@@ -24,7 +24,10 @@ describe("chat-9 last-third admin UX rollout, batch 04",()=>{
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
   expect(page).not.toContain("text-[#");
   expect(page).not.toContain("min-h-10");
-  for(const component of ["<Input","<Select","<Button","<Pagination"])expect(page).toContain(component);
+  const directory=source("src/app/(authenticated)/admin/tenants/directory/page.tsx");
+  for(const component of ["<Input","<Select","<Button","<Pagination"])expect(directory).toContain(component);
+  expect(page).toContain("./directory/page");
+  expect(page).toContain("./setup/page");
   expect(page).toMatch(/PageHeader|SuperAdminContentDirectoryPage|redirect\(|export\s*\{\s*default\s*\}/);
  });
  it("UX-admin-tenants-create-01 preserves shared UX and scoped route behavior",()=>{
