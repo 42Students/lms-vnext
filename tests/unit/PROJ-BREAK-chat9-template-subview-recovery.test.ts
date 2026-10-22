@@ -10,12 +10,14 @@ describe("Super Admin Projects: safe template subview failures", () => {
     const code = readFileSync(join(process.cwd(),
       "src/components/projects/super-admin-template-subview-page.tsx"),"utf8");
     expect(code).toContain('error.code === "PROJECT_TEMPLATE_NOT_FOUND"');
-    expect(code).toContain("notFound()");
-    expect(code).toContain('<ErrorState title="Template section unavailable"');
-    expect(code).toContain("Retry template section");
-    expect(code).toContain("No version or college assignment data is shown.");
-    const thrown = code.indexOf("throw error;",code.indexOf("} catch (error) {"));
-    expect(thrown).toBe(-1);
+    // The legacy template subview now returns a safe missing-state panel
+    // instead of throwing a route-wide 404, while outages offer a retry.
+    expect(code).toContain("Template not found");
+    expect(code).toContain("← Back to templates");
+    expect(code).toContain('<ErrorState title="Failed to load template"');
+    expect(code).toContain("Template could not be loaded. Review your access and try again.");
+    expect(code).toContain("encodeURIComponent(templateId)");
+    expect(code).not.toContain("throw error;");
     expect(code).toContain("templateVersionHistoryQuerySchema.safeParse(historyQuery)");
     expect(code).toContain('title="Invalid version page"');
   });

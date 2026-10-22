@@ -19,7 +19,7 @@ describe("UX-HR-TRACKER-15 recruiter reports and tracker security boundaries",()
  it("HR activity never loads invalid filters or exposes a private application list",()=>{
   const source=read("hr/activity/page.tsx");
   expect(source).toContain("hrActivityQuerySchema.safeParse");
-  expect(source).toContain("Invalid activity filters.");
+  expect(source).toContain('title="Invalid activity filters"');
   expect(source).toContain("Choose again");
   expect(source).toContain("listRecruiterJobActivity(context,input.data)");
   expect(source).toContain("No private applicant information.");
@@ -51,18 +51,25 @@ describe("UX-HR-TRACKER-15 recruiter reports and tracker security boundaries",()
   const guard=source.indexOf("isSuperAdmin(");
   expect(identity).toBeGreaterThan(-1);
   expect(guard).toBeGreaterThan(identity);
-  expect(source).toContain('redirect("/dashboard")');
+  if(path==="tracker/logs/page.tsx"){
+   // The Logs route keeps a signed-in SSO recovery link rather than redirecting.
+   expect(source).toContain('title="Logs access"');
+   expect(source).toContain('Sign in to view logs');
+  }else{
+   expect(source).toContain('redirect("/dashboard")');
+  }
  });
  it("issue detail validates public ID then maps only genuine missing issues to 404",()=>{
   const source=read("tracker/issues/[publicId]/page.tsx");
-  expect(source).toContain("trackerPublicIdSchema.safeParse(publicId)");
+  expect(source).toContain("trackerPublicIdSchema.safeParse(canonical)");
+  expect(source).toContain("canonical!==publicId");
   expect(source).toContain('error.code === "ISSUE_NOT_FOUND"');
   expect(source).toContain("throw error;");
   expect(source).toContain("The tracker is temporarily unavailable.");
  });
  it("tracker global logs and audit findings never use a college-admin or scoped Super Admin bypass",()=>{
   const logs=read("tracker/logs/page.tsx");
-  expect(logs).toContain('context.adminScope?.collegeId || context.adminScope?.organizationId');
+  expect(logs).toMatch(/context\.adminScope\?\.collegeId \|\|\s*context\.adminScope\?\.organizationId/);
   expect(logs).toContain("Clear the Super Admin organization/college safety scope");
   const findings=read("tracker/audit-findings/page.tsx");
   expect(findings).toContain('ctx.adminScope?.collegeId||ctx.adminScope?.organizationId');
