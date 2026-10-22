@@ -149,8 +149,7 @@ export function PlacementEmployerRelationships({
       `/api/placements/companies/${relationshipId}`,
       {
         method,
-        headers: body===undefined ? undefined : {"content-type":"application/json"},
-        body: body===undefined ? undefined : JSON.stringify(body),
+        ...(body===undefined ? {} : {headers: {"content-type":"application/json"}, body: JSON.stringify(body)}),
       },
     );
   }
