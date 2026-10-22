@@ -7,7 +7,7 @@ describe("UX-admin first third delegated touch and contrast audits",()=>{
   // Phone controls must be 44px; 36px desktop overrides remain valid.
   if(touch){
    expect(s).toContain("min-h-11");
-   expect(s).not.toMatch(/(?:^|[\\s\\"\'])min-h-(?:8|9|10)\\b/);
+   expect(s).not.toMatch(/(?:^|[\s"'])min-h-(?:8|9|10)\b/);
   }
   if(ink)expect(s).not.toContain("text-primary-text");
  });
