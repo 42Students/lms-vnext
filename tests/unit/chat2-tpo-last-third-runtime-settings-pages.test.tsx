@@ -110,7 +110,8 @@ describe("chat-2 TPO last-third runtime settings pages", () => {
     const html = renderToStaticMarkup(await TpoPlacementTeamPage());
     expect(html).toContain("Coordinator One");
     expect(html).toContain("Membership status");
-    expect(html).toContain("sm:hidden");
+    expect(html).toContain('data-slot="data-table"');
+    expect(html).toContain("More details");
     expect(html).not.toContain("private@other.test");
     expect(html).not.toContain("+919999999999");
   });

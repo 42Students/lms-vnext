@@ -1,5 +1,7 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import {createElement} from "react";
+import {ToastProvider} from "@/components/ui/toast";
 import {cookies} from "next/headers";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 import CompanySharePage,{metadata} from "@/app/company-share/[token]/page";
@@ -23,7 +25,7 @@ beforeEach(()=>{
 
 describe("chat-16 public company-share page private applicant and access states",()=>{
  it("UX-chat16-company-share-16 requires a separate six-digit access proof before rendering applicants",async()=>{
-  const html=renderToStaticMarkup(await CompanySharePage(request()));
+  const html=renderToStaticMarkup(createElement(ToastProvider,null,await CompanySharePage(request())));
   expect(metadata.robots).toEqual({index:false,follow:false});
   expect(html).toContain("Enter the one-time code the placement cell sent you.");
   expect(html).toContain("6-digit code");
@@ -36,7 +38,7 @@ describe("chat-16 public company-share page private applicant and access states"
  });
  it("UX-chat16-company-share-17 denies an expired or withdrawn link without rendering a code form",async()=>{
   vi.mocked(getPublicCompanyApplicantShare).mockResolvedValue({kind:"UNAVAILABLE"});
-  const html=renderToStaticMarkup(await CompanySharePage(request()));
+  const html=renderToStaticMarkup(createElement(ToastProvider,null,await CompanySharePage(request())));
   expect(html).toContain("This link is not valid any more.");
   expect(html).toContain('aria-label="Restricted applicant share"');
   expect(html).not.toContain('method="post"');
@@ -44,9 +46,9 @@ describe("chat-16 public company-share page private applicant and access states"
  });
  it("UX-chat16-company-share-18 keeps temporary provider errors private and provides a retry",async()=>{
   vi.mocked(getPublicCompanyApplicantShare).mockRejectedValue(new Error("private database credentials"));
-  const html=renderToStaticMarkup(await CompanySharePage(request()));
+  const html=renderToStaticMarkup(createElement(ToastProvider,null,await CompanySharePage(request())));
   expect(html).toContain("We could not load this share. Please retry.");
-  expect(html).toContain("Try again");
+  expect(html).toContain("Retry");
   expect(html).not.toContain("private database credentials");
   expect(html).not.toContain("Enter the 6-digit share code");
  });
@@ -60,7 +62,7 @@ describe("chat-16 public company-share page private applicant and access states"
    selectedColumns:["NAME"],shortlistBy:null,total:1,page:1,totalPages:1,
    truncated:false,search:"",
   });
-  const html=renderToStaticMarkup(await CompanySharePage(request({q:"Ada"})));
+  const html=renderToStaticMarkup(createElement(ToastProvider,null,await CompanySharePage(request({q:"Ada"}))));
   expect(html).toContain("Ada Student");
   expect(html).toContain("for Acme. Please do not forward this page.");
   expect(html).toContain("Everything you open is logged");
