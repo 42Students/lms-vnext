@@ -46,7 +46,7 @@ export default async function SuperAdminProgramsPage({
       </div>;
       return <div className="min-w-0 space-y-5">
         <PageHeader title="Programs"
-          description="Read-only program catalogue for the selected scope. Select a college before creating or editing programs." />
+          description="Choose a college in the header above to create or edit Programs. This program catalogue is read-only until a college is selected." />
         <p className="text-sm text-body" role="status">
           {directory.total.toLocaleString("en-IN")} active programs across active colleges. Page {directory.page} of {directory.totalPages}.
         </p>
