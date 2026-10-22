@@ -7,9 +7,9 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-4-028-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-028-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-12-016-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
-- [ ] G2-13-031-098  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [x] G2-13-031-098  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 - [ ] G2-19-025-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 - [ ] G2-5-001-065  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 - [ ] G2-5-005-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
@@ -19,4 +19,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-5-011-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 
 ## Results
-
+- OK G2-4-028-012 — `src/app/(authenticated)/tpo/settings/team/page.tsx:7,228-239` renders guarded TpoSettingsTeamRemove in the team roster; legacy `docs/legacy-source/frontend/src/components/tpo/team/TeamPeople.jsx:79-86`.
+- OK G2-13-031-098 — `src/app/(authenticated)/tpo/reports/by-company/page.tsx:70-81,108` provides both full-filtered company CSV and visible-page CSV while retaining selected filters; legacy `docs/legacy-source/frontend/src/pages/tpo/reports/[name].js:134-135`.
