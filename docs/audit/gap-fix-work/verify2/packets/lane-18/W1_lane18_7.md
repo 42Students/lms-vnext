@@ -16,3 +16,9 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/admin/companies/page.tsx
 - Legacy: Old global companies render Antd table with Company Domains Added by Colleges Drives Actions columns `docs/legacy-source/frontend/src/pages/superadmin/sections/CompanyCuration.js:59-81`
 - Expected fix: Add global distinct-company table with exact old column set; separate college relationships detail view
+
+## Lane-3 FINAL verification triage (2026-10-22)
+
+- OK G2-9-027-045: Activity page explicitly offers current loaded page CSV with eight forensic headers, separately from all-matching export.
+- DEFERRED G2-15-017-044: creator role audit model guards role+ID and records original actor, but historical first-UPSERT backfill/persistent immutability needs data-layer verification.
+- DEFERRED G2-9-034-007: global company catalogue exists; exact five-column legacy presentation requires deeper full component and relationship review.
