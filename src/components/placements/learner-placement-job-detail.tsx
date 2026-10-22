@@ -38,12 +38,13 @@ function statusTone(status: "PASS" | "FAIL" | "MISSING") {
 }
 
 export function LearnerPlacementJobDetail({
-  items,returnHref="/learn/my-placements/jobs",initialSaved=false,journey=null,
+  items,returnHref="/learn/my-placements/jobs",initialSaved=false,journey=null,bookmarkActionsEnabled=true,
 }: {
   items: readonly LearnerPlacementJobItem[];
   returnHref?:string;
   initialSaved?:boolean;
   journey?:ReactNode;
+  bookmarkActionsEnabled?:boolean;
 }) {
   const summary = learnerJobDetailSummary(items);
   if (!summary) return <section role="alert" aria-live="assertive"
@@ -107,7 +108,8 @@ export function LearnerPlacementJobDetail({
           description={summary.companyName}
           actions={
             <>
-              <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={initialSaved}/>
+              {bookmarkActionsEnabled?<LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={initialSaved}/>:
+               <StatusBadge tone="neutral">Bookmarks unavailable</StatusBadge>}
               {summary.appliedCount ? (
             <StatusBadge tone="success">{summary.appliedCount} role{summary.appliedCount === 1 ? "" : "s"} applied</StatusBadge>
           ) : summary.deadlinePassed ? (
@@ -436,7 +438,8 @@ export function LearnerPlacementJobDetail({
             My applications →
           </Link>
         </div>
-        <LearnerPlacementJobs items={items} savedJobIds={initialSaved?[item.job.id]:[]} />
+        <LearnerPlacementJobs items={items} savedJobIds={initialSaved?[item.job.id]:[]}
+          bookmarkActionsEnabled={bookmarkActionsEnabled} />
       </section>
         </aside>
       </div>
