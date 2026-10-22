@@ -470,6 +470,10 @@ export function FacultyLessonAuthoring({
         if(enableAssignmentResources&&deliveryId){
           const resourcesForSave=assignmentResources.filter(row=>
             !(row.kind==="INSTRUCTIONS"&&row.title==="Instructions"&&!row.body?.trim()));
+          // Legacy AssignmentContentWriteService requires 1–30 resources.
+          // A blank placeholder Instructions block is not a real resource.
+          if(resourcesForSave.length===0)
+            throw new Error("Add at least one assignment instruction or resource.");
           const checked=facultyAssignmentResourcesSchema.safeParse(resourcesForSave);
           if(!checked.success)throw new Error(
             checked.error.issues[0]?.message??"Check the assignment resources.");
