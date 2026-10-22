@@ -7,5 +7,5 @@ Round 8 = the CURRENT failing list from CI run 39760949332. It REPLACES ci4, ci5
 - [x] `docs/audit/gap-fix-work/ci8/packets/CI8U_lane14_3.md` (2 test files)
 - [x] `docs/audit/gap-fix-work/ci8/packets/CI8U_lane14_4.md` (2 test files)
 - [x] `docs/audit/gap-fix-work/ci8/packets/CI8U_lane14_5.md` (1 test files)
-- [ ] `docs/audit/gap-fix-work/ci8/packets/CI8dbU_lane14_1.md`
-- [ ] `docs/audit/gap-fix-work/ci8/packets/CI8dbU_lane14_2.md`
+- [x] `docs/audit/gap-fix-work/ci8/packets/CI8dbU_lane14_1.md`
+- [x] `docs/audit/gap-fix-work/ci8/packets/CI8dbU_lane14_2.md`
