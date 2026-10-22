@@ -156,7 +156,7 @@ export function LearnerGeneralRequests({
   </p>:null}
  </div>:null}
   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Tell the placement cell why
-   <Textarea ref={reasonRef} className={box} rows={3} maxLength={999} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} aria-invalid={error==="Please explain"} aria-describedby={error==="Please explain"?"learner-general-requests-error":undefined}/>
+   <Textarea ref={reasonRef} className={box} rows={3} maxLength={900} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} aria-invalid={error==="Please explain"} aria-describedby={error==="Please explain"?"learner-general-requests-error":undefined}/>
   </label>
   {error?<p role="alert" id="learner-general-requests-error" className="text-sm text-error">{error}</p>:null}
   </div>
