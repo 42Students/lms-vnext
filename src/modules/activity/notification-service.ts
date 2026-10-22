@@ -1802,3 +1802,29 @@ export function legacyAuthorizedNotificationAction(input:{
  }
  return null;
 }
+
+
+/** Event-to-channel parity ledger for old LMS notification triggers.
+ * This is not a sender: actual producer workers must write scoped delivery
+ * rows, release due notices and only then report provider acceptance.
+ * SMTP/DLT templates require separately approved, registered mappings. */
+export const LEGACY_NOTIFICATION_DELIVERY_MATRIX={
+ CLASS_NOTICE:{audience:"ENROLLED_CLASS",inApp:true,email:"OPT_IN",sms:"DLT_ONLY"},
+ COURSE_NOTICE:{audience:"ENROLLED_COURSE",inApp:true,email:"OPT_IN",sms:"DLT_ONLY"},
+ JOB_APPLICATION:{audience:"APPLICANT",inApp:true,email:"REGISTERED_TEMPLATE",sms:"DLT_ONLY"},
+ JOB_ROUND:{audience:"INVITED_APPLICANTS",inApp:true,email:"REGISTERED_TEMPLATE",sms:"DLT_ONLY"},
+ OFFER_RELEASED:{audience:"OFFER_RECIPIENT",inApp:true,email:"REGISTERED_TEMPLATE",sms:"DLT_ONLY"},
+ GENERAL_ANNOUNCEMENT:{audience:"SCOPED_MEMBERS",inApp:true,email:"OPT_IN",sms:"DLT_ONLY"},
+} as const;
+export function legacyNotificationChannelReadiness(input:{
+ event:keyof typeof LEGACY_NOTIFICATION_DELIVERY_MATRIX;
+ verifiedAudience:boolean;templateApproved:boolean;
+ scheduledAt:Date|null;now:Date;
+}){
+ if(!input.verifiedAudience)return {ready:false as const,reason:"AUDIENCE_UNVERIFIED"};
+ if(input.scheduledAt&&input.scheduledAt.getTime()>input.now.getTime())
+  return {ready:false as const,reason:"NOT_DUE"};
+ const settings=LEGACY_NOTIFICATION_DELIVERY_MATRIX[input.event];
+ return {ready:true as const,inApp:settings.inApp,
+  externalDeliveryAllowed:input.templateApproved};
+}
