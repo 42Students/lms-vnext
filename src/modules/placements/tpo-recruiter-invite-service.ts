@@ -120,9 +120,8 @@ export async function issueTpoRecruiterInvite(
         "TPO_RECRUITER_INVITE_NOT_FOUND",
       );
     }
-    // Legacy permits invitations before a company relationship has been linked.
-    // A verified email is still required for recruiter OTP onboarding.
-    if(!lead.emailNorm){
+    // A verified work email and linked employer are required before rotation.
+    if(!lead.emailNorm||!lead.companyRelationshipId){
       throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
     }
 
