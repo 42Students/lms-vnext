@@ -4,10 +4,10 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [x] `tests/unit/PROJ-BREAK-chat19-workspace-brief-and-comment-kinds.test.ts` (1 failing)
 - [x] `tests/unit/chat12-round37-xlsx-export.test.ts` (1 failing)
-- [ ] `tests/unit/chat2-public-placements-page.test.ts` (1 failing)
-- [ ] `tests/unit/chat6-inbound-reply-body-provenance.test.ts` (1 failing)
+- [x] `tests/unit/chat2-public-placements-page.test.ts` (1 failing)
+- [x] `tests/unit/chat6-inbound-reply-body-provenance.test.ts` (1 failing)
 - [x] `tests/unit/chat9-super-admin-exact-page-copy.test.ts` (1 failing)
-- [ ] `tests/unit/learner-job-detail-parity.test.ts` (1 failing)
+- [x] `tests/unit/learner-job-detail-parity.test.ts` (1 failing)
 - [x] `tests/unit/ux-admin-chat9-interactions.test.ts` (1 failing)
 
 ## Failures (from CI log)
