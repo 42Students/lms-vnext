@@ -15,6 +15,7 @@ import {
  type OwnNotificationCategory,
 } from "@/modules/activity/notification-service";
 import { parseNotificationCursor } from "@/modules/activity/notification-cursor";
+import { notificationContextPresentation,notificationFeedFailure } from "@/modules/activity/notification-context-model";
 
 type Params={
  view?:string;category?:string;beforeCreatedAt?:string;beforeId?:string;
@@ -69,6 +70,9 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
   if(result.status==="rejected"&&result.reason instanceof AuthorizationError)throw result.reason;
  }
  const failedNotifications=notificationResult.status==="rejected";
+ const failureStatus=failedNotifications&&typeof (notificationResult.reason as {status?:unknown})?.status==="number"
+  ?(notificationResult.reason as {status:number}).status:null;
+ const failureMessage=failedNotifications?notificationFeedFailure(failureStatus):null;
  const page=notificationResult.status==="fulfilled"
   ?notificationResult.value:{items:[],nextCursor:null};
  const unreadCount=unreadResult.status==="fulfilled"?unreadResult.value:0;
@@ -94,7 +98,7 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
    readAt:notification.readAt?.toISOString()??null,
    createdAt:notification.createdAt.toISOString(),
    module:event.module,importance:event.importance,
-   contextLine:event.module?.replaceAll("_"," ")||"Course update",
+   ...notificationContextPresentation({module:event.module,metadata:event.metadata,actionHref:notification.actionHref}),
   })),
   ...announcements.filter(item=>!query||
     item.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())||
@@ -135,7 +139,7 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
   </Alert>:null}
   {partialFailure?<Alert tone={failedNotifications?"error":"warning"}>
    <strong>{failedNotifications?"Couldn't load notifications":"Couldn't refresh notifications"}</strong>
-   {" "}The available notification sources remain visible.{" "}
+   {" "}{failureMessage??"The available notification sources remain visible."}{" "}
    <Link href={retryHref} className="font-semibold text-primary-text underline">Retry</Link>
   </Alert>:null}
   {!invalid&&(!failedNotifications||items.length>0)?<>
