@@ -21,7 +21,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_scripts_sql_db10-sms-delivery-attempts-staging.sql.md` (edit scripts/sql/db10-sms-delivery-attempts-staging.sql; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_app_authenticated_college_faculty-assignment_page.tsx.md` (edit src/app/(authenticated)/college/faculty-assignment/page.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_app_authenticated_tracker_logs_page.tsx.md` (edit src/app/(authenticated)/tracker/logs/page.tsx; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_NEW_docs_audit_gap2_lane-16_u011-notification-scheduler.md.md` (new; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_NEW_docs_audit_gap2_lane-16_u011-notification-scheduler.md.md` (new; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_NEW_docs_audit_gap2_lane-17_tpo-scheduled-jobs.md.md` (new; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_app_authenticated_college_videos_page.tsx.md` (edit src/app/(authenticated)/college/videos/page.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_app_authenticated_college_course-progress_page.tsx.md` (edit src/app/(authenticated)/college/course-progress/page.tsx; 1 findings; best P1)
