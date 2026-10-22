@@ -5,7 +5,7 @@ describe("Super Admin recruiter identity and college grant expiry",()=>{
  it("SA-academics-people-108 provides structured recruiter name, designation, new company and multi-college creation",()=>{
   const form=read("src/components/admin/super-admin-hr-account-dialog.tsx");
   const service=read("src/modules/placements/super-admin-hr-service.ts");
-  for(const s of ["First Name","Last Name","Designation · optional","setFirstName","setLastName","companyRelationshipIds","newCompany","Create a company by name"])expect(form).toContain(s);
+  for(const s of ["First name","Last name","Designation","setFirstName","setLastName","companyRelationshipIds","newCompany","Create a company by name"])expect(form).toContain(s);
   expect(service).toContain("input.newCompany");
   expect(service).toContain("input.companyRelationshipIds");
  });
@@ -17,6 +17,6 @@ describe("Super Admin recruiter identity and college grant expiry",()=>{
   expect(service).toContain("loadAccountGrants(context,[userId],true)");
   expect(service).toContain("grantHistory:grantHistory.filter");
   expect(service).toContain("GRANT_EXPIRY_INVALID");
-  for(const phrase of ["College access history","Revoked","Expired","Until (optional)","Choose a future access expiration date."])expect(drawer).toContain(phrase);
+  for(const phrase of ["College access and history","Revoked","Expired","Until (optional)","Choose a future access expiration date."])expect(drawer).toContain(phrase);
  });
 });
