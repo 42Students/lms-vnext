@@ -986,6 +986,7 @@ export async function listMyLearnerProjectPage(
  const base=and(
   eq(projectMembers.membershipId,membership.id),eq(projectMembers.role,"LEARNER"),
   isNull(projectMembers.endedAt),eq(projectInstances.collegeId,membership.collegeId),
+  isNull(projectInstances.deletedAt),
   eq(collegeMemberships.collegeId,membership.collegeId),
   eq(collegeMemberships.userId,context.user.id),eq(collegeMemberships.status,"ACTIVE"),
   eq(users.platformStatus,"ACTIVE"),eq(membershipRoles.role,"LEARNER"),
