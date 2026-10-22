@@ -166,7 +166,7 @@ export function FacultyQuizReview({
       if (!response.ok) {
         const message = await courseApiError(response);
         if (thisRequest === requests.current && !controller.signal.aborted) {
-          setError(message);
+          setError(message ?? "Could not load Quiz review.");
         }
         return;
       }
@@ -224,7 +224,7 @@ export function FacultyQuizReview({
 
       if (!response.ok) {
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? "Could not update Quiz results.",
         );
         return;
       }
