@@ -89,3 +89,27 @@ export const LEGACY_TENANT_DOMAIN_IMPORT_NOTES={
  primary:"Prefer the newest verified canonical host per college; primary is never inferred from an unverified row",
  branding:"Re-upload and scan historic college logo assets before issuing signed/public images",
 } as const;
+
+/** Retained source domain tombstones never enter primary-host selection or
+ * normal college branding. Only a verified, live domain can be made primary. */
+export function legacyTenantDomainImportPlan(input:{
+ legacyDomainId:string;legacyCollegeId:number;
+ resolvedCollegeId:string|null;host:string;
+ isDeleted:boolean;isPrimary:boolean;isVerified:boolean;
+ verifiedAt:string|null;lastFoundValues:string|null;
+}){
+ if(!/^[1-9][0-9]{0,18}$/.test(input.legacyDomainId))
+  throw new Error("Invalid historic domain identity");
+ const active=legacyPrimaryTenantDomainCandidate({
+  legacyCollegeId:input.legacyCollegeId,
+  resolvedCollegeId:input.resolvedCollegeId,host:input.host,
+  isPrimary:input.isPrimary&&!input.isDeleted,
+  isVerified:input.isVerified,verifiedAt:input.verifiedAt,
+ });
+ const redacted=input.lastFoundValues?.replace(/(?:token|verification|secret)\s*[=:]\s*\S+/gi,
+  "[REDACTED]").slice(0,512)??null;
+ return {...active,sourceId:input.legacyDomainId,
+  isPrimary:active.isPrimary&&!input.isDeleted,
+  status:input.isDeleted?"ARCHIVED" as const:"ACTIVE" as const,
+  diagnostics:redacted,requireNewVerification:!active.isVerified};
+}

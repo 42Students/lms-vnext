@@ -2629,3 +2629,14 @@ export const LEGACY_PLACEMENT_ACTOR_POLICY={
  missing:"Use explicit tenant-scoped service actor and retain null historic source attribution",
  unknown:"Quarantine unverified identities, never attribute a real faculty or TPO user",
 } as const;
+
+/** The old recruiter row type and organization source ID cannot grant
+ * current tenant access. Suspension is a persisted profile state plus
+ * session/OTP revocation request, not a fake revoked company grant. */
+export const LEGACY_RECRUITER_SUSPENSION_ACTION={
+ profileStatus:"SUSPENDED",
+ recordReason:"placementRecruiterProfiles.suspensionReason",
+ revokedSessionScope:"current principal, all selected memberships",
+ revokeOutstandingLoginChallenges:true,
+ retainCollegeGrantsForAudit:true,
+} as const;
