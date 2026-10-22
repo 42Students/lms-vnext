@@ -20,7 +20,10 @@ import {
 export function facultyContactInitials(name:string|null):string {
  const parts=(name??"").trim().split(/\s+/).filter(Boolean);
  if(parts.length===0)return "?";
- return (parts.length===1?parts[0]!.slice(0,2):parts[0]![0]+parts.at(-1)![0])
+ const first = parts[0];
+ if (first === undefined) return "?";
+ const last = parts.at(-1);
+ return (parts.length === 1 ? first.slice(0, 2) : first[0] + (last?.[0] ?? ""))
   .toLocaleUpperCase("en-IN");
 }
 /** One membership per person; a dual-role member appears once under All and
