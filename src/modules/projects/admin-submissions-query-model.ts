@@ -102,7 +102,7 @@ export function projectAdminSubmissionHref(
 
 // The imported deep-link identifier remains scoped by the listing's college.
 export function focusedProjectIdFromSubmissionUrl(raw: Record<string, string | string[] | undefined>) {
-  const value = first(raw.projectId);
+  const value = first(raw.focusedProjectId) ?? first(raw.projectId);
   if (!value || value.length > 120 || /[^a-zA-Z0-9_-]/.test(value)) return null;
   return value;
 }
