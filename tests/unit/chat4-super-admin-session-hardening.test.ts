@@ -20,7 +20,7 @@ describe("Super Admin tenant sessions adversarial management",()=>{
   const tx=s.indexOf("getDb().transaction(async tx=>",start);
   const persisted=s.indexOf('assertPersistedPlatformPermission(tx,ctx,"college.manage"',tx);
   const update=s.indexOf("UPDATE identity_device_sessions",persisted);
-  const noOp=s.indexOf("if(rows.rows.length===0)return {revoked:0};",update);
+  const noOp=s.indexOf('if(rows.rows.length===0)return {revoked:0,message:"No active sessions."};',update);
   const audit=s.indexOf("recordActivityEventInTransaction(tx,ctx",update);
   expect(tx).toBeGreaterThan(start);
   expect(persisted).toBeGreaterThan(tx);
