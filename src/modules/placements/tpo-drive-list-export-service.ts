@@ -9,8 +9,8 @@ const MAX_PAGES=1000; // 25,000 matching drives, far beyond the page preview.
 export async function exportTpoDriveLifecycle(context:RequestContext,raw:unknown){
  const input=raw&&typeof raw==="object"&&!Array.isArray(raw)?
   raw as Record<string,unknown>:{};
- const scope=input.scope==="PAGE"?"PAGE":input.scope==="SELECTED"?"SELECTED":"ALL";
- const rawIds=Array.isArray(input.ids)?input.ids:typeof input.ids==="string"?[input.ids]:[];
+ const scope=input["scope"]==="PAGE"?"PAGE":input["scope"]==="SELECTED"?"SELECTED":"ALL";
+ const rawIds=Array.isArray(input["ids"])?input["ids"]:typeof input["ids"]==="string"?[input["ids"]]:[];
  const selectedIds=rawIds.filter((x):x is string=>typeof x==="string");
  if(scope==="SELECTED"&&(!selectedIds.length||selectedIds.length>25||
   new Set(selectedIds).size!==selectedIds.length||
