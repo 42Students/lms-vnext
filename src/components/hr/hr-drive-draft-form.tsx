@@ -81,6 +81,7 @@ export function HrDriveDraftForm({
   const [submitting,setSubmitting] = useState(false);
   const [jdUploading,setJdUploading] = useState(false);
   const [jdUploadMessage,setJdUploadMessage] = useState("");
+  const [jdReadUrl,setJdReadUrl] = useState<string|null>(null);
   const [jdPendingKey,setJdPendingKey] = useState<string|null>(null);
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
   const submittedRef=useRef(false);
@@ -253,9 +254,7 @@ export function HrDriveDraftForm({
 
   async function viewUploadedJobDescription() {
     if (!draft.jdObjectKey) return;
-    setJdUploadMessage("");
-    const popup = window.open("about:blank", "_blank");
-    if (popup) popup.opener = null;
+    setJdUploadMessage("");setJdReadUrl(null);
     try {
       const response = await apiFetch("/api/placements/recruiter/drives/jd-upload?" +
         new URLSearchParams({ collegeId, objectKey: draft.jdObjectKey }),
@@ -265,14 +264,12 @@ export function HrDriveDraftForm({
           !Number.isFinite(Date.parse(response.expiresAt)) ||
           Date.parse(response.expiresAt) <= Date.now())
         throw new Error("Invalid signed read link");
-      // Never navigate the unsent drive-request tab when a popup is blocked.
-      // Its draft and change-confirmation guard must remain intact.
-      if (!popup || popup.closed) {
-        setJdUploadMessage("Allow pop-ups to view the uploaded job description.");
-        return;
-      }
-      popup.location.replace(parsed.toString());
-    } catch { popup?.close(); setJdUploadMessage("Could not open the file. Try again after verification."); }
+      // Present a verified link only after its signed URL passes validation.
+      // The browser can open it in another tab via the context menu or modifier click;
+      // the unsent draft stays on screen until the learner explicitly follows it.
+      setJdReadUrl(parsed.toString());
+      setJdUploadMessage("Signed link ready. Open in a separate tab to keep editing.");
+    } catch { setJdReadUrl(null); setJdUploadMessage("Could not open the file. Try again after verification."); }
   }
 
   async function copyPreview() {
@@ -516,6 +513,7 @@ export function HrDriveDraftForm({
             </> : null}
           </div>
           {jdUploadMessage ? <span role="status" className="text-xs text-muted-foreground">{jdUploadMessage}</span> : null}
+           {draft.jdObjectKey&&jdReadUrl?<a href={jdReadUrl} rel="noopener noreferrer" referrerPolicy="no-referrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open verified job description</a>:null}
         </div>
       </section>
 
@@ -831,7 +829,7 @@ export function HrDriveDraftForm({
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
             {draft.jdObjectKey ? <p>Private job description attached. Students receive an authorized link after publication.</p> : null}
              {result.success && result.data.jdUrl ?
-              <p>Job description: <a href={result.data.jdUrl} target="_blank"
+              <p>Job description: <a href={result.data.jdUrl}
                 rel="noopener noreferrer" referrerPolicy="no-referrer"
                 className="font-semibold text-primary-text underline underline-offset-2">
                 View linked job description
@@ -842,7 +840,7 @@ export function HrDriveDraftForm({
                Passing year: {draft.passingYear || "Any year"}</p>
             {draft.driveMode==="OFF_CAMPUS"?
               <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
-                ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer" target="_blank"
+                ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer"
                   className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">{result.data.externalApplicationUrl}</a>
                 : "Not specified"}</p>:null}
             <h4 className="font-semibold text-foreground">Planned hiring process</h4>

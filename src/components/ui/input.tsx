@@ -13,12 +13,7 @@ export type InputProps = ComponentPropsWithRef<"input"> & { error?: boolean };
 export function Input({ className, error = false, ...props }: InputProps) {
   const placeholder = props.placeholder ?? (props.type === "search" ? "Search..." : undefined);
   const invalid = error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
-  return (
-    <input data-slot="input"
-      {...props}
-      placeholder={placeholder}
-      aria-invalid={invalid ? true : props["aria-invalid"]}
-      className={cx(
+  const inputClassName = cx(
         "min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full min-w-0 font-[inherit]",
         "rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)]",
         "bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[7px]",
@@ -42,7 +37,13 @@ export function Input({ className, error = false, ...props }: InputProps) {
         props.type === "search" && "rounded-[8px] pr-[44px] [background-image:url('/assets/images/common/search.svg')] [background-position:right_15px_center] [background-repeat:no-repeat] [background-size:19px_19px] focus:[background-image:none]",
         "motion-reduce:transition-none",
         className,
-      )}
+      );
+  return (
+    <input data-slot="input"
+      {...props}
+      placeholder={placeholder}
+      aria-invalid={invalid ? true : props["aria-invalid"]}
+      className={inputClassName}
     />
   );
 }

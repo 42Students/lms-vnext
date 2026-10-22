@@ -132,9 +132,9 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
       <circle cx={12} cy={12} r={9}/><path d="m8 12 3 3 5-6"/>
     </svg>
     <strong>Live at</strong>
-    <a href={"https://"+state.currentHost} target="_blank" rel="noopener noreferrer"
+    <a href={"https://"+state.currentHost} rel="noopener noreferrer"
       className="inline-flex min-h-9 items-center gap-1 break-all font-semibold underline"
-      aria-label={"Open "+state.currentHost+" in a new tab"}>
+      aria-label={"Open "+state.currentHost}>
       {state.currentHost}
       <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
        stroke="currentColor" strokeWidth={2} aria-hidden="true">
