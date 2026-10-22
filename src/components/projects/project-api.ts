@@ -16,7 +16,9 @@ export async function projectMutation(
 ) {
   return apiFetch<Awaited<ReturnType<Response["json"]>>>(path, {
     method,
-    headers:body===undefined?undefined:{"Content-Type":"application/json"},
-    body:body===undefined?undefined:JSON.stringify(body),
+    ...(body === undefined ? {} : {
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(body),
+    }),
   });
 }
