@@ -26,7 +26,7 @@ function structuredStudentRowsAsCsv(
     STRUCTURED_STUDENT_CSV_COLUMNS.join(","),
     ...entries.map(entry => [
       entry.displayName || [entry.firstName, entry.lastName].filter(Boolean).join(" "),
-      entry.phoneE164 || entry.mobileNumber || "",
+      (entry.phoneE164 || entry.mobileNumber || "").replace(/^([0-9]{10})$/, "+91$1"),
       entry.email || "",
       entry.programId || defaults.programId || "",
       entry.cohortId || defaults.cohortId || "",
