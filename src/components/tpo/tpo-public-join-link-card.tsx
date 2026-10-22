@@ -94,12 +94,12 @@ export function TpoPublicJoinLinkCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[scope,companyId,initial.ready]);
   async function saveDomain(){
-    if(!companyId||actionInFlight.current)return;
+    if(!companyId||actionInFlight.current||!domainDraft.trim())return;
     actionInFlight.current=true;
     setBusy(true);setFeedback("");
     try{
       const response=await fetch("/api/placements/tpo/companies/"+encodeURIComponent(companyId)+"/domain",{
-       method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domain:domainDraft}),
+       method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domain:domainDraft.trim()}),
       });
       const payload=await response.json() as {domain?:string;error?:string};
       if(!response.ok)throw new Error(payload.error==="DOMAIN_IN_USE"?
@@ -190,12 +190,13 @@ export function TpoPublicJoinLinkCard({
             </p>
           )}
           {status.domain ? <p className="mt-2 text-sm text-body">Email domains: @{status.domain}</p> :
-          companyId ? <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+          companyId ? <form onSubmit={event=>{event.preventDefault();void saveDomain();}}
+           className="mt-3 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
            <Input aria-label="Company email domain" value={domainDraft} onChange={event=>{setDomainDraft(event.target.value);setFeedback("");}}
-            placeholder="company.com" className="min-h-11 min-w-0 w-full md:min-h-9"/>
-           <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
-            disabled={busy||!domainDraft.trim()} onClick={()=>void saveDomain()}>Add domain</Button>
-          </div> : null}
+            placeholder="techmahindra.com" className="min-h-11 min-w-0 w-full md:min-h-9"/>
+           <Button type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
+            disabled={busy||!domainDraft.trim()}>Add domain</Button>
+          </form> : null}
         </>
       ) : (
         <p className="mt-2 text-sm text-body">
@@ -261,8 +262,8 @@ export function TpoPublicJoinLinkCard({
       )}
       {feedback ? <p role="status" className="min-w-0 break-words border-l-2 border-border px-3 py-2 text-sm text-body">{feedback}</p> : null}
       <ConfirmDialog open={replaceOpen} onOpenChange={next=>{if(!busy)setReplaceOpen(next);}}
-        title={PUBLIC_JOIN_LINK_COPY.replaceTitle} description={PUBLIC_JOIN_LINK_COPY.replaceExplanation}
-        confirmVariant="primary" confirmLabel={PUBLIC_JOIN_LINK_COPY.replaceConfirm}
+        title="Make a new link?" description="The old link stops working."
+        confirmVariant="primary" confirmLabel="Make a new link"
         pending={busy} onConfirm={()=>{void makeLink();}}>
         {feedback?<p role="alert" className="text-sm text-error">{feedback}</p>:null}
       </ConfirmDialog>
