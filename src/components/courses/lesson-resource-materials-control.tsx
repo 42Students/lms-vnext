@@ -135,6 +135,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      {material.kind==="LINK"&&facultyContentExternalHref("RESOURCE",material.externalUrl)?
       <a href={facultyContentExternalHref("RESOURCE",material.externalUrl)!} rel="noopener noreferrer"
        className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open</a>:
+      material.kind==="LINK"?<span role="status" className="text-xs text-muted-foreground">Link unavailable</span>:
       material.kind==="FILE"?<div className="flex items-center gap-2">
        {material.uploadStatus==="READY"?
         <Button size="sm" type="button" variant="secondary"
