@@ -137,3 +137,10 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - G2-4-023-018 — DEFERRED: company identity mismatch still throws a generic conflict; same-company confirmation flow needs product/API design.
 - G2-4-023-025 — DEFERRED: distinct-company choice and alias policy not established by the canonical domain create flow.
 - Remaining rows are not yet verified; do not treat this packet as completed.
+
+## Lane-12 fast verification triage (2026-10-22)
+
+Confirmed via cited vNext code (OK, limited to described behavior): G2-5-007-044, G2-5-007-069, G2-5-013-028, G2-5-013-037, G2-5-023-014.
+
+DEFERRED — deeper implementation/API/migration review required; these are NOT verified or fixed: G2-4-023-018, G2-4-023-025, G2-4-023-037, G2-4-023-047, G2-13-031-076, G2-5-003-010, G2-5-007-002, G2-5-007-019, G2-5-009-009, G2-5-010-046, G2-5-013-002, G2-5-013-011, G2-5-013-014, G2-5-013-041, G2-5-013-075, G2-5-013-076, G2-5-015-021, G2-5-023-011, G2-5-023-024, G2-5-023-027.
+This packet has been triaged, not certified parity-complete; no unverified row is claimed OK.
