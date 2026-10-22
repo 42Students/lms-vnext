@@ -38,11 +38,11 @@ function MeetingRow({
   const status = mentorMeetingDisplayStatus(meeting, now);
   const href = safeMentorMeetingJoinUrl(meeting, now);
   return (
-    <article className={styles.row}>
-      <div className={styles.head}>
-        <div className={styles.titleBlock}>
-          <h3 className={styles.title}>{meeting.title}</h3>
-          <p className={styles.subtitle}>{meeting.projectTitle}</p>
+    <article className={styles["row"]}>
+      <div className={styles["head"]}>
+        <div className={styles["titleBlock"]}>
+          <h3 className={styles["title"]}>{meeting.title}</h3>
+          <p className={styles["subtitle"]}>{meeting.projectTitle}</p>
         </div>
         <StatusBadge tone={
           status === "COMPLETED" ? "success" :
@@ -50,7 +50,7 @@ function MeetingRow({
           status === "REQUESTED" ? "warning" : "info"
         }>{status}</StatusBadge>
       </div>
-      <p className={styles.meta}>
+      <p className={styles["meta"]}>
         {dateLabel(meeting.startsAt)} · {meetingTimeLabel(meeting)}
         {(meeting.linkedSprintTitle||meeting.legacySprintLabel)
           ? " · Sprint: " + (meeting.linkedSprintTitle||meeting.legacySprintLabel) : ""}
@@ -58,10 +58,10 @@ function MeetingRow({
       {meeting.projectStatus === "ARCHIVED" ? (
         <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Archived project · Read-only</p>
       ) : null}
-      <div className={styles.actions}>
-        {safeProjectExternalHref(href) ? <a className={styles.action} href={safeProjectExternalHref(href)!}
-          >Join link</a> : null}
-        <Link className={styles.action}
+      <div className={styles["actions"]}>
+        {safeProjectExternalHref(href) ? <a className={styles["action"]} href={safeProjectExternalHref(href)!}
+          target="_blank" rel="noopener noreferrer">Join link</a> : null}
+        <Link className={styles["action"]}
           href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) + "?tab=team"}>
           Open project
         </Link>
@@ -90,31 +90,31 @@ export function MentorMeetingsCalendar({
   const instant = useMemo(() => new Date(now), [now]);
   const {upcoming, past} = useMemo(() => splitMentorMeetings(meetings, instant), [meetings, instant]);
 
-  return <div className={styles.calendar} aria-label="Mentor meetings calendar">
-    <section aria-labelledby="mentor-upcoming-meetings" className={styles.section}>
-      <h2 id="mentor-upcoming-meetings" className={styles.heading}>
+  return <div className={styles["calendar"]} aria-label="Mentor meetings calendar">
+    <section aria-labelledby="mentor-upcoming-meetings" className={styles["section"]}>
+      <h2 id="mentor-upcoming-meetings" className={styles["head"]ing}>
         Upcoming ({upcoming.length})
       </h2>
       {upcoming.length
         ? upcoming.map(meeting => <MeetingRow key={meeting.id} meeting={meeting}
             now={instant} />)
-        : <p className={styles.empty}>
+        : <p className={styles["empty"]}>
             No upcoming meetings.
           </p>}
     </section>
-    <section aria-labelledby="mentor-past-meetings" className={styles.section}>
-      <h2 id="mentor-past-meetings" className={styles.heading}>
+    <section aria-labelledby="mentor-past-meetings" className={styles["section"]}>
+      <h2 id="mentor-past-meetings" className={styles["head"]ing}>
         Past &amp; Cancelled ({past.length})
       </h2>
       {past.length
         ? (expanded ? past : past.slice(0, PAST_PREVIEW)).map(meeting =>
             <MeetingRow key={meeting.id} meeting={meeting} now={instant}
               />)
-        : <p className={styles.empty}>
+        : <p className={styles["empty"]}>
             No past meetings yet.
           </p>}
       {past.length > PAST_PREVIEW ? (
-        <Button variant="secondary" className={styles.expand} type="button" 
+        <Button variant="secondary" className={styles["expand"]} type="button" 
           onClick={() => setExpanded(value => !value)}
           aria-expanded={expanded}>
           {expanded ? "Show fewer" : "Show all " + past.length + " past meetings"}
