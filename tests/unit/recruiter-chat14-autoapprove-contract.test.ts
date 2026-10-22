@@ -28,7 +28,7 @@ describe("REC-home-drives-33 recruiter formal request auto approval",()=>{
   const code=src("src/modules/placements/recruiter-drive-request-service.ts");
   expect(code).toContain('pg_advisory_xact_lock(hashtext(');
   expect(code.indexOf('if(existing){')).toBeLessThan(code.indexOf('if(policy.autoApprove){'));
-  expect(code).toContain('return {request:existing,replayed:true}');
+  expect(code).toContain('return {request:existing,replayed:true,...driveRequestReceipt(existing)}');
  });
  it("REC-home-drives-33 preserves TPO manual review if trusted draft is ambiguous",()=>{
   const code=src("src/modules/placements/recruiter-drive-request-service.ts");
