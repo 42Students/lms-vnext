@@ -91,8 +91,8 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
       const saved = receipt && typeof receipt === "object" && !Array.isArray(receipt)
         ? (receipt as { round?: unknown }).round : null;
       if (!saved || typeof saved !== "object" || Array.isArray(saved) ||
-          (saved as Record<string, unknown>).id !== round.id ||
-          (saved as Record<string, unknown>).status !== (action === "CANCEL" ? "CANCELLED" : "SCHEDULED")) {
+          (saved as Record<string, unknown>)["id"] !== round.id ||
+          (saved as Record<string, unknown>)["status"] !== (action === "CANCEL" ? "CANCELLED" : "SCHEDULED")) {
         throw new Error("Round update could not be confirmed. Refresh and review.");
       }
       setId(""); setReason(""); router.refresh();
