@@ -70,7 +70,7 @@ export type CollegeRoundSlotAppointmentFilters = {
  candidatePage?:number;
  candidatePageSize?:number;
  candidateSearch?:string;
- appointmentSort?:"DATE_ASC"|"DATE_DESC";
+ appointmentSort?:"DATE_ASC"|"DATE_DESC"|"JOB"|"STATUS";
  preferredApplicationId?:string;
 };
 /** Source-of-truth candidate appointments, filtered and paged before capping.
@@ -194,9 +194,21 @@ export async function getCollegeRoundSlotAppointments(
  const requested=filters.appointmentPage;
  const appointmentPage=requested!==undefined&&Number.isSafeInteger(requested)&&requested>0
   ?Math.min(requested,appointmentPages):1;
+ // Legacy calendar has Date earliest/latest, Job and Status sorting. Drive
+ // pages already scope to one job, so Job order is its stable date order.
+ // Status uses the persisted completion/absence events before pagination.
+ const statusOrder=sql`case
+   when ${slots.status}='CANCELLED' then 'CANCELLED'
+   when ${noShow} then 'NO_SHOW'
+   when ${done} then 'COMPLETED'
+   when ${slots.legacyInterviewStatus}='RESCHEDULE_REQUESTED' then 'RESCHEDULE_REQUESTED'
+   when ${slots.legacyInterviewStatus}='CONFIRMED' then 'CONFIRMED'
+   else 'SCHEDULED' end`;
  const bookings=await db.select().from(slots).where(bookingWhere)
-  .orderBy(filters.appointmentSort==="DATE_DESC"?desc(slots.startsAt):asc(slots.startsAt),
-    filters.appointmentSort==="DATE_DESC"?desc(slots.id):asc(slots.id))
+  .orderBy(filters.appointmentSort==="STATUS"?asc(statusOrder):
+     filters.appointmentSort==="DATE_DESC"?desc(slots.startsAt):asc(slots.startsAt),
+    filters.appointmentSort==="DATE_DESC"?desc(slots.startsAt):asc(slots.startsAt),
+    asc(slots.id))
   .limit(appointmentPageSize).offset((appointmentPage-1)*appointmentPageSize);
  const ids=bookings.map(row=>row.id);
  const events=ids.length?await db.select({id:activityEvents.id,subjectId:activityEvents.subjectId,
