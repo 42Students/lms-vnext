@@ -14,7 +14,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-3-014-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-055  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-3-028-084  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-3-028-084  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-4-014-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-4-028-007  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 
@@ -30,3 +30,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 
 - G2-19-023-058: FIXED — commit `055ca46455c67fb80a3eb06538409deedb19806b`, `src/app/api/v1/learner/placement/announcements/unread/route.ts:1-44` adds learner-scoped announcement-only unread GET corresponding to `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerAnnouncementController.java:33-39`. Incomplete pagination or missing delivered read receipts return 503 rather than misreporting zero.
+
+- G2-3-028-084: OK — `src/modules/colleges/validation.ts:43-69` preserves optional chair/vice-chair appointments as nullable membership UUIDs on college edit, rejects implicit arbitrary domain writes, and documents the verified tenant-domain workflow in `src/modules/tenant-domains/service.ts:1-65`; this maps the optional legacy chair/vice-chair and domain fields of `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/CollegeDTO.java:30-55` into separate scoped mutations rather than silently accepting and dropping them.
