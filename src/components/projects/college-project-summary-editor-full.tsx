@@ -148,8 +148,15 @@ export function CollegeProjectSummaryEditorFull({
       expectedUpdatedAt:new Date(p.updatedAt).toISOString(),
     }),
    });
-   if(!res.ok){const detail=await res.json().catch(()=>({error:"Save failed"}));
-    throw new Error(detail.error||"Save failed");}
+   if(!res.ok){
+    // A stale concurrency token answers 409; show the customer-safe message
+    // (never the raw machine code) and keep the unsaved draft for the user.
+    const detail:{message?:unknown}|null=await res.json().catch(()=>null);
+    throw new Error(detail&&typeof detail.message==="string"&&detail.message
+      ?detail.message:res.status===409
+        ?"This workspace changed elsewhere. Refresh the latest data before trying again."
+        :"Save failed");
+   }
    const receipt:unknown=await res.json().catch(()=>null);
    const row=receipt&&typeof receipt==="object"&&"project" in receipt
      ?receipt.project:null;
