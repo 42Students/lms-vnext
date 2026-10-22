@@ -38,14 +38,14 @@ describe("HR-BREAK-chat19-profile-page: active recruiter reads and session denia
  });
  it("denies an expired session before profile/college access reads",async()=>{
   m.ctx.mockResolvedValue({...actor,user:{...actor.user,platformStatus:"DISABLED"}});
-  await expect(HrProfilePage()).rejects.toThrow("REDIRECT");
-  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  expect(collect(await HrProfilePage({}))).toContain("Recruiter profile access denied");
+  expect(m.redirect).not.toHaveBeenCalled();
   expect(m.profile).not.toHaveBeenCalled();
   expect(m.grants).not.toHaveBeenCalled();
  });
  it("denies a removed recruiter independently of college membership",async()=>{
   m.ctx.mockResolvedValue({...actor,recruiter:null});
-  await expect(HrProfilePage()).rejects.toThrow("REDIRECT");
+  expect(collect(await HrProfilePage({}))).toContain("Recruiter profile access denied");
   expect(m.profile).not.toHaveBeenCalled();
  });
  it("HR-BREAK-PROFILE-IDENTITY-10 rejects mismatched recruiter identity before profile and grant reads",async()=>{
@@ -56,9 +56,9 @@ describe("HR-BREAK-chat19-profile-page: active recruiter reads and session denia
   expect(m.grants).not.toHaveBeenCalled();
  });
  it("shows only the authenticated recruiter's own email and employer from service projections",async()=>{
-  const result=await HrProfilePage();
+  const result=await HrProfilePage({});
   const text=collect(result);
-  expect(m.profile).toHaveBeenCalledWith(actor);
+  expect(m.profile).toHaveBeenCalledWith(actor,undefined);
   expect(m.grants).toHaveBeenCalledWith(actor);
   expect(text).toContain("ananya@example.com");
   expect(text).toContain("Authorized employer");
@@ -67,8 +67,8 @@ describe("HR-BREAK-chat19-profile-page: active recruiter reads and session denia
  });
  it("requires service projection to succeed and never silently reuses a stale profile cache",async()=>{
   m.profile.mockRejectedValue(new Error("profile unavailable"));
-  await expect(HrProfilePage()).rejects.toThrow("profile unavailable");
-  expect(m.grants).not.toHaveBeenCalled();
+  expect(collect(await HrProfilePage({}))).toContain("We couldn\'t load your profile");
+  expect(m.grants).toHaveBeenCalledWith(actor);
  });
 });
 
@@ -89,9 +89,9 @@ describe("HR-BREAK-PROFILE-SCOPE-44 private profile state isolation",()=>{
   const otherProfile={...profile,displayName:"Other Recruiter",email:"other@example.com",companyName:"Other employer"};
   m.ctx.mockResolvedValue(otherActor);
   m.profile.mockResolvedValue(otherProfile);
-  const result=await HrProfilePage();
+  const result=await HrProfilePage({});
   expect(collect(result)).toContain("other@example.com");
   expect(collect(result)).not.toContain("ananya@example.com");
-  expect(m.profile).toHaveBeenCalledWith(otherActor);
+  expect(m.profile).toHaveBeenCalledWith(otherActor,undefined);
  });
 });
