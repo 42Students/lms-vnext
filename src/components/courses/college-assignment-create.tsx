@@ -155,7 +155,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <p className="text-xs font-semibold text-muted-foreground sm:col-span-2">1. Course, Lesson and Section</p>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
     <Select value={offeringId} disabled={pending||courses.length===0} onChange={e=>{
-      const next=e.target.value;setOfferingId(next);setFieldErrors(old=>({...old,course:undefined,lesson:undefined,section:undefined}));
+      const next=e.target.value;setOfferingId(next);setFieldErrors(old=>(({course: _course, lesson: _lesson, section: _section, ...rest})=>rest)(old));
       setLessonId(lessons.find(lesson=>lesson.offeringId===next)?.id??"");
       setDeliveryId("");setAudience("SHARED");
     }} className="min-h-11 w-full md:min-h-9">
@@ -164,7 +164,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
      </option>)}
     </Select>{fieldErrors.course?<span role="alert" className="text-xs text-error">{fieldErrors.course}</span>:null}</label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
-    <Select value={lessonId} disabled={pending||!offeringId||availableLessons.length===0} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");setAudience("SHARED");setFieldErrors(old=>({...old,lesson:undefined,section:undefined}));}}
+    <Select value={lessonId} disabled={pending||!offeringId||availableLessons.length===0} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");setAudience("SHARED");setFieldErrors(old=>(({lesson: _lesson, section: _section, ...rest})=>rest)(old));}}
      className="min-h-11 w-full md:min-h-9">
      {availableLessons.map(lesson=><option key={lesson.id} value={lesson.id}>{lesson.name}</option>)}
     </Select>{fieldErrors.lesson?<span role="alert" className="text-xs text-error">{fieldErrors.lesson}</span>:null}</label>
@@ -191,11 +191,11 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     </Select>{fieldErrors.section?<span role="alert" className="text-xs text-error">{fieldErrors.section}</span>:null}</label>:null}
    <p className="border-t border-border pt-3 text-xs font-semibold text-muted-foreground sm:col-span-2">2. Assignment details</p>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
-    <Input required maxLength={255} placeholder="e.g., Module 1 Project" value={title} disabled={pending} aria-invalid={Boolean(fieldErrors.title)} onChange={e=>{setTitle(e.target.value);setFieldErrors(old=>({...old,title:undefined}));}}
+    <Input required maxLength={255} placeholder="e.g., Module 1 Project" value={title} disabled={pending} aria-invalid={Boolean(fieldErrors.title)} onChange={e=>{setTitle(e.target.value);setFieldErrors(old=>(({title: _title, ...rest})=>rest)(old));}}
      className="min-h-11 w-full md:min-h-9"/></label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Points
-    <Input type="number" min={0} max={1000} placeholder="Enter points" value={points} disabled={pending} aria-invalid={Boolean(fieldErrors.points)}
-     onChange={e=>{setPoints(e.target.value);setFieldErrors(old=>({...old,points:undefined}));}}
+    <Input type="number" min={0} max={10000} placeholder="Enter points" value={points} disabled={pending} aria-invalid={Boolean(fieldErrors.points)}
+     onChange={e=>{setPoints(e.target.value);setFieldErrors(old=>(({points: _points, ...rest})=>rest)(old));}}
      className="min-h-11 w-full md:min-h-9"/></label>
    <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
