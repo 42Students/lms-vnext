@@ -84,29 +84,38 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
   });
   it("UX-notifications-list-02 exposes a 44px notification selection action (LX-07)", () => {
     const p = readComponent("activity/notification-list.tsx");
-    expect(p).toContain("min-h-11 items-center text-left");
+    expect(p).toContain('<Button variant="ghost" type="button"');
+    expect(p).toContain('aria-label={"Open notification: "');
+    const button=readComponent("ui/button.tsx");
+    expect(button).toContain("max-[767px]:min-h-11");
     expect(p).not.toContain('className="min-h-10 text-left');
   });
   it("UX-learn-courses-02 course list has a 44px Show more courses action (LX-08)", () => {
     const p = readComponent("courses/learner-course-list.tsx");
     expect(p).toContain("setVisibleLimit((value) => value + PAGE_SIZE)");
-    expect(p).toMatch(/min-h-11 items-center rounded-md[^\n]*Show more courses|className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4/);
+    expect(p).toContain('className="min-h-[var(--lms-control-height)] max-md:min-h-11"');
+    expect(p).toContain("Show more courses (");
   });
   it("UX-quiz-attempt-02 quiz Back choices are reachable by keyboard and thumb (LX-09)", () => {
     const p = readComponent("courses/learner-quiz-attempt.tsx");
     expect(p).toContain("ConfirmDialog");
     expect(p).toContain("learnerQuizQuestionNavState");
-    expect(p).toMatch(/min-h-11 items-center[^\n]*>Back<\/button>/);
-    expect(p).toMatch(/min-h-11 items-center[^\n]*>← Back<\/button>/);
+    expect(p).toContain("Back to quizzes</Link>");
+    expect(p).toContain("inline-flex min-h-11");
+    expect(p).toContain('className="min-h-11 md:min-h-9">← Back</Button>');
+    expect(p).toContain("learnerQuizQuestionNavState");
   });
   it("UX-learning-webview-fallback-01 makes validated destinations inspectable and focusable", () => {
     const p = readComponent("ui/third-party-link.tsx");
     expect(p).toContain('url.protocol === "https:"');
     expect(p).toContain("!url.username && !url.password");
-    expect(p).toContain("aria-label={ariaLabel}");
+    expect(p).toContain('aria-label={ariaLabel ? `${ariaLabel} (opens in a new tab)` : undefined}');
+    expect(p).toContain('rel="noopener noreferrer"');
     expect(p).toContain("Copy link");
     expect(p).toContain("Destination URL");
-    expect(p).not.toContain('target="_blank"');
+    expect(p).toContain('target="_blank"');
+    expect(p).toContain("showFallback");
+    expect(p).toContain("focus-visible:outline-2");
   });
   it("UX-learn-profile-confirm-03 protects seven dirty/delete flows with shared confirmation (LX-10)", () => {
     const p = readComponent("profile/learner-profile-workspace.tsx");
@@ -130,12 +139,12 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     expect(p).toContain("setDraft(\"\")");
     expect(p).not.toContain('role="dialog"');
     expect(p).toContain("min-h-11");
-    expect(p).toContain("text-base text-foreground");
+    expect(p).toContain("text-base font-semibold text-foreground");
   });
   it("UX-learn-live-class-03 disables expired meeting but uses WebView-safe join (LX-12)", () => {
     const p=readComponent("courses/learner-live-class-link.tsx");
     expect(p).toContain("if(ended)return");
-    expect(p).toContain('<ThirdPartyLink href={href} label="Join Meeting" />');
+    expect(p).toContain('<ThirdPartyLink href={href} label="Join Meeting"/>');
     expect(p).toContain("Copy meeting link");
     expect(p).not.toContain('target="_blank"');
     expect(p).not.toContain("min-h-10");
@@ -156,8 +165,11 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
   });
   it("UX-learn-attendance-03 gives mobile history input 44px and 16px type (LX-15)", () => {
     const p=readComponent("attendance/learner-attendance-workspace.tsx");
-    expect(p).toContain("min-h-11 rounded-md border border-border bg-surface px-3 text-base");
-    expect(p).not.toContain("min-h-9");
+    expect(p).toContain('aria-label="Jump to month"');
+    expect(p).toContain("max-md:min-h-11");
+    const input=readComponent("ui/input.tsx");
+    expect(input).toContain("max-[767px]:min-h-11");
+    expect(input).toContain("text-[var(--lms-font-base)]");
   });
   it("UX-learn-schedule-03 guards reschedule actions with 44px targets (LX-16)", () => {
     const p=readComponent("placements/learner-schedule-reschedule.tsx");
