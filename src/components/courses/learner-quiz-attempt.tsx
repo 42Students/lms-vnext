@@ -574,7 +574,7 @@ export function LearnerQuizAttempt() {
       </Drawer>
       <div className="grid min-w-0 md:grid-cols-[220px_minmax(0,1fr)]">
         <aside className="hidden min-w-0 border-r border-border p-4 md:block">
-          <Link href={returnTo} className="inline-flex min-h-10 w-[130px] items-center justify-center border border-border text-sm font-semibold text-primary-text">
+          <Link href={returnTo} className="inline-flex min-h-11 w-[130px] items-center justify-center border border-border text-sm font-semibold text-primary-text">
             42 LMS
           </Link>
           <p className="mt-4 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground leading-[20px]">Question Status</p>

@@ -10,8 +10,9 @@ describe("UX-courses-faculty-roster-attendance-tables-01",()=>{
   expect(source).toContain("rows={rows}");
   expect(source).toContain('mobilePriority:"primary"');
   expect(source).toContain('mobilePriority:"secondary"');
-  expect(source).toContain('aria-label={"Preview avatar for "+nameOf(learner)}');
+  expect(source).toContain('aria-label={"View "+nameOf(learner)+" profile photo"}');
   expect(source).toContain("setPreview(learner)");
+  expect(source).toContain('<Dialog open={preview!==null}');
   expect(source).toContain("facultyRosterPhotoPreview");
   expect(source).toContain("View student details →");
   expect(source).toContain("Student roster pages");

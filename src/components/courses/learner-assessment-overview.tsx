@@ -672,7 +672,7 @@ export function LearnerAssessmentOverview({
                         <span className="text-xs text-muted-foreground">File preview is unavailable right now.</span>
                       ) : null}
                       {isFile && downloadHref ? (
-                        <a href={downloadHref} target="_blank" rel="noopener noreferrer"
+                        <a href={downloadHref} rel="noopener noreferrer"
                           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
                           Download
                         </a>

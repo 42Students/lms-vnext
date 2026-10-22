@@ -761,7 +761,7 @@ export function LearnerCourseDiscussion({
               Enter to send · Shift+Enter for a new line
               {draft.length>3400? " · "+draft.length+"/"+LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH:""}
             </span>
-            <Button type="submit" className="min-h-9 w-auto" disabled={!canPost || scopeUnavailable || !learnerDiscussionDraftValid(draft) || posting}>
+            <Button type="submit" className="min-h-11 w-auto md:min-h-9" disabled={!canPost || scopeUnavailable || !learnerDiscussionDraftValid(draft) || posting}>
               {posting ? "Sending…" : "Send"}
             </Button>
           </div>
