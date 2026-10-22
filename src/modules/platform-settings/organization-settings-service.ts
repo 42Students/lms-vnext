@@ -63,6 +63,11 @@ export async function listOrganizationTenantSettings(ctx:RequestContext,rawId:st
 export async function saveOrganizationTenantSettings(ctx:RequestContext,raw:unknown){
  const input=update.parse(raw);
  const organizationId=await authorize(ctx,input.organizationId);
+ // ORG is a retired scope. Even a versioned direct PATCH must not create or
+ // update a value; the only supported historical operation is deleting an
+ // existing, precisely versioned row. Normal readers never inherit ORG.
+ if(input.changes.some(item=>item.value.trim()!==""||item.expectedVersion<1))
+  throw new OrganizationSettingsError("INVALID_SETTING");
  if(!(await available()))throw new OrganizationSettingsError("SETTINGS_STORAGE_PENDING");
  const seen=new Set<string>();
  const results:{key:string;status:"SAVED"|"DELETED"|"FAILED";version?:number;message:string}[]=[];
