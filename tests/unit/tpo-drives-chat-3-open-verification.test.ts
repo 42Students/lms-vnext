@@ -50,7 +50,7 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
   expect(form).toContain("plannedTpoRoundRows(roundPreset)");
   expect(form).toContain("saved.rounds.some");
   expect(form).toContain("planned.slice(saved.rounds.length)");
-  expect(form).toContain('"POST",{kind:round.kind,name:round.name}');
+  expect(form).toContain('"POST",{kind:round.kind,name:round.name,mode:round.mode}');
   expect(form).toContain("scheduling, eligibility reach verification and recruiter invitations are managed in the saved drive workspace.");
  });
  it("TPO-drives-40 learner reach is deferred until persisted evidence can be counted",()=>{
