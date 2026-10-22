@@ -57,7 +57,7 @@ export default async function CollegeHiringDashboardPage({
   const funnelRequest=query.data.seasonId
     ?getCollegeHiringFunnel(context,cleanFunnelFilters)
     :workspaceRequest.then(workspace=>getCollegeHiringFunnel(context,{
-      ...cleanFunnelFilters,...(workspace.selectedSeasonId!==null?{seasonId:workspace.selectedSeasonId}:{}),
+      ...cleanFunnelFilters,...(workspace.selectedSeasonId!=null?{seasonId:workspace.selectedSeasonId}:{}),
     }),()=>getCollegeHiringFunnel(context,cleanFunnelFilters));
   // An unavailable headline report cannot cancel the independently scoped
   // funnel/company read. Without a verified selected season, the fallback
