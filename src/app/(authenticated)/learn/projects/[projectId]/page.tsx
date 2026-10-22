@@ -36,7 +36,7 @@ export default async function LearnerProjectPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; taskStatus?: string; taskSort?: string; sprintId?: string; releaseId?: string; assignee?: string; taskId?: string; activityCategory?: string | string[]; activityFrom?: string | string[]; activityTo?: string | string[]; activityBeforeTime?: string | string[]; activityBeforeId?: string | string[] }>;
+  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; taskStatus?: string; lane?: string; taskSort?: string; sprintId?: string; releaseId?: string; assignee?: string; taskId?: string; activityCategory?: string | string[]; activityFrom?: string | string[]; activityTo?: string | string[]; activityBeforeTime?: string | string[]; activityBeforeId?: string | string[] }>;
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
@@ -63,7 +63,10 @@ export default async function LearnerProjectPage({
     const suffix=retained.toString();
     redirect("/learn/projects/"+encodeURIComponent(legacy.id)+(suffix?"?"+suffix:""));
   }
-  const { tab, taskSearch, priority: priorityInput, taskStatus: taskStatusInput, taskSort: taskSortInput, sprintId: sprintInput, releaseId: releaseInput, assignee: assigneeInput, taskId, activityCategory, activityFrom, activityTo, activityBeforeTime, activityBeforeId } = await searchParams;
+  const { tab, taskSearch, priority: priorityInput, taskStatus: taskStatusInput, lane:legacyLane, taskSort: taskSortInput, sprintId: sprintInput, releaseId: releaseInput, assignee: assigneeInput, taskId, activityCategory, activityFrom, activityTo, activityBeforeTime, activityBeforeId } = await searchParams;
+  // Existing Old LMS bookmarks used the board lane rather than a task status.
+  const legacyBlockedLane=legacyLane?.trim().toLowerCase()==="blocked";
+  const effectiveTaskStatus=taskStatusInput??(legacyBlockedLane?"BLOCKED":undefined);
   const activeSection =
     tab === "board" || tab === "tasks" || tab === "performance"
       ? "tasks"
@@ -123,7 +126,8 @@ export default async function LearnerProjectPage({
   const invalidBoardFilters = activeSection === "tasks" && [
     taskSearch !== undefined && (typeof taskSearch !== "string" || taskSearch.length > 100),
     priorityInput !== undefined && priorityInput !== "" && !learnerBoardPrioritySchema.safeParse(priorityInput).success,
-    taskStatusInput !== undefined && taskStatusInput !== "" && !learnerBoardStatusSchema.safeParse(taskStatusInput).success,
+    effectiveTaskStatus !== undefined && effectiveTaskStatus !== "" && !learnerBoardStatusSchema.safeParse(effectiveTaskStatus).success,
+    legacyLane!==undefined && legacyLane!=="" && !legacyBlockedLane,
     taskSortInput !== undefined && !learnerBoardSortSchema.safeParse(taskSortInput).success,
     sprintInput !== undefined && sprintInput !== "" && !learnerBoardSprintSchema.safeParse(sprintInput).success,
     releaseInput !== undefined && releaseInput !== "" && !learnerBoardReleaseSchema.safeParse(releaseInput).success,
@@ -165,7 +169,7 @@ export default async function LearnerProjectPage({
     : null;
   const search = learnerBoardSearchSchema.parse(taskSearch);
   const priority = learnerBoardPrioritySchema.safeParse(priorityInput).data ?? "";
-  const status = learnerBoardStatusSchema.safeParse(taskStatusInput).data ?? "";
+  const status = learnerBoardStatusSchema.safeParse(effectiveTaskStatus).data ?? "";
   const taskSort=learnerBoardSortSchema.catch("DEFAULT").parse(taskSortInput??"DEFAULT");
   const sprintId = learnerBoardSprintSchema.safeParse(sprintInput).data ?? "";
   const releaseId = learnerBoardReleaseSchema.safeParse(releaseInput).data ?? "";
