@@ -3,6 +3,7 @@ import {
   type ResolvedPlacementParticipation,
 } from "./batch-eligibility-policy";
 import { learnerPlacementDashboard } from "./learner-dashboard-model";
+import { countsAsPlacedByCollegeRule } from "./report-model";
 import type {TpoStudentVerificationFact} from "./tpo-student-verification-facts";
 import {tpoStudentProfileFacts,type TpoStudentProfileFacts} from "./tpo-student-profile-facts";
 
@@ -27,6 +28,11 @@ export type TpoStudentApplicationSignal = {
 export type TpoStudentOfferSignal = {
   status: string;
   joiningStatus: string | null;
+  kind?:string|null;
+  releasedAt?:Date|null;
+  employmentType?:string|null;
+  countsAsPlaced?:boolean|null;
+  selectedOutcome?:boolean;
 };
 
 export type TpoStudentRoundSignal = {
@@ -189,6 +195,7 @@ export type TpoStudentRosterPage = {
 export function deriveTpoStudent(
   source: TpoStudentSource,
   now: Date,
+  countsAsPlacedAt:"SELECTED"|"OFFER_RELEASED"|"OFFER_ACCEPTED"="OFFER_ACCEPTED",
 ): TpoStudentRow {
   const registeredForPlacements=tpoStudentRegisteredForPlacements(
     source.registrationChoice,source.applications.length,
@@ -231,14 +238,22 @@ export function deriveTpoStudent(
   );
 
   const acceptedOfferCount = source.offers.filter(
-    (offer) =>
-      offer.status === "ACCEPTED" &&
-      offer.joiningStatus !== "DID_NOT_JOIN",
+    offer=>offer.status==="ACCEPTED" && offer.joiningStatus!=="DID_NOT_JOIN",
   ).length;
-
-  const placed =
-    acceptedOfferCount > 0 ||
-    source.verifiedExternalOfferCount > 0;
+  // Match college policy, not merely the existence of an accepted offer.
+  // Unreleased and non-placement employment offers cannot count placed;
+  // SELECTED needs a separately verified selection signal.
+  const placed = source.offers.some(offer=>
+    offer.joiningStatus!=="DID_NOT_JOIN" &&
+    countsAsPlacedByCollegeRule({
+      employmentType:offer.employmentType??"FULL_TIME",
+      countsAsPlaced:offer.countsAsPlaced??undefined,
+      offerStatus:offer.status,
+      offerKind:offer.kind??"OFFER",
+      releasedAt:offer.releasedAt,
+      selectedOutcome:offer.selectedOutcome===true,
+      countsAsPlacedAt,
+    })) || source.verifiedExternalOfferCount > 0;
 
   const offersAwaitingAnswer=source.offers.filter(offer=>offer.status==="ISSUED").length;
 
