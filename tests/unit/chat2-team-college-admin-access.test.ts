@@ -17,7 +17,8 @@ describe("College placement team access",()=>{
   expect(roster).toContain('inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])');
   expect(model).toContain('COLLEGE_ADMIN:"College Admin"');
   const page=src("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(page).toContain('member.roles.includes("COLLEGE_ADMIN")');
+  expect(page).toContain("hasPlacementTeamMembership(context)");
+  expect(page).toContain('redirect("/tpo/settings/team")');
  });
  it("TPO-inbox-team-R02 includes admins at the Team entrypoint and private thread detail",()=>{
   for(const path of ["src/app/(authenticated)/tpo/team/page.tsx",

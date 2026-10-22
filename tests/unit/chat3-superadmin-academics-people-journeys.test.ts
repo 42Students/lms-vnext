@@ -104,6 +104,7 @@ describe("chat-3 Super Admin Academics + People account journeys",()=>{
     expect(people.indexOf("if (!collegeId)"))
       .toBeLessThan(people.indexOf("listCollegePeopleWithRuntime("));
     expect(people).toContain("peoplePageState(");
-    expect(recruiters).toContain('export { default } from "../hr/page"');
+    expect(recruiters).toContain('import SuperAdminHrPage from "../hr/page"');
+    expect(recruiters).toContain("<SuperAdminHrPage searchParams={searchParams}/>");
   });
 });
