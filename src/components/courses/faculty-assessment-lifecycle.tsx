@@ -32,6 +32,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
  const [saved,setSaved]=useState(false);
  const [lastAction,setLastAction]=useState<FacultyAssessmentLifecycleAction|null>(null);
  const [error,setError]=useState<string|null>(null);
+ const [deleteFailed,setDeleteFailed]=useState(false);
  const [confirmAction,setConfirmAction]=useState<FacultyAssessmentLifecycleAction|null>(null);
  const actions=facultyAssessmentLifecycleActions({kind,status,owned});
  useEffect(()=>{
@@ -44,7 +45,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
  async function run(action:FacultyAssessmentLifecycleAction){
    if(pending||saved||inFlight.current)return;
    inFlight.current=true;
-   setPending(action);setError(null);
+   setPending(action);setError(null);setDeleteFailed(false);
    try{
      const instant=new Date(updatedAt);
      if(!Number.isFinite(instant.getTime()))throw new Error("This item has an invalid version. Refresh before retrying.");
@@ -59,6 +60,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
        })),
      });
      if(!response.ok){
+       setDeleteFailed(action==="ARCHIVE");
        setError(await courseApiError(response));
        return;
      }
@@ -68,6 +70,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
        :action==="PUBLISH"?"Assessment published.":"Assessment updated."});
      router.refresh();
    }catch(err){
+     setDeleteFailed(action==="ARCHIVE");
      setError(err instanceof Error?err.message:"The assessment could not be changed. Refresh and try again.");
    }finally{inFlight.current=false;setPending(null);}
  }
@@ -77,7 +80,9 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
        className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
        variant={action==="PUBLISH"?"primary":action==="ARCHIVE"?"ghost":"secondary"}
        disabled={pending!==null||saved}
-       onClick={()=>{setError(null);setConfirmAction(action);}}>
+       aria-label={(action==="ARCHIVE"?"Delete ":action==="PUBLISH"?"Publish ":"Close ")+kind.toLowerCase()}
+       aria-busy={pending===action}
+       onClick={()=>{setError(null);setDeleteFailed(false);setConfirmAction(action);}}>
        {pending===action?"Saving…":action==="CLOSE"?"Close quiz":
          action==="PUBLISH"?"Publish":"Delete"}
      </Button>)}
@@ -89,12 +94,24 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
      Legacy assignments became visible immediately on creation. In vNext the builder selects
      Publish now by default; this Draft can be published to students when ready.
    </p>:null}
-   {error?<Alert tone="error">{error}</Alert>:null}
+   {error?<div role="alert" className="space-y-2">
+     <Alert tone="error">{deleteFailed?"Assignment was not deleted. ":""}{error}</Alert>
+     {deleteFailed?<div className="flex flex-wrap gap-2">
+       <Button type="button" size="sm" variant="secondary" disabled={pending!==null}
+         onClick={()=>setConfirmAction("ARCHIVE")}>Retry delete</Button>
+       <Button type="button" size="sm" variant="ghost" disabled={pending!==null}
+         onClick={()=>{setError(null);setDeleteFailed(false);}}>Dismiss</Button>
+     </div>:null}
+   </div>:null}
  <ConfirmDialog
    open={confirmAction!==null}
    onOpenChange={open=>{if(!open && pending===null)setConfirmAction(null);}}
-   title={confirmAction==="ARCHIVE"?"Delete assessment":confirmAction==="CLOSE"?"Close assessment":"Publish assessment"}
-   description={confirmAction===null?undefined:facultyAssessmentLifecycleWarning(kind,confirmAction)}
+   title={confirmAction==="ARCHIVE"?(kind==="ASSIGNMENT"?"Delete this assignment?":"Delete this quiz?"):confirmAction==="CLOSE"?"Close assessment":"Publish assessment"}
+   description={confirmAction==="ARCHIVE"
+    ?(kind==="ASSIGNMENT"
+       ?"Learners will no longer be able to access this assignment. This action cannot be undone from this screen. Existing submissions and files are retained for audit."
+       :"Learners will no longer be able to access this quiz. Existing attempts are retained for audit.")
+    :confirmAction===null?undefined:facultyAssessmentLifecycleWarning(kind,confirmAction)}
    confirmLabel={confirmAction==="ARCHIVE"?"Delete":confirmAction==="CLOSE"?"Close":"Publish"}
    confirmVariant={confirmAction==="ARCHIVE"||confirmAction==="CLOSE"?"danger":"primary"}
    pending={pending!==null}
