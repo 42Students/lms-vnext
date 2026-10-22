@@ -55,7 +55,7 @@ function withoutPrivateCourseImageReceipt<T extends {
   const meta = row.legacyMetadata;
   if (!meta || !Object.prototype.hasOwnProperty.call(meta, "courseCoverAsset")) return row;
   const clean = { ...meta };
-  delete clean.courseCoverAsset;
+  delete clean["courseCoverAsset"];
   return { ...row, legacyMetadata: clean };
 }
 
@@ -407,6 +407,7 @@ export async function createCourse(
           description: input.description ?? null,
         })
         .returning();
+      if (!created) throw new CoursesServiceError("COURSE_CREATE_FAILED");
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.COURSES_CATALOG_CREATED,
         collegeId: department.collegeId, organizationId: department.organizationId,
@@ -440,7 +441,10 @@ export async function updateCourse(
 
   await assertCourseUnique(
     scope.departmentId,
-    input,
+    {
+      ...(input.name !== undefined ? { name: input.name } : {}),
+      ...(input.code !== undefined ? { code: input.code } : {}),
+    },
     courseId,
   );
 
