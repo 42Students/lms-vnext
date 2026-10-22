@@ -10,4 +10,6 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_8.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_5.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_11.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_8.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_8.md` (25 rows)
+
+Packet W1_lane17_8 triaged: 8 OK; 17 DEFERRED for deeper parity checks (see per-row notes; not claimed fixed).
