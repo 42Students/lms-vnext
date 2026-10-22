@@ -12,7 +12,7 @@ const learnerId="55555555-5555-4555-8555-555555555555";
 const foreignLearner="66666666-6666-4666-8666-666666666666";
 const at=(hour:number)=>new Date("2026-10-18T"+String(hour).padStart(2,"0")+":00:00.000Z");
 const state=vi.hoisted(()=>({
- overviews:0,attemptReads:0,submissionReads:0,rosterReads:0,quizReads:0,
+ overviews:0,attemptReads:0,submissionReads:0,rosterReads:0,quizReads:0,rosterFailure:false,
  quizzes:[] as Array<{id:string;deliveryId:string;status:string;title:string}>,
  assignments:[] as Array<{id:string;deliveryId:string;status:string;title:string;dueAt:Date|null;maxPoints:number}>,
  attempts:[] as Array<{membershipId:string;submittedAt:Date;attemptNumber:number;
@@ -39,6 +39,7 @@ vi.mock("@/modules/courses/assignment-submission-service",()=>({
 vi.mock("@/modules/attendance/faculty-service",()=>({
  getFacultyDeliveryRoster:async(_ctx:unknown,id:string)=>{
   state.rosterReads++;
+  if(state.rosterFailure)throw new Error("Current roster could not be loaded");
   if(id!==deliveryId)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   return {roster:[{membershipId:learnerId,displayName:"Section learner"}]};
  },
@@ -55,7 +56,7 @@ const questionId="77777777-7777-4777-8777-777777777777";
 describe("COURSES-BREAK-FACULTY-06 current-roster report anti-IDOR and consistency",()=>{
  beforeEach(()=>{
   state.overviews=0;state.attemptReads=0;state.submissionReads=0;
-  state.rosterReads=0;state.quizReads=0;
+  state.rosterReads=0;state.quizReads=0;state.rosterFailure=false;
   state.quizzes=[{id:quizId,deliveryId,status:"CLOSED",title:"Midterm"}];
   state.assignments=[{id:assignmentId,deliveryId,status:"PUBLISHED",
    title:"Essay",maxPoints:10,dueAt:at(10)}];
@@ -91,6 +92,19 @@ describe("COURSES-BREAK-FACULTY-06 current-roster report anti-IDOR and consisten
   expect(report.metrics).toMatchObject({eligibleLearners:1,submitted:1,
    missing:0,onTime:1,late:0,graded:1,gradePublished:1,averagePercent:50});
   expect(JSON.stringify(report)).not.toContain(foreignLearner);
+ });
+ it("preserves delivery-authorized submissions and attempts during roster failure with unknown absence counts",async()=>{
+  state.rosterFailure=true;
+  const assignment=await getFacultyAssignmentReport(actor,assignmentId,deliveryId);
+  expect(assignment.rosterUnavailable).toBe(true);
+  expect(assignment.reportCompleteness).toBe("PARTIAL_ROSTER_UNAVAILABLE");
+  expect(assignment.metrics).toMatchObject({submitted:2,eligibleLearners:null,missing:null});
+  expect(assignment.submissions).toHaveLength(2);
+  const quiz=await getFacultyQuizReport(actor,quizId,deliveryId);
+  expect(quiz.rosterUnavailable).toBe(true);
+  expect(quiz.reportCompleteness).toBe("PARTIAL_ROSTER_UNAVAILABLE");
+  expect(quiz.metrics).toMatchObject({eligibleLearners:null,notAttempted:null});
+  expect(quiz.attempts).toHaveLength(3);
  });
  it("FAC-assessments-03 non-finite submitted scores cannot inflate the grade distribution",async()=>{
   for(const [score,maxScore] of [

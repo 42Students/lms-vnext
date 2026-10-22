@@ -53,7 +53,7 @@ export default async function FacultyAssignmentReportPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       {report.rosterUnavailable?<Banner tone="warning" role="status">
-        Report is partially loaded. The current student roster could not be verified, so student rows and submission counts are hidden until retry.
+        Report is partially loaded. Known submissions and grades are shown, but the current student roster could not be verified. Not-submitted counts and completion rate are unknown.
         <a className="ml-2 font-semibold text-primary-text underline"
           href={"/teacher/report/assignment/"+encodeURIComponent(contentId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}>Retry roster</a>
       </Banner>:null}
@@ -67,10 +67,10 @@ export default async function FacultyAssignmentReportPage({
         title={assignment.title?.trim()||"Untitled assignment"}
         subtitle={assignment.courseName}
         summary={[
-          "Submitted: " + (report.rosterUnavailable ? "Roster unavailable" : metrics.submitted + "/" + metrics.eligibleLearners),
+          "Submitted: " + (report.rosterUnavailable ? String(metrics.submitted) : metrics.submitted + "/" + metrics.eligibleLearners),
           "Average score: " + (metrics.averagePercent === null ? "Unknown" : metrics.averagePercent + "%"),
           "Graded: " + metrics.graded + "/" + metrics.submitted,
-          "On time: " + metrics.onTime + "; Late: " + metrics.late + "; Not submitted: " + metrics.missing,
+          "On time: " + metrics.onTime + "; Late: " + metrics.late + "; Not submitted: " + (metrics.missing===null?"Unknown":metrics.missing),
           "Total possible points: " + assignment.maxPoints,
           "Due: " + (assignment.dueAt ? facultyReportIstTimestamp(assignment.dueAt) : "No due date"),
         ]}
@@ -95,7 +95,7 @@ export default async function FacultyAssignmentReportPage({
       </div>
       <dl aria-label="Assignment report summary" className="grid min-w-0 grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
-          ["Submitted", report.rosterUnavailable ? "—" : `${metrics.submitted}/${metrics.eligibleLearners}`],
+          ["Submitted", report.rosterUnavailable ? String(metrics.submitted) : `${metrics.submitted}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Graded", `${metrics.graded}/${metrics.submitted}`],
           ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-US", { month:"short", day:"numeric", year:"numeric", timeZone:"Asia/Kolkata" }).format(assignment.dueAt) : "—"],
