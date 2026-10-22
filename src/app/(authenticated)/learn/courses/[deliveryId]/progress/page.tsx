@@ -103,7 +103,7 @@ export default async function LearnerCourseProgressPage({
                 </StatusBadge>
               </div>
               {lesson.percentage !== null ? (
-                <MetricBar className={progressStyles.track+" mt-3"} role="progressbar"
+                <MetricBar className={progressStyles["track"]+" mt-3"} role="progressbar"
                   label={lesson.name + " completion"} value={lesson.percentage} maximum={100} unit="percent" />
               ) : null}
               {lesson.items.length ? (
