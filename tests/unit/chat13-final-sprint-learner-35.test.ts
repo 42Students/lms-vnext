@@ -22,7 +22,9 @@ describe("LEARNER-placements-35 booked-round attendance confirmation",()=>{
  it("LEARNER-placements-35 offers precise confirmation chips and a grouped needs-confirmation count",()=>{
   const page=source("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
   const widget=source("src/components/placements/learner-round-confirm-attendance.tsx");
-  expect(page).toContain("rounds need your confirmation");
+  expect(page).toContain("rounds need");
+  expect(page).toContain("your confirmation. Check your booking time");
+  expect(page).toContain("const needsConfirmation=");
   expect(page).toContain("learnerConfirmedAt");
   expect(page).toContain("<LearnerRoundConfirmAttendance");
   expect(widget).toContain("Confirm I'll attend");
