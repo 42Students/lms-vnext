@@ -37,10 +37,10 @@ describe("MEN-projects-meetings-27 meeting draft lifecycle", () => {
     expect(service).toContain('if (meeting.status === "DRAFT") return cancelled;');
     expect(service).toContain('const moderator = scope.access === "MENTOR" || scope.access === "ADMIN";');
     expect(service).toContain('...(!moderator ? [');
-    expect(service).toContain('or(ne(projectMeetings.status,"CANCELLED")');
+    expect(service).toMatch(/or\(\s*ne\(projectMeetings\.status,\s*"CANCELLED"\)/);
     expect(service).toContain('isNotNull(projectMeetings.requestedByMembershipId)');
     expect(service).toContain('isNotNull(projectMeetings.scheduledByUserId)');
-    expect(service).toContain('rows.map(row=>({...row,facilitation:emptyMentorMeetingFacilitation}))');
+    expect(service).toMatch(/rows\.map\(row\s*=>\s*\(\{\s*\.\.\.row,\s*facilitation:\s*emptyMentorMeetingFacilitation\s*\}\)\)/);
     expect(ui).toContain('meeting.status === "DRAFT" || meeting.status === "REQUESTED"');
     expect(ui).toContain('draftDiscard?"Discard draft":"Cancel meeting"');
     expect(ui).toContain('Drafts are visible to mentors only; no invitations are sent.');
