@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const file = (name: string) => readFileSync("src/components/tpo/" + name + ".tsx", "utf8");
-const ui = (name: string) => readFileSync("src/components/ui/" + name + ".tsx", "utf8");
+const ui = (name: string) => readFileSync("src/components/ui/" + name + (name === "use-overlay-exit" ? ".ts" : ".tsx"), "utf8");
 
 describe("UX-tpo-overlay: focus-safe mobile and desktop workflows", () => {
   it("UX-tpo-overlay-01 student panel uses Drawer focus isolation and sticky next/previous actions", () => {
