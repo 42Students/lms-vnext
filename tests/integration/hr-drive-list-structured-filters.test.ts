@@ -1,9 +1,11 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection} from "@/db/client";
+import {closeDatabaseConnection,getDb} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementRound} from "@/modules/placements/round-service";
+import {placementJobEligibilityPolicies} from "@/db/schema";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
 import {filterRecruiterDrives,recruiterDriveListQuerySchema} from "@/modules/placements/recruiter-drive-list-model";
 import type {RequestContext} from "@/modules/identity/context";
@@ -21,6 +23,8 @@ describe.skipIf(!enabled)("HR drive structured filter PG",()=>{
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Filter B "+nonce,primaryDomain:"hrfb-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
    title:"Remote Engineer "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
+  await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Screening"});
+  await getDb().insert(placementJobEligibilityPolicies).values({jobId:job.id,updatedByUserId:tpo.user.id});
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({

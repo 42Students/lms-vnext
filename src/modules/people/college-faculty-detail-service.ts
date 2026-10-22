@@ -22,7 +22,9 @@ export async function getCollegeFacultyDetail(
   const paging=z.object({
     page:z.coerce.number().int().min(1).max(100000).default(1),
     pageSize:z.coerce.number().int().min(1).max(200).default(25),
-  }).passthrough().parse(rawQuery);
+    status:z.unknown().optional(),
+    role:z.unknown().optional(),
+  }).strict().parse(rawQuery);
   const filter=collegeFacultyAssignmentHistoryQuerySchema.parse({
     status:paging.status,role:paging.role,
   });
