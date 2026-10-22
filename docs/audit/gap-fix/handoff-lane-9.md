@@ -71,3 +71,9 @@
 - src/components/courses/college-assignment-review.tsx + src/components/courses/college-quiz-actions.tsx + admin reports modal owners | G2-4-010-119, G2-3-004-031, G2-3-004-021 | Old 760px submission modal needs accessible Dialog/Drawer with real scoped roster; existing review uses ConfirmDialog for grade publish and quiz editor preflight metadata already; add server-authorized global attempt count preflight and per-action exact success/failure+Retry without leaking submissions into admin index.
 
 - Teacher course layout owner | G2-18-001-004 | Add sections.legacyClassId to the active Faculty delivery projection and pass that number to FacultyCourseTabNavigation.teachingSections. Client rejects unmatched legacy numeric cls to the safe course list; only persisted active teaching grants may populate the lookup. Retain fail-closed layout on revoked or unready roster reads.
+
+- src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx | G2-10-013-053 | P1 verification: server error branch explicitly refuses to show last-known-good appointment rows; owner should keep a client-held, tenant/scope-keyed last-success snapshot with stale warning and Retry, clearing it on college/role change or revoked access.
+
+- src/app/(authenticated)/admin/students/page.tsx + privileged auth limiter service | G2-14-002-093 | P1 verification: Super Admin student support page has no audited reset of learner OTP limiter prefixes; require explicit role/college scope and log actor/target without revealing OTP or bypassing sign-in controls.
+
+- src/app/(authenticated)/college/placements/drives/page.tsx + placement job type model | G2-9-015-023 | P1 verification: Type column prints raw enum with underscores replaced, not the legacy dynamic college job type badge/label; owner should use authorized tenant type display mapping rather than inventing fixed type names.
