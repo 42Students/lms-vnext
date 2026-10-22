@@ -108,6 +108,9 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   where p.offering_id=${offeringId}::uuid and p.status='PUBLISHED'
    and l.status='ACTIVE' and l.visible_to_students=true
    and l.deleted_at is null and q.status='PUBLISHED'
+   and q.legacy_deleted_at is null
+   and q.legacy_active is distinct from false
+   and q.legacy_enabled is distinct from false
  )
  select progress.*,
   count(*) over()::int as "__totalRows",
@@ -136,6 +139,7 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  (select count(distinct sub.assignment_id)::int from assignment_submissions sub
   join published_assignments pa on pa.id=sub.assignment_id
   where sub.membership_id=r.membership_id
+   and sub.submitted_at is not null and sub.deleted_at is null
    and (pa.delivery_id is null or pa.delivery_id=sub.delivery_id)
    and exists (
     select 1 from eligible_deliveries ed
@@ -145,6 +149,7 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   join published_quizzes pq on pq.id=attempt.quiz_id
   where attempt.membership_id=r.membership_id
    and attempt.submitted_at is not null
+   and attempt.deleted_at is null and attempt.legacy_deleted is distinct from true
    and (pq.delivery_id is null or pq.delivery_id=attempt.delivery_id)
    and exists (
     select 1 from eligible_deliveries ed
