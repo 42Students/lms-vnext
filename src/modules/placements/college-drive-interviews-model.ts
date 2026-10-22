@@ -4,7 +4,7 @@ export const driveInterviewsQuerySchema = z.object({
   kind: z.enum(["ALL","INTERVIEW","GD"]).default("ALL"),
   status: z.enum(["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
   applicationId: z.string().uuid().optional(),
-  appointmentStatus: z.enum(["ALL","UPCOMING","COMPLETED","CANCELLED"]).optional(),
+  appointmentStatus: z.enum(["ALL","ACTIVE","UPCOMING","COMPLETED","CANCELLED"]).optional(),
   appointmentMode: z.enum(["ALL","ON_CAMPUS","VIRTUAL"]).optional(),
   appointmentSearch: z.string().trim().max(120).optional(),
   page: z.coerce.number().int().min(1).max(1000).default(1),
@@ -55,7 +55,7 @@ export function driveRoundTime(value: Date | null, timezone: string | null) {
 }
 
 export type CandidateInterviewFilter = {
-  appointmentStatus?: "ALL" | "UPCOMING" | "COMPLETED" | "CANCELLED";
+  appointmentStatus?: "ALL" | "ACTIVE" | "UPCOMING" | "COMPLETED" | "CANCELLED";
   mode?: "ALL" | "ON_CAMPUS" | "VIRTUAL";
   search?: string;
 };
@@ -69,8 +69,12 @@ export function filterDriveCandidateAppointments<T extends {
     const bucket = state === "CANCELLED" || state === "NO_SHOW" ? "CANCELLED"
       : state === "COMPLETED" || (Number.isFinite(when) && when < now.getTime())
         ? "COMPLETED" : "UPCOMING";
+    // Old interview-calendar Active is a union of appointment lifecycle
+    // states, not a "future time" alias. Even a past-due reschedule request
+    // remains active until explicitly completed or cancelled.
+    const active = ["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED","BOOKED"].includes(state);
     return (!filter.appointmentStatus || filter.appointmentStatus === "ALL" ||
-      bucket === filter.appointmentStatus) &&
+      (filter.appointmentStatus === "ACTIVE" ? active : bucket === filter.appointmentStatus)) &&
       (!filter.mode || filter.mode === "ALL" || row.mode === filter.mode) &&
       (!search || row.applicationId.toLowerCase().includes(search));
   });
