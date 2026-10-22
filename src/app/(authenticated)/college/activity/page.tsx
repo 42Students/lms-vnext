@@ -99,7 +99,7 @@ export default async function CollegeActivityPage({
           return <Link key={key} aria-current={active?"page":undefined}
             href={collegeActivityHref({...data.query,loaded:1,category:key==="IMPORTANT"||key==="EVERYTHING"?undefined:key,
               view:key==="EVERYTHING"?"EVERYTHING":"IMPORTANT",module:undefined,importance:undefined})}
-            className={"inline-flex min-h-10 items-center justify-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
+            className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
              (active?"bg-white text-[#0b6772] shadow-sm":"text-[var(--lms-body-text)] hover:bg-white/70")}>
             {label}
           </Link>;
@@ -114,7 +114,7 @@ export default async function CollegeActivityPage({
             ["All time",collegeActivityAllTimeHref(data.query)],
           ] as const).map(([label,href])=><Link key={label} href={href}
             aria-current={collegeActivityHref(data.query)===href?"page":undefined}
-            className={"inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
+            className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
               (collegeActivityHref(data.query)===href?"bg-white text-[#0b6772] shadow-sm":"text-[var(--lms-body-text)] hover:bg-white/70")}>
             {label}</Link>)}
         </nav>

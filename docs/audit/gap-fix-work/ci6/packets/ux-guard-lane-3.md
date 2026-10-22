@@ -4,10 +4,10 @@ The CI lint job runs `npm run ux:guard` (scripts/check-ux-anti-drift.mjs). Fix t
 
 Rules: unsafe-target = target=_blank needs rel="noopener noreferrer" (or drop target); small-touch-target / unverified-touch-class = interactive control needs the shared >=44px touch class the guard recognises; white-on-teal = white text on #26bac7 fails contrast, use the approved darker token; native-popup = replace window.confirm/alert/prompt with the shared dialog component.
 
-- [ ] src/app/(authenticated)/college/activity/page.tsx:102: small-touch-target
-- [ ] src/app/(authenticated)/college/activity/page.tsx:117: small-touch-target
-- [ ] src/app/jobs/external/[slug]/page.tsx:19: unsafe-target
-- [ ] src/components/courses/lesson-resource-file-uploader.tsx:94: native-popup
-- [ ] src/components/placements/tpo-drive-edit-form.tsx:415: small-touch-target
-- [ ] src/components/ui/disclosure.tsx:27: unverified-touch-class
-- [ ] src/components/ui/third-party-link.tsx:35: unsafe-target
+- [x] src/app/(authenticated)/college/activity/page.tsx:102: small-touch-target
+- [x] src/app/(authenticated)/college/activity/page.tsx:117: small-touch-target
+- [x] src/app/jobs/external/[slug]/page.tsx:19: unsafe-target
+- [x] src/components/courses/lesson-resource-file-uploader.tsx:94: native-popup
+- [x] src/components/placements/tpo-drive-edit-form.tsx:415: small-touch-target
+- [x] src/components/ui/disclosure.tsx:27: unverified-touch-class
+- [x] src/components/ui/third-party-link.tsx:35: unsafe-target

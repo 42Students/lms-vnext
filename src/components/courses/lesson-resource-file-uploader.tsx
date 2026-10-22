@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Alert} from "@/components/ui/alert";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 type FileMaterial={
  id:string;kind:string;title:string;originalName:string|null;uploadStatus:string;
@@ -82,6 +83,7 @@ export function LessonResourceFileUploader({
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
  const [busyMaterialId,setBusyMaterialId]=useState<string|null>(null);
+ const [pendingDelete,setPendingDelete]=useState<FileMaterial|null>(null);
  const xhrRef=useRef<XMLHttpRequest|null>(null);
  const mounted=useRef(true);
  useEffect(()=>{
@@ -91,7 +93,6 @@ export function LessonResourceFileUploader({
  const base="/api/courses/lesson-contents/"+encodeURIComponent(contentId)+"/materials/files";
  async function mutateMaterial(id:string,method:"POST"|"DELETE"){
   if(busy)return;
-  if(method==="DELETE"&&!window.confirm("Remove this file? Learners will no longer be able to open it."))return;
   setBusy(true);setBusyMaterialId(id);setError("");setNotice("");
   try{
    const response=await fetch(base+"/"+encodeURIComponent(id),{
@@ -104,8 +105,11 @@ export function LessonResourceFileUploader({
    const result=body&&typeof body==="object"&&"result" in body?body.result:null;
    const state=result&&typeof result==="object"&&"uploadStatus" in result?result.uploadStatus:null;
    await onChanged();
-   if(mounted.current)setNotice(method==="DELETE"?"File removed.":
-    state==="READY"?"File is verified and available.":"Security verification is still pending.");
+   if(mounted.current){
+    setNotice(method==="DELETE"?"File removed.":
+     state==="READY"?"File is verified and available.":"Security verification is still pending.");
+    if(method==="DELETE")setPendingDelete(null);
+   }
   }catch(cause){
    if(mounted.current)setError(cause instanceof Error?cause.message:"File operation failed.");
   }finally{
@@ -168,6 +172,13 @@ export function LessonResourceFileUploader({
   }
  }
  return <div className="space-y-3">
+  <ConfirmDialog open={pendingDelete!==null}
+   onOpenChange={open=>{if(!open&&!busy)setPendingDelete(null);}}
+   title="Remove file?"
+   description="Learners will no longer be able to open it."
+   confirmLabel="Remove file"
+   pending={Boolean(pendingDelete&&busy&&busyMaterialId===pendingDelete.id)}
+   onConfirm={()=>{if(pendingDelete&&!busy)void mutateMaterial(pendingDelete.id,"DELETE");}}/>
   {materials.filter(item=>item.kind==="FILE"&&["UPLOADING","VERIFYING"].includes(item.uploadStatus)).length?
    <div className="space-y-2 border-t border-border pt-3">
     <h5 className="text-sm font-semibold">Pending file verification</h5>
@@ -177,14 +188,14 @@ export function LessonResourceFileUploader({
        <Button type="button" size="sm" variant="secondary" disabled={busy}
         loading={busyMaterialId===item.id} onClick={()=>void mutateMaterial(item.id,"POST")}>Check verification</Button>
        <Button type="button" size="sm" variant="danger" disabled={busy}
-        onClick={()=>void mutateMaterial(item.id,"DELETE")}>Remove</Button>
+        onClick={()=>setPendingDelete(item)}>Remove</Button>
       </div>)}
    </div>:null}
   {materials.filter(item=>item.kind==="FILE"&&item.uploadStatus==="READY").map(item=>
    <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 text-xs">
     <span className="min-w-0 truncate">{item.title}</span>
     <Button type="button" size="sm" variant="danger" disabled={busy}
-     onClick={()=>void mutateMaterial(item.id,"DELETE")}>Remove file</Button>
+     onClick={()=>setPendingDelete(item)}>Remove file</Button>
    </div>)}
   {materials.filter(item=>item.uploadStatus!=="DELETED").length<20?
    <div className="space-y-2 border-t border-border pt-3">
