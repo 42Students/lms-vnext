@@ -14,12 +14,17 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   cohorts,
   cohortProgressionState,
+  colleges,
+  organizations,
   departments,
   learnerProgramEnrollments,
   programTerms,
   programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
   AcademicsServiceError,
@@ -259,6 +264,68 @@ export async function listProgramsPage(
   const total = totals[0]?.total ?? 0;
   return { programs: rows.map(withLegacyProgramDuration), page, pageSize,
     total, totalElements: total, totalPages: Math.max(1, Math.ceil(total / pageSize)) };
+}
+
+/**
+ * Explicit, read-only compatibility for legacy Super Admin /fetchAll.
+ *
+ * The ordinary program directory stays selected-college scoped. Only a
+ * platform administrator with NO selected organization or college can list
+ * programs across colleges, and every result identifies its source tenant.
+ * Archived/deleted colleges and programs are deliberately excluded. This
+ * endpoint cannot be used to edit a program without switching college scope.
+ */
+export async function listGlobalProgramsForSuperAdmin(
+  context: RequestContext,
+  raw: { page?: number; pageSize?: number } = {},
+) {
+  if (!isSuperAdmin(context) ||
+      context.adminScope?.organizationId || context.adminScope?.collegeId)
+    throw new AuthorizationError("admin-scope.select");
+  const positivePage=(value:number|undefined,fallback:number,max:number)=>{
+    if(value===undefined)return fallback;
+    if(!Number.isSafeInteger(value)||value<1||value>max)
+      throw new AcademicsServiceError("PROGRAM_NOT_FOUND");
+    return value;
+  };
+  const page=positivePage(raw.page,1,10000);
+  const pageSize=positivePage(raw.pageSize,25,100);
+  return getDb().transaction(async tx=>{
+    // A formerly privileged session cannot keep enumerating every tenant
+    // after its SUPER_ADMIN system role has been revoked.
+    await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
+    const where=and(
+      eq(organizations.status,"ACTIVE"),
+      eq(colleges.status,"ACTIVE"),
+      isNull(departments.archivedAt),
+      eq(programs.status,"ACTIVE"),
+    );
+    const [items,totals]=await Promise.all([
+      tx.select({
+        id:programs.id,legacyProgramId:programs.legacyProgramId,
+        name:programs.name,code:programs.code,durationTerms:programs.durationTerms,
+        departmentId:programs.departmentId,departmentName:departments.name,
+        collegeId:colleges.id,collegeName:colleges.name,
+        organizationId:organizations.id,organizationName:organizations.name,
+      }).from(programs)
+        .innerJoin(departments,eq(departments.id,programs.departmentId))
+        .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+        .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+        .where(where)
+        .orderBy(asc(organizations.name),asc(colleges.name),asc(departments.name),
+          asc(programs.name),asc(programs.id))
+        .limit(pageSize).offset((page-1)*pageSize),
+      tx.select({total:count()}).from(programs)
+        .innerJoin(departments,eq(departments.id,programs.departmentId))
+        .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+        .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+        .where(where),
+    ]);
+    const total=totals[0]?.total??0;
+    return {items:items.map(withLegacyProgramDuration),page,pageSize,total,
+      totalPages:Math.max(1,Math.ceil(total/pageSize)),
+      readOnly:true as const};
+  });
 }
 
 export async function createProgram(
