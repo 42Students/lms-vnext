@@ -13,8 +13,8 @@ export async function resolveSuperAdminSectionDetail(context: RequestContext, ra
   // gate even if a stale or forged context carries a selected adminScope.
   if (!isSuperAdmin(context)) throw new AuthorizationError("academics.read");
   requirePermission(context, "academics.read", {
-    collegeId: context.adminScope?.collegeId ?? undefined,
-    organizationId: context.adminScope?.organizationId ?? undefined,
+    ...(context.adminScope?.collegeId!==undefined?{collegeId:context.adminScope.collegeId}:{}),
+    ...(context.adminScope?.organizationId!==undefined?{organizationId:context.adminScope.organizationId}:{}),
   });
   const id = sectionIdSchema.safeParse(rawId);
   if (!id.success || !context.adminScope?.collegeId) return null;
