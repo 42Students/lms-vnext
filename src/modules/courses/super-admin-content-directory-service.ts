@@ -40,7 +40,7 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   title:aliased(lessonContents.title,"admin_content_title"),
   notes:lessonContents.notes,
   points:lessonContents.points,
-  hasLegacyRichContent:sql<boolean>`${lessonContents.legacyContentData} is not null`.mapWith(Boolean),
+  hasLegacyRichContent:sql<boolean>`${lessonContents.legacyContentData} is not null`.mapWith(Boolean).as("hasLegacyRichContent"),
   contentType:lessonContents.contentType,
   status:aliased(lessonContents.status,"admin_content_status"),
   sequence:lessonContents.sequence,
