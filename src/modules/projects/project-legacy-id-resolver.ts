@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,or} from "drizzle-orm";
+import {and,eq,isNull,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
@@ -34,6 +34,7 @@ export async function resolveLegacyProjectIdentity(
  const [release]=raw.releaseKey?await getDb().select({
    id:projectReleases.id,
  }).from(projectReleases).where(and(eq(projectReleases.projectId,project.id),
+    isNull(projectReleases.deletedAt),
    or(eq(projectReleases.templateKey,alias.parse(raw.releaseKey)),
       eq(projectReleases.legacyReleaseKey,alias.parse(raw.releaseKey))))).limit(1):[];
  const [sprint]=raw.sprintKey?await getDb().select({

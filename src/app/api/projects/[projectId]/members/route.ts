@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   addProjectMember,
   listProjectMembers,
+  reassignProjectPrimaryMentor,
 } from "@/modules/projects/member-service";
 
 export const runtime = "nodejs";
@@ -45,7 +47,22 @@ export async function POST(
   try {
     const context = await getCurrentRequestContext();
     const { projectId } = await params;
-    const body = await request.json();
+    const body: unknown = await request.json();
+    // Legacy direct mentor selection replaces an existing primary, rather
+    // than failing the add-member uniqueness check. Service authorizes it.
+    if (body && typeof body === "object" && !Array.isArray(body) &&
+        "primaryMentorMembershipId" in body) {
+      const choice = z.strictObject({
+        primaryMentorMembershipId: z.uuid(),
+        roleLabel: z.string().trim().min(1).max(120).optional(),
+      }).parse(body);
+      const primaryMentor = await reassignProjectPrimaryMentor(
+        context, projectId, choice.primaryMentorMembershipId, choice.roleLabel,
+      );
+      return NextResponse.json({ primaryMentor }, {
+        headers: { "Cache-Control": "private, no-store" },
+      });
+    }
     const member = await addProjectMember(
       context,
       projectId,

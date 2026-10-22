@@ -178,6 +178,42 @@ export async function listLearnerGallery(context: RequestContext, membershipId?:
 
 /** An existing scanner-approved, scoped receipt is mandatory. Uploading bytes
  * still goes through the private-object storage flow, not through this route. */
+type GalleryTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+async function recheckGalleryWriteActor(
+  tx: GalleryTx, context: RequestContext, access: GalleryAccess,
+) {
+  // Context was constructed before the upload began. A demoted learner or
+  // college admin must not publish/deactivate a photo after their grant ends.
+  const [currentUser] = await tx.select({ id: users.id }).from(users)
+    .where(and(eq(users.id, context.user.id),
+      eq(users.platformStatus, "ACTIVE"))).for("share").limit(1);
+  if (!currentUser) throw new LearnerGalleryError("GALLERY_FORBIDDEN");
+  if (isSuperAdmin(context)) {
+    if (context.adminScope?.collegeId !== access.collegeId)
+      throw new LearnerGalleryError("GALLERY_FORBIDDEN");
+    return;
+  }
+  const actor = context.membership;
+  const ownLearner = actor?.id === access.membershipId &&
+    hasMembershipRole(context, "LEARNER");
+  const collegeStaff = actor?.collegeId === access.collegeId &&
+    hasMembershipRole(context, "COLLEGE_ADMIN");
+  if (!actor || (!ownLearner && !collegeStaff))
+    throw new LearnerGalleryError("GALLERY_FORBIDDEN");
+  const [active] = await tx.select({ id: collegeMemberships.id })
+    .from(collegeMemberships)
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, ownLearner ? "LEARNER" : "COLLEGE_ADMIN"),
+    ))
+    .where(and(eq(collegeMemberships.id, actor.id),
+      eq(collegeMemberships.userId, context.user.id),
+      eq(collegeMemberships.collegeId, access.collegeId),
+      eq(collegeMemberships.status, "ACTIVE")))
+    .for("share").limit(1);
+  if (!active) throw new LearnerGalleryError("GALLERY_FORBIDDEN");
+}
+
 export async function appendLearnerGalleryImage(
   context: RequestContext, raw: unknown, membershipId?: string,
 ) {
@@ -202,6 +238,7 @@ export async function appendLearnerGalleryImage(
       attestation.sizeBytes !== candidate.sizeBytes)
     throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
   return getDb().transaction(async tx => {
+    await recheckGalleryWriteActor(tx, context, access);
     // Lock one membership, not the global gallery: concurrent appends cannot
     // exceed the ten-picture limit or reuse an unverified upload.
     const [member] = await tx.select({ id: collegeMemberships.id,
@@ -248,6 +285,7 @@ export async function deactivateLearnerGalleryImage(
   const access = await galleryAccess(context, membershipId);
   if (!access.canEdit) throw new LearnerGalleryError("GALLERY_FORBIDDEN");
   return getDb().transaction(async tx => {
+    await recheckGalleryWriteActor(tx, context, access);
     const [member] = await tx.select({ id: collegeMemberships.id })
       .from(collegeMemberships).where(and(
         eq(collegeMemberships.id, access.membershipId),

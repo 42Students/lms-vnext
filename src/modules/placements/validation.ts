@@ -1600,3 +1600,32 @@ export type PlacementDriveDayAttendanceInput =
   z.input<
     typeof placementDriveDayAttendanceInputSchema
   >;
+
+/** Legacy interview feedback choices, retained without treating a recommendation
+ * as an authorized offer, screening transition, or verified joining outcome.
+ * The actual status writer must check the current college, appointment
+ * revision, offer/joining facts and notification consent independently.
+ */
+export const legacyInterviewRecommendationSchema=z.enum([
+ "PROCEED_NEXT_ROUND","HIRE","REJECT","HOLD",
+]);
+export const legacyInterviewFeedbackInputSchema=z.strictObject({
+ rating:z.number().int().min(1).max(5),
+ recommendAction:legacyInterviewRecommendationSchema,
+ comments:z.string().trim().max(4000).nullable().optional(),
+}).superRefine((input,ctx)=>{
+ if(input.recommendAction==="REJECT"&&!input.comments?.trim())
+  ctx.addIssue({code:"custom",path:["comments"],
+   message:"Add feedback explaining the rejection — this will be shared with the candidate."});
+});
+export const LEGACY_INTERVIEW_RECOMMENDATION_TRANSITION={
+ PROCEED_NEXT_ROUND:"ROUND_ADVANCE_REVIEW_REQUIRED",
+ HIRE:"ISSUED_OFFER_AND_JOINING_CONFIRMATION_REQUIRED",
+ REJECT:"AUDITED_REJECTION_AND_ACTIVE_OFFER_REVIEW_REQUIRED",
+ HOLD:"KEEP_EXISTING_APPLICATION_STAGE",
+} as const;
+export function legacyInterviewRecommendationTransition(raw:unknown){
+ const action=legacyInterviewRecommendationSchema.parse(raw);
+ return {recommendAction:action,
+  next:LEGACY_INTERVIEW_RECOMMENDATION_TRANSITION[action]};
+}

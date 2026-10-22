@@ -54,9 +54,9 @@ const taskSchema = z
     key: projectKeySchema,
     sprintKey: projectKeySchema.nullable().optional(),
     title: titleSchema,
-    taskType:z.enum(["STORY","BUG","CHORE","SPIKE"]).optional(),
+    taskType:z.enum(["STORY","BUG","CHORE","SPIKE"]).default("STORY"),
     legacyKey:z.string().trim().max(120).optional(),
-    dueLabel:z.string().trim().max(160).optional(),
+    dueLabel:z.string().trim().max(80).optional(),
     approach:z.string().trim().max(4000).optional(),
     description: descriptionSchema,
     acceptanceCriteria: z
@@ -68,7 +68,8 @@ const taskSchema = z
     priority: z
       .enum(PROJECT_TASK_PRIORITIES)
       .default("MEDIUM"),
-    estimatePoints: z.number().int().min(1).max(13).optional(),
+    // Legacy estimates use the same accepted 0..1000 bound as live tasks.
+    estimatePoints: z.number().int().min(0).max(1000).optional(),
     sequence: sequenceSchema,
   })
   .strict();
@@ -132,7 +133,7 @@ export const projectTemplateBlueprintSchema = z
     tasks: z.array(taskSchema).max(500).default([]),
     resources: z
       .array(resourceSchema)
-      .max(200)
+      .max(500, "A section can contain at most 500 resources")
       .default([]),
     // Legacy source metadata is descriptive-only. It is preserved in the
     // published blueprint for read-only previews, never interpreted as a
@@ -974,13 +975,15 @@ export function normalizeLegacyProjectBlueprint(raw:unknown):unknown{
  ]));
  const tasks=normalizeRows(input.tasks).map(row=>{
    const original=String(row.key??row.taskKey??row.title??"task");
+   if(original.length>120)throw new Error("Legacy task key exceeds 120 characters");
    const key=unique(original,taskSeen);
    const legacyKey=original!==key&&original.length<=120?original:undefined;
    const oldSprint=typeof row.sprintKey==="string"?row.sprintKey:"";
    return {...row,key,legacyKey,
      sprintKey:oldSprint?(sprintMap.get(oldSprint)||null):null,
      taskType:typeof row.taskType==="string"?
-       row.taskType.toUpperCase():undefined};
+       row.taskType.toUpperCase():"STORY",
+     dueLabel:typeof row.dueLabel==="string"?row.dueLabel:undefined};
  });
  const kindMap:Record<string,string>={
    link:"LINK",pdf:"PDF",doc:"DOCUMENT",document:"DOCUMENT",
