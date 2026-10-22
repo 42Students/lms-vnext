@@ -21,7 +21,8 @@ export function CollegeDraftCompanyPicker({
  const search=name.trim().toLocaleLowerCase("en-IN");
  const matches=search?choices.filter(choice=>
   choice.name.toLocaleLowerCase("en-IN").includes(search)).slice(0,12):choices.slice(0,12);
- const linked=selectedId!==null&&choices.some(choice=>choice.relationshipId===selectedId);
+ const linked=selectedId!==null&&(selectedId===currentRelationshipId||
+  choices.some(choice=>choice.relationshipId===selectedId));
  const changed=selectedId!==currentRelationshipId;
  async function save(){
   if(!linked||!selectedId||!changed||busy)return;
