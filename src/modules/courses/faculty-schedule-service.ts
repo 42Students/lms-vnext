@@ -144,8 +144,11 @@ export async function getFacultyClassSchedule(
   const truncated=events.length>5000;
   const visibleEvents=events.slice(0,5000);
   const upcomingCutoff = new Date(now.getTime() + 180 * 86400000);
-  const upcomingEvents = visibleEvents.filter(row =>
-    row.startsAt >= now && row.startsAt <= upcomingCutoff);
+  // A schedule may join several course deliveries. Keep each calendar session
+  // once in the upcoming preview while retaining all linked rows for filters.
+  const upcomingEvents = [...new Map(visibleEvents.filter(row =>
+    row.startsAt >= now && row.startsAt <= upcomingCutoff)
+    .map(row => [row.id, row] as const)).values()];
   const nextUpcoming=upcomingEvents[0]??null;
   const calendarDay=(value:Date)=>new Intl.DateTimeFormat("en-GB",{
     timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric",
