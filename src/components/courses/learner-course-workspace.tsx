@@ -1139,7 +1139,7 @@ export function LearnerCourseWorkspace({
                             caption={"Assignment"+(!assignment.submissionId&&
                               assignment.dueAt&&assignment.dueAt.getTime()<workspace.snapshotNowMs
                                ?" · Not submitted":"")}
-                            {...(assignment.dueAt && formatDateTime(assignment.dueAt) != null ? { dueText: formatDateTime(assignment.dueAt) } : {})}
+                            {...(assignmentDueText != null ? { dueText: assignmentDueText } : {})}
                             progress={item.progress.status}
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
@@ -1171,7 +1171,7 @@ export function LearnerCourseWorkspace({
                             ?"Quiz · Unavailable · deadline missing":quiz.progress.status==="MISSED"
                               ?"Quiz · Missed":"Quiz"}
                           locked={!quiz.dueAt&&quiz.attemptsUsed===0}
-                          {...(quiz.dueAt && formatDateTime(quiz.dueAt) != null ? { dueText: formatDateTime(quiz.dueAt) } : {})}
+                          {...(quizDueText != null ? { dueText: quizDueText } : {})}
                           progress={item.progress.status}
                           initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                           highlighted={focusContentId===item.id && focusLessonId===lesson.id}
