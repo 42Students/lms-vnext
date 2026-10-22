@@ -498,6 +498,7 @@ export async function upsertPlacementBatchSettings(
         updatedAt: new Date(),
       },
     }).returning();
+    if (!row) throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
     if(JSON.stringify(current?.rulesOverride??{})!==JSON.stringify(input.rulesOverride??{})){
       const [college]=await tx.select({organizationId:colleges.organizationId})
         .from(colleges).where(eq(colleges.id,input.collegeId)).limit(1);
@@ -785,10 +786,10 @@ export async function getOwnPlacementParticipationAccess(context: RequestContext
     )).limit(2);
   // A corrupted duplicate active enrollment must never grant eligibility from
   // whichever cohort PostgreSQL happens to return first.
-  if (enrollments.length !== 1 || enrollments[0].collegeId !== collegeId) {
+  const enrollment = enrollments[0];
+  if (enrollments.length !== 1 || !enrollment || enrollment.collegeId !== collegeId) {
     return { showPlacements: false, canSelfApply: false };
   }
-  const enrollment = enrollments[0];
   const activeSections = await getDb().select({
     id: sections.id,
     cohortId: sections.cohortId,

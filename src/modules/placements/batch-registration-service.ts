@@ -145,11 +145,11 @@ export async function registerOwnPlacementChoice(
         eq(learnerProgramEnrollments.membershipId, learner.id),
         eq(learnerProgramEnrollments.status, "ACTIVE"),
       )).limit(2);
-    if (enrollments.length !== 1 ||
-        enrollments[0].collegeId !== membership.collegeId) {
+    const enrollment = enrollments[0];
+    if (enrollments.length !== 1 || !enrollment ||
+        enrollment.collegeId !== membership.collegeId) {
       throw new PlacementRegistrationError("DB08_REGISTRATION_ENROLLMENT_INVALID");
     }
-    const enrollment = enrollments[0];
 
     const activeSections = await tx.select({
       id: sections.id,
