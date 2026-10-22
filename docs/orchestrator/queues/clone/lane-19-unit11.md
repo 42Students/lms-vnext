@@ -5,9 +5,9 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/UX-kit-role-and-overlay-chat17.test.tsx` (1 failing)
 - [x] `tests/unit/chat16-mentor-editor-guard-r5.test.ts` (1 failing)
 - [x] `tests/unit/chat3-round9-origin-and-portal-regression.test.ts` (1 failing)
-- [ ] `tests/unit/chat7-final-sprint-superadmin-courses-content.test.ts` (1 failing)
+- [x] `tests/unit/chat7-final-sprint-superadmin-courses-content.test.ts` (1 failing)
 - [x] `tests/unit/company-share-audit-columns-safety.test.ts` (1 failing)
-- [ ] `tests/unit/superadmin-tenants-gap-closure.test.ts` (2 failing)
+- [x] `tests/unit/superadmin-tenants-gap-closure.test.ts` (2 failing)
 
 ## Failures (from CI log)
 
@@ -151,3 +151,6 @@ AssertionError: expected 'import SuperAdminTenantSetup from "./…' to contain '
 - Employer portal same-tab assertion: `fcc60f3`.
 - Company share missing resume fail-closed fallback assertion: `2b9c1c6`.
 - Tests not executed in connector environment; remaining failures are unticked.
+
+- Course visibility per-course failure assertion: `d1e8b3d`.
+- Tenant directory route-split assertions: `ef991f2`.
