@@ -211,6 +211,7 @@ export function AdminCourseOverview({
             shortTitle:course.shortTitle,
             officialCode:course.officialCode,
             cardColor:course.cardColor,
+            thumbnailUrl:course.thumbnailUrl,
             takeaways:course.takeaways,
             description:
               course.description,
