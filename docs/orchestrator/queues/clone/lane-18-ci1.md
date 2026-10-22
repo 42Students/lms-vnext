@@ -8,4 +8,4 @@ TOP PRIORITY: do these BEFORE anything else (pause verify2). CI runs on every pu
 - [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane18_4.md` (1 errors; edit src/components/tpo/tpo-settings-team-manage.tsx)
 - [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane18_5.md` (3 errors; edit src/modules/placements/recruiter-drive-request-model.ts)
 - [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane18_6.md` (2 errors; edit src/modules/placements/request-service.ts)
-- [ ] `docs/audit/gap-fix-work/ci1/packets/CI1_lane18_7.md` (2 errors; edit src/modules/placements/tpo-remind-not-applied-service.ts)
+- [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane18_7.md` (2 errors; edit src/modules/placements/tpo-remind-not-applied-service.ts)
