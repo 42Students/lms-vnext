@@ -39,7 +39,7 @@ export async function listTpoBatchJourneyCounts(context:RequestContext,batchIds:
  )).orderBy(desc(activityEvents.occurredAt)).limit(500);
  const invited=new Map<string,number>();
  for(const event of inviteEvents){
-  const count=event.metadata?.appRecipients;
+  const count=event.metadata?.["appRecipients"];
   if(!invited.has(event.cohortId)&&typeof count==="number"&&
    Number.isSafeInteger(count)&&count>=0)
    invited.set(event.cohortId,count);
