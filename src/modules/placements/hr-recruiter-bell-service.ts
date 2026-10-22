@@ -7,6 +7,8 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 import {listHrNotifications} from "./hr-notifications-service";
 import {HR_NOTIFICATION_EVENTS} from "./hr-notifications-model";
+import {listRecentUnreadRecruiterThreads} from "./hr-conversation-inbox-service";
+import {hrConversationsHref} from "./hr-conversation-urls-model";
 /** Scope is resolved by the inbox service before either feed page is read.
  * Only the newest 40 events from the last 30 days are shown in the bell.
  * Older unread receipts are reported as hidden, not silently marked read. */
@@ -22,10 +24,13 @@ export async function countHrRecruiterBellUnread(ctx:RequestContext){
  const grants=[...new Set(ctx.recruiter.grants.map(grant=>grant.collegeId))];
  if(grants.length!==1)return {status:grants.length?"CHOOSE_COLLEGE" as const:"NO_ACCESS" as const,
   unread:0,firstVisit:true};
+ // Legacy bell also lists threads with unread TPO messages and a last
+ // message within 30 days; they count toward the unread badge.
+ const unreadThreads=(await listRecentUnreadRecruiterThreads(ctx,grants[0])).length;
  const jobs=(await listOwnRecruiterPlacementJobs(ctx,grants[0]))
   .filter(row=>row.collegeId===grants[0]&&row.companyId===ctx.recruiter!.companyId);
  const ids=[...new Set(jobs.map(row=>row.job.id))];
- if(ids.length===0)return {status:"READY" as const,unread:0,firstVisit:true};
+ if(ids.length===0)return {status:"READY" as const,unread:unreadThreads,firstVisit:true};
  const scope=and(eq(inAppNotifications.userId,ctx.user.id),
   eq(activityEvents.module,"PLACEMENTS"),eq(activityEvents.subjectType,"placement_job"),
   eq(activityEvents.collegeId,grants[0]),inArray(activityEvents.subjectId,ids),
@@ -39,7 +44,7 @@ export async function countHrRecruiterBellUnread(ctx:RequestContext){
   .where(scope);
  const firstVisit=Number(stats?.readReceipts??0)===0;
  return {status:"READY" as const,firstVisit,
-  unread:Number(firstVisit?stats?.recentUnread??0:stats?.totalUnread??0)};
+  unread:Number(firstVisit?stats?.recentUnread??0:stats?.totalUnread??0)+unreadThreads};
 }
 function hrBellTab(label:string):"overview"|"applicants"|"rounds"|"offers"|"requests"|"discussion"{
  if(label==="Drive closed"||label.includes("offer")||label.includes("Offer"))return "offers";
@@ -59,15 +64,31 @@ export async function readHrRecruiterBell(ctx:RequestContext){
   : null;
  const cutoff=Date.now()-30*24*60*60*1000;
  const rows=[...data.rows,...(more?.status==="READY"?more.rows:[])]
-  .filter(item=>item.createdAt.getTime()>=cutoff)
-  .slice(0,40);
+  .filter(item=>item.createdAt.getTime()>=cutoff);
  const sevenDaysAgo=Date.now()-7*86400000;
- const items=rows.map(item=>({
+ const eventItems=rows.map(item=>({
    id:item.id,label:item.label,title:item.title,
    unread:item.unread&&(!count.firstVisit||item.createdAt.getTime()>=sevenDaysAgo),
    at:item.createdAt.toISOString(),
    href:"/hr/placements/jobs/"+encodeURIComponent(item.jobId)+"?tab="+hrBellTab(item.label),
  }));
+ // Unread TPO message threads (last message within 30 days), same college scope.
+ const threads=await listRecentUnreadRecruiterThreads(ctx,data.collegeId);
+ const threadJobs=threads.some(thread=>thread.jobId)
+  ?await listOwnRecruiterPlacementJobs(ctx,data.collegeId,{
+    jobIds:[...new Set(threads.flatMap(thread=>thread.jobId?[thread.jobId]:[]))],
+  }):[];
+ const jobTitles=new Map(threadJobs.map(row=>[row.job.id,row.job.title]));
+ const messageItems=threads.map(thread=>({
+   id:"m-"+thread.id,label:"New message",
+   title:"New message: "+(thread.jobId?(jobTitles.get(thread.jobId)??"Authorized drive"):"General conversation"),
+   unread:true,at:thread.lastMessageAt.toISOString(),
+   href:thread.jobId
+    ?"/hr/placements/jobs/"+encodeURIComponent(thread.jobId)+"?tab=discussion"
+    :hrConversationsHref({collegeId:data.collegeId,q:"",unreadOnly:"true",page:1}),
+ }));
+ const items=[...eventItems,...messageItems]
+  .sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)).slice(0,40);
  const hiddenUnread=Math.max(0,count.unread-items.filter(item=>item.unread).length);
  return {status:"READY" as const,unread:count.unread,unreadTotal:count.unread,
   hiddenUnread,feed:items,items};

@@ -159,6 +159,8 @@ export type ModuleRuleData = {
   scopeId: string;
   module: "projects" | "placements" | "electives";
   enabled: boolean;
+  /** Legacy module.<name>.locked at the same college scope (absent = unlocked). */
+  locked: boolean;
   updatedByUserId: string;
   createdAt: string | null;
   updatedAt: string | null;
@@ -872,7 +874,27 @@ export function buildPlacementsPlan(
   // placements rule vNext keeps the module off for learners (default false).
   c.stat("app_setting", rows("app_setting").length);
   const moduleRules: Planned<ModuleRuleData>[] = [];
+  // module.<name>.locked is a second app_setting row per module; carry it onto the same rule so a
+  // locked decision stays locked. A lock with no matching enabled decision is rejected (audited).
+  const lockedByModule = new Map<string, boolean>();
   for (const row of rows("app_setting")) {
+    const lock = /^module\.(projects|placements|electives)\.locked$/.exec(str(row.setting_key) ?? "");
+    const lockValue = (str(row.setting_value) ?? "").toLowerCase();
+    if (lock && (lockValue === "true" || lockValue === "false")) lockedByModule.set(lock[1] as string, lockValue === "true");
+  }
+  const enabledModules = new Set<string>();
+  for (const row of rows("app_setting")) {
+    const enabledMatch = /^module\.(projects|placements|electives)\.enabled$/.exec(str(row.setting_key) ?? "");
+    const enabledValue = (str(row.setting_value) ?? "").toLowerCase();
+    if (enabledMatch && (enabledValue === "true" || enabledValue === "false")) enabledModules.add(enabledMatch[1] as string);
+  }
+  for (const row of rows("app_setting")) {
+    const lock = /^module\.(projects|placements|electives)\.locked$/.exec(str(row.setting_key) ?? "");
+    const lockValue = (str(row.setting_value) ?? "").toLowerCase();
+    if (lock && (lockValue === "true" || lockValue === "false") && enabledModules.has(lock[1] as string)) {
+      c.stat("app_setting").planned += 1;
+      continue;
+    }
     const match = /^module\.(projects|placements|electives)\.enabled$/.exec(str(row.setting_key) ?? "");
     const value = (str(row.setting_value) ?? "").toLowerCase();
     if (!match || (value !== "true" && value !== "false")) {
@@ -889,6 +911,7 @@ export function buildPlacementsPlan(
           scopeId: collegeId,
           module: match[1] as ModuleRuleData["module"],
           enabled: value === "true",
+          locked: lockedByModule.get(match[1] as string) ?? false,
           updatedByUserId: a.userId,
           createdAt: ist(row.created_at),
           updatedAt: ist(row.updated_at),
