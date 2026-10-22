@@ -48,11 +48,12 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
     expect(source).toContain("<ol");
     expect(source).toContain("collegeActivityHref");
    }else if(route==="electives/[slotId]/allocate"){
+    // This route delegates the responsive table to its client-side selection component.
     expect(source).toContain("<ElectiveEligibleSelection");
-    const roster=readFileSync(join(process.cwd(),"src/components/academics/elective-eligible-selection.tsx"),"utf8");
-    expect(roster).toContain("<DataTable");
-    expect(roster).toMatch(/mobilePriority:\\s*["']primary["']/);
-    expect(roster).not.toContain("<table");
+    const selection=readFileSync(join(process.cwd(),"src/components/academics/elective-eligible-selection.tsx"),"utf8");
+    expect(selection).toContain("<DataTable");
+    expect(selection).toMatch(/mobilePriority:\s*["\x27]primary["\x27]/);
+    expect(selection).not.toContain("<table");
    }else{
     expect(source,route).toContain("<DataTable");
     expect(source,route).toMatch(/mobilePriority:\\s*["']primary["']/);
