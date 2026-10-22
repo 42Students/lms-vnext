@@ -31,6 +31,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[approach,setApproach]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
  const [taskType,setTaskType]=useState(""),[dueDate,setDueDate]=useState(""),[blockerReason,setBlockerReason]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [conflict,setConflict]=useState(false);
  const [moveRequest,setMoveRequest]=useState<{task:Task;targetSprintId:string|null}|null>(null);
  const draftDirty=Boolean(title||description||approach||criteria||points||taskType||dueDate||blockerReason||priority!=="MEDIUM");
  function discardDraft(){
@@ -46,7 +47,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  async function move(){
   if(busy||readOnly||!moveRequest)return;
   const {task,targetSprintId}=moveRequest;
-  setBusy(true);setError("");setNotice("");
+  setBusy(true);setError("");setNotice("");setConflict(false);
   try{
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","PATCH",{
     taskId:task.id,targetSprintId,expectedUpdatedAt:new Date(task.updatedAt).toISOString(),
@@ -55,6 +56,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    setNotice(targetSprintId?"Task pulled into sprint.":"Task returned to backlog.");router.refresh();
   }catch(reason){
     const stale=reason instanceof FriendlyFetchError&&reason.status===409;
+    setConflict(stale);
     setError(stale?"Task plan changed. Reload the latest workspace before saving.":"Failed to update tasks");
    }finally{setBusy(false);}
  }
@@ -75,7 +77,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       Add backlog task
     </Button>
     {adding?<form id={draftId} onSubmit={async e=>{
-      e.preventDefault();if(busy)return;setError("");
+      e.preventDefault();if(busy)return;setError("");setConflict(false);
       if(!title.trim()){setError("Item 1: Title required");return;}
       if(!Number.isInteger(points?Number(points):0)||
         (points!==""&&(Number(points)<0||Number(points)>1000))){
@@ -101,6 +103,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         router.refresh();
       }catch(reason){
         const stale=reason instanceof FriendlyFetchError&&reason.status===409;
+        setConflict(stale);
         setError(stale?"Task plan changed. Reload the latest workspace before saving.":"Failed to update tasks");
       }
       finally{setBusy(false);}
@@ -156,6 +159,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
     </form>:null}
   </section>:null}
   {error&&!moveRequest?<Alert tone="error">{error}</Alert>:null}
+  {conflict&&!moveRequest?<Button type="button" variant="secondary" onClick={()=>{setConflict(false);router.refresh();}}>Reload latest workspace</Button>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
   <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {backlog.map(task=><article key={task.id} className="min-w-0 py-3">
@@ -198,6 +202,8 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    description={moveRequest?.task.title??"Task movement will update the project board."}
    confirmLabel="Confirm" pending={busy} confirmVariant="primary" onConfirm={move}>
    {error?<Alert tone="error">{error}</Alert>:null}
+   {conflict?<Button type="button" variant="secondary" disabled={busy}
+     onClick={()=>{setMoveRequest(null);setConflict(false);router.refresh();}}>Reload latest workspace</Button>:null}
   </ConfirmDialog>
   <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
    title="Discard backlog task changes?"
