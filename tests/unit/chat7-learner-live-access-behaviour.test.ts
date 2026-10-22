@@ -73,7 +73,8 @@ describe("LEARNER-COURSE-ACCESS-01 persisted learner read identity",()=>{
    'eq(collegeMemberships.status,"ACTIVE")',
    'eq(users.platformStatus,"ACTIVE")',
    'eq(membershipRoles.role,"LEARNER")',
-   'eq(sectionEnrollments.sectionId,',
+   'sectionEnrollments.sectionId,',
+   'sectionEnrollments.academicPeriodId,',
   ])expect(src).toContain(required);
  });
 });

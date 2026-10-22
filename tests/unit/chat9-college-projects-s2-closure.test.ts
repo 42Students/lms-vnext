@@ -28,7 +28,8 @@ describe("College Admin Projects S2 legacy gap closure",()=>{
  it("COL-projects-12 exposes active readiness overrides with CSV and workspace management",()=>{
   const page=source("src/components/projects/project-admin-readiness-page.tsx");
   expect(page).toContain("Active overrides");
-  expect(page).toContain("Export overrides CSV");
+  expect(page).toContain("Export displayed page CSV");
+  expect(page).toContain("/api/projects/readiness-overrides/export?collegeId=");
   expect(page).toContain("Manage override");
   expect(page).toContain("listCollegeActiveReadinessOverrides");
  });

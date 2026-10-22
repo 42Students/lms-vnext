@@ -7,7 +7,8 @@ describe("TPO legacy audit page customer-facing copy",()=>{
   expect(audit).toContain("A traceable history of placement decisions, changes, sharing and access across the workspace.");
   expect(audit).toContain("Nothing logged yet");
   expect(audit).toContain("Every drive, decision and setting change your team makes shows up here.");
-  expect(audit).toContain("Export audit log CSV");
+  expect(audit).toContain("Export audit-log CSV");
+  expect(audit).toContain("/api/placements/tpo/audit/export?");
   expect(audit).not.toContain("Export audit-log CSV (canonical events)");
   expect(audit).not.toContain("current database");
   expect(audit).not.toContain("Historical settings changes without persisted event records");
