@@ -68,7 +68,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
  const [notes,setNotes]=useState<Record<string,string>>({});
  const inFlightRef=useRef(false);
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");
- const [confirmation,setConfirmation]=useState<{action:"ACCEPT"|"ANSWER"|"DECLINE"|"WITHDRAW";requestId:string;expectedUpdatedAt:string;note:string}|null>(null);
+ const [confirmation,setConfirmation]=useState<{action:"ACCEPT"|"ANSWER"|"DECLINE"|"WITHDRAW";requestId:string;expectedUpdatedAt:string;field:string;note:string}|null>(null);
  const createRequest={action:"CREATE",field,mode:field==="OTHER"?"ASK":mode,
   proposedValue:field==="OTHER"?"":field==="DEADLINE"&&mode==="SUGGEST"&&value
    ?istDateTimeToUtc(value):value.trim(),reason:reason.trim()};
@@ -264,12 +264,12 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
         actionsFor(item).map(action=>
          <Button key={action} type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
           disabled={busy||(action!=="ACCEPT"&&(notes[item.id]??"").trim().length<1)}
-          onClick={()=>setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(item.legacyField??item.field)==="DEADLINE"&&action==="ANSWER"?istDateTimeToUtc(notes[item.id]??""):(notes[item.id]??"").trim()})}
+          onClick={()=>setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,field:item.legacyField??item.field,note:(item.legacyField??item.field)==="DEADLINE"&&action==="ANSWER"?istDateTimeToUtc(notes[item.id]??""):(notes[item.id]??"").trim()})}
           variant={action==="DECLINE"?"danger":"secondary"}>
           {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</Button>):null}
        {item.status==="OPEN"&&item.proposerParty===party?
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy}
-         onClick={()=>setConfirmation({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
+         onClick={()=>setConfirmation({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,field:item.legacyField??item.field,note:(notes[item.id]??"").trim()})}
          variant="danger">Withdraw</Button>:null}
       </div>
      </Disclosure>
@@ -282,10 +282,17 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
      expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
    <p className="text-sm text-body leading-[22px]">{confirmation?.action==="ACCEPT"?"Accepting immediately applies this change to the drive.":"This decision is recorded in the drive discussion. Answering a named field updates the drive; declining or withdrawing does not."}</p>
-   {confirmation?.action==="ANSWER"||confirmation?.action==="DECLINE"?
-    <label className="mt-3 grid gap-1 text-sm font-semibold">
-     {confirmation.action==="ANSWER"?"Answer":"Why decline?"}
-     <Textarea rows={3} maxLength={confirmation.action==="DECLINE"?1000:2000} value={confirmation.note}
+   {confirmation?.action==="ANSWER"?
+    <div className="mt-3 min-w-0 space-y-1 text-sm">
+     <p className="font-semibold">Answer to apply</p>
+     <p className="whitespace-pre-wrap break-words rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
+      {readableValue(confirmation.field,confirmation.note)}
+     </p>
+     <p className="text-xs text-muted-foreground">To change this answer, cancel and edit the field above before confirming.</p>
+    </div>:null}
+   {confirmation?.action==="DECLINE"?
+    <label className="mt-3 grid gap-1 text-sm font-semibold">Why decline?
+     <Textarea rows={3} maxLength={1000} value={confirmation.note}
       onChange={e=>setConfirmation(previous=>previous?{...previous,note:e.target.value}:null)}/>
     </label>:null}
    {error?<InlineNotice tone="error" message={error}/>:null}
