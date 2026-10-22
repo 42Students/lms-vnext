@@ -12,19 +12,19 @@ export async function POST(request:Request,{params}:{params:Promise<{projectId:s
   const {projectId}=await params;
   const context=await getCurrentRequestContext();
   const raw=await request.json() as Record<string,unknown>;
-  const body=raw.delivery&&typeof raw.delivery==="object"&&!Array.isArray(raw.delivery)
-    ?raw.delivery as Record<string,unknown>:raw;
+  const body=raw["delivery"]&&typeof raw["delivery"]==="object"&&!Array.isArray(raw["delivery"])
+    ?raw["delivery"] as Record<string,unknown>:raw;
   const result=await listProjectSubmissions(context,projectId);
   const latest=result.submissions[result.submissions.length-1];
-  if(!latest||typeof body.version!=="number"||body.version!==latest.version||
-     typeof body.expectedUpdatedAt!=="string")
+  if(!latest||typeof body["version"]!=="number"||body["version"]!==latest.version||
+     typeof body["expectedUpdatedAt"]!=="string")
     throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
-  const action=body.submitAction??body.decision;
+  const action=body["submitAction"]??body["decision"];
   const decision=action==="REQUEST_CHANGES"?"CHANGES_REQUESTED":action;
   const validated=reviewProjectSubmissionInputSchema.parse({
-    decision,feedback:body.feedback,
+    decision,feedback:body["feedback"],
     expectedVersion:latest.version,
-    expectedUpdatedAt:body.expectedUpdatedAt,
+    expectedUpdatedAt:body["expectedUpdatedAt"],
   });
   const reviewed=await reviewProjectSubmission(context,projectId,latest.id,validated);
   return NextResponse.json({message:"Project delivery reviewed",review:reviewed});
