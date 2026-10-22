@@ -160,3 +160,8 @@ AssertionError: expected 9 to be 8 // Object.is equality
      15|   expect(source).toContain("actor.display_name::text as \"actorName\""…
 ```
 
+
+## Deep verification follow-up (23 Oct 2026)
+
+- [x] G2-16-005-045 — OK: named Super Admin Cloud Logging page, live logs, export and nearby-logs authorization verified against legacy access policy; see `docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md`.
+- [ ] G2-4-017-017 — manual template-less historical project support not yet established; do not mark complete without the schema/service fix.
