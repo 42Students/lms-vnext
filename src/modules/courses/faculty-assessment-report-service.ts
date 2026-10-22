@@ -138,7 +138,7 @@ export function assignmentScoreSummary(
     ) {
       return [];
     }
-    return [Math.min(100, (row.pointsAwarded / maxPoints) * 100)];
+    return [Math.round(Math.min(100, (row.pointsAwarded / maxPoints) * 100))];
   });
   return {
     averagePercent:
@@ -235,8 +235,10 @@ export async function getFacultyQuizReport(
   // including persisted faculty authorization. A roster outage must not erase
   // successfully loaded, scoped submissions or quiz results. Missing/absent
   // learner counts still require the roster and remain unknown below.
-  const scopedAttempts=rosterScope
-    ?facultyReportCurrentRosterRows(attempts,rosterScope.roster):attempts;
+  // The assessment attempt query is already authorized for this delivery.
+  // Include prior learners who transferred out; the current roster controls
+  // only today's not-attempted denominator, not historical score evidence.
+  const scopedAttempts=attempts;
   const latestAttempts =
     latestQuizAttemptsByLearner(scopedAttempts);
   const learners = new Set(
@@ -257,7 +259,7 @@ export async function getFacultyQuizReport(
       attempt.score >= 0 &&
       attempt.score <= attempt.maxScore
         ? [
-            Math.min(100,(attempt.score/attempt.maxScore)*100),
+            Math.round(Math.min(100,(attempt.score/attempt.maxScore)*100)),
           ]
         : [],
   );
@@ -319,8 +321,9 @@ export async function getFacultyAssignmentReport(
   // The submission service independently authorizes the faculty and exact
   // delivery. Keep its already-authorized results available during a roster
   // outage; do not infer missing learners without a verified current roster.
-  const scopedSubmissions=rosterScope
-    ?facultyReportCurrentRosterRows(submissions,rosterScope.roster):submissions;
+  // Preserve authorized historical submissions after a learner transfers.
+  // Never infer who is currently missing without the current roster.
+  const scopedSubmissions=submissions;
   const submittedMemberships = new Set(
     scopedSubmissions.map(
       (submission) => submission.membershipId,
