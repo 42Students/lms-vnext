@@ -26,13 +26,13 @@ describe.skipIf(!enabled)("HR inline result read auth (isolated PG)",()=>{
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,title:"Inline "+nonce,
     description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
   const round=await createPlacementRound(tpo,job.id,{kind:"TEST",name:"Screen"});
-  await publishPreparedPlacementJob(tpo,job.id);
-  const identityUid="inline-"+nonce;
-  const recruiter=await createPersistedJobRecruiter({companyId:own.company.id,companyRelationshipId:own.relationship.id,
-   collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
-  const hr=(companyId:string,relationshipId:string,collegeId:string):RequestContext=>persistedRecruiterContext({
-   userId:recruiter.userId,identityUid,companyId,grantId:recruiter.grantId,collegeId,
-   organizationId:SEED_IDS.organization,companyRelationshipId:relationshipId});
+  await upsertJobEligibilityPolicy(tpo,job.id,{});
+  await publishPlacementJob(tpo,job.id);
+  const id=randomUUID();
+  const hr=(companyId:string,relationshipId:string,collegeId:string):RequestContext=>({
+   user:{id,identityUid:"inline-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
+   recruiter:{userId:id,companyId,companyName:"Fixture",title:null,status:"ACTIVE",
+    grants:[{id:randomUUID(),collegeId,organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:relationshipId}]}});
   const record=await getHrJobRead(hr(own.company.id,own.relationship.id,SEED_IDS.collegeA),job.id,{tab:"rounds",roundId:round.id});
   expect(projectRecruiterRoundResults(record.workspace.rounds,round.id,"ALL")?.counts.all).toBe(0);
   await expect(getHrJobRead(hr(other.company.id,other.relationship.id,SEED_IDS.collegeA),job.id,{tab:"rounds"}))
