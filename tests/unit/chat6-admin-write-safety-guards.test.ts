@@ -10,7 +10,8 @@ describe("GR-31 + GR-09 Super Admin write safety",()=>{
   expect(code).toContain("savingRef.current = true");
   expect(code).toContain("savingRef.current = false");
   expect(code).toContain("} catch {");
-  expect(code).toContain("Could not save branding. Check your connection and try again.");
+  expect(code).toContain('title:"Couldn't save branding"');
+  expect(code).toContain('description:"Check your connection and try again."');
   expect(code).toContain("disabled={saving}");
   expect(code).toContain("JSON.stringify({...clean(values),expectedVersion:version})");
   expect(code).toContain("setVersion(data.branding.version)");
