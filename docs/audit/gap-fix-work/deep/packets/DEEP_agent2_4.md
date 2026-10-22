@@ -18,7 +18,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-2-016-134  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-017-052  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [x] G2-2-017-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -38,6 +38,5 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 
 - G2-2-017-057 — OK: `drizzle/0212_learner_content_progress_attempts.sql:3-9` drops the obsolete membership/content unique index, creates a membership/content/attempt unique index, and adds the descending latest-attempt index; `src/db/schema/courses.ts:594,608-621` matches the attempt default and indexes. Legacy comparison: `docs/legacy-source/backend/src/main/resources/db/migration/V132__learner_content_progress_attempt.sql:19-32` (learner ID becomes scoped membership ID). Migration 0212 is registered in `drizzle/meta/_journal.json`. The earlier `0098` only introduced the attempt column and is correctly followed by 0212.
 
-- G2-4-018-074 — OK: `src/db/schema/projects.ts:229-240,268-270` documents archived versus soft-deleted workspace retention, distinct legacy recoverability, scoped restore, and child tombstone reconciliation; `src/db/schema/projects.ts:407,482,591` retains separate historical deletion timestamps for releases, sprints and tasks. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/ProjectDeliveryRepository.java:13-22` (BaseModel soft deletion / finder visibility). This row specifies the retention policy; it does not claim live ProjectDelivery data was migrated.
-- G2-4-018-074 — OK: `src/db/schema/projects.ts:1079` retains `deletedAt` per delivery and `src/db/schema/projects.ts:1103-1114` preserves project/version-scoped history; deleted records are excluded from live reads using the nullable soft-deletion marker, rather than physically removed. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/ProjectDeliveryRepository.java:13-22` filters `isDeleted=false`.
-- G2-13-031-098 — OK: `src/app/(authenticated)/tpo/reports/by-company/page.tsx:72-84` offers full-filtered and visible-page CSV separately. Legacy: `docs/legacy-source/frontend/src/pages/tpo/reports/[name].js:134-135` exports all filtered rows.
+
+- G2-4-017-017 — FIXED: `src/db/schema/projects.ts:246-262` permits the nullable template/version pair and preserves immutable `legacyTemplateSnapshot`; `drizzle/0313_chat14_template_less_legacy_projects.sql:1-9` drops both NOT NULL constraints and enforces pair consistency. Current `src/modules/projects/instance-service.ts` creation requires a published, assigned template, preserving the new-project rule while imported historic manual projects retain nulls. Legacy comparison: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:79-91` (nullable template ID and snapshot).
