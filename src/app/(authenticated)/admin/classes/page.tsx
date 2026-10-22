@@ -29,7 +29,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
   const raw = await searchParams;
   const selected = context.adminScope?.collegeId;
   const filter = collegeClassQuerySchema.safeParse({
-    q: raw.q, programId: raw.programId || undefined, cohortCode: raw.cohortCode || undefined, status: raw.status??"ACTIVE", page: raw.page, pageSize: raw.pageSize??"20",
+    q: raw["q"], programId: raw["programId"] || undefined, cohortCode: raw["cohortCode"] || undefined, status: raw["status"]??"ACTIVE", page: raw["page"], pageSize: raw["page"]Size??"20",
   });
   const loaded=selected && filter.success
     ? await Promise.allSettled([
