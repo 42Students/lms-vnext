@@ -220,8 +220,8 @@ describe("Section A: placement write/read integration boundaries", () => {
     const foreignCohortId = randomUUID();
     extraCohorts.push(foreignCohortId);
     await pool.query(`
-      INSERT INTO cohorts(id,program_id,name,code,start_period_id)
-      VALUES($1,$2,$3,$4,$5)
+      INSERT INTO cohorts(id,program_id,name,code,start_period_id,status)
+      VALUES($1,$2,$3,$4,$5,'ACTIVE')
     `, [foreignCohortId, own.program_id, "Other class "+foreignCohortId,
          "P2-"+foreignCohortId,period.rows[0]!.start_period_id]);
 
@@ -248,18 +248,20 @@ describe("Section A: placement write/read integration boundaries", () => {
   it("P-S2-06 applies persisted college response hours without crediting Sunday partial hours",async()=>{
     await pool.query(`
       INSERT INTO placement_college_rules (college_id,min_response_hours)
-      VALUES ($1,1) ON CONFLICT (college_id)
+      VALUES ($1,12) ON CONFLICT (college_id)
       DO UPDATE SET min_response_hours=excluded.min_response_hours
     `,[SEED_IDS.collegeA]);
     const row=(await pool.query<{min_response_hours:number}>(
       "SELECT min_response_hours FROM placement_college_rules WHERE college_id=$1",
       [SEED_IDS.collegeA],
     )).rows[0];
-    expect(row?.min_response_hours).toBe(1);
+    expect(row?.min_response_hours).toBe(12);
+    // Persisted policy enforces 12..168 hours. Sunday 23:30 IST earns no
+    // credit before midnight: the full 12 hours start at Monday 00:00 IST.
     const issuedAt=new Date("2026-10-18T18:00:00.000Z"); // Sunday 23:30 IST
     const deadline=minimumOfferResponseDeadline(issuedAt,row!.min_response_hours);
-    expect(deadline.toISOString()).toBe("2026-10-18T19:30:00.000Z");
-    expect(deadline.getTime()-issuedAt.getTime()).toBe(90*60_000);
+    expect(deadline.toISOString()).toBe("2026-10-19T06:30:00.000Z");
+    expect(deadline.getTime()-issuedAt.getTime()).toBe((12*60+30)*60_000);
   });
 
   it("T-S2-08 hides median/highest CTC when five offers belong to just one learner",async()=>{
@@ -280,10 +282,14 @@ describe("Section A: placement write/read integration boundaries", () => {
         const app=apps[i]!;
         await pool.query(`
           INSERT INTO placement_offers
-           (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at)
-          VALUES ($1,1,'OFFER','ISSUED','Privacy engineer',$2,$3,now()+interval '7 days')
+           (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at,released_at)
+          VALUES ($1,1,'OFFER','ISSUED','Privacy engineer',$2,$3,now()+interval '7 days',now())
         `,[app.id,500_000+i*10_000,SEED_IDS.facultyUser]);
       }
+      // One released offer may be accepted. A fifth offer from the same
+      // student must not become five distinct compensated learners.
+      await pool.query("UPDATE placement_offers SET status='ACCEPTED' WHERE application_id=$1",
+        [apps[0]!.id]);
       const pub=await getPublicPlacementStatistics(SEED_IDS.collegeA);
       expect(pub?.offers).toBe(5);
       expect(pub?.medianCtcInr).toBeNull();
