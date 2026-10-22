@@ -19,7 +19,7 @@ export function filterOwnRecruiterRequests<T extends RecruiterRequestListItem>(
   if(view==="LIVE")return false;
   if(view==="WAITING"&&!["REQUEST","SENT_BACK","DRAFT"].includes(row.status))return false;
   if(view==="CLOSED"&&!["REJECTED","CANCELLED"].includes(row.status))return false;
-  const title=typeof row.draft.title==="string"?row.draft.title:"";
+  const title=typeof row.draft["title"]==="string"?row.draft["title"]:"";
   return title.toLocaleLowerCase("en").includes(query);
  }).sort((a,b)=>b.createdAt.getTime()-a.createdAt.getTime()||a.id.localeCompare(b.id));
 }
