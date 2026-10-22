@@ -13,17 +13,19 @@ import { publicEnquiryTablesReady } from "./readiness";
 import { enquiryMacMatches } from "./otp-model";
 import { publicEnquiryNetworkTag,PublicEnquiryError } from "./send-service";
 
-/** Match legacy clean() before activity and notification content reaches persistence.
- * Persisted DB limits (name 120, company 160) still apply. */
+/** Accept legacy sanitized name (150) and company (200) limits. The
+ * public-enquiry snapshot and CRM lead have older, smaller column bounds:
+ * write those projections safely and preserve the complete cleaned values in
+ * the textual enquiry/audit record rather than discarding input silently. */
 function cleanRecruitText(value:string,max:number):string{
  return value.replace(/<[^>]*>/g," ").replace(/[<>\u0000-\u001f\u007f]/g," ")
   .replace(/\s+/g," ").trim().slice(0,max);
 }
 export const publicRecruitEnquirySchema=z.strictObject({
  email:publicRecruiterWorkEmailSchema.max(150),code:z.string().regex(/^[0-9]{6}$/),
- name:z.string().max(4096).transform(value=>cleanRecruitText(value,120))
+ name:z.string().max(4096).transform(value=>cleanRecruitText(value,150))
   .refine(value=>value.length>0,"Enter your name"),
- company:z.string().max(4096).transform(value=>cleanRecruitText(value,160)).default(""),
+ company:z.string().max(4096).transform(value=>cleanRecruitText(value,200)).default(""),
  mobile:normalizedTpoLeadPhoneSchema,
  hiringFor:z.string().max(8192).transform(value=>cleanRecruitText(value,1000)),
 });
@@ -75,12 +77,14 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
    .returning({id:placementPublicEnquiryChallenges.id});
   if(!consumed)throw new PublicEnquiryError("INVALID");
   const [enquiry]=await tx.insert(placementPublicRecruitEnquiries).values({
-   collegeId,challengeId:challenge.id,fullName:name,companyName:company,
-   message:hiringFor.length>=10?hiringFor:"Recruiter reached out through the public placements page.",
+   collegeId,challengeId:challenge.id,fullName:name.slice(0,120),companyName:company.slice(0,160),
+   message:(hiringFor.length>=10?hiringFor:"Recruiter reached out through the public placements page.")+
+    (name.length>120?" · Full recruiter name: "+name:"")+
+    (company.length>160?" · Full company: "+company:""),
   }).returning({id:placementPublicRecruitEnquiries.id});
   if(!enquiry)throw new PublicEnquiryError("INVALID");
   const [created]=await tx.insert(placementTpoLeads).values({
-   collegeId,name,emailNorm:email,phoneNorm:mobile,companyName:company,
+   collegeId,name,emailNorm:email,phoneNorm:mobile,companyName:company.slice(0,150),
    source:"COMPANY_REACHED_OUT",
   }).onConflictDoNothing().returning({id:placementTpoLeads.id});
   const [lead]=created?[created]:await tx.select({id:placementTpoLeads.id})
@@ -90,7 +94,9 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
   await tx.insert(placementTpoLeadActivities).values({
    collegeId,leadId:lead.id,type:"SYSTEM",isSystem:true,
    note:"Recruiter reached out through public placements"+
-    (hiringFor?" · "+hiringFor.slice(0,900):""),
+    (hiringFor?" · "+hiringFor.slice(0,900):"")+
+    (company.length>150?" · Full company: "+company:"")+
+    (name.length>120?" · Full recruiter name: "+name:""),
    createdAt:now,
   });
   const [event]=await tx.insert(activityEvents).values({
@@ -98,7 +104,9 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
    eventType:"RECRUIT_FROM_US",subjectType:"placement_tpo_lead",
    subjectId:lead.id,subjectLabel:"Recruiter enquiry",
    summary:name+" wants to recruit from you",
-   metadata:{leadId:lead.id,enquiryId:enquiry.id},
+   metadata:{leadId:lead.id,enquiryId:enquiry.id,
+    ...(name.length>120?{fullRecruiterName:name}:{}),
+    ...(company.length>150?{fullCompanyName:company}:{})},
   }).returning({id:activityEvents.id});
   if(!event)throw new PublicEnquiryError("INVALID");
   const recipients=await tx.selectDistinct({userId:collegeMemberships.userId})
