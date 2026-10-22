@@ -2,12 +2,12 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-4-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/HR-BREAK-chat19-report-joined.test.ts` (1 failing)
+- [x] `tests/unit/HR-BREAK-chat19-report-joined.test.ts` (1 failing)
 - [x] `tests/unit/UX-teacher-shared-surfaces.test.ts` (1 failing)
-- [ ] `tests/unit/chat19-college-cross-audit.test.ts` (2 failing)
+- [x] `tests/unit/chat19-college-cross-audit.test.ts` (2 failing)
 - [x] `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` (2 failing)
 - [x] `tests/unit/chat7-superadmin-course-tenant-bulk.test.ts` (1 failing)
-- [ ] `tests/unit/graceful-raw-error-scan.test.ts` (1 failing)
+- [x] `tests/unit/graceful-raw-error-scan.test.ts` (1 failing)
 - [x] `tests/unit/tpo-team-legacy-people-chat2.test.ts` (1 failing)
 
 ## Failures (from CI log)
@@ -202,3 +202,7 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 - `tpo-team-legacy-people-chat2.test.ts`: FIXED with explicit people/members/roster branch assertion; `src/app/(authenticated)/tpo/team/page.tsx` redirects those bookmarks to scoped Settings > People while conversation deep links remain under Messages (5628cf3).
 
 - `chat7-superadmin-course-tenant-bulk.test.ts`: FIXED outdated all-or-none selected-length requirement to assert explicit unauthorized per-course reporting and fail-closed show policy; legacy per-course partial handling is preserved in `src/modules/courses/super-admin-course-bulk-visibility.ts` (303a364).
+
+- `graceful-raw-error-scan.test.ts`: FIXED product action via `useGuardedAction` in `src/components/tpo/tpo-notice-delivery-retry.tsx` (2082ec3), preserving failure messages and preventing double-submit.
+- `HR-BREAK-chat19-report-joined.test.ts`: FIXED formatting-dependent test to assert multiline scoped college membership predicate (67ed320); no removal of tenant scope or historical rows.
+- `chat19-college-cross-audit.test.ts`: FIXED assertions to follow actual composed `ElectiveEligibleSelection` child where the mobile DataTable, labeled selection checkbox and ScrollCue are implemented (4939cd8).
