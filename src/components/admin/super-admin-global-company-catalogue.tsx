@@ -109,7 +109,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
    {data.query.page>1?<Link href={pageUrl(data.query.page-1)} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Previous</Link>:null}
    {data.query.page<data.totalPages?<Link href={pageUrl(data.query.page+1)} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Next</Link>:null}
   </nav>
-  <p className="text-xs text-muted-foreground">Only this page of up to 10 authorized global companies is exported. Select a college scope before reviewing a merge; private college CRM details are not included.</p>
+  <p className="text-xs text-muted-foreground">Only this page of up to {data.cap} authorized global companies is exported. Select a college scope before reviewing a merge; private college CRM details are not included.</p>
   <Link href="/admin/placements" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">← Placement operations</Link>
  </div>;
 }
