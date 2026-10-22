@@ -376,6 +376,7 @@ export async function addCollegeTermMapping(context: RequestContext, raw: unknow
         programTermId: term.id, courseId: course.id, type: input.type,
         credits: input.credits, displayOrder: nextTermCourseOrder(rows.map(x => x.displayOrder)),
       }).returning();
+      if (!inserted) throw new CollegeTermMappingError("TERM_COURSE_NOT_FOUND");
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_SEMESTER_UPDATED,
         collegeId: membership.collegeId, organizationId: membership.organizationId,
@@ -431,7 +432,10 @@ export async function updateCollegeTermMapping(
       // without moving the row must use its actual position in this term.
       const position = input.position ?? before.findIndex(row => row.id === mappingId) + 1;
       const credits = input.credits ?? current.credits;
-      const { type, isMandatory } = termCourseEditFields(current, input);
+      const { type, isMandatory } = termCourseEditFields(current, {
+         ...(input.type !== undefined ? { type: input.type } : {}),
+         ...(input.isMandatory !== undefined ? { isMandatory: input.isMandatory } : {}),
+       });
       if (position > before.length)
         throw new CollegeTermMappingError("TERM_COURSE_POSITION_INVALID");
       const order = reorderTermCourseIds(before.map(row => row.id), mappingId, position);
@@ -509,6 +513,7 @@ export async function removeCollegeTermMapping(
       // show TERM_COURSE_IN_USE in the caller's confirmation workflow.
       if (activeOffering) throw new CollegeTermMappingError("TERM_COURSE_IN_USE");
       const [removed] = await tx.delete(programTermCourses).where(eq(programTermCourses.id, row.id)).returning();
+       if (!removed) throw new CollegeTermMappingError("TERM_COURSE_NOT_FOUND");
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_SEMESTER_UPDATED,
         collegeId: member.collegeId, organizationId: member.organizationId,
