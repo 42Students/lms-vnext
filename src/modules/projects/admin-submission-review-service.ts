@@ -146,7 +146,8 @@ export async function reviewAdminProjectSubmission(
   const [review]=await tx.insert(projectSubmissionReviews).values({
    projectId:scope.project.id,submissionId,decision:input.action,
    feedback:input.feedback??null,reviewedByUserId:ctx.user.id,
-   reviewedByMembershipId:ctx.membership?.collegeId===scope.collegeId?ctx.membership.id:null,
+   reviewedByMembershipId:ctx.membership&&ctx.membership.collegeId===scope.collegeId
+     ?ctx.membership.id:null,
    reviewedAt:now,
   }).returning();
   if(!review)throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");

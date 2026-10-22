@@ -636,7 +636,7 @@ export async function updatePlacementJob(
       const requested = input.jobTypeLabel.trim().replace(/\s+/g, " ");
       if (current.jobTypeLabel?.toLowerCase() === requested.toLowerCase()) {
         nextTypeLabel = current.jobTypeLabel;
-        nextCountsAsPlaced = current.countsAsPlaced;
+        nextCountsAsPlaced = current.countsAsPlaced ?? undefined;
       } else {
         const builtin = TPO_BUILTIN_JOB_TYPES.find(
           type => type.label.toLowerCase() === requested.toLowerCase(),
@@ -1201,7 +1201,7 @@ export async function archivePlacementJob(
         version:sql`${placementJobs.version}+1`})
       .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,locked.status)))
       .returning();
-    if(!archived)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_ARCHIVABLE");
+    if(!archived)throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
     // College-admin and TPO archives now have the same durable, transactional
     // source event and learner notice behavior as the Super Admin archive.
     // Historical applications/offers remain; no speculative email is sent.

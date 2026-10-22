@@ -190,7 +190,7 @@ export async function transitionMentorProjectSprint(
     }
     const status=input.action==="COMPLETE"?"COMPLETED":"ACTIVE";
     const now=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));
-    const actorMembershipId=context.membership?.collegeId===scope.collegeId?
+    const actorMembershipId=context.membership&&context.membership.collegeId===scope.collegeId?
       context.membership.id:null;
     const [updated]=await tx.update(projectSprints)
       .set({
