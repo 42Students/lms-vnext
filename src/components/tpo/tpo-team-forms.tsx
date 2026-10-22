@@ -73,8 +73,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  async function create(event:React.FormEvent<HTMLFormElement>){
   event.preventDefault();if(pending.current||busy||!recipient||!topic.trim()||
-   ((kind==="DRIVE"||kind==="COMPANY")&&!/^[0-9a-f-]{36}$/i.test(contextId))||
-)return;
+   ((kind==="DRIVE"||kind==="COMPANY")&&!/^[0-9a-f-]{36}$/i.test(contextId)))return;
   pending.current=true;setBusy(true);setError("");
   try{
    if(!createKey.current){createKey.current=crypto.randomUUID();
