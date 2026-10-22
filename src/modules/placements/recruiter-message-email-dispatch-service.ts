@@ -52,7 +52,9 @@ export async function dispatchRecruiterUnreadMessageDigests(
   readinessReason:"SCHEMA_NOT_READY",operatorAlert:"Recruiter email bridge database setup is incomplete"};
  const due=await db.execute<Candidate>(sql`
   select t.id as thread_id,t.recruiter_user_id,u.email as recipient_email,
-    u.display_name as recipient_name,t.college_id,
+    coalesce(nullif(btrim(u.legacy_first_name), ''),
+      nullif(split_part(btrim(u.display_name), ' ', 1), ''), 'there') as recipient_name,
+    t.college_id,
     c.name as college_name,company.name as company_name,
     min(m.created_at) as first_unread_at,max(m.created_at) as last_unread_at
   from placement_tpo_message_threads t
@@ -73,7 +75,8 @@ export async function dispatchRecruiterUnreadMessageDigests(
   where u.email is not null and length(trim(u.email))>0 and (notified.id is null or
     m.created_at>notified.created_at or
     (m.created_at=notified.created_at and m.id>notified.id))
-  group by t.id,t.recruiter_user_id,u.email,u.display_name,t.college_id,c.name,company.name
+  group by t.id,t.recruiter_user_id,u.email,u.display_name,u.legacy_first_name,
+    t.college_id,c.name,company.name
   order by min(m.created_at),t.id limit 200
  `);
  let sent=0,failed=0;
