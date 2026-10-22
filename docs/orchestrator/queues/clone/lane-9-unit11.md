@@ -4,7 +4,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [x] `tests/unit/PROJ-BREAK-chat9-admin-IST-dates.test.ts` (2 failing)
 - [x] `tests/unit/chat12-verify2-hiring-ist-boundary.test.ts` (1 failing)
-- [ ] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing)
+- [x] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing)
 - [ ] `tests/unit/chat6-super-admin-people-contact-redaction.test.tsx` (2 failing)
 - [ ] `tests/unit/chat9-super-admin-orphan-routes.test.ts` (1 failing)
 - [ ] `tests/unit/learner-placements-chat7-schedule-surface.test.ts` (1 failing)
@@ -197,3 +197,5 @@ AssertionError: expected 'import { GracefulPageLoading } from "…' to contain '
 - `PROJ-BREAK-chat9-admin-IST-dates.test.ts`: FIXED on `chatgpt/chat-6-b` in `1395b72d09315dff174f14c3d353133f47fdc7f1`; scoped export now includes the same IST date as workspace cards. No tests executed locally.
 
 - `chat12-verify2-hiring-ist-boundary.test.ts`: already corrected on chat-6 branch: Dec 31 IST exclusive next-day boundary is 2026-12-31T18:30:00.000Z, not 2027-01-01T18:30Z. No local execution.
+
+- `chat2-team-college-admin-access.test.ts`: FIXED in `6ffeff7a223f6cdbf7c52477246f798db84ae604`, stale `/tpo/settings/team` assertion updated to guarded canonical `/tpo/settings?tab=team` route. Not executed locally.
