@@ -76,7 +76,7 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
     try {
       const grant = await command({
         action: "INITIATE", contentType: "application/pdf", sizeBytes: file.size,
-      }) as UploadGrant;
+      }) as unknown as UploadGrant;
       if (!grant.uploadUrl.startsWith("https://")) {
         throw new Error("Secure upload is unavailable.");
       }
