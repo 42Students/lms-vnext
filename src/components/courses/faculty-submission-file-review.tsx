@@ -28,6 +28,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
   const [preview, setPreview] = useState<{fileId:string;name:string;url:string;expiresAt:number}|null>(null);
   const loadingRef = useRef<AbortController | null>(null);
   const grantRef = useRef<AbortController | null>(null);
+  const downloadRef=useRef(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -54,7 +55,9 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
   }, [submissionId]);
 
   async function open(file: SubmissionFile) {
+    if(downloadRef.current)return;
     if (workingId || !fileStatusDescriptor(file.status).usable) return;
+    downloadRef.current = true;
     const controller = new AbortController();
     grantRef.current = controller;
     setWorkingId(file.id);
@@ -91,6 +94,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
     } catch (cause) {
       if (!controller.signal.aborted) setError("Unable to load this submitted file");
     } finally {
+      downloadRef.current = false;
       grantRef.current = null;
       setWorkingId(null);
     }

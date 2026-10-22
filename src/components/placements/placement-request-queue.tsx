@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,6 +68,7 @@ export function PlacementRequestQueue({
   const [validationError,setValidationError]=useState<Record<string,string>>({});
   const [pendingId, setPendingId] =
     useState<string | null>(null);
+  const decisionRef=useRef(false);
   const [notes, setNotes] = useState<
     Record<string, string>
   >({});
@@ -76,6 +77,7 @@ export function PlacementRequestQueue({
     item: PlacementRequestQueueItem,
     action: "APPROVE" | "REJECT",
   ) {
+    if(decisionRef.current)return;
     if(pendingId)return;
     const note = notes[item.id]?.trim()??"";
     if (action === "REJECT" && note.length < 3) {
@@ -89,6 +91,7 @@ export function PlacementRequestQueue({
       return;
     }
     setValidationError(prev=>({...prev,[item.id]:""}));
+    decisionRef.current = true;
     setPendingId(item.id);
     try {
       const response = await fetch(
@@ -142,6 +145,7 @@ export function PlacementRequestQueue({
             : "Please try again.",
       });
     } finally {
+      decisionRef.current = false;
       setPendingId(null);
     }
   }

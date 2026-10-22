@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
@@ -37,6 +37,7 @@ export function FacultyAssignmentResourceDraftFields({
  onPendingChange:(pending:boolean)=>void;
 }){
  const [uploading,setUploading]=useState(false);
+ const uploadRef=useRef(false);
  const [message,setMessage]=useState<string|null>(null);
  const [error,setError]=useState<string|null>(null);
  const blocked=disabled||uploading;
@@ -57,6 +58,7 @@ export function FacultyAssignmentResourceDraftFields({
   next.splice(destination,0,item);onChange(next);
  }
  async function upload(index:number,file:File,kind:"PDF"|"FILE"){
+  if(uploadRef.current)return;
   if(blocked)return;
   const mime=file.type.toLowerCase();
   if(!file.size||file.size>50*1024*1024||
@@ -64,6 +66,7 @@ export function FacultyAssignmentResourceDraftFields({
    setError("Choose a supported, non-empty "+(kind==="PDF"?"PDF":"file")+
      " no larger than 50 MB.");return;
   }
+  uploadRef.current = true;
   setError(null);setMessage(null);setUploading(true);onPendingChange(true);
   try{
    const endpoint="/api/courses/faculty/assignments/"+
@@ -91,7 +94,7 @@ export function FacultyAssignmentResourceDraftFields({
    setMessage("Private file uploaded. Save after the malware scan completes.");
   }catch(caught){
    setError(caught instanceof Error?caught.message:"Could not upload the file.");
-  }finally{setUploading(false);onPendingChange(false);}
+  }finally{uploadRef.current = false;setUploading(false);onPendingChange(false);}
  }
  return <fieldset className="mt-4 min-w-0 space-y-3 border-t border-border pt-4">
   <legend className="text-sm font-semibold text-foreground">
