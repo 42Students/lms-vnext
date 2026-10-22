@@ -31,10 +31,13 @@ export async function editGlobalCompany(context:RequestContext,raw:unknown){
   const [saved]=await tx.update(placementCompanies).set({
    name:input.name, websiteUrl:input.website, industry:input.industry,
    about:input.about, logoPublicUrl:input.logoPublicUrl,
+   version:sql`${placementCompanies.version} + 1`,
    updatedAt:sql`greatest(clock_timestamp(), date_trunc('milliseconds', ${placementCompanies.updatedAt}) + interval '1 millisecond')`,
   }).where(and(eq(placementCompanies.id,current.id),
+    eq(placementCompanies.version,current.version),
     sql`date_trunc('milliseconds', ${placementCompanies.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`))
-   .returning({id:placementCompanies.id,updatedAt:placementCompanies.updatedAt});
+   .returning({id:placementCompanies.id,updatedAt:placementCompanies.updatedAt,
+    version:placementCompanies.version});
   if(!saved)throw new Error("Company details changed. Refresh before saving.");
   await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_UPDATED,
@@ -43,7 +46,8 @@ export async function editGlobalCompany(context:RequestContext,raw:unknown){
    metadata:{oldName:current.name,newName:input.name,
     changedFields:["name","website","industry","about","logoPublicUrl"]},
   });
-  return {id:saved.id,updatedAt:saved.updatedAt.toISOString()};
+  return {id:saved.id,updatedAt:saved.updatedAt.toISOString(),
+   version:saved.version};
  });
 }
 
