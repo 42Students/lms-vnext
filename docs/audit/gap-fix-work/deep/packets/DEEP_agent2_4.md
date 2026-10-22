@@ -7,7 +7,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-17-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-010-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-19-010-068  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-19-010-068  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [x] G2-19-018-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-006-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-006-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
@@ -39,3 +39,4 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 
 - **G2-19-018-062 FIXED** — src/db/schema/lecture-halls.ts: legacy deptId=0 now maps to null; ordinal map and tenant-scoped UUID crosswalk checked against docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LectureHall.java and enums/RoomType.java. Commit 1261805e.
 - **G2-4-018-046 FIXED** — src/db/schema/projects.ts: legacy revision count is separate from submission ordinal and optimistic token; one current snapshot imports without fabricated history, and prior revisions require independent audit records. Legacy docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java. Commit 9b7696ad.
+- G2-19-010-068 — OK: `src/db/schema/tpo-crm.ts:346-378` retains legacy recipient IDs and historical SHA-256 digests; `src/modules/messaging/tpo-campaign-unsubscribe-service.ts:21-68` resolves opaque legacy tokens by SHA-256 digest, locks the matching migrated recipient and applies tenant/lead-scoped opt-out without trusting numeric IDs. Legacy source: `docs/legacy-source/backend/src/main/resources/db/migration/V214__engage_email_campaigns.sql:20-29`. Requires the original historical digest to have been imported into the mapped recipient row.
