@@ -53,7 +53,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_attendance_faculty-schedule-mutation-service.ts.md` (edit src/modules/attendance/faculty-schedule-mutation-service.ts; 9 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_announcements_announcement-feed.tsx.md` (edit src/components/announcements/announcement-feed.tsx; 9 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_log-alerts_client-report.ts.md` (edit src/modules/log-alerts/client-report.ts; 8 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-20_r2-storage-utils.md.md` (new; 8 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-20_r2-storage-utils.md.md` (new; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_log-alerts_scheduler.ts.md` (edit src/modules/log-alerts/scheduler.ts; 7 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_groups_service.ts.md` (edit src/modules/groups/service.ts; 7 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_storage_file-lifecycle.ts.md` (edit src/modules/storage/file-lifecycle.ts; 6 findings; best P2)
