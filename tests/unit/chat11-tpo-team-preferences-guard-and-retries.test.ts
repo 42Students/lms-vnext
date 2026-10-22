@@ -51,7 +51,8 @@ describe("TPO-settings-audit-PREF-TEAM-01 tenant-safe personal team preferences"
   expect(source).toContain("eq(placementTpoInternalReads.membershipId,member.id)");
   expect(source).toContain('for("share")');
   expect(source).toContain('for("update")');
-  expect(source).toContain("if(!changed)return {following,muted:!!mutedAt}");
+  expect(source).toContain("if(!changed)return {following,muted:!!mutedAt,");
+  expect(source).toContain("notificationEnabled:tpoTeamThreadNotificationEnabled(following,!!mutedAt)");
   expect(source).toContain("onConflictDoUpdate");
  });
 });
