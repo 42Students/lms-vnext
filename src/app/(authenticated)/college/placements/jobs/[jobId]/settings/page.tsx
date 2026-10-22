@@ -4,6 +4,7 @@ import {Tabs} from "@/components/ui/tabs";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {PageHeader} from "@/components/ui/page-header";
 import {Alert} from "@/components/ui/alert";
 import {getCollegeDriveOverview} from "@/modules/placements/college-drive-overview-service";
@@ -36,6 +37,13 @@ export default async function CollegeDriveSettingsPage({
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
     </div>;
   }
+  const access = await resolveOptionalModuleAccess(context);
+  if (!access.placements.enabled) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Settings"/>
+    <ErrorState title="Placements unavailable"
+      description="Placements is turned off for this college. Ask a Super Admin to enable Placements in Module Access before editing job settings."
+      action={<Link href="/college/module-access" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View college module access</Link>}/>
+  </div>;
   const {jobId}=await params;
   const base="/college/placements/jobs/"+encodeURIComponent(jobId);
   const rawReturn=(await searchParams).returnTo;
