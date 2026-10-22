@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [ ] G2-8-020-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [x] G2-8-020-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
-- [ ] G2-8-020-076  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [x] G2-8-020-076  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [x] G2-8-020-078  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [x] G2-8-027-007  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [x] G2-8-027-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
@@ -31,3 +31,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - OK G2-11-004-064 — `src/components/hr/hr-drive-draft-form.tsx:333-368,401-434` sends the request to the authenticated recruiter drive-requests endpoint, requires a durable `request.id` before success, distinguishes `approvedJobId` from pending approval, retains the draft on ambiguous/error responses and maps field validation, forbidden and stale states into visible feedback. This replaces the legacy per-college `jobId`/`status` receipt in `docs/legacy-source/frontend/src/pages/recruiter/drives/new.js:266-299` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterPlanDriveController.java:47` with a request ID plus approved-job ID, without treating HTTP success alone as business success.
 
 - FIXED G2-8-031-067 — commit `cd1e4d19b3e3edbc9f469158205dbeca84157243`, `docs/architecture/legacy-admin-audit-mapping.md:1-27`: explicit legacy-to-vNext actor role, original action/entity, scope IDs, privacy-safe IP/user-agent, payload and timezone conversion contract, with import validation gates. The destination fields and indexes already exist in `src/db/schema/activity.ts:19-91`. Source: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AdminAuditLog.java:12-61`. Historical import itself remains unverified and must not be represented as complete.
+
+- FIXED G2-8-020-076 — commit `96ca1126b3818379503d57aab158a888aa53a46b`, `docs/architecture/legacy-course-metadata-mapping.md:1-24` records a field-by-field preservation/retirement disposition for all 14 fields; destination `src/db/schema/courses.ts:37-69`, legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/MetaData.java:20-34`. This closes the documentation rationale requirement, not unimplemented historic conversion or media cutover.
