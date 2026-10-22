@@ -5,7 +5,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/UX-kit-projects-hardening-chat17.test.tsx` (2 failing)
 - [x] `tests/unit/chat16-mentor-calendar-status-r5.test.ts` (2 failing)
 - [x] `tests/unit/chat3-legacy-course-short-title-limit.test.ts` (2 failing)
-- [ ] `tests/unit/chat7-final-sprint-superadmin-course-visibility.test.ts` (1 failing)
+- [x] `tests/unit/chat7-final-sprint-superadmin-course-visibility.test.ts` (1 failing)
 - [ ] `tests/unit/college-placement-student-resume-access.test.ts` (1 failing)
 - [ ] `tests/unit/super-admin-legacy-wording.test.ts` (1 failing)
 
