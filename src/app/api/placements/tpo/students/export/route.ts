@@ -8,7 +8,8 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { exportTpoStudentsCsv } from "@/modules/placements/tpo-students-csv";
 import {
   getTpoStudentsIntelligence,
-  tpoStudentsQuerySchema,
+  tpoStudentsQueryObjectSchema,
+  tpoStudentsRangeRefinement,
 } from "@/modules/placements/tpo-students-service";
 
 export const runtime = "nodejs";
@@ -37,12 +38,13 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
 
     // Export has no caller-controlled page, page size or collegeId.
-    const filters = tpoStudentsQuerySchema
+    const filters = tpoStudentsQueryObjectSchema
       .omit({
         collegeId: true,
         page: true,
         pageSize: true,
       })
+      .superRefine(tpoStudentsRangeRefinement)
       .parse(
         Object.fromEntries(url.searchParams.entries()),
       );

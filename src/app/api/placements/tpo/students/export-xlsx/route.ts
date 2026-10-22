@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {getTpoStudentsIntelligence,tpoStudentsQuerySchema} from "@/modules/placements/tpo-students-service";
+import {getTpoStudentsIntelligence,tpoStudentsQueryObjectSchema,tpoStudentsRangeRefinement} from "@/modules/placements/tpo-students-service";
 import {exportTpoStudentsXlsx} from "@/modules/placements/tpo-students-xlsx";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 export async function GET(request:Request){
@@ -18,7 +18,7 @@ export async function GET(request:Request){
   delete raw.ids;delete raw.columns;delete raw.selected;delete raw.view;
   delete raw.student;delete raw.page;delete raw.pageSize;
   if(raw.q!==undefined){if(raw.search!==undefined)return Response.json({error:"Ambiguous search"},{status:400});raw.search=raw.q;delete raw.q;}
-  const filters=tpoStudentsQuerySchema.omit({collegeId:true,page:true,pageSize:true}).parse(raw);
+  const filters=tpoStudentsQueryObjectSchema.omit({collegeId:true,page:true,pageSize:true}).superRefine(tpoStudentsRangeRefinement).parse(raw);
   const result=await getTpoStudentsIntelligence(ctx,{...filters,collegeId:ctx.membership.collegeId,page:1,pageSize:25},{includeExportRows:true});
   const matched=result.exportRows??[];
   const idsList=ids==="ALL"?null:ids?.split(",").filter(Boolean)??null;

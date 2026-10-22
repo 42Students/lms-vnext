@@ -97,7 +97,8 @@ const paginationFields = {
   pageSize: z.coerce.number().int().min(1).max(100).default(25),
 };
 
-export const tpoStudentsQuerySchema = z
+/** Unrefined object form: routes derive variants with .omit (Zod 4 forbids that on refined schemas). */
+export const tpoStudentsQueryObjectSchema = z
   .object({
     collegeId: uuid,
     // Legacy /table?everyone=true includes all college learners, including
@@ -150,15 +151,19 @@ export const tpoStudentsQuerySchema = z
     q: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
-  .strict()
-  .superRefine((value,ctx)=>{
+  .strict();
+
+/** Range checks shared by the list query and its export variants. */
+export function tpoStudentsRangeRefinement(value:{minCgpa?:number|undefined;maxCgpa?:number|undefined;minApplications?:number|undefined;maxApplications?:number|undefined;minOffers?:number|undefined;maxOffers?:number|undefined},ctx:z.RefinementCtx){
     if(value.minCgpa!==undefined&&value.maxCgpa!==undefined&&value.minCgpa>value.maxCgpa)
      ctx.addIssue({code:"custom",path:["maxCgpa"],message:"CGPA upper bound must be at least the lower bound"});
     if(value.minApplications!==undefined&&value.maxApplications!==undefined&&value.minApplications>value.maxApplications)
      ctx.addIssue({code:"custom",path:["maxApplications"],message:"Maximum applications must be at least the minimum"});
     if(value.minOffers!==undefined&&value.maxOffers!==undefined&&value.minOffers>value.maxOffers)
      ctx.addIssue({code:"custom",path:["maxOffers"],message:"Maximum offers must be at least the minimum"});
-  });
+}
+
+export const tpoStudentsQuerySchema = tpoStudentsQueryObjectSchema.superRefine(tpoStudentsRangeRefinement);
 
 export const tpoStudentRequestsQuerySchema = z
   .object({
