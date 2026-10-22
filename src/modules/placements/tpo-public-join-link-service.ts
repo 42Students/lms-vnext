@@ -22,6 +22,23 @@ import {
 } from "./tpo-public-join-link-model";
 
 type Scope = "COMPANY" | "COLLEGE";
+type LinkState="STORAGE_UNAVAILABLE"|"NOT_CREATED"|"ACTIVE"|"EXPIRED"|"REVOKED";
+/** Legacy CompanyJoin engagement names are presentation aliases, not
+ * another bearer-secret read. Unavailable storage must never imply 0 joins. */
+function legacyLinkEngagement(row:{
+ opensCount:number;joinsCount:number;createdAt:Date;enabled:boolean;
+}|null){
+ return {hasLink:row!==null,
+  opens:row?.opensCount??0,joins:row?.joinsCount??0,
+  createdAt:row?.createdAt.toISOString()??null,enabled:row?.enabled??false};
+}
+/** This is a deliberately time-bounded invitation, unlike historic links.
+ * UTC anniversary avoids day-length ambiguities and date overflow. */
+export function publicJoinRenewalDeadline(now:Date):Date{
+ const date=new Date(Date.UTC(now.getUTCFullYear()+1,now.getUTCMonth(),now.getUTCDate()));
+ if(!Number.isFinite(date.getTime()))throw new RangeError("Cannot calculate invite renewal");
+ return date;
+}
 export class TpoPublicJoinLinkError extends Error {
   constructor(readonly code:
     "NOT_REGISTERED" | "NOT_FOUND" | "DOMAIN_REQUIRED" | "ALREADY_EXISTS" | "STALE") {
@@ -78,13 +95,15 @@ async function findCompanyDomain(collegeId: string, companyId: string) {
 /** No original token is persisted or re-displayed on a subsequent read. */
 export async function getTpoPublicJoinLinkStatus(
   context: RequestContext, scope: Scope, companyId?: string,
-): Promise<TpoPublicJoinLinkStatus & {postDirect:boolean;linkRecovery:"REPLACE_REQUIRED"|"NONE"}> {
+): Promise<TpoPublicJoinLinkStatus & {postDirect:boolean;linkRecovery:"REPLACE_REQUIRED"|"NONE";linkState:LinkState;legacyEngagement:ReturnType<typeof legacyLinkEngagement>;recoveryNotice:string|null}> {
   const { college } = await requireTpoLinkScope(context);
   const domain = scope === "COMPANY"
     ? await findCompanyDomain(college.id, companyId ?? "")
     : null;
-  if (!await publicJoinTablesReady()) return { ready: false, domain, link: null,
-    postDirect:false,linkRecovery:"NONE" };
+  if (!await publicJoinTablesReady()) return { ready:false, domain, link:null,
+    postDirect:false,linkRecovery:"NONE",linkState:"STORAGE_UNAVAILABLE",
+    legacyEngagement:legacyLinkEngagement(null),
+    recoveryNotice:"Public link storage is not available. This is not a missing or expired link." };
   const [row] = await getDb().select({
     id: placementPublicJoinLinks.id,createdAt: placementPublicJoinLinks.createdAt,
     opensCount: placementPublicJoinLinks.opensCount,joinsCount: placementPublicJoinLinks.joinsCount,
@@ -94,7 +113,27 @@ export async function getTpoPublicJoinLinkStatus(
     .where(and(linkFilter(college.id, scope, companyId),
       gt(placementPublicJoinLinks.expiresAt, new Date())))
     .orderBy(desc(placementPublicJoinLinks.createdAt)).limit(1);
-  return { ready: true, domain,
+  // Distinguish an uncreated link from an expired or deliberately revoked
+  // one. Only the active record supplies status/counters, never the old token.
+  const [lastKnown]=row?[]:await getDb().select({
+    revokedAt:placementPublicJoinLinks.revokedAt,
+    expiresAt:placementPublicJoinLinks.expiresAt,
+  }).from(placementPublicJoinLinks).where(and(
+    eq(placementPublicJoinLinks.collegeId,college.id),
+    eq(placementPublicJoinLinks.scope,scope),
+    scope==="COMPANY"&&companyId
+      ?eq(placementPublicJoinLinks.companyId,companyId)
+      :isNull(placementPublicJoinLinks.companyId),
+  )).orderBy(desc(placementPublicJoinLinks.createdAt)).limit(1);
+  const state:LinkState=row?"ACTIVE":lastKnown
+    ?lastKnown.revokedAt?"REVOKED":"EXPIRED":"NOT_CREATED";
+  return { ready: true, domain,linkState:state,
+    legacyEngagement:legacyLinkEngagement(row??null),
+    recoveryNotice:row
+      ?"The old link cannot be recovered. Making a new link stops the previous invitation; copy the replacement when shown."
+      :lastKnown
+      ?"This link is no longer valid. Make a new link to invite recruiters."
+      :null,
     // Only a hash is stored. Do not pretend the original token can be recovered;
     // show the operator a rotation action and copy the replacement once.
     linkRecovery:row?"REPLACE_REQUIRED":"NONE",
@@ -158,7 +197,7 @@ export async function changeTpoPublicJoinLink(context: RequestContext, raw: unkn
       tokenHash: createHash("sha256").update(token).digest("hex"),
       // This vNext table requires an expiry. Use a real annual renewal period,
       // never an arbitrary year-9999 sentinel presented as a permanent link.
-      expiresAt: new Date(Date.UTC(now.getUTCFullYear()+1,now.getUTCMonth(),now.getUTCDate(),0,0,0)),
+      expiresAt:publicJoinRenewalDeadline(now),
       // Never grant direct posting merely by creating or rotating a URL.
       postWithoutApproval:false,
     }).returning({ id: placementPublicJoinLinks.id, createdAt: placementPublicJoinLinks.createdAt,opensCount:placementPublicJoinLinks.opensCount,joinsCount:placementPublicJoinLinks.joinsCount });
@@ -176,7 +215,9 @@ export async function changeTpoPublicJoinLink(context: RequestContext, raw: unkn
       path: publicJoinLinkPath(input.scope, token),
       // Caller adds trusted app origin before copying the shareable link.
       sharePath: publicJoinLinkPath(input.scope, token),
-      shareWarning: "Copy it now: for safety it is shown only once. It expires after approximately one year; replace it to renew.",
+      shareWarning:input.action==="REPLACE"
+       ?"Copy it now: for safety it is shown only once. The previous link no longer works. This invitation expires after one year."
+       :"Copy it now: for safety it is shown only once. This invitation expires after one year.",
       status: { ready: true, domain, link: { id:link.id,createdAt: link.createdAt.toISOString(),opensCount:link.opensCount,joinsCount:link.joinsCount,enabled:true } },
     };
   });
@@ -215,9 +256,49 @@ export async function setTpoPublicJoinLinkEnabled(context:RequestContext,raw:unk
  });
 }
 
+/** Update posting permission without changing the link or optional omitted
+ * fields. Null is legacy "leave unchanged", not automatic permission. */
+export async function setTpoPublicJoinPostingPolicy(context:RequestContext,raw:unknown){
+ const input=tpoPublicJoinPostingPolicySchema.parse(raw);
+ const {college,membership}=await requireTpoLinkScope(context);
+ if(!await publicJoinTablesReady())throw new TpoPublicJoinLinkError("NOT_REGISTERED");
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  const filter=linkFilter(college.id,input.scope,input.scope==="COMPANY"?input.companyId:undefined);
+  const [row]=await tx.select({
+   id:placementPublicJoinLinks.id,postDirect:placementPublicJoinLinks.postWithoutApproval,
+  }).from(placementPublicJoinLinks)
+   .where(and(filter,gt(placementPublicJoinLinks.expiresAt,new Date())))
+   .orderBy(desc(placementPublicJoinLinks.createdAt)).for("update").limit(1);
+  if(!row)throw new TpoPublicJoinLinkError("NOT_FOUND");
+  if(row.id!==input.expectedLinkId)throw new TpoPublicJoinLinkError("STALE");
+  if(input.postDirect===null||row.postDirect===input.postDirect)
+   return {postDirect:row.postDirect,changed:false};
+  await tx.update(placementPublicJoinLinks)
+   .set({postWithoutApproval:input.postDirect})
+   .where(eq(placementPublicJoinLinks.id,row.id));
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId:college.id,
+   actorUserId:context.user.id,actorMembershipId:membership.id,
+   module:"PLACEMENTS",eventType:"PLACEMENTS_PUBLIC_JOIN_POSTING_POLICY_CHANGED",
+   subjectType:"placement_public_join_link",subjectId:row.id,
+   summary:input.postDirect?"Recruiter direct posting enabled":"Recruiter direct posting disabled",
+   metadata:{scope:input.scope,companyId:input.scope==="COMPANY"?input.companyId:null,
+    postDirect:input.postDirect},
+  });
+  return {postDirect:input.postDirect,changed:true};
+ });
+}
+
 /** A public job application link is not a recruiter onboarding invitation.
  * The same link is valid only while the scoped job is published and external. */
 const publicJobIdSchema=z.string().uuid();
+/** New public external job links are separate 20-character 'smr-' slugs,
+ * distinct from the old Java 20-character alphabet and from the 43-character
+ * onboarding invite token. Old bookmarks require explicit checked migration. */
+function newExternalJobSlug(){return "smr-"+randomBytes(8).toString("hex");}
 export async function getTpoExternalJobShare(context:RequestContext,rawJobId:unknown){
  const {college}=await requireTpoLinkScope(context);
  const jobId=publicJobIdSchema.parse(rawJobId);
@@ -248,7 +329,7 @@ export async function createTpoExternalJobShare(context:RequestContext,rawJobId:
   if(!job)throw new TpoPublicJoinLinkError("NOT_FOUND");
   if(job.status!=="PUBLISHED"||!["HYBRID","EXTERNAL_ONLY"].includes(job.applicationMode))
    throw new TpoPublicJoinLinkError("NOT_FOUND");
-  const slug=job.slug??("smr-"+randomBytes(8).toString("hex"));
+  const slug=job.slug??newExternalJobSlug();
   const [already]=await tx.select({id:placementPublicExternalJobLinks.id})
    .from(placementPublicExternalJobLinks)
    .where(and(eq(placementPublicExternalJobLinks.jobId,job.id),
