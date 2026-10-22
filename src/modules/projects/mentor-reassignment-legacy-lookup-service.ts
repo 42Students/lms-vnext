@@ -46,6 +46,6 @@ export async function findLegacyReassignmentMentorMembership(
       inArray(legacyIdMap.newEntityType,["college_membership","membership"]),
    )).limit(2);
   const unique=[...new Set(matches.map(row=>row.membershipId))];
-  return unique.length===1?unique[0]:null;
+  return unique.length===1?(unique[0]??null):null;
  });
 }
