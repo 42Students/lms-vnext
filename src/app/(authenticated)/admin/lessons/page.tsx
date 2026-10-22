@@ -250,7 +250,7 @@ export default async function SuperAdminLessonsPage({
                           other.learningPathId===lesson.learningPathId&&other.sequence===lesson.sequence+1)}/>:null}
                       <Link href={"/admin/courses/offerings/"+encodeURIComponent(lesson.offeringId)}
                         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
-                        Open offering
+                        Open offering to add lessons
                       </Link>
                     </div>
                   </details>

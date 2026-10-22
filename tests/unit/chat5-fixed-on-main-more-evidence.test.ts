@@ -6,7 +6,8 @@ const studentPage="src/app/(authenticated)/tpo/students/page.tsx";
 const requests="src/app/(authenticated)/tpo/requests/page.tsx";
 describe("Chat-5 second verified-main source contracts",()=>{
  it("TPO-students-35 keeps saved views on the scoped roster page",()=>{
-  expect(text(studentPage)).toContain("TpoStudentSavedViews");
+  expect(text(grid)).toContain("<TpoStudentSavedViews embedded/>");
+  expect(text(studentPage)).toContain("TpoStudentsSpreadsheet");
   expect(text("src/components/tpo/tpo-student-saved-views.tsx")).toContain("apiFetch");
  });
  it("TPO-students-37 copies authorized student rows as safe TSV with a browser failure fallback",()=>{
@@ -53,7 +54,7 @@ describe("Chat-5 second verified-main source contracts",()=>{
  it("TPO-requests-verification-09 displays roster roll and branch evidence",()=>{
   const src=text(requests);
   expect(src).toContain("rollNumber");
-  expect(src).toContain("Branch:");
+  expect(src).toContain("request.branchName");
  });
  it("TPO-requests-verification-10 displays the decision actor, reason and timestamp rather than hiding audit history",()=>{
   const src=text(requests);

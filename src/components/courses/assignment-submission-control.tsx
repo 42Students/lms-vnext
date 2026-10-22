@@ -267,7 +267,7 @@ export function AssignmentSubmissionControl({
         <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-primary-text">Submitting for</p>
         <p className="mt-1 break-words text-lg font-semibold text-[var(--lms-heading)]">{assignmentTitle?.trim()||"This assignment"}</p>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
-          Add your work using the allowed methods below. Submission is final once recorded.
+          Add your work using the method below. Submission is final once recorded.
         </p>
 
         <div
