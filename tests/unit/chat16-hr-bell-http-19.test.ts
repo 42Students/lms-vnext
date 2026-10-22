@@ -45,7 +45,7 @@ describe("chat-16 recruiter bell real route permissions, privacy and idempotent 
         at: "2026-10-18T12:00:00.000Z", href: "/hr/conversations",
       }],
     } as never);
-    const response = await GET();
+    const response = await GET(new Request("https://lms.example.org/api/placements/recruiter/bell"));
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
     expect(await response.json()).toMatchObject({ unread: 1 });
@@ -66,7 +66,7 @@ describe("chat-16 recruiter bell real route permissions, privacy and idempotent 
     vi.mocked(markHrRecruiterBellRead).mockResolvedValue({ marked: 0 } as never);
     const response = await POST(req());
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ marked: 0 });
+    expect(await response.json()).toEqual({ marked: 0, ok: true });
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
     expect(markHrRecruiterBellRead).toHaveBeenCalledWith(actor);
   });
@@ -84,7 +84,7 @@ describe("chat-16 recruiter bell real route permissions, privacy and idempotent 
 
   it("HR-BELL-HTTP-05 failed read cannot expose cached notifications from another college", async () => {
     vi.mocked(readHrRecruiterBell).mockRejectedValue(new Error("private-message"));
-    const response = await GET();
+    const response = await GET(new Request("https://lms.example.org/api/placements/recruiter/bell"));
     expect(response.status).toBe(401);
     expect(await response.json()).not.toHaveProperty("items");
     expect(apiErrorResponse).toHaveBeenCalledOnce();

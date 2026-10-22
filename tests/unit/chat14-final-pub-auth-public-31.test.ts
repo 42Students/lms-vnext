@@ -16,7 +16,9 @@ describe("chat-14 final sprint",()=>{
  });
  it("PUB-auth-public-31 broadcasts safe API failure globally and keeps the offline banner",()=>{
   expect(read("src/lib/api-fetch.ts")).toContain('new CustomEvent("lms:network-notice"');
-  expect(read("src/components/auth/connection-failure-notice.tsx")).toContain("role=\"status\"");
+  const banner=read("src/components/auth/connection-failure-notice.tsx");
+  expect(banner).toContain('<InlineNotice tone="error"');
+  expect(read("src/components/ui/inline-notice.tsx")).toContain('role={tone === "error" ? "alert" : "status"}');
   expect(read("src/app/(authenticated)/layout.tsx")).toContain("<ConnectionFailureNotice/>");
   const shell=read("src/components/shell/shell-connectivity-notice.tsx");
   expect(shell).toContain("offline");

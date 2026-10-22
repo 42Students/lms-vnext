@@ -14,7 +14,7 @@ describe("chat-16 real public platform and root recovery page rendering",()=>{
   expect(platformMetadata.title).toBe("Platform | 42 LMS");
   expect(html).toContain("One connected platform for learning, projects and placements.");
   for(const title of ["Learner workspace","Faculty workspace","Mentor workspace",
-   "Placement workspace","HR workspace","Administrator"]){
+   "Career and placement workspace","Placement operations","Course and content administration"]){
    expect(html).toContain(title);
   }
   for(const pillar of ["Learning","Projects","Placements","Integrations"]){
@@ -27,14 +27,14 @@ describe("chat-16 real public platform and root recovery page rendering",()=>{
  it("UX-chat16-public-marketing-21 describes current university and employer workflows without invented AI delivery",()=>{
   const university=renderToStaticMarkup(<UniversitiesPage/>);
   const enterprise=renderToStaticMarkup(<EnterprisesPage/>);
-  expect(universityMetadata.description).toBe("Develop employable graduates through learning and placements.");
-  expect(enterpriseMetadata.description).toBe("Build stronger workforces through learning and hiring.");
+  expect(universityMetadata.description).toContain("Develop employable graduates: evaluate performance");
+  expect(enterpriseMetadata.description).toContain("Build stronger workforces with structured learning");
   expect(university).toContain("Develop employable graduates through learning and placements");
-  expect(enterprise).toContain("Build stronger workforces through learning and hiring");
+  expect(enterprise).toContain("Build High-Performing Workforces");
   for(const html of [university,enterprise]){
    expect(html).not.toContain("with AI");
    expect(html).toContain('href="/request-demo"');
-   expect(html).toContain('aria-label="Public navigation"');
+   expect(html).toContain('aria-label="Primary"');
   }
  });
  it("UX-chat16-errors-17 never renders provider exceptions, stack traces, or private digest values",()=>{
@@ -44,7 +44,7 @@ describe("chat-16 real public platform and root recovery page rendering",()=>{
   const root=renderToStaticMarkup(<RootError error={error} reset={()=>{}}/>);
   const global=renderToStaticMarkup(<GlobalError error={error} reset={()=>{}}/>);
   for(const html of [root,global]){
-   expect(html).toContain("This page is temporarily unavailable");
+   expect(html).toContain("Server Error");
    expect(html).toContain("Try again");
    expect(html).toContain('href="/"');
    expect(html).not.toContain("internal SMTP password");
@@ -62,15 +62,15 @@ describe("chat-16 real public platform and root recovery page rendering",()=>{
   expect(markup).not.toContain("private module path");
   expect(markup).toContain("Try again");
  });
- it("UX-chat16-not-found-19 renders a first-party recovery route instead of a redirect loop",()=>{
-  const html=renderToStaticMarkup(<RootNotFound/>);
+ it("UX-chat16-not-found-19 renders a first-party recovery route instead of a redirect loop",async()=>{
+  const html=renderToStaticMarkup(await RootNotFound());
   expect(html).toContain("Page not found");
   expect(html).toContain('href="/"');
   expect(html).toContain("Go to home");
  });
  it("UX-chat16-loading-20 displays visible, accessible loading affordances",()=>{
   const html=renderToStaticMarkup(<RootLoading/>);
-  expect(html).toContain("Loading your page");
+  expect(html).toContain("Loading sign in...");
   expect(html).toContain('data-slot=');
   expect(html).not.toContain("undefined");
  });

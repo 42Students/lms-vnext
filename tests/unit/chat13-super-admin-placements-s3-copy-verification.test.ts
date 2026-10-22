@@ -28,8 +28,8 @@ describe("Chat 13 Super Admin placement legacy copy and S3 contracts", () => {
   });
   it("SA-placements-projects-33 company tabs", () => {
     const code = source("src/app/(authenticated)/admin/companies/page.tsx");
-    expect(code).toContain("42&apos;s company list");
-    expect(code).toContain("This college&apos;s companies");
+    expect(code).toContain("42's curated company list");
+    expect(code).toContain("This college's companies");
   });
   it("SA-placements-projects-35 safe recruiter lifecycle", () => {
     const code = source("src/components/admin/super-admin-hr-accounts.tsx");
@@ -49,21 +49,21 @@ describe("Chat 13 Super Admin placement legacy copy and S3 contracts", () => {
     const code = source("src/modules/announcements/super-admin-college-broadcast-model.ts");
     expect(code).toContain("buttonLabel");
     expect(code).toContain("buttonUrl");
-    expect(code).toContain("Enter a secure HTTPS link");
+    expect(code).toContain("The link has to start with https://");
   });
   it("SA-placements-projects-04 drive legacy copy", () => {
     const code = source("src/app/(authenticated)/admin/placements/page.tsx");
     expect(code).toContain("title=\"Placement Drives\"");
     expect(code).toContain("Run active hiring drives from one operational view.");
     expect(code).toContain("Select a college to continue");
-    expect(code).toContain("Drives is college-scoped.");
+    expect(code).toContain("All actions remain scoped to the selected college.");
   });
   it("SA-placements-projects-36 recruiter legacy copy", () => {
     const code = source("src/components/admin/super-admin-hr-accounts.tsx");
     expect(code).toContain("Add recruiter");
     expect(code).toContain("Recruiter account lifecycle");
     expect(code).toContain('aria-label="Recruiter account lifecycle"');
-    expect(code).toContain("<h2 className=\"text-base font-semibold\">Recruiter account lifecycle</h2>");
+    expect(code).toContain("<h2 className=\"text-base font-semibold text-foreground\">Recruiter account lifecycle</h2>");
   });
   it("SA-placements-projects-43 analytics legacy copy", () => {
     const code = source("src/app/(authenticated)/admin/placements/analytics/page.tsx");
