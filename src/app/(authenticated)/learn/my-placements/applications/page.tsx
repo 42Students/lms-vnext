@@ -20,7 +20,7 @@ import {ownApplicationAssessmentLinks} from "@/modules/placements/learner-applic
 function legacyDriveCancelReason(posting:unknown):string|null {
  if(!posting||typeof posting!=="object"||Array.isArray(posting))return null;
  const record=posting as Record<string,unknown>;
- const reason=record.cancelReason??record.cancelledReason;
+ const reason=record["cancelReason"]??record["cancelledReason"];
  return typeof reason==="string"&&reason.trim().length>0&&reason.length<=500
   ?reason.trim():null;
 }
