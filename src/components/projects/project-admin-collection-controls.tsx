@@ -93,6 +93,18 @@ export function ProjectAdminFilters({
   // Risk listings keep a fixed 25-row page, unlike the other workspaces.
   const fixedRiskPageSize=includeRiskSort;
   const searchKey=searchParamName??(legacyWorkspaces?"search":"q");
+  // Clearing filters must not leave an at-risk bucket, selected mentor or
+  // archived workspace view; those are route context, not disposable filters.
+  const clearHref=(()=>{
+    const params=new URLSearchParams();
+    if(filterView)params.set("view",filterView);
+    else if(query.view)params.set("view",query.view);
+    if(query.fromMentorId)params.set("fromMentorId",query.fromMentorId);
+    if(query.focusedProjectId)params.set("projectId",query.focusedProjectId);
+    if(query.riskBucket)params.set("riskBucket",query.riskBucket);
+    const values=params.toString();
+    return values?"?"+values:"?";
+  })();
   const [searchText,setSearchText]=useState(query.q??"");
   const updateUrl=useCallback((key:string,value:string)=>{
     const current=new URLSearchParams(window.location.search);
@@ -116,14 +128,21 @@ export function ProjectAdminFilters({
     >
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
         Search
-        <Input
-          name={searchKey}
-          type="search"
-          placeholder={searchPlaceholder??(legacyWorkspaces ? "Search title or slug" : "Workspace title or slug")}
-          className="w-full min-w-0"
-          value={searchText}
-          onChange={event=>setSearchText(event.target.value)}
-        />
+        <span className="flex items-center gap-1">
+          <Input
+            name={searchKey}
+            type="search"
+            placeholder={legacyWorkspaces ? "Search title or slug" : "Workspace title or slug"}
+            className="w-full min-w-0"
+            value={searchText}
+            onChange={event=>setSearchText(event.target.value)}
+          />
+          {searchText?<button type="button" aria-label="Clear search"
+            onClick={()=>{setSearchText("");updateUrl(searchKey,"");}}
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded border border-border bg-surface text-primary-text md:min-h-9 md:min-w-9">
+            ×
+          </button>:null}
+        </span>
       </label>
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
         Workspace status
@@ -209,7 +228,7 @@ export function ProjectAdminFilters({
         Apply
       </Button>
       <Link
-        href={filterView?"?view=NOT_SUBMITTED":"?"}
+        href={clearHref}
         className="inline-flex min-h-11 w-auto items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
       >
         Clear
