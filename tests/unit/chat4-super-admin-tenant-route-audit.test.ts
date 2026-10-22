@@ -15,7 +15,8 @@ describe("chat-4 Super Admin tenant audit: every college admin route scopes read
       expect(s).toContain("getCurrentRequestContext()");
       expect(s).toContain("collegeId");
       expect(s).toContain("PageHeader");
-      expect(s).toContain("min-h-11");
+      if(path==="subdomain/page.tsx")expect(s).toContain("<PageBackLink");
+      else expect(s).toContain("min-h-11");
     });
   }
   it("history filter parser never picks the first duplicate value or accepts foreign keys",()=>{
@@ -31,7 +32,7 @@ describe("chat-4 Super Admin tenant audit: every college admin route scopes read
     const s=read("verification/page.tsx");
     expect(s).toContain("Object.values(raw).some(Array.isArray)");
     expect(s).toContain("verificationQueueFilters.safeParse");
-    expect(s).toContain('role="alert"');
+    expect(s).toContain('<ErrorState title="Invalid verification filters"');
     expect(s).not.toContain('Array.isArray(value)?value[0]:value');
     expect(s).toContain("requireSuperAdminVerificationCollege(context,collegeId)");
   });
@@ -49,7 +50,8 @@ describe("chat-4 Super Admin tenant audit: every college admin route scopes read
     expect(sessions).toContain("<AdminRevokeSessions");
     expect(sessions).toContain("No active sessions for this account.");
     const history=read("admins/[userId]/history/page.tsx");
-    expect(history).toContain("listCollegeAdminHistory(await getCurrentRequestContext(),collegeId,userId,page)");
+    expect(history).toContain("const context=await getCurrentRequestContext()");
+    expect(history).toContain("listCollegeAdminHistory(context,collegeId,userId,page)");
     expect(history).toContain("No matching identity or platform history");
   });
 });

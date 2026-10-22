@@ -54,7 +54,7 @@ describe("UX-tpo-LAST-THIRD-01 settings people page server states",()=>{
   expect(state.team).toHaveBeenCalledWith(expect.objectContaining({
    membership:expect.objectContaining({collegeId:college}),
   }),college);
-  const content=JSON.stringify(page);
+  const content=JSON.stringify(page,(key,value)=>key==="type"&&typeof value!=="string"?undefined:value);
   expect(content).toContain("Faculty team assignments unavailable");
   expect(content).toContain("Drive Day student-coordinator assignments are unavailable");
   expect(content).toContain("No matching active TPO or coordinator memberships");
