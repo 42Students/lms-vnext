@@ -16,7 +16,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-5-027-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [x] G2-5-027-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-5-027-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-5-027-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 
 ## Results
 
@@ -25,3 +25,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-5-027-018: OK — registration profile-field crosswalk and explicit vNext onboarding differences in `src/modules/people/college-student-registration-service.ts:32-38`, with DOB and personal profile persistence at `src/modules/people/college-student-registration-service.ts:95-120`, against legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/LearnerDTO.java:14-40`. The phone requirement remains a documented vNext policy difference, not claimed legacy parity.
 
 - G2-5-027-014: OK — legacy learner hierarchy-enriched detail `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:589-609` has a documented membership, contact, roll/unique, DOB and scoped hierarchy field crosswalk at `src/modules/people/college-role-directory-service.ts:43-55`. This establishes the requested parity map, not proof that every UI renders the fields.
+
+- G2-5-027-024: FIXED `63570e2d50a` in `src/components/college/college-student-register-form.tsx`: last name and roll number are now optional rather than erroneously rejected by client-side validation, matching nullable legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/LearnerDTO.java:14-40` and the already-optional server roll number in `src/modules/people/college-student-registration-service.ts:20-30`. vNext requires an OTP-capable phone and an active program/cohort; these stricter onboarding prerequisites are documented in `src/modules/people/college-student-registration-service.ts:32-42` and visible in the form. Missing-phone onboarding remains unsupported by the canonical identity service and is not claimed as legacy parity.
