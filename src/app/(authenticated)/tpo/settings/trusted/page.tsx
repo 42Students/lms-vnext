@@ -85,7 +85,7 @@ export default async function TpoTrustedCompaniesPage() {
               : String(data.summary.trustedDomainCount),
           ],
         ].map(([label, value]) => (
-          <StatTile key={label} label={label} value={value} className="min-h-[104px]" />
+          <StatTile key={label ?? ""} label={label ?? ""} value={value ?? ""} className="min-h-[104px]" />
         ))}
       </section>
       </Disclosure>
