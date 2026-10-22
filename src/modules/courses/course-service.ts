@@ -602,7 +602,7 @@ export async function archiveCourse(
         eq(courseLessons.status, "ACTIVE")))
       .limit(1);
     if (activeLesson) {
-      throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS");
+      throw new CoursesServiceError("COURSE_HAS_LESSONS");
     }
     const [linkedContent] = await tx
       .select({ id: lessonContents.id })
@@ -613,7 +613,7 @@ export async function archiveCourse(
       .where(eq(courseOfferings.courseId, courseId))
       .limit(1);
     if (linkedContent) {
-      throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS");
+      throw new CoursesServiceError("COURSE_HAS_LESSON_CONTENT");
     }
 
     const [archived] = await tx
