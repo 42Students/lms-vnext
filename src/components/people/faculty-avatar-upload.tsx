@@ -21,7 +21,7 @@ export function FacultyAvatarUpload({initialVersion,initials}:{initialVersion:nu
  const [showLink,setShowLink]=useState(false);
  async function reload(signal?:AbortSignal){
   const response=await fetch("/api/people/faculty-self-document/avatar",{
-   cache:"no-store",credentials:"same-origin",signal,
+   cache:"no-store",credentials:"same-origin",...(signal ? {signal} : {}),
   });
   if(!response.ok)throw new Error("Profile image is temporarily unavailable.");
   const snapshot=await response.json() as AvatarSnapshot;
