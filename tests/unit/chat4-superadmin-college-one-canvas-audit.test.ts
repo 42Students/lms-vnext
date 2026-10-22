@@ -17,7 +17,7 @@ describe("Super Admin colleges/organizations canvas and page states",()=>{
    expect(page).toContain('role="search"');
    expect(page).toContain("<ErrorState");
    expect(page.indexOf("requirePermission(context")).toBeLessThan(
-    page.indexOf("parseAdminDirectorySearchParams(await searchParams)"));
+    page.indexOf("parseAdminDirectorySearchParams("));
   }
   expect(colleges).toContain("No colleges match your search");
   expect(organizations).toContain("No organizations in this scope");
@@ -28,13 +28,16 @@ describe("Super Admin colleges/organizations canvas and page states",()=>{
   expect(detail).toContain("Restore the parent organization before restoring this college.");
   expect(detail).toContain("Setup links are unavailable while this college or its organization is archived.");
   expect(detail).toContain("getSuperAdminTenantLifecycleDetail(context,collegeId)");
-  expect(detail).toContain("notFound()");
+  expect(detail).toContain("getSuperAdminTenantLifecycleDetail(context,collegeId)");
+  expect(detail).toContain('<ErrorState title="Missing collegeId"');
+  expect(detail).toContain("if(error instanceof AuthorizationError) throw error;");
  });
  it("UX-COL-ONE-CANVAS-03 keeps administrator account and session controls in the directory",()=>{
   const admins=read("colleges/[collegeId]/admins/page.tsx");
   expect(admins).toContain('aria-label="College administrator directory"');
   expect(admins).toContain("No active College Admin or TPO accounts in this college.");
-  expect(admins).toContain("Showing the first 500 role records.");
+  expect(admins).toContain('caption="College Admin and TPO accounts"');
+  expect(admins).toContain("listCollegeAdminSessionTargetsPage(context,collegeId,page,role)");
   expect(admins).toContain("CollegeAdminLifecycleAction");
   expect(admins).toContain("View active devices");
   expect(admins).toContain("View history");

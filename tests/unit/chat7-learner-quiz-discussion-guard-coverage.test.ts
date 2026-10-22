@@ -76,7 +76,8 @@ describe("chat-7 learner assessment and discussion guard exhaustive source-model
   const allowed=["home","roadmap","discussions"];
   expect(learnerCourseTabPath(["roadmap"],allowed)).toBe("roadmap");
   expect(learnerCourseTabPath([],allowed)).toBeNull();
-  expect(learnerCourseTabPath(["roadmap","admin"],allowed)).toBeNull();
+  // Authorized routes canonicalize legacy nested bookmarks to their first known tab.
+  expect(learnerCourseTabPath(["roadmap","admin"],allowed)).toBe("roadmap");
   expect(learnerCourseTabPath(["unknown"],allowed)).toBeNull();
   expect(learnerCourseTabPath([""],allowed)).toBeNull();
  });
