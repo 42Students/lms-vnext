@@ -163,3 +163,11 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 - `chat9-verify2-learner-assignment-retry.test.ts`: `src/app/(authenticated)/learn/allAssignments/page.tsx` currently contains `Assignments could not be loaded` and `href="/learn/allAssignments?retry=1"`; route retains its alert state rather than presenting an empty list. Source review only.
 
 The historical CI failures are satisfied by currently inspected branch source; no tests or CI were run and these checks do not certify TypeScript build health.
+
+## Current-main recheck (chat-14)
+
+- `public-auth-error-retry-round5.test.ts`: FIXED outdated `safeRetry < 120` source-string assertion; product now bounds server-supplied seconds to 3600 and derives an IST retry window. Commit `2fb070d`.
+- `chat13-superadmin-interview-operations.test.ts`: FIXED outdated `choices("Type"` / `choices("Mode"` assertions; the accessible labeled Type and Mode selectors are inline and still update their respective filters. Commit `6003fe4`.
+- `chat2-tpo-team-open-increments.test.ts`: FIXED outdated roster redirect assertion; current role-scoped bookmark shim directs people/members/roster tabs to `/tpo/settings?tab=team`. Commit `aba8bb2`.
+
+These are source-level corrections on `chatgpt/chat-14-b`; no Vitest or TypeScript check executed, and the remaining historical ticks are not a current CI-pass certification. Lane 15 queue inspected: all rows already ticked, so no unticked lane-15 test was claimed.
