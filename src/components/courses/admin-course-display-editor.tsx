@@ -317,7 +317,7 @@ export function AdminCourseDisplayEditor({
           <Input value={code} maxLength={64} required disabled={pending} onChange={e=>setCode(e.target.value)}/>
         </label>
         <label className="grid gap-2 text-sm font-semibold">Short display name
-          <Input value={shortTitle} maxLength={255} disabled={pending} onChange={e=>setShortTitle(e.target.value)}/>
+          <Input value={shortTitle} maxLength={64} disabled={pending} onChange={e=>setShortTitle(e.target.value)}/>
         </label>
         <label className="grid gap-2 text-sm font-semibold">Official code (catalogue)
           <Input value={officialCode} maxLength={40} disabled={pending} onChange={e=>setOfficialCode(e.target.value)}/>
