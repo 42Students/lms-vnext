@@ -10,10 +10,10 @@ describe("College Admin atomic Team roster replacement",()=>{
  it("COL-projects-15 accepts a distinct checked learner roster and preserves optional role labels",()=>{
   expect(replaceCollegeProjectRosterSchema.parse({
    learnerMembershipIds:[first,second],roleLabel:" Team captain ",expectedUpdatedAt:stamp,
-  })).toEqual({learnerMembershipIds:[first,second],roleLabel:"Team captain",expectedUpdatedAt:stamp});
+  })).toEqual({learnerMembershipIds:[first,second],roleLabel:"Team captain",mode:"ADD",expectedUpdatedAt:stamp});
  });
  it("COL-projects-15 rejects duplicate, invalid or unbounded learner membership input",()=>{
-  for(const ids of [[first,first],["not-a-uuid"],Array.from({length:101},(_,i)=>
+  for(const ids of [[first,first],["not-a-uuid"],Array.from({length:501},(_,i)=>
    "00000000-0000-4000-8000-"+String(i+1).padStart(12,"0"))]){
    expect(replaceCollegeProjectRosterSchema.safeParse({learnerMembershipIds:ids,expectedUpdatedAt:stamp}).success).toBe(false);
   }
@@ -35,7 +35,7 @@ describe("College Admin atomic Team roster replacement",()=>{
   expect(workspace).toContain("<CollegeProjectStudentRosterDialog");
   expect(modal).toContain("Manage students");
   expect(modal).toContain("Replace roster");
-  expect(modal).toContain("Learners updated");
+  expect(modal).toContain("Learners assigned successfully");
   expect(modal).toContain("Your selected learners are kept");
  });
 });

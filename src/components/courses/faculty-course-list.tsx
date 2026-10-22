@@ -189,10 +189,9 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
             <Badge title="Academic year / period" tone="neutral">
               {course.academicPeriodCode||course.academicPeriodName}
             </Badge>
-            <Badge tone={course.teachingRole==="PRIMARY"?"info":"warning"}>
-              {course.teachingRole==="PRIMARY"?"Primary Instructor":
-                course.teachingRole.replaceAll("_"," ")}
-            </Badge>
+            {course.teachingRole!=="PRIMARY"?<Badge tone="warning">
+              Your role: {course.teachingRole.replaceAll("_"," ")}
+            </Badge>:null}
           </div>
 
           <div className="mt-auto px-4 pb-4 pt-4">

@@ -3,7 +3,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {readFileSync} from "node:fs";
 const state=vi.hoisted(()=>({
  access:vi.fn(),delivery:vi.fn(),actor:vi.fn(),event:vi.fn(),
- current:vi.fn(),txSelect:vi.fn(),txInsert:vi.fn(),txDelete:vi.fn(),
+ current:vi.fn(),txSelect:vi.fn(),txInsert:vi.fn(),txDelete:vi.fn(),txUpdate:vi.fn(),
  live:true,dbMessage:null as null|{id:string;deliveryId:string;senderMembershipId:string;pinned:boolean;updatedAt:Date},
 }));
 vi.mock("@/modules/courses/learning-access",()=>({requireLearningReadAccess:state.access}));
@@ -18,6 +18,7 @@ vi.mock("@/db/client",()=>({
     select:state.txSelect,
     insert:state.txInsert,
     delete:state.txDelete,
+    update:state.txUpdate,
    };
    return callback(tx);
   },
@@ -48,6 +49,7 @@ beforeEach(()=>{
  state.txSelect.mockReset().mockImplementation(()=>query(()=>state.live?[{id:memberId}]:[]));
  state.txInsert.mockReset().mockImplementation(()=>({values(){return this;},returning:async()=>[{id:messageId}]}));
  state.txDelete.mockReset().mockImplementation(()=>({where(){return this;},returning:async()=>[{id:messageId}]}));
+ state.txUpdate.mockReset().mockImplementation(()=>({set(){return this;},where(){return this;},returning:async()=>[{id:messageId}]}));
  state.dbMessage={id:messageId,deliveryId,senderMembershipId:memberId,pinned:false,
   updatedAt:new Date("2099-01-01T00:00:00Z")};
 });
@@ -62,7 +64,7 @@ describe("LEARNER-DISCUSSIONS-RACE-01 recheck learner role at write commit",()=>
  it("persists an active learner post and its activity within the same transaction",async()=>{
   const message=await createCourseDiscussionMessage(context,deliveryId,{messageText:"Question"});
   expect(message.id).toBe(messageId);
-  expect(state.txSelect).toHaveBeenCalledTimes(1);
+  expect(state.txSelect).toHaveBeenCalledTimes(2);
   expect(state.txInsert).toHaveBeenCalledTimes(1);
   expect(state.event).toHaveBeenCalledTimes(1);
  });
@@ -77,7 +79,8 @@ describe("LEARNER-DISCUSSIONS-RACE-01 recheck learner role at write commit",()=>
   const result=await deleteCourseDiscussionMessage(context,messageId,deliveryId);
   expect(result.id).toBe(messageId);
   expect(state.txSelect).toHaveBeenCalledTimes(1);
-  expect(state.txDelete).toHaveBeenCalledTimes(1);
+  expect(state.txUpdate).toHaveBeenCalledTimes(1);
+  expect(state.txDelete).not.toHaveBeenCalled();
   expect(state.event).toHaveBeenCalledTimes(1);
  });
  it("binds the transactional role grant to current learner, college, user and platform state",()=>{
