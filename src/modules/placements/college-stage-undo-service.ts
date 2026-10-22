@@ -37,7 +37,7 @@ export async function undoCollegeApplicationStage(
  const collegeId=await requireCollegePlacementAdmin(context);
  const acting=await resolveActingCollege(context,"placements.manage");
  const jobId=collegeDriveIdSchema.parse(rawJobId);
- if(process.env.DB10_NOTIFICATION_OUTBOX_READY!=="DB10_VERIFIED")
+ if(process.env["DB10_NOTIFICATION_OUTBOX_READY"]!=="DB10_VERIFIED")
   throw Error(COLLEGE_STAGE_UNDO_TOO_LATE);
  return getDb().transaction(async tx=>{
   const [job]=await tx.select({id:placementJobs.id,status:placementJobs.status})
@@ -75,9 +75,9 @@ export async function undoCollegeApplicationStage(
   )).limit(1);
   const meta=audit?.metadata;
   const eventFrom=meta&&typeof meta==="object"&&!Array.isArray(meta)?
-   (meta as Record<string,unknown>).from:null;
+   (meta as Record<string,unknown>)["from"]:null;
   const eventTo=meta&&typeof meta==="object"&&!Array.isArray(meta)?
-   (meta as Record<string,unknown>).to:null;
+   (meta as Record<string,unknown>)["to"]:null;
   if(!audit||eventFrom!==current.previousStage||eventTo!==current.stage||
    Date.now()-audit.occurredAt.getTime()>30_000||
    audit.occurredAt.getTime()>Date.now()+1000)

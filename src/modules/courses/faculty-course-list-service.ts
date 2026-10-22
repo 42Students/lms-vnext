@@ -10,7 +10,8 @@ import { facultyCourseListQuerySchema, pageFacultyCourseList } from "./faculty-c
 export async function getFacultyCourseList(context: RequestContext, rawQuery: unknown) {
   const query = facultyCourseListQuerySchema.parse(rawQuery);
   requirePermission(context,"courses.read",{
-    collegeId:context.membership?.collegeId, organizationId:context.membership?.organizationId,
+    ...(context.membership?.collegeId !== undefined ? {collegeId:context.membership.collegeId} : {}),
+    ...(context.membership?.organizationId !== undefined ? {organizationId:context.membership.organizationId} : {}),
   });
   const courses = await listFacultyCourseDeliveries(context);
   const membership=context.membership;

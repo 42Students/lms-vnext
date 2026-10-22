@@ -121,7 +121,7 @@ export async function emailAuthorizedCompanyShareCode(
   // cannot silently invalidate the manual code. Do not retry ambiguous sends.
   const delivered=await sendZeptoMailTemplate({
    purpose:{kind:"TPO",templateName:"company-share-access"},
-   toEmail:recipient.email,recipientName:recipient.name??undefined,
+   toEmail:recipient.email,...(recipient.name == null ? {} : {recipientName:recipient.name}),
    mergeInfo:{otp:challenge.code,accessCode:challenge.code,expiresInMinutes:"15"},
   });
   if(!delivered.accepted)return "UNAVAILABLE" as const;

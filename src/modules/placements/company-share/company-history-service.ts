@@ -1,6 +1,5 @@
 import "server-only";
 import {and,desc,eq,inArray,sql} from "drizzle-orm";
-import {placementCompanyShareSelections} from "@/db/schema/placement-company-share-selection";
 import {getDb} from "@/db/client";
 import {placementCompanyApplicantShares} from "@/db/schema/placement-company-shares";
 import {placementJobs} from "@/db/schema";

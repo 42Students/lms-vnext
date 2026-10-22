@@ -250,35 +250,6 @@ export async function getCollegeRoundSlotAppointments(
     "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW","PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK",
     "PLACEMENTS_COLLEGE_INTERVIEW_RESCHEDULED"])))
   .orderBy(asc(activityEvents.occurredAt),asc(activityEvents.id)):[];
- // Compute collisions for the selected bounded page, not the entire historical
- // calendar in client memory. Compare with *all* active appointments of this
- // college including jobs outside the current view; prevent cross-tenant leaks.
- const conflicts=ids.length?await db.select({id:slots.id,
-  candidateConflict:sql<boolean>`exists(
-   select 1 from placement_round_candidate_slots other
-   join placement_jobs jo on jo.id=other.job_id and jo.college_id=${collegeId}
-   join placement_applications me on me.id="placement_round_candidate_slots"."application_id"
-   join placement_applications oa on oa.id=other.application_id
-   where other.id<>"placement_round_candidate_slots"."id" and other.status='BOOKED'
-     and oa.membership_id=me.membership_id
-     and other.starts_at < "placement_round_candidate_slots"."ends_at" + interval '15 minutes'
-     and other.ends_at > "placement_round_candidate_slots"."starts_at" - interval '15 minutes'
-     and not exists(select 1 from activity_events e where e.subject_id=other.id::text
-      and e.subject_type='placement_round_candidate_slot'
-      and e.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')))` ,
-  roomConflict:sql<boolean>`exists(
-   select 1 from placement_round_candidate_slots other
-   join placement_jobs jo on jo.id=other.job_id and jo.college_id=${collegeId}
-   where other.id<>"placement_round_candidate_slots"."id" and other.status='BOOKED'
-    and lower(trim(other.room))=lower(trim("placement_round_candidate_slots"."room"))
-    and other.starts_at < "placement_round_candidate_slots"."ends_at" + interval '15 minutes'
-    and other.ends_at > "placement_round_candidate_slots"."starts_at" - interval '15 minutes'
-    and not exists(select 1 from activity_events e where e.subject_id=other.id::text
-     and e.subject_type='placement_round_candidate_slot'
-     and e.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')))` ,
- }).from(slots).where(inArray(slots.id,ids)):[];
- const conflictMap=new Map(conflicts.map(row=>[row.id,
-   [...(row.candidateConflict?["CANDIDATE"]:[]),...(row.roomConflict?["ROOM"]:[])] as string[]]));
  const outcomes=new Map<string,string>();
  const feedbackBySlot=new Map<string,string>();
  const editNotesBySlot=new Map<string,string>();
@@ -286,10 +257,10 @@ export async function getCollegeRoundSlotAppointments(
   if(!event.subjectId)continue;
   if(event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK"){
    const metadata=event.metadata as Record<string,unknown>|null;
-   if(typeof metadata?.feedback==="string")feedbackBySlot.set(event.subjectId,metadata.feedback);
+   if(typeof metadata?.["feedback"]==="string")feedbackBySlot.set(event.subjectId,metadata["feedback"]);
   }else if(event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_RESCHEDULED"){
    const metadata=event.metadata as Record<string,unknown>|null;
-   if(typeof metadata?.notes==="string")editNotesBySlot.set(event.subjectId,metadata.notes);
+   if(typeof metadata?.["notes"]==="string")editNotesBySlot.set(event.subjectId,metadata["notes"]);
   }else outcomes.set(event.subjectId,
    event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED"?"COMPLETED":"NO_SHOW");
  }
@@ -457,6 +428,7 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
      legacyInterviewType:a.interviewType??null,legacyRoundDescription:a.roundDescription??null,
      source:"TPO",confirmedAt:new Date(),changedByUserId:ctx.user.id,
     }).returning();
+    if(!saved)throw Error("Interview booking was not returned.");
     booked=saved;
     eventType="PLACEMENTS_COLLEGE_INTERVIEW_SCHEDULED";
     message="Interview scheduled for "+job.title+" on "+roundInterviewInstantIst(start)+".";
@@ -554,6 +526,7 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
     roundId:booked.roundId,room:booked.room,version:booked.version,
     ...(cmd.action==="EDIT"?{notes:cmd.notes??null}: {})},
   }).returning({id:activityEvents.id});
+  if(!audit)throw Error("Interview audit event was not returned.");
   await tx.insert(inAppNotifications).values({
    userId:learner.userId,eventId:audit.id,title:"Interview update",
    body:message,actionHref:"/learn/my-placements/interviews",
@@ -615,6 +588,7 @@ export async function submitCollegeInterviewFeedback(ctx:RequestContext,rawJobId
     roundId:appointment.roundId,score:input.score,feedback:input.feedback,
     version:saved.version},
   }).returning({id:activityEvents.id});
+  if(!event)throw Error("Interview feedback audit event was not returned.");
   await tx.insert(inAppNotifications).values({
    userId:candidate.userId,eventId:event.id,title:"Interview update",
    body:"Interview feedback has been recorded for "+job.title+".",

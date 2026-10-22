@@ -47,7 +47,7 @@ export async function getFacultyDiscussionHistory(context:RequestContext,raw:unk
   return {
     delivery,query,...pagination,
     items:results.map(({metadata,...item})=>({
-      ...item,action:discussionHistoryLabel(item.eventType,metadata?.pinned),
+      ...item,action:discussionHistoryLabel(item.eventType,metadata?.["pinned"]),
     })),
   };
 }

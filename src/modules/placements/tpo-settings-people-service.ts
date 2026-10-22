@@ -21,7 +21,6 @@ import {
 } from "@/db/schema/tpo-collaboration";
 
 import {
-  hasMembershipRole,
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
