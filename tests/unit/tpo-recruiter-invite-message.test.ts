@@ -26,6 +26,7 @@ describe("TPO-recruiters-12 seven-day recruiter invitation message",()=>{
   const source=readFileSync("src/components/tpo/recruiter-lead-detail-workspace.tsx","utf8");
   for(const text of ["Personal note","Invite link","Invitation preview","Copy message","Copy link","Also email it (open draft)","Close preview"])
    expect(source).toContain(text);
-  expect(source).toContain("window.confirm");
+  expect(source).toContain("<ConfirmDialog open={confirmation!==null}");
+  expect(source).toContain('confirmation==="CLOSE_INVITE"?"Close preview":"Discard"');
  });
 });

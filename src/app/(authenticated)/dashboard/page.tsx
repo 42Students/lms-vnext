@@ -96,7 +96,7 @@ async function SuperAdminDashboard({
   const collegeId = context.adminScope?.collegeId ?? null;
   if (!collegeId) {
     return <div className="min-w-0 max-w-full space-y-6">
-      <PageHeader eyebrow="Super Admin" title="Dashboard" description="Platform-wide operations and navigation" />
+      <PageHeader eyebrow="Super Admin" title="Overview" description="Platform-wide operations and navigation" />
       <section aria-labelledby="platform-operations-title" className="space-y-3">
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">Platform operations</p>
         <h2 id="platform-operations-title" className="text-[var(--lms-font-xl)] font-semibold leading-7 text-[var(--lms-heading)] md:text-[var(--lms-font-2xl)]">
@@ -149,7 +149,7 @@ async function SuperAdminDashboard({
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         eyebrow="Super Admin"
-        title="Dashboard"
+        title="Overview"
         description={`Hello, welcome to ${scopeLabel}. Counts and actions follow your selected college safety scope.`}
       />
       <section aria-label="Selected college greeting" className="space-y-1">
