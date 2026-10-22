@@ -6,7 +6,6 @@ import {
   inArray,
   sql,
   isNull,
-  or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -477,6 +476,7 @@ export async function createPlacementCompany(
       })
       .returning();
 
+    if (!relationship) throw new Error("Company relationship was not returned after linking.");
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_LINKED,
       collegeId: input.collegeId,
