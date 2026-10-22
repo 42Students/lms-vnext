@@ -19,13 +19,10 @@ export function normalizeInboundMailSender(raw:string){
  return {display:cleaned,address:/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?email:null};
 }
 export const inboundMailListQuerySchema = z.strictObject({
- // Historical OPEN maps to NEW; unknown legacy query values open the
- // default inbox rather than producing a blank/error page.
- status: z.string().optional().transform(value=>{
-  if(value==="OPEN")return "NEW" as const;
-  if(value==="NEW"||value==="TRIAGED"||value==="RESOLVED"||value==="ALL")return value;
-  return "ALL" as const;
- }),
+ // Historical OPEN is a valid alias for NEW; unknown values must fail
+ // validation before an invalid filter can broaden a private inbox read.
+ status: z.enum(["OPEN","NEW","TRIAGED","RESOLVED","ALL"]).optional().transform(value=>
+  value==="OPEN"?"NEW" as const:value??"ALL" as const),
  kind:z.enum(["REPLY","OTHER"]).optional(),
  routingStatus:z.enum(inboundMailRoutingStatuses).optional(),
  q: z.string().trim().max(120,{message:"Search must contain at most 120 characters"}).default(""),

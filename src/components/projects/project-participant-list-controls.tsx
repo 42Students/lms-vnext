@@ -66,7 +66,7 @@ export function ProjectParticipantListControls({
     }
   }
   const hasFilters = Boolean(query.search || query.status || query.attention ||
-    (!mentor&&(query.assignment||query.work||(query.sort&&query.sort!=="RECENT"))));
+    query.assignment || query.work || (query.sort && query.sort !== "RECENT"));
   return (
     <form
       ref={liveForm}
