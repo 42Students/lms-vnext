@@ -24,10 +24,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
-import { AuthorizationError } from "@/modules/permissions/policy";
 import {
-  COLLEGE_STRUCTURE_PAGE_SIZE,
-  collegeStructureQuerySchema,
   collegeClassQuerySchema,
   collegeElectiveQuerySchema,
   collegeStructureTotalPages,
