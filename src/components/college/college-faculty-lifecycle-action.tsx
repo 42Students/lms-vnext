@@ -56,17 +56,17 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
             : response.status === 409 ? "The faculty membership changed. Refresh the directory before retrying."
             : response.status >= 500 ? "The service is unavailable. Try again."
             : "Refresh the faculty directory and try again.";
-          if (detail.error === "FACULTY_HAS_ACTIVE_PROJECTS") {
-            const count = detail.activeMentorProjects;
+          if (detail["error"] === "FACULTY_HAS_ACTIVE_PROJECTS") {
+            const count = detail["activeMentorProjects"];
             guidance = typeof count === "number" && Number.isSafeInteger(count) && count > 0
               ? "Cannot suspend this faculty member: they mentor "+count+
                 " active project workspace(s). Reassign those projects to another mentor first."
               : "Cannot suspend this faculty member: active mentor projects remain. Reassign them to another mentor first.";
-          } else if (detail.error === "FACULTY_STATUS_CHANGED") {
+          } else if (detail["error"] === "FACULTY_STATUS_CHANGED") {
             guidance = "The faculty membership status changed. Refresh the directory before trying again.";
-          } else if (detail.error === "FACULTY_HAS_ACTIVE_ASSIGNMENTS") {
+          } else if (detail["error"] === "FACULTY_HAS_ACTIVE_ASSIGNMENTS") {
             guidance = "The faculty member has active assignments that must be reassigned first.";
-          } else if (detail.error === "NOT_FOUND") {
+          } else if (detail["error"] === "NOT_FOUND") {
             guidance = "Faculty membership was not found in this college. Refresh the directory.";
           }
           throw new Error("Failed to "+(action==="DEACTIVATE"?"suspend":"reactivate")+" faculty: "+guidance);
