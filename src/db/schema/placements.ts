@@ -1898,7 +1898,7 @@ export const placementRoundResults = pgTable(
     ),
     check(
       "placement_round_results_source_ck",
-      sql`${table.source} in ('TPO', 'HR', 'IMPORT')`,
+      sql`${table.source} in ('TPO', 'HR', 'IMPORT', 'FACULTY')`,
     ),
     check(
       "placement_round_results_status_ck",
