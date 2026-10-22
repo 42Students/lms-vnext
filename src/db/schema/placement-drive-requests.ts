@@ -89,7 +89,7 @@ export function groupOwnRecruiterDriveRequests<T extends {
   if(item.collegeId!==collegeId||item.recruiterUserId!==recruiterUserId)
    throw new Error("Drive request crosses current recruiter college");
   const existing=groups.get(item.submissionId);
-  const rawTitle=item.draft.title??item.draft.roleTitle;
+  const rawTitle=item.draft["title"]??item.draft["roleTitle"];
   const title=typeof rawTitle==="string" ?rawTitle.trim().slice(0,200):"Drive request";
   if(existing){
    existing.requests.push(item);
