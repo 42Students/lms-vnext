@@ -1,10 +1,14 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import type {ReactNode} from "react";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import AdminNewPlacementPage from "@/app/(authenticated)/admin/placements/new/page";
 import type {RequestContext} from "@/modules/identity/context";
 
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
+vi.mock("@/components/placements/admin-placement-create-dialog",()=>({
+ AdminPlacementCreateDialog:({children}:{children:ReactNode})=><section aria-label="Create Drive dialog">{children}</section>,
+}));
 vi.mock("@/components/placements/placement-job-create-workspace",()=>({
  PlacementJobCreateWorkspace:({context,collegeId,basePath}:{context:RequestContext;collegeId:string;basePath:string})=>
   <div data-college={collegeId} data-scope={context.adminScope?.collegeId??""} data-base={basePath}>

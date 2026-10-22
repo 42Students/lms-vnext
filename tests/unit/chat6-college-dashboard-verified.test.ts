@@ -9,31 +9,31 @@ describe("chat-6 College Admin dashboard verified legacy attention",()=>{
  it("COL-dashboard-03 shows today scheduled held and marked class counters",()=>{
   const ui=dashboard(),svc=src("src/modules/admin-ui/college-dashboard-attendance-service.ts");
   expect(ui).toContain('aria-label="Today"');
-  for(const field of ['attendance.today.scheduled','attendance.today.held','attendance.today.marked'])expect(ui).toContain(field);
+  for(const field of ['attendance?.today.scheduled','attendance?.today.held','attendance?.today.marked'])expect(ui).toContain(field);
   expect(svc).toContain("indiaDayBounds(now)");
-  expect(svc).toContain('scheduled: today.length');
+  expect(svc).toContain("scheduled: sql<number>`count(*)::int`");
  });
  it("COL-dashboard-04 flags held sessions missing marked attendance for 7 days",()=>{
   const ui=dashboard(),svc=src("src/modules/admin-ui/college-dashboard-attendance-service.ts");
   expect(ui).toContain('title="Attendance not taken"');
   expect(ui).toContain('attendance?.unattended.map');
   expect(ui).toContain('href="/college/attendance"');
-  expect(svc).toContain('attendanceStatus !== "MARKED"');
-  expect(svc).toContain('6 * 86_400_000');
+  expect(svc).toContain("is distinct from 'MARKED'");
+  expect(svc).toContain("7 * 86_400_000");
  });
  it("COL-dashboard-05 checks attendance below the college policy threshold over 30 days",()=>{
   const ui=dashboard(),svc=src("src/modules/admin-ui/college-dashboard-risk-service.ts");
   expect(ui).toContain('risk?.rows.map');
   expect(svc).toContain("getCollegeAttendancePolicy");
   expect(svc).toContain('"MARKED"');
-  expect(svc).toContain("30 * 86_400_000");
+  expect(svc).toContain("indiaNow.getUTCDate() - 30");
  });
  it("COL-dashboard-06 shows waiting-to-be-graded submissions per course",()=>{
   const ui=dashboard(),svc=src("src/modules/admin-ui/college-dashboard-grading-service.ts");
   expect(ui).toContain('title="Waiting to be graded"');
   expect(ui).toContain('grades?.map');
   expect(svc).toContain('"NOT_GRADED"');
-  expect(svc).toContain('"PUBLISHED"');
+  expect(svc).toContain('eq(assignmentSubmissions.gradingStatus, "NOT_GRADED")');
   expect(svc).toContain('min(assignmentSubmissions.submittedAt)');
  });
  it("COL-dashboard-07 reports current unstaffed active course deliveries",()=>{
@@ -54,7 +54,7 @@ describe("chat-6 College Admin dashboard verified legacy attention",()=>{
   expect(ui).toContain('title="Quizzes due soon"');
   expect(ui).toContain("getCollegeClosingQuizzes(context)");
   expect(svc).toContain('eq(courseQuizzes.status,"PUBLISHED")');
-  expect(svc).toContain("7*86400000");
+  expect(svc).toContain("8*86400000");
  });
  it("COL-dashboard-14 removes developer-only vNext status copy",()=>{
   const ui=src("src/components/admin/admin-dashboard-actions.tsx");

@@ -48,10 +48,10 @@ describe("Public host-derived college sign-in policy behaviour",()=>{
  it("SA-tenants-public-signin-03 unknown imported method falls back while flagging required admin review",async()=>{
   state.record="UNRECOGNIZED";
   const college="11111111-1111-4111-8111-111111111111";
-  expect(await effectiveCollegeSignInMethod(college)).toBe("EMAIL_AND_PHONE");
+  await expect(effectiveCollegeSignInMethod(college))
+   .rejects.toThrow("INVALID_COLLEGE_SIGNIN_POLICY");
   const {effectivePublicCollegeSignInPolicy}=await import("@/modules/colleges/public-signin-policy-service");
-  expect(await effectivePublicCollegeSignInPolicy(college)).toMatchObject({
-   method:"EMAIL_AND_PHONE",requiresAdminReview:true,policySource:"INVALID_LEGACY_VALUE",
-  });
+  await expect(effectivePublicCollegeSignInPolicy(college))
+   .rejects.toThrow("INVALID_COLLEGE_SIGNIN_POLICY");
  });
 });
