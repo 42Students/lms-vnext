@@ -49,8 +49,9 @@ export default async function CollegeOfferingLearningPage({
         .where(and(eq(departments.collegeId,scope.collegeId),match,
           eq(courseOfferings.status,"ACTIVE")))
         .limit(2);
-      if(offeringMatches.length===1)
-        redirect("/college/courses/offerings/"+encodeURIComponent(offeringMatches[0].id));
+      const uniqueOffering=offeringMatches.length===1?offeringMatches[0]:undefined;
+       if(uniqueOffering)
+        redirect("/college/courses/offerings/"+encodeURIComponent(uniqueOffering.id));
     }
     return <div className="min-w-0 space-y-5">
       <PageHeader title="Course offering unavailable" />
