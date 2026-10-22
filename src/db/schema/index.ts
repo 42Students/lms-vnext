@@ -126,6 +126,6 @@ export {assignmentGradeEventsStaged} from "./db06-history-staged";
 // Runtime activation remains explicitly gated after replay and role review.
 export {
  db10LogAlertSignatures,db10LogAlertSignatureAccounts,
- db10LogAlertStates,db10ScheduledJobLeases,
- db10LogAlertDailyCounts,db10LogAlertObservedEvents,
+ db10LogAlertStates,db10LogAlertDailyCounts,
+ db10LogAlertObservedEvents,
 } from "./db10-log-alerts.draft";
