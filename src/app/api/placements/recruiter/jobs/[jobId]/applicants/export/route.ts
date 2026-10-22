@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { hrApplicantFilterSchema } from "@/modules/placements/hr-job-applicants-model";
