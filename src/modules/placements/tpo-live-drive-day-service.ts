@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, gte, isNull, lt, ne } from "drizzle-orm";
+import { and, asc, eq, gte, isNull, lt, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementJobRounds, placementJobs, placementCompanies, placementCompanyRelationships } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -54,7 +54,7 @@ export async function getTpoDriveDayQueue(
       gte(placementJobRounds.scheduledAt,day.start),
       lt(placementJobRounds.scheduledAt,day.end),
     ))
-    .orderBy(desc(placementJobRounds.scheduledAt),desc(placementJobRounds.id));
+    .orderBy(asc(placementJobRounds.scheduledAt),asc(placementJobRounds.id));
 }
 
 /** Live attendance is an optional drill-down, separate from the complete
@@ -86,6 +86,9 @@ export async function getTpoLiveDriveDaySummary(
     dayRows, rows,
     // Only the optional live-attendance detail can be truncated.
     truncated:live.length>20,
+    // The all-day queue is complete; only the costly live-attendance detail is sampled.
+    totalDayRounds:dayRows.length,totalLiveRounds:live.length,
+    detailedLiveRounds:rows.length,
     asOf:now.toISOString(),
   };
 }

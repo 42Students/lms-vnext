@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,lt,ne,inArray,isNull,sql} from "drizzle-orm";
+import {and,asc,count,eq,gt,lt,ne,inArray,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanies,placementCompanyRelationships,placementRecruiterProfiles,
@@ -54,12 +54,22 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
  }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return job;
 }
-export async function listHrInterviewSlots(context:RequestContext,rawJobId:unknown){
+/** All pages are scoped to the verified recruiter/job. Keep the default call
+ * signature for existing workspaces; callers can request subsequent pages. */
+export const hrInterviewSlotPageSchema=z.strictObject({
+ page:z.coerce.number().int().min(1).max(100000).default(1),
+ pageSize:z.coerce.number().int().min(1).max(100).default(20),
+});
+export async function listHrInterviewSlots(context:RequestContext,rawJobId:unknown,rawPage:unknown={}) {
  const jobId=z.string().uuid().parse(rawJobId);
+ const paging=hrInterviewSlotPageSchema.parse(rawPage);
  // Always authorize before reading the registered slots table.
  return getDb().transaction(async tx=>{
   const job=await verifyRecruiterSlotJob(tx,context,jobId);
-  const rows=await tx.select({
+  const [totals,rows]=await Promise.all([
+   tx.select({total:count()}).from(hrInterviewSlots)
+    .where(and(eq(hrInterviewSlots.collegeId,job.collegeId),eq(hrInterviewSlots.jobId,job.id))),
+   tx.select({
    id:hrInterviewSlots.id,roundId:hrInterviewSlots.roundId,
    startAt:hrInterviewSlots.startAt,endAt:hrInterviewSlots.endAt,
    mode:hrInterviewSlots.mode,panelLabel:hrInterviewSlots.panelLabel,
@@ -70,10 +80,15 @@ export async function listHrInterviewSlots(context:RequestContext,rawJobId:unkno
   }).from(hrInterviewSlots).innerJoin(placementJobRounds,and(
    eq(placementJobRounds.id,hrInterviewSlots.roundId),
    eq(placementJobRounds.jobId,job.id)))
-   .where(eq(hrInterviewSlots.collegeId,job.collegeId))
-   .orderBy(hrInterviewSlots.startAt).limit(100);
+   .where(and(eq(hrInterviewSlots.collegeId,job.collegeId),eq(hrInterviewSlots.jobId,job.id)))
+   .orderBy(asc(hrInterviewSlots.startAt),asc(hrInterviewSlots.id))
+   .limit(paging.pageSize).offset((paging.page-1)*paging.pageSize),
+  ]);
+  const total=totals[0]?.total??0;
   const now=new Date();
-  return {status:"READY" as const,items:rows.map(row=>({
+  return {status:"READY" as const,total,page:paging.page,pageSize:paging.pageSize,
+   pageCount:Math.max(1,Math.ceil(total/paging.pageSize)),
+   hasNext:paging.page*paging.pageSize<total,items:rows.map(row=>({
    id:row.id,roundId:row.roundId,startAt:row.startAt,endAt:row.endAt,
    mode:row.mode,panelLabel:row.panelLabel,meetingLocation:row.meetingLocation,capacity:row.capacity,
    bookedCount:row.bookedCount,status:row.status,version:row.version,
@@ -89,7 +104,16 @@ export async function writeHrInterviewSlot(
  const actionType=z.enum(["CREATE","OFFER","BOOK","CANCEL"]).parse((raw as {action?:unknown}|null)?.action);
  const data=actionType==="CREATE"?hrInterviewSlotCreateSchema.parse(raw):
   hrInterviewSlotActionSchema.parse(raw);
- return getDb().transaction(async tx=>{
+ return getDb().transaction(tx=>writeHrInterviewSlotInTx(tx,context,jobId,actionType,data));
+}
+
+/** Shared transaction body keeps single and batch slot proposals atomic.
+ * A failed member of a batch rolls back all previously inserted slots and
+ * their TPO notifications, so retry never creates a partial batch. */
+async function writeHrInterviewSlotInTx(
+ tx:TpoJobTx,context:RequestContext,jobId:string,
+ actionType:"CREATE"|"OFFER"|"BOOK"|"CANCEL",data:unknown,
+){
   const job=await verifyRecruiterSlotJob(tx,context,jobId);
   if(!can(context,"placements.recruiter.slot.manage",{
    collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
@@ -218,5 +242,23 @@ export async function writeHrInterviewSlot(
   }
   return {id:updated.id,status:next,version:updated.version,
    startAt:slot.startAt.toISOString(),endAt:slot.endAt.toISOString()};
+}
+
+/** Legacy slots[] editor adapter: one college/job, bounded to 20 time blocks.
+ * Every CREATE runs under one transaction and the same college/recruiter locks.
+ * The caller must retry the entire batch on conflict, not individual slots. */
+export async function writeHrInterviewSlotsBatch(
+ context:RequestContext,rawJobId:unknown,raw:unknown,
+){
+ const jobId=z.string().uuid().parse(rawJobId);
+ const batch=z.strictObject({
+  slots:z.array(hrInterviewSlotCreateSchema).min(1).max(20),
+ }).parse(raw);
+ return getDb().transaction(async tx=>{
+  const items:Awaited<ReturnType<typeof writeHrInterviewSlotInTx>>[]=[];
+  for(const item of batch.slots){
+   items.push(await writeHrInterviewSlotInTx(tx,context,jobId,"CREATE",item));
+  }
+  return {status:"PROPOSED" as const,items};
  });
 }
