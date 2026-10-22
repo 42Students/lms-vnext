@@ -10,7 +10,7 @@ export const driveInterviewsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1),
   appointmentPage: z.coerce.number().int().min(1).max(1000).default(1),
   appointmentPageSize:z.coerce.number().int().refine(n=>[10,20,50,100].includes(n)).default(20),
-  appointmentSort:z.enum(["DATE_ASC","DATE_DESC"]).default("DATE_ASC"),
+  appointmentSort:z.enum(["DATE_ASC","DATE_DESC","JOB","STATUS"]).default("DATE_ASC"),
   candidatePage:z.coerce.number().int().min(1).max(10000).default(1),
   candidatePageSize:z.coerce.number().int()
     .refine(value=>[10,20,50,100,200,1000].includes(value)).default(1000),
@@ -93,10 +93,13 @@ export function appointmentFilterChange(query:DriveInterviewsQuery,patch:Partial
   query[key as keyof DriveInterviewsQuery]!==patch[key as keyof DriveInterviewsQuery]);
  return {...query,...patch,appointmentPage:changed?1:(patch.appointmentPage??query.appointmentPage)};
 }
-export function sortDriveAppointments<T extends {scheduledAt:string;id:string}>(rows:readonly T[],sort:"DATE_ASC"|"DATE_DESC"){
+export function sortDriveAppointments<T extends {scheduledAt:string;id:string;status?:string;jobTitle?:string}>(rows:readonly T[],sort:"DATE_ASC"|"DATE_DESC"|"JOB"|"STATUS"){
  const direction=sort==="DATE_DESC"?-1:1;
- return [...rows].sort((a,b)=>direction*(Date.parse(a.scheduledAt)-Date.parse(b.scheduledAt))||
-  a.id.localeCompare(b.id));
+ return [...rows].sort((a,b)=>(sort==="STATUS"?
+    (a.status??"").localeCompare(b.status??""):sort==="JOB"?
+      (a.jobTitle??"").localeCompare(b.jobTitle??""):0)||
+   direction*(Date.parse(a.scheduledAt)-Date.parse(b.scheduledAt))||
+   a.id.localeCompare(b.id));
 }
 export function appointmentConflictLabel(changed:boolean,conflict:boolean){
  return conflict?"Schedule conflict":changed?"Time changed":"On schedule";
