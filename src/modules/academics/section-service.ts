@@ -322,7 +322,7 @@ export async function collegeClassNameExists(
 export async function listPopularClasses(
   context:RequestContext,programId?:string,limit=10,
 ){
-  return searchSections(context,{programId,q:"",
+  return searchSections(context,{...(programId !== undefined ? {programId} : {}),q:"",
     limit:Math.max(1,Math.min(Math.trunc(limit)||10,50))});
 }
 
@@ -448,7 +448,8 @@ export async function updateSection(
   await assertSectionUnique(
     current.cohortId,
     current.academicPeriodId,
-    input,
+    {...(input.name !== undefined ? {name:input.name} : {}),
+      ...(input.code !== undefined ? {code:input.code} : {})},
     sectionId,
   );
 
