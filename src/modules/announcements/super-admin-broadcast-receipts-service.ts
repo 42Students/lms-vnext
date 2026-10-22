@@ -48,6 +48,7 @@ export async function getSuperAdminBroadcastGroupReceiptCounts(
  const empty=new Map<string,{
   broadcastGroupKey:string;targetColleges:number;cellRead:number;
   deliveredRecipients:number;readRecipients:number;
+  collegeReadFraction:number;collegeReadPercent:number;
  }>();
  if(!ids.length)return empty;
  const db=getDb();
@@ -82,6 +83,9 @@ export async function getSuperAdminBroadcastGroupReceiptCounts(
    broadcastGroupKey:row.groupKey!,targetColleges:row.targetColleges,
    cellRead:row.cellRead,deliveredRecipients:row.deliveredRecipients,
    readRecipients:row.readRecipients,
+   // First-read evidence is per recipient college, not each bell event.
+   collegeReadFraction:row.targetColleges>0?Math.min(1,row.cellRead/row.targetColleges):0,
+   collegeReadPercent:row.targetColleges>0?Math.round(Math.min(1,row.cellRead/row.targetColleges)*100):0,
   },
  ]));
  for(const seed of seeds){
