@@ -4,13 +4,20 @@ export const COLLEGE_APPLICATION_STAGES=[
  "APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED",
 ] as const;
 export const collegeStageCommandSchema=z.object({
- action:z.enum(["MOVE","REINSTATE","CORRECT"]),
+ action:z.preprocess(value=>typeof value==="string"?value.trim().toUpperCase():value,
+  z.enum(["MOVE","REINSTATE","CORRECT"])),
+ // Legacy integer application IDs require an explicit import crosswalk.
+ // Never coerce arbitrary numbers to another college\'s UUID.
  applicationIds:z.array(z.string().uuid()).max(100).default([]).refine(ids=>new Set(ids).size===ids.length,
   "Duplicate applications are not allowed"),
  matchingFilter:driveApplicationsQuerySchema.optional(),
- stage:z.enum(COLLEGE_APPLICATION_STAGES).optional(),
+ stage:z.preprocess(value=>typeof value==="string"?value.trim().toUpperCase():value,
+  z.enum(COLLEGE_APPLICATION_STAGES)).optional(),
  reason:z.string().trim().min(3).max(1000),
  notifyByEmail:z.boolean().default(false),
+ // Legacy notifyStudent is distinct from optional email delivery. A false
+ // value suppresses the transactional in-app notice, not the audit event.
+ notifyLearnerInApp:z.boolean().default(true),
  // Only a deliberate Move to Assessment may attach a real HTTPS link.
  assessmentUrl:z.string().trim().url().max(2048)
   .refine(url=>url.startsWith("https://"),"Enter a secure HTTPS assessment URL.")
@@ -39,10 +46,10 @@ export type CollegeStageCommand=z.infer<typeof collegeStageCommandSchema>;
  * verifies external offer and joining facts before accepting any rollback. */
 export const COLLEGE_APPLICATION_TRANSITIONS: Record<string,readonly string[]>={
  APPLIED:["SHORTLISTED","REJECTED"],
- SHORTLISTED:["ASSESSMENT","INTERVIEW","WAITLISTED","REJECTED"],
+ SHORTLISTED:["ASSESSMENT","INTERVIEW","REJECTED","WAITLISTED"],
  ASSESSMENT:["SHORTLISTED","INTERVIEW","WAITLISTED","REJECTED"],
- INTERVIEW:["SHORTLISTED","ASSESSMENT","WAITLISTED","OFFERED","REJECTED"],
- WAITLISTED:["SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED","REJECTED"],
+ INTERVIEW:["SHORTLISTED","ASSESSMENT","OFFERED","WAITLISTED","REJECTED"],
+ WAITLISTED:["OFFERED","REJECTED","SHORTLISTED","ASSESSMENT","INTERVIEW"],
  OFFERED:["INTERVIEW","HIRED","REJECTED"],
  HIRED:["OFFERED"], REJECTED:[],
 };
@@ -70,3 +77,14 @@ export const COLLEGE_APPLICATION_CORRECTIONS:Readonly<Record<string,readonly str
  INTERVIEW:["APPLIED","ASSESSMENT"],
  HIRED:["OFFERED"],
 };
+
+/** Legacy next-status display order with explicit corrective-only options.
+ * Unknown imported statuses cannot request transitions or manufacture a
+ * same-stage success: the administrator must resolve the source mapping.
+ * WITHDRAWN is a lifecycle action and never a pipeline dropdown option. */
+export function collegeStageOptionsForLegacyStatus(raw:unknown){
+ if(typeof raw!=="string")return {move:[] as string[],correct:[] as string[]};
+ const status=raw.trim().toUpperCase();
+ return {move:[...(COLLEGE_APPLICATION_TRANSITIONS[status]??[])],
+  correct:[...(COLLEGE_APPLICATION_CORRECTIONS[status]??[])]};
+}

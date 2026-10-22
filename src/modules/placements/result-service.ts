@@ -278,6 +278,8 @@ export async function stagePlacementRoundResult(
   roundIdInput: string,
   rawInput: StagePlacementRoundResultInput,
   expectedCurrentResultId?: string | null,
+  // Only a verified server-side import/panelist adapter may supply this.
+  submissionChannel: "EXCEL" | "PANELIST" | null = null,
 ) {
   const roundId = placementRoundIdSchema.parse(
     roundIdInput,
@@ -460,7 +462,7 @@ export async function stagePlacementRoundResult(
       (current?.id ?? null) !== expectedCurrentResultId
     ) {
       throw new PlacementsServiceError(
-        "PLACEMENT_RESULT_NOT_FOUND",
+        "PLACEMENT_JOB_PREVIEW_STALE",
       );
     }
     if (current?.status === "APPLIED") {
@@ -541,7 +543,11 @@ export async function stagePlacementRoundResult(
           input.candidateMessage ?? null,
         internalComment:
           input.internalComment ?? null,
-        source: recruiterCanStage ? "HR" : "TPO",
+        // Source provenance is server-owned. A public request cannot choose
+        // a privileged reviewer/import identity by adding a JSON property.
+        source: recruiterCanStage ? "HR" :
+          submissionChannel === "PANELIST" ? "FACULTY" :
+          submissionChannel === "EXCEL" ? "IMPORT" : "TPO",
         status: "STAGED",
         submittedByUserId: context.user.id,
         submittedAt: now,
@@ -572,6 +578,8 @@ export async function stagePlacementRoundResult(
           applicationId: input.applicationId,
           outcome: staged.outcome,
           version: staged.version,
+          source: staged.source,
+          submissionChannel: submissionChannel ?? "MANUAL",
         },
         groupKey: "placement-job:" + job.id + ":results",
         dedupeKey: "placement-result:" + staged.id + ":staged",
@@ -679,9 +687,11 @@ export async function applyPlacementRoundResult(
     );
   }
 
-  await requireRoundParticipant(
-    current.round,
-    current.application.id,
+  // Historical withdrawn/terminal applicants may retain a legitimate
+  // staged forensic result. Applying it means acknowledging that saved result,
+  // not reviving a withdrawn application or changing its learner stage.
+  if(current.application.status==="SUBMITTED")await requireRoundParticipant(
+    current.round,current.application.id,
   );
 
   const db = getDb();
@@ -719,14 +729,10 @@ export async function applyPlacementRoundResult(
       .for("update")
       .limit(1);
 
-    if (
-      !lockedApplication ||
-      lockedApplication.status !== "SUBMITTED"
-    ) {
-      throw new PlacementsServiceError(
-        "PLACEMENT_RESULT_APPLICATION_INACTIVE",
-      );
+    if (!lockedApplication) {
+      throw new PlacementsServiceError("PLACEMENT_RESULT_APPLICATION_INACTIVE");
     }
+    const terminalApplication=lockedApplication.status!=="SUBMITTED";
 
     // Screening can be changed by a second operator while the first one is
     // reviewing a preview. A result for a no-longer-shortlisted learner must
@@ -736,7 +742,7 @@ export async function applyPlacementRoundResult(
     }).from(placementApplicationScreenings)
       .where(eq(placementApplicationScreenings.applicationId,current.application.id))
       .for("share").limit(1);
-    if(!lockedScreening || lockedScreening.status!=="SHORTLISTED")
+    if(!terminalApplication&&(!lockedScreening||lockedScreening.status!=="SHORTLISTED"))
       throw new PlacementsServiceError("PLACEMENT_RESULT_SCREENING_NOT_SHORTLISTED");
 
     const [lockedResult] = await tx
@@ -794,6 +800,24 @@ export async function applyPlacementRoundResult(
       throw new PlacementsServiceError(
         "PLACEMENT_RESULT_NOT_FOUND",
       );
+    }
+
+    if(terminalApplication){
+      // A terminal learner never receives a new stage/offer or duplicate
+      // notification for this reviewed historical result.
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_RESULT_APPLIED,
+        collegeId:current.job.collegeId,
+        subjectType:"placement_result",subjectId:applied.id,
+        subjectLabel:current.round.name,
+        summary:"Historical round result reviewed without application transition",
+        metadata:{jobId:current.job.id,roundId:current.round.id,
+          applicationId:current.application.id,applicationStatus:lockedApplication.status,
+          outcome:applied.outcome,stageChanged:false,forensicReview:true},
+        groupKey:"placement-job:"+current.job.id+":results",
+        dedupeKey:"placement-result:"+applied.id+":applied",
+      });
+      return applied;
     }
 
     // Read learner-facing pipeline stage under lock. A repeated result
