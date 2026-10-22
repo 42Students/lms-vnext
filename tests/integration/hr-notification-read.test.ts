@@ -27,7 +27,8 @@ describe.skipIf(!enabled)("HR notification acknowledgement PG",()=>{
   // A fresh grant defaults to PENDING. Test visibility only after persisted
   // verification, never by weakening the recruiter authorization predicate.
   await getDb().update(placementRecruiterCollegeGrants)
-   .set({verificationStatus:"VERIFIED"})
+   .set({verificationStatus:"VERIFIED",capabilities:["DRIVES"],
+    validUntil:new Date("2099-01-01T00:00:00.000Z")})
    .where(eq(placementRecruiterCollegeGrants.id,grant.grant.id));
   async function publish(relationshipId:string){
    const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:relationshipId,
