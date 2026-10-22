@@ -13,7 +13,7 @@ import {hrDriveDraftSchema} from "./hr-drive-draft-model";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {groupOwnRecruiterDriveRequests} from "@/db/schema/placement-drive-requests";
 import {tpoComparableDriveSnapshot} from "./tpo-drive-request-diff-model";
-import {recruiterDriveRequestInputSchema,recruiterRequestUpdateSchema,canRecruiterResubmit} from "./recruiter-drive-request-model";
+import {recruiterDriveRequestInputSchema,recruiterRequestUpdateSchema} from "./recruiter-drive-request-model";
 import {z} from "zod";
 import {recruiterDriveApprovalPolicy,recruiterAutoApprovalExplanation} from "./recruiter-drive-autoapproval-policy";
 import {createRecruiterApprovedDraftJob,RecruiterDraftApprovalError} from "./recruiter-approved-draft-job-service";
