@@ -946,7 +946,9 @@ export function LearnerCourseWorkspace({
           // Show actionable legacy syllabus states before a lesson is opened.
           // Do not infer "live now" from an authored link alone.
           const hasScheduledItems=lesson.contents.some(content=>
-            content.availability==="SCHEDULED");
+            content.availability==="SCHEDULED"&&content.type!=="LIVE_CLASS");
+          const hasUpcomingLive=lesson.contents.some(content=>
+            content.type==="LIVE_CLASS"&&content.availability==="SCHEDULED");
           const hasEndedLive=lesson.contents.some(content=>
             content.type==="LIVE_CLASS"&&content.availability==="ENDED");
           const hasMissedItems=lesson.items.some(item=>
@@ -1011,6 +1013,7 @@ export function LearnerCourseWorkspace({
                       <StatusBadge tone="neutral">Not started</StatusBadge>
                     )}
                     {hasScheduledItems?<StatusBadge tone="warning">Scheduled / locked items</StatusBadge>:null}
+                    {hasUpcomingLive?<StatusBadge tone="info">Upcoming live class</StatusBadge>:null}
                     {hasMissedItems?<StatusBadge tone="error">Missed item</StatusBadge>:null}
                     {hasEndedLive?<StatusBadge tone="neutral">Past live class</StatusBadge>:null}
                     {contentCounts.liveSessions>0&&!hasEndedLive?
