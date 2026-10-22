@@ -304,7 +304,7 @@ export default async function TpoCompanyMemoryPage({
                 : "No companies match these filters."}
               action={
                 <Link href={companiesHref({
-                  search: query.search,
+                  ...(query.search !== undefined ? { search: query.search } : {}),
                   pageSize: query.pageSize,
                   sort: query.sort,
                 })} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -328,7 +328,7 @@ export default async function TpoCompanyMemoryPage({
             {page.page > 1 ? (
               <Link
                 href={companiesHref({
-                  search: query.search,
+                  ...(query.search !== undefined ? { search: query.search } : {}),
                   pageSize: query.pageSize,
                 sort: query.sort,
                   page: page.page - 1,
@@ -342,7 +342,7 @@ export default async function TpoCompanyMemoryPage({
             {page.page < page.totalPages ? (
               <Link
                 href={companiesHref({
-                  search: query.search,
+                  ...(query.search !== undefined ? { search: query.search } : {}),
                   pageSize: query.pageSize,
                 sort: query.sort,
                   page: page.page + 1,
