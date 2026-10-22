@@ -52,7 +52,7 @@ export function defaultRecruiterCalendarRange(now=new Date()){
  };
  const from=day(now);
  const start=parseActivityDateBoundary(from,"from");
- return {from,to:day(new Date(start.getTime()+30*DAY_MS))};
+ return {from,to:day(new Date(start.getTime()+29*DAY_MS))};
 }
 
 export const recruiterCalendarQuerySchema = z

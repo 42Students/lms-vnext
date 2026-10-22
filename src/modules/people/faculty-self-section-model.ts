@@ -75,17 +75,37 @@ export function updateFacultyProfileSection(
   // New public links must be secure. Unchanged historical HTTP links are
   // retained to avoid destroying unrelated legacy data during section updates.
   if(patch.section==="socialProfiles") {
-    const links=z.record(z.string(),z.string()).parse(patch.value);
-    for(const [key,raw] of Object.entries(links)){
-      if(raw && raw!==current.socialProfiles[key as keyof typeof current.socialProfiles]){
-        let valid=false;
-        try{
-          const url=new URL(raw);
-          valid=url.protocol==="https:" && !!url.hostname && !url.username && !url.password &&
-            url.hostname!=="localhost" && !url.hostname.endsWith(".localhost");
-        }catch{valid=false;}
-        if(!valid)throw new Error("Faculty public profile links must use HTTPS");
-      }
+    // The section contains nested codingProfiles and codingProfileLinks as well
+    // as scalar URLs. Validating it as Record<string,string> rejected every
+    // legitimate update that retained either nested field.
+    const incoming=facultyProfileDocumentSchema.parse({
+      ...current,socialProfiles:patch.value,
+    }).socialProfiles;
+    const previous=current.socialProfiles;
+    const entries=(profile:typeof previous):Array<[string,string]>=>[
+      ["linkedIn",profile.linkedIn],
+      ["github",profile.github],
+      ["portfolio",profile.portfolio],
+      ["twitter",profile.twitter],
+      ["googleScholar",profile.googleScholar],
+      ["researchGate",profile.researchGate],
+      ...Object.entries(profile.codingProfiles).map(([name,link])=>
+        ["codingProfiles."+name,link] as [string,string]),
+      ...profile.codingProfileLinks.map((link,index)=>
+        ["codingProfileLinks."+index,link] as [string,string]),
+    ];
+    const previousLinks=new Map(entries(previous));
+    for(const [key,raw] of entries(incoming)){
+      // Preserve unchanged legacy HTTP links for edit parity. Every new or
+      // changed link, including nested coding links, must be secure.
+      if(!raw||raw===previousLinks.get(key))continue;
+      let valid=false;
+      try {
+        const url=new URL(raw);
+        valid=url.protocol==="https:"&&!!url.hostname&&!url.username&&!url.password&&
+          url.hostname!=="localhost"&&!url.hostname.endsWith(".localhost");
+      }catch{valid=false;}
+      if(!valid)throw new Error("Faculty public profile links must use HTTPS");
     }
   }
   // Reparse the *whole* document; cross-entry chronology, URLs and IDs apply.
