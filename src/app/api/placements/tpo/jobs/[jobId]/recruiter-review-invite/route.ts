@@ -3,7 +3,7 @@ import {and,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanyRelationships,placementCompanies,
- placementTpoLeads,placementTpoLeadActivities,activityEvents} from "@/db/schema";
+ placementTpoLeads,placementTpoLeadActivities} from "@/db/schema";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -120,7 +120,7 @@ export async function POST(request:Request,{params}:Ctx) {
   });
   // Existing invite-issuance service owns credential hashing, audit and
   // provider delivery. Never duplicate or log a bearer token in this route.
-  const mailReady=process.env.TPO_RECRUITER_INVITE_EMAIL_READY==="VERIFIED";
+  const mailReady=process.env["TPO_RECRUITER_INVITE_EMAIL_READY"]==="VERIFIED";
   const invite=await issueTpoRecruiterInvite(context,collegeId,leadId,new Date(),{
    sendEmail:body.sendEmail&&mailReady,
    deliver:async (targetCollegeId,targetLeadId,token)=>{
