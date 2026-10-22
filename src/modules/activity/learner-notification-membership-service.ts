@@ -74,7 +74,7 @@ export async function canOwnLearnerReceiveClassNotice(
     eq(sections.status,"ACTIVE"),
     eq(cohorts.status,"ACTIVE"),
     eq(programs.status,"ACTIVE"),
-    eq(departments.status,"ACTIVE"),
+    isNull(departments.archivedAt),
     eq(departments.collegeId,member.collegeId),
   )).limit(1);
  return Boolean(row);
