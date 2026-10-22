@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -29,13 +29,14 @@ function FacultyContentOrderEditorInner({
   const [order, setOrder] = useState(
     () => items.map((item) => item.id),
   );
+  const baseline = useRef(items.map(item=>item.id));
   const [pending, startTransition] =
     useTransition();
 
   // The parent keys this editor by the persisted source order. A new
   // lesson/delivery/content list remounts it, resetting unsaved local order.
 
-  const dirty = facultyContentOrderDirty(items.map(item=>item.id),order);
+  const dirty = facultyContentOrderDirty(baseline.current,order);
   if (items.length <= 1) return null;
 
   const byId = new Map(
@@ -47,7 +48,7 @@ function FacultyContentOrderEditorInner({
   }
 
   function save() {
-    if (!facultyContentOrderValid(items.map(item=>item.id),order)) {
+    if (!facultyContentOrderValid(baseline.current,order)) {
       showToast({tone:"error",title:"Section content changed",description:"Reload this Section before saving its new order."});
       return;
     }
@@ -65,6 +66,7 @@ function FacultyContentOrderEditorInner({
               lessonId,
               deliveryId,
               orderedContentIds: order,
+              expectedOrderedContentIds: baseline.current,
             }),
           },
         );
@@ -77,6 +79,7 @@ function FacultyContentOrderEditorInner({
         if (!facultyContentOrderReceiptMatches(deliveryId,order,receipt)) {
           throw new Error("Order save status could not be verified. Reload the Section before trying again.");
         }
+        baseline.current=[...order];
         router.refresh();
         showToast({
           tone: "success",
@@ -120,7 +123,7 @@ function FacultyContentOrderEditorInner({
         </div>
         <div className="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row sm:items-center">
         {dirty ? <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" size="md" variant="secondary"
-          disabled={pending} onClick={()=>setOrder(facultyResetContentOrder(items))}>
+          disabled={pending} onClick={()=>setOrder([...baseline.current])}>
           Reset order
         </Button> : null}
         <Button
