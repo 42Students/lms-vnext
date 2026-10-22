@@ -52,8 +52,8 @@ export function superAdminReadPages(total:number,pageSize=SUPER_ADMIN_READ_PAGE_
 export function superAdminReadHref(path:string,query:Omit<SuperAdminReadQuery,"sortBy"|"sortOrder"> & Partial<Pick<SuperAdminReadQuery,"sortBy"|"sortOrder">>) {
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
- if(query.sortBy!=="name")params.set("sortBy",query.sortBy);
- if(query.sortOrder!=="asc")params.set("sortOrder",query.sortOrder);
+ if(query.sortBy&&query.sortBy!=="name")params.set("sortBy",query.sortBy);
+ if(query.sortOrder&&query.sortOrder!=="asc")params.set("sortOrder",query.sortOrder);
  if(query.jobId)params.set("jobId",query.jobId);
  if(query.pipelineStage!=="ALL")params.set("pipelineStage",query.pipelineStage);
  if(query.source!=="ALL")params.set("source",query.source);
