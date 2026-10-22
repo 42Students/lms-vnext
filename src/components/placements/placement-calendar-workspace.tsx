@@ -333,9 +333,12 @@ function eventHref(
       return jobHref + "/applications?applicationId=" + encodeURIComponent(event.applicationId);
     }
 
+    // Legacy calendar Round/Talk links open the drive's Rounds tab.
+    // Carry the round key through the compatibility redirect so the row
+    // receives keyboard focus rather than opening the result-entry form.
     return event.roundId
       ? audience === "TPO"
-        ? `${jobHref}/rounds/${encodeURIComponent(event.roundId)}/results`
+        ? `${jobHref}?tab=rounds&roundId=${encodeURIComponent(event.roundId)}`
         : `${jobHref}#round-${encodeURIComponent(event.roundId)}`
       : jobHref;
   }
