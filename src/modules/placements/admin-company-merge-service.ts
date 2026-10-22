@@ -90,11 +90,15 @@ export async function mergeSuperAdminCompanies(context: RequestContext, raw: unk
     const grants = await tx.select().from(placementRecruiterCollegeGrants)
       .where(inArray(placementRecruiterCollegeGrants.companyRelationshipId,
         [from.id, to.id])).for("update");
+    // The partial unique index also covers PENDING_RECRUITER. Revoke
+    // colliding source grants *before* reparenting, otherwise a pending
+    // invitation and an active/pending target grant can abort the transaction.
+    const liveStatuses=new Set(["ACTIVE","PENDING_RECRUITER"]);
     const targetActive = new Set(grants.filter(g => g.companyRelationshipId === to.id &&
-      g.status === "ACTIVE").map(g => g.recruiterUserId));
+      liveStatuses.has(g.status)).map(g => g.recruiterUserId));
     let deduplicatedGrants = 0;
-    for (const grant of grants.filter(g => g.companyRelationshipId === from.id && g.status === "ACTIVE" &&
-      targetActive.has(g.recruiterUserId))) {
+    for (const grant of grants.filter(g => g.companyRelationshipId === from.id &&
+      liveStatuses.has(g.status) && targetActive.has(g.recruiterUserId))) {
       await tx.update(placementRecruiterCollegeGrants).set({
         status: "REVOKED", revokedByUserId: context.user.id, revokedAt: now,
         revokeReason: "Company merged with existing recruiter grant", updatedAt: now,

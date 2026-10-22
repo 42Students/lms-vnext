@@ -287,10 +287,20 @@ async function writeActivityEvent(
       ? context.membership?.id ?? null
       : null;
 
+  // Capture the trusted actor label at write time, before a later rename
+  // changes how historical project-resource and audit entries are shown.
+  // Authorization still uses the verified user/membership, not this snapshot.
+  const [actor] = await db.select({displayName:users.displayName})
+    .from(users).where(eq(users.id,context.user.id)).limit(1);
+  const actorRoleSnapshot=isSuperAdmin(context)?"SUPER_ADMIN":
+    actorMembershipId?context.membership?.roles.join(",").slice(0,64)||null:null;
+
   const values = {
     ...scope,
     actorUserId: context.user.id,
     actorMembershipId,
+    actorNameSnapshot:actor?.displayName??null,
+    actorRoleSnapshot,
     module:
       moduleForEventType(eventType),
     eventType,
