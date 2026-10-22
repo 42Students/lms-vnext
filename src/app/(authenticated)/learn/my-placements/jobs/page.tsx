@@ -1,5 +1,3 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { Tabs } from "@/components/ui/tabs";
 import { Banner } from "@/components/ui/banner";
 import { PageLoading } from "@/components/ui/page-loading";
 import Link from "next/link";
@@ -72,17 +70,6 @@ export default async function LearnerPlacementJobsPage() {
 
   return (
     <div className="min-w-0 space-y-5">
-      <PageHeader title="My Placements" description="Find current job opportunities, manage your applications and track placement steps."/>
-      <Tabs ariaLabel="Placements sections" renderPanel={false} value="/learn/my-placements/jobs"
-        items={[
-          {value:"/learn/my-placements",label:"Home",href:"/learn/my-placements"},
-          {value:"/learn/my-placements/jobs",label:"Jobs",href:"/learn/my-placements/jobs"},
-          {value:"/learn/my-placements/applications",label:"Applications",href:"/learn/my-placements/applications"},
-          {value:"/learn/my-placements/calendar",label:"Schedule",href:"/learn/my-placements/calendar"},
-          {value:"/learn/my-placements/offers",label:"Offers",href:"/learn/my-placements/offers"},
-          {value:"/learn/my-placements/announcements",label:"Announcements",href:"/learn/my-placements/announcements"},
-          {value:"/learn/my-placements/rules",label:"Placements",href:"/learn/my-placements/rules"},
-        ]}/>
       <div className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-[18px] font-semibold leading-6 text-[var(--lms-heading)]">Drives</h2>
         <Link href="/learn/my-placements/rules?from=drives"

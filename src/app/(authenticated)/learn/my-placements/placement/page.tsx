@@ -1,4 +1,3 @@
-import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -34,7 +33,8 @@ export default async function LearnerPlacementCellPage({
   const requestWorkspace=requestRead.value;
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader title="Placement cell" description="Your registration, offers, round schedule, requests and college placement rules." />
+      <h2 className="text-lg font-semibold text-foreground">Placement cell</h2>
+       <p className="text-sm text-body">Your registration, offers, round schedule, requests and college placement rules.</p>
       <nav aria-label="Placement cell sections" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-[var(--lms-canvas-border)] pb-3">
         {([["Registration","#registration"],["Offers","#my-offers"],["Schedule","#schedule"],["Your requests","#requests"],["Notices","#notices"],["Placement rules","#rules"]] as const).map(([label,href])=>
           <a key={href} href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{label}</a>)}
