@@ -374,6 +374,7 @@ export async function createProgram(
             normalizeProgramDurationTerms(input),
         })
         .returning();
+      if (!created) throw new Error("Program insertion returned no row");
 
       await recordActivityEventInTransaction(
         tx,
