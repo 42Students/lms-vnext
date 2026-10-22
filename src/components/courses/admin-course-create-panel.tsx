@@ -20,7 +20,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import {collegeCourseDuplicatePrefill} from "@/modules/courses/college-course-duplicate-model";
 
 type Option = { id: string; name: string; code?: string };
@@ -250,7 +250,7 @@ export function AdminCourseCreatePanel({
     );
   }, [sections, selectedDeliveryOffering]);
 
-  function run(task: () => Promise<unknown>, successTitle: string, reset: (result:unknown) => void, failureTitle = "Course update failed") {
+  function run(task: () => Promise<unknown>, successTitle: string, reset: (result:unknown) => void, failureTitle = "Course update failed", onFailure?: (error: unknown) => void) {
     void guardedRun(async () => {
       try {
         const result=await task();
@@ -258,6 +258,7 @@ export function AdminCourseCreatePanel({
         showToast({ tone: "success", title: successTitle });
         router.refresh();
       } catch (error) {
+        onFailure?.(error);
         showToast({
           tone: "error",
           title: failureTitle,
@@ -377,6 +378,31 @@ export function AdminCourseCreatePanel({
         if(id&&imageFile){setCreatedImageCourseId(id);void uploadCourseImage(id,imageFile);}
         if(copy)router.replace(courseBasePath); },
       COLLEGE_COURSES_COPY.createFailed,
+      error => {
+        if (!(error instanceof FriendlyFetchError)) return;
+        const fields = error.fieldErrors;
+        const next = {
+          department: fields.departmentId ?? fields.dept_id,
+          name: fields.name ?? fields.course_name,
+          shortTitle: fields.shortTitle ?? fields.short_title,
+          code: fields.code ?? fields.official_course_code,
+          heading: fields.introductionHeading ?? fields.introduction_heading,
+          description: fields.description ?? fields.in_this_course_description,
+          coverUrl: fields.thumbnailUrl ?? fields.imageUrl,
+          cardColor: fields.cardColor ?? fields.course_color,
+        };
+        if (Object.values(next).some(Boolean)) {
+          setCreateErrors(previous => ({...previous, ...next}));
+          const key = Object.entries(next).find(([, message]) => Boolean(message))?.[0];
+          const ids: Record<string, string> = {
+            department: "course-department", name: "course-name",
+            shortTitle: "course-short-title", code: "course-official-code",
+            heading: "course-introduction-heading", description: "course-description",
+            coverUrl: "course-cover-url", cardColor: "course-card-color",
+          };
+          if (key) document.getElementById(ids[key] ?? "")?.focus();
+        }
+      },
     );
   }
 
@@ -600,7 +626,7 @@ export function AdminCourseCreatePanel({
           </div>
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-description">In this Course – Description</FieldLabel>
-            <Textarea id="course-description" className="min-h-24" value={courseDescription} onChange={(event) => {setCourseDescription(event.target.value);setCreateErrors(previous=>({...previous,description:undefined}));}} maxLength={5000} placeholder="Enter course description" required />
+            <Textarea id="course-description" rows={3} className="min-h-24" value={courseDescription} onChange={(event) => {setCourseDescription(event.target.value);setCreateErrors(previous=>({...previous,description:undefined}));}} maxLength={5000} placeholder="Enter course description" required />
             {createErrors.description ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.description}</p> : null}
           </div>
           <label className="md:col-span-2 flex min-h-11 items-center gap-3 text-sm text-body">
