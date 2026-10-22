@@ -78,20 +78,23 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
   }catch(cause){setError(cause instanceof Error?cause.message:PUBLIC_RECRUIT_COPY.errorSubmit);}
   finally{savingRef.current=false;setBusy(false);}
  }
- return <section className="mt-8 border-t border-border pt-6" aria-labelledby="public-recruit-from-us-title">
+ return <section className="mt-6 w-full max-w-[760px] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-sm sm:p-6"
+  aria-labelledby="public-recruit-from-us-title">
   <h2 id="public-recruit-from-us-title" className="text-xl font-semibold text-foreground">{PUBLIC_RECRUIT_COPY.heading}</h2>
-  {done?<div role="status" className="mt-4 space-y-2">
-    <span aria-hidden="true" className="inline-flex size-10 items-center justify-center rounded-full border border-success text-2xl text-success">✓</span>
+  {done?<div role="status" className="mt-6 flex flex-col items-center gap-3 py-8 text-center">
+    <span aria-hidden="true" className="inline-flex size-16 items-center justify-center rounded-full border-2 border-success text-3xl text-success">✓</span>
     <h3 className="font-semibold">{PUBLIC_RECRUIT_COPY.thankYou}</h3>
     <p className="text-sm text-body">{publicRecruitThanks(collegeName)}</p>
-   </div>:!enabled||unavailable?<p role="alert" className="mt-3 text-sm text-body">
-     {PUBLIC_RECRUIT_COPY.unavailable}
-   </p>:<form aria-busy={busy} className="mt-4 max-w-2xl space-y-4" onSubmit={e=>{
+   </div>:!enabled||unavailable?<div role="alert"
+      className="mt-4 flex items-start gap-3 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+     <span aria-hidden="true" className="shrink-0 text-warning-text">⚠</span>
+     <span>{PUBLIC_RECRUIT_COPY.unavailable}</span>
+   </div>:<form aria-busy={busy} className="mt-5 max-w-2xl space-y-4" onSubmit={e=>{
     e.preventDefault();void submit(sent?"recruit":"send-code");
    }} noValidate>
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.workEmail}
      <Input className={control+" mt-1"} required type="email" maxLength={150} autoComplete="email"
-      disabled={Boolean(sent)} aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email?"public-recruit-email-error":undefined} value={email} onChange={e=>{setEmail(e.target.value);clearFieldError("email");}}/>
+      readOnly={Boolean(sent)} aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email?"public-recruit-email-error":undefined} value={email} onChange={e=>{setEmail(e.target.value);clearFieldError("email");}}/>
      <span className="block mt-1 text-xs font-normal">Your company email. We send a code to it.</span>
      {fieldErrors.email?<span role="alert" id="public-recruit-email-error" className="mt-1 block text-xs text-error">{fieldErrors.email}</span>:null}
     </label>
@@ -100,17 +103,17 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
       aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name?"public-recruit-name-error":undefined} value={name} onChange={e=>{setName(e.target.value);clearFieldError("name");}}/>
      {fieldErrors.name?<span role="alert" id="public-recruit-name-error" className="mt-1 block text-xs text-error">{fieldErrors.name}</span>:null}
     </label>
-    {sent ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+    {sent ? <div className="grid min-w-0 grid-cols-1 gap-4">
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.company}
      <Input className={control+" mt-1"} maxLength={150} autoComplete="organization"
       value={company} onChange={e=>setCompany(e.target.value)}/>
     </label>
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.mobile}
-     <Input className={control+" mt-1"} type="tel" maxLength={30}
+     <Input className={control+" mt-1"} type="tel" maxLength={14} autoComplete="tel" inputMode="tel"
       value={mobile} onChange={e=>setMobile(e.target.value)}/>
     </label>
     <label className="block min-w-0 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.hiringFor}
-     <Textarea className={control+" mt-1 py-2"} maxLength={1000}
+     <Textarea className={control+" mt-1 py-2"} maxLength={1000} rows={3}
       value={hiringFor} onChange={e=>setHiringFor(e.target.value)}/>
     </label>
     </div> : null}
@@ -121,12 +124,14 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
       {fieldErrors.code?<span role="alert" id="public-recruit-code-error" className="mt-1 block text-xs text-error">{fieldErrors.code}</span>:null}
       <span className="block mt-1 text-xs font-normal">{PUBLIC_RECRUIT_COPY.code} Enter the six-digit code received by email; it may autofill on supported devices.</span>
      </label>:null}
-    {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
+    {error?<div role="alert" className="flex items-start gap-2 rounded-[var(--lms-control-radius)] border border-error bg-error-subtle px-3 py-2 text-sm text-error">
+      <span aria-hidden="true">⚠</span><span>{error}</span>
+    </div>:null}
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-      <Button type="submit" disabled={busy} className="min-h-11 w-full sm:w-auto sm:min-h-9">
+      <Button type="submit" disabled={busy} loading={busy} aria-busy={busy} className="min-h-11 w-full sm:w-auto sm:min-h-9">
         {sent?PUBLIC_RECRUIT_COPY.submit:PUBLIC_RECRUIT_COPY.send}
       </Button>
-      {sent?<Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full sm:w-auto sm:min-h-9"
+      {sent?<Button variant="secondary" type="button" disabled={busy} loading={busy} className="min-h-11 w-full sm:w-auto sm:min-h-9"
         onClick={()=>void submit("send-code")}>Send a new code</Button>:null}
       {sent?<p className="text-xs text-muted-foreground">Requesting a new code invalidates the previous code. You can still use the verified work email, name and optional company details.</p>:null}
     </div>
