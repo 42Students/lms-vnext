@@ -13,9 +13,15 @@
   display: grid;
   gap: 12px;
   min-width: 0;
+  border: 1px solid var(--lms-canvas-border);
+  border-radius: var(--lms-control-radius);
+  padding: 16px;
+  background: var(--lms-surface);
 }
 .heading {
-  margin: 0;
+  margin: 0 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--lms-canvas-border);
   color: var(--lms-neutral-900);
   font-size: 18px;
   font-weight: 650;
@@ -124,6 +130,7 @@
 .expand { justify-self: start; }
 @media (max-width: 767px) {
   .calendar { gap: 16px; }
+  .section { padding: 12px; }
   .row {
     grid-template-columns: minmax(0,1fr);
     row-gap: 12px;
