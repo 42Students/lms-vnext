@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Select} from "@/components/ui/select";
@@ -53,6 +54,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  const [action,setAction]=useState<"MOVE"|"REINSTATE"|"CORRECT">("MOVE");
  const [notifyLearnerInApp,setNotifyLearnerInApp]=useState(true);
  const [dialog,setDialog]=useState(false);
+ const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [staleConflict,setStaleConflict]=useState(false);
@@ -66,14 +68,14 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  useEffect(()=>{
   scopeEpoch.current+=1;
   setSelected([]);setAllMatching(false);setDetailId(null);setDetailPayload(null);
-  setDialog(false);setBusy(false);setError("");setOutcome(null);setFailedDetailId(null);
+  setDialog(false);setConfirmDiscard(false);setBusy(false);setError("");setOutcome(null);setFailedDetailId(null);
   setAssessmentUrl("");setSaveAssessmentUrlToJob(true);
  },[activeScope]);
  useEffect(()=>{
   // Reject late drawer responses and hidden selection after filter changes.
   scopeEpoch.current+=1;
   setAllMatching(false);setSelected([]);setDetailId(null);setDetailPayload(null);
-  setFailedDetailId(null);setDialog(false);setError("");setOutcome(null);
+  setFailedDetailId(null);setDialog(false);setConfirmDiscard(false);setError("");setOutcome(null);
   setAssessmentUrl("");setSaveAssessmentUrlToJob(true);
  },[filterScope]);
  useEffect(()=>{
@@ -108,6 +110,19 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   setAction(correction?"CORRECT":next==="REINSTATE"?"REINSTATE":"MOVE");
   setReason("");setOutcome(null);setError("");setAssessmentUrl("");
   setSaveAssessmentUrlToJob(true);setDialog(true);
+ }
+ function closeMoveDialog(){
+  if(busy)return;
+  // The optional reject explanation must survive Escape, overlay click and
+  // Close until the operator explicitly confirms discarding it.
+  if(!outcome&&(reason.trim()||assessmentUrl.trim())){
+   setConfirmDiscard(true);return;
+  }
+  setDialog(false);setError("");setOutcome(null);
+ }
+ function discardMoveDraft(){
+  setConfirmDiscard(false);setDialog(false);setReason("");
+  setAssessmentUrl("");setError("");setOutcome(null);
  }
  function chooseBulk(next:string){
   setAction(next==="REINSTATE"?"REINSTATE":"MOVE");setTarget(next);setReason("");
@@ -317,6 +332,32 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     Update {selectedCount} selected</Button>
    <span className="text-body sm:col-span-2 lg:col-span-5">Changes are tracked with per-row results. Students receive in-app notifications; email is not available.</span>
   </div>
+  {legacyShortlisted&&selectedCount>0&&
+   ["ASSESSMENT","INTERVIEW","OFFERED"].includes(query.stage)?
+   <div aria-label="Stage-specific bulk actions" className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
+    <span className="mr-1 text-xs font-semibold text-body">{stageLabel(query.stage)} · {selectedCount} selected</span>
+    {query.stage==="ASSESSMENT"?<>
+     <Button type="button" variant="secondary" disabled={busy||staleConflict}
+       onClick={()=>chooseBulk("INTERVIEW")}>Mark Passed ({selectedCount})</Button>
+     <Button type="button" variant="danger" disabled={busy||staleConflict}
+       onClick={()=>chooseBulk("REJECTED")}>Mark Failed ({selectedCount})</Button>
+    </>:query.stage==="INTERVIEW"?<>
+     <Button type="button" variant="secondary" disabled={busy||staleConflict}
+       onClick={()=>chooseBulk("OFFERED")}>Move to Offered ({selectedCount})</Button>
+     <Button type="button" variant="danger" disabled={busy||staleConflict}
+       onClick={()=>chooseBulk("REJECTED")}>Reject ({selectedCount})</Button>
+    </>:<>
+     <Button type="button" variant="secondary" disabled={busy||staleConflict}
+       onClick={()=>chooseBulk("HIRED")}>Mark Hired ({selectedCount})</Button>
+     <Button type="button" variant="danger" disabled={busy||staleConflict}
+       onClick={()=>chooseBulk("REJECTED")}>Reject ({selectedCount})</Button>
+    </>}
+    <Button type="button" variant="secondary" disabled={busy}
+      onClick={()=>router.refresh()}>Refresh applications</Button>
+    {query.stage==="OFFERED"?<p className="basis-full text-xs text-warning">
+     Hired requires a released accepted offer and verified joining; updating a display stage never creates either record.
+    </p>:null}
+   </div>:null}
 
   {error&&!dialog?<div className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
    <span role="alert" className="min-w-0 flex-1">{error}</span>
@@ -342,8 +383,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
     applicationId={detailId} initialDetail={detailPayload??undefined} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
-  <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title={dialogTitle} dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
-    <Button type="button" disabled={busy} variant="secondary" onClick={()=>{setDialog(false);setError("");setOutcome(null);}}>Close</Button>
+  <Dialog open={dialog} onOpenChange={next=>{if(!next)closeMoveDialog();}} title={dialogTitle} dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
+    <Button type="button" disabled={busy} variant="secondary" onClick={closeMoveDialog}>Close</Button>
     <Button type="button" variant={target==="REJECTED"?"danger":"primary"}
       disabled={busy||staleConflict||(action==="CORRECT"&&reason.trim().length<10)||!selectedCount}
       onClick={()=>void save()}>{busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":
@@ -413,5 +454,10 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       </div>)}
     </div>:null}
   </Dialog>
+  <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
+    title="Discard unsaved application change?"
+    description="The reason, assessment URL and unsubmitted selections in this dialog will be lost."
+    confirmLabel="Discard changes" confirmVariant="danger"
+    onConfirm={discardMoveDraft}/>
  </section>;
 }
