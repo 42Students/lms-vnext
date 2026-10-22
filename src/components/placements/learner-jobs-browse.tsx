@@ -22,6 +22,7 @@ import {learnerJobsMobileFilterLabel} from "@/modules/placements/learner-jobs-mo
 import {learnerDrivesEmptyState} from "@/modules/placements/learner-drives-empty-state-model";
 import {learnerSavedDriveSummary} from "@/modules/placements/learner-saved-drives-model";
 import {Button} from "@/components/ui/button";
+import {Tabs} from "@/components/ui/tabs";
 import { Pagination } from "@/components/ui/pagination";
 import {LearnerSaveDriveButton} from "./learner-save-drive-button";
 
@@ -196,16 +197,13 @@ export function LearnerJobsBrowse({
           {allDrives.withApplications} {allDrives.withApplications===1?"drive has":"drives have"} your application.
         </p>
       </section>
-      <div role="group" aria-label="Drive bookmarks" className="flex min-h-11 items-end gap-6 border-b border-border">
-        <button type="button" aria-pressed={!savedOnly} aria-controls="learner-drive-results"
-          className={"min-h-11 border-b-[3px] px-1 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 "+(!savedOnly?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-foreground")}
-          onClick={()=>updateQuery({saved:null})}>All drives</button>
-        <button type="button" aria-pressed={savedOnly} aria-controls="learner-drive-results"
-          className={"flex min-h-11 items-center gap-2 border-b-[3px] px-1 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 "+(savedOnly?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-foreground")}
-          onClick={()=>updateQuery({saved:"1"})}>
-          Saved <span aria-label={new Set(savedJobIds).size+" saved drives"} className="rounded-full bg-[var(--lms-primary-subtle)] px-2 py-0.5 text-xs font-semibold text-primary-text">{new Set(savedJobIds).size}</span>
-        </button>
-      </div>
+      <Tabs ariaLabel="Drive bookmarks" value={savedOnly?"saved":"all"}
+        renderPanel={false} controlledOnly
+        onValueChange={value=>updateQuery({saved:value==="saved"?"1":null})}
+        items={[
+          {value:"all",label:"All drives"},
+          {value:"saved",label:"Saved",count:new Set(savedJobIds).size},
+        ]}/>
       {navigating?<p role="status" className="text-xs text-body">Updating drives…</p>:null}
       <section className="pt-3" aria-label="Find placement drives">
         <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(220px,2fr)_repeat(3,minmax(130px,1fr))] md:items-start">
@@ -268,18 +266,18 @@ export function LearnerJobsBrowse({
           </div>
         </div>
         <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
-          <button type="button" aria-pressed={filters.eligibleOnly}
+          <Button type="button" variant="secondary" size="sm" aria-pressed={filters.eligibleOnly}
             onClick={()=>updateQuery({eligible:filters.eligibleOnly?null:"1"})}
-            className={"inline-flex min-h-11 items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9 "+
-              (filters.eligibleOnly?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-primary-text":"border-border bg-surface text-body hover:border-[var(--lms-primary)]")}>
+            className={"!min-h-11 !rounded-full !px-3 !py-2 text-sm font-semibold !shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 md:!min-h-9 "+
+              (filters.eligibleOnly?"!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-primary-text":"!border-border !bg-surface !text-body hover:!border-[var(--lms-primary)]")}>
             Eligible <span className="text-xs opacity-80">{eligibleCount}</span>
-          </button>
-          <button type="button" aria-pressed={filters.closingSoon}
+          </Button>
+          <Button type="button" variant="secondary" size="sm" aria-pressed={filters.closingSoon}
             onClick={()=>updateQuery({soon:filters.closingSoon?null:"1"})}
-            className={"inline-flex min-h-11 items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9 "+
-              (filters.closingSoon?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-primary-text":"border-border bg-surface text-body hover:border-[var(--lms-primary)]")}>
+            className={"!min-h-11 !rounded-full !px-3 !py-2 text-sm font-semibold !shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 md:!min-h-9 "+
+              (filters.closingSoon?"!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-primary-text":"!border-border !bg-surface !text-body hover:!border-[var(--lms-primary)]")}>
             Closing soon <span className="text-xs opacity-80">{closingCount}</span>
-          </button>
+          </Button>
           <label className="inline-flex min-h-11 flex-wrap items-center gap-2 text-xs font-semibold text-body md:ml-auto md:min-h-9">
             Availability
             <Select className="min-h-9 w-auto max-w-full" value={filters.availability}
