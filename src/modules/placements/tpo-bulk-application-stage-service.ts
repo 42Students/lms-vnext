@@ -38,7 +38,7 @@ export class TpoBulkStageError extends Error{
  }
 }
 type StageFact={version:string;ready:boolean;reason?:string};
-const targetStage=(action:TpoBulkStageAction)=>action==="MOVE_TEST"?"TEST":"INTERVIEW";
+const targetStage=(action:TpoBulkStageAction):"TEST"|"INTERVIEW"=>action==="MOVE_TEST"?"TEST":"INTERVIEW";
 const stageVersion=(row:{version:number;stage:string;roundId:string}|undefined)=>
  row?row.version+":"+row.stage+":"+row.roundId:"none";
 const canAdvance=(current:string|null,to:"TEST"|"INTERVIEW")=>
@@ -343,14 +343,20 @@ export async function applyTpoLegacyBulkStatuses(
   }catch(error){
    // Authorization and database failures stop the operation. Validation,
    // version, and state failures remain visible beside the affected row.
-   if(!(error instanceof RangeError)&&
-      !(error instanceof TpoBulkStageError)&&
-      !(error instanceof PlacementsServiceError))throw error;
-   const message=error instanceof RangeError?error.message:
-    error instanceof TpoBulkStageError&&error.code==="STAGE_STALE"||
-    error instanceof PlacementsServiceError&&error.code==="PLACEMENT_SCREENING_STALE"
-     ?"Applicant status changed. Refresh and try again.":
-    "The applicant cannot move to this status. Check screening and round requirements.";
+   let message:string;
+   if(error instanceof TpoBulkStageError){
+    message=error.code==="STAGE_STALE"
+     ?"Applicant status changed. Refresh and try again."
+     :"The applicant cannot move to this status. Check screening and round requirements.";
+   }else if(error instanceof PlacementsServiceError){
+    message=error.code==="PLACEMENT_SCREENING_STALE"
+     ?"Applicant status changed. Refresh and try again."
+     :"The applicant cannot move to this status. Check screening and round requirements.";
+   }else if(error instanceof RangeError){
+    message=error.message;
+   }else{
+    throw error;
+   }
    results.push({applicationId:item.applicationId,status:item.status,success:false,error:message,
     pendingRoundApply:false,unchanged:false});
   }
