@@ -1,3 +1,28 @@
+-- Legacy RoundResult.java -> placement_round_results field crosswalk:
+-- Long id -> scoped legacy source map -> UUID id (never a public credential);
+-- Long roundId -> placement_job_rounds.id under the SAME job/college;
+-- Long applicationId -> placement_applications.id under the SAME job/college;
+-- outcome enum -> PASS/FAIL/HOLD/ABSENT, unknown -> import exception;
+-- waitlistRank Integer -> waitlist_rank positive only for HOLD;
+-- score Double -> score_percent integer only after verifying 0..100,
+--   finite numeric value and round-to-nearest integer (ties away from zero);
+--   null remains null; NaN/Infinity, negative, >100 and int overflow reject;
+-- reason category nullable -> reason_category known enum or quarantine;
+-- candidateReason/reasonForCandidate -> candidate_message, sanitized to
+--   learner-viewable text, do NOT expose private staff internal_comment;
+-- internal comment -> internal_comment, staff-only TPO/HR permission;
+-- source author label legacy TPO / PLACEMENT_CELL -> TPO,
+--   recruiter / COMPANY / HR -> HR, owner-approved import -> IMPORT;
+-- submitter numeric user -> submitted_by_user_id via approved identity map;
+-- createdAt/submittedAt -> submitted_at after source-zone interpretation;
+-- appliedBy/at -> applied_by_user_id/applied_at (only APPLIED state);
+-- supersededBy -> source chain of immutable versions; each source link must
+--   resolve in same round+application and be acyclic before importing;
+-- updatedAt -> updated_at; source lastModified is provenance, not CAS version;
+-- status source DRAFT / PENDING -> STAGED, finalized -> APPLIED only with
+--   real actor+date, superseded -> SUPERSEDED with true source transition date.
+-- Source decimal scores MUST NOT be JS Number-rounded from long IDs; resolve
+-- everything in the importer transaction, and do not invent missing dates.
 -- Old round-result BIGINT IDs and superseded_by links require a scoped UUID
 -- crosswalk. Resolve an entire acyclic predecessor chain before activation,
 -- preserving historical outcomes and dates; one version per round/application
