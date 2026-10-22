@@ -25,7 +25,7 @@ export function AdminOtpLockoutResetForm() {
       if (!response.ok) throw new Error("RESET_FAILED");
       setPhone("");
       setReason("");
-      setFeedback({ kind: "success", text: "OTP lockout cleared. Requester limits still apply." });
+      setFeedback({ kind: "success", text: "OTP lockout cleared" });
     } catch {
       setFeedback({ kind: "error", text: "Could not complete this recovery. Check your admin access and try again." });
     } finally {
