@@ -2,7 +2,7 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {and,eq} from "drizzle-orm";
 import {closeDatabaseConnection,getDb} from "@/db/client";
-import {colleges,moduleAccessRules} from "@/db/schema";
+import {colleges,moduleAccessRules,systemRoles} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {listSuperAdminFeatureControls} from "@/modules/module-access/admin-read-service";
 import {superAdminFeaturePageCsv} from "@/modules/module-access/admin-feature-export";
@@ -19,6 +19,11 @@ describe.skipIf(!enabled)("Super Admin feature matrix strict scoped PostgreSQL f
  afterAll(async()=>{await closeDatabaseConnection();});
  it("counts and pages the same exact college/module rule, including explicit absence and CSV",async()=>{
   const db=getDb();
+  // Read services reconstruct the actor from persisted system roles; a claimed
+  // SUPER_ADMIN session flag alone cannot grant access to the matrix.
+  await db.insert(systemRoles).values({
+   userId:SEED_IDS.superAdminUser,role:"SUPER_ADMIN",
+  }).onConflictDoNothing();
   const collegeId=randomUUID();
   const code="FC"+randomUUID().slice(0,10);
   await db.insert(colleges).values({id:collegeId,organizationId:SEED_IDS.organization,name:"Feature Scope "+code,code,status:"ACTIVE"});

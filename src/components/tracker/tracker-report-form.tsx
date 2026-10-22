@@ -376,7 +376,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </label>
       </div>
       <label className={label}>What went wrong?
-        <Textarea className={field + " min-h-36 max-h-80 resize-y overflow-y-auto"} name="description" required maxLength={4000} rows={5}
+        <Textarea className={field + " max-h-80 resize-y overflow-y-auto"} style={{minHeight:144}} name="description" required maxLength={4000} rows={5}
           value={draft.description} onChange={event=>{
             patch("description",event.target.value);
             const element=event.currentTarget;
@@ -429,7 +429,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           <Input aria-label="Find similar issues by keyword" type="search" value={similarQuery}
             onChange={event=>{setSimilarQuery(event.target.value);setSimilarSearched(false);setSimilarError("");}}
             maxLength={100} placeholder="e.g. Quiz submission"
-            className={field+" min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none"}/>
+            className={field+" h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none"}/>
           <Button type="button" onClick={()=>void checkSimilar()}
             disabled={similarLoading||similarQuery.trim().length<15} loading={similarLoading}
             variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">
@@ -441,7 +441,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         {similarSearched&&similarResults.length?<div role="status" className="mt-2 text-sm">
           {similarResults.length?<ul className="divide-y divide-border">
             {similarResults.map(issue=><li key={issue.publicId} className="py-3">
-              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{issue.publicId}</Link>
+              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{issue.publicId}</Link>
               <span className="ml-2 inline-flex align-middle"><StatusBadge tone="neutral">{issue.status}</StatusBadge></span>
               <p className="mt-1 break-words text-xs text-body leading-[20px]">{issue.description.slice(0,160)}</p>
             </li>)}
