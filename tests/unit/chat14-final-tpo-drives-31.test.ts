@@ -35,6 +35,6 @@ describe("chat-14 final sprint",()=>{
   expect(detail).toContain("TpoOutsideParticipantsEditor");
   expect(route).toContain("isSameOriginRequest(request)");
   expect(route).toContain("setTpoOutsideDriveParticipant");
-  expect(read("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx")).toContain("Recorded outside (history)");
+  expect(read("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx")).toContain("Recorded outside · history");
  });
 });

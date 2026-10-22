@@ -18,10 +18,13 @@ vi.mock("@/modules/placements/public-enquiry/recruit-service",()=>({
  submitPublicRecruitEnquiry:vi.fn(),
 }));
 const collegeId="11111111-1111-4111-8111-111111111111";
-const request=()=>new Request("https://college.example.edu/api/public/recruit-from-us/send-code",{
+const request=(enquiry=false)=>new Request("https://college.example.edu/api/public/recruit-from-us/"+(enquiry?"recruit":"send-code"),{
  method:"POST",
  headers:{"host":"college.example.edu","Content-Type":"application/json","x-public-verified-client-ip":"192.0.2.10"},
- body:JSON.stringify({email:"staff@example.org"}),
+ body:JSON.stringify(enquiry?{
+  email:"staff@example.org",code:"123456",name:"Recruiter One",company:"Example Inc",
+  mobile:"+919876543210",hiringFor:"Graduate software engineering roles",
+ }:{email:"staff@example.org"}),
 });
 beforeEach(()=>{
  vi.clearAllMocks();
@@ -38,7 +41,7 @@ describe("chat-16 anonymous recruiter enquiry HTTP outage and scope safety",()=>
  it("PUBLIC-ENQUIRY-FAIL-16 denies cross-origin posts before looking up the host or email",async()=>{
   vi.mocked(isSameOriginRequest).mockReturnValue(false);
   for(const route of [sendCode,recruit]){
-   const response=await route(request());
+   const response=await route(request(route===recruit));
    expect(response.status).toBe(403);
   }
   expect(resolveRequestTenant).not.toHaveBeenCalled();
@@ -48,7 +51,7 @@ describe("chat-16 anonymous recruiter enquiry HTTP outage and scope safety",()=>
  it("PUBLIC-ENQUIRY-FAIL-17 returns 404 for unverified tenant instead of contacting college services",async()=>{
   vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"unknown",host:"college.example.edu"});
   for(const route of [sendCode,recruit]){
-   const response=await route(request());
+   const response=await route(request(route===recruit));
    expect(response.status).toBe(404);
   }
   expect(sendPublicEnquiryCode).not.toHaveBeenCalled();
@@ -57,7 +60,7 @@ describe("chat-16 anonymous recruiter enquiry HTTP outage and scope safety",()=>
  it("PUBLIC-ENQUIRY-FAIL-18 maps tenant registry outage to a no-store generic 503",async()=>{
   vi.mocked(resolveRequestTenant).mockRejectedValue(new Error("SECRET_TENANT_DB_DSN"));
   for(const route of [sendCode,recruit]){
-   const response=await route(request());
+   const response=await route(request(route===recruit));
    expect(response.status).toBe(503);
    expect(response.headers.get("cache-control")).toBe("no-store");
    expect(await response.text()).not.toContain("SECRET_TENANT_DB_DSN");
@@ -69,7 +72,7 @@ describe("chat-16 anonymous recruiter enquiry HTTP outage and scope safety",()=>
   vi.mocked(sendPublicEnquiryCode).mockRejectedValue(new Error("SECRET_ZEPTOMAIL_TOKEN"));
   vi.mocked(submitPublicRecruitEnquiry).mockRejectedValue(new Error("SECRET_DB_CREDENTIAL"));
   for(const route of [sendCode,recruit]){
-   const response=await route(request());
+   const response=await route(request(route===recruit));
    expect(response.status).toBe(503);
    expect(response.headers.get("cache-control")).toBe("no-store");
    expect(await response.text()).not.toMatch(/SECRET_|ZEPTOMAIL_TOKEN|DB_CREDENTIAL/);
@@ -78,7 +81,7 @@ describe("chat-16 anonymous recruiter enquiry HTTP outage and scope safety",()=>
  it("PUBLIC-ENQUIRY-FAIL-20 preserves success and passes only verified proxy IPs",async()=>{
   vi.stubEnv("PUBLIC_JOIN_TRUSTED_PROXY_READY","");
   expect(await (await sendCode(request())).json()).toEqual({sent:true});
-  expect(await (await recruit(request())).json()).toEqual({received:true});
+  expect(await (await recruit(request(true))).json()).toEqual({received:true});
   expect(sendPublicEnquiryCode).toHaveBeenCalledWith(collegeId,expect.any(Object),null);
   expect(submitPublicRecruitEnquiry).toHaveBeenCalledWith(collegeId,expect.any(Object),null);
   vi.stubEnv("PUBLIC_JOIN_TRUSTED_PROXY_READY","VERIFIED");
@@ -91,7 +94,7 @@ describe("chat-16 anonymous recruiter enquiry HTTP outage and scope safety",()=>
   expect(limited.status).toBe(429);
   expect(await limited.json()).toEqual({error:"TOO_MANY_TRIES"});
   vi.mocked(submitPublicRecruitEnquiry).mockRejectedValue(new PublicEnquiryError("NOT_READY"));
-  const unavailable=await recruit(request());
+  const unavailable=await recruit(request(true));
   expect(unavailable.status).toBe(503);
   expect(await unavailable.json()).toEqual({error:"RECRUITER_ENQUIRIES_UNAVAILABLE"});
  });

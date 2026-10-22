@@ -25,7 +25,8 @@ describe("Super Admin candidate-level interview conflicts",()=>{
  it("SA-placements-projects-47 bounded candidate interview CSV, per-row .ics and four headline metrics",()=>{
   const ui=source("src/components/admin/super-admin-interview-operations.tsx");
   expect(ui).toContain('download="interviews.csv"');
-  expect(ui).toContain("Date.parse(row.endsAt)-Date.parse(row.startsAt)");
+  expect(ui).toContain("Date.parse(e.endsAt)-Date.parse(e.startsAt)");
+  expect(ui).toContain('download={"interview-"+row.id+".ics"}');
   expect(superAdminInterviewCsv([a])).toContain("Example");
  });
  it("GR-72 supplementary booked-interview data stays scoped and warns when truncated",()=>{

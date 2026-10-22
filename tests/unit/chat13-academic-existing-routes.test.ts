@@ -27,9 +27,10 @@ describe("Chat13 Academic existing route and mutation contracts",()=>{
   it("SA-academics-people-27 lecture hall search export and paging",()=>{
     const content=read("src/app/(authenticated)/admin/lecture-halls/page.tsx");
     expect(content).toContain("Search halls");
-    expect(content).toContain("Export CSV");
+    expect(content).toContain("Export all matching CSV");
     expect(content).toContain("Refresh");
     expect(content).toContain("Rows per page");
+    expect(content).toContain("Export all matching CSV");
   });
   it("SA-academics-people-33 semester active status editable",()=>{
     const content=read("src/components/academics/college-semester-management.tsx");

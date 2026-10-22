@@ -16,7 +16,8 @@ describe("chat-12 final sprint mentor projects",()=>{
  it("MEN-projects-meetings-20 preserves authored deliverables behind the mentor mutation guard",()=>{
   const scope=read("src/modules/projects/workspace-brief-service.ts");
   expect(scope).toContain("requireProjectLifecycleMutationAccess(context,projectIdInput)");
-  expect(scope).toContain("authoredBrief:input.brief");
+  expect(scope).toContain("...original,...input.brief");
+  expect(scope).toContain("authoredBrief:mergedBrief");
   expect(scope).toContain("PROJECT_SUBMISSION_CONFLICT");
  });
  it("MEN-projects-meetings-20 accepts bounded fields with an optimistic version",()=>{
