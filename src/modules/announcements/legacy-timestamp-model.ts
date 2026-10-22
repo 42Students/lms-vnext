@@ -15,8 +15,15 @@ export function legacyAnnouncementIstWallTimeToUtc(
   if (!match) return null;
   const [, yearText, monthText, dayText, hourText, minuteText, secondText,
     fractional = ""] = match;
-  const [year, month, day, hour, minute, second] =
-    [yearText, monthText, dayText, hourText, minuteText, secondText].map(Number);
+  if (yearText === undefined || monthText === undefined || dayText === undefined ||
+      hourText === undefined || minuteText === undefined || secondText === undefined)
+    return null;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+  const second = Number(secondText);
   if (year < 1970 || year > 2100 || month < 1 || month > 12 ||
       day < 1 || day > 31 || hour > 23 || minute > 59 || second > 59)
     return null;
