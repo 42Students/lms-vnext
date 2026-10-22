@@ -103,11 +103,7 @@ export function FacultyCourseRoster({
     currentPage * PAGE_SIZE,
   );
 
-  const {missingRoll}=facultyRosterMetrics(learners);
-  const contacts = learners.filter(
-    (learner) =>
-      Boolean(learner.phoneE164?.trim()),
-  ).length;
+  const {contactLabel,rollLabel}=facultyRosterMetrics(learners);
 
   // Faculty exports exclude phone/email and cap the already authorized roster.
   function exportFiltered() {
@@ -144,9 +140,8 @@ export function FacultyCourseRoster({
       <div className="flex flex-wrap items-center gap-2" aria-label="Class roster metrics">
         {[
           [learners.length+" students","bg-blue-50 text-blue-800","students"],
-          [missingRoll?missingRoll+" without a roll number":"All have roll numbers",
-           "bg-amber-50 text-amber-800","roll"],
-          [contacts+" contacts","bg-emerald-50 text-emerald-800","contacts"],
+          [rollLabel,"bg-amber-50 text-amber-800","roll"],
+          [contactLabel,"bg-emerald-50 text-emerald-800","contacts"],
         ].map(([text,tint,id])=><span key={id}
           className={"inline-flex items-center gap-2 rounded-[var(--lms-radius-full)] border border-border px-3 py-2 text-sm font-semibold "+tint}>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
