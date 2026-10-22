@@ -9,7 +9,6 @@ import {createPlacementJob} from "@/modules/placements/job-service";
 import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
 import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
-
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 import {hrTodayUnreadAction} from "@/modules/placements/hr-today-unread-model";
 import type {RequestContext} from "@/modules/identity/context";
@@ -64,7 +63,13 @@ describe.skipIf(!enabled)("HR in-app notification scopes",()=>{
   const scoped=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA,unreadOnly:"true"});
   expect(hrTodayUnreadAction({...scoped,collegeId:SEED_IDS.collegeA})?.value).toBe(1);
   expect(JSON.stringify(result.rows)).not.toContain("Confidential source body");
-  await expect(listHrNotifications({...ctx,recruiter:{...ctx.recruiter!,companyId:b.company.id}},
+  // An existing grant cannot be repurposed to browse another employer in
+  // the SAME college, even when the cached recruiter company is tampered with.
+  const foreignEmployer={...ctx,recruiter:{...ctx.recruiter!,companyId:b.company.id}};
+  const foreignInbox=await listHrNotifications(foreignEmployer,{collegeId:SEED_IDS.collegeA});
+  expect(foreignInbox.rows).toEqual([]);
+  expect(foreignInbox.total).toBe(0);
+  await expect(listHrNotifications(foreignEmployer,
     {collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
   await expect(listHrNotifications(tpo,{})).rejects.toBeDefined();
  });
