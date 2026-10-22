@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   check,
   integer,
   index,
@@ -26,7 +27,7 @@ export const collegeMemberships = pgTable(
       .references(() => users.id, { onDelete: "restrict" }),
     collegeId: uuid("college_id")
       .notNull()
-      .references(() => colleges.id, { onDelete: "restrict" }),
+      .references((): AnyPgColumn => colleges.id, { onDelete: "restrict" }),
     status: membershipStatusEnum("status").notNull().default("ACTIVE"),
     /** Mapping source account to one scoped membership; not an auth key. */
     legacyMembershipId: integer("legacy_membership_id"),
