@@ -15,6 +15,7 @@ import {Banner} from "@/components/ui/banner";
 import {
   getAdminAttendanceGrid,
   getAdminAttendanceOptions,
+  AdminAttendanceOptionsLookupError,
 } from "@/modules/attendance/admin-service";
 
 function currentMonth() {
@@ -61,12 +62,19 @@ export default async function CollegeAttendancePage({
   const month = query.month ?? currentMonth();
   const optionsResult = await Promise.allSettled([getAdminAttendanceOptions(context, collegeId)]);
   if (optionsResult[0].status === "rejected") {
+    const classLookupFailed=optionsResult[0].reason instanceof
+      AdminAttendanceOptionsLookupError &&
+      optionsResult[0].reason.kind==="class_courses";
     return <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader title="Attendance" />
-      <ErrorState title="Couldn't load classes/courses for this college"
-        description="Attendance options are unavailable. Your chosen month and filters are preserved."
+      <ErrorState title={classLookupFailed
+          ?"Couldn't verify which courses are taught to this class"
+          :"Couldn't load classes/courses for this college"}
+        description={classLookupFailed
+          ?"Course assignments could not be verified. No empty-list conclusion has been made; retry class courses with the same filters."
+          :"Attendance options are unavailable. Your chosen month and filters are preserved."}
         action={<Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>} />
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">{classLookupFailed?"Retry class courses":"Retry"}</Link>} />
     </div>;
   }
   const options = optionsResult[0].value;
@@ -110,6 +118,7 @@ export default async function CollegeAttendancePage({
     showAllCourses: query.allCourses === "1",
     selectedDeliveryId: delivery?.deliveryId ?? null,
     month,
+    gridLookupFailed:gridFailed,
     grid: grid
       ? {
           delivery: grid.delivery,
