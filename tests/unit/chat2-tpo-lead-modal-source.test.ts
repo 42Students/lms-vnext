@@ -24,7 +24,9 @@ describe("TPO recruiter contact modal and source parity",()=>{
   expect(detail).toContain('setNotNowOpen(false)');
   // Native showModal traps keyboard focus; onCancel handles Escape and
   // onClose returns focus to the opener. Dismissal is blocked while saving.
-  expect(dialog).toContain("modal.showModal()");
+  const overlay=readFileSync("src/components/ui/use-overlay-exit.ts","utf8");
+  expect(dialog).toContain("useOverlayExit(ref, opener, open, 180)");
+  expect(overlay).toContain("dialog.showModal()");
   expect(dialog).toContain("onCancel={event =>");
   expect(dialog).toContain("onOpenChange(false)");
   expect(dialog).toContain("opener.current?.focus()");
