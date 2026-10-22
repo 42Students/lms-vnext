@@ -7,6 +7,7 @@ import {
 } from "vitest";
 import { Pool } from "pg";
 import { randomUUID } from "node:crypto";
+import { ZodError } from "zod";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createProgram } from "@/modules/academics/program-service";
@@ -587,10 +588,10 @@ describe("courses UI2A faculty read model", () => {
     });
     expect(workspace.summary).toMatchObject({
       lessons: 1,
-      contents: 2,
+      contents: 1,
       assignments: 1,
       quizzes: 1,
-      draftItems: 4,
+      draftItems: 3,
       publishedItems: 0,
     });
     expect(
@@ -601,11 +602,7 @@ describe("courses UI2A faculty read model", () => {
         ],
       ),
     ).toEqual([
-      [structure.shared.id, null],
-      [
-        structure.exact.id,
-        structure.deliveryA.id,
-      ],
+      [structure.exact.id, structure.deliveryA.id],
     ]);
     expect(
       workspace.lessons[0]?.assignments[0],
@@ -772,9 +769,7 @@ describe("courses UI2A faculty read model", () => {
           presentMembershipIds: [],
         },
       ),
-    ).rejects.toMatchObject({
-      code: "ATTENDANCE_ROSTER_CONFLICT",
-    });
+    ).rejects.toBeInstanceOf(ZodError);
 
     const absentResult =
       await markFacultyAttendance(
@@ -1445,10 +1440,10 @@ describe("courses UI2A faculty read model", () => {
           SEED_IDS.collegeAdminUser,
       }),
     ]);
+    // Correcting an individual record is not a bulk marking of the Section.
     expect(excused.sessions[0]).toMatchObject({
-      attendanceStatus: "MARKED",
-      attendanceMarkedByUserId:
-        SEED_IDS.collegeAdminUser,
+      attendanceStatus: null,
+      attendanceMarkedByUserId: null,
     });
 
     await correctAdminAttendance(

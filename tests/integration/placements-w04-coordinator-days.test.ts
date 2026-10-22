@@ -62,6 +62,11 @@ async function cleanup() {
   await pool.query("delete from placement_application_screening_history");
   await pool.query("delete from placement_application_screenings");
   await pool.query("delete from placement_application_status_history");
+  // Both College Admin and TPO stage projections reference live applications.
+  // Their dependent stage history must be removed before its stage and parent.
+  await pool.query("delete from placement_college_application_stage_history");
+  await pool.query("delete from placement_college_application_stages");
+  await pool.query("delete from placement_tpo_application_stages");
   await pool.query("delete from placement_applications");
   await pool.query("delete from placement_job_eligibility_policies");
   await pool.query("delete from placement_jobs");
