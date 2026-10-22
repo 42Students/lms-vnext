@@ -16,7 +16,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-4-016-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-4-026-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-4-028-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
-- [ ] G2-5-004-069  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-5-004-069  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 
 ## Results
 
@@ -29,3 +29,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - OK G2-4-016-048 — src/modules/notifications/exotel-sms.ts:100-110,235-250 records FAILED configuration attempts with safe reason; matches docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ExotelSmsServiceImpl.java:95-101,148-153.
 
 - OK G2-13-031-089 — src/modules/placements/report-model.ts:1093-1117 keys company joining outcomes by membershipId, then counts one offer per learner, exposed through src/app/(authenticated)/tpo/reports/joining-status/page.tsx:37-80; matches distinct-per-company learner semantics in docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoInsightsService.java:638-644.
+
+- FIXED G2-5-004-069 — commits 66b5855, e713a0a, ffa45f5; src/modules/projects/mentor-calendar-view.ts now admits validated REQUESTED and COMPLETED join URLs (except CANCELLED), and src/components/projects/mentor-meetings-calendar.tsx opens join links in the same tab; legacy docs/legacy-source/frontend/src/pages/mentor/calendar.js:85-86,120-125.
