@@ -53,9 +53,10 @@ export async function createTpoJobType(context:RequestContext,raw:unknown){
    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),
     sql`lower(${placementTpoJobTypes.label}) = lower(${input.label}::text)`)).limit(1);
   if(existing)throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
-  const [{count}]=await tx.select({count:sql<number>`count(*)::integer`}).from(placementTpoJobTypes)
+  const [countRow]=await tx.select({count:sql<number>`count(*)::integer`}).from(placementTpoJobTypes)
    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),eq(placementTpoJobTypes.isBuiltin,false)));
-  if(count>=30)throw new TpoConfigError("TPO_JOB_TYPE_LIMIT");
+  if(!countRow)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  if(countRow.count>=30)throw new TpoConfigError("TPO_JOB_TYPE_LIMIT");
   const [order]=await tx.select({
    next:sql<number>`(coalesce(max(${placementTpoJobTypes.sortOrder}),0)+1)::integer`,
   }).from(placementTpoJobTypes).where(eq(placementTpoJobTypes.collegeId,collegeId));
@@ -63,6 +64,7 @@ export async function createTpoJobType(context:RequestContext,raw:unknown){
    collegeId,label:input.label,active:true,countsAsPlaced:input.countsAsPlaced,isBuiltin:false,
    sortOrder:order?.next??1,
   }).returning({id:placementTpoJobTypes.id,label:placementTpoJobTypes.label});
+  if(!created)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,actorUserId:context.user.id,
    actorMembershipId:context.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_type.created",
@@ -288,8 +290,9 @@ export async function removeTpoJobType(ctx:RequestContext,raw:unknown){
    .where(and(eq(placementJobs.collegeId,collegeId),
     sql`lower(job_type_label) = lower(${current.label})`));
   // Even archived drives remain historical references and block deletion.
-  if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE",
-   '"'+current.label+'" is used by '+usage.n+' drive'+(usage.n===1?'':'s')+
+  const usageCount=usage?.n??0;
+  if(usageCount>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE",
+   '"'+current.label+'" is used by '+usageCount+' drive'+(usageCount===1?'':'s')+
    ': switch it off instead of deleting it');
   await tx.delete(placementTpoJobTypes).where(and(eq(placementTpoJobTypes.id,current.id),
    eq(placementTpoJobTypes.collegeId,collegeId)));
@@ -401,8 +404,10 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
   }
   for(let index=0;index<input.length;index++){
    const item=input[index];
+   if(!item)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
    if(item.isBuiltin){
-    const fixed=TPO_BUILTIN_JOB_TYPES.find(row=>row.label===item.label)!;
+    const fixed=TPO_BUILTIN_JOB_TYPES.find(row=>row.label===item.label);
+    if(!fixed)throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
     const old=existing.find(row=>row.label.toLowerCase()===fixed.label.toLowerCase());
     if((old?.updatedAt.toISOString()??"none")!==item.expectedVersion)
      throw new TpoConfigError("TPO_SETTINGS_STALE");
