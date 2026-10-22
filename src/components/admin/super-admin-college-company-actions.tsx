@@ -42,21 +42,24 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
    setError("Company name must be between 2 and 100 characters");return;
   }
   if(!domain&&!website){setError("Add the company's website or a company email domain");return;}
-  if(website){try{
+  if(website){
+   if(!/^https:\/\//i.test(website)){setError("Website must start with https://");return;}
+   try{
    const url=new URL(website);
    if(url.protocol!=="https:"||url.username||url.password)
     throw new Error("INVALID_URL");
-  }catch{setError("Company website must be a valid https link");return;}}
+  }catch{setError("Must be a valid URL");return;}}
   if(logoPublicUrl.trim()){
+   if(!/^https:\/\//i.test(logoPublicUrl.trim())){setError("Logo URL must start with https://");return;}
    try{const url=new URL(logoPublicUrl.trim());
     if(url.protocol!=="https:"||url.username||url.password)throw new Error("INVALID_URL");
-   }catch{setError("Company logo must be a valid HTTPS link");return;}
+   }catch{setError("Must be a valid URL");return;}
   }
   if(industry.trim().length>100||about.trim().length>2000||notes.trim().length>2000){
    setError("Industry is limited to 100 characters; description and notes to 2,000.");return;
   }
   if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-   setError("Must be a valid contact email");return;
+   setError("Must be a valid email");return;
   }
   if(phone&&!/^[+()\d][\d\s().-]{6,29}$/.test(phone)){
    setError("Enter a valid phone number");return;
@@ -123,10 +126,11 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
       <Input maxLength={255} placeholder="example.com" value={primaryDomain} onChange={e=>setPrimaryDomain(e.target.value)} className={fieldClass}/>
      </label>
      <label className={labelClass}>Website (HTTPS)
-      <Input type="url" maxLength={500} placeholder="https://example.com" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)} className={fieldClass}/>
+      <Input type="url" maxLength={500} placeholder="https://..." value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)} className={fieldClass}/>
+      <span className="text-xs font-normal leading-5 text-muted-foreground">A company is kept once across colleges by its website or company email domain: add at least one of them.</span>
      </label>
      <label className={labelClass}>Company logo (HTTPS)
-      <Input type="url" maxLength={500} placeholder="https://example.com/logo.png"
+      <Input type="url" maxLength={500} placeholder="https://..."
        value={logoPublicUrl} onChange={e=>setLogoPublicUrl(e.target.value)} className={fieldClass}/>
       <span className="text-xs font-normal leading-5 text-muted-foreground">Saved on a new company identity only. An existing shared company keeps its verified logo.</span>
      </label>
@@ -137,7 +141,7 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
       <Input maxLength={150} value={contactName} onChange={e=>setContactName(e.target.value)} className={fieldClass}/>
      </label>
      <label className={labelClass}>Contact email
-      <Input type="email" maxLength={150} value={contactEmail} onChange={e=>setContactEmail(e.target.value)} className={fieldClass}/>
+      <Input type="email" maxLength={150} placeholder="recruiter@company.com" value={contactEmail} onChange={e=>setContactEmail(e.target.value)} className={fieldClass}/>
      </label>
      <label className={labelClass}>Phone
       <Input type="tel" maxLength={30} placeholder="+91 98765 43210" value={contactPhone}

@@ -19,11 +19,11 @@ export function AdminPeopleAcademicCascade({departments,programs,batches,classes
  const [program,setProgram]=useState(initial.programId??"");
  const [batch,setBatch]=useState(initial.cohortId??"");
  const [section,setSection]=useState(initial.sectionId??"");
- const availablePrograms=programs.filter(row=>!department||!row.departmentId||row.departmentId===department);
+ const availablePrograms=programs.filter(row=>!department||row.departmentId===department);
  const selectedProgram=availablePrograms.some(row=>row.id===program)?program:"";
- const availableBatches=batches.filter(row=>!selectedProgram||!row.programId||row.programId===selectedProgram);
+ const availableBatches=selectedProgram?batches.filter(row=>row.programId===selectedProgram):[];
  const selectedBatch=availableBatches.some(row=>row.id===batch)?batch:"";
- const availableClasses=classes.filter(row=>!selectedBatch||!row.cohortId||row.cohortId===selectedBatch);
+ const availableClasses=selectedBatch?classes.filter(row=>row.cohortId===selectedBatch):[];
  const selectedSection=availableClasses.some(row=>row.id===section)?section:"";
  const field="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
  return <>
@@ -42,14 +42,14 @@ export function AdminPeopleAcademicCascade({departments,programs,batches,classes
    </Select>
   </label>
   <label className={field}>Batch
-   <Select name="cohortId" className="w-full" value={selectedBatch}
+   <Select name="cohortId" className="w-full" value={selectedBatch} disabled={!selectedProgram}
      onChange={e=>{setBatch(e.target.value);setSection("");}}>
     <option value="">All batches</option>
     {availableBatches.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
    </Select>
   </label>
   <label className={field}>Class
-   <Select name="sectionId" className="w-full" value={selectedSection}
+   <Select name="sectionId" className="w-full" value={selectedSection} disabled={!selectedBatch}
      onChange={e=>setSection(e.target.value)}>
     <option value="">All classes</option>
     {availableClasses.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}

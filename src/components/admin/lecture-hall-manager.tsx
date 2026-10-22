@@ -445,6 +445,7 @@ export function LectureHallManager({
         title={`Discard edits to “${editing?.name ?? "this lecture hall"}”?`}
         description="Your unsaved changes will be lost."
         confirmLabel="Discard edits"
+        confirmVariant="danger"
         onConfirm={finishEdit}
       />
 
