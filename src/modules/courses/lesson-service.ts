@@ -164,9 +164,21 @@ export async function createCourseLesson(
   // the whole payload before acquiring locks, and insert all children in the
   // same transaction. Invalid children roll back the parent and its audit.
   const rawObject=z.record(z.string(),z.unknown()).parse(rawInput);
-  const {contentsDTOs,lessonName,...lessonFields}=rawObject;
+  const {contentsDTOs,lessonName,courseSlug,courseId,...lessonFields}=rawObject;
+  const legacyScope=z.strictObject({
+    courseSlug:z.string().trim().max(160).optional(),
+    courseId:z.union([z.string().trim().min(1),z.number().int().positive()]).optional(),
+  }).parse({courseSlug,courseId});
+  const resolvedLegacyPath=legacyScope.courseSlug||legacyScope.courseId!==undefined
+    ?await resolveLegacyLessonLearningPath(context,legacyScope):null;
+  if((legacyScope.courseSlug||legacyScope.courseId!==undefined)&&!resolvedLegacyPath)
+    throw new CoursesServiceError("LESSON_NOT_FOUND");
+  if(resolvedLegacyPath&&lessonFields.learningPathId!==undefined&&
+     lessonFields.learningPathId!==resolvedLegacyPath)
+    throw new CoursesServiceError("LESSON_NOT_FOUND");
   const input=createCourseLessonInputSchema.parse({
-    ...lessonFields,name:lessonFields.name??lessonName,
+    ...lessonFields,learningPathId:lessonFields.learningPathId??resolvedLegacyPath,
+    name:lessonFields.name??lessonName,
   });
   const children=contentsDTOs===undefined?[]:
     z.array(z.record(z.string(),z.unknown())).max(50).parse(contentsDTOs);
