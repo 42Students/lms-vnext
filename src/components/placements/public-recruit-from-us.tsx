@@ -48,7 +48,15 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
       mobile:mobile.trim(),hiringFor:hiringFor.trim(),
     }),
    });
-   const data=await response.json() as {error?:string;email?:string;message?:string};
+   // A gateway error page need not contain JSON; use a safe fallback.
+   const raw:unknown=await response.json().catch(()=>null);
+   const record=raw!==null&&typeof raw==="object"&&!Array.isArray(raw)
+     ?raw as Record<string,unknown>:null;
+   const data={
+     error:typeof record?.error==="string"?record.error:undefined,
+     email:typeof record?.email==="string"?record.email:undefined,
+     message:typeof record?.message==="string"?record.message:undefined,
+   };
    if(!response.ok){
     if(response.status===503||data.error==="RECRUITER_ENQUIRIES_UNAVAILABLE"){
      setUnavailable(true);throw new Error(PUBLIC_RECRUIT_COPY.unavailable);
