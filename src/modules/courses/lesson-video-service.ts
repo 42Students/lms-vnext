@@ -21,6 +21,7 @@ import {
 } from "@/modules/storage/file-lifecycle";
 import {
   MAX_VIDEOS_PER_LESSON_DELIVERY,
+  MAX_VIDEO_BYTES,
   MAX_VIDEO_DURATION_SECONDS,
   validateStorageDeclaration,
 } from "@/modules/storage/file-policy";
@@ -54,6 +55,33 @@ export const LESSON_VIDEO_IMPORT_POLICY={
  cleanupRetainsAuditRows:true,
  operatorMessage:"Remote URL import is unavailable. Upload a verified file directly; publishing is enabled only after the scan completes.",
 } as const;
+/** Legacy remote URL imports remain disabled until a bounded, scanned worker
+ * exists. Expose only the safe progress/status and declared size ceiling for
+ * asynchronous signed uploads. Never expose object keys or grant URLs here. */
+export function lessonVideoUploadFeedback(row: {
+  processingStatus: string;
+  scanStatus: string;
+}) {
+  if (row.processingStatus === "READY") return {
+    phase: "READY" as const,
+    message: "Video is verified and ready to publish.",
+    maxUploadBytes: MAX_VIDEO_BYTES,
+  };
+  if (row.processingStatus === "FAILED" || row.processingStatus === "BLOCKED") return {
+    phase: "FAILED" as const,
+    message: row.scanStatus === "REJECTED"
+      ? "Video failed the security scan. Upload a different file."
+      : "Video could not be verified. Upload the file again.",
+    maxUploadBytes: MAX_VIDEO_BYTES,
+  };
+  return {
+    phase: row.processingStatus === "UPLOADING" ? "UPLOADING" as const : "VERIFYING" as const,
+    message: row.processingStatus === "UPLOADING"
+      ? "Upload the file using the signed link, then confirm completion."
+      : "Video is being verified. It cannot be published until scanning finishes.",
+    maxUploadBytes: MAX_VIDEO_BYTES,
+  };
+}
 type VideoRow = typeof lessonVideoAssets.$inferSelect;
 
 const idSchema = z.string().uuid();
@@ -125,6 +153,7 @@ export function toVideoDto(row: VideoRow) {
     thumbnailStatus: row.thumbnailStatus as "NONE" | "UPLOADING" | "READY",
     replacesVideoId: row.replacesAssetId,
     failureCode: row.failureCode,
+    uploadFeedback: lessonVideoUploadFeedback(row),
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     completedAt: row.completedAt?.toISOString() ?? null,
