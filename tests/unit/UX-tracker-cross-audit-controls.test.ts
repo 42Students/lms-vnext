@@ -8,7 +8,7 @@ describe("Cross-audit Tracker directory and actions",()=>{
   for(const x of ['<Input name="q"','<Select name="area" multiple','<Select name="status" multiple','<Select name="severity" multiple','<Select name="kind" multiple','<Button type="submit" variant="primary"'])expect(s).toContain(x);
   expect(s).toContain('aria-label="tracker audit findings filters"');
   expect(s).toContain('<Pagination label="Audit findings pages"');
-  expect(s).toContain('className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9"');
+  expect(s).toContain('className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9 focus-visible:outline-2');
   expect(s).toContain('<IndependentAuditFindingsBoard rows={data.items}');
  });
  it("UX-tracker-issues-02 issue detail link works on touch and keyboard without hover",()=>{
