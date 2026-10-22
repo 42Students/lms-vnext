@@ -184,6 +184,7 @@ export async function createPlacementDebarment(
       untilDrives: input.untilDrives ?? null,
       createdByUserId: context.user.id,
     }).returning();
+    if (!row) throw new PlacementDebarmentError("DB08_DEBARMENT_INSERT_FAILED");
     // The DB08 trigger independently preserves immutable CREATED history.
     await recordDebarmentNotice(tx,college,learner.userId,context.user.id,row.id,"DEBARRED");
     return row;
@@ -224,6 +225,7 @@ export async function liftPlacementDebarment(
       liftedByUserId: context.user.id,
       liftedReason: input.reason||"Lifted by placement officer; no reason supplied",
     }).where(eq(placementDebarments.id, locked.id)).returning();
+    if (!updated) throw new PlacementDebarmentError("DB08_DEBARMENT_LIFT_FAILED");
     // The DB trigger creates an immutable LIFTED action. A repeated lift is a no-op.
     const [learner]=await tx.select({userId:collegeMemberships.userId})
       .from(collegeMemberships).where(and(

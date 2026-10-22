@@ -123,38 +123,38 @@ export function projectTpoShareApplicant(input: {
   );
 
   if (allowed.has("name")) {
-    projected.name = [applicant.firstName, applicant.lastName]
+    projected["name"] = [applicant.firstName, applicant.lastName]
       .filter((part) => part?.trim())
       .join(" ");
   }
-  if (allowed.has("roll")) projected.roll = applicant.roll;
-  if (allowed.has("branch")) projected.branch = applicant.branch;
+  if (allowed.has("roll")) projected["roll"] = applicant.roll;
+  if (allowed.has("branch")) projected["branch"] = applicant.branch;
 
   const ug = verifiedPercentage(applicant.marks.UG);
   if (allowed.has("cgpa") && ug !== null) {
-    projected.cgpa = formatUgPercentage(ug, visibility.showCgpaExact);
+    projected["cgpa"] = formatUgPercentage(ug, visibility.showCgpaExact);
   }
   if (visibility.showTenthTwelfth) {
     const tenth = verifiedPercentage(applicant.marks["10TH"]);
     if (allowed.has("tenth") && tenth !== null) {
-      projected.tenth = tenth / 100;
+      projected["tenth"] = tenth / 100;
     }
     if (allowed.has("twelfth")) {
       const twelfth = verifiedPercentage(applicant.marks["12TH"]) ??
         verifiedPercentage(applicant.marks.DIPLOMA);
-      if (twelfth !== null) projected.twelfth = twelfth / 100;
+      if (twelfth !== null) projected["twelfth"] = twelfth / 100;
     }
   }
 
   if (!retained) {
-    if (allowed.has("email")) projected.email = applicant.email;
+    if (allowed.has("email")) projected["email"] = applicant.email;
     if (allowed.has("phone") && position >= SHARE_STAGE_POSITIONS.get("SHORTLISTED")!) {
-      projected.phone = applicant.phone;
+      projected["phone"] = applicant.phone;
     }
-    if (allowed.has("resume")) projected.resume = applicant.resumeUrl;
+    if (allowed.has("resume")) projected["resume"] = applicant.resumeUrl;
     if (allowed.has("projects") && visibility.showProjectLinks) {
-      projected.github = applicant.githubUrl;
-      projected.portfolio = applicant.portfolioUrl;
+      projected["github"] = applicant.githubUrl;
+      projected["portfolio"] = applicant.portfolioUrl;
     }
   }
 
@@ -164,9 +164,9 @@ export function projectTpoShareApplicant(input: {
     visibility.showAssessmentScores &&
     applicant.skillMatchScore !== null &&
     Number.isFinite(applicant.skillMatchScore)
-  ) projected.skillMatch = Math.round(applicant.skillMatchScore);
+  ) projected["skillMatch"] = Math.round(applicant.skillMatchScore);
 
   // Attendance is deliberately not a share column even when its toggle is true.
-  if (allowed.has("stage")) projected.stage = applicant.stage;
+  if (allowed.has("stage")) projected["stage"] = applicant.stage;
   return projected;
 }
