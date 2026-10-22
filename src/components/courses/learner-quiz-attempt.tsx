@@ -365,6 +365,9 @@ export function LearnerQuizAttempt() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             deliveryId,
+            // Persist the exact question set the learner answered. The service
+            // rejects stale or re-authored quizzes rather than grading a mix.
+            shownQuestionIds: questions.map(question => question.id),
             answers: questions.map((question) => ({
               questionId: question.id,
               selectedOptionIds: answers[question.id] ?? [],

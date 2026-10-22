@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { executeScheduledJobWithLease } from "./scheduled-job-runner";
 import { postgresScheduledJobLeaseStore } from "./postgres-scheduled-job-lease-store";
 import { TPO_SCHEDULED_JOBS } from "./tpo-scheduled-job-registry";
-import { sweepExpiredPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
+import { sweepExpiredPlacementOffers, remindExpiringPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
 import {finalizeMaturedExternalTpoAcceptances} from "@/modules/placements/tpo-offer-lifecycle-service";
 
 const JOB_NAME = "tpo.expireOverdueOffers";
@@ -13,7 +13,8 @@ export type TpoOfferExpiryTickResult =
   | { status: "DISABLED"; expired: 0 }
   | { status: "HELD"; expired: 0 }
   | { status: "COMPLETED"; expired: number; batchLimitReached: boolean;
-      matured: number; maturityFailed: number; maturityBatchLimitReached: boolean };
+      matured: number; maturityFailed: number; maturityBatchLimitReached: boolean;
+      reminded: number; reminderBatchLimitReached: boolean };
 
 /**
  * Called only by the internal POST scheduler route, never by page renders.
@@ -56,6 +57,21 @@ export async function runTpoOfferExpiryTick(): Promise<TpoOfferExpiryTickResult>
         }
         batchLimitReached = true;
       }
+      // The 15-minute sweep also services the hourly at-most-once reminder
+      // contract; row-level event dedupe prevents extra user notifications.
+      // A separate deployment flag gates reminders until the scheduler and
+      // notification provider are configured and operationally approved.
+      let reminded=0,reminderBatchLimitReached=false;
+      if(process.env.TPO_SCHEDULED_OFFER_REMINDERS_ENABLED==="true"){
+        for(let batch=0;batch<5;batch++){
+          await fence.renew();
+          await fence.assertCurrent();
+          const n=await remindExpiringPlacementOffers(actorUserId,new Date(),100);
+          reminded+=n;
+          if(n<100){reminderBatchLimitReached=false;break;}
+          reminderBatchLimitReached=true;
+        }
+      }
       // Apply the independent 48-hour external-acceptance due selector
       // after expiry. Each acceptance rechecks disputes and serializes
       // membership/offer writes, preserving a retryable failure record.
@@ -74,7 +90,8 @@ export async function runTpoOfferExpiryTick(): Promise<TpoOfferExpiryTickResult>
         }
         maturityBatchLimitReached=true;
       }
-      return { expired, batchLimitReached,matured,maturityFailed,maturityBatchLimitReached };
+      return { expired, batchLimitReached,matured,maturityFailed,maturityBatchLimitReached,
+        reminded,reminderBatchLimitReached };
     },
   );
   if (!result.ran) return { status: "HELD", expired: 0 };
