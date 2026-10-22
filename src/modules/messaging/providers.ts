@@ -323,6 +323,331 @@ const DEFAULT_JOB_SMS_BODY =
 /** Remove the DLT token shape, bidi/format controls and excess whitespace. */
 export function dltSafeRecipientName(raw: string | null | undefined): string {
   const normalized = (raw ?? "").replace(/\{#.*?#\}/g, "")
+    .replace(/[{}<>#%import { outboundFetch } from "@/lib/outbound";
+import { writeStructuredLog } from "@/observability/logger";
+import { appendSmsDeliveryAttempt, readExotelConfig, type ExotelConfig } from "@/modules/notifications/exotel-sms";
+import {
+  readZeptoMailConfig, sendZeptoMailTemplate,
+  type LegacyMailEvent, type ZeptoMailConfig, type ZeptoMailPurpose,
+} from "@/modules/notifications/zeptomail-email";
+import type { OutboundProvider } from "./service";
+import { outboundSendSchema, normalizeRecipient, type OutboundSendRequest } from "./model";
+import { canContactRecipientAtRuntime } from "./runtime-safety";
+import { isExotelAcceptedResponse } from "./provider-acceptance-model";
+import { isCampaignTemplateKey } from "./template-boundary-model";
+
+/** Legacy NotificationEventRegistry channel policy, as of 13 October 2026. */
+export const LEGACY_NOTIFICATION_CHANNELS: Readonly<Record<LegacyMailEvent, readonly ("IN_APP" | "EMAIL" | "SMS")[]>> = {
+  JOB_APPLICATION_CONFIRMATION: ["IN_APP", "SMS"],
+  JOB_SHORTLISTED: ["IN_APP", "SMS"],
+  JOB_ASSESSMENT_INVITE: ["IN_APP"],
+  JOB_INTERVIEW_SCHEDULED: ["IN_APP", "EMAIL", "SMS"],
+  JOB_OFFER_EXTENDED: ["IN_APP"],
+  JOB_HIRED: ["IN_APP"],
+  JOB_APPLICATION_REJECTED: ["IN_APP", "SMS"],
+  JOB_WAITLISTED: ["IN_APP"],
+  INTERVIEW_REMINDER: ["IN_APP", "EMAIL", "SMS"],
+  INTERVIEW_CONFIRMED: ["IN_APP", "EMAIL", "SMS"],
+  INTERVIEW_CANCELLED: ["IN_APP"],
+  INTERVIEW_RESCHEDULED: ["IN_APP"],
+  COURSE_ASSIGNMENT_DUE: ["IN_APP"],
+  COURSE_ASSIGNMENT_SUBMITTED: ["IN_APP"],
+  COURSE_GRADE_PUBLISHED: ["IN_APP"],
+  SYSTEM_EMAIL_VERIFICATION: ["EMAIL"],
+  SYSTEM_APPLICATION_APPROVED: ["EMAIL"],
+  SYSTEM_APPLICATION_REJECTED: ["EMAIL"],
+};
+
+/** Templates are provisioned server-side; OTP IDs never enter this registry. */
+export type OutboundTemplate = {
+  zeptoTemplateKey?: string;
+  exotelDltTemplateId?: string;
+  exotelSenderId?: string;
+  renderSms?: (variables: Record<string, string>) => string;
+  legacyEvent?: LegacyMailEvent;
+  /** Trusted college-specific sender settings, not caller-provided headers. */
+  senderName?: string;
+  fromAddress?: string;
+  replyTo?: string;
+  /** Optional human display label, never accepted as an arbitrary mailbox. */
+  replyToName?: string;
+  /** Explicit template-bound merge contract. Missing values never reach API. */
+  requiredVariables?: readonly string[];
+  /** At least one nonblank key in each group must be provided. */
+  oneOfVariables?: readonly (readonly string[])[];
+  /** Approved DLT SMS text is not necessarily the generic 1600-char limit. */
+  maxSmsLength?: number;
+};
+export type OutboundProviderConfig = {
+  email: ZeptoMailConfig;
+  sms: ExotelConfig;
+  templates: Readonly<Record<string, OutboundTemplate>>;
+};
+export type OutboundProviderOutcome =
+  | { status: "ACCEPTED"; providerSid?: string }
+  | { status: "NOT_CONFIGURED"; reason: string }
+  | { status: "SUPPRESSED"; reason: string }
+  | { status: "FAILED"; reason: string; httpStatus?: number };
+export type OutboundProviderWithOutcomes = OutboundProvider & {
+  sendDetailed(request: OutboundSendRequest): Promise<OutboundProviderOutcome>;
+};
+
+export function readOutboundProviderConfig(templates: OutboundProviderConfig["templates"]): OutboundProviderConfig {
+  return { email: readZeptoMailConfig(), sms: readExotelConfig(), templates: registerLegacySmsTemplates(templates) };
+}
+
+/** Event-to-template contracts mirror registered ZeptoMail/DLT purposes.
+ * A template may tighten but never bypass the generic variable checks. */
+export const LEGACY_EVENT_MERGE_FIELDS: Partial<Readonly<Record<LegacyMailEvent,readonly string[]>>> = {
+ JOB_INTERVIEW_SCHEDULED:["learnerName","jobTitle","companyName","applicationId",
+  "roundDescription","interviewDate","interviewTime","interviewMode"],
+ INTERVIEW_REMINDER:["learnerName","jobTitle","companyName","applicationId",
+  "interviewDate","interviewTime","interviewMode"],
+ INTERVIEW_CONFIRMED:["learnerName","jobTitle","companyName","applicationId",
+  "interviewDate","interviewTime","interviewMode"],
+ SYSTEM_EMAIL_VERIFICATION:["learnerName"],
+ SYSTEM_APPLICATION_APPROVED:["learnerName","applicationId"],
+ SYSTEM_APPLICATION_REJECTED:["learnerName","applicationId","rejectionReason"],
+};
+const RESERVED_TEMPLATE_VARIABLE=/^(?:__proto__|constructor|prototype|password|otp|apiKey|accessToken|secret)$/i;
+export type OutboundVariableValidation =
+ | {ok:true;clean:Record<string,string>}
+ | {ok:false;code:"TEMPLATE_MERGE_MISSING"|"TEMPLATE_MERGE_INVALID";missing?:string};
+export function validateOutboundTemplateVariables(
+ variables:Record<string,string>,template:OutboundTemplate,
+):OutboundVariableValidation{
+ const clean:Record<string,string>=Object.create(null) as Record<string,string>;
+ let total=0;
+ const keys=Object.entries(variables);
+ if(keys.length>25)return {ok:false,code:"TEMPLATE_MERGE_INVALID"};
+ for(const [key,value] of keys){
+  if(!/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)||
+   RESERVED_TEMPLATE_VARIABLE.test(key)||
+   typeof value!=="string"||value.length>4000||
+   /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value))return {
+    ok:false,code:"TEMPLATE_MERGE_INVALID",
+   };
+  total+=key.length+value.length;
+  if(total>12000)return {ok:false,code:"TEMPLATE_MERGE_INVALID"};
+  clean[key]=value.trim();
+ }
+ const required=[...(template.legacyEvent?
+  LEGACY_EVENT_MERGE_FIELDS[template.legacyEvent]??[]:[]),
+  ...(template.requiredVariables??[])];
+ for(const key of required){
+  if(!/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)||
+   RESERVED_TEMPLATE_VARIABLE.test(key))return {ok:false,code:"TEMPLATE_MERGE_INVALID"};
+  if(!clean[key])return {ok:false,code:"TEMPLATE_MERGE_MISSING",missing:key};
+ }
+ const eventLocationRequired=template.legacyEvent==="JOB_INTERVIEW_SCHEDULED"||
+  template.legacyEvent==="INTERVIEW_REMINDER"||
+  template.legacyEvent==="INTERVIEW_CONFIRMED";
+ if(eventLocationRequired&&![
+   "meetingLink","venueAddress","interviewLocation"
+  ].some(key=>Boolean(clean[key])))
+  return {ok:false,code:"TEMPLATE_MERGE_MISSING",
+    missing:"meetingLink|venueAddress|interviewLocation"};
+ for(const alternatives of template.oneOfVariables??[]){
+  if(alternatives.length<1||alternatives.some(key=>
+      !/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)||
+      RESERVED_TEMPLATE_VARIABLE.test(key)))return {ok:false,code:"TEMPLATE_MERGE_INVALID"};
+  if(!alternatives.some(key=>Boolean(clean[key])))
+   return {ok:false,code:"TEMPLATE_MERGE_MISSING",missing:alternatives.join("|")};
+ }
+ return {ok:true,clean};
+}
+/** An operator-safe summary suitable for previews; no addresses or credentials. */
+export function outboundTemplateReadiness(
+ templateKey:string,channel:"EMAIL"|"SMS",config:OutboundProviderConfig,
+):{ready:boolean;reason:"READY"|"UNREGISTERED_TEMPLATE"|"EVENT_CHANNEL_DISABLED"|
+ "EMAIL_TEMPLATE_NOT_PROVISIONED"|"SMS_TEMPLATE_NOT_PROVISIONED"}{
+ const entry=config.templates[templateKey];
+ if(!entry||!isCampaignTemplateKey(templateKey))
+  return {ready:false,reason:"UNREGISTERED_TEMPLATE"};
+ if(entry.legacyEvent&&!LEGACY_NOTIFICATION_CHANNELS[entry.legacyEvent].includes(channel))
+  return {ready:false,reason:"EVENT_CHANNEL_DISABLED"};
+ if(channel==="EMAIL"){
+  const valid=Boolean(entry.zeptoTemplateKey&&
+    isCampaignTemplateKey(entry.zeptoTemplateKey)&&
+    entry.zeptoTemplateKey!==config.email.otpTemplateKey);
+  return {ready:valid,reason:valid?"READY":"EMAIL_TEMPLATE_NOT_PROVISIONED"};
+ }
+ const valid=Boolean(entry.exotelDltTemplateId&&safeDltId(entry.exotelDltTemplateId)&&
+  entry.exotelDltTemplateId!==config.sms.otpDltTemplateId&&
+  safeSenderId(entry.exotelSenderId)&&entry.renderSms&&
+  config.sms.apiKey.trim()&&config.sms.apiToken.trim());
+ return {ready:valid,reason:valid?"READY":"SMS_TEMPLATE_NOT_PROVISIONED"};
+}
+
+/** Existing callers retain send():boolean; operators may inspect typed outcomes. */
+export function createOutboundProvider(
+  config: OutboundProviderConfig,
+  fetchImpl: typeof fetch = fetch,
+  env: Record<string, string | undefined> = process.env,
+): OutboundProviderWithOutcomes {
+  async function sendDetailedOnce(rawRequest: OutboundSendRequest): Promise<OutboundProviderOutcome> {
+    const parsed = outboundSendSchema.safeParse(rawRequest);
+    if (!parsed.success) return { status: "SUPPRESSED", reason: "INVALID_OUTBOUND_REQUEST" };
+    const request = {
+      ...parsed.data, recipient: normalizeRecipient(parsed.data.channel, parsed.data.recipient),
+    };
+    if (!canContactRecipientAtRuntime(request.channel, request.recipient, env)) {
+      return { status: "SUPPRESSED", reason: "INVALID_OR_DISALLOWED_RECIPIENT" };
+    }
+    const template = config.templates[request.templateKey];
+    if (!template || !isCampaignTemplateKey(request.templateKey)) {
+      return { status: "NOT_CONFIGURED", reason: "UNREGISTERED_TEMPLATE" };
+    }
+    if (template.legacyEvent && !LEGACY_NOTIFICATION_CHANNELS[template.legacyEvent]?.includes(request.channel)) {
+      return { status: "SUPPRESSED", reason: "EVENT_CHANNEL_DISABLED" };
+    }
+    const validation=validateOutboundTemplateVariables(request.variables,template);
+    if(!validation.ok){
+      return {status:"SUPPRESSED",reason:validation.code+
+        (validation.missing?":"+validation.missing:"")};
+    }
+    const variables=validation.clean;
+    if (request.channel === "EMAIL") {
+      // Legacy templates have one location merge slot. An explicitly entered
+      // meeting link or venue is mapped only after the one-of validation.
+      if(template.legacyEvent==="INTERVIEW_REMINDER"||
+         template.legacyEvent==="INTERVIEW_CONFIRMED"){
+        variables.interviewLocation=variables.interviewLocation||
+          variables.meetingLink||variables.venueAddress;
+      }
+      if (!template.zeptoTemplateKey || !isCampaignTemplateKey(template.zeptoTemplateKey) ||
+        template.zeptoTemplateKey === config.email.otpTemplateKey) {
+        return { status: "NOT_CONFIGURED", reason: "EMAIL_TEMPLATE_NOT_PROVISIONED" };
+      }
+      // The trusted registry supplies the template ID. The common adapter
+      // validates event merge fields, verified sender/reply headers, and provider
+      // acceptance without leaking the address, token or content into logs.
+      const purpose: ZeptoMailPurpose = template.legacyEvent
+        ? { kind: "EVENT", event: template.legacyEvent }
+        : { kind: "TPO", templateName: "registered_outbound" };
+      const override = template.legacyEvent
+        ? { ["ZEPTOMAIL_TEMPLATE_" + template.legacyEvent]: template.zeptoTemplateKey }
+        : { ZEPTOMAIL_TEMPLATE_TPO_REGISTERED_OUTBOUND: template.zeptoTemplateKey };
+      const effectiveEnv = { ...env, ...override };
+      const result = await sendZeptoMailTemplate({
+        purpose, toEmail: request.recipient,
+        recipientName: variables.learnerName ?? variables.name ?? request.recipient,
+        mergeInfo: variables,
+        senderName: template.senderName?.trim() || undefined,
+        fromAddress: template.fromAddress?.trim() || undefined,
+        replyTo: template.replyTo?.trim() || undefined,
+      }, config.email, fetchImpl, effectiveEnv);
+      if (result.accepted) return { status: "ACCEPTED" };
+      if (result.code === "TEMPLATE_NOT_CONFIGURED" || result.code === "TOKEN_NOT_CONFIGURED" ||
+        result.code === "ENDPOINT_INVALID") {
+        return { status: "NOT_CONFIGURED", reason: result.code };
+      }
+      if (result.code === "EVENT_EMAIL_DISABLED" || result.code === "DEV_RECIPIENT_NOT_ALLOWED" ||
+        result.code === "RECIPIENT_REQUIRED" || result.code === "RECIPIENT_INVALID" ||
+        result.code === "REQUIRED_VARIABLE_MISSING" || result.code === "MERGE_INFO_INVALID" ||
+        result.code === "SENDER_UNVERIFIED" || result.code === "REPLY_TO_UNVERIFIED") {
+        return { status: "SUPPRESSED", reason: result.code };
+      }
+      return { status: "FAILED", reason: result.code, ...(result.httpStatus
+        ? { httpStatus: result.httpStatus } : {}) };
+    }
+
+    if (!config.sms.apiKey.trim() || !config.sms.apiToken.trim() ||
+      !/^[A-Za-z0-9_-]+$/.test(config.sms.accountSid) ||
+      !config.sms.dltEntityId.trim() || !template.exotelSenderId?.trim() ||
+      !template.exotelDltTemplateId?.trim() || !template.renderSms ||
+      template.exotelDltTemplateId === config.sms.otpDltTemplateId) {
+      return { status: "NOT_CONFIGURED", reason: request.templateKey === "job.update"
+        ? "JOB_DLT_TEMPLATE_ID_NOT_CONFIGURED" : "SMS_TEMPLATE_NOT_PROVISIONED" };
+    }
+    try {
+      const body = template.renderSms(variables);
+      const approvedBound=template.maxSmsLength&&template.maxSmsLength>0?
+        Math.min(template.maxSmsLength,1600):1600;
+      if (!body.trim() || body.length > approvedBound) {
+        return { status: "SUPPRESSED", reason: "SMS_BODY_INVALID" };
+      }
+      const form = new URLSearchParams({
+        From: template.exotelSenderId, To: request.recipient, Body: body,
+        DltEntityId: config.sms.dltEntityId, DltTemplateId: template.exotelDltTemplateId,
+        SmsType: config.sms.smsType, Priority: "normal",
+      });
+      const response = await outboundFetch(
+        "https://api.exotel.com/v1/Accounts/" + config.sms.accountSid + "/Sms/send.json", {
+          method: "POST",
+          headers: {
+            Authorization: "Basic " + Buffer.from(config.sms.apiKey + ":" + config.sms.apiToken).toString("base64"),
+            "Content-Type": "application/x-www-form-urlencoded",
+            Accept: "application/json",
+          },
+          body: form, timeoutMs: 10_000, maxAttempts: 1, fetchImpl,
+        },
+      );
+      if (!response.ok) return { status: "FAILED", reason: "SMS_PROVIDER_REJECTED", httpStatus: response.status };
+      const payload: unknown = await response.json();
+      if (!isExotelAcceptedResponse(payload)) {
+        return { status: "FAILED", reason: "SMS_PROVIDER_NOT_ACCEPTED" };
+      }
+      const message=(payload as {SMSMessage:{Sid:string}}).SMSMessage;
+      const sid=message.Sid.trim();
+      if(!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$/.test(sid)){
+        // The acceptance ledger has a narrower SID shape than Exotel.
+        // Without an auditable receipt, do not claim an accepted SMS send.
+        return {status:"FAILED",reason:"SMS_PROVIDER_RECEIPT_INVALID"};
+      }
+      return { status: "ACCEPTED", providerSid:sid };
+    } catch {
+      return { status: "FAILED", reason: "SMS_PROVIDER_UNAVAILABLE" };
+    }
+  }
+  async function sendDetailed(rawRequest: OutboundSendRequest): Promise<OutboundProviderOutcome> {
+    const outcome = await sendDetailedOnce(rawRequest);
+    // This is an independent append-on-send audit, not another provider send.
+    // Reuse the same Exotel acceptance/failed outcome from the single bounded
+    // request; never persist the SMS body, OTP, full recipient or credentials.
+    // Suppressed/unconfigured events did not attempt provider delivery.
+    if(rawRequest.channel==="SMS"&&(outcome.status==="ACCEPTED"||outcome.status==="FAILED")){
+      await appendSmsDeliveryAttempt({
+        purpose:rawRequest.templateKey==="job.update"?"job.update":"notification",
+        recipient:normalizeRecipient("SMS",rawRequest.recipient),
+        outcome:outcome.status==="ACCEPTED"?"PROVIDER_ACCEPTED":"FAILED",
+        providerSid:outcome.status==="ACCEPTED"?outcome.providerSid??null:null,
+        failureCode:outcome.status==="FAILED"?outcome.reason:null,
+      });
+    }
+    if (outcome.status !== "ACCEPTED") {
+      writeStructuredLog("WARNING", "messaging.provider_not_accepted", {
+        channel: rawRequest.channel === "EMAIL" ? "EMAIL" : "SMS",
+        outcome: outcome.status,
+        reason: outcome.reason,
+        ...(outcome.status === "FAILED" && outcome.httpStatus
+          ? { httpStatus: outcome.httpStatus } : {}),
+      });
+    }
+    return outcome;
+  }
+  return {
+    sendDetailed,
+    async send(rawRequest) {
+      return (await sendDetailed(rawRequest)).status === "ACCEPTED";
+    },
+  };
+}
+
+
+/** The seven legacy job/SMS intents share exactly one TRAI-registered body. */
+export const LEGACY_JOB_SMS_INTENTS = [
+  "application-submitted", "shortlisted", "interview-round-update",
+  "selected", "rejected", "interview.reminder", "interview.confirmed",
+] as const;
+export type LegacyJobSmsIntent = (typeof LEGACY_JOB_SMS_INTENTS)[number];
+
+const DEFAULT_JOB_SMS_BODY =
+  "Reminder: Hello {#var#}, You have an update on the 42 LMS Jobs Portal. Login to 42lms.com to check - JRSPF";
+
+/** Remove the DLT token shape, bidi/format controls and excess whitespace. */
+export function dltSafeRecipientName(raw: string | null | undefined): string {
+\\]/g, " ")
     .replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+/gu, " ")
     .replace(/\s+/gu, " ").trim();
   return Array.from(normalized || "User").slice(0, 30).join("").trim() || "User";

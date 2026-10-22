@@ -123,3 +123,24 @@ export function assertAtLeastOneActiveTpoJobType(
  if(!rows.some(row=>row.active))
   throw new Error("At least one job type must remain active");
 }
+
+
+/** Unknown imported job-type flags are not inferred from employment type
+ * or from active job counts. One college's hidden custom labels can differ
+ * from another's; a null countsAsPlaced requires an explicit reviewed
+ * canonical mapping before producing "placed" learner statistics. */
+export function legacyTpoJobTypeCountingDecision(input:{
+  sourceLabel:string;sourceCountsAsPlaced:boolean|null;
+  sourceHidden:boolean|null;collegeId:string;
+  approvedBuiltins:ReadonlyMap<string,boolean>;
+}){
+ const label=input.sourceLabel.trim().replace(/\s+/g," ");
+ if(!label||label.length>40||!input.collegeId)
+  throw new Error("Unmapped job type label/college");
+ const builtin=input.approvedBuiltins.get(label.toLocaleLowerCase("en-IN"));
+ const countsAsPlaced=input.sourceCountsAsPlaced??builtin??null;
+ if(countsAsPlaced===null)return {status:"REVIEW_REQUIRED" as const,
+  label,countsAsPlaced:null,active:input.sourceHidden!==true};
+ return {status:"READY" as const,label,
+  countsAsPlaced,active:input.sourceHidden!==true};
+}
