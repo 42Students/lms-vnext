@@ -15,6 +15,7 @@ const invoke=(authorization?:string)=>new Request(
 });
 beforeEach(()=>{
  vi.clearAllMocks();
+ vi.spyOn(process,"uptime").mockReturnValue(120);
  process.env.RECRUITER_MESSAGE_WORKER_SECRET=secret;
  vi.mocked(isSameOriginRequest).mockReturnValue(true);
  vi.mocked(dispatchRecruiterUnreadMessageDigests).mockResolvedValue({
@@ -22,6 +23,7 @@ beforeEach(()=>{
  });
 });
 afterEach(()=>{
+ vi.restoreAllMocks();
  if(previous===undefined)delete process.env.RECRUITER_MESSAGE_WORKER_SECRET;
  else process.env.RECRUITER_MESSAGE_WORKER_SECRET=previous;
 });
