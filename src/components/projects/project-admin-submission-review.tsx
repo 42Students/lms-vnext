@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Banner } from "@/components/ui/banner";
+import {StatusBadge} from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -104,7 +105,8 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  }
  return <section aria-label="Review final submission" className="mt-[var(--lms-space-3)] min-w-0">
   <Button type="button" variant="secondary" onClick={()=>{void openReview();}}>
-   Review
+   {status==="UNDER_REVIEW"||locked||!["SUBMITTED","APPROVED"].includes(status)?
+      "View review status":"Review"}
   </Button>
   {message?<Banner tone="success">{message}</Banner>:null}
   <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title={"Review — "+(workspaceTitle??"project submission")}
@@ -112,26 +114,39 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:justify-end">
     <Button className="w-full sm:w-auto" type="button" variant="secondary" disabled={pending} onClick={guard.requestClose}
      >Cancel</Button>
-    {currentActionAvailable&&canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"CHANGES_REQUESTED")?
-     <Button className="w-full sm:w-auto" type="button" variant="secondary"
-      disabled={pending||loadingCurrent||reviewVersion===null||!feedback.trim()}
-      onClick={()=>{void decide("CHANGES_REQUESTED")}}
-      >Request changes</Button>:null}
-    {currentActionAvailable&&canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"APPROVED")?
-     <Button className="w-full sm:w-auto" type="button" variant="primary" loading={pending}
-       disabled={pending||loadingCurrent||reviewVersion===null}
-       onClick={()=>{void decide("APPROVED")}}>Accept submission</Button>:null}
+    <Button className="w-full sm:w-auto" type="button" variant="secondary"
+      disabled={pending||loadingCurrent||!currentActionAvailable||
+        reviewVersion===null||!feedback.trim()||
+        !canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"CHANGES_REQUESTED")}
+      onClick={()=>{void decide("CHANGES_REQUESTED")}}>Request changes</Button>
+    <Button className="w-full sm:w-auto" type="button" variant="primary" loading={pending}
+      disabled={pending||loadingCurrent||!currentActionAvailable||
+        reviewVersion===null||
+        !canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"APPROVED")}
+      onClick={()=>{void decide("APPROVED")}}>Accept submission</Button>
+    {allowLock?<Button className="w-full sm:w-auto" type="button" variant="secondary"
+      disabled={pending||loadingCurrent||!currentActionAvailable||
+        reviewVersion===null||
+        !canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"LOCK")}
+      onClick={()=>setConfirmLock(true)}>Lock submission</Button>:null}
    </div>}>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Feedback for the learner
     <Textarea maxLength={6000} value={feedback} disabled={pending}
       onChange={event=>setFeedback(event.target.value)} rows={4}
       className="w-full"
-      placeholder="Optional for Accept/Lock — required for Request changes"/>
+      placeholder="Optional — shown to learner alongside decision."/>
+    <span className="text-xs font-normal leading-5 text-body">
+      Feedback is optional when accepting or locking; requesting changes requires an explanation.
+    </span>
    </label>
-   {allowLock&&currentActionAvailable&&canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"LOCK")?<details className="mt-[var(--lms-space-4)] min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]">
-     <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Lock submission</summary>
-     <div className="mt-[var(--lms-space-2)] flex"><Button className="w-full sm:w-auto" type="button" variant="secondary" disabled={pending} onClick={()=>setConfirmLock(true)}>Lock submission</Button></div>
-   </details>:null}
+   <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-body">
+     <span>Review status:</span>
+     <StatusBadge tone={currentLocked?"neutral":
+       currentStatus==="APPROVED"?"success":
+       currentStatus==="CHANGES_REQUESTED"?"warning":"info"}>
+       {currentLocked?"LOCKED":currentStatus.replaceAll("_"," ")}
+     </StatusBadge>
+   </div>
    {loadingCurrent?<Banner tone="info">Checking the latest submission status…</Banner>:null}
    {!currentActionAvailable&&!loadingCurrent?<Banner tone="info">
      No review action is currently available. {missing?

@@ -329,11 +329,32 @@ export async function updateProjectSubmissionDraft(
     if (!updated) {
       throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
     }
-    if(input.attachments!==undefined){
+    if(input.attachments!==undefined&&
+       JSON.stringify(submission.attachments)!==JSON.stringify(input.attachments)){
+      // Event notes store display labels only: never file storage keys,
+      // signed grants or unverified historic attachment URLs.
+      const label=(value:unknown):string=>{
+        if(!value||typeof value!=="object")return "Evidence";
+        const entry=value as Record<string,unknown>;
+        return typeof entry.name==="string"?
+          entry.name.slice(0,120).replace(/[\\r\\n]/g," "):"Evidence";
+      };
+      const previous=Array.isArray(submission.attachments)?submission.attachments:[];
+      const current=input.attachments;
+      const former=new Map(previous.map(row=>[JSON.stringify(row),label(row)]));
+      const next=new Map(current.map(row=>[JSON.stringify(row),label(row)]));
+      const added=[...next].filter(([key])=>!former.has(key)).map(([,value])=>value);
+      const removed=[...former].filter(([key])=>!next.has(key)).map(([,value])=>value);
+      const details="Evidence updated: "+previous.length+" to "+current.length+
+        " item(s); added: "+(added.join(", ")||"none")+
+        "; removed: "+(removed.join(", ")||"none");
       await tx.insert(projectDeliveryEvents).values({
         projectId:scope.project.id,submissionId:updated.id,
         eventType:"ATTACHMENTS_CHANGED",actorMembershipId:scope.membershipId,
-        reason:"Delivery attachment metadata updated",
+        reason:details.slice(0,4000),
+        legacyAction:"ATTACHMENTS_CHANGED",
+        legacyRevisionCount:submission.legacyRevisionCount,
+        legacyNotes:details.slice(0,4000),
       });
     }
     await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
@@ -750,7 +771,7 @@ export async function listProjectSubmissions(
   return {
    submissions,reviews,deliveryEvents,history,
    legacyDelivery:legacyProjectDeliveryProjection({submissions,reviews,deliveryEvents}),
-   revisionCount:submissions.length,
+   revisionCount:submissions[submissions.length-1]?.legacyRevisionCount??null,
    reviewCount:reviews.length,
    legacyRevisionCount:submissions.reduce((max,row)=>
       Math.max(max,row.legacyRevisionCount??0),0),
