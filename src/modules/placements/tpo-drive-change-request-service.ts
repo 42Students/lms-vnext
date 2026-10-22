@@ -108,6 +108,10 @@ async function announce(tx:Parameters<Parameters<ReturnType<typeof getDb>["trans
  }
 }
 
+function legacyChangeFieldLabel(field:string, fallback:string):string {
+ const labels:Readonly<Record<string,string>>=LEGACY_DRIVE_CHANGE_FIELD_LABELS;
+ return labels[field]??labels[fallback]??"Other";
+}
 /** Apply a field-specific answer/acceptance while the job and request are locked.
  * Legacy answers change the drive too; the request must never say ACCEPTED
  * without a committed job version and an applied receipt.
@@ -225,8 +229,7 @@ export async function getDriveChangeRequestDiscussionContext(
   eq(placementDriveChangeRequests.jobId,job.id),
  )).limit(1);
  if(!request)return null;
- return {id:request.id,fieldLabel:LEGACY_DRIVE_CHANGE_FIELD_LABELS[request.legacyField??request.field]??
-   LEGACY_DRIVE_CHANGE_FIELD_LABELS[request.field]??"Other",
+ return {id:request.id,fieldLabel:legacyChangeFieldLabel(request.legacyField??request.field,request.field),
   proposedValue:request.proposedValue,reason:request.reason};
 }
 
@@ -275,7 +278,7 @@ export async function getDriveChangeRequests(context:RequestContext,jobId:unknow
    decidedAt:r.decidedAt?.toISOString()??null,
    resolvedAt:(r.resolvedAt??r.decidedAt)?.toISOString()??null,
    createdByName:names.get(r.createdByUserId)??null,
-   fieldLabel:LEGACY_DRIVE_CHANGE_FIELD_LABELS[r.legacyField??r.field]??LEGACY_DRIVE_CHANGE_FIELD_LABELS[r.field]??"Other",
+   fieldLabel:legacyChangeFieldLabel(r.legacyField??r.field,r.field),
    kind:r.mode==="SUGGEST"?"PROPOSE":"ASK",
    direction:r.proposerParty==="TPO"?"COLLEGE_TO_COMPANY":"COMPANY_TO_COLLEGE",
    answerValue:r.answerValue??(r.status==="ANSWERED"?r.decisionNote:null),
