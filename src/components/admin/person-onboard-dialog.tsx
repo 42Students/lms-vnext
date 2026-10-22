@@ -191,7 +191,7 @@ export function PersonOnboardDialog({
         tone: "success",
         title: forcedRole === "FACULTY" ? "Faculty registered successfully! They can now login with their mobile number."
           : forcedRole ? roleLabel(forcedRole)+" created"
-          : roles.length===1 ? roleLabel(roles[0])+" created" : "Person onboarded",
+          : roles.length===1 && roles[0] ? roleLabel(roles[0])+" created" : "Person onboarded",
         description:
           "The canonical user and college membership are ready. No invitation or message was sent.",
       });
