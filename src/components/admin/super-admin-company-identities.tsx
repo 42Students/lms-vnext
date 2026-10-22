@@ -76,7 +76,7 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
      title={title} dismissible={!pending}>
      <div className="space-y-4">
       <p className="text-sm text-body">
-        {kind==="domains"?"Manage the verified company domains. At least one domain must remain.":
+        {kind==="domains"?"Add or remove company domains. New domains are not verified automatically; only the separate Super Admin verification action can verify the primary domain. Other domains remain unverified. At least one domain must remain.":
          "Add short names, older names and the company’s full name so people can find it. If an alias belongs to another company, use Merge instead."}
       </p>
       {entries.length===0?<p className="text-sm text-muted-foreground">None yet</p>:null}
