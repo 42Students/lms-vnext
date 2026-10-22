@@ -39,6 +39,7 @@ export async function addTpoStudentNotes(ctx:RequestContext,raw:unknown){
     collegeId,learnerMembershipId:id,note:input.note,
     createdByUserId:ctx.user.id,
    }).returning({id:placementTpoStudentNotes.id});
+   if(!record)throw new Error("Student note insert did not return an ID");
    saved.push(id);
    await tx.insert(activityEvents).values({
     organizationId:college.organizationId,collegeId,
