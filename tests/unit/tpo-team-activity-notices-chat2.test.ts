@@ -9,7 +9,7 @@ describe("Team inbox activity and participant notices",()=>{
   expect(read).toContain(".orderBy(desc(lastActivity),desc(tpoInternalThreads.id))");
   expect(read).toContain("m.college_id=");
   expect(page).toContain("threadTime(item.lastActivityAt,today)");
-  expect(page).toContain("row.lastActivityAt");
+  expect(page).toContain('dateTime={item.lastActivityAt.toISOString()}');
  });
  it("TPO-inbox-team-29 sends a person-named bell and safe preview with a message deep link",()=>{
   const reply=src("src/modules/placements/tpo-team-internal-reply-service.ts");

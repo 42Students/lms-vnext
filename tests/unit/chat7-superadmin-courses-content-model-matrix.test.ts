@@ -71,7 +71,7 @@ describe("Super Admin Courses and Content model behaviour and legacy-safe URLs",
   expect(safePublicCourseContentUrl("https://example.edu/guide")).toBe("https://example.edu/guide");
   expect(contentTypesForKind("VIDEOS")).toEqual(["VIDEO","YOUTUBE"]);
   expect(contentTypesForKind("RESOURCES")).toEqual(["RESOURCE"]);
-  expect(adminContentTypeLabel("YOUTUBE")).toBe("YouTube");
+  expect(adminContentTypeLabel("YOUTUBE")).toBe("YouTube Video");
  });
  it("SA-academics-people-68 lesson/progress filters remain route-correct and never sum learners across offerings",()=>{
   const q=adminLearningQuerySchema.parse({status:"ALL",courseCode:"CS1",cohortCode:"2028",page:3});
