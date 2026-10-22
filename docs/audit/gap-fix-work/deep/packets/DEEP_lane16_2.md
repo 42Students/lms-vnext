@@ -11,7 +11,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-18-016-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [x] G2-18-016-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [x] G2-12-002-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
-- [ ] G2-12-002-076  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
+- [x] G2-12-002-076  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 - [x] G2-12-017-015  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 - [x] G2-12-017-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 - [x] G2-12-017-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
@@ -31,3 +31,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-12-017-060: OK (representation contract) — `src/db/schema/projects.ts:661-697` allows legacy NOTE, PROGRESS, NEEDS_HELP, REVIEW, BLOCKED, STATUS_UPDATE as well as vNext names; `src/modules/projects/task-comment-service.ts:88-105` represents immutable state/review events as timeline comment kinds. Matches `docs/legacy-source/backend/src/main/resources/db/migration/V77__project_task_comment_actions.sql:1-25` and `docs/legacy-source/frontend/src/components/Projects/modals/TaskDetailsModal.jsx:13-35`. Legacy values can be kept without lossy enum conversion.
 
 - G2-13-013-054: OK (vNext schema crosswalk, no executed legacy import) — `src/db/schema/courses.ts:391-443` maps lesson UUID identity via its scoped learning path to course ancestry, retaining sequence, active status, independent student visibility, deletion timestamp and optimistic version. `src/db/schema/courses.ts:448-495` retains lesson-content ordering, soft deletion and version. Source fields: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Lesson.java:13-38`. No historic integer IDs are passed directly as UUIDs.
+
+- G2-12-002-076: OK — `src/modules/academics/college-term-mapping-service.ts:474-520` hard-deletes an unused scoped mapping in a transaction, rejects active-offering dependencies and records an immutable removal audit; `src/db/schema/academic-terms.ts:49-52` retains original source deletion provenance for approved imports. Legacy repository hard-delete/soft-hidden read patterns are `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/SemesterCourseRepository.java:16-20,37-39`. The vNext restriction against removing an active batch offering is an intentional integrity safeguard; removal does not delete historical learner/offerings data.
