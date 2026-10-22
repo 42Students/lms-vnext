@@ -22,7 +22,7 @@ export const facultyAssignmentResourcesSchema=z.array(z.discriminatedUnion("kind
   },"Use a secure HTTPS link")}),
  z.strictObject({kind:z.enum(["PDF","FILE"]),title:z.string().trim().min(1).max(255),
   privateObjectKey:z.string().min(30).max(1024)}),
-])).max(30).superRefine((items,ctx)=>{
+])).min(1,"Assignment requires at least one completed resource").max(30).superRefine((items,ctx)=>{
  if(items.filter(row=>row.kind==="INSTRUCTIONS").length>1)
   ctx.addIssue({code:"custom",path:[],message:"Only one Instructions resource is allowed"});
 });
