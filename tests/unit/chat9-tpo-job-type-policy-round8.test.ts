@@ -10,17 +10,18 @@ describe("chat9 TPO job-type and drive-approval verification",()=>{
   expect(source).toContain("activeCount<=1");
  });
  it("TPO-settings-audit-21 requires an explicit placed decision for each new custom job type",()=>{
-  const source=s("src/components/tpo/tpo-job-types-editor.tsx");
-  expect(source).toContain("countsAsPlaced===null");
-  expect(source).toContain("setCountsAsPlaced(true)");
-  expect(source).toContain("setCountsAsPlaced(false)");
+  const source=s("src/components/tpo/tpo-unified-job-types-editor.tsx");
+  expect(source).toContain("newPlaced === null");
+  expect(source).toContain("setNewPlaced(true)");
+  expect(source).toContain("setNewPlaced(false)");
  });
  it("TPO-settings-audit-22 preserves in-use job-type history by deactivating instead of deleting a referenced category",()=>{
   const source=s("src/modules/placements/tpo-job-type-write-service.ts");
   expect(source).toContain("TPO_JOB_TYPE_LAST_ACTIVE");
   expect(source).toContain("TPO_JOB_TYPE_BUILTIN");
   expect(source).toContain("renameSchema");
-  expect(source).not.toMatch(/delete\(placementTpoJobTypes\)/);
+  expect(source).toContain('if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
+  expect(source.indexOf("TPO_JOB_TYPE_IN_USE",source.indexOf("export async function deleteTpoJobType"))).toBeLessThan(source.indexOf("tx.delete(placementTpoJobTypes)",source.indexOf("export async function deleteTpoJobType")));
  });
  it("TPO-settings-audit-24 validates college custom job-type names before persistence",()=>{
   expect(tpoJobTypeNameSchema.safeParse("Graduate Trainee").success).toBe(true);
