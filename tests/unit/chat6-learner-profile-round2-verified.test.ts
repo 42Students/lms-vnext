@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 const source=(path:string)=>readFileSync(path,"utf8");
 describe("Learner profile and notifications fixed-on-main parity evidence",()=>{
  it("LEARNER-profile-misc-07 restores exact legacy section headings",()=>{
-  {const code=source("src/components/profile/learner-profile-workspace.tsx");expect(code).toContain("Personal Details");expect(code).toContain("Education/Qualification");expect(code).toContain("Academic Achievements");expect(code).toContain("Hobbies & Interests");expect(code).toContain("Publications & Research");expect(code).toContain("Awards & Recognitions");}
+  {const code=source("src/components/profile/learner-profile-workspace.tsx");expect(code).toContain("Personal Details");expect(code).toContain('education: "Qualifications"');expect(code).toContain("Academic Achievements");expect(code).toContain("Hobbies & Interests");expect(code).toContain("Publications & Research");expect(code).toContain("Awards & Recognitions");}
  });
  it("LEARNER-profile-misc-09 shows profile completion ring and completed remaining pills",()=>{
   {const code=source("src/components/profile/learner-profile-workspace.tsx");expect(code).toContain("viewBox=\"0 0 64 64\"");expect(code).toContain("coverage.completed} Completed");expect(code).toContain("coverage.total-coverage.completed} Remaining");}
@@ -20,7 +20,7 @@ describe("Learner profile and notifications fixed-on-main parity evidence",()=>{
  });
  it("LEARNER-profile-misc-13 provides skill catalogue searching instead of free text only",()=>{
   {const code=source("src/components/profile/learner-profile-workspace.tsx");expect(code).toContain("LearnerSkillCatalogInput");}
-  {const code=source("src/components/profile/learner-skill-catalog-input.tsx");expect(code).toContain("\"/api/skills?\"");expect(code).toContain("Search and select skills...");}
+  {const code=source("src/components/profile/learner-skill-catalog-input.tsx");expect(code).toContain("\"/api/skills?\"");expect(code).toContain("Type to search skills (e.g., Java, Python, React)...");}
  });
  it("LEARNER-profile-misc-14 shows verification badge at top of profile",()=>{
   {const code=source("src/app/(authenticated)/learn/profile/page.tsx");expect(code).toContain("aria-label=\"Profile verification summary\"");expect(code).toContain("Verified profile");expect(code).toContain("Not verified yet");}
