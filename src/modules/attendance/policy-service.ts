@@ -140,7 +140,7 @@ export async function updateCollegeAttendancePolicy(
     actorUserId: context.user.id,
     actorMembershipId:
       context.membership?.collegeId === college.id
-        ? context.membership.id
+        ? context.membership?.id ?? null
         : null,
     module: "COURSES",
     eventType: "ATTENDANCE_POLICY_UPDATED",
@@ -210,7 +210,7 @@ export async function updateCollegeAttendancePolicyField(context:RequestContext,
     await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId:college.id,
       actorUserId:context.user.id,
-      actorMembershipId:context.membership?.collegeId===college.id?context.membership.id:null,
+      actorMembershipId:context.membership?.collegeId===college.id?context.membership?.id??null:null,
       module:"COURSES",eventType:"ATTENDANCE_POLICY_UPDATED",
       subjectType:"attendance_policy",subjectId:college.id,
       summary:"Attendance policy updated",
@@ -249,7 +249,7 @@ export async function resetCollegeAttendancePolicyOverride(context:RequestContex
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,
    actorUserId:context.user.id,
-   actorMembershipId:context.membership?.collegeId===college.id?context.membership.id:null,
+   actorMembershipId:context.membership?.collegeId===college.id?context.membership?.id??null:null,
    module:"COURSES",eventType:"ATTENDANCE_POLICY_UPDATED",
    subjectType:"attendance_policy",subjectId:college.id,
    summary:"Attendance policy reset to default",
