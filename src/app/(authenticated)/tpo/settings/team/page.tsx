@@ -1,4 +1,6 @@
 import { Disclosure } from "@/components/ui/disclosure";
+import { TpoTeamAssignUnowned } from "@/components/tpo/tpo-team-assign-unowned";
+import { readTpoUnownedWork } from "@/modules/placements/tpo-team-unowned-service";
 import { TpoSettingsTeamManage, TpoSettingsTeamRemove } from "@/components/tpo/tpo-settings-team-manage";
 import { listTpoTeamAssignableStaff } from "@/modules/placements/tpo-settings-team-actions-service";
 import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
@@ -58,6 +60,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
   }
 
   const { members, summary, sources } = data;
+  const unowned=await readTpoUnownedWork(context).catch(()=>({ready:false as const,drives:0,companies:0}));
   const workload=await readTpoTeamAskWorkload(context).catch(()=>({ready:false as const,items:[]}));
   const workloadByMember=new Map(workload.items.map(item=>[item.membershipId,item]));
   const sortedMembers=sortTpoPeople(members.map(member=>({
@@ -148,6 +151,11 @@ export default async function TpoPlacementTeamPage({searchParams}: {
         ))}
       </section>
       </Disclosure>
+
+      {unowned.ready?<TpoTeamAssignUnowned drives={unowned.drives} companies={unowned.companies}
+        members={members.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
+          .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>
+       :<Alert tone="warning">Unowned placement work cannot be verified right now. Assignments are unavailable until the registered ownership records can be checked.</Alert>}
 
       <TpoSettingsTeamManage candidates={candidates} activeIds={members.map(member=>member.membershipId)} available={sources.teamAssignmentsAvailable}/>
 
