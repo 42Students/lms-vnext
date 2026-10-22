@@ -46,7 +46,7 @@ export default async function FacultyCalendarPage({
   const context=await getCurrentRequestContext();
   const [primary,upcomingRead]=await Promise.all([
     getFacultyIstMonth(context,input.data),
-    getFacultyClassSchedule(context).then(value=>({available:true as const,value}))
+    getFacultyClassSchedule(context,{startAt:new Date()}).then(value=>({available:true as const,value}))
       .catch(()=>({available:false as const,value:null})),
   ]);
   const {schedule,grid}=primary;
