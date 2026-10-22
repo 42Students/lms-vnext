@@ -29,7 +29,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   const validShape=Object.keys(raw).every(key=>validKeys.has(key))&&
     Object.values(raw).every(value=>!Array.isArray(value));
   const parsed = adminUnassignedUsersQuerySchema.safeParse(validShape
-    ?{q:raw.q,platformStatus:raw.platformStatus,role:raw.role,page:raw.page}
+    ?{q:raw["q"],platformStatus:raw["platformStatus"],role:raw["role"],page:raw["page"]}
     :{invalid:true});
   if (!parsed.success) return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Users without college memberships" />
