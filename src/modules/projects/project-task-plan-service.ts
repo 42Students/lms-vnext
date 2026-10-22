@@ -1,7 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints, projectTasks } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -62,7 +62,8 @@ export async function saveProjectTaskPlan(
         releaseId: projectSprints.releaseId,
       }).from(projectSprints).where(eq(projectSprints.projectId, scope.project.id));
       const releases = await tx.select({ id: projectReleases.id, status: projectReleases.status })
-        .from(projectReleases).where(eq(projectReleases.projectId, scope.project.id));
+        .from(projectReleases).where(and(eq(projectReleases.projectId, scope.project.id),
+          isNull(projectReleases.deletedAt)));
       const sprintMap = new Map(sprints.map(sprint => [sprint.id, sprint]));
       const releaseMap = new Map(releases.map(release => [release.id, release]));
 
