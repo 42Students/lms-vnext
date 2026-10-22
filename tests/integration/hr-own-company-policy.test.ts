@@ -1,7 +1,9 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection} from "@/db/client";
+import {closeDatabaseConnection,getDb} from "@/db/client";
+import {placementJobEligibilityPolicies} from "@/db/schema";
+import {createPlacementRound} from "@/modules/placements/round-service";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
@@ -22,7 +24,13 @@ describe.skipIf(!enabled)("HR forged cross-company grant is non-leaking",()=>{
     title:"Allowed "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
   const second=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:other.relationship.id,
     title:"Private "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
-  await publishPlacementJob(tpo,first.id);await publishPlacementJob(tpo,second.id);
+  for(const job of [first,second]){
+   await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Technical evaluation"});
+   await getDb().insert(placementJobEligibilityPolicies).values({
+    jobId:job.id,updatedByUserId:tpo.user.id,
+   });
+   await publishPlacementJob(tpo,job.id);
+  }
   const uid=randomUUID();
   const grants=[own.relationship,other.relationship].map((rel,i)=>({id:randomUUID(),collegeId:SEED_IDS.collegeA,
     organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:rel.id}));
