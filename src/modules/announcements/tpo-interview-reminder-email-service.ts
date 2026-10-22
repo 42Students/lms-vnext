@@ -54,9 +54,9 @@ export async function queueFencedInterviewReminderEmails(
   throw new Error("INVALID_TPO_INTERVIEW_EMAIL_TIME");
  const localHour=new Date(now.getTime()+330*60_000).getUTCHours();
  if(localHour<19)return {accepted:0,notAccepted:0,reserved:0,hasMore:false};
- if(process.env.TPO_INTERVIEW_EMAIL_READY!=="VERIFIED"||
-    process.env.DB10_NOTIFICATION_SCHEDULER_READY!=="DB10_VERIFIED"||
-    process.env.ZEPTOMAIL_LEGACY_KEY_REVOKED!=="confirmed")
+ if(process.env["TPO_INTERVIEW_EMAIL_READY"]!=="VERIFIED"||
+    process.env["DB10_NOTIFICATION_SCHEDULER_READY"]!=="DB10_VERIFIED"||
+    process.env["ZEPTOMAIL_LEGACY_KEY_REVOKED"]!=="confirmed")
   throw new Error("INTERVIEW_EMAIL_UNPROVISIONED");
  const {from,to}=tomorrowInIndiaUtcWindow(now);
  await fence.assertCurrent();
