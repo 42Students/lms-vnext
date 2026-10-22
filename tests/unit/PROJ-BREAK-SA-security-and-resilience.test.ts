@@ -54,8 +54,10 @@ describe("Super Admin Projects adversarial controls", () => {
     const client = read("src/components/projects/project-admin-submission-review.tsx");
     expect(server).toContain("allowLock={allowLock}");
     expect(client).toContain('action==="LOCK"&&!allowLock');
-    expect(client).toContain('allowLock&&canAdminSettleDelivery(status,locked,projectStatus,"LOCK")');
-    expect(client).toContain('(status==="APPROVED"&&!allowLock)');
+    expect(client).toContain('(action==="LOCK"&&!allowLock)');
+    expect(client).toContain('!canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"LOCK")');
+    expect(client).toContain('{allowLock?<Button');
+    expect(client).toContain('disabled={pending||loadingCurrent||!currentActionAvailable||');
     expect(client).not.toContain("min-h-10");
   });
 
@@ -93,17 +95,20 @@ describe("Super Admin Projects adversarial controls", () => {
     const validation=service.indexOf("mayRecordCollegeAdminDeliveryLock(persisted,scope.collegeId,scope.organizationId)",txStart);
     const event=service.indexOf("tx.insert(projectDeliveryEvents)",txStart);
     expect(txStart).toBeGreaterThanOrEqual(0);
-    expect(rowLock).toBeGreaterThan(txStart);
-    expect(persisted).toBeGreaterThan(rowLock);
+    expect(persisted).toBeGreaterThan(txStart);
     expect(validation).toBeGreaterThan(persisted);
-    expect(event).toBeGreaterThan(validation);
+    // Authorization is deliberately checked before acquiring project row locks.
+    expect(rowLock).toBeGreaterThan(validation);
+    expect(event).toBeGreaterThan(rowLock);
     expect(service).toContain("persisted.membership?.id!==actorMembershipId");
   });
 
   it("PROJ-BREAK-SA-04 keeps same-origin enforcement on Super Admin delivery mutations", () => {
     const route = read("src/app/api/projects/[projectId]/submissions/[submissionId]/lock/route.ts");
     expect(route).toContain("isSameOriginRequest(request)");
-    expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("request.json()"));
+    expect(route).toContain("readLimitedProjectLockInput(request)");
+    expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("readLimitedProjectLockInput(request)"));
+    expect(route.indexOf("readLimitedProjectLockInput(request)")).toBeLessThan(route.indexOf("getCurrentRequestContext()"));
     expect(route).toContain("apiErrorResponse(error)");
     const service = read("src/modules/projects/admin-submission-review-service.ts");
     expect(service).toContain('z.strictObject({reason:z.string().trim().min(1).max(4000)})');
@@ -133,7 +138,10 @@ describe("Super Admin Projects adversarial controls", () => {
     expect(templateAvailabilityCollegesInScope(colleges, { collegeId: collegeA, organizationId: orgB }))
       .toEqual([]);
     const service = read("src/modules/projects/template-college-availability-service.ts");
-    expect(service).toContain("templateAvailabilityCollegesInScope(colleges, context.adminScope ?? null)");
+    expect(service).toContain('requirePermission(context,"admin-scope.select")');
+    expect(service).toContain('assertPersistedPlatformPermission(tx,context,"admin-scope.select")');
+    expect(service).toContain("templateAvailabilityCollegesInScope(");
+    expect(service).toContain("snapshot.collegeRows,context.adminScope??null,true");
   });
 
   it("PROJ-BREAK-SA-07 rejects malformed, overlong, or unreasoned readiness overrides", () => {
@@ -158,6 +166,6 @@ describe("Super Admin Projects adversarial controls", () => {
     expect(service).toContain('.offset(');
     const page = read("src/app/(authenticated)/admin/projects/page.tsx");
     expect(page).toContain('if (!collegeId)');
-    expect(page).toContain('title="No college selected"');
+    expect(page).toContain('if (!collegeId) redirect("/admin/projects/templates")');
   });
 });

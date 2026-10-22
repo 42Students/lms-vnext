@@ -34,8 +34,12 @@ describe("HR-BREAK-CLOSED-OFFER-41: recruiter follow-ups continue after closing 
 describe("UX-HR-COMPANY-TOUCH-42 keyboard accessible company/team tabs and college selector",()=>{
  it("provides phone-sized tab links, college selectors and focus-visible recovery",()=>{
   const source=readFileSync("src/app/(authenticated)/hr/company/page.tsx","utf8");
-  expect(source).toContain("inline-flex min-h-11 items-center border-b-2 border-primary");
-  expect(source).toContain("inline-flex min-h-11 items-center rounded-full");
+  expect(source).toContain('<Tabs renderPanel={false} ariaLabel="Company and team sections"');
+  expect(source).toContain('{value:"team",label:"Team",href:base+"&tab=team"}');
+  expect(source).toContain('<NeedsDoingChips label="College access:"');
+  const tabs=readFileSync("src/components/ui/tabs.tsx","utf8");
+  expect(tabs).toContain("inline-flex min-h-11");
+  expect(tabs).toContain("focus-visible:outline-2");
   expect(source).toContain("focus-visible:outline-2");
   expect(source).toContain('title="Company & Team"');
  });

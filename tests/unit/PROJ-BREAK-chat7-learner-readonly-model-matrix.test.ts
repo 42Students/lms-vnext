@@ -120,9 +120,11 @@ describe("PROJ-BREAK-LEARNER-99 read-only role journey and data leak regressions
     const path=learnerProjectTabHref(projectId,"activity",query);
     expect(path).toContain("taskSearch=capstone");
     expect(path).toContain("activityFrom=2099-01-01");
-    expect(path).not.toContain("taskId=");
+    // The current task and its page are intentionally retained across tab
+    // changes so an unsaved editor is not silently closed.
+    expect(path).toContain("taskId="+taskId);
+    expect(path).toContain("page=999");
     expect(path).not.toContain("activityCursor=");
-    expect(path).not.toContain("page=");
   });
   it("distinguishes unassigned from filtered-out projects and exposes mobile active filters",()=>{
     expect(learnerProjectListEmptyState(0,0).reason).toBe("NO_ASSIGNMENTS");
