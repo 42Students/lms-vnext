@@ -91,9 +91,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
   description={student.programName+" · "+student.branchName+" · "+student.cohortName+
    (student.classIds.length===0?" · Class not assigned":student.classIds.length===1?" · One active class":" · Multiple classes")} footer={<div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
     <span className="col-span-2 text-center text-xs text-muted-foreground sm:col-span-1 sm:col-start-2 sm:row-start-1">{index+1} of {rows.length} on this page</span>
-    <Button variant="secondary" type="button" className="min-h-11 w-full sm:col-start-1 sm:row-start-1 md:min-h-9" disabled={index<=0} onClick={()=>onNavigate(rows[index-1].membershipId)}>← Previous</Button>
+    <Button variant="secondary" type="button" className="min-h-11 w-full sm:col-start-1 sm:row-start-1 md:min-h-9" disabled={index<=0} onClick={()=>{const previous=rows[index-1];if(previous)onNavigate(previous.membershipId);}}>← Previous</Button>
     <Button variant="secondary" type="button" className="min-h-11 w-full sm:col-start-3 sm:row-start-1 md:min-h-9" disabled={index<0||index>=rows.length-1}
-      onClick={()=>onNavigate(rows[index+1].membershipId)}>Next →</Button>
+      onClick={()=>{const next=rows[index+1];if(next)onNavigate(next.membershipId);}}>Next →</Button>
    </div>}>
    <section aria-label="Student placement overview" className="min-w-0 border-b border-border pb-4">
     <p className="min-w-0 break-words text-sm text-body">{student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName}</p>
