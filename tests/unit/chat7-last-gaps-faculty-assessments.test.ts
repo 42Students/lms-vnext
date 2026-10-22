@@ -3,7 +3,7 @@ import {join} from "node:path";
 import {describe,expect,it} from "vitest";
 import {facultyAssignmentMethodsChanged,facultyAssignmentEditLockedBySubmissions}
  from "@/modules/courses/faculty-assignment-authoring-model";
-import {facultyReportIsIncomplete} from "@/modules/courses/faculty-report-completeness";
+import {facultyReportIsIncomplete,facultyReportCompleteness} from "@/modules/courses/faculty-report-completeness";
 
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 
@@ -32,9 +32,9 @@ describe("chat-7 last gaps: faculty assessment behavior",()=>{
   const ui=source("src/components/courses/faculty-assessment-overview.tsx");
   expect(ui).toContain("Created: ");
   expect(ui).toContain("formatDate(item.createdAt)");
-  expect(ui).toContain("Due date: ");
+  expect(ui).toContain("Due ${formatDate(item.dueAt)}");
   expect(ui).toContain("formatDate(item.dueAt)");
-  expect(ui).toContain("Course: {item.courseName} · Lesson: {item.lessonName}");
+  expect(ui).toContain("{item.courseName} · {item.sectionName} · {item.lessonName}");
   expect(ui).toContain("item.sectionName");
   expect(ui).toContain("Needs due date");
   expect(ui).toContain("Draft · hidden from students");
@@ -49,23 +49,27 @@ describe("chat-7 last gaps: faculty assessment behavior",()=>{
   expect(report).toContain("No one has submitted this assignment yet.");
   expect(report).toContain("<FacultyAssignmentReview");
   expect(drawer).toContain('if(status==="DRAFT")return');
-  expect(drawer).toContain("No submissions yet. Publish this assignment to allow students to submit work.");
+  expect(drawer).toContain('title="No submissions yet"');
+  expect(drawer).toContain('description="Publish this assignment to allow students to submit work."');
   expect(drawer).toContain("View submissions");
  });
  it("FAC-assessments-28: incomplete PDF must be confirmed and marked, complete report is immediate",()=>{
   expect(facultyReportIsIncomplete({kind:"quiz",eligibleLearners:8,submittedLearners:8,questionCount:4})).toBe(false);
-  expect(facultyReportIsIncomplete({kind:"quiz",eligibleLearners:8,submittedLearners:7,questionCount:4})).toBe(true);
-  expect(facultyReportIsIncomplete({kind:"quiz",eligibleLearners:0,submittedLearners:0,questionCount:4})).toBe(true);
+  expect(facultyReportIsIncomplete({kind:"quiz",eligibleLearners:8,submittedLearners:7,questionCount:4})).toBe(false);
+  expect(facultyReportCompleteness({kind:"quiz",eligibleLearners:8,submittedLearners:7,questionCount:4}).inProgress).toBe(true);
+  expect(facultyReportIsIncomplete({kind:"quiz",eligibleLearners:0,submittedLearners:0,questionCount:4})).toBe(false);
+  expect(facultyReportCompleteness({kind:"quiz",eligibleLearners:0,submittedLearners:0,questionCount:4}).emptyCohort).toBe(true);
   expect(facultyReportIsIncomplete({kind:"assignment",eligibleLearners:6,submitted:6,graded:6})).toBe(false);
-  expect(facultyReportIsIncomplete({kind:"assignment",eligibleLearners:6,submitted:6,graded:5})).toBe(true);
-  expect(facultyReportIsIncomplete({kind:"assignment",eligibleLearners:6,submitted:4,graded:4})).toBe(true);
+  expect(facultyReportIsIncomplete({kind:"assignment",eligibleLearners:6,submitted:6,graded:5})).toBe(false);
+  expect(facultyReportIsIncomplete({kind:"assignment",eligibleLearners:6,submitted:4,graded:4})).toBe(false);
+  expect(facultyReportIsIncomplete({kind:"assignment",eligibleLearners:6,submitted:4,graded:4,rosterReadFailed:true})).toBe(true);
   const download=source("src/components/courses/faculty-report-download.tsx");
   const quiz=source("src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx");
   const assignment=source("src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx");
   expect(download).toContain('title="This report is incomplete"');
   expect(download).toContain('confirmLabel="Download marked incomplete"');
-  expect(download).toContain("if(props.incomplete)");
-  expect(download).toContain('summary:incomplete?["This report is incomplete",...reportData.summary]');
+  expect(download).toContain("props.incomplete && !props.rosterUnavailable");
+  expect(download).toContain('["INCOMPLETE DATA: "+missingReason,...props.summary]');
   expect(quiz).toContain('incomplete={facultyReportIsIncomplete({kind:"quiz"');
   expect(assignment).toContain('incomplete={facultyReportIsIncomplete({kind:"assignment"');
   for(const heading of ["Question accuracy","Worst-answered first.","Student scores","Score distribution"])
