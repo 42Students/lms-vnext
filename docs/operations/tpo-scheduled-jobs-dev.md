@@ -23,6 +23,18 @@ The typed contract is `src/modules/operations/tpo-scheduled-job-registry.ts`.
 Separate due-announcement publisher: every minute, 50-second lease under
 `tpo.deliverDueNotices`; its service retains the 30-second Undo hold.
 
+**P0 release gate:** Both "Send now" and "Schedule" on the TPO author form are
+disabled until an operator sets `TPO_NOTICE_DELIVERY_VERIFIED=VERIFIED` **and**
+`TPO_NOTICE_SCHEDULER_SECRET` is at least 32 bytes. This flag is an operator
+attestation, not a CI default. Do not set it until the one-minute CronJob,
+registered announcements/audience/notification storage, cross-college recipient
+isolation, fresh enrollment, 30-second Undo hold, expiry, rollback/retry and
+in-app learner receipt have been exercised in the deployed environment. On
+partial fanout failure the worker returns HTTP 503 for scheduler retry/alerting;
+it never answers 200 for an incomplete delivery. Old COLLEGE notices without an
+audience row are recovered *only* from an authorized creation event explicitly
+recording audience=COLLEGE; other missing audience rows fail closed.
+
 **Timing differences:** The legacy fixed-delay intervals start after each
 successful run; fixed wall-clock CronJobs run on the minute. Legacy recruiter
 digest startup had a 90-second initial delay; a Kubernetes CronJob does **not**
