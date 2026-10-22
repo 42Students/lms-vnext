@@ -55,7 +55,7 @@ describe.skipIf(!enabled)("Super Admin Video, Resources and Live Classes authori
 
     const videos = await listSuperAdminContentDirectory(admin, "VIDEOS", { q: fx.tag });
     expect(videos.items.map((row) => row.id)).toEqual([youtube.id]);
-    expect(videos.items[0]).not.toHaveProperty("externalUrl");
+    expect(videos.items[0]?.externalUrl).toBe("https://youtu.be/xyz789");
     const live1 = await listSuperAdminContentDirectory(admin, "LIVE_CLASSES", { q: fx.tag });
     expect(live1.items.map((row) => row.id)).toEqual([live.id]);
 
