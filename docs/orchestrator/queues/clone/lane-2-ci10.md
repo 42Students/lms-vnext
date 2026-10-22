@@ -5,4 +5,4 @@ Round 10 = the CURRENT failing list from CI run 39772266680 (32 unit + 9 integra
 - [x] `docs/audit/gap-fix-work/ci10/packets/CI10U_lane2_1.md` (1 test files)
 - [x] `docs/audit/gap-fix-work/ci10/packets/CI10U_lane2_2.md` (1 test files)
 - [x] `docs/audit/gap-fix-work/ci10/packets/CI10JOB_lane2.md`
-- [ ] `docs/audit/gap-fix-work/ci10/packets/CI10dbU_lane2_1.md`
+- [x] `docs/audit/gap-fix-work/ci10/packets/CI10dbU_lane2_1.md`
