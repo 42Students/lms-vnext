@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentDeviceSession } from "@/auth/current-session";
+import { ADMIN_SCOPE_COOKIE_NAME } from "@/auth/admin-scope";
+import { MEMBERSHIP_COOKIE_NAME, ROLE_COOKIE_NAME, SESSION_COOKIE_NAME } from "@/auth/session";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {privateAuthResponse} from "@/modules/auth/private-response";
@@ -36,7 +38,22 @@ export async function DELETE(request: Request, { params }: RouteContext) {
       return privateAuthResponse(NextResponse.json({ error: "SESSION_NOT_FOUND", message: "Session not found" }, { status: 404 }));
     }
 
-    return privateAuthResponse(NextResponse.json({ ok: true, message: "Session revoked" }, { headers: { "Cache-Control": "private, no-store" } }));
+    const response=privateAuthResponse(NextResponse.json({ ok: true, message: "Session revoked" }, { headers: { "Cache-Control": "private, no-store" } }));
+    // A user may revoke this very device from its security page. A revoked
+    // session cannot remain selected in the browser's college/role UI.
+    if (sessionId === session.sessionId) {
+      for (const name of [
+        SESSION_COOKIE_NAME, MEMBERSHIP_COOKIE_NAME,
+        ROLE_COOKIE_NAME, ADMIN_SCOPE_COOKIE_NAME,
+      ]) {
+        response.cookies.set(name, "", {
+          httpOnly: true, secure: process.env.NODE_ENV === "production",
+          sameSite: "lax", path: "/", maxAge: 0,
+        });
+      }
+      response.headers.set("Clear-Site-Data", '"storage"');
+    }
+    return response;
   } catch (error) {
     return privateAuthResponse(apiErrorResponse(error));
   }
