@@ -212,7 +212,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        registered:student.registeredForPlacements}]}/>
     </>:null}
     {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status" className="text-sm text-body">Loading student records…</p>:null}
-    {error?<div className="min-w-0 space-y-2"><InlineNotice tone="error" message={error}/>
+    {error?<div role="alert" className="min-w-0 space-y-2"><InlineNotice tone="error" message={error}/>
      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void fetchDetail()}>Retry</Button></div>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
