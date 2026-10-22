@@ -41,7 +41,8 @@ describe("HR-BREAK-TEAM-ATTRIBUTION-40: count approved drives, never stale reque
  });
  it("college branch suggestions fail closed for mismatched recruiter principal",()=>{
   const source=readFileSync("src/modules/placements/recruiter-college-branch-service.ts","utf8");
-  expect(source).toContain('context.recruiter.userId!==context.user.id');
+  expect(source).toContain('context.recruiter?.userId!==context.user.id');
+  expect(source).toContain('!hasActiveRecruiter(context)');
   expect(source).toContain('isNull(departments.archivedAt)');
  });
 });

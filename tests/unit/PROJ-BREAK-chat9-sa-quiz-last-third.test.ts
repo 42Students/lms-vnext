@@ -45,7 +45,8 @@ describe("Super Admin last-third quiz directory, forged URL and outage contract"
     expect(page).toContain('Retry loading quizzes');
     expect(page).toContain('lessonsResult.status==="fulfilled"');
     expect(page).toContain('Existing quizzes remain visible.');
-    expect(page).toContain('AdminAssessmentDirectory data={data}');
+    expect(page).toContain('<AdminAssessmentDirectory key={context.adminScope.collegeId}');
+    expect(page).toContain('data={data} showHeader={false}');
     expect(page).toContain('adminAssessmentExportHref("QUIZ",query.data)');
   });
 });

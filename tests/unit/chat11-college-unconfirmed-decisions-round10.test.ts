@@ -10,7 +10,7 @@ describe("chat-11 delegated College Admin decisions",()=>{
   const forms=src("src/components/academics/college-academic-directory.tsx");
   expect(cards).toContain("COLLEGE_AT_A_GLANCE_CARD_CLASS");
   expect(src("src/components/ui/stat-tile.tsx")).toContain("mt-2 break-words");
-  expect(forms).toContain("grid grid-cols-1 gap-3 sm:grid-cols-2");
+  expect(forms).toContain("grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4");
   expect(forms).toContain("overflow-x-auto");
  });
  it("COL-course-tabs-15 restores archived lessons without erasing progress or bypassing permission",()=>{
