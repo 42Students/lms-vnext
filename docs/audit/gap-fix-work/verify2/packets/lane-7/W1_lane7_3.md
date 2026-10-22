@@ -109,7 +109,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Read/convert old JSON schema, do not drop date classification or UTC.
 
 ## G2-18-010-036 [P1] GAP facet F10
-- [x] Verified intentional hardening: production sends valid recipients; nonproduction deny-by-default unless the exact email/phone appears in configured AUTH_TEST_EMAILS/PHONES, rejecting legacy domain-wide DEV_MAIL_ALLOW permissiveness.
+- [ ] Partial: runtime-safety defaults nonproduction delivery to deny unless an exact recipient is in AUTH_TEST_EMAILS/PHONES; legacy STAGE/DEV_MAIL_ALLOW parity and sender-by-sender coverage remain unverified.
 - Files: src/modules/messaging/runtime-safety.ts
 - Legacy: Legacy configurable STAGE/DEV_MAIL_ALLOW controls dispatch (`TpoMailService.java:55-61,203-220`).
 - Expected fix: Reconcile environment variables and test nonprod deny-by-default across all sender paths.
