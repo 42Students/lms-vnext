@@ -103,19 +103,19 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  // 200,000 characters for restricted operator triage.
  if(Buffer.byteLength(rawBody,"utf8")>300_000)
   return {accepted:false,replayed:false,outcome:"FAILED"};
- const secret=env.RECRUITER_MESSAGE_INBOUND_HMAC_SECRET??"";
- if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true"||
+ const secret=env["RECRUITER_MESSAGE_INBOUND_HMAC_SECRET"]??"";
+ if(env["RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED"]!=="true"||
     !verifyRecruiterMailBridgeWithRotation({
      body:rawBody,signature,currentSecret:secret,
-     previousSecret:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET,
-     previousExpiresAt:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL,
+     ...(env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET"]!==undefined?{previousSecret:env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET"]}:{}),
+     ...(env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL"]!==undefined?{previousExpiresAt:env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL"]}:{}),
     }))
   return {accepted:false,replayed:false};
  let json:unknown;
  try{json=JSON.parse(rawBody);}catch{return {accepted:false,replayed:false};}
  const parsed=inboundSchema.safeParse(json);
  if(!parsed.success)return {accepted:false,replayed:false};
- const input=parsed.data,domain=(env.RECRUITER_MESSAGE_REPLY_DOMAIN??"").toLowerCase();
+ const input=parsed.data,domain=(env["RECRUITER_MESSAGE_REPLY_DOMAIN"]??"").toLowerCase();
  const fullText=plainMailText(input.text,input.html).slice(0,200000);
   if(!fullText)return {accepted:false,replayed:false};
  // Legacy stores up to 200k in the restricted inbox but only a 4k reply in
@@ -128,7 +128,8 @@ export async function acceptAuthenticatedRecruiterEmailReply(
   // This receiver is exclusively for the reply alias. General verified mail
   // is ingested through /api/internal/inbound-mail, never by guessing a thread.
   if(!isReply)return {accepted:false,replayed:false};
- const tokenHash=isReply&&match?createHash("sha256").update(match[1]).digest("hex"):null;
+ const token=match?.[1];
+ const tokenHash=isReply&&token!==undefined?createHash("sha256").update(token).digest("hex"):null;
  // Inbox and reply posting are one atomic intake: no mail is acknowledged without
  // durable storage, including unknown mail, expired replies, and failed auth.
  const db=getDb();
