@@ -8,6 +8,9 @@ vi.mock("@/modules/courses/learner-course-file-reference-service",()=>({
 }));
 vi.mock("@/modules/storage/r2-config",()=>({getPrivateR2Config:state.config}));
 vi.mock("@/modules/storage/s3-client",()=>({headObject:state.head,presignUrl:state.sign}));
+vi.mock("@/db/client",()=>({
+ getDb:()=>({select:()=>({from:()=>({where:()=>({limit:async()=>[{name:"my notes.pdf"}]})})})}),
+}));
 import {GET} from "@/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route";
 
 const deliveryId="11111111-1111-4111-8111-111111111111";

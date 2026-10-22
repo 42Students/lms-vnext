@@ -9,7 +9,7 @@ describe("42 Tracker manager navigation theme parity", () => {
     const toggle = read("src/components/tracker/tracker-theme-toggle.tsx");
     const styles = read("src/app/globals.css");
     for (const href of ["/tracker", "/tracker/issues", "/tracker/logs", "/tracker/audit-findings"]) {
-      expect(nav).toContain('href="' + href + '"');
+      expect(nav).toContain('href: "' + href + '"');
     }
     expect(nav).toContain("Report Issue");
     expect(nav).toContain('href="#tracker-content"');

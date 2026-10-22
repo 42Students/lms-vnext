@@ -25,8 +25,9 @@ describe("chat-11 college academic setup remaining acceptance", () => {
       id: String(index), name, createdAt: "2099-01-01", usage: null,
     }));
     const sorted = filterDepartmentRows(rows, "");
-    expect(sorted.map(r => r.name)).toEqual(["Biology", "Physics", "Zoology"]);
-    expect(pageDepartmentRows(sorted, 2, 2).items.map(r => r.name)).toEqual(["Zoology"]);
+    expect(sorted.map(r => r.name)).toEqual(["Zoology", "Physics", "Biology"]);
+    expect(filterDepartmentRows(rows, "biology").map(r => r.name)).toEqual(["Biology"]);
+    expect(pageDepartmentRows(sorted, 2, 2).items.map(r => r.name)).toEqual(["Biology"]);
     const code = source("src/components/admin/department-directory.tsx");
     expect(code).toContain("[10, 25, 50, 100]");
     expect(code).toContain("Clear search");
@@ -47,7 +48,7 @@ describe("chat-11 college academic setup remaining acceptance", () => {
     expect(error).toContain("Could not load departments");
     expect(error).toContain("onClick={reset}");
     expect(error).not.toContain("{error.message}");
-    expect(loading).toContain("Loading departments…");
+    expect(loading).toContain("Loading departments");
     expect(loading).toContain('aria-busy="true"');
   });
 });

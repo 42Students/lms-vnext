@@ -6,7 +6,7 @@ describe("faculty lesson management storage API wiring",()=>{
  it("exposes upload thumbnail replacement, publish, ordering, delete and content linking",()=>{
   for(const phrase of ["/videos${deliveryId?`?deliveryId=","uploadFacultyLessonVideo","uploadFacultyLessonThumbnail",
    "replaceVideoId","publishStatus:facultyVideoPublishAction","visibleToStudents:!video.visibleToStudents",
-   "facultyVideoReorderPlan","/lesson-contents","video-asset/","lessonContentId:contentId",'"DELETE",undefined']){
+   "facultyVideoReorderPlan","/lesson-contents","video-asset/","lessonContentId:contentId",'"DELETE", undefined, signal']){
     expect(ui).toContain(phrase);
   }
  });

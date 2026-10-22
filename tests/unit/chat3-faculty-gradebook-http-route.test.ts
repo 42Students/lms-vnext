@@ -46,8 +46,9 @@ describe("FAC-GRADE-HTTP-01 Faculty published gradebook CSV endpoint", () => {
     expect(response.headers.get("content-disposition")).toContain("faculty-section-gradebook.csv");
     expect(response.headers.get("cache-control")).toContain("no-store");
     expect(response.headers.get("x-content-type-options")).toBe("nosniff");
-    const csv = await response.text();
-    expect(csv.startsWith("\uFEFF")).toBe(true);
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    expect(Array.from(bytes.slice(0, 3))).toEqual([0xef, 0xbb, 0xbf]);
+    const csv = new TextDecoder().decode(bytes);
     expect(csv).toContain("\"'=HYPERLINK(1)\"");
     expect(csv).toContain("Incomplete grading");
     expect(csv).toContain("\"80\"");
