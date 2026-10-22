@@ -246,7 +246,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    {otherDirty?<p role="status" className="mb-3 text-xs text-warning-text">
     An unlisted-key add draft may still be unsaved. Scope navigation remains guarded until this editor is reloaded.
    </p>:null}
-   <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries} showHeading={false}/>
+   <OtherTenantSettings scopeType={scopeType} {...(collegeId !== undefined ? {collegeId} : {})} ready={ready} entries={entries} showHeading={false}/>
    </div>
   </Disclosure>
   <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
