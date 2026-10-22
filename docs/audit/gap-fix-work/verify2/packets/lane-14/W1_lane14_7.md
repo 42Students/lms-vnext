@@ -126,3 +126,10 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/db/schema/db10-announcements.ts
 - Legacy: Legacy sender string + numeric id, isDeleted, schedules/expiry/pin `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Announcement.java:36-68`
 - Expected fix: Map legacy deletion and sender provenance without loss
+
+## Lane-12 fast verification triage (2026-10-22)
+
+No row can be certified OK from the shallow file inspection alone.
+
+DEFERRED — not verified or fixed; needs deeper implementation, policy, API or migration review: G2-13-017-037, G2-13-017-038, G2-13-017-057, G2-13-017-061, G2-13-002-002, G2-13-016-019, G2-13-016-025, G2-13-016-040, G2-18-018-005, G2-18-018-007, G2-18-018-008, G2-18-018-015, G2-18-018-034, G2-18-018-045, G2-18-018-049, G2-18-021-011, G2-19-026-034, G2-14-001-041, G2-14-009-080, G2-14-009-082, G2-14-013-066, G2-14-013-068, G2-14-014-010, G2-14-014-060, G2-14-014-061.
+Triage is complete, parity verification is not. Do not interpret deferred rows as completed fixes.

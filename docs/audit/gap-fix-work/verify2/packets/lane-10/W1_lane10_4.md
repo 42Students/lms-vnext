@@ -126,3 +126,10 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/tracker/logs/page.tsx
 - Legacy: `logs.js:770-815`; `TrackerLogsAccessGate.jsx:12-56`: Super Admin or tracker logs password access gate.
 - Expected fix: Get owner access decision; if password-based tester access remains, implement isolated hardened alternate auth.
+
+## Lane-12 fast verification triage (2026-10-22)
+
+Confirmed via cited vNext code (OK, limited to described behavior): G2-14-002-038, G2-14-002-090, G2-15-012-020, G2-15-012-060, G2-16-002-082.
+
+DEFERRED — deeper implementation/API/migration review required; these are NOT verified or fixed: G2-18-031-025, G2-18-031-041, G2-18-031-054, G2-15-004-049, G2-15-006-045, G2-15-008-054, G2-16-001-001, G2-16-002-019, G2-16-002-037, G2-16-002-039, G2-16-002-045, G2-16-002-051, G2-16-002-059, G2-16-002-061, G2-16-003-010, G2-16-003-045, G2-16-004-042, G2-16-004-050, G2-16-004-076, G2-16-005-004.
+This packet has been triaged, not certified parity-complete; no unverified row is claimed OK.

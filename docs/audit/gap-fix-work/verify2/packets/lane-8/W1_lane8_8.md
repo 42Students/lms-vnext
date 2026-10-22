@@ -126,3 +126,10 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/e2e/superadmin-login/page.tsx
 - Legacy: POST /api/v1/superadmin/e2e/seed only action (SuperAdminE2eController.java:17-20,37-48).
 - Expected fix: Add tightly gated dev-only deterministic seed endpoint or documented migration/setup substitute.
+
+## Lane-12 fast verification triage (2026-10-22)
+
+Confirmed via cited vNext code (OK, limited to described behavior): G2-5-014-002, G2-12-011-045.
+
+DEFERRED — deeper implementation/API/migration review required; these are NOT verified or fixed: G2-5-004-041, G2-5-007-018, G2-5-008-015, G2-5-008-076, G2-5-009-028, G2-5-010-020, G2-5-010-055, G2-5-010-079, G2-5-014-028, G2-5-014-049, G2-5-017-024, G2-5-021-004, G2-5-021-018, G2-5-025-002, G2-5-025-012, G2-5-025-019, G2-5-031-016, G2-6-015-007, G2-6-019-019, G2-11-020-028, G2-11-026-016, G2-12-011-021, G2-15-024-001.
+This packet has been triaged, not certified parity-complete; no unverified row is claimed OK.
