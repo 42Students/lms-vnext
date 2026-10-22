@@ -20,7 +20,7 @@ type MeetingRow = {
 };
 type Choice = { id: string; title: string };
 type TaskChoice = Choice & { sprintId: string | null };
-type Draft = Omit<MeetingRow,"status"|"meetingKey"> & {key:string;notes:string|null};
+type Draft = Omit<MeetingRow,"status"|"meetingKey"|"outcome"> & {key:string;notes:string|null};
 
 function localIst(iso: string) {
   const value = new Date(iso);

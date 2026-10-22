@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import {
-  foreignKey,
   integer,
   check,
   index,
@@ -12,7 +11,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { organizations } from "./organizations";
-import { collegeMemberships } from "./memberships";
 import { collegeStatusEnum } from "./enums";
 
 export const colleges = pgTable(
@@ -55,17 +53,9 @@ export const colleges = pgTable(
     check("colleges_legacy_unique_id_ck",sql`
       ${table.legacyUniqueId} is null or length(trim(${table.legacyUniqueId})) between 1 and 64`),
     uniqueIndex("colleges_id_organization_uq").on(table.id, table.organizationId),
-    foreignKey({
-      name: "colleges_chair_membership_scope_fk",
-      columns: [table.chairMembershipId, table.id],
-      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
-    }).onDelete("restrict"),
-    foreignKey({
-      name: "colleges_vice_chair_membership_scope_fk",
-      columns: [table.viceChairMembershipId, table.id],
-      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
-    }).onDelete("restrict"),
-    index("colleges_organization_idx").on(table.organizationId),
+    // The two scoped leadership FKs are enforced by migration 0161.
+    // Declaring them here would create a TypeScript schema cycle because
+    // college_memberships already references colleges.    index("colleges_organization_idx").on(table.organizationId),
     index("colleges_organization_status_idx").on(
       table.organizationId,
       table.status,
