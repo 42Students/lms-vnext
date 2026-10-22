@@ -447,7 +447,9 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,sectio
                  workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName??
                  workspace.members.find(member=>member.role==="MENTOR")?.displayName??null]
                 .filter(Boolean).join(" · ")||"Project workspace"
-              : mode==="ADMIN"&&section==="meetings"?
+              : mode==="ADMIN"&&section==="audit"?
+                "Trace resource changes here, or open the full project audit trail for broader events.":
+                mode==="ADMIN"&&section==="meetings"?
                 "Plan project touchpoints and connect conversations to the work they support.":
                 mode==="ADMIN"&&section==="overview"?
                 "Shape the project brief mentors and students use to understand the work.":
@@ -2320,7 +2322,9 @@ export function ProjectWorkspace({
           </div>
 
           {mode === "ADMIN" ? <Link href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?entityId=" + encodeURIComponent(workspace.project.id) + "&range=all"}
-            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View audit trail</Link> : null}
+            className="inline-flex min-h-11 md:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-link hover:bg-primary-subtle">
+              <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>
+              View audit trail</Link> : null}
           {mode==="ADMIN"&&workspace.activityLoadError?
             <div role="alert" className="border-l-[3px] border-warning-border bg-warning-subtle p-3 text-sm">
               <p className="font-semibold">Resource audit could not be loaded.</p>
@@ -2333,9 +2337,9 @@ export function ProjectWorkspace({
             <ProjectResourceAuditList events={workspace.activity.map(event => ({
             id: event.id, eventType: event.eventType, summary: event.summary,
             subjectLabel: event.subjectLabel, actorDisplayName: event.actorDisplayName,
-            occurredAt: event.occurredAt.toISOString(),
+            actorType:event.actorType, occurredAt: event.occurredAt.toISOString(),
           }))} /> : null}
-          {!workspace.activityLoadError?<ProjectActivityFilteredList
+          {!workspace.activityLoadError&&mode!=="ADMIN"?<ProjectActivityFilteredList
             projectId={workspace.project.id} events={workspace.activity}
             now={new Date().toISOString()} />:null}
 
