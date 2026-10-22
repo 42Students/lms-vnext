@@ -33,7 +33,7 @@ const page=(search:Record<string,unknown>={})=>
 describe("HR-BREAK-round-results-page-01 recruiter job and shared candidate privacy",()=>{
  beforeEach(()=>{
   vi.clearAllMocks();
-  f.ctx.mockResolvedValue({user:{id:"owner"}});
+  f.ctx.mockResolvedValue({user:{id:"owner"},recruiter:{userId:"owner"}});
   f.active.mockReturnValue(true);
   f.jobs.mockResolvedValue([]);
   f.workspace.mockResolvedValue({
@@ -89,6 +89,6 @@ describe("HR-BREAK-round-results-page-01 recruiter job and shared candidate priv
   const result=await page({jobId:job});
   expect(visible(result)).toContain("No rounds yet");
   expect(visible(result)).toContain("The placement cell has not configured");
-  expect(f.workspace).toHaveBeenCalledWith({user:{id:"owner"}},job);
+  expect(f.workspace).toHaveBeenCalledWith({user:{id:"owner"},recruiter:{userId:"owner"}},job);
  });
 });

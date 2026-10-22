@@ -88,7 +88,7 @@ describe("IIT Dharwad Mentor sprint/task transition and input hardening",()=>{
   expect(mentorTaskCreateSchema.safeParse(backlog).success).toBe(true);
   expect(mentorTaskCreateSchema.safeParse({...backlog,status:"IN_PROGRESS"}).success).toBe(false);
   expect(mentorTaskCreateSchema.safeParse({...backlog,sprintId}).success).toBe(false);
-  expect(mentorTaskCreateSchema.safeParse({...backlog,expectedSprintUpdatedAt}).success).toBe(false);
+  expect(mentorTaskCreateSchema.safeParse({...backlog,expectedSprintUpdatedAt:expectedUpdatedAt}).success).toBe(false);
   expect(mentorTaskCreateSchema.safeParse({...backlog,collegeId:"foreign"}).success).toBe(false);
   expect(mentorTaskCreateSchema.safeParse({...backlog,title:""}).success).toBe(false);
  });

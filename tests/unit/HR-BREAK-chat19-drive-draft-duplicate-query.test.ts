@@ -1,5 +1,7 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
+import {isValidElement,type ReactNode} from "react";
+import {ErrorState} from "@/components/ui/error-state";
 
 const d=vi.hoisted(()=>({
  ctx:vi.fn(),notFound:vi.fn(),redirect:vi.fn(),workspace:vi.fn(),requests:vi.fn(),
@@ -44,7 +46,14 @@ describe("HR-BREAK-DRIVE-DRAFT-QUERY-23: secure recruiter draft source URL",()=>
   {from:[a,b]},{edit:[a,b]},{fix:[a,b]},{copy:[a,b]},
   {from:a,fix:b},
  ])("does not pick one of contradictory grant/request/source links %j",async raw=>{
-  await expect(page(raw)).rejects.toThrow("NOT_FOUND");
+  const fallback=await page(raw);
+  // A bad legacy deep link now renders a public-safe recoverable error
+  // rather than leaking whether the requested college or draft exists.
+  const children=(isValidElement(fallback)
+    ?(fallback.props as {children?:ReactNode}).children:[]) as ReactNode;
+  const safeChildren=Array.isArray(children)?children:[children];
+  expect(safeChildren.some(child=>isValidElement(child)&&child.type===ErrorState&&
+    (child.props as {title?:string}).title==="We couldn't load that drive")).toBe(true);
   expect(d.workspace).not.toHaveBeenCalled();
   expect(d.requests).not.toHaveBeenCalled();
   expect(d.branches).not.toHaveBeenCalled();
