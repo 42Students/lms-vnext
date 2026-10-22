@@ -63,7 +63,7 @@ export default async function CollegeDriveShortlistedPage({
   const requested = await searchParams;
   const query = driveApplicationsParams({
     ...requested,
-    stage: requested.stage ?? "ASSESSMENT",
+    stage: requested["stage"] ?? "ASSESSMENT",
     status: "SUBMITTED",
     screening: "ALL",
   });
