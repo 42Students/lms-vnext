@@ -196,7 +196,11 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
     order by attempted_at desc,id desc limit ${query.size} offset ${offset}
   `);
   const content=records.rows.map(row=>({
-    ...row, statusLabel:row.outcome==="PROVIDER_ACCEPTED"?"Provider accepted":"Failed",
+    id:row.id,purpose:row.purpose,provider:row.provider,
+    recipientSuffix:row.recipientSuffix,collegeId:row.collegeId,
+    outcome:row.outcome,providerMessageId:row.providerMessageId,
+    createdAt:row.createdAt,
+    statusLabel:row.outcome==="PROVIDER_ACCEPTED"?"Provider accepted":"Failed",
     failureSummary:row.safeFailureCode?SMS_FAILURE_LABELS[row.safeFailureCode]??"SMS attempt failed.":null,
   }));
   return {ready:true,entries:content,content,totalElements:total??0,
