@@ -13,8 +13,8 @@ import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier
  * cross-environment schedulers sharing one DB must never share poll/digest
  * cursor keys or leases. */
 export function alertEnvironment(env: NodeJS.ProcessEnv = process.env) {
-  return env.APP_ENV === "development" || env.APP_ENV === "test" ? "DEVELOPMENT" :
-    env.APP_ENV === "uat" ? "UAT" : "PRODUCTION";
+  return env["APP_ENV"] === "development" || env["APP_ENV"] === "test" ? "DEVELOPMENT" :
+    env["APP_ENV"] === "uat" ? "UAT" : "PRODUCTION";
 }
 
 export function istDayAndHour(now: Date) {
@@ -170,10 +170,10 @@ function noteCloudPollingFailure() {
 /** Operator-opted Cloud Logging backup. Production cannot silently query the dev namespace. */
 export function cloudPollSettings(env: NodeJS.ProcessEnv = process.env):
   { project: string; namespace: string } | null {
-  if (env.LOG_ALERT_CLOUD_POLL_ENABLED !== "true") return null;
-  const project = env.GOOGLE_CLOUD_PROJECT;
-  const namespace = env.LOG_ALERT_K8S_NAMESPACE ??
-    (!env.APP_ENV || env.APP_ENV === "development" ? "lms-dev-2026" : "");
+  if (env["LOG_ALERT_CLOUD_POLL_ENABLED"] !== "true") return null;
+  const project = env["GOOGLE_CLOUD_PROJECT"];
+  const namespace = env["LOG_ALERT_K8S_NAMESPACE"] ??
+    (!env["APP_ENV"] || env["APP_ENV"] === "development" ? "lms-dev-2026" : "");
   if (!isCloudLogProject(project) || !isCloudLogNamespace(namespace)) return null;
   return { project, namespace };
 }
@@ -255,7 +255,8 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
         if (record.timestamp <= window.start || record.timestamp > window.end) continue;
         const success = await reportErrorForAlert({
           event: record.event, error: record.message, path: record.path,
-          requestId: record.requestId, component: record.component,
+          ...(record.requestId !== undefined ? { requestId: record.requestId } : {}),
+          ...(record.component !== undefined ? { component: record.component } : {}),
           sourceEventId: record.id,
         });
         if (!success) return; // This page is replayed on next tick, not skipped.
@@ -354,8 +355,8 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     const message = formatDailyDigest({
       day: previousDay,
       health: healthWatchStatus(health, now),
-      deploy: /^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT ?? "")
-        ? process.env.DEPLOY_COMMIT : undefined,
+      ...(/^[0-9a-f]{7,64}$/i.test(process.env["DEPLOY_COMMIT"] ?? "")
+        ? { deploy: process.env["DEPLOY_COMMIT"] } : {}),
       total: Number(counts?.total ?? 0),
       firstSeen: Number(counts?.firstSeen ?? 0),
       muted: Number(counts?.muted ?? 0),
