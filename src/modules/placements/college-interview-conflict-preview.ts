@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, gt, lt, ne, notExists, sql } from "drizzle-orm";
+import { and, eq, gt, lt, ne, notExists, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { activityEvents, collegeMemberships, placementApplications, placementJobs } from "@/db/schema";
@@ -77,6 +77,14 @@ export async function previewCollegeInterviewConflicts(
     .innerJoin(placementApplications,eq(placementApplications.id,slots.applicationId))
     .where(and(
       eq(slots.status,"BOOKED"),
+      or(
+        eq(placementApplications.membershipId,candidate.studentId),
+        input.interviewer?.trim()?and(
+          eq(placementJobs.companyRelationshipId,job.companyRelationshipId),
+          sql`lower(trim(coalesce(nullif(${slots.legacyInterviewerName},''),${slots.panel},'')))=${input.interviewer.trim().toLowerCase()}`,
+        ):undefined,
+        input.room?.trim()?sql`lower(trim(${slots.room}))=${input.room.trim().toLowerCase()}`:undefined,
+      ),
       input.excludingInterviewId?ne(slots.id,input.excludingInterviewId):undefined,
       lt(slots.startsAt,new Date(end.getTime()+buffer)),
       gt(slots.endsAt,new Date(start.getTime()-buffer)),
@@ -97,13 +105,10 @@ export async function previewCollegeInterviewConflicts(
     interviewer:input.interviewer??"",room:input.room??"",
   });
   const {candidate:learner,interviewer,room}=totals;
+  // SQL already filters to matching candidate, same-company interviewer or
+  // matching room. Count rows once even if one booking violates multiple rules.
   return {candidate:learner,interviewer,room,
-    total:rows.length>500?null:rows.slice(0,500).filter(row=>
-      row.studentId===candidate.studentId ||
-      row.companyRelationshipId===job.companyRelationshipId&&
-        Boolean(input.interviewer)&&row.interviewerName?.trim().toLowerCase()===input.interviewer.trim().toLowerCase() ||
-      Boolean(input.room)&&row.room.trim().toLowerCase()===input.room.trim().toLowerCase()
-    ).length,
+    total:rows.length>500?null:rows.length,
     incomplete:rows.length>500,
   };
 }
