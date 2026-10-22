@@ -123,7 +123,11 @@ describe("Sprint and task mutating routes under Mentor account",()=>{
    expect(JSON.stringify(await response.json())).not.toContain("AUTH_REQUIRED");
   });
   it("PROJ-BREAK-MENTOR-341 "+route.name+" passes route IDs to one authorized service call",async()=>{
-   const body={expectedUpdatedAt:"2099-01-01T00:00:00.000Z",title:"Sprint"};
+   // Task status has a distinct strict command schema. Keep the route mock
+   // checking a real, valid status transition rather than an editor payload.
+   const body=route.name==="task-status"
+    ? {expectedUpdatedAt:"2099-01-01T00:00:00.000Z",status:"IN_PROGRESS"}
+    : {expectedUpdatedAt:"2099-01-01T00:00:00.000Z",title:"Sprint"};
    const response=await route.invoke(request(route.method,body));
    expect(response.status).toBeLessThan(300);
    expect(state.lastOperation).toBe(route.name);

@@ -684,9 +684,15 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       score: 4,
       maxScore: 10,
       learnerDisplayName: "C4B Quiz Learner",
-      learnerEmail:
-        "c4b.learner."+quizLearnerIds.user+"@example.test",
+      // Faculty graders see learner names, but not private contact details.
+      learnerEmail: null,
     });
+    const adminAttempts = await listQuizAttempts(
+      collegeAdmin, quiz.id, structure.deliveryA.id,
+    );
+    expect(adminAttempts[0]?.learnerEmail).toBe(
+      "c4b.learner."+quizLearnerIds.user+"@example.test",
+    );
 
     const hidden = await getMyQuizAttempts(
       learner,
@@ -817,6 +823,21 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       collegeAdmin,
       quiz.id,
       { published: true },
+    );
+
+    // Result publication alone is insufficient: learners still cannot see
+    // scores or answers before the scheduled due time. Advance only this
+    // closed fixture's database deadline to exercise the released snapshot.
+    const beforeDue = await getMyQuizAttempts(
+      learner, quiz.id, structure.deliveryA.id,
+    );
+    expect(beforeDue[0]).toMatchObject({
+      score: null, maxScore: null, resultsVisible: false,
+    });
+    expect(beforeDue[0]?.answers[0]).not.toHaveProperty("correct");
+    await pool.query(
+      "update course_quizzes set due_at = now() - interval '1 minute' where id = $1",
+      [quiz.id],
     );
 
     const attempts =
