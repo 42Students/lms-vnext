@@ -9,7 +9,7 @@ import InboundMailPage from "@/app/(authenticated)/admin/inbound-mail/page";
 
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
 vi.mock("@/modules/permissions/policy",()=>({requirePermission:vi.fn()}));
-vi.mock("@/modules/inbound-mail/admin-service",()=>({listInboundMailForAdmin:vi.fn()}));
+vi.mock("@/modules/inbound-mail/admin-service",()=>({listInboundMailForAdmin:vi.fn(),INBOUND_ROUTING_METADATA_READY:true}));
 
 const admin:RequestContext={
  user:{id:"sa",identityUid:"uid",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},

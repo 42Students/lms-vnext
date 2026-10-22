@@ -68,6 +68,12 @@ describe("chat-13 additional admin mutation and recruiter account security",()=>
   const valid={confirmed:true,expectedUpdatedAt:"2099-01-01T00:00:00Z",
    reason:"Reviewed by platform operations",title:"Graduate Engineer",
    description:"Placement position",locations:["Hyderabad","Bengaluru"],
+   companyRelationshipId:id,assessmentUrl:"",assessmentDeadline:null,
+   importantDates:[],customEligibilityRules:[],
+   candidatePreferences:{preferredDegree:"",specialization:"",
+     graduationYear:null,minGpa:null,city:""},
+   jobTypeLabel:"Software engineer",employmentType:"FULL_TIME",
+   workMode:"HYBRID",responsibilities:"",
    applicationDeadline:"2099-04-01T00:00:00Z",openings:2,
    minimumAnnualCtcInr:500000,maximumAnnualCtcInr:800000};
   expect(superAdminPublishedDriveEditSchema.safeParse(valid).success).toBe(true);
@@ -114,7 +120,9 @@ describe("chat-13 additional admin mutation and recruiter account security",()=>
 
  it("SA-BULK-DRIVE-01 bounds destructive multi-action input and maintains partial failure ledger",()=>{
   const service=read("src/modules/placements/super-admin-bulk-drive-service.ts");
-  expect(service).toContain("z.array(z.uuid()).min(1).max(25)");
+  expect(service).toContain("z.array(z.uuid()).min(1).max(100)");
+  expect(service).toContain("chunkSize:25");
+  expect(service).toContain("Math.ceil(input.jobIds.length/25)");
   expect(service).toContain("new Set(ids).size === ids.length");
   expect(service).toContain("confirmed: z.literal(true)");
   expect(service).toContain("resolveActingCollege(context, \"placements.manage\")");

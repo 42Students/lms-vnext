@@ -40,6 +40,11 @@ describe("TPO-settings-audit-NOTIFY-READ-05 private inbox data after role revoca
   expect(source).toContain("eq(inAppNotifications.userId, userId)");
   expect(source).toContain("eq(activityEvents.collegeId, collegeId)");
   expect(source).toContain("eq(activityEvents.organizationId, organizationId)");
-  expect(source).not.toContain("inAppNotifications.body");
+  // The private TPO inbox returns only fixed labels and counts; Super Admin
+  // notification audit has a separate, permissioned read of delivery bodies.
+  const platformAudit=source.indexOf("export async function getPlatformNotificationAudit");
+  expect(platformAudit).toBeGreaterThan(0);
+  expect(source.slice(0,platformAudit)).not.toContain("inAppNotifications.body");
+  expect(source.slice(platformAudit)).toContain("body: inAppNotifications.body");
  });
 });

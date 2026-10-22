@@ -4,20 +4,23 @@ const source=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),
 describe("TPO Requests FIXED-ON-MAIN source contracts; DB acceptance separate",()=>{
  it("TPO-requests-verification-07 preserves its source contract",()=>{
   expect(source("src/modules/placements/tpo-drive-stop-effects.ts")).toContain("settleDriveWithdrawalRequests");
-  expect(source("src/modules/placements/tpo-drive-stop-effects.ts")).toContain("status:\"APPROVED\"");
-  expect(source("src/modules/placements/tpo-drive-stop-effects.ts")).toContain("const note=\"Approved (drive \"");
+  const stop=source("src/modules/placements/tpo-drive-stop-effects.ts");
+  expect(stop).toContain('const decision=protectedOffer?"REJECTED":"APPROVED"');
+  expect(stop).toContain("status:decision");
+  expect(source("src/modules/placements/tpo-drive-stop-effects.ts")).toContain('const approvedNote="Approved (drive "+statusLabel');
+  expect(stop).toContain('eq(placementOffers.status,"ACCEPTED")');
  });
  it("TPO-requests-verification-36 preserves its source contract",()=>{
   expect(source("src/modules/placements/tpo-drive-change-request-service.ts")).toContain("getDriveChangeRequests");
   expect(source("src/modules/placements/tpo-drive-change-request-service.ts")).toContain("placementDriveChangeRequests");
  });
  it("TPO-requests-verification-09 preserves its source contract",()=>{
-  expect(source("src/app/(authenticated)/tpo/requests/page.tsx")).toContain("Student number:");
+  expect(source("src/app/(authenticated)/tpo/requests/page.tsx")).toContain('request.rollNumber??"—"');
   expect(source("src/app/(authenticated)/tpo/requests/page.tsx")).toContain("After college:");
  });
  it("TPO-requests-verification-10 preserves its source contract",()=>{
-  expect(source("src/app/(authenticated)/tpo/requests/page.tsx")).toContain("Decided by:");
-  expect(source("src/app/(authenticated)/tpo/requests/page.tsx")).toContain("Decided on:");
+  expect(source("src/app/(authenticated)/tpo/requests/page.tsx")).toContain(">Decided by</th>");
+  expect(source("src/app/(authenticated)/tpo/requests/page.tsx")).toContain(">Decided on</th>");
  });
  it("TPO-requests-verification-11 preserves its source contract",()=>{
   expect(source("src/modules/placements/tpo-global-requests-model.ts")).toContain("urgentOnly");
@@ -36,7 +39,8 @@ describe("TPO Requests FIXED-ON-MAIN source contracts; DB acceptance separate",(
   expect(source("src/modules/placements/tpo-requests-page-csv-model.ts")).toContain("tpoRequestsExportHref");
  });
  it("TPO-requests-verification-25 preserves its source contract",()=>{
-  expect(source("src/components/verification/TpoVerificationPanel.tsx")).toContain("Review one by one");
+  expect(source("src/components/verification/TpoVerificationPanel.tsx")).toContain("Start with the first of {waiting.length}");
+  expect(source("src/components/verification/TpoVerificationPanel.tsx")).toContain("sequenceIndex+1");
   expect(source("src/components/verification/TpoVerificationPanel.tsx")).toContain("nextSequential");
  });
  it("TPO-requests-verification-30 preserves its source contract",()=>{

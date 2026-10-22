@@ -40,7 +40,7 @@ describe("TPO-BREAK-company-service-08 scoped company directory reads and redact
    ()=>getTpoCompanyDetailView(ctx,{collegeId:B,companyId:A}),
    ()=>exportTpoCompanyDirectory(ctx,{collegeId:B}),
   ]){
-   await expect(run()).rejects.toThrow("PERMISSION_DENIED");
+   await expect(run()).rejects.toThrow("Missing permission: placements.manage");
   }
   expect(mocks.companies).not.toHaveBeenCalled();
   expect(mocks.ready).not.toHaveBeenCalled();

@@ -12,7 +12,7 @@ export function isExotelAcceptedResponse(raw:unknown):boolean{
  if(!message || typeof message!=="object")return false;
  if(!("Sid" in message)||typeof message.Sid!=="string")return false;
  const sid=message.Sid.trim();
- if(!sid || sid.length>255)return false;
+ if(!sid || sid.length>255 || /[\x00-\x1f\x7f]/.test(sid))return false;
  if(!("Status" in message)||typeof message.Status!=="string")return false;
  const status=message.Status.trim().toLowerCase();
  if(!status || status.startsWith("failed"))return false;

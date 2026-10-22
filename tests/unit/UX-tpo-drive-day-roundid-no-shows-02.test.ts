@@ -6,7 +6,8 @@ describe("UX-tpo-drive-day-roundid-no-shows-02",()=>{
   expect(source).toContain("<DataTable");
   expect(source).toContain("getRowKey=");
   expect(source).toContain("mobilePriority");
-  expect(source).toContain("empty={<p");
+  expect(source).toContain("empty={<EmptyState");
+  expect(source).toContain('title="No learner is currently marked ABSENT in this round."');
   expect(source).toContain("No learner is currently marked ABSENT in this round.");
   expect(source).not.toContain("<table");
  });
