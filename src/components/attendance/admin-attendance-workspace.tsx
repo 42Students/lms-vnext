@@ -94,6 +94,8 @@ export type AdminAttendanceWorkspaceData = {
   showAllCourses: boolean;
   selectedDeliveryId: string | null;
   month: string;
+  /** Server-side grid read failed; null grid does not imply empty attendance. */
+  gridLookupFailed?: boolean;
   grid: null | {
     delivery: DeliveryOption;
     roster: Learner[];
@@ -203,9 +205,25 @@ export function AdminAttendanceWorkspace({
   }, [data.courses, data.deliveries, sectionId]);
   const visibleCourses = showAllCourses ? data.courses : offeredCourses;
   const termDeliveries=data.deliveries.filter(row=>row.sectionId===sectionId && row.courseId===courseId);
+  // Retain only the last successful read for the same college, delivery,
+  // class, course and month. Cross-college or cross-filter snapshots must never
+  // be rendered after a failed server read.
+  const gridScopeKey=[
+    data.collegeId,data.selectedSectionId??"",data.selectedCourseId??"",
+    data.selectedDeliveryId??"",data.month,
+  ].join("|");
+  const [lastGrid,setLastGrid]=useState<{
+    scope:string;value:NonNullable<AdminAttendanceWorkspaceData["grid"]>;
+  }|null>(()=>data.grid?{scope:gridScopeKey,value:data.grid}:null);
+  useEffect(()=>{
+    if(data.grid)setLastGrid({scope:gridScopeKey,value:data.grid});
+  },[gridScopeKey,data.grid]);
+  const viewGrid=data.grid??(data.gridLookupFailed && lastGrid?.scope===gridScopeKey
+    ?lastGrid.value:null);
+
   const sessionDays = useMemo(() =>
-    attendanceMonthDays(data.month,data.grid?.sessions ?? []),
-    [data.grid?.sessions,data.month],
+    attendanceMonthDays(data.month,viewGrid?.sessions ?? []),
+    [viewGrid?.sessions,data.month],
   );
 
   function navigate(
@@ -225,14 +243,14 @@ export function AdminAttendanceWorkspace({
   const recordMap = useMemo(
     () =>
       new Map(
-        (data.grid?.records ?? []).map(
+        (viewGrid?.records ?? []).map(
           (record) => [
             `${record.scheduleEventId}:${record.membershipId}`,
             record,
           ],
         ),
       ),
-    [data.grid?.records],
+    [viewGrid?.records],
   );
 
   // Held status must update if a scheduled class begins while this page is open.
@@ -243,18 +261,18 @@ export function AdminAttendanceWorkspace({
   },[]);
   const heldSessions = useMemo(
     () =>
-      (data.grid?.sessions ?? []).filter(
+      (viewGrid?.sessions ?? []).filter(
         (session) => new Date(session.startsAt).getTime() <= loadedAt,
       ),
-    [data.grid?.sessions, loadedAt],
+    [viewGrid?.sessions, loadedAt],
   );
 
   const markedSessions=heldSessions.filter(session=>session.attendanceStatus==="MARKED");
   // Count only authorized visible learners and their individually marked sessions.
-  const totalMarks=(data.grid?.roster??[]).reduce((sum,learner)=>sum+
+  const totalMarks=(viewGrid?.roster??[]).reduce((sum,learner)=>sum+
     heldSessions.filter(session=>adminAttendanceCellState(session,
       recordMap.get(session.id+":"+learner.membershipId)).counted).length,0);
-  const presentMarks=(data.grid?.roster??[]).reduce((sum,learner)=>sum+
+  const presentMarks=(viewGrid?.roster??[]).reduce((sum,learner)=>sum+
     heldSessions.filter(session=>adminAttendanceCellState(session,
       recordMap.get(session.id+":"+learner.membershipId)).present).length,0);
   const absentMarks=totalMarks-presentMarks;
@@ -264,13 +282,13 @@ export function AdminAttendanceWorkspace({
 
   function learnerPercent(learner: Learner) {
     return adminAttendancePercent(
-      learner.membershipId, data.grid?.sessions ?? [], data.grid?.records ?? [],
+      learner.membershipId, viewGrid?.sessions ?? [], viewGrid?.records ?? [],
     );
   }
 
   function dailyMarkedRatio(learner: Learner, sessions: Session[]) {
     return adminAttendanceDayRatio(
-      learner.membershipId, sessions, data.grid?.records ?? [],
+      learner.membershipId, sessions, viewGrid?.records ?? [],
     );
   }
 
@@ -359,11 +377,11 @@ export function AdminAttendanceWorkspace({
   }
 
   function exportCsv() {
-    if (!data.grid) return;
+    if (!viewGrid) return;
     // One column per IST calendar day, so the file remains usable in the
     // legacy monthly grid. Multiple sessions on a date are slash-delimited.
     const header = ["Student",...sessionDays.map(row=>String(Number(row.day.slice(-2))))];
-    const rows = data.grid.roster.map(learner=>[
+    const rows = viewGrid.roster.map(learner=>[
       learnerName(learner),
       ...sessionDays.map(({sessions})=>{
         if(sessions.length===0)return "";
@@ -383,7 +401,7 @@ export function AdminAttendanceWorkspace({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `attendance-class-${data.grid.delivery.sectionCode}-course-${data.grid.delivery.courseCode}-${data.month}.csv`;
+    link.download = `attendance-class-${viewGrid.delivery.sectionCode}-course-${viewGrid.delivery.courseCode}-${data.month}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -392,6 +410,7 @@ export function AdminAttendanceWorkspace({
     <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
       {notice?<Alert tone="info">{notice}</Alert>:null}
       {refreshing?<p role="status" className="text-sm text-body">Refreshing attendance…</p>:null}
+      {data.gridLookupFailed&&viewGrid?<Alert tone="warning">The monthly attendance refresh failed. Displaying only the last verified grid for this same college, class, course and month. <Button type="button" variant="secondary" size="sm" disabled={refreshing} onClick={()=>startRefresh(()=>router.refresh())}>Retry attendance</Button></Alert>:null}
 
       <section aria-label="Attendance policy" className="min-w-0 border-b border-border pb-4">
       <h2 className="mb-3 text-base font-semibold text-foreground">Attendance policy</h2>
@@ -497,7 +516,7 @@ export function AdminAttendanceWorkspace({
               if (event.target.value) navigate(event.target.value);
             }} />
         </div>
-        <Button size="sm" variant="secondary" type="button" disabled={!data.grid||refreshing}
+        <Button size="sm" variant="secondary" type="button" disabled={!viewGrid||refreshing||data.gridLookupFailed}
           onClick={exportCsv}>Export CSV</Button>
       </form>
       <div className="flex flex-wrap items-center justify-end gap-2">
@@ -511,19 +530,19 @@ export function AdminAttendanceWorkspace({
           title="No assigned class courses"
           description="There are no active class/course deliveries for this college yet."
         />
-      ) : !data.grid ? (
+      ) : !viewGrid ? (
         <EmptyState
           title={sectionId && courseId ? "Course is not taught to this class" : "Select a class and course"}
           description={sectionId && courseId
             ? "Choose a course taught to this class to view attendance records."
             : "Choose a class, an offered course, and a month to review attendance."}
         />
-      ) : data.grid.roster.length === 0 ? (
+      ) : viewGrid.roster.length === 0 ? (
         <EmptyState
           title="No active learners in this class"
           description="Attendance records require an active learner roster for this delivery."
         />
-      ) : data.grid.sessions.length === 0 ? (
+      ) : viewGrid.sessions.length === 0 ? (
         <EmptyState
           title="No attendance data for this class, course and month"
           description="No class sessions are scheduled for the selected Course delivery in this month."
@@ -537,12 +556,12 @@ export function AdminAttendanceWorkspace({
                   Monthly class health
                 </p>
                 <h2 className="mt-1 text-lg font-semibold text-foreground">
-                  {data.grid.delivery.sectionName} ·{" "}
-                  {data.grid.delivery.courseName}
+                  {viewGrid.delivery.sectionName} ·{" "}
+                  {viewGrid.delivery.courseName}
                 </h2>
                 <p className="mt-1 text-sm text-body">
                   {
-                    data.grid.sessions.filter(
+                    viewGrid.sessions.filter(
                       (session) =>
                         session.attendanceStatus ===
                         "MARKED",
@@ -552,7 +571,7 @@ export function AdminAttendanceWorkspace({
                 </p>
                 <p className="mt-2 text-3xl font-semibold tabular-nums text-foreground" aria-label="Monthly attendance percentage">{monthPercent===null?"—":monthPercent+"%"}</p>
                 <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-3 gap-[var(--lms-space-3)] text-xs text-body">
-                  <div><dt>Students</dt><dd className="text-lg font-semibold">{data.grid.roster.length}</dd></div>
+                  <div><dt>Students</dt><dd className="text-lg font-semibold">{viewGrid.roster.length}</dd></div>
                   <div><dt>Sessions held</dt><dd className="text-lg font-semibold">{heldSessions.length}</dd></div>
                   <div><dt>Absences</dt><dd className="text-lg font-semibold">{absentMarks}</dd></div>
                   {notMarkedCount>0?<div><dt>Not marked</dt><dd className="text-base font-semibold">{notMarkedCount}</dd></div>:null}
@@ -591,7 +610,7 @@ export function AdminAttendanceWorkspace({
                 </tr>
               </thead>
               <tbody>
-                {data.grid.roster.map(
+                {viewGrid.roster.map(
                   (learner) => {
                     const percent =
                       learnerPercent(learner);
@@ -687,7 +706,7 @@ export function AdminAttendanceWorkspace({
         </>
       )}
 
-      <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
+      <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={viewGrid?.roster??[]}/>
 
       <Modal
         open={Boolean(target)}

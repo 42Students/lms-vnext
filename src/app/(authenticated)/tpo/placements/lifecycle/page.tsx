@@ -21,6 +21,7 @@ import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuratio
 import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
+import {TpoLifecycleRefreshAction,TpoLifecycleStaleSnapshot} from "@/components/placements/tpo-lifecycle-stale-snapshot";
 type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];tab?:string|string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];recruiterDriveMode?:string|string[];employmentType?:string|string[];jobTypeLabel?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -39,6 +40,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     if(item && item.length<=100)retryQuery.set(key,item);
   }
   const retryHref="/tpo/placements/lifecycle"+(retryQuery.size?"?"+retryQuery.toString():"");
+  // Do not reuse a drive snapshot across membership or filter changes.
+  const snapshotKey=context.membership.id+":"+retryQuery.toString();
   try {
     data = await getTpoDriveLifecycleList(context, {
     ...(first(params.seasonId) ? { seasonId: first(params.seasonId) } : {}),
@@ -64,12 +67,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.page)?{page:first(params.page)}:{}),
     });
   } catch {
-    return <main className="min-w-0 space-y-4">
-      <PageHeader eyebrow="TPO" title="Drives" />
-      <Alert tone="error">Could not load drives.</Alert>
-      <p className="text-sm text-muted-foreground">The drives were not loaded. Your filters are preserved.</p>
-      <a href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Retry</a>
-    </main>;
+    return <TpoLifecycleStaleSnapshot key={snapshotKey} failed>
+      <main className="min-w-0 space-y-4">
+        <PageHeader eyebrow="TPO" title="Drives" />
+        <Alert tone="error">Could not load drives.</Alert>
+        <p className="text-sm text-muted-foreground">The drives were not loaded. Your filters are preserved.</p>
+        <TpoLifecycleRefreshAction label="Retry" />
+      </main>
+    </TpoLifecycleStaleSnapshot>;
   }
   let jobTypes: Awaited<ReturnType<typeof listPlacementJobTypeChoices>>;
   let supportError=false;
@@ -116,11 +121,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     data.payCategory !== "ALL" || data.display !== "DETAILED" || data.sort !== "COMPANY" ||
     data.minApplied !== undefined || data.maxApplied !== undefined ||
     data.minOffers !== undefined || data.maxOffers !== undefined);
-  return <div className="min-w-0 space-y-4">
+  return <TpoLifecycleStaleSnapshot key={snapshotKey} failed={false}>
+    <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="TPO" title="Drives"
       description="Review requests, prepare drafts and run every placement drive from one workspace."
       actions={<>
-        <Link href={retryHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)] md:min-h-9 md:w-auto">Refresh</Link>
+        <TpoLifecycleRefreshAction />
         <Dropdown mobileSheet align="end" label="More drive actions" trigger="More">
           <nav aria-label="Drive navigation and exports" className="grid min-w-48 gap-1 text-sm">
             <Link href="/tpo/placements/overview" className="rounded-[var(--lms-control-radius)] px-3 py-2 font-semibold text-primary-text hover:bg-primary-subtle">Operations overview</Link>
@@ -484,5 +490,6 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </nav>
     </>}
     </section>
-  </div>;
+    </div>
+  </TpoLifecycleStaleSnapshot>;
 }

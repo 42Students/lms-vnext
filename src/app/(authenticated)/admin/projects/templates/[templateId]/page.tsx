@@ -83,10 +83,6 @@ export default async function SuperAdminProjectTemplateDetailPage({
       .where(eq(colleges.id,context.adminScope.collegeId)).limit(1))[0]?.name??null:null;
   return (
     <div className="min-w-0 space-y-4 md:space-y-5">
-      <ProjectAdminNav
-        basePath="/admin/projects"
-        active="templates"
-      />
       <PageBackLink href="/admin/projects/templates" label="Back to templates" />
       <PageHeader
         title={detail.template.title}
@@ -150,6 +146,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
           </div>
         }
       />
+      <ProjectAdminNav basePath="/admin/projects" active="templates" />
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active="overview"
@@ -160,7 +157,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
         }}
       />
       <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)] lg:gap-6">
-        <section aria-labelledby="template-basic-info" className="min-w-0 rounded-lg border border-[var(--lms-canvas-border)] p-4 sm:p-5">
+        <section aria-labelledby="template-basic-info" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4 sm:pb-5">
           <h2 id="template-basic-info" className="text-base font-semibold text-[var(--lms-heading)]">Basic info</h2>
           <dl className="mt-3 divide-y divide-[var(--lms-canvas-border)] text-sm">
             {([["Name",detail.template.title],["Slug",detail.template.slug],
@@ -172,7 +169,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
               </div>)}
           </dl>
         </section>
-        <section aria-labelledby="template-lifecycle" className="min-w-0 rounded-lg border border-[var(--lms-canvas-border)] p-4 sm:p-5">
+        <section aria-labelledby="template-lifecycle" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4 sm:pb-5 lg:border-l lg:pl-6">
           <h2 id="template-lifecycle" className="text-base font-semibold text-[var(--lms-heading)]">Lifecycle settings</h2>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <StatusBadge tone={detail.template.status==="PUBLISHED"?"success":detail.template.status==="ARCHIVED"?"neutral":"warning"}>{detail.template.status}</StatusBadge>

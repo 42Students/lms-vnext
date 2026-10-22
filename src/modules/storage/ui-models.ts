@@ -149,6 +149,7 @@ const ERROR_MESSAGES: Record<StorageFileErrorCode, string> = {
   STORAGE_ALREADY_SUBMITTED: "This assignment has already been submitted.",
   STORAGE_FILES_REQUIRED: "Add at least one verified file before submitting.",
   STORAGE_NOT_CONFIGURED: "R2 storage is not configured. Contact your administrator or try again later.",
+  STORAGE_PROVIDER_UNAVAILABLE: "Private document storage is temporarily unavailable. Please try again later.",
 };
 
 /** Maps an API error code to learner-safe copy; unknown codes get a generic message. */

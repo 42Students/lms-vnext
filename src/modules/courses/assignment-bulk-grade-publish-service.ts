@@ -89,6 +89,8 @@ export async function publishAssignmentGradeBatch(
     summary:"Assignment grade publication batch processed",
     metadata:{
       assignmentId,deliveryId:input.deliveryId??null,
+      legacyAuditAction:"ASSIGNMENT_GRADES_PUBLISH_ALL",
+      bulkRequestId:input.requestId,
       initiallyPending:initial?.total??0,processed:rows.length,
       published,failed:failedIds.length,remaining,
       skippedUngraded:classification?.skippedUngraded??0,

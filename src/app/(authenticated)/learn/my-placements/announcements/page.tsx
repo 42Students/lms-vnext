@@ -15,6 +15,7 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { listOwnLearnerAnnouncementReceipts } from "@/modules/announcements/learner-announcement-receipts-service";
 import { LearnerNoticeReadAction } from "@/components/placements/learner-notice-read-action";
+import { LearnerNoticeReadOnView } from "@/components/placements/learner-notice-read-on-view";
 import { learnerPlacementNoticeFeed } from "@/modules/placements/learner-placement-announcement-model";
 import { learnerPlacementNoticeView } from "@/modules/placements/learner-placement-notice-view-model";
 import {getOwnLearnerPlacementAlerts,getUnreadOwnLearnerPlacementAlertCount} from "@/modules/placements/learner-placement-alerts-service";
@@ -205,6 +206,12 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
             Search all my visible notices
           </Link>
         </div>
+      ) : null}
+      {ready && collegeNoticesRead.available && activeView === "announcements" ? (
+        <LearnerNoticeReadOnView notificationIds={pages.items
+          .filter(notice => notice.unread === true)
+          .map(notice => ownReceipts.get(notice.id)?.notificationId)
+          .filter((id): id is string => Boolean(id))} />
       ) : null}
       {!ready ? (
         <div role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-b border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">

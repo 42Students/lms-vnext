@@ -30,7 +30,7 @@ const courseCodeSchema = z
   );
 
 const courseShortTitleSchema=z.string().trim().min(1,"Enter short display name")
- .max(120,"Maximum 120 characters");
+ .max(64,"Maximum 64 characters");
 const courseOfficialCodeSchema=z.string().trim().max(40,"Maximum 40 characters").nullable();
 /** Immutable legacy/public course slug; the department-local code is separate. */
 export const courseSlugSchema=z.string().trim()
@@ -49,7 +49,7 @@ const courseThumbnailUrlSchema=z.string().trim().max(2048).refine(value=>{
 
 
 /** Legacy CourseDTO crosswalk (IDs remain tenant-scoped UUIDs): course_name
- * -> name, short_title -> shortTitle (120 DB chars), dept_id -> departmentId,
+ * -> name, short_title -> shortTitle (64 legacy characters; 120 DB capacity), dept_id -> departmentId,
  * parent_course_id -> parentCourseId, enabled -> enabled, and intro/takeaways
  * metadata -> course-display fields. Legacy active maps to lifecycle transitions,
  * allowed_for_display to persisted legacyAllowedForDisplay; neither flag is
@@ -68,7 +68,7 @@ export const createCourseInputSchema = z.object({
    * Cover URLs here must be approved public HTTPS assets. */
   thumbnailUrl:courseThumbnailUrlSchema.optional(),
   takeaways:z.string().trim().max(2000).nullable().optional(),
-  introductionHeading:z.string().trim().min(1,"Enter the heading").max(255,"Maximum 255 characters").optional(),
+  introductionHeading:z.string().trim().min(1,"Enter heading").max(255,"Maximum 255 characters").optional(),
   enabled:z.boolean().optional(),
   description: z
     .string()
@@ -90,7 +90,7 @@ export const updateCourseInputSchema = z
     cardColor:courseCardColorSchema.optional(),
     thumbnailUrl:courseThumbnailUrlSchema.optional(),
     takeaways:z.string().trim().max(2000).nullable().optional(),
-    introductionHeading:z.string().trim().min(1,"Enter the heading").max(255,"Maximum 255 characters").optional(),
+    introductionHeading:z.string().trim().min(1,"Enter heading").max(255,"Maximum 255 characters").optional(),
     enabled:z.boolean().optional(),
     description: z
       .string()
@@ -194,7 +194,7 @@ export const createCourseTeachingAssignmentsBatchInputSchema = z.object({
 export const legacyCourseDraftSchema=z.object({
  departmentId:z.string().uuid("Select a department"),
  course_name:z.string().trim().min(1,"Enter a course name").max(255,"Maximum 255 characters"),
- short_title:z.string().trim().min(1,"Enter short display name").max(255).optional(),
+ short_title:z.string().trim().min(1,"Enter short display name").max(64,"Maximum 64 characters").optional(),
  official_course_code:z.string().trim().max(40,"Maximum 40 characters").optional(),
  in_this_course_description:z.string().trim().min(1,"In this Course Description is required").max(5000),
  takeaways:z.array(z.string().trim().min(1)).max(50).optional(),
@@ -210,7 +210,7 @@ export function normalizeLegacyCourseDraft(
  const ordered=source.takeaways?.map(item=>item.trim()).filter(Boolean)??[];
  const points=ordered.join("\n");
  if(points.length>2000)throw new Error("Course Takeaways exceed 2000 characters");
- const shortTitle=(source.short_title??source.course_name).slice(0,120);
+ const shortTitle=(source.short_title??source.course_name).slice(0,64);
  return createCourseInputSchema.parse({
   departmentId:source.departmentId,name:source.course_name,
   shortTitle,code:internalCode,officialCode:source.official_course_code||null,

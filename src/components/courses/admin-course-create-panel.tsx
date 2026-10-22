@@ -331,12 +331,12 @@ export function AdminCourseCreatePanel({
     if (!courseName.trim()) issues.name = "Enter a course name";
     else if (courseName.trim().length > 255) issues.name = "Maximum 255 characters";
     if (!shortTitle.trim()) issues.shortTitle = "Enter short display name";
-    else if (shortTitle.trim().length > 120)
-      issues.shortTitle = "Maximum 120 characters";
+    else if (shortTitle.trim().length > 64)
+      issues.shortTitle = "Maximum 64 characters";
     if (officialCode.trim().length > 40)
       issues.code = "Maximum 40 characters";
     if (!superAdmin && !courseCode.trim()) issues.code = "Enter course code";
-    if (!introductionHeading.trim()) issues.heading = "Enter the heading";
+    if (!introductionHeading.trim()) issues.heading = "Enter heading";
     else if (introductionHeading.trim().length > 255) issues.heading = "Maximum 255 characters";
     if (!courseDescription.trim())
       issues.description = "Enter course description";
@@ -485,7 +485,7 @@ export function AdminCourseCreatePanel({
           <div className="grid gap-3 md:col-span-2 md:grid-cols-2">
             <div>
               <FieldLabel htmlFor="course-short-title">Short display name</FieldLabel>
-              <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>({...previous,shortTitle:undefined}));}} maxLength={120} placeholder="e.g. DSA" required />
+              <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>({...previous,shortTitle:undefined}));}} maxLength={64} placeholder="e.g. DSA" required />
               {createErrors.shortTitle ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.shortTitle}</p> : null}
             </div>
             <div>

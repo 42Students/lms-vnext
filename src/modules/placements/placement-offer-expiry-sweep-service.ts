@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, gt, isNotNull, lte, notExists } from "drizzle-orm";
+import { and, asc, eq, gt, isNotNull, isNull, lte, notExists } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
  activityEvents,colleges,placementApplications,placementJobs,
@@ -54,6 +54,9 @@ export async function sweepExpiredPlacementOffers(
       .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
       .where(and(
       eq(placementOffers.status, "ISSUED"),
+      // Imported ISSUED rows with an answered timestamp must be manually
+      // reconciled, never automatically converted to EXPIRED.
+      isNull(placementOffers.respondedAt),
       isNotNull(placementOffers.expiresAt),
       lte(placementOffers.expiresAt, now),
     )).orderBy(asc(placementOffers.expiresAt), asc(placementOffers.id))
@@ -68,6 +71,7 @@ export async function sweepExpiredPlacementOffers(
       }).where(and(
         eq(placementOffers.id, row.id),
         eq(placementOffers.status, "ISSUED"),
+        isNull(placementOffers.respondedAt),
       )).returning({ id: placementOffers.id });
       if (!updated) continue;
       await tx.insert(placementOfferStatusHistory).values({

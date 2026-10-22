@@ -123,6 +123,9 @@ export type TaskData = {
   status: "TODO" | "IN_PROGRESS" | "BLOCKED" | "IN_REVIEW" | "DONE";
   sequence: number;
   assigneeMembershipId: string | null;
+  legacyAssigneeId: number | null;
+  legacyAssigneeType: string | null;
+  legacyAssigneeName: string | null;
   blockerReason: string | null;
   dueDate: string | null;
   estimatePoints: number | null;
@@ -902,10 +905,17 @@ export function buildProjectsPlan(
       const seq = sequenceInSprint.get(sprint.newId) ?? 0;
       sequenceInSprint.set(sprint.newId, seq + 1);
       const assigneeType = (str(tk.assignee_type) ?? "").toUpperCase();
+      const sourceAssignee=Number(tk.assignee_id);
+      const legacyAssigneeId=tk.assignee_id!=null&&
+        Number.isSafeInteger(sourceAssignee)&&sourceAssignee>0?sourceAssignee:null;
       let assignee: string | null = null;
-      if (tk.assignee_id !== null && tk.assignee_id !== undefined) {
-        const a = assigneeType === "FACULTY" ? person.get(`faculty:${String(tk.assignee_id)}`) : person.get(`learner:${String(tk.assignee_id)}`);
-        if (a) assignee = a.data.membershipId;
+      if(legacyAssigneeId!==null){
+        // Never default an unrecognized assignee type to LEARNER: numeric
+        // learner and faculty identities overlap in the old source tables.
+        const prefix=assigneeType==="FACULTY"?"faculty":
+          assigneeType==="LEARNER"?"learner":null;
+        const a=prefix?person.get(prefix+":"+legacyAssigneeId):null;
+        if(a)assignee=a.data.membershipId;
         else note("taskAssigneeNotLoaded");
       }
       const estimate = toIntRoundHalfUp(tk.estimate_points);
@@ -925,6 +935,9 @@ export function buildProjectsPlan(
           status,
           sequence: seq,
           assigneeMembershipId: assignee,
+          legacyAssigneeId,
+          legacyAssigneeType:assigneeType&&assigneeType.length<=32?assigneeType:null,
+          legacyAssigneeName:clip(tk.assignee_name,160),
           blockerReason: status === "BLOCKED" ? (clip(tk.blocker_reason, 2000) ?? "Blocked (reason not recorded in the legacy LMS)") : clip(tk.blocker_reason, 2000),
           dueDate: /^\d{4}-\d{2}-\d{2}$/.test(due ?? "") ? due : null,
           estimatePoints: estimate !== null && estimate >= 0 && estimate <= 1000 ? estimate : null,

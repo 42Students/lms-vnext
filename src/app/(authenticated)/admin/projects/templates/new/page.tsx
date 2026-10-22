@@ -20,7 +20,7 @@ export default async function NewSuperAdminTemplatePage(){
   <PageHeader title="Create project template"
    description="Define the reusable blueprint for workspaces."
    actions={<PageBackLink href="/admin/projects/templates" label="Back to templates" />}/>
-  <section aria-label="Project template form" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-space-6)]">
+  <section aria-label="Project template form" className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
    <p className="mb-[var(--lms-space-4)] text-sm text-muted-foreground">
     Keep the template generic. Live meetings, activity, and submission state belong to workspaces.
    </p>

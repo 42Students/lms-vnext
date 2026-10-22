@@ -77,7 +77,7 @@ export function CollegeProjectMentorDialog({projectId,collegeId,currentMentorNam
   }finally{lock.current=false;setBusy(false);}
  }
  return <>
-  <Button size="sm" variant="secondary" onClick={()=>{setOpen(true);setError("");setHasSearched(false);setConfirming(false);setMentorRequired(false);setMentorId("");setSelectedMentor(null);setMentors([]);void load("");}}>
+  <Button size="sm" variant="secondary" onClick={()=>{setOpen(true);setError("");setSearch("");setRoleLabel("");setHasSearched(false);setConfirming(false);setMentorRequired(false);setMentorId("");setSelectedMentor(null);setMentors([]);void load("");}}>
    ↻ Reassign mentor…
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!busy){setOpen(next);if(!next){requestSequence.current++;setConfirming(false);}}}}
@@ -95,7 +95,7 @@ export function CollegeProjectMentorDialog({projectId,collegeId,currentMentorNam
      </Button>
     </div>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mentor
-     <Select value={mentorId} onChange={e=>{const id=e.target.value;setMentorId(id);setSelectedMentor(mentors.find(m=>m.membershipId===id)??null);setMentorRequired(false);setConfirming(false);}} disabled={busy} aria-invalid={mentorRequired&&!mentorId}>
+     <Select value={mentorId} onChange={e=>{const id=e.target.value;setMentorId(id);setSelectedMentor(mentors.find(m=>m.membershipId===id)??(selectedMentor?.membershipId===id?selectedMentor:null));setMentorRequired(false);setConfirming(false);}} disabled={busy} aria-invalid={mentorRequired&&!mentorId}>
       <option value="">Select a mentor</option>
       {selectedMentor&&!mentors.some(m=>m.membershipId===selectedMentor.membershipId)?<option value={selectedMentor.membershipId}>{selectedMentor.displayName??selectedMentor.email??"Mentor"}</option>:null}
       {mentors.map(mentor=><option key={mentor.membershipId} value={mentor.membershipId}>

@@ -1,4 +1,6 @@
 import {NextResponse} from "next/server";
+import {z} from "zod";
+import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {isSameOriginRequest} from "@/auth/origin";
 import {requestRecruiterInviteOtp} from "@/modules/placements/recruiter-invite-otp-service";
 import {deliverPublicRecruiterJoinCode} from "@/modules/messaging/public-join-code-delivery";
@@ -12,23 +14,33 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
  if(!recruiterInviteAcceptReady({db09:process.env.DB09_TPO_API_READY,
   otp:process.env.TPO_RECRUITER_OTP_READY,delivery:process.env.TPO_RECRUITER_OTP_DELIVERY_READY}))
    return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503});
+ let email:string|undefined;
+ if(request.body!==null){
+  const body=await readBoundedJsonBody(request);
+  if(body.kind==="TOO_LARGE")
+   return NextResponse.json({error:"INVALID_REQUEST"},{status:413,headers:{"Cache-Control":"no-store"}});
+  const parsed=z.strictObject({email:z.email().max(150)}).safeParse(body.kind==="OK"?body.value:null);
+  if(!parsed.success)
+   return NextResponse.json({error:"COMPANY_EMAIL_REQUIRED"},{status:422,headers:{"Cache-Control":"no-store"}});
+  email=parsed.data.email;
+ }
  let deliveryAttempted=false;
  let deliverySucceeded=false;
  let confirmedMailbox:string|null=null;
  try{
-  await requestRecruiterInviteOtp(token,async(email,code)=>{
+  await requestRecruiterInviteOtp(token,async(recipient,code)=>{
    // Track the outcome without echoing the recipient or OTP. Provider
    // rejection is operational unavailability, not an invalid invitation.
    deliveryAttempted=true;
    // Expose only a masked confirmation. The mailbox is selected from the
    // persisted invite, never from untrusted public request parameters.
-   const [local,domain]=email.split("@");
+   const [local,domain]=recipient.split("@");
    if(local&&domain)confirmedMailbox=local.slice(0,1)+"***@"+domain;
-   deliverySucceeded=await deliverPublicRecruiterJoinCode(email,code);
+   deliverySucceeded=await deliverPublicRecruiterJoinCode(recipient,code);
    return deliverySucceeded;
-  });
-  // The code is delivered only to the persisted college-company mailbox.
-  // Never echo an arbitrary email supplied by the unauthenticated caller.
+  },email);
+  // The code is delivered only to the invitation's existing mailbox or a
+  // newly persisted, exact-company-domain mailbox. Never echo the address.
   return NextResponse.json({status:"CODE_SENT",sent:true,
    ...(confirmedMailbox?{email:confirmedMailbox}:{}),
   },{headers:{"Cache-Control":"no-store"}});

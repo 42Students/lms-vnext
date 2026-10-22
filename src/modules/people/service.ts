@@ -123,6 +123,12 @@ export async function onboardPerson(
     organizationId: college.organizationId,
     collegeId: college.id,
   });
+  // Creating a college administrator or TPO membership is a privileged role
+  // grant, even when it happens during first-time onboarding. Apply the same
+  // gate used by addMembershipRole before provisioning any identity or account.
+  if (input.roles.some((role) => role === "COLLEGE_ADMIN" || role === "TPO")) {
+    requirePermission(context, "admin-scope.select");
+  }
 
   const identity = await resolveOrCreateIdentity(
     {

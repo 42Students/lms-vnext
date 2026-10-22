@@ -37,6 +37,11 @@ function deadlineShort(value:Date|null){
 
 export function CollegeDriveAttentionCards({data}:{data:Attention}){
  const categories=Object.keys(labels) as (keyof typeof labels)[];
+ const categoryLabels={
+  ...labels,
+  STALE_APPLIED:"Applications with no action in "+
+    data.lookbackDays+" day"+(data.lookbackDays===1?"":"s"),
+ };
  const [expanded,setExpanded]=useState<Partial<Record<keyof typeof labels,boolean>>>({});
  const [search,setSearch]=useState("");
  const searchTerm=search.trim().toLocaleLowerCase("en-IN");
@@ -54,17 +59,22 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
     const rows=data.categories.filter(item=>item.category===category);
     if(!rows.length)return null;
     const shown=expanded[category]?rows:rows.slice(0,3);
-    return <section key={category} aria-label={labels[category]}
+    return <section key={category} aria-label={categoryLabels[category]}
       className="min-w-0 rounded-[8px] border border-[#fff1b8] border-l-4 border-l-[#faad14] bg-[#fffbe6] p-3">
       <h3 className="flex items-center gap-2 text-sm font-semibold text-[#8d6300]">
-       <AttentionGlyph/>{labels[category]} ({rows.length})
+       <AttentionGlyph/>{categoryLabels[category]} ({rows.length})
       </h3>
       <ul className="mt-3 divide-y divide-[#e6c35c]">
        {shown.map(row=><li key={row.jobId}
         className="flex min-w-0 flex-col justify-between gap-3 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-start">
         <div className="min-w-0 flex-1">
          <p className="break-words text-sm font-semibold text-foreground">{row.title}</p>
-         <p className="text-xs text-body">{row.count} candidate(s) need review</p>
+         <p className="text-xs text-body">{row.category==="LOW_CONVERSION"
+           ?"1 drive flagged for low conversion":row.count.toLocaleString("en-IN")+" candidate(s) need review"}</p>
+         {row.sampleOmitted>0?<p role="status" className="mt-1 text-xs text-muted-foreground">
+          Showing {row.examples.length} sample{row.examples.length===1?"":"s"} of {row.countTotal} affected applications.
+          {row.examples.length===0?" No named sample is available on this read.":""}
+         </p>:null}
          {row.examples.length>0?<ul className="mt-2 space-y-1"
            aria-label={"Affected learners for "+row.title}>
            {row.examples.map(example=><li key={example.id} className="text-xs">

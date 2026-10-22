@@ -213,20 +213,33 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       return;
     }
     setError(null); setFieldErrors({});
+    const nextOrder = peers.map(peer => peer.id).filter(peerId => peerId !== id);
+    nextOrder.splice(position - 1, 0, id);
     if (oldPosition !== position) {
-      const ids = peers.map(peer => peer.id).filter(peerId => peerId !== id);
-      ids.splice(position - 1, 0, id);
-      setOptimisticByTerm(current => ({ ...current, [termId]: ids }));
+      setOptimisticByTerm(current => ({ ...current, [termId]: nextOrder }));
       setNotice("Saving course order…");
     }
     inFlight.current=true;
     start(async () => {
       try {
-        await apiFetch("/api/academics/semester-course-mappings/" + encodeURIComponent(id), {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(parsed.data),
-        });
+        if (oldPosition !== position && !changedCredits && !editFields) {
+          // Legacy drag/arrow reorder is a COMPLETE ordered set. The PUT
+          // endpoint locks the semester and validates set equality before
+          // committing, rejecting an out-of-date or mixed-college list.
+          await apiFetch("/api/academics/semester-course-mappings", {
+            method: "PUT",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ programTermId: termId, mappingIds: nextOrder }),
+          });
+        } else {
+          // The edit modal can change credits, type, mandatory and position
+          // together; preserve the single-record atomic PATCH for that case.
+          await apiFetch("/api/academics/semester-course-mappings/" + encodeURIComponent(id), {
+            method: "PATCH",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(parsed.data),
+          });
+        }
         const message = oldPosition === position
           ? `Updated mapping for “${previous?.courseName ?? "course"}”.`
           : "Semester course order saved.";
@@ -479,13 +492,13 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             { type: editing.type, isMandatory: editing.isMandatory });
         }}>
         <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Credits
-          <Input type="number" min={1} max={10} step={1} required
+          <Input type="number" min={0} max={30} step={1} required
             value={editing.credits}
             onChange={event => {
               setFieldErrors(current => ({ ...current, credits: undefined }));
               setEditing({ ...editing, credits: event.target.value });
             }}
-            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-[var(--lms-control-height)]" />
+            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:max-w-[50%] md:min-h-[var(--lms-control-height)]" />
           {fieldErrors.credits ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.credits}</span> : null}
         </label>
         <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Course Type
@@ -508,7 +521,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           <Input type="number" min={1} max={orderedPeers(editingRow).length} step={1} required
             value={editing.position}
             onChange={event => setEditing({ ...editing, position: event.target.value })}
-            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-[var(--lms-control-height)]" />
+            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:max-w-[50%] md:min-h-[var(--lms-control-height)]" />
         </label>
         {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">Course mapping was not updated. {error}</p> : null}
         <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end">

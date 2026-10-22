@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,inArray,isNull,or,sql} from "drizzle-orm";
+import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobs,placementCompanies,placementCompanyRelationships,users} from "@/db/schema";
@@ -19,11 +19,24 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
   throw Error("Invalid drive identifier.");
  const settingKeys=["placement.staleAppliedDays","placement.closingSoonDays",
   "placement.needsAttentionSampleCap","placement.lowConversionThreshold"];
- const overrides=await db.select({key:platformSettingOverrides.key,value:platformSettingOverrides.value})
-  .from(platformSettingOverrides)
-  .where(and(eq(platformSettingOverrides.scopeType,"GLOBAL"),
-   eq(platformSettingOverrides.scopeId,"GLOBAL"),inArray(platformSettingOverrides.key,settingKeys)));
- const values=new Map(overrides.map(row=>[row.key,row.value]));
+ // Use the selected college's persisted override first; inherit the
+ // platform default only when this college has no explicit value.
+ const overrides=await db.select({
+  key:platformSettingOverrides.key,value:platformSettingOverrides.value,
+  scopeType:platformSettingOverrides.scopeType,
+ }).from(platformSettingOverrides).where(and(
+  inArray(platformSettingOverrides.key,settingKeys),
+  or(
+   and(eq(platformSettingOverrides.scopeType,"GLOBAL"),
+    eq(platformSettingOverrides.scopeId,"GLOBAL")),
+   and(eq(platformSettingOverrides.scopeType,"COLLEGE"),
+    eq(platformSettingOverrides.scopeId,collegeId)),
+  ),
+ ));
+ const values=new Map(overrides.filter(row=>row.scopeType==="GLOBAL")
+  .map(row=>[row.key,row.value]));
+ for(const row of overrides)if(row.scopeType==="COLLEGE")
+  values.set(row.key,row.value);
  const staleDays=storedPlacementPolicyValue("placement.staleAppliedDays",values.get("placement.staleAppliedDays"));
  const closingDays=storedPlacementPolicyValue("placement.closingSoonDays",values.get("placement.closingSoonDays"));
  const sampleCap=storedPlacementPolicyValue("placement.needsAttentionSampleCap",values.get("placement.needsAttentionSampleCap"));
@@ -68,7 +81,7 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
    .where(and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.id,rawJobId))).limit(1);
   if(target)jobs.push(target);
  }
- if(!jobs.length)return {jobs:[],total:0,categories:[] as AttentionItem[],hasOfferLetterEvidence:true,lookbackDays:staleDays,
+ if(!jobs.length)return {jobs:[],total:0,categories:[] as Array<AttentionItem & {sampleOmitted:number;countTotal:number}>,hasOfferLetterEvidence:true,lookbackDays:staleDays,
   allDriveCount,activeDriveCount,inactiveDriveCount:allDriveCount-activeDriveCount,
   snapshotAt:snapshotAt.toISOString()};
  const records=await db.select({
@@ -89,7 +102,7 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
     select 1 from placement_offers o
     where o.application_id=${placementApplications.id}
      and o.status in ('ISSUED','ACCEPTED')
-     and (o.offer_letter_url is null or trim(o.offer_letter_url)='')
+     and nullif(trim(o.offer_letter_url),'') is null and nullif(trim(o.offer_letter_object_path),'') is null
   ))::integer`.as("missing_offer_letter"),
   shortlisted:sql<number>`count(*) filter (where
     coalesce(${placementCollegeApplicationStages.stage},
@@ -131,9 +144,7 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
  // The aggregate is the authoritative count; this bounded read supplies
  // named learner examples, not a second estimate of the category totals.
  // No learner outside this authorized college or selected drives is returned.
- if(categories.length){
-  const lowConversionJobs=categories.filter(item=>item.category==="LOW_CONVERSION")
-   .map(item=>item.jobId);
+ if(categories.some(item=>item.category!=="LOW_CONVERSION")){
   const actionable=await db.select({
    id:placementApplications.id,jobId:placementApplications.jobId,
    displayName:users.displayName,
@@ -146,13 +157,10 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
      and not exists(select 1 from placement_round_candidate_slots s
        where s.job_id=${placementApplications.jobId}
         and s.application_id=${placementApplications.id} and s.status='BOOKED')`,
-   lowConversion:sql<boolean>`coalesce(${placementCollegeApplicationStages.stage},
-     ${placementApplicationScreenings.status},'APPLIED') not in
-     ('SHORTLISTED','ASSESSMENT','INTERVIEW','WAITLISTED','OFFERED','HIRED')`,
    missingLetter:sql<boolean>`exists(select 1 from placement_offers o
       where o.application_id=${placementApplications.id}
        and o.status in ('ISSUED','ACCEPTED')
-       and (o.offer_letter_url is null or trim(o.offer_letter_url)=''))`,
+       and nullif(trim(o.offer_letter_url),'') is null and nullif(trim(o.offer_letter_object_path),'') is null)`,
   }).from(placementApplications)
    .innerJoin(collegeMemberships,and(
     eq(collegeMemberships.id,placementApplications.membershipId),
@@ -165,8 +173,7 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
    .where(and(
     inArray(placementApplications.jobId,jobs.map(job=>job.id)),
     eq(placementApplications.status,"SUBMITTED"),
-    or(
-     sql`(
+    sql`(
       (coalesce(${placementCollegeApplicationStages.stage},
         case when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
          when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
@@ -179,15 +186,8 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
       or exists(select 1 from placement_offers o
        where o.application_id=${placementApplications.id}
         and o.status in ('ISSUED','ACCEPTED')
-        and (o.offer_letter_url is null or trim(o.offer_letter_url)=''))
+        and nullif(trim(o.offer_letter_url),'') is null and nullif(trim(o.offer_letter_object_path),'') is null)
      )`,
-     lowConversionJobs.length?and(
-      inArray(placementApplications.jobId,lowConversionJobs),
-      sql`coalesce(${placementCollegeApplicationStages.stage},
-        ${placementApplicationScreenings.status},'APPLIED') not in
-        ('SHORTLISTED','ASSESSMENT','INTERVIEW','WAITLISTED','OFFERED','HIRED')`,
-     ):undefined,
-    ),
    ))
    .orderBy(desc(placementApplications.submittedAt),placementApplications.id)
    .limit(900);
@@ -197,7 +197,8 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
    if(applicant.stale)matches.push("STALE_APPLIED");
    if(applicant.unscheduled)matches.push("INTERVIEW_UNSCHEDULED");
    if(applicant.missingLetter)matches.push("MISSING_OFFER_LETTER");
-   if(applicant.lowConversion)matches.push("LOW_CONVERSION");
+   // Low conversion is a per-drive condition, not a candidate decision.
+   // Showing individual learner samples here would falsely imply a personal flag.
    for(const category of matches){
     const item=byCategory.get(applicant.jobId+":"+category);
     if(!item||item.examples.length>=sampleCap)continue;
@@ -214,10 +215,16 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
  }
  return {jobs:jobs.slice(0,60).map(job=>({...job,applicants:counts.get(job.id)?.total??0,
   attention:categories.filter(row=>row.jobId===job.id).reduce((n,row)=>n+row.count,0)})),
-  // The legacy Needs attention total is the sum of affected candidate items,
-  // not the number of category labels rendered in a grid.
+  // Counts represent every affected application (or one flagged drive for
+  // LOW_CONVERSION); samples are intentionally bounded and may be incomplete.
   total:categories.reduce((count,item)=>count+item.count,0),
-  categories,hasOfferLetterEvidence:true,
+  categories:categories.map(item=>({
+   ...item,
+   sampleOmitted:item.category==="LOW_CONVERSION"?0:
+    Math.max(0,item.count-item.examples.length),
+   countTotal:item.count,
+  })),
+  hasOfferLetterEvidence:true,
   allDriveCount,activeDriveCount,inactiveDriveCount:allDriveCount-activeDriveCount,
   lookbackDays:staleDays,closingSoonDays:closingDays,sampleCap,conversionThreshold,
   snapshotAt:snapshotAt.toISOString()};

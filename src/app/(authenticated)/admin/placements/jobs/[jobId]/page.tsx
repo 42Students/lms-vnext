@@ -69,6 +69,24 @@ export default async function AdminPlacementDrivePage({
   const pipeline=pipelineRead.status==="fulfilled"?pipelineRead.value:null;
   const attention=attentionRead.status==="fulfilled"?attentionRead.value:[];
   const job=jobRead.value;
+  let workspace: Awaited<ReturnType<typeof PlacementDriveWorkspace>>;
+  try {
+    workspace = await PlacementDriveWorkspace({
+      context,
+      jobId,
+      applicationsHref: withReturn(root+"/applications"),
+      overview: <SuperAdminDrivePipeline rows={pipeline} attention={attention} jobId={jobId}/>,
+    });
+  } catch (error) {
+    if (error instanceof AuthorizationError) throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Placement Drives" actions={<PageBackLink href={backHref} label="Drives"/>}/>
+      <ErrorState title="Could not load this drive."
+        description="Drive details could not be refreshed. No changes were made."
+        action={<Link href={root+preserved} prefetch={false}
+          className="font-semibold text-link underline">Retry drive</Link>}/>
+    </div>;
+  }
   const navItems=[
     {label:"Overview",href:withReturn(root)},
     {label:"Applications",href:withReturn(root+"/applications")},
@@ -83,12 +101,7 @@ export default async function AdminPlacementDrivePage({
     </nav>
     <Tabs ariaLabel="Drive workspace" value="Overview" renderPanel={false}
       items={navItems.map(item=>({value:item.label,label:item.label,href:item.href}))}/>
-    <PlacementDriveWorkspace
-      context={context}
-      jobId={jobId}
-      applicationsHref={withReturn(root+"/applications")}
-      overview={<SuperAdminDrivePipeline rows={pipeline} attention={attention} jobId={jobId}/>}
-    />
+    {workspace}
    </div>
   );
 }

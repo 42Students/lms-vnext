@@ -61,8 +61,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    description="A single catalog every college draws from — college-admin can use these but not edit them."
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3.5 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary)]-hover hover:bg-[var(--lms-button-primary)]-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Create template</Link>:undefined}/>
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
-  <section aria-label="Templates" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
-    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Templates</h2>
+  <section aria-label="Templates" className="min-w-0 space-y-4">
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 sm:w-[240px]">Search title or slug
     <SuperAdminTemplateAutoSearch defaultValue={data.query.q}/>

@@ -56,26 +56,50 @@ export async function PATCH(
     const context = await getCurrentRequestContext();
     const { templateId } = await params;
     const body:unknown = await request.json();
-    // Legacy resource-only PUT/PATCH preserves every unrelated blueprint
-    // section from the current immutable version. The version CAS in the
-    // writer rejects concurrent edits instead of overwriting them.
+    // Legacy section-only PUT/PATCH requests omit the template title. Merge
+    // only the supplied section onto the immutable current version, retaining
+    // metadata and all other sections. The writer enforces expectedVersion
+    // under its own transactional CAS and verifies platform permissions again.
+    const sectionKeys = ["overview","releases","sprints","tasks","resources",
+      "submission","delivery","meetings","activity"] as const;
     if(body && typeof body==="object" && !Array.isArray(body) &&
-      "resources" in body && !("blueprint" in body)){
+      !("blueprint" in body) && !("title" in body) &&
+      sectionKeys.some(key=>key in body)){
       const input=z.strictObject({
         expectedVersion:z.number().int().positive(),
-        resources:z.array(z.unknown()).max(200),
         changeNote:z.string().trim().min(1).max(1000).optional(),
+        overview:z.unknown().optional(),
+        releases:z.unknown().optional(),
+        sprints:z.unknown().optional(),
+        tasks:z.unknown().optional(),
+        resources:z.unknown().optional(),
+        submission:z.unknown().optional(),
+        delivery:z.unknown().optional(),
+        meetings:z.unknown().optional(),
+        activity:z.unknown().optional(),
+      }).refine(value=>sectionKeys.some(key=>value[key]!==undefined),{
+        message:"Provide at least one template section",
       }).parse(body);
       const detail=await getProjectTemplateDetail(context,templateId);
       if(!detail.currentVersion ||
          detail.template.currentVersion!==input.expectedVersion)
         return NextResponse.json({error:"PROJECT_TEMPLATE_STALE_VERSION"},{status:409});
       const current=projectTemplateBlueprintSchema.parse(detail.currentVersion.blueprint);
-      const blueprint=projectTemplateBlueprintSchema.parse({...current,resources:input.resources});
+      const patch=Object.fromEntries(sectionKeys
+        .filter(key=>input[key]!==undefined)
+        .map(key=>[key,input[key]]));
+      // Partial Overview patches retain the current fields (for example an
+      // unchanged definitionOfDone); arrays represent a whole section.
+      const overviewPatch=input.overview!==null &&
+        typeof input.overview==="object" && !Array.isArray(input.overview)
+        ? {overview:{...current.overview,...input.overview}} : {};
+      const blueprint=projectTemplateBlueprintSchema.parse({
+        ...current,...patch,...overviewPatch,
+      });
       const result=await reviseProjectTemplate(context,templateId,{
         expectedVersion:input.expectedVersion,title:detail.template.title,
         summary:detail.template.summary??undefined,
-        blueprint,changeNote:input.changeNote??"Updated template resources",
+        blueprint,changeNote:input.changeNote??"Updated template section",
       });
       return NextResponse.json({...result,message:"Project template updated"});
     }
@@ -91,8 +115,8 @@ export async function PATCH(
   }
 }
 
-/** Version-checked PUT alias. Resource-only legacy updates merge all
- * other sections from the current version; never perform a blind overwrite.
+/** Version-checked PUT alias. Section-only legacy updates merge just the
+ * submitted section into the immutable current blueprint; never a blind write.
  */
 export async function PUT(request:Request,context:RouteContext) {
  return PATCH(request,context);

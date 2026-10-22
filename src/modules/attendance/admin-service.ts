@@ -45,6 +45,15 @@ import { indiaAttendanceMonthWindow } from "./month-window";
 import {enqueueAttendanceParentSms,dispatchQueuedAttendanceParentSms} from "./parent-sms-service";
 
 
+/** Options are independent reads. A failed class-offering query must never
+ * be rendered as a verified empty course list. */
+export class AdminAttendanceOptionsLookupError extends Error {
+ constructor(public readonly kind:"class_courses"|"college_courses"|"policy"){
+  super("ATTENDANCE_OPTIONS_"+kind.toUpperCase()+"_UNAVAILABLE");
+  this.name="AdminAttendanceOptionsLookupError";
+ }
+}
+
 /** Legacy-facing copy for recoverable schedule/correction errors.
  * Internal permission and tenant failure details must not be exposed.
  */
@@ -137,8 +146,8 @@ export async function getAdminAttendanceOptions(
       collegeIdInput,
     );
 
-  const [policyRows, deliveries, allCourses] =
-    await Promise.all([
+  const [policyResult, deliveryResult, coursesResult] =
+    await Promise.allSettled([
       getDb()
         .select({
           eligibilityThresholdPercent:
@@ -242,6 +251,15 @@ export async function getAdminAttendanceOptions(
         ))
         .orderBy(asc(courses.name), asc(courses.id)),
     ]);
+  if(deliveryResult.status==="rejected")
+    throw new AdminAttendanceOptionsLookupError("class_courses");
+  if(coursesResult.status==="rejected")
+    throw new AdminAttendanceOptionsLookupError("college_courses");
+  if(policyResult.status==="rejected")
+    throw new AdminAttendanceOptionsLookupError("policy");
+  const policyRows=policyResult.value;
+  const deliveries=deliveryResult.value;
+  const allCourses=coursesResult.value;
 
   return {
     college,

@@ -1,2 +1,3 @@
-# Notice for lane 11 (read and do FIRST)
-Your last version of src/app/api/admin/placements/hiring-report/export/route.ts (commit "Restore mixed assignment evidence and complete hiring CSV and curriculum workspaces") had a SYNTAX ERROR, so the merge robot restored the old file on main and that change is NOT on main. Re-read the file carefully (matching braces, parentheses, template strings, imports), redo the change cleanly, re-read it once more, then continue your queue.
+# Notice for lane 11 (read and apply FIRST)
+
+CI (GitHub Actions) now checks every push to main. TOP PRIORITY: work docs/orchestrator/queues/clone/lane-11-ci1.md (real type-check, lint and build errors reported by CI) BEFORE anything else. Pause the verify2 queue until your ci1 queue is done. Never silence errors (no any, @ts-ignore, @ts-expect-error, eslint-disable). Then continue lane-11-verify.md and lane-11-verify2.md.

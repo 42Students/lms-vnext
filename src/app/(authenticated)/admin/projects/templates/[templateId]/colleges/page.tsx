@@ -76,20 +76,18 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <div className="min-w-0">
       <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">← Back to templates</Link>
       <PageHeader title={data.template.title}
-        description="Select the colleges that can use this template." />
+        description="Select the colleges that can use this template."
+        actions={<Link href={templateCollegeAvailabilityHref(id,data.query)}
+          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+            stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+            <path d="M20 7v5h-5"/><path d="M4 17v-5h5"/>
+            <path d="M5 10a8 8 0 0 1 14-3M19 14a8 8 0 0 1-14 3"/>
+          </svg>
+          Refresh
+        </Link>} />
     </div>
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <SuperAdminTemplateTabs templateId={id} active="colleges" />
-      <Link href={templateCollegeAvailabilityHref(id,data.query)}
-        className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
-          stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <path d="M20 7v5h-5"/><path d="M4 17v-5h5"/>
-          <path d="M5 10a8 8 0 0 1 14-3M19 14a8 8 0 0 1-14 3"/>
-        </svg>
-        Refresh
-      </Link>
-    </div>
+    <SuperAdminTemplateTabs templateId={id} active="colleges" />
     <p className="text-xs text-muted-foreground">
       Scope: active colleges accessible to the selected Super Admin. Existing workspaces
       retain their pinned template version when availability changes.

@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   date,
   index,
@@ -708,7 +709,6 @@ export function legacyNewProgramImport(input:{
   code,status:input.legacyWasDeleted?"ARCHIVED" as const:"ACTIVE" as const,
   legacyWasDeleted:input.legacyWasDeleted};
 }
-
 
 /** Mapping old semester_number/academic_year into the new period + program
  * term model. An academic year is a named civil interval and cannot be

@@ -53,6 +53,8 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
    action={<Link href="/admin/companies?view=GLOBAL" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
  </div>;
  const data=load.value;
+ // Legacy global curation columns: Company, Domains, Added by, Colleges,
+ // Drives and Actions. Additional last-active detail stays within Actions.
  const columns:DataTableColumn<(typeof data.rows)[number]>[]=[
   {key:"name",header:"Company",mobilePriority:"primary",cell:row=><div className="flex min-w-0 gap-3">
    <SuperAdminCompanyAvatar name={row.name} url={row.logoPublicUrl}/>
@@ -67,7 +69,6 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
   {key:"added",header:"Added by",cell:row=><span>{row.addedByLabel??"-"}</span>},
   {key:"colleges",header:"Colleges",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.companyCollegeCount}</span>},
   {key:"drives",header:"Drives",cell:row=><span className="tabular-nums">{row.driveCount}</span>},
-  {key:"last",header:"Last active",cell:row=><span>{formatLast(row.lastActiveAt)}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
     {row.companyStatus==="ARCHIVED"?<SuperAdminCompanyRestore id={row.companyId} name={row.name}/>:<>
      <SuperAdminCompanyVerification companyId={row.companyId} name={row.name} verified={Boolean(row.verifiedAt)}/>
@@ -78,7 +79,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
        domains={row.domains} aliases={row.aliases}/>
      </Disclosure>
     </>}
-    <span className="text-xs text-muted-foreground">Select a college to review History or Merge</span>
+    <span className="text-xs text-muted-foreground">Last active: {formatLast(row.lastActiveAt)}. Select a college to review History or Merge.</span>
    </div>},
  ];
  const csv=["Company,Website,Domains,Other names,Verified,Added by,Colleges,Drives,Last active",

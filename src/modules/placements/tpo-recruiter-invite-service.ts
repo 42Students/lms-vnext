@@ -120,9 +120,10 @@ export async function issueTpoRecruiterInvite(
         "TPO_RECRUITER_INVITE_NOT_FOUND",
       );
     }
-    // A public invite must have a verifiable mailbox and a real company link.
-    // Otherwise issuance succeeds but OTP acceptance is structurally impossible.
-    if(!lead.emailNorm||!lead.companyRelationshipId){
+    // A linked company is required. If no work email was captured by the
+    // TPO, public OTP issuance must first bind a matching company-domain
+    // mailbox, then verify its ownership by delivering a code.
+    if(!lead.companyRelationshipId){
       throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
     }
 

@@ -73,9 +73,13 @@ export function LearnerPlacementRegistration({registration}:Props) {
           <span className="block break-words text-sm text-muted-foreground">{item.hint}</span></span>
       </label>)}
       {choice==="PLACEMENTS"&&registration.choice==="PLACEMENTS"?
-        <p className="text-sm text-muted-foreground">You are already registered for Placements. Select a different choice to update your registration.</p>:null}
+        <div className="space-y-1 text-sm text-muted-foreground">
+          <p>You are already registered for Placements. Select a different choice to update your registration.</p>
+          <p id="placement-consent-existing-note">Your previously recorded choice remains saved. The consent checkbox starts unchecked on this screen because a new choice involving placements requires fresh confirmation; it does not withdraw an earlier consent.</p>
+        </div>:null}
       {choice==="PLACEMENTS"?<label className="flex min-h-11 min-w-0 items-start gap-2 py-2 text-sm">
-        <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
+        <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}
+          aria-describedby={registration.choice==="PLACEMENTS"?"placement-consent-existing-note":undefined}/>
         <span>{LEARNER_REGISTRATION_COPY.consent}</span>
       </label>:null}
     </fieldset>

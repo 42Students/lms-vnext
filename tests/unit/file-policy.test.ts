@@ -11,7 +11,10 @@ import {
   namespaceForKind,
   normalizeContentType,
   validateStorageDeclaration,
+  validateLegacyFolderDeclaration,
 } from "@/modules/storage/file-policy";
+
+import { lessonVideoPreselection, LESSON_VIDEO_SINGLE_PUT_LIMIT_TEXT } from "@/modules/storage/video-preselection";
 
 const bytes = (...values: number[]) => Uint8Array.from(values);
 const text = (value: string) => new TextEncoder().encode(value);
@@ -182,5 +185,43 @@ describe("magicBytesMatch", () => {
     expect(magicBytesMatch("video/webm", bytes(0x1a, 0x45, 0xdf, 0xa3, 1))).toBe(true);
     expect(magicBytesMatch("video/x-msvideo", text("RIFF\0\0\0\0AVI LIST"))).toBe(true);
     expect(magicBytesMatch("video/mp4", text("not a video at all"))).toBe(false);
+  });
+});
+
+describe("E2E-safe video preflight and legacy thumbnail limits", () => {
+  const mib = 1024 * 1024;
+  it("accepts expected single-PUT upload declarations at 100 MiB, 1 GiB and 4900 MiB", () => {
+    for (const size of [100 * mib, 1024 * mib, 4900 * mib]) {
+      expect(lessonVideoPreselection({
+        name: "recording.mp4", type: "video/mp4", size,
+      })).toEqual({ ok: true, maxBytes: MAX_VIDEO_BYTES });
+    }
+    expect(lessonVideoPreselection({
+      name: "recording.mp4", type: "video/mp4", size: 4900 * mib + 1,
+    })).toEqual({ ok: false, message: LESSON_VIDEO_SINGLE_PUT_LIMIT_TEXT });
+  });
+
+  it("accepts missing browser MIME from the extension without loosening mismatches", () => {
+    expect(lessonVideoPreselection({
+      name: "capture.MOV", type: "", size: 100 * mib,
+    }).ok).toBe(true);
+    expect(lessonVideoPreselection({
+      name: "fake.mp4", type: "image/png", size: 100 * mib,
+    }).ok).toBe(false);
+    expect(lessonVideoPreselection({
+      name: "capture.avi", type: "video/mp4", size: 100 * mib,
+    })).toEqual({ok:false,message:"The video extension does not match its file type."});
+  });
+
+  it("distinguishes empty videos and folder-specific 5 MiB thumbnail caps", () => {
+    expect(lessonVideoPreselection({
+      name: "empty.mp4", type: "video/mp4", size: 0,
+    })).toEqual({ok:false,message:"The video file is empty. Choose a nonempty video."});
+    expect(validateLegacyFolderDeclaration("course-images", {
+      originalName: "poster.png", contentType: "image/png", sizeBytes: 5 * mib,
+    }).ok).toBe(true);
+    expect(validateLegacyFolderDeclaration("course-images", {
+      originalName: "poster.png", contentType: "image/png", sizeBytes: 5 * mib + 1,
+    })).toEqual({ok:false,code:"STORAGE_FILE_TOO_LARGE"});
   });
 });

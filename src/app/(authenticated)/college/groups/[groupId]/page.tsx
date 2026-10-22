@@ -66,10 +66,13 @@ export default async function CollegeGroupDetailPage({
   try {
     detail = await getCollegeGroupDetail(context, groupId);
   } catch (error) {
-    if (
-      error instanceof GroupReadError ||
-      (error instanceof Error && error.name === "ZodError")
-    ) {
+    // Legacy student-group bookmarks, including deleted group IDs, returned
+    // to People. Preserve that fallback without disguising college/scope errors.
+    if (error instanceof GroupReadError && error.code === "GROUP_NOT_FOUND") {
+      redirect("/college/people");
+    }
+    if (error instanceof GroupReadError ||
+        (error instanceof Error && error.name === "ZodError")) {
       notFound();
     }
     throw error;

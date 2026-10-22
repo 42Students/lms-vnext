@@ -5,6 +5,7 @@ import { CollegeAssessmentAggregate } from "@/components/courses/college-assessm
 import {CollegeQuizCreate} from "@/components/courses/college-quiz-create";
 import {getCollegeQuizAuthoringOptions} from "@/modules/courses/college-quiz-authoring-options";
 import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeAssessmentListQuerySchema } from "@/modules/courses/college-assessment-aggregate-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
@@ -41,13 +42,24 @@ export default async function CollegeQuizzesPage({
     );
   }
   try {
-    const [data, lessons] = await Promise.all([
+    // An authoring-options outage must not hide the persisted quiz directory.
+    const [data, authoring] = await Promise.all([
       listCollegeAssessmentAggregate(context, "QUIZ", validation.data),
-      getCollegeQuizAuthoringOptions(context),
+      getCollegeQuizAuthoringOptions(context).then(value => ({
+        status: "ready" as const, value,
+      })).catch(error => {
+        if (error instanceof AuthorizationError) throw error;
+        return { status: "unavailable" as const };
+      }),
     ]);
     return <CollegeAssessmentAggregate data={data}
-      leading={<CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>} />;
-  } catch {
+      leading={authoring.status==="ready"
+        ? <CollegeQuizCreate lessons={authoring.value} deliveries={data.reviewDeliveries}/>
+        : <Banner tone="warning" role="status">
+            Quiz authoring options could not be loaded. Existing quizzes remain available. Refresh to retry.
+          </Banner>} />;
+  } catch (error) {
+    if (error instanceof AuthorizationError) throw error;
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Quizzes" />
       <ErrorState title="Quizzes could not be loaded"

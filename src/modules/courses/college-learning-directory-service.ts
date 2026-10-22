@@ -113,7 +113,10 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
-      query.status === "ACTIVE" ? isNull(courseLessons.deletedAt) : undefined,
+      // ARCHIVED means intentionally retired but still restorable; a deletedAt
+      // tombstone is different and must never appear in any live directory view.
+      isNull(courseLessons.deletedAt),
+      isNull(courses.deletedAt),
       query.liveEvidence==="HAS_LIVE"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"LIVE_CLASS")))):query.liveEvidence==="NO_LIVE"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"LIVE_CLASS"))))):undefined,
       query.resourceEvidence==="HAS_RESOURCE"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"RESOURCE")))):query.resourceEvidence==="NO_RESOURCE"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"RESOURCE"))))):undefined,
       query.videoEvidence==="HAS_VIDEO"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"])))):query.videoEvidence==="NO_VIDEO"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"]))))):undefined,

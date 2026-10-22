@@ -3,7 +3,7 @@ import {parseLearnerCareerDate} from "./learner-career-date-model";
 import {careerCalendarEvents,careerCalendarPeriod,type CareerCalendarSourceRound} from "./learner-career-calendar-model";
 const date=z.string().refine(value=>parseLearnerCareerDate(value)!==null,"Invalid IST calendar date");
 export const learnerCalendarUrlStateSchema=z.object({
-  date,view:z.enum(["agenda","month","week","day"]),kind:z.enum(["ALL","ASSESSMENT","INTERVIEW","OTHER"]),
+  date,view:z.enum(["agenda","month","week","day"]),kind:z.enum(["ALL","ASSESSMENT","INTERVIEW","TALK","OTHER"]),
 }).strict();
 export type LearnerCalendarUrlState=z.infer<typeof learnerCalendarUrlStateSchema>;
 export function readLearnerCalendarUrl(query:string,fallbackDay:string):LearnerCalendarUrlState{

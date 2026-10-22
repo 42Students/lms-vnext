@@ -11,6 +11,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Dropdown } from "@/components/ui/dropdown";
 import { Menu, MenuItem } from "@/components/ui/menu";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -470,6 +471,7 @@ export function CreateLessonForm({
 
 export function LessonActions({
   lesson,
+  destinations = [],
 }: {
   lesson: {
     id: string;
@@ -478,7 +480,9 @@ export function LessonActions({
     sequence: number;
     updatedAt: Date | string;
     visibleToStudents?: boolean;
+    learningPathId?: string;
   };
+  destinations?: readonly { learningPathId: string; label: string }[];
 }) {
   const [editOpen, setEditOpen] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
@@ -487,12 +491,16 @@ export function LessonActions({
   const [name, setName] = useState(lesson.name);
   const [description, setDescription] = useState(lesson.description ?? "");
   const [visibleToStudents,setVisibleToStudents]=useState(lesson.visibleToStudents??true);
+  const [targetLearningPathId,setTargetLearningPathId]=useState(lesson.learningPathId??"");
+  const eligibleDestinations=destinations.filter(item=>
+    item.learningPathId!==lesson.learningPathId);
   const {showToast}=useToast();
   const [editFailure, setEditFailure] = useState("");
   const [archiveFailure, setArchiveFailure] = useState("");
   const { pending, run } = useLearningMutation();
   const dirty = name !== lesson.name || description !== (lesson.description ?? "") ||
-    (lesson.visibleToStudents!==undefined && visibleToStudents!==lesson.visibleToStudents);
+    (lesson.visibleToStudents!==undefined && visibleToStudents!==lesson.visibleToStudents) ||
+    (Boolean(lesson.learningPathId) && targetLearningPathId!==lesson.learningPathId);
   const validName = name.trim().length > 0 && name.trim().length <= 255;
   function dismissEdit(next: boolean) {
     if (pending) {showToast({tone:"warning",title:"Wait for the lesson save to finish."});return;}
@@ -504,6 +512,7 @@ export function LessonActions({
     setName(lesson.name);
     setDescription(lesson.description ?? "");
     setVisibleToStudents(lesson.visibleToStudents??true);
+    setTargetLearningPathId(lesson.learningPathId??"");
     setEditFailure("");
     setDiscardOpen(false);
     setEditOpen(true);
@@ -538,7 +547,7 @@ export function LessonActions({
         dismissible
         className="max-w-[520px]"
         title={"Edit lesson “"+lesson.name+"”"}
-        description="Course membership is managed by the Learning Path. Use the Reorder tool to change lesson order and the Visibility control to show or hide the lesson."
+        description="Edit the lesson details, choose an eligible course or learning path, and set student visibility. Use Reorder to change lesson order."
         footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           <Button variant="secondary" disabled={pending} onClick={() => dismissEdit(false)}>Cancel</Button>
           <Button disabled={pending || !validName} onClick={() => {
@@ -548,6 +557,8 @@ export function LessonActions({
                 name: name.trim(),
                 description: description.trim() || null,
                 ...(lesson.visibleToStudents!==undefined?{visibleToStudents}:{}),
+                ...(lesson.learningPathId && targetLearningPathId!==lesson.learningPathId
+                  ?{targetLearningPathId}:{}),
                 expectedUpdatedAt: new Date(lesson.updatedAt).toISOString(),
               }),
               "Updated lesson “" + name.trim() + "”.",
@@ -570,6 +581,19 @@ export function LessonActions({
             <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">Description</span>
             <Textarea value={description} onChange={event=>setDescription(event.target.value)} maxLength={5000}/>
           </label>
+          {lesson.learningPathId&&eligibleDestinations.length>0?<label>
+            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">Course</span>
+            <Select value={targetLearningPathId} disabled={pending}
+              onChange={event=>setTargetLearningPathId(event.target.value)}>
+              <option value={lesson.learningPathId}>Current course / learning path</option>
+              {eligibleDestinations.map(option=><option key={option.learningPathId}
+                value={option.learningPathId}>{option.label}</option>)}
+            </Select>
+            <span className="mt-1 block text-xs text-muted-foreground">
+              Moving a lesson with class-specific content, learner progress or submissions
+              may be blocked to protect existing records.
+            </span>
+          </label>:null}
           {lesson.visibleToStudents!==undefined?<label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
             <input type="checkbox" className="h-4 w-4 accent-[var(--lms-primary)]"
              checked={visibleToStudents} disabled={pending}
@@ -577,7 +601,7 @@ export function LessonActions({
             Visible to students
           </label>:null}
           <p className="text-xs text-muted-foreground">
-           The parent course and learning path are immutable. Change lesson order using Reorder.
+           The lesson order remains unchanged. Use Reorder to adjust its sequence.
           </p>
           {editFailure?<div role="alert" className="space-y-2 rounded border border-danger p-3">
             <p className="text-sm font-semibold text-error">Lesson changes were not saved</p>

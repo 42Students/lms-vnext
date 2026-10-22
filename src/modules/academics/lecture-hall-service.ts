@@ -497,7 +497,12 @@ export async function searchLectureHallsForPicker(context: RequestContext, raw: 
       name.split(/\s+/).some(word => word.startsWith(needle)) ? 60 :
       name.includes(needle) || type.includes(needle) ? 40 :
       description.includes(needle) ? 30 :
-      needle.length >= 3 && nearRoomTerm(name, needle) ? 20 : 0;
+      needle.length >= 3 && (
+        nearRoomTerm(name, needle) ||
+        name.split(/\s+/).some(word => nearRoomTerm(word, needle)) ||
+        type.split(/\s+/).some(word => nearRoomTerm(word, needle)) ||
+        description.split(/\s+/).some(word => nearRoomTerm(word, needle))
+      ) ? 20 : 0;
     return { row, score: score + Math.min(10, Math.max(0, row.upcomingClasses)) };
   }).filter(({ score }) => !needle || score >= 20).sort((a, b) =>
     b.score - a.score || a.row.name.localeCompare(b.row.name) ||

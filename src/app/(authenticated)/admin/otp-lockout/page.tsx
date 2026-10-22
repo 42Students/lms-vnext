@@ -6,8 +6,8 @@ import { AdminOtpLockoutResetForm } from "@/components/auth/admin-otp-lockout-re
 
 export default async function AdminOtpRecoveryPage() {
   if (!isSuperAdmin(await getCurrentRequestContext())) redirect("/dashboard");
-  return <main className="rounded-xl border border-[var(--lms-canvas-border)] bg-white p-6">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Clear OTP lockout" description="Staff-assisted sign-in recovery" />
     <AdminOtpLockoutResetForm />
-  </main>;
+  </div>;
 }

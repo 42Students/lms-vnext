@@ -53,17 +53,17 @@ export default async function SuperAdminProjectAuditPage({
     );
   }
 
-  return <div className="min-w-0 space-y-4">
-    {!collegeId ? <Banner tone="warning" role="status">
-      Platform-wide project audit. Results may include multiple colleges under
-      your explicitly authorized global audit scope. Select one college in the
-      scope switcher to narrow the audit before reviewing or exporting events.
-    </Banner> : <Banner tone="info" role="status">
-      Selected-college project audit. Results are restricted to the current college.
-    </Banner>}
+  return (
     <ProjectAdminAuditPage
       basePath="/admin/projects"
       searchParams={await searchParams}
+      scopeNotice={!collegeId ? <Banner tone="warning" role="status">
+        Platform-wide project audit. Results may include multiple colleges under
+        your explicitly authorized global audit scope. Select one college in the
+        scope switcher to narrow the audit before reviewing or exporting events.
+      </Banner> : <Banner tone="info" role="status">
+        Selected-college project audit. Results are restricted to the current college.
+      </Banner>}
     />
-  </div>;
+  );
 }

@@ -231,10 +231,12 @@ export async function getFacultyQuizReport(
   // Roster failure must not hide the already-authorized attempt summary.
   // Never infer non-attempting learners without a current roster.
   const rosterScope=rosterRead.ok?rosterRead.value:null;
-  // An unavailable roster must never be treated as authorization to disclose
-  // historical or otherwise ineligible learner attempts.
+  // The quiz-attempt service already enforces this exact teaching delivery,
+  // including persisted faculty authorization. A roster outage must not erase
+  // successfully loaded, scoped submissions or quiz results. Missing/absent
+  // learner counts still require the roster and remain unknown below.
   const scopedAttempts=rosterScope
-    ?facultyReportCurrentRosterRows(attempts,rosterScope.roster):[];
+    ?facultyReportCurrentRosterRows(attempts,rosterScope.roster):attempts;
   const latestAttempts =
     latestQuizAttemptsByLearner(scopedAttempts);
   const learners = new Set(
@@ -314,10 +316,11 @@ export async function getFacultyAssignmentReport(
         .catch(()=>({ok:false as const})),
     ]);
   const rosterScope=rosterRead.ok?rosterRead.value:null;
-  // A historical submission is not permission to view that learner after
-  // their enrollment ended; never drop the current-roster filter on failure.
+  // The submission service independently authorizes the faculty and exact
+  // delivery. Keep its already-authorized results available during a roster
+  // outage; do not infer missing learners without a verified current roster.
   const scopedSubmissions=rosterScope
-    ?facultyReportCurrentRosterRows(submissions,rosterScope.roster):[];
+    ?facultyReportCurrentRosterRows(submissions,rosterScope.roster):submissions;
   const submittedMemberships = new Set(
     scopedSubmissions.map(
       (submission) => submission.membershipId,

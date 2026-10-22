@@ -1,2 +1,3 @@
-# Notice for lane 14 (read and do FIRST)
-Your last version of src/db/schema/activity.ts had a SYNTAX ERROR, so the merge robot restored the old file on main: your commits "Model scheduled notification outbox and legacy activity provenance" and "Preserve privacy-governed audit and notification history" are NOT on main. Re-read the file carefully (matching braces, parentheses, commas in column lists, imports), redo those changes cleanly, push, then continue your queue.
+# Notice for lane 14 (read and apply FIRST)
+
+CI (GitHub Actions) now checks every push to main. TOP PRIORITY: work docs/orchestrator/queues/clone/lane-14-ci1.md (real type-check, lint and build errors reported by CI) BEFORE anything else. Pause the verify2 queue until your ci1 queue is done. Never silence errors (no any, @ts-ignore, @ts-expect-error, eslint-disable). Then continue lane-14-verify.md and lane-14-verify2.md.

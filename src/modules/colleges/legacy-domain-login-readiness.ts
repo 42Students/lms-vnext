@@ -1,3 +1,5 @@
+import {z} from "zod";
+
 /** Login-domain launch readiness is not operational setup readiness. The
  * policy MUST come from the resolver that serves actual logins. Branding,
  * academic roster and placement setup never block a configured login domain.
@@ -51,4 +53,25 @@ export function evaluateLegacyDomainLoginReadiness(f:LegacyDomainLoginFacts){
  }
  return {readyForDomainLogin:known?blockers.length===0:null,
   blockers,warnings,recommendedActions};
+}
+
+
+/** Validate adapter/readiness responses at the boundary, not only at compile
+ * time. Null denotes unavailable DB evidence and may never render as READY.
+ * This deliberately preserves the legacy error for malformed DTOs while
+ * allowing the vNext unknown-source state. */
+const legacyDomainReadinessResponse=z.strictObject({
+ readyForDomainLogin:z.boolean().nullable(),
+ blockers:z.array(z.string().trim().min(1).max(120)).max(64),
+ warnings:z.array(z.string().trim().min(1).max(120)).max(64),
+ recommendedActions:z.array(z.string().trim().min(1).max(500)).max(64),
+});
+export function validateLegacyDomainLoginReadinessResponse(value:unknown){
+ const result=legacyDomainReadinessResponse.safeParse(value);
+ if(!result.success)throw new Error("Unexpected readiness response");
+ // A potentially malformed upstream 'ready' with contradictory blockers must
+ // fail closed, never replace the result with an inferred green verdict.
+ if(result.data.readyForDomainLogin===true&&result.data.blockers.length)
+   throw new Error("Unexpected readiness response");
+ return result.data;
 }

@@ -105,6 +105,22 @@ export async function listCollegeDriveApplications(
       appliedFrom?gte(placementApplications.submittedAt,appliedFrom):undefined,
       appliedTo?lt(placementApplications.submittedAt,appliedTo):undefined,
       query.status === "ALL" ? undefined : eq(placementApplications.status, query.status),
+      query.attention==="OFFERED_NO_LETTER"?
+        sql`exists(select 1 from placement_offers o where o.application_id=${placementApplications.id}
+          and o.status in ('ISSUED','ACCEPTED')
+          and (o.offer_letter_url is null or trim(o.offer_letter_url)=''))`:
+      query.attention==="INTERVIEW_UNSCHEDULED"?
+        sql`coalesce(${placementCollegeApplicationStages.stage},'APPLIED')='INTERVIEW'
+          and not exists(select 1 from placement_round_candidate_slots s
+            where s.job_id=${placementApplications.jobId}
+              and s.application_id=${placementApplications.id} and s.status='BOOKED')`:
+      query.attention==="STALE_APPLICATIONS"?
+        and(eq(placementApplications.status,"SUBMITTED"),
+          sql`coalesce(${placementCollegeApplicationStages.stage},
+            case when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
+              when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
+              else 'APPLIED' end)='APPLIED'`,
+          lt(placementApplications.submittedAt,new Date(Date.now()-7*86400000))):undefined,
       query.source === "ALL" ? undefined : eq(placementApplications.channel,query.source),
       query.departmentId||query.programId||query.cohortId ? exists(
         db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
