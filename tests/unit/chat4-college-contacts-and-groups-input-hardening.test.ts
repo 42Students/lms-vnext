@@ -29,12 +29,15 @@ describe("College Admin contact directory and study-group export boundaries", ()
     expect(parseCollegeContactsSearchParams({ page: "2", pageSize: "25" }).page).toBe(2);
     expect(parseCollegeContactsSearchParams({ page: "2", pageSize: "25" }).pageSize).toBe(25);
     expect(collegeContactsQuerySchema.parse({ page: 3, pageSize: 50 }).page).toBe(3);
-    for (const value of ["0x10", "1e2", " 2", "+2", "2.0", "2 ", "-1", "0", "10001"]) {
+    for (const value of ["0x10", "1e2", " 2", "+2", "2.0", "2 ", "10001"]) {
       expect(() => parseCollegeContactsSearchParams({ page: value })).toThrow();
     }
-    for (const value of ["0x14", "2e1", " 20", "+20", "20.0", "20 ", "0", "100"]) {
+    for (const value of ["0x14", "2e1", " 20", "+20", "20.0", "20 ", "100"]) {
       expect(() => parseCollegeContactsSearchParams({ pageSize: value })).toThrow();
     }
+    expect(parseCollegeContactsSearchParams({page:"-1"}).page).toBe(1);
+    expect(parseCollegeContactsSearchParams({page:"0"}).page).toBe(1);
+    expect(parseCollegeContactsSearchParams({pageSize:"0"}).pageSize).toBe(10);
     expect(() => parseCollegeContactsSearchParams({ page: ["1", "2"] })).toThrow();
     expect(() => parseCollegeContactsSearchParams({ unknownTenant: member })).toThrow();
     expect(() => parseCollegeContactsSearchParams({ membershipId: member, page: "1" })).not.toThrow();

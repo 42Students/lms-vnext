@@ -7,7 +7,8 @@ const root = "src/app/(authenticated)/college";
 describe("chat-4 College UX canonical redirects and shared-kit coverage", () => {
   it("COL-ux-redirect-01 People entry lands on read-only contacts rather than privileged account management", () => {
     const source = read(root + "/people/page.tsx");
-    expect(source).toContain('redirect("/college/contacts")');
+    expect(source).toContain('import CollegeContactsPage from "../contacts/page"');
+    expect(source).toContain("<CollegeContactsPage");
     expect(source).not.toContain('redirect("/college/people/manage")');
     const destination = read(root + "/contacts/page.tsx");
     expect(destination).toContain("getCurrentRequestContext()");
@@ -15,7 +16,7 @@ describe("chat-4 College UX canonical redirects and shared-kit coverage", () => 
 
   it("COL-ux-redirect-02 legacy workspace list resolves to one canonical Projects list", () => {
     const source = read(root + "/projects/workspaces/page.tsx");
-    expect(source).toContain('redirect("/college/projects")');
+    expect(source).toContain('redirect("/college/projects"+');
     const destination = read(root + "/projects/page.tsx");
     expect(destination).toContain("getCurrentRequestContext()");
   });
@@ -23,7 +24,7 @@ describe("chat-4 College UX canonical redirects and shared-kit coverage", () => 
   it("COL-ux-redirect-03 legacy workspace identifiers are URL-encoded to avoid forged segments", () => {
     const source = read(root + "/projects/workspaces/[workspaceId]/page.tsx");
     expect(source).toContain("encodeURIComponent(workspaceId)");
-    expect(source).toContain('redirect("/college/projects/"');
+    expect(source).toContain('const next="/college/projects/"+encodeURIComponent(workspaceId)');
     expect(source).not.toContain("workspaceId +");
   });
 
@@ -48,8 +49,7 @@ describe("chat-4 College UX canonical redirects and shared-kit coverage", () => 
 
   it("COL-ux-scroll-01 wide people lists and imports have a labelled scroll cue through DataTable", () => {
     const role = read("src/components/college/college-role-directory-workspace.tsx");
-    expect(role).toContain("<ScrollCue");
-    expect(role).toContain("<table");
+    expect(role).toContain("<DataTable");
     const table = read("src/components/ui/data-table.tsx");
     expect(table).toContain('<ScrollCue axis="x"');
     for (const component of [

@@ -37,7 +37,9 @@ describe("UX-tpo-LAST-THIRD-01: reports refuse ambiguous scope/filters without i
  });
  it("renders an honest 14-route recovery state without a fictitious placement count",()=>{
   const source=readFileSync("src/components/placements/tpo-report-invalid-filters.tsx","utf8");
-  expect(source).toContain('role="alert"');
+  expect(source).toContain('<Alert tone="error"');
+  const alert=readFileSync("src/components/ui/alert.tsx","utf8");
+  expect(alert).toContain("role=");
   expect(source).toContain("No report records were loaded");
   expect(source).toContain("Clear filters");
   expect(source).not.toMatch(/0 placed|0%|No students placed/);

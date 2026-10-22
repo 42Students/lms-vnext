@@ -6,7 +6,7 @@ describe("Chat-3 second-eye Super Admin academics and people audit",()=>{
  it("SA3-ACADEMICS-01 selected college controls workspace and no-scope state",()=>{
   const s=page("academics");
   expect(s).toContain("context.adminScope?.collegeId ?? null");
-  expect(s).toContain('title="Select a college scope"');
+  expect(s).toContain('if (!collegeId) redirect("/superadmin/dashboard")');
   expect(s).toContain("getAcademicsWorkspace(");
   expect(s).toContain('sectionBasePath="/admin/academics/sections"');
  });
@@ -20,7 +20,7 @@ describe("Chat-3 second-eye Super Admin academics and people audit",()=>{
   const s=page("people/directory");
   expect(s).toContain("adminUsersQuerySchema.safeParse");
   expect(s).toContain("listSuperAdminUsers(context,query.data)");
-  expect(s).toContain('data.contactVisible?(row.email??"No email recorded"):"Email masked"');
+  expect(s).toContain('data.contactVisible?row.email??"—":"Email masked"');
   expect(s).toContain("page=>adminUsersHref({...data.query,page})");
   expect(s).toContain('title="No matching users"');
  });
@@ -45,12 +45,13 @@ describe("Chat-3 second-eye Super Admin academics and people audit",()=>{
  });
  it("SA3-RECRUITERS-01 alias reuses canonical HR permissions and does not fork data",()=>{
   const s=page("recruiters");
-  expect(s).toContain('export { default } from "../hr/page"');
+  expect(s).toContain('import SuperAdminHrPage from "../hr/page"');
+  expect(s).toContain("<SuperAdminHrPage searchParams={searchParams}/>");
  });
  it("SA3-PEOPLE-08 membership list retains version-safe page limits and explicit empty copy",()=>{
   const s=page("people");
   expect(s).toContain("parsePeoplePageSize(rawPageSize)");
   expect(s).toContain("listCollegePeopleWithRuntime");
-  expect(s).toContain('empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}');
+  expect(s).toContain('<DataTable empty={<EmptyState title="No matching contacts"');
  });
 });
