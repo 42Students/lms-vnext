@@ -6,7 +6,7 @@ describe("Public recruiter invitation parity",()=>{
   const route=src("src/app/college-join/[token]/page.tsx");
   const retry=src("src/components/placements/public-join-preview-retry.tsx");
   expect(route).toContain("PublicJoinPreviewRetry");
-  expect(retry).toContain("We couldn&apos;t load this page");
+  expect(retry).toContain("We couldn’t load this page");
   expect(retry).toContain(">Retry");
  });
  it("TPO-campaigns-public-30 preserves company-link load errors as retryable, not expired links",()=>{
@@ -18,7 +18,7 @@ describe("Public recruiter invitation parity",()=>{
  });
  it("TPO-campaigns-public-R03 labels already joined versus first join from server outcome",()=>{
   const ui=src("src/components/placements/public-recruiter-join-form.tsx");
-  expect(ui).toContain('setAlreadyJoined(result.outcome==="ALREADY_JOINED")');
+  expect(ui).toContain('setAlreadyJoined((result.outcome??result.status)==="ALREADY_JOINED")');
   expect(ui).toContain('alreadyJoined?"You already have access to "+college');
   expect(ui).toContain('setSignInEmail(result.signInEmail)');
  });
@@ -42,6 +42,6 @@ describe("Public recruiter invitation parity",()=>{
   expect(domain).toContain("registrableWorkDomain");
   expect(domain).toContain("matchesCompanyDomain");
   const ui=src("src/modules/placements/public-join/client-error-model.ts");
-  expect(ui).toContain('domain.endsWith("."+approvedDomain)');
+  expect(ui).toContain('matchesCompanyDomain');
  });
 });
