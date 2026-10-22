@@ -130,8 +130,8 @@ export function CollegeStudentBulkModuleAccess({students}:{
      </table>
    </div>:null}
    <Dialog open={review!==null} role="alertdialog" title="Apply bulk module access?"
-     description={review?"Apply "+review.next+" to "+review.selectedModule+" for "+review.ids.length+
-       " students? Inherit removes the individual override and uses college/ancestor settings.":undefined}
+     {...(review ? {description:"Apply "+review.next+" to "+review.selectedModule+" for "+review.ids.length+
+       " students? Inherit removes the individual override and uses college/ancestor settings."} : {})}
      onOpenChange={next=>{if(!next&&!busy)setReview(null);}}
      dismissible={!busy}
      footer={<>
