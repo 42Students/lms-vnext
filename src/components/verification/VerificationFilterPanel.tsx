@@ -11,8 +11,8 @@ type Fields={ageBand:string;enrollment:string;waitingState:string;membershipId:s
 const empty:Fields={ageBand:"ANY",enrollment:"ALL",waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",programId:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function VerificationFilterPanel({query,onApply,batchChoices,branchChoices,classChoices,programChoices,attentionCounts}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList;branchChoices?:VerificationFilterChoiceList;classChoices?:VerificationFilterChoiceList;programChoices?:VerificationFilterChoiceList;attentionCounts?:Partial<Record<"MISSING_MARKSHEET"|"VERIFIED_DETAILS_CHANGED"|"WAITING_OVER_WEEK",number>>}){
- const selected=():Fields=>({ageBand:query.ageBand??"ANY",enrollment:query.enrollment??"ALL",waitingState:query.waitingState??"ALL",membershipId:query.membershipId??"",q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",submittedFrom:query.submittedFrom??"",
-  programId:query.programId??"",sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
+ const selected=():Fields=>({ageBand:query["ageBand"]??"ANY",enrollment:query["enrollment"]??"ALL",waitingState:query["waitingState"]??"ALL",membershipId:query["membershipId"]??"",q:query["q"]??"",marksheets:query["marksheets"]??"ANY",attention:query["attention"]??"ALL",waitingSince:query["waitingSince"]??"",submittedFrom:query["submittedFrom"]??"",
+  programId:query["programId"]??"",sectionId:query["sectionId"]??"",batchId:query["batchId"]??"",branchId:query["branchId"]??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
  function istDay(daysBeforeToday=0){
@@ -32,7 +32,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   }
   if(value.submittedFrom&&value.waitingSince&&value.submittedFrom>value.waitingSince){setError("Start date must not follow the end date");return;}
   if(value.enrollment==="NONE"&&(value.programId||value.sectionId||value.batchId||value.branchId)){setError("No active enrollment cannot be combined with an academic assignment");return;}
-  if(query.tab!=="WAITING"&&value.ageBand!=="ANY"){setError("Waiting-age triage requires the Waiting tab");return;}
+  if(query["tab"]!=="WAITING"&&value.ageBand!=="ANY"){setError("Waiting-age triage requires the Waiting tab");return;}
   if(value.attention==="WAITING_OVER_WEEK"&&["WITHIN_48_HOURS","TWO_TO_SEVEN_DAYS"].includes(value.ageBand)){setError("Waiting over a week cannot be combined with a younger age band");return;}
   if(value.attention==="VERIFIED_DETAILS_CHANGED"&&value.waitingState==="SUBMITTED"){setError("Changed verified details requires an updated submission");return;}
   const draftError=verificationFilterDraftError({...query,...value});
@@ -64,13 +64,13 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
      <Input type="text" maxLength={36} value={fields.membershipId} onChange={e=>change("membershipId",e.target.value)}
       placeholder="Membership UUID" className="mt-1 w-full"/>
     </label>
-    {query.tab==="WAITING"&&<label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Waiting request state
+    {query["tab"]==="WAITING"&&<label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Waiting request state
      <Select value={fields.waitingState} onChange={e=>change("waitingState",e.target.value)}
       className="mt-1 w-full">
       <option value="ALL">Both waiting states</option><option value="SUBMITTED">First submission</option><option value="UPDATE_PENDING">Updated verified details</option>
      </Select>
     </label>}
-    {query.tab==="WAITING"&&<label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Time in verification queue
+    {query["tab"]==="WAITING"&&<label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Time in verification queue
      <Select value={fields.ageBand} onChange={e=>change("ageBand",e.target.value)} className="mt-1 w-full">
       <option value="ANY">Any age</option><option value="WITHIN_48_HOURS">Under 48 hours</option><option value="TWO_TO_SEVEN_DAYS">2–7 days</option><option value="OVER_SEVEN_DAYS">At least 7 days</option>
      </Select>
@@ -90,7 +90,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
       <option value="ALL">All requests</option><option value="MISSING_MARKSHEET">Missing marksheets</option><option value="VERIFIED_DETAILS_CHANGED">Updated verified details</option><option value="WAITING_OVER_WEEK">Waiting over a week</option>
      </Select>
     </label>
-    {query.tab==="WAITING"?<fieldset className="min-w-0 space-y-2 md:col-span-2">
+    {query["tab"]==="WAITING"?<fieldset className="min-w-0 space-y-2 md:col-span-2">
       <legend className="text-sm font-semibold">Waiting since</legend>
       <div className="flex flex-wrap gap-2">
         <FilterChip type="button" onClick={()=>chooseWaitingPreset("TODAY")}>Today</FilterChip>
