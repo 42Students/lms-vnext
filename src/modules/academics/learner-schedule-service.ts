@@ -7,7 +7,7 @@ import {
   asc,
   desc,
   eq,
-  gte,
+  gt,
   lt,
   inArray,
   isNull,
@@ -196,8 +196,8 @@ export async function getLearnerClassSchedule(
     : sql<boolean>`false`;
 
   // Window end is exclusive UTC (next-day midnight for inclusive date
-  // filters); >= start includes an event ending exactly at the requested
-  // lower boundary. Legacy local date strings must be migrated to IST first.
+  // filters). An event ending precisely at the lower bound is outside this
+  // half-open window. Legacy local date strings must be migrated to IST first.
   const events = await db
     .select({
       id: sectionScheduleEvents.id,
@@ -230,7 +230,7 @@ export async function getLearnerClassSchedule(
       eq(sectionScheduleEvents.status, "SCHEDULED"),
       ...(visibleWindow?[
         lt(sectionScheduleEvents.startsAt,visibleWindow.to),
-        gte(sectionScheduleEvents.endsAt,visibleWindow.from),
+        gt(sectionScheduleEvents.endsAt,visibleWindow.from),
       ]:[]),
       or(
         and(
