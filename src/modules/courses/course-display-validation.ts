@@ -15,10 +15,11 @@ export const updateCourseDisplayContentSchema =
         return true;
       });
     }),
-    thumbnailUrl: z.string().trim().url().refine(
-      (value) => new URL(value).protocol === "https:",
-      "Thumbnail URL must use https",
-    ).nullable(),
+    thumbnailUrl: z.string().trim().max(2048).refine((value) => {
+      if (/^\/api\/courses\/[a-f0-9-]{36}\/image$/i.test(value)) return true;
+      try { return new URL(value).protocol === "https:"; }
+      catch { return false; }
+    }, "Thumbnail URL must use HTTPS or the current verified course image").nullable(),
     expectedVersion: z.number().int().min(0).nullable(),
   });
 
