@@ -49,7 +49,11 @@ export default async function CollegeHiringDashboardPage({
     ?getCollegeHiringFunnel(context,query.data)
     :workspaceRequest.then(workspace=>getCollegeHiringFunnel(context,{
       ...query.data,seasonId:workspace.selectedSeasonId??undefined,
-    }));
+    }),()=>getCollegeHiringFunnel(context,query.data));
+  // An unavailable headline report cannot cancel the independently scoped
+  // funnel/company read. Without a verified selected season, the fallback
+  // explicitly requests the unfiltered college overview rather than treating
+  // the absent report as zero placements.
   const [workspaceResult,funnelResult]=await Promise.allSettled([workspaceRequest,funnelRequest]);
   if(workspaceResult.status==="rejected"&&workspaceResult.reason instanceof AuthorizationError)
     throw workspaceResult.reason;
