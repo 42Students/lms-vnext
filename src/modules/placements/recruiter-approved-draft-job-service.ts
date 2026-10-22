@@ -37,6 +37,8 @@ export async function createRecruiterApprovedDraftJob(
    eq(placementSeasons.status,"ACTIVE"))).orderBy(asc(placementSeasons.id)).for("update").limit(2);
  if(!seasons.length)throw new RecruiterDraftApprovalError("NO_ACTIVE_SEASON");
  if(seasons.length!==1)throw new RecruiterDraftApprovalError("AMBIGUOUS_ACTIVE_SEASONS");
+ const [season]=seasons;
+ if(!season)throw new RecruiterDraftApprovalError("NO_ACTIVE_SEASON");
  // Existing placement_job and role constraints permit only FULL_TIME, INTERNSHIP and CONTRACT.
  if(draft.employmentType==="INTERNSHIP_FULL_TIME")
   throw new RecruiterDraftApprovalError("UNSUPPORTED_EMPLOYMENT_TYPE");
@@ -45,7 +47,7 @@ export async function createRecruiterApprovedDraftJob(
   throw new RecruiterDraftApprovalError("EXTERNAL_APPLICATION_URL_REQUIRED");
  const legacyAnnualCtc=draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null;
  const [job]=await tx.insert(placementJobs).values({
-   collegeId:request.collegeId,seasonId:seasons[0].id,
+   collegeId:request.collegeId,seasonId:season.id,
    companyRelationshipId:request.companyRelationshipId,
    title:draft.title,description:draft.description,employmentType:draft.employmentType,
    jobTypeLabel:draft.employmentType==="INTERNSHIP"?"Internship":
