@@ -22,9 +22,9 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
  const [error,setError]=useState<string|null>(null);
  const [notice,setNotice]=useState<string|null>(null);
  const [loading,setLoading]=useState(true);
- const [openingMaterialId,setOpeningMaterialId]=useState<string|null>(null);
+ const [openingMaterialIds,setOpeningMaterialIds]=useState<string[]>([]);
  const [removeId,setRemoveId]=useState<string|null>(null);
- const openingRef=useRef<string|null>(null);
+ const openingRef=useRef<Set<string>>(new Set());
  const uri="/api/courses/lesson-contents/"+encodeURIComponent(contentId)+"/materials"+
   (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
  const [prevUri,setPrevUri]=useState(uri);
@@ -34,7 +34,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   // An old Section or acting-college may have been visible on this mounted
   // component. Never show those private materials while the new scope loads.
   setPrevUri(uri);setLoading(true);setError(null);setNotice(null);
-  setMaterials([]);setDraft(blank);setEditing(null);setBusy(false);setOpeningMaterialId(null);setRemoveId(null);
+  setMaterials([]);setDraft(blank);setEditing(null);setBusy(false);setOpeningMaterialIds([]);setRemoveId(null);
  }
  useEffect(()=>{
   const controller=new AbortController();
@@ -51,11 +51,21 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   return ()=>controller.abort();
  },[uri]);
  async function openFile(materialId:string){
-  if(openingRef.current)return;
-  openingRef.current=materialId;
-  setOpeningMaterialId(materialId);setError(null);
-  // Do not expose storage keys or retain signed URLs in component state.
-  // Navigate in this tab after obtaining the authorized short-lived URL.
+  const openingKey=uri+"|"+materialId;
+  if(openingRef.current.has(openingKey))return;
+  openingRef.current.add(openingKey);
+  setOpeningMaterialIds(ids=>ids.includes(openingKey)?ids:[...ids,openingKey]);
+  setError(null);
+  // Reserve a tab while the click is still synchronous. Waiting for a
+  // presign request before opening one is blocked by popup protection.
+  // If popups are disabled, fall back to same-tab navigation.
+  let reserved:Window|null=null;
+  try{
+   reserved=window.open("about:blank","_blank");
+   if(reserved)reserved.opener=null;
+  }catch{
+   reserved=null;
+  }
   const controller=new AbortController();
   const timeout=window.setTimeout(()=>controller.abort(),12000);
   try{
@@ -72,15 +82,20 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
    const target=new URL(signed);
    if(target.protocol!=="https:"||target.username||target.password)
     throw new Error("Resource file is unavailable. Contact your instructor.");
-   if(currentUriRef.current!==uri)return;
-   window.location.assign(target.href);
+   if(currentUriRef.current!==uri){reserved?.close();return;}
+   if(reserved&&!reserved.closed){
+    try{reserved.location.replace(target.href);}
+    catch{reserved.close();window.location.assign(target.href);}
+   }else window.location.assign(target.href);
   }catch{
+   reserved?.close();
    if(currentUriRef.current===uri)
     setError("Resource file is unavailable. Contact your instructor.");
   }finally{
    window.clearTimeout(timeout);
-   openingRef.current=null;
-   if(currentUriRef.current===uri)setOpeningMaterialId(null);
+   openingRef.current.delete(openingKey);
+   if(currentUriRef.current===uri)
+    setOpeningMaterialIds(ids=>ids.filter(id=>id!==openingKey));
   }
  }
  async function reload(){
@@ -136,10 +151,10 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
        {material.uploadStatus==="READY"?
         <Button size="sm" type="button" variant="secondary"
          className="min-h-11 md:min-h-9"
-         loading={openingMaterialId===material.id}
-         disabled={busy||openingMaterialId!==null}
+         loading={openingMaterialIds.includes(uri+"|"+material.id)}
+         disabled={busy||openingMaterialIds.includes(uri+"|"+material.id)}
          onClick={()=>void openFile(material.id)}>
-         {openingMaterialId===material.id?"Preparing file…":"Open"}
+         {openingMaterialIds.includes(uri+"|"+material.id)?"Preparing file…":"Open"}
         </Button>:
         <span role="status" className="text-xs text-muted-foreground">File unavailable</span>}
       </div>:null}
