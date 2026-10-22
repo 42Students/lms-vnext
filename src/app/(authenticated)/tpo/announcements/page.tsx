@@ -36,11 +36,11 @@ import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-re
 import {tpoNoticeDeliveryVerified} from "@/modules/announcements/tpo-notice-delivery-readiness";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[]}>};
 
-// The undo clock starts at actual persisted delivery, never at a planned
-// schedule timestamp. Older immediate notices without broadcast-group rows
-// were sent on creation; a scheduled row without sentAt is not yet sent.
+// Only confirmed persisted delivery starts the 30-second undo window.
+// Creation can precede dispatch, including immediate notices; using createdAt
+// would incorrectly open or expire undo before a recipient was sent anything.
 function noticeUndoAnchor(row:{createdAt:Date;scheduledAt:Date|null;sentAt:Date|null}):Date|null {
- return row.sentAt??(row.scheduledAt===null?row.createdAt:null);
+ return row.sentAt;
 }
 function noticeCanUndo(row:{createdAt:Date;scheduledAt:Date|null;sentAt:Date|null},now:Date):boolean {
  const sentAt=noticeUndoAnchor(row);
