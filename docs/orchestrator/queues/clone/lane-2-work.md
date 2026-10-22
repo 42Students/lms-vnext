@@ -70,7 +70,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_learner-placement-registration.tsx.md` (edit src/components/placements/learner-placement-registration.tsx; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-join_error-copy.ts.md` (edit src/modules/placements/public-join/error-copy.ts; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-coding-profile-model.ts.md` (edit src/modules/placements/tpo-coding-profile-model.ts; 5 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-configuration-read-service.ts.md` (edit src/modules/placements/tpo-configuration-read-service.ts; 5 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-configuration-read-service.ts.md` (edit src/modules/placements/tpo-configuration-read-service.ts; 5 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-placement-event-copy.ts.md` (edit src/modules/placements/learner-placement-event-copy.ts; 5 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_tpo-college-rules-control.tsx.md` (edit src/components/placements/tpo-college-rules-control.tsx; 5 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_company-share_column-model.ts.md` (edit src/modules/placements/company-share/column-model.ts; 4 findings; best P1)

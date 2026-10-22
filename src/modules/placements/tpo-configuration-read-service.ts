@@ -8,6 +8,10 @@ import { placementTableExists } from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {TPO_BUILTIN_JOB_TYPES} from "./tpo-builtin-job-types";
+import {codingProfileChoices} from "./tpo-coding-profile-model";
+import {registrationChoiceOptions,afterCollegeAllOptions,AFTER_COLLEGE_LABELS} from "./tpo-after-college-model";
+import {DEFAULT_LEARNER_EDUCATION_CATALOG} from "@/modules/people/learner-education-picker-model";
+import {readTpoOutcomeChoiceCatalog} from "./tpo-outcome-label-settings-service";
 import { placementTpoBlockedDates as tpoBlockedDates, placementTpoJobTypes as tpoJobTypes, placementTpoPrepReadiness as tpoPrepReadiness } from "@/db/schema/tpo-configuration";
 
 /** Legacy ChoicesController advertised these fields. Only job types and
@@ -210,4 +214,57 @@ export async function listTpoCollegeBranchOptions(ctx:RequestContext,collegeId:s
 export async function listTpoCollegePassingYearOptions(ctx:RequestContext,collegeId:string|null){
  const options=await listTpoLearnerChoices(ctx,collegeId);
  return {state:options.state,passingYears:options.passingYears};
+}
+
+/** Single bounded choice snapshot compatible with the original ChoicesController.
+ * Fixed choices are intentionally independent of the selected college. Custom
+ * job types, outcome labels and academic facets are queried through their own
+ * persisted-role-scoped readers and never cached across tenant switches.
+ * Do not turn a failed scoped read into a plausible empty options array.
+ */
+export async function getTpoLegacyChoices(ctx:RequestContext,collegeId:string|null){
+ if(ctx.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.read");
+ const [jobTypes,learner,outcomeLabels]=await Promise.all([
+  listPlacementJobTypeChoices(ctx,collegeId),
+  listTpoLearnerChoices(ctx,collegeId),
+  readTpoOutcomeChoiceCatalog(ctx,collegeId?"SCOPED":"UNIVERSAL"),
+ ]);
+ if(!outcomeLabels.ready)throw new Error("TPO_CHOICES_UNAVAILABLE");
+ const same=(values:readonly string[])=>values.map(value=>({value,label:value}));
+ const leadSources=[
+  ["ALUMNI","Alumni"],["REFERRAL","Referral"],["LINKEDIN","LinkedIn"],
+  ["JOB_PORTAL","Job portal"],["EVENT","Event or job fair"],
+  ["COLD_OUTREACH","Cold outreach"],["COMPANY_REACHED_OUT","Company reached out"],
+  ["MANUAL","Added by hand"],["IMPORT","Imported"],
+ ] as const;
+ return {
+  genders:same(["Male","Female","Other","Prefer not to say"]),
+  jobTypes:jobTypes.map(row=>({value:row.label,label:row.label,
+   countsAsPlaced:row.countsAsPlaced,builtin:row.builtin})),
+  outcomes:afterCollegeAllOptions().map(row=>({
+   value:row.value==="LOOKING_FOR_JOB"?"SEEKING":
+    row.value==="NOT_DECIDED"?"NOT_REGISTERED":row.value,
+   label:row.value==="PLACED_ON_CAMPUS"?"Placed (on campus)":
+    row.value==="PLACED_OFF_CAMPUS"?"Placed (off campus)":row.label,
+   settable:["HIGHER_STUDIES","ENTREPRENEURSHIP","COMPETITIVE_EXAMS","NOT_INTERESTED"].includes(row.value),
+  })),
+  outcomeLabels:outcomeLabels.labels.map(row=>({
+   id:row.id,label:row.label,outcome:row.outcome,
+   outcomeName:AFTER_COLLEGE_LABELS[row.outcome],
+  })),
+  driveModes:[
+   {value:"ON_CAMPUS",label:"On campus"},
+   {value:"POOL",label:"Pool"},
+   {value:"OFF_CAMPUS",label:"Off campus"},
+  ],
+  registrationChoices:registrationChoiceOptions(),
+  educationTypes:same(DEFAULT_LEARNER_EDUCATION_CATALOG.educationTypes),
+  gradingTypes:same(DEFAULT_LEARNER_EDUCATION_CATALOG.gradingTypes),
+  codingPlatforms:codingProfileChoices,
+  recruiterLeadSources:leadSources.map(([value,label],index)=>({
+   value,label,pickable:index<7,
+  })),
+  branches:learner.branches,
+  passingYears:learner.passingYears,
+ };
 }
