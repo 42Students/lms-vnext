@@ -117,7 +117,7 @@ export function SidebarNav({
      title={item.label}
      aria-current={active?"page":undefined}
      data-active={active?"true":undefined}
-     onClick={onNavigate}
+     {...(onNavigate ? {onClick:onNavigate} : {})}
      className="lms-sidebar-item group min-w-0"
     >
      <span className="lms-sidebar-item-icon" aria-hidden="true">
