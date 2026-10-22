@@ -1,6 +1,13 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
 import {readFileSync} from "node:fs";
+import {AuthorizationError} from "@/modules/permissions/policy";
+vi.mock("next/navigation",()=>({
+ useRouter:()=>({push:vi.fn(),replace:vi.fn(),refresh:vi.fn()}),
+ useSearchParams:()=>new URLSearchParams(),
+ usePathname:()=>"/college/students",
+ redirect:(href:string)=>{throw new Error("REDIRECT_TO_"+href);},
+}));
 
 const mocks=vi.hoisted(()=>({context:vi.fn(),directory:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.context}));
@@ -102,15 +109,22 @@ describe("COL-UX-PEOPLE-TABLE-03 mobile privacy and desktop People directory",()
  });
  it("does not render people from a rejected or revoked college role",async()=>{
   mocks.directory.mockRejectedValueOnce(new Error("REVOKED"));
+  const html=renderToStaticMarkup(await CollegeRoleDirectoryWorkspace({
+   kind:"LEARNER",searchParams:Promise.resolve({}),
+  }));
+  expect(html).toContain("Could not load students");
+  expect(html).not.toContain("Student A");
+  expect(html).not.toContain("REVOKED");
+  mocks.directory.mockRejectedValueOnce(new AuthorizationError("college.people.read"));
   await expect(CollegeRoleDirectoryWorkspace({
    kind:"LEARNER",searchParams:Promise.resolve({}),
-  })).rejects.toThrow("REVOKED");
+  })).rejects.toBeInstanceOf(AuthorizationError);
  });
  it("removes the desktop-only raw table without removing the existing native phone cards",()=>{
   const source=readFileSync("src/components/college/college-role-directory-workspace.tsx","utf8");
   expect(source).not.toContain("<table");
   expect(source).toContain('className="hidden md:block"');
-  expect(source).toContain('className="space-y-3 p-3 md:hidden"');
+  expect(source).toContain('<ul aria-label={title + " mobile records"} className="space-y-2 md:hidden"');
   expect(source).toContain('caption={title+" directory"}');
   expect(source).toContain('getRowKey={item=>item.membershipId}');
  });
