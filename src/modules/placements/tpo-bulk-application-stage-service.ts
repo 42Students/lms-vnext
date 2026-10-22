@@ -97,7 +97,7 @@ export async function loadTpoBulkApplicationStages(ctx:RequestContext,jobId:stri
    app.screening!=="SHORTLISTED"?"Applicant must be shortlisted first":
    !canAdvance(stage?.stage??null,target)?"Already at or beyond this stage":
    "Application is not active";
-  result.set(app.id,{version:stageVersion(stage),ready,reason});
+  result.set(app.id,{version:stageVersion(stage),ready,...(reason===undefined?{}:{reason})});
  }
  return result;
 }
@@ -428,10 +428,10 @@ export async function listTpoApplicationStatusHistory(
     const meta=row.metadata??{};
     return {
      id:row.id,at:row.at,source:"ACTIVITY" as const,
-     from:typeof meta.from==="string"?meta.from:null,
-     to:typeof meta.to==="string"?meta.to:null,
+     from:typeof meta["from"]==="string"?meta["from"]:null,
+     to:typeof meta["to"]==="string"?meta["to"]:null,
      actorUserId:row.actorUserId,
-     reason:typeof meta.reason==="string"?meta.reason:row.summary,
+     reason:typeof meta["reason"]==="string"?meta["reason"]:row.summary,
     };
    }),
  ];
