@@ -38,10 +38,11 @@ export async function PATCH(request:Request,{params}:Params){
     result.reason==="SEVERITY_UNCHANGED"?"It is already this severity":
     result.reason==="ASSIGNEE_UNCHANGED"?"The assignee has not changed":
     result.reason==="INVALID_DUPLICATE"?"Choose the finding this repeats":
+    result.reason==="FIX_COMMIT_REQUIRES_FIXED"?"Only a fixed finding can have a fix commit":
     result.reason==="DUPLICATE_TARGET_NOT_FOUND"?"That finding doesn't exist":
     "The finding changed or cannot be updated. Refresh and retry.",
   },{status:result.reason==="NOT_FOUND"?404:result.reason==="NOT_READY"?503:
-    result.reason==="INVALID_STATUS_TRANSITION"?422:409,headers:{"Cache-Control":"private, no-store"}});
+    result.reason==="INVALID_STATUS_TRANSITION"||result.reason==="FIX_COMMIT_REQUIRES_FIXED"?422:409,headers:{"Cache-Control":"private, no-store"}});
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
