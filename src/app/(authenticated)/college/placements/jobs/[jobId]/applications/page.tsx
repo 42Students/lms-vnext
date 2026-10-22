@@ -41,8 +41,8 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   </div>;
   const rawParams=await searchParams;
   const query = driveApplicationsParams(rawParams);
-  const initialDetailId=typeof rawParams.applicationId==="string" &&
-   z.uuid().safeParse(rawParams.applicationId).success?rawParams.applicationId:null;
+  const initialDetailId=typeof rawParams["applicationId"]==="string" &&
+   z.uuid().safeParse(rawParams["applicationId"]).success?rawParams["applicationId"]:null;
   if (!query) return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications" />
     <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid."
@@ -162,7 +162,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         </Select>
       </label>
       <CollegeApplicationDependentFilters key={[query.departmentId,query.programId,query.cohortId].join(":")}
-        initial={{departmentId:query.departmentId,programId:query.programId,cohortId:query.cohortId}}
+        initial={{...(query.departmentId!==undefined?{departmentId:query.departmentId}:{}),...(query.programId!==undefined?{programId:query.programId}:{}),...(query.cohortId!==undefined?{cohortId:query.cohortId}:{})}}
         departments={filters.departments} programs={filters.programs} cohorts={filters.cohorts} />
         </div>
       </Disclosure>

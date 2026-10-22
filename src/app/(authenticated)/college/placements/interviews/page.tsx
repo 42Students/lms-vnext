@@ -28,10 +28,10 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  </div>;
  if(!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
  const raw=await searchParams;
- const input={q:first(raw.q)??"",status:first(raw.status)??"ALL",
-  mode:first(raw.mode)??"ALL",type:first(raw.type)??"ALL",
-  companyId:first(raw.companyId)||undefined,departmentId:first(raw.departmentId)||undefined,
-  sort:first(raw.sort)??"EARLIEST",page:first(raw.page)??"1",pageSize:first(raw.pageSize)??"20"};
+ const input={q:first(raw["q"])??"",status:first(raw["status"])??"ALL",
+  mode:first(raw["mode"])??"ALL",type:first(raw["type"])??"ALL",
+  companyId:first(raw["companyId"])||undefined,departmentId:first(raw["departmentId"])||undefined,
+  sort:first(raw["sort"])??"EARLIEST",page:first(raw["page"])??"1",pageSize:first(raw["page"]Size)??"20"};
  const valid=collegeInterviewFilters.safeParse(input);
  if(!valid.success)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data).catch(error=>{
@@ -219,14 +219,14 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
         </Disclosure>
       </article>)}
       {!data.rows.length?<EmptyState title={hasActiveFilters?"No interviews match your filters.":"No interviews scheduled yet."}
-        description={hasActiveFilters?"Try adjusting filters or schedule interviews from the Jobs module.":undefined}/>:null}
+        {...(hasActiveFilters?{description:"Try adjusting filters or schedule interviews from the Jobs module."}:{})}/>:null}
     </div>
     <div className="hidden md:block">
       <DataTable caption="College interview appointments" columns={columns}
         rows={data.rows} rowHref={applicantHref} getRowKey={row=>row.id}
         empty={<EmptyState title={hasActiveFilters?"No matching interviews":"No interviews scheduled yet."}
-          description={hasActiveFilters?"No interviews match your filters. Try adjusting filters or schedule interviews from the Jobs module.":undefined}
-          action={hasActiveFilters?<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>:undefined}/>} />
+          {...(hasActiveFilters?{description:"No interviews match your filters. Try adjusting filters or schedule interviews from the Jobs module."}:{})}
+          {...(hasActiveFilters?{action:<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>}:{})}/>} />
     </div>
    </section>
    <nav aria-label="Interview result pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm">
