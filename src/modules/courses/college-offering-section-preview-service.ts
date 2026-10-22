@@ -1,4 +1,5 @@
 import "server-only";
+import {orderLessonCurriculum} from "./lesson-mixed-order-model";
 
 import {and,asc,eq,inArray,isNull,ne,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -144,5 +145,15 @@ export async function listOfferingSectionPreview(
     (item.status==="PUBLISHED"||item.status==="CLOSED"),
   })),
  }));
- return {options,truncated,selected,invalid,lessons:sectionLessons};
+ return {options,truncated,selected,invalid,lessons:sectionLessons.map(lesson=>({
+  ...lesson,
+  // vNext persists assessments separately, but the legacy curriculum is one
+  // ordered lesson timeline. Expose both the existing per-kind collections
+  // and a combined ordered projection for clients and migration review.
+  curriculum:orderLessonCurriculum([
+   ...lesson.contents.map(item=>({...item,source:"CONTENT" as const})),
+   ...lesson.assignments.map(item=>({...item,kind:"ASSIGNMENT" as const,source:"ASSIGNMENT" as const})),
+   ...lesson.quizzes.map(item=>({...item,kind:"QUIZ" as const,source:"QUIZ" as const})),
+  ]),
+ }))};
 }
