@@ -83,7 +83,9 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
   }).from(placementTpoCollegeSettings)
    .where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
   const stored=current?z.array(entrySchema).safeParse(current.outcomeLabels):null;
-  if(current&&stored?.success&&tpoOutcomeLabelsAlreadyApplied(stored.data,input.labels)){
+  if(current&&stored?.success&&tpoOutcomeLabelsAlreadyApplied(
+    stored.data.map(row=>({...row,id:row.id??null})),
+    input.labels.map(row=>({...row,id:row.id??null})))){
    return {labels:stored.data.map(row=>({...row,id:row.id??null})),
     version:current.updatedAt.toISOString()};
   }
