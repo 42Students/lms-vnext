@@ -29,6 +29,19 @@ export async function getTpoDriveDiscussion(context:RequestContext,jobId:string)
  if(!threadsReady||!messagesReady)return {job,available:false,threads:[]};
  const threads=await getDb().select({
   id:placementTpoMessageThreads.id,recruiterName:users.displayName,
+  // Last three scoped messages let the drive Discussion show the actual
+  // conversation context rather than an unlinked single-line preview.
+  recentMessages:sql<Array<{id:string;body:string;senderType:string;via:string;
+    event:string|null;createdAt:string}>>`
+    coalesce((select jsonb_agg(jsonb_build_object(
+     'id',snippet.id,'body',snippet.body,'senderType',snippet.sender_type,
+     'via',snippet.via,'event',snippet.event,
+     'createdAt',snippet.created_at
+    ) order by snippet.created_at, snippet.id)
+    from (select m.id,m.body,m.sender_type,m.via,m.event,m.created_at
+      from placement_tpo_messages m
+      where m.thread_id=${placementTpoMessageThreads.id}
+      order by m.created_at desc,m.id desc limit 3) snippet),'[]'::jsonb)`,
   lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_messages m
    where m.thread_id=${placementTpoMessageThreads.id}
    order by m.created_at desc,m.id desc limit 1)`,

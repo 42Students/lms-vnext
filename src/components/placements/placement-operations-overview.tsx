@@ -4,8 +4,6 @@ import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.modul
 import Link from "next/link";
 import { SuperAdminDriveQuickSearch } from "@/components/placements/super-admin-drive-quick-search";
 import {SuperAdminNeedsAttention} from "@/components/placements/super-admin-needs-attention";
-import {SuperAdminDriveDuplicate} from "@/components/placements/super-admin-drive-duplicate";
-import {SuperAdminDriveDeadline} from "@/components/placements/super-admin-drive-deadline";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
@@ -39,17 +37,11 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
   return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
     {showDriveSearch ? <div className="grid min-w-0 grid-cols-1 overflow-hidden border-y border-border sm:grid-cols-4">
       <Metric label="Active drives" value={operations.summary.activeDrives} description="All non-archived, published drives in the college. Cards show only the latest 60." />
-      <Metric label="Closed / draft" value={operations.summary.closedJobs+operations.summary.draftJobs} description="Closed and draft drives; cancelled drives are counted separately." />
-      <Metric label="All drives" value={operations.summary.totalJobs} description="All non-archived college drives, not the bounded card sample." />
       {operations.attention.available?<Metric label="Needs attention" value={affected} description="Affected records in all four legacy attention categories; not a distinct-drive count." />:
         <p role="status" className="p-3 text-sm text-body">Couldn't check for anything that needs attention.</p>}
+      <Metric label="Closed / draft" value={operations.summary.closedJobs+operations.summary.draftJobs} description="Closed and draft drives; cancelled drives are counted separately." />
+      <Metric label="All drives" value={operations.summary.totalJobs} description="All non-archived college drives, not the bounded card sample." />
     </div> : null}
-    <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
-      <Metric label="Live jobs" value={operations.summary.publishedJobs} description="Published opportunities currently operated by the placement cell." />
-      <Metric label="Applications" value={operations.summary.submittedApplications} description="Active submitted applications across current jobs." />
-      <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
-      <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Jobs with an unresolved operational action." />
-    </div>
     {showDriveSearch?(
       operations.attention.available
         ? <SuperAdminNeedsAttention items={attentionItems} basePath={basePath}/>
@@ -84,64 +76,39 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
     {showDriveSearch?<section className="min-w-0 space-y-3" aria-label="Active placement drives">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="m-0 text-base font-semibold text-foreground">Active drives</h2>
-          <p className="mt-1 text-sm text-body">Open opportunities and their outstanding placement work.</p>
+          <h2 className="m-0 text-base font-semibold text-foreground">Active drives ({operations.summary.activeDrives})</h2>
+          <p className="mt-1 text-sm text-body">
+            {operations.summary.totalJobs} drives including {operations.summary.closedJobs+operations.summary.draftJobs} closed/draft.
+            The cards below show at most 60 recent published drives; All drives has the complete list.
+          </p>
         </div>
-        <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">View all drives</Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href={basePath+"/new"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm font-semibold text-on-primary hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">New Drive</Link>
+          <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">All drives</Link>
+        </div>
       </div>
-      {activeSample.length>0?
-        <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 xl:grid-cols-4">
-          {activeSample.map(item=>{
-            const work=attentionItems.filter(action=>action.jobId===item.job.id)
-              .reduce((total,action)=>total+action.count,0);
-            const deadline=item.job.applicationDeadline;
-            const expired=Boolean(deadline&&deadline.getTime()<Date.now());
-            const company=item.job.company.name;
-            return <article key={item.job.id} className="group relative flex min-w-0 flex-col gap-3 rounded-[12px] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-space-4)] transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:border-[var(--lms-primary)] hover:shadow-md focus-within:border-[var(--lms-primary)]">
-              <div className="flex items-start justify-between gap-2">
-                <span aria-label={company+" company monogram"} className="flex size-12 shrink-0 items-center justify-center rounded-[10px] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] text-base font-semibold text-[var(--lms-primary-text)]">
-                  {company.trim().slice(0,2).toUpperCase()||"CO"}
-                </span>
-                <StatusBadge tone={work>0?"warning":"neutral"}>
-                  {!operations.attention.available?"Attention unavailable":
-                    work>0?"At least "+work+" affected":"Published"}
-                </StatusBadge>
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="break-words text-sm font-semibold text-[var(--lms-heading)]">
-                  <Link href={basePath+"/jobs/"+item.job.id} className="hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">{item.job.title}</Link>
-                </h3>
-                <p className="mt-1 break-words text-xs text-muted-foreground">{company}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-2 border-t border-[var(--lms-canvas-border)] pt-3 text-xs">
-                <div><p className="text-muted-foreground">Applicants</p><strong className="mt-1 block text-base text-foreground">{item.metrics.submittedApplications}</strong></div>
-                <div><p className="text-muted-foreground">Rounds</p><strong className="mt-1 block text-base text-foreground">{item.metrics.roundCount}</strong></div>
-              </div>
-              <div className="text-xs text-body">
-                <span aria-hidden="true" className="mr-1">◷</span>
-                {deadline?<span className={expired?"text-[var(--lms-error)]":""}>
-                  {expired?"Deadline passed: ":"Apply by "}
-                  {formatWhen(deadline,"Asia/Kolkata")}
-                </span>:<span>No application deadline</span>}
-              </div>
-              <div className="flex min-w-0 flex-wrap items-center gap-2 border-t border-[var(--lms-canvas-border)] pt-3 text-xs">
-                <Link href={basePath+"/jobs/"+item.job.id+"/applications"} className="font-semibold text-link underline">Applications</Link>
-                <span aria-hidden="true">·</span>
-                <Link href={basePath+"/jobs/"+item.job.id+"/settings"} className="font-semibold text-link underline">Manage</Link>
-                <details className="ml-auto min-w-[120px] text-left">
-                  <summary className="cursor-pointer font-semibold text-link underline underline-offset-4">More actions</summary>
-                  <div className="mt-2 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
-                    <SuperAdminDriveDuplicate jobId={item.job.id} title={item.job.title}/>
-                    <SuperAdminDriveDeadline jobId={item.job.id} deadline={deadline?.toISOString()??null}/>
-                  </div>
-                </details>
-              </div>
-            </article>;
-          })}
-        </div>:
-        <EmptyState title="No active drives yet" description="Published placement drives will appear here." action={<Link href={basePath+"/drives"} className="text-sm font-semibold text-link underline">Create your first drive</Link>}/>
-      }
+      <SuperAdminDriveQuickSearch basePath={basePath}
+        jobs={activeSample.map(item=>{
+          const attentionCount=operations.attention.available?attentionItems
+            .filter(action=>action.jobId===item.job.id).reduce((total,action)=>total+action.count,0):null;
+          return {
+            id:item.job.id,title:item.job.title,companyName:item.job.company.name,
+            status:item.job.status,applicants:item.metrics.submittedApplications,
+            deadline:item.job.applicationDeadline?.toISOString()??null,
+            attentionCount,
+          };
+        })}/>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3 text-xs text-muted-foreground">
+        <span>Showing a sample of active drives. {operations.summary.totalJobs} drives in the complete directory.</span>
+        <Link href={basePath+"/drives"} className="min-h-9 font-semibold text-link underline">All drives</Link>
+      </div>
     </section>:null}
+    <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
+      <Metric label="Live jobs" value={operations.summary.publishedJobs} description="Published opportunities currently operated by the placement cell." />
+      <Metric label="Applications" value={operations.summary.submittedApplications} description="Active submitted applications across current jobs." />
+      <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
+      <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Jobs with an unresolved operational action." />
+    </div>
     <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">Placement funnel</h2>
@@ -168,13 +135,8 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
             <Link href={basePath + "/jobs/" + round.jobId} className="text-sm font-semibold text-primary-text hover:text-primary-hover">Open drive →</Link>
           </div>)}</div>}
     </section>
-    {showDriveSearch ? <SuperAdminDriveQuickSearch basePath={basePath}
-      jobs={operations.jobs.map(item=>({
-        id:item.job.id,title:item.job.title,companyName:item.job.company.name,
-        status:item.job.status,applicants:item.metrics.submittedApplications,
-      }))} /> : null}
     <section className="border-b border-border pb-6">
-      <div className="border-b border-border pb-3"><h2 className="m-0 text-base font-semibold text-foreground">Job portfolio</h2><p className="mt-1 text-sm text-body">Operational state for every non-archived placement job in this college.</p></div>
+      <div className="border-b border-border pb-3"><h2 className="m-0 text-base font-semibold text-foreground">All drive statuses</h2><p className="mt-1 text-sm text-body">Operational state for every non-archived placement job in this college.</p></div>
       <div className="divide-y divide-border">{operations.jobs.map(item =>
         <div key={item.job.id} className="flex min-w-0 flex-col gap-[var(--lms-space-3)] py-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
           <div><div className="flex flex-wrap items-center gap-2"><p className="m-0 font-semibold text-foreground">{item.job.title}</p><StatusBadge tone={item.job.status === "PUBLISHED" ? "success" : item.job.status === "DRAFT" ? "warning" : "neutral"}>{item.job.status}</StatusBadge></div><p className="mt-1 text-sm text-body">{item.job.company.name} · {item.metrics.submittedApplications} applications · {item.metrics.roundCount} rounds</p></div>

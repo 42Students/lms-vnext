@@ -1,0 +1,25 @@
+# Verification queue: lane chat-6
+
+Second verification round over the remaining P1 rows (W1_* packets). Do these after your fix queues and the verify queue (lane-6-verify.md). Tick [x] as you go.
+
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_1.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_2.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_3.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_4.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_5.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_6.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_7.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_8.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_9.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_10.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_11.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_12.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_13.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_14.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_15.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_16.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_17.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_18.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_19.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_20.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_21.md` (3 rows)

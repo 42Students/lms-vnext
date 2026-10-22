@@ -1,30 +1,18 @@
-# UI/UX polish VERIFICATION queue: lane chat-9 (surfaces polished by OTHER lanes)
+# Verification queue: lane chat-9
 
-46 surfaces. Each was already polished by another lane. Your job is to VERIFY and improve, strictly one surface at a time.
+Second verification round over the remaining P1 rows (W1_* packets). Do these after your fix queues and the verify queue (lane-9-verify.md). Tick [x] as you go.
 
-1. Regressions first (a polish pass edits many files without running code): matching tags, every import present and used, no duplicate attributes, no undeclared packages, props still match their component types, no removed export that another file imports. Fix anything broken.
-2. Behaviour kept: ids, data-testid, aria labels, routes, permissions, form fields, wording (docs/audit/legacy-copy-A.md and B.md) and legacy tokens (docs/design) must be unchanged; if the polish dropped or reworded something, restore it.
-3. Then judge the surface fresh as a senior product designer: is anything still cluttered, misaligned, duplicated or noisy? One obvious primary action? Aligned left edges and gaps on the legacy scale? Calm density? Real layouts at 375 and 768? Empty, loading, error states with a clear next step? Fix what you find.
-4. Also check the route files in the same folder (loading, error, not-found, template) and the nearest parent layout.
-
-Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-9-b with [chat-9] after every 2 surfaces.
-
-
-- [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [x] `src/components/placements/tpo-season-controls.tsx`
-- [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [x] `src/components/placements/tpo-drive-saved-views.tsx`
-- [x] `src/components/tpo/recruiter-roster-display-controls.tsx`
-- [x] `src/components/tpo/tpo-team-assign-unowned.tsx`
-- [x] `src/components/ui/button-group.tsx`
-- [x] `src/app/(authenticated)/teacher/loading.tsx`
-- [x] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
-- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [x] `src/components/tpo/tpo-applications-spreadsheet.tsx`
-- [x] `src/components/tpo/tpo-topbar-new-menu.tsx`
-- [x] `src/components/admin/admin-program-directory.tsx`
-- [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
-- [x] `src/components/academics/college-term-mapping-manager.tsx`
-- [x] `src/components/courses/faculty-assessment-lifecycle.tsx`
-- [x] `src/components/admin/college-bulk-import.tsx`
-- [x] `src/components/admin/super-admin-company-merge.tsx`
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_1.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_2.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_3.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_4.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_5.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_6.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_7.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_8.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_9.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_10.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_11.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_12.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_13.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_14.md` (11 rows)

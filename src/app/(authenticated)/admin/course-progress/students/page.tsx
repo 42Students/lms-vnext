@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {redirect} from "next/navigation";
 import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseOfferings,courseSectionDeliveries,sections,courses,departments} from "@/db/schema";
@@ -38,7 +39,14 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
   <ErrorState title="Choose a course offering" description="Course and class are required. Select a valid class and its taught course from Course Progress first; this page uses their authorized course offering, not separate legacy numeric IDs." action={back}/>
  </div>;
  let report:Awaited<ReturnType<typeof getSuperAdminStudentCourseProgress>>;
- try{report=await getSuperAdminStudentCourseProgress(context,{offeringId,deliveryId:requestedDelivery??undefined});}
+ try{
+  const selection={offeringId,deliveryId:requestedDelivery??undefined,pageSize,sort};
+  report=await getSuperAdminStudentCourseProgress(context,{...selection,page:requestedPage});
+  // An out-of-range bookmarked page has no window-count row. Re-read the
+  // first page to obtain the correct total before redirecting below.
+  if(requestedPage>1&&!report.rows.length)
+   report=await getSuperAdminStudentCourseProgress(context,{...selection,page:1});
+ }
  catch(error){
   // Do not expose SQL, stack traces or another tenant's identifiers in the error surface.
   const detail=error instanceof Error&&error.name==="AuthorizationError"
@@ -75,32 +83,23 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const measuredCounts=report.rows.map(row=>row.totalVideos+row.totalAssignments+row.totalQuizzes);
  const lowestMeasured=measuredCounts.length?Math.min(...measuredCounts):0;
  const highestMeasured=measuredCounts.length?Math.max(...measuredCounts):0;
- const average=report.rows.map(row=>studentCourseCompletion(row))
-  .filter((n):n is number=>n!==null);
- const mean=average.length?Math.round(average.reduce((a,n)=>a+n,0)/average.length):null;
- const notStarted=report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length;
+ const mean=report.meanPercent===null?null:Math.round(report.meanPercent);
+ const notStarted=report.notStartedCount;
  const firstMeasured=report.rows[0];
  const measuredVideos=firstMeasured?.totalVideos??0;
  const measuredAssignments=firstMeasured?.totalAssignments??0;
  const measuredQuizzes=firstMeasured?.totalQuizzes??0;
  const audienceVaries=report.rows.some(row=>row.totalVideos!==measuredVideos||
   row.totalAssignments!==measuredAssignments||row.totalQuizzes!==measuredQuizzes);
- const allRows=[...report.rows].sort((a,b)=>{
-   const ap=studentCourseCompletion(a),bp=studentCourseCompletion(b);
-   if(ap===null&&bp!==null)return 1;
-   if(bp===null&&ap!==null)return -1;
-   const compared=(ap??0)-(bp??0);
-   return (sort==="percent-desc"?-compared:compared) ||
-     a.studentName.localeCompare(b.studentName) || a.membershipId.localeCompare(b.membershipId);
- });
- const totalPages=Math.max(1,Math.ceil(allRows.length/pageSize));
+ const totalPages=Math.max(1,Math.ceil(report.totalRows/pageSize));
  const page=Math.min(requestedPage,totalPages);
- const shownRows=allRows.slice((page-1)*pageSize,page*pageSize);
+ const shownRows=report.rows;
  const reportHref=(nextPage:number,nextSize=pageSize,nextSort=sort)=>
    "/admin/course-progress/students?"+new URLSearchParams({
      offeringId,...(requestedDelivery?{deliveryId:requestedDelivery}:{}),
      page:String(nextPage),pageSize:String(nextSize),sort:nextSort,
    }).toString();
+ if(requestedPage>totalPages)redirect(reportHref(totalPages));
  const hasMeasuredWork=report.rows.some(row=>row.totalVideos+row.totalAssignments+row.totalQuizzes>0);
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title="Course Progress"
@@ -142,7 +141,9 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
         <Link href={reportHref(page)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
           Refresh
         </Link>
-        {report.rows.length?<a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
+        {report.totalRows>0?<a href={"/api/admin/course-progress/students/export?"+new URLSearchParams({
+          offeringId:report.offeringId,...(requestedDelivery?{deliveryId:requestedDelivery}:{})
+        }).toString()}
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">Export CSV</a>:
           <span aria-disabled="true" title="No students available for export"
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 text-sm text-muted-foreground md:min-h-9">Export CSV</span>}
@@ -156,7 +157,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     </div>
     <div className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
       <dt className="text-xs font-semibold text-muted-foreground">Students</dt>
-      <dd className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{report.rows.length}</dd>
+      <dd className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{report.totalRows}</dd>
     </div>
     <div className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
       <dt className="text-xs font-semibold text-muted-foreground">Not started</dt>
@@ -168,21 +169,20 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
         {lowestMeasured===highestMeasured?highestMeasured:lowestMeasured+"–"+highestMeasured}
       </dd>
       <p className="mt-1 text-xs text-muted-foreground">
-        {measuredVideos} videos · {measuredAssignments} assignments · {measuredQuizzes} quizzes
+        Measurements for this page: {measuredVideos} videos · {measuredAssignments} assignments · {measuredQuizzes} quizzes
         {audienceVaries?" (counts shown for one learner; the eligible items vary by student)":""}
       </p>
     </div>
   </dl>
-  {!report.rows.length?<Alert tone="info" role="status">No students in this section.</Alert>:
+  {!report.totalRows?<Alert tone="info" role="status">No students in this section.</Alert>:
     !hasMeasuredWork?<Alert tone="warning" role="status">
-      This course has no videos, assignments or quizzes to measure. No completion percentage is available until work is assigned.
+      This page has no videos, assignments or quizzes to measure. No completion percentage is available until work is assigned.
     </Alert>:null}
-  {report.truncated?<Alert tone="warning" role="alert">
-    The progress service returned a limited sample of active students. Statistics and sorting here may not include the full class.
-    Use the export endpoint for the authorized report.
-  </Alert>:null}
+  {totalPages>1?<p role="status" className="text-xs text-muted-foreground">
+    Viewing page {page} of {totalPages}. Student count, average completion and not-started total reflect all authorized students; item counts show the current page.
+  </p>:null}
   <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
-    <p className="text-sm text-body">Showing {allRows.length===0?0:(page-1)*pageSize+1}–{Math.min(page*pageSize,allRows.length)} of {allRows.length}{report.truncated?" returned":""} students</p>
+    <p className="text-sm text-body">Showing {report.totalRows===0?0:(page-1)*pageSize+1}–{Math.min(page*pageSize,report.totalRows)} of {report.totalRows} students</p>
     <form method="get" action="/admin/course-progress/students" className="flex flex-wrap items-end gap-2">
       <input type="hidden" name="offeringId" value={offeringId}/>
       {requestedDelivery?<input type="hidden" name="deliveryId" value={requestedDelivery}/>:null}
