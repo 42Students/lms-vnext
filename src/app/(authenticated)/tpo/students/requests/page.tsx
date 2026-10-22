@@ -24,6 +24,8 @@ type SearchParams = {
   search?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
+  includeDecided?: string | string[];
+  decidedDays?: string | string[];
 };
 
 type RequestStatus =
@@ -48,11 +50,17 @@ function requestsHref(input: {
   search?: string;
   page?: number;
   pageSize?: number;
+  includeDecided?:boolean;
+  decidedDays?:number|"ALL";
 }) {
   const params = new URLSearchParams();
 
   if (input.status) params.set("status", input.status);
   if (input.search) params.set("search", input.search);
+  if (input.includeDecided) {
+    params.set("includeDecided","1");
+    params.set("decidedDays",input.decidedDays==="ALL"?"0":String(input.decidedDays??30));
+  }
 
   if (input.page && input.page > 1) {
     params.set("page", String(input.page));
@@ -112,6 +120,9 @@ export default async function TpoStudentRequestsPage({
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
     pageSize: first(raw.pageSize) || undefined,
+    includeDecided:first(raw.includeDecided)==="1"||
+      ["APPROVED","REJECTED","CANCELLED"].includes(first(raw.status)??""),
+    decidedDays:first(raw.decidedDays)==="0"?"ALL":first(raw.decidedDays)||undefined,
   });
 
   if (tpoStudentRequestsHasInvalidUrlFilters(raw) || !parsed.success) {
@@ -155,6 +166,8 @@ export default async function TpoStudentRequestsPage({
     status: query.status,
     search: query.search,
     pageSize: query.pageSize,
+    includeDecided:query.includeDecided,
+    decidedDays:query.decidedDays,
   };
 
   const firstItem =
@@ -201,9 +214,21 @@ export default async function TpoStudentRequestsPage({
         </Link>
       </nav>
 
+      <nav aria-label="Request decision history" className="flex flex-wrap gap-3 border-b border-border pb-3 text-sm">
+        <Link href={requestsHref({status:"PENDING",search:query.search,pageSize:query.pageSize})}
+          aria-current={!query.includeDecided?"page":undefined}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Pending only</Link>
+        <Link href={requestsHref({search:query.search,pageSize:query.pageSize,includeDecided:true,decidedDays:30})}
+          aria-current={query.includeDecided&&query.decidedDays!== "ALL"?"page":undefined}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Last 30 days of decisions</Link>
+        <Link href={requestsHref({search:query.search,pageSize:query.pageSize,includeDecided:true,decidedDays:"ALL"})}
+          aria-current={query.includeDecided&&query.decidedDays==="ALL"?"page":undefined}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">All history</Link>
+      </nav>
       <section className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-3 xl:grid-cols-5">
         <Link
-          href={requestsHref(tpoStudentRequestShortcutFilters(query.search,query.pageSize))}
+          href={requestsHref({...tpoStudentRequestShortcutFilters(query.search,query.pageSize),
+            includeDecided:query.includeDecided,decidedDays:query.decidedDays})}
           aria-current={!query.status ? "page" : undefined}
           className={
             "min-w-0 border-b border-r p-4 last:border-r-0 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] " +
@@ -212,7 +237,7 @@ export default async function TpoStudentRequestsPage({
               : "border-border bg-surface")
           }
         >
-          <p className="text-sm font-semibold text-body">All requests</p>
+          <p className="text-sm font-semibold text-body">{query.includeDecided?"All requests":"Outstanding requests"}</p>
           <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
             {data.summary.total}
           </p>
@@ -221,7 +246,9 @@ export default async function TpoStudentRequestsPage({
         {STATUSES.map((status) => (
           <Link
             key={status}
-            href={requestsHref(tpoStudentRequestShortcutFilters(query.search,query.pageSize,status))}
+            href={requestsHref({...tpoStudentRequestShortcutFilters(query.search,query.pageSize,status),
+              includeDecided:status!=="PENDING"||query.includeDecided,
+              decidedDays:query.decidedDays})}
             aria-current={
               query.status === status ? "page" : undefined
             }
@@ -288,6 +315,9 @@ export default async function TpoStudentRequestsPage({
           </Select>
         </label>
 
+        {query.includeDecided?<><input type="hidden" name="includeDecided" value="1"/>
+          <input type="hidden" name="decidedDays" value={query.decidedDays==="ALL"?"0":String(query.decidedDays)}/>
+        </>:null}
         <div className="sm:col-span-2 xl:col-span-3">
           <Button variant="primary"
             type="submit"
