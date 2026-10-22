@@ -62,7 +62,8 @@ describe("chat-13 Super Admin settings, access and tracker reconciliation",()=>{
   expect(code).toContain('{value:"OPEN",label:"Open"}');
   expect(code).toContain('{value:"RELEASE",label:"Release blockers"}');
   expect(code).toContain('{value:"ALL",label:"All"}');
-  expect(code).toContain("Release (critical & high)");
+  expect(code).toContain('{value:"RELEASE",label:"Release blockers"}');
+  expect(code).toContain('<NeedsDoingChips label="Open findings by severity"');
  });
  it("SA-tenants-modules-50 verifies current code, without asserting runtime activation",()=>{
   const code=source("src/components/tracker/audit-finding-filter-memory.tsx");
