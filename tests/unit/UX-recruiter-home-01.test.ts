@@ -6,7 +6,8 @@ describe("UX-recruiter-home-01",()=>{
  it("preserves canonical route, scoped data and the audited mobile/action states",()=>{
   const source=read("src/app/(authenticated)/recruiter/home/page.tsx");
   expect(source).toContain("@/app/(authenticated)/hr/home/page");
-  expect(source).toMatch(/export\s*\{\s*default\s*\}/);
+  expect(source).toContain("export default function RecruiterHome");
+  expect(source).toContain("<HrHome searchParams={searchParams}/>");
   const canonical=read("src/app/(authenticated)/hr/home/page.tsx");
   expect(canonical).toMatch(/export\s+default|export\s*\{\s*default/);
   expect(read("src/app/(authenticated)/recruiter/home/loading.tsx")).toContain("GracefulPageLoading");
