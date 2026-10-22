@@ -157,7 +157,10 @@ function requireLearnerOfferOwner(
     !hasMembershipRole(context, "LEARNER") ||
     context.membership.id !== membershipId
   ) {
-    throw new AuthorizationError("placements.read");
+    // A foreign offer and an absent offer must have the same public status
+    // and error identifier. Do not expose whether the supplied UUID belongs
+    // to another learner in this college or another tenant.
+    throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_FOUND");
   }
 }
 
