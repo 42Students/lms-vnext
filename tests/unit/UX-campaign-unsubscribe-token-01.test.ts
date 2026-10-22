@@ -22,7 +22,7 @@ describe("UX-campaign-unsubscribe-token-01 preference confirmation",()=>{
   expect(page).toContain('<h1 className="m-0 text-[20px]');
   expect(page).toContain('<Card as="section"');
   expect(page).toContain('min-h-dvh');
-  expect(form).toContain("if(pendingRef.current)return");
+  expect(form).toContain("if(pendingRef.current||confirmed||!token.trim())return");
   expect(form).toContain('method:"POST"');
   expect(form).toContain('response.redirected');
   expect(form).toContain('url.pathname!=="/campaign-unsubscribe/confirmed"');

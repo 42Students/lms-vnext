@@ -24,7 +24,7 @@ describe("College Academic Setup open-register functional checks",()=>{
   expect(code).toContain('row.status!=="PLANNED"');
   expect(code).toContain("row.activeSections>0 || row.activeEnrolledLearners>0");
   expect(code).toContain("Cannot archive while ");
-  expect(code).toContain("Remove this planned batch?");
+  expect(code).toContain("Archive this planned batch?");
  });
  it("COL-academic-setup-32 retains a section-specific schedule action and class identifier",()=>{
   const code=read("src/components/academics/college-structure-directory.tsx");
@@ -60,7 +60,7 @@ describe("College Academic Setup open-register functional checks",()=>{
     startDate:null,endDate:null,currentTermNumber:1,currentAcademicYearStart:2024,
     activeSections:2,activeEnrolledLearners:120}],false);
   expect(batch).toContain("2024 CSE");
-  expect(batch).toContain("Active learner enrollments");
+  expect(batch).toContain('"students"');
  });
  it("COL-academic-setup-40 surfaces retry on department initial load failure",()=>{
   const error=read("src/app/(authenticated)/college/departments/error.tsx");

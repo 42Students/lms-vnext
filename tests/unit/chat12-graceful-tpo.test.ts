@@ -30,7 +30,7 @@ describe("chat-12 touched TPO pages degrade gracefully",()=>{
   const source=read("src/components/tpo/tpo-academic-import-workspace.tsx");
   expect(source).toContain("These records changed while you were working.");
   expect(source).toContain("Those rows are now unselected. Re-preview before retrying the remaining rows.");
-  expect(source).toContain("cause instanceof FriendlyFetchError && cause.status===409");
+  expect(source).toContain("cause instanceof FriendlyFetchError&&cause.status===409");
   expect(source).not.toContain("window.confirm(");
   expect(source).not.toContain("body?.error");
  });

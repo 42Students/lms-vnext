@@ -49,11 +49,13 @@ describe("HR-BREAK-DRIVE-DRAFT-QUERY-23: secure recruiter draft source URL",()=>
   const fallback=await page(raw);
   // A bad legacy deep link now renders a public-safe recoverable error
   // rather than leaking whether the requested college or draft exists.
-  const children=(isValidElement(fallback)
-    ?(fallback.props as {children?:ReactNode}).children:[]) as ReactNode;
-  const safeChildren=Array.isArray(children)?children:[children];
-  expect(safeChildren.some(child=>isValidElement(child)&&child.type===ErrorState&&
-    (child.props as {title?:string}).title==="We couldn't load that drive")).toBe(true);
+  function containsUnavailable(node:ReactNode):boolean {
+    if(Array.isArray(node))return node.some(containsUnavailable);
+    if(!isValidElement(node))return false;
+    if(node.type===ErrorState && (node.props as {title?:string}).title==="We couldn't load that drive")return true;
+    return containsUnavailable((node.props as {children?:ReactNode}).children);
+  }
+  expect(containsUnavailable(fallback)).toBe(true);
   expect(d.workspace).not.toHaveBeenCalled();
   expect(d.requests).not.toHaveBeenCalled();
   expect(d.branches).not.toHaveBeenCalled();

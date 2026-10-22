@@ -12,7 +12,7 @@ import {ErrorState} from "@/components/ui/error-state";
  * Safe Super Admin entry point for the college-scoped verification workspace.
  * Do not implicitly select the first college in a global organization.
  */
-export default async function AdminVerificationEntry({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
+export default async function AdminVerificationEntry({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>} = {searchParams:Promise.resolve({})}) {
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
     return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
