@@ -32,6 +32,7 @@ import { listMembershipChoices } from "@/modules/identity/context-service";
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
+import { listSignedInRecruiterPendingInvites } from "@/modules/placements/public-recruiter-invite-accept-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import {
   getPlacementTpoOperations,
@@ -534,10 +535,10 @@ export default async function DashboardPage() {
       );
     }
 
-    const memberships =
-      await listMembershipChoices(
-        context.user.identityUid,
-      );
+    const [memberships, pendingInvites] = await Promise.all([
+      listMembershipChoices(context.user.identityUid),
+      listSignedInRecruiterPendingInvites(context).catch(()=>null),
+    ]);
 
     return (
       <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
@@ -546,6 +547,18 @@ export default async function DashboardPage() {
           title="Choose your college"
           description="One canonical account can belong to multiple colleges. Choose the membership you want to use for this session."
         />
+        {pendingInvites?.length ? <section aria-label="Recruiter invitations awaiting consent"
+          className="min-w-0 space-y-2 border-b border-border py-3">
+          <p className="text-sm text-body">You have {pendingInvites.length} recruiter college invitation{pendingInvites.length===1?"":"s"} awaiting your decision.</p>
+          <Link href="/recruiter-invitations"
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+            Review recruiter invitations →
+          </Link>
+        </section> : null}
+        {pendingInvites===null ? <Link href="/recruiter-invitations"
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          Check recruiter invitations
+        </Link> : null}
         <MembershipChooser
           memberships={memberships}
         />

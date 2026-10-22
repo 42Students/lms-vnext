@@ -60,30 +60,25 @@ import {listSignedInRecruiterPendingInvites} from "./public-recruiter-invite-acc
 export async function getRecruiterSelfGrantOverview(
   context: RequestContext,
 ) {
-  if (
-    !hasActiveRecruiter(context) ||
-    !context.recruiter ||
-    context.recruiter.userId !== context.user.id
-  ) {
-    throw new AuthorizationError(
-      "placements.recruiter.read",
-    );
-  }
-
-  const profile =
-    await getRecruiterSelfProfile(context);
-
-  const authorizedGrants =
-    context.recruiter.grants;
-  // Pending invitations are proven by the signed-in identity, not by an
-  // ACTIVE college grant. Keep them separate from permitted workspace choices.
+  // The pending-invite inbox is an identity-bound capability, not a college
+  // grant. Existing recruiters with ZERO active grants must still be able to
+  // review consent without being treated as active in another college.
   const pending=await listSignedInRecruiterPendingInvites(context);
   const pendingSummary={
-    pendingInvites:pending.slice(0,50),
+    pendingInvites:pending.slice(0,50).map(({collegeId,collegeName,company,invitedContact})=>
+      ({collegeId,collegeName,company,invitedContact})),
     pendingTotal:pending.length,
     pendingPages:Math.max(1,Math.ceil(pending.length/50)),
     pendingHasMore:pending.length>50,
   };
+  if(!hasActiveRecruiter(context)||!context.recruiter||
+      context.recruiter.userId!==context.user.id){
+    if(!pending.length)throw new AuthorizationError("placements.recruiter.read");
+    return {profileStatus:"PENDING" as const,grants:[],...pendingSummary};
+  }
+
+  const profile=await getRecruiterSelfProfile(context);
+  const authorizedGrants=context.recruiter.grants;
 
   // A recruiter can have an active employer profile
   // without a currently active college grant.
