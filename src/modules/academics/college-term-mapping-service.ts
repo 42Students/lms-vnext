@@ -527,9 +527,15 @@ export const LEGACY_PROGRAM_STRUCTURE_CROSSWALK = [
   {legacy:"fetchAll",vnext:"GET /api/academics/semesters",intent:"LIST"},
   {legacy:"fetchAllSemesters",vnext:"listScopedLegacyProgramStructures",intent:"BY_PROGRAM"},
   {legacy:"fetchActiveSemesters",vnext:"listScopedLegacyProgramStructures(activeOnly)",intent:"ACTIVE"},
-  {legacy:"updateStatus",vnext:"PATCH /api/academics/semesters/{semesterId} (isActive)",intent:"STATUS"},
+  {legacy:"updateStatus",vnext:"PATCH /api/academics/semesters/{semesterId}?statusType=ACTIVE|INACTIVE&programId={programId} (server-resolved CAS)",intent:"STATUS"},
 ] as const;
 
+/** Create/update/delete use semester-mutation-service and the authorized
+ * /api/academics/semesters routes; course membership/order use this service.
+ * One program term is the vNext equivalent of an independently owned legacy
+ * ProgramStructure. Legacy integer IDs are provenance, never permission grants.
+ * A completed imported structure remains read-only, by design.
+ */
 /** Preserve old fetchAll/byProgram/active semantics without bypassing selected
  * college or exposing another tenant's imported structure identifiers. */
 export async function listScopedLegacyProgramStructures(

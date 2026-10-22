@@ -17,7 +17,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_app_api_skills_route.ts.md` (edit src/app/api/skills/route.ts; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_semester-mutation-service.ts.md` (edit src/modules/academics/semester-mutation-service.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_components_electives_college-elective-offering-manager.tsx.md` (edit src/components/electives/college-elective-offering-manager.tsx; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_college-term-mapping-service.ts.md` (edit src/modules/academics/college-term-mapping-service.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_college-term-mapping-service.ts.md` (edit src/modules/academics/college-term-mapping-service.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_skills_catalog-service.ts.md` (edit src/modules/skills/catalog-service.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_NEW_docs_audit_gap2_lane-5_u003-college-admin-classes.md.md` (new; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_college-academic-directory-service.ts.md` (edit src/modules/academics/college-academic-directory-service.ts; 2 findings; best P1)
