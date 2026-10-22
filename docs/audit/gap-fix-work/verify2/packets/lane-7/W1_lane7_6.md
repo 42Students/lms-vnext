@@ -126,3 +126,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: (none, new feature)
 - Legacy: LFE/components/admin/projects/useUnsavedFormGuard.js:31-61: keyboard route Back guarded for changed form
 - Expected fix: Guard keyboard/browser/tab navigation on dirty dialogs
+
+## Lane-3 verification triage
+
+Fast triage (2026-10-22): DEFERRED: all 25 rows need migration/service and UI parity review. Admin roster exposes Mobile as Unavailable (G2-5-031-011 remains a known gap); no implementation parity claimed.

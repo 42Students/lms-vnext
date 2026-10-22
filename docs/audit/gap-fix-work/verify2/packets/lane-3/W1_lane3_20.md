@@ -61,3 +61,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/admin/batch-promotion/page.tsx
 - Legacy: Ant table default page size 10, size changer and row range `docs/legacy-source/frontend/src/pages/superadmin/sections/BatchPromotion.js:442-450`
 - Expected fix: Add 10-per-page pagination and size changer, server-side when large
+
+## Lane-3 verification triage
+
+Fast triage (2026-10-22): OK: G2-9-018-002 (explicit no-college warning and administrator guidance), G2-9-022-018 (server-paged 10/25/50 and visible row range). DEFERRED: remaining 10 rows need service/attachment and transition contract review; no implementation parity claimed.
