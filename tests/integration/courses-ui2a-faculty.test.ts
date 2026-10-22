@@ -112,7 +112,7 @@ const facultyFixtureLearnerRoleId=randomUUID();
 const learner: RequestContext = {
   user: {
     id: facultyFixtureLearnerUserId,
-    identityUid: "seed-learner",
+    identityUid: "faculty-ui2a-" + facultyFixtureLearnerUserId,
     platformStatus: "ACTIVE",
     systemRoles: [],
   },
@@ -531,12 +531,12 @@ async function createStructure() {
 
 beforeEach(async () => {
   await cleanupUI2A();
-  // Seed only this suite\u0027s learner; preserve unique active membership/program invariants.
+  // Seed only this suite's learner; preserve unique active membership/program invariants.
   await pool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,$3) ON CONFLICT(id) DO NOTHING",
     [facultyFixtureLearnerUserId,"faculty-ui2a-"+facultyFixtureLearnerUserId,"Faculty UI2A learner"]);
   await pool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3) ON CONFLICT(id) DO NOTHING",
     [facultyFixtureLearnerMembershipId,facultyFixtureLearnerUserId,SEED_IDS.collegeA]);
-  await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,\u0027LEARNER\u0027) ON CONFLICT(id) DO NOTHING",
+  await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'LEARNER') ON CONFLICT(id) DO NOTHING",
     [facultyFixtureLearnerRoleId,facultyFixtureLearnerMembershipId]);
 });
 
