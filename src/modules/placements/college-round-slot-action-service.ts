@@ -216,22 +216,22 @@ export async function getCollegeRoundSlotAppointments(
   candidateConflict:sql<boolean>`exists(
    select 1 from placement_round_candidate_slots other
    join placement_jobs jo on jo.id=other.job_id and jo.college_id=${collegeId}
-   join placement_applications me on me.id=${slots.applicationId}
+   join placement_applications me on me.id="placement_round_candidate_slots"."application_id"
    join placement_applications oa on oa.id=other.application_id
-   where other.id<>${slots.id} and other.status='BOOKED'
+   where other.id<>"placement_round_candidate_slots"."id" and other.status='BOOKED'
      and oa.membership_id=me.membership_id
-     and other.starts_at < ${slots.endsAt} + interval '15 minutes'
-     and other.ends_at > ${slots.startsAt} - interval '15 minutes'
+     and other.starts_at < "placement_round_candidate_slots"."ends_at" + interval '15 minutes'
+     and other.ends_at > "placement_round_candidate_slots"."starts_at" - interval '15 minutes'
      and not exists(select 1 from activity_events e where e.subject_id=other.id::text
       and e.subject_type='placement_round_candidate_slot'
       and e.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')))` ,
   roomConflict:sql<boolean>`exists(
    select 1 from placement_round_candidate_slots other
    join placement_jobs jo on jo.id=other.job_id and jo.college_id=${collegeId}
-   where other.id<>${slots.id} and other.status='BOOKED'
-    and lower(trim(other.room))=lower(trim(${slots.room}))
-    and other.starts_at < ${slots.endsAt} + interval '15 minutes'
-    and other.ends_at > ${slots.startsAt} - interval '15 minutes'
+   where other.id<>"placement_round_candidate_slots"."id" and other.status='BOOKED'
+    and lower(trim(other.room))=lower(trim("placement_round_candidate_slots"."room"))
+    and other.starts_at < "placement_round_candidate_slots"."ends_at" + interval '15 minutes'
+    and other.ends_at > "placement_round_candidate_slots"."starts_at" - interval '15 minutes'
     and not exists(select 1 from activity_events e where e.subject_id=other.id::text
      and e.subject_type='placement_round_candidate_slot'
      and e.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')))` ,
