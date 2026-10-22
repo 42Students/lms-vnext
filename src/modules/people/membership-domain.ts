@@ -127,7 +127,7 @@ export function membershipLifecycleActionResult(
 export const MEMBERSHIP_ADMIN_ACTION_EXPLANATIONS = {
   end: "End access to this college without deleting the person's shared account or history.",
   delete: "Permanent account deletion is not available here. End membership access or request a reviewed erasure.",
-  bulkUndo: "Undo imported memberships with an audited reversal. Existing learning, attendance and placement records are retained.",
+  bulkUndo: "Automatic bulk undo is unavailable. Review each imported membership and its learning, attendance, placement and identity dependencies before any audited access change.",
   impersonate: "Sign in as a student or faculty member is not permitted. Use an audited, permission-scoped support view.",
   otpUnlock: "Reset only a verified account's OTP lockout through the authorized identity support action; never bypass verification.",
 } as const;
