@@ -48,7 +48,7 @@ describe("Super Admin placement lookup — real service orchestration of bounded
       roll:"R"+index,email:"learner"+index+"@example.test",
     }));
     const details=Array.from({length:101},(_,index)=>({
-      jobId:"job-"+index,job:"Graduate Engineer",
+      applicationId:"application-"+index,jobId:"job-"+index,job:"Graduate Engineer",
       company:"Example",submittedAt:new Date("2099-01-01T00:00:00.000Z"),
       applicationStatus:"SUBMITTED",offerStatus:null,joining:null,
     }));
@@ -61,25 +61,25 @@ describe("Super Admin placement lookup — real service orchestration of bounded
     mocks.getDb.mockReturnValue({select,selectDistinct});
 
     const result=await lookupCollegeStudentPlacement(admin,"Learner");
-    expect(result.students).toHaveLength(15);
+    expect(result.students).toHaveLength(10);
     expect(result.truncated).toBe(true);
-    expect(result.students.map(student=>student.membershipId)).not.toContain(people[15]?.membershipId);
+    expect(result.students.map(student=>student.membershipId)).not.toContain(people[10]?.membershipId);
     expect(result.students[0]?.placed).toBe(true);
     expect(result.students[0]?.applications).toHaveLength(100);
     expect(result.students[0]?.truncated).toBe(true);
     expect(result.students[1]?.placed).toBe(false);
     expect(selectDistinct).toHaveBeenCalledTimes(1);
-    expect(select).toHaveBeenCalledTimes(16);
+    expect(select).toHaveBeenCalledTimes(11);
     expect(mocks.requireCollegePlacementAdmin).toHaveBeenCalledWith(admin);
   });
 
   it("SA-STUDENT-LOOKUP-CAP-04 does not warn for exactly 15 learners or 100 application records",async()=>{
-    const people=Array.from({length:15},(_,index)=>({
+    const people=Array.from({length:10},(_,index)=>({
       membershipId:"learner-"+index,name:"Learner "+index,
       roll:"R"+index,email:"learner"+index+"@example.test",
     }));
     const details=Array.from({length:100},(_,index)=>({
-      jobId:"job-"+index,job:"Graduate Engineer",
+      applicationId:"application-"+index,jobId:"job-"+index,job:"Graduate Engineer",
       company:"Example",submittedAt:new Date("2099-01-01T00:00:00.000Z"),
       applicationStatus:"SUBMITTED",offerStatus:null,joining:null,
     }));
@@ -91,7 +91,7 @@ describe("Super Admin placement lookup — real service orchestration of bounded
       selectDistinct:vi.fn(()=>new SelectRows([] as {membershipId:string}[])),
     });
     const result=await lookupCollegeStudentPlacement(admin,"Learner");
-    expect(result.students).toHaveLength(15);
+    expect(result.students).toHaveLength(10);
     expect(result.truncated).toBe(false);
     expect(result.students.every(student=>!student.truncated&&!student.placed)).toBe(true);
     expect(result.students.every(student=>student.applications.length===100)).toBe(true);

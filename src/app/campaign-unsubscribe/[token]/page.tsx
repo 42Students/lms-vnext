@@ -15,7 +15,7 @@ export default async function CampaignUnsubscribe({
             Stop these emails?
           </h1>
           <p className="mt-3 break-words text-sm leading-[22px] text-[var(--lms-muted-text)]">
-            The placement cell that wrote to you will not email you again.
+            Opening this link does not unsubscribe you. No preference was changed. Confirm below to stop further emails from this placement cell.
           </p>
           <CampaignUnsubscribeConfirm token={token} cell={true}/>
         </Card>

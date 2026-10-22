@@ -10,8 +10,9 @@ describe("chat15 learner recoverability and staff applications",()=>{
   expect(service).toContain('stateWarnings.push("quiz list")');
   expect(service).toContain('stateWarnings.push("quiz attempts")');
   const ui=src("src/components/courses/learner-course-workspace.tsx");
-  expect(ui).toContain("Some course state could not be loaded");
+  expect(ui).toContain("Lesson completion state could not be fully verified");
   expect(ui).toContain("<LearnerCourseStateRetry/>");
+  expect(ui).toContain("workspace.stateWarnings.join");
   const retry=src("src/components/courses/learner-course-state-retry.tsx");
   expect(retry).toContain("Retry state");
   expect(retry).toContain("router.refresh()");

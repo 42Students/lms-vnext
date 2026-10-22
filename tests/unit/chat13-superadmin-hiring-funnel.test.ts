@@ -26,7 +26,7 @@ describe("Super Admin Analytics",()=>{
  });
  it("GR-71 displays filtered-empty reporting state and reset action",()=>{
   const page=source("src/app/(authenticated)/admin/placements/analytics/page.tsx");
-  expect(page).toContain("No hiring results match these filters.");
+  expect(page).toContain("No companies match these filters");
   expect(page).toContain("Clear all");
  });
  it("GR-73 preserves selected filters when refreshing the hiring report",()=>{
