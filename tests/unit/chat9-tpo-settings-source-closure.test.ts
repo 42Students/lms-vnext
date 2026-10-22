@@ -15,9 +15,10 @@ describe("TPO settings audited source features",()=>{
  });
  it("TPO-settings-audit-21 verifies existing implementation in src/components/tpo/tpo-job-types-editor.tsx",()=>{
   const source=text("src/components/tpo/tpo-job-types-editor.tsx");
-  expect(source).toContain("New job type");
-  expect(source).toContain("setCountsAsPlaced");
-  expect(source).toContain("setCountsAsPlaced");
+  expect(source).toContain("TpoUnifiedJobTypesEditor");
+  const editor=text("src/components/tpo/tpo-unified-job-types-editor.tsx");
+  expect(editor).toContain('aria-label="New job type"');
+  expect(editor).toContain("countsAsPlaced");
  });
  it("TPO-settings-audit-22 verifies partial implementation in src/modules/placements/tpo-job-type-write-service.ts",()=>{
   const source=text("src/modules/placements/tpo-job-type-write-service.ts");
@@ -73,9 +74,10 @@ describe("TPO settings audited source features",()=>{
  });
  it("TPO-settings-audit-57 verifies partial implementation in src/app/(authenticated)/tpo/settings/recruiters/page.tsx",()=>{
   const source=text("src/app/(authenticated)/tpo/settings/recruiters/page.tsx");
-  expect(source).toContain("Access & verification");
+  expect(source).toContain('title="Recruiter access"');
+  expect(source).toContain('header:"Verification"');
   expect(source).toContain("Ended or removed");
-  expect(source).toContain("No expiry on record");
+  expect(source).toContain('"No end date"');
  });
  it("TPO-settings-audit-70 verifies existing implementation in src/components/tpo/tpo-communication-settings-editors.tsx",()=>{
   const source=text("src/components/tpo/tpo-communication-settings-editors.tsx");
@@ -92,7 +94,7 @@ describe("TPO settings audited source features",()=>{
  it("TPO-settings-audit-74 verifies partial implementation in src/app/(authenticated)/tpo/settings/public-page/page.tsx",()=>{
   const source=text("src/app/(authenticated)/tpo/settings/public-page/page.tsx");
   expect(source).toContain("Published placement preview");
-  expect(source).toContain("How your public placements look");
+  expect(source).toContain('aria-label="Published placement preview"');
   expect(source).toContain("Not enough data yet");
  });
  it("TPO-settings-audit-76 verifies partial implementation in src/components/tpo/tpo-communication-settings-editors.tsx",()=>{
@@ -104,7 +106,7 @@ describe("TPO settings audited source features",()=>{
  it("TPO-settings-audit-92 verifies existing implementation in src/app/(authenticated)/tpo/audit/page.tsx",()=>{
   const source=text("src/app/(authenticated)/tpo/audit/page.tsx");
   expect(source).toContain("Filter audit by category");
-  expect(source).toContain("Audit filters");
+  expect(source).toContain("Filter the audit log");
   expect(source).toContain("Apply filters");
  });
  it("TPO-settings-audit-93 verifies partial implementation in src/app/(authenticated)/tpo/audit/page.tsx",()=>{
@@ -131,8 +133,10 @@ describe("TPO settings audited source features",()=>{
  });
  it("TPO-settings-audit-25 verifies partial implementation in src/components/tpo/tpo-job-types-editor.tsx",()=>{
   const source=text("src/components/tpo/tpo-job-types-editor.tsx");
-  expect(source).toContain("Job types saved");
-  expect(source).toContain("Job types were not saved");
+  expect(source).toContain("TpoUnifiedJobTypesEditor");
+  const editor=text("src/components/tpo/tpo-unified-job-types-editor.tsx");
+  expect(editor).toContain("Job types saved");
+  expect(editor).toContain("Job types were not saved");
  });
  it("TPO-settings-audit-45 verifies existing implementation in src/components/tpo/tpo-blocked-dates-editor.tsx",()=>{
   const source=text("src/components/tpo/tpo-blocked-dates-editor.tsx");
@@ -157,14 +161,14 @@ describe("TPO settings audited source features",()=>{
  });
  it("TPO-settings-audit-71 verifies partial implementation in src/app/(authenticated)/tpo/settings/notices/page.tsx",()=>{
   const source=text("src/app/(authenticated)/tpo/settings/notices/page.tsx");
-  expect(source).toContain("Student Notices &amp; Preparation");
+  expect(source).toContain("Student Notices & Preparation");
   expect(source).toContain("Emails switched on");
   expect(source).toContain("Always sent (email and SMS)");
  });
  it("TPO-settings-audit-82 verifies existing implementation in src/components/placements/tpo-settings-nav.tsx",()=>{
   const source=text("src/components/placements/tpo-settings-nav.tsx");
-  expect(source).toContain("id:\"season\"");
-  expect(source).toContain("id:\"trusted\"");
+  expect(source).toContain('id:"rules"');
+  expect(source).toContain('id:"team"');
  });
  it("TPO-settings-audit-97 verifies partial implementation in src/components/tpo/tpo-audit-grid.tsx",()=>{
   const source=text("src/components/tpo/tpo-audit-grid.tsx");
