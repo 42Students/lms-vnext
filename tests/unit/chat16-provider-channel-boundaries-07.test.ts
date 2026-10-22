@@ -73,7 +73,12 @@ describe("chat-16 generic campaign and recruiter email channel fail-closed behav
   });
 
   it("MSG-CHANNEL-FAIL-04 a failed email does not throw, a successful acknowledgement uses a single POST", async () => {
-    const outbound = createOutboundProvider(config, fetch, { APP_ENV: "production" });
+    // A successful provider response is valid only after the deployed sender
+    // attests key rotation. Keep the production security gate in the test.
+    const outbound = createOutboundProvider(config, fetch, {
+      APP_ENV: "production", ZEPTOMAIL_LEGACY_KEY_REVOKED: "confirmed",
+      ZEPTOMAIL_VERIFIED_FROM_ADDRESSES: "hello@example.org",
+    });
     vi.mocked(outboundFetch).mockRejectedValueOnce(new Error("private-provider-secret"));
     expect(await outbound.send(email)).toBe(false);
     vi.mocked(outboundFetch).mockResolvedValueOnce(providerResponse({ request_id: "accepted" }));
