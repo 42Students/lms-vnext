@@ -11,7 +11,7 @@ export const legacyTpoDriveLifecycleLabels = {
  * drive lifecycle: approving REQUEST creates a scoped DRAFT, never a live job. */
 export const legacyRecruiterRequestTransitions = {
   REQUEST: ["DRAFT", "SENT_BACK", "REJECTED", "CANCELLED"],
-  SENT_BACK: ["REQUEST", "REJECTED", "CANCELLED"],
+  SENT_BACK: ["REQUEST", "CANCELLED"],
   DRAFT: [],
   REJECTED: [],
   CANCELLED: [],
@@ -25,8 +25,8 @@ export function canTransitionLegacyRecruiterRequest(
 }
 
 export const TPO_DRIVE_CANONICAL_TRANSITIONS={
- DRAFT:["PUBLISHED"],
- PUBLISHED:["CLOSED"],
+ DRAFT:["PUBLISHED","CANCELLED"],
+ PUBLISHED:["CLOSED","CANCELLED"],
  CLOSED:[],
  CANCELLED:[],
  ARCHIVED:[],
