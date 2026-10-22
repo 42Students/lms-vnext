@@ -1229,19 +1229,17 @@ export async function PlacementCalendarWorkspace({
                 state.view === "month" ? 3 : 4,
               );
 
+              const dayCellClass =
+                "min-h-32 border p-2 " +calendarStyles.calendarDay+" "+
+                (day===today?calendarStyles.calendarCurrentDay+" ":"")+
+                (new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday+" ":"")+
+                (outsideMonth?"bg-muted/40":"bg-surface");
               return (
                 <div
                   key={day}
                   aria-label={`${dateLabel(day)}: ${dayEvents.length} events`}
                   aria-current={day===today?"date":undefined}
-                  className={
-                    "min-h-32 border p-2 " +calendarStyles.calendarDay+" "+
-                    (day===today?calendarStyles.calendarCurrentDay+" ":"")+
-                    (new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday+" ":"")+
-                    (outsideMonth
-                      ? "bg-muted/40"
-                      : "bg-surface")
-                  }
+                  className={dayCellClass}
                 >
                   <p
                     className={
