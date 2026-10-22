@@ -8,6 +8,9 @@ import {placementJobIdSchema} from "./validation";
 import {auditTpoJobChange,requireTpoJobActor,requireTpoJobCollege} from "./tpo-job-write-base";
 import {evaluateTpoDriveEdit,tpoDriveEditSchema} from "./tpo-drive-edit-model";
 import {evaluatePlacementEligibilityBatch} from "./eligibility-service";
+import {placementTpoJobTypes} from "@/db/schema/tpo-configuration";
+import {TPO_BUILTIN_JOB_TYPES} from "./tpo-builtin-job-types";
+import {resolveTpoDriveJobTypeChoice} from "./tpo-job-type-selection-model";
 export async function getTpoDriveEditState(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
  const [job]=await getDb().select({
@@ -181,9 +184,25 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    ...(input.portal!==undefined?{portal:input.portal}:{}),
    importantDates:nextImportantDates,
   }:job.legacyPostingDetails;
+  // A hidden historical type is valid ONLY when the existing label stays
+  // unchanged. Every changed value must resolve to an active type owned by
+  // this college; never accept arbitrary labels or drop the saved type.
+  let selectedJobType: {label:string;countsAsPlaced:boolean} | undefined;
+  if(input.jobTypeLabel!==undefined){
+   const configured=await tx.select({
+    label:placementTpoJobTypes.label,active:placementTpoJobTypes.active,
+    countsAsPlaced:placementTpoJobTypes.countsAsPlaced,
+   }).from(placementTpoJobTypes)
+    .where(eq(placementTpoJobTypes.collegeId,collegeId));
+   selectedJobType=resolveTpoDriveJobTypeChoice(
+    input.jobTypeLabel,{label:job.jobTypeLabel,countsAsPlaced:job.countsAsPlaced},
+    configured,TPO_BUILTIN_JOB_TYPES,
+   )??undefined;
+   if(!selectedJobType)throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
+  }
   const [updated]=await tx.update(placementJobs).set({
    title:input.title,description:input.description,locations:input.locations,openings:input.openings,
-   ...(input.jobTypeLabel!==undefined?{jobTypeLabel:input.jobTypeLabel}:{}),
+   ...(selectedJobType?{jobTypeLabel:selectedJobType.label,countsAsPlaced:selectedJobType.countsAsPlaced}:{}),
    ...(input.employmentType!==undefined?{employmentType:input.employmentType}:{}),
    ...(input.workMode!==undefined?{workMode:input.workMode}:{}),
    ...(input.recruiterDriveMode!==undefined?{recruiterDriveMode:input.recruiterDriveMode}:{}),
