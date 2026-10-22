@@ -748,12 +748,13 @@ function learnerApplicationStageLabel(status:string){
 }
 
 export function LearnerPlacementJobs({
-  items,snapshotNowIso=null,returnQuery="",savedJobIds=[],
+  items,snapshotNowIso=null,returnQuery="",savedJobIds=[],bookmarkActionsEnabled=true,
 }: {
   items: readonly LearnerPlacementJobItem[];
   snapshotNowIso?:string|null;
   returnQuery?:string;
   savedJobIds?:readonly string[];
+  bookmarkActionsEnabled?:boolean;
 }) {
   if (items.length === 0) {
     return (
@@ -835,31 +836,22 @@ export function LearnerPlacementJobs({
                   View job description ↗
                 </a>:null}
               </div>
-              <dl className="grid min-w-0 gap-3 border-t border-border pt-3 text-sm sm:grid-cols-3 lg:grid-cols-1 lg:border-0 lg:pt-0">
-                <div className="min-w-0">
-                  <dt className="text-xs font-semibold text-muted-foreground">CTC</dt>
-                  <dd className="mt-1 break-words font-semibold text-body">
-                    {formatCtc(item.roleOption.minimumAnnualCtcInr,item.roleOption.maximumAnnualCtcInr)}
-                  </dd>
-                </div>
-                <div className="min-w-0">
-                  <dt className="text-xs font-semibold text-muted-foreground">Deadline</dt>
-                  <dd className="mt-1 break-words font-semibold text-body">
-                    <span data-tone={learnerDriveDeadlineUrgency(item.job.applicationDeadline,item.deadlinePassed,snapshotNowIso).tone}>
-                     {learnerDriveDeadlineUrgency(item.job.applicationDeadline,item.deadlinePassed,snapshotNowIso).label}
-                    </span>
-                  </dd>
-                </div>
-                <div className="min-w-0">
-                  <dt className="text-xs font-semibold text-muted-foreground">Location</dt>
-                  <dd className="mt-1 break-words font-semibold text-body">
-                    {item.roleOption.locations.length?item.roleOption.locations.join(", "):"Not specified"}
-                  </dd>
-                </div>
-              </dl>
-              <div className="flex shrink-0 items-start justify-end">
-                {firstRole?<LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title}
-                  initialSaved={savedJobIds.includes(item.job.id)} surface="LIST"/>:null}
+              <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
+              {bookmarkActionsEnabled?<LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>:
+                <span role="status" className="text-xs text-muted-foreground">Bookmarks unavailable</span>}
+              {firstRole?<StatusBadge tone="info">{item.job.jobTypeLabel?.trim() || humanize(item.job.employmentType)}</StatusBadge>:null}
+               {item.application ? (
+                 <StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
+                   {learnerApplicationStageLabel(item.application.stage??item.application.status)}
+                 </StatusBadge>
+               ) : null}
+              <StatusBadge
+                tone={eligibilityTone(
+                  item.eligibility.status,
+                )}
+              >
+                {humanize(item.eligibility.status)}
+              </StatusBadge>
               </div>
             </div>
 
