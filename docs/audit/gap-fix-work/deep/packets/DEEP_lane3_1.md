@@ -16,9 +16,11 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-8-022-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-8-024-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-8-025-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
-- [ ] G2-9-002-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
+- [x] G2-9-002-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 
 ## Results
+
+- G2-9-002-006: OK — `src/app/(authenticated)/college/batch-promotion/page.tsx:128-164` presents the Batch Promotion directory with program filter, completed/inactive checkbox, Refresh and seven table columns (Batch Name, Program, Semester, Academic Year, Students, Status, Last Action). Legacy: `docs/legacy-source/frontend/src/pages/superadmin/sections/BatchPromotion.js:398-450`.
 
 - G2-5-032-016: OK — `src/modules/operations/tpo-scheduled-job-registry.ts:25-29` declares 15-minute schedule/12-minute lease, `src/app/api/internal/placements/tpo/withdrawal-escalations/run/route.ts:19-30` enforces authenticated fenced execution, and `src/modules/placements/tpo-withdrawal-escalation-service.ts:11-38,55-60,94-107` enforces the 24-hour window and per-request durable dedupe. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoScheduledJobs.java:51-52`.
 
