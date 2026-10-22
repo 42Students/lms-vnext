@@ -38,7 +38,7 @@ export async function PATCH(
       context,
       projectId,
       taskId,
-      body,
+      updateProjectTaskStatusInputSchema.parse(body),
     );
 
     return NextResponse.json({ task });
