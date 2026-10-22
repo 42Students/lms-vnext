@@ -2,6 +2,7 @@ import {
   and, desc, eq, gt, inArray, isNotNull, isNull, lt, lte, or, sql, type SQL,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { z } from "zod";
 import { db10Announcements,announcementBroadcastGroups } from "@/db/schema/db10-announcements";
 import { activityEvents, inAppNotifications } from "@/db/schema/activity";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -806,4 +807,52 @@ export async function listAnnouncementTargetOptions(context: RequestContext) {
       label: row.displayName || row.email || "Unnamed learner",
     })),
   };
+}
+
+/** Resend creates a new live notice while consuming one version of the source.
+ * It is not an in-app read receipt replay. The source version CAS prevents
+ * repeated POST retries from duplicating a delivered notification. */
+const announcementResendSchema=z.strictObject({
+ announcementId:z.string().uuid(),
+ collegeId:z.string().uuid(),
+ expectedVersion:z.number().int().min(0),
+ publishConsent:z.literal(true).optional(),
+});
+export async function resendAnnouncementForAdmin(context:RequestContext,raw:unknown){
+ const input=announcementResendSchema.parse(raw);
+ requirePlatformPublishConsent(isSuperAdmin(context),input.publishConsent===true);
+ const original=await loadAnnouncement(input.announcementId);
+ requireManage(context,{collegeId:original.collegeId,organizationId:original.organizationId});
+ if(original.collegeId!==input.collegeId||original.deletedAt)
+  throw new AnnouncementError("ANNOUNCEMENT_NOT_FOUND");
+ // A platform-wide broadcast requires its own all-colleges fanout transaction.
+ if(original.broadcastGroupId)throw new AnnouncementError("STALE_AUDIENCE");
+ const target=await resolveTarget(original.receiverType,original.receiverId);
+ if(target.collegeId!==original.collegeId||
+    target.organizationId!==original.organizationId)
+  throw new AnnouncementError("TARGET_NOT_FOUND");
+ return getDb().transaction(async tx=>{
+  const [locked]=await tx.select().from(db10Announcements)
+   .where(eq(db10Announcements.id,input.announcementId)).for("update").limit(1);
+  if(!locked||locked.deletedAt||locked.collegeId!==input.collegeId)
+   throw new AnnouncementError("ANNOUNCEMENT_NOT_FOUND");
+  if(locked.version!==input.expectedVersion)
+   throw new AnnouncementError("STALE_VERSION");
+  const now=new Date();
+  const [updated]=await tx.update(db10Announcements).set({
+    version:input.expectedVersion+1,updatedAt:now,
+   }).where(and(eq(db10Announcements.id,locked.id),
+     eq(db10Announcements.version,input.expectedVersion),
+     isNull(db10Announcements.deletedAt))).returning({id:db10Announcements.id});
+  if(!updated)throw new AnnouncementError("STALE_VERSION");
+  const [created]=await tx.insert(db10Announcements).values({
+    organizationId:target.organizationId,
+    collegeId:target.collegeId,
+    receiverType:locked.receiverType,receiverId:locked.receiverId,
+    title:locked.title,message:locked.message,
+    senderUserId:context.user.id,senderType:senderType(context),
+    isPinned:locked.isPinned,scheduledAt:null,expiresAt:null,
+  }).returning();
+  return created;
+ });
 }
