@@ -28,8 +28,9 @@ export function recruiterLegacyHeaderCollege(
   g.collegeName.trim().length>0);
  const selected=selectedCollegeId?available.find(g=>g.collegeId===selectedCollegeId):null;
  if(selected)return {collegeId:selected.collegeId,collegeName:selected.collegeName.trim()};
- if(available.length===1&&(!selectedCollegeId||selectedCollegeId===available[0].collegeId))
-  return {collegeId:available[0].collegeId,collegeName:available[0].collegeName.trim()};
+ const soleCollege=available.length===1?available[0]:undefined;
+ if(soleCollege&&(!selectedCollegeId||selectedCollegeId===soleCollege.collegeId))
+  return {collegeId:soleCollege.collegeId,collegeName:soleCollege.collegeName.trim()};
  // Multiple colleges: never guess the active brand; shell must show a chooser.
  return null;
 }
