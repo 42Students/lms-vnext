@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
-export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","SELECTED_NOT_RELEASED","PENDING_VERIFICATION","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","REVOKED","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN","NOT_JOINED"]).transform(value=>value==="NOT_JOINED"?"DID_NOT_JOIN" as const:value).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
+export const offerRegisterQueryObject=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","SELECTED_NOT_RELEASED","PENDING_VERIFICATION","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","REVOKED","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN","NOT_JOINED"]).transform(value=>value==="NOT_JOINED"?"DID_NOT_JOIN" as const:value).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
  // Direct GET/CSV requests may include blank HTML or nullable JSON
  // numeric fields; absent means unbounded, not a zero-package filter.
  minCtcLpa:z.preprocess(value=>value==null||
@@ -9,9 +9,16 @@ export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(
  maxCtcLpa:z.preprocess(value=>value==null||
   typeof value==="string"&&value.trim()===""?undefined:value,
   z.coerce.number().min(0).max(1000).optional()),
-}).strict().superRefine((input,ctx)=>{
- if(input.minCtcLpa!==undefined&&input.maxCtcLpa!==undefined&&input.maxCtcLpa<input.minCtcLpa)
-  ctx.addIssue({code:"custom",path:["maxCtcLpa"],message:"Maximum package must be at least the minimum package"});
+}).strict();
+// Zod 4 does not permit .omit() on refined schemas. Both variants share
+// the same range validation after their request-specific shape is selected.
+const packageRangeValid=(input:{minCtcLpa?:number;maxCtcLpa?:number})=>
+ input.minCtcLpa===undefined||input.maxCtcLpa===undefined||input.maxCtcLpa>=input.minCtcLpa;
+export const offerRegisterQuery=offerRegisterQueryObject.superRefine((input,ctx)=>{
+ if(!packageRangeValid(input))ctx.addIssue({code:"custom",path:["maxCtcLpa"],message:"Maximum package must be at least the minimum package"});
+});
+export const offerRegisterCsvQuery=offerRegisterQueryObject.omit({page:true}).superRefine((input,ctx)=>{
+ if(!packageRangeValid(input))ctx.addIssue({code:"custom",path:["maxCtcLpa"],message:"Maximum package must be at least the minimum package"});
 });
 export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;fixedLpa?:string|null;variableLpa?:string|null;joiningBonusLpa?:string|null;bondMonths?:number|null;bondAmount?:string|null;acceptanceChannel?:string|null;acceptedDisputableUntil?:Date|null;issuedAt:Date;createdAt?:Date|null;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;phone?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
 /** Legacy TPO offer rows defaulted to SELECTED even before a letter was
