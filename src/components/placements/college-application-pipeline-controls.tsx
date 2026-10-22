@@ -13,7 +13,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useToast} from "@/components/ui/toast";
-import {COLLEGE_APPLICATION_STAGES,COLLEGE_APPLICATION_TRANSITIONS} from "@/modules/placements/college-stage-action-model";
+import {COLLEGE_APPLICATION_STAGES,COLLEGE_APPLICATION_TRANSITIONS,collegeStageMoveFeedback} from "@/modules/placements/college-stage-action-model";
 import {driveApplicationsHref,type DriveApplicationsQuery} from "@/modules/placements/college-drive-applications-model";
 import {CollegeApplicationDetailDrawer,type CollegeApplicationDetail} from "./college-application-detail-drawer";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -163,8 +163,9 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    setAllMatching(false);
    setSelected(payload.results?.filter(r=>r.status==="skipped").map(r=>r.applicationId).slice(0,100)??[]);
    const held=payload.results?.filter(item=>item.undoEventId).length??0;
+   const feedback=collegeStageMoveFeedback(action,target,moved,skipped);
    showToast({tone:skipped?"info":"success",
-    title:skipped?moved+" updated, "+skipped+" skipped":"Application status updated",
+    title:feedback.title,
     description:held?held+" learner notifications are held for 30 seconds for safe undo. Other updates are notified in-app.":
      skipped?"Review skipped applicants and retry after refreshing.":notifyLearnerInApp?"Candidates were notified in-app.":"No learner notification was requested."});
    router.refresh();
@@ -173,7 +174,10 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    if(e instanceof FriendlyFetchError&&e.status===409){
     setStaleConflict(true);
     setError("Application status has changed since this page loaded. Refresh the current stages before retrying.");
-   }else setError(e instanceof Error?e.message:friendlyApiError({}));
+   }else{
+    const message=e instanceof Error?e.message:friendlyApiError({});
+    setError(collegeStageMoveFeedback(action,target,0,0).failurePrefix+message);
+   }
   }finally{
    savingRef.current=false;
    if(scopeEpoch.current===epoch)setBusy(false);
