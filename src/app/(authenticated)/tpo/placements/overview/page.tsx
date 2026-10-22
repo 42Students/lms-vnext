@@ -27,7 +27,7 @@ export default async function TpoPlacementsOverviewPage() {
               href="/tpo/placements/new"
               className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-[650] text-on-primary transition-colors hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9"
             >
-              New opportunity
+              + Create drive
             </Link>
             <Dropdown mobileSheet align="end" label="Other placement operations" trigger="More ···">
               <nav aria-label="Placement operation links" className="min-w-48 space-y-1">

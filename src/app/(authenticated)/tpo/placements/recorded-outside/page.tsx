@@ -10,7 +10,7 @@ import {Alert} from "@/components/ui/alert";
 import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form";
 import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
 import {listTpoOutsideDriveRecords} from "@/modules/placements/recorded-outside-participation-service";
-export default async function TpoRecordedOutsidePage({searchParams}:{searchParams:Promise<{saved?:string}>}){
+export default async function TpoRecordedOutsidePage({searchParams}:{searchParams:Promise<{saved?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(
   !context.membership ||
@@ -22,7 +22,7 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
  const result=await recordedOutsideChoices(context,collegeId);
  const recorded=await listTpoOutsideDriveRecords(context);
  const savedId=(await searchParams).saved;
- const invalidConfirmation=typeof savedId==="string"&&
+ const invalidConfirmation=Array.isArray(savedId)||typeof savedId==="string"&&
   !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(savedId);
  const saved=typeof savedId==="string"&&!invalidConfirmation?
   await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
@@ -34,7 +34,7 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
   {saved?<Banner tone="success">
    External drive record saved. It was not published as a job.
   </Banner>:null}
-  {!result.choices.length?<Banner tone="warning">No authorized company is available for this record. <Link href="/tpo/placements/overview" className="font-semibold underline">Companies</Link></Banner>:null}
+  {!result.choices.length?<Banner tone="warning">No authorized company is available for this record. <Link href="/tpo/companies" className="font-semibold underline">Companies</Link></Banner>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
   <section aria-label="Recorded outside drives" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
    <h2 className="text-base font-semibold leading-6 md:text-lg md:leading-7 lg:text-xl">Recorded outside drives</h2>
