@@ -119,6 +119,8 @@ export async function listLearnerPlacementJobs(
     eq(learnerProgramEnrollments.status, "ACTIVE"),
   )).limit(2);
   if (enrollments.length !== 1) return [];
+  const enrollment = enrollments[0];
+  if (!enrollment) return [];
 
   const rows = await getDb()
     .select({
@@ -225,17 +227,17 @@ export async function listLearnerPlacementJobs(
     .from(sectionEnrollments)
     .innerJoin(sections,eq(sections.id,sectionEnrollments.sectionId))
     .where(and(
-      eq(sectionEnrollments.learnerEnrollmentId,enrollments[0]!.id),
+      eq(sectionEnrollments.learnerEnrollmentId,enrollment.id),
       eq(sectionEnrollments.status,"ACTIVE"),
       eq(sections.status,"ACTIVE"),
-      eq(sections.cohortId,enrollments[0]!.cohortId),
+      eq(sections.cohortId,enrollment.cohortId),
     ));
   const activeSectionIds = activeSections.map(row=>row.id);
   const [registration] = await getDb().select({
     choice: placementBatchRegistrations.choice,
   }).from(placementBatchRegistrations).where(and(
     eq(placementBatchRegistrations.collegeId, membership.collegeId),
-    eq(placementBatchRegistrations.cohortId, enrollments[0].cohortId),
+    eq(placementBatchRegistrations.cohortId, enrollment.cohortId),
     eq(placementBatchRegistrations.membershipId, membership.id),
   )).limit(1);
   const registrationState = resolveSelfApplyRegistrationChoice(
@@ -326,7 +328,7 @@ export async function listLearnerPlacementJobs(
     finishedAt:placementBatchLifecycles.finishedAt})
     .from(placementBatchLifecycles).where(and(
       eq(placementBatchLifecycles.collegeId,membership.collegeId),
-      eq(placementBatchLifecycles.cohortId,enrollments[0]!.cohortId),
+      eq(placementBatchLifecycles.cohortId,enrollment.cohortId),
     )).limit(1);
   const effectiveRules=rules?effectiveTpoBatchRuleFields(rules,activeBatch?.rulesOverride):null;
   const heldOffers = await loadPlacementHeldOfferFacts(
