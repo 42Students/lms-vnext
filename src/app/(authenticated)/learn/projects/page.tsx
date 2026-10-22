@@ -76,12 +76,17 @@ export default async function LearnerProjectsPage({
   const status = one(params["status"]);
   const attention = one(params["attention"]);
   const work = one(params["work"]);
+  const parsedSearch=searchSchema.safeParse(one(params["search"]));
+  const parsedStatus=statusSchema.safeParse(status);
+  const parsedAttention=attentionSchema.safeParse(attention);
+  const parsedWork=workSchema.safeParse(work);
+  const parsedSort=sortSchema.safeParse(one(params["sort"]));
   const query: ProjectParticipantListQuery = {
-    search: searchSchema.safeParse(one(params["search"])).data || undefined,
-    status: statusSchema.safeParse(status).data,
-    attention: attentionSchema.safeParse(attention).data,
-    work: workSchema.safeParse(work).data,
-    sort: sortSchema.safeParse(one(params["sort"])).data,
+    ...(parsedSearch.success && parsedSearch.data ? {search:parsedSearch.data} : {}),
+    ...(parsedStatus.success ? {status:parsedStatus.data} : {}),
+    ...(parsedAttention.success ? {attention:parsedAttention.data} : {}),
+    ...(parsedWork.success ? {work:parsedWork.data} : {}),
+    ...(parsedSort.success ? {sort:parsedSort.data} : {}),
     page: parsePage(one(params["page"])),
     pageSize: parsePageSize(one(params["pageSize"])),
   };
