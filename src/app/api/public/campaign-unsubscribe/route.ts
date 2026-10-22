@@ -35,7 +35,7 @@ export async function POST(request:Request){
  const form=await input.formData().catch(()=>null);
  const rawToken=form?.get("token");
  if(typeof rawToken!=="string"||!rawToken.trim()||rawToken.length>2048)
-  return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
+  return successResponse(request,"placement-cell");
  const tpoClaim=verifyTpoCampaignRecipientToken(rawToken,resolveTpoCampaignRecipientSecret(process.env),Date.now());
  if(tpoClaim){
   try{
@@ -43,7 +43,7 @@ export async function POST(request:Request){
    return successResponse(request,"placement-cell");
   }catch(e){
    if(e instanceof CampaignUnsubscribeInvalid)
-    return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
+    return successResponse(request,"placement-cell");
    throw e;
   }
  }
@@ -57,12 +57,15 @@ export async function POST(request:Request){
    return successResponse(request,"placement-cell");
   }catch(e){
    if(e instanceof CampaignUnsubscribeInvalid)
-    return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
+    return successResponse(request,"placement-cell");
    throw e;
   }
  }
  const claim=verifyUnsubscribeToken(rawToken,process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"",Date.now());
- if(!claim)return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
+ // Do not expose whether a guessed or old one-click token matches a recipient.
+ // The legacy public controller acknowledged both already-cleared and unknown
+ // links identically; only verified claims ever reach the suppression writer.
+ if(!claim)return successResponse(request,"placement-cell");
  const db=getDb();
  const exists=await db.execute<{ready:boolean}>(sql`select to_regclass('public.outbound_global_email_suppressions') is not null as ready`);
  if(exists.rows[0]?.ready!==true)return NextResponse.json({error:"SUPPRESSIONS_NOT_READY",message:"That didn\u0027t work. Please try again."},{status:503,headers:{"Cache-Control":"no-store"}});
