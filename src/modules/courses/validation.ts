@@ -78,8 +78,7 @@ export const createCourseInputSchema = z.object({
     .optional(),
 }).strict();
 
-/** A course's destination department is never a tenant grant.
- * The service revalidates both departments under the acting college. */
+/** Scoped in-college moves require a fresh row token. */
 export const moveCourseDepartmentInputSchema=z.strictObject({
   departmentId:z.string().uuid(),
   expectedUpdatedAt:z.iso.datetime({offset:true}),
