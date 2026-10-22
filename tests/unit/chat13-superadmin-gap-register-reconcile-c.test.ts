@@ -44,7 +44,7 @@ describe("chat-13 Super Admin settings, access and tracker reconciliation",()=>{
  });
  it("SA-tenants-modules-45 verifies current code, without asserting runtime activation",()=>{
   const code=source("src/app/(authenticated)/activity/page.tsx");
-  expect(code).toContain("limit: 50");
+  expect(code).toContain("limit: pageSize");
   expect(code).toContain("groups");
  });
  it("SA-tenants-modules-46 verifies current code, without asserting runtime activation",()=>{
@@ -59,7 +59,9 @@ describe("chat-13 Super Admin settings, access and tracker reconciliation",()=>{
  });
  it("SA-tenants-modules-48 verifies current code, without asserting runtime activation",()=>{
   const code=source("src/app/(authenticated)/tracker/audit-findings/page.tsx");
-  expect(code).toContain("\"OPEN\",\"RELEASE\",\"ALL\"");
+  expect(code).toContain('{value:"OPEN",label:"Open"}');
+  expect(code).toContain('{value:"RELEASE",label:"Release blockers"}');
+  expect(code).toContain('{value:"ALL",label:"All"}');
   expect(code).toContain("Release (critical & high)");
  });
  it("SA-tenants-modules-50 verifies current code, without asserting runtime activation",()=>{
@@ -69,7 +71,8 @@ describe("chat-13 Super Admin settings, access and tracker reconciliation",()=>{
  });
  it("SA-tenants-modules-60 verifies current code, without asserting runtime activation",()=>{
   const code=source("src/components/announcements/super-admin-college-broadcast-form.tsx");
-  expect(code).toContain("Pin for recipients");
+  expect(code).toContain("Pin it to the top");
+  expect(code).toContain("isPinned:pinned");
   expect(code).toContain("buttonUrl");
  });
  it("SA-tenants-modules-67 verifies current code, without asserting runtime activation",()=>{

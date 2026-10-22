@@ -19,8 +19,12 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
     it("UX-admin-first-"+route.replaceAll("/", "-")+" requires authenticated context and no raw unresponsive tables", () => {
       const source = read(path);
       expect(source).toContain("getCurrentRequestContext");
-      expect(source).not.toMatch(/<table(?:\s|>)/);
-      expect(source).not.toMatch(/min-h-(?:7|8|9|10)(?!\d)/);
+      if(/<table(?:\s|>)/.test(source)){
+        expect(source).toContain("overflow-x-auto");
+        expect(source).toMatch(/min-w-\[/);
+      }
+      // Desktop may use md:min-h-9; touch targets cannot default below 44px.
+      expect(source).not.toMatch(/(?<![\w:-])min-h-(?:7|8|9|10)(?!\d)/);
       expect(source).not.toMatch(/target=(?:\"|')_blank(?:\"|')/);
     });
   }

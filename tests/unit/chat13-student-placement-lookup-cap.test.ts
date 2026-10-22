@@ -35,13 +35,15 @@ describe("SA-STUDENT-LOOKUP-CAP-01 truthful supervised placement lookup paging",
     const service=readFileSync("src/modules/placements/college-placement-student-lookup-service.ts","utf8");
     expect(service).toContain(".limit(STUDENT_LOOKUP_CAP+1)");
     expect(service).toContain(".orderBy(asc(users.displayName),asc(collegeMemberships.id))");
-    expect(service).toContain("const visiblePeople=capStudentLookupRows(people,STUDENT_LOOKUP_CAP).items");
+    expect(service).toContain("people.slice(0,STUDENT_LOOKUP_CAP)");
+    expect(service).toContain("truncated:people.length>STUDENT_LOOKUP_CAP");
+    expect(service).toContain("const {students:visiblePeople,truncated}=await suggestCollegePlacementLearners(ctx,raw);");
     expect(service).toContain("Promise.all(visiblePeople.map(async person=>");
     expect(service).toContain("inArray(placementApplications.membershipId,visiblePeople.map(person=>person.membershipId))");
     expect(service).toContain(".limit(STUDENT_LOOKUP_APPLICATION_CAP+1)");
     expect(service).toContain(".orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id),desc(placementOffers.id))");
-    expect(service).toContain("capStudentLookupRows(rows,STUDENT_LOOKUP_APPLICATION_CAP)");
-    expect(service).toContain("applications:applications.items");
+    expect(service).toContain("capStudentLookupRows(distinct,STUDENT_LOOKUP_APPLICATION_CAP)");
+    expect(service).toContain("applications:applications.items.map(row=>");
     expect(service).toContain("truncated:applications.truncated");
     expect(service).toContain("people.length>STUDENT_LOOKUP_CAP");
     expect(service).toContain("eq(collegeMemberships.collegeId,collegeId)");

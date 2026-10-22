@@ -12,7 +12,9 @@ describe("Faculty scroll and motion cues",()=>{
  });
  it("UX-teacher-scroll-motion-02 cues horizontal attendance and retains sticky learner column",()=>{
   const s=read("src/components/attendance/faculty-attendance-workspace.tsx");
-  expect(s).toContain('<ScrollCue axis="x" label="Faculty attendance monthly grid"');
+  expect(s).toContain('<Table scrollLabel="Faculty attendance monthly grid"');
+  const table=read("src/components/ui/table.tsx");
+  expect(table).toContain('<ScrollCue axis="x" label={scrollLabel');
   expect(s).toContain('className="sticky left-0 z-10 bg-surface px-3 py-3"');
   expect(s).toContain("P = Present · A = Absent");
  });
@@ -22,7 +24,7 @@ describe("Faculty scroll and motion cues",()=>{
   const table=read("src/components/ui/data-table.tsx");
   expect(table).toContain('<ScrollCue axis="x"');
   expect(table).toContain('mobilePriority==="action"');
-  expect(table).toContain("sm:table-row");
+  expect(table).toContain("md:table-row");
   expect(s).not.toContain("hidden overflow-x-auto rounded-xl");
  });
 });

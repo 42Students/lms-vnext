@@ -72,7 +72,8 @@ describe("TPO-drive-workspace-44 guarded reschedule endpoint and error UX",()=>{
   expect(src).toContain("ref={formRef}");
   expect(src).toContain("if(pending||!formRef.current)return");
   expect(src).toContain("<ConfirmDialog");
-  expect(src).toContain("onConfirm={()=>{setConfirmOpen(false);void submitConfirmed();}}");
+  expect(src).toContain("onConfirm={()=>{void submitConfirmed();}}");
+  expect(src).toContain("if(!pending)setConfirmOpen(next);");
   expect(src).toContain("body?.message");
   expect(src).not.toContain("window.confirm(");
   expect(src).not.toContain("body?.error");

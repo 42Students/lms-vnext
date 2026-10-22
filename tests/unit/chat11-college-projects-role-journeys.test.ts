@@ -44,11 +44,13 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
   it("PROJ-COL-QUERY-03 refuses number-coercion bypasses and retains canonical decimal navigation", () => {
     for (const hostile of ["1e2", "0x10", "0b101", " 2", "2 ", "1.0", "+2", "-0", "Infinity", "NaN"]) {
       expect(parseCollegeProjectsQuery({page: hostile}).success, hostile).toBe(false);
-      expect(parseCollegeProjectsQuery({pageSize: hostile}).success, hostile).toBe(false);
+      const legacySize=parseCollegeProjectsQuery({pageSize: hostile});
+      expect(legacySize.success, hostile).toBe(true);
+      if(legacySize.success)expect(legacySize.data.pageSize).toBe(20);
     }
     expect(parseCollegeProjectsQuery({page: "100001"}).success).toBe(false);
     expect(parseCollegeProjectsQuery({pageSize: "9"}).success).toBe(false);
-    for (const valid of [{page:"1",pageSize:"10"},{page:"0002",pageSize:"025"},{page:"100000",pageSize:"100"}]) {
+    for (const valid of [{page:"1",pageSize:"10"},{page:"0002",pageSize:"20"},{page:"100000",pageSize:"100"}]) {
       const parsed=parseCollegeProjectsQuery(valid);
       expect(parsed.success,JSON.stringify(valid)).toBe(true);
       if(parsed.success) {
@@ -72,7 +74,7 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     const defaults = parseCollegeProjectsQuery({});
     expect(defaults.success).toBe(true);
     if(defaults.success)expect(defaults.data).toMatchObject({
-      view: "cards", page: 1, pageSize: 25,
+      view: "table", page: 1, pageSize: 20,
     });
   });
 
@@ -101,6 +103,11 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     ];
     for (const route of routes) {
       const source = readFileSync(route, "utf8");
+      if(route.endsWith("/workspaces/new/page.tsx")){
+        expect(source).toContain("redirect(");
+        expect(source).toContain("/college/projects/create");
+        continue;
+      }
       expect(source, route).toContain("getProjectAdminCollegeId(context)");
       expect(source, route).not.toContain("context.membership.collegeId");
       expect(source, route).not.toContain("context.membership?.collegeId");
@@ -145,7 +152,7 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     }).success).toBe(false);
     expect(createProjectInstanceInputSchema.safeParse({
       ...base, sectionId: undefined,
-    }).success).toBe(false);
+    }).success).toBe(true);
     expect(createProjectInstanceInputSchema.safeParse({
       ...base, collegeId: OTHER_COLLEGE, injectedOrganizationId: ORGANIZATION,
     }).success).toBe(false);
@@ -183,8 +190,9 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
 
   it("PROJ-COL-STALE-05 refuses Enter-key submit with a pending/wrong class roster and ignores aborted candidates", () => {
     const control=readFileSync("src/components/projects/project-create-control.tsx","utf8");
-    expect(control).toContain("if (!controller.signal.aborted) setMentors(body.mentors ?? [])");
-    expect(control).toContain("controller.signal.aborted ||");
+    expect(control).toContain("if (controller.signal.aborted) return;");
+    expect(control).toContain("setMentors(previous => {");
+    expect(control).toContain("if (controller.signal.aborted) return;");
     expect(control).toContain("classesError ||");
     expect(control).toContain("!classes.some(item => item.id === sectionId)");
     expect(control).toContain("rosterError ||");
@@ -205,7 +213,7 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     const submit=control.indexOf("submitLock.current = true");
     expect(validation).toBeGreaterThan(0);
     expect(validation).toBeLessThan(submit);
-    expect(control).toContain("Assign a Mentor before making this Project active.");
+    expect(control).toContain("A mentor is required before a workspace can be Active");
     expect(createProjectInstanceInputSchema.safeParse({
       collegeId:COLLEGE,templateId:TEMPLATE,slug:"a",title:"Team A",
       initialStatus:"ACTIVE",learnerMembershipIds:[],

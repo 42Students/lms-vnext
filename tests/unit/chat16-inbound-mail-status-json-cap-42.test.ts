@@ -1,12 +1,14 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
-import {changeInboundMailStatusForAdmin} from "@/modules/inbound-mail/admin-service";
+import {changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
 import {PATCH} from "@/app/api/admin/inbound-mail/status/route";
 
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
-vi.mock("@/modules/inbound-mail/admin-service",()=>({changeInboundMailStatusForAdmin:vi.fn()}));
+vi.mock("@/modules/inbound-mail/admin-service",()=>({
+ changeInboundMailStatusForAdmin:vi.fn(),getInboundMailDetailForAdmin:vi.fn(),
+}));
 const id="11111111-1111-4111-8111-111111111111";
 const url="https://lms.example.org/api/admin/inbound-mail/status";
 const req=(body:BodyInit)=>new Request(url,{
@@ -22,6 +24,7 @@ beforeEach(()=>{
   user:{id:"sa",identityUid:"sa-uid",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
   membership:null,
  });
+ vi.mocked(getInboundMailDetailForAdmin).mockResolvedValue({id});
  vi.mocked(changeInboundMailStatusForAdmin).mockResolvedValue({
   kind:"UPDATED",id,status:"TRIAGED",version:1,
  });
@@ -57,6 +60,9 @@ describe("chat-16 global private inbound-mail status HTTP boundary",()=>{
   );
   vi.mocked(changeInboundMailStatusForAdmin).mockResolvedValueOnce({kind:"STALE"});
   expect((await PATCH(req(payload))).status).toBe(409);
+  expect(getInboundMailDetailForAdmin).toHaveBeenCalledWith(
+   expect.objectContaining({user:expect.objectContaining({id:"sa"})}),id,
+  );
   vi.mocked(changeInboundMailStatusForAdmin).mockResolvedValueOnce({kind:"UNAVAILABLE"});
   expect((await PATCH(req(payload))).status).toBe(503);
  });

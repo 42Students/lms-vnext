@@ -51,9 +51,9 @@ describe("College Admin attendance center", () => {
     const absent = {scheduleEventId:notMarked.id,membershipId:"learner-a",status:"ABSENT"};
     const learnerA = adminAttendanceCellState(notMarked,absent,NOW);
     const learnerB = adminAttendanceCellState(notMarked,undefined,NOW);
-    expect(learnerA).toMatchObject({code:"A",label:"Absent",counted:false,present:false});
+    expect(learnerA).toMatchObject({code:"A",label:"Absent",counted:true,present:false});
     expect(learnerB).toMatchObject({code:"—",label:"Not marked",counted:false,present:false});
-    expect(adminAttendancePercent("learner-a",[notMarked],[absent],NOW)).toBeNull();
+    expect(adminAttendancePercent("learner-a",[notMarked],[absent],NOW)).toBe(0);
     expect(adminAttendancePercent("learner-b",[notMarked],[absent],NOW)).toBeNull();
   });
 
