@@ -8,6 +8,7 @@ import {
   exists,
   ilike,
   inArray,
+  isNull,
   or,
   sql,
 } from "drizzle-orm";
@@ -17,6 +18,8 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   colleges,
+  departments,
+  facultyProfiles,
   membershipRoles,
   organizations,
   users,
@@ -30,6 +33,7 @@ import type { MembershipManagementRepository } from "./membership-service";
 import { PeopleServiceError } from "./errors";
 import {assertMutableMembershipTarget} from "./membership-protection";
 import {activeMentorProjectCount} from "./active-mentor-project-guard";
+import {facultyProfileDocumentSchema} from "./faculty-profile-document";
 import type {
   CollegePeoplePage,
   OnboardedPerson,
@@ -409,6 +413,56 @@ export const drizzlePeopleRepository:
         const roles = roleRows.map(
           (row) => row.role,
         );
+
+        if(input.facultyProfile){
+          if(!roles.includes("FACULTY"))
+            throw new Error("FACULTY_ROLE_REQUIRED");
+          // Authorize the exact department in this same transaction. A
+          // follow-up profile write could leave a fully active faculty
+          // membership without a valid department on failure.
+          const [department]=await tx.select({id:departments.id})
+            .from(departments).where(and(
+              eq(departments.id,input.facultyProfile.primaryDepartmentId),
+              eq(departments.collegeId,input.collegeId),
+              isNull(departments.archivedAt),
+            )).limit(1);
+          if(!department)throw new Error("DEPARTMENT_NOT_FOUND");
+          const [existingProfile]=await tx.select({
+            document:facultyProfiles.profileDocument,
+          }).from(facultyProfiles)
+            .where(eq(facultyProfiles.membershipId,membership.id))
+            .for("update").limit(1);
+          const original=facultyProfileDocumentSchema.parse(
+            existingProfile?.document??{},
+          );
+          const requested=input.facultyProfile;
+          const mobile=requested.contactPhone.replace(/\D/g,"").slice(-10);
+          const document=facultyProfileDocumentSchema.parse({
+            ...original,
+            about:{...original.about,description:requested.bio},
+            personalDetails:{...original.personalDetails,
+              gender:requested.gender,dateOfBirth:requested.dateOfBirth},
+            address:{...original.address,currentAddress:requested.address},
+            contact:{...original.contact,
+              contactMobile:mobile,contactMail:requested.contactEmail},
+          });
+          await tx.insert(facultyProfiles).values({
+            membershipId:membership.id,profileDocument:document,
+            primaryDepartmentId:department.id,
+            academicTitle:requested.academicTitle||null,
+            employmentType:requested.employmentType,
+          }).onConflictDoUpdate({
+            target:facultyProfiles.membershipId,
+            set:{
+              profileDocument:document,
+              profileDocumentVersion:sql`${facultyProfiles.profileDocumentVersion}+1`,
+              primaryDepartmentId:department.id,
+              academicTitle:requested.academicTitle||null,
+              employmentType:requested.employmentType,
+              updatedAt:new Date(),
+            },
+          });
+        }
 
         await recordActivityEventInTransaction(
           tx,

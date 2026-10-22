@@ -27,6 +27,7 @@ import {
   getPersonMembershipDetail,
   listCollegePeople,
   onboardPerson,
+  type FacultyOnboardingProfile,
 } from "./service";
 
 function runtimeIdentityDirectory() {
@@ -54,12 +55,13 @@ export function provisionPlatformIdentityWithRuntime(
 export function onboardPersonWithRuntime(
   context: RequestContext,
   rawInput: unknown,
+  facultyProfile?:FacultyOnboardingProfile,
 ) {
   return onboardPerson(context, rawInput, {
     identityDirectory:
       runtimeIdentityDirectory(),
     repository: drizzlePeopleRepository,
-  });
+  },facultyProfile);
 }
 
 export function listCollegePeopleWithRuntime(

@@ -22,6 +22,14 @@ export type PeopleTargetCollege = {
   organizationId: string;
 };
 
+/** Authenticated faculty onboarding profile; persisted with the membership,
+ * never in a follow-up write that could leave an incomplete account. */
+export type FacultyOnboardingProfile={
+ kind:"FACULTY";primaryDepartmentId:string;employmentType:string;
+ academicTitle:string;gender:string;dateOfBirth:string;
+ address:string;bio:string;contactPhone:string;contactEmail:string;
+};
+
 export type PersistPersonMembershipInput = {
   identityUid: string;
   phoneE164: string;
@@ -29,6 +37,7 @@ export type PersistPersonMembershipInput = {
   displayName: string;
   collegeId: string;
   roles: readonly MembershipRole[];
+  facultyProfile?: FacultyOnboardingProfile;
 };
 
 export type OnboardedPerson = {
@@ -109,6 +118,7 @@ export async function onboardPerson(
   context: RequestContext,
   rawInput: unknown,
   dependencies: OnboardPersonDependencies,
+  facultyProfile?:FacultyOnboardingProfile,
 ) {
   const input: OnboardPersonInput = onboardPersonInputSchema.parse(rawInput);
   const college = await dependencies.repository.loadActiveCollege(
@@ -150,6 +160,7 @@ export async function onboardPerson(
       displayName: input.displayName,
       collegeId: college.id,
       roles: input.roles,
+      ...(facultyProfile?{facultyProfile}:{}),
     },
     {
       context,

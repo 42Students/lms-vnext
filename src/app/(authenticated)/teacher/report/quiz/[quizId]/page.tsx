@@ -19,6 +19,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getFacultyQuizReport } from "@/modules/courses/faculty-assessment-report-service";
+import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
+import {CoursesServiceError} from "@/modules/courses/errors";
 import { facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
 
 export default async function FacultyQuizReportPage({
@@ -40,6 +42,25 @@ export default async function FacultyQuizReportPage({
   try {
     report=await getFacultyQuizReport(context,parsed.assessmentId,parsed.deliveryId);
   } catch(error) {
+    if(!parsed.deliveryId && error instanceof CoursesServiceError &&
+       error.code==="QUIZ_DELIVERY_MISMATCH"){
+      // Shared quizzes have no single class denominator. Offer only Sections
+      // from this faculty member's already-authorized assessment overview.
+      const options=await getFacultyAssessmentOverview(context)
+        .then(overview=>overview.quizzes.filter(item=>item.id===parsed.assessmentId))
+        .catch(()=>[]);
+      if(options.length>1)return <section className="min-w-0 space-y-4">
+        <PageHeader title="Choose a Section for this quiz report"/>
+        <p className="text-sm text-body">This quiz is shared by more than one Section. Select the Section whose results you want to review.</p>
+        <ul className="space-y-2">{options.map(option=>
+          <li key={option.deliveryId}>
+            <Link href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+"?deliveryId="+encodeURIComponent(option.deliveryId)}
+              className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              {option.courseName} · {option.lessonName} · {option.deliveryId.slice(0,8)}
+            </Link>
+          </li>)}</ul>
+      </section>;
+    }
     if(facultyQuizReportHidden(error)) notFound();
     return <section className="min-w-0 space-y-4">
       <PageHeader title="Quiz report" />
