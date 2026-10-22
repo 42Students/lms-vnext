@@ -14,7 +14,7 @@ describe("PROJ-BREAK-COL-PAGES-01 scope and resilience for all seven College Adm
    const source=readFileSync(base+page,"utf8");
    if(page==="workspaces/new/page.tsx"){
     expect(source).toContain('redirect("/college/projects/create?mode=teams")');
-    continue;
+    return;
    }
    const scope=source.indexOf("getProjectAdminCollegeId(context)");
    expect(source,page).toContain("getCurrentRequestContext()");

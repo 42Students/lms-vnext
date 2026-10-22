@@ -5,9 +5,9 @@ describe("chat-12 touched TPO pages degrade gracefully",()=>{
  it("TPO-requests-verification-18 / GR-19 / GR-20 provide request loading and friendly error screens",()=>{
   const loading=read("src/app/(authenticated)/tpo/requests/loading.tsx");
   const error=read("src/app/(authenticated)/tpo/requests/error.tsx");
-  expect(loading).toContain('aria-busy="true"');
-  expect(loading).toContain('role="status"');
-  expect(error).toContain('role="alert"');
+  expect(loading).toContain("GracefulPageLoading");
+  expect(loading).toContain('label="Loading requests…"');
+  expect(error).toContain("<ErrorState");
   expect(error).toContain("Retry requests");
   expect(error).not.toContain("error.message");
  });
@@ -15,20 +15,21 @@ describe("chat-12 touched TPO pages degrade gracefully",()=>{
   for(const path of ["src/app/(authenticated)/tpo/requests/error.tsx","src/app/(authenticated)/tpo/verification/error.tsx"]){
    const source=read(path);
    expect(source).toContain("onClick={reset}");
-   expect(source).toContain("focus-visible:ring-2");
-   expect(source).toContain("role=\"alert\"");
+   expect(source).toContain("min-h-11");
+   expect(source).toContain("<ErrorState");
   }
  });
  it("GR-90 / GR-91 offer plain announced retryable student-panel errors",()=>{
   const panel=read("src/components/tpo/tpo-student-quick-panel.tsx");
-  expect(panel).toContain("Retry loading student details");
+  expect(panel).toContain('<InlineNotice tone="error" message={error}/>');
+  expect(panel).toContain("onClick={()=>void fetchDetail()}>Retry");
   expect(panel).toContain('role="alert"');
   expect(panel).not.toContain("body?.error??");
  });
  it("GR-32 preserves the academic import draft on conflict and never renders the raw backend code",()=>{
   const source=read("src/components/tpo/tpo-academic-import-workspace.tsx");
-  expect(source).toContain("This changed while you were working.");
-  expect(source).toContain("Your academic import choices are kept below");
+  expect(source).toContain("These records changed while you were working.");
+  expect(source).toContain("Those rows are now unselected. Re-preview before retrying the remaining rows.");
   expect(source).toContain("cause instanceof FriendlyFetchError && cause.status===409");
   expect(source).not.toContain("window.confirm(");
   expect(source).not.toContain("body?.error");
