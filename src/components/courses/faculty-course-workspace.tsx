@@ -592,11 +592,11 @@ export function FacultyCourseWorkspace({
             </Link>
             {workspace.lessons.map((lesson,index)=>lesson.id===selectedLessonId?(
               <div key={lesson.id} className="flex flex-wrap items-center gap-3 text-sm">
-                {index>0?<Link className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1].id)}>
+                {index>0?<Link className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1]?.id ?? "")}>
                   Previous lesson
                 </Link>:null}
                 <span className="text-muted-foreground">Lesson {index+1} of {workspace.lessons.length}</span>
-                {index+1<workspace.lessons.length?<Link className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1].id)}>
+                {index+1<workspace.lessons.length?<Link className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1]?.id ?? "")}>
                   Next lesson
                 </Link>:null}
               </div>
