@@ -36,6 +36,35 @@ export async function listSuperAdminInterviews(
    query.status==="ACTIVE"?
     inArray(effectiveStatus,["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"]):
     sql`${effectiveStatus} = ${query.status}`;
+ // Compare the complete college appointment set before page/filter slicing.
+ // Legacy allows both a learner and an interviewer to have concurrent slots;
+ // never restrict conflict detection to the rows currently displayed.
+ const candidateOverlap=sql<boolean>`case when ${s.status} <> 'BOOKED' then false
+  else exists(
+   select 1 from placement_round_candidate_slots collision
+   join placement_jobs collision_job on collision_job.id=collision.job_id
+   join placement_applications other_app on other_app.id=collision.application_id
+   join placement_applications own_app on own_app.id=${s.applicationId}
+   where collision.id <> ${s.id}
+    and collision.status='BOOKED'
+    and collision_job.college_id=${scope.collegeId}::uuid
+    and collision.starts_at < ${s.endsAt}
+    and collision.ends_at > ${s.startsAt}
+    and other_app.membership_id=own_app.membership_id
+  ) end`;
+ const interviewerOverlap=sql<boolean>`case when ${s.status} <> 'BOOKED' then false
+  else exists(
+   select 1 from placement_round_candidate_slots collision
+   join placement_jobs collision_job on collision_job.id=collision.job_id
+   where collision.id <> ${s.id}
+    and collision.status='BOOKED'
+    and collision_job.college_id=${scope.collegeId}::uuid
+    and collision.starts_at < ${s.endsAt}
+    and collision.ends_at > ${s.startsAt}
+    and nullif(lower(trim(coalesce(${s.legacyInterviewerName},${s.panel}))), '') is not null
+    and lower(trim(coalesce(collision.legacy_interviewer_name,collision.panel))) =
+        lower(trim(coalesce(${s.legacyInterviewerName},${s.panel})))
+  ) end`;
  const source=getDb().select({
   id:s.id,jobId:placementJobs.id,jobTitle:placementJobs.title,
   companyName:placementCompanies.name,candidateName:users.displayName,
@@ -46,6 +75,8 @@ export async function listSuperAdminInterviews(
   legacyInterviewerName:s.legacyInterviewerName,
   room:s.room,legacyInterviewMode:s.legacyInterviewMode,
   version:s.version,
+  candidateConflict:candidateOverlap.as("candidate_conflict"),
+  interviewerConflict:interviewerOverlap.as("interviewer_conflict"),
  }).from(s)
  .innerJoin(placementJobs,and(eq(placementJobs.id,s.jobId),eq(placementJobs.collegeId,scope.collegeId)))
  .innerJoin(placementJobRounds,and(eq(placementJobRounds.id,s.roundId),eq(placementJobRounds.jobId,s.jobId)))
@@ -84,6 +115,8 @@ export async function listSuperAdminInterviews(
    const kind=row.interviewType??row.roundKind;
    const mode=row.legacyInterviewMode??(row.room.startsWith("https://")?"ONLINE":"IN_PERSON");
    const interviewer=row.legacyInterviewerName??row.panel??"Not assigned";
+   const conflict=row.candidateConflict&&row.interviewerConflict?"Both candidate and interviewer":
+    row.candidateConflict?"Candidate":row.interviewerConflict?"Interviewer":"None";
    const dateKey=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",
     year:"numeric",month:"2-digit",day:"2-digit"}).format(row.startsAt);
    const href="/admin/placements/calendar?view=agenda&date="+
@@ -104,6 +137,7 @@ export async function listSuperAdminInterviews(
      "Date & Time: "+date,
      "Interviewer: "+interviewer,
      "Mode: "+mode,
+     "Conflict: "+conflict,
      "Actions: Open interview calendar",
     ],
    };
