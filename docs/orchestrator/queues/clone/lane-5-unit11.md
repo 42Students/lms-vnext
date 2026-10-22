@@ -7,7 +7,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [ ] `tests/unit/chat19-tpo-mobile-footer.test.ts` (3 failing)
 - [x] `tests/unit/chat5-final-faculty-courses-a.test.ts` (1 failing)
 - [ ] `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` (2 failing)
-- [ ] `tests/unit/learner-coding-profile-link.test.ts` (1 failing)
+- [x] `tests/unit/learner-coding-profile-link.test.ts` (1 failing)
 - [x] `tests/unit/tpo-team-person-context-chat2.test.ts` (1 failing)
 
 ## Failures (from CI log)
@@ -202,3 +202,4 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 - TPO Team bookmark test: current canonical `/tpo/settings?tab=team` route (`59fd1b214ba2b6e4f43329edc16d554255deb5ac`).
 
 - Faculty roster contract test: metrics implementation moved to `faculty-roster-display-model.ts`; retained assertions for contact count, missing-roll copy, roster sorting and authorized photo fallback (`edc029d5ea421c1fab58fe700397974c213dba19`).
+- Coding profile link security test: legacy HTTP input canonicalizes to HTTPS; malicious/unknown hosts remain rejected (`10ff2e49943d91856e8291829284ca209ffd4b35`).
