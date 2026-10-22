@@ -48,16 +48,22 @@ describe("COL-people-faculty-bulk-01 confirmed, tenant-scoped batch imports",()=
    csv:csv("Jane,Smith,9876543210,jane@example.edu")})).rejects.toThrow("Missing permission: people.manage");
   expect(mocks.onboard).not.toHaveBeenCalled();
  });
- it("normalizes Indian phone numbers, creates only faculty roles and skips duplicate mobiles",async()=>{
-  const result=await importFacultyCsv(actor,{collegeId,departmentId,confirmed:true,csv:csv(
-   "Jane,Smith,9876543210,jane@example.edu",
-   "Jane,Smith,+919876543210,jane@example.edu",
-   "Ravi,Patel,9876543211,ravi@example.edu",
-  )});
-  expect(result).toMatchObject({total:3,created:2,skipped:1,failed:0});
-  expect(result.results.map(row=>row.status)).toEqual(["CREATED","SKIPPED","CREATED"]);
-  expect(result.results[1]?.message).toContain("Duplicate mobile");
-  expect(mocks.onboard).toHaveBeenCalledTimes(2);
+ it("rejects duplicate mobiles before importing, then normalizes distinct phones and creates only faculty roles",async()=>{
+  const duplicate=csv(
+    "Jane,Smith,9876543210,jane@example.edu",
+    "Jane,Smith,+919876543210,jane@example.edu",
+    "Ravi,Patel,9876543211,ravi@example.edu",
+   );
+   await expect(importFacultyCsv(actor,{collegeId,departmentId,confirmed:true,csv:duplicate}))
+    .rejects.toThrow("Duplicate mobile in file");
+   expect(mocks.onboard).not.toHaveBeenCalled();
+   const result=await importFacultyCsv(actor,{collegeId,departmentId,confirmed:true,csv:csv(
+    "Jane,Smith,9876543210,jane@example.edu",
+    "Ravi,Patel,+919876543211,ravi@example.edu",
+   )});
+   expect(result).toMatchObject({total:2,created:2,skipped:0,failed:0});
+   expect(result.results.map(row=>row.status)).toEqual(["CREATED","CREATED"]);
+   expect(mocks.onboard).toHaveBeenCalledTimes(2);
   expect(mocks.profile).toHaveBeenCalledTimes(2);
   expect(mocks.profile).toHaveBeenNthCalledWith(1,actor,"created",{
    primaryDepartmentId:departmentId,employmentType:"Lecturer",academicTitle:null,
