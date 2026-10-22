@@ -5,7 +5,7 @@ describe("College placement verified operational parity",()=>{
  it("COL-placements-11 retention report and college student placement lookup are accessible",()=>{
   {const body=source("src/app/(authenticated)/college/placements/retention/page.tsx");expect(body).toContain("Data retention report");expect(body).toContain("getCollegeApplicationRetentionReport");}
   {const body=source("src/app/(authenticated)/college/placements/student-lookup/page.tsx");expect(body).toContain("Student placement lookup");expect(body).toContain("lookupCollegeStudentPlacement");}
-  {const body=source("src/modules/placements/college-retention-report-service.ts");expect(body).toContain("collegeApplicationRetentionCutoff(new Date(),days)");expect(body).toContain(".limit(200)");
+  {const body=source("src/modules/placements/college-retention-report-service.ts");expect(body).toContain("collegeApplicationRetentionCutoff(new Date(),days)");expect(body).toContain(".limit(pageSize).offset((page-1)*pageSize)");expect(body).toContain("pageCount:Math.max(1,Math.ceil");
     const policy=source("src/modules/placements/college-retention-report-policy.ts");
     expect(policy).toContain("COLLEGE_APPLICATION_RETENTION_DAYS = 365");
     expect(policy).toContain("days * 86400000");
