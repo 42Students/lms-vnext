@@ -1,5 +1,4 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
-import { seedPublishableJobReadiness } from "../support/publishable-job-readiness";
 import {
   afterAll,
   beforeEach,
@@ -108,6 +107,10 @@ async function cleanup() {
   await pool.query(
     "delete from placement_application_status_history",
   );
+  // College-specific stages reference applications and must be removed first.
+  await pool.query(
+    "delete from placement_college_application_stages",
+  );
   await pool.query(
     "delete from placement_applications",
   );
@@ -163,8 +166,7 @@ async function createPublishedJob(
       applicationMode: "INTERNAL",
     },
   );
-  await seedPublishableJobReadiness(draft.id,context.user.id);
-  return publishPlacementJob(context, draft.id);
+  return publishPreparedPlacementJob(context, draft.id);
 }
 
 beforeEach(async () => {
