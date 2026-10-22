@@ -126,3 +126,9 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/screening-service.ts, src/modules/placements/tpo-bulk-application-stage-service.ts
 - Legacy: docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PlacementJobController.java:509-573 notes,579-665 bulk statuses,671-753 single statuses
 - Expected fix: Create service dispatch for notes/status/bulk flows, actor audit, per-item failure
+
+
+## Fast verification triage — chat-4
+- OK (direct source inspection): none conclusively verified in this pass.
+- DEFERRED (not validated or fixed; needs deeper parity review): G2-7-015-004, G2-7-015-077, G2-7-017-006, G2-7-017-080, G2-7-018-067, G2-7-021-016, G2-7-021-055, G2-7-021-059, G2-7-021-081, G2-7-032-022, G2-7-032-026, G2-7-032-032, G2-7-032-051, G2-7-032-071, G2-7-034-010, G2-7-036-038, G2-8-021-042, G2-8-027-001, G2-8-027-030, G2-8-027-054, G2-8-019-059, G2-12-012-015, G2-12-012-031, G2-15-026-020, G2-15-026-034.
+- This is a triage disposition, not an assertion of feature parity. Deferred facets remain open for implementation and independent comparison.
