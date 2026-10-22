@@ -82,6 +82,7 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
       aria-describedby="existing-hint" aria-invalid onFiles={()=>{}}/>);
     expect(disabled).toContain('aria-describedby="existing-hint disabled-upload-unavailable"');
     expect(disabled).not.toContain('aria-invalid="true"');
+    expect(moduleSource("file-upload")).toContain('aria-invalid={unavailable ? undefined : error ? true : props["aria-invalid"]}');
     expect(disabled).toContain('disabled=""');
   });
 
