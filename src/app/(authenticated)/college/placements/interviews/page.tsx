@@ -31,7 +31,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  const input={q:first(raw.q)??"",status:first(raw.status)??"ALL",
   mode:first(raw.mode)??"ALL",type:first(raw.type)??"ALL",
   companyId:first(raw.companyId)||undefined,departmentId:first(raw.departmentId)||undefined,
-  sort:first(raw.sort)??"UPCOMING",page:first(raw.page)??"1"};
+  sort:first(raw.sort)??"EARLIEST",page:first(raw.page)??"1",pageSize:first(raw.pageSize)??"20"};
  const valid=collegeInterviewFilters.safeParse(input);
  if(!valid.success)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data).catch(error=>{
@@ -45,6 +45,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  const build=(page:number,format:"html"|"ics"|"csv"="html")=>{
   const query=new URLSearchParams({q:valid.data.q,status:valid.data.status,
    mode:valid.data.mode,type:valid.data.type,sort:valid.data.sort,page:String(page),
+   pageSize:String(valid.data.pageSize),
    ...(valid.data.companyId?{companyId:valid.data.companyId}:{}),
    ...(valid.data.departmentId?{departmentId:valid.data.departmentId}:{}),
   });
@@ -106,6 +107,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
    </Banner>:<>
    <SummaryStrip label="Interview summary" steps={[{label:"Scheduled",value:data.summary?.scheduled??0},{label:"Today",value:data.summary?.today??0},{label:"Companies",value:data.summary?.companies??0},{label:"Conflicts",value:data.summary?.conflicts??0}]}/>
    <form method="get" role="search" aria-label="Interview appointment filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
+    <input type="hidden" name="pageSize" value={String(valid.data.pageSize)}/>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student, company or role
      <Input type="search" name="q" defaultValue={valid.data.q} maxLength={100} />
     </label>
@@ -137,7 +139,8 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
      </Select></label>)}
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
      <Select name="sort" defaultValue={valid.data.sort} >
-      <option value="UPCOMING">Date ↑ Earliest</option><option value="RECENT">Date ↓ Latest</option>
+      <option value="EARLIEST">Date ↑ Earliest</option><option value="LATEST">Date ↓ Latest</option>
+      <option value="JOB">Job title</option><option value="STATUS">Status</option>
       <option value="STUDENT">Student</option>
      </Select>
     </label>
@@ -157,13 +160,28 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     </form>:null}
     <span className="inline-flex items-center gap-2">Sort by:
       <Select aria-label="Sort interviews" defaultValue={valid.data.sort} name="sort" form="interview-sort-form">
-        <option value="UPCOMING">Date ↑ Earliest</option><option value="RECENT">Date ↓ Latest</option>
+        <option value="EARLIEST">Date ↑ Earliest</option><option value="LATEST">Date ↓ Latest</option>
+        <option value="JOB">Job title</option><option value="STATUS">Status</option>
         <option value="STUDENT">Student</option>
       </Select>
       <form method="get" id="interview-sort-form" action="/college/placements/interviews">
         <Button type="submit" variant="secondary">Sort</Button>
       </form>
     </span>
+    <form action="/college/placements/interviews" method="get" className="inline-flex items-center gap-2">
+      <label htmlFor="interview-page-size">Per page</label>
+      <Select id="interview-page-size" name="pageSize" defaultValue={String(valid.data.pageSize)}>
+        {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
+      </Select>
+      <input type="hidden" name="sort" value={valid.data.sort}/>
+      {valid.data.q?<input type="hidden" name="q" value={valid.data.q}/>:null}
+      {valid.data.status!=="ALL"?<input type="hidden" name="status" value={valid.data.status}/>:null}
+      {valid.data.mode!=="ALL"?<input type="hidden" name="mode" value={valid.data.mode}/>:null}
+      {valid.data.type!=="ALL"?<input type="hidden" name="type" value={valid.data.type}/>:null}
+      {valid.data.companyId?<input type="hidden" name="companyId" value={valid.data.companyId}/>:null}
+      {valid.data.departmentId?<input type="hidden" name="departmentId" value={valid.data.departmentId}/>:null}
+      <Button type="submit" variant="secondary">Apply</Button>
+    </form>
     <a href={build(1,"csv")} aria-disabled={data.rows.length===0}
       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text hover:bg-primary-subtle">
       ↓ Export CSV
