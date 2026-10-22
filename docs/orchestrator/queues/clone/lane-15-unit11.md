@@ -149,9 +149,6 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 
 Static source review only: current runner is unavailable; CI pass is not claimed. No test files were deleted or skipped.
 
-## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+## Current-main recheck (2026-10-23)
 
-Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
-
-- [ ] G2-2-017-052  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-13-031-098  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+All six unit-test entries were already checked in `main` and `chatgpt/chat-15-b` with prior dispositions; no source edits or CI pass are claimed in this recheck. Deep rows G2-2-017-052 and G2-13-031-098 reviewed against current `main`, recorded OK in `DEEP_agent2_4.md` (commit `9bf926fd`). Proceed to lane 16 queue, whose six listed unit-test rows are already checked on `main`.
