@@ -1,7 +1,8 @@
 import {describe,expect,it} from "vitest";
 import {
  workspaceBriefSchema,updateWorkspaceBriefSchema,
- parseWorkspaceBrief,emptyWorkspaceBrief,
+ parseWorkspaceBrief,emptyWorkspaceBrief,workspaceBriefRequiresDeliverables,
+ translateLegacyWorkspaceOverview,
 } from "@/modules/projects/workspace-brief-model";
 import {
  PROJECT_TASK_COMMENT_KINDS,PROJECT_TASK_COMMENT_KIND_LABELS,
@@ -53,6 +54,23 @@ describe("PROJ-BREAK-BRIEF-01: workspace brief and persisted task-kind integrity
   first.deliverables.push("first tenant only");
   expect(second.deliverables).toEqual([]);
   expect(emptyWorkspaceBrief.deliverables).toEqual([]);
+ });
+ it("migrates legacy definitionOfDone without reviving explicitly cleared conditions",()=>{
+  const legacy={overview:{goal:"Prototype",definitionOfDone:["Reviewed"],
+   deliverables:["Demo"],customTimeline:"semester 5"}};
+  expect(parseWorkspaceBrief(legacy).completionConditions).toEqual(["Reviewed"]);
+  expect(parseWorkspaceBrief({...legacy,completionConditions:[]}).completionConditions).toEqual([]);
+  expect(parseWorkspaceBrief({...legacy,completionConditions:null}).completionConditions).toEqual([]);
+  const migrated=translateLegacyWorkspaceOverview(legacy);
+  expect(migrated.opaqueFacts).toEqual({customTimeline:"semester 5"});
+  expect(migrated.brief.deliverables).toEqual(["Demo"]);
+  expect(migrated.brief.completionConditions).toEqual(["Reviewed"]);
+ });
+ it("requires deliverables for an active workspace regardless of editor role, but permits a draft",()=>{
+  expect(workspaceBriefRequiresDeliverables("ACTIVE")).toBe(true);
+  expect(workspaceBriefRequiresDeliverables("PLANNED")).toBe(false);
+  expect(workspaceBriefRequiresDeliverables("ARCHIVED")).toBe(false);
+  expect(workspaceBriefRequiresDeliverables("COMPLETED")).toBe(false);
  });
  it("known comment taxonomy is stable; no message-text inference or forged kinds",()=>{
   expect(PROJECT_TASK_COMMENT_KINDS).toEqual([
