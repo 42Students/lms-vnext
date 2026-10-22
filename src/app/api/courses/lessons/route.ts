@@ -144,13 +144,13 @@ export async function POST(request: Request) {
     // Legacy lesson_name and sequence=0 semantics are mapped, but the
     // learning path must always resolve to the caller's authorized offering.
     // Course slugs/legacy numeric IDs alone are not trusted parent IDs.
-    if(!raw.learningPathId&&(raw.course_id||raw.courseId||raw.slug))
+    if(!raw["learningPathId"]&&(raw["course_id"]||raw["courseId"]||raw["slug"]))
       return NextResponse.json({
         error:"LEARNING_PATH_REQUIRED",
         message:"Select an authorized course offering and its learningPathId. Legacy numeric course IDs and slugs cannot identify a tenant on their own.",
       },{status:400,headers:noStore});
     const {lesson_name:legacyLessonName,...modern}=raw;
-    const mapped=(legacyLessonName!==undefined && modern.name===undefined)
+    const mapped=(legacyLessonName!==undefined && modern["name"]===undefined)
       ?{...modern,name:legacyLessonName}:modern;
     const lesson = await createCourseLesson(context,mapped);
 
