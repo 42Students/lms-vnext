@@ -69,8 +69,7 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
   if(!consumed)throw new PublicEnquiryError("INVALID");
   const [enquiry]=await tx.insert(placementPublicRecruitEnquiries).values({
    collegeId,challengeId:challenge.id,fullName:name,companyName:company,
-   message:(hiringFor.length>=10?hiringFor:"Recruiter reached out through the public placements page.")+
-    "",
+   message:hiringFor.length>=10?hiringFor:"Recruiter reached out through the public placements page.",
   }).returning({id:placementPublicRecruitEnquiries.id});
   if(!enquiry)throw new PublicEnquiryError("INVALID");
   const [created]=await tx.insert(placementTpoLeads).values({
