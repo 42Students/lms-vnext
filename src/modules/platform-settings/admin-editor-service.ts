@@ -48,11 +48,21 @@ export function normalizeLegacySettingScope(input:string|null|undefined){
  return scope==="ORG"?"ORGANIZATION":scope||"GLOBAL";
 }
 export function tenantSettingActivationMessage(key:string):string {
+  const spec=LEGACY_TENANT_SETTING_MAP.get(key);
+  const status=spec&&"activation" in spec?spec.activation:null;
+  if(status==="DEPLOYMENT_REQUIRED")
+    return "Deployment required — saved value does not change live authentication, DNS or SMS.";
+  if(status==="PROVIDER_TEMPLATE_MATCH_REQUIRED")
+    return "Provider approval required — verify the Exotel/DLT template before use.";
+  if(status==="STORED_ONLY")
+    return "Stored only — no active reader has been verified for this setting.";
   if(PLACEMENT_POLICY_FIELDS.some(field=>field.key===key))
-    return "Placement policy reader connected; verify each consuming workflow.";
-  if(LEGACY_TENANT_SETTING_MAP.get(key)?.dangerous)
-    return "Deployment review required; saving does not reconfigure live authentication or SMS.";
-  return "Stored setting only; runtime activation has not been verified.";
+    return "Placement policy reader connected; verify the enforcing workflow before operational use.";
+  if(status==="READER_VERIFICATION_REQUIRED")
+    return "Reader verification required — a saved value is not proof the active service consumes it.";
+  if(spec?.dangerous)
+    return "Deployment review required — saving does not reconfigure live authentication or SMS.";
+  return "Stored only — no runtime reader has been verified for this setting.";
 }
 export function legacySettingRangeMessage(key:string,value:string):string|null{
   const spec=LEGACY_TENANT_SETTING_MAP.get(key);
