@@ -30,7 +30,8 @@ function makeTx(){
    const results=[
     [{status:state.status}],
     [{id:taskId,projectId,assigneeMembershipId:memberId,status:state.taskStatus,
-     sprintId,templateKey:"learner-"+memberId.replaceAll("-","")+"-abcd1234",title:"My task"}],
+     sprintId,templateKey:"learner-"+memberId.replaceAll("-","")+"-abcd1234",title:"My task",
+     updatedAt:new Date("2026-10-18T10:00:00Z")}],
     [{id:sprintId,status:state.sprintStatus,releaseId}],
     [{id:releaseId,status:state.releaseStatus}],
     state.comment?[state.comment]:[],
@@ -40,8 +41,12 @@ function makeTx(){
     for(){return chain;},limit(){return Promise.resolve(results);}};
    return chain;
   },
-  delete(){
-   return {where(){state.deleted();return Promise.resolve();}};
+  update(){
+   return {set(){
+    return {where(){
+     return {returning:async()=>{state.deleted();return [{id:taskId}];}};
+    }};
+   }};
   },
  };
 }

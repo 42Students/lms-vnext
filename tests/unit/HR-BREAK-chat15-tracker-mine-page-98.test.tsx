@@ -18,8 +18,8 @@ function text(node:ReactNode):string{
 function links(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(links);
  if(!isValidElement(node))return [];
- const p=node.props as {href?:string;children?:ReactNode};
- return [...(p.href?[p.href]:[]),...links(p.children)];
+ const p=node.props as {href?:string;children?:ReactNode;actions?:ReactNode;action?:ReactNode};
+ return [...(p.href?[p.href]:[]),...links(p.children),...links(p.actions),...links(p.action)];
 }
 describe("HR-TRACKER-PAGE-98 recruiter-owned bug reports survive transient failures",()=>{
  beforeEach(()=>{

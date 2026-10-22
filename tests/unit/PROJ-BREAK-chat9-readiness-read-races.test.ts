@@ -29,9 +29,9 @@ vi.mock("@/db/client",()=>({
     const select=(columns:Record<string,unknown>)=>{
       state.reads++;
       const key=Object.keys(columns);
-      const rows=key.includes("points")?[{sprintId:"sprint",points:8}]
+      const rows=key.includes("committed")?[{sprintId:"sprint",committed:8,completed:5}]
         :key.includes("releaseId")?[{id:"sprint",releaseId:"release",status:"COMPLETED"}]
-        :key.includes("sequence")?[{id:"release",title:"Release",status:"PLANNED",sequence:0}]
+        :key.includes("sequence")?[{id:"release",title:"Release",status:"PLANNED",sequence:0,targetDate:null}]
         :key.includes("title")?[{id:projectId,title:"Workspace",status:"ACTIVE"}]
         :state.missingProject?[]:[{id:projectId}];
       const chain={
@@ -41,6 +41,7 @@ vi.mock("@/db/client",()=>({
         for:(lock:string)=>{if(lock==="share")state.locked++;return chain;},
         groupBy:()=>chain,
         limit:()=>chain,
+        offset:()=>chain,
         then:(resolve:(rows:typeof rows)=>unknown)=>Promise.resolve(rows).then(resolve),
       };
       return chain;
@@ -76,7 +77,8 @@ describe("IIT Dharwad Projects readiness: revoked roles and archive races",()=>{
   });
   it("PROJ-BREAK-readiness-62 a live owned project is held through sprint and task totals",async()=>{
     const rows=await listCollegeReadinessReleases(admin(),collegeId,projectId);
-    expect(rows).toMatchObject([{id:"release",sprintCount:1,completedSprints:1,points:8,targetDate:null}]);
+    expect(rows).toMatchObject([{id:"release",sprintCount:1,completedSprints:1,
+      points:8,committedPoints:8,completedPoints:5,targetDate:null}]);
     expect(state.liveChecks).toBe(1);
     expect(state.locked).toBe(1);
     expect(state.reads).toBe(4);
