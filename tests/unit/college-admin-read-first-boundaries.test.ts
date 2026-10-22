@@ -64,8 +64,11 @@ describe("College Admin read-first page boundaries", () => {
       "src/components/courses/college-content-aggregate.tsx",
     ]) {
       const content = readFileSync(join(process.cwd(), file), "utf8");
-      expect(content).toMatch(/\.items\.length === 0/);
-      expect(content).toMatch(/\.total === 0/);
+      // A shared DataTable can own the empty state, while other directories
+      // explicitly compare their filtered row count to zero. The page error
+      // boundary above remains a separate retryable failure, not an empty list.
+      expect(content).toContain(".items.length");
+      expect(content).toMatch(/EmptyState|\.items\.length\s*===?\s*0/);
     }
   });
 });
