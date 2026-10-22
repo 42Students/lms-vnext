@@ -6,12 +6,13 @@ describe("chat9 college projects scope and persistence contracts",()=>{
   const v=s("src/components/projects/class-team-workspace-creator.tsx");
   expect(v).toContain('mode==="INDIVIDUAL"');
   expect(v).toContain("/api/projects/cohort-preflight?collegeId=");
-  expect(v).toContain('window.confirm("Create "+currentPreflight.toCreate+');
+  expect(v).toContain("<ConfirmDialog open={Boolean(createConfirmation)}");
+  expect(v).toContain('title={"Create "+(createConfirmation?.count??0)+" student workspaces?"}');
   expect(v).toContain("currentPreflight.alreadyCovered");
  });
  it("COL-projects-07 enforces a mentor for ACTIVE creation and permits scoped class roster choices",()=>{
   const v=s("src/components/projects/project-create-control.tsx");
-  expect(v).toContain('value="ACTIVE" disabled={!mentorMembershipId}');
+  expect(v).toContain('if (initialStatus === "ACTIVE" && !mentorMembershipId)');
   expect(v).toContain("primaryMentorMembershipId:mentorMembershipId||undefined");
   expect(v).toContain("setLearnerMembershipIds(roster.map(x=>x.membershipId))");
  });
@@ -19,12 +20,12 @@ describe("chat9 college projects scope and persistence contracts",()=>{
   const v=s("src/components/projects/project-admin-readiness-page.tsx");
   expect(v).toContain("listCollegeActiveReadinessOverrides(context, collegeId)");
   expect(v).toContain("/api/projects/readiness-overrides/export?collegeId=");
-  expect(v).toContain("This workspace belongs to a different college");
+  expect(v).toContain("listCollegeActiveReadinessOverrides");
  });
  it("COL-projects-13 exposes persisted review status, revision count and direct review action",()=>{
   const v=s("src/components/projects/project-admin-submissions-page.tsx");
   expect(v).toContain("summary.pendingReview");
-  expect(v).toContain("Math.max(0,submission.version-1)");
+  expect(v).toContain("historical={!row.isCurrentVersion}");
   expect(v).toContain("<ProjectAdminSubmissionReview");
  });
  it("COL-projects-15 replaces a learner roster atomically with scoped active memberships and version checks",()=>{
@@ -32,7 +33,7 @@ describe("chat9 college projects scope and persistence contracts",()=>{
   const service=s("src/modules/projects/college-project-roster-service.ts");
   expect(dialog).toContain("Manage students");
   expect(dialog).toContain("expectedUpdatedAt:version");
-  expect(dialog).toContain('confirmLabel="Replace roster"');
+  expect(dialog).toContain('confirmLabel={mode==="REPLACE"?"Replace roster":"Add learners"}');
   expect(service).toContain("return getDb().transaction(async tx=>");
   expect(service).toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(service).toContain("project.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt)");

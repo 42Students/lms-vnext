@@ -8,13 +8,13 @@ it("FAC-courses-01 faculty course back-link has legacy label and destination",()
 });
 it("FAC-courses-04 only secondary teaching roles show role badge",()=>{
  const source=readFileSync("src/components/courses/faculty-course-list.tsx","utf8");
- expect(source).toContain("course.teachingRole!==\"PRIMARY\"");
+ expect(source).toContain('course.teachingRole!=="PRIMARY"');
  expect(source).toContain("Your role:");
 });
 it("FAC-courses-05 course list exposes assignment and section metrics",()=>{
  const source=readFileSync("src/components/courses/faculty-course-list.tsx","utf8");
- expect(source).toContain("Teaching assignment(s)");
- expect(source).toContain("Section(s)");
+ expect(source).toContain("Teaching assignments");
+ expect(source).toContain("course.sectionName");
 });
 it("FAC-courses-08 empty/filter-miss messages distinguish conditions",()=>{
  const source=readFileSync("src/components/courses/faculty-course-list.tsx","utf8");
