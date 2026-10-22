@@ -67,7 +67,9 @@ function normalizeAuditDetail(detail: string): string {
 }
 
 /** Legacy TPO entity to vNext recorded-source crosswalk.
- * DRIVE / RECRUITER_LEAD / SETTINGS / BULK => activity_events.
+ * DRIVE / SETTINGS / BULK => activity_events.
+ * RECRUITER_LEAD => activity_events plus scoped DB09 lead-activity history
+ * when present (no private note, email, phone or invite-token projection).
  * STUDENT => application and screening histories.
  * ROUND => round events and round results.
  * OFFER => offer and joining histories; SHARE => share events.
@@ -200,6 +202,7 @@ type AuditDbRow = {
 function auditSources(
   collegeId: string,
   shareAvailable: boolean,
+  leadActivitiesAvailable: boolean,
 ): AuditSource[] {
   const sources: AuditSource[] = [
     {
@@ -408,6 +411,43 @@ function auditSources(
     },
   ];
 
+
+  // Legacy recruiter's CALL/EMAIL/MEETING/NOTE activity is not always
+  // represented by a global placement activity event. Preserve its durable
+  // CRM writer history when the staged DB09 tables exist. Never read the
+  // free-form note/contact data into the shared audit grid.
+  if (leadActivitiesAvailable) {
+    sources.push({
+      kind: "ACTIVITY",
+      statement: sql`
+        select
+          event.id as event_id,
+          'ACTIVITY'::text as kind,
+          ('TPO_RECRUITER_LEAD_' || event.type)::text as event_type,
+          'Recruiter lead'::text as title,
+          case event.type
+            when 'CALL' then 'Recruiter call recorded'
+            when 'WHATSAPP' then 'Recruiter WhatsApp recorded'
+            when 'EMAIL' then 'Recruiter email recorded'
+            when 'MEETING' then 'Recruiter meeting recorded'
+            when 'NOTE' then 'Recruiter activity recorded'
+            else 'Recruiter lead updated'
+          end::text as detail,
+          event.created_at as occurred_at,
+          null::uuid as job_id,
+          'placement_recruiter_lead'::text as subject_type,
+          event.lead_id::text as subject_id,
+          event.created_by_user_id as actor_user_id
+        from placement_tpo_lead_activities event
+        inner join placement_tpo_leads lead
+          on lead.id = event.lead_id
+          and lead.college_id = event.college_id
+        where event.college_id = ${collegeId}
+          and lead.college_id = ${collegeId}
+      `,
+    });
+  }
+
   if (shareAvailable) {
     sources.push({
       kind: "SHARE",
@@ -588,22 +628,21 @@ export async function getTpoAuditLog(
   const liveCollegeId=await requireTpoBatchActor(context);
   if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
 
-  const [shareEventsExists, shareLinksExist] =
+  const [shareEventsExists, shareLinksExist, leadsExist, leadActivitiesExist] =
     await Promise.all([
-      placementTableExists(
-        "placement_tpo_share_events",
-      ),
-      placementTableExists(
-        "placement_tpo_share_links",
-      ),
+      placementTableExists("placement_tpo_share_events"),
+      placementTableExists("placement_tpo_share_links"),
+      placementTableExists("placement_tpo_leads"),
+      placementTableExists("placement_tpo_lead_activities"),
     ]);
 
-  const shareAvailable =
-    shareEventsExists && shareLinksExist;
+  const shareAvailable = shareEventsExists && shareLinksExist;
+  const leadActivitiesAvailable = leadsExist && leadActivitiesExist;
 
   const allSources = auditSources(
     collegeId,
     shareAvailable,
+    leadActivitiesAvailable,
   );
 
   const selectedSources =
