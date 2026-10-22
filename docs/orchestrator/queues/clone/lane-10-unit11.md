@@ -5,7 +5,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/PROJ-BREAK-chat9-admin-programs-page.test.tsx` (2 failing)
 - [ ] `tests/unit/chat12-verify2-legacy-category-controls.test.ts` (1 failing)
 - [x] `tests/unit/chat2-team-handover-36.test.ts` (1 failing)
-- [ ] `tests/unit/chat6-superadmin-course-edit-copy-55.test.ts` (1 failing)
+- [x] `tests/unit/chat6-superadmin-course-edit-copy-55.test.ts` (1 failing)
 - [ ] `tests/unit/chat9-super-admin-placement-remaining-gap-verification.test.ts` (1 failing)
 - [ ] `tests/unit/learner-syllabus-soft-delete-visibility.test.ts` (1 failing)
 - [ ] `tests/unit/verify2-lane18-attendance-program-interviews.test.ts` (1 failing)
