@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {listSuperAdminGlobalCourses} from "@/modules/courses/super-admin-global-course-directory";
 import { AdminCourseOverview } from "@/components/courses/admin-course-overview";
 import { AdminCourseRecycleBin } from "@/components/courses/admin-course-recycle-bin";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -20,6 +21,20 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
     context.adminScope?.collegeId ?? null;
 
   if (!collegeId) {
+    const globalQuery=await searchParams;
+    const rawQ=typeof globalQuery.q==="string"?globalQuery.q:"";
+    const rawPage=typeof globalQuery.page==="string"?globalQuery.page:"1";
+    const valid=rawQ.length<=100&&/^[1-9][0-9]{0,3}$/.test(rawPage);
+    const catalogue=valid?await listSuperAdminGlobalCourses(context,{
+      q:rawQ,page:Number(rawPage),
+    }).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const,value:null})):
+      {ok:false as const,value:null};
+    const catalogueHref=(pageNumber:number)=>{
+      const params=new URLSearchParams();
+      if(rawQ)params.set("q",rawQ);
+      if(pageNumber>1)params.set("page",String(pageNumber));
+      return "/admin/courses"+(params.size?"?"+params.toString():"");
+    };
     const globalPolicy = !context.adminScope?.organizationId
       ? await getAdminTenantSettingState(context,"GLOBAL","course.minInProgressPercent")
         .then(value=>({ok:true as const,value}))
@@ -67,10 +82,56 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
             </Link>
           </Banner>
         )}
-        <EmptyState
-          title="Select a college to manage Courses"
-          description="Choose a college in the header above to view, create and edit Courses."
-        />
+        <section aria-label="Read-only authorized course catalogue"
+          className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+          <h2 className="text-lg font-semibold text-foreground">
+            {context.adminScope?.organizationId?"Organization course catalogue":"Platform course catalogue"}
+          </h2>
+          <p className="text-sm text-body">Read-only courses from authorized active colleges.
+            Select a college in the header to create or edit courses. This view never changes your active scope.</p>
+          <form action="/admin/courses" method="get" className="flex flex-wrap gap-2">
+            <label className="min-w-0 flex-1 text-xs font-semibold text-body">
+              Find course or code
+              <input type="search" name="q" defaultValue={rawQ} maxLength={100}
+                className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
+            </label>
+            <button type="submit" className="min-h-11 self-end rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Search</button>
+          </form>
+          {!valid?<ErrorState title="Invalid course filters"
+            description="Use up to 100 search characters and a positive page number."
+            action={<Link href="/admin/courses" className="font-semibold text-primary-text underline">Clear filters</Link>}/>:
+            !catalogue.ok||!catalogue.value?<ErrorState title="Course catalogue unavailable"
+              description="Could not verify the current authorized course catalogue."
+              action={<Link href={catalogueHref(Number(rawPage))} className="font-semibold text-primary-text underline">Retry</Link>}/>:
+            catalogue.value.items.length===0?<EmptyState title="No courses found" description="Try another search or select a college."/>:
+            <>
+              <div className="min-w-0 overflow-x-auto">
+                <table className="w-full min-w-[560px] text-left text-sm">
+                  <thead><tr className="border-b border-border text-xs text-muted-foreground">
+                    <th scope="col" className="p-2">Course</th><th scope="col" className="p-2">Code</th>
+                    <th scope="col" className="p-2">College</th><th scope="col" className="p-2">Department</th>
+                    <th scope="col" className="p-2">Status</th>
+                  </tr></thead>
+                  <tbody>{catalogue.value.items.map(item=><tr key={item.id} className="border-b border-border">
+                    <td className="p-2 font-semibold">{item.name}</td>
+                    <td className="p-2">{item.code}</td>
+                    <td className="p-2">{item.college}</td>
+                    <td className="p-2">{item.department}</td>
+                    <td className="p-2">{item.status}</td>
+                  </tr>)}</tbody>
+                </table>
+              </div>
+              <nav aria-label="Course catalogue pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+                <span role="status">Page {catalogue.value.page} · {catalogue.value.total} matching courses</span>
+                <div className="flex gap-3">
+                  {catalogue.value.page>1?<Link href={catalogueHref(catalogue.value.page-1)}
+                    className="font-semibold text-primary-text underline">Previous</Link>:null}
+                  {catalogue.value.hasMore?<Link href={catalogueHref(catalogue.value.page+1)}
+                    className="font-semibold text-primary-text underline">Next</Link>:null}
+                </div>
+              </nav>
+            </>}
+        </section>
       </div>
     );
   }
