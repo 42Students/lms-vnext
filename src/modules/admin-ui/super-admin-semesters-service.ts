@@ -9,7 +9,7 @@ import {hasActiveMembership,isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import { requireSuperAdminSelectedCollege } from "./super-admin-selected-college";
 import {
- superAdminReadQuerySchema,superAdminReadPages,scopedSearchLike,SUPER_ADMIN_READ_PAGE_SIZE,
+ superAdminReadQuerySchema,superAdminReadPages,scopedSearchLike,
  type SuperAdminReadResult,
 } from "./super-admin-read-directory-model";
 export async function listAdminSemesters(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult> {
