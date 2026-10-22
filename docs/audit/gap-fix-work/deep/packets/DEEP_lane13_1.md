@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [x] G2-11-022-077  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-12-023-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
-- [ ] G2-12-023-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
+- [x] G2-12-023-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-12-023-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-15-021-048  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-20-006-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
@@ -21,3 +21,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 ## Results
 
 - OK G2-11-022-077 — `src/app/(authenticated)/tpo/reports/page.tsx:251-293` renders an immediately visible, accessible, linked Placement journey before report cards, including Looking for a job, Placed, Accepted, Unplaced, Not accepted yet, counts and percentages. Matches `docs/legacy-source/frontend/src/pages/tpo/reports/index.js:62-74` (JourneyStrip, stage and gap destinations).
+- FIXED G2-12-023-045 — commit `1fbabf3e79e993babc2d12b8668ba6912c8dbde5`, `src/modules/announcements/tpo-notice-delivery-service.ts`: college-wide placement announcements now select active LEARNER memberships only; legacy student-only audience in `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/PlacementAnnouncementService.java:25-30`.
