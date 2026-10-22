@@ -18,7 +18,7 @@ describe("chat-9 round9 TPO recruiter and communication settings",()=>{
   const ui=source("src/components/placements/tpo-recruiter-grant-controls.tsx");
   const service=source("src/modules/placements/tpo-recruiter-grant-write-service.ts");
   expect(ui).toContain('action:"EXTEND",confirmed:true,grantId,expectedUpdatedAt,months');
-  expect(ui).toContain('setNotice("Access extended")');
+  expect(ui).toContain('setNotice("Access extended"+(until?" · Until "+until:""))');
   expect(service).toContain('if(input.action==="EXTEND")');
   expect(service).toContain("isRecruiterGrantStale(record.grant.updatedAt, input.expectedUpdatedAt)");
   expect(service).toContain('eq(placementCompanyRelationships.collegeId, collegeId)');
@@ -30,8 +30,10 @@ describe("chat-9 round9 TPO recruiter and communication settings",()=>{
   expect(service).toContain("placementRecruiterCollegeGrants.revokedAt");
   expect(service).toContain("placementRecruiterCollegeGrants.validUntil");
   expect(service).toContain("requirePersistedTpoMembership(context,collegeId)");
-  expect(page).toContain("Access & verification");
-  expect(page).toContain("No expiry on record");
+  expect(page).toContain('header:"Verification"');
+  expect(page).toContain('header:"Revoked"');
+  expect(page).toContain('header:"Valid through (IST)"');
+  expect(page).toContain("No end date");
  });
  it("TPO-settings-audit-70 validates and saves optional-SMS monthly limit without claiming verified sends",()=>{
   const editor=source("src/components/tpo/tpo-communication-settings-editors.tsx");
