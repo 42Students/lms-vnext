@@ -3,12 +3,15 @@
  * coerced into a downloadable content type. */
 export type LegacySyllabusKind="CONTENT"|"ASSIGNMENT"|"QUIZ"|"UNSUPPORTED";
 export function legacySyllabusKind(value:string):LegacySyllabusKind{
- switch(value.trim().toLowerCase().replaceAll("-","_")){
+ // The legacy syllabus normalizes spaces in addition to hyphens. In that
+ // UI "assessment" and quiz_v2 describe quiz activities, not assignments.
+ switch(value.trim().toLowerCase().replace(/[\s-]+/g,"_")){
   case "resource":case "notes":case "material":
   case "video":case "youtube":case "youtube_video":
   case "live_class":case "liveclass":return "CONTENT";
-  case "assignment":case "assessment":return "ASSIGNMENT";
-  case "quiz":case "quiz_v2":case "quizv2":return "QUIZ";
+  case "assignment":return "ASSIGNMENT";
+  case "assessment":case "assessments":case "quiz":case "quiz_v2":
+  case "quizv2":case "quiz2":case "quiz_content":return "QUIZ";
   default:return "UNSUPPORTED";
  }
 }
