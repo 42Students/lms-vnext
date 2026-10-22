@@ -8,6 +8,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Wire existing signed file upload, safe URL resource list and Drive attachment importer.
 
 ## G2-4-012-028 [P1] GAP facet F06
+- [x] Verified: assignment points blank maps to zero; nonblank requires integer 1–1000 in faculty lesson authoring.
 - Files: src/components/courses/faculty-lesson-authoring.tsx
 - Legacy: Points optional blank saves zero; nonblank only integer 1-1000. (`docs/legacy-source/frontend/src/components/Global/Offcanvas/Assignment/newAssignment.js:445-450`; `docs/legacy-source/frontend/src/components/Global/Offcanvas/Assignment/newAssignment.js:677-694`)
 - Expected fix: Match empty/default/validation behavior.
