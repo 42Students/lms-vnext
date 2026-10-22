@@ -317,6 +317,7 @@ export async function recordTpoOfferLifecycle(
  * Failed rows remain eligible for a later idempotent retry. The same scheduler\n * also runs ISSUED offer expiry (placement-offer-expiry-sweep-service),\n * so both legacy due selectors are applied, never just exposed as reports.
  */
 export async function finalizeMaturedExternalTpoAcceptances(
+  systemActorUserId: string,
   now: Date = new Date(),
   batchSize = 40,
 ) {
@@ -398,9 +399,11 @@ export async function finalizeMaturedExternalTpoAcceptances(
           )).limit(1);
         if (pendingDispute) return "DISPUTED" as const;
 
-        const actorUserId = offer.respondedByUserId ?? offer.issuedByUserId;
+        // This is a scheduler action, not a delayed TPO click. Ledger rows,
+        // cascaded offers and audit must identify the provisioned service actor.
+        const originalRecorderUserId = offer.respondedByUserId ?? offer.issuedByUserId;
         const cascade = await cascadeTpoRecordedAcceptance(tx, {
-          actorUserId, membershipId: item.membershipId, collegeId: item.collegeId,
+          actorUserId: systemActorUserId, membershipId: item.membershipId, collegeId: item.collegeId,
           offer: {
             id: offer.id, applicationId: offer.applicationId,
             kind: offer.kind, annualCtcInr: offer.annualCtcInr,
@@ -424,14 +427,15 @@ export async function finalizeMaturedExternalTpoAcceptances(
         if(tenant){
           const [notice]=await tx.insert(activityEvents).values({
             organizationId:tenant.organizationId,
-            collegeId:item.collegeId,actorUserId,
+            collegeId:item.collegeId,actorUserId:systemActorUserId,
             actorMembershipId:null,module:"PLACEMENTS",
             eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_RESPONDED,
             subjectType:"placement_offer",subjectId:offer.id,
             subjectLabel:offer.roleTitle,
             summary:"External offer acceptance finalized after dispute window",
             metadata:{action:"EXTERNAL_ACCEPTANCE_FINALIZED",offerId:offer.id,
-              applicationId:offer.applicationId,cascadeId:cascade.cascadeId},
+              applicationId:offer.applicationId,cascadeId:cascade.cascadeId,
+              originalRecorderUserId},
             groupKey:"placement-offer:"+offer.id,
             dedupeKey:"placement-external-acceptance-finalized:"+offer.id,
           }).onConflictDoNothing().returning({id:activityEvents.id});

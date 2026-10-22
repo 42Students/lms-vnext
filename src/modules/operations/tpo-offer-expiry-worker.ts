@@ -81,7 +81,7 @@ export async function runTpoOfferExpiryTick(): Promise<TpoOfferExpiryTickResult>
       for (let batch=0;batch<5;batch+=1) {
         await fence.renew();
         await fence.assertCurrent();
-        const result=await finalizeMaturedExternalTpoAcceptances(new Date(),40);
+        const result=await finalizeMaturedExternalTpoAcceptances(actorUserId,new Date(),40);
         matured+=result.finalized;
         maturityFailed+=result.failed;
         if(result.examined<40 || result.finalized===0) {
