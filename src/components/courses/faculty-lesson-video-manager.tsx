@@ -45,6 +45,31 @@ export function FacultyLessonVideoManager({
   const [contentPoints,setContentPoints]=useState("1");
   const [duration,setDuration]=useState("");
   const [file,setFile]=useState<File|null>(null);
+  const detectedVideoDuration=useRef<string|null>(null);
+  useEffect(()=>{
+    const old=detectedVideoDuration.current;
+    if(old)setDuration(value=>value===old?"":value);
+    detectedVideoDuration.current=null;
+    if(!file)return;
+    const objectUrl=URL.createObjectURL(file);
+    const preview=document.createElement("video");
+    let cancelled=false;
+    preview.preload="metadata";
+    preview.onloadedmetadata=()=>{
+      if(cancelled||!Number.isFinite(preview.duration)||preview.duration<=0||
+         preview.duration>86400)return;
+      const seconds=String(Math.ceil(preview.duration));
+      detectedVideoDuration.current=seconds;
+      setDuration(value=>value.trim()?value:seconds);
+    };
+    preview.onerror=()=>{/* Fall back to the editable duration field. */};
+    preview.src=objectUrl;
+    return()=>{
+      cancelled=true;preview.removeAttribute("src");preview.load();
+      URL.revokeObjectURL(objectUrl);
+    };
+  },[file]);
+
   const [durationDraft,setDurationDraft]=useState<Record<string,string>>({});
   const [titleDraft,setTitleDraft]=useState<Record<string,string>>({});
   const [previewId,setPreviewId]=useState<string|null>(null);
@@ -271,6 +296,9 @@ export function FacultyLessonVideoManager({
       <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Duration (seconds, optional)
         <Input className="mt-[6px]" type="number" min={1} max={86400} value={duration} onChange={event=>setDuration(event.target.value)}/>
       </label>
+      {file&&detectedVideoDuration.current?<p role="status" className="text-xs text-muted-foreground sm:col-span-2">
+        Video duration detected: {detectedVideoDuration.current} seconds. You may edit this value.
+      </p>:null}
       <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Points (lesson content)
         <Input className="mt-[6px]" type="number" min={0} max={1000}
           value={contentPoints} onChange={event=>setContentPoints(event.target.value)}/>
