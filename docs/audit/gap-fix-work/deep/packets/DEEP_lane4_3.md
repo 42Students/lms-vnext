@@ -10,13 +10,18 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-9-010-084  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
 - [ ] G2-9-010-087  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
 - [ ] G2-9-011-015  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
-- [ ] G2-9-011-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
-- [ ] G2-9-011-064  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
+- [x] G2-9-011-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
+- [x] G2-9-011-064  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
 - [ ] G2-9-014-027  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
 - [ ] G2-9-014-090  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
-- [ ] G2-9-016-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
+- [x] G2-9-016-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
 - [ ] G2-9-016-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
 - [ ] G2-9-016-096  (source: docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md)
 
 ## Results
+
+- G2-9-011-064: OK — vNext `src/modules/placements/college-drive-overview-service.ts:46-83,93-101` scopes counts by college membership and job, counts withdrawn and external applications separately, and deduplicates offers and selections; legacy `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/index.js:244-259` derives its hiring metrics from job applications.
+
+- G2-9-016-014: OK — vNext `src/app/(authenticated)/college/placements/page.tsx:104-109` renders all four exact drive total tiles with distinct counts, matching legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/DrivesLanding.js:251-258`.
+- G2-9-011-045: OK — vNext `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx:26-45,139` treats attention fetch rejection as nonfatal and retains the drive with a clear info alert, matching legacy `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/index.js:92-94`.
 
