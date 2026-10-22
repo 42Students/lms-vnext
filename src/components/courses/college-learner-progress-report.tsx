@@ -93,7 +93,7 @@ export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Resul
      ["Students",String(report.students)],
      ["Not started",String(report.notStarted)],
      ["Items measured",String(report.itemsMeasured)],
-    ].map(([label,value])=><StatTile key={label} label={label} value={value} className="p-3" />)}
+    ].map(([label,value])=><StatTile key={label??""} label={label??""} value={value??""} className="p-3" />)}
    </div>
    <div className="mt-1 space-y-1 text-sm leading-6 text-body">
     <p>Videos completed: {report.totalVideos} measurable item(s)</p>
@@ -120,9 +120,9 @@ export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Resul
      {key:"assignments",header:"Assignments",mobilePriority:"secondary" as const,cell:(row)=>row.assignmentDone+"/"+report.totalAssignments},
      {key:"quizzes",header:"Quizzes",mobilePriority:"secondary" as const,cell:(row)=>row.quizDone+"/"+report.totalQuizzes},
      {key:"progress",header:"Progress",mobilePriority:"secondary" as const,
-      cell:(row)=><div className={styles.progressCell}>
-       <MetricBar label={row.name+" progress" } role="progressbar" value={row.progress} maximum={100} unit="percent" className={styles.progressTrack} />
-       <span className={styles.progressValue}>{row.progress}%</span>
+      cell:(row)=><div className={styles["progressCell"]}>
+       <MetricBar label={row.name+" progress" } role="progressbar" value={row.progress} maximum={100} unit="percent" {...(styles["progressTrack"]!==undefined?{className:styles["progressTrack"]}:{})} />
+       <span className={styles["progressValue"]}>{row.progress}%</span>
       </div>},
     ]}
    />
