@@ -26,7 +26,7 @@ export async function correctionHoursDeploymentMax(){
   select pg_get_constraintdef(oid) as definition from pg_constraint
   where conname='attendance_policies_correction_window_ck' limit 1
  `);
- return (()=>{const definition=row.rows[0]?["definition"];return typeof definition==="string"&&definition.includes("8760")?8760:168;})();
+ return (()=>{const definition=row.rows[0]?.definition;return typeof definition==="string"&&definition.includes("8760")?8760:168;})();
 }
 /**
  * Read the persisted policy for one authorized college.

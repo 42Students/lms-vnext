@@ -48,20 +48,20 @@ export function parseAdminProjectsQuery(
     return schema.safeParse(null);
   // Legacy `search` and current `q` are aliases, not independently
   // selectable filters. Reject conflicts rather than silently preferring one.
-  const legacySearch=first(params["search"]);
-  const currentSearch=first(params["q"]);
+  const legacySearch=first(params.search);
+  const currentSearch=first(params.q);
   if(legacySearch!==undefined&&currentSearch!==undefined&&
      legacySearch.trim()!==currentSearch.trim())return schema.safeParse(null);
   const search = legacySearch ?? currentSearch;
-  const rawStatus=first(params["status"]);
+  const rawStatus=first(params.status);
   // Preserve the legacy filter dimension. BLOCKED uses the scoped blocker
   // predicate and READY uses authored readiness phase rather than silently
   // falling through to all ACTIVE workspaces.
   const status=rawStatus==="NOT_STARTED"?"PLANNED":
     rawStatus==="DONE"?"COMPLETED":rawStatus;
-  const view = first(params["view"]);
-  const page = first(params["page"]);
-  const pageSize = first(params["page"]Size)??first(params["size"]);
+  const view = first(params.view);
+  const page = first(params.page);
+  const pageSize = first(params.pageSize)??first(params.size);
   return schema.safeParse({
     ...(search !== undefined ? { q: search } : {}),
     ...(status ? { status } : {}),

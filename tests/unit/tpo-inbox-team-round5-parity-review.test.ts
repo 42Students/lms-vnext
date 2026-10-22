@@ -4,7 +4,7 @@ const src=(p:string)=>readFileSync(p,"utf8");
 describe("TPO inbox/team outstanding legacy contracts",()=>{
  it("TPO-inbox-team-30 routes the authenticated legacy c/m deep link and members alias",()=>{
   const team=src("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(team).toContain("const thread = first(params["c"]) ?? first(params["thread"]) ?? first(params["conversationId"])");
+  expect(team).toContain("const thread = first(params.c) ?? first(params.thread) ?? first(params.conversationId)");
   expect(team).toContain('redirect("/tpo/messages?" + target.toString())');
   expect(team).toContain('tab === "people" || tab === "members"');
   expect(team).toContain('redirect("/tpo/settings?tab=team")');

@@ -126,28 +126,28 @@ export function validateSubmittedEvidence(
     typeof id === "string" && receipts.some(r => r.id === id &&
       usablePrivateReceipt(r,membershipId,purpose,at,entryId));
   if (section === "IDENTITY") {
-    const hasAadhaar = typeof submitted["aadhaarNumber"] === "string" &&
-      submitted["aadhaarNumber"].trim().length > 0;
-    const hasPan = typeof submitted["panNumber"] === "string" &&
-      submitted["panNumber"].trim().length > 0;
-    return (hasAadhaar && ref("AADHAAR",submitted["aadhaarDocumentId"])) ||
-      (hasPan && ref("PAN",submitted["panDocumentId"]));
+    const hasAadhaar = typeof submitted.aadhaarNumber === "string" &&
+      submitted.aadhaarNumber.trim().length > 0;
+    const hasPan = typeof submitted.panNumber === "string" &&
+      submitted.panNumber.trim().length > 0;
+    return (hasAadhaar && ref("AADHAAR",submitted.aadhaarDocumentId)) ||
+      (hasPan && ref("PAN",submitted.panDocumentId));
   }
-  const raw = submitted["education"];
+  const raw = submitted.education;
   if (!Array.isArray(raw)) return false;
   const items: EducationForVerification[] = [];
   const evidenceByEntry = new Map<string,boolean>();
   for (const e of raw) {
     if (e === null || typeof e !== "object" || Array.isArray(e)) return false;
     const item = e as Record<string,unknown>;
-    if (typeof item["id"] !== "string" || typeof item["education"]Type !== "string" ||
-        typeof item["grade"] !== "string") return false;
+    if (typeof item.id !== "string" || typeof item.educationType !== "string" ||
+        typeof item.grade !== "string") return false;
     // A linked optional marksheet must also be a CLEAN, correct-owner receipt.
-    if (item["marksheetDocumentId"] !== undefined &&
-        !ref("MARKSHEET",item["marksheetDocumentId"],item["id"])) return false;
-    items.push({id:item["id"],educationType:item["education"]Type,gradeObtained:item["grade"]});
-    evidenceByEntry.set(item["id"],ref("MARKSHEET",item["marksheetDocumentId"],item["id"]));
+    if (item.marksheetDocumentId !== undefined &&
+        !ref("MARKSHEET",item.marksheetDocumentId,item.id)) return false;
+    items.push({id:item.id,educationType:item.educationType,gradeObtained:item.grade});
+    evidenceByEntry.set(item.id,ref("MARKSHEET",item.marksheetDocumentId,item.id));
   }
-  if (!ref("RESUME",submitted["resumeDocumentId"])) return false;
+  if (!ref("RESUME",submitted.resumeDocumentId)) return false;
   return missingCoreEducation(items, e=>evidenceByEntry.get(e.id)===true).length === 0;
 }
