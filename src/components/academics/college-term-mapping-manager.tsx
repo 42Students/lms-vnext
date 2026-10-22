@@ -23,7 +23,7 @@ type MappingRead = {
   }[];
 };
 
-export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
+export function CollegeTermMappingManager({ data, readOnly = false }: { data: MappingRead; readOnly?: boolean }) {
   const router = useRouter();
   const pathname=usePathname();
   const programsHref=pathname.startsWith("/admin")?"/admin/programs":"/college/programs";
@@ -87,6 +87,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   }
 
   async function send() {
+    if (readOnly) return;
     if (!confirm || inFlight.current) return;
     inFlight.current=true;
     start(async () => {
@@ -163,7 +164,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const filteredCourses = availableCourses.filter(course =>
     (course.name + " " + course.code).toLowerCase().includes(courseQuery.toLowerCase()));
   function toggleCourse(courseId: string, checked: boolean) {
-    if (mappingStale || refreshing || inFlight.current) return;
+    if (readOnly || mappingStale || refreshing || inFlight.current) return;
     setFieldErrors(current => ({ ...current, courses: undefined }));
     setError(null);
     setDraftByTerm(current => ({
@@ -176,6 +177,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
 
   function prepare(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (readOnly) return;
     if (!programId || !termId) {
       setFieldErrors({ program: !programId ? "Select a program" : undefined,
         term: !termId ? "Select a semester" : undefined });
@@ -199,6 +201,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
 
   function updateMapping(id: string, creditsValue: string, position: number,
     editFields?: { type: "CORE" | "ELECTIVE"; isMandatory: boolean }) {
+    if (readOnly) return;
     if (inFlight.current) return;
     const previous = data.mapped.find(row => row.id === id);
     if (!previous || !editableTerm || previous.termId !== termId) return;
@@ -401,7 +404,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             <Button type="button" variant="ghost" size="icon-sm"
               aria-label={"Drag to reorder " + (row.courseName || row.courseId) + ". Press Arrow Up or Arrow Down to move."}
               aria-keyshortcuts="ArrowUp ArrowDown"
-              draggable={!pending && editableTerm} disabled={pending || !editableTerm}
+              draggable={!pending && editableTerm && !readOnly} disabled={pending || !editableTerm}
               onDragStart={event => { setDraggedId(row.id); event.dataTransfer.effectAllowed="move"; }}
               onDragEnd={() => setDraggedId(null)}
               onDragOver={event => { if (draggedId && draggedId !== row.id) event.preventDefault(); }}
