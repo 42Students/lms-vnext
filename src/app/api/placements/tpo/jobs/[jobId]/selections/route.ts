@@ -25,9 +25,9 @@ export async function POST(request:Request,{params}:Props){
     const {jobId}=await params;
     const context=await getCurrentRequestContext();
     const body=await readTpoBulkRequestBody(request);
-    const result=body.action==="RECORD"
+    const result=body["action"]==="RECORD"
       ? await recordTpoDriveSelections(context,jobId,body)
-      : body.action==="VERIFY_AND_RELEASE"
+      : body["action"]==="VERIFY_AND_RELEASE"
         ? await verifyAndReleaseTpoSelections(context,jobId,body)
         : null;
     if(!result)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});

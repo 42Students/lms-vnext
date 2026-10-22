@@ -22,7 +22,6 @@ import { HrRoundResultsGrid } from "@/components/hr/hr-round-results-grid";
 import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
 import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Badge } from "@/components/ui/badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
@@ -38,7 +37,6 @@ import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-ra
 import {RecruiterResumeDownload} from "@/components/placements/recruiter-resume-download";
 import {RecruiterResumesZipDownload} from "@/components/placements/recruiter-resumes-zip-download";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
-import {placementTableExists} from "@/modules/placements/staged-tables";
 import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
 import {RecruiterFocusedReviewShortcuts} from "@/components/placements/recruiter-focused-review-shortcuts";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
@@ -175,7 +173,7 @@ export default async function HrPlacementJobPage({
   const focusedIds = applicants.rows.filter(row => row.status === "SUBMITTED").map(row => row.id);
   const selectedId = focused ? (filters.applicant ?? focusedIds[0] ?? null) : filters.applicant;
   if (focused && selectedId && !focusedIds.includes(selectedId)) notFound();
-  const selectedApplicant = buildHrApplicantDrawer(applicants.rows, selectedId);
+  const selectedApplicant = buildHrApplicantDrawer(applicants.rows, selectedId ?? undefined);
   const focusedNavigation = focused && selectedId
     ? focusedReviewNavigation({candidateIds: focusedIds, currentId: selectedId})
     : null;
@@ -461,13 +459,13 @@ export default async function HrPlacementJobPage({
                 shared:applicants.counts.all,shortlisted:applicants.counts.shortlisted,
                 rounds:workspace.rounds,
                 offered:offerSummary.distinctOffered,hired:offerSummary.distinctHired,
-              }).map(stage=><li key={stage.label} className={funnelStyles.stage}>
-                <p className={funnelStyles.label}>{stage.label}</p>
-                <p className={funnelStyles.count}>{stage.count??"—"}</p>
-                <MetricBar className={funnelStyles.track+" mt-2"} role="img"
+              }).map(stage=><li key={stage.label} className={funnelStyles["stage"]}>
+                <p className={funnelStyles["label"]}>{stage.label}</p>
+                <p className={funnelStyles["count"]}>{stage.count??"—"}</p>
+                <MetricBar className={funnelStyles["track"]+" mt-2"} role="img"
                   label={stage.label+": "+(stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage")}
                   value={stage.ofPrevious??0} maximum={100} unit="percent" />
-                <p className={funnelStyles.note}>{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"} · {stage.ofApplied===null?"Applied percentage unavailable":stage.ofApplied+"% of shared applicants"}</p>
+                <p className={funnelStyles["note"]}>{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"} · {stage.ofApplied===null?"Applied percentage unavailable":stage.ofApplied+"% of shared applicants"}</p>
               </li>)}
             </ol>
           </section>
@@ -539,7 +537,8 @@ export default async function HrPlacementJobPage({
             </li>)}
           </ol></ScrollCue>
           <RecruiterConversationReplyForm threadId={selectedThread!.id}
-             quoteId={quoteRequest?.id} quoteLabel={quoteRequest?.field}/>
+             {...(quoteRequest?.id !== undefined ? {quoteId:quoteRequest.id} : {})}
+              {...(quoteRequest?.field !== undefined ? {quoteLabel:quoteRequest.field} : {})}/>
           <Link href={"/hr/conversations/"+selectedThread!.id}
             className="inline-flex min-h-9 max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Browse full conversation history</Link>
         </div>:<form method="post" action="/api/placements/recruiter/conversations/open" className="space-y-3">
@@ -679,7 +678,7 @@ export default async function HrPlacementJobPage({
                   <span className="shrink-0 text-body">{focusedNavigation.index+1} of {focusedNavigation.total} shared applicants on this page</span>
                   <MetricBar role="progressbar" label="Focused review progress"
                     value={focusedNavigation.index+1} maximum={focusedNavigation.total} unit="applicants"
-                    className={funnelStyles.reviewTrack} />
+                    className={funnelStyles["reviewTrack"] ?? ""} />
                 </label>
                 {focusedNavigation.previous ? <Link className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
                 {focusedNavigation.next ? <Link className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}

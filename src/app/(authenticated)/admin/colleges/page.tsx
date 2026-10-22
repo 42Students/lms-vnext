@@ -56,7 +56,8 @@ function collegeSearchFields(row:CollegeRow):string[]{
 /** Legacy search rank without the separate usage counter (which is not available to this SSR directory). */
 function collegeSearchScore(row:CollegeRow,query:string):number{
   if(!query)return 1;
-  const terms=query in COLLEGE_SYNONYMS?[query,COLLEGE_SYNONYMS[query]]:[query];
+  const synonym=COLLEGE_SYNONYMS[query];
+  const terms=synonym!==undefined?[query,synonym]:[query];
   let best=0;
   for(const term of terms){
     for(const value of collegeSearchFields(row)){
@@ -75,14 +76,19 @@ function collegeFuzzyMatch(query:string,value:string):boolean {
     const next=[i];
     let minimum=i;
     for(let j=1;j<=value.length;j++){
-      next[j]=Math.min(next[j-1]+1,prior[j]+1,
-        prior[j-1]+(query[i-1]===value[j-1]?0:1));
-      minimum=Math.min(minimum,next[j]);
+      const left=next[j-1];
+      const above=prior[j];
+      const diagonal=prior[j-1];
+      if(left===undefined||above===undefined||diagonal===undefined)return false;
+      const distance=Math.min(left+1,above+1,
+        diagonal+(query[i-1]===value[j-1]?0:1));
+      next[j]=distance;
+      minimum=Math.min(minimum,distance);
     }
     if(minimum>2)return false;
     prior=next;
   }
-  return prior[value.length]<=2;
+  return (prior[value.length]??Number.POSITIVE_INFINITY)<=2;
 }
 
 
@@ -161,9 +167,9 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
   const filters=parseAdminDirectorySearchParams({pageSize:"10",...rawDirectory});
   const validFacet=(value:unknown,max:number)=>value===undefined||
     (typeof value==="string"&&value.length<=max);
-  const validOrg=raw.orgId===undefined||
-    (typeof raw.orgId==="string"&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.orgId));
-  if (!filters||!validFacet(raw.state,80)||!validFacet(raw.city,100)||!validOrg) return <div className="min-w-0 space-y-[var(--lms-space-6)]">
+  const validOrg=raw["orgId"]===undefined||
+    (typeof raw["orgId"]==="string"&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw["orgId"]));
+  if (!filters||!validFacet(raw["state"],80)||!validFacet(raw["city"],100)||!validOrg) return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title="Colleges"/>
     <ErrorState title="Invalid college directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
@@ -209,9 +215,9 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
    .catch(()=>({ok:false as const,value:[]})):({ok:true as const,value:[]});
   const popularity=new Map(popularityRead.value.map(item=>[item.collegeId,item.total]));
   const {q,pageSize}=filters;
-  const state=typeof raw.state==="string"?raw.state.trim():"";
-  const city=typeof raw.city==="string"?raw.city.trim():"";
-  const orgId=typeof raw.orgId==="string"?raw.orgId:"";
+  const state=typeof raw["state"]==="string"?raw["state"].trim():"";
+  const city=typeof raw["city"]==="string"?raw["city"].trim():"";
+  const orgId=typeof raw["orgId"]==="string"?raw["orgId"]:"";
   const normalized=normalizedText(q);
   const scopeRows=rows.filter(item=>
     (!state||normalizedText(item.state)===normalizedText(state))&&

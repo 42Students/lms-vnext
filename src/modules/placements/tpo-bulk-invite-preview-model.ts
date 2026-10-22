@@ -7,7 +7,7 @@ export type TpoBulkInviteCandidate={
 export function bulkInviteDisposition(row:TpoBulkInviteCandidate){
  if(row.recruiterUserId)return "Already joined";
  if(row.unsubscribedAt)return "Asked not to be contacted";
- if(!row.emailNorm)return "Work email missing";
+ if(!row.emailNorm)return "No email on file";
  if(!row.companyRelationshipId)return "Company link missing";
  return null;
 }

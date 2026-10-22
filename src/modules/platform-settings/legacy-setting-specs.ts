@@ -135,8 +135,8 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "min": 1,
     "max": 100,
     "placeholder": "90",
-    "help": "Global watched percentage, from 1 through 100. Stored setting alone does not change learner progress unless the authorized progress reader consumes the override.",
-    "activation": "READER_VERIFICATION_REQUIRED"
+    "help": "Global watched percentage, from 1 through 100. Read by the learner progress service (src/modules/courses/progress-service.ts) through readLearnerPlaybackSettings; new progress saves use the override.",
+    "activation": "RUNTIME_CONSUMED"
   },
   {
     "key": "course.minInProgressPercent",
@@ -148,8 +148,8 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "min": 0,
     "max": 100,
     "placeholder": "5",
-    "help": "Global percentage under which partially viewed work is Not started. Check the active progress calculation before changing this.",
-    "activation": "READER_VERIFICATION_REQUIRED"
+    "help": "Global percentage under which partially viewed work is Not started. Read by the learner progress service (src/modules/courses/progress-service.ts) through readLearnerPlaybackSettings.",
+    "activation": "RUNTIME_CONSUMED"
   },
   {
     "key": "ui.chatPollIntervalMs",
@@ -161,8 +161,8 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "min": 3000,
     "max": 600000,
     "placeholder": "15000",
-    "help": "Legacy poll interval 3000–600000 ms. VNext classroom chat uses its own polling mechanism; a stored override does not prove that it changes the running poller.",
-    "activation": "STORED_ONLY"
+    "help": "Poll interval 3000–600000 ms. Read when the learner classroom chat opens (learn/courses page via readLearnerPlaybackSettings) and passed to the poller; open chats pick up a new value on reload.",
+    "activation": "RUNTIME_CONSUMED"
   },
   {
     "key": "ui.progressSaveIntervalMs",
@@ -174,8 +174,8 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "min": 5000,
     "max": 600000,
     "placeholder": "15000",
-    "help": "Legacy video progress save interval 5000–600000 ms. The running player must explicitly use the override; it is not a live toggle until verified.",
-    "activation": "STORED_ONLY"
+    "help": "Video progress save interval 5000–600000 ms (default 15000). Read through readLearnerPlaybackSettings and passed to the learner video players as saveIntervalMs; open players pick up a new value on reload.",
+    "activation": "RUNTIME_CONSUMED"
   },
   {
     "key": "attendance.eligibilityThresholdPercent",

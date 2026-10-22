@@ -38,7 +38,9 @@ describe("chat-9 UX last-third substantive interactions",()=>{
   expect(search).toContain('role="search"');
  });
  it("UX-admin-tenants-03 enforces the accessible interaction contract",()=>{
-  const page=source("src/app/(authenticated)/admin/tenants/page.tsx");
+  const landing=source("src/app/(authenticated)/admin/tenants/page.tsx");
+  expect(landing).toContain('<TenantDirectory searchParams={Promise.resolve(raw)}');
+  const page=source("src/app/(authenticated)/admin/tenants/directory/page.tsx");
   for(const slot of ["<Input","<Select","<Button","<Pagination"])expect(page).toContain(slot);
   expect(page).toContain('label="Tenant pages"');
   expect(page).toContain("No colleges in the current scope match these lifecycle filters.");

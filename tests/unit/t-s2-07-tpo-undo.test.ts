@@ -13,7 +13,7 @@ describe("T-S2-07 30-second undo send",()=>{
   const read=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
   const page=read("src/app/(authenticated)/tpo/announcements/page.tsx");
   const lifecycle=read("src/modules/announcements/tpo-placement-notice-lifecycle.ts");
-  expect(page).toContain("row.sentAt??(row.scheduledAt===null?row.createdAt:null)");
+  expect(page).toContain("return row.sentAt;");
   expect(page).toContain("sentAt!==null&&canUndoTpoAnnouncementSend(sentAt,now)");
   expect(lifecycle).toContain("sentAt:announcementBroadcastGroups.sentAt");
   expect(lifecycle).toContain("if(!sentAt)throw new Error(\"ANNOUNCEMENT_NOT_SENT\")");

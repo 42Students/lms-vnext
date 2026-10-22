@@ -93,6 +93,42 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
  </section>;
 }
 
+/** Legacy "Approve each drive a recruiter requests" switch (tpo/settings.js RecruiterRules). */
+export function TpoRecruiterApprovalEditor({initial,version}:{initial:boolean;version:string|null}){
+ const router=useRouter();
+ const [approval,setApproval]=useState(initial),[saved,setSaved]=useState(initial);
+ const [currentVersion,setCurrentVersion]=useState(version);
+ const [busy,setBusy]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
+ const inFlight=useRef(false);
+ async function save(){
+  if(inFlight.current||busy)return;
+  inFlight.current=true;setBusy(true);setError("");setNotice("");
+  try{
+   const response=await fetch("/api/placements/tpo/settings/communication",{
+    method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({section:"RECRUITER_APPROVAL",recruiterDriveNeedsApproval:approval,expectedVersion:currentVersion}),
+   });
+   const data=await response.json() as ResponseBody;
+   if(!response.ok)throw Error(saveError(data));
+   setSaved(approval);setCurrentVersion(data.version??null);setNotice("Saved");router.refresh();
+  }catch(caught){setError(caught instanceof Error?caught.message:"Settings were not saved.");}
+  finally{inFlight.current=false;setBusy(false);}
+ }
+ return <section className="space-y-3 border-t border-border pt-5">
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">How recruiters work with you</h2>
+  <label className="flex items-start gap-3 text-sm font-semibold">
+   <input type="checkbox" checked={approval} disabled={busy}
+    onChange={event=>setApproval(event.target.checked)} className="mt-1 h-5 w-5"/>
+   <span>Approve each drive a recruiter requests</span>
+  </label>
+  <p className="text-xs text-muted-foreground leading-[20px]">{approval?"On: a request waits for your approval before you set dates and publish it.":"Off: a request is approved as it arrives (unless the recruiter is still waiting for verification). You still set dates and publish."}</p>
+  <Button type="button" onClick={()=>void save()} disabled={busy||saved===approval}
+   className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9 print:hidden">Save</Button>
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
+ </section>;
+}
+
 /** Changes future grants only. Existing recruiter expiries are not silently extended. */
 export function TpoRecruiterDurationEditor({initial,version}:{initial:number;version:string|null}){
  const router=useRouter();

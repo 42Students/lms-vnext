@@ -43,20 +43,20 @@ export async function PUT(request:Request,{params}:{params:Promise<{collegeId:st
   // field; do not overwrite a college's logos, colors or any other branding.
   // Even a legacy update requires a known version (body or If-Match), never
   // a blind overwrite of a concurrent administrator's policy.
-  const branding=record.branding;
+  const branding=record["branding"];
   const legacy=branding&&typeof branding==="object"&&!Array.isArray(branding)
-    ?(branding as Record<string,unknown>).loginMethods:undefined;
+    ?(branding as Record<string,unknown>)["loginMethods"]:undefined;
   const token=request.headers.get("if-match");
   const ifMatch=token&&/^(?:W\/)?\"?[0-9]{1,9}\"?$/.test(token)
     ?Number(token.replace(/[^0-9]/g,"")):null;
-  const expected=record.expectedVersion??ifMatch;
+  const expected=record["expectedVersion"]??ifMatch;
   if(legacy!==undefined&&(expected===null||expected===undefined))
    return NextResponse.json({error:"SIGNIN_POLICY_VERSION_REQUIRED",
       message:"Refresh sign-in settings before saving this college."},{status:428});
   const payload=legacy!==undefined
     ?{collegeId,method:legacy,expectedVersion:expected}
     :record;
-  if(!("collegeId" in payload)||payload.collegeId!==collegeId)
+  if(!("collegeId" in payload)||payload["collegeId"]!==collegeId)
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   const policy=await saveAdminCollegeSignInPolicy(context,payload);
   return NextResponse.json({policy},{headers:{"Cache-Control":"private, no-store"}});

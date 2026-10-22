@@ -72,6 +72,9 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
       (row.acceptanceCriteria?.length ?? 0) > 4000 ||
       (row.approach?.length ?? 0) > 4000);
   });
+  // Legacy RepeatingItemEditor reports the first row missing its title as "Item N: Title required".
+  const missingTitleAt = draft.findIndex((row, index) =>
+    !row.title.trim() && JSON.stringify(row) !== JSON.stringify(baseline[index]));
   const normalizedKeys = draft.map(row => row.key.trim().toLowerCase());
   const duplicatedKeys = draft.some((row, index) =>
     normalizedKeys[index] !== baseline[index]?.key.trim().toLowerCase() &&
@@ -234,7 +237,11 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
         </details>;
       })}
       {invalid || duplicatedKeys ? <p role="alert" className="text-sm text-error">
+        {missingTitleAt >= 0 ? "Item " + (missingTitleAt + 1) + ": Title required. " : ""}
         Resolve invalid titles, repeated keys, or unavailable sprint choices before saving.
+      </p> : null}
+      {changed.length > 100 ? <p role="alert" className="text-sm text-error">
+        {changed.length} tasks changed; save at most 100 changed tasks at once. Undo {changed.length - 100} before saving.
       </p> : null}
       <div className="flex flex-wrap gap-2">
         <Button loading={pending} disabled={pending || invalid || duplicatedKeys || changed.length > 100}

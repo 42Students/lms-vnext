@@ -80,8 +80,8 @@ export async function POST(request: Request) {
     },{status:422,headers:{"Cache-Control":"no-store"}});
     const legacyStatus=normalizeLegacyProjectCreationStatus(
       legacy.data.initialStatus??legacy.data.status??"PLANNED",{
-        ...(typeof legacy.data.phase==="string"?{phase:legacy.data.phase}:{}),
-        ...(typeof legacy.data.blocker==="string"?{blocker:legacy.data.blocker}:{}),
+        ...(typeof legacy.data["phase"]==="string"?{phase:legacy.data["phase"]}:{}),
+        ...(typeof legacy.data["blocker"]==="string"?{blocker:legacy.data["blocker"]}:{}),
       });
     if(!legacyStatus)return NextResponse.json({
       error:"PROJECT_INVALID_STATE",
@@ -96,12 +96,12 @@ export async function POST(request: Request) {
       primaryMentorMembershipId:legacy.data.primaryMentorMembershipId??legacy.data.mentorMembershipId,
       learnerMembershipIds:legacy.data.learnerMembershipIds??legacy.data.studentMembershipIds??[],
       initialStatus:legacyStatus.initialStatus,
-      ...(typeof legacy.data.summary==="string"?{summary:legacy.data.summary}:{}),
+      ...(typeof legacy.data["summary"]==="string"?{summary:legacy.data["summary"]}:{}),
       ...(legacyStatus.phase?{phase:legacyStatus.phase}:{}),
-      ...(typeof legacy.data.progressPercent==="number"?{progressPercent:legacy.data.progressPercent}:{}),
-      ...(typeof legacy.data.dueLabel==="string"?{dueLabel:legacy.data.dueLabel}:{}),
+      ...(typeof legacy.data["progressPercent"]==="number"?{progressPercent:legacy.data["progressPercent"]}:{}),
+      ...(typeof legacy.data["dueLabel"]==="string"?{dueLabel:legacy.data["dueLabel"]}:{}),
       ...(legacyStatus.blocker?{blocker:legacyStatus.blocker}:{}),
-      ...(typeof legacy.data.nextAction==="string"?{nextAction:legacy.data.nextAction}:{}),
+      ...(typeof legacy.data["nextAction"]==="string"?{nextAction:legacy.data["nextAction"]}:{}),
     };
     const project = await createProjectInstance(context,canonical);
 

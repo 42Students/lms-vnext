@@ -21,7 +21,7 @@ describe("HR-BREAK-REPORT-JOINED-51: employer joined stage only includes accepte
  });
  it("retains historical college applicants in page counts after graduation or deactivation",()=>{
   const section=source.split("const reportCounts =")[1]?.split("const summaryRecord")[0]??"";
-  expect(section).toContain("eq(collegeMemberships.collegeId,");
+  expect(section).toMatch(/eq\(\s*collegeMemberships\.collegeId,\s*collegeId,\s*\)/);
   expect(section).toContain("eq(users.id,collegeMemberships.userId)");
   expect(section).not.toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(section).not.toContain('eq(users.platformStatus,"ACTIVE")');

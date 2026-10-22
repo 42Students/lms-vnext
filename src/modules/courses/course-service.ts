@@ -381,7 +381,7 @@ export async function createCourse(
           throw new CoursesServiceError("COURSE_PARENT_NOT_FOUND");
       }
       await assertCourseShortTitleUnique(
-        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 64),
+        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 255),
       );
       const [created] = await tx
         .insert(courses)
@@ -487,7 +487,7 @@ export async function updateCourse(
       }
       await assertCourseShortTitleUnique(
         tx, scope.departmentId,
-        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 64),
+        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 255),
         courseId,
       );
       // The old LMS has independent enabled and allowedForDisplay values.
@@ -497,12 +497,10 @@ export async function updateCourse(
       .update(courses)
       .set({
         ...changes,
-        // Enabled and allowed-for-display are independent legacy switches.
-        // A PATCH that only edits enabled must not silently overwrite the
-        // display flag; omitted values preserve the existing DB column.
-        ...(visibleToStudents!==undefined
-          ?{legacyAllowedForDisplay:visibleToStudents?1:0}
-          :{}),
+        // Legacy Course fields enabled and allowedForDisplay are independent.
+         ...(visibleToStudents!==undefined
+           ?{legacyAllowedForDisplay:visibleToStudents?1:0}
+           :{}),
         version: sql<number>`${courses.version} + 1`,
         // The persisted token MUST advance even for two edits within one
         // millisecond (or across app/DB clocks). The browser sends this exact
@@ -706,7 +704,7 @@ export async function restoreCourse(
       // conflict with a new active name or code in the same department.
       await assertCourseShortTitleUnique(
         tx, scope.departmentId,
-        locked.shortTitle ?? locked.name.slice(0, 64),
+        locked.shortTitle ?? locked.name.slice(0, 255),
         courseId,
       );
       const [restored] = await tx

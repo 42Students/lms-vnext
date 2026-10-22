@@ -224,7 +224,7 @@ export function AssignmentSubmissionControl({
       );
 
       if (!response.ok) {
-        const message=await courseApiError(response);
+        const message=(await courseApiError(response))??"Unable to submit assignment.";
         setError(message.toLowerCase().includes("deadline is not configured")
           ? "This assignment does not have a valid deadline. Submission is unavailable."
           : message.toLowerCase().includes("deadline has passed")

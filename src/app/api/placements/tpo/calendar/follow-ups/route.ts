@@ -36,6 +36,7 @@ export async function POST(request: Request) {
       dueAt: input.dueAt,
       note: input.note,
     });
+    if (!followup) throw new Error("TPO_FOLLOWUP_INSERT_RETURNED_NO_ROW");
     return NextResponse.json(
       { followup: { id: followup.id, leadId: input.leadId, dueAt: followup.dueAt.toISOString() } },
       { status: 201 },

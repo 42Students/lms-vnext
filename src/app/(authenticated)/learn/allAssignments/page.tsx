@@ -62,6 +62,14 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
     return (
       <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
         <PageHeader title="All Assignments" />
+        <div role="alert" className="space-y-2 rounded-lg border border-destructive/40 p-4">
+          <p className="font-semibold">Assignments could not be loaded</p>
+          <p className="text-sm">This is a loading problem, not an empty list.</p>
+          <Link href="/learn/allAssignments?retry=1"
+            className="inline-flex items-center rounded-md px-3 py-3 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2">
+            Retry loading assignments
+          </Link>
+        </div>
         <LearnerAssessmentOverview
           key={requestedCourse||"all"}
           initialCourseId={requestedCourse}

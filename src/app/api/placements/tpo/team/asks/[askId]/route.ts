@@ -23,7 +23,7 @@ export async function POST(request:Request,{params}:{
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   const result=await changeTpoTeamAskById(await getCurrentRequestContext(),{
-   askId,...parsed.data,
+   askId,action:parsed.data.action,...(parsed.data.note!==undefined?{note:parsed.data.note}:{}),
   });
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){

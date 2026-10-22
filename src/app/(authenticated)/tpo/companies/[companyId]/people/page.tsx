@@ -25,7 +25,7 @@ export default async function TpoCompanyPeoplePage({
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
       </Link></>}/>
-      {process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? (
+      {process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" ? (
         <Disclosure title="Add or edit contact person" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3"><TpoCompanyPersonEditor companyId={companyId} contacts={company.contacts}/></Disclosure>
       ) : <Alert tone="warning">DB09 contact writes are unavailable.</Alert>}
       {company.contacts.length === 0

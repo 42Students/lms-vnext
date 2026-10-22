@@ -35,7 +35,7 @@ async function mutate(request:Request,{params}:Params,legacyVerb?:"PUT"|"DELETE"
    if(!raw||typeof raw!=="object"||Array.isArray(raw))
     return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
    const input=raw as Record<string,unknown>;
-   if(typeof input.expectedHost!=="string"&&input.expectedHost!==null)
+   if(typeof input["expectedHost"]!=="string"&&input["expectedHost"]!==null)
     return NextResponse.json({error:"EXPECTED_HOST_REQUIRED"},{status:400});
    raw={...input,action:legacyVerb==="DELETE"?"REMOVE":
     (await getManagedCollegeSubdomain(context,collegeId)).currentHost?"CHANGE":"ALLOT"};

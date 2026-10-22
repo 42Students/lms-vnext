@@ -43,7 +43,7 @@ export default async function CollegePlacementsPage({searchParams}:{
     </section>
   );
   const incoming=await searchParams;
-  const rawSearch=incoming.q;
+  const rawSearch=incoming["q"];
   if(Array.isArray(rawSearch)||(typeof rawSearch==="string"&&rawSearch.length>100))
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Placement Drives"/>
@@ -51,7 +51,7 @@ export default async function CollegePlacementsPage({searchParams}:{
         className="font-semibold text-link underline">Clear search</Link></Alert>
     </div>;
   const q=typeof rawSearch==="string"?rawSearch.trim():"";
-  const rawReturnTo=incoming.returnTo;
+  const rawReturnTo=incoming["returnTo"];
   const returnTo=typeof rawReturnTo==="string"&&
     rawReturnTo.startsWith("/college/")&&!rawReturnTo.startsWith("//")
     ?rawReturnTo:"";
@@ -171,8 +171,9 @@ export default async function CollegePlacementsPage({searchParams}:{
 
       <CollegeRetentionInlinePreview/>
       <p className="border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
-        <Link href="/college/students" className="font-semibold text-link underline">Student directory</Link>
-        <span className="ml-2 text-xs text-muted-foreground">Student placement history lookup is not yet available; no outcome is inferred.</span>
+        <Link href="/college/placements/student-lookup" className="font-semibold text-link underline">Student placement lookup</Link>
+        <span className="ml-2 text-xs text-muted-foreground">Search a student by name, roll number or email to see recorded applications, offers and joining outcomes.</span>
+        <Link href="/college/students" className="ml-3 font-semibold text-link underline">Student directory</Link>
       </p>
       <PlacementOperationsWorkspace
         context={context}

@@ -87,6 +87,7 @@ export function CollegeAssignmentReview({
   No active class delivery is available for reviewing submissions.
  </p>;
  const selected=options.find(item=>item.deliveryId===deliveryId)??options[0];
+ if(!selected)return <p role="status">No Sections available for this assignment.</p>;
  return <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
   <Button variant="secondary" size="sm" type="button" disabled={bulkBusy}
    aria-label={"Submissions for "+(assignmentTitle||"assignment "+assignmentId)}

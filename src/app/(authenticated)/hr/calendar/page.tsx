@@ -257,7 +257,7 @@ export default async function HrCalendarPage({
   const view =
     VIEWS.find(
       (candidate) => candidate === requestedView,
-    ) ?? "week";
+    ) ?? "agenda";
 
   // Recruiter legacy calendar starts on Monday and displays seven days by default.
   // Other placement calendars retain their own Sunday-first week conventions.
@@ -338,7 +338,7 @@ export default async function HrCalendarPage({
         title="Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
         actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
-              <nav aria-label="Calendar period navigation" className={styles.nav}>
+              <nav aria-label="Calendar period navigation" className={styles["nav"]}>
                 <Link href={calendarHref(previous,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Previous week":"Previous month"}
                   className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
@@ -459,13 +459,13 @@ export default async function HrCalendarPage({
               <summary className="min-h-11 cursor-pointer text-sm font-semibold text-primary-text">View month grid</summary>
               <section
               aria-label={`${view} recruiter calendar`}
-              className={styles.boardFrame}
+              className={styles["boardFrame"]}
             >
               <div className="space-y-3 min-[1100px]:hidden">
                 {mobileDays.map((day) => (
-                  <article key={day.day} className={styles.mobileDay}>
+                  <article key={day.day} className={styles["mobileDay"]}>
                     <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{fullDayLabel(day.day)}{day.day===today?" · Today":""}</h3>
-                    <div className={styles.mobileEvents}>
+                    <div className={styles["mobileEvents"]}>
                       {day.events.map((event) => (
                         <RecruiterCalendarEventCard key={event.id} event={event} />
                       ))}
@@ -485,7 +485,7 @@ export default async function HrCalendarPage({
                   </p>
                 ) : null}
               </div>
-              <CalendarGrid className={"hidden min-[1100px]:grid "+styles.board}>
+              <CalendarGrid className={"hidden min-[1100px]:grid "+styles["board"]}>
                 {[
                   "Mon",
                   "Tue",
@@ -497,7 +497,7 @@ export default async function HrCalendarPage({
                 ].map((label,index) => (
                   <div
                     key={label}
-                    className={styles.dayHead+" "+(index===6?calendarStyles.calendarSunday:"")}
+                    className={styles["dayHead"]+" "+(index===6?calendarStyles["calendarSunday"]:"")}
                   >
                     {label}
                   </div>
@@ -522,14 +522,14 @@ export default async function HrCalendarPage({
                       aria-label={`${dateLabel(day)}: ${events.length + resultsDue.length} events`}
                       data-today={isToday}
                       data-outside={outsideMonth}
-                      className={styles.day}
+                      className={styles["day"]}
                     >
                       <p
                         className={
                           (isToday
                             ? "text-xs font-bold text-primary-text"
                             : "text-xs font-semibold text-foreground") +
-                          (!isToday && new Date(day+"T12:00:00Z").getUTCDay()===0?" "+calendarStyles.calendarSunday:"")
+                          (!isToday && new Date(day+"T12:00:00Z").getUTCDay()===0?" "+calendarStyles["calendarSunday"]:"")
                         }
                       >
                         {shortDayLabel(day)}
@@ -551,9 +551,9 @@ export default async function HrCalendarPage({
                               key={event.id}
                               href={href}
                               title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                              className={styles.event}
+                              className={styles["event"]}
                             >
-                              <span className={styles.time+" block font-semibold"}>
+                              <span className={styles["time"]+" block font-semibold"}>
                                 {eventTime(
                                   event.startsAt,
                                 )}
@@ -569,7 +569,7 @@ export default async function HrCalendarPage({
                         {resultsDue.map((item) => (
                           <Link key={"due:" + item.id} href={hrResultsDueHref(item.jobId,item.id)}
                             title={"Results due at " + eventTime(item.dueAt) + " IST"}
-                            className={styles.event+" "+styles.due}>
+                            className={styles["event"]+" "+styles["due"]}>
                             <span className="block font-semibold">Results due · {eventTime(item.dueAt)}</span>
                             <span className="mt-1 block break-words">{item.roundName}</span>
                           </Link>

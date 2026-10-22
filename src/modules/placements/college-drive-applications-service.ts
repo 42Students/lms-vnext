@@ -194,22 +194,37 @@ export async function listCollegeDriveApplications(
   };
 }
 
-/** A bounded, neutralized export of exactly the columns present in the College Admin roster. */
+/** Page through every matching, college-scoped application for export. The
+ * interactive roster stays capped; its page size never silently truncates CSV.
+ * Every page reuses the same validated filters and deterministic sort order. */
 export async function exportCollegeDriveApplicationsCsv(
   context: RequestContext, jobId: unknown, raw: unknown,
 ) {
-  const data = await listCollegeDriveApplications(context, jobId, raw, { exportAll: true });
+  const query = driveApplicationsQuerySchema.parse(raw);
+  const pageSize = 100;
   const headings = ["Student name","Email","College","Roll number","Role option","Source","Pipeline stage","Application status","Screening status","Submitted at","Age (days)"];
-  const rows: (string | number | null)[][] = data.items.map(item => [
-    item.name ?? "",item.email,item.collegeName,item.rollNumber,item.roleTitle,item.source,item.stage,item.status,
-    item.screening ?? "Not recorded",item.submittedAt.toISOString(),item.ageDays,
-  ]);
-  if (data.truncated) {
-    rows.push(["TRUNCATED — export capped at " + DRIVE_APPLICATION_EXPORT_CAP + " of " + data.total + " matching rows",
-      "", "", "", "", "", "", "", "", "", ""]);
-  }
-  return { csv: "\uFEFF" + placementReportCsv(headings, rows),
-    truncated: data.truncated, exported: data.items.length, total: data.total };
+  const rows: (string | number | null)[][] = [];
+  let total = 0;
+  let page = 1;
+  do {
+    const data = await listCollegeDriveApplications(
+      context, jobId, { ...query, page }, { pageSize },
+    );
+    total = data.total;
+    for (const item of data.items) {
+      rows.push([
+        item.name ?? "",item.email,item.collegeName,item.rollNumber,item.roleTitle,
+        item.source,item.stage,item.status,item.screening ?? "Not recorded",
+        item.submittedAt.toISOString(),item.ageDays,
+      ]);
+    }
+    if (data.items.length === 0) break;
+    page += 1;
+  } while (rows.length < total);
+  return {
+    csv: "\uFEFF" + placementReportCsv(headings, rows),
+    truncated: false, exported: rows.length, total,
+  };
 }
 
 

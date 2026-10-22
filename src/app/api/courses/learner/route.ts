@@ -16,6 +16,16 @@ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]
  * no studentId/classId override; numeric legacy semesterId is resolved only
  * through imported term-to-course records for the authenticated learner's
  * currently authorized programs and courses.
+ *
+ * Legacy SemesterService.js endpoint mapping (all three are role-scoped):
+ *  - GET /api/v1/student-courses/byStudent/{studentId}[?semesterId=]
+ *      -> GET /api/courses/learner[?semesterId=<imported legacy id>|academicPeriodId=<UUID>]
+ *  - GET /api/v1/student-courses/byStudent/{studentId}/semesters
+ *      -> GET /api/courses/learner?view=semesters
+ *  - GET /api/v1/student-courses/byClass/{classId}
+ *      -> no learner route: a class roster of courses is a staff read served by
+ *         the college class/section pages (src/app/(authenticated)/college/classes)
+ *         and faculty deliveries (faculty-course-service), never a learner override.
  * The only principal is the current ACTIVE learner membership resolved by
  * listLearnerCourseDeliveries. An independent teacher/admin roster endpoint
  * must handle staff-authorized byClass reads with its own permission check.

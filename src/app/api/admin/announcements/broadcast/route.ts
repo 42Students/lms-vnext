@@ -104,17 +104,17 @@ function normalizeBroadcastComposer(raw:unknown):unknown{
  if(!["body","pinned","link","showUntil","audience"].some(key=>key in value))
   return raw;
  return {
-  audienceMode:value.audienceMode??(value.audience==="ALL"?"ALL_COLLEGES":"SELECTED_COLLEGES"),
-  collegeIds:value.collegeIds??[],
-  reviewedCollegeIds:value.reviewedCollegeIds,
-  title:value.title,
-  message:value.message??value.body,
-  scheduledAt:value.scheduledAt??null,
-  expiresAt:value.expiresAt??value.showUntil??null,
-  isPinned:value.isPinned??value.pinned??false,
-  buttonUrl:value.buttonUrl??value.link??null,
-  buttonLabel:value.buttonLabel,
-  publishConsent:value.publishConsent,
+  audienceMode:value["audienceMode"]??(value["audience"]==="ALL"?"ALL_COLLEGES":"SELECTED_COLLEGES"),
+  collegeIds:value["collegeIds"]??[],
+  reviewedCollegeIds:value["reviewedCollegeIds"],
+  title:value["title"],
+  message:value["message"]??value["body"],
+  scheduledAt:value["scheduledAt"]??null,
+  expiresAt:value["expiresAt"]??value["showUntil"]??null,
+  isPinned:value["isPinned"]??value["pinned"]??false,
+  buttonUrl:value["buttonUrl"]??value["link"]??null,
+  buttonLabel:value["buttonLabel"],
+  publishConsent:value["publishConsent"],
  };
 }
 export async function POST(request:Request){

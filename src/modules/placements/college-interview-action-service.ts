@@ -96,13 +96,26 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
   let message:string;
   if(input.action==="SCHEDULE"||input.action==="EDIT"){
    const proposed=input.appointment;
-   if(new Date(proposed.scheduledAt)<=new Date())throw Error("Interview must be scheduled in the future.");
+   if(new Date(proposed.scheduledAt)<=new Date()){
+    // Legacy InterviewEditForm: an untouched (unchanged-to-the-minute) time stays
+    // valid when editing a past interview; only a changed past time is rejected.
+    let untouched=false;
+    if(input.action==="EDIT"){
+     const [existing]=await tx.select({scheduledAt:placementCollegeInterviews.scheduledAt})
+      .from(placementCollegeInterviews).where(and(
+       eq(placementCollegeInterviews.id,input.interviewId),
+       eq(placementCollegeInterviews.jobId,job.id))).limit(1);
+     untouched=existing!==undefined&&Math.floor(existing.scheduledAt.getTime()/60000)===
+      Math.floor(new Date(proposed.scheduledAt).getTime()/60000);
+    }
+    if(!untouched)throw Error("The selected date and time is in the past");
+   }
    const [round]=await tx.select({id:placementJobRounds.id,status:placementJobRounds.status})
     .from(placementJobRounds).where(and(eq(placementJobRounds.id,proposed.roundId),
      eq(placementJobRounds.jobId,job.id),eq(placementJobRounds.kind,"INTERVIEW"))).limit(1);
    if(!round||!["PENDING","SCHEDULED"].includes(round.status))
     throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_READY");
-   const [application]=await tx.select({id:placementApplications.id})
+   const [application]=await tx.select({id:placementApplications.id,membershipId:placementApplications.membershipId})
     .from(placementApplications).innerJoin(placementApplicationScreenings,
      eq(placementApplicationScreenings.applicationId,placementApplications.id))
     .where(and(eq(placementApplications.id,proposed.applicationId),
@@ -117,6 +130,21 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
    if(withdrawal)throw new PlacementsServiceError("PLACEMENT_REQUEST_PENDING_WITHDRAWAL");
    const start=new Date(proposed.scheduledAt);
    const end=new Date(start.getTime()+proposed.durationMinutes*60000);
+   // Legacy scheduleInterview locks the learner and rejects overlapping interviews across
+   // every job. Serialize on all of this student's applications, then check all drives.
+   await tx.select({id:placementApplications.id}).from(placementApplications)
+    .where(eq(placementApplications.membershipId,application.membershipId)).for("update");
+   const candidateCollision=await tx.select({id:placementCollegeInterviews.id})
+    .from(placementCollegeInterviews)
+    .innerJoin(placementApplications,eq(placementApplications.id,placementCollegeInterviews.applicationId))
+    .where(and(
+     eq(placementApplications.membershipId,application.membershipId),
+     eq(placementCollegeInterviews.status,"SCHEDULED"),
+     input.action==="EDIT"?ne(placementCollegeInterviews.id,input.interviewId):undefined,
+     sql`${placementCollegeInterviews.scheduledAt} < ${end}`,
+     sql`${placementCollegeInterviews.scheduledAt} + ${placementCollegeInterviews.durationMinutes} * interval '1 minute' > ${start}`,
+    )).limit(1);
+   if(candidateCollision.length)throw Error("This student already has an interview at the chosen time.");
    const sharedResource=or(
      proposed.mode==="ON_CAMPUS"&&proposed.venue?
       sql`lower(${placementCollegeInterviews.venue})=lower(${proposed.venue})`:undefined,

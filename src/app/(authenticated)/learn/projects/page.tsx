@@ -65,25 +65,30 @@ export default async function LearnerProjectsPage({
   const allowedKeys=["search","status","attention","work","sort","page","pageSize"];
   const invalidFilters=Object.keys(params).some(key=>!allowedKeys.includes(key)) ||
     Object.values(params).some(Array.isArray) ||
-    (params.search!==undefined&&!searchSchema.safeParse(one(params.search)).success) ||
-    (params.status!==undefined&&!statusSchema.safeParse(one(params.status)).success) ||
-    (params.attention!==undefined&&!attentionSchema.safeParse(one(params.attention)).success) ||
-    (params.work!==undefined&&!workSchema.safeParse(one(params.work)).success) ||
-    (params.sort!==undefined&&!sortSchema.safeParse(one(params.sort)).success) ||
-    (params.page!==undefined&&!z.coerce.number().int().min(0).max(100000).safeParse(one(params.page)).success) ||
-    (params.pageSize!==undefined&&!z.coerce.number().int().safeParse(one(params.pageSize)).success) ||
-    (params.pageSize!==undefined&&![10,25,50].includes(Number(one(params.pageSize))));
-  const status = one(params.status);
-  const attention = one(params.attention);
-  const work = one(params.work);
+    (params["search"]!==undefined&&!searchSchema.safeParse(one(params["search"])).success) ||
+    (params["status"]!==undefined&&!statusSchema.safeParse(one(params["status"])).success) ||
+    (params["attention"]!==undefined&&!attentionSchema.safeParse(one(params["attention"])).success) ||
+    (params["work"]!==undefined&&!workSchema.safeParse(one(params["work"])).success) ||
+    (params["sort"]!==undefined&&!sortSchema.safeParse(one(params["sort"])).success) ||
+    (params["page"]!==undefined&&!z.coerce.number().int().min(0).max(100000).safeParse(one(params["page"])).success) ||
+    (params["pageSize"]!==undefined&&!z.coerce.number().int().safeParse(one(params["pageSize"])).success) ||
+    (params["pageSize"]!==undefined&&![10,25,50].includes(Number(one(params["pageSize"]))));
+  const status = one(params["status"]);
+  const attention = one(params["attention"]);
+  const work = one(params["work"]);
+  const parsedSearch=searchSchema.safeParse(one(params["search"]));
+  const parsedStatus=statusSchema.safeParse(status);
+  const parsedAttention=attentionSchema.safeParse(attention);
+  const parsedWork=workSchema.safeParse(work);
+  const parsedSort=sortSchema.safeParse(one(params["sort"]));
   const query: ProjectParticipantListQuery = {
-    search: searchSchema.safeParse(one(params.search)).data || undefined,
-    status: statusSchema.safeParse(status).data,
-    attention: attentionSchema.safeParse(attention).data,
-    work: workSchema.safeParse(work).data,
-    sort: sortSchema.safeParse(one(params.sort)).data,
-    page: parsePage(one(params.page)),
-    pageSize: parsePageSize(one(params.pageSize)),
+    ...(parsedSearch.success && parsedSearch.data ? {search:parsedSearch.data} : {}),
+    ...(parsedStatus.success ? {status:parsedStatus.data} : {}),
+    ...(parsedAttention.success ? {attention:parsedAttention.data} : {}),
+    ...(parsedWork.success ? {work:parsedWork.data} : {}),
+    ...(parsedSort.success ? {sort:parsedSort.data} : {}),
+    page: parsePage(one(params["page"])),
+    pageSize: parsePageSize(one(params["pageSize"])),
   };
 
   const directory = await listMyLearnerProjectPage(context,query);
@@ -128,6 +133,10 @@ export default async function LearnerProjectsPage({
           const projectAttention = archived ? undefined : attentionByProject.get(row.project.id);
           const blocked = !archived && (Boolean(row.project.blocker?.trim()) ||
             learnerProjectHasBlockedTasks(row.project.status, progressByProject.get(row.project.id)));
+          const progress = progressByProject.get(row.project.id);
+          const team = teamsByProject.get(row.project.id);
+          const due = dueByProject.get(row.project.id);
+          const progressPercent = progress?.percentage ?? row.project.progressPercent;
           return {
             id: row.project.id,
             title: row.project.title,
@@ -140,20 +149,17 @@ export default async function LearnerProjectsPage({
             courseLabel: row.project.courseLabel,
             phase: row.project.phase,
             dueLabel: row.project.dueLabel,
-            memberCount: teamsByProject.get(row.project.id)?.memberCount,
-            progressPercent: progressByProject.get(row.project.id)?.percentage ?? row.project.progressPercent ?? undefined,
-            dueState: dueByProject.get(row.project.id)?.state,
-            dueDate: dueByProject.get(row.project.id)?.date,
-            progressDetail: progressByProject.has(row.project.id)
-              ? "Task completion " + String(progressByProject.get(row.project.id)!.completedTasks) +
-                "/" + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks"
-              : row.project.progressPercent!==null?"Admin-reported progress / Manual estimate":undefined,
+            ...(team?.memberCount !== undefined ? {memberCount:team.memberCount} : {}),
+            ...(progressPercent != null ? {progressPercent} : {}),
+            ...(due?.state !== undefined ? {dueState:due.state} : {}),
+            ...(due?.date !== undefined ? {dueDate:due.date} : {}),
+            ...(progress ? {progressDetail: "Task completion " + String(progress.completedTasks) + "/" + String(progress.totalTasks) + " tasks"} : row.project.progressPercent!==null ? {progressDetail:"Admin-reported progress / Manual estimate"} : {}),
             actionLine: archived ? "Archived · view only" :
               projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
               projectAttention === "DRAFT" ? "Finish your draft submission" :
               blocked ? "Open blocked work" : row.project.nextAction?.trim() || "Open workspace",
-            blockedHref: blocked ? "/learn/projects/" + row.project.id + "?tab=board&lane=Blocked" : undefined,
-            blockerText: row.project.blocker?.trim()||undefined,
+            ...(blocked ? {blockedHref: "/learn/projects/" + row.project.id + "?tab=board&lane=Blocked"} : {}),
+            ...(row.project.blocker?.trim() ? {blockerText:row.project.blocker.trim()} : {}),
             attention:
               archived ? [] : projectAttention === "CHANGES_REQUESTED"
                 ? ["Changes requested"]

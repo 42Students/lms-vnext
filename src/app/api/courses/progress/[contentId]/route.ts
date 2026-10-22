@@ -77,10 +77,10 @@ export async function PUT(
       );
 
     const legacyBody=body as Record<string,unknown>;
-    const reportedDuration=typeof legacyBody.durationSeconds==="number"?
-     legacyBody.durationSeconds:null;
-    const reportedComplete=typeof legacyBody.completed==="boolean"?
-     legacyBody.completed:null;
+    const reportedDuration=typeof legacyBody["durationSeconds"]==="number"?
+     legacyBody["durationSeconds"]:null;
+    const reportedComplete=typeof legacyBody["completed"]==="boolean"?
+     legacyBody["completed"]:null;
     // Authored server duration and latest persisted progress beat unverified
     // client/player duration and completion hints.
     const playbackReconciled=(reportedDuration!==null&&
@@ -129,9 +129,9 @@ export async function POST(request:Request,{params}:RouteContext){
   const raw:unknown=await request.json().catch(()=>null);
   if(raw===null || typeof raw!=="object" || Array.isArray(raw))
    return NextResponse.json({error:"INVALID_REQUEST",message:"Progress request cannot be null"},{status:400});
-  const action=(raw as Record<string,unknown>).action;
+  const action=(raw as Record<string,unknown>)["action"];
   if(action==="READ_BATCH"){
-   const rawIds=(raw as Record<string,unknown>).contentIds;
+   const rawIds=(raw as Record<string,unknown>)["contentIds"];
    if(Array.isArray(rawIds)&&rawIds.length>500)
     return NextResponse.json({error:"RETAKE_TOO_MANY_ITEMS",
       message:"Too many lessonContentIds in one request. Split the request into batches of 500 or fewer."},{status:400});

@@ -9,7 +9,8 @@ describe("G2-18-026-048 Super Admin program server directory",()=>{
   expect(page).not.toContain("listPrograms(context,collegeId)");
   expect(page).toContain("pageSize:z.coerce.number().int().min(1).max(100).default(20)");
   const reader=service.slice(service.indexOf("export async function listProgramsPage("));
-  expect(reader).toContain("q ? or(ilike(programs.name,like)");
+  expect(reader).toContain("q ? or(ilike(programs.name, searchPattern)");
+  expect(reader).toContain("const searchPattern = `%${escaped}%`");
   expect(reader).toContain(".limit(pageSize).offset((page - 1) * pageSize)");
   expect(reader).toContain("eq(departments.collegeId, collegeId)");
  });

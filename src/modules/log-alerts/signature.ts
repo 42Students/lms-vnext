@@ -2,14 +2,14 @@ import { createHash } from "node:crypto";
 import { redactAlertText, safeAlertPath } from "./redaction";
 
 export function alertEnvironment(): "PRODUCTION" | "UAT" | "DEVELOPMENT" {
-  if (process.env.APP_ENV === "production") return "PRODUCTION";
-  if (process.env.APP_ENV === "uat") return "UAT";
+  if (process.env["APP_ENV"] === "production") return "PRODUCTION";
+  if (process.env["APP_ENV"] === "uat") return "UAT";
   return "DEVELOPMENT";
 }
 
 /** Group equivalent faults without collecting volatile IDs, arguments or stack traces. */
 export function normaliseErrorForSignature(message: unknown): string {
-  const firstLine = typeof message === "string" ? message.split(/\r?\n/)[0] : "";
+  const firstLine = typeof message === "string" ? message.split(/\r?\n/)[0] ?? "" : "";
   // Normalize volatile structures BEFORE redaction: the phone scrubber also
   // matches hyphenated dates, which can otherwise split equivalent timestamps.
   const canonical = firstLine

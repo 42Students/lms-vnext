@@ -115,7 +115,7 @@ export default async function MentorReviewsPage({
             }).format(new Date(item.occurredAt))} IST</p>
             <p className="mt-1 text-xs font-semibold text-link leading-5">Open delivery review →</p>
           </Link>)}</div>}
-      {data.totalPages>1?<Pagination label="Review queue pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorPortfolioHref("reviews",{...data.query,page})}/>:null}
+      {data.totalPages>1?<Pagination label="Review queue pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>{ const { projectId, ...query } = data.query; return mentorPortfolioHref("reviews", { ...query, ...(projectId === undefined ? {} : { projectId }), page }); }}/>:null}
     </>}
     <p className="text-xs text-muted-foreground leading-5">
       Review actions remain in each assigned project&apos;s existing authorized Delivery workspace.

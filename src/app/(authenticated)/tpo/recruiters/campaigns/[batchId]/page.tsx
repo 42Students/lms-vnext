@@ -23,7 +23,7 @@ export default async function BatchDetail({params}:{params:Promise<{batchId:stri
    <div aria-label="Delivery receipts" className="grid min-w-0 grid-cols-2 gap-3 md:grid-cols-4">
     {([["Queued",batch.actualQueued],["Provider accepted",batch.actualSent],
       ["Failed",batch.actualFailed],["Suppressed",batch.actualSuppressed]] as const).map(([label,count])=>
-      <StatTile key={label} label={label} value={count} className={tpoTileStyles.tile} />)}
+      <StatTile key={label} label={label} value={count} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />)}
    </div>
   </section>
   <p className="text-xs text-muted-foreground">For privacy, individual addresses, phone numbers, template variables, invitation links, and opaque recipient keys are not displayed.</p>

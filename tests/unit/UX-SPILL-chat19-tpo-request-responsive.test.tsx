@@ -42,7 +42,7 @@ describe("UX-SPILL-TPO-CLIP-02: request mobile cards retain selection and full f
  it("keeps sorting, chooser and reset controls keyboard-focusable and 44px tall",()=>{
   const html=renderToStaticMarkup(<TpoRequestPageClipboard rows={[row]}/>);
   expect(html).toMatch(/<select[^>]*min-h-11[^>]*>/);
-  expect(html).toMatch(/<summary[^>]*min-h-11[^>]*>Choose columns/);
+  expect(html).toMatch(/<summary[^>]*style="min-height:44px"[^>]*>Choose columns/);
   expect(html).toContain("Reset columns");
   expect(html).toMatch(/class="[^"]*min-h-11[^"]*"[^>]*>Reset columns<\/button>/);
   expect(html).toContain("focus-visible:outline-2");

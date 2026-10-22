@@ -1,14 +1,14 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {listLectureHalls} from "@/modules/academics/lecture-hall-service";
+import {listLectureHalls,listSuperAdminOrganizationLectureHalls} from "@/modules/academics/lecture-hall-service";
 import {listDepartments} from "@/modules/departments/service";
 import {getCollegeHallAvailability} from "@/modules/academics/college-hall-availability-service";
 import SuperAdminLectureHallsPage from "@/app/(authenticated)/admin/lecture-halls/page";
 import SuperAdminLectureHallAvailability from "@/app/(authenticated)/admin/lecture-halls/[hallId]/page";
 
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
-vi.mock("@/modules/academics/lecture-hall-service",()=>({listLectureHalls:vi.fn()}));
+vi.mock("@/modules/academics/lecture-hall-service",()=>({listLectureHalls:vi.fn(),listSuperAdminOrganizationLectureHalls:vi.fn()}));
 vi.mock("@/modules/departments/service",()=>({listDepartments:vi.fn()}));
 vi.mock("@/modules/academics/college-hall-availability-service",()=>({
  getCollegeHallAvailability:vi.fn(),
@@ -38,6 +38,7 @@ beforeEach(()=>{
   collegeName:"IIT Dharwad",items:[],pagination:{total:0},
  } as never);
  vi.mocked(listDepartments).mockResolvedValue([] as never);
+ vi.mocked(listSuperAdminOrganizationLectureHalls).mockResolvedValue({items:[],total:0,limit:20,offset:0,readOnly:true} as never);
  vi.mocked(getCollegeHallAvailability).mockResolvedValue({
   hall:{id:"44444444-4444-4444-8444-444444444444",name:"Room A",capacity:35,status:"ACTIVE"},
   sessions:[],truncated:false,conflictCount:0,
@@ -52,11 +53,13 @@ describe("SA-middle-lecture-halls-24 platform role and selected college",()=>{
   await expect(detailPage({from:"2026-10-18",to:"2026-10-19"})).rejects.toThrow();
   expect(getCollegeHallAvailability).not.toHaveBeenCalled();
  });
- it("provides safe missing-college recovery with zero private reads",async()=>{
+ it("shows the permission-gated read-only directory without a selected college",async()=>{
   vi.mocked(getCurrentRequestContext).mockResolvedValue(makeContext("SUPER_ADMIN",null) as never);
   const listing=renderToStaticMarkup(await listPage());
   const detail=renderToStaticMarkup(await detailPage());
-  expect(listing).toContain("Select a college to continue");
+  expect(listing).toContain("Organization lecture hall directory");
+  expect(listSuperAdminOrganizationLectureHalls).toHaveBeenCalledWith(expect.anything(),
+   {organizationId:undefined,q:"",limit:20,offset:0});
   expect(detail).toContain("Select a college to continue");
   expect(listLectureHalls).not.toHaveBeenCalled();
   expect(getCollegeHallAvailability).not.toHaveBeenCalled();

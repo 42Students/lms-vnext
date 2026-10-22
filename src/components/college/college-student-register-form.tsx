@@ -47,8 +47,6 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     event.preventDefault();setError("");setFieldErrors({});setResult(null);setSavedMemberId(null);
     const invalid:Record<string,string>={};
     if(!firstName.trim())invalid.firstName="Enter the first name";
-    if(!lastName.trim())invalid.lastName="Enter the last name";
-    if(!rollNumber.trim())invalid.rollNumber="Enter the roll number";
     if(!phoneE164.trim())invalid.mobile="Enter the mobile number";
     else if(!indianMobileToE164(phoneE164))invalid.mobile="Mobile number must be 10 digits";
     if(!programId || !choices.programs.some(item=>item.id===programId))invalid.programId="Choose a program";
@@ -91,6 +89,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       {fieldErrors.firstName?<span id="register-first-error" role="alert" className="text-xs text-error">{fieldErrors.firstName}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Last Name
+      <span className="text-xs font-normal text-muted-foreground">Optional</span>
       <Input name="lastName" autoComplete="family-name" placeholder="Enter last name" maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field} aria-invalid={Boolean(fieldErrors.lastName)} aria-describedby={fieldErrors.lastName?"register-last-error":undefined}/>
       {fieldErrors.lastName?<span id="register-last-error" role="alert" className="text-xs text-error">{fieldErrors.lastName}</span>:null}
     </label>
@@ -105,6 +104,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       <Input type="email" maxLength={320} value={email} onChange={e=>setEmail(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Roll Number
+      <span className="text-xs font-normal text-muted-foreground">Optional</span>
       <Input name="rollNumber" maxLength={128} placeholder="e.g., 22CS101" value={rollNumber} onChange={e=>setRoll(e.target.value)} className={field}
         aria-invalid={Boolean(fieldErrors.rollNumber)} aria-describedby={fieldErrors.rollNumber?"register-roll-error":undefined}/>
       {fieldErrors.rollNumber?<span id="register-roll-error" role="alert" className="text-xs text-error">{fieldErrors.rollNumber}</span>:null}

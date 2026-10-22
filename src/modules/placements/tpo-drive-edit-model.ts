@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {DRIVE_PAY_CATEGORIES,DRIVE_PAY_CATEGORY_REASON_MAX,drivePayCategoryOverrideIssue} from "./drive-pay-category-model";
 export const tpoDriveEditSchema=z.object({
  confirmed:z.literal(true),
  wantedSkills:z.array(z.string().trim().min(1).max(50)).max(30).refine(
@@ -49,7 +50,15 @@ export const tpoDriveEditSchema=z.object({
  variableCtcLpa:z.number().min(0).max(1000).nullable(),
  stipendPerMonthInr:z.number().int().min(0).max(10000000).nullable(),
  isDream:z.boolean(),
-}).strict();
+ // Legacy manual pay-category override. Absent keeps the stored tier; null
+ // clears it so the tier is worked out from the highest CTC again.
+ legacyJobCategory:z.enum(DRIVE_PAY_CATEGORIES).nullable().optional(),
+ categoryOverrideReason:z.string().trim().max(DRIVE_PAY_CATEGORY_REASON_MAX).nullable().optional(),
+}).strict().superRefine((input,ctx)=>{
+ if(input.legacyJobCategory===undefined&&input.categoryOverrideReason===undefined)return;
+ const issue=drivePayCategoryOverrideIssue(input);
+ if(issue)ctx.addIssue({code:"custom",path:[issue.path],message:issue.message});
+});
 export type TpoDriveEditInput=z.infer<typeof tpoDriveEditSchema>;
 export function evaluateTpoDriveEdit(status:string,seasonStatus:string|null,input:TpoDriveEditInput){
  // Historical closed/cancelled drives stay frozen; a completed season alone

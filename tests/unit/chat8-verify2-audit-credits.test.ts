@@ -13,7 +13,7 @@ describe("lane-8 verify2: semester credits and audit stale recovery", () => {
     expect(parseTermCourseCreditsDraft("30")).toMatchObject({ success: true, data: 30 });
     const manager = source("src/components/academics/college-term-mapping-manager.tsx");
     expect(manager).toContain("parseTermCourseCreditsDraft(creditsValue)");
-    expect(manager).toContain('creditsValue.trim() ? "Enter credits from 0 to 30" : "Enter credits"');
+    expect(manager).toContain('creditsValue?.trim() ? "Enter credits from 0 to 30" : "Enter credits"');
   });
   it("preserves scoped audit rows on failed refresh, with warning dismissal and retry", () => {
     const grid = source("src/components/tpo/tpo-audit-grid.tsx");

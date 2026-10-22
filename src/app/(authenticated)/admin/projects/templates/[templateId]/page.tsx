@@ -130,7 +130,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
               }
               selectedCollegeName={selectedCollegeName}
               allowGlobalActions={can(context, "project-template.manage")}
-              blueprint={detail.currentVersion?.blueprint}
+              {...(detail.currentVersion ? {blueprint:detail.currentVersion.blueprint} : {})}
               assignedToSelectedCollege={
                 Boolean(
                   context.adminScope?.collegeId &&

@@ -32,7 +32,8 @@ export function ProjectDeletedRowRestore({projectId,title,expectedUpdatedAt,
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/undelete",
     "POST",{expectedUpdatedAt});
    setOpen(false);
-   showToast({tone:"success",title:"Workspace restored",
+   showToast({tone:missingMentor?"info":"success",
+    title:missingMentor?"Workspace restored, but its mentor could not be recovered — assign one to reactivate it.":"Workspace restored",
     description:missingMentor?
      "The workspace is archived for review. Assign a mentor before reopening work.":
      "The workspace is available under Archived workspaces. Restore it there to resume work."});

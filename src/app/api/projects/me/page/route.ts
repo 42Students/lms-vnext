@@ -30,7 +30,9 @@ export async function GET(request:Request){
   const page=await listMyProjectInstancesLegacyPage(
    await getCurrentRequestContext(),{
     page0:query.page,size:query.size as 10|25|50,
-    search:query.search,status:query.status,attention:query.attention,
+    ...(query.search !== undefined ? {search:query.search} : {}),
+    ...(query.status !== undefined ? {status:query.status} : {}),
+    ...(query.attention !== undefined ? {attention:query.attention} : {}),
    });
   return NextResponse.json(page,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}

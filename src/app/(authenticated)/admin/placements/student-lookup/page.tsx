@@ -54,9 +54,9 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
   const params = await searchParams;
   const { query, invalid } = parseSuperAdminPlacementStudentSearch(params);
   const q = query ?? "";
-  const historyPage=typeof params.historyPage==="string"&&
-    /^[1-9][0-9]{0,4}$/.test(params.historyPage)
-    ?Math.min(100000,Number(params.historyPage)):1;
+  const historyPage=typeof params["historyPage"]==="string"&&
+    /^[1-9][0-9]{0,4}$/.test(params["historyPage"])
+    ?Math.min(100000,Number(params["historyPage"])):1;
   const scope = ctx.adminScope?.collegeId ?? null;
   // Memberships and application history are fetched only for the selected,
   // authorized college. A forged learner ID never bypasses this result set.
@@ -67,9 +67,9 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
     : null;
   const data = lookup?.ok ? lookup.value : null;
   const choices = data?.students.slice(0, 10) ?? [];
-  const requestedStudent = typeof params.student === "string" &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.student)
-    ? params.student : null;
+  const requestedStudent = typeof params["student"] === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params["student"])
+    ? params["student"] : null;
   const selectedStudent = choices.find(person => person.membershipId === requestedStudent) ?? null;
   const selectedDetail = selectedStudent
     ? await getCollegeStudentPlacementDetails(ctx,{membershipId:selectedStudent.membershipId,page:historyPage})

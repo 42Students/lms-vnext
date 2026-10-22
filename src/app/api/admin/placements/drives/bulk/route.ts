@@ -15,10 +15,10 @@ export async function POST(request: Request) {
     const context = await getCurrentRequestContext();
     const raw: unknown = await request.json();
     const body = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
-    const result = body.confirmStage === "PREVIEW"
-      ? await previewSuperAdminBulkDrives(context, {action: body.action, jobIds: body.jobIds})
+    const result = body["confirmStage"] === "PREVIEW"
+      ? await previewSuperAdminBulkDrives(context, {action: body["action"], jobIds: body["jobIds"]})
       : await updateSuperAdminBulkDrives(context, {
-          action: body.action, jobIds: body.jobIds, confirmed: body.confirmed,
+          action: body["action"], jobIds: body["jobIds"], confirmed: body["confirmed"],
         });
     return NextResponse.json(result, {headers: {"Cache-Control": "private, no-store"}});
   } catch (error) {

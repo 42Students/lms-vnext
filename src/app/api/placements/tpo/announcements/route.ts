@@ -25,16 +25,16 @@ export async function POST(request:Request){
     "sendAt","showUntil","when","audience","kind","targetId"]){
    if(typeof fields[name]==="string")form.set(name,fields[name]);
   }
-  if(fields.pinned===true)form.set("pinned","on");
-  if(Array.isArray(fields.targetIds)){
-   for(const id of fields.targetIds.slice(0,51)){
+  if(fields["pinned"]===true)form.set("pinned","on");
+  if(Array.isArray(fields["targetIds"])){
+   for(const id of fields["targetIds"].slice(0,51)){
     if(typeof id!=="string")return noticePostError(request,"INVALID_BODY",400);
     form.append("targetIds",id);
    }
   }
   // Email delivery, read receipts and tell-again have their own delivery
   // contracts. Do not silently pretend these old write flags were processed.
-  if(fields.email===true||fields.notifyByEmail===true||fields.tellAgain===true)
+  if(fields["email"]===true||fields["notifyByEmail"]===true||fields["tellAgain"]===true)
    return NextResponse.json({error:"UNSUPPORTED_LEGACY_DELIVERY",
     message:"This action cannot send email or tell-again notifications. Create an in-app notice instead."},
     {status:422});

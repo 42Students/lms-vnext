@@ -42,8 +42,8 @@ export async function requestPublicJoinCode(
 ): Promise<{ sent: true;status:"CODE_SENT";companyName:string|null }> {
   const input = publicJoinSendCodeSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinCodeError("INVALID_LINK");
-  const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
-  const rateSecret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
+  const secret = process.env["TPO_RECRUITER_OTP_HMAC_SECRET"] ?? "";
+  const rateSecret = process.env["TPO_RECRUITER_OTP_HMAC_SECRET"] ?? "";
   const ipTag = opaqueNetworkTag(verifiedClientIp ?? "", rateSecret);
   if (!await publicJoinTablesReady()) throw new PublicJoinCodeError("INVALID_LINK");
   const ready = await getDb().execute<{ ready: boolean }>(sql`

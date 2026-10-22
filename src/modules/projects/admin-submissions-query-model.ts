@@ -51,7 +51,6 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
     q:first(params.q),focusedProjectId:first(params.focusedProjectId)??first(params.projectId),status:workspaceStatus,
     sort:first(params.sort),
     submissionStatus:normalizeSubmissionStatus(first(params.submissionStatus) ?? legacySubmission),
-    sort:first(params.sort),
     page:first(params.page),pageSize:first(params.pageSize) ?? (options.superAdmin ? "10" : undefined),
   };
   return schema.safeParse(Object.fromEntries(

@@ -33,13 +33,13 @@ export async function PUT(request:Request,{params}:{params:Promise<{collegeId:st
   if(!parsed.success){
    const values=input!==null&&typeof input==="object"&&!Array.isArray(input)
      ? input as Record<string,unknown>:null;
-   const moduleName=values?.module;
+   const moduleName=values?.["module"];
    const invalidModule=typeof moduleName==="string"&&moduleName.trim()!==""&&
      !collegeFeatureModuleSchema.safeParse(moduleName).success;
    const message=invalidModule
      ? "Unknown module. Choose Projects, Placements or Electives."
      : typeof moduleName!=="string"||moduleName.trim()===""||
-       (values?.action==="SET"&&typeof values?.enabled!=="boolean")
+       (values?.["action"]==="SET"&&typeof values?.["enabled"]!=="boolean")
        ? 'Request must include both "module" and "enabled" when setting a rule.'
        : !values||!("expected" in values)
          ? "Include the expected stored rule state before changing a module."

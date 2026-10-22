@@ -11,7 +11,6 @@ import {
   type MembershipRole,
   type MembershipStatus,
 } from "@/modules/identity/constants";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PersonProfileDialog } from "@/components/admin/person-profile-dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";

@@ -25,16 +25,16 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const raw=await searchParams;
  const allowed=new Set(["offeringId","deliveryId","page","pageSize","sort"]);
  const validKeys=Object.keys(raw).every(key=>allowed.has(key) && !Array.isArray(raw[key]));
- const offeringId=validKeys?parseSuperAdminStudentProgressParams({offeringId:raw.offeringId}):null;
- const requestedDelivery=typeof raw.deliveryId==="string"&&
-  /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw.deliveryId)
-   ?raw.deliveryId:null;
- const invalidDelivery=raw.deliveryId!==undefined&&raw.deliveryId!==""&&!requestedDelivery;
- const pageSize=typeof raw.pageSize==="string"&&["20","50","100"].includes(raw.pageSize)
-  ?Number(raw.pageSize):20;
- const requestedPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,6}$/.test(raw.page)
-  ?Number(raw.page):1;
- const sort=raw.sort==="percent-desc"?"percent-desc":"percent-asc";
+ const offeringId=validKeys?parseSuperAdminStudentProgressParams({offeringId:raw["offeringId"]}):null;
+ const requestedDelivery=typeof raw["deliveryId"]==="string"&&
+  /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw["deliveryId"])
+   ?raw["deliveryId"]:null;
+ const invalidDelivery=raw["deliveryId"]!==undefined&&raw["deliveryId"]!==""&&!requestedDelivery;
+ const pageSize=typeof raw["pageSize"]==="string"&&["20","50","100"].includes(raw["pageSize"])
+  ?Number(raw["pageSize"]):20;
+ const requestedPage=typeof raw["page"]==="string"&&/^[1-9][0-9]{0,6}$/.test(raw["page"])
+  ?Number(raw["page"]):1;
+ const sort=raw["sort"]==="percent-desc"?"percent-desc":"percent-asc";
  const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Course Progress</Link>;
  if(!offeringId||invalidDelivery)return <div className="space-y-6">
   <PageHeader title="Course Progress"/>

@@ -25,7 +25,7 @@ function matchesSecret(value: string | null, expected: string) {
  * fixtures must be provisioned transactionally by the dev environment.
  * Never accepts IDs/body or writes data, and is wholly unavailable in prod. */
 export async function GET(request: Request) {
-  if (process.env.NODE_ENV === "production" || process.env.APP_ENV !== "development") {
+  if (process.env.NODE_ENV === "production" || process.env["APP_ENV"] !== "development") {
     return NextResponse.json({ error: "NOT_FOUND" }, { status: 404, headers: noStore });
   }
   if (!devFixtureManifestEnabled()) {
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     }, { status: 503, headers: noStore });
   }
   const secret = request.headers.get("x-e2e-seed-secret");
-  if (!matchesSecret(secret, process.env.APP_E2E_SEED_SECRET!)) {
+  if (!matchesSecret(secret, process.env["APP_E2E_SEED_SECRET"]!)) {
     return NextResponse.json({ status: "error", error: "FORBIDDEN" }, {
       status: 403, headers: noStore,
     });

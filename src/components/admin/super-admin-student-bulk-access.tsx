@@ -7,6 +7,7 @@ import {useEffect,useRef,useState} from "react";
 import {superAdminStudentBulkFailure} from "@/modules/module-access/super-admin-student-bulk-feedback";
 import {useRouter} from "next/navigation";
 type Learner={id:string;name:string};
+const MAX_SELECTED_STUDENTS=1000;
 export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:readonly Learner[];collegeId:string}){
  const router=useRouter(),[selected,setSelected]=useState<string[]>([]);
  const pendingRef=useRef(false);
@@ -21,7 +22,7 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
    const parsed:unknown=raw?JSON.parse(raw):[];
    const ids=Array.isArray(parsed)?parsed.filter((id):id is string=>
     typeof id==="string"&&/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(id)):[];
-   setSelected([...new Set(ids)]);
+   setSelected([...new Set(ids)].slice(0,MAX_SELECTED_STUDENTS));
   }catch{setSelected([]);}
   setHydratedKey(storageKey);
  },[storageKey]);
@@ -40,11 +41,16 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
  const allVisible=visibleIds.length>0&&visibleIds.every(id=>selected.includes(id));
  function toggleVisible(checked:boolean){
   const visible=new Set(visibleIds);
-  setSelected(curr=>checked?[...new Set([...curr,...visibleIds])]:
-   curr.filter(id=>!visible.has(id)));
+  setSelected(curr=>{
+   if(!checked)return curr.filter(id=>!visible.has(id));
+   const next=[...new Set([...curr,...visibleIds])];
+   if(next.length>MAX_SELECTED_STUDENTS){setError("Select at most 1,000 students.");return curr;}
+   return next;
+  });
  }
  async function submit(){
   if(pendingRef.current||busy||selected.length===0)return;
+  if(selected.length>MAX_SELECTED_STUDENTS){setError("Select at most 1,000 students.");return;}
   if(new Set(selected).size!==selected.length){
    setError("Duplicate student membership IDs in the selection. Refresh this page and try again.");
    return;
@@ -134,7 +140,7 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
       <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={()=>setSelected([])}>Clear selection</Button>
     </div>
   </div>:null}
-  <p className="text-xs text-muted-foreground leading-5">Select any number of authorized students across roster pages. Each 25-person group is atomic; already completed groups remain committed if a later group fails. Selection is retained across this college's roster pages and filters for this browser session. Updates are saved in validated batches of 25 with a separate audit event for each group. Placements remains configured at college scope (not per student); Projects and Electives can be overridden here. Locked ancestor policies remain protected.</p>
+  <p className="text-xs text-muted-foreground leading-5">Select at most 1,000 authorized students across roster pages. Each 25-person group is atomic; already completed groups remain committed if a later group fails. Selection is retained across this college's roster pages and filters for this browser session. Updates are saved in validated batches of 25 with a separate audit event for each group. Placements remains configured at college scope (not per student); Projects and Electives can be overridden here. Locked ancestor policies remain protected.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm text-body print:hidden">
    <Checkbox checked={allVisible}
     onChange={e=>toggleVisible(e.target.checked)} disabled={busy}/>
@@ -150,14 +156,22 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
        const start=Math.min(lastClickedIndex.current,index),end=Math.max(lastClickedIndex.current,index);
        const range=capped.slice(start,end+1).map(row=>row.id);
        shiftHandled.current=true;
-       setSelected(curr=>[...new Set([...curr,...range])]);
+       setSelected(curr=>{
+        const next=[...new Set([...curr,...range])];
+        if(next.length>MAX_SELECTED_STUDENTS){setError("Select at most 1,000 students.");return curr;}
+        return next;
+       });
       }
       lastClickedIndex.current=index;
      }}
      onChange={event=>{
       if(shiftHandled.current){shiftHandled.current=false;return;}
-      setSelected(curr=>event.target.checked?[...new Set([...curr,learner.id])]:
-       curr.filter(id=>id!==learner.id));
+      setSelected(curr=>{
+        if(!event.target.checked)return curr.filter(id=>id!==learner.id);
+        const next=[...new Set([...curr,learner.id])];
+        if(next.length>MAX_SELECTED_STUDENTS){setError("Select at most 1,000 students.");return curr;}
+        return next;
+       });
      }}/>
     <span className="min-w-0 break-words">{learner.name}</span>
    </label>)}

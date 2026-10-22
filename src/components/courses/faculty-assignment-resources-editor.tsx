@@ -55,12 +55,12 @@ async function responseError(response:Response,fallback:string):Promise<string>{
  const raw:unknown=await response.json().catch(()=>null);
  if(raw&&typeof raw==="object"){
   const item=raw as Record<string,unknown>;
-  if(typeof item.message==="string"&&item.message)return item.message;
-  if(item.error==="ASSIGNMENT_HAS_SUBMISSIONS")
+  if(typeof item["message"]==="string"&&item["message"])return item["message"];
+  if(item["error"]==="ASSIGNMENT_HAS_SUBMISSIONS")
    return "Learner submissions exist. Resources are locked; only the assignment title can change.";
-  if(item.error==="FACULTY_ASSIGNMENT_STALE_VERSION")
+  if(item["error"]==="FACULTY_ASSIGNMENT_STALE_VERSION")
    return "This assignment was updated elsewhere. Reload it before saving resources.";
-  if(typeof item.error==="string"&&item.error)return fallback+" ("+item.error+")";
+  if(typeof item["error"]==="string"&&item["error"])return fallback+" ("+item["error"]+")";
  }
  return fallback;
 }

@@ -8,16 +8,24 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-5-027-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-5-027-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-5-027-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-036  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-044  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-5-027-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-5-027-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-5-027-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-5-027-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-061  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-075  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-5-027-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-5-027-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 
 ## Results
 
 - OK G2-5-027-025 — src/modules/people/college-student-registration-service.ts:43-72 verifies same-college active program, cohort and section before identity creation. Legacy: docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:338-391.
+
+- FIXED G2-5-027-029 — commits 52aca3e, 49a0b13; `src/modules/academics/errors.ts` preserves typed error codes with explicit user-facing messages, and `src/modules/people/college-student-registration-service.ts` validates section membership before identity creation and returns `Learner class must belong to the selected program`, matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:347-356`.
+
+- OK G2-5-027-045 — `src/modules/attendance/faculty-service.ts:558-740` writes ABSENT exception records, marks the session MARKED, and persists COURSES_ATTENDANCE_MARKED activity inside the same transaction, matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:801-896` (Attend write, schedule attendanceTaken, audit).
+
+- OK G2-5-027-050 — `src/modules/people/college-role-directory-service.ts:521-568` requires an active assigned faculty delivery and returns only learner ID/name/roll with contact omitted under the vNext need-to-know masking policy; `src/modules/attendance/faculty-service.ts:236-250` independently checks delivery authority. Corresponding class-assignment enforcement and learner roster: `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:630-655` (legacy teacher contacts intentionally more permissive than vNext policy).
+
+- OK G2-5-027-080 — `src/modules/attendance/learner-service.ts:153-210` joins schedule event → matching section delivery and linked attendance session/record, then maps authorized legacy course/class identifiers to the same delivery (`src/modules/attendance/learner-service.ts:105-135`). Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:801-896` (class schedule attendance mapping). No unapproved legacy numeric-ID migration is asserted.

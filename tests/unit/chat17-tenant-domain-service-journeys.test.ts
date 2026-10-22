@@ -158,6 +158,8 @@ describe("WEAK-tenant-domains service authorization, idempotency and hostile hos
     const verify=vi.fn(async()=>({verified:true as const,result:"VERIFIED" as const}));
     await expect(verifyTenantDomain(asSuperAdmin(),DOMAIN,repo,{verify})).resolves.toMatchObject({isVerified:true});
     expect(verify).not.toHaveBeenCalled();
+    // The next assertion concerns only the missing-token attempt, not earlier verification records.
+    repo.recordVerificationResult.mockClear();
     repo.loadDomain.mockResolvedValueOnce(domain({verificationToken:null}));
     await expect(verifyTenantDomain(asSuperAdmin(),DOMAIN,repo,{verify}))
       .rejects.toMatchObject({code:"DOMAIN_NOT_VERIFIED"});

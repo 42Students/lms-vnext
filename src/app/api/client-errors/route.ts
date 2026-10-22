@@ -60,7 +60,7 @@ export async function POST(request: Request) {
   // strips incoming copies and overwrites them. Enable this only after
   // configuring that deployment boundary. Never rate-limit all logged-in
   // users behind one "unknown" IP/NAT bucket.
-  const trustedIngress=process.env.TRUSTED_CLIENT_IP_HEADERS==="true";
+  const trustedIngress=process.env["TRUSTED_CLIENT_IP_HEADERS"]==="true";
   const claimedIp=trustedIngress?(
     request.headers.get("x-real-ip")??
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()??null
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
   logError("client.error", new Error(redactAlertText(safeMessage)), {
     ...identity, component: safeBrowserComponent(report),
     path: safeAlertPath(report.path), requestId: report.requestId,
-    errorName: safeBrowserComponent({ name: report.name }),
+    errorName: safeBrowserComponent(report.name === undefined ? {} : { name: report.name }),
     viewportBand: report.viewport, status: 500,
   });
   // Telemetry is fire-and-forget. 202 is success even for clients that do

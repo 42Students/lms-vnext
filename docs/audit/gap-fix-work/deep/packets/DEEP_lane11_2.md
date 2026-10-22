@@ -10,8 +10,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-5-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 - [ ] G2-5-019-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 - [ ] G2-5-019-011  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
-- [ ] G2-11-018-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
-- [ ] G2-11-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [x] G2-11-018-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [x] G2-11-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-11-024-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-19-028-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-8-018-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
@@ -19,4 +19,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-8-018-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 
 ## Results
+- G2-11-018-045 OK — `src/modules/activity/tpo-notifications-model.ts:60-68` returns the persisted read timestamp unchanged even for notices older than 30 days; `src/modules/activity/tpo-notifications-service.ts:72-98` counts persisted unread across all history. Legacy `docs/legacy-source/frontend/src/pages/tpo/notifications.js:87-93` does not manufacture read receipts for older notices.
+- G2-11-018-010 OK — `src/modules/activity/tpo-notifications-service.ts:72-98` separately counts persisted unread receipts across the full college history, without restricting the bell to page/window results; legacy `docs/legacy-source/frontend/src/pages/tpo/notifications.js:43,87-93` uses the server unread count for the same reason.
 
+- G2-5-005-026 OK — `src/app/(authenticated)/hr/calendar/page.tsx:283-296` catches recruiter calendar read failures, displays the legacy `Could not load the calendar` alert and retries via `calendarHref(anchor, view, category, selectedCollegeId)` retaining authorized college and window; route-level failures can also retry via `src/app/(authenticated)/hr/calendar/error.tsx:1-19`. Legacy: `docs/legacy-source/frontend/src/pages/recruiter/calendar.js:55-64,88-89`.

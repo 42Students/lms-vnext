@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
-import {getTpoBatchStudentRegistrations} from "@/modules/placements/tpo-batch-student-registration-service";
+import {getTpoBatchStudentRegistrationView} from "@/modules/placements/tpo-batch-student-registration-service";
 import {parseBatchStudentSearchParams} from "@/modules/placements/tpo-batch-student-view-model";
 import {selectTpoBatchStudentView} from "@/modules/placements/tpo-batch-student-selection-model";
 import {serializeTpoBatchStudentViewCsv} from "@/modules/placements/tpo-batch-student-filtered-export-model";
@@ -12,10 +12,10 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
  try{
   const {batchId}=await params;
   const raw=Object.fromEntries(new URL(request.url).searchParams.entries());
-  const page=pageSchema.parse(raw.page??undefined);
+  const page=pageSchema.parse(raw["page"]??undefined);
   const view=parseBatchStudentSearchParams(raw);
   if(!view.success)throw new Error("Invalid batch student filters");
-  const records=await getTpoBatchStudentRegistrations(await getCurrentRequestContext(),batchId,page,view.data.q);
+  const records=await getTpoBatchStudentRegistrationView(await getCurrentRequestContext(),batchId,page,view.data);
   const chosen=selectTpoBatchStudentView(records.students,view.data,records.registrationAvailable);
   return new Response("\uFEFF"+serializeTpoBatchStudentViewCsv(chosen),{headers:{
    "Content-Type":"text/csv; charset=utf-8",

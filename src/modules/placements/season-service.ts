@@ -113,6 +113,14 @@ export async function createPlacementSeason(
       )
       .limit(1);
 
+    // Recorded decision (legacy TpoSeasonService: "a season is a filter, never
+    // a mode"; starting one never closes drives). vNext keeps exactly one
+    // ACTIVE season per college, enforced by placement_seasons_active_college_uq,
+    // because registration, reopen and recruiter-draft flows resolve the single
+    // ACTIVE season. The legacy overlap is preserved differently: nothing here
+    // ever closes or moves existing drives (closing a season is refused while
+    // it has DRAFT/PUBLISHED jobs), so an earlier batch's drives keep running
+    // while the next batch's drives are created in the same ACTIVE season.
     if (active) {
       throw new PlacementsServiceError(
         "PLACEMENT_SEASON_ACTIVE_EXISTS",

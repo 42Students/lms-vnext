@@ -17,8 +17,8 @@ export type TpoInboxQuery = z.infer<typeof tpoInboxQuerySchema>;
 export function resolveTpoInboxQuery(rawQuery: unknown) {
   const query = tpoInboxQuerySchema.parse(rawQuery);
   const cursor = parseNotificationCursor({
-    beforeCreatedAt: query.beforeCreatedAt,
-    beforeId: query.beforeId,
+    ...(query.beforeCreatedAt !== undefined ? {beforeCreatedAt: query.beforeCreatedAt} : {}),
+    ...(query.beforeId !== undefined ? {beforeId: query.beforeId} : {}),
   });
   return { query, cursor };
 }

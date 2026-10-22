@@ -1,0 +1,13 @@
+# Strictness A queue: lane chat-5
+
+No-mercy program part A (compiler flags). Work packets in order; each lists files and their baseline errors. Fix at the cause, push after every file, tick the packet line when all its files are pushed.
+
+- [ ] `docs/audit/strictness/A/packets/A_005.md`
+- [ ] `docs/audit/strictness/A/packets/A_025.md`
+- [ ] `docs/audit/strictness/A/packets/A_045.md`
+- [ ] `docs/audit/strictness/A/packets/A_065.md`
+- [ ] `docs/audit/strictness/A/packets/A_085.md`
+- [ ] `docs/audit/strictness/A/packets/A_105.md`
+- [ ] `docs/audit/strictness/A/packets/A_125.md`
+- [ ] `docs/audit/strictness/A/packets/A_145.md`
+- [ ] `docs/audit/strictness/A/packets/A_165.md`

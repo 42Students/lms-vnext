@@ -143,7 +143,7 @@ export default async function SuperAdminTenantSetup({
  const retry=<Link href={tabLink(tab)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>;
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageBackLink href="/admin/tenants/directory" label="Tenant directory" />
-  <PageHeader eyebrow="Tenant lifecycle" title="Create the customer, then make one college launch-ready"
+  <PageHeader eyebrow="Tenant lifecycle" title="Tenant Setup"
    description="Tenant Setup · Create a customer, set up its colleges, and get the selected college ready for launch." />
   <section aria-label="Tenant setup overview" className="min-w-0 border-b border-border pb-4">
    <div className="mb-3 flex flex-wrap items-center gap-2">

@@ -31,6 +31,23 @@ export const legacyProjectAuditActions:Readonly<Record<string,string>> = {
  PROJECT_TEMPLATE_COLLEGE_UNASSIGN:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_REVOKED,
  PROJECT_RESOURCE_SYNC:ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED,
  PROJECT_DELIVERY_ADMIN_REVIEW:ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REVIEWED,
+ // Remaining legacy AdminAuditLog action keys (audit/index.js action list) mapped
+ // to the nearest persisted vNext event so old action bookmarks keep filtering.
+ PROJECT_UPDATE:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_SUMMARY_UPDATED,
+ PROJECT_TEMPLATE_ATTACH:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ASSIGNED,
+ PROJECT_ASSIGN_LEARNERS:ACTIVITY_EVENT_TYPES.PROJECTS_TEAM_MEMBER_ADDED,
+ PROJECT_MEMBER_ADD:ACTIVITY_EVENT_TYPES.PROJECTS_TEAM_MEMBER_ADDED,
+ PROJECT_MEMBER_UPDATE:ACTIVITY_EVENT_TYPES.PROJECTS_TEAM_MEMBER_UPDATED,
+ PROJECT_MEMBER_REMOVE:ACTIVITY_EVENT_TYPES.PROJECTS_TEAM_MEMBER_ENDED,
+ PROJECT_TASK_CREATE:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_CREATED,
+ PROJECT_TASK_UPDATE:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
+ PROJECT_TASK_DELETE:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
+ PROJECT_TASK_SYNC:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_STATUS_CHANGED,
+ PROJECT_MEETINGS_SYNC:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_NOTES_UPDATED,
+ PROJECT_DELIVERY_UPDATE:ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_DRAFT_UPDATED,
+ PROJECT_RELEASE_SHIPPED:ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_UPDATED,
+ PROJECT_RELEASE_UNSHIPPED:ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_UPDATED,
+ PROJECT_RELEASE_DELETED_AFTER_SHIP:ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_DELETED,
 };
 
 /** Read old link-only range/entity/page keys without ever accepting arbitrary
@@ -94,7 +111,7 @@ export function parseProjectAdminAuditQuery(params: ProjectAdminAuditSearchParam
   // Unknown URL keys are never applied to the activity query. Surface an
   // explicit recovery warning instead of silently pretending they were used.
   let ignoredInvalidFilters = Object.keys(params).some(key=>![
-    "action","status","eventType","importance","subjectType","subjectId",
+    "action","actionKey","status","eventType","importance","subjectType","subjectId",
     "from","to","beforeOccurredAt","beforeId",
   ].includes(key));
   const read = (key: string): string | undefined => {
@@ -117,9 +134,9 @@ export function parseProjectAdminAuditQuery(params: ProjectAdminAuditSearchParam
     return value;
   };
 
-  const actionAliases=[read("action"),read("status"),read("eventType")]
+  const actionAliases=[read("action"),read("actionKey"),read("status"),read("eventType")]
     .filter((value):value is string=>Boolean(value));
-  // All three query keys are legacy aliases for ONE filter, not independent
+  // All four query keys (action, actionKey, status, eventType) are legacy aliases for ONE filter, not independent
   // selectors. Conflicting values must never quietly prefer the first.
   const ambiguousAction=new Set(actionAliases).size>1;
   if(ambiguousAction)ignoredInvalidFilters=true;

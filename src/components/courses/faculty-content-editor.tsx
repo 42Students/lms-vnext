@@ -84,7 +84,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
         body: JSON.stringify(body),
       });
       if (!response.ok) {
-        setError(await courseApiError(response));
+        setError((await courseApiError(response)) ?? "Could not save this content.");
         return;
       }
       const receipt:unknown = await response.json().catch(() => null);

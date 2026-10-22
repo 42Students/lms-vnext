@@ -8,13 +8,13 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-19-023-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-19-023-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-3-014-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-19-023-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-3-014-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-3-014-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-3-014-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-3-014-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-055  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-3-028-084  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-3-028-084  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-4-014-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-4-028-007  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 
@@ -28,3 +28,11 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-4-028-007: OK — `src/app/(authenticated)/tpo/messages/page.tsx:1,86-96,105-109,137,175,202` imports and renders `TpoTeamMessagesDirectory`, exposes the `Team` tab and `Recruiters` tab through `TpoMessagesTabs`, and selects via `?tab=team`; matches `docs/legacy-source/frontend/src/pages/tpo/messages.js:10-13,25-27,39-48,55-64` (legacy Team/Recruiters tablist and TeamConversations). No code change required.
 
+
+- G2-19-023-058: FIXED — commit `055ca46455c67fb80a3eb06538409deedb19806b`, `src/app/api/v1/learner/placement/announcements/unread/route.ts:1-44` adds learner-scoped announcement-only unread GET corresponding to `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerAnnouncementController.java:33-39`. Incomplete pagination or missing delivered read receipts return 503 rather than misreporting zero.
+
+- G2-3-028-084: OK — `src/modules/colleges/validation.ts:43-69` preserves optional chair/vice-chair appointments as nullable membership UUIDs on college edit, rejects implicit arbitrary domain writes, and documents the verified tenant-domain workflow in `src/modules/tenant-domains/service.ts:1-65`; this maps the optional legacy chair/vice-chair and domain fields of `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/CollegeDTO.java:30-55` into separate scoped mutations rather than silently accepting and dropping them.
+
+- G2-3-014-001: FIXED — commit `c36a3f0f7542d1d6187e13d95c9c024beec90131`, `src/app/api/v2/courses/search/route.ts:1-29` exposes a bounded authenticated v2-style search adapter backed by role-aware scoped SQL in `src/modules/courses/college-course-catalogue-service.ts:142-212`, while learner header autocomplete remains in `src/components/shell/topbar/command-search.tsx:88-128,155-174`. Legacy reference: `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/courses/CourseSearchController.java:31-36,99-107`. UUID course identities and the server's authorization policy are retained rather than accepting unvalidated legacy numeric IDs.
+
+- G2-3-014-029: OK — `src/modules/courses/college-course-catalogue-service.ts:142-212,238-312` requires active actor and tenant-scoped course.read permissions, limits faculty/learner suggestions to granted course IDs and filters departments by authorized college/organization. `src/components/shell/topbar/command-search.tsx:112-123` scopes learner popular counts to its authorized deliveries. Legacy reference: `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/courses/CourseSearchController.java:175-190,199-222`.

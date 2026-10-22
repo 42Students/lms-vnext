@@ -1,0 +1,222 @@
+# Unit-test repair queue (unit11): lane chat-4
+
+CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-4-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
+
+- [x] `tests/unit/HR-BREAK-chat19-report-joined.test.ts` (1 failing)
+- [x] `tests/unit/UX-teacher-shared-surfaces.test.ts` (1 failing)
+- [x] `tests/unit/chat19-college-cross-audit.test.ts` (2 failing)
+- [x] `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` (2 failing)
+- [x] `tests/unit/chat7-superadmin-course-tenant-bulk.test.ts` (1 failing)
+- [x] `tests/unit/graceful-raw-error-scan.test.ts` (1 failing)
+- [x] `tests/unit/tpo-team-legacy-people-chat2.test.ts` (1 failing)
+
+## Failures (from CI log)
+
+### tests/unit/HR-BREAK-chat19-report-joined.test.ts
+
+```
+ FAIL  tests/unit/HR-BREAK-chat19-report-joined.test.ts > HR-BREAK-REPORT-JOINED-51: employer joined stage only includes accepted offers > retains historical college applicants in page counts after graduation or deactivation
+AssertionError: expected ' jobIds.length === 0\n    ? []\n    :…' to contain 'eq(collegeMemberships.collegeId,'
+
+- Expected
++ Received
+
+- eq(collegeMemberships.collegeId,
++  jobIds.length === 0
++     ? []
++     : await db
++         .select({
++           jobId: placementApplications.jobId,
++           applications: sql<number>`
++             count(
++               distinct ${placementApplications.id}
++             )::integer
+```
+
+### tests/unit/UX-teacher-shared-surfaces.test.ts
+
+```
+ FAIL  tests/unit/UX-teacher-shared-surfaces.test.ts > Faculty shared surface mobile and focus rollout > UX-teacher-courses-shared-02 preserves course summary roles and 44px filter disclosures
+AssertionError: expected 'import type { ReactNode } from "react…' to contain 'flex min-h-11 cursor-pointer'
+
+- Expected
++ Received
+
+- flex min-h-11 cursor-pointer
++ import type { ReactNode } from "react";
++ import { cx } from "@/lib/class-names";
++
++ /** Semantic keyboard disclosure. Native details handles Enter/Space and
++  * reduces motion to the shared opacity-only fade in globals.css. */
++ export function Disclosure({
++   title, children, className, defaultOpen = false,
++   id, summaryAriaLabel, summaryTitle, ariaLabel, summaryClassName, contentClassName, preserveSummary = false,
++ }: {
+```
+
+### tests/unit/chat19-college-cross-audit.test.ts
+
+```
+ FAIL  tests/unit/chat19-college-cross-audit.test.ts > chat-19 college UX cross-audit > COL-XA-11 uses mobile cards with labelled elective allocation checkboxes
+AssertionError: expected '"use server";\nimport Link from "next…' to contain '<DataTable'
+
+- Expected
++ Received
+
+- <DataTable
++ "use server";
++ import Link from "next/link";
++ import { redirect, notFound } from "next/navigation";
++ import { and, asc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
++ import { z } from "zod";
++ import { getDb } from "@/db/client";
++ import {
++   collegeMemberships, electiveOfferings, electiveSlots, learnerProfiles,
++   learnerProgramEnrollments, lmsGroupMembers, lmsGroups, sectionEnrollments, sections, users,
+
+ FAIL  tests/unit/chat19-college-cross-audit.test.ts > chat-19 college UX cross-audit > UX-college-scroll-motion-01 responsive rosters offer an actual shared scroll cue instead of a hidden scrollbar
+AssertionError: expected '"use server";\nimport Link from "next…' to contain '<DataTable'
+
+- Expected
++ Received
+
+- <DataTable
++ "use server";
++ import Link from "next/link";
++ import { redirect, notFound } from "next/navigation";
++ import { and, asc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
++ import { z } from "zod";
++ import { getDb } from "@/db/client";
++ import {
++   collegeMemberships, electiveOfferings, electiveSlots, learnerProfiles,
++   learnerProgramEnrollments, lmsGroupMembers, lmsGroups, sectionEnrollments, sections, users,
+```
+
+### tests/unit/chat4-college-verification-misc-gap-closure.test.ts
+
+```
+ FAIL  tests/unit/chat4-college-verification-misc-gap-closure.test.ts > chat-4 College Verification and Misc verification > COL-verification-misc-02 retains source-backed legacy behavior
+AssertionError: expected '"use client";\n\nimport {useRouter} f…' to contain '>Retry</Link>'
+
+- Expected
++ Received
+
+- >Retry</Link>
++ "use client";
++
++ import {useRouter} from "next/navigation";
++ import {Button} from "@/components/ui/button";
++ import {useEffect,useState,useTransition,type ComponentProps} from "react";
++ import {CollegeAdminProfileEditor} from "./college-admin-profile-editor";
++ import {ErrorState} from "@/components/ui/error-state";
++ import {Alert} from "@/components/ui/alert";
++
+
+ FAIL  tests/unit/chat4-college-verification-misc-gap-closure.test.ts > chat-4 College Verification and Misc verification > G2-1-026-012 retains the last college profile with a warning and safe retry
+AssertionError: expected '"use client";\n\nimport {useRouter} f…' to contain '>Retry</Link>'
+
+- Expected
++ Received
+
+- >Retry</Link>
++ "use client";
++
++ import {useRouter} from "next/navigation";
++ import {Button} from "@/components/ui/button";
++ import {useEffect,useState,useTransition,type ComponentProps} from "react";
++ import {CollegeAdminProfileEditor} from "./college-admin-profile-editor";
++ import {ErrorState} from "@/components/ui/error-state";
++ import {Alert} from "@/components/ui/alert";
++
+```
+
+### tests/unit/chat7-superadmin-course-tenant-bulk.test.ts
+
+```
+ FAIL  tests/unit/chat7-superadmin-course-tenant-bulk.test.ts > SA-academics-people-52/53 GR-COURSES-TENANT-01 safe scoped Super Admin visibility and progress > the initial lesson-content query filters both college-owned departments and periods to acting scope before counting matches
+AssertionError: expected 'import "server-only";\nimport {and,eq…' to contain 'selected.length!==input.courseIds.len…'
+
+- Expected
++ Received
+
+- selected.length!==input.courseIds.length
++ import "server-only";
++ import {and,eq,inArray,sql} from "drizzle-orm";
++ import {z} from "zod";
++ import {getDb} from "@/db/client";
++ import {academicPeriods,courseLessons,courseLearningPaths,courseOfferings,courses,departments,lessonContents} from "@/db/schema";
++ import type {RequestContext} from "@/modules/identity/context";
++ import {resolveActingCollege} from "@/modules/permissions/acting-college";
++ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
++ import {bulkSuperAdminLessonVisibility} from "./super-admin-lesson-bulk-visibility";
+```
+
+### tests/unit/graceful-raw-error-scan.test.ts
+
+```
+ FAIL  tests/unit/graceful-raw-error-scan.test.ts > new raw-error and mutation regression gate > GR-31 inventories newly changed unguarded mutating components
+AssertionError: Mutating fetch without useGuardedAction: src/components/tpo/tpo-notice-delivery-retry.tsx: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "src/components/tpo/tpo-notice-delivery-retry.tsx",
++ ]
+
+ ❯ tests/unit/graceful-raw-error-scan.test.ts:111:91
+    109|         blobHash(content) !== baseline[file];
+    110|     });
+    111|     expect(offenders, `Mutating fetch without useGuardedAction: ${offe…
+       |                                                                                           ^
+```
+
+### tests/unit/tpo-team-legacy-people-chat2.test.ts
+
+```
+ FAIL  tests/unit/tpo-team-legacy-people-chat2.test.ts > TPO People roster legacy copy > TPO-inbox-team-32 keeps the number of displayed team members consistent with the filtered roster
+AssertionError: expected 'import { redirect } from "next/naviga…' to contain 'redirect("/tpo/settings/team")'
+
+- Expected
++ Received
+
+- redirect("/tpo/settings/team")
++ import { redirect } from "next/navigation";
++ import { getCurrentRequestContext } from "@/auth/request-context";
++ import { hasPlacementTeamMembership } from "@/modules/placements/placement-team-access-model";
++ import { hasMembershipRole } from "@/modules/identity/context";
++
++ type LegacyTeamSearch = Record<string, string | string[] | undefined>;
++
++ function first(value: string | string[] | undefined): string | undefined {
++   return Array.isArray(value) ? value[0] : value;
+```
+
+
+## Repair results
+
+- `UX-teacher-shared-surfaces.test.ts`: FIXED production disclosure minimum 44px via `src/components/ui/disclosure.tsx` (2adc636); native keyboard/summary behavior retained.
+- `chat4-college-verification-misc-gap-closure.test.ts`: FIXED obsolete anchor-markup assertion to check actual `onClick={retry}` button path (aa6beaa); retained profile uses `router.refresh()` and disables the button while pending.
+
+- `tpo-team-legacy-people-chat2.test.ts`: FIXED with explicit people/members/roster branch assertion; `src/app/(authenticated)/tpo/team/page.tsx` redirects those bookmarks to scoped Settings > People while conversation deep links remain under Messages (5628cf3).
+
+- `chat7-superadmin-course-tenant-bulk.test.ts`: FIXED outdated all-or-none selected-length requirement to assert explicit unauthorized per-course reporting and fail-closed show policy; legacy per-course partial handling is preserved in `src/modules/courses/super-admin-course-bulk-visibility.ts` (303a364).
+
+- `graceful-raw-error-scan.test.ts`: FIXED product action via `useGuardedAction` in `src/components/tpo/tpo-notice-delivery-retry.tsx` (2082ec3), preserving failure messages and preventing double-submit.
+- `HR-BREAK-chat19-report-joined.test.ts`: FIXED formatting-dependent test to assert multiline scoped college membership predicate (67ed320); no removal of tenant scope or historical rows.
+- `chat19-college-cross-audit.test.ts`: FIXED assertions to follow actual composed `ElectiveEligibleSelection` child where the mobile DataTable, labeled selection checkbox and ScrollCue are implemented (4939cd8).
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [x] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+
+## Current-main reconciliation (2026-10-23)
+
+All seven listed unit-test files were already marked repaired in current `main` before this pass; no additional failing test file remained in this queue. The associated previous repair commits and behavior notes are preserved under Repair results above. Lane-5 unit11 is also fully ticked, so there are no unticked next-lane unit11 files to claim. Unit tests were not executed in this GitHub-only pass.
+
+- Deep G2-19-002-095: FIXED — preserve India wall-clock legacy assignment deadline at import (b9e8c84); documented in DEEP_agent2_4.md.
+- Deep G2-4-017-049: OK — legacy recoverability remains separate from archive/deletion status (`src/db/schema/projects.ts:231-263`); documented in DEEP_agent2_4.md.

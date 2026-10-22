@@ -92,6 +92,7 @@ export type LearnerCourseListRow = {
     isMandatory?: boolean | null;
     electiveOfferingId?: string | null;
     legacyCourseId?: number | null;
+    legacyClassId?: number | null;
     credits: number | null;
     sectionName: string;
     sectionCode: string;
@@ -456,6 +457,10 @@ export function LearnerCourseList({
               const previousElective =
                 index > 0 &&
                 String(renderedRows[index - 1]?.course.offeringType).toUpperCase() === "ELECTIVE";
+              const sectionKey = (item: LearnerCourseListRow) => item.course.legacyClassId != null
+                ? "id:" + item.course.legacyClassId
+                : "legacy:" + item.course.cohortName + ":" + item.course.periodStartDate.slice(0,4) + ":" + (item.course.sectionName || "Unknown");
+              const startsSectionGroup = index === 0 || sectionKey(row) !== sectionKey(renderedRows[index - 1]!);
               const startsElectiveGroup =
                 effectiveTypeFilter === "all" &&
                 elective &&
@@ -473,6 +478,7 @@ export function LearnerCourseList({
               );
               return (
                 <Fragment key={row.course.deliveryId}>
+                  {startsSectionGroup ? <h2 className="col-span-full mt-2 text-sm font-semibold text-heading">Section: {row.course.sectionName || "Unknown"} · {row.course.cohortName || "Batch unavailable"}</h2> : null}
                   {startsElectiveGroup ? (
                     <h2 className="col-span-full mb-1 mt-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                       Electives

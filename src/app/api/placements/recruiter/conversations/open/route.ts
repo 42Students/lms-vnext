@@ -22,8 +22,8 @@ export async function POST(request:Request){
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
   const message=payload.data.message;
   const thread=message
-    ?await composeAndSendRecruiterThreadMessage(context,{...payload.data,message})
-    :await openRecruiterMessageThread(context,payload.data);
+    ?await composeAndSendRecruiterThreadMessage(context,{...payload.data,...(payload.data.jobId !== undefined ? {jobId:payload.data.jobId} : {}),message})
+    :await openRecruiterMessageThread(context,{collegeId:payload.data.collegeId,...(payload.data.jobId !== undefined ? {jobId:payload.data.jobId} : {})});
   return NextResponse.redirect(new URL("/hr/conversations/"+thread.id,request.url),303);
  }catch(error){
   if(error instanceof TpoMessagingError)

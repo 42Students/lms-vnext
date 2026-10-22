@@ -34,7 +34,7 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=can(context,"organization.manage");
  const params=await searchParams;
- const preferredId=preferredNewTenantOrganization(params.organizationId,creatable);
+ const preferredId=preferredNewTenantOrganization(params["organizationId"],creatable);
  return <div className="min-w-0 space-y-4 md:space-y-5">
   <PageBackLink href="/admin/tenants" label="Tenant directory" />
   <PageHeader title="Create the customer, then make one college launch-ready"
@@ -52,7 +52,7 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
   <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Create college">
    <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">2. College</h2>
    {preferredId?<Banner tone="info" role="status">Organization chosen for the next step. The college form has this verified, authorized organization preselected; your current safety scope is unchanged.</Banner>:null}
-   {creatable.length?<CollegeCreateForm preferredOrganizationId={preferredId ?? undefined} advanceToSetup organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>: 
+   {creatable.length?<CollegeCreateForm {...(preferredId !== null && preferredId !== undefined ? {preferredOrganizationId:preferredId} : {})} advanceToSetup organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>: 
     <Banner tone="warning">No organization in the current safety scope can receive a college. Create or select an authorized organization first.</Banner>}
    <Link href="/admin/colleges" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review colleges</Link>
   </section>

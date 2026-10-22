@@ -1235,7 +1235,8 @@ export async function listTpoStudentRequests(
        nullif(btrim(${placementLearnerRequests.effectPayload}->>'proofUrl'),''),
        nullif(btrim(${placementLearnerRequests.effectPayload}->>'proof_url'),''),
        nullif(btrim(${placementLearnerRequests.effectPayload}->>'documentUrl'),''),
-       nullif(btrim(${placementLearnerRequests.effectPayload}->>'offerLetterUrl'),'')
+       nullif(btrim(${placementLearnerRequests.effectPayload}->>'offerLetterUrl'),''),
+       nullif(btrim(${placementLearnerRequests.effectPayload}->>'letterUrl'),'')
       ) is not null`,
       branchId:sql<string|null>`(select program.department_id from learner_program_enrollments enr
         join programs program on program.id=enr.program_id

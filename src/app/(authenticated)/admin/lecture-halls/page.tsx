@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { listLectureHalls, listSuperAdminOrganizationLectureHalls } from "@/modules/academics/lecture-hall-service";
 import { listDepartments } from "@/modules/departments/service";
 import { lectureHallsCsvHref } from "@/modules/academics/college-lecture-halls-export-model";
@@ -32,8 +33,10 @@ export default async function SuperAdminLectureHallsPage({
     const q=typeof raw.q==="string"?raw.q.slice(0,100):"";
     const pageRaw=typeof raw.page==="string"?Number(raw.page):1;
     const page=Number.isSafeInteger(pageRaw)&&pageRaw>0?Math.min(pageRaw,10000):1;
-    const organizationDirectory=orgId?await listSuperAdminOrganizationLectureHalls(
-      context,{organizationId:orgId,q,limit:20,offset:(page-1)*20},
+    // Organization-scoped and global Super Admins both get the legacy
+    // read-only directory; college scope is required only for mutations.
+    const organizationDirectory=isSuperAdmin(context)?await listSuperAdminOrganizationLectureHalls(
+      context,{organizationId:orgId??undefined,q,limit:20,offset:(page-1)*20},
     ):null;
     return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lecture Halls" description="Lecture halls in the selected college" />
@@ -86,7 +89,7 @@ export default async function SuperAdminLectureHallsPage({
            className="underline">Next</Link>:null}
       </nav>
     </>:<Alert tone="warning" title="Select a college to continue">
-      Choose a college or organization in the header above to see its lecture halls.
+      Choose a college in the header above to see its lecture halls.
     </Alert>}
   </div>;
   }
@@ -105,13 +108,13 @@ export default async function SuperAdminLectureHallsPage({
   const [hallResult, departmentResult] = await Promise.allSettled([
     listLectureHalls(context, {
       collegeId,
-      q: query.q || undefined,
-      status: query.status === "ALL" ? undefined : query.status,
-      roomType: query.roomType === "ALL" ? undefined : query.roomType,
-      departmentId: query.departmentId,
-      minimumCapacity: query.minimumCapacity,
-      maximumCapacity: query.maximumCapacity,
-      upcoming: query.upcoming === "ALL" ? undefined : query.upcoming,
+      ...(query.q ? { q: query.q } : {}),
+      ...(query.status !== "ALL" ? { status: query.status } : {}),
+      ...(query.roomType !== "ALL" ? { roomType: query.roomType } : {}),
+      ...(query.departmentId !== undefined ? { departmentId: query.departmentId } : {}),
+      ...(query.minimumCapacity !== undefined ? { minimumCapacity: query.minimumCapacity } : {}),
+      ...(query.maximumCapacity !== undefined ? { maximumCapacity: query.maximumCapacity } : {}),
+      ...(query.upcoming !== "ALL" ? { upcoming: query.upcoming } : {}),
       limit: query.pageSize,
       offset: (query.page - 1) * query.pageSize,
     }),

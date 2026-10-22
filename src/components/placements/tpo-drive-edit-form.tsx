@@ -18,6 +18,8 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {Button} from "@/components/ui/button";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
+import {DrivePayCategoryField,readDrivePayCategoryFields} from "./drive-pay-category-field";
+import {isDrivePayCategory} from "@/modules/placements/drive-pay-category-model";
 type Draft=Awaited<ReturnType<typeof getTpoDriveEditState>>;
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
@@ -31,6 +33,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [proposal,setProposal]=useState<Record<string,unknown>|null>(null);
  const [reviewTitle,setReviewTitle]=useState(job.title);
+ const [maxCtcInr,setMaxCtcInr]=useState(job.maximumAnnualCtcInr===null?"":String(job.maximumAnnualCtcInr));
 
  const [reviewDeadline,setReviewDeadline]=useState(job.applicationDeadline??"");
  type Reach={kind:"UNAVAILABLE";reason:string}|{kind:"READY";asOf:string;
@@ -208,8 +211,15 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   if(chosenPrograms.some(id=>!job.availablePrograms.some(program=>program.id===id))){
    setError("An eligible program selection is no longer available. Reload this drive.");return;
   }
+  const category=readDrivePayCategoryFields(fields);
+  if(!category.ok){setError(category.message);return;}
   setProposal({
    confirmed:true,expectedUpdatedAt:version,
+   // An imported tier that was never overridden is left untouched.
+   ...(category.legacyJobCategory===null&&job.legacyJobCategory&&!job.legacyCategoryOverrideReason?{}:{
+    legacyJobCategory:category.legacyJobCategory,
+    categoryOverrideReason:category.categoryOverrideReason,
+   }),
    applicationDeadline:deadline,minCgpaHundredths:cgpa===null?null:Math.round(cgpa*100),
    ...(job.availableBatches.length?{allowedCohortIds:fields.getAll("allowedCohortIds").map(String)}:{}),
    ...(job.availablePrograms.length?{allowedProgramIds:chosenPrograms}:{}),
@@ -293,6 +303,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   if(field instanceof HTMLInputElement){
    if(field.name==="title")setReviewTitle(field.value);
    if(field.name==="applicationDeadline")setReviewDeadline(field.value);
+   if(field.name==="maximumAnnualCtcInr")setMaxCtcInr(field.value);
   }
  }} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
@@ -403,6 +414,10 @@ export function TpoDriveEditForm({job}:{job:Draft}){
       defaultValue={job.stipendPerMonthInr??""} className={cls}/></label>
   </div>
   </details>
+  <DrivePayCategoryField inputClassName={cls}
+   maxCtcLpa={maxCtcInr.trim()!==""&&Number.isFinite(Number(maxCtcInr))?Number(maxCtcInr)/100000:null}
+   initialCategory={isDrivePayCategory(job.legacyJobCategory)&&job.legacyCategoryOverrideReason?job.legacyJobCategory:null}
+   initialReason={job.legacyCategoryOverrideReason??""}/>
   <label className="flex min-h-11 min-w-0 items-center gap-3 text-sm font-semibold text-body">
     <Checkbox name="isDream" defaultChecked={job.isDream} className="h-4 w-4 accent-primary"/>
     Dream drive — held-offer limit exception

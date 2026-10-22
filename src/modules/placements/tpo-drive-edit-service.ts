@@ -28,6 +28,8 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
   maximumAnnualCtcInr:placementJobs.maximumAnnualCtcInr,
   fixedCtcLpa:placementJobs.fixedCtcLpa,variableCtcLpa:placementJobs.variableCtcLpa,
   stipendPerMonthInr:placementJobs.stipendPerMonthInr,isDream:placementJobs.isDream,
+  legacyJobCategory:placementJobs.legacyJobCategory,
+  legacyCategoryOverrideReason:placementJobs.legacyCategoryOverrideReason,
  }).from(placementJobs).where(and(eq(placementJobs.id,jobId),
   eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
@@ -215,7 +217,13 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    minimumAnnualCtcInr:input.minimumAnnualCtcInr,maximumAnnualCtcInr:input.maximumAnnualCtcInr,
    fixedCtcLpa:input.fixedCtcLpa===null?null:input.fixedCtcLpa.toFixed(2),
    variableCtcLpa:input.variableCtcLpa===null?null:input.variableCtcLpa.toFixed(2),
-   stipendPerMonthInr:input.stipendPerMonthInr,isDream:input.isDream,
+   stipendPerMonthInr:input.stipendPerMonthInr,
+   // An explicit pay-category override is the source of truth for the dream flag.
+   isDream:input.legacyJobCategory?input.legacyJobCategory!=="REGULAR":input.isDream,
+   ...(input.legacyJobCategory!==undefined?{
+    legacyJobCategory:input.legacyJobCategory,
+    legacyCategoryOverrideReason:input.legacyJobCategory?input.categoryOverrideReason?.trim()??null:null,
+   }:{}),
    updatedAt:sql`greatest(clock_timestamp(), date_trunc('milliseconds', ${placementJobs.updatedAt}) + interval '1 millisecond')`,
   }).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId),
    inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
@@ -306,6 +314,7 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    toDeadline:updated.applicationDeadline?.toISOString()??null,
    fromUpdatedAt:job.updatedAt.toISOString(),toUpdatedAt:updated.updatedAt.toISOString(),
    changedFields:["title","description","locations","openings","minimumAnnualCtcInr","maximumAnnualCtcInr","fixedCtcLpa","variableCtcLpa","stipendPerMonthInr","isDream",
+    ...(input.legacyJobCategory!==undefined?["legacyJobCategory","legacyCategoryOverrideReason"]:[]),
     ...(input.allowedCohortIds!==undefined?["allowedCohortIds"]:[]),
     ...(input.verifiedMarksOnly!==undefined?["verifiedMarksOnly"]:[]),
     ...(input.applicationDeadline!==undefined?["applicationDeadline","importantDates"]:[]),

@@ -50,8 +50,8 @@ describe("chat-16 mentor editor safeguards",()=>{
     expect(guard).toContain('document.addEventListener("click",onLinkClick,true)');
     expect(guard).toContain("event.preventDefault();event.stopPropagation()");
     expect(guard).toContain("destination.current=href");
-    expect(guard).toContain("target.pathname===window.location.pathname");
-    expect(guard).toContain("target.search===window.location.search");
+    expect(guard).toContain("canKeepProjectEditorMountedAcrossNavigation(window.location.href,target.href)");
+    expect(guard).toContain("canKeepProjectEditorMountedAcrossNavigation(window.location.href,href)");
     expect(guard).toContain("if(pending)return");
     expect(guard).toContain("leaveConfirmed.current=true");
     expect(guard).toContain("window.location.assign(navigateTo)");

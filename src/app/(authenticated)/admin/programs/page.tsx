@@ -28,7 +28,7 @@ export default async function SuperAdminProgramsPage({
   if (!collegeId) {
     // The legacy Super Admin /fetchAll is a catalogue read, not authority to
     // edit a program outside the selected college x role workspace.
-    if (!context.adminScope?.organizationId) {
+    {
       const rawPage=(await searchParams)?.page;
       if(rawPage && !/^[1-9][0-9]{0,3}$/.test(rawPage))
         return <div className="min-w-0 space-y-4">
@@ -39,14 +39,14 @@ export default async function SuperAdminProgramsPage({
       const page=rawPage?Number(rawPage):1;
       const directory=await listGlobalProgramsForSuperAdmin(context,{page}).catch(()=>null);
       if(!directory)return <div className="min-w-0 space-y-4">
-        <PageHeader title="Programs" description="Platform-wide program catalogue" />
+        <PageHeader title="Programs" description={context.adminScope?.organizationId?"Organization program catalogue":"Platform-wide program catalogue"} />
         <ErrorState title="Could not load programs"
           description="The global program catalogue is unavailable. No rows are assumed empty, and no college has been selected."
           action={<Link href={"/admin/programs?page="+page} className="font-semibold text-link underline">Retry program directory</Link>} />
       </div>;
       return <div className="min-w-0 space-y-5">
         <PageHeader title="Programs"
-          description="Read-only platform catalogue. Select a college in the header before creating or editing programs." />
+          description="Choose a college in the header above to create or edit Programs. This program catalogue is read-only until a college is selected." />
         <p className="text-sm text-body" role="status">
           {directory.total.toLocaleString("en-IN")} active programs across active colleges. Page {directory.page} of {directory.totalPages}.
         </p>
@@ -73,17 +73,9 @@ export default async function SuperAdminProgramsPage({
           {directory.page>1?<Link href={"/admin/programs?page="+(directory.page-1)} className="text-link underline">Previous page</Link>:null}
           {directory.page<directory.totalPages?<Link href={"/admin/programs?page="+(directory.page+1)} className="text-link underline">Next page</Link>:null}
         </nav>
-        <p className="text-xs text-muted-foreground">The global list is informational. Changes require an explicitly selected college.</p>
+        <p className="text-xs text-muted-foreground">This list is informational. Changes require an explicitly selected college.</p>
       </div>;
     }
-    return (
-      <div className="min-w-0 space-y-5">
-        <PageHeader title="Programs"
-          description="Select a college first. Choose a college scope before managing programs." />
-        <EmptyState title="Select a college to manage Programs"
-          description="Choose a college in the header above to create or edit Programs." />
-      </div>
-    );
   }
 
   // A selected-college directory reads only its SQL page: never load every

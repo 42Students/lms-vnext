@@ -33,13 +33,13 @@ export async function POST(request:Request){
   }
  }
  const parsed=internalThreadSchema.safeParse({
-  recipientMembershipId:source.recipientMembershipId,
-  topic:source.topic,firstMessage:source.firstMessage??source.message??undefined,
-  ...(source.kind?{kind:source.kind}:{}),
-  ...(source.contextId?{contextId:source.contextId}:{}),
-  ...(Array.isArray(source.participantMembershipIds)?
-    {participantMembershipIds:source.participantMembershipIds}:{}),
-  ...(source.idempotencyKey?{idempotencyKey:source.idempotencyKey}:{}),
+  recipientMembershipId:source["recipientMembershipId"],
+  topic:source["topic"],firstMessage:source["firstMessage"]??source["message"]??undefined,
+  ...(source["kind"]?{kind:source["kind"]}:{}),
+  ...(source["contextId"]?{contextId:source["contextId"]}:{}),
+  ...(Array.isArray(source["participantMembershipIds"])?
+    {participantMembershipIds:source["participantMembershipIds"]}:{}),
+  ...(source["idempotencyKey"]?{idempotencyKey:source["idempotencyKey"]}:{}),
  });
  if(!parsed.success)return NextResponse.json({
   error:"INVALID_BODY",message:"Review the recipient, topic and first message.",

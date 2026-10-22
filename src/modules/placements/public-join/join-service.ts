@@ -15,7 +15,7 @@ import { registrableWorkDomain } from "./domain-model";
 import { companyJoinEmailCandidate } from "./company-preview-policy";
 import { publicJoinAcceptSchema } from "./form-model";
 import { matchesPublicJoinCode, PUBLIC_JOIN_MAX_FAILURES, PUBLIC_JOIN_PER_IP_JOIN_HOUR } from "./code-policy";
-import { opaqueNetworkTag, PublicJoinCodeError } from "./send-code-service";
+import { opaqueNetworkTag } from "./send-code-service";
 import { publicJoinTablesReady } from "./readiness";
 import { publicRecruiterJoinedNotification } from "./join-notification-model";
 import { recruiterGrantValidUntil, recruiterGrantEffectiveAt } from "../recruiter-grant-expiry-policy";
@@ -55,7 +55,7 @@ export async function acceptPublicRecruiterJoin(
 ): Promise<{ joined: true; outcome: "JOINED" | "ALREADY_JOINED";signInEmail:string }> {
   const input = publicJoinAcceptSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinAcceptError("INVALID");
-  const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
+  const secret = process.env["TPO_RECRUITER_OTP_HMAC_SECRET"] ?? "";
   if (Buffer.byteLength(secret, "utf8") < 32) throw new PublicJoinAcceptError("NOT_CONFIGURED");
   let ipTag: string;
   try { ipTag = opaqueNetworkTag(verifiedClientIp ?? "", secret); }
@@ -138,10 +138,11 @@ export async function acceptPublicRecruiterJoin(
     const accessMonths = recruiterAccessMonthsOrDefault(settings?.months);
     if (accessMonths < 1 || accessMonths > 60) return "NOT_CONFIGURED";
     // Reuse a real user for this verified work email. Never relabel an existing identity.
-    await tx.insert(users).values({
+    const createdIdentity = await tx.insert(users).values({
       identityUid: "public-recruiter-email:" + createHash("sha256").update(email).digest("hex"),
       email, displayName: name,
-    }).onConflictDoNothing();
+    }).onConflictDoNothing().returning({ id: users.id });
+    const newIdentity = createdIdentity.length > 0;
     const [user] = await tx.select().from(users)
       .where(sql`lower(${users.email}) = ${email}`).for("update").limit(1);
     if (!user || user.platformStatus !== "ACTIVE") throw new PublicJoinAcceptError("ACCOUNT_UNAVAILABLE");
@@ -255,6 +256,21 @@ export async function acceptPublicRecruiterJoin(
           eventId: event.id, userId: item.userId, ...notice,
         })),
       ).onConflictDoNothing();
+      if (newIdentity) {
+        // Legacy CompanyJoinService sends the recruiter welcome only for a newly
+        // created identity. Record a durable intent once with the consumed code;
+        // provider mail is never sent inside this identity/grant transaction.
+        await tx.insert(activityEvents).values({
+          organizationId: link.organizationId, collegeId: link.collegeId,
+          module: "PLACEMENTS", eventType: "PLACEMENTS_RECRUITER_WELCOME_INTENT",
+          subjectType: "placement_company_relationship", subjectId: relationship.id,
+          summary: "Recruiter welcome email awaiting delivery",
+          subjectLabel: name, metadata: {
+            recruiterUserId: user.id, templateKey: "recruiter-welcome",
+            deliveryStatus: "AWAITING_TEMPLATE_OUTBOX", scope, companyId,
+          },
+        });
+      }
     }
     if(outcome==="JOINED")await tx.update(placementPublicJoinLinks)
       .set({joinsCount:sql`${placementPublicJoinLinks.joinsCount} + 1`})

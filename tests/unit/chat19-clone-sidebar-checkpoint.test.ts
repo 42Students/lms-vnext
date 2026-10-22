@@ -101,8 +101,10 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  it("has one TPO footer implementation rather than two diverging copies",()=>{
  const primary=read("src/components/tpo/tpo-mobile-footer.tsx");
  const alias=read("src/components/shell/tpo-mobile-footer.tsx");
- expect(primary).toContain("<Button key=");
- expect(primary).toContain("</Button>");
+ expect(primary).toContain("<Link key={link.label} href={link.href}");
+ expect(primary).toContain("aria-current={active ? \"page\" : undefined}");
+ expect(primary).toContain('{label:"More",href:"/tpo/more"');
+ expect(primary).toContain("min-h-16");
  expect(alias).toContain('export {TpoMobileFooter} from "@/components/tpo/tpo-mobile-footer";');
 });
  it("announces query-only route changes without stealing input focus",()=>{

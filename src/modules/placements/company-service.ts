@@ -312,6 +312,39 @@ export async function listPlacementRelationshipOwners(
   return [...owners.values()];
 }
 
+export type PlacementCompanyIdentity={id:string;name:string;primaryDomain:string|null};
+const identityName=(value:string)=>value.normalize("NFKC").trim().replace(/\s+/g," ").toLowerCase();
+const identityDomain=(value:string)=>value.trim().toLowerCase().replace(/^www\./,"");
+/** Legacy "Add other" duplicate check: an ACTIVE company with the same name but
+ * a different domain is offered as "Use <company>" before a new one is made. */
+export async function findSamePlacementCompanyByName(
+  name:string,domain:string,
+):Promise<PlacementCompanyIdentity|null>{
+  const wanted=identityName(name);
+  const own=identityDomain(domain);
+  const rows=await getDb().select({id:placementCompanies.id,name:placementCompanies.name,
+    primaryDomain:placementCompanies.primaryDomain}).from(placementCompanies)
+    .where(and(eq(placementCompanies.status,"ACTIVE"),
+      sql`lower(regexp_replace(btrim(${placementCompanies.name}),'[[:space:]]+',' ','g'))=${wanted}`))
+    .limit(5);
+  return rows.find(row=>identityDomain(row.primaryDomain??"")!==own)??null;
+}
+/** Server re-read of a reviewed company identity (never trusted from the client). */
+export async function loadPlacementCompanyIdentity(
+  companyId:string,
+):Promise<PlacementCompanyIdentity|null>{
+  const [row]=await getDb().select({id:placementCompanies.id,name:placementCompanies.name,
+    primaryDomain:placementCompanies.primaryDomain}).from(placementCompanies)
+    .where(and(eq(placementCompanies.id,companyId),eq(placementCompanies.status,"ACTIVE"))).limit(1);
+  return row??null;
+}
+export function placementCompanyIdentityMatches(
+  identity:PlacementCompanyIdentity,name:string,domain:string,
+):boolean{
+  return identityName(identity.name)===identityName(name)&&
+    identityDomain(identity.primaryDomain??"")===identityDomain(domain);
+}
+
 export async function createPlacementCompany(
   context: RequestContext,
   rawInput: CreatePlacementCompanyInput,

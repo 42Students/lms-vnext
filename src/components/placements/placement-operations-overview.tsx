@@ -13,7 +13,7 @@ import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operati
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
 function Metric({ label, value, description }: { label: string; value: number; description: string }) {
-  return <StatTile className={tpoTileStyles.tile} label={label} value={value} detail={description} />;
+  return <StatTile {...(tpoTileStyles['tile'] !== undefined ? {className:tpoTileStyles['tile']} : {})} label={label} value={value} detail={description} />;
 }
 function priorityTone(priority: string): "error" | "warning" | "info" {
   return priority === "HIGH" ? "error" : priority === "MEDIUM" ? "warning" : "info";

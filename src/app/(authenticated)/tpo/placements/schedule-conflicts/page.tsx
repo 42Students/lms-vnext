@@ -47,6 +47,12 @@ export default async function TpoScheduleConflictsPage({
   }
 
   const data = await getTpoScheduleConflicts(context, validated.data);
+  const summaryTiles: [string, number][] = [
+    ["Recorded rounds", data.totalScheduled],
+    ["Venue overlaps", data.conflicts.length],
+    ["Assessable rounds", data.assessedCount],
+    ["Incomplete scheduling", data.unassessable.length],
+  ];
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
@@ -71,13 +77,8 @@ export default async function TpoScheduleConflictsPage({
         </Button>
       </form>
       <section aria-label="Schedule assessment" className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-4">
-        {[
-          ["Recorded rounds", data.totalScheduled],
-          ["Venue overlaps", data.conflicts.length],
-          ["Assessable rounds", data.assessedCount],
-          ["Incomplete scheduling", data.unassessable.length],
-        ].map(([name, value]) => (
-          <StatTile key={name} label={String(name)} value={value} className={tpoTileStyles.tile} />
+        {summaryTiles.map(([name, value]) => (
+          <StatTile key={name} label={String(name)} value={value} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />
         ))}
       </section>
       {data.limited ? (

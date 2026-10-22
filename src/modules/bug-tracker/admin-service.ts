@@ -469,7 +469,7 @@ export async function retestBugTrackerIssueForAdmin(
  * cursor listing remains unchanged and both paths enforce the same scope. */
 export async function listLegacyBugTrackerIssuesForAdmin(
  context:RequestContext,input:{page:number;size:number;sort:"asc"|"desc";
-  status?:string;severity?:string;environment?:string;q?:string},
+  status?:string;severity?:string;environment?:string;q?:string;reporter?:string},
 ){
  requireTrackerAdmin(context);
  const conditions:SQL[]=[];
@@ -478,6 +478,7 @@ export async function listLegacyBugTrackerIssuesForAdmin(
  if(input.status)conditions.push(eq(db10BugReports.status,input.status));
  if(input.severity)conditions.push(eq(db10BugReports.severity,input.severity));
  if(input.environment)conditions.push(eq(db10BugReports.environment,input.environment));
+ if(input.reporter)conditions.push(sql`lower(${db10BugReports.reporterName}) = ${input.reporter.toLowerCase()}`);
  if(input.q){
   const term=input.q.toLowerCase();
   conditions.push(or(

@@ -26,8 +26,8 @@ export default async function LearnerAcademicRecordPage(){
  const recordedAt=(value:Date|null|undefined)=>value?
   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST":
   "Not recorded";
- const importBatchId=typeof evidence?.sourceMetadata?.importBatchId==="string"
-   ?evidence.sourceMetadata.importBatchId:null;
+ const importBatchId=typeof evidence?.sourceMetadata?.["importBatchId"]==="string"
+   ?evidence.sourceMetadata["importBatchId"]:null;
  const scores = evidence ? [
   {label:"CGPA",value:evidence.cgpa,suffix:""},
   {label:"10th percentage",value:evidence.tenthPercentage,suffix:"%"},

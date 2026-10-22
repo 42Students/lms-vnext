@@ -690,7 +690,7 @@ export async function listLegacyCollegeLearnerPage(context:RequestContext,raw:un
   classId:z.string().uuid().optional(),
   page:z.number().int().min(0).max(9999).default(0),
   size:z.union([z.literal(10),z.literal(25),z.literal(50),
-    z.literal(100),z.literal(200)]).default(50),
+    z.literal(100),z.literal(200)]).default(25),
   status:z.enum(["ALL","ACTIVE","SUSPENDED","ENDED"]).default("ACTIVE"),
  }).parse(raw);
  const result=await listCollegeRoleDirectory(context,"LEARNER",{

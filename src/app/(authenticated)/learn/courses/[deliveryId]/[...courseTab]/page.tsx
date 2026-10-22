@@ -18,7 +18,6 @@ import { LearnerCourseTabs, learnerCourseTabs } from "@/components/courses/learn
 import { LearnerCourseWorkspace } from "@/components/courses/learner-course-workspace";
 import { LearnerCourseStateRetry } from "@/components/courses/learner-course-state-retry";
 import { PageHeader } from "@/components/ui/page-header";
-import { EmptyState } from "@/components/ui/empty-state";
 import { learnerCourseAttendanceIstMonth,learnerCourseAttendanceIstWindow } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { learnerDiscussionScopeKey } from "@/modules/courses/learner-discussion-scope-key-model";
@@ -179,7 +178,7 @@ export default async function LearnerCourseTabPage({
 
   // Legacy links use lowercase roadmap filter names. Preserve known categories
   // without trusting the parameter as a path or database identifier.
-  const rawRoadmapFilter = first(query.filter)?.trim().toLowerCase() ?? "all";
+  const rawRoadmapFilter = first(query["filter"])?.trim().toLowerCase() ?? "all";
   const roadmapFilter = ({
     lectures: "lectures", resources: "resources", assessments: "assessments",
     "live-sessions": "live-sessions", all: "all",
@@ -250,14 +249,14 @@ export default async function LearnerCourseTabPage({
         deliveryId={deliveryId}
         workspace={workspace}
         filter={roadmapFilter}
-        focusLessonId={first(query.lesson) ?? null}
-        focusContentId={first(query.content) ?? null}
+        focusLessonId={first(query["lesson"]) ?? null}
+        focusContentId={first(query["content"]) ?? null}
         readOnly={readOnly}
       />
     );
   } else if (activeTab === "attendanceDetail") {
     const currentMonth=learnerCourseAttendanceIstMonth(new Date());
-    const requested=first(query.month);
+    const requested=first(query["month"]);
     const selectedMonth=requested&&learnerCourseAttendanceIstWindow(requested)
       ?requested:currentMonth;
     const window=learnerCourseAttendanceIstWindow(selectedMonth)!;

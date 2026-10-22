@@ -26,6 +26,12 @@ export const emptyWorkspaceBrief:WorkspaceBrief={
 export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
  const envelope=value&&typeof value==="object"&&!Array.isArray(value)
   ?value as Record<string,unknown>:{};
+ // Persisted workspace identity is determined by the scoped database query,
+ // never by a JSON overview. Reject mixed-tenant metadata rather than
+ // retaining attacker-controlled goal text from an invalid envelope.
+ if ("collegeId" in envelope || "organizationId" in envelope || "membershipId" in envelope) {
+  return {goal:"",description:"",deliverables:[],completionConditions:[],personas:[]};
+ }
  // A trusted imported overview can carry historic tenant metadata. Never
  // treat those keys as authority, but do not erase its actual brief fields.
  // The strict editor schema excludes metadata from client writes.

@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, or, sql } from "drizzle-orm";
+import { and, asc, eq, gt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges,

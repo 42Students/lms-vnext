@@ -74,7 +74,7 @@ export async function POST(request:Request){
    throw e;
   }
  }
- const claim=verifyUnsubscribeToken(rawToken,process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"",Date.now());
+ const claim=verifyUnsubscribeToken(rawToken,process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]??"",Date.now());
  // Do not expose whether a guessed or old one-click token matches a recipient.
  // The legacy public controller acknowledged both already-cleared and unknown
  // links identically; only verified claims ever reach the suppression writer.

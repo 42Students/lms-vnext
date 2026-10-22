@@ -4,6 +4,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {Disclosure} from "@/components/ui/disclosure";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
+import {Textarea} from "@/components/ui/textarea";
 
 import { useId, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -18,11 +19,15 @@ export function TpoCompanyCreateForm() {
   const [error, setError] = useState("");
   const [reviewing,setReviewing]=useState(false);
   const [notTheSame,setNotTheSame]=useState(false);
-  const [conflict,setConflict]=useState<{error:string;message:string;companyId?:string;name?:string}|null>(null);
+  const [conflict,setConflict]=useState<{error:string;message:string;companyId?:string;name?:string;primaryDomain?:string|null}|null>(null);
+  // The matching company the TPO is saying this one is different from, plus why.
+  const [reviewedMatch,setReviewedMatch]=useState<{companyId:string;name:string;primaryDomain:string}|null>(null);
+  const [distinctReason,setDistinctReason]=useState("");
   const [resolved,setResolved]=useState<{companyId:string;name:string;existed:boolean;verifiedBy42:boolean}|null>(null);
   function close(){
     if(pending)return;
     setOpen(false);setReviewing(false);setError("");setConflict(null);setResolved(null);setNotTheSame(false);
+    setReviewedMatch(null);setDistinctReason("");
   }
   const [form, setForm] = useState({
     name: "", websiteUrl: "", primaryDomain: "", recruiterEmail: "",
@@ -32,6 +37,10 @@ export function TpoCompanyCreateForm() {
     if (pending || submittingRef.current) return;
     if (form.name.trim().length < 2) {
       setError("Enter a company name with at least two characters.");
+      return;
+    }
+    if(notTheSame&&(!reviewedMatch||distinctReason.trim().length<20)){
+      setError("Explain in at least 20 characters why this is a different company.");
       return;
     }
     if(!reviewing){setReviewing(true);setError("");return;}
@@ -47,6 +56,11 @@ export function TpoCompanyCreateForm() {
         body: JSON.stringify({
           confirmed: true,
           notTheSame,
+          ...(notTheSame&&reviewedMatch?{
+            reviewedCompanyId:reviewedMatch.companyId,
+            reviewedCompanyDomain:reviewedMatch.primaryDomain,
+            distinctCompanyReason:distinctReason.trim(),
+          }:{}),
           ...(form.recruiterEmail.trim()?{recruiterEmail:form.recruiterEmail.trim().toLowerCase()}:{}),
           name: form.name.trim(),
           ...(form.websiteUrl.trim() ? { websiteUrl: form.websiteUrl.trim() } : {}),
@@ -55,13 +69,14 @@ export function TpoCompanyCreateForm() {
       });
       const body = (await response.json().catch(() => null)) as
         | { companyId?: string; companyName?: string; name?: string; existed?: boolean;
-            verifiedBy42?: boolean; error?: string; message?: string }
+            verifiedBy42?: boolean; error?: string; message?: string;
+            primaryDomain?: string|null }
         | null;
       if(!response.ok||!body?.companyId){
         if(response.status===409){
           setConflict({error:body?.error??"SAME_COMPANY",
             message:body?.message??"A matching company requires review.",
-            companyId:body?.companyId,name:body?.name});
+            companyId:body?.companyId,name:body?.name,primaryDomain:body?.primaryDomain});
         }
         throw new Error(body?.message??(
           body?.error==="RECRUITER_EMAIL_DOMAIN_MISMATCH"
@@ -71,7 +86,7 @@ export function TpoCompanyCreateForm() {
       }
       setResolved({companyId:body.companyId,name:body.companyName??body.name??form.name,
         existed:Boolean(body.existed),verifiedBy42:Boolean(body.verifiedBy42)});
-      setNotTheSame(false);
+      setNotTheSame(false);setReviewedMatch(null);setDistinctReason("");
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Company creation failed.");
@@ -143,7 +158,15 @@ export function TpoCompanyCreateForm() {
               Existing canonical companies will be reused where identity matches.
               This creates an auditable college relationship.
             </p>:null}
-            {notTheSame?<InlineNotice tone="info" message="A distinct employer needs its own verified domain and placement-cell review. This choice cannot bypass a matching canonical company."/>:null}
+            {notTheSame?<>
+              <InlineNotice tone="info" message="A distinct employer needs its own company domain or website. This choice cannot bypass a matching canonical company."/>
+              <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+                Why is this a different company{reviewedMatch?" from "+reviewedMatch.name:""}?
+                <Textarea className="mt-1 w-full min-w-0" rows={3} minLength={20} maxLength={500}
+                  value={distinctReason} disabled={pending}
+                  onChange={event=>{setReviewing(false);setError("");setDistinctReason(event.target.value);}}/>
+              </label>
+            </>:null}
             {conflict?<div role="alert" className="space-y-2 border-y border-border py-3">
               <p className="text-sm font-semibold text-[var(--lms-heading)]">{conflict.error==="PLACEMENT_COMPANY_IDENTITY_CONFLICT"?"Company identity needs review":"Matching company found"}</p>
               <p className="text-sm text-body">{conflict.message}</p>
@@ -151,7 +174,13 @@ export function TpoCompanyCreateForm() {
                <Button type="button" variant="secondary" disabled={pending}
                 onClick={()=>{router.push(conflict.companyId?"/tpo/companies/"+encodeURIComponent(conflict.companyId):"/tpo/companies");close();}}>Use {conflict.name??"existing company"}</Button>
                <Button type="button" variant="secondary" disabled={pending}
-                onClick={()=>{setNotTheSame(true);setReviewing(true);setConflict(null);setError("");}}>It&apos;s a different company</Button>
+                onClick={()=>{
+                 if(!conflict.companyId||!conflict.primaryDomain){
+                  setError("This match cannot be overridden here. Use the existing company or contact the placement team.");
+                  return;
+                 }
+                 setReviewedMatch({companyId:conflict.companyId,name:conflict.name??form.name,primaryDomain:conflict.primaryDomain});
+                 setNotTheSame(true);setReviewing(false);setConflict(null);setError("");}}>It&apos;s a different company</Button>
               </div>
             </div>:null}
             {resolved?<div role="status" className="space-y-1 border-y border-border py-3 text-sm text-body">

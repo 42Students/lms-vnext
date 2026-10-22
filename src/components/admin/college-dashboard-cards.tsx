@@ -53,7 +53,7 @@ export function CollegeDashboardCards({ cards }: { cards: Cards }) {
         label={card.label} value={counts[card.key]??"—"}>
         <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none"
          stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"
-         className="mt-2 block text-primary-text"><path d={COLLEGE_AT_A_GLANCE_ICONS[card.key]??COLLEGE_AT_A_GLANCE_ICONS.students}/></svg>
+         className="mt-2 block text-primary-text"><path d={COLLEGE_AT_A_GLANCE_ICONS[card.key]??COLLEGE_AT_A_GLANCE_ICONS["students"]}/></svg>
        </StatTile>)}
     </div> : <div className="space-y-2">
       <EmptyState title="No college summary available" description="College summary metrics are not available in the selected scope."/>

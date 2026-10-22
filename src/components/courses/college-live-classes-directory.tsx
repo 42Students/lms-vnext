@@ -120,7 +120,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       </article>)}</div>}
   </section>
   <Pagination page={data.query.page} pageCount={data.totalPages}
-    hrefForPage={page=>collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page})}
+    hrefForPage={page=>collegeLiveClassHref({...data.query,view:data.view,...(data.from!==undefined?{from:data.from}:{}),...(data.to!==undefined?{to:data.to}:{}),page})}
     label="Live class pagination" showBoundaryLinks={false}/>
  </div>;
 }

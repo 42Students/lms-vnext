@@ -12,7 +12,7 @@ export async function PATCH(request:Request,{params}:{params:Promise<{jobTypeId:
    return NextResponse.json({error:"INVALID_INPUT"},{status:400});
   const fields=body as Record<string,unknown>;
   const result=await setTpoJobTypeActive(await getCurrentRequestContext(),{
-   jobTypeId,active:fields.active,expectedVersion:fields.expectedVersion,
+   jobTypeId,active:fields["active"],expectedVersion:fields["expectedVersion"],
   });
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){

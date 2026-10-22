@@ -14,6 +14,7 @@ export const tpoCommunicationChangeSchema=z.discriminatedUnion("section",[
   expectedVersion:expectedRevisionSchema}).strict(),
  z.object({section:z.literal("PREP_THRESHOLD"),prepThresholdPct:z.number().int().min(0).max(100),expectedVersion:expectedRevisionSchema}).strict(),
  z.object({section:z.literal("RECRUITER_DURATION"),recruiterAccessMonths:z.union([z.literal(3),z.literal(6),z.literal(12),z.literal(24)]),expectedVersion:expectedRevisionSchema}).strict(),
+ z.object({section:z.literal("RECRUITER_APPROVAL"),recruiterDriveNeedsApproval:z.boolean(),expectedVersion:expectedRevisionSchema}).strict(),
 ]);
 
 export type TpoCommunicationChange=z.infer<typeof tpoCommunicationChangeSchema>;
@@ -24,6 +25,7 @@ export function tpoCommunicationChanges(input:TpoCommunicationChange){
   input.section==="OPTIONAL_EMAILS"?{
    notifyDriveOpenEmail:input.notifyDriveOpenEmail,notifyResultApplied:input.notifyResultApplied,
    notifyNudges:input.notifyNudges,notifyPrepAssigned:input.notifyPrepAssigned}:
+  input.section==="RECRUITER_APPROVAL"?{recruiterDriveNeedsApproval:input.recruiterDriveNeedsApproval}:
   {recruiterAccessMonths:input.recruiterAccessMonths};
 }
 

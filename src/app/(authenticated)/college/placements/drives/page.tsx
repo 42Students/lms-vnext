@@ -46,7 +46,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   const params = await searchParams;
   const query = driveQueryFromSearch({
     ...params,
-    status:params.status ?? "ALL",
+    status:params["status"] ?? "ALL",
   });
   if (!query) return <div className="space-y-4">
     <PageHeader title="Jobs" />

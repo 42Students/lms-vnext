@@ -293,7 +293,7 @@ export const notificationDeliveryOutbox = pgTable(
     index("notification_delivery_outbox_scope_idx")
       .on(table.organizationId, table.collegeId, table.createdAt),
     check("notification_delivery_outbox_status_ck",
-      sql`${table.deliveryStatus} in ('SCHEDULED','PROCESSING','SENT','FAILED')`),
+      sql`${table.deliveryStatus} in ('SCHEDULED','PROCESSING','SENT','FAILED','CANCELLED')`),
     check("notification_delivery_outbox_attempts_ck",
       sql`${table.deliveryAttempts} >= 0`),
     check("notification_delivery_outbox_status_time_ck",

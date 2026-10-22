@@ -41,8 +41,13 @@ export function getPrivateR2Config(
   env: NodeJS.ProcessEnv = process.env,
 ): S3Config {
   const accountId = env.R2_ACCOUNT_ID?.trim();
-  const accessKeyId = env.R2_ACCESS_KEY?.trim();
-  const secretAccessKey = env.R2_SECRET_KEY?.trim();
+  const privateAccessKeyId = env.R2_PRIVATE_ACCESS_KEY?.trim();
+  const privateSecretAccessKey = env.R2_PRIVATE_SECRET_KEY?.trim();
+  if (Boolean(privateAccessKeyId) !== Boolean(privateSecretAccessKey)) {
+    throw new PrivateObjectStorageError("PRIVATE_STORAGE_NOT_CONFIGURED");
+  }
+  const accessKeyId = privateAccessKeyId || env.R2_ACCESS_KEY?.trim();
+  const secretAccessKey = privateSecretAccessKey || env.R2_SECRET_KEY?.trim();
   const bucket = env.R2_PRIVATE_BUCKET?.trim();
   if (!accountId || !accessKeyId || !secretAccessKey || !bucket) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_NOT_CONFIGURED");

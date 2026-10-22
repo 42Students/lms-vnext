@@ -167,11 +167,8 @@ export async function getRecruiterCompanyReports(
   const jobIds = pageJobs.map((job) => job.id);
 
   /**
-   * Historical applicant counts include withdrawn or graduated members of
-   * this same college. A later membership or user deactivation must not erase
-   * previously published drive conversion and joining totals. Authorization
-   * is enforced by the granted college and company relationship, never by
-   * a learner's present-day membership activity.
+   * Report only active college members with active platform accounts.
+   * Authorization remains scoped by the granted college and relationship.
    *
    * Multiple offer versions are separate persisted offer
    * rows. ISSUED means currently outstanding, not
@@ -240,7 +237,9 @@ export async function getRecruiterCompanyReports(
             ),
           ),
         )
-        .innerJoin(users,eq(users.id,collegeMemberships.userId))
+        .innerJoin(users,and(
+          eq(users.id,collegeMemberships.userId),
+        ))
         .leftJoin(
           placementOffers,
           eq(placementOffers.applicationId,placementApplications.id),
@@ -273,8 +272,8 @@ export async function getRecruiterCompanyReports(
 
 
   // Entire authorized employer-college portfolio, independent of pagination.
-  // Historical membership/user activity must not be added to the funnel's
-  // college join; otherwise it disagrees with the per-drive counts above.
+  // Apply the same active membership/account filters to the funnel
+  // as the per-drive counts above.
   // Return counts only; never materialize private candidate information.
   const funnelRows=await db.execute<{
     applied:number;shortlisted:number;assessment:number;interview:number;
@@ -290,8 +289,8 @@ export async function getRecruiterCompanyReports(
       select a.id,a.status from placement_applications a
       join jobs j on j.id=a.job_id
       join college_memberships m on m.id=a.membership_id
-        and m.college_id=${collegeId}::uuid
-      join users u on u.id=m.user_id
+        and m.college_id=${collegeId}::uuid and m.status='ACTIVE'
+      join users u on u.id=m.user_id and u.platform_status='ACTIVE'
     )
     select
       (select count(*)::int from applicants) as applied,

@@ -12,7 +12,7 @@ describe("Super Admin placement drive directory date safety",()=>{
  });
  it("SA-admin-middle-drives-IST-01 never renders a UTC ISO date fragment for either timestamp",()=>{
   const page=readFileSync("src/app/(authenticated)/admin/placements/drives/page.tsx","utf8");
-  expect(page).toContain("adminDriveIstDate(row.job.applicationDeadline)");
+  expect(page).toContain("adminDriveIstDate(adminDriveEffectiveDeadline(row.job))");
   expect(page).toContain("adminDriveIstDate(row.job.publishedAt??row.job.createdAt)");
   expect(page).not.toContain("row.job.applicationDeadline.toISOString().slice(0,10)");
   expect(page).not.toContain("row.job.publishedAt?.toISOString().slice(0,10)");

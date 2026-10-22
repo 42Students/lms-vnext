@@ -29,6 +29,7 @@ export async function GET(request:Request,{params}:RouteContext) {
   if(values.length>1)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   if(values.length===1){
    const requested=values[0];
+   if(requested===undefined)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
    if(!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(requested))
     return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
    if(context.adminScope?.collegeId && context.adminScope.collegeId!==requested)

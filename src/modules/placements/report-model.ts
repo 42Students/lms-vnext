@@ -965,31 +965,31 @@ export function summarizePlacementReportDetails(input: {
 
   const bands: PlacementReportCtcBand[] = [
     {
-      label: "Below ₹3 lakh",
+      label: "<4 LPA",
       minimumInr: 0,
-      maximumExclusiveInr: 300_000,
+      maximumExclusiveInr: 400_000,
       offers: 0,
     },
     {
-      label: "₹3–6 lakh",
-      minimumInr: 300_000,
+      label: "4–6 LPA",
+      minimumInr: 400_000,
       maximumExclusiveInr: 600_000,
       offers: 0,
     },
     {
-      label: "₹6–10 lakh",
+      label: "6–10 LPA",
       minimumInr: 600_000,
       maximumExclusiveInr: 1_000_000,
       offers: 0,
     },
     {
-      label: "₹10–20 lakh",
+      label: "10–20 LPA",
       minimumInr: 1_000_000,
       maximumExclusiveInr: 2_000_000,
       offers: 0,
     },
     {
-      label: "₹20 lakh and above",
+      label: "20+ LPA",
       minimumInr: 2_000_000,
       maximumExclusiveInr: null,
       offers: 0,

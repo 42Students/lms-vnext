@@ -121,25 +121,28 @@ export function SuperAdminInterviewEdit({jobId,appointmentId,interviewers}:{
      </Banner>:null}
      <p className="text-xs text-muted-foreground">Changes affect the selected college only and are audited. The applicant receives a notification.</p>
      <div className="grid gap-3 sm:grid-cols-2">
-      <label className="grid gap-1 text-sm font-semibold">Date &amp; time (IST)
-       <Input type="datetime-local" required step={300} value={start} onChange={event=>setStart(event.target.value)}/>
-      </label>
-      <label className="grid gap-1 text-sm font-semibold">Duration (minutes)
-       <Input type="number" min={5} max={480} required value={duration} onChange={event=>setDuration(event.target.value)}/>
-      </label>
-      <label className="grid gap-1 text-sm font-semibold">Interview type
+      <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Interview type
        <Select value={interviewType} onChange={event=>setInterviewType(event.target.value as Type)}>
         {TYPES.map(type=><option key={type} value={type}>{type}</option>)}
        </Select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold">Mode
-       <Select value={mode} onChange={event=>setMode(event.target.value as typeof mode)}>
-        <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
-       </Select>
+      <label className="grid gap-1 text-sm font-semibold sm:col-span-2">What this round is about ({description.length}/500)
+       <Textarea rows={3} minLength={10} maxLength={500} required value={description} onChange={event=>setDescription(event.target.value)}/>
       </label>
       <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Interviewer
        <Input list={listId} maxLength={255} value={interviewer} onChange={event=>setInterviewer(event.target.value)}/>
        <datalist id={listId}>{[...new Set(interviewers)].map(name=><option key={name} value={name}/>)}</datalist>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold">Duration (minutes)
+       <Input type="number" min={5} max={480} required value={duration} onChange={event=>setDuration(event.target.value)}/>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold">Date &amp; time (IST)
+       <Input type="datetime-local" required step={300} value={start} onChange={event=>setStart(event.target.value)}/>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Mode
+       <Select value={mode} onChange={event=>setMode(event.target.value as typeof mode)}>
+        <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
+       </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold sm:col-span-2">
        {mode==="VIRTUAL"?"Meeting link (HTTPS)":"Venue"}
@@ -147,13 +150,10 @@ export function SuperAdminInterviewEdit({jobId,appointmentId,interviewers}:{
         value={mode==="VIRTUAL"?meetingUrl:venue}
         onChange={event=>mode==="VIRTUAL"?setMeetingUrl(event.target.value):setVenue(event.target.value)}/>
       </label>
+      <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Private interview notes ({notes.length}/1000)
+       <Textarea rows={3} maxLength={1000} value={notes} onChange={event=>setNotes(event.target.value)}/>
+      </label>
      </div>
-     <label className="grid gap-1 text-sm font-semibold">What this round is about ({description.length}/500)
-      <Textarea rows={3} minLength={10} maxLength={500} required value={description} onChange={event=>setDescription(event.target.value)}/>
-     </label>
-     <label className="grid gap-1 text-sm font-semibold">Private interview notes ({notes.length}/1000)
-      <Textarea rows={3} maxLength={1000} value={notes} onChange={event=>setNotes(event.target.value)}/>
-     </label>
      <label className="grid gap-1 text-sm font-semibold">Reason for change
       <Textarea rows={2} minLength={3} maxLength={500} required value={reason} onChange={event=>setReason(event.target.value)}/>
      </label>

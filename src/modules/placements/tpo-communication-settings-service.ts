@@ -19,7 +19,7 @@ export class TpoCommunicationSettingsError extends Error {
 export async function getTpoCommunicationSettings(context:RequestContext){
  const collegeId=await requireTpoBatchActor(context);
  if(!await placementTableExists("placement_tpo_college_settings"))
-  return {ready:false as const,smsMonthlyCap:500,emailSignature:"",recruiterAccessMonths:6,prepThresholdPct:60,notifyDriveOpenEmail:true,notifyResultApplied:true,notifyNudges:true,notifyPrepAssigned:true,version:null};
+  return {ready:false as const,smsMonthlyCap:500,emailSignature:"",recruiterAccessMonths:6,recruiterDriveNeedsApproval:true,prepThresholdPct:60,notifyDriveOpenEmail:true,notifyResultApplied:true,notifyNudges:true,notifyPrepAssigned:true,version:null};
  // Read private college delivery settings only after checking persisted
  // account and membership permissions inside the same transaction. Otherwise
  // a demoted officer can still receive an in-flight response after revocation.
@@ -33,14 +33,14 @@ export async function getTpoCommunicationSettings(context:RequestContext){
    collegeId,organizationId:college.organizationId,
   });
   const [row]=await tx.select({smsMonthlyCap:placementTpoCollegeSettings.smsMonthlyCap,
-   emailSignature:placementTpoCollegeSettings.emailSignature,recruiterAccessMonths:placementTpoCollegeSettings.recruiterAccessMonths,prepThresholdPct:placementTpoCollegeSettings.prepThresholdPct,
+   emailSignature:placementTpoCollegeSettings.emailSignature,recruiterAccessMonths:placementTpoCollegeSettings.recruiterAccessMonths,recruiterDriveNeedsApproval:placementTpoCollegeSettings.recruiterDriveNeedsApproval,prepThresholdPct:placementTpoCollegeSettings.prepThresholdPct,
    notifyDriveOpenEmail:placementTpoCollegeSettings.notifyDriveOpenEmail,
    notifyResultApplied:placementTpoCollegeSettings.notifyResultApplied,
    notifyNudges:placementTpoCollegeSettings.notifyNudges,
    notifyPrepAssigned:placementTpoCollegeSettings.notifyPrepAssigned,updatedAt:placementTpoCollegeSettings.updatedAt})
    .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
   return {ready:true as const,smsMonthlyCap:row?.smsMonthlyCap??500,
-   emailSignature:row?.emailSignature??"",recruiterAccessMonths:row?.recruiterAccessMonths??6,prepThresholdPct:row?.prepThresholdPct??60,
+   emailSignature:row?.emailSignature??"",recruiterAccessMonths:row?.recruiterAccessMonths??6,recruiterDriveNeedsApproval:row?.recruiterDriveNeedsApproval??true,prepThresholdPct:row?.prepThresholdPct??60,
    notifyDriveOpenEmail:row?.notifyDriveOpenEmail??true,
    notifyResultApplied:row?.notifyResultApplied??true,
    notifyNudges:row?.notifyNudges??true,
@@ -83,13 +83,15 @@ export async function updateTpoCommunicationSettings(context:RequestContext,raw:
    subjectId:collegeId,summary:input.section==="SMS_CAP"?"TPO changed the optional SMS monthly cap":
     input.section==="SIGNATURE"?"TPO changed the email signature":
     input.section==="PREP_THRESHOLD"?"TPO changed preparation readiness threshold":
-    input.section==="OPTIONAL_EMAILS"?"TPO changed optional student email preferences":"TPO changed recruiter access duration",
+    input.section==="OPTIONAL_EMAILS"?"TPO changed optional student email preferences":
+    input.section==="RECRUITER_APPROVAL"?"TPO changed recruiter drive approval":"TPO changed recruiter access duration",
    metadata:input.section==="SMS_CAP"?{field:"smsMonthlyCap",value:input.smsMonthlyCap}:
     input.section==="SIGNATURE"?{field:"emailSignature",length:input.emailSignature.length}:
     input.section==="PREP_THRESHOLD"?{field:"prepThresholdPct",value:input.prepThresholdPct}:
     input.section==="OPTIONAL_EMAILS"?{field:"studentOptionalEmails",changes:{
      driveOpenEmail:input.notifyDriveOpenEmail,resultApplied:input.notifyResultApplied,
      nudges:input.notifyNudges,prepAssigned:input.notifyPrepAssigned}}:
+    input.section==="RECRUITER_APPROVAL"?{field:"recruiterDriveNeedsApproval",value:input.recruiterDriveNeedsApproval}:
     {field:"recruiterAccessMonths",value:input.recruiterAccessMonths},
   });
   return {saved:true,version:updated.updatedAt.toISOString()};

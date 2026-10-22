@@ -170,7 +170,7 @@ export async function GET(request: Request) {
           const ready = await db.execute(sql<{present:boolean}>`
             select to_regclass('public.announcements') is not null as present
           `);
-          if (ready.rows[0]?.present !== true) {
+          if (ready.rows[0]?.["present"] !== true) {
             warning = "Deleted announcements are unavailable until announcement storage is ready.";
             break;
           }

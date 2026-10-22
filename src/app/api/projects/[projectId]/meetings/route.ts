@@ -43,7 +43,7 @@ export async function GET(
       !["ACTIVE","INACTIVE","ALL"].includes(archive))
       return NextResponse.json({error:"INVALID_MEETING_FILTER"},{status:400});
     const options={
-      q:search.get("q")??undefined,
+      ...(search.get("q")!==null?{q:search.get("q")??""}:{}),
       state:state as "ALL"|"DRAFT"|"REQUESTED"|"SCHEDULED"|"RESCHEDULED"|"COMPLETED"|"CANCELLED",
       archive:archive as "ACTIVE"|"INACTIVE"|"ALL",
       ...(page!==null||pageSize!==null?{page:page??1,pageSize:(pageSize??25)+1}:{}),

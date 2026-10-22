@@ -36,8 +36,8 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
     });
     const result = await response.json() as Record<string, unknown>;
     if (!response.ok) {
-      throw new Error(typeof result.message === "string"
-        ? result.message : "Resume update could not be completed.");
+      throw new Error(typeof result["message"] === "string"
+        ? result["message"] : "Resume update could not be completed.");
     }
     return result;
   }
@@ -70,7 +70,7 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
     setWorking(true);setError(false);setMessage("");
     try {
       const result = await command({action:"VIEW",receiptId:id});
-      const url = typeof result.readUrl === "string" ? result.readUrl : "";
+      const url = typeof result["readUrl"] === "string" ? result["readUrl"] : "";
       // A receipt UUID alone does not grant a read; only the server-issued
       // short-lived HTTPS URL from the authenticated command may be opened.
       if (!url.startsWith("https://")) throw new Error("Secure resume view is unavailable.");

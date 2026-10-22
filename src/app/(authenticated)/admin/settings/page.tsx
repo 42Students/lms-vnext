@@ -47,7 +47,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
       action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
   </div>;
-  const requestedScope=typeof raw.scope==="string"?raw.scope:null;
+  const requestedScope=typeof raw["scope"]==="string"?raw["scope"]:null;
   const viewScope=requestedScope??(context.adminScope?.collegeId?"COLLEGE":
     context.adminScope?.organizationId?"ORG":"GLOBAL");
   const retryParams=new URLSearchParams();
@@ -178,13 +178,13 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         organizationId={context.adminScope!.organizationId!}
         ready={organizationHistory.value.ready}
         entries={organizationHistory.value.entries.map((entry:Record<string,unknown>)=>({
-         key:String(entry.key),value:String(entry.value),version:Number(entry.version)}))}/>:
+         key:String(entry["key"]),value:String(entry["value"]),version:Number(entry["version"])}))}/>:
        viewScope==="ORG"?<Banner tone="warning" role="status">
         Select the organization in the header to inspect or remove its historical unused keys. No new ORG settings can be created.
        </Banner>:
        viewScope===editorScope&&!organizationOnly&&editorData?
         <TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
-         collegeId={context.adminScope?.collegeId??undefined}
+         {...(context.adminScope?.collegeId ? {collegeId:context.adminScope.collegeId} : {})}
          ready={editorData.ready} entries={editorData.entries}/>:(
        <Banner tone="warning">
         {organizationOnly?<p className="font-semibold">Select a college to view its settings.</p>:null}

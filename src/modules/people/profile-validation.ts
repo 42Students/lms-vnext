@@ -73,9 +73,11 @@ const phoneValue = z
   .refine(
     (value) => {
       if (value === "") return true;
-      // Legacy contacts accept numeric digits only; separators and + prefixes
-      // must not bypass the 10–15 digit alternate-phone bound.
-      return /^\d{10,15}$/.test(value);
+      // Accept legacy international formatting while counting actual digits.
+      // Reject letters and other punctuation; separators never bypass the
+      // 10–15 digit bound.
+      return /^\+?[0-9][0-9 ()-]*$/.test(value) &&
+        /^\d{10,15}$/.test(value.replace(/\D/g, ""));
     },
     "Phone number must be 10-15 digits",
   )
@@ -147,7 +149,29 @@ const socialProfilesSchema = z
     researchGateUrl: "",
   });
 
-const addressSchema = z
+/** Import both generations of legacy learner address fields without losing an
+ * explicitly entered current location. The old learner persisted shared
+ * city/state/pincode alongside current_* and permanent_* variants. */
+export function normalizeLegacyLearnerAddress(value: unknown): unknown {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return value;
+  const fields = value as Record<string, unknown>;
+  const text = (key: string): string | undefined =>
+    typeof fields[key] === "string" ? fields[key] as string : undefined;
+  const prefer = (current: string, legacy: string): string | undefined =>
+    text(current) ?? text(legacy);
+  return {
+    currentAddress: prefer("currentAddress", "address") ?? "",
+    city: prefer("currentCity", "city") ?? "",
+    state: prefer("currentState", "state") ?? "",
+    pincode: prefer("currentPincode", "pincode") ?? "",
+    permanentAddress: text("permanentAddress") ?? "",
+    permanentCity: text("permanentCity") ?? "",
+    permanentState: text("permanentState") ?? "",
+    permanentPincode: text("permanentPincode") ?? "",
+  };
+}
+
+const addressSchema = z.preprocess(normalizeLegacyLearnerAddress, z
   .object({
     currentAddress: textValue(1000),
     city: textValue(160),
@@ -186,7 +210,7 @@ const addressSchema = z
     permanentCity: "",
     permanentState: "",
     permanentPincode: "",
-  });
+  }));
 
 const personalDetailsSchema = z
   .object({
@@ -338,6 +362,13 @@ const educationSchema = z
     maxGrade: textValue(64),
     qualifyingExam: textValue(120),
     examRank: textValue(120).optional(),
+    // Historical education description fields are preserved on roundtrips.
+    // Never persist a legacy public certificateUpload URL as a read grant.
+    degree: textValue(200).optional(),
+    field: textValue(200).optional(),
+    score: textValue(120).optional(),
+    description: textValue(5000).optional(),
+    certificateReceiptId: z.string().uuid().nullable().optional(),
     examDetails: z
       .record(
         z.string().max(120),
@@ -352,7 +383,14 @@ const educationSchema = z
   .strict();
 // Application qualification editors retain the legacy 20-entry limit;
  // learner career profiles are allowed the broader 30-entry collection.
-export const learnerApplicationQualificationWriteSchema = z.array(educationSchema).max(20);
+export const learnerApplicationQualificationWriteSchema = z.array(educationSchema).max(20).superRefine((items,ctx)=>{
+ // An empty optional application draft is permitted, but a submitted
+ // qualification set has exactly one most recent education, as in the old LMS.
+ if(items.length===0)return;
+ const count=items.filter(item=>item.isRecentEducation).length;
+ if(count!==1)ctx.addIssue({code:"custom",path:["isRecentEducation"],
+  message:count===0?"Select one recent education":"Select only one recent education"});
+});
 export const learnerProfileEducationWriteSchema=z.array(educationSchema).max(30).superRefine((items,ctx)=>{
  let recentCount=0;
  for(const [index,entry] of items.entries()){

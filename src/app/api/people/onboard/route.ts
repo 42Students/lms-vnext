@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     if(!parsed.success)return NextResponse.json({error:"INVALID_FACULTY_PROFILE",
       message:"Check the department, faculty type and profile information."},{status:400});
     const facultyProfile=parsed.data.facultyProfile;
-    if(facultyProfile&&(!Array.isArray(parsed.data.roles)||!parsed.data.roles.includes("FACULTY")))
+    if(facultyProfile&&(!Array.isArray(parsed.data["roles"])||!parsed.data["roles"].includes("FACULTY")))
       return NextResponse.json({error:"FACULTY_ROLE_REQUIRED"},{status:400});
     // Membership, role grant and optional faculty department/profile now
     // commit together. Never return an active partially registered teacher.

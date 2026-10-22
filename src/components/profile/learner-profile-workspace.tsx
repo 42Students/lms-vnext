@@ -729,6 +729,7 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Work Shift Preference" value={document.jobPreferences.workShiftPreference}/>
             <Value label="Preferred Employment City" value={document.jobPreferences.preferredEmploymentCity}/>
             <Value label="Exam Slot Preference" value={document.jobPreferences.examSlotPreference || "No preference"}/>
+            <Value label="PAP Interest" value={document.jobPreferences.papInterest || "Not specified"}/>
             <Value label="Job Notifications Enabled" value={document.jobPreferences.jobNotificationsEnabled ? "On" : "Off"}/>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
@@ -1043,6 +1044,15 @@ export function LearnerProfileWorkspace(props: {
               <option value="Morning">Morning</option>
               <option value="Afternoon">Afternoon</option>
               <option value="Evening">Evening</option>
+            </Select>
+          </label>
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">PAP Interest
+            <Select className="mt-[6px] min-h-11 md:min-h-9" value={jobPrefsDraft.papInterest}
+              onChange={event=>setJobPrefsDraft(current=>({...current,papInterest:event.target.value as LearnerProfileDocument["jobPreferences"]["papInterest"]}))}>
+              <option value="">Not specified</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+              <option value="Need more info">Need more info</option>
             </Select>
           </label>
           <label className="flex min-h-11 items-center gap-3 text-[13px] font-semibold text-[var(--lms-neutral-400)]">

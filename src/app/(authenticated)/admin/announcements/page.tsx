@@ -48,7 +48,7 @@ export default async function AnnouncementsPage({
   const {query: legacyQuery, ...canonicalParams} = rawParams;
   const params = parseSuperAdminAnnouncementParams({
     ...canonicalParams,
-    q: canonicalParams.q ?? legacyQuery,
+    q: canonicalParams["q"] ?? legacyQuery,
   });
   if (!params) {
     return <div className="min-w-0 space-y-6">
@@ -241,7 +241,7 @@ export default async function AnnouncementsPage({
                     ? <span>Updated {first.updatedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
                 </div>
                 {groupReceipt&&target>0?<MetricBar role="progressbar"
-                  label={first.title+" placement cells read"} className={chartStyles.track+" mt-3 w-full"}
+                  label={first.title+" placement cells read"} className={chartStyles["track"]+" mt-3 w-full"}
                   value={reached} maximum={target} unit="placement cell"/>:null}
               </article>;
             })}
@@ -251,6 +251,12 @@ export default async function AnnouncementsPage({
           This feed shows one authorized page at a time. Continue to Older announcements below to see earlier placement-cell broadcasts.
         </p> : null}
       </section>
+      <div className="flex flex-wrap items-center gap-3">
+        <Link href="/admin/announcements/delivery" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">
+          Notification delivery history
+        </Link>
+        <p className="text-xs text-muted-foreground">Review persisted delivery status for the selected college. Delivery controls are available only when the delivery workflow is enabled.</p>
+      </div>
       <section aria-label="Announcement management" className="min-w-0 space-y-4 border-t border-border pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div><h2 className="m-0 text-lg font-semibold text-foreground">Announcement management</h2>
@@ -320,17 +326,19 @@ export default async function AnnouncementsPage({
         const receipt=receipts.get(row.id)!;
         return <li key={row.id} className="border-b border-border py-3 text-sm">
          <p className="font-semibold">{row.title}</p><p className="text-muted-foreground">{receipt.cellRead} of 1 placement cell read · {receipt.read}/{receipt.delivered} bell recipients read</p>
-         <MetricBar role="progressbar" label={row.title+" notification reads"} className={chartStyles.track+" mt-2 w-full"}
+         <MetricBar role="progressbar" label={row.title+" notification reads"} className={chartStyles["track"]+" mt-2 w-full"}
           value={receipt.cellRead} maximum={1} unit="placement cell" />
         </li>;
        })}</ul>
       </section>:null}
+      <p className="text-sm"><Link href="/admin/notification-delivery" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">View notification delivery history and status</Link></p>
       <Banner tone="info" role="status">
-        Broadcast notices are stored as separate college records. This view does not yet
-        combine them by broadcast group or calculate distinct colleges reached; the individual
-        placement-cell receipts above must not be treated as an all-colleges delivery total.
-        Scheduled-delivery retry, cancel and the cross-type recycle bin require separate,
-        audited operator services and are not available through this announcements list.
+        Broadcast notices are stored as separate college records and grouped above when
+        they share a persisted broadcast identity. A complete group receipt counts distinct
+        target colleges; without that receipt, counts cover only copies on the current page.
+        Read receipts are not notification delivery confirmations. Scheduled-notification
+        retry and cancellation are separate operator actions, not announcement actions;
+        they cannot be performed from this list.
       </Banner>
       <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent
         emptyMessage={announcementHistoryEmptyMessage({

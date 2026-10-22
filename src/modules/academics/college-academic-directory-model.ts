@@ -40,14 +40,18 @@ export const collegeSemesterDirectoryBaseSchema = z.object({
   status: z.enum(["ALL", "ACTIVE", "INACTIVE"]).default("ALL"),
 }).strict();
 
-export function withCollegeSemesterCreditCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number; creditState?: "ALL"|"CONFIGURED"|"UNSET" }>>(schema:T) {
+export function withCollegeSemesterCreditCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number; creditState?: "ALL"|"CONFIGURED"|"UNSET" }>>(schema:T): T {
   return schema.refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
     {path:["maximumCredits"],message:"Maximum credits must be at least the minimum"})
     .refine(q => q.creditState !== "UNSET" || (q.minimumCredits === undefined && q.maximumCredits === undefined),
       {path:["creditState"],message:"Unconfigured semester credits cannot be combined with credit bounds"});
 }
 
-export const collegeSemesterDirectorySchema = withCollegeSemesterCreditCheck(collegeSemesterDirectoryBaseSchema);
+export const collegeSemesterDirectorySchema = collegeSemesterDirectoryBaseSchema
+  .refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
+    {path:["maximumCredits"],message:"Maximum credits must be at least the minimum"})
+  .refine(q => q.creditState !== "UNSET" || (q.minimumCredits === undefined && q.maximumCredits === undefined),
+    {path:["creditState"],message:"Unconfigured semester credits cannot be combined with credit bounds"});
 
 export const collegeBatchDirectoryBaseSchema = z.object({
   ...common,
@@ -64,14 +68,25 @@ export const collegeBatchDirectoryBaseSchema = z.object({
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "INACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
 }).strict();
 
-export function withCollegeBatchFilterCheck<T extends z.ZodType<{startOnOrAfter?:string;startOnOrBefore?:string;progression?:"ALL"|"RECORDED"|"MISSING";currentTerm?:number;yearStart?:number;academicYearState?:"ALL"|"RECORDED"|"UNRECORDED"}>>(schema:T){
+type CollegeBatchFilterFields=Pick<z.output<typeof collegeBatchDirectoryBaseSchema>,
+ "startOnOrAfter"|"startOnOrBefore"|"progression"|"currentTerm"|"academicYearState"|"yearStart">;
+// Generic so callers keep their full inferred type, including .omit() variants for CSV export.
+export function withCollegeBatchFilterCheck<T extends z.ZodType<CollegeBatchFilterFields>>(schema:T){
  return schema.refine(q=>q.startOnOrAfter===undefined||q.startOnOrBefore===undefined||q.startOnOrAfter<=q.startOnOrBefore,
   {path:["startOnOrBefore"],message:"Batch start-date end limit must not precede start limit"}).refine(q=>q.progression!=="MISSING"||q.currentTerm===undefined,
   {path:["currentTerm"],message:"A missing progression record cannot have a recorded current term"}).refine(q=>q.academicYearState!=="UNRECORDED"||q.yearStart===undefined,
   {path:["yearStart"],message:"An unrecorded academic year cannot match a year-start filter"}).refine(q=>q.progression!=="MISSING"||q.yearStart===undefined,
   {path:["yearStart"],message:"A missing progression record cannot match a recorded academic year"});
 }
-export const collegeBatchDirectorySchema=withCollegeBatchFilterCheck(collegeBatchDirectoryBaseSchema);
+export const collegeBatchDirectorySchema = collegeBatchDirectoryBaseSchema
+  .refine(q=>q.startOnOrAfter===undefined||q.startOnOrBefore===undefined||q.startOnOrAfter<=q.startOnOrBefore,
+    {path:["startOnOrBefore"],message:"Batch start-date end limit must not precede start limit"})
+  .refine(q=>q.progression!=="MISSING"||q.currentTerm===undefined,
+    {path:["currentTerm"],message:"A missing progression record cannot have a recorded current term"})
+  .refine(q=>q.academicYearState!=="UNRECORDED"||q.yearStart===undefined,
+    {path:["yearStart"],message:"An unrecorded academic year cannot match a year-start filter"})
+  .refine(q=>q.progression!=="MISSING"||q.yearStart===undefined,
+    {path:["yearStart"],message:"A missing progression record cannot match a recorded academic year"});
 
 export type CollegeSemesterDirectoryQuery = z.infer<typeof collegeSemesterDirectorySchema>;
 export type CollegeBatchDirectoryQuery = z.infer<typeof collegeBatchDirectorySchema>;

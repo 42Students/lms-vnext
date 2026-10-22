@@ -67,3 +67,77 @@ export const placementTpoCampaignDrafts = pgTable(
     ),
   ],
 );
+
+/**
+ * Legacy V214 campaign header import mapping. Resolve both numeric principals
+ * through a college-scoped crosswalk before writing either destination table.
+ * Do not infer sender identity from an email, or reinterpret a sent campaign
+ * as an editable draft. Old delivery counters stay available for audit.
+ */
+export function mapLegacyTpoCampaignHeader(
+  row: {
+    id: number;
+    collegeId: number;
+    subject: string;
+    body: string;
+    sentByFacultyId: number;
+    recipients: number;
+    sent: number;
+    skipped: number;
+    failed: number;
+    createdAt: Date;
+  },
+  resolved: {
+    collegeId: string;
+    senderUserId: string;
+    senderName: string;
+  },
+) {
+  const counters = [row.recipients, row.sent, row.skipped, row.failed];
+  if (
+    !Number.isSafeInteger(row.id) || row.id <= 0 ||
+    !Number.isSafeInteger(row.collegeId) || row.collegeId <= 0 ||
+    !Number.isSafeInteger(row.sentByFacultyId) || row.sentByFacultyId <= 0 ||
+    counters.some((count) => !Number.isSafeInteger(count) || count < 0) ||
+    row.recipients > 500 ||
+    row.sent + row.skipped + row.failed > row.recipients ||
+    row.subject.trim().length === 0 || row.subject.length > 200 ||
+    row.body.trim().length < 2 || row.body.length > 10000 ||
+    !Number.isFinite(row.createdAt.getTime()) ||
+    !resolved.collegeId || !resolved.senderUserId || !resolved.senderName.trim()
+  ) {
+    throw new Error("Invalid legacy TPO campaign header: quarantine source row");
+  }
+
+  const status = row.sent + row.skipped + row.failed === row.recipients
+    ? "SENT" as const
+    : "CANCELLED" as const;
+  return {
+    campaign: {
+      legacyCampaignId: row.id,
+      legacySenderUserId: row.sentByFacultyId,
+      collegeId: resolved.collegeId,
+      createdByUserId: resolved.senderUserId,
+      status,
+      totalRecipients: row.recipients,
+      legacySubject: row.subject,
+      legacyBody: row.body,
+      legacySentCount: row.sent,
+      legacyFailedCount: row.failed,
+      createdAt: row.createdAt,
+    },
+    draft: {
+      collegeId: resolved.collegeId,
+      title: row.subject.slice(0, 160),
+      subject: row.subject,
+      body: row.body,
+      senderName: resolved.senderName,
+      createdByUserId: resolved.senderUserId,
+      templateKey: "LEGACY_IMPORTED",
+      segment: "ALL_ELIGIBLE" as const,
+      suppressionCounts: { legacySkipped: row.skipped },
+      suppressedCounts: { legacySkipped: row.skipped },
+      createdAt: row.createdAt,
+    },
+  };
+}

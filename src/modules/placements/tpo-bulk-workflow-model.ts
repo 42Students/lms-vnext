@@ -11,17 +11,22 @@ export const tpoBulkPreviewRequestSchema = z.object({
   jobId:z.string().uuid().optional(),
   action:tpoBulkActionSchema,
   note:z.string().trim().max(1000).default(""),
+  /** Private rejection reason; never shown to candidates (legacy internal/student split). */
+  internalReason:z.string().trim().max(500).optional(),
   ids,
 }).strict().superRefine((value,ctx)=>{
   if(value.target==="STUDENTS"){
     if(value.jobId || !["ELIGIBLE","INELIGIBLE","CLEAR_OVERRIDE"].includes(value.action) ||
        (value.action==="INELIGIBLE" ? value.note.length < 3 || value.note.length > 200 : value.note.length > 0))
       ctx.addIssue({code:"custom",message:"Invalid student action"});
+    if(value.internalReason)ctx.addIssue({code:"custom",message:"Invalid student action"});
   } else {
     if(!value.jobId||!["SHORTLISTED","REJECTED","ADD_NOTE","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(value.action))
       ctx.addIssue({code:"custom",message:"Invalid application action"});
     if(value.note.length<10)
       ctx.addIssue({code:"custom",message:"Screening decisions require at least ten characters of review context"});
+    if(value.internalReason&&(value.action!=="REJECTED"||value.internalReason.length<3))
+      ctx.addIssue({code:"custom",message:"Internal reason applies only to rejections and needs at least three characters"});
   }
 });
 /** Explicit action language makes the confirmation auditable to the operator. */

@@ -4,6 +4,7 @@ import {and,eq,ne,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   attendanceSessions,lectureHalls,sections,sectionScheduleEventCourses,sectionScheduleEvents,
+  sectionEnrollments,learnerProgramEnrollments,collegeMemberships,users,
 } from "@/db/schema";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
@@ -12,6 +13,7 @@ import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-serv
 import {assertPersistedFacultyTeachingMutation} from "@/modules/courses/faculty-persisted-teaching-guard";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {deliverInAppNotificationInTransaction} from "@/modules/activity/notification-service";
 import {facultyAttendanceScheduleParamsSchema,facultyAttendanceScheduleSchema,facultyScheduleFieldsChanged}
   from "./faculty-schedule-mutation-model";
 
@@ -21,6 +23,18 @@ function bookingGraceMs() {
   if(!Number.isInteger(minutes)||minutes<0||minutes>30)
     throw new Error("INVALID_FACULTY_SCHEDULE_BOOKING_GRACE");
   return minutes*60_000;
+}
+
+/** Match the legacy "EEE, d MMM at h:mm a" in the college's IST clock. */
+function scheduledNoticeWhen(startsAt:Date):string {
+  const pieces=new Intl.DateTimeFormat("en-US",{
+    timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
+    hour:"numeric",minute:"2-digit",hour12:true,
+  }).formatToParts(startsAt);
+  const part=(type:Intl.DateTimeFormatPartTypes)=>
+    pieces.find(piece=>piece.type===type)?.value??"";
+  return part("weekday")+", "+part("day")+" "+part("month")+
+    " at "+part("hour")+":"+part("minute")+" "+part("dayPeriod");
 }
 
 /** Scoped course Session CREATE and RESCHEDULE. Marked sessions cannot move. */
@@ -45,7 +59,7 @@ export async function commandFacultyAttendanceSchedule(
     throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
   if(startsAt.getTime()<Date.now()-bookingGraceMs())
     throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
-  return getDb().transaction(async tx=>{
+  const result=await getDb().transaction(async tx=>{
     // Match the College Admin schedule writer's tenant lock. This is the
     // serialization point for bookings created through either role, including
     // different sections competing for one lecture hall.
@@ -152,7 +166,7 @@ export async function commandFacultyAttendanceSchedule(
       )).returning();
     }
     if(!saved)throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
-    await recordActivityEventInTransaction(tx,context,{
+    const event=await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.COURSES_CLASS_SCHEDULED,
       collegeId:membership.collegeId,organizationId:membership.organizationId,
       subjectType:"attendance_session",subjectId:saved.id,
@@ -165,8 +179,52 @@ export async function commandFacultyAttendanceSchedule(
       groupKey:"attendance-session:"+saved.id,
       dedupeKey:"faculty-session:"+saved.id+":"+input.action+":"+randomUUID(),
     });
-    return {id:saved.id,status:saved.status,updatedAt:saved.updatedAt,
+    return {eventId:event.id,id:saved.id,status:saved.status,updatedAt:saved.updatedAt,
       sectionId:owned.sectionId,deliveryId,facultyMembershipId:membership.id,
       lectureHallId:saved.lectureHallId};
   });
+  // Legacy schedule creation delivers a class-targeted learner notice.
+  // Delivery is deliberately post-commit: a notification failure cannot roll
+  // back the booked class, and recipients are filtered by active college,
+  // section enrollment and account status at dispatch time.
+  if(input.action==="CREATE"){
+    try{
+      const recipients=await getDb().selectDistinct({userId:collegeMemberships.userId})
+        .from(sectionEnrollments)
+        .innerJoin(learnerProgramEnrollments,
+          eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId))
+        .innerJoin(collegeMemberships,
+          eq(collegeMemberships.id,learnerProgramEnrollments.membershipId))
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
+        .where(and(
+          eq(sectionEnrollments.sectionId,result.sectionId),
+          eq(sectionEnrollments.status,"ACTIVE"),
+          eq(learnerProgramEnrollments.status,"ACTIVE"),
+          eq(collegeMemberships.collegeId,membership.collegeId),
+          eq(collegeMemberships.status,"ACTIVE"),
+          eq(users.platformStatus,"ACTIVE"),
+        ));
+      const body="A class has been scheduled for "+scheduledNoticeWhen(startsAt)+".";
+      for(let index=0;index<recipients.length;index+=250){
+        await getDb().transaction(async tx=>
+          deliverInAppNotificationInTransaction(
+            tx,result.eventId,recipients.slice(index,index+250).map(row=>row.userId),{
+              title:input.title.trim()||"New class scheduled",
+              body,
+              actionHref:"/learn/courses",
+            },
+          ));
+      }
+    }catch(error){
+      // Best effort is a legacy requirement, not a silent failure.
+      console.error("Class-scheduled learner notification failed",{
+        scheduleEventId:result.id,error,
+      });
+    }
+  }
+  return {
+    id:result.id,status:result.status,updatedAt:result.updatedAt,
+    sectionId:result.sectionId,deliveryId:result.deliveryId,
+    facultyMembershipId:result.facultyMembershipId,lectureHallId:result.lectureHallId,
+  };
 }

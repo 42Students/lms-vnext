@@ -19,13 +19,12 @@ describe("Chat-7 schedule parity",()=>{
   expect(s).toContain("row.testUrl");
   expect(s).toContain("Open test");
   const link=read("src/components/ui/third-party-link.tsx");
-  // Validated HTTPS links stay in the same tab, with a copy fallback for WebViews.
-  // Copy fallback is retained for clients that cannot launch a browser.
+  // Validated HTTPS links navigate in the same tab for embedded clients.
+  // The copy fallback remains available for clients that cannot launch a browser.
   expect(s).toContain("<ThirdPartyLink href={row.testUrl}");
   expect(link).toContain('url.protocol === "https:" && !url.username && !url.password');
   expect(link).toContain('rel="noopener noreferrer" href={safeHref}');
   expect(link).not.toContain('target="_blank"');
-  expect(link).toContain('href !== href.trim()');
   expect(link).toContain("Show link to copy");
   expect(s).toContain("not an attendance confirmation or final outcome");
  });

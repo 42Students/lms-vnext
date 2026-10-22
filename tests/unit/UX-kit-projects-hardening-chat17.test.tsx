@@ -192,7 +192,8 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     // Legacy in-app/WebView navigation uses the current tab; do not fork a new window.
     expect(html).not.toContain('target="_blank"');
     expect(html).toContain('href="https://example.org/"');
-    expect(html).toContain('rel="noopener noreferrer"');
+    expect(html).not.toMatch(/<a[^>]*\\starget=/);
+    expect(html).toContain('href="https://example.org/"');
   });
   it("UX-kit-HARDEN-15 8+ persistent errors remain separately dismissible while timed entries cap",()=>{
     const errors: ToastItem[]=Array.from({length:9},(_,i)=>({id:String(i),title:"Error "+i,tone:"error" as const}));

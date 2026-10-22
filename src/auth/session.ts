@@ -82,7 +82,7 @@ export async function revokeIdentitySessions(
   const result = await getDb().execute(sql`
     SELECT id FROM users WHERE identity_uid = ${identityUid} LIMIT 1
   `);
-  const userId = result.rows[0]?.id as string | undefined;
+  const userId = result.rows[0]?.["id"] as string | undefined;
 
   if (userId) {
     await revokeAllSessionsForUser(userId, userId, reason);

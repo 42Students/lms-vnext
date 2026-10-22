@@ -24,11 +24,11 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  const raw=await searchParams;
- const currentPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,4}$/.test(raw.page)
-  ?Number(raw.page):1;
- const requestedJob=typeof raw.jobId==="string"&&
-  /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw.jobId)
-  ?raw.jobId:undefined;
+ const currentPage=typeof raw["page"]==="string"&&/^[1-9][0-9]{0,4}$/.test(raw["page"])
+  ?Number(raw["page"]):1;
+ const requestedJob=typeof raw["jobId"]==="string"&&
+  /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw["jobId"])
+  ?raw["jobId"]:undefined;
  const calendarQuery=new URLSearchParams({view:"agenda"});
  for(const key of ["date","company","roundKind","job","jobId"] as const){
   const value=raw[key];
@@ -113,7 +113,9 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
       item.status==="CONFIRMED"?"success":
       item.status==="RESCHEDULE_REQUESTED"?"warning":
       item.status==="CANCELLED"||item.status==="NO_SHOW"?"error":"neutral"}>
-    {item.status==="RESCHEDULE_REQUESTED"?"Reschedule":
+    {item.status==="SCHEDULED"?"Scheduled":item.status==="CONFIRMED"?"Confirmed":
+      item.status==="RESCHEDULE_REQUESTED"?"Reschedule":item.status==="COMPLETED"?"Completed":
+      item.status==="CANCELLED"?"Cancelled":
       item.status==="NO_SHOW"?"No Show":item.status.replaceAll("_"," ")}</StatusBadge>},
   {key:"date",header:"Date & Time",cell:item=><span className="whitespace-nowrap">{detail(item,"Date & Time")}</span>},
   {key:"interviewer",header:"Interviewer",cell:item=>detail(item,"Interviewer")},

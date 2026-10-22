@@ -13,11 +13,16 @@ export async function getLearnerProjectGoals(
 ) {
   const scope=await requireProjectReadAccess(context,projectId);
   if(scope.access!=="LEARNER")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const {templateId,templateVersionId}=scope.project;
+  // Imported legacy projects may have no template: there are no authored goals.
+  if(!templateId||!templateVersionId){
+    return {goal:null,description:null,deliverables:[],definitionOfDone:[],personas:[]};
+  }
   const [version]=await getDb().select({
     blueprint:projectTemplateVersions.blueprint,
   }).from(projectTemplateVersions).where(and(
-    eq(projectTemplateVersions.id,scope.project.templateVersionId),
-    eq(projectTemplateVersions.templateId,scope.project.templateId),
+    eq(projectTemplateVersions.id,templateVersionId),
+    eq(projectTemplateVersions.templateId,templateId),
   )).limit(1);
   if(!version)throw new ProjectsServiceError("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
   const authored=projectTemplateBlueprintSchema.parse(version.blueprint);

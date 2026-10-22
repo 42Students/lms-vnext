@@ -70,8 +70,10 @@ export async function getTpoBatch(ctx:RequestContext,rawId:unknown){
   readinessMessage:ready?null:"Placement batch lifecycle migration is not installed. Try again after setup.",
   lifecycle:lifecycle??null,decision};
 }
-export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPage:unknown=1,rawSearch:unknown="",onlyDirect=false) {
- const {batch,collegeId}=await getTpoBatch(ctx,rawId);const page=pageSchema.parse(rawPage);
+/** Upper bound for a whole-roster evidence-filter read. */
+export const TPO_BATCH_ROSTER_CAP=2000;
+export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPage:unknown=1,rawSearch:unknown="",onlyDirect=false,wholeRoster=false) {
+ const {batch,collegeId}=await getTpoBatch(ctx,rawId);const page=wholeRoster?1:pageSchema.parse(rawPage);
  const search=z.string().trim().max(100).parse(rawSearch);
  const term="%"+search.replace(/[\\%_]/g,"\\$&")+"%";
  const filter=and(eq(learnerProgramEnrollments.cohortId,batch.id),eq(learnerProgramEnrollments.status,"ACTIVE"),
@@ -86,8 +88,10 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER"))).where(filter);
- const records=await roster().orderBy(asc(users.displayName),asc(collegeMemberships.id)).limit(26).offset((page-1)*25);
- const visible=records.slice(0,25),enrollmentIds=visible.map(r=>r.enrollmentId);
+ // wholeRoster loads the full active roster (bounded) so evidence filters can run before paging.
+ const pageSize=wholeRoster?TPO_BATCH_ROSTER_CAP:25;
+ const records=await roster().orderBy(asc(users.displayName),asc(collegeMemberships.id)).limit(pageSize+1).offset((page-1)*pageSize);
+ const visible=records.slice(0,pageSize),enrollmentIds=visible.map(r=>r.enrollmentId);
  const activeSections=enrollmentIds.length?await getDb().select({enrollmentId:sectionEnrollments.learnerEnrollmentId,sectionId:sections.id,sectionName:sections.name})
  .from(sectionEnrollments).innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),eq(sections.cohortId,batch.id),eq(sections.status,"ACTIVE")))
  .where(and(eq(sectionEnrollments.status,"ACTIVE"),inArray(sectionEnrollments.learnerEnrollmentId,enrollmentIds))):[];
@@ -110,7 +114,7 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
    ?{status:direct.status as "ELIGIBLE"|"INELIGIBLE",reason:direct.reason,note:direct.note,updatedAt:direct.updatedAt.toISOString()}
    :{status:null,reason:null,note:null,updatedAt:null},
  };});
- return {batch,students,page,hasMore:records.length>25};
+ return {batch,students,page,hasMore:records.length>pageSize};
 }
 export async function listTpoBatchHistory(ctx:RequestContext,rawId:unknown){
  const {batch,collegeId}=await getTpoBatch(ctx,rawId);

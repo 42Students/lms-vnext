@@ -41,7 +41,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
  if(ready&&!draft)notFound();
  return <div className="min-w-0 space-y-4">
   <PageHeader title={draft?.title??"Campaign draft"}
-    description={draft?draft.sender_name+" · "+draft.status+" · "+draft.total_recipients+" potential recipients · "+draft.segment.replaceAll("_"," "):undefined}
+    {...(draft?{description:draft.sender_name+" · "+draft.status+" · "+draft.total_recipients+" potential recipients · "+draft.segment.replaceAll("_"," ")}:{})}
     actions={<Link href="/tpo/recruiters/campaigns"
       className="inline-flex min-h-11 w-full min-w-0 items-center justify-center text-sm sm:w-auto md:min-h-9 font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       ← Campaign history
@@ -49,9 +49,9 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
   {!ready?<Banner tone="warning">{CAMPAIGN_DRAFT_UNAVAILABLE}</Banner>:
    draft?<article className="min-w-0 space-y-4">
     <section aria-label="Campaign delivery summary" className="grid gap-3 sm:grid-cols-3">
-      <StatTile label="Provider accepted" value={draft.sent} className={tpoTileStyles.tile} />
-      <StatTile label="Failed" value={draft.failed} className={tpoTileStyles.tile} />
-      <StatTile label="Skipped" value={draft.skipped+Object.values(draft.suppressed_counts).reduce((a,b)=>a+b,0)} className={tpoTileStyles.tile} />
+      <StatTile label="Provider accepted" value={draft.sent} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />
+      <StatTile label="Failed" value={draft.failed} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />
+      <StatTile label="Skipped" value={draft.skipped+Object.values(draft.suppressed_counts).reduce((a,b)=>a+b,0)} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />
     </section>
     <p className="text-xs text-muted-foreground leading-5">Provider acceptance is not proof of delivery.</p>
     <TpoCampaignSendControl campaignId={campaignId} ready={deliveryReady}

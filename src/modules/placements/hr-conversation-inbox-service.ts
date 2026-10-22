@@ -120,3 +120,44 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
     .sort().join("|")+"|unread:"+Number(globalUnread?.total??0),
  };
 }
+
+
+/** Recruiter bell source: legacy only publishes threads with unread TPO messages
+ * and a last message within 30 days. This read is independent of the paged
+ * conversation inbox and never widens the authorized recruiter/college scope. */
+export async function listRecentUnreadRecruiterThreads(context:RequestContext,collegeId:string){
+ if(!hasActiveRecruiter(context)||!context.recruiter||
+    context.recruiter.userId!==context.user.id||
+    !context.recruiter.grants.some(grant=>grant.collegeId===collegeId))
+  throw new AuthorizationError("placements.recruiter.read");
+ const threads=(await listMessageThreads(context,collegeId)).filter(thread=>
+  thread.collegeId===collegeId&&thread.recruiterUserId===context.user.id&&
+  thread.lastMessageAt!==null&&thread.lastMessageAt.getTime()>=Date.now()-30*86400000);
+ if(!threads.length)return [];
+ const jobs=await listOwnRecruiterPlacementJobs(context,collegeId,{
+  jobIds:[...new Set(threads.flatMap(thread=>thread.jobId?[thread.jobId]:[]))],
+ });
+ const owned=new Set(jobs.filter(job=>job.collegeId===collegeId&&
+  job.companyId===context.recruiter!.companyId).map(job=>job.job.id));
+ const accessible=threads.filter(thread=>!thread.jobId||owned.has(thread.jobId));
+ if(!accessible.length)return [];
+ const counts=await getDb().select({
+  threadId:placementTpoMessages.threadId,
+  unread:sql<number>`count(*)::integer`,
+ }).from(placementTpoMessages)
+  .innerJoin(placementTpoMessageThreads,
+   eq(placementTpoMessageThreads.id,placementTpoMessages.threadId))
+  .where(and(inArray(placementTpoMessages.threadId,accessible.map(t=>t.id)),
+   eq(placementTpoMessageThreads.collegeId,collegeId),
+   eq(placementTpoMessageThreads.recruiterUserId,context.user.id),
+   eq(placementTpoMessages.senderType,"TPO"),
+   eq(placementTpoMessages.kind,"MESSAGE"),
+   isNull(placementTpoMessages.readAt)))
+  .groupBy(placementTpoMessages.threadId);
+ const unreadById=new Map(counts.map(row=>[row.threadId,Number(row.unread)]));
+ return accessible.filter(thread=>(unreadById.get(thread.id)??0)>0)
+  .map(thread=>({
+   id:thread.id,jobId:thread.jobId,lastMessageAt:thread.lastMessageAt!,
+   unread:unreadById.get(thread.id)??0,
+  })).sort((a,b)=>b.lastMessageAt.getTime()-a.lastMessageAt.getTime());
+}

@@ -108,13 +108,16 @@ export async function CollegeProjectDeliveryOverview({projectId,basePath="/colle
   </section>
   <section aria-labelledby="delivery-review" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
    <h2 id="delivery-review" className="text-lg font-semibold">Review</h2>
-   {!review?<p role="status" className="text-sm text-muted-foreground">No mentor review has been recorded yet.</p>:<>
+   {!review?<p role="status" className="text-sm text-muted-foreground">No mentor feedback has been recorded yet.</p>:<>
     <StatusBadge tone={reviewTone}>{reviewStatus.replaceAll("_"," ")}</StatusBadge>
     <dl className="grid gap-4 text-sm sm:grid-cols-2">
      <div><dt className="text-xs text-muted-foreground">Reviewed by</dt><dd>{actorName(review.reviewedByMembershipId)}</dd></div>
      <div><dt className="text-xs text-muted-foreground">Reviewed at</dt><dd>{date(review.reviewedAt)}</dd></div>
     </dl>
-    <p className="whitespace-pre-wrap text-sm text-body">{review.feedback||"No feedback supplied."}</p>
+    {review.feedback?<div>
+     <h3 className="text-xs text-muted-foreground">Mentor feedback</h3>
+     <p className="mt-1 whitespace-pre-wrap text-sm text-body">{review.feedback}</p>
+    </div>:<p className="text-sm text-muted-foreground">No mentor feedback has been recorded yet.</p>}
    </>}
   </section>
  </div>;

@@ -18,7 +18,7 @@ const columns:DataTableColumn<StudentApplication & {uiKey:string}>[]=[
 export default async function CollegePlacementStudentLookup({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
- const params=await searchParams,q=typeof params.q==="string"?params.q.trim():"";
+ const params=await searchParams,q=typeof params["q"]==="string"?params["q"].trim():"";
  const data=q.length>=3?await lookupCollegeStudentPlacement(await getCurrentRequestContext(),q):null;
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Student placement lookup"

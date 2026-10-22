@@ -23,9 +23,9 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
 }){
  const raw=await searchParams;
  const parsed=superAdminHiringReportQuery.safeParse({
-  q:raw.q,jobId:raw.jobId||undefined,departmentId:raw.departmentId||undefined,
-  programId:raw.programId||undefined,cohortId:raw.cohortId||undefined,
-  appliedFrom:raw.appliedFrom||undefined,appliedTo:raw.appliedTo||undefined,
+  q:raw["q"],jobId:raw["jobId"]||undefined,departmentId:raw["departmentId"]||undefined,
+  programId:raw["programId"]||undefined,cohortId:raw["cohortId"]||undefined,
+  appliedFrom:raw["appliedFrom"]||undefined,appliedTo:raw["appliedTo"]||undefined,
  });
  if(!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Analytics"/>
@@ -64,10 +64,11 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  const q=data.query;
  const params=new URLSearchParams();
  for(const key of ["q","jobId","departmentId","programId","cohortId","appliedFrom","appliedTo"] as const){
-  if(q[key])params.set(key,q[key]!);
+  const value=q[key];
+  if(value)params.set(key,value);
  }
  const groups=hiringCompanyRollups(data.rows);
- const reportPageRaw=typeof raw.reportPage==="string"?Number(raw.reportPage):1;
+ const reportPageRaw=typeof raw["reportPage"]==="string"?Number(raw["reportPage"]):1;
  const reportPages=Math.max(1,Math.ceil(data.rows.length/10));
  const reportPage=Number.isSafeInteger(reportPageRaw)&&reportPageRaw>0
   ?Math.min(reportPages,reportPageRaw):1;
@@ -142,7 +143,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
      <SuperAdminHiringAcademicFilters key={[q.departmentId??"",q.programId??"",q.cohortId??""].join(":")}
       departments={filters?.departments??[]} programs={filters?.programs??[]}
       batches={filters?.batches??[]}
-      selected={{departmentId:q.departmentId,programId:q.programId,cohortId:q.cohortId}}/>
+      selected={{...(q.departmentId !== undefined ? {departmentId:q.departmentId} : {}),...(q.programId !== undefined ? {programId:q.programId} : {}),...(q.cohortId !== undefined ? {cohortId:q.cohortId} : {})}}/>
     </div>
    </fieldset>
   </form>

@@ -9,7 +9,7 @@ export async function GET(request:Request){
   const params=new URL(request.url).searchParams;
   const input:Record<string,string>={};
   for(const [key,value] of params){if(Object.hasOwn(input,key))return Response.json({error:"INVALID_REQUEST"},{status:400});input[key]=value;}
-  if(input.collegeId==="")delete input.collegeId;
+  if(input["collegeId"]==="")delete input["collegeId"];
   const query=adminCompaniesQuerySchema.parse(input);
   const context=await getCurrentRequestContext();
   const page=await listSuperAdminCompanyDirectory(context,{...query,page:1});

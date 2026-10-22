@@ -25,9 +25,16 @@ describe("Chat-6 /admin middle-third read and application correctness",()=>{
   const roundtrip=driveApplicationsParams(Object.fromEntries(exportedSearch));
   expect(roundtrip).toEqual({...params,page:1});
   const route=source("src/app/api/college/placements/jobs/[jobId]/applications/export/route.ts");
+  // The export route delegates complete query parsing to the shared Zod-backed
+  // export parser, rather than manually reading individual search keys.
+  expect(route).toContain("driveApplicationsExportParams(search)");
+  expect(route).toContain("if(!parsed.ok)");
+  const exportParser=source("src/modules/placements/college-drive-applications-model.ts");
   for(const key of ["q","status","screening","source","stage","departmentId","programId","cohortId"]){
-   expect(route).toContain('search.get("'+key+'")');
+   expect(exportParser).toContain('"'+key+'"');
   }
+  expect(exportParser).toContain("if(!allowed.has(key)||raw[key]!==undefined)");
+  expect(exportParser).toContain("const query=driveApplicationsParams(raw)");
   expect(route).toContain("exportCollegeDriveApplicationsCsv(context,jobId,query)");
   const service=source("src/modules/placements/college-drive-applications-service.ts");
   expect(service).toContain('eq(placementApplications.channel,query.source)');

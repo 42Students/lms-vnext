@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { Alert } from "@/components/ui/alert";
-import {TpoRecruiterDurationEditor} from "@/components/tpo/tpo-communication-settings-editors";
+import {TpoRecruiterApprovalEditor,TpoRecruiterDurationEditor} from "@/components/tpo/tpo-communication-settings-editors";
 import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
 import { redirect } from "next/navigation";
 
@@ -152,16 +152,16 @@ export default async function TpoRecruiterAccessPage({
       <TpoSettingsNav active="recruiters" compact />
 
       <Alert tone="info">
-        Recruiter access lasts six months by default unless changed below. Legacy
-        recruiter approval and AFTER_REVIEW visibility settings have not been
-        migrated as a combined policy; verify individual grants before sharing details.
+        New recruiter grants use the college's configured access duration ({communication.recruiterAccessMonths} months).
+        Existing grants retain their recorded expiry dates. Drive approval is set below and trusted email domains
+        are managed under Trusted Companies; verify each request and grant before sharing details.
       </Alert>
       <Disclosure title="Recruiter access rules" defaultOpen
        className="min-w-0 border-t border-border pt-3"
        contentClassName="min-w-0 space-y-4 pt-3">
 
       {canManage?
-       communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
+       communication.ready?<><TpoRecruiterApprovalEditor key={"approval-"+context.membership.collegeId+(communication.version??"")} initial={communication.recruiterDriveNeedsApproval} version={communication.version}/><TpoRecruiterDurationEditor key={context.membership.collegeId+(communication.version??"")} initial={communication.recruiterAccessMonths} version={communication.version}/></>:
         <Alert tone="warning">Recruiter access duration settings are not available yet.</Alert>:
        <p className="text-sm text-body">Only a TPO admin can change recruiter access duration.</p>}
       {canManage?<TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />:null}

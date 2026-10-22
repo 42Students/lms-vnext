@@ -8,7 +8,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { PageBackLink } from "@/components/ui/page-back-link";
-import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -86,7 +85,8 @@ export default async function SuperAdminCourseProgressPage({
       <p className="text-xs text-muted-foreground">Class sections are represented by their active batch in this directory. Use the offering detail for authorized class-level learner completion.</p>
       <div className="grid min-w-0 items-end gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
         <SuperAdminCourseProgressSelector courses={filters.courses} cohorts={filters.cohorts}
-          selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
+          {...(data.query.courseCode !== undefined ? {selectedCourse:data.query.courseCode} : {})}
+          {...(data.query.cohortCode !== undefined ? {selectedCohort:data.query.cohortCode} : {})}/>
         <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9">
           <span aria-hidden="true" className="mr-2">↻</span> Refresh
         </Button>

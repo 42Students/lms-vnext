@@ -135,15 +135,16 @@ export async function POST(request: Request) {
     if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_QUIZ_INPUT",message:"Quiz details are required"},{status:400});
     const record=body as Record<string,unknown>;
-    if(record.publish!==undefined&&typeof record.publish!=="boolean")
+    if(record["publish"]!==undefined&&typeof record["publish"]!=="boolean")
       return NextResponse.json({error:"INVALID_QUIZ_INPUT",message:"publish must be true or false"},{status:400});
-    if(record.publish!==undefined&&record.publishNow!==undefined&&record.publish!==record.publishNow)
+    if(record["publish"]!==undefined&&record["publishNow"]!==undefined&&record["publish"]!==record["publishNow"])
       return NextResponse.json({error:"INVALID_QUIZ_INPUT",message:"Conflicting publish options"},{status:400});
     const {publish,...rest}=record;
-    const publishNow=record.publishNow??publish??false;
+    const publishNow=record["publishNow"]??publish??false;
     // Create + publish is one DB transaction; never claim a successful
     // release when an authoring validation failed halfway through.
     const quiz=await createCourseQuiz(context,{...rest,publishNow});
+     if(!quiz)throw new Error("Quiz creation returned no quiz");
     return NextResponse.json({
       quiz,status:"OK",message:"OK",data:quiz,
       published:quiz.status==="PUBLISHED",

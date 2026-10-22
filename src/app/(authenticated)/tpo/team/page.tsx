@@ -26,15 +26,14 @@ export default async function TpoTeamLegacyRedirect({
   }
 
   const params = await searchParams;
-  const tab = first(params.tab)?.toLowerCase();
-  // Legacy routing prioritizes tab=people/members, dropping every other
-  // query parameter even if a conversation filter also happens to be set.
+  const tab = first(params["tab"])?.toLowerCase();
+  // Roster bookmarks take precedence over conversation filters, as in the legacy UI.
   if (tab === "people" || tab === "members" || tab === "roster") {
-    redirect("/tpo/settings?tab=team");
+    redirect("/tpo/settings/team");
   }
   // Student requests belong to the role-scoped placement request inbox,
   // not an invented student-private team conversation kind.
-  const filter = first(params.filter)?.toLowerCase();
+  const filter = first(params["filter"])?.toLowerCase();
   if (tab === "students" || filter === "students") {
     if (hasMembershipRole(context,"TPO")) redirect("/tpo/requests");
     redirect("/tpo/messages?tab=team");
@@ -55,7 +54,7 @@ export default async function TpoTeamLegacyRedirect({
 
   // Legacy c= is an integer; vNext owns UUID conversations. Never guess a
   // UUID from a legacy integer. New bookmarks can open an authorized UUID.
-  const thread = first(params.c) ?? first(params.thread) ?? first(params.conversationId);
+  const thread = first(params["c"]) ?? first(params["thread"]) ?? first(params["conversationId"]);
   if (thread && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(thread)) {
     const target = new URLSearchParams({tab:"team",c:thread});
     for (const key of ["m","ask","filter","q","about"]) {
@@ -81,7 +80,7 @@ export default async function TpoTeamLegacyRedirect({
   // Old object/ask/bookmark references become scoped Team search terms
   // where the new membership model has no global object selector.
   if(!target.has("q")){
-    const object=first(params.object)??first(params.about);
+    const object=first(params["object"])??first(params["about"]);
     if(object&&object.length>=2&&object.length<=120&&
       !/[\u0000-\u001f\u007f]/.test(object))target.set("q",object);
   }

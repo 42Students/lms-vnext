@@ -19,11 +19,11 @@ export default async function CollegeContentOrderPage({searchParams}:{
  </div>;
  const raw=await searchParams;
  const idPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
- const offeringId=typeof raw.offeringId==="string"&&idPattern.test(raw.offeringId)?raw.offeringId:null;
- const deliveryId=typeof raw.deliveryId==="string"&&idPattern.test(raw.deliveryId)?raw.deliveryId:null;
+ const offeringId=typeof raw["offeringId"]==="string"&&idPattern.test(raw["offeringId"])?raw["offeringId"]:null;
+ const deliveryId=typeof raw["deliveryId"]==="string"&&idPattern.test(raw["deliveryId"])?raw["deliveryId"]:null;
  const choices=await listCollegeSectionSyllabusChoices(context);
  const selected=choices.find(item=>item.id===deliveryId&&item.offeringId===offeringId);
- const invalid=(raw.offeringId!==undefined||raw.deliveryId!==undefined)&&!selected;
+ const invalid=(raw["offeringId"]!==undefined||raw["deliveryId"]!==undefined)&&!selected;
  let syllabus:Awaited<ReturnType<typeof listCollegeSectionSyllabus>>|null=null;
  let failed=false;
  if(selected&&offeringId&&deliveryId){

@@ -194,6 +194,12 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
 
    ...(pendingRequests?[{type:"REQUESTS",priority:1,title:pendingRequests.label,
       count:pendingRequestCount!,link:"/tpo/requests"}]:[]),
+   // Legacy TpoInsightsService.home needsYou cards backed by persisted CRM counts.
+   ...((crmCounts?.pendingRecruiterAccess??0)>0?[{type:"RECRUITER_ACCESS",priority:2,
+      title:"Recruiters waiting for your approval",
+      count:crmCounts!.pendingRecruiterAccess,link:"/tpo/recruiters"}]:[]),
+   ...((crmCounts?.dueFollowups??0)>0?[{type:"FOLLOW_UPS",priority:1,title:"Follow-ups due",
+      count:crmCounts!.dueFollowups,link:"/tpo/recruiters?due=1"}]:[]),
   ];
  const next=buildTpoLegacyNextUp({needsYou:homeNeeds,
   batches:inviteReady?[{batchId:inviteCandidate!.id,name:inviteCandidate!.name,

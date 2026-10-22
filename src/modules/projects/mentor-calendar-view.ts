@@ -60,11 +60,16 @@ export function mentorMeetingDisplayStatus(
 }
 
 export function safeMentorMeetingJoinUrl(item: MentorMeetingCalendarItem, now?: Date): string | null {
-  // Legacy calendar exposes a valid join URL for every state except CANCELLED.
-  // Keep safe URL validation; neither a past date nor COMPLETED/REQUESTED
-  // status alone suppresses an otherwise legitimate meeting link.
-  if (item.status === "CANCELLED" || !item.meetingUrl) return null;
-  if (now && !Number.isFinite(now.getTime())) return null;
+  // Only active scheduled meetings can expose a join action. The calendar
+  // still displays persisted DRAFT, REQUESTED and historical statuses.
+  if ((item.status !== "SCHEDULED" && item.status !== "RESCHEDULED") || !item.meetingUrl) return null;
+  if (now) {
+    const current = now.getTime();
+    const start = Date.parse(item.startsAt);
+    const end = Date.parse(item.endsAt);
+    if (!Number.isFinite(current) || !Number.isFinite(start) ||
+        !Number.isFinite(end) || current < start || current > end) return null;
+  }
   try {
     const url = new URL(item.meetingUrl);
     return (url.protocol === "https:" || url.protocol === "http:") &&

@@ -121,26 +121,26 @@ export default async function LearnerAttendanceCalendarPage({
         ?"Unknown (no marked classes)" : data.summary.percentage+"%"}</Badge>.
     </p>
     </Disclosure>
-    <section aria-label={monthLabel+" attendance calendar"} className={monthStyles.calendarCard}>
-      <div className={monthStyles.toolbar}>
+    <section aria-label={monthLabel+" attendance calendar"} className={monthStyles["calendarCard"]}>
+      <div className={monthStyles["toolbar"]}>
         <Link href={previous} aria-label="Previous month"
-          className={monthStyles.navLink}>← Previous</Link>
-        <h2 className={monthStyles.period}>{monthLabel}</h2>
+          className={monthStyles["navLink"]}>← Previous</Link>
+        <h2 className={monthStyles["period"]}>{monthLabel}</h2>
         <Link href={next} aria-label="Next month"
-          className={monthStyles.navLink}>Next →</Link>
+          className={monthStyles["navLink"]}>Next →</Link>
       </div>
-      <CalendarGrid className={monthStyles.mobileGrid+" p-1 sm:p-3 md:p-6"}>
+      <CalendarGrid className={monthStyles["mobileGrid"]+" p-1 sm:p-3 md:p-6"}>
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>
-          <span key={day} className={monthStyles.mobileWeekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{day}</span>)}
+          <span key={day} className={monthStyles["mobileWeekday"]+" "+(index===0?calendarStyles["calendarSunday"]:"")}>{day}</span>)}
         {days.map((day,index)=>{
           if(!day) return <div key={"pad-"+index} aria-hidden="true"/>;
           const entries=byDay.get(day)??[];
           const label=Number(day.slice(-2));
           return <div key={day}
             aria-label={day+": "+entries.length+" matching classes"}
-            className={monthStyles.mobileDay}>
-            <div className={monthStyles.dayNumber+" "+(new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>{label}</div>
-            {entries.length>0?<div className={monthStyles.mobileCount}>
+            className={monthStyles["mobileDay"]}>
+            <div className={monthStyles["dayNumber"]+" "+(new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles["calendarSunday"]:"")}>{label}</div>
+            {entries.length>0?<div className={monthStyles["mobileCount"]}>
               {entries.length} class{entries.length===1?"":"es"}
             </div>:null}
             <div className="mt-1 hidden flex-wrap gap-1 md:flex">

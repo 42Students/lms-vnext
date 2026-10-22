@@ -23,7 +23,7 @@ export async function GET(request:Request){
   return NextResponse.json({
    status:"success",message:filter.length?"Schedule retrieved":"No scheduled rounds",
    data:filter.slice(0,500).map(row=>({
-    applicationId:row.applicationId,roundId:row.roundId,
+    applicationId:row.applicationId,jobId:row.jobId,roundId:row.roundId,
     roundName:row.roundName,roundKind:row.roundKind,
     companyName:row.companyName,roleTitle:row.roleTitle,
     scheduledAt:(row.exception?.scheduledAt??row.scheduledAt)?.toISOString()??null,
@@ -32,7 +32,13 @@ export async function GET(request:Request){
     timezone:row.exception?.timezone??row.timezone??"Asia/Kolkata",
     venue:row.exception?.venue??row.venue,
     meetingUrl:row.exception?.meetingUrl??row.meetingUrl,
+    // Legacy TpoScheduleService field names: startsAt mirrors scheduledAt,
+    // mode follows an exception override, room is null until a slot room is booked.
+    startsAt:(row.exception?.scheduledAt??row.scheduledAt)?.toISOString()??null,
+    mode:row.exception?.mode??row.mode,
+    room:null,
     whatToBring:row.whatToBring??null,
+    confirmedAt:row.learnerConfirmedAt?new Date(row.learnerConfirmedAt).toISOString():null,
     booked:row.booked,learnerConfirmed:row.learnerConfirmedAt!==null,
    })),
    total:filter.length,truncated:filter.length>500,

@@ -12,16 +12,16 @@ export async function GET(request:Request,{params}:Props){
   if(!query)return NextResponse.json({error:"INVALID_INTERVIEW_FILTERS"},{status:400});
   return NextResponse.json(await getCollegeRoundSlotAppointments(
    await getCurrentRequestContext(),jobId,{
-     appointmentPage:query.appointmentPage,
-     appointmentStatus:query.appointmentStatus,
-     appointmentMode:query.appointmentMode,
-     appointmentSearch:query.appointmentSearch,
-     appointmentPageSize:query.appointmentPageSize,
-     appointmentSort:query.appointmentSort,
-     preferredApplicationId:query.applicationId,
-     candidatePage:query.candidatePage,
-     candidatePageSize:query.candidatePageSize,
-     candidateSearch:query.candidateSearch,
+     ...(query.appointmentPage !== undefined ? {appointmentPage:query.appointmentPage} : {}),
+     ...(query.appointmentStatus !== undefined ? {appointmentStatus:query.appointmentStatus} : {}),
+     ...(query.appointmentMode !== undefined ? {appointmentMode:query.appointmentMode} : {}),
+     ...(query.appointmentSearch !== undefined ? {appointmentSearch:query.appointmentSearch} : {}),
+     ...(query.appointmentPageSize !== undefined ? {appointmentPageSize:query.appointmentPageSize} : {}),
+     ...(query.appointmentSort !== undefined ? {appointmentSort:query.appointmentSort} : {}),
+     ...(query.applicationId !== undefined ? {preferredApplicationId:query.applicationId} : {}),
+     ...(query.candidatePage !== undefined ? {candidatePage:query.candidatePage} : {}),
+     ...(query.candidatePageSize !== undefined ? {candidatePageSize:query.candidatePageSize} : {}),
+     ...(query.candidateSearch !== undefined ? {candidateSearch:query.candidateSearch} : {}),
    }),
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}

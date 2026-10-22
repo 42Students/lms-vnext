@@ -45,7 +45,9 @@ describe("SA-tenants-modules-LIFECYCLE-11 cross-tenant and concurrent lifecycle 
   expect(update).toBeGreaterThan(childCheck);
   expect(event).toBeGreaterThan(update);
   expect(source).toContain(".where(eq(colleges.organizationId,organizationId)).groupBy(colleges.status)");
-  expect(source).toContain("blockerCounts.active+blockerCounts.archived>0");
+  // Legacy soft-deleted colleges are not blockers; only ACTIVE children prevent archival.
+  expect(source).toContain("if(blockerCounts.active>0)");
+  expect(source).not.toContain("blockerCounts.active+blockerCounts.archived>0");
   expect(source).not.toContain("const [activeCollege] = await db.select(");
  });
  it("locks active organization and current admin before inserting a new college",()=>{

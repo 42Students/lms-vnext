@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { Pagination } from "@/components/ui/pagination";
-import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
 import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-copy";
 import { CollegeStudentVisibilityControl } from "./college-student-visibility-control";
 import { PageHeader } from "@/components/ui/page-header";

@@ -164,7 +164,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
     .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   const workspace=workspaceResult.ok?workspaceResult.value:null;
   const dependenciesResult=await getSuperAdminCourseDependencyCounts(context,
-    (workspace?.courses??[]).slice(0,100).map(course=>course.id))
+    paginateCollegeCourses(workspace?.courses??[],catalogueQuery).items.map(course=>course.id))
     .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   const lessonCountByCourse=dependenciesResult.ok?dependenciesResult.value:undefined;
 
@@ -199,9 +199,9 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
             workspace={workspace}
             openCreateCourse={openCreateCourse}
             courseBasePath="/admin/courses"
-            duplicateCourseId={duplicateCourseId}
+            {...(duplicateCourseId!==undefined?{duplicateCourseId}:{})}
             catalogueQuery={catalogueQuery}
-            lessonCountByCourse={lessonCountByCourse}
+            {...(lessonCountByCourse!==undefined?{lessonCountByCourse}:{})}
             offeringBasePath="/admin/courses/offerings"
           />
           <AdminCourseRecycleBin collegeId={collegeId}/>

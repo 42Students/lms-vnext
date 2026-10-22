@@ -307,9 +307,9 @@ export function CollegeBrandingForm({
             Public logo URL (optional fallback)
             <Input type="url" value={values.logoUrl??""} onChange={event=>set("logoUrl",event.target.value)}
               placeholder="https://cdn.example.edu/logo.png" disabled={!canEdit||fetching||Boolean(loadError)}
-              aria-invalid={Boolean(errors.logoUrl)} />
+              aria-invalid={Boolean(errors["logoUrl"])} />
           </label>
-          {errors.logoUrl?<Alert tone="error">{errors.logoUrl}</Alert>:null}
+          {errors["logoUrl"]?<Alert tone="error">{errors["logoUrl"]}</Alert>:null}
         </section>
         <div className="space-y-3" aria-label="Login preview">
           <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Preview</h3>

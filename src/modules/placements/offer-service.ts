@@ -1050,20 +1050,27 @@ export async function actOnPlacementOffer(
       const declinedOffers = otherOffers.filter(candidate=>
         candidate.status==="ISSUED" && candidate.kind==="OFFER" &&
         !wouldKeep(candidate));
-      for(const other of declinedOffers){
-        const [declined]=await tx.update(placementOffers).set({
+      // Sibling offer rows are already locked in UUID order. Batch the write
+      // and its status history to avoid two DB round trips per sibling when a
+      // learner accepts an offer after accumulating many outstanding offers.
+      // Serializable rollback still covers the whole cascade on a mismatch.
+      if (declinedOffers.length) {
+        const declined=await tx.update(placementOffers).set({
           status:"DECLINED",respondedByUserId:context.user.id,
           respondedAt:lockedNow,updatedAt:lockedNow,
         }).where(and(
-          eq(placementOffers.id,other.id),
+          inArray(placementOffers.id,declinedOffers.map(row=>row.id)),
           eq(placementOffers.status,"ISSUED"),
         )).returning({id:placementOffers.id});
-        if(!declined)throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
-        await tx.insert(placementOfferStatusHistory).values({
-          offerId:declined.id,fromStatus:"ISSUED",toStatus:"DECLINED",
-          actorUserId:context.user.id,
-          reason:"placed elsewhere; cascade:"+cascadeId,cascadeId,
-        });
+        if(declined.length!==declinedOffers.length)
+          throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+        await tx.insert(placementOfferStatusHistory).values(
+          declined.map(row=>({
+            offerId:row.id,fromStatus:"ISSUED" as const,toStatus:"DECLINED" as const,
+            actorUserId:context.user.id,
+            reason:"placed elsewhere; cascade:"+cascadeId,cascadeId,
+          })),
+        );
       }
 
       const siblingApplications=await tx.select({
@@ -1343,6 +1350,10 @@ export async function actOnPlacementOffer(
       });
 
     return updated;
+  }, { isolationLevel: "serializable" }).catch(error=>{
+    if(isPlacementIssuanceConcurrencyError(error))
+      throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+    throw error;
   });
 }
 

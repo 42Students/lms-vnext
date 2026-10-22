@@ -5,7 +5,7 @@ import "@/components/shell/legacy-mobile-footer.css";
 import { usePathname } from "next/navigation";
 
 /** Legacy phone footer destinations. More opens the actual /tpo/more page
- * instead of a competing BottomSheet that hid the page navigation. */
+ * instead of an overlay that hides the page navigation. */
 const links = [
   {label:"Home",href:"/tpo/home",icon:"/assets/images/common/analytics.svg"},
   {label:"Engage",href:"/tpo/recruiters",icon:"/assets/images/common/contact.svg"},

@@ -53,11 +53,11 @@ export default async function CollegeActivityPage({
   const context = await getCurrentRequestContext();
   if (!context.membership) return <div className="min-w-0 space-y-3"><PageHeader title="Activity Log"/><Alert tone="warning" title="College not assigned">Ask your administrator to assign a college before you can view the activity log.</Alert></div>;
   const raw = await searchParams;
-  const parsed = collegeActivityQuerySchema.safeParse({...(activitySearchParams(raw) as Record<string,unknown>),pageSize:raw.pageSize || "50"});
+  const parsed = collegeActivityQuerySchema.safeParse({...(activitySearchParams(raw) as Record<string,unknown>),pageSize:raw["pageSize"] || "50"});
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Activity Log" />
     <ErrorState title="Invalid activity filters"
-      description={invalidCollegeActivityCategory(raw.category) ?? "The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."}
+      description={invalidCollegeActivityCategory(raw["category"]) ?? "The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."}
       action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data).catch((error:unknown)=>{

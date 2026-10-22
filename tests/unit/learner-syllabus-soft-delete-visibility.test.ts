@@ -8,7 +8,7 @@ const source = readFileSync(
 describe("Learner syllabus soft-delete and audience isolation", () => {
   it("excludes soft-deleted lessons even if marked active and visible", () => {
     const lessonQuery = source.slice(
-      source.indexOf("const rows = await getDb()"),
+      source.lastIndexOf("const rows = await getDb()", source.indexOf("type ContentItem")),
       source.indexOf("type ContentItem"),
     );
     expect(lessonQuery).toContain('eq(courseLessons.status, "ACTIVE")');
@@ -18,10 +18,10 @@ describe("Learner syllabus soft-delete and audience isolation", () => {
 
   it("continues to deny hidden, deleted and foreign-class content", () => {
     const lessonQuery = source.slice(
-      source.indexOf("const rows = await getDb()"),
+      source.lastIndexOf("const rows = await getDb()", source.indexOf("type ContentItem")),
       source.indexOf("type ContentItem"),
     );
-    expect(lessonQuery).toContain('eq(lessonContents.status,');
+    expect(lessonQuery).toMatch(/eq\(\s*lessonContents\.status,\s*"PUBLISHED",?\s*\)/);
     expect(lessonQuery).toContain('"PUBLISHED"');
     expect(lessonQuery).toContain("eq(lessonContents.visibleToStudents,true)");
     expect(lessonQuery).toContain("isNull(lessonContents.deletedAt)");

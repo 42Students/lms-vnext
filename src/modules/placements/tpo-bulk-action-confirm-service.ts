@@ -26,7 +26,7 @@ export class TpoBulkPreviewError extends Error {
 export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
  const input=tpoBulkConfirmRequestSchema.parse(raw);
  const plan=tpoBulkPreviewRequestSchema.parse({
-   target:input.target,jobId:input.jobId,action:input.action,note:input.note,ids:input.ids,
+   target:input.target,jobId:input.jobId,action:input.action,note:input.note,internalReason:input.internalReason,ids:input.ids,
  });
  if(input.selections.length!==plan.ids.length||
     input.selections.some((row,index)=>row.id!==plan.ids[index]))throw new TpoBulkPreviewError();
@@ -79,6 +79,7 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
        await reviewTpoApplicant(context,{jobId:plan.jobId,applicationId:selected.id},{
          confirmed:true,expectedUpdatedAt:selected.version,
          decision:plan.action,note:plan.note,
+         ...(plan.action==="REJECTED"&&plan.internalReason?{internalReason:plan.internalReason}:{}),
        });
      }
      return {outcome:{id:selected.id,status:"updated",reason:null},undo:null};

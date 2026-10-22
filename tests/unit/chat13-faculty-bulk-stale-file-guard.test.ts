@@ -29,7 +29,7 @@ describe("SA-FACULTY-CSV-17 prevent stale bulk onboarding after replacement file
    expect(view).toContain("loadedCsv.current=null");
    expect(view).toContain("loadedCsv.current={version,text}");
    expect(view).toContain("inputCsv===csv");
-   expect(view).toContain('setCsv("");setResults([]);setError("");setPreviewVersion(-1);setFilename(file?.name??"")');
+   expect(view).toContain('setCsv("");setResults([]);setError("");setPreviewVersion(-1);setPreviewIssues([]);setFilename(file?.name??"")');
    expect(view).toContain("if(version===fileVersion.current){");
    expect(view).toContain("loadedCsv.current={version,text};");
    expect(view).toContain("setCsv(text);");
@@ -37,7 +37,9 @@ describe("SA-FACULTY-CSV-17 prevent stale bulk onboarding after replacement file
    expect(view).toContain("if(submissionInProgress.current)return");
    expect(view).toContain("submissionInProgress.current=true");
    expect(view).toContain("submissionInProgress.current=false");
-   expect(view).toContain("!allowed()||previewVersion!==version||rowIssues.length>0||");
+   expect(view).toContain("!allowed()||previewVersion!==version||previewDepartment!==departmentId||previewIssues.length>0||rowIssues.length>0||");
+   expect(view).toContain("!departments.some(item=>item.id===departmentId))return;");
+   expect(view).toContain("setPreviewDepartment(selectedDepartment);setPreviewVersion(version);");
    expect(view).toContain("if(submissionInProgress.current)return;");
    expect(view).toContain("body:JSON.stringify({collegeId,departmentId,csv:inputCsv,confirmed:true})");
    expect(view).toContain("Boolean(issue||error)||rowIssues.length>0||!filename");

@@ -23,13 +23,15 @@ function structuredStudentRowsAsCsv(
 ): string {
   const quote = (value: string) => '"' + value.replaceAll('"', '""') + '"';
   return [
-    STUDENT_CSV_COLUMNS.join(","),
+    STRUCTURED_STUDENT_CSV_COLUMNS.join(","),
     ...entries.map(entry => [
       entry.displayName || [entry.firstName, entry.lastName].filter(Boolean).join(" "),
-      entry.phoneE164 || entry.mobileNumber || "",
+      (entry.phoneE164 || entry.mobileNumber || "").replace(/^([0-9]{10})$/, "+91$1"),
       entry.email || "",
       entry.programId || defaults.programId || "",
       entry.cohortId || defaults.cohortId || "",
+      entry.sectionId || defaults.sectionId || "",
+      entry.rollNumber || "",
     ].map(value => quote(value)).join(",")),
   ].join("\r\n");
 }
@@ -64,6 +66,7 @@ const csvRowSchema = z.object({
 export type StudentCsvRow = z.infer<typeof csvRowSchema>;
 export type StudentCsvResult = { row: number; status: "VALID" | "INVALID" | "IMPORTED" | "FAILED" | "PARTIAL"; detail: string; membershipId?: string; enrollmentId?: string };
 export const STUDENT_CSV_COLUMNS = ["displayName","phoneE164","email","programId","cohortId"] as const;
+export const STRUCTURED_STUDENT_CSV_COLUMNS = [...STUDENT_CSV_COLUMNS, "sectionId", "rollNumber"] as const;
 export const MAX_STUDENT_CSV_ROWS = 500;
 export const LEGACY_STUDENT_CSV_COLUMNS = ["First Name","Last Name","Roll Number","Mobile Number","Email"] as const;
 const PRIOR_STUDENT_CSV_COLUMNS = ["First Name","Last Name","Mobile Number","Email","Roll Number"] as const;
@@ -117,7 +120,8 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
   const prior = header.join(",") === PRIOR_STUDENT_CSV_COLUMNS.join(",");
   const picker = header.join(",") === PICKER_STUDENT_CSV_COLUMNS.join(",");
   const canonical = header.join(",") === STUDENT_CSV_COLUMNS.join(",");
-  if (!legacy && !prior && !picker && !canonical) {
+  const structured = header.join(",") === STRUCTURED_STUDENT_CSV_COLUMNS.join(",");
+  if (!legacy && !prior && !picker && !canonical && !structured) {
     return { entries: [], structuralErrors: ["INVALID_CSV_HEADER"] };
   }
   if ((legacy || prior || picker) && (!defaults.programId || !defaults.cohortId)) {
@@ -131,8 +135,10 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
   const seenRollNumbers = new Set<string>();
   const entries = rows.slice(1).map((cells, index) => {
     const row = index + 2;
-    if (cells.length !== (picker ? 4 : 5)) return { row, errors: ["COLUMN_COUNT_MISMATCH"] };
-    const record = canonical ? { ...Object.fromEntries(STUDENT_CSV_COLUMNS.map(
+    if (cells.length !== (picker ? 4 : structured ? 7 : 5)) return { row, errors: ["COLUMN_COUNT_MISMATCH"] };
+    const record = structured ? Object.fromEntries(STRUCTURED_STUDENT_CSV_COLUMNS.map(
+      (key, i) => [key, cells[i]?.trim() || (key === "sectionId" ? defaults.sectionId : "")]))
+      : canonical ? { ...Object.fromEntries(STUDENT_CSV_COLUMNS.map(
       (key, i) => [key, cells[i]?.trim() ?? ""])), sectionId: defaults.sectionId } : (legacy || prior) ? {
         displayName: [cells[0],cells[1]].map(v=>v?.trim()).filter(Boolean).join(" "),
         phoneE164: (cells[legacy ? 3 : 2]?.trim() ?? "").replace(/^([0-9]{10})$/, "+91$1"),

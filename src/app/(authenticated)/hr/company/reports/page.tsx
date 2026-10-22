@@ -217,11 +217,11 @@ export default async function RecruiterCompanyReportsPage({
           {buildRecruiterReportFunnel(report.funnel)
             .filter(stage=>!(stage.label.toLowerCase().includes("assessment")&&stage.total===0))
             .map(stage=><div key={stage.label}
-            className={funnelStyles.row}>
-            <span className={funnelStyles.label}>{stage.label}</span>
+            className={funnelStyles["row"]}>
+            <span className={funnelStyles["label"]}>{stage.label}</span>
             <MetricBar label={stage.label+" hiring funnel"}
               value={stage.appliedPercent} maximum={100} unit="percent" />
-            <span className={funnelStyles.num}>{stage.total} · {stage.previousPercentLabel} of previous</span>
+            <span className={funnelStyles["num"]}>{stage.total} · {stage.previousPercentLabel} of previous</span>
           </div>)}
         </div>
       </section>

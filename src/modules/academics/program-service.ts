@@ -61,7 +61,9 @@ export function normalizeProgramDurationTerms(input: {
 }
 
 export function programDurationYears(durationTerms: number) {
-  return durationTerms / 2;
+  // Legacy duration_years is a whole number: never expose fractional years
+  // for nonstandard term counts (durationTerms stays authoritative).
+  return Math.ceil(durationTerms / 2);
 }
 
 function withLegacyProgramDuration<
@@ -281,8 +283,9 @@ export async function listProgramsPage(
  * Explicit, read-only compatibility for legacy Super Admin /fetchAll.
  *
  * The ordinary program directory stays selected-college scoped. Only a
- * platform administrator with NO selected organization or college can list
- * programs across colleges, and every result identifies its source tenant.
+ * platform administrator without a selected college can list active programs
+ * within their selected organization (or globally if unscoped). Every result
+ * identifies its source tenant.
  * Archived/deleted colleges and programs are deliberately excluded. This
  * endpoint cannot be used to edit a program without switching college scope.
  */
@@ -290,8 +293,7 @@ export async function listGlobalProgramsForSuperAdmin(
   context: RequestContext,
   raw: { page?: number; pageSize?: number } = {},
 ) {
-  if (!isSuperAdmin(context) ||
-      context.adminScope?.organizationId || context.adminScope?.collegeId)
+  if (!isSuperAdmin(context) || context.adminScope?.collegeId)
     throw new AuthorizationError("admin-scope.select");
   const positivePage=(value:number|undefined,fallback:number,max:number)=>{
     if(value===undefined)return fallback;
@@ -310,6 +312,8 @@ export async function listGlobalProgramsForSuperAdmin(
       eq(colleges.status,"ACTIVE"),
       isNull(departments.archivedAt),
       eq(programs.status,"ACTIVE"),
+      context.adminScope?.organizationId
+        ? eq(organizations.id,context.adminScope.organizationId) : undefined,
     );
     const [items,totals]=await Promise.all([
       tx.select({
@@ -485,6 +489,21 @@ export async function updateProgram(
             .where(eq(cohorts.programId,programId))
             .orderBy(desc(cohortProgressionState.currentTermNumber)).limit(1),
         ]);
+        // Imported active enrollments can predate cohort progression tracking.
+        // Without term provenance a smaller duration cannot be verified safe.
+        const [unmappedEnrollment] = await tx
+          .select({id:learnerProgramEnrollments.id})
+          .from(learnerProgramEnrollments)
+          .leftJoin(cohortProgressionState,eq(
+            cohortProgressionState.cohortId,learnerProgramEnrollments.cohortId,
+          ))
+          .where(and(
+            eq(learnerProgramEnrollments.programId,programId),
+            eq(learnerProgramEnrollments.status,"ACTIVE"),
+            isNull(cohortProgressionState.cohortId),
+          ))
+          .limit(1);
+        if(unmappedEnrollment)throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
         if (durationTerms < Math.max(term?.number ?? 0,progression?.number ?? 0))
           throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
       }

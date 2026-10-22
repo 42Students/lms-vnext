@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {companyDomainSchema} from "./company-curation-domain-model";
+import {PUBLIC_WORK_EMAIL_LEGACY_COPY} from "./public-work-email-policy";
 import {canonicalCompanyAlias,LEGACY_COMPANY_ALIAS_MAX_LENGTH} from "./company-curation-alias-model";
 
 const action=z.enum(["ADD","REMOVE"]);
@@ -20,10 +21,10 @@ export function normalizeCompanyDomain(raw:string){
  const parsed=companyDomainSchema.safeParse(raw);
  if(!parsed.success){
   const message=parsed.error.issues[0]?.message;
-  if(message==="Use the company's domain name, not an IP address")throw new Error(message);
-  if(message?.includes("personal, temporary or academic"))
-   throw new Error("Use a company domain, not a personal, temporary or academic domain");
-  throw new Error("Enter a valid company domain.");
+  // Surface the exact legacy CompanyDomainService wording for each outcome.
+  if(message&&Object.values<string>(PUBLIC_WORK_EMAIL_LEGACY_COPY).includes(message))
+   throw new Error(message);
+  throw new Error(PUBLIC_WORK_EMAIL_LEGACY_COPY.INVALID);
  }
  const normalized=parsed.data;
  if(PERSONAL_EMAIL_HOSTS.has(normalized))throw new Error("Personal email domains cannot be claimed.");

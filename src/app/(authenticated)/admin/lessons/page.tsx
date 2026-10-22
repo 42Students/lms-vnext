@@ -15,7 +15,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { LessonPageSizePreference } from "@/components/courses/lesson-page-size-preference";
 import {collegeLearningDirectoryHasPageCap} from "@/modules/courses/college-learning-directory-model";
 import { Alert } from "@/components/ui/alert";
-import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Pagination } from "@/components/ui/pagination";
@@ -30,13 +29,13 @@ export default async function SuperAdminLessonsPage({
   // Legacy lesson directory has an explicit all-courses opt-in, separate from
   // the authenticated tenant selection; never infer a college from query input.
   const safeRaw={...raw};
-  delete safeRaw.allCourses;delete safeRaw.pageSize;
+  delete safeRaw["allCourses"];delete safeRaw["pageSize"];
   const parsed = parseSuperAdminLearningQuery(safeRaw);
-  const validAllCourses=raw.allCourses===undefined||raw.allCourses==="true";
-  const allCourses=raw.allCourses==="true"&&!raw.courseCode;
-  const validPageSize=typeof raw.pageSize!=="object"&&
-    (raw.pageSize===undefined||["10","25","50","100"].includes(raw.pageSize));
-  const pageSize=validPageSize&&raw.pageSize?Number(raw.pageSize):25;
+  const validAllCourses=raw["allCourses"]===undefined||raw["allCourses"]==="true";
+  const allCourses=raw["allCourses"]==="true"&&!raw["courseCode"];
+  const validPageSize=typeof raw["pageSize"]!=="object"&&
+    (raw["pageSize"]===undefined||["10","25","50","100"].includes(raw["pageSize"]));
+  const pageSize=validPageSize&&raw["pageSize"]?Number(raw["pageSize"]):25;
   if (!parsed.success||!validPageSize||!validAllCourses) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."

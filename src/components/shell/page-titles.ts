@@ -120,8 +120,8 @@ export function pageTitleForPath(
   }
 
   if (area === "mentor") {
-    if (!second) return ROUTE_TITLES.mentor;
-    if (second === "projects") return ROUTE_TITLES.mentor;
+    if (!second) return ROUTE_TITLES["mentor"] ?? null;
+    if (second === "projects") return ROUTE_TITLES["mentor"] ?? null;
     return ROUTE_TITLES[second] ?? safeRouteTitle(second);
   }
 

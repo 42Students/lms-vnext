@@ -110,14 +110,16 @@ describe("SA-tenants-modules-BRAND-CAS-01 optimistic college branding saves",()=
   const authorize=part.indexOf('assertPersistedPlatformPermission(tx,context,"college.manage"');
   const collegeLock=part.indexOf('.for("update")');
   const stored=part.indexOf("const [stored]=await tx.select()");
-  const identical=part.indexOf("if(sameCollegeBranding(previous,input))");
+  const merged=part.indexOf("const merged: CollegeBrandingInput");
+  const identical=part.indexOf("if(sameCollegeBranding(previous,merged))");
   const cas=part.indexOf("if(previous.version!==expectedVersion)");
   const update=part.indexOf("tx.update(collegeBranding)");
   const activity=part.indexOf("recordActivityEventInTransaction(tx, context");
   expect(authorize).toBeGreaterThan(0);
   expect(collegeLock).toBeGreaterThan(authorize);
   expect(stored).toBeGreaterThan(collegeLock);
-  expect(identical).toBeGreaterThan(stored);
+  expect(merged).toBeGreaterThan(stored);
+  expect(identical).toBeGreaterThan(merged);
   expect(cas).toBeGreaterThan(identical);
   expect(update).toBeGreaterThan(cas);
   expect(activity).toBeGreaterThan(update);

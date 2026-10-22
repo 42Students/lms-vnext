@@ -45,10 +45,10 @@ export async function GET(request: Request) {
     if(url.searchParams.getAll("view").length>1)
       return Response.json({error:"Repeated view names are not allowed"},{status:400});
     const raw=Object.fromEntries(url.searchParams.entries());
-    const savedViewRequested=raw.view!==undefined;
-    const viewName=!savedViewRequested?"students":tpoStudentExportViewName(raw.view);
+    const savedViewRequested=raw["view"]!==undefined;
+    const viewName=!savedViewRequested?"students":tpoStudentExportViewName(raw["view"]);
     if(!viewName)return Response.json({error:"Invalid saved view name"},{status:400});
-    delete raw.view;
+    delete raw["view"];
     // Export has no caller-controlled page, page size or collegeId.
     const filters = tpoStudentsQueryObjectSchema
       .omit({

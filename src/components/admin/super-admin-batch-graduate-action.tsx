@@ -27,12 +27,12 @@ export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;n
    const cohort=receipt&&typeof receipt==="object"&&!Array.isArray(receipt)
      ?(receipt as {cohort?:unknown}).cohort:null;
    if(!cohort||typeof cohort!=="object"||Array.isArray(cohort)||
-      (cohort as Record<string,unknown>).id!==cohortId||
-      (cohort as Record<string,unknown>).status!=="COMPLETED")
+      (cohort as Record<string,unknown>)["id"]!==cohortId||
+      (cohort as Record<string,unknown>)["status"]!=="COMPLETED")
      throw new Error("Graduation could not be confirmed. Refresh before retrying.");
    // The server receipt is canonical; show final state only after confirmation.
    const record=cohort as Record<string,unknown>;
-   if(record.id!==cohortId||record.status!=="COMPLETED")throw new Error("Graduation result changed. Refresh and inspect the batch.");
+   if(record["id"]!==cohortId||record["status"]!=="COMPLETED")throw new Error("Graduation result changed. Refresh and inspect the batch.");
    setOpen(false);setSuccess("Marked "+name+" as graduated (Completed). Reactivation remains available through the batch lifecycle controls.");router.refresh();
    });
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not graduate this batch. Try again.");}

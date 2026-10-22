@@ -6,7 +6,7 @@ export const TPO_BULK_PREVIEW_TTL_MS = 5 * 60 * 1000;
 function mac(secret:string, expiry:string, actor:string, plan:TpoBulkPreviewRequest,
   selections:readonly TpoBulkVersion[]) {
   const data=JSON.stringify(["tpo-bulk-v1",expiry,actor,plan.target,plan.jobId??null,
-    plan.action,plan.note,plan.ids,selections.map(row=>[row.id,row.version])]);
+    plan.action,plan.note,plan.internalReason??"",plan.ids,selections.map(row=>[row.id,row.version])]);
   return createHmac("sha256",secret).update(data).digest("base64url");
 }
 /** Short-lived bound confirmation; UUIDs, decisions, notes, names never appear in the token. */

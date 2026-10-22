@@ -87,10 +87,14 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
         ...(receipt.membershipId ? {membershipId: receipt.membershipId} : {}),
         ...(receipt.enrollmentId ? {enrollmentId: receipt.enrollmentId} : {}),
       }));
+      // Replay receipts must report the original outcomes, not count failed
+      // onboarding or partial rows as successfully validated learners.
+      const invalid = results.filter(row => row.status === "INVALID").length;
       return { preview: false, structuralErrors: [], results,
-        valid: results.length, invalid: 0,
+        valid: results.length - invalid, invalid,
         runId: prior.runId, bulkImportBatchId: prior.runId,
-        learnerCount: results.length, reversible: false,
+        learnerCount: results.filter(row => row.membershipId !== undefined).length,
+        reversible: false,
         recoveryRequired: results.some(row => row.status === "PARTIAL" || row.status === "FAILED"),
         alreadyProcessed: true };
     }
@@ -144,6 +148,19 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   const takenPhones=new Set(existingIdentities.map(row=>row.phone).filter(Boolean));
   const takenEmails=new Set(existingIdentities.map(row=>row.email?.toLowerCase()).filter(Boolean));
   const takenRolls=new Set(existingRolls.map(row=>row.roll?.trim().toLowerCase()).filter(Boolean));
+  // Reject collisions within this file before any identity writer runs. The
+  // database preflight above only detects identities from previous imports;
+  // without this guard two rows in one import can provision the same account.
+  const countBy = (values: string[]) => {
+    const counts = new Map<string, number>();
+    for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1);
+    return counts;
+  };
+  const phoneCounts = countBy(incoming.map(row => row.phoneE164));
+  const emailCounts = countBy(incoming.flatMap(row =>
+    row.email ? [row.email.trim().toLowerCase()] : []));
+  const rollCounts = countBy(incoming.flatMap(row =>
+    row.rollNumber ? [row.rollNumber.trim().toLowerCase()] : []));
   const checked = parsed.entries.map(entry => {
     const errors = [...entry.errors];
     const cohort = entry.data ? validCohorts.get(entry.data.cohortId) : undefined;
@@ -153,6 +170,12 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
       errors.push("PROGRAM_COHORT_UNAVAILABLE");
     }
     if(entry.data){
+      if ((phoneCounts.get(entry.data.phoneE164) ?? 0) > 1)
+        errors.push("DUPLICATE_PHONE_IN_IMPORT");
+      if (entry.data.email && (emailCounts.get(entry.data.email.trim().toLowerCase()) ?? 0) > 1)
+        errors.push("DUPLICATE_EMAIL_IN_IMPORT");
+      if (entry.data.rollNumber && (rollCounts.get(entry.data.rollNumber.trim().toLowerCase()) ?? 0) > 1)
+        errors.push("DUPLICATE_ROLL_IN_IMPORT");
       if(takenPhones.has(entry.data.phoneE164))errors.push("PHONE_ALREADY_REGISTERED");
       if(entry.data.email&&takenEmails.has(entry.data.email.toLowerCase()))
         errors.push("EMAIL_ALREADY_REGISTERED");
@@ -286,7 +309,8 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
    metadata:{count:results.length,created:results.filter(x=>x.status==="IMPORTED").length,
     partial:results.filter(x=>x.status==="PARTIAL").length,
     failed:results.filter(x=>["INVALID","FAILED"].includes(x.status)).length,
-    runId,bulkImportBatchId:runId,learnerCount:results.length,
+    runId,bulkImportBatchId:runId,
+    learnerCount:results.filter(item=>item.membershipId !== undefined).length,
     createdMembershipIds:receipts.filter(x=>x.membershipId).map(x=>x.membershipId),
     actorRole:isSuperAdmin(context)?"SUPER_ADMIN":"COLLEGE_ADMIN",
     selectedCollegeId:member.collegeId,sourceFingerprint, receipts,
@@ -296,14 +320,19 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     reversible:false},
   });
   return { preview: false, structuralErrors: [], results, valid: valid.length, invalid,
-    runId,bulkImportBatchId:runId,learnerCount:results.length,
+    runId,bulkImportBatchId:runId,
+    learnerCount:results.filter(item=>item.membershipId !== undefined).length,
     reversible:false, recoveryRequired:results.some(item=>item.status==="PARTIAL") };
 }
 
-/** SA-academics-people-95: history reads use the same selected active college as imports. */
-export async function listSuperAdminStudentCsvImportHistory(context: RequestContext) {
-  if (!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
-  const selected = await resolveActingCollege(context, "people.manage");
+/** Both administrator history views are strictly scoped to their authorized college. */
+export async function listCollegeStudentCsvImportHistory(context: RequestContext) {
+  const selected = isSuperAdmin(context)
+    ? await resolveActingCollege(context, "people.manage")
+    : requireCollegeStudentImporter(context);
+  requirePermission(context, "people.manage", {
+    collegeId: selected.collegeId, organizationId: selected.organizationId,
+  });
   return getDb().select({
     runId:activityEvents.subjectId,
     occurredAt:activityEvents.occurredAt,
@@ -314,4 +343,10 @@ export async function listSuperAdminStudentCsvImportHistory(context: RequestCont
     eq(activityEvents.organizationId,selected.organizationId),
     eq(activityEvents.eventType,"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT"),
   )).orderBy(desc(activityEvents.occurredAt)).limit(50);
+}
+
+/** Preserve the existing Super Admin history entry point without widening access. */
+export async function listSuperAdminStudentCsvImportHistory(context: RequestContext) {
+  if (!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
+  return listCollegeStudentCsvImportHistory(context);
 }

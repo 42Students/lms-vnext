@@ -11,6 +11,7 @@ describe("SA-tenants-modules-24 tenant write audit",()=>{
   const source=readFileSync(new URL("../../src/modules/colleges/service.ts",import.meta.url),"utf8");
   expect((source.match(/recordActivityEventInTransaction\(tx,context/g)??[]).length).toBe(4);
   expect(source).toContain("return await db.transaction(async tx=>");
-  expect((source.match(/return getDb\(\).transaction\(async tx=>/g)??[]).length).toBe(3);
+  // Three college mutation transactions plus one independently scoped read transaction.
+  expect((source.match(/return getDb\(\).transaction\(async tx=>/g)??[]).length).toBe(4);
  });
 });

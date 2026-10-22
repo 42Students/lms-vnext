@@ -5,7 +5,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
-import { getCollegeLessonSearchStats, searchCollegeLessons } from "@/modules/courses/college-learning-directory-service";
+import { getCollegeLessonSearchStats, getGlobalLessonSearchStats, searchCollegeLessons } from "@/modules/courses/college-learning-directory-service";
 import {
   createCourseLesson,
   listCourseLessons,
@@ -61,7 +61,13 @@ export async function GET(request: Request) {
       }, { headers: noStore });
     }
     if (view === "stats") {
-      const stats = await getCollegeLessonSearchStats(context);
+      // Legacy /stats is GLOBAL Super Admin only; a selected college or
+      // organization scope never enumerates other tenants.
+      const globalScope = isSuperAdmin(context) &&
+        !context.adminScope?.collegeId && !context.adminScope?.organizationId;
+      const stats = globalScope
+        ? await getGlobalLessonSearchStats(context)
+        : await getCollegeLessonSearchStats(context);
       return NextResponse.json({
         status: "success", message: "Stats retrieved", data: stats,
       }, { headers: noStore });
@@ -138,13 +144,13 @@ export async function POST(request: Request) {
     // Legacy lesson_name and sequence=0 semantics are mapped, but the
     // learning path must always resolve to the caller's authorized offering.
     // Course slugs/legacy numeric IDs alone are not trusted parent IDs.
-    if(!raw.learningPathId&&(raw.course_id||raw.courseId||raw.slug))
+    if(!raw["learningPathId"]&&(raw["course_id"]||raw["courseId"]||raw["slug"]))
       return NextResponse.json({
         error:"LEARNING_PATH_REQUIRED",
         message:"Select an authorized course offering and its learningPathId. Legacy numeric course IDs and slugs cannot identify a tenant on their own.",
       },{status:400,headers:noStore});
     const {lesson_name:legacyLessonName,...modern}=raw;
-    const mapped=(legacyLessonName!==undefined && modern.name===undefined)
+    const mapped=(legacyLessonName!==undefined && modern["name"]===undefined)
       ?{...modern,name:legacyLessonName}:modern;
     const lesson = await createCourseLesson(context,mapped);
 

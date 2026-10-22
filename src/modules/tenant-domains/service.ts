@@ -179,7 +179,11 @@ export function tenantDomainDnsInstructions(host:string,token:string){
  return {
   current:{name:verificationDnsName(validated),value:verificationDnsValue(token)},
   historical:{name:"_42lms-verify."+validated,value:"42lms-verification="+token},
-  guidance:"Create the current TXT record, wait for DNS propagation, and verify again. Historical _42lms-verify records are not interchangeable. Custom hosts also require deployed DNS routing and TLS; managed wildcard domains require infrastructure readiness.",
+  historicalAlternatives:{
+    names:["_42lms-verify."+validated,validated],
+    values:["42lms-verification="+token,token],
+  },
+  guidance:"Legacy LMS accepted TXT records at _42lms-verify.<host> or the host root, with a bare token or 42lms-verification= prefix. Those historical challenges do not prove ownership of a new vNext token. Publish the current _lms-vnext TXT challenge, wait for DNS propagation, and verify again before switching traffic. Preserve the old DNS records until legacy traffic is retired. Custom hosts also require deployed DNS routing and TLS; managed wildcard domains require infrastructure readiness.",
  };
 }
 
@@ -272,24 +276,26 @@ export async function verifyTenantDomain(
     repository,
   );
 
-  if (domain.isVerified) {
-    return domain;
-  }
-
-  if (!domain.verificationToken) {
+  // A verified binding is already valid: repeat verification is idempotent.
+  // Do not perform another DNS lookup or rewrite verification diagnostics.
+  // Reverification after a host edit remains possible because editing clears
+  // the verified flag and rotates its challenge.
+  if (domain.isVerified) return domain;
+  const verificationToken = domain.verificationToken;
+  if (!verificationToken) {
     throw new TenantDomainServiceError("DOMAIN_NOT_VERIFIED");
   }
 
   const result = await verifier.verify(
     domain.host,
-    domain.verificationToken,
+    verificationToken,
   );
 
   return repository.recordVerificationResult(domain.id, {
     ...result,
     checkedAt: new Date(),
     expectedHost:domain.host,
-    expectedToken:domain.verificationToken,
+    expectedToken:verificationToken,
     context,
   });
 }

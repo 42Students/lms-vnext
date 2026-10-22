@@ -379,8 +379,8 @@ export function RecruiterLeadDetailWorkspace({
 
   async function sendInviteEmail(confirmed=false) {
     if (!confirmed) { setConfirmation("SEND_INVITE"); return; }
-    if (!lead?.emailNorm || !lead.companyRelationshipId || lead.unsubscribedAt) {
-      setActionError("Add a work email and link a company before inviting.");
+    if (!lead?.emailNorm || lead.unsubscribedAt) {
+      setActionError("Add a work email before inviting.");
       return;
     }
     setSaving(true); setActionError(""); setInviteNotice("");
@@ -409,8 +409,8 @@ export function RecruiterLeadDetailWorkspace({
   async function createInviteLink(confirmed=false) {
     if(!confirmed){setConfirmation("CREATE_INVITE");return;}
     if(lead?.unsubscribedAt){setActionError("Asked not to be contacted.");return;}
-    if(!lead?.emailNorm||!lead.companyRelationshipId){
-      setActionError("Add a work email and link a company before inviting.");
+    if(!lead?.emailNorm){
+      setActionError("Add a work email before inviting.");
       return;
     }
     setSaving(true);
@@ -571,14 +571,14 @@ export function RecruiterLeadDetailWorkspace({
                       onChange={event=>setInvitePersonalNote(event.target.value)}/>
                   </label>
                   <Button type="button" variant="primary" className="min-h-11 md:min-h-9"
-                    disabled={saving||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
+                    disabled={saving||!lead.emailNorm||Boolean(lead.unsubscribedAt)}
                     onClick={() => void sendInviteEmail()}>
                     {saving ? "Sending…" : lead.inviteSentAt ? "Resend invite" : "Send invite email"}
                   </Button>
                   <Button
                     type="button"
                     variant="secondary" className="min-h-11 md:min-h-9"
-                    disabled={saving||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
+                    disabled={saving||!lead.emailNorm||Boolean(lead.unsubscribedAt)}
                     onClick={() => void createInviteLink()}
                   >
                     {lead.inviteSentAt ? "Create new invite link" : "Create invite link"}

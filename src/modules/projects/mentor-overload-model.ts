@@ -1,4 +1,4 @@
-/** Legacy mentor overload requires 1.5× mean AND a margin of 3 assignments.
+/** Legacy mentor overload: active count >= max(1.5× mean, mean + 3).
  * Unassigned projects do not count as a mentor. */
 export function projectMentorWorkloadAverage(activeCounts: readonly number[]): number {
   if (activeCounts.length === 0) return 0;
@@ -6,10 +6,10 @@ export function projectMentorWorkloadAverage(activeCounts: readonly number[]): n
 }
 export function isProjectMentorOverloaded(activeCount: number, activeCounts: readonly number[]): boolean {
   // Compare scaled workloads to avoid floating-point rounding at exactly 150%.
-  // Keep both legacy conditions: strictly above 1.5× mean and >= 3 above mean.
+  // Legacy flags a mentor at or above max(1.5× mean, mean + 3), inclusive.
   const total = activeCounts.reduce((sum, count) => sum + Math.max(0, count), 0);
   const mentorCount = activeCounts.length;
   return total > 0 && mentorCount > 0 &&
-    activeCount * mentorCount * 2 > total * 3 &&
+    activeCount * mentorCount * 2 >= total * 3 &&
     activeCount * mentorCount >= total + mentorCount * 3;
 }

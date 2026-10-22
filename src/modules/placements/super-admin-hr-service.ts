@@ -108,18 +108,10 @@ function visibilityClause(context: RequestContext) {
           placementRecruiterCollegeGrants.recruiterUserId,
           placementRecruiterProfiles.userId,
         ),
-        eq(
-          placementRecruiterCollegeGrants.status,
-          "ACTIVE",
-        ),
-        eq(
-          placementCompanyRelationships.status,
-          "ACTIVE",
-        ),
-        eq(
-          colleges.status,
-          "ACTIVE",
-        ),
+        // Legacy RecruiterAdminService.list: a scoped Super Admin sees
+        // recruiters holding OR HAVING HELD a grant inside the scope, so
+        // revoked or expired grants still make the recruiter visible for
+        // audit review. Status only affects effective access, not visibility.
         eq(
           placementCompanyRelationships.companyId,
           placementRecruiterProfiles.companyId,
@@ -154,8 +146,9 @@ export async function hrAccountManageability(context:RequestContext,userIds:read
   .from(placementRecruiterCollegeGrants)
   .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
   .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
-  .where(and(inArray(placementRecruiterCollegeGrants.recruiterUserId,[...userIds]),
-   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),outside));
+  // Any historical grant outside the scope blocks account-wide actions
+  // (legacy requireManageable), not only a currently active one.
+  .where(and(inArray(placementRecruiterCollegeGrants.recruiterUserId,[...userIds]),outside));
  const outsideIds=new Set(grants.map(row=>row.recruiterUserId));
  return new Map(userIds.map(id=>[id,!outsideIds.has(id)]));
 }

@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   const input=body.value;
   // A trusted ingress must overwrite this header. Without explicit proxy
   // attestation this public endpoint fails closed (never rate-limit by spoofed IP).
-  const trusted = process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED";
+  const trusted = process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"] === "VERIFIED";
   const network = trusted ? request.headers.get("x-public-verified-client-ip") : null;
   try {
     const result=await requestPublicJoinCode("COMPANY", input, network, deliverPublicRecruiterJoinCode);

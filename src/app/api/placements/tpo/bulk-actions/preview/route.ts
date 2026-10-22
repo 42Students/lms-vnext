@@ -40,7 +40,7 @@ export async function POST(request:Request){
      },{status:error.status,headers:{"Cache-Control":"private, no-store"}});
    if(error instanceof TpoBulkApplicationsUnavailable)
      return NextResponse.json({error:"DB09_MIGRATIONS_PENDING",
-       message:previewMessages.DB09_MIGRATIONS_PENDING,
+       message:previewMessages["DB09_MIGRATIONS_PENDING"],
      },{status:503,headers:{"Cache-Control":"private, no-store"}});
    return apiErrorResponse(error);
  }

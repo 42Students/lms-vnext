@@ -55,8 +55,12 @@ describe("Super Admin workspace brief isolation and malformed persisted JSON", (
    expect(normalized.deliverables.length).toBeLessThanOrEqual(50);
    expect(normalized.personas.every(item=>item.length>0&&item.length<=500)).toBe(true);
   }
+  // Persisted tenant identifiers in the untrusted JSON envelope are not
+  // accepted as authority or imported across a workspace boundary.
   expect(parseWorkspaceBrief({...original,collegeId:"other-tenant"}))
    .toEqual(emptyWorkspaceBrief);
+  expect(Object.keys(parseWorkspaceBrief({...original,collegeId:"other-tenant"})))
+   .not.toContain("collegeId");
   expect(updateWorkspaceBriefSchema.safeParse({
    brief:original,expectedUpdatedAt:"2026-10-18T12:00:00+05:30",
   }).success).toBe(true);

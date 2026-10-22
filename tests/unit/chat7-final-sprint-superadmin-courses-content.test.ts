@@ -36,7 +36,8 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   expect(ui).toContain("Show to students");expect(ui).toContain("Hide from students");
   expect(ui).toContain("Retry failed");
   const service=read("src/modules/courses/super-admin-course-bulk-visibility.ts");
-  expect(service).toContain("selected.length!==input.courseIds.length");
+  expect(service).toContain("const unauthorizedIds=input.courseIds.filter(id=>!validIds.includes(id))");
+  expect(service).toContain("const failedCourses=new Set<string>(unauthorizedIds)");
   expect(service).toContain("bulkSuperAdminLessonVisibility(context");
   expect(service).toContain("failures.push(");
   expect(read("src/app/api/admin/courses/bulk-status/route.ts")).toContain("isSameOriginRequest");

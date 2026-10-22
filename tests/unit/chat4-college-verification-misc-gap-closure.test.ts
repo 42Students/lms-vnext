@@ -23,7 +23,7 @@ describe("chat-4 College Verification and Misc verification",()=>{
    expect(s).toContain("query.section === \"connect-accounts\"");
    expect(s).toContain("Profile unavailable");
    expect(s).toContain("<CollegeProfileRetained");
-   expect(read("src/components/college/college-profile-retained.tsx")).toContain(">Retry</Link>");
+   expect(read("src/components/college/college-profile-retained.tsx")).toContain("onClick={retry}");
   }
   {const s=read("src/components/college/college-admin-profile-editor.tsx");
    expect(s).toContain("Profile photo (HTTPS link)");
@@ -40,7 +40,7 @@ describe("chat-4 College Verification and Misc verification",()=>{
   expect(retained).toContain("Showing the last profile we loaded.");
   expect(retained).toContain('failed&&!snapshot?<ErrorState title="Failed to load profile."');
   expect(retained).toContain("readOnly={failed}");
-  expect(retained).toContain(">Retry</Link>");
+  expect(retained).toContain("onClick={retry}");
   expect(editor).toContain("if(saving||readOnly)return;");
   expect(editor).toContain("disabled={readOnly||saving||!dirty}");
   expect(editor).toContain("if(readOnly||dirty)return;");

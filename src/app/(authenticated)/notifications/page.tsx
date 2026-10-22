@@ -41,7 +41,8 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
   (params.courseId&&!isUuid(params.courseId))
  );
  const parsedCursor=parseNotificationCursor({
-  beforeCreatedAt:params.beforeCreatedAt,beforeId:params.beforeId,
+  ...(params.beforeCreatedAt !== undefined ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
+  ...(params.beforeId !== undefined ? {beforeId:params.beforeId} : {}),
  });
  const invalid=parsedCursor.invalid||invalidCategory||invalidQuery||invalidScope;
  const newest=!params.beforeCreatedAt&&!params.beforeId;
@@ -118,7 +119,7 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
   <PageHeader title="Notifications"
    description="Course updates, announcements and activity for your selected workspace."/>
   <NotificationToolbar view={view} unreadCount={unreadCount}
-   categories={categoryCounts} selectedCategory={category}/>
+   categories={categoryCounts} {...(category !== undefined ? {selectedCategory:category} : {})}/>
   <form action={inbox} method="get" role="search"
    className="flex min-w-0 flex-wrap items-end gap-2">
    <input type="hidden" name="view" value={view}/>

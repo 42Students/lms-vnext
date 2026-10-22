@@ -48,7 +48,6 @@ export default async function FacultyNotificationsPage({
   const scopeTab=legacyTab.tab;
   const { view, cursor, invalid } = parseFacultyInboxQuery(query);
   const announcementsEnabled = announcementsRuntimeEnabled();
-  const noAnnouncements: Awaited<ReturnType<typeof listVisibleAnnouncementsForMembership>> = [];
   const [notificationRead, unreadCount, announcementRead] = await Promise.all([
     (invalid
       ? Promise.resolve({ items: [], nextCursor: null })
@@ -108,7 +107,7 @@ export default async function FacultyNotificationsPage({
     contextLine:(item.receiverType||"College").replaceAll("_"," ")+" announcement",
   }));
   const feed=(scopeTab==="personal"?items:scopeTab==="all"?[...items,...announcementItems]:announcementItems)
-    .sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt));
+    .sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt)||b.id.localeCompare(a.id));
   const allEmpty=feed.length===0 && view==="all" && scopeTab==="all";
   return (
     <div className="min-w-0 max-w-full space-y-6">

@@ -92,7 +92,10 @@ export const collegeBrandingInputSchema = z
 export type CollegeBrandingInput = z.infer<typeof collegeBrandingInputSchema>;
 
 /** Optimistic version supplied by an editor, never by tenant identity. */
-export const collegeBrandingSaveSchema=collegeBrandingInputSchema.extend({
+/** PATCH semantics: omitted fields retain their stored values; an explicit
+ * null clears a field. Do not allow a partial editor to erase unrelated
+ * branding data through the full-input normalizers. */
+export const collegeBrandingSaveSchema=collegeBrandingInputSchema.partial().extend({
  expectedVersion:z.number().int().nonnegative(),
 });
 const BRANDING_KEYS=[

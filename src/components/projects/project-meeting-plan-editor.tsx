@@ -68,6 +68,9 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
     return JSON.stringify(row) !== JSON.stringify(original);
   });
   const dirty = changed.length > 0;
+  // Legacy RepeatingItemEditor reports the first row missing its title as "Item N: Title required".
+  const missingTitleAt = draft.findIndex(row => !row.title.trim() &&
+    changed.some(item => item.id === row.id));
   // A historic untouched draft must not prevent saving a different, valid draft.
   const valid = changed.every(row => {
     const start = Date.parse(row.startsAt + ":00+05:30");
@@ -259,6 +262,12 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
               current.map(item => item.id === row.id ? { ...original } : item));
           }}>Undo row</Button>
       </fieldset>)}
+      {missingTitleAt >= 0 ? <p role="alert" className="text-sm font-semibold text-error">
+        Item {missingTitleAt + 1}: Title required
+      </p> : null}
+      {changed.length > 500 ? <p role="alert" className="text-sm font-semibold text-error">
+        This section holds {changed.length} changed rows; the server accepts at most 500. Remove {changed.length - 500} before saving.
+      </p> : null}
       {!valid ? <p role="alert" className="text-sm font-semibold text-error">
         Check meeting dates in IST: the end must follow the start.
         Linked tasks must belong to the selected sprint.

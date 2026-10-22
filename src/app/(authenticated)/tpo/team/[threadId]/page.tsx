@@ -129,7 +129,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
      timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
     }).format(date);
     const own=message.authorMembershipId===context.membership?.id;
-    const showDay=index===0||day(result.messages[index-1].createdAt)!==day(message.createdAt);
+    const showDay=index===0||day(result.messages[index-1]?.createdAt ?? message.createdAt)!==day(message.createdAt);
     return <li id={"team-message-"+message.id} key={message.id} className="min-w-0">
      {showDay?<p className="my-3 text-center text-xs font-semibold text-muted-foreground">{day(message.createdAt)}</p>:null}
      <div className={own?
@@ -154,7 +154,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     </li>;
    })}
   </ol>
-  <TpoTeamMessageScroll highlightId={highlightId}/>
+  <TpoTeamMessageScroll {...(highlightId !== undefined ? {highlightId} : {})}/>
   <nav aria-label="Team message history pages" className="flex flex-wrap items-center gap-3 text-sm">
    <span className="text-body">Page {result.page} of {result.pages}</span>
    {result.page < result.pages ? <Link
@@ -179,7 +179,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    recipientName={result.thread.counterpartName}
    eligibleAssignees={eligibleAssignees}
    items={asks.items.map(ask=>({...ask,dueAt:ask.dueAt?.toISOString()??null}))}
-   highlightAskId={highlightAskId} serverNowMs={serverNow.getTime()}/>:asks.status==="FAILED"?
+   {...(highlightAskId !== undefined ? {highlightAskId} : {})} serverNowMs={serverNow.getTime()}/>:asks.status==="FAILED"?
    <p role="alert" className="text-sm text-error">Could not load team asks. Other messages are still available.</p>:null}
 
  </div>;

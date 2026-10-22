@@ -380,7 +380,7 @@ export function SuperAdminHrAccounts({
           values.displayName.trim() !==
           (existing.displayName ?? "")
         ) {
-          changes.displayName =
+          changes["displayName"] =
             values.displayName.trim();
         }
 
@@ -393,7 +393,7 @@ export function SuperAdminHrAccounts({
               "Mobile number cannot be cleared here.",
             );
           }
-          changes.phoneE164 =
+          changes["phoneE164"] =
             values.phoneE164.trim();
         }
 
@@ -406,14 +406,14 @@ export function SuperAdminHrAccounts({
               "Existing email cannot be cleared here.",
             );
           }
-          changes.email = values.email.trim();
+          changes["email"] = values.email.trim();
         }
 
         if (
           values.title.trim() !==
           (existing.title ?? "")
         ) {
-          changes.title =
+          changes["title"] =
             values.title.trim() || null;
         }
 
@@ -421,7 +421,7 @@ export function SuperAdminHrAccounts({
           existing.status !== "DISABLED" &&
           values.status !== existing.status
         ) {
-          changes.status = values.status;
+          changes["status"] = values.status;
         }
 
         if (Object.keys(changes).length === 0) {
@@ -894,7 +894,7 @@ export function SuperAdminHrAccounts({
           }
           relationships={relationships}
           colleges={colleges}
-          selectedCollegeId={selectedCollegeId}
+          {...(selectedCollegeId !== undefined ? { selectedCollegeId } : {})}
           optionsLoading={optionsLoading}
           optionsError={optionsError}
           pending={saving}

@@ -20,7 +20,7 @@ function migrationPendingResponse(){
 }
 
 export async function GET(request: Request) {
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") return migrationPendingResponse();
+  if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") return migrationPendingResponse();
 
   try {
     const context = await getCurrentRequestContext();
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") return migrationPendingResponse();
+  if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") return migrationPendingResponse();
 
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });

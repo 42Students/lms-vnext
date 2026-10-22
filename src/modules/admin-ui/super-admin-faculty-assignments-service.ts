@@ -9,7 +9,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole,isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
-import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,SUPER_ADMIN_READ_PAGE_SIZE,type SuperAdminReadResult} from "./super-admin-read-directory-model";
+import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 const sectionDepartment=alias(departments,"admin_faculty_section_department");
 
 /** Legacy faculty-teaching DTO projection:

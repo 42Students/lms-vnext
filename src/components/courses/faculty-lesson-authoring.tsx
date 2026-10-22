@@ -686,10 +686,10 @@ export function FacultyLessonAuthoring({
             (option) => option.correct,
           )
         ) {
-          options[0] = {
-            ...options[0],
-            correct: true,
-          };
+          const firstOption = options[0];
+          if (firstOption !== undefined) {
+            options[0] = {...firstOption, correct: true};
+          }
         }
 
         return {
@@ -998,6 +998,13 @@ export function FacultyLessonAuthoring({
               <Input type="datetime-local" value={dueAt} onChange={event=>setDueAt(event.target.value)}/>
              </label>:null}
 
+            {mode==="ASSIGNMENT"?<div className="mt-4 rounded border border-border p-3 text-sm" aria-label="Assignment review summary">
+              <h3 className="font-semibold">Review assignment before saving</h3>
+              <p>Submission methods: {allowedAssignmentMethods.join(", ") || "None selected"}</p>
+              <ul className="mt-2 list-disc pl-5">
+                {assignmentResources.map((resource,index)=><li key={index}>{resource.title || resource.kind}</li>)}
+              </ul>
+            </div>:null}
             {mode==="ASSIGNMENT"?<h3 className="mt-4 font-semibold">Assignment Resources</h3>:null}
             {mode==="ASSIGNMENT"&&enableAssignmentResources&&deliveryId?
                <div ref={assignmentResourcesRef} className="min-w-0">

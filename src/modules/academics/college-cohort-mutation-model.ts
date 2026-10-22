@@ -95,3 +95,50 @@ export function validCohortPeriodRange(
 export function batchAcademicYearFromDates(startDate:string,_endDate:string|null):string {
  return batchAcademicYearWithStartMonth(startDate,7);
 }
+
+/**
+ * Import boundary for legacy BatchRequestDTO records (batchName, programId,
+ * startDate, endDate, currentStudents, academicYear, status). The legacy
+ * numeric programId must be resolved to a college-scoped UUID, and the
+ * required vNext batch code and starting academic period are supplied by the
+ * migration. The client-sent currentStudents count is ignored: vNext derives
+ * enrolment from real learner enrollments. New vNext batches start PLANNED
+ * (legacy created them ACTIVE); the legacy status is returned as metadata only.
+ */
+export const legacyBatchImportSchema = z.object({
+  batchName: name,
+  programId: z.number().int().positive(),
+  startDate: legacyDate.nullable().optional(),
+  endDate: legacyDate.nullable().optional(),
+  currentStudents: z.number().int().nullable().optional(),
+  academicYear: legacyYear.nullable().optional(),
+  status: z.string().trim().max(32).nullable().optional(),
+});
+
+export function translateLegacyBatchToCohort(
+  raw: unknown,
+  resolved: {
+    programId: string;
+    code: string;
+    startPeriodId: string;
+    expectedEndPeriodId: string | null;
+    legacyProgramId: number;
+  },
+) {
+  const input = legacyBatchImportSchema.parse(raw);
+  if (input.programId !== resolved.legacyProgramId)
+    throw new Error("Legacy batch program mapping does not match");
+  return {
+    cohort: createCollegeCohortSchema.parse({
+      programId: resolved.programId,
+      name: input.batchName,
+      code: resolved.code,
+      startPeriodId: resolved.startPeriodId,
+      expectedEndPeriodId: resolved.expectedEndPeriodId,
+      academicYear: input.academicYear ?? null,
+      startDate: input.startDate ?? null,
+      endDate: input.endDate ?? null,
+    }),
+    legacyStatus: input.status ?? null,
+  };
+}

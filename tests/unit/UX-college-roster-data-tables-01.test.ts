@@ -14,10 +14,13 @@ describe("UX-college-roster-data-tables-01 responsive roster and faculty detail"
   });
   it("/college/electives/[slotId]/allocate retains checked learner IDs inside real form submission",()=>{
     const s=read("electives/[slotId]/allocate");
-    expect(s).toContain('caption="Eligible students for allocation"');
-    expect(s).toContain("<Checkbox");
-    expect(s).toContain('name="membershipId" value={student.membershipId}');
-    expect(s).toMatch(/mobilePriority:\s*"action"/);
+    const selection=readFileSync(join(process.cwd(),"src/components/academics/elective-eligible-selection.tsx"),"utf8");
+    expect(s).toContain("<ElectiveEligibleSelection");
+    expect(selection).toContain('caption="Eligible students for allocation"');
+    expect(selection).toContain("<Checkbox");
+    expect(selection).toContain('name="membershipId" value={id}');
+    expect(selection).toContain("ids.map(id=><input");
+    expect(selection).toMatch(/mobilePriority:\s*"action"/);
     expect(s).toContain('name="identifiers"');
     expect(s).toContain("Allocate selected to");
     expect(s).not.toContain("<table");

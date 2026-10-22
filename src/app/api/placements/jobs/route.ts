@@ -119,7 +119,7 @@ export async function GET(request: Request) {
         const filtered=filterLearnerPlacementJobs(permitted,{
           ...DEFAULT_LEARNER_JOB_FILTERS,
           search:parsed.data.q,
-          jobType:parsed.data.jobType||undefined,
+          ...(parsed.data.jobType ? {jobType:parsed.data.jobType} : {}),
           sort:"newest",
         });
         const ordered=parsed.data.sort==="TITLE_ASC"?
@@ -137,7 +137,9 @@ export async function GET(request: Request) {
       const page=await listPlacementJobsPage(context,collegeId,{
         q:parsed.data.q,status:parsed.data.status,sort:parsed.data.sort,
         applicationMode:parsed.data.applicationMode,
-        jobType:parsed.data.jobType,programId:parsed.data.programId,deptId:parsed.data.deptId,
+        jobType:parsed.data.jobType,
+        ...(parsed.data.programId !== undefined ? {programId:parsed.data.programId} : {}),
+        ...(parsed.data.deptId !== undefined ? {deptId:parsed.data.deptId} : {}),
         page:parsed.data.page+1,pageSize:parsed.data.size,
       });
       return NextResponse.json({

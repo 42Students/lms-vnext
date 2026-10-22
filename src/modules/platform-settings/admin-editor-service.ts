@@ -54,6 +54,8 @@ export function tenantSettingActivationMessage(key:string):string {
     return "Deployment required — saved value does not change live authentication, DNS or SMS.";
   if(status==="PROVIDER_TEMPLATE_MATCH_REQUIRED")
     return "Provider approval required — verify the Exotel/DLT template before use.";
+  if(status==="RUNTIME_CONSUMED")
+    return "Active — read by the learner runtime; open pages pick up a changed value on reload.";
   if(status==="STORED_ONLY")
     return "Stored only — no active reader has been verified for this setting.";
   if(PLACEMENT_POLICY_FIELDS.some(field=>field.key===key))

@@ -49,7 +49,7 @@ export async function POST(request:Request,{params}:Params){
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   const raw=payload as Record<string,unknown>;
   if(Object.keys(raw).some(key=>key!=="mode"&&key!=="action")||
-     raw.action!=="REFRESH"||raw.mode!==undefined&&raw.mode!=="stats")
+     raw["action"]!=="REFRESH"||raw["mode"]!==undefined&&raw["mode"]!=="stats")
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   const value=await read(await getCurrentRequestContext(),jobId,{mode:"stats"});
   return NextResponse.json({...value,message:"Live application statistics retrieved",

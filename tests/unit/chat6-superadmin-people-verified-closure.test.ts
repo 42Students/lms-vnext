@@ -21,7 +21,7 @@ describe("chat-6 selected-college People gap verification",()=>{
   expect(source("src/modules/people/faculty-bulk-import-model.ts")).toContain("if(data.length>500)");
  });
  it("G2-15-027-052 keeps legacy department and faculty type in import preview and report",()=>{
-  const rows=parseFacultyBulkCsv("First Name,Last Name,Mobile Number,Email,Department,Faculty Type\\nAnjali,Sharma,9876543210,anjali@example.edu,Computer Science,MENTOR\\n");
+  const rows=parseFacultyBulkCsv("First Name,Last Name,Mobile Number,Email,Department,Faculty Type\nAnjali,Sharma,9876543210,anjali@example.edu,Computer Science,MENTOR\n");
   expect(rows[0]).toMatchObject({departmentName:"Computer Science",facultyType:"MENTOR"});
   const view=source("src/components/admin/super-admin-faculty-bulk-import.tsx");
   expect(view).toContain("Email,Department,Faculty Type");

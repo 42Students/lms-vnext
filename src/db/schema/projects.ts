@@ -218,6 +218,30 @@ export const projectTemplateCollegeAssignments =
  *   different colleges is deliberately allowed, never auto-crosslinked.
  *   Conflicting slugs within one college must be reconciled before insert;
  *   the previous URL alias must be retained by the importer.
+ * - Legacy ProjectWorkspace column map (source is project_workspace):
+ *   BaseModel.id (int) -> legacyProjectId (int) + id (UUID); BaseModel
+ *   createdAt/updatedAt -> createdAt/updatedAt; BaseModel.isDeleted ->
+ *   deletedAt tombstone; BaseModel.version (nullable Long @Version) ->
+ *   legacyRevision import provenance, NOT the vNext concurrency token.
+ *   organizationId (int) -> legacyOrganizationId + tenant crosswalk;
+ *   collegeId (int) -> collegeId UUID via authorized college crosswalk;
+ *   classId (int) -> legacyClassId + sectionId via class/section crosswalk;
+ *   templateId (nullable int) -> templateId/templateVersionId via template
+ *   crosswalk; an absent source template must NOT be converted into a
+ *   different historical template without an explicit provenance record.
+ *   teamGroupId (nullable int) -> teamGroupId UUID via scoped group crosswalk;
+ *   source mentor/user references -> createdByUserId via verified user map.
+ *   name/title -> title; shortDescription/description -> summary/authoredBrief
+ *   only after preserving source JSON; slug -> normalized slug with collision
+ *   mapping; status -> legacyStatus and mapped status; progress -> progressPercent;
+ *   phase/course/due labels -> matching fields; startDate/endDate ->
+ *   startDate/endDate; sprintDurationWeeks -> sprintLengthWeeks;
+ *   estimationUnit -> estimationUnit; overview -> legacyOverview;
+ *   templateSnapshot -> legacyTemplateSnapshot (immutable);
+ *   recoverableContent -> legacyRecoverableContent; meetingsList ->
+ *   legacyMeetingsList. Nullable historical fields remain nullable provenance
+ *   and must never be silently supplied from a different college or template.
+ *   The nullable source version is unrelated to ordering or permission checks.
  * - Source orgId/collegeId/classId/teamGroupId/templateId and mentor userId
  *   are numeric *identities*. Resolve each via verified college-specific
  *   crosswalks to organization/college/section/group/template and a currently
@@ -230,6 +254,13 @@ export const projectTemplateCollegeAssignments =
  *   from versioned projectTemplateVersions and current authoredBrief.
  *   legacyRecoverableContent records the old recoverability flag independently
  *   of the current archived/deleted lifecycle. Neither grants restore access.
+ *   Archive sets status=ARCHIVED and archivedAt without deleting resources,
+ *   tasks, releases or sprints. Historical legacyRecoverableContent=false is
+ *   not a restore permission: deletedAt means excluded from live views and
+ *   cannot be automatically resurrected. A future explicit restore operation
+ *   must revalidate college/role scope and reconcile each child row's own
+ *   deletedAt/deletedByWorkspace state; it must never indiscriminately clear
+ *   child tombstones or expose previously private resources.
  */
 export const projectInstances = pgTable(
   "project_instances",
@@ -240,13 +271,14 @@ export const projectInstances = pgTable(
       .references(() => colleges.id, {
         onDelete: "restrict",
       }),
+    // Legacy manually created workspaces have no template or pinned version.
+    // A null pair represents that original provenance; new UI creation still
+    // requires an assigned, published template and pins its exact version.
     templateId: uuid("template_id")
-      .notNull()
       .references(() => projectTemplates.id, {
         onDelete: "restrict",
       }),
     templateVersionId: uuid("template_version_id")
-      .notNull()
       .references(() => projectTemplateVersions.id, {
         onDelete: "restrict",
       }),
@@ -283,7 +315,9 @@ export const projectInstances = pgTable(
     nextAction: text("next_action"),
     startDate: date("start_date"),
     endDate: date("end_date"),
-    sprintLengthWeeks: integer("sprint_length_weeks"),
+    // Preserve legacy four-week default for newly created workspaces; imported rows
+    // can explicitly retain NULL when historical source data is missing.
+    sprintLengthWeeks: integer("sprint_length_weeks").default(4),
     estimationUnit: varchar("estimation_unit", { length: 32 }).default("POINTS"),
     authoredBrief: jsonb("authored_brief").notNull().default(sql`'{"goal":"","description":"","deliverables":[],"completionConditions":[],"personas":[]}'::jsonb`),
     createdByUserId: uuid("created_by_user_id")
@@ -343,6 +377,8 @@ export const projectInstances = pgTable(
     index("project_instances_template_version_idx").on(
       table.templateVersionId,
     ),
+    check("project_instances_template_pair_ck",
+      sql`(${table.templateId} is null) = (${table.templateVersionId} is null)`),
     check(
       "project_instances_status_ck",
       sql`${table.status} in ('PLANNED', 'ACTIVE', 'COMPLETED', 'ARCHIVED')`,

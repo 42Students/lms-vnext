@@ -15,7 +15,7 @@ export default async function FacultyCourseDefaultPage({
 }) {
   const { deliveryId } = await params;
   const query = await searchParams;
-  const cls = typeof query.cls === "string" ? query.cls : null;
+  const cls = typeof query["cls"] === "string" ? query["cls"] : null;
 
   // Legacy index performed a replace without a read, but vNext must validate
   // the current persisted teaching assignment before navigating to a route.

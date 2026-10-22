@@ -161,6 +161,11 @@ export const LEGACY_NOTIFICATION_JOB_SCHEDULES = {
   assignmentReminder: { jobName: "notification.assignmentReminders", cron: "0 0 9 * * *", timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000 },
   deadlineToday: { jobName: "tpo.deadlineToday", cron: "0 0 8 * * *", timeZone: "Asia/Kolkata", ttlMs: 30 * 60_000 },
   offersExpiringSoon: { jobName: "tpo.offersExpiringSoon", fixedDelayMs: 60 * 60_000, ttlMs: 50 * 60_000 },
+  // Legacy 08:00 IST daily, 30-minute lease; consume only the next local-day
+  // half-open window from tomorrowInIndiaUtcWindow(now), never the current day.
+  // This declares the schedule; a deployment worker must still bind delivery.
+  shortlistDueTomorrow: { jobName: "tpo.shortlistDueTomorrow", cron: "0 0 8 * * *",
+    timeZone: "Asia/Kolkata", ttlMs: 30 * 60_000, wired: false },
 } as const;
 
 /** India has a fixed UTC+05:30 offset; return next local day as a half-open
@@ -201,9 +206,14 @@ export async function processFencedNotificationBatch<T>(
   due: readonly T[],
   sendAndPersist: (entry: T, fence: ScheduledJobFence) => Promise<void>,
   persistFailed: (entry: T, safeReason: string) => Promise<void>,
+  audit?: {
+    safeEntryId: (entry: T) => string;
+    persistBatch: (summary: { processed: number; succeeded: number; failed: number; remaining: number; failedEntryIds: readonly string[] }) => Promise<void>;
+  },
 ): Promise<{ processed: number; failed: number; remaining: number }> {
   let processed = 0;
   let failed = 0;
+  const failedEntryIds: string[] = [];
   const rows = due.slice(0, 200);
   for (const entry of rows) {
     await fence.assertCurrent();
@@ -215,13 +225,25 @@ export async function processFencedNotificationBatch<T>(
       // Never write raw provider/SQL exception messages into a user-facing row.
       await persistFailed(entry, "Scheduled delivery could not be completed.");
       failed += 1;
+      if (audit) {
+        const safeId = audit.safeEntryId(entry);
+        if (!/^[a-zA-Z0-9_-]{1,120}$/.test(safeId)) {
+          throw new ScheduledJobRunnerError("INVALID_JOB_INPUT");
+        }
+        failedEntryIds.push(safeId);
+      }
     }
     processed += 1;
     // A large batch can outlive the original TTL. Renewal compares holder
     // and fence against the DB clock; loss aborts before the next side effect.
     if (processed % 25 === 0) await fence.renew();
   }
-  return { processed, failed, remaining: Math.max(0, due.length - processed) };
+  const remaining = Math.max(0, due.length - processed);
+  if (audit) {
+    await fence.assertCurrent();
+    await audit.persistBatch({ processed, succeeded: processed - failed, failed, remaining, failedEntryIds });
+  }
+  return { processed, failed, remaining };
 }
 
 /**

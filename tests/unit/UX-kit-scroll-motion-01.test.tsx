@@ -105,7 +105,7 @@ describe("UX-kit-scroll-motion owner invisible-scrollbar contracts", () => {
     const detail=renderToStaticMarkup(<Disclosure title="More details"><p>Hidden grade</p></Disclosure>);
     expect(detail).toContain("<details");
     expect(detail).toContain("<summary");
-    expect(detail).toContain("min-h-11");
+    expect(detail).toContain("min-height:44px");
     expect(detail).toContain("motion-reduce:transition-none");
     const css=read("src/app/globals.css");
     for(const key of ["--lms-motion-fast: 150ms","--lms-motion-base: 250ms",

@@ -6,9 +6,9 @@ type Props={children:ReactNode;name:string;fallbackHref?:string};
 type State={failed:boolean};
 /** GR-70: a broken bell/menu never takes down the page or adjacent navigation. */
 export class ShellWidgetBoundary extends Component<Props,State>{
- state:State={failed:false};
+ override state:State={failed:false};
  static getDerivedStateFromError():State{return {failed:true};}
- render(){
+ override render(){
   if(!this.state.failed)return this.props.children;
   return <div className="grid w-full min-w-0 max-w-sm gap-[var(--lms-space-3)]" role="group" aria-label={this.props.name}>
    <InlineNotice tone="error" message="Could not load this right now. Try again."/>

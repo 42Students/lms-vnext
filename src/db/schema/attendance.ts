@@ -199,8 +199,14 @@ export function legacyAttendanceMarkSummary(input:{
  * current editable note has a 1,000-character cap. */
 export function legacyAttendanceAbsence(input:{
   legacyAttendId:number;sourceReason:string|null;markedAt:Date;
+  /** Legacy attend.attendance_status: NULL is a plain unexplained absence;
+   * EXCUSED, MEDICAL and LATE are explicit codes that must be preserved. */
+  sourceStatus?:string|null;
 }){
-  return {legacyAttendId:input.legacyAttendId,status:"ABSENT" as const,
+  const code=input.sourceStatus?.trim().toUpperCase()??"";
+  const status=code==="EXCUSED"||code==="MEDICAL"||code==="LATE"
+    ?code:"ABSENT" as const;
+  return {legacyAttendId:input.legacyAttendId,status,
     legacyAbsenceReason:input.sourceReason,note:input.sourceReason?.slice(0,1000)??null,
     markedAt:input.markedAt};
 }
@@ -209,9 +215,14 @@ export function legacyAttendanceAbsence(input:{
  * PRESENT rows. A missing actor must be remapped before marking, not guessed. */
 export function legacyAttendanceSessionState(input:{
   sourceMarked:boolean;sourceMarkedAt:Date|null;actorUserId:string|null;
+  /** Legacy absence rows imply the session was marked even when the source
+   * attendanceMarkedAt flag is missing (adminAttendanceGrid isSessionCounted). */
+  absenceCount?:number;earliestAbsenceMarkedAt?:Date|null;
 }){
-  if(input.sourceMarked&&input.sourceMarkedAt&&input.actorUserId)
-    return {status:"MARKED" as const,markedAt:input.sourceMarkedAt,markedByUserId:input.actorUserId};
+  const impliedMarked=(input.absenceCount??0)>0;
+  const markedAt=input.sourceMarkedAt??(impliedMarked?input.earliestAbsenceMarkedAt??null:null);
+  if((input.sourceMarked||impliedMarked)&&markedAt&&input.actorUserId)
+    return {status:"MARKED" as const,markedAt,markedByUserId:input.actorUserId};
   return {status:"UNMARKED" as const,markedAt:null,markedByUserId:null};
 }
 

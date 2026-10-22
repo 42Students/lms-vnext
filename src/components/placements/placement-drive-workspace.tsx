@@ -250,7 +250,7 @@ export async function PlacementDriveWorkspace({
     minimumAnnualCtcInr:job.minimumAnnualCtcInr,
     maximumAnnualCtcInr:job.maximumAnnualCtcInr,
     applicationDeadline:job.applicationDeadline,
-    isDream:job.isDream,stipendPerMonthInr:job.stipendPerMonthInr,
+    isDream:job.isDream,legacyJobCategory:job.legacyJobCategory,stipendPerMonthInr:job.stipendPerMonthInr,
     recordedOutside:job.recordedOutside,
   });
 

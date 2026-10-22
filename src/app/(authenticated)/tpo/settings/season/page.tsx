@@ -62,7 +62,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
             value: summary.closed,
           },
         ].map((metric) => (
-          <StatTile className={tpoTileStyles.tile} key={metric.label} label={metric.label} value={metric.value} />
+          <StatTile {...(tpoTileStyles["tile"] !== undefined ? { className: tpoTileStyles["tile"] } : {})} key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </div>
       </Disclosure>

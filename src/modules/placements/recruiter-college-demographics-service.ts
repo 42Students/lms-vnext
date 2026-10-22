@@ -3,7 +3,7 @@ import {and,eq,isNull,sql,type SQL} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
  collegeMemberships,departments,learnerProgramEnrollments,membershipRoles,
- placementCandidateAcademicEvidence,programs,users,
+ placementCandidateAcademicEvidence,programs,users,colleges,
 } from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
@@ -12,6 +12,9 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
  * No learner-level evidence, unsuppressed group counts or names are returned. */
 const MIN_GROUP=10;
 export type RecruiterCollegeDemographics={
+ collegeName:string;
+ asOf:string;
+ cgpaBasedOn:"verified academic records"|null;
  totalLearners:number|null;
  byBranch:{branch:string;roundedCount:number}[];
  verifiedCgpaBands:{label:string;roundedCount:number}[];
@@ -49,7 +52,9 @@ export async function getRecruiterCollegeDemographics(
   when ${placementCandidateAcademicEvidence.cgpaHundredths} < 800 then '7 to 8'
   when ${placementCandidateAcademicEvidence.cgpaHundredths} < 900 then '8 to 9'
   else '9 and above' end`;
- const [totals,branches,bands]=await Promise.all([
+ const [collegeRows,totals,branches,bands]=await Promise.all([
+  db.select({name:colleges.name}).from(colleges)
+   .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).limit(1),
   db.select({total:sql<number|null>`case when ${countDistinctLearners} >= ${MIN_GROUP}
    then (round((${countDistinctLearners})::numeric / 5)*5)::integer else null end`})
    .from(collegeMemberships)
@@ -80,9 +85,14 @@ export async function getRecruiterCollegeDemographics(
    .groupBy(bucket)
    .having(sql`${countDistinctLearners} >= ${MIN_GROUP}`),
  ]);
+ if(!collegeRows[0])throw new AuthorizationError("placements.recruiter.read");
  return {
+  collegeName:collegeRows[0].name,
+  asOf:new Date().toISOString(),
+  cgpaBasedOn:bands.length>0?"verified academic records":null,
   totalLearners:totals[0]?.total??null,
-  byBranch:branches.map(row=>({branch:row.branch,roundedCount:row.roundedCount})),
+  byBranch:branches.map(row=>({branch:row.branch,roundedCount:row.roundedCount}))
+   .sort((a,b)=>b.roundedCount-a.roundedCount||a.branch.localeCompare(b.branch)),
   verifiedCgpaBands:bands.map(row=>({label:row.label,roundedCount:row.roundedCount})),
   policy:"ROUNDED_MIN_10",
  };

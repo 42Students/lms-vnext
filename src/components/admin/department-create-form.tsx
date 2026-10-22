@@ -48,16 +48,16 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
         if(!response.ok){
           const payload:unknown=await response.json().catch(()=>null);
           const data=payload&&typeof payload==="object"?payload as Record<string,unknown>:{};
-          const conflict=data.error==="DEPARTMENT_NAME_CONFLICT"||
-            data.code==="DEPARTMENT_NAME_CONFLICT";
-          const fieldErrors=data.fieldErrors&&typeof data.fieldErrors==="object"
-            ?data.fieldErrors as Record<string,unknown>:{};
-          const missingCollege=typeof fieldErrors.college_id==="string"||
-            typeof fieldErrors.collegeId==="string";
+          const conflict=data["error"]==="DEPARTMENT_NAME_CONFLICT"||
+            data["code"]==="DEPARTMENT_NAME_CONFLICT";
+          const fieldErrors=data["fieldErrors"]&&typeof data["fieldErrors"]==="object"
+            ?data["fieldErrors"] as Record<string,unknown>:{};
+          const missingCollege=typeof fieldErrors["college_id"]==="string"||
+            typeof fieldErrors["collegeId"]==="string";
           const detail=conflict?"Department name already exists":
             missingCollege?"Please select college":
-            typeof data.message==="string"&&/^(Department name|Please select college|Department already exists)/.test(data.message)
-              ?data.message:"Failed to create department";
+            typeof data["message"]==="string"&&/^(Department name|Please select college|Department already exists)/.test(data["message"])
+              ?data["message"]:"Failed to create department";
           fail(detail,conflict?detail:"");
           return;
         }

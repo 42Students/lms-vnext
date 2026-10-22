@@ -45,7 +45,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   </section>;
   const {jobId}=await params;
   const rawFilters=await searchParams;
-  const conflictOnly=rawFilters.conflicts==="1";
+  const conflictOnly=rawFilters["conflicts"]==="1";
   const query=driveInterviewsParams(rawFilters);
   if(!query) return <ErrorState title="Invalid interview filters"
     description={driveInterviewFilterError(await searchParams)} action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/interviews`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>;
@@ -53,15 +53,15 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     listCollegeDriveInterviews(context,jobId,query),
     getCollegeRoundSlotAppointments(context,jobId,{
       appointmentPage:query.appointmentPage,
-      appointmentStatus:query.appointmentStatus,
-      appointmentMode:query.appointmentMode,
-      appointmentSearch:query.appointmentSearch,
+      ...(query.appointmentStatus!==undefined?{appointmentStatus:query.appointmentStatus}:{}),
+      ...(query.appointmentMode!==undefined?{appointmentMode:query.appointmentMode}:{}),
+      ...(query.appointmentSearch!==undefined?{appointmentSearch:query.appointmentSearch}:{}),
       appointmentSort:query.appointmentSort,
       appointmentPageSize:query.appointmentPageSize,
-      preferredApplicationId:query.applicationId,
+      ...(query.applicationId!==undefined?{preferredApplicationId:query.applicationId}:{}),
       candidatePage:query.candidatePage,
       candidatePageSize:query.candidatePageSize,
-      candidateSearch:query.candidateSearch,
+      ...(query.candidateSearch!==undefined?{candidateSearch:query.candidateSearch}:{}),
     }),
   ]);
   const failed=results.find(result=>result.status==="rejected");
@@ -77,8 +77,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   const appointments=results[1].value;
   const base="/college/placements/jobs/"+encodeURIComponent(jobId);
   const appointmentRows=filterDriveCandidateAppointments(appointments.interviews,{
-    appointmentStatus:query.appointmentStatus,mode:query.appointmentMode,
-    search:query.appointmentSearch,
+    ...(query.appointmentStatus!==undefined?{appointmentStatus:query.appointmentStatus}:{}),...(query.appointmentMode!==undefined?{mode:query.appointmentMode}:{}),
+    ...(query.appointmentSearch!==undefined?{search:query.appointmentSearch}:{}),
   });
   const scheduled=appointments.interviews.filter(item=>
     ["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"].includes(item.status));
@@ -234,7 +234,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       </aside>:null}
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={visibleAppointments}
-      preferredApplicationId={query.applicationId}/>
+      {...(query.applicationId!==undefined?{preferredApplicationId:query.applicationId}:{})}/>
     <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-b border-border pb-4 text-sm">
       {appointments.appointmentPage>1?<Link href={driveInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1})}
         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}

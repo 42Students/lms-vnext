@@ -7,16 +7,29 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-5-001-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-001-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-005-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-006-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-006-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-007-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-009-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-009-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-019-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-005-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-006-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-006-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-007-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-009-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-009-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-019-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [ ] G2-5-019-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 
 ## Results
 
+- G2-5-001-040: OK — `src/components/attendance/admin-attendance-workspace.tsx:270-279` computes counted and present marks separately for each learner, including absent-implied counted cells via `adminAttendanceCellState`; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:99-112`.
+- G2-5-001-046: OK — `src/components/attendance/admin-attendance-workspace.tsx:380-394` exports empty unscheduled dates, N for unmarked, and attended/counted for multi-session days; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:448-463`.
+- G2-5-006-025: OK — `src/components/attendance/admin-attendance-workspace.tsx:208-224,413,528-534` preserves last verified results only for an identical scope, warns on refresh failure and offers Retry; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:523-538`.
+- G2-5-009-040: OK — `src/modules/attendance/admin-service.ts:530-560,663-674` provides college/delivery-scoped fresh record reading and transaction-time optimistic comparison; `src/components/attendance/admin-attendance-workspace.tsx:309-357` reads before writing and submits the token; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:52-71` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAttendanceController.java:206-259`.
+- G2-5-009-042: OK — `src/components/attendance/admin-attendance-workspace.tsx:297-366` fetches the scoped current record on correction open, blocks writes without a verified record, and submits `expectedMarkedAt`; `src/modules/attendance/admin-service.ts:530-560,663-674` validates a current record and enforces optimistic comparison. Matches the missing-record refusal in `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:52-67` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAttendanceController.java:206-259`.
+
+- G2-5-005-020: OK — `src/app/(authenticated)/hr/calendar/page.tsx:186-214,302-306` folds interview slots by job and round into a single event with `N interview slot(s)`; a same-day round owns its grouped slot count and orphan slots appear once per round, matching `docs/legacy-source/frontend/src/pages/recruiter/calendar.js:95-118` (the legacy `foldWeek` presentation contract).
+
+- G2-5-006-024: OK — `src/app/(authenticated)/admin/attendance/page.tsx:64-81` distinguishes class-course lookup failure (`AdminAttendanceOptionsLookupError.kind === "class_courses"`) from general options failure, surfaces distinct user-visible warnings and appropriate Retry links without treating errors as empty lists; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:487-495`.
+
+- G2-5-007-042: OK — `src/modules/placements/college-interview-directory-service.ts:151-203` loads booked active interview appointments from the full college, across jobs and beyond the selected filtered/paginated rows, excludes cancelled/completed/no-show records, and checks candidate or interviewer overlap before annotating the visible rows. Matches `docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:224-230` (unfiltered active conflict basis).
+
+- G2-5-019-018: FIXED — `126c3ff437c8bc89a5ff07b8fe72f950341a7df1` in `src/modules/people/profile-validation.ts`; `normalizeLegacyLearnerAddress` accepts the legacy shared address/city/state/pincode and newer current*/permanent* variants, preferring explicitly provided current values. Matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Learner.java:103-140`.

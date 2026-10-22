@@ -171,7 +171,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(saving)return;
+    if(saving||readOnly)return;
     const requestedSection=sectionSaveIntent.current;
     sectionSaveIntent.current=null;
     const baseline = savedSnapshot.current;

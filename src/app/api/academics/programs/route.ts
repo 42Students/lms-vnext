@@ -67,26 +67,26 @@ function legacyProgramSearch<T extends {
     data:{totalPrograms:rows.length,departments:new Set(rows.map(row=>row.departmentId)).size} };
   if (mode === "exists") return { status:"success",message:"Program existence checked",
     data: rows.some(row=>row.name.toLocaleLowerCase("en") ===
-      (parsed.name ?? parsed.query).trim().toLocaleLowerCase("en")) };
+      (parsed["name"] ?? parsed.query).trim().toLocaleLowerCase("en")) };
   const limit = parsed.limit ?? (mode === "department" || mode === "category" ? 50 :
     mode === "popular" ? 10 : 15);
   return {status:"success",message:"Programs retrieved",
     data:sorted.slice(0,limit).map(row=>({
       id:row.id, legacyId:row.legacyProgramId??null, name:row.name,deptId:row.departmentId,deptName:row.departmentName,
-      code:row.code,durationYears:row.durationTerms/2,scope:"COLLEGE",
+      code:row.code,durationYears:Math.ceil(row.durationTerms/2),scope:"COLLEGE",
     })),total:sorted.length,limit};
 }
 
 function legacyProgramCreateInput(raw: unknown) {
   const source=z.record(z.string(),z.unknown()).parse(raw);
-  const name=typeof source.name==="string"?source.name.trim():"";
-  const code=typeof source.code==="string"&&source.code.trim()?source.code.trim():
+  const name=typeof source["name"]==="string"?source["name"].trim():"";
+  const code=typeof source["code"]==="string"&&source["code"].trim()?source["code"].trim():
     name.toUpperCase().replace(/[^A-Z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,64);
-  const years=source.durationYears??source.duration_years;
+  const years=source["durationYears"]??source["duration_years"];
   return {
-    departmentId:source.departmentId??source.dept_id??source.deptId,
+    departmentId:source["departmentId"]??source["dept_id"]??source["deptId"],
     name,code,
-    durationTerms:source.durationTerms??(
+    durationTerms:source["durationTerms"]??(
       typeof years==="number"?years*2:typeof years==="string"&&years.trim()?
         Number(years)*2:undefined),
   };
@@ -189,8 +189,8 @@ export async function POST(request: Request) {
         fieldErrors: new URL(request.url).searchParams.get("legacy") === "1"
           ? (() => {
               const fields=programCreateFieldErrors(error);
-              return {...fields,...(fields.departmentId ? {dept_id:fields.departmentId}:{}),
-                ...(fields.durationTerms ? {duration_years:fields.durationTerms}:{})};
+              return {...fields,...(fields["departmentId"] ? {dept_id:fields["departmentId"]}:{}),
+                ...(fields["durationTerms"] ? {duration_years:fields["durationTerms"]}:{})};
             })()
           : programCreateFieldErrors(error),
         message: "Please review the program details.",

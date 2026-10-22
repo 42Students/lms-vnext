@@ -1,4 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {readFileSync} from "node:fs";
 import {facultyReportCurrentRosterRows,getFacultyQuizReport,
  getFacultyAssignmentReport} from "@/modules/courses/faculty-assessment-report-service";
 import {CoursesServiceError} from "@/modules/courses/errors";
@@ -54,6 +55,14 @@ const actor:RequestContext={
 };
 const questionId="77777777-7777-4777-8777-777777777777";
 describe("COURSES-BREAK-FACULTY-06 current-roster report anti-IDOR and consistency",()=>{
+ it("enforces tenant membership and delivery scope before reporting historical submissions",()=>{
+  const quizSource=readFileSync(new URL("../../src/modules/courses/quiz-attempt-service.ts",import.meta.url),"utf8");
+  const assignmentSource=readFileSync(new URL("../../src/modules/courses/assignment-submission-service.ts",import.meta.url),"utf8");
+  expect(quizSource).toContain("eq(collegeMemberships.collegeId,quiz.collegeId)");
+  expect(quizSource).toContain("eq(quizAttempts.deliveryId,");
+  expect(assignmentSource).toContain("eq(assignmentSubmissions.deliveryId,");
+  expect(assignmentSource).toContain("requireDeliveryContentMutation(");
+ });
  beforeEach(()=>{
   state.overviews=0;state.attemptReads=0;state.submissionReads=0;
   state.rosterReads=0;state.quizReads=0;state.rosterFailure=false;
@@ -75,23 +84,23 @@ describe("COURSES-BREAK-FACULTY-06 current-roster report anti-IDOR and consisten
     gradePublished:true,pointsAwarded:10,submittedAt:at(11)},
   ];
  });
- it("FAC-assessments-01 filters foreign and unenrolled learner attempts before summary and per-question accuracy",async()=>{
+ it("FAC-assessments-01 retains delivery-authorized historical attempts while current roster controls missing counts",async()=>{
   const report=await getFacultyQuizReport(actor,quizId,deliveryId);
-  expect(report.attempts).toHaveLength(2);
-  expect(report.latestAttempts).toHaveLength(1);
+  expect(report.attempts).toHaveLength(3);
+  expect(report.latestAttempts).toHaveLength(2);
   expect(report.metrics).toMatchObject({
-   totalAttempts:2,eligibleLearners:1,uniqueLearners:1,
-   submittedLearners:1,notAttempted:0,averagePercent:50,
+   totalAttempts:3,eligibleLearners:1,uniqueLearners:2,
+   submittedLearners:2,notAttempted:0,averagePercent:75,
   });
-  expect(report.questions).toMatchObject([{correctCount:0,answeredCount:1,accuracyPercent:0}]);
-  expect(JSON.stringify(report)).not.toContain(foreignLearner);
+  expect(report.questions).toMatchObject([{correctCount:1,answeredCount:2,accuracyPercent:50}]);
+  expect(report.latestAttempts.map(row=>row.membershipId)).toContain(foreignLearner);
  });
- it("FAC-assessments-01 excludes foreign submissions from published grades, missing counts and late statistics",async()=>{
+ it("FAC-assessments-01 retains historical delivery submissions and excludes them only from missing-roster counts",async()=>{
   const report=await getFacultyAssignmentReport(actor,assignmentId,deliveryId);
-  expect(report.submissions).toHaveLength(1);
-  expect(report.metrics).toMatchObject({eligibleLearners:1,submitted:1,
-   missing:0,onTime:1,late:0,graded:1,gradePublished:1,averagePercent:50});
-  expect(JSON.stringify(report)).not.toContain(foreignLearner);
+  expect(report.submissions).toHaveLength(2);
+  expect(report.metrics).toMatchObject({eligibleLearners:1,submitted:2,
+   missing:0,onTime:1,late:1,graded:2,gradePublished:2,averagePercent:75});
+  expect(report.submissions.map(row=>row.membershipId)).toContain(foreignLearner);
  });
  it("preserves delivery-authorized submissions and attempts during roster failure with unknown absence counts",async()=>{
   state.rosterFailure=true;

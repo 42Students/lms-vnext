@@ -62,7 +62,7 @@ describe("Chat-5 FIXED-ON-MAIN evidence revalidation",()=>{
   expect(c).toContain("deliverRecordedLearnerPlacementEvent(tx,{");
   expect(c).toContain('kind:request.requestType==="ROUND_RESCHEDULE"?"RESCHEDULE_DECIDED":"REQUEST_DECIDED"');
   expect(source("src/modules/placements/learner-placement-event-copy.ts")).toContain('REQUEST_DECIDED:"Placement request reviewed"');
-  expect(source("src/modules/placements/learner-placement-event-delivery.ts")).toContain("deliverInAppNotificationInTransaction(tx,input.eventId");
+  expect(source("src/modules/placements/learner-placement-event-delivery.ts")).toContain("deliverInAppNotificationInTransaction(inner,input.eventId");
   expect(c).toContain("decisionEvent.id");
  });
 });

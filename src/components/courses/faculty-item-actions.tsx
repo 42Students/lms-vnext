@@ -65,7 +65,7 @@ export function FacultyItemActions({
 
       if (!response.ok) {
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? "Could not update this Course item.",
         );
         return;
       }

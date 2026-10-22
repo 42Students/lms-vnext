@@ -1,8 +1,8 @@
 import "server-only";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { academicPeriods, cohorts, collegeMemberships, departments, learnerProfiles, programs, sections } from "@/db/schema";
+import { academicPeriods, cohorts, collegeMemberships, departments, learnerProfiles, programs, sections, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
@@ -68,7 +68,30 @@ export async function registerCollegeStudent(context: RequestContext, raw: unkno
       .where(and(eq(sections.id,input.sectionId),eq(sections.cohortId,input.cohortId),
         eq(academicPeriods.collegeId,member.collegeId),
         eq(sections.status,"ACTIVE"))).limit(1);
-    if(!section)throw new AcademicsServiceError("CLASS_BATCH_MISMATCH");
+    if (!section) {
+      throw new AcademicsServiceError(
+        "CLASS_BATCH_MISMATCH",
+        "Learner class must belong to the selected program",
+      );
+    }
+  }
+  // Reject conflicts before creating an identity. Canonical onboarding must
+  // still enforce uniqueness atomically: another request can race this read.
+  // Never expose the owner of a conflicting phone, email, or roll number.
+  const [identityConflict] = await getDb().select({id:users.id})
+    .from(users).where(or(
+      eq(users.phoneE164,input.phoneE164),
+      input.email ? eq(sql<string>`lower(${users.email})`,input.email.toLowerCase()) : undefined,
+    )).limit(1);
+  if (identityConflict) throw new Error("STUDENT_IDENTITY_ALREADY_REGISTERED");
+  if (input.rollNumber) {
+    const [rollConflict] = await getDb().select({id:learnerProfiles.membershipId})
+      .from(learnerProfiles)
+      .innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProfiles.membershipId))
+      .where(and(eq(collegeMemberships.collegeId,member.collegeId),
+        eq(sql<string>`lower(${learnerProfiles.rollNumber})`,input.rollNumber.toLowerCase())))
+      .limit(1);
+    if (rollConflict) throw new Error("ROLL_NUMBER_ALREADY_REGISTERED");
   }
   const person = await onboardPersonWithRuntime(context, {
     collegeId: member.collegeId, displayName: input.displayName,

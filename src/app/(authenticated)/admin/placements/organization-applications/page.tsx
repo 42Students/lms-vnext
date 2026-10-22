@@ -84,34 +84,30 @@ export default async function OrganizationApplicationsPage({searchParams}:{
    <Link href="/admin/placements/organization-applications"
     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
   </div>
-  <div className="max-w-full overflow-x-auto border-y border-border">
-   <table className="w-full min-w-[760px] text-left text-sm">
-    <caption className="sr-only">Organization placement applications</caption>
-    <thead className="border-b border-border bg-[var(--lms-neutral-50)] text-[13px]">
-     <tr><th scope="col" className="px-3 py-3">Learner</th>
-      <th scope="col" className="px-3 py-3">Company / drive</th>
-      <th scope="col" className="px-3 py-3">Status</th>
-      <th scope="col" className="px-3 py-3">Score</th>
-      <th scope="col" className="px-3 py-3">Applied (IST)</th>
-      <th scope="col" className="px-3 py-3">Action</th></tr>
-    </thead>
-    <tbody>
-     {result.records.map(record=><tr key={record.id} className="border-b border-border">
-      <td className="max-w-48 break-words px-3 py-3 font-semibold">{record.learnerName}</td>
-      <td className="max-w-60 break-words px-3 py-3">{record.companyName}<span className="block text-xs text-muted-foreground">{record.jobTitle}</span></td>
-      <td className="px-3 py-3">{record.applicationStatus}</td>
-      <td className="px-3 py-3 tabular-nums">{record.score??"—"}</td>
-      <td className="px-3 py-3">{fmt.format(new Date(record.appliedAt))}</td>
-      <td className="px-3 py-3">
-       <Link href={"/admin/placements/jobs/"+encodeURIComponent(record.jobId)+
-        "/applications?applicationId="+encodeURIComponent(record.id)}
-        className="font-semibold text-link underline">Application details</Link>
-      </td>
-     </tr>)}
-    </tbody>
-   </table>
-   {!result.records.length?<p className="p-6 text-sm text-muted-foreground">No matching placement applications.</p>:null}
-  </div>
+  <section aria-label="Organization placement applications" className="space-y-3">
+   {result.records.length?(
+    <ul className="grid min-w-0 gap-3">
+     {result.records.map(record=><li key={record.id} className="min-w-0 rounded-lg border border-border p-4">
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+       <div className="min-w-0 space-y-1">
+        <h2 className="break-words font-semibold">{record.learnerName}</h2>
+        <p className="break-words text-sm">{record.companyName} · {record.jobTitle}</p>
+       </div>
+       <span className="text-sm font-semibold">{record.applicationStatus}</span>
+      </div>
+      <dl className="mt-3 flex flex-wrap gap-x-8 gap-y-2 text-sm">
+       <div><dt className="text-muted-foreground">Score</dt><dd className="tabular-nums">{record.score??"—"}</dd></div>
+       <div><dt className="text-muted-foreground">Applied (IST)</dt><dd>{fmt.format(new Date(record.appliedAt))}</dd></div>
+      </dl>
+      <Link href={"/admin/placements/jobs/"+encodeURIComponent(record.jobId)+
+       "/applications?applicationId="+encodeURIComponent(record.id)}
+       className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+       Application details
+      </Link>
+     </li>)}
+    </ul>
+   ):<EmptyState title="No matching placement applications" description="Try a different search, stage or sort order."/>}
+  </section>
   <nav aria-label="Application search pages" className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-sm text-body">Page {result.page} of {result.totalPages}</p>
    <div className="flex gap-3">

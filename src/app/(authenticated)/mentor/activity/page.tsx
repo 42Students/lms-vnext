@@ -148,7 +148,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             </div>
           </li>)}</ol>}
       {data.totalPages > 1 ? <Pagination label="Project activity pagination" page={data.page}
-        pageCount={data.totalPages} hrefForPage={page=>mentorPortfolioHref("activity",{...data.query,page})}/> : null}
+        pageCount={data.totalPages} hrefForPage={page=>{ const { projectId, ...query } = data.query; return mentorPortfolioHref("activity", { ...query, ...(projectId === undefined ? {} : { projectId }), page }); }}/> : null}
     </>}
     <p className="text-xs text-muted-foreground">
       Only registered project activity events tied to active Mentor assignments are counted. Full legacy history is not yet certified.

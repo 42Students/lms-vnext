@@ -73,8 +73,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
   let method="POST";
   if(action==="SAVE"){
    const maxPoints=Number(points);
-   if(!title.trim()||title.trim().length>255||!points.trim()||!Number.isInteger(maxPoints)||maxPoints<0||maxPoints>10000){
-    setError("Enter an assignment title (1–255 characters) and points from 0 to 10000.");return;
+   if(!title.trim()||title.trim().length>255||!points.trim()||!Number.isInteger(maxPoints)||maxPoints<0||maxPoints>1000){
+    setError("Enter an assignment title (1–255 characters) and points from 0 to 1000.");return;
    }
    const dueInstant=dueAt?parseCollegeIstLocal(dueAt):null;
    if(dueAt&&!dueInstant){setError("Enter a valid IST deadline.");return;}
@@ -179,7 +179,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     <Input maxLength={255} placeholder="e.g., Module 1 Project" disabled={busy} value={title} onChange={e=>setTitle(e.target.value)}
      className="min-h-11 md:min-h-9"/></label>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Points
-    <Input type="number" min={0} max={10000} placeholder="Enter points" disabled={busy} value={points}
+    <Input type="number" min={0} max={1000} placeholder="Enter points" disabled={busy} value={points}
      onChange={e=>setPoints(e.target.value)} className="min-h-11 md:min-h-9"/></label>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Deadline (IST)
     <Input type="datetime-local" disabled={busy} value={dueAt} onChange={e=>setDueAt(e.target.value)}

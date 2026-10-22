@@ -2,14 +2,14 @@ import {z} from "zod";
 const id=z.string().uuid();
 /** Storage accepts the legacy InterviewForm's 255-character interviewer and
  * 500-character venue. Notes use the versioned outcome reason (up to 1000).
- * College-configured duration bounds may be narrower than the safe 5–480
+ * College-configured duration bounds may be narrower than the legacy 15–480
  * minute server guard; the UI can call this pure helper before submission.
  */
 export function collegeInterviewDurationBounds(settings?:{
  minMinutes?:number|null;maxMinutes?:number|null;defaultMinutes?:number|null;
 }){
- const min=Number.isInteger(settings?.minMinutes)&&Number(settings?.minMinutes)>=5
-   ?Math.min(480,Number(settings?.minMinutes)):5;
+ const min=Number.isInteger(settings?.minMinutes)&&Number(settings?.minMinutes)>=15
+   ?Math.min(480,Number(settings?.minMinutes)):15;
  const max=Number.isInteger(settings?.maxMinutes)&&Number(settings?.maxMinutes)>=min
    ?Math.min(480,Number(settings?.maxMinutes)):480;
  const initial=Number.isInteger(settings?.defaultMinutes)?Number(settings?.defaultMinutes):60;
@@ -26,21 +26,21 @@ function isSafeInterviewMeetingUrl(value:string|null){
 }
 const appointment=z.object({
  roundId:id,applicationId:id,scheduledAt:z.iso.datetime({offset:true}),
- durationMinutes:z.number().int().min(5).max(480),
+ durationMinutes:z.number().int().min(15).max(480),
  // Legacy interview vocabulary; optional for already-versioned round clients.
  interviewType:z.enum(["SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"],
   {error:"Please select interview type"}).optional(),
  roundDescription:z.string().trim().min(10,"Please add at least a short description (min 10 characters)")
   .max(500).optional(),
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]),venue:z.string().trim().max(500).nullable(),
- meetingUrl:z.url().max(500).nullable(),interviewer:z.string().trim().max(255).nullable(),
+ meetingUrl:z.url("Please enter a valid meeting link starting with https://").max(500).nullable(),interviewer:z.string().trim().max(255).nullable(),
 }).strict().superRefine((x,c)=>{
  if(x.mode==="ON_CAMPUS"&&(!x.venue||x.venue.length<2))
   c.addIssue({code:"custom",path:["venue"],message:"Enter the interview location."});
  if(x.mode==="VIRTUAL"&&!x.meetingUrl)
   c.addIssue({code:"custom",path:["meetingUrl"],message:"Please enter the meeting link"});
  else if(x.mode==="VIRTUAL"&&!isSafeInterviewMeetingUrl(x.meetingUrl))
-  c.addIssue({code:"custom",path:["meetingUrl"],message:"Meeting link must be a valid https:// URL with a public hostname"});
+  c.addIssue({code:"custom",path:["meetingUrl"],message:"Please enter a valid meeting link starting with https://"});
 });
 /** New schedules require the legacy interview type and meaningful description.
  * Editing imported appointments is compatible with missing historic fields.

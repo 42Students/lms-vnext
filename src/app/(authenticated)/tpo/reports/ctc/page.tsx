@@ -47,8 +47,8 @@ export default async function TpoCtcReportPage({
   });
 
   const ctc = workspace.details.ctc;
-  // The report model currently aggregates 0–3/3–6 LPA; those counts cannot
-  // be accurately split into legacy <4 and 4–6 without individual INR offers.
+  // The report model bands individual annual INR offers at the legacy
+  // TpoInsightsService boundaries: <4, 4–6, 6–10, 10–20 and 20+ LPA.
   const legacyBoundaryStarts=[0,400_000,600_000,1_000_000,2_000_000];
   const legacyBandParity=ctc.bands.length===legacyBoundaryStarts.length &&
     ctc.bands.every((band,index)=>band.minimumInr===legacyBoundaryStarts[index] &&

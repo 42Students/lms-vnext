@@ -1,6 +1,7 @@
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { CollegeBatchGraduateButton } from "@/components/academics/college-batch-graduate-button";
 import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -14,6 +15,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { collegePromotionQuerySchema, formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
 import { getPromotionFacultyReadiness } from "@/modules/academics/college-promotion-faculty-readiness";
+import { getPromotionTeachingForecast } from "@/modules/academics/college-promotion-teaching-forecast";
 import {
   listCollegePromotionOptions,
   previewCollegeBatchPromotion,
@@ -40,17 +42,17 @@ export default async function CollegeBatchPromotionPage({
     <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Choose a college in your account switcher →</Link>
   </div>;
   const incoming = await searchParams;
-  const showCompleted = first(incoming.showCompleted) === "1";
-  const batchPageRaw=first(incoming.batchPage)??"1";
-  const showInactive=first(incoming.showInactive)==="1";
-  const batchSearch=(first(incoming.search)??"").trim().slice(0,120);
-  const batchSizeRaw=first(incoming.batchPageSize)??"10";
+  const showCompleted = first(incoming["showCompleted"]) === "1";
+  const batchPageRaw=first(incoming["batchPage"])??"1";
+  const showInactive=first(incoming["showInactive"])==="1";
+  const batchSearch=(first(incoming["search"])??"").trim().slice(0,120);
+  const batchSizeRaw=first(incoming["batchPageSize"])??"10";
   const batchPage=/^[1-9][0-9]{0,3}$/.test(batchPageRaw)?Number(batchPageRaw):null;
   const batchSize=["10","20","50"].includes(batchSizeRaw)?Number(batchSizeRaw):null;
   const raw = {
-    programId: first(incoming.programId),
-    cohortId: first(incoming.cohortId),
-    yearStart: first(incoming.yearStart),
+    programId: first(incoming["programId"]),
+    cohortId: first(incoming["cohortId"]),
+    yearStart: first(incoming["yearStart"]),
   };
   const parsed = collegePromotionQuerySchema.safeParse(
     Object.fromEntries(Object.entries(raw).filter(([, value]) =>
@@ -58,7 +60,7 @@ export default async function CollegeBatchPromotionPage({
     )),
   );
   if (!parsed.success||batchPage===null||batchSize===null||
-      (first(incoming.showCompleted) !== undefined && !["1",""].includes(first(incoming.showCompleted)!))) return <div className="min-w-0 space-y-4 md:space-y-6">
+      (first(incoming["showCompleted"]) !== undefined && !["1",""].includes(first(incoming["showCompleted"])!))) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
@@ -85,6 +87,9 @@ export default async function CollegeBatchPromotionPage({
   const previewError=previewResult.status==="rejected";
   const facultySetup=preview?.plan.targetTermNumber&&parsed.data.cohortId
     ?await getPromotionFacultyReadiness(context,preview.batch.programId,
+      parsed.data.cohortId,preview.plan.targetTermNumber).catch(()=>null):null;
+  const teachingForecast=preview?.plan.targetTermNumber&&parsed.data.cohortId
+    ?await getPromotionTeachingForecast(context,preview.batch.programId,
       parsed.data.cohortId,preview.plan.targetTermNumber).catch(()=>null):null;
   const inactiveCount=options.cohorts.filter(row=>row.status!=="ACTIVE").length;
   const visibleCohorts=options.cohorts.filter(row=>{
@@ -143,8 +148,8 @@ export default async function CollegeBatchPromotionPage({
         </label>
         <Button type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
       </form>
-      <p className="text-xs text-muted-foreground">Graduation is recorded only after a guarded
-        final-term action is available; no completion is inferred from semester number alone.</p>
+      <p className="text-xs text-muted-foreground">Graduation is a separate confirmed
+        action on a batch in its final semester; no completion is inferred from semester number alone.</p>
       <DataTable caption="All college batches" rows={directoryRows} getRowKey={row=>row.id}
         columns={[
           {key:"batch",header:"Batch Name",mobilePriority:"primary",cell:row=>row.name},
@@ -158,7 +163,7 @@ export default async function CollegeBatchPromotionPage({
           {key:"action",header:"Last Action",mobilePriority:"action",cell:row=>row.status==="ACTIVE"?
             (preview?.batch.id===row.id && row.currentTermNumber!==null &&
              row.currentTermNumber>=preview.batch.durationTerms
-              ?<span className="text-xs text-muted-foreground" title="Graduation requires a verified final-term action; a promotion cannot graduate learners.">Mark graduated — not available</span>
+              ?<CollegeBatchGraduateButton cohortId={row.id} batchName={row.name}/>
               :<Link href={batchPreviewHref(row)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Promote · Preview</Link>):
             <span className="text-xs text-muted-foreground">{row.status==="COMPLETED"?"Graduated":"No action available"}</span>},
         ]}
@@ -275,10 +280,13 @@ export default async function CollegeBatchPromotionPage({
               <CollegePromotionConfirmation cohortId={preview.batch.id}
                 programId={preview.batch.programId}
                 expectedVersion={preview.batch.version}
-                yearStart={parsed.data.yearStart}
+                {...(parsed.data.yearStart!==undefined?{yearStart:parsed.data.yearStart}:{})}
                 targetTerm={preview.plan.targetTermNumber!}
+                {...(teachingForecast?.ending!==undefined?{deactivatedFacultyAssignments:teachingForecast.ending}:{})}
                 learnerCount={preview.checkedLearners}
-                academicYearStart={preview.plan.academicYearStart!} />
+                academicYearStart={preview.plan.academicYearStart!}
+                activeClasses={preview.activeClasses}
+                maxSemester={preview.batch.durationTerms} />
             ) : null}
         </section>
         <section aria-label="Learner-level preview" className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
@@ -295,9 +303,8 @@ export default async function CollegeBatchPromotionPage({
       </>
     )}
     <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">
-      Preview never writes. Graduation is not an enabled server operation yet;
-      final-semester rows are not marked Completed or graduated by this view.
-      Confirming promotion requires an unchanged version and rechecks
+      Preview never writes. Final-semester rows are marked Completed only through the confirmed
+      Mark graduated action. Confirming promotion requires an unchanged version and rechecks
       blockers in a transaction. Graduation is available for batches in their final registered semester.
     </p>
   </div>;

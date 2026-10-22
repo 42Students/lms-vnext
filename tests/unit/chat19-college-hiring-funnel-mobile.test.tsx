@@ -11,7 +11,7 @@ const totals={
 function fixture(hasRows:boolean):Funnel{
  return {
   query:{},
-  filters:{departments:[],programs:[],cohorts:[]},
+  filters:{departments:[],programs:[],cohorts:[],errors:{departments:null,programs:null,cohorts:null}},
   totalApplications:hasRows?9:0,
   companyReportUnavailable:false,
   normalizedCompanySubtotals:[],

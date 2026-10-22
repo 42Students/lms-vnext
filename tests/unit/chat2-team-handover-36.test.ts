@@ -52,6 +52,7 @@ describe("Scoped Team ownership handover",()=>{
   expect(ui).toContain("timeoutMs:12000");
   expect(page).toContain("<TpoTeamHandover");
   expect(page).toContain('member.membershipId!==actorMembershipId');
-  expect(legacyRedirect).toContain('redirect("/tpo/settings/team")');
+  expect(legacyRedirect).toContain('redirect("/tpo/settings?tab=team")');
+  expect(legacyRedirect).toContain('tab === "people" || tab === "members" || tab === "roster"');
  });
 });

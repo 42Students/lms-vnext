@@ -39,7 +39,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   requireSuperAdminSelectedCollege(context,"placements.manage");
   const {jobId}=await params;
   const rawSearchParams=await searchParams;
-  const conflictsOnly=rawSearchParams.conflictsOnly==="1";
+  const conflictsOnly=rawSearchParams["conflictsOnly"]==="1";
   const query=driveInterviewsParams(rawSearchParams);
   if(!query) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Interviews" description="Schedule candidate interviews and review interview rounds."/>
@@ -53,15 +53,15 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     listCollegeDriveInterviews(context,jobId,query),
     getCollegeRoundSlotAppointments(context,jobId,{
       appointmentPage:query.appointmentPage,
-      appointmentStatus:query.appointmentStatus,
-      appointmentMode:query.appointmentMode,
-      appointmentSearch:query.appointmentSearch,
+      ...(query.appointmentStatus !== undefined ? {appointmentStatus:query.appointmentStatus} : {}),
+      ...(query.appointmentMode !== undefined ? {appointmentMode:query.appointmentMode} : {}),
+      ...(query.appointmentSearch !== undefined ? {appointmentSearch:query.appointmentSearch} : {}),
       appointmentPageSize:query.appointmentPageSize,
-      appointmentSort:query.appointmentSort,
-      preferredApplicationId:query.applicationId,
+      ...(query.appointmentSort !== undefined ? {appointmentSort:query.appointmentSort} : {}),
+      ...(query.applicationId !== undefined ? {preferredApplicationId:query.applicationId} : {}),
       candidatePage:query.candidatePage,
       candidatePageSize:query.candidatePageSize,
-      candidateSearch:query.candidateSearch,
+      ...(query.candidateSearch !== undefined ? {candidateSearch:query.candidateSearch} : {}),
     }),
   ]);
   if(roundResult.status==="rejected"&&roundResult.reason instanceof AuthorizationError)
@@ -307,7 +307,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           </Banner>:null}
         <CollegeInterviewAppointments jobId={jobId}
           rounds={appointments.rounds} candidates={appointments.candidates}
-          appointments={visibleCandidateRows} preferredApplicationId={query.applicationId}/>
+          appointments={visibleCandidateRows} {...(query.applicationId !== undefined ? {preferredApplicationId:query.applicationId} : {})}/>
         <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
           {appointments.appointmentPage>1?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}
