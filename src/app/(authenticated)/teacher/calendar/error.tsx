@@ -12,8 +12,8 @@ export default function FacultyClassScheduleError({ reset }: {
   return (
     <section className="min-w-0 space-y-4">
       <PageHeader title="Class Schedule" />
-      <Alert tone="error" title="Unable to load class schedule. Please try again.">
-        The schedule could not be refreshed. Retry the schedule or return to Courses without changing any saved classes.
+      <Alert tone="error" title="Failed to load course data">
+        Calendar events may be incomplete. Retry the schedule or return to Courses without changing any saved classes.
       </Alert>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         <Button onClick={reset}>Retry class schedule</Button>
