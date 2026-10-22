@@ -18,11 +18,14 @@ export async function getLearnerProjectGoals(
   if(!templateId||!templateVersionId){
     return {goal:null,description:null,deliverables:[],definitionOfDone:[],personas:[]};
   }
+  // Bind guarded IDs to local non-null variables before constructing the query.
+  const versionId: string = templateVersionId;
+  const assignedTemplateId: string = templateId;
   const [version]=await getDb().select({
     blueprint:projectTemplateVersions.blueprint,
   }).from(projectTemplateVersions).where(and(
-    eq(projectTemplateVersions.id,templateVersionId),
-    eq(projectTemplateVersions.templateId,templateId),
+    eq(projectTemplateVersions.id,versionId),
+    eq(projectTemplateVersions.templateId,assignedTemplateId),
   )).limit(1);
   if(!version)throw new ProjectsServiceError("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
   const authored=projectTemplateBlueprintSchema.parse(version.blueprint);
