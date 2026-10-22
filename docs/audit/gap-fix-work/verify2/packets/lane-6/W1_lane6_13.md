@@ -52,7 +52,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: Tenant-specific deep link /recruiter/messages or /recruiter/drives/{jobId} `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/RecruiterMessageEmailService.java:110-116`
 - Expected fix: Add verified tenant-domain deep link and proper job context to template
 
-## G2-20-010-004 [P1] GAP facet F02
+## G2-20-010-004 [OK — name/subject/count/excerpts/earlier count/CTA merged] GAP facet F02
 - Files: src/modules/placements/recruiter-message-email-provider.ts
 - Legacy: Email layout includes greeting, subject, count, newest messages, earlier count and link `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/RecruiterMessageEmailService.java:106-136`
 - Expected fix: Restore complete original email information hierarchy and verify rendered template
@@ -62,7 +62,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: Deep link uses verified college domain via mail.collegeLink `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/RecruiterMessageEmailService.java:110-116`
 - Expected fix: Build safe per-college URL to job/general conversation and send in merge
 
-## G2-20-010-040 [P1] GAP facet F15
+## G2-20-010-040 [OK — dedicated template key, merge variables and verified Reply-To configured] GAP facet F15
 - Files: src/modules/placements/recruiter-message-email-provider.ts
 - Legacy: Dedicated recruiter-message Zepto template, merge includes count/subject/more/link `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/RecruiterMessageEmailService.java:106-122`
 - Expected fix: Provision full variable set and verify template render, subject and reply-to
