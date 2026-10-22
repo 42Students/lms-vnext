@@ -104,7 +104,8 @@ export async function commandFacultyAssignment(
           throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
         if(current.status==="ARCHIVED")
           throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
-        const storedResources=input.action==="EDIT"&&normalizedResources!==undefined
+        const storedResources=(input.action==="EDIT"||input.action==="RESOURCES")&&
+          normalizedResources!==undefined
           ?await tx.select().from(courseAssignmentResources).where(
             eq(courseAssignmentResources.assignmentId,current.id))
             .orderBy(courseAssignmentResources.position):[];
@@ -123,6 +124,15 @@ export async function commandFacultyAssignment(
           if(facultyAssignmentEditLockedBySubmissions(changedFields,Boolean(submission)))
             throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
           eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED;
+        }else if(input.action==="RESOURCES"){
+          if(!["DRAFT","PUBLISHED"].includes(current.status))
+            throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+          if(normalizedResources===undefined||
+             !facultyResourcesChanged(storedResources,normalizedResources))
+            throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+          if(submission)throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
+          changedFields=["resources"];
+          eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED;
         }else if(input.action==="PUBLISH"){
           if(current.status!=="DRAFT"||!current.dueAt||current.dueAt.getTime()<=Date.now())
             throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
@@ -139,7 +149,8 @@ export async function commandFacultyAssignment(
             maxPoints:input.maxPoints,updatedAt:now,
             ...(input.allowedMethods&&facultyAssignmentMethodsChanged(current.allowedSubmissionMethods,input.allowedMethods)
               ?{allowedSubmissionMethods:input.allowedMethods}:{}),
-          }:{status:input.action==="PUBLISH"?"PUBLISHED":"ARCHIVED",updatedAt:now},
+          }:input.action==="RESOURCES"?{updatedAt:now}:
+            {status:input.action==="PUBLISH"?"PUBLISHED":"ARCHIVED",updatedAt:now},
         ).where(and(eq(courseAssignments.id,current.id),
           eq(courseAssignments.deliveryId,deliveryId),
           eq(courseAssignments.status,current.status),
@@ -150,7 +161,8 @@ export async function commandFacultyAssignment(
         result=updated;
       }
       if(normalizedResources!==undefined&&(input.action==="CREATE"||
-        (input.action==="EDIT"&&changedFields.includes("resources")))){
+        ((input.action==="EDIT"||input.action==="RESOURCES")&&
+          changedFields.includes("resources")))){
         await replaceFacultyAssignmentResources(tx,result.id,context.user.id,
           normalizedResources);
       }

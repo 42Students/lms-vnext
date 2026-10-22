@@ -256,7 +256,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    {createdResourceTarget.saved?<FacultyAssignmentResourcesEditor
      key={createdResourceTarget.saved.id+"-private-resources"}
      deliveryId={createdResourceTarget.deliveryId}
-     assignment={createdResourceTarget.saved}/>:null}
+     assignment={createdResourceTarget.saved} resourcesOnly/>:null}
   </section>:null}
  </div>;
 }

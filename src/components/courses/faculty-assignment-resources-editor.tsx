@@ -69,8 +69,8 @@ async function responseError(response:Response,fallback:string):Promise<string>{
  * Link resources. Saves through the scoped faculty CAS endpoint. Uploaded files
  * remain private and are accepted only after scanner CLEAN attestation. */
 export function FacultyAssignmentResourcesEditor({
- assignment,deliveryId,
-}:{assignment:Assignment;deliveryId:string}){
+ assignment,deliveryId,resourcesOnly=false,
+}:{assignment:Assignment;deliveryId:string;resourcesOnly?:boolean}){
  const router=useRouter();
  const [open,setOpen]=useState(false);
  const [drafts,setDrafts]=useState<Resource[]>([]);
@@ -188,7 +188,10 @@ export function FacultyAssignmentResourcesEditor({
   try{
    const response=await fetch(commandEndpoint,{
     method:"POST",headers:{"Content-Type":"application/json"},cache:"no-store",
-    body:JSON.stringify({
+    body:JSON.stringify(resourcesOnly?{
+     action:"RESOURCES",assignmentId:assignment.id,
+     resources:parsed.data,expectedUpdatedAt:version.toISOString(),confirmed:true,
+    }:{
      action:"EDIT",assignmentId:assignment.id,
      title:assignment.title,description:assignment.description,
      dueAt:due?.toISOString()??null,maxPoints:assignment.maxPoints,
