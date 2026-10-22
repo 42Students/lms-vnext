@@ -69,13 +69,13 @@ export async function getTpoInterviewLegacyStatus(
  )).orderBy(desc(placementInterviewPrivateEvents.createdAt),
   desc(placementInterviewPrivateEvents.id)).limit(1):[];
  const privateReview=review?.privateFeedback??null;
- const rating=typeof privateReview?.rating==="number"&&
-  Number.isFinite(privateReview.rating)&&privateReview.rating>=0&&
-  privateReview.rating<=5?privateReview.rating:null;
- const recommendation=typeof privateReview?.recommendation==="string"
-  ?privateReview.recommendation.slice(0,120):null;
- const comments=typeof privateReview?.comments==="string"
-  ?privateReview.comments.slice(0,3000):null;
+ const rating=typeof privateReview?.["rating"]==="number"&&
+  Number.isFinite(privateReview["rating"])&&privateReview["rating"]>=0&&
+  privateReview["rating"]<=5?privateReview["rating"]:null;
+ const recommendation=typeof privateReview?.["recommendation"]==="string"
+  ?privateReview["recommendation"].slice(0,120):null;
+ const comments=typeof privateReview?.["comments"]==="string"
+  ?privateReview["comments"].slice(0,3000):null;
  const importedStatus=slot.legacyInterviewStatus;
  const canonicalLegacyStatuses=[
   "SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED",
