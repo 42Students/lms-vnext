@@ -12,8 +12,8 @@ export type MentorInboxQuery = z.infer<typeof mentorInboxQuerySchema>;
 export function resolveMentorInboxQuery(rawQuery: unknown) {
   const query = mentorInboxQuerySchema.parse(rawQuery);
   const cursor = parseNotificationCursor({
-    beforeCreatedAt: query.beforeCreatedAt,
-    beforeId: query.beforeId,
+    ...(query.beforeCreatedAt !== undefined ? { beforeCreatedAt: query.beforeCreatedAt } : {}),
+    ...(query.beforeId !== undefined ? { beforeId: query.beforeId } : {}),
   });
   return { query, cursor };
 }
