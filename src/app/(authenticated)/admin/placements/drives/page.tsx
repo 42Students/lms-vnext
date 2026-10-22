@@ -19,7 +19,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, adminDriveIsExpired, adminDriveIstDate } from "@/modules/placements/admin-drive-directory-model";
+import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, adminDriveIsExpired, adminDriveIstDate, adminDriveEffectiveDeadline } from "@/modules/placements/admin-drive-directory-model";
 
 export default async function SuperAdminDrivesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -91,13 +91,13 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    }},
   {key:"location",header:"Location",mobilePriority:"secondary",cell:row=>row.job.locations.join(", ")||"Not specified"},
   {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:row=>{
-    const expired=adminDriveIsExpired(row.job.applicationDeadline,today);
+    const expired=adminDriveIsExpired(adminDriveEffectiveDeadline(row.job),today);
     return <span className={"inline-flex items-center gap-1 "+(expired?"text-warning":"text-body")}>
       <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18"/>
       </svg>
-      <span className={expired?"line-through":""}>{adminDriveIstDate(row.job.applicationDeadline)}</span>
+      <span className={expired?"line-through":""}>{adminDriveIstDate(adminDriveEffectiveDeadline(row.job))}</span>
     </span>;
    }},
   {key:"posted",header:"Posted",mobilePriority:"secondary",
