@@ -5,7 +5,10 @@ it("public share service selects only preview-approved candidate identity fields
  const s=readFileSync(join(process.cwd(),"src/modules/placements/company-share/public-service.ts"),"utf8");
  // Private source fields are queried only after token, college, current shortlist
  // and share-column permission checks. Output is filtered by saved columns.
- expect(s).toContain("projectCompanyShareRows(records,grant.selectedColumns)");
+ expect(s).toContain("projectCompanyShareRows(visibleRecords,selectedColumns)");
+ expect(s).toContain("safeCompanyShareColumns(grant.selectedColumns)");
+ expect(s).toContain("if(!selectionReady)return {kind:\"UNAVAILABLE\" as const}");
+ expect(s).toContain("resumeSignedUrl:null");
  expect(s).toContain("companyShareTokenSchema.safeParse(token)");
  expect(s).toContain("eq(collegeMemberships.collegeId,grant.collegeId)");
  expect(s).toContain('eq(placementApplicationScreenings.status,"SHORTLISTED")');

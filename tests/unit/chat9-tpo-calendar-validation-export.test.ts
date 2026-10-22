@@ -17,7 +17,7 @@ describe("TPO calendar scheduling and accreditation export",()=>{
    const rows=buildAccreditationStudentRows([{
      membershipId:"m1",offerId:"o1",name:"Sample Learner",rollNumber:"23A",
      programme:"B.Tech",branch:"CSE",batch:"2099",company:"Acme",
-     status:"ACCEPTED",annualCtcInr:600000,joining:null,kind:"OFFER",
+     status:"ACCEPTED",annualCtcInr:600000,joining:null,kind:"OFFER",countsAsPlaced:true,
    }]);
    const csv=accreditationStudentCsv(rows);
    expect(rows).toHaveLength(1);

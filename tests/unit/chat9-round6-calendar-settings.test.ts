@@ -10,7 +10,9 @@ describe("chat-9 round 6 calendar and settings",()=>{
   expect(s).toContain('aria-label={"Move follow-up: "');
   expect(s).toContain("onClick={()=>setMove");
   expect(s).toContain("<TpoCalendarMoveFollowup");
-  expect(s).toContain('aria-label="Move recruiter follow-up"');
+  expect(s).toContain('aria-label={"Move follow-up: "+event.title}');
+  expect(s).toContain('draggable onDragStart=');
+  expect(s).toContain('<Dialog open={Boolean(move)}');
  });
  it("TPO-calendar-reports-38 uses the exact legacy description of each canonical report rather than persisted implementation copy",()=>{
   for(const slug of ["by-branch","by-company","ctc","leads","accreditation"]){
@@ -24,7 +26,7 @@ describe("chat-9 round 6 calendar and settings",()=>{
    const labels=TPO_SETTINGS_NAV_GROUPS.flatMap(g=>g.items.map(x=>x.label));
    // TPO-settings-audit-01/03/55: the legacy settings.js People tab is
    // named Recruiters. Recruiter access remains the page heading only.
-   for(const text of ["Placement Rules","Recruiters","What Companies See","Public placements","Placement Branding"])
+   for(const text of ["Placement rules","Job types","After college","Placement team","Recruiters"])
     expect(labels).toContain(text);
  });
  it("TPO-settings-audit-13 shows the live offer-rules example and exact placed-number help",()=>{
