@@ -52,13 +52,14 @@ describe("learner/projects verified gap closure",()=>{
   expect(s).toContain("Open blocked work");
  });
  it("LEARNER-projects-03 blocks are labelled and linked to Board blocked tasks",()=>{
-  const s=page();expect(s).toContain('["Blocked"]');expect(s).toContain("?tab=board&taskStatus=BLOCKED");
+  const s=page();expect(s).toContain('["Blocked"]');expect(s).toContain("?tab=board&lane=Blocked");
  });
  it("LEARNER-projects-04 maps legacy status labels and exposes blocked attention",()=>{
   const s=read("src/components/projects/project-participant-list-controls.tsx");
   expect(s).toContain("In progress");expect(s).toContain("Ready");
   expect(s).toContain('<option value="BLOCKED">Blocked</option>');
-  expect(page()).toContain('query.attention!=="BLOCKED"');
+  expect(page()).toContain('blocked ? ["Blocked"] : []');
+  expect(page()).toContain("attentionSchema.safeParse(attention)");
  });
  it("LEARNER-projects-06 exact list empty copy distinguishes no assignment from filters",()=>{
   expect(learnerProjectListEmptyState(0,0).title).toBe("No projects assigned yet.");
@@ -74,7 +75,8 @@ describe("learner/projects verified gap closure",()=>{
   expect(s).toContain("Admin-reported progress / Manual estimate");
  });
  it("LEARNER-projects-10 archived learner workspace has exact read-only copy",()=>{
-  expect(detail()).toContain("This workspace is archived, so it is read-only.");
+  expect(detail()).toContain('"Archived workspace"');
+  expect(detail()).toContain("Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled.");
  });
  it("LEARNER-projects-11 performance alias targets learner Board and delivery remains available",()=>{
   const s=read("src/app/(authenticated)/learn/projects/[projectId]/page.tsx");
@@ -95,7 +97,7 @@ describe("learner/projects verified gap closure",()=>{
  });
  it("LEARNER-projects-16 Overview uses legacy learner section names",()=>{
   expect(read("src/components/projects/learner-project-goals.tsx")).toContain("About this project");
-  const s=detail();expect(s).toContain('"Project team"');
+  const s=detail();expect(s).toContain("Project team · Works on assigned tasks and shared submissions");
   expect(s).toContain("Final submission");
  });
  it("LEARNER-projects-17 request meeting button, dialog and success use legacy copy",()=>{
@@ -132,7 +134,7 @@ describe("learner/projects verified gap closure",()=>{
  it("LEARNER-projects-30 comments validate nonempty note and expose comment kind",()=>{
   const s=read("src/components/projects/project-task-comments.tsx");
   expect(s).toContain("PROJECT_TASK_COMMENT_KINDS");
-  expect(s).toContain("if(!body.trim())return;");
+  expect(s).toContain('if(!body.trim()){setError("message is required");return;}');
   expect(s).toContain("Add a note before posting");
  });
  it("LEARNER-projects-31 Board shows Add my task, filters and saving feedback",()=>{

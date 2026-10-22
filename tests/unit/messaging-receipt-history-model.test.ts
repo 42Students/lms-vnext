@@ -7,6 +7,7 @@ it("retains only aggregate recipient-free history", () => {
 });
 it("bounds page size and does not accept arbitrary filters", () => {
   expect(messagingHistoryQuerySchema.safeParse({page:"2"}).success).toBe(true);
-  expect(messagingHistoryQuerySchema.safeParse({page:0}).success).toBe(false);
+  expect(messagingHistoryQuerySchema.parse({page:0}).page).toBe(1);
+  expect(messagingHistoryQuerySchema.parse({page:10001}).page).toBe(10000);
   expect(messagingHistoryQuerySchema.safeParse({collegeId:"foreign"}).success).toBe(false);
 });
