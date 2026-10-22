@@ -16,6 +16,7 @@ type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 export const PLACEMENT_NOTICE_DELIVERY_POLICY = {
  inApp:"EVENT_TRANSACTION",external:"DB10_VERIFIED_OUTBOX",
  deduplication:"EVENT_ID_AND_RECIPIENT",crossCollege:"DENY",
+ inAppBatchSize:250,sourceReads:"EVENT_TRANSACTION_CURRENT",
 } as const;
 
 /** Operator-visible requirements, not proof of external dispatch. */
@@ -65,16 +66,27 @@ export type LearnerPlacementDeliverySkip =
  * Nothing is emitted by a page GET or a speculative schedule calculation. */
 export async function deliverRecordedLearnerPlacementEvent(
  tx:Tx,
- input:{eventId:string;collegeId:string;membershipId:string;kind:LearnerPlacementEventKind;subject:string;jobId?:string;applicationId?:string},
+ input:{eventId:string;collegeId:string;membershipId:string;kind:LearnerPlacementEventKind;
+  subject:string;jobId?:string;applicationId?:string;
+  /** Only a verified candidate-specific event writer can provide this. */
+  approvedAssessmentUrl?:string},
 ):Promise<{delivered:boolean;skipped:LearnerPlacementDeliverySkip|null}>{
+ let jobTitle:string|undefined;
+ let scopedJobId:string|undefined=input.jobId;
+ let applicationStatus:string|undefined;
+ let applicationStatusUpdatedAt:Date|null=null;
  if(input.jobId){
-  const [job]=await tx.select({id:placementJobs.id}).from(placementJobs)
+  const [job]=await tx.select({id:placementJobs.id,title:placementJobs.title}).from(placementJobs)
    .where(and(eq(placementJobs.id,input.jobId),eq(placementJobs.collegeId,input.collegeId)))
    .limit(1);
   if(!job)return {delivered:false,skipped:"JOB_NOT_FOUND_OR_OUTSIDE_COLLEGE"};
+  jobTitle=job.title;
  }
  if(input.applicationId){
-  const [application]=await tx.select({id:placementApplications.id})
+  const [application]=await tx.select({
+   id:placementApplications.id,jobId:placementJobs.id,jobTitle:placementJobs.title,
+   status:placementApplications.status,statusUpdatedAt:placementApplications.statusUpdatedAt,
+  })
    .from(placementApplications)
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .where(and(eq(placementApplications.id,input.applicationId),
@@ -83,6 +95,11 @@ export async function deliverRecordedLearnerPlacementEvent(
     input.jobId?eq(placementJobs.id,input.jobId):undefined))
    .limit(1);
   if(!application)return {delivered:false,skipped:"JOB_NOT_FOUND_OR_OUTSIDE_COLLEGE"};
+  scopedJobId=application.jobId;
+  jobTitle=application.jobTitle;
+  applicationStatusUpdatedAt=application.statusUpdatedAt;
+  if(["INTERVIEW","OFFERED","HIRED","ASSESSMENT","REJECTED","SHORTLISTED","WAITLISTED"].includes(application.status))
+   applicationStatus=application.status;
  }
  const [row]=await tx.select({
    userId:collegeMemberships.userId,
@@ -118,7 +135,13 @@ export async function deliverRecordedLearnerPlacementEvent(
    ? row.matching!==false : row.applications!==false
  );
  if(!enabled)return {delivered:false,skipped:"PREFERENCE_OFF"};
- const message=learnerPlacementEventCopy(input.kind,input.subject);
+ // Re-read the currently authorized job/application inside the event writer
+ // transaction; context never comes from a browser-supplied college or URL.
+ const message=learnerPlacementEventCopy(input.kind,input.subject,{
+  jobId:scopedJobId,jobTitle,applicationId:input.applicationId,
+  status:applicationStatus,statusUpdatedAt:applicationStatusUpdatedAt,
+  assessmentUrl:input.applicationId?input.approvedAssessmentUrl:undefined,
+ });
  const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],message);
  return {delivered:delivered.delivered>0,skipped:null};
 }
@@ -129,7 +152,7 @@ export async function deliverRecordedJobApplicantsPlacementEvent(tx:Tx,input:{
  eventId:string;collegeId:string;jobId:string;
  kind:LearnerPlacementEventKind;subject:string;
 }):Promise<number>{
- const [job]=await tx.select({id:placementJobs.id}).from(placementJobs)
+ const [job]=await tx.select({id:placementJobs.id,title:placementJobs.title}).from(placementJobs)
   .where(and(eq(placementJobs.id,input.jobId),eq(placementJobs.collegeId,input.collegeId)))
   .limit(1);
  if(!job)return 0;
@@ -152,11 +175,15 @@ export async function deliverRecordedJobApplicantsPlacementEvent(tx:Tx,input:{
  const usersToNotify=[...new Set(recipients.filter(row=>
    row.profileEnabled!==false &&
    (jobPreference?row.matching!==false:row.applications!==false)).map(row=>row.userId))];
- const notice=learnerPlacementEventCopy(input.kind,input.subject);
+ // Broadcasts never carry candidate-specific assessment links. The job's
+ // stored college is checked above and every recipient is revalidated.
+ const notice=learnerPlacementEventCopy(input.kind,input.subject,{
+  jobId:job.id,jobTitle:job.title,
+ });
  let delivered=0;
- for(let start=0;start<usersToNotify.length;start+=250){
+ for(let start=0;start<usersToNotify.length;start+=PLACEMENT_NOTICE_DELIVERY_POLICY.inAppBatchSize){
   const result=await deliverInAppNotificationInTransaction(tx,input.eventId,
-   usersToNotify.slice(start,start+250),notice);
+   usersToNotify.slice(start,start+PLACEMENT_NOTICE_DELIVERY_POLICY.inAppBatchSize),notice);
   delivered+=result.delivered;
  }
  return delivered;
