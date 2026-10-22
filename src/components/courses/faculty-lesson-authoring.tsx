@@ -686,10 +686,10 @@ export function FacultyLessonAuthoring({
             (option) => option.correct,
           )
         ) {
-          options[0] = {
-            ...options[0],
-            correct: true,
-          };
+          const firstOption = options[0];
+          if (firstOption !== undefined) {
+            options[0] = {...firstOption, correct: true};
+          }
         }
 
         return {
