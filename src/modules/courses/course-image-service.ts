@@ -6,7 +6,7 @@ import { getDb } from "@/db/client";
 import { courses } from "@/db/schema";
 import { courseDisplayContents } from "@/db/schema/course-display-staged";
 import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { can, requirePermission } from "@/modules/permissions/policy";
 import { createPrivateUploadGrant, readPrivateObjectAttestation } from "@/modules/storage/private-object-storage";
 import { getPrivateR2Config } from "@/modules/storage/r2-config";
 import { deleteObject, getObjectStream, headObject } from "@/modules/storage/s3-client";
@@ -44,7 +44,7 @@ function receipt(raw: unknown): Receipt | null {
       typeof row.sizeBytes !== "number" || row.sizeBytes < 1 ||
       row.sizeBytes > MAX_IMAGE_BYTES || typeof row.expiresAt !== "string" ||
       !["UPLOADING", "VERIFYING", "READY"].includes(String(row.status))) return null;
-  return row as Receipt;
+  return row as unknown as Receipt;
 }
 function state(meta: Record<string, unknown> | null): ImageState {
   const value = meta?.courseCoverAsset;
@@ -65,11 +65,19 @@ async function authorize(context: RequestContext, rawId: string, manage: boolean
     requirePermission(context, "courses.manage", {
       collegeId: scope.collegeId, organizationId: scope.organizationId,
     });
-  } else if (context.user.platformStatus !== "ACTIVE" ||
-    !(context.membership?.status === "ACTIVE" &&
-      context.membership.collegeId === scope.collegeId) &&
-    !context.user.systemRoles.includes("SUPER_ADMIN")) {
-    fail("COURSE_IMAGE_NOT_FOUND", 404);
+  } else {
+    const ownCollegeMember = context.membership?.status === "ACTIVE" &&
+      context.membership.collegeId === scope.collegeId;
+    if (context.user.platformStatus !== "ACTIVE" ||
+        !ownCollegeMember && !context.user.systemRoles.includes("SUPER_ADMIN"))
+      fail("COURSE_IMAGE_NOT_FOUND", 404);
+    if (!ownCollegeMember) requirePermission(context, "courses.read", {
+      collegeId: scope.collegeId, organizationId: scope.organizationId,
+    });
+    if ((!scope.enabled || scope.legacyAllowedForDisplay === 0) &&
+        !can(context, "courses.manage", {
+          collegeId: scope.collegeId, organizationId: scope.organizationId,
+        })) fail("COURSE_IMAGE_NOT_FOUND", 404);
   }
   if (!courseDisplayRuntimeEnabled()) fail("DB05_COURSE_DISPLAY_MIGRATIONS_PENDING", 503);
   return scope;
@@ -98,6 +106,9 @@ export async function grantCourseImage(context: RequestContext, rawId: string, r
   const ownerMembershipId = uploader(context, scope.collegeId);
   const declaration = raw && typeof raw === "object" && !Array.isArray(raw)
     ? raw as Record<string, unknown> : {};
+  if (typeof declaration.originalName !== "string" ||
+      typeof declaration.contentType !== "string" ||
+      typeof declaration.sizeBytes !== "number") fail("INVALID_REQUEST", 400);
   const parsed = validateStorageDeclaration("lesson-video-thumbnail", {
     originalName: declaration.originalName,
     contentType: declaration.contentType,
@@ -154,7 +165,8 @@ async function verifiedReceipt(pending: Receipt, collegeId: string) {
   };
   const head = await headObject(getPrivateR2Config(), pending.key);
   if (!head) fail("COURSE_IMAGE_UPLOAD_NOT_FOUND", 409);
-  if (pending.status === "VERIFYING" && !devAttestationAllowed()) {
+  if (!devAttestationAllowed() &&
+      (pending.status === "VERIFYING" || head.metadata["malware-scan-status"] === "CLEAN")) {
     try {
       const scan = await readPrivateObjectAttestation(pending.key, {
         collegeId, ownerMembershipId: pending.ownerMembershipId,
@@ -179,7 +191,7 @@ async function verifiedReceipt(pending: Receipt, collegeId: string) {
  * the active thumbnail. The previously visible image survives failed uploads. */
 export async function completeCourseImage(context: RequestContext, rawId: string, receiptId: string) {
   const scope = await authorize(context, rawId, true);
-  const ownerMembershipId = uploader(context, scope.collegeId);
+  uploader(context, scope.collegeId);
   let oldKey: string | undefined;
   let status: "READY" | "VERIFYING" = "VERIFYING";
   try {
@@ -192,7 +204,8 @@ export async function completeCourseImage(context: RequestContext, rawId: string
       if (!locked || locked.status !== "ACTIVE") fail("COURSE_IMAGE_NOT_FOUND", 404);
       const previous = state(locked.legacyMetadata);
       const pending = previous.pending;
-      if (!pending || pending.id !== receiptId || pending.ownerMembershipId !== ownerMembershipId)
+      if (!pending || pending.id !== receiptId ||
+          !pending.key.startsWith("private/" + scope.collegeId + "/"))
         fail("COURSE_IMAGE_RECEIPT_NOT_FOUND", 404);
       if (Date.parse(pending.expiresAt) + 60 * 60 * 1000 < Date.now() &&
         pending.status === "UPLOADING") fail("COURSE_IMAGE_UPLOAD_EXPIRED", 409);
@@ -240,6 +253,24 @@ export async function completeCourseImage(context: RequestContext, rawId: string
   } catch (error) { return safeError(error); }
   if (status === "READY" && oldKey) await safelyDelete(oldKey);
   return { status, imageUrl: status === "READY" ? urlFor(scope.id) : null };
+}
+
+/** A manager may resume verification after a refresh, but never receives
+ * raw R2 object keys or token hashes. */
+export async function getCourseImageStatus(context: RequestContext, rawId: string) {
+  const scope = await authorize(context, rawId, true);
+  const [row] = await getDb().select({ legacyMetadata: courses.legacyMetadata })
+    .from(courses).where(and(eq(courses.id, scope.id),
+      eq(courses.departmentId, scope.departmentId))).limit(1);
+  const image = state(row?.legacyMetadata ?? null);
+  return {
+    pending: image.pending ? {
+      receiptId: image.pending.id, status: image.pending.status,
+      expiresAt: image.pending.expiresAt,
+    } : null,
+    ready: image.active?.status === "READY",
+    imageUrl: image.active?.status === "READY" ? urlFor(scope.id) : null,
+  };
 }
 
 export async function removeCourseImage(context: RequestContext, rawId: string) {
