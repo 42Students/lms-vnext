@@ -40,7 +40,7 @@ export const collegeSemesterDirectoryBaseSchema = z.object({
   status: z.enum(["ALL", "ACTIVE", "INACTIVE"]).default("ALL"),
 }).strict();
 
-export function withCollegeSemesterCreditCheck<T extends z.ZodType<{ minimumCredits?: number | undefined; maximumCredits?: number | undefined; creditState?: "ALL"|"CONFIGURED"|"UNSET"|undefined }>>(schema:T) {
+export function withCollegeSemesterCreditCheck<T extends typeof collegeSemesterDirectoryBaseSchema>(schema:T) {
   return schema.refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
     {path:["maximumCredits"],message:"Maximum credits must be at least the minimum"})
     .refine(q => q.creditState !== "UNSET" || (q.minimumCredits === undefined && q.maximumCredits === undefined),
@@ -68,7 +68,7 @@ export const collegeBatchDirectoryBaseSchema = z.object({
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "INACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
 }).strict();
 
-export function withCollegeBatchFilterCheck<T extends z.ZodType<{startOnOrAfter?:string|undefined;startOnOrBefore?:string|undefined;progression?:"ALL"|"RECORDED"|"MISSING"|undefined;currentTerm?:number|undefined;yearStart?:number|undefined;academicYearState?:"ALL"|"RECORDED"|"UNRECORDED"|undefined}>>(schema:T){
+export function withCollegeBatchFilterCheck<T extends typeof collegeBatchDirectoryBaseSchema>(schema:T){
  return schema.refine(q=>q.startOnOrAfter===undefined||q.startOnOrBefore===undefined||q.startOnOrAfter<=q.startOnOrBefore,
   {path:["startOnOrBefore"],message:"Batch start-date end limit must not precede start limit"}).refine(q=>q.progression!=="MISSING"||q.currentTerm===undefined,
   {path:["currentTerm"],message:"A missing progression record cannot have a recorded current term"}).refine(q=>q.academicYearState!=="UNRECORDED"||q.yearStart===undefined,
