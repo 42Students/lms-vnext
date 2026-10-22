@@ -9,8 +9,8 @@ describe("UX-projects-tables-chat14 responsive and accessible data tables",()=>{
     expect(src).toContain('caption="Learner creation preflight"');
     expect(src).toContain('caption="Individual workspace creation results"');
     expect(src).toContain('mobilePriority:"primary"');
-    expect(src).toContain('row.status==="TO_CREATE"?"To create"');
-    expect(src).toContain('"Already covered":"Duplicate"');
+    expect(src).toContain('row.status==="TO_CREATE"?"Create"');
+    expect(src).toContain('"Already has workspace":"Duplicate"');
     expect(src).toContain('"Created":"Already covered"');
     expect(src).toContain("No eligible learners in this preview.");
     expect(src).toContain("No individual results recorded.");
@@ -19,7 +19,7 @@ describe("UX-projects-tables-chat14 responsive and accessible data tables",()=>{
   it("UX-projects-table-02 retains unsubmitted action, ageing and empty copy",()=>{
     const src=projectSource("project-admin-submissions-page");
     expect(src).toContain('caption="Unsubmitted project workspaces"');
-    expect(src).toContain('Math.max(0,Math.floor((renderedAt.getTime()-row.updatedAt.getTime())/86400000))');
+    expect(src).toContain("projectAdminElapsedDays(row.updatedAt,renderedAt)");
     expect(src).toContain("basePath+\"/\"+row.id+\"/delivery\"");
     expect(src).toContain('mobilePriority:"action"');
     expect(src).toContain("All matching workspaces have a submission.");
