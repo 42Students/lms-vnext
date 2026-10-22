@@ -855,6 +855,8 @@ export const createPlacementApplicationInputSchema =
         .boolean()
         .optional()
         .default(false),
+      // An owner-verified private receipt, not a client-supplied resume URL.
+      resumeReceiptId: z.string().uuid().optional(),
     })
     .strict();
 
