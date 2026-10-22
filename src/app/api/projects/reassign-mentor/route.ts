@@ -6,6 +6,7 @@ import { bulkReassignProjectMentor } from "@/modules/projects/member-service";
 import {findLegacyReassignmentMentorMembership}
   from "@/modules/projects/mentor-reassignment-legacy-lookup-service";
 import {z} from "zod";
+import {bulkProjectMentorReassignmentInputSchema} from "@/modules/projects/validation";
 
 export const runtime = "nodejs";
 
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
     const result =
       await bulkReassignProjectMentor(
         context,
-        normalized,
+        bulkProjectMentorReassignmentInputSchema.parse(normalized),
       );
     return NextResponse.json({...result,
       partialSuccess:result.failures.length>0&&result.reassignedCount>0,
