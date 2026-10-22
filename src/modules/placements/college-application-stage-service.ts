@@ -315,6 +315,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       assessmentLinkSavedToJob:next==="ASSESSMENT"&&Boolean(input.saveAssessmentUrlToJob),
       learnerInAppNoticeRequested:input.notifyLearnerInApp},
     }).returning({id:activityEvents.id});
+    if(!audit)throw new Error("Stage activity event was not recorded.");
     const title="Your placement application was updated";
     const body=next==="REJECTED"?
      "Your application was not selected. See My applications for the latest status.":
@@ -327,7 +328,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     const noticeAllowed=input.notifyLearnerInApp&&
      await learnerAcceptsPlacementApplicationNotices(tx,{collegeId,userId:application.userId});
     const reversible=noticeAllowed&&
-     process.env.DB10_NOTIFICATION_OUTBOX_READY==="DB10_VERIFIED"&&
+     process.env["DB10_NOTIFICATION_OUTBOX_READY"]==="DB10_VERIFIED"&&
      input.action==="MOVE"&&
      ([["SHORTLISTED","ASSESSMENT"],["ASSESSMENT","INTERVIEW"],
        ["INTERVIEW","WAITLISTED"],["WAITLISTED","ASSESSMENT"],
