@@ -10,7 +10,7 @@ describe("Final sprint recruiter Today partial and fatal errors",()=>{
   expect(page).toContain('conversationResult.status==="rejected"');
   expect(page).toContain("Drive summary is partially unavailable.");
   expect(page).toContain("(summaryPartiallyUnavailable||otherSignalsUnavailable)");
-  expect(page).toContain("failedSections");
+  expect(page).toContain("unavailableSources");
   expect(page).toContain('href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}');
   expect(page).toContain(">Retry</Link>");
   expect(error).toContain("onClick={reset}");
