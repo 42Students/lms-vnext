@@ -4,11 +4,13 @@ const offer=(status:string,kind="OFFER"):AccreditationStudentOffer=>({
  membershipId:"learner",offerId:"offer-"+status+"-"+kind,name:"Example",
  rollNumber:"R1",programme:"BTech",branch:"CSE",batch:"2099",
  company:"Employer",status,kind,countsAsPlaced:true,annualCtcInr:1000000,joining:null,
+ releasedAt:status==="ISSUED"||status==="ACCEPTED"?new Date("2026-09-01T00:00:00Z"):null,
 });
 describe("Accreditation placed student policy",()=>{
  it("TPO-calendar-reports-R01 includes released offers for OFFER_RELEASED but not for OFFER_ACCEPTED",()=>{
   const rows=[offer("ISSUED")];
   expect(buildAccreditationStudentRows(rows,"OFFER_RELEASED")).toHaveLength(1);
+  expect(buildAccreditationStudentRows([{...offer("ISSUED"),releasedAt:null}],"OFFER_RELEASED")).toHaveLength(0);
   expect(buildAccreditationStudentRows(rows,"OFFER_ACCEPTED")).toHaveLength(0);
   expect(buildAccreditationStudentRows([offer("ACCEPTED")],"OFFER_ACCEPTED")).toHaveLength(1);
  });
