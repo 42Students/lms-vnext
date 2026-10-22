@@ -36,11 +36,11 @@ export async function POST(request: Request) {
       ? body as Record<string, unknown> : {};
     // A validated work email can provide the domain for a new employer.
     // Never infer a domain from an unvalidated, personal or disposable address.
-    const email = typeof raw.recruiterEmail === "string" ? raw.recruiterEmail.trim().toLowerCase() : "";
+    const email = typeof raw["recruiterEmail"] === "string" ? raw["recruiterEmail"].trim().toLowerCase() : "";
     const derivedDomain = email.includes("@") ? email.split("@")[1] : undefined;
     const withDomain: Record<string, unknown> = {
       ...raw,
-      ...(!raw.primaryDomain && derivedDomain ? { primaryDomain: derivedDomain } : {}),
+      ...(!raw["primaryDomain"] && derivedDomain ? { primaryDomain: derivedDomain } : {}),
     };
     // Distinct-company review fields are validated separately (below) and are
     // not part of the base create contract.
@@ -118,9 +118,11 @@ export async function POST(request: Request) {
         groupKey: "placement-companies:" + collegeId,
       });
     }
+    const relationship = result.relationship;
+    if (!relationship) throw new Error("Company relationship was not created");
     return NextResponse.json({
       companyId: result.company.id,
-      relationshipId: result.relationship.id,
+      relationshipId: relationship.id,
       companyName: result.company.name,
       name: result.company.name,
       logoUrl: result.company.logoPublicUrl ?? null,
@@ -135,9 +137,9 @@ export async function POST(request: Request) {
         primaryDomain:result.company.primaryDomain,
         verifiedBy42:Boolean(result.company.verifiedAt),
       },
-      relationship:{id:result.relationship.id,
-        collegeId:result.relationship.collegeId,
-        status:result.relationship.status},
+      relationship:{id:relationship.id,
+        collegeId:relationship.collegeId,
+        status:relationship.status},
       identityDecision:result.existed?"MATCHED":"NEW",
       actorAttribution:{userId:context.user.id,mode:"SCOPED_TPO"},
       message:result.alreadyLinked?"Company is already linked to your college.":
