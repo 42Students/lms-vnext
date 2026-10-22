@@ -17,6 +17,7 @@ describe("TPO Notifications history and refresh legacy fidelity",()=>{
   expect(now.getTime()-cutoff.getTime()).toBe(30*86400000);
   // Older messages must not silently acquire fabricated read receipts.
   expect(tpoEffectiveReadAt(null,new Date("2099-01-01T00:00:00.000Z"),cutoff)).toBeNull();
+  expect(tpoEffectiveReadAt(new Date("2099-01-02T00:00:00.000Z"),new Date("2099-01-01T00:00:00.000Z"),cutoff)).toEqual(new Date("2099-01-02T00:00:00.000Z"));
   expect(tpoEffectiveReadAt(null,new Date("2099-12-30T00:00:00.000Z"),cutoff)).toBeNull();
   const page=src("src/app/(authenticated)/tpo/notifications/page.tsx");
   expect(page).toContain("olderUnread>0");

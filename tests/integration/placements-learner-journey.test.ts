@@ -23,6 +23,7 @@ import { actOnPlacementRound } from "@/modules/placements/round-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
+import { deletePlacementRowTrees } from "../support/placement-job-tree-cleanup";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -83,43 +84,13 @@ const roundId =
   "66666666-6666-4666-8666-666666666666";
 
 async function cleanup() {
-  await pool.query(
-    "delete from placement_round_results",
-  );
-  await pool.query(
-    "delete from placement_job_round_events",
-  );
-  await pool.query(
-    "delete from placement_job_rounds",
-  );
-  await pool.query(
-    "delete from placement_application_screening_history",
-  );
-  await pool.query(
-    "delete from placement_application_screenings",
-  );
-  await pool.query(
-    "delete from placement_application_status_history",
-  );
-  await pool.query(
-    "delete from placement_applications",
-  );
-  await pool.query(
-    "delete from placement_eligibility_overrides",
-  );
-  await pool.query(
-    "delete from placement_job_eligibility_policies",
-  );
-  await pool.query(
-    "delete from placement_candidate_academic_evidence",
-  );
-  await pool.query(
-    "delete from placement_candidate_preferences",
-  );
-  await pool.query("delete from placement_jobs");
-  await pool.query(
-    "delete from placement_company_relationships",
-  );
+  // Remove all drive descendants in foreign-key order, including the
+  // persisted College Admin pipeline stages introduced after this test.
+  // Do not disable constraints or bypass production history restrictions.
+  await deletePlacementRowTrees(pool);
+  await pool.query("delete from placement_candidate_academic_evidence");
+  await pool.query("delete from placement_candidate_preferences");
+  await pool.query("delete from placement_company_relationships");
   await pool.query("delete from placement_companies");
 }
 
@@ -242,7 +213,7 @@ describe("Learner placement journey", () => {
       {
         action: "SCHEDULE",
         scheduledAt:
-          new Date("2026-10-20T04:30:00.000Z"),
+          new Date(Date.now() + 7 * 86400000),
         timezone: "Asia/Kolkata",
         mode: "VIRTUAL",
         meetingUrl:

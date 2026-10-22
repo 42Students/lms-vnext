@@ -12,6 +12,8 @@ describe("TPO batch eligibility import presentation",()=>{
    expect(ui).toContain(label);
   expect(ui).not.toContain('Action ID: ');
   expect(ui).toContain("disabled={busy||(preview?preview.ready===0||unresolved>0||!acknowledged:false)}");
+  expect(ui).toContain("if(!preview||preview.ready===0||busy||actionInFlight.current||!acknowledged)return");
+  expect(ui).toContain("if(unresolved>0)");
   expect(ui).toContain("<TpoBatchUndoControl");
   expect(ui).toContain("Choose another file");
  });

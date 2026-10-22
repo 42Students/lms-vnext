@@ -83,10 +83,10 @@ export async function getCollegeRoundSlotAppointments(
  const {collegeId,job}=await scope(ctx,raw);
  const db=getDb();
  const now=new Date();
- const done=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}
+ const done=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}::text
     and ev.subject_type='placement_round_candidate_slot'
     and ev.event_type='PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED')`;
- const noShow=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}
+ const noShow=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}::text
     and ev.subject_type='placement_round_candidate_slot'
     and ev.event_type='PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')`;
  const status=filters.appointmentStatus;
@@ -276,7 +276,7 @@ export async function getCollegeRoundSlotAppointments(
     .where(and(eq(placementApplications.membershipId,preferred.membershipId),
       eq(slots.status,"BOOKED"),gte(slots.endsAt,now),
       notExists(db.select({id:activityEvents.id}).from(activityEvents)
-       .where(and(eq(activityEvents.subjectId,slots.id),
+       .where(and(eq(activityEvents.subjectId,sql<string>`${slots.id}::text`),
          eq(activityEvents.subjectType,"placement_round_candidate_slot"),
          inArray(activityEvents.eventType,[
            "PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED",
@@ -361,7 +361,7 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
    const normalizedPanel=a.interviewer?.trim().toLocaleLowerCase("en-IN")??"";
    // Completed/no-show bookings remain BOOKED for history but are not active.
    const activeSlot=notExists(tx.select({id:activityEvents.id}).from(activityEvents)
-    .where(and(eq(activityEvents.subjectId,slots.id),
+    .where(and(eq(activityEvents.subjectId,sql<string>`${slots.id}::text`),
      eq(activityEvents.subjectType,"placement_round_candidate_slot"),
      inArray(activityEvents.eventType,[
       "PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED","PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW",
