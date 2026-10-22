@@ -28,13 +28,16 @@ describe("SA-COURSES-CONTENT-AUDIT-03 lessons and progress list resilience",()=>
  it("preserves an authorized directory after optional picker outage, but never presents failed data as empty",()=>{
   const lesson=read("src/app/(authenticated)/admin/lessons/page.tsx");
   const progress=read("src/app/(authenticated)/admin/course-progress/page.tsx");
+  expect(lesson).toContain("parseSuperAdminLearningQuery(safeRaw)");
+  expect(progress).toContain("parseSuperAdminCourseProgressParams(await searchParams)");
   for(const page of [lesson,progress]){
-   expect(page).toContain("parseSuperAdminLearningQuery(raw)");
    expect(page).toContain("Promise.allSettled([");
    expect(page).toContain('if(dataResult.status==="rejected")');
    expect(page).toContain('filtersResult.status==="rejected"');
-   expect(page).toContain("Your selected filters are still applied");
+   expect(page).toContain('filtersResult.status==="rejected"');
   }
+  expect(lesson).toContain("Your filters have not changed.");
+  expect(progress).toContain("Your current filters are preserved;");
   expect(lesson).toContain('pathsResult.status==="fulfilled"');
   expect(lesson).toContain("Existing lessons remain visible");
   expect(lesson).toContain("Retry loading lessons");
