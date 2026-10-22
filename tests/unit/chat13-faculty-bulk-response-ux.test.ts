@@ -4,7 +4,7 @@ import {facultyBulkImportResponseSchema,facultyBulkImportFailureMessage}
  from "@/modules/people/faculty-bulk-import-response-model";
 
 const response={
- total:3,created:1,failed:1,skipped:1,
+ total:3,created:1,failed:1,skipped:1,partial:0,
  results:[
   {row:1,name:"Anjali Sharma",status:"CREATED",message:"Faculty membership onboarded"},
   {row:2,name:"Ravi Kumar",status:"FAILED",message:"Could not onboard this record."},

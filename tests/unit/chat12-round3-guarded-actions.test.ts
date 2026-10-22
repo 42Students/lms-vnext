@@ -22,7 +22,8 @@ describe("chat-12 round3 guarded mutation controls",()=>{
   const s=read(files.bulk);expect(s).toContain('"SEND_BACK"');expect(s).toContain("runGuarded(save)");
  });
  it("TPO-students-14 confirms a single Add-to-Drive mutation after the dialog",()=>{
-  const s=read(files.add);expect(s).toContain("runGuarded(submit)");expect(s).toContain("guardedPending");
+  const s=read(files.add);expect(s).toContain("await runGuarded(async()=>");
+  expect(s).toContain("onClick={()=>void submit()}");expect(s).toContain("guardedPending");
  });
  it("TPO-students-15 protects the notified student add from duplicate click",()=>{
   expect(read(files.add)).toContain("useGuardedAction()");

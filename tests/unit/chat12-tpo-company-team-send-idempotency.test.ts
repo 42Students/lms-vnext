@@ -53,6 +53,7 @@ describe("TPO-companies-05 private company Team idempotent SEND service",()=>{
      number===2?[{id:MESSAGE,body:mock.originalBody,decision:false,assignee:null,dueAt:null}]:[];
    return {
     from(){return this;},where(){return this;},for(){return this;},
+    orderBy(){return this;},
     limit(){return Promise.resolve(value);},
     then(resolve:(value:unknown)=>unknown){return Promise.resolve([]).then(resolve);},
    };
