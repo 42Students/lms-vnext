@@ -529,7 +529,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   expect(page).toContain('import { DataTable } from "@/components/ui/data-table"');
   expect(page).toContain('<DataTable');
   expect(page).toContain('caption="Candidate schedule"');
-  expect(page).toContain('empty={<p role="status">No progression-eligible round participants are currently recorded.');
+  expect(page).toContain('empty={<EmptyState title="No progression-eligible round participants are currently recorded.');
   expect(page).toContain('mobilePriority:"primary"');
   expect((page.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(5);
   for(const header of ["Candidate","Round","Shared start (IST)","Round venue","Candidate slot","Panel"])
@@ -542,7 +542,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   expect(page).toContain('<Pagination page={page} pageCount={pageCount} hrefForPage={pageHref}');
   expect(page).toContain("Math.min(data.rows.length,300)");
   expect(page).toContain("Showing the first 300 rows. Download CSV for the complete filtered list.");
-  expect(page).toContain('empty={<p role="status">No students match these filters.</p>}');
+  expect(page).toContain('empty={<EmptyState title="No students match these filters."');
   expect((page.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(5);
   for(const header of ["Student","Roll no.","Batch","Branch","After college","Applications"])
    expect(page).toContain('header:"'+header+'"');
@@ -557,7 +557,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   for(const column of ["Current branch","Applicants","Accepted learners","Accepted offer versions",
    "Accepted / applicants","Registered pool","Accepted registered learners","Placed / registered"])
     expect(report).toContain('header:"'+column+'"');
-  expect(report).toContain('empty={<p role="status">This season has no persisted applicant, accepted-offer or registered-pool branch evidence.');
+  expect(report).toContain('empty={<EmptyState title="This season has no persisted applicant, accepted-offer or registered-pool branch evidence.');
   expect(report).toContain('row.acceptedPerApplicantPercent.toFixed(2)+"%"');
   expect(report).toContain('row.placedPerRegisteredPercent.toFixed(2)+"%"');
   expect(report).toContain('row.registered??"Unknown"');
@@ -573,8 +573,8 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   expect(page).toContain('caption="Accreditation evidence preview"');
   expect((page.match(/mobilePriority:"primary"/g)??[])).toHaveLength(2);
   expect((page.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(15);
-  expect(page).toContain('empty={<p role="status">No placed students were recorded in this batch.</p>}');
-  expect(page).toContain('empty={<p role="status">No reportable placement season was found.');
+  expect(page).toContain('empty={<EmptyState title="No placed students were recorded in this batch."');
+  expect(page).toContain('empty={<EmptyState title="No reportable placement season was found.');
   expect(page).toContain("accreditationPackageLpa(student.packageInr)");
   expect(page).toContain("accreditationOfferStatusLabel(student.offerStatus)");
   expect(page).toContain("accreditationJoiningLabel(student.joining)");
