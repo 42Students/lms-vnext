@@ -22,10 +22,10 @@ export async function requestRecruiterInviteOtp(
   deliver: (email: string, code: string) => Promise<boolean>,
   requestedWorkEmail?: string | null,
 ): Promise<{sent:true}> {
-  if (process.env.TPO_RECRUITER_OTP_READY !== "VERIFIED") {
+  if (process.env["TPO_RECRUITER_OTP_READY"] !== "VERIFIED") {
     throw new Error("RECRUITER_OTP_NOT_REGISTERED");
   }
-  const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET;
+  const secret = process.env["TPO_RECRUITER_OTP_HMAC_SECRET"];
   if (!secret || Buffer.byteLength(secret, "utf8") < 32 ||
       !isRecruiterInviteTokenShape(token)) {
     throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
