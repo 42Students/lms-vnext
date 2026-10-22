@@ -351,7 +351,7 @@ export async function updateProjectResource(
         accessNotes: merged.accessNotes ?? null,
         sprintId: merged.sprintId ?? null,
         taskId: merged.taskId ?? null,
-        updatedAt: new Date(),
+        updatedAt: new Date(Math.max(Date.now(), resource.updatedAt.getTime() + 1)),
       })
       .where(
         and(
@@ -449,7 +449,7 @@ export async function archiveProjectResource(
       .update(projectResources)
       .set({
         status: "ARCHIVED",
-        updatedAt: new Date(),
+        updatedAt: new Date(Math.max(Date.now(), resource.updatedAt.getTime() + 1)),
       })
       .where(
         and(
