@@ -49,12 +49,13 @@ export default async function TpoUnplacedReportPage({
     redirect("/dashboard");
   }
 
+  const collegeId=context.membership.collegeId;
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/unplaced"/>;
   const report = await (async () => {
     try {
   const workspace = await getPlacementReportDetails(context, {
-    collegeId: context.membership.collegeId,
+    collegeId: collegeId,
     seasonId: first(query.seasonId) || undefined,
     jobId: first(query.jobId) || undefined,
   });
@@ -66,18 +67,18 @@ export default async function TpoUnplacedReportPage({
   const batchId=first(query.batchId)||undefined,branchId=first(query.branchId)||undefined;
   const permittedBatch=!batchId||Boolean(batches?.batches.some(batch=>batch.id===batchId));
   const intelligence=permittedBatch?await getTpoStudentsIntelligence(context,{
-    collegeId:context.membership.collegeId,...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
+    collegeId:collegeId,...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
     page:1,pageSize:100,
   },{includeExportRows:true}):null;
   const permittedBranch=!branchId||(intelligence?.branches??[]).some(item=>item.branchId===branchId);
   const lastApplications=permittedBatch&&permittedBranch?
    await getTpoUnplacedLastApplications(context,{
-    collegeId:context.membership.collegeId,seasonId:workspace.selectedSeasonId,
+    collegeId:collegeId,seasonId:workspace.selectedSeasonId,
     jobId:workspace.selectedJobId,
    }):new Map<string,{lastSubmittedAt:Date|null;applications:number;stillInDrive:boolean}>();
   const rowsById=new Map(permittedBranch?intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]:[]);
   const unplaced=workspace.details.unplaced.filter(learner=>rowsById.has(learner.membershipId));
-  const academic=await getTpoUnplacedAcademicEvidence(context,context.membership.collegeId,unplaced.map(item=>item.membershipId));
+  const academic=await getTpoUnplacedAcademicEvidence(context,collegeId,unplaced.map(item=>item.membershipId));
   // Legacy Ready/Unplaced requires all facts together: a registration in
   // Placements, a resume, a recorded CGPA, 10th percentage, and no accepted
   // placement offer. Unknown evidence never becomes a synthetic pass.

@@ -26,7 +26,7 @@ vi.mock("drizzle-orm",()=>({
  and:(...xs:unknown[])=>xs,eq:(...xs:unknown[])=>xs,
  asc:(x:unknown)=>x,desc:(x:unknown)=>x,
  inArray:(...xs:unknown[])=>xs,ne:(...xs:unknown[])=>xs,
- isNotNull:(x:unknown)=>x,or:(...xs:unknown[])=>xs,
+ isNotNull:(x:unknown)=>x,isNull:(x:unknown)=>x,or:(...xs:unknown[])=>xs,
  gt:(...xs:unknown[])=>xs,lt:(...xs:unknown[])=>xs,
  sql:(_part:TemplateStringsArray,...xs:unknown[])=>xs,
 }));

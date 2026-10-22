@@ -50,14 +50,12 @@ export const collegeTermCourseUpdateSchema = z.object({
   credits: termCourseCreditsSchema.optional(),
   position: z.number().int().min(1).max(100000).optional(),
   type: z.enum(["CORE","ELECTIVE"]).optional(),
-  /** Legacy nullable mandatory is preserved unless the caller edits it. */
+  /** Legacy nullable mandatory flag is independently persisted from CORE/ELECTIVE.
+   * Imported CORE-but-optional courses must remain representable without
+   * forcing the flag to the type default on every edit. */
   isMandatory: z.boolean().optional(),
 }).strict().refine(input => Object.keys(input).length > 0, {
   message: "Choose a semester mapping field to update",
-}).refine(input => input.isMandatory === undefined || input.type === undefined ||
-  input.isMandatory === (input.type === "CORE"), {
-  message: "Mandatory courses must use Core type",
-  path: ["isMandatory"],
 });
 
 /** 1-indexed reordering contract shared by the service and regression tests. */

@@ -60,7 +60,7 @@ const auditFacetSchema = z.preprocess((raw) => {
  * The read model alone cannot prove every mutation has a matching writer.
  */
 const LEGACY_AUDIT_SINGULAR_DETAIL =
-  /(?<![\\d.])1 (student|recruiter|row|selection|slot|drive|application|offer|request|course|test|batch|class)e?s\\b/gi;
+  /(?<![\d.])1 (student|recruiter|row|selection|slot|drive|application|offer|request|course|test|batch|class)e?s\b/gi;
 
 function normalizeAuditDetail(detail: string): string {
   return detail.replace(LEGACY_AUDIT_SINGULAR_DETAIL, "1 $1").slice(0, 1000);
