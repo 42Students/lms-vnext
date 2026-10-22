@@ -33,12 +33,16 @@ export async function getBatchEligibilityImportPreview(ctx:RequestContext,rawBat
  const learnerRolls=new Map(candidates.map(row=>[row.membershipId,row.rollNumber]));
  const roster=candidates.map(r=>({studentCode:r.membershipId,rollNumber:r.rollNumber,membershipId:r.membershipId,
   expectedVersion:existing.get(r.membershipId)??"none"}));
- const preview=previewTpoEligibilitySheet(rows,roster).map((item,index)=>({...item,
+ const preview=previewTpoEligibilitySheet(rows,roster).map((item,index)=>{
+  const inputRow=rows[index];
+  if(!inputRow)throw new Error("INVALID_ELIGIBILITY_SHEET_ROW");
+  return {...item,
   studentName:item.membershipId?learnerNames.get(item.membershipId)??null:null,
   rollNumber:item.membershipId?learnerRolls.get(item.membershipId)??null:null,
   currentStatus:item.membershipId?statuses.get(item.membershipId)??"NOT_DECIDED":null,
-  proposedStatus:rows[index].decision,
- }));
+  proposedStatus:inputRow.decision,
+  };
+ });
  return {batchId:batch.id,rows,preview,ready:preview.filter(r=>r.status==="matched").length,
   skipped:preview.filter(r=>r.status==="unusable").length};
 }

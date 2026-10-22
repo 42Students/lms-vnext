@@ -38,12 +38,12 @@ export type TpoAuditSavedView={
 export function tpoAuditStoredView(raw:unknown):TpoAuditStoredView|null{
  if(!raw||typeof raw!=="object"||Array.isArray(raw))return null;
  const data=raw as Record<string,unknown>;
- const query=tpoAuditSavedFiltersSchema.safeParse(data.query);
+ const query=tpoAuditSavedFiltersSchema.safeParse(data["query"]);
  if(!query.success)return null;
- return {query:query.data,pinned:data.pinned===true,
-  revision:typeof data.revision==="string"&&z.uuid().safeParse(data.revision).success?data.revision:null,
-  usedAt:typeof data.usedAt==="string"&&Number.isFinite(Date.parse(data.usedAt))
-   ?data.usedAt:null};
+ return {query:query.data,pinned:data["pinned"]===true,
+  revision:typeof data["revision"]==="string"&&z.uuid().safeParse(data["revision"]).success?data["revision"]:null,
+  usedAt:typeof data["usedAt"]==="string"&&Number.isFinite(Date.parse(data["usedAt"]))
+   ?data["usedAt"]:null};
 }
 export function tpoAuditSavedViewHref(filters:TpoAuditSavedFilters){
  const params=new URLSearchParams();

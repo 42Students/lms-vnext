@@ -23,10 +23,11 @@ export function summarizeBatchEligibility(
       needsReview++;
       continue;
     }
+    const sectionId = learner.sectionIds[0];
     const result = resolvePlacementParticipation({
       learner: decisions.learner.get(learner.membershipId) ?? null,
-      section: learner.sectionIds.length === 1
-        ? decisions.section.get(learner.sectionIds[0]) ?? null : null,
+      section: learner.sectionIds.length === 1 && sectionId !== undefined
+        ? decisions.section.get(sectionId) ?? null : null,
       cohort: decisions.cohort,
     });
     if (result.status === "ELIGIBLE") eligible++;

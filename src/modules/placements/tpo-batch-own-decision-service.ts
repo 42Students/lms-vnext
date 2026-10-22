@@ -55,7 +55,7 @@ export async function getTpoBatchOwnDecisionSummary(ctx:RequestContext,batchId:s
   if(direct!=="ELIGIBLE"&&direct!=="INELIGIBLE")continue;
   const classes=assigned.filter(item=>item.enrollmentId===row.enrollmentId);
   const inherited=classes.length>1?null:
-   classes.length===1?byClass.get(classes[0].sectionId)??batchRule?.status??"NOT_DECIDED":
+   classes.length===1&&classes[0]?byClass.get(classes[0].sectionId)??batchRule?.status??"NOT_DECIDED":
    batchRule?.status??"NOT_DECIDED";
   facts.push({direct,parent:inherited==="ELIGIBLE"||inherited==="INELIGIBLE"||inherited==="NOT_DECIDED"?inherited:null});
  }
