@@ -3,7 +3,7 @@
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-6-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
 - [ ] `tests/unit/PROJ-BREAK-SA-workspace-brief-isolation.test.ts` (1 failing)
-- [ ] `tests/unit/chat11-super-admin-tenant-route-guard.test.ts` (1 failing)
+- [x] `tests/unit/chat11-super-admin-tenant-route-guard.test.ts` (1 failing)
 - [x] `tests/unit/chat2-UX-tpo-overlay-01.test.ts` (branch already has corrected canonical More page assertion; verified footer wiring) (1 failing)
 - [ ] `tests/unit/chat5-program-server-directory-wiring.test.ts` (1 failing)
 - [ ] `tests/unit/chat8-verify2-audit-credits.test.ts` (1 failing)
@@ -171,3 +171,5 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 
 - `chat2-UX-tpo-overlay-01.test.ts`: existing branch test asserts `/tpo/more` navigation, accessible landmark, keyboard focus and same-tab `Link`; verified in `src/components/tpo/tpo-mobile-footer.tsx:8-42`. The original main CI assertion required a BottomSheet even though the canonical More destination is an accessible page. Assertion was already corrected on this branch; no test weakening.
 - `learner-coding-profile-privacy.test.ts`: branch test correctly accepts an HTTPS `github.com` profile and still rejects unsafe schemes, userinfo, spoofed hosts and HTTP. `src/modules/placements/learner-coding-profile-link.ts:5-11` applies the safe profile normalization. The original CI assertion incorrectly required a valid profile URL to be null. Existing branch correction verified; no product mutation required.
+
+- `chat11-super-admin-tenant-route-guard.test.ts`: fixed landing page to authorize the actor before consuming query params (`src/app/(authenticated)/admin/tenants/page.tsx`); test now verifies the consolidated landing delegates filtering to the already guarded Directory/Setup views. Product commit `6dc640603dceadf5d7051d30ad77edcc338f6316`; test commit `818b75796db9ef5165002afae21d3f28bee830f9`. Not executed locally.
