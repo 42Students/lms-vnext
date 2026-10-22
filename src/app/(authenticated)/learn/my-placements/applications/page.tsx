@@ -1,7 +1,9 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { PageLoading } from "@/components/ui/page-loading";
-import {StatusBadge} from "@/components/ui/status-badge";
+import {StatusBadge,applicationStatusTone} from "@/components/ui/status-badge";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {safeTpoBrandLogoUrl} from "@/modules/placements/tpo-branding-model";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -27,7 +29,19 @@ export default async function LearnerPlacementApplicationsPage() {
   const context = await getCurrentRequestContext();
   // The primary journey must load independently. Do not run a second
   // workspace query when there are no applications to enrich.
-  const rows=await getLearnerPlacementJourney(context);
+  let rows:Awaited<ReturnType<typeof getLearnerPlacementJourney>>;
+  try {
+    rows=await getLearnerPlacementJourney(context);
+  } catch(error) {
+    if(error instanceof AuthorizationError)throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Applications" />
+      <ErrorState title="Could not load applications"
+        description="Your application history could not be loaded. No applications are assumed missing or withdrawn."
+        action={<Link href="/learn/my-placements/applications"
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry applications</Link>} />
+    </div>;
+  }
   const roundsRead=rows.length>0
     ?await readOptionalLearnerPlacementSource(()=>getLearnerPlacementRequestWorkspace(context))
     :{available:true as const,value:{rounds:[]}};
@@ -112,7 +126,7 @@ export default async function LearnerPlacementApplicationsPage() {
            <p className="m-0 break-words text-sm text-body">{row.company.name}</p>
            <p className="m-0 text-xs text-muted-foreground">{jobType??"Role type not specified"}{pay?" · "+pay:""} · Applied {submitted}</p>
            <div className="flex flex-wrap gap-2">
-            <StatusBadge tone={row.applicationStatus==="WITHDRAWN"?"warning":"info"}>
+            <StatusBadge tone={applicationStatusTone(row.applicationStatus)}>
              {row.applicationStatus.replaceAll("_"," ")}
             </StatusBadge>
             {row.offerStatus?<StatusBadge tone="success">Offer: {row.offerStatus.replaceAll("_"," ")}</StatusBadge>:null}

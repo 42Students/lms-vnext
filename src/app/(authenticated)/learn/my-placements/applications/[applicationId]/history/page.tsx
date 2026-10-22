@@ -72,6 +72,11 @@ export default async function LearnerApplicationHistoryPage({
   } as Record<string,string>)[status]??status.replaceAll("_"," ").toLowerCase().replace(/^./,char=>char.toUpperCase());
   return (
     <div className="min-w-0 space-y-5">
+      <PageHeader
+        title={history.roleTitle}
+        description={history.companyName + " · Application status history"}
+        actions={<StatusBadge tone={applicationStatusTone(history.currentStatus)}>{stageLabel(history.currentStatus)}</StatusBadge>}
+      />
       <Tabs ariaLabel="Placements sections" renderPanel={false} value="/learn/my-placements/applications"
         items={[
           {value:"/learn/my-placements",label:"Home",href:"/learn/my-placements"},
@@ -87,11 +92,6 @@ export default async function LearnerApplicationHistoryPage({
       >
         ← Back to application
       </Link>
-      <PageHeader
-        title={history.roleTitle}
-        description={history.companyName + " · Application status history"}
-        actions={<StatusBadge tone={applicationStatusTone(history.currentStatus)}>{stageLabel(history.currentStatus)}</StatusBadge>}
-      />
       <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4">
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status history</h2>
         <p className="mt-2 max-w-2xl text-sm leading-[22px] text-body">

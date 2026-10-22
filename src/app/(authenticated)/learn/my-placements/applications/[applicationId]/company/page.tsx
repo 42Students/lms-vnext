@@ -1,4 +1,6 @@
 import { Banner } from "@/components/ui/banner";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { notFound } from "next/navigation";
@@ -18,17 +20,30 @@ export default async function LearnerApplicationCompanyPage({
     notFound();
   }
   const context = await getCurrentRequestContext();
-  const company = await getOwnLearnerApplicationCompany(context, applicationId);
+  let company:Awaited<ReturnType<typeof getOwnLearnerApplicationCompany>>;
+  try {
+    company = await getOwnLearnerApplicationCompany(context, applicationId);
+  } catch (error) {
+    if (error instanceof AuthorizationError) throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Company profile" />
+      <ErrorState title="Could not load company profile"
+        description="The company information for your application is temporarily unavailable."
+        action={<Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)+"/company"}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry company profile</Link>} />
+    </div>;
+  }
   if (!company) notFound();
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
 
+      <PageHeader title={company.companyName} description="Read-only company profile from your own placement application." />
       <nav aria-label="Application navigation" className="flex min-w-0 flex-wrap items-center gap-2">
         <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(company.applicationId)}
             className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Back to application</Link>
       </nav>
-      <PageHeader title={company.companyName} description="Read-only company profile from your own placement application." />
+
       <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={company.companyStatus === "ACTIVE" ? "success" : "neutral"}>
             {company.companyStatus.replaceAll("_", " ")}
           </StatusBadge></div>

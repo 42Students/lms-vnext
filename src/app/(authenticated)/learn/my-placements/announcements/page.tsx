@@ -96,9 +96,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   return (
     <div className="min-w-0 space-y-6">
       <div>
-        <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to My Placements</Link>
         <PageHeader title={LEARNER_LEGACY_NOTICES_TITLE}
           description="Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown." />
+        <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to My Placements</Link>
+
         {hadInvalidNoticeFilters ? <Banner tone="warning" className="mt-2">Some notice filters were invalid and have been reset to safe defaults.</Banner> : null}
         {ready && (!collegeNoticesRead.available || !personalAlerts.available) ? (
           <Banner tone="error" role="alert" className="mt-2" action={

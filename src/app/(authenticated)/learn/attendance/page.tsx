@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import { z } from "zod";
+import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import Link from "next/link";
 import {learnerAttendanceIstMonth,learnerAttendanceMonthSchema} from "@/modules/attendance/learner-attendance-filter-model";
@@ -36,7 +38,16 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
   const raw=await searchParams;
   const defaultMonth=learnerAttendanceIstMonth(new Date());
   const selected=learnerAttendanceMonthSchema.safeParse(raw.month).data??defaultMonth;
-  const deliveryId=Array.isArray(raw.deliveryId)?raw.deliveryId[0]:raw.deliveryId;
+  const deliveryId=typeof raw.deliveryId==="string"?raw.deliveryId:undefined;
+  if(raw.deliveryId!==undefined&&(!deliveryId||!z.uuid().safeParse(deliveryId).success)){
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Attendance" />
+      <ErrorState title="Invalid course attendance link"
+        description="Select a course from your own attendance list; a repeated or malformed course selector was not used."
+        action={<Link href="/learn/attendance"
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">View my attendance</Link>} />
+    </div>;
+  }
   // Course attendance deep links remain scoped by the learner enrollment
   // service. An invalid or another-college delivery cannot become an empty list.
   const context =
@@ -75,6 +86,10 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
           Monthly attendance calendar →
         </Link></div>
       )} />
+      {raw.month!==undefined&&!learnerAttendanceMonthSchema.safeParse(raw.month).success ? <Alert tone="warning" role="status">
+        The requested month filter was invalid. Showing the current month instead.
+        <Link href="/learn/attendance" className="ml-2 font-semibold underline">Clear month filter</Link>
+      </Alert> : null}
       <LearnerAttendanceWorkspace
         defaultMonth={defaultMonth}
         courses={workspace.courses}

@@ -264,6 +264,8 @@ export default async function LearnerCourseTabPage({
 
   return (
     <div role="region" aria-label="Course workspace" className={"learn-projects learn-course-layout learn-course-layout--" + activeTab + " min-w-0 max-w-full space-y-4"}>
+      <PageHeader title={activeTab === "roadmap" ? "Learning Path" : courseTitle}
+        description={activeTab === "roadmap" ? courseTitle : "Course workspace"} />
       <nav aria-label="Course navigation" className="flex flex-wrap items-center gap-3">
         <Link
               href="/learn/courses"
@@ -272,8 +274,7 @@ export default async function LearnerCourseTabPage({
               {LEARNER_BACK_TO_COURSES}
             </Link>
       </nav>
-      <PageHeader title={activeTab === "roadmap" ? "Learning Path" : courseTitle}
-        description={activeTab === "roadmap" ? courseTitle : "Course workspace"} />
+
       {readOnly?<Banner tone="info">
         Past semester course · Read only. Submitted work remains accessible.
       </Banner>:null}

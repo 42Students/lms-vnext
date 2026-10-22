@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
+import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import { Tabs } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -80,7 +82,6 @@ export default async function LearnerPlacementJobDetailPage({
     /^\/learn\/my-placements\/jobs(?:\?|$)/.test(query.returnTo) ? query.returnTo : "";
   const back=legacyReturn || learnerJobReturnToDrivesHref(query.back??query.returnTo);
   const shell=<>
-    <PageHeader title="My Placements" description="Opportunities and your application journey" />
     <Tabs renderPanel={false} ariaLabel="Placements sections" value="/learn/my-placements/jobs" items={[
       {value:"/learn/my-placements",label:"Home",href:"/learn/my-placements"},
       {value:"/learn/my-placements/jobs",label:"Jobs",href:"/learn/my-placements/jobs"},
@@ -94,9 +95,9 @@ export default async function LearnerPlacementJobDetailPage({
   // Malformed and old integer URLs never reach a UUID database query.
   if(!placementJobIdSchema.safeParse(jobId).success){
    return <div className="space-y-4">
-    {shell}
     <PageHeader title="This job link isn't valid"
      description="The link may be outdated. Browse current drives or find your application in My applications."/>
+    {shell}
     <div className="flex flex-wrap gap-4">
      <Link href={back} className="text-sm font-semibold text-primary-text underline">Browse drives</Link>
      <Link href="/learn/my-placements/applications" className="text-sm font-semibold text-primary-text underline">My applications</Link>
@@ -104,25 +105,29 @@ export default async function LearnerPlacementJobDetailPage({
    </div>;
   }
   const [feed,savedJobs]=await Promise.all([
-    listLearnerPlacementJobs(context,new Date(),jobId),listOwnPlacementSavedJobs(context),
+    listLearnerPlacementJobs(context,new Date(),jobId),
+    readOptionalLearnerPlacementSource(()=>listOwnPlacementSavedJobs(context)),
   ]);
   const rows=feed.filter(row=>row.job.id===jobId);
   const journey=await getOwnLearnerDriveJourney(context,jobId);
   if(rows.length===0&&!journey)return <div className="min-w-0 space-y-4">
+    <PageHeader title="My Placements" description="Opportunities and your application journey" />
     {shell}
     <EmptyState title="Job unavailable" description="This drive was not found, is unpublished, or is not available to your selected college."
       action={<Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Back to jobs</Link>} />
   </div>;
   return <div className="min-w-0 space-y-5">
-   {shell}
-   {rows.length===0 && journey ? (
+   {rows.length===0 && journey ?
     <PageHeader title="Placement drive history" description="Your recorded application journey remains available."
-      actions={<Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">← Back to drives</Link>} />
-   ) : null}
+      actions={<Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">← Back to drives</Link>} /> : null}
+   {/* Published jobs supply their own PageHeader through LearnerPlacementJobDetail.
+       Do not duplicate the h1 from this route. */}
+   {shell}
+   {!savedJobs.available ? <Banner tone="warning" role="alert">Your saved-job status could not be verified. Bookmark controls may show an outdated selection; refresh before changing saved jobs. Drive details remain available. <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="font-semibold underline">Retry saved jobs</Link></Banner> : null}
    {rows.length>0 && rows.some(row => Boolean(row.job.jobDescriptionObjectPath)) ?
      <LearnerJobDescriptionLink jobId={jobId}/> : null}
    {rows.length>0?<LearnerPlacementJobDetail items={rows.map(toItem)}
-    returnHref={back} initialSaved={savedJobs.some(row=>row.jobId===jobId)}
+    returnHref={back} initialSaved={savedJobs.available&&savedJobs.value.some(row=>row.jobId===jobId)}
     journey={journey?<LearnerOwnDriveJourney journey={journey}/>:null}/>:null}
    {rows.length===0&&journey?<LearnerOwnDriveJourney journey={journey}/>:null}
   </div>;

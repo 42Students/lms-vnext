@@ -1,6 +1,8 @@
 import { MetricBar } from "@/components/ui/metric-bar";
 import progressStyles from "@/components/courses/learner-course-progress.module.css";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -24,7 +26,19 @@ export default async function LearnerCourseProgressPage({
   const { deliveryId } = await params;
   if (!courseSectionDeliveryIdSchema.safeParse(deliveryId).success) notFound();
   const context = await getCurrentRequestContext();
-  const progress = await getOwnLearnerCourseProgressBreakdown(context, deliveryId);
+  let progress:Awaited<ReturnType<typeof getOwnLearnerCourseProgressBreakdown>>;
+  try {
+    progress = await getOwnLearnerCourseProgressBreakdown(context, deliveryId);
+  } catch (error) {
+    if (error instanceof AuthorizationError) throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Course progress by lesson" />
+      <ErrorState title="Could not load lesson progress"
+        description="Your recorded completion state could not be loaded. No content has been marked incomplete."
+        action={<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/progress"}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry progress</Link>} />
+    </div>;
+  }
   if (!progress) notFound();
   // A retake is a privileged, explicit staff action handled by the separate
   // admin progress-retake workflow; never offer the write action to learners.
@@ -34,11 +48,12 @@ export default async function LearnerCourseProgressPage({
 
   return (
     <div className="min-w-0 space-y-6">
+      <PageHeader title="Course progress by lesson" />
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/home"}
         className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         ← Course overview
       </Link>
-      <PageHeader title="Course progress by lesson" />
+
       {latestContentAttempt>1 ? (
         <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-soft-surface)] px-4 py-3 text-sm text-body">
           Attempt {latestContentAttempt} started. The previous attempt is kept as history.

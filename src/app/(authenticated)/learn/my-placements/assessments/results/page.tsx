@@ -1,4 +1,6 @@
 import { Pagination } from "@/components/ui/pagination";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
@@ -38,7 +40,23 @@ export default async function LearnerAssessmentResultsPage({
   if(!parsed.success)notFound();
   const {view,q}=parsed.data;
   const context = await getCurrentRequestContext();
-  const results = await getOwnLearnerAssessmentResults(context, view);
+  let results:Awaited<ReturnType<typeof getOwnLearnerAssessmentResults>>;
+  try {
+    results = await getOwnLearnerAssessmentResults(context, view);
+  } catch(error) {
+    if(error instanceof AuthorizationError)throw error;
+    const retry=new URLSearchParams();
+    if(view!=="all")retry.set("view",view);
+    if(q)retry.set("q",q);
+    if(parsed.data.page>1)retry.set("page",String(parsed.data.page));
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Official assessment results" />
+      <ErrorState title="Could not load assessment results"
+        description="Published outcomes could not be loaded. No result has been treated as missing or not passed."
+        action={<Link href={"/learn/my-placements/assessments/results"+(retry.size?"?"+retry.toString():"")}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry official results</Link>} />
+    </div>;
+  }
   const paged=pageLearnerAssessmentResults(results.items,parsed.data);
   function href(nextView:string,pageNumber=1,search=q) {
     const query=new URLSearchParams();
@@ -51,14 +69,15 @@ export default async function LearnerAssessmentResultsPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <Link href="/learn/my-placements/assessments"
-        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
-        ← Assessment schedule
-      </Link>
       <PageHeader
         title="Official assessment results"
         description="Only placement-team-applied test outcomes from your own applications. A scheduled or submitted assessment is not a published result."
       />
+      <Link href="/learn/my-placements/assessments"
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
+        ← Assessment schedule
+      </Link>
+
       <Tabs ariaLabel="Filter published assessment results" renderPanel={false} value={view} items={views.map(option=>({value:option.id,label:option.label,count:results.counts[option.id],href:href(option.id)}))}/>
       <form method="get" role="search" aria-label="Placement assessment results filters" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:items-end sm:gap-[8px]">
         {view!=="all" ? <Input type="hidden" name="view" value={view}/> : null}

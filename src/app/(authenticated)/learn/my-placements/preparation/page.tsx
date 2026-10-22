@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PageHeader } from "@/components/ui/page-header";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   learnerPreparationHref, learnerPreparationQuerySchema,
@@ -29,7 +30,19 @@ export default async function LearnerPlacementPreparationPage({
   </div>;
   const context=await getCurrentRequestContext();
   if(!hasMembershipRole(context,"LEARNER")) redirect("/dashboard");
-  const data=await getOwnLearnerPlacementPreparation(context,parsed.data);
+  let data:Awaited<ReturnType<typeof getOwnLearnerPlacementPreparation>>;
+  try {
+    data=await getOwnLearnerPlacementPreparation(context,parsed.data);
+  }catch(error){
+    if(error instanceof AuthorizationError)throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Placement preparation" />
+      <ErrorState title="Could not load placement preparation"
+        description="Your recorded preparation categories could not be loaded; no missing entries are assumed."
+        action={<Link href={learnerPreparationHref(parsed.data)}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry preparation</Link>} />
+    </div>;
+  }
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Placement preparation"
       description="A checklist of information and activity actually recorded for your account."

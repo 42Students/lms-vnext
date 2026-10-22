@@ -1,4 +1,6 @@
 import { Banner } from "@/components/ui/banner";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import Link from "next/link";
 import { notFound,redirect } from "next/navigation";
 import { resolveOwnAssessmentDeepLink } from "@/modules/placements/learner-assessment-deeplink-model";
@@ -17,12 +19,29 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
   // Redirect before database reads; retain modern record-specific deep links.
   const legacyTarget=legacyLearnerAssessmentsRedirect(query);
   if(legacyTarget)redirect(legacyTarget);
-  const context = await getCurrentRequestContext();
-  const workspace = await getOwnLearnerAssessmentBrowse(context);
   const search=learnerRoundSearchQuerySchema.safeParse({q:query.q});
   if(!search.success)notFound();
   const due=learnerAssessmentDueBucketSchema.safeParse(query.due??"all");
   if(!due.success)notFound();
+  const context = await getCurrentRequestContext();
+  let workspace:Awaited<ReturnType<typeof getOwnLearnerAssessmentBrowse>>;
+  try {
+    workspace = await getOwnLearnerAssessmentBrowse(context);
+  } catch (error) {
+    if(error instanceof AuthorizationError)throw error;
+    const retry=new URLSearchParams();
+    for(const key of ["q","due","applicationId","roundId"] as const){
+      const value=query[key];
+      if(typeof value==="string"&&value.length<=100)retry.set(key,value);
+    }
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Assessments" />
+      <ErrorState title="Could not load assessments"
+        description="Assessment appointments are temporarily unavailable; this is not an empty schedule."
+        action={<Link href={"/learn/my-placements/assessments"+(retry.size?"?"+retry.toString():"")}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry assessments</Link>} />
+    </div>;
+  }
   const link=resolveOwnAssessmentDeepLink(workspace.rounds,{
     applicationId:query.applicationId,roundId:query.roundId,
   });

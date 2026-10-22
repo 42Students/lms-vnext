@@ -1,4 +1,7 @@
 import { Badge } from "@/components/ui/badge";
+import { Banner } from "@/components/ui/banner";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -19,17 +22,33 @@ export default async function LearnerPlacementRulesPage({
   // change authorization, learner identity or the data being read.
   const parsed = learnerPlacementRulesQuerySchema.safeParse(query);
   const context = await getCurrentRequestContext();
+  let result:Awaited<ReturnType<typeof getOwnLearnerPlacementRulesView>>;
+  try {
+    result=await getOwnLearnerPlacementRulesView(context,parsed.success?parsed.data:{});
+  } catch(error) {
+    if(error instanceof AuthorizationError)throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Placement rules" />
+      <ErrorState title="Could not load placement rules"
+        description="Your college's saved placement policy could not be read. No eligibility decision is assumed."
+        action={<Link href="/learn/my-placements/rules?from=cell"
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry placement rules</Link>} />
+    </div>;
+  }
   const { evidence, preferences, preparation, back, ruleApplicability, policyView,
-    effectivePolicySource, effectivePolicyUpdatedAt } =
-    await getOwnLearnerPlacementRulesView(context, parsed.success ? parsed.data : {});
+    effectivePolicySource, effectivePolicyUpdatedAt }=result;
   return (
     <div className="min-w-0 space-y-6">
+      <PageHeader title="Placement rules"
+        description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
       <Link href={back.href}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         ← {back.label}
       </Link>
-      <PageHeader title="Placement rules"
-        description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
+
+      {!parsed.success ? <Banner tone="warning" role="status">
+        The original navigation filter was invalid and has been reset to this college's saved rules.
+      </Banner> : null}
       <section className="min-w-0 border-b border-border py-4" aria-label="College-wide placement policy">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="font-semibold text-[var(--lms-heading)]">Your effective placement policy</h2>
