@@ -18,7 +18,8 @@ describe("UX-college-department-data-table-01 evidence reports",()=>{
     expect(source).toContain('mobilePriority:"primary"');
     expect(source).toContain('mobilePriority:"secondary"');
     expect(source).not.toContain("<table");
-    expect(source).toContain("min-h-11 items-center rounded-md");
+    expect(source).toContain('className="min-h-11 w-full md:min-h-9 md:w-auto"');
+    expect(source).toContain("focus-visible:outline-2");
   });
   it("does not infer attendance percentages from a missing denominator",()=>{
     expect(attendanceEvidenceLabel({markedSessions:0,recordedRows:0})).toBe("No marked sessions recorded");

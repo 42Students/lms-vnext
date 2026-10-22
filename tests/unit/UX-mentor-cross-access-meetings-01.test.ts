@@ -14,8 +14,11 @@ describe("Mentor cross audit access state and meeting controls",()=>{
  it("UX-mentor-cross-M03 meeting actions have 44px targets and safe URLs",()=>{
   const meeting=read("src/components/projects/mentor-meetings-calendar.tsx");
   expect(meeting).toContain("safeProjectExternalHref(href)");
-  expect(meeting).toContain("min-h-11");
-  expect(meeting).toContain("focus-visible:outline-2");
+  const css=read("src/components/projects/mentor-meetings-calendar.module.css");
+  expect(meeting).toContain("className={styles.action}");
+  expect(css).toMatch(/\.action\s*\{[^}]*min-height:\s*44px/s);
+  expect(css).toContain(".action:focus-visible");
+  expect(css).toContain("outline: 2px solid");
   expect(read("src/components/projects/mentor-calendar-load-failure.tsx")).toContain('<Button type="button" variant="secondary"');
  });
 });
