@@ -26,15 +26,33 @@ import { mayReadGlobalProjectAudit } from "@/modules/projects/admin-audit-access
 import {z} from "zod";
 import {getProjectResourceHistory} from "@/modules/projects/resource-history-service";
 
+/** Mirrors the legacy destructive/access-changing action keys. Count each
+ * raw activity item, not distinct projects or condensed groups. */
 const destructiveProjectEventTypes=new Set<string>([
  ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_ARCHIVED,
  ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_DELETED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN,
+ ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_REASSIGNED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_TEAM_MEMBER_ADDED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_TEAM_MEMBER_UPDATED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_TEAM_MEMBER_ENDED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REVIEWED,
  ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNASSIGNED,
  ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_REVOKED,
  ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ARCHIVED,
- ACTIVITY_EVENT_TYPES.PROJECTS_TEAM_MEMBER_ENDED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ROLLED_BACK,
  ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_ARCHIVED,
 ]);
+function destructiveProjectActivity(event:{eventType:string;metadata:Record<string,unknown>}):boolean{
+ if(destructiveProjectEventTypes.has(event.eventType))return true;
+ // Task removals preserve their history as a details event with a tombstone.
+ if(event.eventType===ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED)
+  return event.metadata.deleted===true;
+ // A release deletion matters after shipping; do not conflate draft cleanup.
+ if(event.eventType===ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_DELETED)
+  return event.metadata.afterShip===true||event.metadata.shipped===true;
+ return false;
+}
 function linkedWorkspaceId(event:{
  subjectId:string;subjectType:string;metadata:Record<string,unknown>;
 }):string|null{
@@ -211,8 +229,7 @@ export async function ProjectAdminAuditPage({
   const coveredEvents=rawEvents.length;
   const peopleCount=new Set(rawEvents.map(item=>item.actor.id)
     .filter((id):id is string=>Boolean(id))).size;
-  const destructiveCount=rawEvents.filter(item=>destructiveProjectEventTypes.has(
-    item.event.eventType)).length;
+  const destructiveCount=rawEvents.filter(item=>destructiveProjectActivity(item.event)).length;
   const partialCoverage=Boolean(result.nextCursor);
   const legacyOptions=Object.entries(legacyProjectAuditActions).sort(([a],[b])=>a.localeCompare(b));
 
