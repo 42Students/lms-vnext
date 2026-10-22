@@ -7,6 +7,7 @@ import {getCollegeQuizAuthoringOptions} from "@/modules/courses/college-quiz-aut
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { PageHeader } from "@/components/ui/page-header";
+import {CurrentPageRetry} from "@/components/ui/current-page-retry";
 import { collegeAssessmentListQuerySchema } from "@/modules/courses/college-assessment-aggregate-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
@@ -53,8 +54,7 @@ export default async function CollegeQuizzesPage({
       <PageHeader title="Quizzes" />
       <ErrorState title="Quizzes could not be loaded"
         description="The quiz list could not be refreshed. Your existing quizzes were not changed."
-        action={<Link href="/college/quizzes" prefetch={false}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+        action={<CurrentPageRetry />}/>
     </div>;
   }
   if(authoringResult.status==="rejected"&&authoringResult.reason instanceof AuthorizationError)
