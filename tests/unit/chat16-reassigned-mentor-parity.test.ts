@@ -115,7 +115,8 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     expect(page).toContain("listMyMentorCalendarMeetings(context)");
     expect(page).toContain("calendarRead.items===null");
     expect(page).toContain('<MentorCalendarLoadFailure reason={calendarRead.reason??"UNKNOWN"}/>');
-    expect(fallback).toContain("We couldn&apos;t load your meetings.");
+    expect(fallback).toContain("We couldn't load your meetings.");
+    expect(fallback).toContain('role="alert"');
     expect(fallback).toContain("router.refresh()");
     expect(fallback).toContain("Retry");
   });
