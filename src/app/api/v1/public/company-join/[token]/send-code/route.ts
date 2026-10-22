@@ -12,7 +12,7 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
   {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"no-store"}});
  const payload=body.value;
  const {token}=await params;
- const trusted=process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY==="VERIFIED";
+ const trusted=process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"]==="VERIFIED";
  const ip=trusted?request.headers.get("x-public-verified-client-ip"):null;
  try{
   const email=typeof payload==="object"&&payload!==null&&"email" in payload?payload.email:undefined;
