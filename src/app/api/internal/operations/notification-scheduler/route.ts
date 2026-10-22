@@ -69,6 +69,14 @@ export async function POST(request: Request) {
       { status: 503, headers });
   }
   const jobName: WiredJob = name;
+  // Never report a successful release tick while the durable recipient
+  // outbox is unverified: that would silently drop delayed notifications.
+  // The 0214 migration and producer dedupe index are a release prerequisite.
+  if (jobName === "notification.release" &&
+      process.env.DB10_NOTIFICATION_OUTBOX_READY !== "DB10_VERIFIED") {
+    return NextResponse.json({ error: "NOTIFICATION_OUTBOX_NOT_READY" },
+      { status: 503, headers });
+  }
   const ttlMs = jobName === "notification.release"
     ? LEGACY_NOTIFICATION_JOB_SCHEDULES.release.ttlMs
     : jobName === "notification.cleanup"

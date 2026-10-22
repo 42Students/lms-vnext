@@ -237,6 +237,9 @@ export async function releaseScheduledNotificationOutbox(
     });
     if (!result.processed) break;
     processed += 1;
+    // Each row commits independently. Renew only between fenced database
+    // transactions so a long 200-row release cannot silently lose its lease.
+    if (processed % 20 === 0) await fence.renew();
   }
   return { processed, hasMore: processed === 200 };
 }
