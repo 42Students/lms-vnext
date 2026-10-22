@@ -170,3 +170,28 @@ export function legacyFacultyTypeFromOrdinal(ordinal:number):{
 }
 /** Role hints are NOT account grants: role activation needs an existing,
  * college-scoped membership with appropriate persisted permission. */
+
+/** Historical faculty.website sometimes named a public image URL. Direct
+ * reuse is forbidden: approved importers must re-upload that source asset
+ * to the verified owner's private profile-verification namespace, attest the
+ * content type/size, and log the verified uploader as an activity actor.
+ * Source user IDs are never assumed to be current UUID principals. */
+export const LEGACY_FACULTY_AVATAR_IMPORT_MAP={
+ source:"faculty.website",target:"faculty_profiles.avatar_object_path",
+ owner:"faculty_profiles.membership_id",college:"college_memberships.college_id",
+ uploader:"activity_events.actor_user_id",retiredSourceUrl:"not persisted",
+} as const;
+export function validateImportedFacultyAvatarOwnership(input:{
+ collegeId:string;membershipId:string;objectKey:string;
+ attestedCollegeId:string;attestedMembershipId:string;
+ contentType:string;sizeBytes:number;scanStatus:string;
+}):boolean{
+ const expected="private/"+input.collegeId+"/"+input.membershipId+"/profile-verification/";
+ return input.collegeId===input.attestedCollegeId&&
+  input.membershipId===input.attestedMembershipId&&
+  input.objectKey.startsWith(expected)&&
+  !input.objectKey.includes("..")&&
+  ["image/png","image/jpeg","image/webp"].includes(input.contentType)&&
+  Number.isSafeInteger(input.sizeBytes)&&input.sizeBytes>0&&
+  input.sizeBytes<=5*1024*1024&&input.scanStatus==="CLEAN";
+}
