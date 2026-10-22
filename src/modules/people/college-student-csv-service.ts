@@ -46,7 +46,11 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   requirePermission(context, "academics.manage", {
     collegeId: member.collegeId, organizationId: member.organizationId,
   });
-  const parsed = parseStudentCsv(request.csv, request);
+  const parsed = parseStudentCsv(request.csv, {
+    ...(request.programId !== undefined ? {programId:request.programId} : {}),
+    ...(request.cohortId !== undefined ? {cohortId:request.cohortId} : {}),
+    ...(request.sectionId !== undefined ? {sectionId:request.sectionId} : {}),
+  });
   if (parsed.structuralErrors.length) {
     return { preview: true, structuralErrors: parsed.structuralErrors,
       results: [] as StudentCsvResult[], valid: 0, invalid: 0 };
