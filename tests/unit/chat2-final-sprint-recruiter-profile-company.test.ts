@@ -70,7 +70,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
   const ui=src("src/components/tpo/recruiter-invite-landing.tsx");
   expect(ui).toContain("You can request placement drives and review the students who apply.");
   expect(ui).toContain("Contact details are shared only as the placement cell allows.");
-  expect(ui).toContain('type="email" readOnly={Boolean(invite.contactEmail)}');
+  expect(ui).toContain('type="email" readOnly={Boolean(invite.contactEmail) || codeSent}');
   expect(ui).toContain('value={invite.contactEmail??requestedEmail}');
   expect(src("src/components/ui/input.tsx")).toMatch(/<input\s+data-slot="input"/);
   expect(ui).toContain('"From your invitation. You\'ll sign in with it."');
@@ -132,7 +132,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
  });
 
  it("REC-calendar-messages-profile-41 independent final-sprint acceptance regression",()=>{
-  expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain('readOnly={Boolean(invite.contactEmail)}');
+  expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain('readOnly={Boolean(invite.contactEmail) || codeSent}');
   expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain("Contact details are shared only as the placement cell allows.");
   expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain("You can request placement drives and review the students who apply.");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-41 |");
