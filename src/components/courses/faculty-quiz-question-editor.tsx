@@ -92,7 +92,7 @@ export function FacultyQuizQuestionEditor({
       );
       if (!response.ok) {
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? "Could not load or save Quiz questions.",
         );
         return;
       }
@@ -391,7 +391,7 @@ export function FacultyQuizQuestionEditor({
       );
       if (!response.ok) {
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? "Could not load or save Quiz questions.",
         );
         return;
       }
