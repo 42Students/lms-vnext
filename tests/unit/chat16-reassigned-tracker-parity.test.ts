@@ -41,7 +41,10 @@ describe("chat-16 reassigned tracker issue workflows",()=>{
     expect(bulk).toContain("Set status to…");
     expect(bulk).toContain("selected.length");
     expect(bulk).toContain("expectedVersion:row.version");
-    expect(bulk).toContain("Failed IDs:");
+    // Exact IDs stay visible and selected for retry; successful rows are not retried.
+    expect(bulk).toContain('failures.join(", ")');
+    expect(bulk).toContain("setSelected(failures)");
+    expect(bulk).toContain('tone={failed.length?"error":"success"}');
     expect(bulk).toContain("while(remaining.length)");
     expect(route).toContain("isSameOriginRequest(request)");
     expect(route).toContain("updateBugTrackerWorkflowForAdmin(");
