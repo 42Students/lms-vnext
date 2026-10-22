@@ -26,6 +26,8 @@ describe("TPO timed debarments wired to DB08",()=>{
   const ui=src("src/components/tpo/tpo-timed-debar-control.tsx");
   expect(ui).toContain("apiFetch<{rows:TpoTimedDebarRow[]}>");
   expect(ui).toContain("<Dialog open={confirm!==null}");
-  expect(ui).toContain('role="alert"');
+  expect(ui).toContain('<InlineNotice tone="error" message={error}');
+  const notice=src("src/components/ui/inline-notice.tsx");
+  expect(notice).toContain('tone === "error" ? "alert" : "status"');
  });
 });

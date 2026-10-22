@@ -250,6 +250,10 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
   const emptyMessages=classTeamCreatorEmptyMessages(loading,classes.length,templates.length,Boolean(error));
   async function create() {
+    if(mode==="INDIVIDUAL"&&!currentPreflight){
+      setError("Refresh the class preflight before creating workspaces.");
+      return;
+    }
     if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced&&!rosterLoading)))return;
     if(!roster)return;
     if(initialStatus==="ACTIVE"&&!primaryMentorMembershipId){
