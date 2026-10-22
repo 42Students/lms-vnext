@@ -88,7 +88,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_faculty-assessment-editor.tsx.md` (edit src/components/courses/faculty-assessment-editor.tsx; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_assignment-validation.ts.md` (edit src/modules/courses/assignment-validation.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_college-lesson-visibility-controls.tsx.md` (edit src/components/courses/college-lesson-visibility-controls.tsx; 3 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_lesson-video-service.ts.md` (edit src/modules/courses/lesson-video-service.ts; 3 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_lesson-video-service.ts.md` (edit src/modules/courses/lesson-video-service.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_learner-assignment-due-notice-model.ts.md` (edit src/modules/courses/learner-assignment-due-notice-model.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_faculty-assessment-lifecycle.tsx.md` (edit src/components/courses/faculty-assessment-lifecycle.tsx; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_faculty-report-pdf.ts.md` (edit src/modules/courses/faculty-report-pdf.ts; 3 findings; best P2)
