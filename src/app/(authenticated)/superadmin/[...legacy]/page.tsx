@@ -26,8 +26,11 @@ function importedLegacyTemplateUuid(legacyId: string): string {
     .update(Buffer.from(`project_templates:project_template:${legacyId}`, "utf8"))
     .digest();
   const bytes = Buffer.from(digest.subarray(0, 16));
-  bytes[6] = (bytes[6] & 0x0f) | 0x50;
-  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const versionByte = bytes[6];
+  const variantByte = bytes[8];
+  if (versionByte === undefined || variantByte === undefined) throw new Error("Invalid SHA-1 digest length");
+  bytes[6] = (versionByte & 0x0f) | 0x50;
+  bytes[8] = (variantByte & 0x3f) | 0x80;
   const hex = bytes.toString("hex");
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
@@ -127,7 +130,7 @@ export default async function LegacySuperAdminRedirect({
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) redirect("/dashboard");
   const [{ legacy }, query] = await Promise.all([params, searchParams]);
-  const type = typeof query.type === "string" ? query.type : undefined;
+  const type = typeof query["type"] === "string" ? query["type"] : undefined;
   const destination = await nestedProjectDestination(context, legacy) ??
     legacySuperAdminDestination(legacy, type);
   if (!destination) {
@@ -156,23 +159,23 @@ export default async function LegacySuperAdminRedirect({
   // Pass only supported, bounded navigation state. A forged query college may
   // not switch the signed-in user's selected college (or global Admin scope).
   const search = new URLSearchParams();
-  if (typeof query.q === "string" && query.q.length <= 100) {
-    search.set("q", query.q);
+  if (typeof query["q"] === "string" && query["q"].length <= 100) {
+    search.set("q", query["q"]);
   }
-  if (typeof query.from === "string" && /^[a-z0-9_-]{1,64}$/i.test(query.from)) {
-    search.set("from", query.from);
+  if (typeof query["from"] === "string" && /^[a-z0-9_-]{1,64}$/i.test(query["from"])) {
+    search.set("from", query["from"]);
   }
   // Restore only filters supported by the new selected-college page. Do not
   // reuse opaque numeric course IDs as UUIDs or accept a foreign college.
   if (destination === "/admin/lessons") {
-    if (typeof query.courseCode === "string" && /^[a-z0-9_-]{1,64}$/i.test(query.courseCode))
-      search.set("courseCode", query.courseCode);
-    if (typeof query.status === "string" && ["ALL","ACTIVE","ARCHIVED"].includes(query.status))
-      search.set("status", query.status);
-    if (typeof query.pageSize === "string" && ["10","25","50","100"].includes(query.pageSize))
-      search.set("pageSize", query.pageSize);
-    if (typeof query.page === "string" && /^[1-9][0-9]{0,2}$/.test(query.page))
-      search.set("page", query.page);
+    if (typeof query["courseCode"] === "string" && /^[a-z0-9_-]{1,64}$/i.test(query["courseCode"]))
+      search.set("courseCode", query["courseCode"]);
+    if (typeof query["status"] === "string" && ["ALL","ACTIVE","ARCHIVED"].includes(query["status"]))
+      search.set("status", query["status"]);
+    if (typeof query["pageSize"] === "string" && ["10","25","50","100"].includes(query["pageSize"]))
+      search.set("pageSize", query["pageSize"]);
+    if (typeof query["page"] === "string" && /^[1-9][0-9]{0,2}$/.test(query["page"]))
+      search.set("page", query["page"]);
   }
   // The historic template root redirected to /overview with its query
   // intact. Preserve bounded, harmless view state through the UUID crosswalk
@@ -187,13 +190,13 @@ export default async function LegacySuperAdminRedirect({
   // Legacy template backlinks may be kept only within the authorized modern
   // Super Admin projects area, never arbitrary redirects or user-provided hosts.
   if (destination.startsWith("/admin/projects/") &&
-      typeof query.return === "string" &&
-      /^\/admin\/projects\/(?:templates|audit|readiness|at-risk)(?:\/[a-z0-9-]{1,96})?$/i.test(query.return)) {
-    search.set("return", query.return);
+      typeof query["return"] === "string" &&
+      /^\/admin\/projects\/(?:templates|audit|readiness|at-risk)(?:\/[a-z0-9-]{1,96})?$/i.test(query["return"])) {
+    search.set("return", query["return"]);
   }
   const selectedCollegeId = context.adminScope?.collegeId;
   if (selectedCollegeId &&
-      (query.collegeId === selectedCollegeId || query.college === selectedCollegeId)) {
+      (query["collegeId"] === selectedCollegeId || query["college"] === selectedCollegeId)) {
     search.set("collegeId", selectedCollegeId);
   }
   return redirect(destination + (search.size ? "?" + search.toString() : ""));
