@@ -22,7 +22,7 @@ export async function readAdminCollegeSignInPolicy(context:RequestContext,colleg
    collegeId:college.id,organizationId:college.organizationId,
   });
   const present=await tx.execute(sql<{found:boolean}>`SELECT to_regclass('public.college_signin_policies') IS NOT NULL AS found`);
-  if(present.rows[0]?.found!==true)return {college,policy:signInPolicyReadState(false,null)};
+  if(present.rows[0]?.found!==true)return {college,policy:signInPolicyReadState(false,null),version:null,updatedAt:null};
   const [row]=await tx.select({
    method:collegeSignInPoliciesStaged.method,
    version:collegeSignInPoliciesStaged.version,

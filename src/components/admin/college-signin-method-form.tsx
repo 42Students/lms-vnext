@@ -32,6 +32,20 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
  const [loadError,setLoadError]=useState("");
  const [reloadPending,setReloadPending]=useState(false);
  const dirty=selection!==savedMethod;
+ const crossTabKey="lms.college.signin.version."+collegeId;
+ useEffect(()=>{
+  const onOtherTabSave=(event:StorageEvent)=>{
+   if(event.key!==crossTabKey||event.newValue===null)return;
+   const newer=Number(event.newValue);
+   if(Number.isSafeInteger(newer)&&newer>currentVersion){
+    setLoadError("Sign-in settings changed in another tab. Reload before editing or saving.");
+    setMessageTone("error");
+    setMessage("Saved sign-in settings changed in another tab.");
+   }
+  };
+  window.addEventListener("storage",onOtherTabSave);
+  return ()=>window.removeEventListener("storage",onOtherTabSave);
+ },[crossTabKey,currentVersion]);
  useEffect(()=>{onDirtyChange?.(dirty);return ()=>onDirtyChange?.(false);},[dirty,onDirtyChange]);
  useEffect(()=>{onBusyChange?.(saving);return ()=>onBusyChange?.(false);},[saving,onBusyChange]);
  useEffect(()=>{return ()=>{requestSeq.current++;};},[collegeId]);
@@ -111,6 +125,9 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
       if(requestSeq.current!==seq)return;
       setSavedMethod(committed.method);
       setCurrentVersion(committed.version);
+      // Synchronize only this college's edit tabs. Version CAS remains the
+      // source of truth if browser storage is disabled.
+      try{window.localStorage.setItem(crossTabKey,String(committed.version));}catch{}
       setConfirmOpen(false);setMessageTone("success");setMessage("Sign-in settings saved");
       showToast({tone:"success",title:"Sign-in settings saved"});router.refresh();
     }catch(error){
