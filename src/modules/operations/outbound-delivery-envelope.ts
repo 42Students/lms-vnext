@@ -250,8 +250,21 @@ export function deriveGlobalEmailSuppressionHash(
   if (intent.channel !== "EMAIL") return null;
   // Separate key from ciphertext: opt-outs must remain stable when the
   // outbox AES encryption key rotates. Missing/malformed key fails closed.
-  const { digestKey } = keyMaterial(globalEmailHmacKeyBase64);
-  return digest(digestKey, "global-email-suppression-v1", intent.recipient);
+  return deriveGlobalEmailSuppressionHashForAddress(intent.recipient,globalEmailHmacKeyBase64);
+}
+
+/** Purpose-specific global identity for campaign senders that do not use the
+ * invitation-outbox intent schema. This deliberately uses the exact same
+ * domain separator, stable key and canonical address as the regular outbox.
+ * Never persist, log or return the raw address alongside the digest. */
+export function deriveGlobalEmailSuppressionHashForAddress(
+  rawAddress:string,globalEmailHmacKeyBase64:string,
+):string {
+  const address=rawAddress.trim().toLowerCase();
+  if(address.length>320||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(address))
+    throw new OutboundDeliveryError("INVALID_OUTBOUND_INTENT");
+  const {digestKey}=keyMaterial(globalEmailHmacKeyBase64);
+  return digest(digestKey,"global-email-suppression-v1",address);
 }
 
 /**
