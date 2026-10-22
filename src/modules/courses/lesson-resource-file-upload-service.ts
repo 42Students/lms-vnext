@@ -198,6 +198,34 @@ export async function completeLessonResourceFileUpload(
  return {id:ready.id,uploadStatus:"READY" as const};
 }
 
+const fileDetailsInput=z.strictObject({
+ deliveryId:uuid.nullable().optional(),
+ title:z.string().trim().min(1).max(255),
+ notes:z.string().trim().max(2000).nullable().optional(),
+});
+/** Edit FILE metadata without overwriting the verified object, token or scan
+ * attestation; the byte replacement workflow is separately grant-scoped. */
+export async function editLessonResourceFileDetails(
+ context:RequestContext,contentId:string,materialId:string,rawInput:unknown,
+){
+ const input=fileDetailsInput.parse(rawInput);
+ await authorizeWriter(context,contentId,input.deliveryId??null);
+ const [updated]=await getDb().update(lessonContentMaterials).set({
+  title:input.title,notes:input.notes??null,updatedAt:new Date(),
+ }).where(and(
+  eq(lessonContentMaterials.id,uuid.parse(materialId)),
+  eq(lessonContentMaterials.lessonContentId,contentId),
+  eq(lessonContentMaterials.kind,"FILE"),
+  ne(lessonContentMaterials.uploadStatus,"DELETED"),
+  ne(lessonContentMaterials.uploadStatus,"QUARANTINED"),
+ )).returning({
+  id:lessonContentMaterials.id,title:lessonContentMaterials.title,
+  notes:lessonContentMaterials.notes,
+ });
+ if(!updated)throw new StorageFileError("STORAGE_NOT_FOUND");
+ return updated;
+}
+
 export async function removeLessonResourceFile(
  context:RequestContext,contentId:string,materialId:string,deliveryId:string|null,
 ){
