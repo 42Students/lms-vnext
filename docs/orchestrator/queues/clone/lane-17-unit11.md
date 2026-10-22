@@ -7,7 +7,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [ ] `tests/unit/chat3-faculty-assessment-report-service-scope.test.ts` (2 failing)
 - [ ] `tests/unit/chat7-college-assessment-export-service-weak.test.ts` (2 failing)
 - [x] `tests/unit/college-drive-applications-model.test.ts` (1 failing) — corrected default sort assertion and AGE_ASC link preservation (647a0bdd, 6db2f8f).
-- [ ] `tests/unit/sa-tenants-modules-24-college-mutation-audit.test.ts` (1 failing)
+- [x] `tests/unit/sa-tenants-modules-24-college-mutation-audit.test.ts` (1 failing) — the fourth read transaction verifies persisted permission; updated exact transaction assertion (94368cf).
 
 ## Failures (from CI log)
 
