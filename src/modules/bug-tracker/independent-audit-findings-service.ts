@@ -182,7 +182,10 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
    if(row.externalId===input.duplicateOf)return {ok:false as const,reason:"INVALID_DUPLICATE"};
    const [target]=await tx.select({id:db10AuditFindings.id,status:db10AuditFindings.status})
     .from(db10AuditFindings).where(eq(db10AuditFindings.externalId,input.duplicateOf)).limit(1);
-   if(!target||target.status==="DUPLICATE")return {ok:false as const,reason:"INVALID_DUPLICATE"};
+   // Distinguish a missing reference from a reference to another duplicate.
+   // The old tracker explicitly says when the selected ID does not exist.
+   if(!target)return {ok:false as const,reason:"DUPLICATE_TARGET_NOT_FOUND"};
+   if(target.status==="DUPLICATE")return {ok:false as const,reason:"INVALID_DUPLICATE"};
    patch.duplicateOf=target.id;patch.status="DUPLICATE";
    note=`Duplicate of ${input.duplicateOf}`;
   }
