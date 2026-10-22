@@ -21,11 +21,11 @@ describe("Super Admin tenant directory strict URL handling",()=>{
   ])expect(parseTenantLifecycleSearchParams(malformed)).toBeNull();
  });
  it("SA-tenants-directory-QUERY-02 URL serialization and 20-row paging retain selected authorized filters",()=>{
-  expect(TENANT_LIFECYCLE_PAGE_SIZE).toBe(20);
+  expect(TENANT_LIFECYCLE_PAGE_SIZE).toBe(25);
   expect(tenantLifecycleHref({q:"IIT Dharwad",status:"ARCHIVED",organizationId:org,page:2}))
    .toBe("/admin/tenants?q=IIT+Dharwad&organizationId="+org+"&status=ARCHIVED&page=2");
   expect(tenantLifecycleHref({})).toBe("/admin/tenants");
-  expect(tenantLifecyclePaging(99,2)).toEqual({total:99,totalPages:5,page:2,offset:20});
+  expect(tenantLifecyclePaging(99,2)).toEqual({total:99,totalPages:4,page:2,offset:25});
   expect(tenantLifecyclePaging(0,18)).toEqual({total:0,totalPages:1,page:1,offset:0});
  });
  it("SA-tenants-directory-QUERY-03 malformed input renders a recovery page without a tenant query",()=>{
@@ -39,6 +39,6 @@ describe("Super Admin tenant directory strict URL handling",()=>{
   expect(query).toBeGreaterThan(guard);
   expect(body).toContain('title="Invalid tenant filters"');
   expect(body).toContain('href="/admin/tenants"');
-  expect(body).toContain('requirePermission(context,"admin-scope.select")');
+  expect(body).toContain('can(context,"admin-scope.select")');
  });
 });

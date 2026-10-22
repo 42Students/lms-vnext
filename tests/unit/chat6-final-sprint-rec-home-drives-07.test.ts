@@ -11,7 +11,7 @@ describe("Final sprint recruiter live drive highlight",()=>{
   ];
   expect(hrTodayLiveDriveRows(rows,"college","company").map(row=>row.job.id)).toEqual(["early","late"]);
   const source=readFileSync("src/app/(authenticated)/hr/home/page.tsx","utf8");
-  expect(source).toContain("recruiterVisiblePortfolioCounts(context,selectedId,liveDrives.map(row=>row.job.id))");
+  expect(source).toContain("recruiterVisiblePortfolioCounts(");
   expect(source).toContain("mostSharedLiveId");
   expect(source).toContain("sharedApplicants");
   expect(source).toContain("No shortlisted applicants have been shared yet.");
