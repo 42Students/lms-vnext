@@ -183,6 +183,15 @@ export default async function HrPlacementJobPage({
   const now = new Date(currentTimeMs());
 
   const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
+  // The applicant grid is paged and stage-filtered. A selection proposal must
+  // use the full employer-authorized round roster, not only the visible page.
+  // The workspace excludes unshared, withdrawn, and inactive candidates.
+  const eligibleSelectionCandidates = (workspace.rounds[0]?.participants ?? [])
+    .filter(participant => selectionReadyIds.has(participant.applicationId))
+    .map(participant => ({
+      id: participant.applicationId,
+      name: participant.displayName ?? "Unnamed applicant",
+    }));
   const driveOverview = buildHrDriveOverview({job:workspace.job,applicants:applicants.counts,offers,rounds:workspace.rounds},now);
   if (filters.applicant && !selectedApplicant) notFound();
   let applicantNotes: Awaited<ReturnType<typeof listRecruiterApplicantNotes>> | null = null;
@@ -772,9 +781,7 @@ export default async function HrPlacementJobPage({
               disabled={driveOverview.readOnly}
               minCtcInr={workspace.job.minimumAnnualCtcInr}
               maxCtcInr={workspace.job.maximumAnnualCtcInr}
-              candidates={applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>({
-                id:applicant.id,name:applicant.name??"Unnamed applicant",
-              }))}
+              candidates={eligibleSelectionCandidates}
             />
           </section>
           <Tabs renderPanel={false} ariaLabel="Offer status" value={filters.offerState}
