@@ -125,6 +125,7 @@ describe("ZeptoMail provider", () => {
 
   it("sends the OTP template with the legacy merge fields", async () => {
     vi.stubEnv("APP_ENV", "development");
+    vi.stubEnv("STAGE", "dev");
     vi.stubEnv("DEV_MAIL_ALLOW", "learner@example.test");
     const fetchMock = vi.fn(async () => jsonResponse({ data: [] }));
     const accepted = await createZeptoMailEmailProvider(
