@@ -364,8 +364,8 @@ export function ProjectTemplateActions({
           "Assigned to "+(selectedCollegeName??"selected college"):
           label==="Revoke college assignment"?
           "Removed from "+(selectedCollegeName??"selected college"):label,
-        description:label==="Assign to college"||label==="Revoke college assignment"?
-          undefined:title+" was updated successfully.",
+        ...(label==="Assign to college"||label==="Revoke college assignment"?
+          {}:{description:title+" was updated successfully."}),
       });
       router.refresh();
     } catch (caught) {
