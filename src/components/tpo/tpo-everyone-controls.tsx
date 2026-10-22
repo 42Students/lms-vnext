@@ -4,13 +4,14 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Disclosure} from "@/components/ui/disclosure";
 
-import {useEffect,useRef,useState} from "react";
+import {useEffect,useId,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 
 export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUserId:string}){
  const router=useRouter();
+ const messageLengthId=useId();
  const pending=useRef(false);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
@@ -75,12 +76,12 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
    className="min-w-0 space-y-3 border-y border-border py-4">
    <h2 className="font-semibold">Write to Everyone</h2>
    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
-    <Textarea className="mt-2 min-h-32 w-full min-w-0" name="body" required maxLength={4000} rows={4} value={message}
+    <Textarea aria-describedby={messageLengthId} className="mt-2 min-h-32 w-full min-w-0" name="body" required maxLength={4000} rows={4} value={message}
      onChange={event=>updateMessage(event.target.value)} disabled={busy}
      
      placeholder="Share an update with the placement team"/>
    </label>
-   <p aria-live="polite" className="text-xs text-muted-foreground">{message.length}/4000</p>
+   <p id={messageLengthId} aria-live="polite" className="text-xs text-muted-foreground">{message.length}/4000</p>
    <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||!message.trim()}
     >
     {busy?"Sending…":"Send to Everyone"}
@@ -91,7 +92,7 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
    <p className="text-xs text-muted-foreground">
     {localMuted?"Muted: no unread count, no noise":"Everyone in the team can read and reply."}
    </p>
-   <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} onClick={()=>void updateMute()}
+   <Button variant="secondary" type="button" aria-pressed={localMuted} aria-label={localMuted?"Unmute Everyone notifications":"Mute Everyone notifications"} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} onClick={()=>void updateMute()}
     >
     {busy?"Updating…":localMuted?"Unmute":"Mute"}
    </Button>

@@ -273,11 +273,11 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
 - [x] `src/components/tpo/tpo-bell-panel.tsx`
 - [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tpo/tpo-campaign-compose.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-drive-request-actions.tsx`
-- [ ] `src/components/tpo/tpo-everyone-controls.tsx`
-- [ ] `src/components/tpo/tpo-find-shortcut.tsx`
+- [x] `src/components/tpo/tpo-campaign-compose.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-drive-request-actions.tsx`
+- [x] `src/components/tpo/tpo-everyone-controls.tsx`
+- [x] `src/components/tpo/tpo-find-shortcut.tsx`
 - [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
 - [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
 - [ ] `src/components/tpo/tpo-roster-verification-bulk.tsx`
