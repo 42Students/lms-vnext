@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import type { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-drive-lifecycle-service";
 import { tpoDriveReadinessMessage } from "@/modules/placements/tpo-drive-lifecycle-model";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
-import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
