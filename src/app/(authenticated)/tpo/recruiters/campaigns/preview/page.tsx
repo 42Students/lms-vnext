@@ -31,7 +31,7 @@ export default async function PreviewCampaign({searchParams}:PageProps){
       ["No email",preview.withoutEmail],["Opted out",preview.unsubscribed],
       ["Previously bounced",preview.bounced],["Not now",preview.notNow],
       ["Outside selected segment",preview.outsideSegment]] as const).map(([label,value])=>
-     <StatTile key={label} label={label} value={value} className={tpoTileStyles.tile} />)}
+     <StatTile key={label} label={label} value={value} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />)}
   </section>
   <p className="text-sm text-body leading-[22px]">Potential does not mean deliverable: provider availability, daily caps, global email suppression and non-production allowlists require checks again at dispatch. Sending is not enabled here.</p>
  </div>;
