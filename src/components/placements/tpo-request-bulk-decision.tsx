@@ -12,7 +12,8 @@ import {tpoRequestFailedRowsTsv} from "@/modules/placements/tpo-request-failed-r
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 
-type Row={id:string;studentName:string;requestType:string;expectedUpdatedAt:string};
+type Row={id:string;studentName:string;requestType:string;expectedUpdatedAt:string;proofMissing?:boolean};
+const PROOF_SKIP_NOTE="No proof attached: open it to decide";
 type Outcome={id:string;name:string;status:"updated"|"failed";message:string};
 const MAX_BULK_REQUESTS=10;
 
@@ -57,13 +58,15 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
    await navigator.clipboard.writeText(text);
   }catch{setError("Could not copy failed requests. Check browser clipboard permissions.");}
  }
- const chosen=rows.filter(row=>selected.includes(row.id));
+ // Approving without opening never covers a request whose proof is missing; those stay reviewable one by one.
+ const chosen=rows.filter(row=>selected.includes(row.id)&&!(action==="APPROVE"&&row.proofMissing));
  const chosenKind=chosen[0]?.requestType??null;
  const valid=chosen.length>0&&chosen.length<=MAX_BULK_REQUESTS&&
   chosen.every(row=>row.requestType===chosenKind)&&
   (action==="APPROVE"||reason.trim().length>=3);
  function toggle(row:Row,checked:boolean){
   if(auditRetry)return;
+  if(checked&&action==="APPROVE"&&row.proofMissing)return;
   if(checked&&(selected.length>=MAX_BULK_REQUESTS||chosenKind!==null&&chosenKind!==row.requestType))return;
   setSelected(ids=>checked?[...ids,row.id]:ids.filter(id=>id!==row.id));
   setConfirmOpen(false);setAcknowledged(false);setOutcomes([]);setError("");
@@ -149,10 +152,11 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
      className="max-h-64 min-h-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
      {rows.map(row=>{
       const checked=selected.includes(row.id);
-      const unavailable=pending||auditRetry!==null||(!checked&&(selected.length>=MAX_BULK_REQUESTS||(chosenKind!==null&&chosenKind!==row.requestType)));
+      const proofBlocked=action==="APPROVE"&&Boolean(row.proofMissing);
+      const unavailable=pending||auditRetry!==null||proofBlocked||(!checked&&(selected.length>=MAX_BULK_REQUESTS||(chosenKind!==null&&chosenKind!==row.requestType)));
       return <label key={row.id} className="flex min-h-11 min-w-0 cursor-pointer items-center gap-[var(--lms-space-3)] px-[var(--lms-space-2)] py-[var(--lms-space-2)] text-[var(--lms-font-base)] leading-5 hover:bg-[var(--lms-neutral-50)] focus-within:bg-[var(--lms-neutral-50)]">
        <Checkbox checked={checked} disabled={unavailable} onChange={event=>toggle(row,event.target.checked)}/>
-       <span className="min-w-0 break-words text-[var(--lms-body-text)]">{row.studentName} <span className="text-[var(--lms-muted-text)]">· {row.requestType.replaceAll("_"," ")}</span></span>
+       <span className="min-w-0 break-words text-[var(--lms-body-text)]">{row.studentName} <span className="text-[var(--lms-muted-text)]">· {row.requestType.replaceAll("_"," ")}</span>{proofBlocked?<span className="block text-xs text-[var(--lms-warning-text)]">{PROOF_SKIP_NOTE}</span>:null}</span>
       </label>;
      })}
     </div>

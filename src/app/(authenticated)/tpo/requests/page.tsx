@@ -184,6 +184,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     {data.query.status==="PENDING"?<TpoRequestBulkDecision rows={data.requests.filter(row=>row.status==="PENDING").map(row=>({
       id:row.id,studentName:row.studentName,requestType:row.requestType,
       expectedUpdatedAt:row.updatedAt.toISOString(),
+      proofMissing:["OFF_CAMPUS_OFFER","ABSENCE_DISPUTE","CORRECTION_WITH_PROOF"].includes(row.requestType)&&!row.proofAttached,
     }))}/>:null}
     {data.query.status==="PENDING"?<TpoSequentialRequestReview
       requests={data.requests.filter(row=>row.status==="PENDING").map(row=>({
