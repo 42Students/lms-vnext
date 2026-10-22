@@ -138,7 +138,11 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  }).from(source)
   .orderBy(desc(sql<string>`"admin_faculty_assignment_directory"."admin_teacher_assignment_id"`))
   .limit(query.pageSize).offset((page-1)*query.pageSize);
- const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(value)+" IST";
+ const format=(value:Date|string|null|undefined)=>{
+  const instant=value instanceof Date?value:new Date(value??"");
+  if(!Number.isFinite(instant.getTime()))return "Date unavailable";
+  return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(instant)+" IST";
+ };
  return {query:{...query,page},total,totalPages,
   rangeStart:total===0?0:(page-1)*query.pageSize+1,
   rangeEnd:Math.min(total,page*query.pageSize),

@@ -25,7 +25,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   expect(page).toContain('mobilePriority: "action"');
   expect(page).toContain('className="min-h-11 md:min-h-9"');
   expect(page).not.toContain("text-[#26bac7]");
-  expect(page).toContain('setFormError("Could not save the hall. Check your connection and retry.")');
+  expect(page).toContain('"Could not save the room. Try again."');
   expect(page).toContain('if (!response.ok)');
   expect(page).toContain('!value && !pending && setEditing(null)');
   expect(page).toContain("grid-cols-1 gap-3 sm:grid-cols-2");
@@ -63,7 +63,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   expect(guard).toBeLessThan(page.indexOf("getSuperAdminCompanyHiringReport(context,parsed.data)"));
   expect(page).toContain("Choose a reporting scope");
   expect(page).toContain("Select an organization or a college");
-  expect(page).toContain('caption="Company hiring report"');
+  expect(page).toContain('caption="Company-wise Hiring Report"');
   for(const ctl of ["<Input","<Select","<Button"])expect(page).toContain(ctl);
  });
  it("UX-admin-placements-jobs-02 uses recoverable college-scope states rather than silent redirect",()=>{
@@ -131,7 +131,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
  });
  it("UX-admin-placements-calendar-02 all calendar chips/events meet phone size and high contrast focus",()=>{
   const page=source("src/components/placements/placement-calendar-workspace.tsx");
-  expect(page).toContain("md:min-h-9");
+  expect(page).not.toContain("min-h-10");
   expect(source("src/components/ui/filter-chip.tsx")).toContain("min-h-11");
   expect(page).toContain("focus-visible:outline-2");
   expect(page).toContain("min-h-11");

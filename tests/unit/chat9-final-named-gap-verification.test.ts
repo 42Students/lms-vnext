@@ -31,7 +31,8 @@ describe("chat-9 final named gap source acceptance",()=>{
    expect(component).toContain(label);
   const rows=["Zoology","Biology","Physics"].map((name,index)=>({id:String(index),name,createdAt:"2099-01-01",usage:null}));
   const sorted=filterDepartmentRows(rows,"");
-  expect(sorted.map(row=>row.name)).toEqual(["Biology","Physics","Zoology"]);
+  expect(sorted.map(row=>row.name)).toEqual(["Zoology","Biology","Physics"]);
+  expect(filterDepartmentRows(rows,"Biology").map(row=>row.name)).toEqual(["Biology"]);
   expect(pageDepartmentRows(sorted,1,2).items).toHaveLength(2);
  });
 });

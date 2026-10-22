@@ -1,5 +1,4 @@
 import type { TpoStudentRow } from "./tpo-students-model";
-import {tpoStudentMarksVerificationLabel} from "./tpo-student-marks-label";
 import {tpoStudentDisplayLabel} from "./tpo-student-display-label";
 
 /**
@@ -75,7 +74,7 @@ export function exportTpoStudentsCsv(
       row.participationStatus,
       tpoStudentDisplayLabel(row.readinessSignal),
       row.cgpa,row.tenthPct,row.twelfthPct,row.diplomaPct,row.ugPct,
-      row.passingYear,row.gapYears,tpoStudentMarksVerificationLabel(row.marksVerified),
+      row.passingYear,row.gapYears,row.marksVerified==null?"":row.marksVerified?"Yes":"No",
       row.isLateralEntry==null?"":row.isLateralEntry?"Yes":"No",
       row.activeBacklogs,row.pastBacklogs,tpoStudentDisplayLabel(row.journeyState),
       row.activeApplicationCount,row.offersAwaitingAnswer,row.acceptedOfferCount,
