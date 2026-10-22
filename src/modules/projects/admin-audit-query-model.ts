@@ -59,7 +59,7 @@ export function projectLegacyAuditLink(params:ProjectAdminAuditSearchParams,now:
   const start=new Date(Date.UTC(
    Number(indiaDate("year")),Number(indiaDate("month"))-1,Number(indiaDate("day")),
   ));
-  if(range!=="today")start.setUTCDate(start.getUTCDate()-(range==="7d"?7:30));
+  if(range!=="today")start.setUTCDate(start.getUTCDate()-(range==="7d"?6:29));
   if(!translated.from)translated.from=start.toISOString().slice(0,10);
  }
  const legacyPage=validPage?Number(page):0;
