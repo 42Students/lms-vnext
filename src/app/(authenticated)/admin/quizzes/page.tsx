@@ -66,7 +66,7 @@ export default async function SuperAdminQuizzesPage({
   const data=dataResult.value;
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Quizzes" eyebrow="Courses & Content"
-      actions={data.items.length?
+      actions={<div className="flex min-w-0 flex-wrap items-center gap-3">{data.items.length?
        <a href={adminAssessmentExportHref("QUIZ",query.data,"PAGE")} download
         className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto print:hidden hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" className="size-4"><path d="M10 2.5v10m-4-4 4 4 4-4M3 13.5v3h14v-3" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -75,7 +75,10 @@ export default async function SuperAdminQuizzesPage({
        <span aria-disabled="true" className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 text-sm text-muted-foreground opacity-60 md:min-h-9">
         <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" className="size-4"><path d="M10 2.5v10m-4-4 4 4 4-4M3 13.5v3h14v-3" strokeLinecap="round" strokeLinejoin="round"/></svg>
         Export CSV (page)
-       </span>}/>
+       </span>}
+        <a href={adminAssessmentExportHref("QUIZ",query.data)} download
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Export all matching</a>
+       </div>}/>
     <div className="min-w-0 flex flex-col gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
       <form method="get" action="/admin/quizzes" className="flex min-w-0 flex-wrap items-end gap-3" aria-label="Filter quizzes by course">
        {Object.entries(query.data).filter(([key,value])=>key!=="courseCode"&&key!=="page"&&value!==undefined&&value!==""&&value!=="ALL")

@@ -124,7 +124,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             {key:"capacity",header:"Max Students",mobilePriority:"secondary",cell:row=>row.capacity===null||row.capacity===0?"No limit":row.capacity},
             {key:"description",header:"Description",mobilePriority:"secondary",cell:row=><span className="block max-w-[180px] truncate" title={row.description??undefined}>{row.description?.trim()||"—"}</span>},
             {key:"students",header:"Students",mobilePriority:"secondary",cell:row=><>
-              {Number.isFinite(row.activeLearners)?row.activeLearners:"Unavailable"}{row.capacity!==null&&row.capacity>0&&row.activeLearners>=row.capacity?
+              {Number.isFinite(row.activeLearners)?row.activeLearners:"Unavailable"}{row.capacity!==null&&row.capacity>0&&row.activeLearners!==null&&row.activeLearners>=row.capacity?
                 <span className="ml-2 rounded-[var(--lms-radius-pill)] border border-border bg-surface px-2 text-xs font-semibold text-foreground" title="Class is full; learners cannot be moved into it.">Class full</span>:null}
             </>},
             {key:"actions",header:"Actions",mobilePriority:"action",cell:row=>

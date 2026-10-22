@@ -11,7 +11,7 @@ describe("chat9 TPO report drilldowns and presentation",()=>{
   expect(query.get("journeyState")).toBe("READY_NOT_APPLYING");
   expect(query.get("batchId")).toBe("batch-one");
   expect(query.get("branchId")).toBe("branch-two");
-  expect(read("src/app/(authenticated)/tpo/reports/unplaced/page.tsx")).toContain("it is not an exhaustive filter of every unplaced student");
+  expect(read("src/app/(authenticated)/tpo/reports/unplaced/page.tsx")).toContain("This does not prove that all learners have been placed across all seasons.");
  });
  it("TPO-calendar-reports-48 counts unique applied decisions by round and active branch rather than all registered candidates",()=>{
   const result=summarizeFailedRoundSharesByBranch([
