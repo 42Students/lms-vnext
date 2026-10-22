@@ -4,7 +4,7 @@
 -- V164__log_alert_signature_triage.sql and LogAlertingService.
 -- Only Chat 1 may journal this migration and register the Drizzle schema.
 -- Raw cloud logs are NOT stored here; these tables hold bounded triage memory.
-CREATE TABLE log_alert_signatures (
+CREATE TABLE IF NOT EXISTS log_alert_signatures (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   environment varchar(32) NOT NULL,
   signature_hash varchar(64) NOT NULL,
@@ -33,18 +33,18 @@ CREATE TABLE log_alert_signatures (
   CONSTRAINT db10_log_alert_signature_fixed_shape_ck
     CHECK ((fix_status = 'FIXED' AND fixed_at IS NOT NULL) OR fix_status <> 'FIXED')
 );
-CREATE UNIQUE INDEX db10_log_alert_signature_env_hash_uq
+CREATE UNIQUE INDEX IF NOT EXISTS db10_log_alert_signature_env_hash_uq
   ON log_alert_signatures(environment,signature_hash);
-CREATE INDEX db10_log_alert_signature_status_seen_idx
+CREATE INDEX IF NOT EXISTS db10_log_alert_signature_status_seen_idx
   ON log_alert_signatures(fix_status,last_seen_at);
-CREATE INDEX db10_log_alert_signature_muted_seen_idx
+CREATE INDEX IF NOT EXISTS db10_log_alert_signature_muted_seen_idx
   ON log_alert_signatures(muted,last_seen_at);
 
 -- Source V158 account_id is a typed account=<id>/<ROLE> log marker, not
 -- a proven global vNext users.id FK. An opaque keyed HMAC of a verified
 -- typed identity preserves distinct-account blast radius without raw PII.
 -- Untrusted frontend-supplied markers must never produce trusted rows.
-CREATE TABLE log_alert_signature_accounts (
+CREATE TABLE IF NOT EXISTS log_alert_signature_accounts (
   signature_id uuid NOT NULL REFERENCES log_alert_signatures(id) ON DELETE CASCADE,
   account_key_hash varchar(64) NOT NULL,
   first_seen_at timestamp with time zone NOT NULL,
@@ -52,17 +52,17 @@ CREATE TABLE log_alert_signature_accounts (
   CONSTRAINT db10_log_alert_signature_accounts_hash_ck
     CHECK (account_key_hash ~ '^[0-9a-f]{64}$')
 );
-CREATE INDEX db10_log_alert_signature_accounts_hash_idx
+CREATE INDEX IF NOT EXISTS db10_log_alert_signature_accounts_hash_idx
   ON log_alert_signature_accounts(account_key_hash,first_seen_at);
 
-CREATE TABLE log_alert_states (
+CREATE TABLE IF NOT EXISTS log_alert_states (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   state_key varchar(64) NOT NULL,
   poll_cursor_at timestamp with time zone,
   admin_last_viewed_at timestamp with time zone,
   CONSTRAINT db10_log_alert_states_key_ck CHECK (length(btrim(state_key)) > 0)
 );
-CREATE UNIQUE INDEX db10_log_alert_states_key_uq ON log_alert_states(state_key);
+CREATE UNIQUE INDEX IF NOT EXISTS db10_log_alert_states_key_uq ON log_alert_states(state_key);
 
 -- RUNTIME REQUIREMENTS, NOT IMPLEMENTED BY THE SCHEMA:
 -- A: per-environment hash upsert must atomically increment the BIGINT counter
