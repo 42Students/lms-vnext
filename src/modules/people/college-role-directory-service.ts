@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 import { and, asc, count, desc, eq, exists, gte, ilike, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {activityEvents} from "@/db/schema/activity";
 import {
   collegeMemberships,
   membershipRoles,
@@ -702,4 +703,81 @@ export async function listLegacyCollegeLearnerPage(context:RequestContext,raw:un
    page:input.page,size:input.size,
    hasNext:(input.page+1)*input.size<result.total,
    hasPrevious:input.page>0};
+}
+
+/** Popular Faculty is an authenticated, same-college aggregate of actual
+ * selections, not a global people search. No raw search text or contact
+ * details are persisted in the event stream. */
+export async function listPopularFacultyDirectory(context:RequestContext,limit=10){
+ if(!context.membership||context.membership.status!=="ACTIVE"||
+    !hasMembershipRole(context,"COLLEGE_ADMIN")||
+    context.user.platformStatus!=="ACTIVE")
+  throw new AuthorizationError("people.manage");
+ const member=context.membership;
+ requirePermission(context,"people.manage",{
+  collegeId:member.collegeId,organizationId:member.organizationId,
+ });
+ const capped=Math.max(1,Math.min(20,Math.floor(limit)));
+ const events=await getDb().select({
+  membershipId:collegeMemberships.id,name:users.displayName,
+  selectionCount:sql<number>`count(${activityEvents.id})::integer`.mapWith(Number),
+ }).from(activityEvents)
+  .innerJoin(collegeMemberships,sql`${activityEvents.subjectId}=${collegeMemberships.id}::text`)
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"FACULTY")))
+  .where(and(
+   eq(activityEvents.eventType,"identity.faculty_directory.selected"),
+   eq(activityEvents.subjectType,"faculty_membership"),
+   eq(activityEvents.collegeId,member.collegeId),
+   eq(collegeMemberships.collegeId,member.collegeId),
+   eq(collegeMemberships.status,"ACTIVE"),
+   eq(users.platformStatus,"ACTIVE"),
+  ))
+  .groupBy(collegeMemberships.id,users.displayName)
+  .orderBy(desc(sql`count(${activityEvents.id})`),asc(users.displayName),asc(collegeMemberships.id))
+  .limit(capped);
+ return events.map(row=>({membershipId:row.membershipId,name:row.name??"Unnamed",
+  selectionCount:row.selectionCount}));
+}
+
+/** One selection per genuine roster option click. A client cannot forge an
+ * external college, a learner ID or a high popularity count. */
+export async function recordFacultyDirectorySelection(
+ context:RequestContext,facultyMembershipId:string,
+){
+ if(!context.membership||context.membership.status!=="ACTIVE"||
+    !hasMembershipRole(context,"COLLEGE_ADMIN")||
+    context.user.platformStatus!=="ACTIVE")
+  throw new AuthorizationError("people.manage");
+ const member=context.membership;
+ requirePermission(context,"people.manage",{
+  collegeId:member.collegeId,organizationId:member.organizationId,
+ });
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"people.manage",{
+   collegeId:member.collegeId,organizationId:member.organizationId,
+  });
+  const [faculty]=await tx.select({id:collegeMemberships.id})
+   .from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,and(
+     eq(membershipRoles.membershipId,collegeMemberships.id),
+     eq(membershipRoles.role,"FACULTY")))
+   .where(and(eq(collegeMemberships.id,facultyMembershipId),
+     eq(collegeMemberships.collegeId,member.collegeId),
+     eq(collegeMemberships.status,"ACTIVE"),
+     eq(users.platformStatus,"ACTIVE"))).limit(1);
+  if(!faculty)throw new AuthorizationError("people.manage");
+  await tx.insert(activityEvents).values({
+   module:"IDENTITY",eventType:"identity.faculty_directory.selected",
+   subjectType:"faculty_membership",subjectId:faculty.id,
+   organizationId:member.organizationId,collegeId:member.collegeId,
+   actorUserId:context.user.id,actorMembershipId:member.id,
+   summary:"Faculty selected from college directory",
+   metadata:{scope:"COLLEGE",selectionSource:"FACULTY_DIRECTORY"},
+  });
+  return {recorded:true,facultyMembershipId:faculty.id};
+ });
 }

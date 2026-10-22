@@ -81,7 +81,9 @@ export async function completeOwnFacultyIdentityUpload(context:RequestContext,ra
    eq(facultyProfiles.profileDocumentVersion,input.expectedVersion)))
    .returning({version:facultyProfiles.profileDocumentVersion});
   if(!saved)throw new Error("FACULTY_PROFILE_VERSION_CONFLICT");
-  if(previous)await tx.update(profilePrivateDocumentReceipts).set({revokedAt:new Date()})
+  if(previous)await tx.update(profilePrivateDocumentReceipts).set({
+   revokedAt:new Date(),retentionUntil:new Date(Date.now()+7*86400000),
+  })
    .where(and(eq(profilePrivateDocumentReceipts.id,previous),
     eq(profilePrivateDocumentReceipts.owningMembershipId,member.id),
     eq(profilePrivateDocumentReceipts.purpose,input.kind),
@@ -143,8 +145,9 @@ export async function revokeOwnFacultyIdentityEvidence(context:RequestContext,ra
    eq(facultyProfiles.profileDocumentVersion,input.expectedVersion)))
    .returning({version:facultyProfiles.profileDocumentVersion});
   if(!saved)throw new Error("FACULTY_PROFILE_VERSION_CONFLICT");
-  await tx.update(profilePrivateDocumentReceipts).set({revokedAt:new Date()})
-   .where(and(eq(profilePrivateDocumentReceipts.id,receiptId),
+  await tx.update(profilePrivateDocumentReceipts).set({
+   revokedAt:new Date(),retentionUntil:new Date(Date.now()+7*86400000),
+  }).where(and(eq(profilePrivateDocumentReceipts.id,receiptId),
     eq(profilePrivateDocumentReceipts.owningMembershipId,member.id),
     eq(profilePrivateDocumentReceipts.purpose,input.kind),
     isNull(profilePrivateDocumentReceipts.revokedAt)));
