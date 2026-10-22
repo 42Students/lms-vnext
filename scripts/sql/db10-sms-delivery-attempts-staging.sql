@@ -1,5 +1,11 @@
 -- DB-031 / DB10 generic SMS provider attempt ledger.
--- STAGING ONLY, NOT A DRIZZLE MIGRATION. Chat 1 owns registration.
+-- HISTORICAL DB-031 PROPOSAL ONLY; DO NOT EXECUTE THIS AS A MIGRATION.
+-- The registered provider-attempt table is messaging_sms_delivery_attempts,
+-- created by drizzle/0162_lane15_sms_attempt_audit.sql and modelled in
+-- src/db/schema/messaging-receipts.ts. It is NOT sms_delivery_attempts.
+-- This unregistered alternate layout must never be deployed in parallel.
+-- The Exotel writer/support reader must be updated by their owning lane to
+-- use the registered schema before SMS ledger parity can be signed off.
 --
 -- Legacy runtime oracle:
 --   42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5
