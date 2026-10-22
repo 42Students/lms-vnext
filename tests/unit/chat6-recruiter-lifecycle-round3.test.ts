@@ -15,7 +15,7 @@ describe("Super Admin recruiter legacy lifecycle",()=>{
  it("SA-academics-people-114 restores recruiter accounts page search and college access copy",()=>{
   const ui=read("src/components/admin/super-admin-hr-accounts.tsx");
   const drawer=read("src/components/admin/super-admin-hr-detail-drawer.tsx");
-  expect(ui).toContain('eyebrow="Industry access"');
+  expect(ui).toContain('>Industry access</p>');
   expect(ui).toContain('<section aria-label="Recruiter account lifecycle"');
   expect(ui).toContain("<h2 className=\"text-base font-semibold\">Recruiter account lifecycle</h2>");
   expect(ui).toContain("Recruiter accounts");
