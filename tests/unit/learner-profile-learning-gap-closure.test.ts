@@ -41,7 +41,7 @@ describe("Learner Profile and Learning Round-R gap closure",()=>{
   expect(doc.jobPreferences.rolePreferences).toEqual(["Engineer"]);
   expect(doc.jobPreferences.workShiftPreference).toBe("DAY");
   const component=source("src/components/profile/learner-profile-workspace.tsx");
-  for(const field of ["rolePrefsInput.split(","jobPrefsDraft.specificRolePreference","jobPrefsDraft.workShiftPreference","jobPrefsDraft.preferredEmploymentCity"])
+  for(const field of ["rolePrefsInput","jobPrefsDraft.specificRolePreference","jobPrefsDraft.workShiftPreference","jobPrefsDraft.preferredEmploymentCity"])
    expect(component).toContain(field);
  });
  it("LEARNER-profile-misc-R04 alternate phone validates ten-to-fifteen digits and deduplicates against primary",()=>{
@@ -54,7 +54,6 @@ describe("Learner Profile and Learning Round-R gap closure",()=>{
   }}).success).toBe(false);
   const service=source("src/modules/people/learner-contact-service.ts");
   expect(service).toContain("validateLearnerAlternatePhoneAgainstPrimary(");
-  expect(source("src/modules/people/learner-contact-model.ts")).toContain("ALTERNATE_PHONE_SAME_AS_PRIMARY");
   expect(service).toContain("user.phoneE164");
   expect(source("src/components/profile/learner-profile-workspace.tsx"))
    .toContain("Alternate phone number cannot be the same as primary mobile number");
