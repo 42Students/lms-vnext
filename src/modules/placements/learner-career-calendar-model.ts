@@ -69,7 +69,9 @@ export function legacyJobImportantDatesToSupplements(
   };
   return [{key:job.jobId+":"+index+":"+record.at,
    kind:legacyJobImportantDateEventType,day:careerDayKey(new Date(entry.at)),
-   title:record.label,companyName:job.companyName,roleTitle:job.roleTitle,
+   title:record.label,
+    ...(job.companyName!==undefined?{companyName:job.companyName}:{}),
+    ...(job.roleTitle!==undefined?{roleTitle:job.roleTitle}:{}),
    jobId:job.jobId,importantDateType:record.type,importantDateLabel:record.label,
    visible:true,note:record.type}];
  });
