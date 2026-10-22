@@ -36,8 +36,14 @@ describe("W1-1 legacy path-bound campaign unsubscribe contract",()=>{
  it("never labels temporary storage failures as successful opt-outs",async()=>{
   vi.mocked(unsubscribeTpoCampaignRecipient)
    .mockRejectedValue(new Error("TPO_CAMPAIGNS_NOT_REGISTERED"));
-  await expect(POST(request(),params))
-   .rejects.toThrow("TPO_CAMPAIGNS_NOT_REGISTERED");
+  const response=await POST(request(),params);
+  expect(response.status).toBe(503);
+  expect(response.ok).toBe(false);
+  expect(response.headers.get("Cache-Control")).toBe("no-store");
+  expect(await response.json()).toEqual({
+   error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again.",
+  });
+  expect(unsubscribeTpoCampaignRecipient).toHaveBeenCalledExactlyOnceWith("opaque-token");
  });
  it("rejects cross-origin POST before resolving a recipient",async()=>{
   vi.mocked(isSameOriginRequest).mockReturnValue(false);
