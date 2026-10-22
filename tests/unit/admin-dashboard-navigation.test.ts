@@ -71,7 +71,7 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
 
   it("does not erroneously restore a full setup guide to Super Admin", () => {
     expect(SUPER_ADMIN_GLOBAL_LINKS.map((item) => item.label)).toEqual([
-      "Tenant setup", "Feature controls", "Activity log", "Recruiter accounts",
+      "Tenant Setup", "Feature Controls", "Activity Log", "Recruiter accounts",
     ]);
     expect(SUPER_ADMIN_GLOBAL_LINKS.map(item => item.href)).toEqual([
       "/admin/tenants", "/admin/features", "/admin/audit", "/admin/recruiters",
