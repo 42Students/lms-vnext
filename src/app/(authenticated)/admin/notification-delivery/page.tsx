@@ -35,17 +35,17 @@ export default async function NotificationDeliveryPage({
     redirect("/dashboard");
   }
   const query = await searchParams;
-  const rawStatus = single(query.status);
+  const rawStatus = single(query["status"]);
   const status: DeliveryStatus | undefined =
     rawStatus && statuses.some((value) => value === rawStatus)
       ? (rawStatus as DeliveryStatus)
       : undefined;
-  const pageValue = single(query.page) ?? "0";
+  const pageValue = single(query["page"]) ?? "0";
   const pageNo = /^\d{1,5}$/.test(pageValue) ? Number(pageValue) : NaN;
   if (
     (rawStatus && !status) ||
     !Number.isSafeInteger(pageNo) ||
-    (Array.isArray(query.status) || Array.isArray(query.page))
+    (Array.isArray(query["status"]) || Array.isArray(query["page"]))
   ) {
     return (
       <main className="space-y-4">
@@ -55,7 +55,7 @@ export default async function NotificationDeliveryPage({
     );
   }
   const result = await listScopedAdminNotificationPage(context, {
-    deliveryStatus: status,
+    ...(status !== undefined ? { deliveryStatus: status } : {}),
     pageNo,
     pageSize: 50,
   });
