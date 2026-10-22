@@ -32,6 +32,9 @@ describe("isolated cross-module E2E fixture contract", () => {
     const other = buildE2EFixtureManifest("qa_lane13_other");
     expect(other.ids.collegeA).not.toBe(manifest.ids.collegeA);
     expect(other.ids.jobApplicationA).not.toBe(manifest.ids.jobApplicationA);
+    expect(other.testPhones.facultyA).not.toBe(manifest.testPhones.facultyA);
+    expect(other.testPhones.learnerA).not.toBe(manifest.testPhones.learnerA);
+    expect(new Set(Object.values(manifest.testPhones)).size).toBe(5);
     expect(() => buildE2EFixtureManifest("../production")).toThrow();
     expect(() => buildE2EFixtureManifest("x")).toThrow();
   });
