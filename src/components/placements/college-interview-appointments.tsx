@@ -642,7 +642,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
    title="Discard interview setup?"
    description="There are unsaved interview changes."
-   confirmLabel="Discard changes" cancelLabel="Keep editing"
+   confirmLabel="Discard changes" cancelLabel="Keep editing" confirmVariant="danger"
    onConfirm={()=>{setConfirmDiscard(false);setDirty(false);setShow(false);}}/>
   <ConfirmDialog open={decision!==null} onOpenChange={open=>{if(!open&&!busy)setDecision(null);}}
    title={decision?.action==="CANCEL"?"Cancel interview?":decision?.action==="NO_SHOW"?"Mark No Show?":"Mark interview completed?"}
