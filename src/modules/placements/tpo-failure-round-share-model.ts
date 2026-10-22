@@ -9,7 +9,7 @@ export function summarizeFailedRoundShares(rows:readonly AppliedRoundDecision[])
   let group=grouped.get(row.roundId);
   if(!group){group={roundId:row.roundId,roundName:row.roundName,jobId:row.jobId,decisions:0,failed:0};grouped.set(row.roundId,group);}
   group.decisions+=1;
-  if(row.outcome==="FAIL")group.failed+=1;
+  if(row.outcome==="FAIL"||row.outcome==="ABSENT")group.failed+=1;
  }
  return [...grouped.values()].map(row=>({...row,shareOfRoundPercent:
   row.decisions>0?Math.round(row.failed/row.decisions*100):null}))
@@ -31,7 +31,7 @@ export function summarizeFailedRoundSharesByBranch(rows:readonly AppliedRoundBra
    branchId,branchName:row.branchName?.trim()||"Not recorded",decisions:0,failed:0};
    groups.set(key,group);}
   group.decisions++;
-  if(row.outcome==="FAIL")group.failed++;
+  if(row.outcome==="FAIL"||row.outcome==="ABSENT")group.failed++;
  }
  return [...groups.values()].map(row=>({...row,
   shareOfRoundPercent:row.decisions>0?Math.round(row.failed/row.decisions*100):null,

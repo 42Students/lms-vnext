@@ -122,7 +122,7 @@ export default async function TpoFailureReasonsPage({
         row.shareOfRoundPercent===null?"Not recorded":row.shareOfRoundPercent+"%",
        ])}
        emptyDescription="No applied round decisions were recorded for the selected placement scope."/>
-      <p className="text-xs text-muted-foreground leading-5">Share of the round = applied FAIL decisions divided by all applied round decisions. It does not count candidates who have no recorded round result, and is not a share of registered students.</p>
+      <p className="text-xs text-muted-foreground leading-5">Share of the round = applied FAIL or ABSENT decisions divided by all applied round decisions. It does not count candidates who have no recorded round result, and is not a share of registered students.</p>
 
       <a href={"/api/placements/tpo/reports/round-failures?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
