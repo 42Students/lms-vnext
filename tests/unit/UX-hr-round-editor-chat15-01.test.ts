@@ -8,8 +8,8 @@ describe("UX-hr-round-editor-chat15-01",()=>{
   expect(s).toContain('import {Dialog} from "@/components/ui/dialog"');
   expect(s).toContain("<Dialog open={open}");
   expect(s).toContain("dismissible={!pending}");
-  expect(s).toContain('title={active?"Change round":"Add a round"}');
-  expect(s).toContain("if(!next&&!pending)reset()");
+  expect(s).toContain('title={active?"Change round":"Add a round at the end"}');
+  expect(s).toContain("if(!next)requestClose()");
   expect(s).not.toContain('role="dialog" aria-modal="true"');
   expect(s).toContain('className="min-h-11');
   expect(s).toContain("<ConfirmActionDialog");
@@ -26,7 +26,10 @@ describe("UX-hr-round-editor-chat15-01",()=>{
  it("shared Dialog and ScrollCue provide native Escape, labelled title, focus return and conditional fades",()=>{
   const dialog=read("src/components/ui/dialog.tsx");
   const cue=read("src/components/ui/scroll-cue.tsx");
-  for(const part of ["modal.showModal()","modal.close()","opener.current?.focus()",
+  const exit=read("src/components/ui/use-overlay-exit.ts");
+  for(const part of ["dialog.showModal()","dialog.close()","opener.focus()"])
+    expect(exit).toContain(part);
+  for(const part of ["useOverlayExit(ref, opener, open, 180)",
     "aria-labelledby={titleId}",'onCancel={event', 'axis="y"'])
     expect(dialog).toContain(part);
   expect(cue).toContain('data-scroll-fade="end"');
