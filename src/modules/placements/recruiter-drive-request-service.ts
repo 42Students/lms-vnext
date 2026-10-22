@@ -6,6 +6,7 @@ import {activityEvents,collegeMemberships,colleges,inAppNotifications,membership
  placementTpoCollegeSettings,placementTpoTrustedDomains,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
+import {verifyOwnRecruiterJdObject} from "./recruiter-jd-upload-service";
 import {can} from "@/modules/permissions/policy";
 import {recruiterGrantEffectiveAt} from "./recruiter-grant-expiry-policy";
 import {hrDriveDraftSchema} from "./hr-drive-draft-model";
@@ -138,6 +139,7 @@ async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId
  /** REC-home-drives-21: writes registered 0101 table and TPO bell transactionally. */
 export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:unknown){
  const input=recruiterDriveRequestInputSchema.parse(raw);
+ await verifyOwnRecruiterJdObject(context,input.collegeId,input.draft.jdObjectKey);
  return getDb().transaction(async tx=>{
   const scope=await lockedRelationship(tx,context,input.collegeId);
   // A repeated POST with the same nonce is a replay, not a 409 caused by
@@ -236,6 +238,7 @@ export async function listOwnRecruiterDriveRequests(context:RequestContext,colle
 }
 export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:unknown){
  const input=recruiterRequestUpdateSchema.parse(raw);
+ if(input.draft)await verifyOwnRecruiterJdObject(context,input.collegeId,input.draft.jdObjectKey);
  return getDb().transaction(async tx=>{
   const scope=await lockedRelationship(tx,context,input.collegeId);
   const [original]=await tx.select().from(placementRecruiterDriveRequests).where(and(
