@@ -492,7 +492,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
         <section aria-label="Source and stack trace" className="space-y-2 border-t border-border pt-3 text-xs text-muted-foreground">
           <h3 className="font-semibold text-body">Source and stack trace</h3>
           <p>Only redacted provider fields are shown. Full stack frames, raw SQL and bind values are not returned by the restricted log endpoint.</p>
-          <a target="_blank" rel="noopener noreferrer"
+          <a rel="noopener noreferrer"
             href={"https://github.com/42Students/lms-vnext/search?q="+
               encodeURIComponent((detailEntry.component??detailEntry.path).slice(0,100))}
             className="inline-flex min-h-9 items-center font-semibold text-link underline"
