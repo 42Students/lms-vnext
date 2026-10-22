@@ -25,7 +25,10 @@ describe("TPO conversations filters",()=>{
   const page=readFileSync(join(process.cwd(),"src/app/(authenticated)/tpo/team/page.tsx"),"utf8");
   expect(reader).toContain("hasDecisions:sql<boolean>");
   expect(reader).toContain("later.event_type in");
-  expect(page).toContain('conversations.asksReady?["ASKS","AT_ME"] as const');
+  expect(page).toContain('redirect("/tpo/messages?" + target.toString())');
+  const canonical=readFileSync(join(process.cwd(),"src/components/tpo/tpo-team-messages-directory.tsx"),"utf8");
+  expect(canonical).toContain('["asks","Asks"]');
+  expect(canonical).toContain('["decisions","Decisions"]');
   expect(page).toContain('"Decisions"');
  });
  it("TPO-inbox-team-22 uses only scoped OPEN asks for the Asks and @ Me chips",()=>{
@@ -42,9 +45,11 @@ describe("TPO conversations filters",()=>{
  });
  it("TPO-inbox-team-18 keeps filter state in the URL and explains an empty filtered result",()=>{
   const page=readFileSync(join(process.cwd(),"src/app/(authenticated)/tpo/team/page.tsx"),"utf8");
-  expect(page).toContain("tpoTeamConversationFilterSchema.optional()");
-  expect(page).toContain("conversationCounts[key]");
-  expect(page).toContain("No conversations match these filters. Clear filters to see all.");
-  expect(page).toContain("visibleConversations.map(row");
+  expect(page).toContain('const target = new URLSearchParams({ tab: "team" })');
+  const canonical=readFileSync(join(process.cwd(),"src/components/tpo/tpo-team-messages-directory.tsx"),"utf8");
+  expect(canonical).toContain('if(nextFilter!=="following")params.set("filter",nextFilter)');
+  expect(canonical).toContain("displayedCount");
+  expect(canonical).toContain("Nothing here. Try All.");
+  expect(canonical).toContain("visible.map(");
  });
 });

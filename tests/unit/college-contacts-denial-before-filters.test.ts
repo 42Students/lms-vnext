@@ -7,6 +7,7 @@ describe("College Contacts role-first denial",()=>{
   const parse=source.indexOf("parseCollegeContactsSearchParams(raw)");
   expect(guard).toBeGreaterThan(-1);
   expect(guard).toBeLessThan(parse);
-  expect(source).toMatch(/if\(!context\.membership\|\|!hasMembershipRole\(context,"COLLEGE_ADMIN"\)\)redirect\("\/dashboard"\)/);
+  expect(source).toContain("The contacts directory is for staff only");
+  expect(source).toContain('context.membership.status!=="ACTIVE"');
  });
 });

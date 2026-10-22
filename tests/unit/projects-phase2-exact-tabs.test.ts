@@ -27,7 +27,10 @@ describe("Phase2 exact legacy Projects labels + single tab strip",()=>{
   });
   it("has one workspace-level Admin tab strip, not the list-level strip too",()=>{
     expect(admin).toContain("sectionBaseHref={");
-    expect(admin).not.toContain("ProjectAdminNav");
+    // The navigation remains mounted in the explicit recovery state, while
+    // the successful workspace has a single scoped section tab strip.
+    expect(admin).toContain('<ProjectAdminNav basePath={basePath} active="workspaces"/>');
+    expect(admin).toContain("<WorkspaceContextTabs projectId={projectId}");
     expect(workspace).toContain('aria-label="Project workspace sections"');
     expect(college).toContain('["", "Workspaces"]');
     for(const label of ["Workspaces","At Risk","Readiness","Submissions","Templates","Audit"]){
