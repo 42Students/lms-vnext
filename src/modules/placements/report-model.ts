@@ -5,8 +5,9 @@
  * - applications: distinct currently submitted application IDs
  * - offers: distinct issued offer IDs, including subsequently withdrawn offers
  * - accepted offers: offers whose CURRENT status is ACCEPTED
- * - placed learners: distinct learners with accepted FULL_TIME offers
- * - packages: best accepted FULL_TIME annual CTC per learner
+ * - placed learners: distinct learners with selected/released/accepted evidence
+ *   from jobs whose persisted counts-as-placed flag is explicitly true
+ * - packages: best accepted qualifying OFFER annual CTC per learner
  *
  * Historical status transitions are not inferred from current status.
  * The registered pool reflects current batch registration choices, not a
@@ -239,8 +240,7 @@ function bestAcceptedFullTimePackages(
     if (
       offer.status !== "ACCEPTED" ||
       (offer.kind ?? "OFFER") !== "OFFER" ||
-      (jobsById.get(offer.jobId)?.countsAsPlaced ??
-        (jobsById.get(offer.jobId)?.employmentType === "FULL_TIME")) === false
+      jobsById.get(offer.jobId)?.countsAsPlaced !== true
     ) {
       continue;
     }
@@ -261,8 +261,8 @@ function bestAcceptedFullTimePackages(
 /** A legacy drive's persisted "counts as placed" answer is authoritative.
  * NULL means no verified answer, not an implicit "yes" for FULL_TIME jobs.
  * In production, fail closed until the TPO explicitly records that answer.
- * Pure legacy fixtures may omit the optional flag, so the model continues to
- * support them separately; the DB reader always supplies a boolean.
+ * All projections fail closed when a caller omits the answer. Employment
+ * type is informational and cannot silently substitute for the TPO policy.
  */
 export function verifiedJobCountsAsPlaced(value:boolean|null):boolean{
  return value===true;
@@ -279,7 +279,7 @@ export function countsAsPlacedByCollegeRule(input: {
   countsAsPlacedAt: "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
   selectedOutcome?: boolean;
 }): boolean {
-  if (!(input.countsAsPlaced ?? (input.employmentType === "FULL_TIME"))) return false;
+  if (input.countsAsPlaced !== true) return false;
   if (input.countsAsPlacedAt === "SELECTED") return input.selectedOutcome === true;
   if ((input.offerKind ?? "OFFER") !== "OFFER") return false;
   if (input.countsAsPlacedAt === "OFFER_RELEASED") {
@@ -394,7 +394,7 @@ export function summarizePlacementReports(
       .map((item) => [item.jobId + ":" + item.membershipId, item]),
   ).values()].filter((item) => {
     const job = jobsById.get(item.jobId)!;
-    return job.countsAsPlaced ?? (job.employmentType === "FULL_TIME");
+    return job.countsAsPlaced === true;
   });
   const selectionsByJob = groupPlacementRowsByJob(selections);
   const jobsByCompany = new Map<string, PlacementReportJob[]>();
@@ -474,8 +474,7 @@ export function summarizePlacementReports(
       (offer) => offer.status === "WITHDRAWN",
     ).length,
     studentsAccepted: distinct(accepted.filter((offer) =>
-      jobsById.get(offer.jobId)?.countsAsPlaced ??
-        (jobsById.get(offer.jobId)?.employmentType === "FULL_TIME"),
+      jobsById.get(offer.jobId)?.countsAsPlaced === true,
     ).map((offer) => offer.membershipId)).length,
     studentsAcceptedAnyType:distinct(accepted.map(offer=>offer.membershipId)).length,
     studentsPlaced: studentsPlaced.length,
@@ -923,8 +922,7 @@ export function summarizePlacementReportDetails(input: {
             (selection.status === "SELECTED" ||
               selection.status === "VERIFIED" ||
               selection.status === "RELEASED") &&
-            (selection.countsAsPlaced ??
-              (selection.employmentType === "FULL_TIME")))
+            selection.countsAsPlaced === true)
           .map((selection) => selection.membershipId)
       : offers
           .filter((offer) => countsAsPlacedByCollegeRule({
@@ -947,13 +945,13 @@ export function summarizePlacementReportDetails(input: {
         left.membershipId.localeCompare(right.membershipId),
     );
 
-  // This distribution counts accepted full-time OFFER records, not the
-  // best offer per learner used by the existing Placement Summary.
+  // This distribution counts accepted OFFER records from jobs explicitly
+  // approved as counts-as-placed, rather than guessing from FULL_TIME.
   const acceptedFullTime = offers.filter(
     (offer) =>
       offer.status === "ACCEPTED" &&
       (offer.kind ?? "OFFER") === "OFFER" &&
-      (offer.countsAsPlaced ?? (offer.employmentType === "FULL_TIME")),
+      offer.countsAsPlaced === true,
   );
 
   const knownCtc = acceptedFullTime
