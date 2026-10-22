@@ -13,6 +13,7 @@ import {
 } from "@/modules/auth/http";
 import { verifyLoginWithRuntime } from "@/modules/auth/runtime";
 import { getAuthConfig } from "@/modules/auth/config";
+import {LoginError} from "@/modules/auth/login-service";
 
 export const runtime = "nodejs";
 
@@ -28,6 +29,9 @@ const schema = z.strictObject({
   secondCode: z.string().trim()
     .regex(/^[0-9]{4,8}$/, "Enter the 4-8 digit second verification code")
     .optional(),
+  // Result-shaping only. This cannot enable recruiter privileges or change
+  // verification: it hides whether an email-first dummy attempt was persisted.
+  recruiterFlow: z.literal(true).optional(),
 }).superRefine((data,ctx)=>{
   if(!data.code&&!data.otp)ctx.addIssue({
     code:"custom",path:["code"],message:"otp required",
@@ -134,6 +138,15 @@ export async function POST(request: Request) {
     );
     return privateAuthResponse(response);
   } catch (error) {
+    // A recruiter-specific start returns a non-persisted dummy attempt for
+    // unknown or unauthorized identities. Without this generic reply, the
+    // subsequent verify response (INVALID_ATTEMPT vs INCORRECT_OTP) would
+    // reveal whether a recruiter email had an active college grant.
+    // Other staff and learner flows keep their actionable expiry feedback.
+    if(guarded.body.recruiterFlow===true&&error instanceof LoginError)
+      return loginErrorResponse(new LoginError("INCORRECT_OTP"),{
+        route:"login-verify",ip:guarded.ip,
+      });
     return loginErrorResponse(error, { route: "login-verify", ip: guarded.ip });
   }
 }
