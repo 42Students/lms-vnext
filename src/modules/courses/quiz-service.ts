@@ -120,6 +120,7 @@ async function insertQuestions(
         sequence: questionInput.sequence,
       })
       .returning();
+    if (!question) throw new CoursesServiceError("QUIZ_NOT_FOUND");
 
     await tx.insert(quizOptions).values(
       questionInput.options.map((option) => ({
@@ -510,6 +511,7 @@ export async function createCourseQuiz(
             status: input.publishNow?"PUBLISHED":"DRAFT",
           })
           .returning();
+        if (!quiz) throw new CoursesServiceError("QUIZ_NOT_FOUND");
 
         await insertQuestions(
           tx,
