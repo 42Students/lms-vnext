@@ -29,8 +29,8 @@ export function verificationEducationRows(value: unknown): VerificationEducation
         ? string("institutionName") : string("institution"),
       year: string("endYear"),
       marks: string("grade"),
-      marksheet: typeof record.marksheetDocumentId === "string" &&
-        record.marksheetDocumentId.trim().length>0 ? "Submitted" as const : "Missing" as const,
+      marksheet: typeof record["marksheetDocumentId"] === "string" &&
+        record["marksheetDocumentId"].trim().length>0 ? "Submitted" as const : "Missing" as const,
     }];
   });
 }
