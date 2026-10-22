@@ -7,7 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getPlacementJob} from "./job-service";
 
 export type SuperAdminDriveAttention={
- label:string;stage:"APPLIED"|"INTERVIEW"|"OFFERED"|null;
+ label:string;stage:"APPLIED"|"INTERVIEW"|"ALL"|null;
  filter:"STALE_APPLICATIONS"|"INTERVIEW_UNSCHEDULED"|"OFFERED_NO_LETTER"|null;
  count:number;details:string;
 };
@@ -60,7 +60,9 @@ export async function getSuperAdminDriveAttention(
  if((row?.unscheduled??0)>0)result.push({label:"Marked Interview, nothing scheduled",
   stage:"INTERVIEW",filter:"INTERVIEW_UNSCHEDULED",count:row!.unscheduled,details:"Candidates without a booked interview slot"});
  if((row?.withoutLetter??0)>0)result.push({label:"Offered, no offer letter attached",
-  stage:"OFFERED",filter:"OFFERED_NO_LETTER",count:row!.withoutLetter,details:"Issued or accepted offers missing a letter"});
+  // Missing-letter attention also includes hired learners with accepted offers.
+  // Never hide them behind an OFFERED-only application stage filter.
+  stage:"ALL",filter:"OFFERED_NO_LETTER",count:row!.withoutLetter,details:"Issued or accepted offers missing a letter"});
  const deadline=job.applicationDeadline;
  if(job.status==="PUBLISHED"&&deadline&&
     deadline.getTime()>Date.now()&&deadline.getTime()-Date.now()<=7*86400000&&
