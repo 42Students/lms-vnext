@@ -22,7 +22,7 @@ export function SuperAdminStudentImportHistory({ runs }: { runs: readonly Run[] 
         <DataTable caption="Bulk import history records"
           rows={runs.map((run,index)=>({...run,index}))}
           getRowKey={run=>String(run.index)}
-          empty={<p role="status" className="text-sm text-body">No import history found.</p>}
+          empty={<p role="status" className="text-sm text-body">No bulk imports on file for this college.</p>}
           columns={[
             {key:"when",header:"When",mobilePriority:"primary",cell:run=>run.when},
             {key:"students",header:"Students",mobilePriority:"secondary",cell:run=>run.students},
