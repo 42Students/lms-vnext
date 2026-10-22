@@ -351,7 +351,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        </div>
        {detail.jobAssessmentLink?.startsWith("https://")?<div className="mt-2 flex min-w-0 flex-wrap items-center gap-3 border border-warning/30 bg-warning/5 px-3 py-2 text-sm" role="note">
         <span className="font-semibold">Assessment Link:</span>
-        <a href={detail.jobAssessmentLink} target="_blank" rel="noopener noreferrer"
+        <a href={detail.jobAssessmentLink} rel="noopener noreferrer"
          className="min-w-0 flex-1 break-all text-link underline">{detail.jobAssessmentLink}</a>
         <Button variant="secondary" type="button" onClick={async()=>{
          try{await navigator.clipboard.writeText(detail.jobAssessmentLink!);
@@ -362,7 +362,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         }}>Copy</Button>
        </div>:null}
        {detail.assessmentLink?.startsWith("https://")?<p className="mt-2 text-sm">
-        Saved assessment link: <a href={detail.assessmentLink} target="_blank"
+        Saved assessment link: <a href={detail.assessmentLink}
           rel="noopener noreferrer" className="break-all font-semibold text-link underline">
           {detail.assessmentLink}</a>
        </p>:null}
@@ -389,7 +389,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         <li key={o.id} className="min-w-0 space-y-2 break-words py-3">
          <p>{o.status} · {when(o.issuedAt)}</p>
          {o.offerLetterUrl&&/^https:\/\//i.test(o.offerLetterUrl)?
-          <a href={o.offerLetterUrl} target="_blank" rel="noreferrer noopener"
+          <a href={o.offerLetterUrl} rel="noreferrer noopener"
            className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:
           o.offerLetterUrl?<p className="text-muted-foreground">Offer letter link unavailable (invalid URL)</p>:
           <p className="text-muted-foreground">No offer letter attached</p>}
@@ -663,9 +663,9 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
      <p className="text-xs text-muted-foreground">
       If your browser cannot preview this file, use the secure link below.
      </p>
-     <a href={privateResumeUrl} target="_blank" rel="noopener noreferrer"
+     <a href={privateResumeUrl} rel="noopener noreferrer"
       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-      Open verified resume in a new tab
+      Open verified resume
      </a>
      <Button type="button" variant="secondary" onClick={()=>setResumePreviewOpen(false)}
       className="ml-2 min-h-11 md:min-h-9">Close preview</Button>
