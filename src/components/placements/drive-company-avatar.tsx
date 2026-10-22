@@ -18,7 +18,7 @@ const AVATAR_COLORS=[
 function avatarColor(name:string){
  let hash=0;
  for(let i=0;i<name.length;i++)hash=name.charCodeAt(i)+((hash<<5)-hash);
- return AVATAR_COLORS[Math.abs(hash)%AVATAR_COLORS.length];
+ return AVATAR_COLORS[Math.abs(hash)%AVATAR_COLORS.length] ?? {bg:"#e8f4fd",text:"#0c63d4"};
 }
 export function DriveCompanyAvatar({name,logoUrl}:{name:string;logoUrl:string|null}){
  const [failed,setFailed]=useState(false);
@@ -30,7 +30,7 @@ export function DriveCompanyAvatar({name,logoUrl}:{name:string;logoUrl:string|nu
   className="inline-flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border"
   style={{background:showLogo?"#fff":palette.bg,color:palette.text,
    fontSize:18,fontWeight:600}}>
-  {showLogo?<img src={logoUrl!} alt={name} loading="lazy"
+  {showLogo&&logoUrl?<img src={logoUrl} alt={name} loading="lazy"
     referrerPolicy="no-referrer" className="h-full w-full object-contain p-1"
     onError={()=>setFailed(true)}/>:initial}
  </span>;

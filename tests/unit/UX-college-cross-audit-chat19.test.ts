@@ -56,7 +56,7 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
     expect(selection).not.toContain("<table");
    }else{
     expect(source,route).toContain("<DataTable");
-    expect(source,route).toMatch(/mobilePriority:\\s*["']primary["']/);
+    expect(source,route).toMatch(/mobilePriority:\s*["']primary["']/);
     expect(source,route).not.toContain("<table");
    }
    const shared=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
