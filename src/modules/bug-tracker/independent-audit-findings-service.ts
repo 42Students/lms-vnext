@@ -4,7 +4,7 @@ import {getDb} from "@/db/client";
 import {db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs,db10AuditFindingFiles} from "@/db/schema/db10-audit-findings.draft";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {independentFindingActionSchema} from "./independent-finding-actions-model";
-import {canTransitionIndependentFinding,type IndependentFindingStatus} from "./independent-finding-transition-model";
+import {canAttachFixCommitToFinding,canTransitionIndependentFinding,type IndependentFindingStatus} from "./independent-finding-transition-model";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {ACTIVE_FINDING_STATUSES,RELEASE_BLOCKER_FINDING_STATUSES,INDEPENDENT_AUDIT_PAGE_SIZE,type FindingFilters} from "./independent-audit-findings-model";
@@ -192,6 +192,8 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
    note=`Duplicate of ${input.duplicateOf}`;
   }
   if(input.action==="FIX_COMMIT"){
+   if(!canAttachFixCommitToFinding(row.status as IndependentFindingStatus))
+    return {ok:false as const,reason:"FIX_COMMIT_REQUIRES_FIXED"};
    if(row.fixCommits.some(x=>x.repo===input.repo&&x.sha.toLowerCase()===input.sha.toLowerCase()))
      return {ok:false as const,reason:"DUPLICATE_COMMIT"};
    patch.fixCommits=[...row.fixCommits,{repo:input.repo,sha:input.sha}];
