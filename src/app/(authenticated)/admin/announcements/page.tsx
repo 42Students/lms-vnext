@@ -325,6 +325,7 @@ export default async function AnnouncementsPage({
         </li>;
        })}</ul>
       </section>:null}
+      <p className="text-sm"><Link href="/admin/notification-delivery" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">View notification delivery history and status</Link></p>
       <Banner tone="info" role="status">
         Broadcast notices are stored as separate college records and grouped above when
         they share a persisted broadcast identity. A complete group receipt counts distinct
