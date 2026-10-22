@@ -174,26 +174,29 @@ export async function listTpoLeads(
   // The old list's Stage board was manual first, last activity next.
   // Today we preserve the latest-contact ordering with ID tie-break while
   // exposing the derived stage and the manual legacy stage separately.
-  return rows.map(row => ({
+  return rows.map(row => {
+    const stage = stages.get(row.id);
+    return ({
     ...tpoLeadView(row, recruiterAttentionFromPersistedFacts({
     createdAt: row.createdAt,
     lastContactAt: contactByLead.get(row.id) ? new Date(contactByLead.get(row.id)!) : null,
     lastActivityAt:activityByLead.get(row.id)?.lastActivityAt??null,
-    stage:stages.get(row.id),
+    ...(stage !== undefined ? { stage } : {}),
     nextFollowupAt: nextByLead.get(row.id) ? new Date(nextByLead.get(row.id)!) : null,
     inviteBouncedAt: row.inviteBouncedAt,
     inviteSentAt: row.inviteSentAt,
     recruiterUserId: row.recruiterUserId,
     manualStage: row.manualStage,
     unsubscribedAt: row.unsubscribedAt,
-  }, now), stages.get(row.id)),
+  }, now), stage),
     ownerName:row.ownerMembershipId?ownerByMembership.get(row.ownerMembershipId)??null:null,
     lastActivityAt:activityByLead.get(row.id)?.lastActivityAt.toISOString()??null,
     lastActivityType:activityByLead.get(row.id)?.lastActivityType??null,
     nextFollowupAt:nextByLead.get(row.id)?.toISOString()??null,
     inviteStatus:row.recruiterUserId?"JOINED":row.inviteBouncedAt?"BOUNCED":
       row.inviteClickedAt?"OPENED":row.inviteSentAt?"SENT":"NOT_INVITED",
-  }));
+  });
+  });
 }
 
 /** Database partial uniques make email/phone duplicate prevention race-safe. */
@@ -573,7 +576,10 @@ export async function markTpoLeadNotNow(
       .for("update")
       .limit(1);
     if (!current) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
-    if (isSameNotNowDecision(current, input)) return tpoLeadView(current);
+    if (isSameNotNowDecision(current, {
+       ...(input.reason !== undefined ? { reason: input.reason } : {}),
+       ...(input.revisitDate !== undefined ? { revisitDate: input.revisitDate } : {}),
+     })) return tpoLeadView(current);
 
     const [updated] = await tx.update(placementTpoLeads)
       .set({

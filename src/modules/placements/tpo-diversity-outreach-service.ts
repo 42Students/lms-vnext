@@ -45,7 +45,7 @@ export class PrivateDiversityPolicyError extends Error {
   }
 }
 function requireReady() {
-  if (process.env.DB10_DIVERSITY_OUTREACH_READY !== "PRIVACY_APPROVED")
+  if (process.env["DB10_DIVERSITY_OUTREACH_READY"] !== "PRIVACY_APPROVED")
     throw new PrivateDiversityPolicyError("DIVERSITY_NOT_READY");
 }
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];

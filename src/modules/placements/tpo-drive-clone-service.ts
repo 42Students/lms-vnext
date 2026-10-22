@@ -34,6 +34,7 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
   // Never carry a past deadline or old company portal URL into a new drive.
   applicationMode:"INTERNAL",externalApplicationUrl:null,applicationDeadline:null,
  });
+ if(!draft)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  // Copy active non-primary packages while the newly created draft remains unpublished.
  const [oldPolicy]=await getDb().select().from(placementJobEligibilityPolicies)
   .where(eq(placementJobEligibilityPolicies.jobId,source.id)).limit(1);

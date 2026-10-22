@@ -65,7 +65,7 @@ export function parseLegacyDriveChangeCommand(raw:unknown){
   return driveChangeCommandSchema.parse(raw);
  const object=raw as Record<string,unknown>;
  const {kind,note,field,...rest}=object;
- let action=rest.action;
+ let action=rest["action"];
  if(action==="REPLY")action="DECLINE";
  if(action==="CREATE"){
   const selected=typeof field==="string"?field.trim():"";
@@ -75,17 +75,17 @@ export function parseLegacyDriveChangeCommand(raw:unknown){
   const mapped=label??normalized;
   const allowed=driveChangeFieldSchema.safeParse(mapped);
   const chosen=allowed.success?allowed.data:"OTHER";
-  const requestedMode=rest.mode??kind??(chosen==="OTHER"?"ASK":"SUGGEST");
+  const requestedMode=rest["mode"]??kind??(chosen==="OTHER"?"ASK":"SUGGEST");
   return driveChangeCommandSchema.parse({
    ...rest,action,field:chosen,mode:chosen==="OTHER"?"ASK":requestedMode,
-   reason:rest.reason??note??"",
-   proposedValue:chosen==="DEADLINE"&&typeof rest.proposedValue==="string"
-     ?canonicalLegacyDriveChangeDeadline(rest.proposedValue):rest.proposedValue,
+   reason:rest["reason"]??note??"",
+   proposedValue:chosen==="DEADLINE"&&typeof rest["proposedValue"]==="string"
+     ?canonicalLegacyDriveChangeDeadline(rest["proposedValue"]):rest["proposedValue"],
   });
  }
  // COMMENT remains a message, independent from a legacy Reply decision.
- const reply=rest.action==="COMMENT"?{...rest,body:rest.body??note}:
-  {...rest,action,note:rest.note??note};
+ const reply=rest["action"]==="COMMENT"?{...rest,body:rest["body"]??note}:
+  {...rest,action,note:rest["note"]??note};
  return driveChangeCommandSchema.parse(reply);
 }
 /** Only the read adapter uses the historic REPLIED label. Mutations persist
