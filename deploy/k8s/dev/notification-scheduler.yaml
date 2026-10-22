@@ -1,0 +1,233 @@
+# Dev-only operational scheduler bindings for the persisted 0133 lease and
+# 0214 notification outbox. The Next.js app never runs in-process timers.
+# Apply only after confirming both migrations, granting a 32+ byte key as
+# vnext-integrations.DB10_NOTIFICATION_SCHEDULER_SECRET and explicitly setting
+# DB10_NOTIFICATION_SCHEDULER_READY=DB10_VERIFIED and
+# DB10_NOTIFICATION_OUTBOX_READY=DB10_VERIFIED on the web deployment.
+# Replicas are protected by DB-clock fenced leases; CronJob Forbid is not the
+# cross-replica lock. Failed HTTP ticks must remain failed to alert operators.
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vnext-notification-release
+  namespace: lms-dev-2026
+spec:
+  schedule: "* * * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          containers:
+            - name: tick
+              image: curlimages/curl:8.12.1
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  curl -fsS --connect-timeout 3 --max-time 50 -o /dev/null \
+                    -X POST -H "Content-Type: application/json" \
+                    -H "x-notification-scheduler-key: $DB10_NOTIFICATION_SCHEDULER_SECRET" \
+                    --data '{"jobName":"notification.release"}' \
+                    http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/api/internal/operations/notification-scheduler
+              env:
+                - name: DB10_NOTIFICATION_SCHEDULER_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: vnext-integrations
+                      key: DB10_NOTIFICATION_SCHEDULER_SECRET
+              resources:
+                requests: { cpu: 20m, memory: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities: { drop: ["ALL"] }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vnext-notification-cleanup
+  namespace: lms-dev-2026
+spec:
+  schedule: "0 2 * * 0"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          containers:
+            - name: tick
+              image: curlimages/curl:8.12.1
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  curl -fsS --connect-timeout 3 --max-time 120 -o /dev/null \
+                    -X POST -H "Content-Type: application/json" \
+                    -H "x-notification-scheduler-key: $DB10_NOTIFICATION_SCHEDULER_SECRET" \
+                    --data '{"jobName":"notification.cleanup"}' \
+                    http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/api/internal/operations/notification-scheduler
+              env:
+                - name: DB10_NOTIFICATION_SCHEDULER_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: vnext-integrations
+                      key: DB10_NOTIFICATION_SCHEDULER_SECRET
+              resources:
+                requests: { cpu: 20m, memory: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities: { drop: ["ALL"] }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vnext-notification-interview-tomorrow
+  namespace: lms-dev-2026
+spec:
+  schedule: "0 19 * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          containers:
+            - name: tick
+              image: curlimages/curl:8.12.1
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  curl -fsS --connect-timeout 3 --max-time 120 -o /dev/null \
+                    -X POST -H "Content-Type: application/json" \
+                    -H "x-notification-scheduler-key: $DB10_NOTIFICATION_SCHEDULER_SECRET" \
+                    --data '{"jobName":"notification.interviewReminders"}' \
+                    http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/api/internal/operations/notification-scheduler
+              env:
+                - name: DB10_NOTIFICATION_SCHEDULER_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: vnext-integrations
+                      key: DB10_NOTIFICATION_SCHEDULER_SECRET
+              resources:
+                requests: { cpu: 20m, memory: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities: { drop: ["ALL"] }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vnext-notification-course-due
+  namespace: lms-dev-2026
+spec:
+  schedule: "0 9 * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          containers:
+            - name: tick
+              image: curlimages/curl:8.12.1
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  curl -fsS --connect-timeout 3 --max-time 120 -o /dev/null \
+                    -X POST -H "Content-Type: application/json" \
+                    -H "x-notification-scheduler-key: $DB10_NOTIFICATION_SCHEDULER_SECRET" \
+                    --data '{"jobName":"notification.assignmentReminders"}' \
+                    http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/api/internal/operations/notification-scheduler
+              env:
+                - name: DB10_NOTIFICATION_SCHEDULER_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: vnext-integrations
+                      key: DB10_NOTIFICATION_SCHEDULER_SECRET
+              resources:
+                requests: { cpu: 20m, memory: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities: { drop: ["ALL"] }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vnext-notification-interview-today
+  namespace: lms-dev-2026
+spec:
+  schedule: "0 8 * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          containers:
+            - name: tick
+              image: curlimages/curl:8.12.1
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  curl -fsS --connect-timeout 3 --max-time 120 -o /dev/null \
+                    -X POST -H "Content-Type: application/json" \
+                    -H "x-notification-scheduler-key: $DB10_NOTIFICATION_SCHEDULER_SECRET" \
+                    --data '{"jobName":"tpo.interviewMorningReminders"}' \
+                    http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/api/internal/operations/notification-scheduler
+              env:
+                - name: DB10_NOTIFICATION_SCHEDULER_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: vnext-integrations
+                      key: DB10_NOTIFICATION_SCHEDULER_SECRET
+              resources:
+                requests: { cpu: 20m, memory: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities: { drop: ["ALL"] }
