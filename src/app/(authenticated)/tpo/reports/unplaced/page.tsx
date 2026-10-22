@@ -51,7 +51,8 @@ export default async function TpoUnplacedReportPage({
 
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/unplaced"/>;
-  try {
+  const report = await (async () => {
+    try {
   const workspace = await getPlacementReportDetails(context, {
     collegeId: context.membership.collegeId,
     seasonId: first(query.seasonId) || undefined,
@@ -95,6 +96,23 @@ export default async function TpoUnplacedReportPage({
    ...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
   });
   const filteredExportHref="/api/placements/tpo/reports/unplaced?"+exportParams.toString();
+  return {workspace,batches,batchesUnavailable,batchId,branchId,permittedBatch,permittedBranch,
+    branches,unplaced,readyUnplaced,academic,lastApplications,rowsById,filteredExportHref};
+    } catch {
+      return null;
+    }
+  })();
+  if (!report) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Unplaced students" description="Students looking for a job with no offer that counts as placed"/>
+    <Link href="/tpo/reports" className="text-sm font-semibold text-link underline">All reports</Link>
+    <Alert tone="error">
+     <strong>Could not load the report</strong>
+     <p className="mt-2 text-sm">The previous report data has not been replaced with a false zero or an empty result.</p>
+     <Link href="/tpo/reports/unplaced" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>
+    </Alert>
+   </div>;
+  const {workspace,batches,batchesUnavailable,batchId,branchId,permittedBatch,permittedBranch,
+    branches,unplaced,readyUnplaced,academic,lastApplications,rowsById,filteredExportHref}=report;
   return (
     <div data-tpo-presentation-report className="min-w-0 space-y-6">
       <PageHeader
@@ -173,15 +191,4 @@ export default async function TpoUnplacedReportPage({
       <ReportNavigation workspace={workspace} compactNavigation />
     </div>
   );
-  }catch{
-   return <div className="min-w-0 space-y-4">
-    <PageHeader title="Unplaced students" description="Students looking for a job with no offer that counts as placed"/>
-    <Link href="/tpo/reports" className="text-sm font-semibold text-link underline">All reports</Link>
-    <Alert tone="error">
-     <strong>Could not load the report</strong>
-     <p className="mt-2 text-sm">The previous report data has not been replaced with a false zero or an empty result.</p>
-     <Link href="/tpo/reports/unplaced" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>
-    </Alert>
-   </div>;
-  }
 }

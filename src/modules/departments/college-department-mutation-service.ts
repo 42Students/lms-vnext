@@ -161,7 +161,7 @@ export async function archiveCollegeDepartment(
       subjectType: "department", subjectId: archived.id,
       subjectLabel: archived.name, summary: "College department archived",
       metadata: { action: "DEPARTMENT_ARCHIVE", legacyAction:"DEPARTMENT_DELETE",
-        previousName:current.name,usage,legacyDepartmentId:archived.legacyDepartmentId,
+        previousName:current.name,usage,
         retentionPolicy:"SOFT_ARCHIVE",hiddenFromActiveDirectories:true,
         version:"ACTING_COLLEGE_MEMBERSHIP_VNEXT"},
     });
