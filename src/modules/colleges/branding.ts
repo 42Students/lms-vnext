@@ -129,11 +129,12 @@ export function rgbToHex([r, g, b]: Rgb) {
 }
 
 function luminance(rgb: Rgb) {
-  const [r, g, b] = rgb.map((channel) => {
+  const channelLuminance = (channel: number) => {
     const c = channel / 255;
     return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const [r, g, b] = rgb;
+  return 0.2126 * channelLuminance(r) + 0.7152 * channelLuminance(g) + 0.0722 * channelLuminance(b);
 }
 
 export function contrastRatio(a: string, b: string) {
