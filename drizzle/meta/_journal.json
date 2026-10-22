@@ -1989,6 +1989,13 @@
       "when": 1792358351266,
       "tag": "0307_chat14_learner_gallery",
       "breakpoints": true
+    },
+    {
+      "idx": 284,
+      "version": "7",
+      "when": 1792358411266,
+      "tag": "0308_chat16_season_registration_lifecycle",
+      "breakpoints": true
     }
   ]
 }

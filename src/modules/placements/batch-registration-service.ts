@@ -12,6 +12,7 @@ import {
   sectionEnrollments,
   sections,
   users,
+  placementSeasons,
 } from "@/db/schema";
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
@@ -21,6 +22,7 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import {
   createRegistrationWrite,
   resolveRegistrationWindow,
+  resolveSeasonRegistrationWindow,
 } from "./batch-registration-policy";
 import { resolvePlacementParticipation } from "./batch-eligibility-policy";
 
@@ -197,6 +199,20 @@ export async function registerOwnPlacementChoice(
     if (participation.status !== "ELIGIBLE") {
       throw new PlacementRegistrationError("DB08_REGISTRATION_NOT_ELIGIBLE");
     }
+
+    // Only explicitly managed seasons add a gate. Existing cohort invitations
+    // remain valid unless a TPO has opted into the season-wide lifecycle.
+    const [season] = await tx.select({
+      registrationControlled:placementSeasons.registrationControlled,
+      isRegistrationOpen:placementSeasons.isRegistrationOpen,
+      registrationDeadline:placementSeasons.registrationDeadline,
+    }).from(placementSeasons).where(and(
+      eq(placementSeasons.collegeId,membership.collegeId),
+      eq(placementSeasons.status,"ACTIVE"),
+    )).limit(1);
+    const seasonWindow=resolveSeasonRegistrationWindow(season??null,new Date());
+    if(!seasonWindow.open)
+      throw new PlacementRegistrationError("DB08_REGISTRATION_WINDOW_CLOSED");
 
     const [batch] = await tx.select().from(placementBatchLifecycles)
       .where(and(

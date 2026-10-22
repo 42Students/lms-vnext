@@ -202,6 +202,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.season.started",
   PLACEMENTS_SEASON_CLOSED:
     "placements.season.closed",
+  PLACEMENTS_SEASON_REGISTRATION_UPDATED:
+    "placements.season.registration_updated",
   PLACEMENTS_COMPANY_DOMAIN_UPDATED: "placements.company.domain_updated",
   PLACEMENTS_COMPANY_RELATIONSHIP_ARCHIVED: "placements.company.relationship_archived",
   PLACEMENTS_COMPANY_RELATIONSHIP_RESTORED: "placements.company.relationship_restored",

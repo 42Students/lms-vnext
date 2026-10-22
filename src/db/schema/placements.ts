@@ -490,6 +490,11 @@ export const placementSeasons = pgTable(
     status: varchar("status", { length: 24 })
       .notNull()
       .default("ACTIVE"),
+    // Cohort invitations remain authoritative until a season explicitly opts
+    // in to the independent legacy registration-open lifecycle.
+    registrationControlled: boolean("registration_controlled").notNull().default(false),
+    isRegistrationOpen: boolean("is_registration_open").notNull().default(false),
+    registrationDeadline: timestamp("registration_deadline", {withTimezone: true}),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
@@ -538,6 +543,8 @@ export const placementSeasons = pgTable(
       "placement_seasons_name_ck",
       sql`length(trim(${table.name})) > 0 and length(trim(${table.code})) > 0`,
     ),
+    check("placement_seasons_registration_control_ck",
+      sql`not ${table.isRegistrationOpen} or (${table.registrationControlled} and ${table.status} = 'ACTIVE')`),
     check(
       "placement_seasons_dates_ck",
       sql`${table.endDate} >= ${table.startDate}`,
