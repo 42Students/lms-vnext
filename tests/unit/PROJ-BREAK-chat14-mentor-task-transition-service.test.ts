@@ -21,6 +21,7 @@ const blocked={status:"BLOCKED",expectedUpdatedAt:version,confirmed:true,
 vi.mock("server-only",()=>({}));
 vi.mock("drizzle-orm",()=>({
  and:(...xs:unknown[])=>xs,eq:(...xs:unknown[])=>xs,
+ isNull:(value:unknown)=>["IS_NULL",value],
  sql:(_parts:TemplateStringsArray,...xs:unknown[])=>xs,
 }));
 vi.mock("@/db/schema",()=>({
@@ -29,7 +30,7 @@ vi.mock("@/db/schema",()=>({
   sprintId:"task.sprint_id",status:"task.status",updatedAt:"task.updated_at"},
  projectSprints:{id:"sprint.id",projectId:"sprint.project_id",
   status:"sprint.status",releaseId:"sprint.release_id"},
- projectReleases:{id:"release.id",projectId:"release.project_id",status:"release.status"},
+ projectReleases:{id:"release.id",projectId:"release.project_id",status:"release.status",deletedAt:"release.deleted_at"},
 }));
 vi.mock("@/modules/projects/access",()=>({
  requireProjectLifecycleMutationAccess:async()=>({

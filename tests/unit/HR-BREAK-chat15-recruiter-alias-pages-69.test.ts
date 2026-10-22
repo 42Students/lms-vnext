@@ -43,18 +43,24 @@ describe("HR-RECRUITER-PAGES-69: legacy aliases use the exact authorized HR serv
   ["remove round",RecruiterRemoveRound,HrRemoveRound],
   ["new drive",RecruiterNewDrive,HrNewDrive],["proposals",RecruiterProposals,HrProposals],
   ["recorded outside",RecruiterOutside,HrOutside],
-  ["home",RecruiterHome,HrHome],["inbox",RecruiterInbox,HrInbox],
+  ["inbox",RecruiterInbox,HrInbox],
   ["profile",RecruiterProfile,HrProfile],
  ])("%s alias cannot bypass the canonical page's auth and tenant boundary",
   (_name,alias,canonical)=>{
    expect(alias).toBe(canonical);
   });
+ it("home forwards the exact college selection to the guarded canonical Today page",()=>{
+  const searchParams=Promise.resolve({collegeId:"11111111-1111-4111-8111-111111111111"});
+  const rendered=RecruiterHome({searchParams});
+  expect(rendered.type).toBe(HrHome);
+  expect(rendered.props.searchParams).toBe(searchParams);
+ });
  it("both legacy landing pages return to Today, not to an unscoped college directory",()=>{
   mocks.redirect.mockImplementation(()=>{throw new Error("REDIRECT");});
   expect(()=>RecruiterIndex()).toThrow("REDIRECT");
   expect(()=>RecruiterColleges()).toThrow("REDIRECT");
   expect(mocks.redirect).toHaveBeenCalledTimes(2);
-  expect(mocks.redirect).toHaveBeenNthCalledWith(1,"/hr/home");
-  expect(mocks.redirect).toHaveBeenNthCalledWith(2,"/hr/home");
+  expect(mocks.redirect).toHaveBeenNthCalledWith(1,"/recruiter/home");
+  expect(mocks.redirect).toHaveBeenNthCalledWith(2,"/recruiter/home");
  });
 });

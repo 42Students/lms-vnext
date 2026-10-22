@@ -9,10 +9,12 @@ describe("UX-recruiter-drives-jobId-change-requests-01",()=>{
   expect(source).toContain("getDriveChangeRequests(context,jobId)");
   expect(source).toContain('data.party!=="COMPANY"');
   expect(source).toContain("<PageHeader");
-  expect(source).toContain('actions={<Link href=');
+  expect(source).toContain('actions={<PageBackLink href=');
   expect(source).toContain("Back to drive");
-  expect(source).toContain("min-h-11");
-  expect(source).toContain("focus-visible:outline-2");
+  const backLink=read("src/components/ui/page-back-link.tsx");
+  expect(backLink).toContain("min-h-11");
+  expect(backLink).toContain("focus-visible:outline-2");
+  expect(backLink).toContain('aria-label={label}');
   expect(source).toContain("<TpoDriveChangeRequests");
   expect(source).toContain("data.storageReady");
   expect(read("src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/loading.tsx")).toContain("GracefulPageLoading");

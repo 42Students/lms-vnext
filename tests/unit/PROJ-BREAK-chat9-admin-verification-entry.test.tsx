@@ -1,6 +1,7 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement} from "react";
 import AdminVerificationEntry from "@/app/(authenticated)/admin/verification/page";
+import AdminCollegeVerification from "@/app/(authenticated)/admin/colleges/[collegeId]/verification/page";
 
 const state=vi.hoisted(()=>({
   role:"ADMIN" as "ADMIN"|"COLLEGE"|"DISABLED",
@@ -34,7 +35,7 @@ describe("Super Admin last-third: verification entry security and scope",()=>{
   it("UX-admin-verification-19 expired and college-only roles see a safe denial with no selected-scope redirect",async()=>{
     for(const role of ["COLLEGE","DISABLED"] as const){
       state.role=role;state.selected=true;
-      const page=visible(await AdminVerificationEntry()).join(" ");
+      const page=visible(await AdminVerificationEntry({searchParams:Promise.resolve({})})).join(" ");
       expect(page).toContain("Verification access denied");
       expect(page).toContain("Back to dashboard");
       expect(page).not.toContain("/admin/colleges/22222222-2222-4222-8222-222222222222/verification");
@@ -47,8 +48,13 @@ describe("Super Admin last-third: verification entry security and scope",()=>{
   });
   it("UX-admin-verification-21 a scoped operator navigates only to the selected college",async()=>{
     state.selected=true;
-    await expect(AdminVerificationEntry()).rejects.toThrow(
-      "EXPECTED_REDIRECT:/admin/colleges/22222222-2222-4222-8222-222222222222/verification",
-    );
+    const searchParams=Promise.resolve({});
+    const page=await AdminVerificationEntry({searchParams});
+    expect(isValidElement(page)).toBe(true);
+    if(!isValidElement(page))throw new Error("Expected a scoped college verification page");
+    expect(page.type).toBe(AdminCollegeVerification);
+    const props=page.props as {params:Promise<{collegeId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>};
+    expect(await props.params).toEqual({collegeId:"22222222-2222-4222-8222-222222222222"});
+    expect(props.searchParams).toBe(searchParams);
   });
 });

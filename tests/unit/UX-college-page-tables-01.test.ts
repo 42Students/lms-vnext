@@ -6,11 +6,14 @@ describe("UX-college-page-tables-01 mobile action parity",()=>{
   it("/college/activity preserves accessible event details and scoped empty/partial state",()=>{
     const s=read("activity");
     expect(s).toContain("listCollegeActivity(context, parsed.data)");
-    expect(s).toContain('<DataTable rows={data.items} getRowKey={item=>item.event.id}');
-    expect(s).toContain('mobilePriority:"action"');
-    expect(s).toContain('href={"/college/activity/" + encodeURIComponent(item.event.id)}');
-    expect(s).toContain("No persisted activity events match these filters.");
-    expect(s).toContain('role="alert"');
+    // The legacy activity log is a grouped timeline, not an editable roster.
+    expect(s).toContain('aria-label="College activity events"');
+    expect(s).toContain('group.latest');
+    expect(s).toContain('href={"/college/activity/"+encodeURIComponent(item.event.id)}');
+    expect(s).toContain("sanitizeActivityMetadata(item.event.metadata)");
+    expect(s).toContain("Nothing important happened in this period.");
+    expect(s).toContain('Alert tone="error" title="Couldn\'t load activity"');
+    expect(s).toContain('href={collegeActivityHref(parsed.data)}');
     expect(s).not.toContain("<table");
   });
   it("/college/batch-promotion preserves read-only learner blockers and transaction confirmation",()=>{

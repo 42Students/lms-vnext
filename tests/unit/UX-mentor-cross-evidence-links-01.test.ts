@@ -6,5 +6,5 @@ it("UX-mentor-cross-E01 source/demo/attachment links stay sanitized and 44px",()
  expect(src).toContain("safeProjectExternalHref(v.demoUrl)");
  expect(src).toContain('safeProjectExternalHref(entry.url)');
  expect(src).toContain('rel="noopener noreferrer" className="inline-flex min-h-11 items-center');
- expect(src).toContain('className="ml-2 inline-flex min-h-11 items-center');
+ expect(src).toContain('className="ml-2 inline-flex min-h-11 max-w-full items-center');
 });

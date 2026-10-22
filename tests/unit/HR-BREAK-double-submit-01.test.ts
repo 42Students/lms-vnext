@@ -18,7 +18,7 @@ describe("HR-BREAK-double-submit-01: recruiter formal drive submission",()=>{
  it("has a synchronous in-flight ref guard, not only delayed React state, and preserves retries",()=>{
   const source=readFileSync("src/components/hr/hr-drive-draft-form.tsx","utf8");
   expect(source).toContain("const submittingRef=useRef(false)");
-  expect(source).toContain("if(submitting||submittingRef.current||submittedRef.current)return");
+  expect(source).toContain("if(submitting||jdUploading||jdPendingKey||submittingRef.current||submittedRef.current)return");
   expect(source).toContain("submittingRef.current=true");
   expect(source).toContain("submittingRef.current=false");
   expect(source).toContain("submissionId:next.submissionId");

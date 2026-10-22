@@ -35,7 +35,8 @@ vi.mock("@/db/schema",()=>({
   title:"meeting.title",startsAt:"meeting.starts_at",updatedAt:"meeting.updated_at"},
  projectSubmissions:{id:"submission.id",projectId:"submission.project_id",
   status:"submission.status",submittedAt:"submission.submitted_at",
-  version:"submission.version",updatedAt:"submission.updated_at"},
+  version:"submission.version",updatedAt:"submission.updated_at",reopenedAt:"submission.reopened_at"},
+ projectSubmissionReviews:{submissionId:"review.submission_id",reviewedAt:"review.reviewed_at"},
  projectTaskSubmissions:{projectId:"task_submission.project_id",updatedAt:"task_submission.updated_at"},
 }));
 vi.mock("drizzle-orm",()=>({
@@ -62,6 +63,7 @@ vi.mock("@/db/client",()=>({
       ?String(table.__table):String(table);
      return q;
     },
+    leftJoin:()=>q,
     where:(condition:unknown)=>{record.where=condition;return q;},
     groupBy:(group:unknown)=>{record.groupBy=group;return Promise.resolve(result());},
     orderBy:()=>{record.orderBy=true;return Promise.resolve(result());},

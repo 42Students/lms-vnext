@@ -197,7 +197,9 @@ export async function ProjectAdminSubmissionsPage({
         ] as const).map(([name,count,status])=>{
           const pressed=query.submissionStatus===status;
           return <Link key={name} role="button" aria-pressed={pressed}
-            href={projectAdminSubmissionHref(queuePath,query,pressed?undefined:status)}
+            href={projectAdminSubmissionHref(queuePath,
+              status==="APPROVED"?query:{...query,status:"ACTIVE"},
+              pressed?undefined:status)}
             className={"block min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border p-3 "+
               (pressed?"border-[var(--lms-primary)] bg-primary-subtle":"border-border bg-surface hover:bg-primary-subtle")}>
             <span className="block text-xs font-semibold text-body">{name}</span>
