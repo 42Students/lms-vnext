@@ -53,7 +53,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,i
  const rows=selectedRow&&!result.items.some(item=>item.id===selectedRow.id)
    ?[selectedRow,...result.items]:result.items;
  const startIndex=total===0?0:(current-1)*25+1,finish=Math.min(total,current*25);
- return <form method="get" action={action} className={"min-w-0 max-w-[420px] space-y-3 "+styles.legacy}>
+ return <form method="get" action={action} className={"min-w-0 max-w-[420px] space-y-3 "+styles['legacy']}>
   {choice?<input type="hidden" name="workspaceId" value={choice}/>:null}
   <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
    Search workspaces by title or ID

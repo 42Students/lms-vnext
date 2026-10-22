@@ -69,12 +69,6 @@ export function CollegeProjectSummaryEditorFull({
   setForm(baselineRef.current.form);setOpen(false);setError("");setStale(false);
  });
  const hasTaskData=(taskProgress?.total??0)>0;
- const legacyStatus=(()=>{
-   if(form.status==="COMPLETED")return "COMPLETED";
-   const stage=(form.phase??"").toUpperCase().replace(/\s+/g,"_");
-   if(["READY","BLOCKED","IN_PROGRESS"].includes(stage))return stage;
-   return form.status;
- })();
  const overviewHref=pathname.replace(/\/summary\/?$/,"/overview");
  const derivedProgress=hasTaskData?Math.round(100*(taskProgress?.done??0)/(taskProgress?.total??1)):null;
  const change=(key:keyof typeof form,value:string|number)=>setForm(v=>({...v,[key]:value}));
