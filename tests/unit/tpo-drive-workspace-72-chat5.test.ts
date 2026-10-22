@@ -13,6 +13,7 @@ describe("TPO drive mobile action layout",()=>{
   expect(grid).toContain("TpoSpreadsheetGrid");
   expect(grid).toContain("mobileActionsCollapsible");
   const generic=file("src/components/tpo/tpo-spreadsheet-grid.tsx");
-  expect(generic).toContain('>Actions</summary>');
+  expect(generic).toContain('<Dropdown mobileSheet align="end"');
+  expect(generic).toContain('trigger="Actions"');
  });
 });
