@@ -6,5 +6,7 @@ it("UX-college-college-hiring-dashboard-01 keeps accessible shared screen state"
  expect(route).toContain("overflow-x-clip");
  expect(route).not.toContain("text-on-primary");
  expect(route).not.toContain("text-[#26bac7]");
+ expect(route).toContain("focus-visible:outline-2");
+ expect(route).toContain("min-h-11");
  
 });

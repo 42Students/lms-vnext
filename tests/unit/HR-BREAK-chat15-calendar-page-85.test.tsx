@@ -23,8 +23,8 @@ function text(node:ReactNode):string{
  if(Array.isArray(node))return node.map(text).join(" ");
  if(typeof node==="string"||typeof node==="number")return String(node);
  if(!isValidElement(node))return "";
- const p=node.props as {children?:ReactNode;title?:string;description?:string;actions?:ReactNode};
- return [p.title??"",p.description??"",text(p.children),text(p.actions)].join(" ");
+ const p=node.props as {children?:ReactNode;title?:string;description?:string;actions?:ReactNode;action?:ReactNode};
+ return [p.title??"",p.description??"",text(p.children),text(p.actions),text(p.action)].join(" ");
 }
 describe("HR-CALENDAR-PAGE-85: recruiter role, malformed query and safe empty schedule",()=>{
  beforeEach(()=>{
@@ -61,6 +61,6 @@ describe("HR-CALENDAR-PAGE-85: recruiter role, malformed query and safe empty sc
   expect(text(output)).not.toContain("Results due ·");
   expect(m.calendar).toHaveBeenCalledWith(actor,expect.objectContaining({
    from:expect.any(String),to:expect.any(String),
-  }));
+  }),collegeId);
  });
 });
