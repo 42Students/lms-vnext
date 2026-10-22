@@ -50,7 +50,8 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
   if(input.q){
    const escaped=input.q.replace(/[\\%_]/g,"\\$&");
    const pattern="%"+escaped+"%";
-   conditions.push(or(ilike(t.fromAddress,pattern),ilike(t.subject,pattern),ilike(t.bodyPlain,pattern))!);
+   const searchCondition=or(ilike(t.fromAddress,pattern),ilike(t.subject,pattern),ilike(t.bodyPlain,pattern));
+   if(searchCondition)conditions.push(searchCondition);
   }
   const [row]=await getDb().select({total:count()}).from(t).where(conditions.length?and(...conditions):undefined);
   return row?.total??0;
@@ -64,7 +65,8 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
   if(input.q) {
    const escaped=input.q.replace(/[\\%_]/g,"\\$&");
    const pattern="%"+escaped+"%";
-   conditions.push(or(ilike(t.fromAddress,pattern),ilike(t.subject,pattern),ilike(t.bodyPlain,pattern))!);
+   const searchCondition=or(ilike(t.fromAddress,pattern),ilike(t.subject,pattern),ilike(t.bodyPlain,pattern));
+   if(searchCondition)conditions.push(searchCondition);
   }
   const rows=await getDb().select({
    id:t.id,receivedAt:t.receivedAt,fromAddress:t.fromAddress,toAddress:t.toAddress,
