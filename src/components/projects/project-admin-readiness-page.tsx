@@ -73,9 +73,9 @@ export async function ProjectAdminReadinessPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
-  const pageValue=one(searchParams.page);
-  const sizeValue=one(searchParams.pageSize);
-  const statusValue=one(searchParams.status);
+  const pageValue=one(searchParams["page"]);
+  const sizeValue=one(searchParams["pageSize"]);
+  const statusValue=one(searchParams["status"]);
   const validPage=pageValue===undefined||(/^[1-9][0-9]*$/.test(pageValue)&&Number.isSafeInteger(Number(pageValue)));
   const validSize=sizeValue===undefined||["10","20","25","50","100"].includes(sizeValue);
   const validStatus=statusValue===undefined||statusValue===""||
@@ -87,13 +87,13 @@ export async function ProjectAdminReadinessPage({
       description="Review the workspace status, page or rows filters. No workspace records were loaded."
       action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>}/>
   </div>;
+  const searchQuery = one(searchParams["q"]);
+  const selectedStatus = one(searchParams["status"]) as ProjectAdminCollectionQuery["status"];
   const query: ProjectAdminCollectionQuery = {
-    q: one(searchParams.q),
-    status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
-    page: Number(one(searchParams.page) ?? 1),
-    pageSize: Number(
-      one(searchParams.pageSize) ?? 25,
-    ),
+    ...(searchQuery !== undefined ? { q: searchQuery } : {}),
+    ...(selectedStatus !== undefined ? { status: selectedStatus } : {}),
+    page: Number(one(searchParams["page"]) ?? 1),
+    pageSize: Number(one(searchParams["pageSize"]) ?? 25),
   };
   // Independent fetches: one failed overrides/choice read must not masquerade
   // as an empty successful response or disable the main readiness list.
@@ -117,7 +117,7 @@ export async function ProjectAdminReadinessPage({
   const activeOverrides=overridesResult.status==="fulfilled"?overridesResult.value:[];
   const workspaceChoices=choicesResult.status==="fulfilled"?choicesResult.value:
     {items:[],total:0,page:1,pageSize:25,totalPages:1};
-  const requested=one(searchParams.projectId)??one(searchParams.workspaceId);
+  const requested=one(searchParams["projectId"])??one(searchParams["workspaceId"]);
   const chosenId=requested?await resolveCollegeReadinessWorkspaceId(
     context,collegeId,requested).catch(()=>null):null;
   const selectedScope=chosenId?await requireProjectManageAccess(context,chosenId)
@@ -137,7 +137,7 @@ export async function ProjectAdminReadinessPage({
   const releaseUnavailable=releasesRead?.status==="rejected";
   const releaseContext=releasesRead?.status==="fulfilled"?releasesRead.value:[];
   const readinessPath=basePath+"/readiness";
-  const rawOverridesPage=one(searchParams.overridePage)??"1";
+  const rawOverridesPage=one(searchParams["overridePage"])??"1";
   const overridePage=/^[1-9][0-9]*$/.test(rawOverridesPage)&&Number.isSafeInteger(Number(rawOverridesPage))
     ?Math.min(Number(rawOverridesPage),10000):1;
   const matchingOverrides=activeOverrides.filter(row=>!query.q||
