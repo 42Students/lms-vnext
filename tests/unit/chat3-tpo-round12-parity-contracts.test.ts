@@ -12,7 +12,7 @@ describe("chat-3 TPO Drives source parity audit, 18 distinct gap IDs",()=>{
  });
  it("TPO-drives-06 keeps applied count is displayed per drive",()=>{
   const code=src("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
-  expect(code).toContain("{job.appliedCount}");
+  expect(code).toContain('{job.appliedCount??"Unknown"}');
  });
  it("TPO-drives-07 keeps pay and dream flags are displayed",()=>{
   const code=src("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");

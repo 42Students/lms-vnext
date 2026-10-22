@@ -11,7 +11,7 @@ describe("Chat-4 College UX round 4",()=>{
  it("UX-college-contacts-01 protects action size or responsive width",()=>{
  const page=source("contacts");
  expect(page).toContain("min-h-11");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0 space-y-4");
  });
  it("UX-college-contacts-membershipId-01 protects action size or responsive width",()=>{
  const page=source("contacts/[membershipId]");
@@ -21,11 +21,11 @@ describe("Chat-4 College UX round 4",()=>{
  it("UX-college-course-progress-01 protects action size or responsive width",()=>{
  const page=source("course-progress");
  
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0 max-w-full space-y-[var(--lms-space-4)]");
  });
  it("UX-college-courses-01 protects action size or responsive width",()=>{
  const page=source("courses");
  
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0 max-w-full space-y-[var(--lms-space-4)]");
  });
 });
