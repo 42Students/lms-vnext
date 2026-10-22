@@ -21,6 +21,7 @@ import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/proje
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import { ProjectDeliveryEvidenceDownload } from "./project-delivery-evidence-download";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
+import {ProjectDeliveryHistoryTimeline} from "./project-delivery-history-timeline";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerSprintRollup,learnerSprintProgress} from "@/modules/projects/learner-sprint-progress-model";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -846,6 +847,7 @@ export function ProjectWorkspace({
               }}
             /> : null}
           </div>
+          <ProjectDeliveryHistoryTimeline projectId={workspace.project.id}/>
         </section>
       ) : null}
 
