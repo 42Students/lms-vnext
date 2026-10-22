@@ -8,11 +8,13 @@ import { AdminProgramDirectory } from "@/components/admin/admin-program-director
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
-import { listPrograms } from "@/modules/academics/program-service";
+import { listPrograms, listGlobalProgramsForSuperAdmin } from "@/modules/academics/program-service";
 import { listProgramContents } from "@/modules/admin-ui/program-contents-service";
 import { listDepartments } from "@/modules/departments/service";
 
-export default async function SuperAdminProgramsPage() {
+export default async function SuperAdminProgramsPage({
+ searchParams,
+}: {searchParams?:Promise<{page?:string}>} ) {
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context))return <div className="min-w-0 space-y-5">
     <PageHeader title="Programs"/>
@@ -23,9 +25,59 @@ export default async function SuperAdminProgramsPage() {
   const collegeId = context.adminScope?.collegeId ?? null;
 
   if (!collegeId) {
+    // The legacy Super Admin /fetchAll is a catalogue read, not authority to
+    // edit a program outside the selected college x role workspace.
+    if (!context.adminScope?.organizationId) {
+      const rawPage=(await searchParams)?.page;
+      if(rawPage && !/^[1-9][0-9]{0,3}$/.test(rawPage))
+        return <div className="min-w-0 space-y-4">
+          <PageHeader title="Programs" />
+          <ErrorState title="Invalid page number" description="Choose a valid page of the global program directory."
+            action={<Link href="/admin/programs" className="font-semibold text-link underline">Return to first page</Link>} />
+        </div>;
+      const page=rawPage?Number(rawPage):1;
+      const directory=await listGlobalProgramsForSuperAdmin(context,{page}).catch(()=>null);
+      if(!directory)return <div className="min-w-0 space-y-4">
+        <PageHeader title="Programs" description="Platform-wide program catalogue" />
+        <ErrorState title="Could not load programs"
+          description="The global program catalogue is unavailable. No rows are assumed empty, and no college has been selected."
+          action={<Link href={"/admin/programs?page="+page} className="font-semibold text-link underline">Retry program directory</Link>} />
+      </div>;
+      return <div className="min-w-0 space-y-5">
+        <PageHeader title="Programs"
+          description="Read-only platform catalogue. Select a college in the header before creating or editing programs." />
+        <p className="text-sm text-body" role="status">
+          {directory.total.toLocaleString("en-IN")} active programs across active colleges. Page {directory.page} of {directory.totalPages}.
+        </p>
+        {directory.items.length?<div className="min-w-0 overflow-x-auto border-y border-border">
+          <table className="w-full min-w-[640px] text-left text-sm">
+            <caption className="sr-only">Programs across colleges, read only</caption>
+            <thead><tr className="border-b border-border text-xs font-semibold text-muted-foreground">
+              <th scope="col" className="px-3 py-3">Program</th>
+              <th scope="col" className="px-3 py-3">Department</th>
+              <th scope="col" className="px-3 py-3">College</th>
+              <th scope="col" className="px-3 py-3">Organization</th>
+              <th scope="col" className="px-3 py-3">Duration</th>
+            </tr></thead>
+            <tbody>{directory.items.map(program=><tr key={program.id} className="border-b border-border last:border-b-0">
+              <td className="px-3 py-3 font-semibold text-[var(--lms-heading)]">{program.name} <span className="block text-xs font-normal text-muted-foreground">{program.code}</span></td>
+              <td className="px-3 py-3">{program.departmentName}</td>
+              <td className="px-3 py-3">{program.collegeName}</td>
+              <td className="px-3 py-3">{program.organizationName}</td>
+              <td className="px-3 py-3 tabular-nums">{program.durationYears} years</td>
+            </tr>)}</tbody>
+          </table>
+        </div>:<EmptyState title="No programs found" description="No active college programs are available in the platform catalogue."/>}
+        <nav aria-label="Program directory pagination" className="flex flex-wrap gap-4 text-sm font-semibold">
+          {directory.page>1?<Link href={"/admin/programs?page="+(directory.page-1)} className="text-link underline">Previous page</Link>:null}
+          {directory.page<directory.totalPages?<Link href={"/admin/programs?page="+(directory.page+1)} className="text-link underline">Next page</Link>:null}
+        </nav>
+        <p className="text-xs text-muted-foreground">The global list is informational. Changes require an explicitly selected college.</p>
+      </div>;
+    }
     return (
       <div className="min-w-0 space-y-5">
-        <PageHeader  title="Programs"
+        <PageHeader title="Programs"
           description="Select a college first. Choose a college scope before managing programs." />
         <EmptyState title="Select a college to manage Programs"
           description="Choose a college in the header above to create or edit Programs." />
