@@ -221,7 +221,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts} legacyCollegeCopy hideHeader
    selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} selectionDisabled={bulkBusy} disableLocalSearch preserveServerOrder allowCollegeStudentLinks allowCollegeContactLinks
    initialTab={activeTab} initialKind={initialKind} sort={query["sort"]==="NAME"?"NAME":query["sort"]==="NEWEST"?"NEWEST":"OLDEST"}
-   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query["waitingState"]??"ALL":"",ageBand:tab==="WAITING"?query["ageBand"]??"ANY":"",attention:tab!=="WAITING"&&["VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"].includes(query["attention"])?"ALL":query["attention"]??"ALL"})}
+   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query["waitingState"]??"ALL":"",ageBand:tab==="WAITING"?query["ageBand"]??"ANY":"",attention:tab!=="WAITING"&&["VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"].includes(query["attention"] ?? "")?"ALL":query["attention"]??"ALL"})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1",...(kind==="IDENTITY"?{marksheets:"ANY",attention:query["attention"]==="MISSING_MARKSHEET"?"ALL":query["attention"]}:{})})}
    onReview={row=>setSelected(row)}/>
   </div>

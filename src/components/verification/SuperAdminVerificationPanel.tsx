@@ -40,7 +40,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  const inSequence=selected&&sequence.length>0&&sequence[sequenceIndex]&&
   verificationSelectionKey(selected)===verificationSelectionKey(sequence[sequenceIndex]);
  const nextInSequence=()=>{
-  if(sequenceIndex+1<sequence.length){setSequenceIndex(i=>i+1);setSelected(sequence[sequenceIndex+1]);}
+  if(sequenceIndex+1<sequence.length){setSequenceIndex(i=>i+1);setSelected(sequence[sequenceIndex+1] ?? null);}
   else{setSequence([]);setSequenceIndex(0);setSelected(null);}
  };
  const stopSequence=(notify=true)=>{
@@ -207,9 +207,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
   {selected?<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
    row={selected} apiBase="/api/admin/verification"
    collegeId={collegeId} onClose={stopSequence}
-   sequenceProgress={inSequence?(sequenceIndex+1)+" of "+sequence.length:undefined}
-   onNext={inSequence?nextInSequence:undefined}
-   onFinish={inSequence?stopSequence:undefined}
+   {...(inSequence ? {sequenceProgress:(sequenceIndex+1)+" of "+sequence.length, onNext:nextInSequence, onFinish:stopSequence} : {})}
    onSaved={(action)=>{
     showToast({tone:"success",title:action==="VERIFY"?(selected.section==="EDUCATION"?"Education":"Identity")+" verified. The student has been told.":"Sent back. The student sees your reason."});
     if(inSequence)nextInSequence();else setSelected(null);
