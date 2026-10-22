@@ -31,7 +31,7 @@ describe("Chat-12 TPO Requests gap closure",()=>{
   expect(source).toContain("eventId:decisionEvent.id");
   expect(source).toContain('kind:request.requestType==="ROUND_RESCHEDULE"?"RESCHEDULE_DECIDED":"REQUEST_DECIDED"');
   const dispatch=read("src/modules/placements/learner-placement-event-delivery.ts");
-  expect(dispatch).toContain("deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],message)");
+  expect(dispatch).toContain("deliverInAppNotificationInTransaction(inner,input.eventId,[row.userId],message)");
   expect(dispatch).toContain("eq(collegeMemberships.collegeId,input.collegeId)");
   expect(dispatch).toContain("row.applications!==false");
   const copy=read("src/modules/placements/learner-placement-event-copy.ts");
