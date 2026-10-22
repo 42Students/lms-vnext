@@ -17,7 +17,7 @@ export default async function LearnerCalendarLegacyRedirect({searchParams}:{
   // member-authorized Schedule workspace, without trusting a requested view.
   const original=await searchParams;
   const query=new URLSearchParams({view:"calendar"});
-  const date=original.date;
+  const date=original["date"];
   if(typeof date==="string" && parseLearnerCareerDate(date)!==null)
     query.set("date",date);
   // Preserve only member-scoped UUID selectors; legacy integer keys must be
@@ -27,7 +27,7 @@ export default async function LearnerCalendarLegacyRedirect({searchParams}:{
     if(typeof value==="string" && z.uuid().safeParse(value).success)
       query.set(key,value);
   }
-  const kind=original.kind;
+  const kind=original["kind"];
   if(typeof kind==="string" &&
     ["ALL","ASSESSMENT","INTERVIEW","TALK","OTHER"].includes(kind))
     query.set("kind",kind);
