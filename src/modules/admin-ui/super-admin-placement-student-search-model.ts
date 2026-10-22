@@ -6,7 +6,7 @@ const searchSchema=z.string().trim().min(2).max(150);
 export function parseSuperAdminPlacementStudentSearch(
   params:Record<string,string|string[]|undefined>,
 ):{query:string|null;invalid:boolean}{
-  const value=params.q;
+  const value=params["q"];
   if(value===undefined||value==="")return {query:null,invalid:false};
   if(typeof value!=="string")return {query:null,invalid:true};
   const parsed=searchSchema.safeParse(value);

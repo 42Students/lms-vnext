@@ -20,7 +20,7 @@ import {
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
-import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery} from "@/modules/placements/tpo-grid-model";
 import {TpoSpreadsheetGrid,type TpoSpreadsheetGridProps} from "../tpo-spreadsheet-grid";
 import {gridSelectionClick,gridSelectionCheckbox,selectedGridIdsWithin} from "./grid-selection";
 import {GRID_LAYOUT_SUFFIX,parseGridViewMemory,serializeGridViewMemory} from "./view-memory";
@@ -204,24 +204,23 @@ export function TpoGrid<Row>({
    cellRenderer:(p:{data?:Row})=>p.data?<Checkbox
     aria-label={"Select "+(openPrimary?.ariaLabel(p.data)??rowKey(p.data))}
     checked={selection.selected.includes(rowKey(p.data))}
-    onChange={event=>selectOne(p.data!,event.target.checked,event.nativeEvent instanceof MouseEvent&&event.nativeEvent.shiftKey)}/>:null,
+    onChange={event=>{if(p.data)selectOne(p.data,event.target.checked,event.nativeEvent instanceof MouseEvent&&event.nativeEvent.shiftKey);}}/>:null,
   });
   for(const col of display)result.push({
-   colId:col.key,headerName:col.label,field:undefined,
+   colId:col.key,headerName:col.label,
    minWidth, maxWidth, width:160,resizable:true,sortable:Boolean(col.sortKind),
    valueGetter:p=>p.data?col.read(p.data):null,
-   comparator:col.sortKind?(a,b,nodeA,nodeB,isDescending)=>compareNumberDate(
-    col.sortKind!,
+   ...(col.sortKind?{comparator:(a:unknown,b:unknown,nodeA:{data?:Row},nodeB:{data?:Row},isDescending:boolean)=>compareNumberDate(
+    col.sortKind,
     col.sortValue&&nodeA.data?col.sortValue(nodeA.data):a,
     col.sortValue&&nodeB.data?col.sortValue(nodeB.data):b,
     isDescending,
-   ):undefined,
-   tooltipValueGetter:p=>p.data?col.tooltip?.(p.data):undefined,
-   cellRenderer:openPrimary?.columnKey===col.key
-    ?(p:{data?:Row})=>p.data?<Button variant="ghost" className="min-h-9 px-0 text-left underline"
-      aria-label={openPrimary.ariaLabel(p.data)} onClick={()=>openPrimary.onOpen(p.data!)}>
-      {col.render?col.render(p.data):cellValue(col.read(p.data))}</Button>:null
-    :col.render?(p:{data?:Row})=>p.data?col.render!(p.data):null:undefined,
+   )}:{}),
+   ...(col.tooltip?{tooltipValueGetter:(p:{data?:Row})=>p.data?col.tooltip?.(p.data):undefined}:{}),
+   ...(openPrimary?.columnKey===col.key?{cellRenderer:(p:{data?:Row})=>p.data?<Button variant="ghost" className="min-h-9 px-0 text-left underline"
+      aria-label={openPrimary.ariaLabel(p.data)} onClick={()=>openPrimary.onOpen(p.data)}>
+      {col.render?col.render(p.data):cellValue(col.read(p.data))}</Button>:null}
+    :col.render?{cellRenderer:(p:{data?:Row})=>p.data?col.render?.(p.data):null}:{}),
   });
   if(rowActions)result.push({
    colId:"__actions",headerName:"Actions",width:220,minWidth:160,sortable:false,
@@ -272,9 +271,9 @@ export function TpoGrid<Row>({
   </div>
   <div className="md:hidden">
    <TpoSpreadsheetGrid<Row> rows={rows} columns={columns} rowKey={rowKey}
-    selection={selection} rowActions={rowActions} openPrimary={openPrimary}
-    mobilePrimaryKeys={mobilePrimaryKeys} mobileActionsCollapsible={mobileActionsCollapsible}
-    integratedWorkspace storageKey={storageKey}/>
+    {...(selection!==undefined?{selection}:{})} {...(rowActions!==undefined?{rowActions}:{})} {...(openPrimary!==undefined?{openPrimary}:{})}
+    {...(mobilePrimaryKeys!==undefined?{mobilePrimaryKeys}:{})} mobileActionsCollapsible={mobileActionsCollapsible}
+    integratedWorkspace {...(storageKey!==undefined?{storageKey}:{})}/>
   </div>
  </section>;
 }
