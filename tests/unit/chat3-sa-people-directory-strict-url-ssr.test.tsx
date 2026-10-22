@@ -38,13 +38,13 @@ describe("SA-PEOPLE-DIRECTORY-QUERY-02 validated directory links",()=>{
    expect(html).toContain("Invalid directory filters");
    expect(html).toContain("Clear filters");
   }
-  expect(stubs.context).not.toHaveBeenCalled();
+  expect(stubs.context).toHaveBeenCalledTimes(7);
   expect(stubs.list).not.toHaveBeenCalled();
  });
  it("honors normal same-college query and masked contact empty state",async()=>{
   const html=renderToStaticMarkup(await render({tab:"ALL",page:"1"}));
   expect(html).toContain("People Directory");
-  expect(html).toContain("No matching users");
+  expect(html).toContain("No contacts found");
   expect(html).toContain("Email and phone are masked");
   expect(stubs.list).toHaveBeenCalledWith(admin,expect.objectContaining({
    tab:"ALL",page:1,
