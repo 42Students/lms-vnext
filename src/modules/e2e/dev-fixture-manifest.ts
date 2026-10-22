@@ -47,7 +47,7 @@ export const devFixtureManifestSchema = z.strictObject({
 export type DevFixtureManifest = z.infer<typeof devFixtureManifestSchema>;
 
 export function readProvisionedDevFixtureManifest(env: NodeJS.ProcessEnv = process.env) {
-  const raw = env.APP_E2E_SEED_MANIFEST_JSON;
+  const raw = env["APP_E2E_SEED_MANIFEST_JSON"];
   if (!raw || raw.length > 24_000) return null;
   let parsed: unknown;
   try { parsed = JSON.parse(raw); } catch { return null; }
@@ -57,8 +57,8 @@ export function readProvisionedDevFixtureManifest(env: NodeJS.ProcessEnv = proce
 
 export function devFixtureManifestEnabled(env: NodeJS.ProcessEnv = process.env) {
   return env.NODE_ENV !== "production" &&
-    env.APP_ENV === "development" &&
-    env.APP_E2E_SEED_ENABLED === "true" &&
-    typeof env.APP_E2E_SEED_SECRET === "string" &&
-    env.APP_E2E_SEED_SECRET.length >= 32;
+    env["APP_ENV"] === "development" &&
+    env["APP_E2E_SEED_ENABLED"] === "true" &&
+    typeof env["APP_E2E_SEED_SECRET"] === "string" &&
+    env["APP_E2E_SEED_SECRET"].length >= 32;
 }
