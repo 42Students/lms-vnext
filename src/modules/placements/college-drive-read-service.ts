@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, count, eq, gte, ilike, lte, or, sql, isNull } from "drizzle-orm";
+import { and, asc, desc, count, eq, gte, ilike, lte, or, sql, isNotNull, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
@@ -83,7 +83,7 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
       // Deletion is an explicit history view, never implicitly mixed with
       // operational "All" or published/draft/closed drives.
       query.status === "ARCHIVED"
-        ? eq(placementJobs.status, "ARCHIVED")
+        ? isNotNull(placementJobs.archivedAt)
         : isNull(placementJobs.archivedAt),
       query.status === "ALL" || query.status === "ARCHIVED"
         ? undefined : eq(placementJobs.status, query.status),
