@@ -12,8 +12,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-4-016-015  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-4-016-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-4-016-048  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
-- [ ] G2-4-016-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
-- [ ] G2-4-016-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-4-016-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-4-016-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-4-026-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-4-028-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-5-004-069  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
@@ -22,3 +22,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - OK G2-4-016-015 — `src/modules/notifications/exotel-sms.ts:119-126,143-157` keeps unscoped OTP attempts nullable while accepting verified college/organization context; `drizzle/0162_lane15_sms_attempt_audit.sql:3-7` permits NULL scope, matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/SmsDeliveryLog.java:51-52` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ExotelSmsServiceImpl.java:220-229`.
 - OK G2-4-016-046 — `src/modules/notifications/exotel-sms.ts:143-157` inserts one new attempt without upsert on each invocation; `drizzle/0162_lane15_sms_attempt_audit.sql:3-19` provides a generated unique attempt ID, matching append-on-send behavior `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ExotelSmsServiceImpl.java:220-233`.
+- OK G2-4-016-060 — `src/db/schema/messaging-receipts.ts:157-165` declares attempted-at and `(recipient_suffix,purpose,attempted_at)` indexes, registered in `drizzle/0162_lane15_sms_attempt_audit.sql:20-24`, matching `docs/legacy-source/backend/src/main/resources/db/migration/V134__sms_delivery_log.sql:37-40`.
+- OK G2-4-016-070 — `src/db/schema/messaging-receipts.ts:169-174,183-199` distinguishes PROVIDER_ACCEPTED from handset delivery and maps legacy SENT correctly; `src/modules/notifications/exotel-sms.ts:93-95` explicitly documents provider acceptance only, matching `docs/legacy-source/backend/src/main/resources/db/migration/V134__sms_delivery_log.sql:26-30`.
