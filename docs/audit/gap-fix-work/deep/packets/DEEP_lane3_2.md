@@ -11,7 +11,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-15-009-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-15-009-054  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-15-009-061  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
-- [ ] G2-15-009-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [x] G2-15-009-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-15-009-085  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-15-009-092  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-16-001-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
@@ -21,3 +21,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 ## Results
 
 - G2-16-001-026: OK — `src/app/(authenticated)/tracker/audit-findings/page.tsx:46-71` catches rejected listing requests, preserves authorization errors, renders the inline `Couldn't load findings.` message and an authorized Retry link retaining the filters. Legacy: `docs/legacy-source/frontend/src/pages/tracker/audit-findings.js:60-63` (legacy file path to confirm).
+
+- G2-15-009-080: OK — `src/components/attendance/faculty-attendance-workspace.tsx:485-553` submits the entire roster in one PATCH, preserves the draft on both explicit rejection and uncertain network failures, and tells the teacher to refresh persisted marks before retrying an ambiguous result. `src/modules/attendance/faculty-service.ts:640-710,779-790` updates marks and session status in one transaction, checks the optimistic correction token, and returns `attendanceComplete: true` only after an atomic save; partial-acceptance retry is consequently unnecessary. Legacy: `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TakeAttendance.js:517-548` (per-learner partial successes required retrying failed rows; the transactional vNext endpoint strengthens this to all-or-none while retaining the recovery path).
