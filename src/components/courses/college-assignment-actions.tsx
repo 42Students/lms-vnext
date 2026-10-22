@@ -27,6 +27,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const [editing,setEditing]=useState(false);
  const [expectedUpdatedAt,setExpectedUpdatedAt]=useState<string|null>(null);
  const [resourceDeliveryId,setResourceDeliveryId]=useState<string|null>(null);
+ const [savedEdit,setSavedEdit]=useState<{title:string;description:string;points:string;dueAt:string}|null>(null);
+ const [confirmDiscard,setConfirmDiscard]=useState(false);
  const requestLock=useRef(false);
  const [methods,setMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
  const [methodsLoaded,setMethodsLoaded]=useState(false);
@@ -41,6 +43,14 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const [confirmTransition,setConfirmTransition]=useState<"PUBLISH"|"ARCHIVE"|null>(null);
  const [liveSubmissionCount,setLiveSubmissionCount]=useState<number|null>(null);
  const [confirmLoading,setConfirmLoading]=useState(false);
+ const editDirty=Boolean(savedEdit&&(
+  title!==savedEdit.title||description!==savedEdit.description||
+  points!==savedEdit.points||dueAt!==savedEdit.dueAt||methodsDirty));
+ function closeEdit(){
+  if(busy)return;
+  if(editDirty){setConfirmDiscard(true);return;}
+  setEditing(false);setResourceDeliveryId(null);
+ }
  async function inspectDelete(){
   if(requestLock.current||busy||confirmLoading)return;
   setConfirmLoading(true);setError("");
@@ -96,7 +106,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    {assignment.status!=="ARCHIVED"?<Button type="button" disabled={busy}
     variant="secondary" className="min-h-11 md:min-h-9"
     aria-label={"Edit "+assignment.title} onClick={()=>void (async()=>{
-      if(editing){setEditing(false);setResourceDeliveryId(null);return;}
+      if(editing){closeEdit();return;}
       if(requestLock.current)return;
       setError("");setNotice("");setMethodsLoaded(false);setExpectedUpdatedAt(null);
       setResourceDeliveryId(null);
@@ -117,6 +127,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
         return;
        }
        setDescription(data.assignment.description??"");
+       setSavedEdit({title:data.assignment.title,description:data.assignment.description??"",
+        points:String(data.assignment.maxPoints),dueAt:istInput(data.assignment.dueAt)});
        setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));setMethodsDirty(false);
        setMethodsLoaded(true);setEditing(true);
       }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load assignment settings.");}
@@ -142,11 +154,11 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     if(!confirmTransition)return;
     const next=confirmTransition;setConfirmTransition(null);void command(next);
    }}/>
-  <Dialog open={editing} onOpenChange={open=>{if(!open&&!busy)setEditing(false);}}
+  <Dialog open={editing} onOpenChange={open=>{if(!open)closeEdit();}}
    dismissible={!busy} className="max-w-[720px]"
    title={"Edit assignment: "+assignment.title}
    footer={<>
-    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setEditing(false)}>Cancel</Button>
+    <Button type="button" variant="secondary" disabled={busy} onClick={closeEdit}>Cancel</Button>
     <Button type="button" loading={busy} disabled={busy||!methodsLoaded}
      onClick={()=>void command("SAVE")}>Save changes</Button>
    </>}>
@@ -181,6 +193,14 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     <p role="status" className="text-xs text-muted-foreground">Shared assignments retain their original authoring scope. Add or remove secure resource links in a Section-specific assignment; unverified file keys cannot be attached.</p>}
   </div>
   </Dialog>
+  <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
+   title="Discard unsaved assignment changes?"
+   description="The title, instructions, deadline, points and submission-method edits have not been saved."
+   confirmLabel="Discard changes" confirmVariant="danger" pending={busy}
+   onConfirm={()=>{
+    if(busy)return;
+    setConfirmDiscard(false);setEditing(false);setResourceDeliveryId(null);
+   }}/>
   {error?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
  </div>;
