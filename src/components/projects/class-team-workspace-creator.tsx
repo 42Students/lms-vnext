@@ -402,9 +402,10 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       }
     } finally {
       setPreflightLoading(false);
-      // After a successful POST, keep Create locked until navigation unmounts this form.
-      // Releasing the latch would allow a second request while router.push is pending.
-      if(!created||mode==="INDIVIDUAL"){
+      // A successful cohort POST may return partial coverage. Leave the Create
+      // action locked until the page is reloaded and a fresh preflight is read;
+      // immediately retrying the same roster can duplicate successful writes.
+      if(!created){
         createInFlight.current=false;
         setPending(false);
       }
