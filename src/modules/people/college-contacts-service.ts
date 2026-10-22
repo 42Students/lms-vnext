@@ -17,8 +17,19 @@ export type CollegeContactRow={
 };
 export async function listCollegeContacts(context:RequestContext,raw:unknown){
  const filter=collegeContactsQuerySchema.parse(raw);
- if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
- if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
+ const dateWindow={
+  ...(filter.joinedFrom!==undefined?{joinedFrom:filter.joinedFrom}:{}),
+  ...(filter.joinedThrough!==undefined?{joinedThrough:filter.joinedThrough}:{}),
+ };
+ if(!contactDateWindowValid(dateWindow))throw new Error("INVALID_CONTACT_DATE_WINDOW");
+ const academicFilter={
+  teaching:filter.teaching,teachingRole:filter.teachingRole,enrollment:filter.enrollment,
+  ...(filter.cohortId!==undefined?{cohortId:filter.cohortId}:{}),
+  ...(filter.programId!==undefined?{programId:filter.programId}:{}),
+  ...(filter.sectionId!==undefined?{sectionId:filter.sectionId}:{}),
+  classPresence:filter.classPresence,
+ };
+ if(!contactAcademicFiltersCompatible(academicFilter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
  if(!contactRoleAudienceCompatible(filter))throw new Error("INVALID_CONTACT_ROLE_AUDIENCE");
  const claim=context.membership;
  if(!claim||claim.status!=="ACTIVE"||!claim.roles.includes("COLLEGE_ADMIN"))
@@ -271,7 +282,9 @@ export async function listLegacyCollegeContacts(context:RequestContext,raw:unkno
    role==="all"?"ALL" as const:null;
  if(!tab)throw new RangeError("INVALID_CONTACT_USER_TYPE");
  const result=await listCollegeContacts(context,{
-  tab,programId:input.programId,facultyDepartmentId:input.departmentId,
+  tab,
+  ...(input.programId!==undefined?{programId:input.programId}:{}),
+  ...(input.departmentId!==undefined?{facultyDepartmentId:input.departmentId}:{}),
   page:input.pageNumber+1,pageSize:input.pageSize,q:input.query,
  });
  return {
