@@ -1,6 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement} from "react";
-import {Pagination} from "@/components/ui/pagination";
+import {ProjectAdminPagination} from "@/components/projects/project-admin-collection-controls";
 import {ProjectAdminSubmissionsPage} from "@/components/projects/project-admin-submissions-page";
 
 const state=vi.hoisted(()=>({
@@ -51,9 +51,9 @@ function paginationState(value:unknown): {page:number;pageCount:number}|null {
     return null;
   }
   if(!isValidElement(value))return null;
-  if(value.type===Pagination){
-    const p=value.props as {page:number;pageCount:number};
-    return {page:p.page,pageCount:p.pageCount};
+  if(value.type===ProjectAdminPagination){
+    const p=value.props as {page:number;totalPages:number};
+    return {page:p.page,pageCount:p.totalPages};
   }
   const p=value.props as Record<string,unknown>;
   return paginationState(p.children)??paginationState(p.empty)??paginationState(p.action);
