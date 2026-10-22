@@ -245,7 +245,7 @@ db
             isNull(placementJobs.archivedAt),
           ),
         )
-        .orderBy(sql`${placementJobs.publishedAt} desc nulls last`, desc(placementJobs.createdAt), desc(placementJobs.id)).limit(60),
+        .orderBy(sql`coalesce(${placementJobs.publishedAt}, ${placementJobs.legacyPostedAt}, ${placementJobs.createdAt}) desc nulls last`, desc(placementJobs.createdAt), desc(placementJobs.id)).limit(60),
 db
         .select({
           job: placementJobs,
@@ -273,7 +273,7 @@ db
             isNull(placementJobs.archivedAt),
           ),
         )
-        .orderBy(sql`${placementJobs.publishedAt} desc nulls last`, desc(placementJobs.createdAt), desc(placementJobs.id)).limit(20),
+        .orderBy(sql`coalesce(${placementJobs.publishedAt}, ${placementJobs.legacyPostedAt}, ${placementJobs.createdAt}) desc nulls last`, desc(placementJobs.createdAt), desc(placementJobs.id)).limit(20),
   ]);
   const jobs = [...activeJobs, ...otherJobs];
   const sampledJobIds = jobs.map(({ job }) => job.id);
@@ -894,7 +894,7 @@ export async function listPlacementOperationsJobPage(
   const page = Math.min(filters.page, totalPages);
   const rows = await directory().where(where)
     .orderBy(
-      sql`${placementJobs.publishedAt} desc nulls last`,
+      sql`coalesce(${placementJobs.publishedAt}, ${placementJobs.legacyPostedAt}, ${placementJobs.createdAt}) desc nulls last`,
       desc(placementJobs.createdAt),
       desc(placementJobs.id),
     )

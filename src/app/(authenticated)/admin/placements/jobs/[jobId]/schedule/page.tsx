@@ -38,7 +38,11 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   // Validate the platform actor and selected tenant before reading private rounds.
   requireSuperAdminSelectedCollege(context,"placements.manage");
   const {jobId}=await params;
-  const query=driveInterviewsParams(await searchParams);
+  const rawQuery=await searchParams;
+  const query=driveInterviewsParams(rawQuery);
+  // A server-only URL filter cannot reference an undeclared client variable.
+  // Keep conflict-only export/rows derived from this verified request.
+  const conflictsOnly=rawQuery.conflictsOnly==="1";
   if(!query) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Interviews" description="Schedule candidate interviews and review interview rounds."/>
     <ErrorState title="Invalid interview filters"
@@ -258,7 +262,13 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       </Link>
     </div>
     <section aria-label="Candidate interviews" className="min-w-0 space-y-3">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Candidate interviews</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Candidate interviews</h2>
+       <Link href={conflictHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        {conflictsOnly?"Show all interviews":"Only schedule conflicts"} ({conflictIds.size} on this page)
+       </Link>
+      </div>
+      {conflictsOnly?<Banner tone="info">Only conflicts found among the interviews loaded on this page are shown. Other drives and unloaded pages are not part of this preview.</Banner>:null}
       {appointments&&appointments.appointmentTotal===0?<p role="status" className="text-sm text-muted-foreground">
         {activeCandidateFilters?"No interviews match your current filters.":"No interviews scheduled for this drive yet."}
       </p>:null}
@@ -267,9 +277,9 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates (page {appointments.candidatePage} of {appointments.candidatePages}). Deep-link from the application detail to include an individual learner.
         </Banner>:null}
         <nav aria-label="Eligible candidate picker pages" className="flex flex-wrap items-center gap-3 text-sm">
-          {appointments.candidatePage>1?<Link href={adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1})}
+          {appointments.candidatePage>1?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline">Previous candidates</Link>:null}
-          {appointments.candidatePage<appointments.candidatePages?<Link href={adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1})}
+          {appointments.candidatePage<appointments.candidatePages?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline">Next candidates</Link>:null}
         </nav>
         <p role="status" className="text-sm text-body">{appointments.appointmentTotal} matching candidate appointments · page {appointments.appointmentPage} of {appointments.appointmentPages}
@@ -290,9 +300,9 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           rounds={appointments.rounds} candidates={appointments.candidates}
           appointments={appointments.interviews} preferredApplicationId={query.applicationId}/>
         <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
-          {appointments.appointmentPage>1?<Link href={adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1})}
+          {appointments.appointmentPage>1?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}
-          {appointments.appointmentPage<appointments.appointmentPages?<Link href={adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1})}
+          {appointments.appointmentPage<appointments.appointmentPages?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next appointments</Link>:null}
         </nav>
       </> :

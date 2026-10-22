@@ -178,6 +178,16 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   setDirty(false);setConfirmDiscard(false);
   setError("");setSuccess("");setFieldErrors({});setShow(true);
  }
+ // Legacy applicant -> Schedule action opens the same form with that
+ // applicant already selected. Do not silently switch the selected learner,
+ // and never reopen a dismissed form on a data refresh.
+ const openedFromApplication=useRef<string|null>(null);
+ useEffect(()=>{
+  if(!preferredApplicationId||openedFromApplication.current===preferredApplicationId)return;
+  if(!candidates.some(candidate=>candidate.applicationId===preferredApplicationId))return;
+  openedFromApplication.current=preferredApplicationId;
+  open();
+ },[preferredApplicationId,candidates]);
  function cloneCancelled(row:Appointment){
   open(row);
   // Reuse the old details as a new audited scheduling request, never send

@@ -150,11 +150,22 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         {totalStageCount} applications across recorded pipeline statuses.
       </p>
     </section>
+    {query.attention!=="ALL"?<Banner tone="info" role="status">
+      Showing candidates matching {query.attention==="OFFERED_NO_LETTER"
+       ?"issued or accepted offers without a letter"
+       :query.attention==="INTERVIEW_UNSCHEDULED"
+        ?"the interview stage without a booked slot"
+        :"applications still awaiting review after one week"}.
+      {" "}<Link href={resetHref+preserved} className="font-semibold underline">
+        Clear attention filter
+      </Link>
+    </Banner>:null}
     {filters===null?<Banner tone="warning" action={<Link href={retryHref} className="font-semibold underline">Retry filter choices</Link>}>
       Department, program and batch options could not be loaded. The current applications remain visible; academic filter choices are unavailable.
     </Banner>:null}
     <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[8px] border border-[#f0f0f0] bg-[#fafafa] p-4" aria-label="Filter job applications">
       {shortlisted?<input type="hidden" name="shortlisted" value="true"/>:null}
+      {query.attention!=="ALL"?<input type="hidden" name="attention" value={query.attention}/>:null}
       {preserved?<input type="hidden" name="returnTo" value={returnTo}/>:null}
       <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Name, email, roll or role

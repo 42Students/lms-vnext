@@ -42,12 +42,19 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
   <div className="mt-3 space-y-3">
    {active.filter(category=>category.affected>0).map(category=>{
     const shown=expanded.includes(category.code)?category.rows:category.rows.slice(0,3);
-    const incomplete=category.affected>category.rows.length;
+    const incomplete=category.distinctDrives>category.rows.length;
     return <div key={category.code} className="min-w-0 space-y-1">
      <h3 className="text-[13px] font-semibold text-[#613400]">{category.label} ({category.affected})</h3>
      <div className="space-y-1">{shown.map((item,index)=>{
+       const params=new URLSearchParams();
+       if(category.tab!==null)params.set("stage",category.tab);
+       if(category.code!=="CLOSING_SOON_LOW_CONVERSION")
+        params.set("attention",category.code);
+       // The applicant list validates this relative path before using it as
+       // a contextual Back link; no cross-college data comes from the URL.
+       params.set("returnTo",basePath);
        const href=basePath+"/jobs/"+encodeURIComponent(item.jobId)+
-        (category.tab===null?"":"/applications?stage="+category.tab);
+        (category.tab===null?"":"/applications?"+params.toString());
        return <Link key={item.jobId+"-"+index} href={href}
         aria-label={item.jobTitle+", "+category.label+", "+item.count+" affected"}
         className="flex min-h-9 min-w-0 items-center justify-between gap-3 rounded px-1 py-1 text-[13px] text-[#613400] hover:bg-[#ffe58f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ad6800]">
@@ -62,7 +69,8 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
       {expanded.includes(category.code)?"Show less":"+"+(category.rows.length-shown.length)+" more"}
      </Button>:null}
      {incomplete?<p role="status" className="text-xs text-[#8c6a35]">
-       Showing top {shown.length} of {category.affected} affected; open a drive to see all candidates.
+       Showing {shown.length} of {category.distinctDrives} flagged drives
+       ({category.affected} affected records across the category). Open a drive to review all matching candidates.
       </p>:null}
     </div>;
    })}
