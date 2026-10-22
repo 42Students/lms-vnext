@@ -13,12 +13,14 @@ const avatarTints=[
 ] as const;
 function initials(name:string){
  const parts=name.trim().split(/\s+/).filter(Boolean);
- return ((parts.length>=2?parts[0][0]+parts[parts.length-1][0]:parts[0]?.[0])??"?").toUpperCase();
+ const first=parts[0]?.[0]??"?";
+ const last=parts.at(-1)?.[0]??first;
+ return (parts.length>=2?first+last:first).toUpperCase();
 }
 function tint(seed:string){
  let hash=0;
  for(const char of seed)hash=(hash*31+char.charCodeAt(0))>>>0;
- return avatarTints[hash%avatarTints.length];
+ return avatarTints[hash%avatarTints.length]??avatarTints[0];
 }
 function submittedText(value:string|null){
  if(!value)return "—";
