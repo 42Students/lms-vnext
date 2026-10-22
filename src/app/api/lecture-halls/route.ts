@@ -49,8 +49,8 @@ export async function GET(request: Request) {
     }
     const params=Object.fromEntries([...search].filter(([key])=>
       !["legacy","stats","deptId","hallId"].includes(key)));
-    if(search.has("deptId")&&!params.departmentId)params.departmentId=search.get("deptId")??"";
-    if(search.has("hallId")&&!params.id)params.id=search.get("hallId")??"";
+    if(search.has("deptId")&&!params["departmentId"])params["departmentId"]=search.get("deptId")??"";
+    if(search.has("hallId")&&!params["id"])params["id"]=search.get("hallId")??"";
     const result=await listLectureHalls(context,params);
 
     if(legacy)return NextResponse.json({status:"success",message:"Lecture halls retrieved",

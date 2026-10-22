@@ -62,7 +62,7 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
    {ITEMS.map(item=><Skeleton key={item.key} variant="kpi" label={item.label+" loading"}/>)}
   </div>:null}
   {counts?<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-   {ITEMS.map(item=><StatTile className={collegeStyles.tile} key={item.key} href={item.href} label={item.label}
+   {ITEMS.map(item=><StatTile className={collegeStyles["tile"] ?? ""} key={item.key} href={item.href} label={item.label}
     value={displayedGlanceNumber(counts?.[item.key]??null)}
     detail="Recorded in the selected college">
      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"

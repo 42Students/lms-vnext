@@ -44,15 +44,22 @@ export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const params = new URL(request.url).searchParams;
+    const organizationId = params.get("organizationId") || undefined;
+    const collegeId = params.get("collegeId") || undefined;
+    const classId = params.get("classId") || undefined;
+    const courseId = params.get("courseId") || undefined;
+    const deliveryStatus = (params.get("deliveryStatus") || undefined) as
+      "SENT" | "SCHEDULED" | "PROCESSING" | "FAILED" | "DELETED" | undefined;
+    const pageNo = params.has("pageNo") ? Number(params.get("pageNo")) : undefined;
+    const pageSize = params.has("pageSize") ? Number(params.get("pageSize")) : undefined;
     const result = await listScopedAdminNotificationPage(context, {
-      organizationId: params.get("organizationId") || undefined,
-      collegeId: params.get("collegeId") || undefined,
-      classId: params.get("classId") || undefined,
-      courseId: params.get("courseId") || undefined,
-      deliveryStatus: (params.get("deliveryStatus") || undefined) as
-        "SENT" | "SCHEDULED" | "PROCESSING" | "FAILED" | "DELETED" | undefined,
-      pageNo: params.has("pageNo") ? Number(params.get("pageNo")) : undefined,
-      pageSize: params.has("pageSize") ? Number(params.get("pageSize")) : undefined,
+      ...(organizationId !== undefined ? { organizationId } : {}),
+      ...(collegeId !== undefined ? { collegeId } : {}),
+      ...(classId !== undefined ? { classId } : {}),
+      ...(courseId !== undefined ? { courseId } : {}),
+      ...(deliveryStatus !== undefined ? { deliveryStatus } : {}),
+      ...(pageNo !== undefined ? { pageNo } : {}),
+      ...(pageSize !== undefined ? { pageSize } : {}),
     });
     return NextResponse.json(result);
   } catch (error) {
