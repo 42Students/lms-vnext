@@ -88,6 +88,27 @@ export function verifyRecruiterMailBridgeSignature(secret:string,body:string,sup
  return timingSafeEqual(expected,Buffer.from(supplied,"hex"));
 }
 
+/** Permit one bounded rotation interval without accepting a retired key forever.
+ * Both candidates use the constant-time HMAC validator, and cutoff must be
+ * within the next 24 hours. Never include a secret or submitted digest in logs.
+ */
+export function verifyRecruiterMailBridgeWithRotation(input:{
+ body:string;signature:string;currentSecret:string;
+ previousSecret?:string;previousExpiresAt?:string;now?:Date;
+}):boolean{
+ const now=input.now??new Date();
+ const expires=input.previousExpiresAt?Date.parse(input.previousExpiresAt):NaN;
+ const previousActive=Boolean(input.previousSecret&&
+   input.previousSecret!==input.currentSecret&&
+   Number.isFinite(now.getTime())&&Number.isFinite(expires)&&
+   expires>now.getTime()&&expires-now.getTime()<=24*60*60_000);
+ const currentOk=verifyRecruiterMailBridgeSignature(
+   input.currentSecret,input.body,input.signature);
+ const previousOk=previousActive?verifyRecruiterMailBridgeSignature(
+   input.previousSecret!,input.body,input.signature):false;
+ return currentOk||previousOk;
+}
+
 /** Plain-text email replies can contain full quoted recruiter/TPO history.
  * Admit only the human's new message, not mail headers or earlier participants'
  * private conversation text. An all-quoted reply is not a message.

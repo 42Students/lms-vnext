@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
-import { listLectureHalls } from "@/modules/academics/lecture-hall-service";
+import { listLectureHalls, listSuperAdminOrganizationLectureHalls } from "@/modules/academics/lecture-hall-service";
 import { listDepartments } from "@/modules/departments/service";
 import { lectureHallsCsvHref } from "@/modules/academics/college-lecture-halls-export-model";
 import {
@@ -26,7 +26,16 @@ export default async function SuperAdminLectureHallsPage({
 }) {
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
-  if (!collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
+  if (!collegeId) {
+    const orgId=context.adminScope?.organizationId??null;
+    const raw=await searchParams;
+    const q=typeof raw.q==="string"?raw.q.slice(0,100):"";
+    const pageRaw=typeof raw.page==="string"?Number(raw.page):1;
+    const page=Number.isSafeInteger(pageRaw)&&pageRaw>0?Math.min(pageRaw,10000):1;
+    const organizationDirectory=orgId?await listSuperAdminOrganizationLectureHalls(
+      context,{organizationId:orgId,q,limit:20,offset:(page-1)*20},
+    ):null;
+    return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lecture Halls" description="Lecture halls in the selected college" />
     <Tabs ariaLabel="Academic Setup" renderPanel={false} value="/admin/lecture-halls" items={[
       {value:"/admin/academics",label:"Academic Setup",href:"/admin/academics"},
@@ -34,8 +43,53 @@ export default async function SuperAdminLectureHallsPage({
       {value:"/admin/electives",label:"Electives",href:"/admin/electives"},
       {value:"/admin/lecture-halls",label:"Lecture Halls",href:"/admin/lecture-halls"},
     ]}/>
-    <Alert tone="warning" title="Select a college to continue">Choose a college in the header above to see its lecture halls.</Alert>
+    {organizationDirectory?<>
+      <Alert tone="info" title="Organization lecture hall directory">
+        Read-only rooms across this organization. Select a college in the
+        header to create, edit, archive or manage bookings.
+      </Alert>
+      <form method="get" action="/admin/lecture-halls" role="search"
+        className="flex flex-wrap items-end gap-2">
+        <label className="grid flex-1 gap-1 text-sm">Search organization rooms
+          <Input type="search" name="q" defaultValue={q} maxLength={100}/>
+        </label>
+        <Button type="submit">Search</Button>
+      </form>
+      <section aria-label="Organization lecture halls" className="min-w-0 overflow-x-auto">
+        <table className="w-full min-w-[36rem] text-left text-sm">
+          <thead><tr>
+            <th scope="col" className="p-3">College</th>
+            <th scope="col" className="p-3">Room</th>
+            <th scope="col" className="p-3">Capacity</th>
+            <th scope="col" className="p-3">Status</th>
+          </tr></thead>
+          <tbody>{organizationDirectory.items.map(hall=><tr key={hall.id}
+             className="border-t border-[var(--lms-canvas-border)]">
+              <td className="p-3">{hall.collegeName}</td>
+              <td className="p-3">{hall.name}</td>
+              <td className="p-3">{hall.capacity}</td>
+              <td className="p-3">{hall.status}</td>
+            </tr>)}</tbody>
+        </table>
+        {organizationDirectory.items.length===0?
+          <p className="p-4 text-sm">No lecture halls match this search.</p>:null}
+      </section>
+      <p className="text-sm text-muted-foreground">
+        {organizationDirectory.total} matching rooms · Showing
+        {" "}{organizationDirectory.items.length} on page {page}
+      </p>
+      <nav aria-label="Organization room pages" className="flex gap-3">
+        {page>1?<Link href={"/admin/lecture-halls?"+new URLSearchParams({q,page:String(page-1)})}
+           className="underline">Previous</Link>:null}
+        {page*20<organizationDirectory.total?<Link
+           href={"/admin/lecture-halls?"+new URLSearchParams({q,page:String(page+1)})}
+           className="underline">Next</Link>:null}
+      </nav>
+    </>:<Alert tone="warning" title="Select a college to continue">
+      Choose a college or organization in the header above to see its lecture halls.
+    </Alert>}
   </div>;
+  }
   requireSuperAdminSelectedCollege(context,"academics.manage");
 
   const query = parseSuperAdminLectureHallFilters(await searchParams);
