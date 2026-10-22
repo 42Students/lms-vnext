@@ -187,17 +187,10 @@ async function mutate(
 ) {
   const response = await fetch(url, {
     method,
-    headers:
-      body === undefined
-        ? undefined
-        : {
-            "content-type":
-              "application/json",
-          },
-    body:
-      body === undefined
-        ? undefined
-        : JSON.stringify(body),
+    ...(body === undefined ? {} : {
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    }),
   });
   const payload = (await response
     .json()
@@ -683,7 +676,7 @@ export function PlacementDriveControls({
           ...(action === "CANCEL"
             ? {
                 reason:
-                  draft.cancelReason.trim(),
+                  draft?.cancelReason.trim() ?? "",
               }
             : {}),
         },
