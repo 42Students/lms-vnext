@@ -1,6 +1,6 @@
 "use client";
 
-import {useMemo,useState} from "react";
+import {useId,useMemo,useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
 import {Disclosure} from "@/components/ui/disclosure";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -19,6 +19,7 @@ const stringValue=(value:Cell)=>value===null?"":String(value);
 export function ReportInteractiveTable({title,headings,rows,emptyDescription,compactControls=false}:{
  title:string;headings:readonly string[];rows:readonly (readonly Cell[])[];emptyDescription:string;compactControls?:boolean;
 }){
+ const headingId=useId();
  const [search,setSearch]=useState("");
  const [sort,setSort]=useState<number|null>(null);
  const [columnFilters,setColumnFilters]=useState<Record<number,string>>({});
@@ -114,8 +115,8 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);setMessage("");}}
      size="sm" className="min-h-11 md:min-h-9 print:hidden">Reset view</Button>
  </>);
- return <section className="space-y-3" aria-labelledby="interactive-report-heading">
-  <h2 id="interactive-report-heading" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{title}</h2>
+ return <section className="space-y-3" aria-labelledby={headingId}>
+  <h2 id={headingId} className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{title}</h2>
   {rows.length===0?<EmptyState title="No report rows" description={emptyDescription}/>:<>
    <div data-report-toolbar className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-3">
     <label className="grid min-w-0 w-full max-w-xl gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search table

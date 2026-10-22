@@ -367,6 +367,7 @@ export function RecruiterResultControls({
           key==="r"?"FAIL":key==="a"?"ABSENT":null;
         if(outcome){event.preventDefault();draftSelectedOutcome(activeRoundId,outcome);}
       }}>
+      <p id="recruiter-result-keyboard-hint" className="sr-only">Keyboard shortcuts when this editor has focus: S pass, W or H hold, R fail, A absent, Z undo. These do not apply while typing in a form.</p>
       {rounds.length === 0 ? (
         <EmptyState title="No hiring rounds" description="The placement team has not configured any rounds yet."/>
       ) : (
