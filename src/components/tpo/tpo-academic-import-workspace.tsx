@@ -12,7 +12,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useToast} from "@/components/ui/toast";
 import {recruiterXlsxToCsv} from "@/modules/placements/tpo-lead-xlsx-import-model";
 
-import { useId, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { parseTpoAcademicImportCsv,parseTpoLegacyAcademicImportCsv,
   type TpoLegacyAcademicStagingRow } from "@/modules/placements/tpo-academic-preview-import-model";
@@ -39,7 +39,7 @@ type PreviewRow = Partial<Omit<AcademicRow,"studentCode">> & {
 export function TpoAcademicImportWorkspace() {
   const router = useRouter();
   const {showToast}=useToast();
-  const id = useId();
+  
   const [open, setOpen] = useState(false);
   const [discardOpen,setDiscardOpen]=useState(false);
   const [previewTab,setPreviewTab]=useState<"WILL_UPDATE"|"CANT_MATCH">("WILL_UPDATE");
