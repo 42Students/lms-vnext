@@ -1081,6 +1081,8 @@ export function LearnerProfileWorkspace(props: {
                     onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,
                       educationType:event.target.value,program:"",specialization:"",qualifyingExam:"",examDetails:{}});}}>
                     <option value="">Choose education type</option>
+                    {value&&!choices.educationTypes.includes(value)?
+                      <option value={value}>{value} (saved)</option>:null}
                     {choices.educationTypes.map(option=><option key={option} value={option}>{option}</option>)}
                   </Select>
                 </label>;
