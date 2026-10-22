@@ -32,6 +32,23 @@ export const TPO_SEASON_CREATE_REVIEW_COPY={
  confirm:"I understand that students cannot register merely because a season is active.",
  unavailable:"Registration opening and deadline are managed separately from season dates.",
 } as const;
+/** Season opening is independent of ACTIVE status and cohort invitations. */
+export const tpoSeasonRegistrationActionSchema = z.discriminatedUnion("action", [
+  z.strictObject({
+    action: z.literal("OPEN_REGISTRATION"),
+    seasonId: z.uuid(),
+    expectedUpdatedAt: z.iso.datetime({offset: true}),
+    registrationDeadline: z.iso.datetime({offset: true}).nullable(),
+    confirmed: z.literal(true),
+  }),
+  z.strictObject({
+    action: z.literal("CLOSE_REGISTRATION"),
+    seasonId: z.uuid(),
+    expectedUpdatedAt: z.iso.datetime({offset: true}),
+    confirmed: z.literal(true),
+  }),
+]);
+
 export const tpoRulesChangeSchema = z.object({
   confirmed: z.literal(true),
   expectedVersion: z.number().int().min(0),

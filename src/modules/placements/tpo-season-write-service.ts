@@ -1,12 +1,15 @@
 import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { activityEvents, placementCollegeRules, placementSeasons } from "@/db/schema";
+import { activityEvents, colleges, placementCollegeRules, placementSeasons } from "@/db/schema";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { createPlacementSeason } from "./season-service";
 import { requirePlacementManageScope } from "./scope";
-import { tpoRulesChangeSchema, tpoSeasonChangeSchema } from "./tpo-season-write-model";
+import { tpoRulesChangeSchema, tpoSeasonChangeSchema, tpoSeasonRegistrationActionSchema } from "./tpo-season-write-model";
 import { PlacementsServiceError } from "./errors";
 
 /** Legacy openRegistration has no writable vNext season columns yet:
@@ -22,8 +25,59 @@ export const legacySeasonRegistrationWriteContract = {
  mustNotConflateWith: ["status", "endDate"],
  requires: ["scoped TPO actor", "persisted permission", "version check",
    "audited season transition", "learner eligibility reads"],
- supported: false,
+ supported: true,
 } as const;
+
+/** Open/close the persisted legacy season-wide registration gate without
+ * changing active season lifecycle or bypassing academic cohort invitations.
+ * College-row serialization matches learner registration and TPO cohort writes.
+ */
+export async function changeTpoSeasonRegistration(context:RequestContext, raw:unknown) {
+  const auth=await requireTpo(context);
+  const input=tpoSeasonRegistrationActionSchema.parse(raw);
+  const opening=input.action==="OPEN_REGISTRATION";
+  const deadline=opening&&input.registrationDeadline?new Date(input.registrationDeadline):null;
+  if(opening&&deadline&&deadline.getTime()<=Date.now())
+    throw new RangeError("Registration deadline must be in the future.");
+  return getDb().transaction(async tx=>{
+    const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
+      .from(colleges).where(eq(colleges.id,auth.collegeId)).for("update").limit(1);
+    if(!college)throw new AuthorizationError("placements.manage");
+    const actor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
+    if(!hasMembershipRole(actor,"TPO"))throw new AuthorizationError("placements.manage");
+    const [before]=await tx.select().from(placementSeasons).where(and(
+      eq(placementSeasons.id,input.seasonId),eq(placementSeasons.collegeId,college.id),
+    )).for("update").limit(1);
+    if(!before)throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_FOUND");
+    if(before.status!=="ACTIVE")throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_ACTIVE");
+    if(tpoSeasonVersionToken(before.updatedAt)!==tpoSeasonVersionToken(new Date(input.expectedUpdatedAt)))
+      throw new TpoSettingsStaleError();
+    const nextDeadline=opening?deadline:before.registrationDeadline;
+    if(before.registrationControlled && before.isRegistrationOpen===opening &&
+       (before.registrationDeadline?.getTime()??null)===(nextDeadline?.getTime()??null))
+      return before;
+    const now=new Date(Math.max(Date.now(),before.updatedAt.getTime()+1));
+    const [after]=await tx.update(placementSeasons).set({
+      registrationControlled:true,isRegistrationOpen:opening,
+      registrationDeadline:nextDeadline,updatedAt:now,
+    }).where(and(eq(placementSeasons.id,before.id),eq(placementSeasons.collegeId,college.id),
+      sql`date_trunc('milliseconds',${placementSeasons.updatedAt}) = ${tpoSeasonVersionToken(before.updatedAt)}::timestamptz`
+    )).returning();
+    if(!after)throw new TpoSettingsStaleError();
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_SEASON_REGISTRATION_UPDATED,
+      collegeId:auth.collegeId,organizationId:auth.organizationId,
+      subjectType:"placement_season",subjectId:after.id,subjectLabel:after.name,
+      summary:opening?"Season registration opened":"Season registration closed",
+      metadata:{previousOpen:before.isRegistrationOpen,open:after.isRegistrationOpen,
+        controlled:true,deadline:after.registrationDeadline?.toISOString()??null},
+      groupKey:"placement-season:"+after.id,
+    });
+    return after;
+  });
+}
 
 /** Historic @Version increments were a Java persistence detail, not a
  * portable UUID-era token. VNext exports millisecond-precision UTC instants

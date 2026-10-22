@@ -45,6 +45,28 @@ export function resolveRegistrationWindow(
   };
 }
 
+/** Season control is an *additional* gate, not a replacement for per-cohort
+ * eligibility, explicit invitation or consent. Old seasons have control off,
+ * preserving existing DB08 registration without a backfill guess. */
+export function resolveSeasonRegistrationWindow(
+  season: {
+    registrationControlled: boolean;
+    isRegistrationOpen: boolean;
+    registrationDeadline: Date | null;
+  } | null,
+  now: Date,
+) {
+  if (!season || !season.registrationControlled)
+    return {managed: false as const, open: true, deadline: null};
+  return {
+    managed: true as const,
+    open: season.isRegistrationOpen &&
+      (season.registrationDeadline === null ||
+       now.getTime() < season.registrationDeadline.getTime()),
+    deadline: season.registrationDeadline,
+  };
+}
+
 export type RegistrationWrite = {
   choice: PlacementRegistrationChoice;
   consentVersion: string | null;
