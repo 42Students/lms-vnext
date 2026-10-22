@@ -97,28 +97,28 @@ function first(value: string | string[] | undefined) {
 
 function studentsHref(
   filters: {
-    journeyState?: string;
-    everyone?:boolean;
-    legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;debarred?:boolean;
-    interviewedWith?:string;
-    gender?:string;birthYear?:number;skillName?:string;minSkills?:number;minProjects?:number;minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;hasResume?:boolean;hasCodingProfiles?:boolean;
-    branchId?: string;
-    programId?:string;
-    afterCollege?:string;
-    profileStatus?:string;
-    minApplications?:number;maxApplications?:number;minOffers?:number;maxOffers?:number;
-    offerWaiting?:boolean;
-    minCgpa?:number;maxCgpa?:number;
-    minTenthPct?:number;minTwelfthPct?:number;minDiplomaPct?:number;minUgPct?:number;
-    passingYear?:number;maxGapYears?:number;marksVerified?:boolean;isLateralEntry?:boolean;
-    maxActiveBacklogs?:number;maxPastBacklogs?:number;
-    cgpaRecorded?:boolean;
-    classId?:string;
-    batchId?: string;
-    search?: string;
-    page?: number;
-    pageSize?: number;
-    columns?: string;
+    journeyState?: string | undefined;
+    everyone?:boolean | undefined;
+    legacyStage?:string | undefined;minRoundReached?:number | undefined;needsAttention?:boolean | undefined;debarred?:boolean | undefined;
+    interviewedWith?:string | undefined;
+    gender?:string | undefined;birthYear?:number | undefined;skillName?:string | undefined;minSkills?:number | undefined;minProjects?:number | undefined;minCertifications?:number | undefined;minExperiences?:number | undefined;hasProfileLinks?:boolean | undefined;hasResume?:boolean | undefined;hasCodingProfiles?:boolean | undefined;
+    branchId?: string | undefined;
+    programId?:string | undefined;
+    afterCollege?:string | undefined;
+    profileStatus?:string | undefined;
+    minApplications?:number | undefined;maxApplications?:number | undefined;minOffers?:number | undefined;maxOffers?:number | undefined;
+    offerWaiting?:boolean | undefined;
+    minCgpa?:number | undefined;maxCgpa?:number | undefined;
+    minTenthPct?:number | undefined;minTwelfthPct?:number | undefined;minDiplomaPct?:number | undefined;minUgPct?:number | undefined;
+    passingYear?:number | undefined;maxGapYears?:number | undefined;marksVerified?:boolean | undefined;isLateralEntry?:boolean | undefined;
+    maxActiveBacklogs?:number | undefined;maxPastBacklogs?:number | undefined;
+    cgpaRecorded?:boolean | undefined;
+    classId?:string | undefined;
+    batchId?: string | undefined;
+    search?: string | undefined;
+    page?: number | undefined;
+    pageSize?: number | undefined;
+    columns?: string | undefined;
   },
   exportCsv = false,
 ) {
