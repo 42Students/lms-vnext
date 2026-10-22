@@ -71,7 +71,7 @@ describe("College Admin Student groups directory query and role journey", () => 
     expect(code).toContain("Clear filters");
     expect(code).toContain("No groups found");
     expect(code).toContain("Managed elsewhere");
-    expect(code).toContain("Showing {offset + 1}");
+    expect(code).toContain('Showing {(offset+1).toLocaleString("en-IN")}');
     expect(code).toContain("collegeGroupsDirectoryHref");
   });
 
