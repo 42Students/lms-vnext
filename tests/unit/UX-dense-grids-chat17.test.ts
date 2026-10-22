@@ -13,10 +13,10 @@ describe("UX-UNOWNED-DENSE-GRID-05 semantic grid exceptions",()=>{
   it("TPO spreadsheet has semantic desktop table AND mobile row disclosure with same selection actions",()=>{
     const text=source("src/components/tpo/tpo-spreadsheet-grid.tsx");
     expect(text.startsWith('"use client";')).toBe(true);
-    expect(text).toContain('<ScrollCue axis="x" label="TPO spreadsheet columns"');
-    expect(text).toContain('className="hidden rounded border border-border md:block"');
+    expect(text).toContain('<Table scrollLabel="TPO spreadsheet columns"');
+    expect(text).toContain('className="hidden md:block"');
     expect(text).toContain('<caption className="sr-only">Current page TPO spreadsheet records</caption>');
-    expect(text).toContain('<ul aria-label="Current page TPO spreadsheet records" className="space-y-2 md:hidden">');
+    expect(text).toContain('<ul aria-label="Current page TPO spreadsheet records" className="min-w-0 divide-y divide-border md:hidden">');
     expect(text).toContain('Select all filtered students');
     expect(text).toContain("More student details");
     expect(text).toContain("mobilePrimaryKeys");
@@ -27,7 +27,7 @@ describe("UX-UNOWNED-DENSE-GRID-05 semantic grid exceptions",()=>{
 
   it("college attendance month grid retains each scheduled-day column and per-learner correction controls",()=>{
     const text=source("src/components/attendance/admin-attendance-workspace.tsx");
-    expect(text).toContain('<ScrollCue axis="x" label="College attendance monthly grid"');
+    expect(text).toContain('<Table scrollLabel="College attendance monthly grid"');
     expect(text).toContain("<caption");
     expect(text).toContain("sessionDays.map");
     expect(text).toContain('className="sticky left-0 z-10 bg-surface px-4 py-3"');
@@ -35,5 +35,7 @@ describe("UX-UNOWNED-DENSE-GRID-05 semantic grid exceptions",()=>{
     expect(text).toContain("Multiple sessions on a day open a session chooser");
     expect(text).toContain("<Drawer");
     expect(text).toContain("College Admin may correct sessions");
+    const table=source("src/components/ui/table.tsx");
+    expect(table).toContain('<ScrollCue axis="x" label={scrollLabel');
   });
 });
