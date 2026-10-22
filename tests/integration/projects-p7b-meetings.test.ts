@@ -1,11 +1,12 @@
 import {
   afterAll,
-  beforeEach,
   describe,
   expect,
   it,
 } from "vitest";
 import { Pool } from "pg";
+import {randomUUID} from "node:crypto";
+import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -30,15 +31,13 @@ import {
 import { listMyMentorCalendarMeetings } from "@/modules/projects/mentor-calendar-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const databaseUrl =
-  process.env.TEST_DATABASE_URL ??
-  process.env.DATABASE_URL;
+const databaseUrl = process.env.TEST_DATABASE_URL;
 
 if (!databaseUrl) {
-  throw new Error(
-    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
-  );
+  throw new Error("Disposable TEST_DATABASE_URL is required for DB integration tests");
 }
+
+assertDb018DisposableTarget(process.env,{serviceBound:true});
 
 const pool = new Pool({
   connectionString: databaseUrl,
@@ -146,76 +145,15 @@ function blueprint() {
   };
 }
 
-async function cleanup() {
-  await pool.query(
-    `delete from project_meetings
-     where project_id in (
-       select id from project_instances
-       where slug like 'p7b-%'
-     )`,
-  );
-  await pool.query(
-    `delete from project_members
-     where project_id in (
-       select id from project_instances
-       where slug like 'p7b-%'
-     )`,
-  );
-  await pool.query(
-    `delete from project_resources
-     where project_id in (
-       select id from project_instances
-       where slug like 'p7b-%'
-     )`,
-  );
-  await pool.query(
-    `delete from project_tasks
-     where project_id in (
-       select id from project_instances
-       where slug like 'p7b-%'
-     )`,
-  );
-  await pool.query(
-    `delete from project_sprints
-     where project_id in (
-       select id from project_instances
-       where slug like 'p7b-%'
-     )`,
-  );
-  await pool.query(
-    `delete from project_releases
-     where project_id in (
-       select id from project_instances
-       where slug like 'p7b-%'
-     )`,
-  );
-  await pool.query(
-    "delete from project_instances where slug like 'p7b-%'",
-  );
-  await pool.query(
-    `delete from project_template_college_assignments
-     where template_id in (
-       select id from project_templates
-       where slug like 'p7b-%'
-     )`,
-  );
-  await pool.query(
-    `delete from project_template_versions
-     where template_id in (
-       select id from project_templates
-       where slug like 'p7b-%'
-     )`,
-  );
-  await pool.query(
-    "delete from project_templates where slug like 'p7b-%'",
-  );
-}
+// Meeting history is immutable. Each case owns a fresh project/template in the
+// disposable database; suite teardown must never erase audited meeting rows.
 
 async function createProject() {
+  const nonce = randomUUID().slice(0,12);
   const template = await createProjectTemplate(
     superAdmin,
     {
-      slug: "p7b-meeting-template",
+      slug: "p7b-meeting-template-"+nonce,
       title: "P7B Meeting Template",
       blueprint: blueprint(),
     },
@@ -234,7 +172,7 @@ async function createProject() {
     {
       collegeId: SEED_IDS.collegeA,
       templateId: template.template.id,
-      slug: "p7b-meeting-project",
+      slug: "p7b-meeting-project-"+nonce,
       title: "P7B Meeting Project",
     },
   );
@@ -270,10 +208,7 @@ const requestedWindow = {
   timeZone: "Asia/Kolkata" as const,
 };
 
-beforeEach(cleanup);
-
 afterAll(async () => {
-  await cleanup();
   await pool.end();
   await closeDatabaseConnection();
 });
@@ -322,6 +257,7 @@ describe("Projects P7B meetings", () => {
         request.id,
         {
           ...requestedWindow,
+          expectedUpdatedAt:request.updatedAt.toISOString(),
           meetingType: "REVIEW",
           meetingUrl:
             "https://meet.example.com/project",
@@ -539,9 +475,10 @@ describe("Projects P7B meetings", () => {
   it("cannot revive a cancelled or completed meeting through a stale schedule", async () => {
     const project = await createProject();
     const request = await requestProjectMeeting(learner,project.id,requestedWindow);
-    await transitionProjectMeeting(learner,project.id,request.id,{action:"CANCEL"});
+    const cancelled=await transitionProjectMeeting(learner,project.id,request.id,{action:"CANCEL"});
     await expect(scheduleProjectMeeting(mentor,project.id,request.id,{
       ...requestedWindow,meetingUrl:"https://meet.example.com/revived",
+      expectedUpdatedAt:cancelled.updatedAt.toISOString(),
     })).rejects.toMatchObject({code:"PROJECT_MEETING_INVALID_STATE"});
     const [meeting] = await listProjectMeetings(mentor,project.id);
     expect(meeting).toMatchObject({id:request.id,status:"CANCELLED"});
