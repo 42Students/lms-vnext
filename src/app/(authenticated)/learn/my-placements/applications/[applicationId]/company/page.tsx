@@ -38,11 +38,12 @@ export default async function LearnerApplicationCompanyPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
 
+      <PageHeader title={company.companyName} description="Read-only company profile from your own placement application." />
       <nav aria-label="Application navigation" className="flex min-w-0 flex-wrap items-center gap-2">
         <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(company.applicationId)}
             className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Back to application</Link>
       </nav>
-      <PageHeader title={company.companyName} description="Read-only company profile from your own placement application." />
+
       <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={company.companyStatus === "ACTIVE" ? "success" : "neutral"}>
             {company.companyStatus.replaceAll("_", " ")}
           </StatusBadge></div>
