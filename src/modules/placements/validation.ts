@@ -44,7 +44,8 @@ const corporateWebsiteSchema=z.string().trim()
    !url.username&&!url.password&&url.hostname.includes(".");}catch{return false;}},
   "Company website must be a valid https link",
  ));
-export const createPlacementCompanyInputSchema = z
+/** Plain object form (no refinements) so derived schemas can .omit/.extend it (Zod 4 forbids that on refined schemas). */
+export const createPlacementCompanyInputObjectSchema = z
   .object({
     collegeId: z.string().uuid(),
     name: z.string().trim().min(2,"Company name must be between 2 and 100 characters").max(100,"Company name must be between 2 and 100 characters"),
@@ -63,11 +64,15 @@ export const createPlacementCompanyInputSchema = z
     internalNotes: z.string().trim().max(2000).nullable().optional(),
     isTrusted: z.boolean().optional().default(false),
   })
-  .strict()
-  .refine(value=>Boolean(value.primaryDomain||value.websiteUrl),{
-    path:["primaryDomain"],
-    message:"Add the company's website or a company email domain",
-  });
+  .strict();
+
+export const companyWebsiteOrDomainRule = {
+  check:(value:{primaryDomain?:string|undefined;websiteUrl?:string|undefined})=>Boolean(value.primaryDomain||value.websiteUrl),
+  issue:{path:["primaryDomain"],message:"Add the company's website or a company email domain"},
+} as const;
+
+export const createPlacementCompanyInputSchema = createPlacementCompanyInputObjectSchema
+  .refine(companyWebsiteOrDomainRule.check,companyWebsiteOrDomainRule.issue);
 
 export const updatePlacementCompanyRelationshipInputSchema = z
   .object({

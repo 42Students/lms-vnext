@@ -1,9 +1,10 @@
 import { z } from "zod";
-import { createPlacementCompanyInputSchema } from "./validation";
+import { companyWebsiteOrDomainRule, createPlacementCompanyInputObjectSchema } from "./validation";
 import { publicRecruiterWorkEmailSchema } from "./public-college-join-model";
 
-/** College ownership comes from the authenticated TPO membership, never JSON. */
-export const tpoCreateCompanySchema = createPlacementCompanyInputSchema
+/** College ownership comes from the authenticated TPO membership, never JSON.
+ * Kept unrefined so the distinct-review schema can extend it (Zod 4 rule). */
+const tpoCreateCompanyObjectSchema = createPlacementCompanyInputObjectSchema
   .omit({ collegeId: true, isTrusted: true })
   .extend({
     confirmed: z.literal(true),
@@ -12,12 +13,15 @@ export const tpoCreateCompanySchema = createPlacementCompanyInputSchema
   })
   .strict();
 
+export const tpoCreateCompanySchema = tpoCreateCompanyObjectSchema
+  .refine(companyWebsiteOrDomainRule.check, companyWebsiteOrDomainRule.issue);
+
 /** Explicit review-only path for a company with the same name but a provably
  * different website/domain. It is NOT permission to re-use a canonical domain,
  * bypass tenant scope, or add aliases automatically. Server must re-read the
  * reviewed identity and serialize domain uniqueness inside the transaction.
  */
-export const tpoDistinctCompanyReviewSchema = tpoCreateCompanySchema.extend({
+export const tpoDistinctCompanyReviewSchema = tpoCreateCompanyObjectSchema.extend({
  notTheSame:z.literal(true),
  reviewedCompanyId:z.string().uuid(),
  reviewedCompanyDomain:z.string().trim().toLowerCase().min(3).max(253),
