@@ -10,7 +10,8 @@ describe("TPO notice audience selection and graceful preview",()=>{
   const page=text("src/app/(authenticated)/tpo/announcements/page.tsx");
   expect(service).toContain("eq(departments.collegeId,college.id)");
   expect(service).toContain("eq(placementJobs.collegeId,college.id)");
-  expect(service).toContain('inArray(placementJobs.status,["PUBLISHED","CLOSED"])');
+  expect(service).toContain('eq(placementJobs.status,"PUBLISHED")');
+  expect(service).not.toContain('inArray(placementJobs.status,["PUBLISHED","CLOSED"])');
   expect(service).toContain("assertPersistedPlatformPermission");
   expect(picker).toContain("No batch is in placements");
   expect(picker).toContain("No student in placements has a branch yet");
