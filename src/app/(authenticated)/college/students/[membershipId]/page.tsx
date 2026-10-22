@@ -55,7 +55,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
       <p className="mt-2 text-xs text-muted-foreground leading-5">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
       {data.enrollments.length === 0 ? <EmptyState title="No matching enrollments" description="No program enrollment matches the selected lifecycle status."
           action={data.filter.status !== "ALL" ? <Link href={"/college/students/" + encodeURIComponent(membershipId)}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">All enrollments</Link> : undefined} /> :
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">All enrollments</Link> : undefined} /> :
         <ul className="mt-3 divide-y divide-border border-y border-border">{data.enrollments.map(row =>
           <li key={row.id} className="min-w-0 break-words py-3 text-sm text-body">
             {row.programName} ({row.programCode}) · {row.cohortName} ({row.cohortCode}) · {row.status}
