@@ -73,10 +73,11 @@ describe("SA-colleges-signin-page-01 actual Super Admin page state and authoriza
   await expect(CollegeSignInMethods(props)).rejects.toBeDefined();
   expect(mocks.policy).not.toHaveBeenCalled();
  });
- it("invalid college IDs 404 before scoped policy access",async()=>{
-  await expect(CollegeSignInMethods({params:Promise.resolve({collegeId:"forged"})}))
-   .rejects.toThrow("NEXT_NOT_FOUND");
-  expect(mocks.notFound).toHaveBeenCalledOnce();
+ it("invalid college IDs render a bounded chooser without scoped policy access",async()=>{
+  const html=renderToStaticMarkup(await CollegeSignInMethods({params:Promise.resolve({collegeId:"forged"})}));
+  expect(html).toContain("Choose a college");
+  expect(html).toContain('href="/admin/colleges"');
+  expect(mocks.notFound).not.toHaveBeenCalled();
   expect(mocks.policy).not.toHaveBeenCalled();
  });
 });

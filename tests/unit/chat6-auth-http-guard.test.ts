@@ -128,7 +128,8 @@ describe("authentication guard: hostile requests and audit integrity", () => {
     });
     expect(limited.status).toBe(429);
     expect(limited.headers.get("Retry-After")).toBe("37");
-    expect(await limited.json()).toEqual({ error: "TOO_MANY_REQUESTS", retryAfterSeconds: 37 });
+    expect(await limited.json()).toEqual({ error: "TOO_MANY_REQUESTS", retryAfterSeconds: 37,
+      message:"Too many OTP requests. Please try again later." });
     const configuration = loginErrorResponse(new AuthConfigError("secret missing"));
     expect(configuration.status).toBe(503);
     expect(await configuration.json()).toEqual({ error: "AUTH_NOT_CONFIGURED" });

@@ -12,7 +12,8 @@ describe("Chat-6 Super Admin people round 3 source verification",()=>{
  });
  it("SA-academics-people-83 exposes college-scoped suspend and reactivate actions with reason",()=>{
   {const file=text("src/app/(authenticated)/admin/faculty/page.tsx");expect(file).toContain("ScopedMembershipLifecycleActions");}
-  {const file=text("src/components/admin/scoped-membership-lifecycle-actions.tsx");expect(file).toContain("Suspend");expect(file).toContain("Reactivate");expect(file).toContain("Reason for suspension");expect(file).toContain("Other college access is unaffected");}
+  {const file=text("src/components/admin/scoped-membership-lifecycle-actions.tsx");expect(file).toContain("Suspend");expect(file).toContain("Reactivate");expect(file).toContain("Reason for suspension");expect(file).toContain("other college memberships are not suspended.");
+   expect(file).toContain("active device sessions will be revoked");}
  });
  it("SA-academics-people-88 provides editable membership profiles and audit trail detail links",()=>{
   {const file=text("src/components/admin/person-membership-actions.tsx");expect(file).toContain("PersonProfileDialog");}
@@ -20,11 +21,14 @@ describe("Chat-6 Super Admin people round 3 source verification",()=>{
  });
  it("SA-academics-people-96 supports student suspend and reactivate via membership lifecycle",()=>{
   {const file=text("src/app/(authenticated)/admin/students/page.tsx");expect(file).toContain("ScopedMembershipLifecycleActions");}
-  {const file=text("src/components/admin/scoped-membership-lifecycle-actions.tsx");expect(file).toContain("College membership suspended.");expect(file).toContain("College membership reactivated.");}
+  {const file=text("src/components/admin/scoped-membership-lifecycle-actions.tsx");expect(file).toContain("setNotice(targetLabel+");
+   expect(file).toContain('action==="SUSPEND"?"suspended":"reactivated"');
+   expect(file).toContain("not a permanent global account change");}
  });
  it("SA-academics-people-97 supports safe bulk student module overrides with selection cap",()=>{
   {const file=text("src/app/(authenticated)/admin/students/page.tsx");expect(file).toContain("SuperAdminStudentBulkAccess");}
-  {const file=text("src/components/admin/super-admin-student-bulk-access.tsx");expect(file).toContain("Bulk module access");expect(file).toContain("Select first");expect(file).toContain("ENABLE");expect(file).toContain("DISABLE");expect(file).toContain("INHERIT");expect(file).toContain("/api/admin/students/module-access/bulk");}
+  {const file=text("src/components/admin/super-admin-student-bulk-access.tsx");expect(file).toContain("Bulk module access");expect(file).toContain("selected.length===0");
+   expect(file).toContain("Select at most 1,000 students.");expect(file).toContain("ENABLE");expect(file).toContain("DISABLE");expect(file).toContain("INHERIT");expect(file).toContain("/api/admin/students/module-access/bulk");}
  });
  it("SA-academics-people-112 restricts recruiter account-wide actions outside selected scope",()=>{
   {const file=text("src/components/admin/super-admin-hr-accounts.tsx");expect(file).toContain("accountManageable");expect(file).toContain("scopeDescription");expect(file).toContain("Account-wide actions are restricted");}

@@ -7,7 +7,7 @@ describe("SA-tenants-modules-46 inaccessible audit repository",()=>{
   const board=source("src/app/(authenticated)/tracker/audit-findings/page.tsx");
   const service=source("src/modules/bug-tracker/independent-audit-findings-service.ts");
   expect(board).toContain("automatic GitHub sync is not configured");
-  expect(board).toContain("No sync was performed by opening this page.");
+  expect(board).toContain("No sync was started here.");
   expect(service).toContain('eq(db10AuditFindingSyncs.source,"42Students/lms-findings")');
   expect(service).toContain("lastSyncedAt");
   expect(service).toContain("refusedFiles");
