@@ -118,3 +118,70 @@ export function planLegacyOrgOverrideDisposition<T extends {
    runtimeOverrideCreated:false as const};
  });
 }
+
+/** Explicit AppSetting scope crosswalk. Ordinary global/college settings stay
+ * in platformSettingOverrides; finer-grained *module* decisions are routed to
+ * module_access_rules after checking the old numeric ID against a UUID map.
+ * A legacy tombstone is an audited removal, never a disabled inherited rule.
+ * Matching by a naked legacy numeric ID without scope is forbidden. */
+export type LegacyModuleScope=
+  "GLOBAL"|"ORGANIZATION"|"COLLEGE"|"DEPARTMENT"|
+  "PROGRAM"|"BATCH"|"CLASS"|"LEARNER";
+export type CanonicalModuleScope=
+  "GLOBAL"|"ORGANIZATION"|"COLLEGE"|"DEPARTMENT"|
+  "PROGRAM"|"COHORT"|"SECTION"|"MEMBERSHIP";
+export type LegacyModuleSettingCandidate={
+  sourceId:string;scope:LegacyModuleScope;legacyScopeId:string|null;
+  settingKey:string;enabled:boolean;locked:boolean;deleted:boolean;
+  updatedAt:string;scopeUuid:string|null;
+};
+export function mapLegacyModuleSetting(candidate:LegacyModuleSettingCandidate){
+ const sourceId=candidate.sourceId.trim();
+ if(!/^[1-9][0-9]{0,18}$/.test(sourceId))
+  throw new Error("Invalid legacy setting row ID");
+ const moduleKeys:Record<string,"projects"|"placements"|"electives">={
+  PROJECTS:"projects",PLACEMENTS:"placements",ELECTIVES:"electives",
+ };
+ const module=moduleKeys[candidate.settingKey.trim().toUpperCase()];
+ if(!module)throw new Error("Unapproved historical module setting");
+ const scopes:Record<LegacyModuleScope,CanonicalModuleScope>={
+  GLOBAL:"GLOBAL",ORGANIZATION:"ORGANIZATION",COLLEGE:"COLLEGE",
+  DEPARTMENT:"DEPARTMENT",PROGRAM:"PROGRAM",BATCH:"COHORT",
+  CLASS:"SECTION",LEARNER:"MEMBERSHIP",
+ };
+ const scopeType=scopes[candidate.scope],id=candidate.scopeUuid;
+ if(scopeType==="GLOBAL"){
+  if(candidate.legacyScopeId!==null||id!==null)
+   throw new Error("Legacy GLOBAL scope cannot carry a scoped ID");
+ }else if(!candidate.legacyScopeId?.trim()||!id||
+   !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)){
+  throw new Error("Historical scoped module decision needs verified mapping");
+ }
+ const date=new Date(candidate.updatedAt);
+ if(!Number.isFinite(date.getTime())||
+    !/(?:Z|[+-]\d{2}:\d{2})$/.test(candidate.updatedAt))
+  throw new Error("Historical setting time requires explicit source zone");
+ return {sourceId,scopeType,scopeId:scopeType==="GLOBAL"?null:id,
+  module,enabled:candidate.enabled,locked:candidate.locked,
+  deleted:candidate.deleted,updatedAt:date.toISOString()};
+}
+export function planLegacyModuleRuleImport(rows:readonly LegacyModuleSettingCandidate[]){
+ const mapped=rows.map(mapLegacyModuleSetting);
+ const groups=new Map<string,typeof mapped>();
+ for(const item of mapped){
+  const key=item.scopeType+":"+(item.scopeId??"GLOBAL")+":"+item.module;
+  const items=groups.get(key)??[];
+  items.push(item);groups.set(key,items);
+ }
+ return [...groups.values()].map(group=>{
+  const ordered=[...group].sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)||
+    (BigInt(b.sourceId)>BigInt(a.sourceId)?1:-1));
+  const latest=ordered[0]!;
+  if(ordered.some(item=>item.updatedAt===latest.updatedAt&&
+    (item.enabled!==latest.enabled||item.locked!==latest.locked||
+     item.deleted!==latest.deleted)))
+   throw new Error("Conflicting historical module decisions");
+  return {...latest,active:!latest.deleted,
+    supersededSourceIds:ordered.slice(1).map(row=>row.sourceId)};
+ });
+}
