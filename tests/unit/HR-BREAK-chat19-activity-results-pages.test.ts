@@ -52,7 +52,7 @@ describe("HR-BREAK-chat19-activity-results: release-scoped source and abnormal i
   {collegeId:[college,"22222222-2222-4222-8222-222222222222"]},
   {page:["1","2"]},{q:["a","b"]}])(
   "rejects invalid activity filters %j before querying history",async input=>{
-   expect(textOf(await activity(input))).toContain("Invalid activity filters.");
+   expect(textOf(await activity(input))).toContain("Invalid activity filters");
    expect(m.activity).not.toHaveBeenCalled();
  });
  it("handles no-access activity with a safe scoped message",async()=>{

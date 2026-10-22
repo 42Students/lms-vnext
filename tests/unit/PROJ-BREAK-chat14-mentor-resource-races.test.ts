@@ -125,7 +125,7 @@ describe("Mentor resource mutation and reorder permission matrix",()=>{
   const operations=[
    ()=>updateProjectResource(context,projectId,r1,{title:"Rename",...expected}),
    ()=>archiveProjectResource(context,projectId,r1,expected),
-   ()=>reorderProjectResources(context,projectId,{orderIds:[r2,r1]}),
+   ()=>reorderProjectResources(context,projectId,{orderIds:[r2,r1],expectedOrderIds:[r1,r2]}),
   ];
   for(const operation of operations){
    await expect(operation()).rejects.toThrow("PROJECT_LIFECYCLE_ACCESS_DENIED");
@@ -142,7 +142,7 @@ describe("Mentor resource mutation and reorder permission matrix",()=>{
  });
  it("PROJ-BREAK-MENTOR-278 reorder produces one audit event after committed sequence moves",async()=>{
   state.persistedAllowed=true;
-  const outcome=await reorderProjectResources(context,projectId,{orderIds:[r2,r1]});
+  const outcome=await reorderProjectResources(context,projectId,{orderIds:[r2,r1],expectedOrderIds:[r1,r2]});
   expect(outcome).toEqual({changed:true,count:2});
   expect(state.actorChecks).toBe(1);
   expect(state.projectLocks).toBe(1);

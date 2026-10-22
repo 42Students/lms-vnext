@@ -55,8 +55,8 @@ describe("HR-MESSAGING-DEPTH-63: thread allowlist before unread message lookup",
  });
  it("reads unread information only for an actually owned thread",async()=>{
   m.threads.mockResolvedValue([thread("own")]);
-  m.rows=[[{threadId:"own"}],[{threadId:"own",unread:2}],
-   [{threadId:"own",body:"Hello",senderType:"TPO"}]];
+  m.rows=[[{threadId:"own"}],[{total:2}],[{threadId:"own",unread:2}],
+   [{threadId:"own",body:"Hello",senderType:"TPO",truncated:false}]];
   const result=await listHrConversations(context as never,{unreadOnly:"true"});
   expect(result.status).toBe("READY");
   if(result.status==="READY"){
@@ -65,7 +65,7 @@ describe("HR-MESSAGING-DEPTH-63: thread allowlist before unread message lookup",
    expect(result.unreadInView).toBe(2);
   }
   expect(m.distinct).toHaveBeenCalledTimes(1);
-  expect(m.select).toHaveBeenCalledTimes(1);
+  expect(m.select).toHaveBeenCalledTimes(2);
   expect(m.distinctOn).toHaveBeenCalledTimes(1);
  });
  it("does not run a cross-college inbox search for an inactive or swapped recruiter",async()=>{
