@@ -194,11 +194,11 @@ export default async function FacultyQuizReportPage({
             const total = Math.max(metrics.submittedLearners, 1);
             const width = Math.round((bucket.count / total) * 100);
             return (
-              <Disclosure key={bucket.label} title={<span className={styles.distribution+" min-w-0 flex-1"}>
-                <span className={styles.distributionLabel}>{bucket.label}</span>
-                <MetricBar className={styles.distributionTrack+" "+(bucket.min>=90?styles.distributionExcellent:bucket.min>=80?styles.distributionGood:bucket.min>=70?styles.distributionFair:bucket.min>=60?styles.distributionWeak:styles.distributionPoor)} label={bucket.label+" grade distribution"}
+              <Disclosure key={bucket.label} title={<span className={styles["distribution"]+" min-w-0 flex-1"}>
+                <span className={styles["distributionLabel"]}>{bucket.label}</span>
+                <MetricBar className={styles["distributionTrack"]+" "+(bucket.min>=90?styles["distributionExcellent"]:bucket.min>=80?styles["distributionGood"]:bucket.min>=70?styles["distributionFair"]:bucket.min>=60?styles["distributionWeak"]:styles["distributionPoor"])} label={bucket.label+" grade distribution"}
                   value={width} maximum={100} unit="percent" />
-                <strong className={styles.distributionCount}>{bucket.count}</strong>
+                <strong className={styles["distributionCount"]}>{bucket.count}</strong>
                 </span>}
                  className="border-b border-[var(--lms-canvas-border)] p-2 text-sm [&>summary]:min-h-11 md:[&>summary]:min-h-[var(--lms-control-height)] [&>summary]:px-0">
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
@@ -233,7 +233,7 @@ export default async function FacultyQuizReportPage({
             {questions.map((question, index) => (
               <li
                 key={question.id}
-                className={styles.accuracyRow+" !rounded-none !bg-transparent !px-0 !py-3 "+(question.accuracyPercent===null?"":question.accuracyPercent<50?styles.accuracyRowPoor:question.accuracyPercent<75?styles.accuracyRowFair:"")}
+                className={styles["accuracyRow"]+" !rounded-none !bg-transparent !px-0 !py-3 "+(question.accuracyPercent===null?"":question.accuracyPercent<50?styles["accuracyRowPoor"]:question.accuracyPercent<75?styles["accuracyRowFair"]:"")}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -250,7 +250,7 @@ export default async function FacultyQuizReportPage({
                       : `${question.accuracyPercent}%`}
                   </strong>
                 </div>
-                <MetricBar className={styles.accuracyTrack+" mt-3 "+(question.accuracyPercent===null?styles.accuracyUnanswered:question.accuracyPercent<50?styles.accuracyPoor:question.accuracyPercent<75?styles.accuracyFair:styles.accuracyGood)} label="Question answer accuracy"
+                <MetricBar className={styles["accuracyTrack"]+" mt-3 "+(question.accuracyPercent===null?styles["accuracyUnanswered"]:question.accuracyPercent<50?styles["accuracyPoor"]:question.accuracyPercent<75?styles["accuracyFair"]:styles["accuracyGood"])} label="Question answer accuracy"
                   value={question.accuracyPercent ?? 0} maximum={100} unit="percent" />
                 <p className="mt-2 text-xs text-muted-foreground leading-5">
                   {question.answeredCount > 0
