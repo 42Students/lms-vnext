@@ -16,7 +16,7 @@ export function tpoGeneralRequestReviewFacts(kind:string,payload:Record<string,u
   kind==="OFFER_ACCEPTANCE_DISPUTE"?[entry("Offer","offerId")]:[];
  const requiresProof=["OFF_CAMPUS_OFFER","ABSENCE_DISPUTE","CORRECTION_WITH_PROOF"].includes(kind);
  let proofUrl:string|null=null;
- const raw=value("proofUrl");
+ const raw=value("letterUrl")||value("proofUrl");
  if(raw&&raw.length<=2000){
   try{
    const parsed=new URL(raw);
@@ -26,6 +26,7 @@ export function tpoGeneralRequestReviewFacts(kind:string,payload:Record<string,u
  }
  return {facts:facts.filter(item=>item.value!==""),
   requiresProof,proofUrl:requiresProof?proofUrl:null,
+  proofLabel:value("letterUrl")?"Offer letter":"Proof",
   // Never turn an invalid submitted link into "No proof attached" or expose it.
   proofIssue:!requiresProof||proofUrl?null:raw?"Submitted proof is not a web link":"No proof attached",
  };
