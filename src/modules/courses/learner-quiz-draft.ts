@@ -15,8 +15,8 @@ export function parseLearnerQuizDraft(raw: string | null, questionCount: number)
     if (!decoded || typeof decoded !== "object" || Array.isArray(decoded)) return empty;
     const value = decoded as Record<string, unknown>;
     const answers: Record<string, string[]> = {};
-    if (value.answers && typeof value.answers === "object" && !Array.isArray(value.answers)) {
-      for (const [questionId, selections] of Object.entries(value.answers).slice(0, 200)) {
+    if (value["answers"] && typeof value["answers"] === "object" && !Array.isArray(value["answers"])) {
+      for (const [questionId, selections] of Object.entries(value["answers"]).slice(0, 200)) {
         if (
           questionId.length > 0 &&
           questionId.length <= 128 &&
@@ -31,11 +31,11 @@ export function parseLearnerQuizDraft(raw: string | null, questionCount: number)
         }
       }
     }
-    const step = typeof value.step === "number" &&
-      Number.isInteger(value.step) &&
-      value.step >= 0 &&
-      value.step < questionCount
-        ? value.step
+    const step = typeof value["step"] === "number" &&
+      Number.isInteger(value["step"]) &&
+      value["step"] >= 0 &&
+      value["step"] < questionCount
+        ? value["step"]
         : 0;
     return { answers, step };
   } catch {
