@@ -510,14 +510,18 @@ function lessonSearchScore(term: string, name: string, courseName: string) {
   return score;
 }
 
-function scopedLessonSearchConditions(collegeId: string, courseId?: string) {
+function scopedLessonSearchConditions(collegeId: string | null, courseId?: string) {
   // Unlike the old global in-memory LessonRepository cache, this query
   // excludes archived/deleted parents and enforces offering cohort/period
-  // ancestry within the explicitly selected college.
+  // ancestry within the explicitly selected college. A null college is only
+  // passed for the legacy GLOBAL Super Admin mode (no college/organization
+  // selected), where ancestry must still agree within each lesson's own college.
   return and(
-    eq(departments.collegeId, collegeId),
-    eq(cohortDepartment.collegeId, collegeId),
-    eq(academicPeriods.collegeId, collegeId),
+    collegeId ? eq(departments.collegeId, collegeId) : undefined,
+    collegeId
+      ? eq(cohortDepartment.collegeId, collegeId)
+      : eq(cohortDepartment.collegeId, departments.collegeId),
+    collegeId ? eq(academicPeriods.collegeId, collegeId) : undefined,
     eq(courseLessons.status, "ACTIVE"),
     isNull(courseLessons.deletedAt),
     ne(courseLearningPaths.status, "ARCHIVED"),
@@ -562,7 +566,15 @@ export async function searchCollegeLessons(
   rawInput: unknown,
 ) {
   const input = scopedLessonSearchInput.parse(rawInput);
-  const collegeId = requireCollegeCoursesRead(context);
+  // Legacy LessonSearchController: only a GLOBAL Super Admin (no college or
+  // organization scope) may search unrestricted; every other actor is limited
+  // to its authorized college and must name a course (unless a selected-college
+  // Super Admin).
+  const globalSuperAdmin = isSuperAdmin(context) &&
+    !context.adminScope?.collegeId && !context.adminScope?.organizationId;
+  if (globalSuperAdmin) requirePermission(context, "courses.read", {});
+  const collegeId: string | null = globalSuperAdmin
+    ? null : requireCollegeCoursesRead(context);
   if (!isSuperAdmin(context) && !input.courseId)
     throw new AuthorizationError("courses.read");
   const db = getDb();

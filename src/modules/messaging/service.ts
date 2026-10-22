@@ -65,8 +65,37 @@ export function operatorDeliveryOutcome(record: Pick<DeliveryRecord,"status"|"re
  */
 export const LEGACY_NOTIFICATION_CHANNEL_MATRIX = {
   JOB_UPDATE: ["IN_APP","EMAIL","TRAI_SMS"],
-  COURSE_EVENT: ["IN_APP","EMAIL"],
+  // Legacy NotificationEventRegistry sends course events in-app only (email
+  // to learners was narrowed to urgent interview/system events on 13 Oct 2026).
+  COURSE_EVENT: ["IN_APP"],
   IN_APP_ONLY: ["IN_APP"],
+} as const;
+
+/** Per-event fan-out of the legacy NotificationDispatcherServiceImpl:105-171
+ * driven by NotificationEventRegistry (sendInApp / sendEmail / sendSmsTrai /
+ * pre-login email-only set) with the vNext producer that now owns each event.
+ * External channels remain subject to consent, DLT/template approval and the
+ * durable outbox; "IN_APP" is the in-transaction receipt. */
+export const LEGACY_NOTIFICATION_EVENT_CHANNELS = {
+  JOB_APPLICATION_CONFIRMATION: { channels: ["IN_APP", "TRAI_SMS"], vNext: "APPLICATION_STATUS_CHANGED (APPLIED)" },
+  JOB_SHORTLISTED: { channels: ["IN_APP", "TRAI_SMS"], vNext: "APPLICATION_STATUS_CHANGED (SHORTLISTED)" },
+  JOB_ASSESSMENT_INVITE: { channels: ["IN_APP"], vNext: "APPLICATION_STATUS_CHANGED (ASSESSMENT)" },
+  JOB_INTERVIEW_SCHEDULED: { channels: ["IN_APP", "EMAIL", "TRAI_SMS"], vNext: "ROUND_SCHEDULED" },
+  JOB_OFFER_EXTENDED: { channels: ["IN_APP"], vNext: "OFFER_RELEASED" },
+  JOB_HIRED: { channels: ["IN_APP"], vNext: "APPLICATION_STATUS_CHANGED (HIRED)" },
+  JOB_APPLICATION_REJECTED: { channels: ["IN_APP", "TRAI_SMS"], vNext: "APPLICATION_STATUS_CHANGED (REJECTED)" },
+  JOB_WAITLISTED: { channels: ["IN_APP"], vNext: "APPLICATION_STATUS_CHANGED (WAITLISTED)" },
+  INTERVIEW_REMINDER: { channels: ["IN_APP", "EMAIL", "TRAI_SMS"], vNext: "ROUND_REMINDER" },
+  INTERVIEW_CONFIRMED: { channels: ["IN_APP", "EMAIL", "TRAI_SMS"], vNext: "ROUND_SCHEDULED (slot booked)" },
+  INTERVIEW_CANCELLED: { channels: ["IN_APP"], vNext: "college stage move away from Interview" },
+  INTERVIEW_RESCHEDULED: { channels: ["IN_APP"], vNext: "RESCHEDULE_DECIDED" },
+  COURSE_ASSIGNMENT_DUE: { channels: ["IN_APP"], vNext: "notification.assignmentReminders scheduler" },
+  COURSE_ASSIGNMENT_SUBMITTED: { channels: ["IN_APP"], vNext: "assignment submission event" },
+  COURSE_GRADE_PUBLISHED: { channels: ["IN_APP"], vNext: "grade release event" },
+  SYSTEM_EMAIL_VERIFICATION: { channels: ["EMAIL"], vNext: "pre-login email (no in-app)" },
+  SYSTEM_APPLICATION_APPROVED: { channels: ["EMAIL"], vNext: "pre-login email (no in-app)" },
+  SYSTEM_APPLICATION_REJECTED: { channels: ["EMAIL"], vNext: "pre-login email (no in-app)" },
+  SYSTEM_OTP_SMS: { channels: ["OTP_SMS"], vNext: "auth OTP delivery" },
 } as const;
 export type DeliveryRecord = {
   batchId: string;
