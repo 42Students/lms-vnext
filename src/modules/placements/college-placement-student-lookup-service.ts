@@ -200,10 +200,10 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
  }).from(placementOffers)
   .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
   .where(inArray(placementOffers.applicationId,ids))
-  .orderBy(desc(placementOffers.createdAt),desc(placementOffers.id)):[];
+  .orderBy(desc(placementOffers.issuedAt),desc(placementOffers.id)):[];
  // The newest row is not necessarily the authoritative offer: a later
  // withdrawn/revoked letter must not hide a previously accepted and joined
- // placement. Within equal lifecycle priority the latest created offer wins.
+ // placement. Within equal lifecycle priority the latest issued offer wins.
  const offerPriority=(row:typeof offers[number]):number=>
   row.joining==="JOINED"?6:row.status==="ACCEPTED"?5:
   row.status==="ISSUED"?4:row.status==="DECLINED"?3:
