@@ -7,7 +7,7 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-5-007-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-5-007-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-5-009-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-5-011-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-5-026-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
@@ -19,4 +19,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-5-032-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 
 ## Results
+- G2-5-007-025: FIXED — `da92924bca235694f2d863d6a801bb562b9066c3`, `src/components/admin/super-admin-interview-operations.tsx` (legacy five interview types, Online/In-person mode options; reference `docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:51-56,78-87,264-272`).
 
