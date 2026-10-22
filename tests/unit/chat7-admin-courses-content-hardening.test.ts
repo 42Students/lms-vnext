@@ -76,8 +76,8 @@ describe("SA-COURSES-CONTENT-AUDIT-02 course and resource list boundaries",()=>{
    expect(directory).toContain('if(dataResult.status==="rejected")');
    expect(directory).toContain('lessonsResult.status==="fulfilled"');
    expect(directory).toContain('sectionsResult.status==="rejected"');
-   expect(directory).toContain("Existing content remains visible");
-   expect(directory).toContain("Your selected filters are still applied");
+   expect(directory).toContain("Existing content remains available");
+   expect(directory).toContain("Your selected filters still apply");
    expect(directory).not.toContain(".catch(()=>({ok:false");
    const page=read("src/app/(authenticated)/admin/courses/page.tsx");
    expect(page).toContain("parseSuperAdminCourseQuery(query)");

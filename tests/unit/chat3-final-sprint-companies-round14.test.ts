@@ -11,11 +11,14 @@ describe("chat-3 final sprint TPO Companies",()=>{
   expect(code).toContain("Repeat hiring relationship");
  });
  it("TPO-companies-08 company drives include applied/offers, search and CSV",()=>{
-  const code=source("src/components/tpo/tpo-company-memory-workspace.tsx");
-  expect(code).toContain("drive.applied");
-  expect(code).toContain("drive.offers");
-  expect(code).toContain("companyDriveCsv");
-  expect(code).toContain("driveSearch");
+  const memory=source("src/components/tpo/tpo-company-memory-workspace.tsx");
+  const grid=source("src/components/tpo/tpo-company-memory-drive-grid.tsx");
+  expect(memory).toContain("<TpoCompanyMemoryDriveGrid");
+  expect(memory).toContain("driveSearch");
+  expect(grid).toContain("row.applied");
+  expect(grid).toContain("row.offers");
+  expect(grid).toContain("exportTpoGridCsv");
+  expect(grid).toContain("searchValue={search}");
  });
  it("TPO-companies-10 company drilldown targets the real job detail route",()=>{
   const code=source("src/components/tpo/tpo-company-memory-workspace.tsx");
@@ -39,9 +42,10 @@ describe("chat-3 final sprint TPO Companies",()=>{
  });
  it("TPO-companies-14 company-aware New action offers lead, drive and followup",()=>{
   const code=source("src/components/tpo/tpo-company-memory-workspace.tsx");
-  expect(code).toContain("New recruiter lead for ");
-  expect(code).toContain("New drive for ");
-  expect(code).toContain("Follow-up");
+  expect(code).toContain('href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}');
+  expect(code).toContain('href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}');
+  expect(code).toContain("Create drive");
+  expect(code).toContain("Add contact");
  });
  it("TPO-companies-15 company communication status has optimistic and rollback semantics",()=>{
   const code=source("src/components/tpo/recruiter-leads-workspace.tsx");
@@ -66,7 +70,7 @@ describe("chat-3 final sprint TPO Companies",()=>{
   const code=source("src/components/tpo/recruiter-leads-workspace.tsx");
   expect(code).toContain("exportCompanies");
   expect(code).toContain("tpoCompanyDirectoryCsv");
-  expect(code).toContain("Companies (");
+  expect(code).toContain('{value:"companies",label:"Companies",count:companies.length}');
  });
  it("TPO-companies-24 TPO company route retains parent navigation highlight",()=>{
   const code=source("src/components/shell/legacy-sidebar-active-model.ts");
@@ -80,9 +84,11 @@ describe("chat-3 final sprint TPO Companies",()=>{
   expect(code).toContain("<Dialog open={open}");
   expect(code).toContain("onOpenChange={next=>{if(!next)close();}}");
   expect(code).toContain("if(pending)return;");
-  expect(dialog).toContain("modal.showModal()");
+  const modalLifecycle=source("src/components/ui/use-overlay-exit.ts");
+  expect(dialog).toContain("useOverlayExit(ref, opener, open,");
+  expect(modalLifecycle).toContain("dialog.showModal()");
   expect(dialog).toContain("onCancel={event =>");
-  expect(dialog).toContain("opener.current?.focus()");
+  expect(dialog).toContain("if (opener.current?.isConnected) opener.current.focus()");
   expect(dialog).toContain("aria-labelledby={titleId}");
  });
  it("TPO-companies-27 canonical directory offers export, sort and create-drive action",()=>{

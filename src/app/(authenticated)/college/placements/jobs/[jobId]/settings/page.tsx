@@ -82,7 +82,7 @@ export default async function CollegeDriveSettingsPage({
   ):null;
   const sectionGroups=sectionResults?.every(row=>row.status==="fulfilled")
     ?sectionResults.map(row=>row.status==="fulfilled"?row.value:null).filter(
-       (row):row is {program:typeof programs[number];cohort:typeof cohortGroups[number]["cohorts"][number];sections:Awaited<ReturnType<typeof listSections>>}=>row!==null)
+       (row):row is {program:typeof programs[number];cohort:Awaited<ReturnType<typeof listCohorts>>[number];sections:Awaited<ReturnType<typeof listSections>>}=>row!==null)
     :null;
   const applicationCount=overviewResult.status==="fulfilled"
     ?overviewResult.value.counts.applications:null;

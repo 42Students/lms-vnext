@@ -29,7 +29,7 @@ describe("chat-4 college academics and group models: state, validation, concurre
   const base={cohortStatus:"ACTIVE",currentTermNumber:2,durationTerms:8,nextTermConfigured:true,
     nextTermHasCourses:true,currentYearStart:2026,currentPeriodConfigured:true,currentPeriodOwned:true};
   it("batchPromotionPlan distinguishes promote, graduate and unusable progression",()=>{
-    expect(batchPromotionPlan(base)).toEqual({action:"PROMOTE",targetTermNumber:3,academicYearStart:2026,blockers:[]});
+    expect(batchPromotionPlan(base)).toEqual({action:"PROMOTE",targetTermNumber:3,academicYearStart:2027,blockers:[]});
     expect(batchPromotionPlan({...base,currentTermNumber:8}).action).toBe("GRADUATE");
     const bad=batchPromotionPlan({...base,currentTermNumber:0,cohortStatus:"ARCHIVED",currentPeriodConfigured:false,currentYearStart:null});
     expect(bad.action).toBe("UNAVAILABLE");
@@ -100,7 +100,7 @@ describe("chat-4 college academics and group models: state, validation, concurre
     expect(collegeSectionLifecycleSchema.safeParse({...valid,action:"RESTORE"}).success).toBe(true);
     for(const change of [{action:"DELETE"},{confirm:false},{expectedUpdatedAt:"2099-01-14"},{expectedVersion:2}])
       expect(collegeSectionLifecycleSchema.safeParse({...valid,...change}).success).toBe(false);
-    expect(classLifecyclePrompt("CSE-A","ARCHIVE")).toContain("blocks archival");
+    expect(classLifecyclePrompt("CSE-A","ARCHIVE")).toContain("Move enrolled students and unlink teaching");
     expect(classLifecyclePrompt("CSE-A","RESTORE")).toContain("Its cohort");
   });
   it("collegePreviewErrorLabel never reflects hostile internal response codes or stack traces",()=>{

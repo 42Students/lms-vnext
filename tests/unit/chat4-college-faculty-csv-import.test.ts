@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
 
-const mocks=vi.hoisted(()=>({onboard:vi.fn(),facultyProfile:vi.fn()}));
+const mocks=vi.hoisted(()=>({onboard:vi.fn(),facultyProfile:vi.fn(),db:vi.fn()}));
+vi.mock("@/db/client",()=>({getDb:mocks.db}));
 vi.mock("@/modules/people/runtime",()=>({
  onboardPersonWithRuntime:mocks.onboard,
  upsertFacultyProfileWithRuntime:mocks.facultyProfile,
@@ -10,15 +11,17 @@ import { FACULTY_CSV_COLUMNS,runCollegeFacultyCsv } from "@/modules/people/colle
 
 const collegeId="11111111-1111-4111-8111-111111111111";
 const org="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+const departmentId="22222222-2222-4222-8222-222222222222";
 const actor:RequestContext={
  user:{id:"college-admin",identityUid:"college-admin",platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:"actor-member",collegeId,organizationId:org,status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
 };
-const csv=(...rows:string[])=>FACULTY_CSV_COLUMNS.join(",")+"\n"+rows.join("\n");
+const csv=(...rows:string[])=>FACULTY_CSV_COLUMNS.join(",")+"\n"+rows.map(row=>row+","+departmentId).join("\n");
 beforeEach(()=>{
  mocks.onboard.mockReset();mocks.facultyProfile.mockReset();
  mocks.onboard.mockResolvedValue({membership:{id:"faculty-member"}});
  mocks.facultyProfile.mockResolvedValue(undefined);
+ mocks.db.mockReturnValue({select:()=>({from:()=>({where:()=>({limit:async()=>[{id:departmentId}]})})})});
 });
 
 describe("COL-people-faculty-csv-01 registered faculty import validation and safe partial outcomes",()=>{
@@ -90,7 +93,7 @@ describe("COL-people-faculty-csv-01 registered faculty import validation and saf
    email:"jane@example.edu",roles:["FACULTY"],
   });
   expect(mocks.facultyProfile).toHaveBeenCalledWith(actor,"faculty-member",{
-   primaryDepartmentId:null,employmentType:"Professor",academicTitle:null,
+   primaryDepartmentId:departmentId,employmentType:"Professor",academicTitle:null,
   });
  });
  it("does not echo private storage errors after partial faculty profile or identity failure",async()=>{
