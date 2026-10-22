@@ -149,11 +149,12 @@ export async function onboardPerson(
     dependencies.identityDirectory,
   );
 
+  const resolvedEmail = input.email ?? identity.email;
   return dependencies.repository.persistPersonMembership(
     {
       identityUid: identity.uid,
       phoneE164: input.phoneE164,
-      ...((input.email ?? identity.email) != null ? { email: input.email ?? identity.email } : {}),
+      ...(resolvedEmail != null ? { email: resolvedEmail } : {}),
       displayName: input.displayName,
       collegeId: college.id,
       roles: input.roles,
