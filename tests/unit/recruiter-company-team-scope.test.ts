@@ -95,12 +95,12 @@ describe("W05 recruiter company college scope", () => {
       'eq(colleges.status,"ACTIVE")',
     ])expect(scopeQuery).toContain(check);
     expect(source.indexOf('if (!company) throw new AuthorizationError'))
-      .toBeLessThan(source.indexOf("const team = await db"));
+      .toBeLessThan(source.indexOf("const team = includeTeam ? await db"));
   });
 
   it("HR-TEAM-RECIPIENT-45 returns only verified and unexpired colleague contact grants",()=>{
     const source=readFileSync("src/modules/placements/recruiter-company-team-service.ts","utf8");
-    const roster=source.slice(source.indexOf("const team = await db"));
+    const roster=source.slice(source.indexOf("const team = includeTeam ? await db"));
     for(const clause of [
       'eq(placementRecruiterCollegeGrants.companyRelationshipId, company.relationshipId)',
       'eq(placementRecruiterCollegeGrants.status, "ACTIVE")',

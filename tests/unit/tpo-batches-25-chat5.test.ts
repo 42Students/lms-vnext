@@ -14,7 +14,8 @@ describe("TPO batch decision success and undo action",()=>{
   }
   expect(learner).toContain("result.changed?result.actionId??null:null");
   expect(batch).toContain("body.actionId??null:null");
-  expect(page).toContain("<TpoBatchInlineDecision membershipId={s.membershipId} batchId={batchId}");
+  expect(page).toContain("<TpoBatchInlineDecision membershipId={student.membershipId}");
+  expect(page).toContain("batchId={batchId} expected={student.direct}");
   expect(page).not.toContain('key={s.membershipId+":"+(s.direct.updatedAt??"none")}');
   const route=source("src/app/api/placements/tpo/batches/[batchId]/undo/route.ts");
   expect(route).toContain("isSameOriginRequest(request)");

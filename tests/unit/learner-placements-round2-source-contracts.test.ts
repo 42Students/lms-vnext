@@ -19,7 +19,8 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
   });
   it("LEARNER-placements-10 source behavior or reviewed disposition",()=>{
     const text=source("src/components/placements/learner-placements-dashboard.tsx");
-    expect(text).toContain("aria-label=\"Placement snapshot\"");
+    expect(text).toContain('aria-label="Placement dashboard"');
+    expect(text).toContain('<SummaryStrip className="mt-3" label="Application stages"');
   });
   it("LEARNER-placements-11 source behavior or reviewed disposition",()=>{
     const text=source("src/app/(authenticated)/learn/my-placements/page.tsx");
@@ -34,7 +35,7 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
   });
   it("LEARNER-placements-14 source behavior or reviewed disposition",()=>{
     const text=source("src/components/placements/learner-jobs-browse.tsx");
-    expect(text).toContain("Search by title, company, location…");
+    expect(text).toContain('placeholder="Search jobs, companies, roles, locations…"');
     expect(text).toContain("Highest CTC");
     expect(text).toContain("Eligible only");
     expect(text).toContain("Closing in 7 days");
@@ -46,7 +47,8 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
   });
   it("LEARNER-placements-18 source behavior or reviewed disposition",()=>{
     const text=source("src/components/placements/learner-jobs-browse.tsx");
-    expect(text).toContain("All published drives summary");
+    expect(text).toContain("published");
+    expect(text).toContain("role options");
   });
   it("LEARNER-placements-19 source behavior or reviewed disposition",()=>{
     const text=source("src/modules/placements/learner-drive-pagination-model.ts");
@@ -76,7 +78,7 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
   });
   it("LEARNER-placements-29 source behavior or reviewed disposition",()=>{
     const text=source("src/components/placements/learner-applications-browse.tsx");
-    expect(text).toContain("learnerWithdrawalMode");
+    expect(text).toContain("authorizedWithdrawalMode");
     expect(text).toContain("APPLICATION_WITHDRAWAL");
   });
   it("LEARNER-placements-31 source behavior or reviewed disposition",()=>{
@@ -87,7 +89,7 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
     const text=source("src/components/placements/learner-applications-browse.tsx");
     expect(text).toContain("label:\"In progress\"");
     expect(text).toContain("label:\"Finished\"");
-    expect(text).toContain("placeholder=\"Search company or role\"");
+    expect(text).toContain('placeholder="Search applications…"');
   });
   it("LEARNER-placements-34 source behavior or reviewed disposition",()=>{
     const text=source("src/components/placements/learner-applications-browse.tsx");
@@ -97,7 +99,8 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
   });
   it("LEARNER-placements-36 source behavior or reviewed disposition",()=>{
     const text=source("src/components/placements/learner-schedule-reschedule.tsx");
-    expect(text).toContain("Can't make it? Ask to reschedule");
+    expect(text).toContain('title="Ask to reschedule"');
+    expect(text).toContain('open?"Close":"Can\'t make it?"');
     expect(text).toContain("Reason (3–900 characters)");
   });
   it("LEARNER-placements-37 source behavior or reviewed disposition",()=>{
@@ -108,9 +111,9 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
   });
   it("LEARNER-placements-38 source behavior or reviewed disposition",()=>{
     const text=source("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
-    expect(text).toContain("[\"coming\",\"Coming up\"]");
-    expect(text).toContain("[\"past\",\"Past\"]");
-    expect(text).toContain("[\"calendar\",\"Calendar\"]");
+    expect(text).toContain('{ value: "coming", label: "Coming up"');
+    expect(text).toContain('{ value: "past", label: "Past"');
+    expect(text).toContain('{ value: "calendar", label: "Calendar"');
   });
   it("LEARNER-placements-42 source behavior or reviewed disposition",()=>{
     const text=source("src/components/placements/learner-placement-offers.tsx");
@@ -121,12 +124,13 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
   it("LEARNER-placements-44 source behavior or reviewed disposition",()=>{
     const text=source("src/app/(authenticated)/learn/my-placements/offers/page.tsx");
     expect(text).toContain("How offers work at your college");
-    expect(text).toContain("Need more time? Send a request to the placement cell");
+    expect(text).toContain("Offer extension-request history is temporarily unavailable");
+    expect(text).toContain("Review your recorded offers below");
   });
   it("LEARNER-placements-47 source behavior or reviewed disposition",()=>{
     const text=source("src/app/(authenticated)/learn/my-placements/announcements/page.tsx");
-    expect(text).toContain(">Updated</span>");
-    expect(text).toContain(">New</span>");
+    expect(text).toContain('<Badge tone="info">Updated</Badge>');
+    expect(text).toContain('<Badge tone="info">New</Badge>');
     expect(text).toContain(" · For ");
   });
   it("LEARNER-placements-48 source behavior or reviewed disposition",()=>{
@@ -154,7 +158,7 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
   });
   it("LEARNER-placements-R05 source behavior or reviewed disposition",()=>{
     const text=source("src/components/placements/learner-applications-browse.tsx");
-    expect(text).toContain("learnerWithdrawalMode");
+    expect(text).toContain("authorizedWithdrawalMode");
     expect(text).toContain("withdrawReason.trim()");
   });
   it("LEARNER-placements-R06 source behavior or reviewed disposition",()=>{
