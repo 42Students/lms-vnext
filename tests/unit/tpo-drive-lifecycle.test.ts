@@ -48,11 +48,11 @@ describe("TPO drive publish / close / reopen transitions", () => {
     }).allowed).toBe(true);
     expect(evaluateTpoDriveLifecycle("REOPEN", {
       ...base, jobStatus: "CLOSED",
-    }).allowed).toBe(true);
+    })).toMatchObject({allowed:false,blockers:["CLOSED_DRIVE_TERMINAL"]});
     expect(evaluateTpoDriveLifecycle("REOPEN", {
       ...base, jobStatus: "CLOSED",
       appliedResultCount: 1, acceptedOfferCount: 2,
-    }).blockers).toEqual(["APPLIED_RESULTS_EXIST", "ACCEPTED_OFFERS_EXIST"]);
+    }).blockers).toEqual(["CLOSED_DRIVE_TERMINAL","APPLIED_RESULTS_EXIST", "ACCEPTED_OFFERS_EXIST"]);
     expect(evaluateTpoDriveLifecycle("REOPEN", base).allowed).toBe(false);
   });
 });

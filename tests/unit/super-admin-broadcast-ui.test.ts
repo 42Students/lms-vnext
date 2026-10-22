@@ -7,7 +7,9 @@ describe("Super Admin all and selected college publishing",()=>{
   expect(ui).toContain("SELECTED_COLLEGES");
   expect(ui).toContain("ALL_COLLEGES");
   expect(ui).toContain("publishConsent:true");
-  expect(ui).toContain("Consent and publish");
+  expect(ui).toContain("Approve announcement to placement cells");
+  expect(ui).toContain("Confirm the audience and expiry before immediate delivery.");
+  expect(ui).toContain("confirmDisabled={!valid}");
   expect(page).toContain("SuperAdminCollegeBroadcastForm");
  });
 });
