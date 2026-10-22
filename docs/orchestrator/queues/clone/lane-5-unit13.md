@@ -4,7 +4,7 @@ CI run 39849936419 on main (3c24c0c0), the LATEST run failed these unit tests. T
 
 - [ ] `tests/unit/PROJ-BREAK-chat14-mentor-calendar-resources.test.ts` (1 failing)
 - [ ] `tests/unit/chat3-tenant-public-verified-round13.test.ts` (1 failing)
-- [ ] `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` (1 failing)
+- [x] `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` (1 failing)
 
 ## Failures (from CI log)
 
