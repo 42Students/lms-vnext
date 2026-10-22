@@ -36,7 +36,7 @@ const courseOfficialCodeSchema=z.string().trim().max(40,"Maximum 40 characters")
 export const courseSlugSchema=z.string().trim()
  .regex(/^[a-z0-9][a-z0-9-]{0,63}$/,"Invalid slug format");
 const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/,"Use a colour like #0a7c88").nullable();
-const courseThumbnailUrlSchema=z.string().trim().max(2048).refine(value=>{
+export const courseThumbnailUrlSchema=z.string().trim().max(2048).refine(value=>{
   if(!value)return true;
   try{
     const url=new URL(value),host=url.hostname.toLowerCase();
