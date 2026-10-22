@@ -218,6 +218,30 @@ export const projectTemplateCollegeAssignments =
  *   different colleges is deliberately allowed, never auto-crosslinked.
  *   Conflicting slugs within one college must be reconciled before insert;
  *   the previous URL alias must be retained by the importer.
+ * - Legacy ProjectWorkspace column map (source is project_workspace):
+ *   BaseModel.id (int) -> legacyProjectId (int) + id (UUID); BaseModel
+ *   createdAt/updatedAt -> createdAt/updatedAt; BaseModel.isDeleted ->
+ *   deletedAt tombstone; BaseModel.version (nullable Long @Version) ->
+ *   legacyRevision import provenance, NOT the vNext concurrency token.
+ *   organizationId (int) -> legacyOrganizationId + tenant crosswalk;
+ *   collegeId (int) -> collegeId UUID via authorized college crosswalk;
+ *   classId (int) -> legacyClassId + sectionId via class/section crosswalk;
+ *   templateId (nullable int) -> templateId/templateVersionId via template
+ *   crosswalk; an absent source template must NOT be converted into a
+ *   different historical template without an explicit provenance record.
+ *   teamGroupId (nullable int) -> teamGroupId UUID via scoped group crosswalk;
+ *   source mentor/user references -> createdByUserId via verified user map.
+ *   name/title -> title; shortDescription/description -> summary/authoredBrief
+ *   only after preserving source JSON; slug -> normalized slug with collision
+ *   mapping; status -> legacyStatus and mapped status; progress -> progressPercent;
+ *   phase/course/due labels -> matching fields; startDate/endDate ->
+ *   startDate/endDate; sprintDurationWeeks -> sprintLengthWeeks;
+ *   estimationUnit -> estimationUnit; overview -> legacyOverview;
+ *   templateSnapshot -> legacyTemplateSnapshot (immutable);
+ *   recoverableContent -> legacyRecoverableContent; meetingsList ->
+ *   legacyMeetingsList. Nullable historical fields remain nullable provenance
+ *   and must never be silently supplied from a different college or template.
+ *   The nullable source version is unrelated to ordering or permission checks.
  * - Source orgId/collegeId/classId/teamGroupId/templateId and mentor userId
  *   are numeric *identities*. Resolve each via verified college-specific
  *   crosswalks to organization/college/section/group/template and a currently
