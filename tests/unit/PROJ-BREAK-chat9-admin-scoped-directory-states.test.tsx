@@ -68,14 +68,14 @@ describe("Super Admin last-third shared scoped directories: no false empties or 
   it("UX-admin-directory-103 missing selected college does not infer a default tenant",async()=>{
     state.selected=false;
     const message=display(await render()).join(" ");
-    expect(message).toContain("Select a college to continue");
+    expect(message).toContain("Select a College to manage Learners");
     expect(state.loaderCalls).toBe(0);
   });
   it("UX-admin-directory-104 essential load outage preserves validated filters and does not render zero matching results",async()=>{
     state.fail="PRIMARY";
     const message=display(await render({q:"IIT Dharwad",status:"ACTIVE",page:"2",pageSize:"50"})).join(" ");
-    expect(message).toContain("Directory unavailable");
-    expect(message).toContain("Retry loading directory");
+    expect(message).toContain("Could not load student roster");
+    expect(message).toContain("Retry");
     expect(message).toContain("q=IIT+Dharwad");
     expect(message).toContain("status=ACTIVE");
     expect(message).toContain("page=2");
@@ -89,13 +89,13 @@ describe("Super Admin last-third shared scoped directories: no false empties or 
     const message=display(await render({},true)).join(" ");
     expect(message).toContain("Directory totals are temporarily unavailable.");
     expect(message).toContain("The filtered records below remain visible.");
-    expect(message).toContain("No matching records");
+    expect(message).toContain("0 matching records");
     expect(message).not.toContain("PRIVATE_DIRECTORY_DB_PASSWORD");
     expect(state.loaderCalls).toBe(4);
   });
   it("UX-admin-directory-106 legitimate empty list remains a distinct zero-state",async()=>{
     const message=display(await render()).join(" ");
-    expect(message).toContain("No matching records");
+    expect(message).toContain("0 matching records");
     expect(message).not.toContain("Directory unavailable");
     expect(state.loaderCalls).toBe(1);
   });

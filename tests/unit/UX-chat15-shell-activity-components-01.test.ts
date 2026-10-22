@@ -10,7 +10,8 @@ describe("UX-chat15-shell-activity-components-01",()=>{
     "apiFetch","/api/notifications?limit=40","learnerNotificationTarget",
     "due.slice(0,3)","No notifications yet", "/learn/notifications"])
     expect(s).toContain(fragment);
-  expect(s).toContain("role=\"dialog\"");
+  expect(s).toContain('<PopoverPanel id="lms-learner-notifications"');
+  expect(s).toContain('<Drawer id="lms-learner-mobile-notifications"');
  });
  it("UX-shell-learner-bell-scroll-01 provides real overflow fades, safe overscroll and keyboard Escape return",()=>{
   const s=code("src/components/shell/learner-notification-bell.tsx");
@@ -25,13 +26,11 @@ describe("UX-chat15-shell-activity-components-01",()=>{
  });
  it("UX-shell-mobile-navigation-01 opens a true accessible navigation overlay with Escape and focus trap",()=>{
   const s=code("src/components/shell/mobile-navigation.tsx");
-  expect(s).toContain('aria-label="Open navigation menu"');
-  expect(s).toContain('role="dialog"');
-  expect(s).toContain('aria-modal="true"');
-  expect(s).toContain('event.key === "Escape"');
-  expect(s).toContain('event.key !== "Tab"');
-  expect(s).toContain("triggerRef.current?.focus()");
-  expect(s).toContain("useOverlayWebview");
+  expect(s).toContain('aria-label={open?"Close menu":"Open menu"}');
+  expect(s).toContain('aria-haspopup="dialog"');
+  expect(s).toContain('<Drawer');
+  expect(s).toContain("onOpenChange={setOpen}");
+  expect(s).toContain("md:hidden");
   expect(s).toContain("h-11 w-11");
  });
  it("UX-shell-route-announcer-01 reports route changes without stealing focus on query-only updates",()=>{

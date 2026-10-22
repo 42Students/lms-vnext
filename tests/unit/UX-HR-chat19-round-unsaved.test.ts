@@ -26,7 +26,7 @@ describe("UX-HR-ROUND-UNSAVED-32: protected round-edit dialog changes",()=>{
   expect(source).toContain("if(dirty){setConfirmDiscard(true);return;}");
   expect(source).toContain("onOpenChange={next=>{if(!next)requestClose();}}");
   expect(source).toContain('onClick={requestClose}');
-  expect(source).toContain('open={confirmDiscard} title="Discard unsaved round changes?"');
+  expect(source).toContain('open={confirmDiscard} title="Discard these round changes?"');
   expect(source).toContain('onCancel={()=>setConfirmDiscard(false)} onConfirm={reset}');
   expect(source).toContain('open={confirmRemove} title="Remove this round?"');
  });

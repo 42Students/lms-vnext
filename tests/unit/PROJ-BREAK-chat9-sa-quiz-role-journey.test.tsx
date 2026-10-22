@@ -21,7 +21,7 @@ vi.mock("@/modules/courses/college-assessment-aggregate-service",()=>({
   listCollegeAssessmentAggregate:async()=>{
     state.dirReads++;
     if(state.fail==="directory")throw Error("PRIVATE_PG_CREDENTIAL");
-    return {items:[],total:0,totalPages:1,reviewDeliveries:[],query:{}};
+    return {items:[],total:0,totalPages:1,reviewDeliveries:[],directoryCourses:[],query:{}};
   },
 }));
 vi.mock("@/modules/courses/college-quiz-authoring-options",()=>({
@@ -83,7 +83,7 @@ describe("Super Admin last-third: quiz directory guarded server journey",()=>{
   it("UX-admin-quizzes-08 directory outage retains valid filters and shows retry without leaking internals",async()=>{
     state.fail="directory";
     const content=visible(await render({q:"IIT Dharwad",status:"PUBLISHED",page:"2"})).join(" ");
-    expect(content).toContain("Quizzes unavailable");
+    expect(content).toContain("Quizzes could not be loaded");
     expect(content).toContain("Retry loading quizzes");
     expect(content).toContain("q=IIT+Dharwad");
     expect(content).toContain("status=PUBLISHED");
