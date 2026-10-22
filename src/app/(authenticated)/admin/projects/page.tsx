@@ -159,7 +159,7 @@ export default async function SuperAdminProjectsPage({
         </div>} />
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
 
-      {!templatesResult.ok ? <Banner tone="warning">
+      {!templatesResult.ok ? <Banner tone="warning" role="status">
         Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
       </Banner> : null}
       <section aria-label="Workspaces" className="min-w-0 space-y-3">
