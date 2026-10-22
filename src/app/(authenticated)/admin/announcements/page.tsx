@@ -48,7 +48,7 @@ export default async function AnnouncementsPage({
   const {query: legacyQuery, ...canonicalParams} = rawParams;
   const params = parseSuperAdminAnnouncementParams({
     ...canonicalParams,
-    q: canonicalParams.q ?? legacyQuery,
+    q: canonicalParams["q"] ?? legacyQuery,
   });
   if (!params) {
     return <div className="min-w-0 space-y-6">
@@ -241,7 +241,7 @@ export default async function AnnouncementsPage({
                     ? <span>Updated {first.updatedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
                 </div>
                 {groupReceipt&&target>0?<MetricBar role="progressbar"
-                  label={first.title+" placement cells read"} className={chartStyles.track+" mt-3 w-full"}
+                  label={first.title+" placement cells read"} className={chartStyles["track"]+" mt-3 w-full"}
                   value={reached} maximum={target} unit="placement cell"/>:null}
               </article>;
             })}
@@ -320,7 +320,7 @@ export default async function AnnouncementsPage({
         const receipt=receipts.get(row.id)!;
         return <li key={row.id} className="border-b border-border py-3 text-sm">
          <p className="font-semibold">{row.title}</p><p className="text-muted-foreground">{receipt.cellRead} of 1 placement cell read · {receipt.read}/{receipt.delivered} bell recipients read</p>
-         <MetricBar role="progressbar" label={row.title+" notification reads"} className={chartStyles.track+" mt-2 w-full"}
+         <MetricBar role="progressbar" label={row.title+" notification reads"} className={chartStyles["track"]+" mt-2 w-full"}
           value={receipt.cellRead} maximum={1} unit="placement cell" />
         </li>;
        })}</ul>
