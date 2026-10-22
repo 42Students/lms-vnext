@@ -11,6 +11,7 @@ import {
   recordClassSearchSelection,
 } from "@/modules/academics/section-service";
 import { z } from "zod";
+import { createSectionInputSchema } from "@/modules/academics/validation";
 
 export const runtime = "nodejs";
 
@@ -128,7 +129,7 @@ export async function POST(request: Request) {
     }
     const section = await createSection(
       context,
-      body,
+      createSectionInputSchema.parse(body),
     );
 
     return NextResponse.json(
