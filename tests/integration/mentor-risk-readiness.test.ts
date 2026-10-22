@@ -29,22 +29,15 @@ const learner:RequestContext={user:{id:SEED_IDS.learnerUser,identityUid:"learner
   status:"ACTIVE",roles:["LEARNER"]}};
 const tracked:{projects:string[];templates:string[]}={projects:[],templates:[]};
 async function cleanup(){
-  // Immutable activity events and the identities they reference remain untouched.
-  if(tracked.projects.length){
-    for(const table of ["project_task_submissions","project_submission_reviews","project_submissions",
-      "project_meetings","project_members","project_resources","project_tasks",
-      "project_sprints","project_releases"]){
-      await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[tracked.projects]);
-    }
-    await pool.query("delete from project_instances where id=any($1::uuid[])",[tracked.projects]);
-  }
-  if(tracked.templates.length){
-    for(const table of ["project_template_college_assignments","project_template_versions"])
-      await pool.query("delete from "+table+" where template_id=any($1::uuid[])",[tracked.templates]);
-    await pool.query("delete from project_templates where id=any($1::uuid[])",[tracked.templates]);
-  }
+  // W03 DB07 writes append-only project_meeting_history rows with
+  // ON DELETE RESTRICT back to their meeting. Removing a meeting here would
+  // destroy verified immutable audit history. This test exclusively uses a
+  // disposable PostgreSQL database and random, scoped fixture IDs, so retain
+  // the entire related graph until that database is disposed. The cleanup
+  // deliberately never disables history triggers or bypasses foreign keys.
   tracked.projects=[];tracked.templates=[];
 }
+
 afterEach(cleanup);
 afterAll(async()=>{try{await cleanup();}finally{await pool.end();await closeDatabaseConnection();}});
 async function fixture(){
