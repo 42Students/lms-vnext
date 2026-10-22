@@ -3,6 +3,7 @@ import { facultyVideoUploadTimeoutMs } from "@/components/courses/faculty-video-
 import {
   MAX_THUMBNAIL_BYTES,
   MAX_VIDEO_BYTES,
+  validateLegacyFolderDeclaration,
   validateStorageDeclaration,
 } from "@/modules/storage/file-policy";
 import { lessonVideoPreselection } from "@/modules/storage/video-preselection";
@@ -36,5 +37,25 @@ describe("R2 signed single-PUT faculty media contract",()=>{
   expect(lessonVideoPreselection({
    name:"lesson.mp4",type:"video/mp4",size:MAX_VIDEO_BYTES+1,
   }).ok).toBe(false);
+ });
+ it("preserves legacy folder-specific size and MIME restrictions",()=>{
+  expect(validateLegacyFolderDeclaration("course-images",{
+   originalName:"course.png",contentType:"image/png",sizeBytes:5*MIB,
+  }).ok).toBe(true);
+  expect(validateLegacyFolderDeclaration("course-images",{
+   originalName:"course.png",contentType:"image/png",sizeBytes:5*MIB+1,
+  })).toEqual({ok:false,code:"STORAGE_FILE_TOO_LARGE"});
+  expect(validateLegacyFolderDeclaration("college-branding",{
+   originalName:"logo.jpg",contentType:"image/jpeg",sizeBytes:1*MIB,
+  })).toEqual({ok:false,code:"STORAGE_TYPE_NOT_ALLOWED"});
+  expect(validateLegacyFolderDeclaration("marksheets",{
+   originalName:"marks.pdf",contentType:"application/pdf",sizeBytes:5*MIB+1,
+  })).toEqual({ok:false,code:"STORAGE_FILE_TOO_LARGE"});
+  expect(validateLegacyFolderDeclaration("offer-letters",{
+   originalName:"offer.pdf",contentType:"application/pdf",sizeBytes:10*MIB+1,
+  })).toEqual({ok:false,code:"STORAGE_FILE_TOO_LARGE"});
+  expect(validateLegacyFolderDeclaration("lesson-content",{
+   originalName:"archive.zip",contentType:"application/zip",sizeBytes:1*MIB,
+  })).toEqual({ok:false,code:"STORAGE_TYPE_NOT_ALLOWED"});
  });
 });

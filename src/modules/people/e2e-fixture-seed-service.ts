@@ -155,7 +155,15 @@ export async function seedIsolatedE2EAcademicGraph(
     code:code("PA"),durationTerms:8},
    {id:d.programB,departmentId:d.deptB,name:"E2E BTech EC "+namespace,
     code:code("PB"),durationTerms:8},
-  ])await tx.insert(programs).values(row).onConflictDoNothing();
+  ]){
+   await tx.insert(programs).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({
+    departmentId:programs.departmentId,name:programs.name,code:programs.code,
+   }).from(programs).where(eq(programs.id,row.id)).limit(1);
+   if(!stored||stored.departmentId!==row.departmentId||
+      stored.name!==row.name||stored.code!==row.code)
+    throw new Error("E2E_PROGRAM_COLLISION");
+  }
   seeded.add("programA");seeded.add("programB");
 
   const periodA=auxId(namespace,"periodA"),periodB=auxId(namespace,"periodB");
@@ -166,20 +174,47 @@ export async function seedIsolatedE2EAcademicGraph(
    {id:periodB,collegeId:d.collegeB,name:"E2E 2026-27 "+namespace,
     code:code("AY2"),startDate:"2026-01-01",endDate:"2027-12-31",
     status:"ACTIVE" as const},
-  ])await tx.insert(academicPeriods).values(row).onConflictDoNothing();
+  ]){
+   await tx.insert(academicPeriods).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({
+    collegeId:academicPeriods.collegeId,code:academicPeriods.code,
+    status:academicPeriods.status,
+   }).from(academicPeriods).where(eq(academicPeriods.id,row.id)).limit(1);
+   if(!stored||stored.collegeId!==row.collegeId||
+      stored.code!==row.code||stored.status!=="ACTIVE")
+    throw new Error("E2E_PERIOD_COLLISION");
+  }
   for(const row of [
    {id:d.batchA,programId:d.programA,name:"E2E Batch A "+namespace,
     code:code("BA"),startPeriodId:periodA,status:"ACTIVE" as const},
    {id:d.batchB,programId:d.programB,name:"E2E Batch B "+namespace,
     code:code("BB"),startPeriodId:periodB,status:"ACTIVE" as const},
-  ])await tx.insert(cohorts).values(row).onConflictDoNothing();
+  ]){
+   await tx.insert(cohorts).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({
+    programId:cohorts.programId,startPeriodId:cohorts.startPeriodId,
+    code:cohorts.code,
+   }).from(cohorts).where(eq(cohorts.id,row.id)).limit(1);
+   if(!stored||stored.programId!==row.programId||
+      stored.startPeriodId!==row.startPeriodId||stored.code!==row.code)
+    throw new Error("E2E_BATCH_COLLISION");
+  }
   seeded.add("batchA");seeded.add("batchB");
   for(const row of [
    {id:d.classA,cohortId:d.batchA,academicPeriodId:periodA,
     name:"E2E Section A "+namespace,code:code("SA")},
    {id:d.classB,cohortId:d.batchB,academicPeriodId:periodB,
     name:"E2E Section B "+namespace,code:code("SB")},
-  ])await tx.insert(sections).values(row).onConflictDoNothing();
+  ]){
+   await tx.insert(sections).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({
+    cohortId:sections.cohortId,academicPeriodId:sections.academicPeriodId,
+    code:sections.code,
+   }).from(sections).where(eq(sections.id,row.id)).limit(1);
+   if(!stored||stored.cohortId!==row.cohortId||
+      stored.academicPeriodId!==row.academicPeriodId||stored.code!==row.code)
+    throw new Error("E2E_SECTION_COLLISION");
+  }
   seeded.add("classA");seeded.add("classB");
 
   for(const persona of personas){
@@ -219,11 +254,33 @@ export async function seedIsolatedE2EAcademicGraph(
     id:enrollment,membershipId:d[learner.key],
     programId:learner.program,cohortId:learner.cohort,
    }).onConflictDoNothing();
+   const [programEnrollment]=await tx.select({
+    membershipId:learnerProgramEnrollments.membershipId,
+    programId:learnerProgramEnrollments.programId,
+    cohortId:learnerProgramEnrollments.cohortId,
+   }).from(learnerProgramEnrollments)
+    .where(eq(learnerProgramEnrollments.id,enrollment)).limit(1);
+   if(!programEnrollment||
+      programEnrollment.membershipId!==d[learner.key]||
+      programEnrollment.programId!==learner.program||
+      programEnrollment.cohortId!==learner.cohort)
+    throw new Error("E2E_LEARNER_ENROLLMENT_COLLISION");
+   const sectionEnrollmentId=auxId(namespace,"section-enroll-"+learner.key);
    await tx.insert(sectionEnrollments).values({
-    id:auxId(namespace,"section-enroll-"+learner.key),
-    learnerEnrollmentId:enrollment,sectionId:learner.section,
-    academicPeriodId:learner.period,
+    id:sectionEnrollmentId,learnerEnrollmentId:enrollment,
+    sectionId:learner.section,academicPeriodId:learner.period,
    }).onConflictDoNothing();
+   const [sectionEnrollment]=await tx.select({
+    learnerEnrollmentId:sectionEnrollments.learnerEnrollmentId,
+    sectionId:sectionEnrollments.sectionId,
+    academicPeriodId:sectionEnrollments.academicPeriodId,
+   }).from(sectionEnrollments)
+    .where(eq(sectionEnrollments.id,sectionEnrollmentId)).limit(1);
+   if(!sectionEnrollment||
+      sectionEnrollment.learnerEnrollmentId!==enrollment||
+      sectionEnrollment.sectionId!==learner.section||
+      sectionEnrollment.academicPeriodId!==learner.period)
+    throw new Error("E2E_SECTION_ENROLLMENT_COLLISION");
   }
   for(const row of [
    {id:d.courseA,departmentId:d.deptA,name:"E2E Java Course "+namespace,
@@ -534,9 +591,9 @@ export async function seedIsolatedE2EAcademicGraph(
 
   const ledger=buildE2EFixtureSeedLedger(manifest,seeded);
   const missing=ledger.missing;
-  // Do not report success for the unseeded placements, calendar, video, image
-  // and project workspace. This response is an actual partial DB seed, not
-  // the speculative fixture manifest treated as a persisted graph.
+  // Only mark nodes which this transaction actually wrote. Binary video and
+  // image resources (and dependent video progress) require separate private
+  // scan attestation; do not claim full fixture activation for them.
   return {
    status:ledger.status,manifest,ledger,actualUserIds:manifestUsers,
    persistedNodeCount:seeded.size,
