@@ -131,7 +131,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   // image URL. Never surface the backing private logo object path.
   const publicLogo=result.company.logoUrl??
     (profile?.logoPublicUrl && /^https:\/\/[^\s]+$/i.test(profile.logoPublicUrl)?profile.logoPublicUrl:null);
-  const companyDomains=result.company.primaryDomain ? ["@"+result.company.primaryDomain.replace(/^@/,"")] : [];
+  const companyDomains=result.company.domains.map(domain=>"@"+domain.replace(/^@/,""));
   if (tab==="team" && (!Array.isArray(result.team) ||
     !result.team.every(member => typeof member.userId === "string" &&
       typeof member.displayName === "string" && typeof member.isYou === "boolean"))) {

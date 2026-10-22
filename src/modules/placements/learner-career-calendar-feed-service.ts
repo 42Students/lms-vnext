@@ -26,6 +26,23 @@ export async function loadLearnerCareerCalendarSupplements(
     const job = row.job;
     if (seen.has(job.id)) continue;
     seen.add(job.id);
+    // Important dates in currently eligible/discoverable jobs belong on the
+    // learner calendar even before application. An applied job is projected
+    // only by the private application-history query below, so each source
+    // index is emitted once rather than duplicated across the two feeds.
+    if(!appliedJobIds.has(job.id)){
+      const details=job.legacyPostingDetails?.importantDates;
+      if(Array.isArray(details)){
+        const dates=legacyJobImportantDatesToSupplements({
+          jobId:job.id,companyName:row.company.name,roleTitle:job.title,
+          importantDates:details,
+        });
+        const room=Math.max(0,500-supplements.length);
+        supplements.push(...dates.slice(0,room));
+        if(dates.length>room)warnings.push(
+          "Showing the first 500 upcoming job calendar items. View Jobs for more dates.");
+      }
+    }
     const deadline = job.applicationDeadline;
     if (!deadline || deadline.getTime() < now.getTime() ||
         appliedJobIds.has(job.id)) continue;

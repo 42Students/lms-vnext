@@ -173,8 +173,6 @@ export function formatTpoAuditEventType(
    APPLICANTS_MOVE_UNDONE:"Move undone",
    ROUND_RESULTS_APPLIED:"Round results applied",
    NUDGE_SENT:"Nudge sent",PREP_ASSIGNED:"Prep assigned",
-   RECRUITER_LEADS_OWNER_SET:"Recruiter owner set",
-   RECRUITER_LEADS_STAGE_SET:"Recruiter stage set",
    PLACEMENTS_COLLEGE_RULES_UPDATED:"Placement rules changed",
    RECRUITER_LEADS_CREATED:"Recruiter lead added",
    RECRUITER_LEADS_CONTACT_UPDATED:"Recruiter contact updated",
