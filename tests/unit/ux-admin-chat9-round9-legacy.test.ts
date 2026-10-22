@@ -21,7 +21,10 @@ describe("chat-9 Round 9: legacy labels survive UX rollout",()=>{
   it("UX-admin-projects-labels-01 preserves the original College Project copy and scope recovery",()=>{
     const workspaces=source("src/app/(authenticated)/college/projects/page.tsx");
     const risk=source("src/components/projects/project-admin-at-risk-page.tsx");
-    expect(workspaces.match(/title="Workspaces"/g)).toHaveLength(3);
+    expect(workspaces).toContain('title="Project workspaces"');
+    expect(workspaces).toContain('<ProjectAdminNav basePath="/college/projects" active="workspaces"');
+    expect(workspaces).toContain('title="No college selected"');
+    expect(workspaces).toContain("Bulk reassign mentor");
     expect(workspaces).toContain('role="alert"');
     expect(workspaces).toContain("Bulk reassign mentor");
     expect(risk).toContain('description="Workspaces with no recent activity, an active blocker, or a pending review."');
@@ -37,8 +40,11 @@ describe("chat-9 Round 9: legacy labels survive UX rollout",()=>{
   it("UX-admin-tpo-settings-label-01 keeps the exact Recruiters settings tab",()=>{
     const labels=TPO_SETTINGS_NAV_GROUPS.flatMap(group=>group.items.map(item=>item.label));
     expect(labels).toContain("Recruiters");
-    expect(labels).toContain("Placement Rules");
-    expect(labels).toContain("What Companies See");
-    expect(labels).toContain("Placement Branding");
+    expect(labels).toEqual([
+      "Placement rules","Job types","After college","Placement team","Recruiters",
+    ]);
+    const overview=source("src/app/(authenticated)/tpo/settings/page.tsx");
+    expect(overview).toContain(">Placement Rules</h2>");
+    expect(overview).toContain('href="/tpo/settings/public-page"');
   });
 });

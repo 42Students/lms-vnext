@@ -10,11 +10,15 @@ describe("TPO Team remaining gap increments, not full object-thread parity",()=>
   expect(page).toContain("Open conversation</Link>");
  });
  it("TPO-inbox-team-18 defaults to Following, retains search and counted filters but not imaginary object threads",()=>{
-  const page=source("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(page).toContain('parsed.data.filter??"FOLLOWING"');
-  expect(page).toContain("filterTpoTeamConversations");
-  expect(page).toContain("tpoTeamConversationCounts");
-  expect(page).toContain("TpoTeamSearch");
+  const legacy=source("src/app/(authenticated)/tpo/team/page.tsx");
+  const messages=source("src/app/(authenticated)/tpo/messages/page.tsx");
+  const directory=source("src/components/tpo/tpo-team-messages-directory.tsx");
+  expect(legacy).toContain('redirect("/tpo/messages?" + target.toString())');
+  expect(messages).toContain('<TpoTeamMessagesDirectory context={context}');
+  expect(directory).toContain('selectedFilter(filter??"following")');
+  expect(directory).toContain('safeQuery.length>=2?"all":view');
+  expect(directory).toContain('const displayedCount="totalCount" in data?data.totalCount:visible.length');
+  expect(directory).toContain("<TpoTeamSearch value={safeQuery}/>");
  });
  it("TPO-inbox-team-20 stores per-member Follow/Mute and suppresses muted unread alerts",()=>{
   const read=source("src/modules/placements/tpo-team-internal-read-service.ts");
@@ -42,18 +46,19 @@ describe("TPO Team remaining gap increments, not full object-thread parity",()=>
  });
  it("TPO-inbox-team-30 validates legacy ?c and ?m aliases without redirecting to arbitrary external destinations",()=>{
   const team=source("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(team).toContain("z.string().uuid().safeParse(threadId)");
-  expect(team).toContain('redirect("/tpo/team/"+encodeURIComponent(threadId)+target)');
-  expect(team).toContain('tabInput==="members"?"people":tabInput');
+  expect(team).toContain('const thread = first(params.c) ?? first(params.thread) ?? first(params.conversationId)');
+  expect(team).toContain('/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(thread)');
+  expect(team).toContain('redirect("/tpo/messages?" + target.toString())');
+  expect(team).toContain('redirect("/tpo/settings/team")');
  });
  it("TPO-inbox-team-31 displays real workload counts, never fabricated unregistered owner values",()=>{
-  const page=source("src/app/(authenticated)/tpo/team/page.tsx");
+  const directory=source("src/components/tpo/tpo-team-messages-directory.tsx");
   const work=source("src/modules/placements/tpo-team-ownership-workload-service.ts");
-  expect(page).toContain("Live drives");
-  expect(page).toContain("Draft drives");
-  expect(page).toContain("Overdue follow-ups");
-  expect(page).toContain("Waiting on teammates");
-  expect(page).toContain('"Unavailable"');
-  expect(work).toContain("liveDrives");
+  expect(directory).toContain("const visible=data.items");
+  expect(work).toContain("hasDriveOwnerColumn()");
+  expect(work).toContain("isNotNull(placementJobs.ownerMembershipId)");
+  expect(work).toContain("liveDrives:0,draftDrives:0");
+  expect(work).toContain("entry.liveDrives=Number(row.live)");
+  expect(work).toContain("entry.draftDrives=Number(row.draft)");
  });
 });

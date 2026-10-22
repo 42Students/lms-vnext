@@ -5,7 +5,9 @@ import {listInboundMailForAdmin} from "@/modules/inbound-mail/admin-service";
 import InboundMailPage from "@/app/(authenticated)/admin/inbound-mail/page";
 
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
-vi.mock("@/modules/inbound-mail/admin-service",()=>({listInboundMailForAdmin:vi.fn()}));
+vi.mock("@/modules/inbound-mail/admin-service",()=>({
+ listInboundMailForAdmin:vi.fn(), INBOUND_ROUTING_METADATA_READY:true,
+}));
 vi.mock("@/components/admin/inbound-mail-list",()=>({InboundMailList:()=>null}));
 const context=(allowed=true)=>({
  user:{id:"11111111-1111-4111-8111-111111111111",identityUid:"identity",platformStatus:"ACTIVE",

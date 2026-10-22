@@ -105,6 +105,7 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
     media.addEventListener("change", syncInline);
     return () => media.removeEventListener("change", syncInline);
   }, [inlineDesktop]);
+  const summaryClassName = cx("inline-flex min-h-11 cursor-pointer list-none items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-[background-color] duration-[200ms] ease-[ease] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden", inlineDesktop ? "md:hidden" : "", triggerClassName);
   return <details ref={rootRef} data-slot="dropdown-root" data-mobile-sheet={mobileSheet || undefined} data-inline-desktop={inlineDesktop || undefined} className={cx("group relative inline-block min-w-0 align-middle", inlineDesktop ? "md:contents" : "", className)} {...props}
     onPointerDown={event => {
       props.onPointerDown?.(event);

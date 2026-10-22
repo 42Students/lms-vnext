@@ -6,6 +6,7 @@ import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {createPlacementRound} from "@/modules/placements/round-service";
 import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
+import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrDriveOverview} from "@/modules/placements/hr-drive-overview-model";
 import type {RequestContext} from "@/modules/identity/context";
@@ -27,11 +28,17 @@ describe.skipIf(!enabled)("HR Drive Overview PG guard",()=>{
   await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"HR overview screening"});
   await upsertJobEligibilityPolicy(tpo,job.id,{});
   await publishPlacementJob(tpo,job.id);
-  const uid=randomUUID();
-  const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({
-    user:{id:uid,identityUid:"hr-overview-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
-    recruiter:{userId:uid,companyId,companyName:"Fixture",title:null,status:"ACTIVE",
-     grants:[{id:randomUUID(),collegeId,organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:rel}]}});
+  const identityUid="hr-overview-"+nonce;
+  const recruiter=await createPersistedJobRecruiter({
+    companyId:a.company.id,companyRelationshipId:a.relationship.id,
+    collegeId:SEED_IDS.collegeA,jobId:job.id,
+    grantedByUserId:tpo.user.id,identityUid,
+  });
+  const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>persistedRecruiterContext({
+    userId:recruiter.userId,identityUid,companyId,
+    grantId:recruiter.grantId,collegeId,organizationId:SEED_IDS.organization,
+    companyRelationshipId:rel,
+  });
   const own=await getHrJobRead(hr(a.company.id,a.relationship.id,SEED_IDS.collegeA),job.id,{tab:"overview"});
   expect(buildHrDriveOverview({job:own.workspace.job,applicants:own.applicants.counts,
     offers:own.offers,rounds:own.workspace.rounds},new Date()).shared).toBe(0);

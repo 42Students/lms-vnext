@@ -44,7 +44,7 @@ describe("chat-16 private inbound-mail status route",()=>{
   vi.mocked(changeInboundMailStatusForAdmin).mockResolvedValue({kind:"STALE"});
   const result=await PATCH(send());
   expect(result.status).toBe(409);
-  expect(await result.json()).toEqual({error:"MESSAGE_CHANGED"});
+  expect(await result.json()).toEqual({error:"MESSAGE_CHANGED",message:"This message changed. Reload it and try again."});
  });
  it("inbound-mail-route-18 distinguishes unavailable storage from an empty mailbox",async()=>{
   vi.mocked(changeInboundMailStatusForAdmin).mockResolvedValue({kind:"UNAVAILABLE"});

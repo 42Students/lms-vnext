@@ -36,7 +36,7 @@ function words(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(words);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","action","href","eyebrow"].flatMap(k=>words(props[k]));
+  return ["children","title","description","action","href","label","eyebrow"].flatMap(k=>words(props[k]));
 }
 const routes=[
   {title:"At Risk",run:()=>ProjectAtRiskRoute({searchParams:Promise.resolve({})})},

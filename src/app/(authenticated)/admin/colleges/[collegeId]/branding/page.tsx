@@ -35,17 +35,24 @@ export default async function SuperAdminCollegeBrandingPage({
   }
 
 
-  const [previewResult,persistedResult,tenantResult]=await Promise.allSettled([
+  // Verify the requested college before making either private branding read.
+  // A missing/foreign preview must not probe another tenant's stored files.
+  const previewResult=await Promise.allSettled([
     getSuperAdminCollegeBrandingPreview(context,collegeId),
-    getCollegeBranding(context,collegeId),
-    getSuperAdminTenantLifecycleDetail(context,collegeId),
-  ]);
-  for(const value of [previewResult,persistedResult,tenantResult]){
-    if(value.status==="rejected"&&value.reason instanceof AuthorizationError)throw value.reason;
-  }
+  ]).then(results=>results[0]);
+  if(previewResult.status==="rejected"&&previewResult.reason instanceof AuthorizationError)
+    throw previewResult.reason;
   if(previewResult.status==="fulfilled"&&!previewResult.value)notFound();
-  if(previewResult.status==="rejected"||persistedResult.status==="rejected"||
-    tenantResult.status==="rejected")return <div className="min-w-0 space-y-4">
+  const [persistedResult,tenantResult]=previewResult.status==="fulfilled"
+    ?await Promise.allSettled([
+      getCollegeBranding(context,collegeId),
+      getSuperAdminTenantLifecycleDetail(context,collegeId),
+    ]):[null,null];
+  for(const value of [persistedResult,tenantResult]){
+    if(value?.status==="rejected"&&value.reason instanceof AuthorizationError)throw value.reason;
+  }
+  if(previewResult.status==="rejected"||!persistedResult||!tenantResult||
+    persistedResult.status==="rejected"||tenantResult.status==="rejected")return <div className="min-w-0 space-y-4">
     <PageHeader title="Look and feel"
       actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)} label="College overview"/>}/>
     <ErrorState title="Couldn't load branding for this college."
@@ -55,8 +62,7 @@ export default async function SuperAdminCollegeBrandingPage({
         Retry branding
       </Link>}/>
   </div>;
-  const branding=previewResult.value;
-  if(!branding)notFound();
+
   const persisted=persistedResult.value,tenant=tenantResult.value;
   const canEdit=can(context,"college.manage",{collegeId,organizationId:tenant.organizationId});
 

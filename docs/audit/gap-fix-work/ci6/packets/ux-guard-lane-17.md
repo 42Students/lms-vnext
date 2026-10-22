@@ -4,11 +4,11 @@ The CI lint job runs `npm run ux:guard` (scripts/check-ux-anti-drift.mjs). Fix t
 
 Rules: unsafe-target = target=_blank needs rel="noopener noreferrer" (or drop target); small-touch-target / unverified-touch-class = interactive control needs the shared >=44px touch class the guard recognises; white-on-teal = white text on #26bac7 fails contrast, use the approved darker token; native-popup = replace window.confirm/alert/prompt with the shared dialog component.
 
-- [ ] src/app/company-share/[token]/error.tsx:7: unverified-touch-class
-- [ ] src/components/courses/college-content-authoring-control.tsx:634: small-touch-target
-- [ ] src/components/placements/learner-job-description-link.tsx:14: native-popup
-- [ ] src/components/tracker/tracker-report-form.tsx:379: unverified-touch-class
-- [ ] src/components/tracker/tracker-report-form.tsx:432: unverified-touch-class
-- [ ] src/components/tracker/tracker-report-form.tsx:444: unsafe-target
-- [ ] src/components/ui/searchable-select.tsx:172: unverified-touch-class
-- [ ] src/components/ui/searchable-select.tsx:178: unverified-touch-class
+- [x] src/app/company-share/[token]/error.tsx:7: unverified-touch-class
+- [x] src/components/courses/college-content-authoring-control.tsx:634: small-touch-target
+- [x] src/components/placements/learner-job-description-link.tsx:14: native-popup
+- [x] src/components/tracker/tracker-report-form.tsx:379: unverified-touch-class
+- [x] src/components/tracker/tracker-report-form.tsx:432: unverified-touch-class
+- [x] src/components/tracker/tracker-report-form.tsx:444: unsafe-target
+- [x] src/components/ui/searchable-select.tsx:172: unverified-touch-class
+- [x] src/components/ui/searchable-select.tsx:178: unverified-touch-class

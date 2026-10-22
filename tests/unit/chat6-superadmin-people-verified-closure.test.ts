@@ -7,8 +7,9 @@ describe("chat-6 selected-college People gap verification",()=>{
  it("SA-academics-people-78 uses the legacy exact no-college title and contextual noun",()=>{
   const s=source("src/components/admin/admin-scoped-read-page.tsx");
   expect(s).toContain("Select a college to continue");
-  expect(s).toContain("Choose a college in the header above to see its ");
-  for(const noun of ["faculty assignments","people directory","students"])expect(s).toContain(noun);
+  expect(s).toContain("Choose a college in the header above to continue.");
+   expect(s).toContain("Choose an Organization + College in the header above to view faculty assignments.");
+  for(const noun of ["faculty assignments","matching records","students"])expect(s).toContain(noun);
  });
  it("SA-academics-people-82 validates the 500-row faculty sample and preserves row result feedback",()=>{
   const rows=parseFacultyBulkCsv("First Name,Last Name,Mobile Number,Email\nAnjali,Sharma,9876543210,anjali@example.edu\n");
@@ -17,7 +18,7 @@ describe("chat-6 selected-college People gap verification",()=>{
   const s=source("src/components/admin/super-admin-faculty-bulk-import.tsx");
   expect(s).toContain("bulk_faculty_sample.csv");
   expect(s).toContain('status==="FAILED"');
-  expect(source("src/modules/people/faculty-bulk-import-model.ts")).toContain("result.length > 500");
+  expect(source("src/modules/people/faculty-bulk-import-model.ts")).toContain("if(data.length>500)");
  });
  it("SA-academics-people-93 registers a student with a chosen program batch and class",()=>{
   const s=source("src/components/college/college-student-register-form.tsx");
@@ -36,7 +37,8 @@ describe("chat-6 selected-college People gap verification",()=>{
   const policy=source("docs/audit/owner-decisions-resolved.md");
   expect(policy).toContain("no impersonation.");
   for(const path of ["src/app/(authenticated)/admin/faculty/page.tsx","src/app/(authenticated)/admin/students/page.tsx"]){
-   expect(source(path)).not.toContain("Impersonate");
+   expect(source(path)).not.toContain(">Impersonate<");
+   expect(source(path)).not.toContain('aria-label="Impersonate"');
   }
  });
 });

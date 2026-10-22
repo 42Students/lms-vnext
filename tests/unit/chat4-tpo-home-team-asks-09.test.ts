@@ -21,7 +21,8 @@ describe("TPO-home-09 persisted team attention",()=>{
   expect(page).toContain("item.asksForMe");
   expect(page).toContain("teamMentions:null");
   expect(page).toContain('type:"TEAM_ASKS",priority:1');
-  expect(page).toContain('type:"TEAM_MESSAGES",priority:4');
+  expect(page).toContain('type:"RECRUITER_MESSAGES",priority:4');
+  expect(page).not.toContain('type:"TEAM_MESSAGES",priority:4');
  });
  it("TPO-home-09 reserves the higher urgency for assigned work",()=>{
   const next=buildTpoLegacyNextUp({

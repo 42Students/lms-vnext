@@ -4,9 +4,9 @@ The CI lint job runs `npm run ux:guard` (scripts/check-ux-anti-drift.mjs). Fix t
 
 Rules: unsafe-target = target=_blank needs rel="noopener noreferrer" (or drop target); small-touch-target / unverified-touch-class = interactive control needs the shared >=44px touch class the guard recognises; white-on-teal = white text on #26bac7 fails contrast, use the approved darker token; native-popup = replace window.confirm/alert/prompt with the shared dialog component.
 
-- [ ] src/app/company-share/[token]/not-found.tsx:7: unverified-touch-class
-- [ ] src/components/courses/college-live-classes-directory.tsx:108: unsafe-target
-- [ ] src/components/placements/placement-calendar-workspace.tsx:1237: unverified-touch-class
-- [ ] src/components/ui/button-group.tsx:16: unverified-touch-class
-- [ ] src/components/ui/selection-controls.tsx:13: unverified-touch-class
-- [ ] src/components/ui/selection-controls.tsx:24: unverified-touch-class
+- [x] src/app/company-share/[token]/not-found.tsx:7: unverified-touch-class
+- [x] src/components/courses/college-live-classes-directory.tsx:108: unsafe-target
+- [x] src/components/placements/placement-calendar-workspace.tsx:1237: unverified-touch-class
+- [x] src/components/ui/button-group.tsx:16: unverified-touch-class
+- [x] src/components/ui/selection-controls.tsx:13: unverified-touch-class
+- [x] src/components/ui/selection-controls.tsx:24: unverified-touch-class

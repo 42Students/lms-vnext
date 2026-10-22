@@ -28,6 +28,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
  const submissionLock=useRef(false);
  const [editing,setEditing]=useState(false),[busy,setBusy]=useState(false);
  const [pendingAction,setPendingAction]=useState<"PUBLISH"|"ARCHIVE"|null>(null);
+ const [pendingConfirmation,setPendingConfirmation]=useState<{kind:"DISCARD"}|{kind:"ZONE";zone:MeetingZone}|null>(null);
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
  const [title,setTitle]=useState(item.title),[order,setOrder]=useState(String(item.sequence+1));
  const [duration,setDuration]=useState(item.durationSeconds===null?"":String(item.durationSeconds));
@@ -111,22 +112,32 @@ export function SuperAdminContentActions({item}:{item:Content}){
     cause instanceof Error?cause.message:"Unable to update content.");}
   finally{submissionLock.current=false;setBusy(false);}
  }
+ function resetEditor(){
+  setTitle(item.title);setOrder(String(item.sequence+1));
+  setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
+  setNotes(item.notes??"");setReplacementUrl("");setTimeZone("Asia/Kolkata");
+  setStartsAt(localDate(item.startsAt));setEndsAt(localDate(item.endsAt));
+ }
  function toggleEditor(){
   if(editing){
    const dirty=title!==item.title||order!==String(item.sequence+1)||
     duration!==(item.durationSeconds===null?"":String(item.durationSeconds))||
     notes!==(item.notes??"")||replacementUrl.trim().length>0||
     startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone);
-   if(dirty&&!window.confirm(item.contentType==="RESOURCE"
-     ?"Discard the changes to this resource? Unsaved links and material changes will be lost."
-     :"Discard lesson-content edits? Any unsaved replacement file or link will be lost."))return;
-   setTitle(item.title);setOrder(String(item.sequence+1));
-   setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
-   setNotes(item.notes??"");setReplacementUrl("");setTimeZone("Asia/Kolkata");
-   setStartsAt(localDate(item.startsAt));setEndsAt(localDate(item.endsAt));
+   if(dirty){setPendingConfirmation({kind:"DISCARD"});return;}
+   resetEditor();
   }
   setEditing(!editing);
   setError("");
+ }
+ function acceptConfirmation(){
+  if(pendingConfirmation?.kind==="DISCARD"){
+   resetEditor();setEditing(false);setError("");
+  }else if(pendingConfirmation?.kind==="ZONE"){
+   const zone=pendingConfirmation.zone;
+   setTimeZone(zone);setStartsAt(localDate(item.startsAt,zone));setEndsAt(localDate(item.endsAt,zone));
+  }
+  setPendingConfirmation(null);
  }
  if(item.status==="ARCHIVED")return <p className="text-xs text-muted-foreground">Archived content is read-only.</p>;
  return <div className="min-w-0 space-y-2">
@@ -173,8 +184,9 @@ export function SuperAdminContentActions({item}:{item:Content}){
      <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Time Zone
       <Select value={timeZone} onChange={e=>{
        const zone=e.target.value as MeetingZone;
-       if((startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone))&&
-          !window.confirm("Changing Time Zone will reset unsaved date and time edits. Continue?"))return;
+       if(startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone)){
+        setPendingConfirmation({kind:"ZONE",zone});return;
+       }
        setTimeZone(zone);setStartsAt(localDate(item.startsAt,zone));setEndsAt(localDate(item.endsAt,zone));
       }}>
        <option value="Asia/Kolkata">India Standard Time (IST)</option>
@@ -196,6 +208,20 @@ export function SuperAdminContentActions({item}:{item:Content}){
     </div>:null}
    </fieldset>
    {error?<Alert tone="error">{error}</Alert>:null}
+  </Dialog>
+  <Dialog open={pendingConfirmation!==null} onOpenChange={open=>{if(!open)setPendingConfirmation(null);}}
+   title={pendingConfirmation?.kind==="ZONE"?"Change Time Zone?":"Discard unsaved changes?"}
+   footer={<>
+    <Button variant="secondary" onClick={()=>setPendingConfirmation(null)}>Keep editing</Button>
+    <Button variant="danger" onClick={acceptConfirmation}>
+     {pendingConfirmation?.kind==="ZONE"?"Continue":"Discard changes"}
+    </Button>
+   </>}>
+   <p className="text-sm text-body">{pendingConfirmation?.kind==="ZONE"
+    ?"Changing Time Zone will reset unsaved date and time edits. Continue?"
+    :item.contentType==="RESOURCE"
+     ?"Discard the changes to this resource? Unsaved links and material changes will be lost."
+     :"Discard lesson-content edits? Any unsaved replacement file or link will be lost."}</p>
   </Dialog>
   <Dialog open={pendingAction!==null} onOpenChange={open=>{if(!open)setPendingAction(null);}}
    title={pendingAction==="ARCHIVE"?(item.contentType==="RESOURCE"?"Delete this resource?":"Are you sure to delete this content?"):"Publish this content?"}

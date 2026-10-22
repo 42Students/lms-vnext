@@ -15,7 +15,7 @@ describe("Faculty scroll and motion cues",()=>{
   expect(s).toContain('<Table scrollLabel="Faculty attendance monthly grid"');
   const table=read("src/components/ui/table.tsx");
   expect(table).toContain('<ScrollCue axis="x" label={scrollLabel');
-  expect(s).toContain('className="sticky left-0 z-10 bg-surface px-3 py-3"');
+  expect(s).toContain('className="sticky left-0 z-10 bg-surface px-3 py-3 text-left"');
   expect(s).toContain("P = Present · A = Absent");
  });
  it("UX-teacher-scroll-motion-03 cues desktop roster scrolling while retaining phone cards",()=>{

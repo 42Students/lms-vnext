@@ -148,7 +148,7 @@ export default async function CollegeDriveShortlistedPage({
     {assessmentLink && query.stage==="ASSESSMENT" ? <Alert tone="info">
       <div className="flex flex-wrap items-center gap-3">
         <div className="min-w-0 flex-1"><p className="font-semibold">Assessment link</p>
-          <a href={assessmentLink} target="_blank" rel="noopener noreferrer"
+          <a href={assessmentLink} rel="noopener noreferrer"
             className="inline-flex min-h-11 items-center break-all font-mono text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{assessmentLink}</a></div>
         <CollegeAssessmentLinkCopy url={assessmentLink}/>
       </div>

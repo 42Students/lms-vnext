@@ -412,7 +412,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    <p className="text-xs leading-5 text-body">Choose batches allowed to apply. No selection means all batches, subject to the other eligibility rules. A live update does not change role options or scheduled rounds.</p>
    {job.availableBatches.length?<div className="grid max-h-52 gap-2 overflow-y-auto sm:grid-cols-2">
     {job.availableBatches.map(batch=><label key={batch.id}
-      className="flex min-h-10 min-w-0 items-start gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm text-body">
+      className="flex min-h-11 min-w-0 items-start gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm text-body">
      <Checkbox name="allowedCohortIds" value={batch.id}
        defaultChecked={job.allowedCohortIds.includes(batch.id)}
        className="mt-0.5 h-4 w-4 shrink-0 accent-primary"/>

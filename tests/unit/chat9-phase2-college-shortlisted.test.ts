@@ -10,12 +10,13 @@ describe("college shortlisted route",()=>{
     expect(collegeShortlistedQuery({page:["1","2"]}).success).toBe(false);
     expect(collegeShortlistedHref(id,{q:"A B",page:3})).toContain("q=A+B&page=3");
   });
-  it("forces submitted+shortlisted through the authorized college applicant read",()=>{
+  it("enforces submitted applications and explicit pipeline stage through the authorized college applicant read",()=>{
     const src=readFileSync(join(process.cwd(),
       "src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx"),"utf8");
     expect(src).toContain('hasMembershipRole(context, "COLLEGE_ADMIN")');
     expect(src).toContain('status:"SUBMITTED"');
-    expect(src).toContain('screening:"SHORTLISTED"');
+    expect(src).toContain('stage: requested.stage ?? "ASSESSMENT"');
+    expect(src).toContain('screening: "ALL"');
     expect(src).toContain("listCollegeDriveApplications(context,jobId,query)");
     expect(src).not.toContain("getDb()");
   });

@@ -18,15 +18,15 @@ const collegeAdmin:RequestContext={user:{id:SEED_IDS.collegeAdminUser,identityUi
 const prefix="chat9-roster-";
 async function cleanup(){
  const projects="select id::text from project_instances where slug like '"+prefix+"%'";
- const projectIds="select id from project_instances where slug like '"+prefix+"%'";
+ const projectIds="select id::text from project_instances where slug like '"+prefix+"%'";
  await pool.query("delete from in_app_notifications where event_id in (select id from activity_events where metadata->>'projectId' in ("+projects+"))");
  await pool.query("delete from activity_events where metadata->>'projectId' in ("+projects+")");
- await pool.query("delete from project_members where project_id in ("+projectIds+")");
- await pool.query("delete from project_resources where project_id in ("+projectIds+")");
- await pool.query("delete from project_tasks where project_id in ("+projectIds+")");
- await pool.query("delete from project_sprints where project_id in ("+projectIds+")");
- await pool.query("delete from project_releases where project_id in ("+projectIds+")");
- await pool.query("delete from project_resource_audit where project_id in ("+projectIds+")");
+ await pool.query("delete from project_members where project_id::text in ("+projectIds+")");
+ await pool.query("delete from project_resources where project_id::text in ("+projectIds+")");
+ await pool.query("delete from project_tasks where project_id::text in ("+projectIds+")");
+ await pool.query("delete from project_sprints where project_id::text in ("+projectIds+")");
+ await pool.query("delete from project_releases where project_id::text in ("+projectIds+")");
+ await pool.query("delete from project_resource_audit where project_id::text in ("+projectIds+")");
  await pool.query("delete from project_instances where slug like '"+prefix+"%'");
  const templateIds="select id from project_templates where slug like '"+prefix+"%'";
  await pool.query("delete from project_template_college_assignments where template_id in ("+templateIds+")");

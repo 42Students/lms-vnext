@@ -131,7 +131,7 @@ export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Resul
      <span>Page {currentPage} of {pageCount} · {report.rows.length} learners</span>
      <label className="flex items-center gap-2">Rows per page
       <Select value={String(pageSize)} onChange={event=>{setPageSize(Number(event.target.value));setPage(1);}}
-       className="min-h-10 w-24">
+       className="min-h-11 w-24 md:min-h-9">
        <option value="20">20</option><option value="50">50</option><option value="100">100</option>
       </Select>
      </label>

@@ -119,7 +119,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
       <span className={"inline-block rounded border border-border px-2 py-1 text-xs "+companyTone(row.companyName)}>{row.companyName}</span>
       <p className="text-xs text-body">{inIst(row.startsAt)} IST · {calendarMode(row)}</p>
       {row.venue?<p className="text-xs text-body">Venue: {row.venue}</p>:null}
-      {row.meetingUrl?<a href={row.meetingUrl} target="_blank" rel="noopener noreferrer"
+      {row.meetingUrl?<a href={row.meetingUrl} rel="noopener noreferrer"
         className="inline-flex min-h-11 items-center font-semibold text-link underline">Join online interview</a>:null}
       <div className="flex flex-wrap gap-4">
        {row.jobId&&row.status==="SCHEDULED"?<SuperAdminInterviewEdit jobId={row.jobId} appointmentId={row.id} interviewers={interviewerChoices}/>:null}

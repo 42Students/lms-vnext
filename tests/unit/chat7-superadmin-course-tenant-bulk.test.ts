@@ -29,7 +29,9 @@ describe("SA-academics-people-52/53 GR-COURSES-TENANT-01 safe scoped Super Admin
   expect(sqlScope).toContain("eq(courseLessons.id,lessonId)");
   expect(sqlScope).toContain("eq(academicPeriods.collegeId,acting.collegeId)");
   expect(sqlScope).toContain("assertPersistedPlatformPermission(tx,context");
-  expect(sqlScope).toContain("updateCollegeContentStudentVisibility(context");
+  expect(sqlScope).toContain("tx.update(courseLessons).set({");
+  expect(sqlScope).toContain("eq(courseLessons.id,lesson.id),eq(courseLessons.version,lesson.version)");
+  expect(sqlScope).toContain("eventType:ACTIVITY_EVENT_TYPES.COURSES_LESSON_UPDATED");
   const course=source("super-admin-course-bulk-visibility");
   expect(course).toContain("eq(departments.collegeId,acting.collegeId)");
   expect(course).toContain("selected.length!==input.courseIds.length");

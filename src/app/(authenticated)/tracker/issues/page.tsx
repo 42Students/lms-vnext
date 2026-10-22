@@ -28,6 +28,7 @@ export default async function TrackerIssuesPage({
   searchParams: SearchParams;
 }) {
   const context = await getCurrentRequestContext();
+  if (context.user.platformStatus !== "ACTIVE") redirect("/dashboard");
   if (!isSuperAdmin(context) || context.adminScope?.collegeId ||
       context.adminScope?.organizationId) redirect("/dashboard");
 

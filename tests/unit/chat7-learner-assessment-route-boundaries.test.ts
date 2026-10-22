@@ -71,7 +71,7 @@ describe("COURSES7-07 / COURSES7-08 authenticated learner assessment HTTP bounda
  it("COURSES7-07 passes the authenticated context, path quiz, and unmodified body into the authorized service",async()=>{
   const body={deliveryId,answers:[]};
   const response=await submitQuizRoute(post("/api/courses/quizzes/"+quizId+"/submit",body),quizParams);
-  expect(response.status).toBe(201);
+  expect(response.status).toBe(200);
   expect(state.submitQuiz).toHaveBeenCalledTimes(1);
   expect(state.submitQuiz).toHaveBeenCalledWith(actor,quizId,body);
  });

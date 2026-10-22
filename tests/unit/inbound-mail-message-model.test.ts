@@ -1,9 +1,11 @@
 import {describe,it,expect} from "vitest";
 import {inboundMailListQuerySchema,safeInboundPreview} from "@/modules/inbound-mail/message-model";
 describe("inbound mail search",()=>{
- it("rejects unknown filters and unbounded pages",()=>{
+ it("rejects unknown filters and clamps malformed or unbounded legacy paging",()=>{
  expect(inboundMailListQuerySchema.safeParse({collegeId:"other"}).success).toBe(false);
- expect(inboundMailListQuerySchema.safeParse({page:-1}).success).toBe(false);
+ expect(inboundMailListQuerySchema.parse({page:-1}).page).toBe(1);
+ expect(inboundMailListQuerySchema.parse({page:1_000_000}).page).toBe(10000);
+ expect(inboundMailListQuerySchema.parse({page:"garbage"}).page).toBe(1);
  });
  it("normalizes previews without control characters",()=>{
  expect(safeInboundPreview("Hi\n there")).toBe("Hi there");

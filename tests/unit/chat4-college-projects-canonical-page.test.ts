@@ -34,8 +34,10 @@ describe("PROJ-BREAK-COLLEGE-04-PAGE-06 stale College Admin project bookmarks",(
  it("keeps malformed and cross-tenant URL filters out before building any canonical redirect",()=>{
   for(const params of [
    {page:["2","99"]},{collegeId:"other-tenant"},{page:"1e2"},
-   {pageSize:"0x32"},
   ])expect(parseCollegeProjectsQuery(params).success).toBe(false);
+  const staleSize=parseCollegeProjectsQuery({pageSize:"0x32"});
+  expect(staleSize.success).toBe(true);
+  if(staleSize.success)expect(staleSize.data.pageSize).toBe(20);
   const stale=parseCollegeProjectsQuery({status:"REMOVED"});
   expect(stale.success).toBe(true);
   if(stale.success)expect(stale.data.status).toBeUndefined();
