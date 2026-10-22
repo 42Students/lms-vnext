@@ -1,6 +1,6 @@
 # Notice for lane 19 (read and apply FIRST)
 
-NO DEADLINE NOW: keep working until your queues are fully ticked (the 19:15 freeze is cancelled).
+HEAVY LIFTING, NO DEADLINE (owner): do AT LEAST 4 full packets per turn back to back without stopping to report; keep going until your queues (including any "More packets" section) are fully ticked.
 
 1) Finish anything unticked in docs/orchestrator/queues/clone/lane-19-ci10.md.
 2) docs/orchestrator/queues/clone/lane-19-verify2b.md to the END: tick rows that already match the old LMS immediately; fix only REAL gaps, smallest correct change; no long notes.
