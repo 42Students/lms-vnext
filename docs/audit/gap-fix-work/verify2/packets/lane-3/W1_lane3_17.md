@@ -30,6 +30,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Document owner approval for deviations or fix.
 
 ## G2-4-013-012 [P1] GAP facet F03
+- [x] Verified: authorized submission metrics survive roster failure; warning Banner says Report is partially loaded and Retry roster links to the same report.
 - Files: src/modules/courses/faculty-assessment-report-service.ts, src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx
 - Legacy: Partial roster warning yellow Alert Report is partially loaded, Retry roster. (`docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:167-175`)
 - Expected fix: Render partial metrics/warning and Retry roster when submission data succeeded.
@@ -47,12 +48,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Provide partial warning without false missing/eligible counts.
 
 ## G2-4-013-044 [P1] GAP facet F10
+- [x] Verified: unique authorized assignment links without deliveryId resolve against faculty assessment overview; shared assignments use an explicit Section chooser.
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy report reads class roster even without dedicated Section filter. (`docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:67-73`)
 - Expected fix: Support unambiguous legacy links; retain strict cross-section scope for shared reports.
 
 ## G2-4-013-046 [P1] GAP facet F11
-- [ ] Partial: ambiguous shared assessments fail closed; legacy Section chooser is not yet implemented.
+- [x] Verified: ambiguous shared assignments display an authorized Section chooser in the report page, rather than selecting an unrelated Section.
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy report may be reached by faculty from Blueprint without deliveryId. (`docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:29-33`)
 - Expected fix: Provide safe Section chooser on ambiguous deep links.
