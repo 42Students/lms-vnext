@@ -5,15 +5,19 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [ ] `tests/unit/HR-BREAK-chat15-company-report-archive-31.test.ts` (1 failing)
 - [x] `tests/unit/UX-learning-cross-audit-chat17.test.ts` (2 failing)
 - [x] `tests/unit/chat17-verify2b-contact-more-parity.test.ts` (1 failing)
-- [ ] `tests/unit/chat3-verify2-retention-and-assignments.test.ts` (1 failing)
-- [ ] `tests/unit/chat7-round3-faculty-contracts.test.ts` (1 failing)
+- [x] `tests/unit/chat3-verify2-retention-and-assignments.test.ts` (1 failing)
+- [x] `tests/unit/chat7-round3-faculty-contracts.test.ts` (1 failing)
 - [x] `tests/unit/db04-profile-document-format.test.ts` (1 failing)
-- [ ] `tests/unit/tpo-drives-chat-3-round4.test.ts` (1 failing)
+- [x] `tests/unit/tpo-drives-chat-3-round4.test.ts` (1 failing)
 
 ## Repairs on chatgpt/chat-2-b (static checks; CI not run)
 - `UX-learning-cross-audit-chat17.test.ts`: `31cfcf602895d12447f9ec0679c1bd3eee2aef28` and `dd0528d6a09e06ef7c28066032d0e0ae82300824` — retained safe HTTPS links and removed new-tab navigation.
 - `chat17-verify2b-contact-more-parity.test.ts`: `6a130ed59f3f367bf7a711be6dee2753afbd9f8e` — eliminated obsolete overlay reference in source comment while keeping direct More route.
 - `db04-profile-document-format.test.ts`: `fb9a905f513786136332be96f4cbf23b8b401f86` — accept formatted numeric phone and reject alphabetic input.
+
+- `chat3-verify2-retention-and-assignments.test.ts`: `1ecc0b0be3dc76079983d14e94f79b6dd98266a6`, `9d83e04a6b09120554fdc574163ded7218aeaa51` — visible assignment review lists allowed methods and resources.
+- `chat7-round3-faculty-contracts.test.ts`: `c000ce8eb15a1555640e63c82afcdfd1f6029fd4` — display academic period code on course card.
+- `tpo-drives-chat-3-round4.test.ts`: `310068edc28b731032818c901ff4a2709f963975` — preserve scoped clone picker wiring and source contract.
 
 ## Failures (from CI log)
 
