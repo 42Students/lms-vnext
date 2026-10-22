@@ -12,15 +12,16 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import type { ModuleAccessScope } from "./service";
 import { getSuperAdminLearnerAccessTrace } from "./admin-trace-service";
-import { hasPersistedAncestorLock, isStudentRuleNoop, studentRuleMatches } from "./admin-student-rule-model";
+import { isStudentRuleNoop, studentRuleMatches } from "./admin-student-rule-model";
 import { StudentRuleConflict } from "./admin-student-rule-write";
 
 /** No placement overrides: placement decisions ignore membership rules.
- * Remain bounded to 25 IDs until a bulk 1000-learner SQL preflight exists. */
+ * Batch membership locks, stored CAS rows and ancestor locks in a single
+ * transaction. The legacy maximum is 1000 distinct learner memberships. */
 const inputSchema = z.strictObject({
   membershipIds: z.preprocess(
     (value) => Array.isArray(value) ? [...new Set(value)] : value,
-    z.array(z.uuid()).min(1).max(25),
+    z.array(z.uuid()).min(1).max(1000),
   ),
   module: z.enum(["projects", "electives"]),
   action: z.enum(["ENABLE", "DISABLE", "INHERIT"]),
@@ -93,6 +94,8 @@ export async function updateSuperAdminStudentRulesInBulk(
       });
     }
 
+    const scopeKey=(scope:ModuleAccessScope)=>
+      scope.scopeType+":"+(scope.scopeId??"");
     const applied = await getDb().transaction(async (tx) => {
       const [college] = await tx.select({
         id: colleges.id,
@@ -139,46 +142,59 @@ export async function updateSuperAdminStudentRulesInBulk(
         .for("share");
       const learnerIds = new Set(roles.map((entry) => entry.membershipId));
 
+      // Lock current membership overrides in one stable ordered read, rather
+      // than a SELECT FOR UPDATE per learner inside a 1000-row transaction.
+      const storedRows=await tx.select({
+        id:moduleAccessRules.id,scopeId:moduleAccessRules.scopeId,
+        enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked,
+      }).from(moduleAccessRules).where(and(
+        eq(moduleAccessRules.scopeType,"MEMBERSHIP"),
+        eq(moduleAccessRules.module,input.module),
+        inArray(moduleAccessRules.scopeId,ids),
+      )).orderBy(asc(moduleAccessRules.scopeId)).for("update");
+      const storedByMember=new Map(storedRows.map(row=>[row.scopeId,row]));
+      // Preflight shared parent locks once per distinct ancestor scope. Chunk
+      // predicates to avoid huge SQL expressions for mixed academic cohorts.
+      const ancestorScopes=new Map<string,ModuleAccessScope>();
+      if(input.action!=="INHERIT"){
+        for(const entry of prepared)for(const scope of entry.ancestors)
+          ancestorScopes.set(scopeKey(scope),scope);
+      }
+      const ancestorRows=[...ancestorScopes.values()];
+      const lockedAncestors=new Set<string>();
+      for(let index=0;index<ancestorRows.length;index+=200){
+        const group=ancestorRows.slice(index,index+200);
+        const predicate=or(...group.map(scope=>and(
+          eq(moduleAccessRules.scopeType,scope.scopeType),
+          scope.scopeId===null?isNull(moduleAccessRules.scopeId):
+            eq(moduleAccessRules.scopeId,scope.scopeId),
+        )));
+        const parents=await tx.select({
+          scopeType:moduleAccessRules.scopeType,
+          scopeId:moduleAccessRules.scopeId,
+          locked:moduleAccessRules.locked,
+        }).from(moduleAccessRules).where(and(
+          eq(moduleAccessRules.module,input.module),predicate,
+        )).for("share");
+        for(const row of parents)if(row.locked)
+          lockedAncestors.add(scopeKey(row));
+      }
+      const auditRows: Array<typeof activityEvents.$inferInsert>=[];
       for (const item of prepared) {
         currentId = item.membershipId;
         if (!activeIds.has(item.membershipId) || !learnerIds.has(item.membershipId)) {
           throw new BulkRuleRejected(item.membershipId, "LEARNER_NOT_FOUND");
         }
-
-        if (input.action !== "INHERIT" && item.ancestors.length > 0) {
-          const parentConditions = item.ancestors.map((scope) => {
-            const scopeIdMatch = scope.scopeId === null
-              ? isNull(moduleAccessRules.scopeId)
-              : eq(moduleAccessRules.scopeId, scope.scopeId);
-            return and(
-              eq(moduleAccessRules.scopeType, scope.scopeType),
-              scopeIdMatch,
-            );
-          });
-          const parents = await tx.select({
-            locked: moduleAccessRules.locked,
-          }).from(moduleAccessRules)
-            .where(and(
-              eq(moduleAccessRules.module, input.module),
-              or(...parentConditions),
-            ))
-            .for("share");
-          if (hasPersistedAncestorLock(parents)) {
-            throw new StudentRuleConflict("ANCESTOR_LOCKED");
-          }
-        }
+        if(input.action!=="INHERIT"&&
+            item.ancestors.some(scope=>lockedAncestors.has(scopeKey(scope))))
+          throw new StudentRuleConflict("ANCESTOR_LOCKED");
 
         const predicate = and(
           eq(moduleAccessRules.scopeType, "MEMBERSHIP"),
           eq(moduleAccessRules.scopeId, item.membershipId),
           eq(moduleAccessRules.module, input.module),
         );
-        const [previous] = await tx.select({
-          id: moduleAccessRules.id,
-          enabled: moduleAccessRules.enabled,
-          locked: moduleAccessRules.locked,
-        }).from(moduleAccessRules).where(predicate)
-          .for("update").limit(1);
+        const previous=storedByMember.get(item.membershipId);
         const before = previous
           ? { enabled: previous.enabled, locked: previous.locked }
           : null;
@@ -212,7 +228,7 @@ export async function updateSuperAdminStudentRulesInBulk(
             updatedByUserId: context.user.id,
           });
         }
-        await tx.insert(activityEvents).values({
+        auditRows.push({
           collegeId: college.id,
           organizationId: college.organizationId,
           actorUserId: context.user.id,
@@ -232,6 +248,8 @@ export async function updateSuperAdminStudentRulesInBulk(
         });
       }
 
+      // One audited bulk insert, rather than a round trip per learner.
+      if(auditRows.length)await tx.insert(activityEvents).values(auditRows);
       // A failed summary also rolls back all learner mutations and audits.
       await tx.insert(activityEvents).values({
         collegeId: college.id,
