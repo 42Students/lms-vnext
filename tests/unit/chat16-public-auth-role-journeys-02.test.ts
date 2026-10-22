@@ -68,7 +68,7 @@ describe("chat-16 public auth and invitation page journeys",()=>{
   expect(form).toContain("response.redirected");
   expect(form).toContain("url.origin!==window.location.origin");
   expect(form).toContain('url.pathname!=="/campaign-unsubscribe/confirmed"');
-  expect(form).toContain("That didn't work. Please try again.");
+  expect(form).toContain("That didn’t work. Please try again.");
   expect(confirmed).toContain('role="status"');
  });
 });
