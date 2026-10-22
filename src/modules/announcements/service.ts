@@ -858,3 +858,92 @@ export async function resendAnnouncementForAdmin(context:RequestContext,raw:unkn
   return created;
  });
 }
+
+/**
+ * The old /api/v2/announcements/search endpoint is GLOBAL Super Admin only.
+ * Unlike the scoped management list, it must never widen a selected
+ * organization/college workspace into a platform-wide search.
+ */
+export async function searchLegacyAnnouncementsForGlobalSuperAdmin(
+  context: RequestContext, rawQuery: unknown, rawLimit: unknown = 15,
+) {
+  if (!isSuperAdmin(context) || context.adminScope?.collegeId ||
+      context.adminScope?.organizationId ||
+      !canAccessAnnouncements(context.user.platformStatus)) {
+    throw new AnnouncementError("FORBIDDEN");
+  }
+  requirePermission(context, "admin-scope.select");
+  const query = z.string().trim().max(100).parse(rawQuery).toLowerCase();
+  const limit = z.coerce.number().int().min(1).max(50).parse(rawLimit);
+  // Bounded candidate pool: matching titles/messages first, then recent
+  // source rows for a limited <=2-edit typo fallback. No unscoped result
+  // leaves this function before the global-only role check above.
+  const contains = query
+    ? or(
+      sql`position(${query}::text in lower(${db10Announcements.title})) > 0`,
+      sql`position(${query}::text in lower(${db10Announcements.message})) > 0`,
+    )
+    : undefined;
+  const fields = {
+    id: db10Announcements.id,
+    title: db10Announcements.title,
+    message: db10Announcements.message,
+    receiverType: db10Announcements.receiverType,
+    receiverId: db10Announcements.receiverId,
+    createdAt: db10Announcements.createdAt,
+  };
+  const direct = await getDb().select(fields).from(db10Announcements)
+    .where(and(isNull(db10Announcements.deletedAt), contains))
+    .orderBy(desc(db10Announcements.createdAt), desc(db10Announcements.id))
+    .limit(500);
+  const fallback = query.length >= 3 && direct.length < limit
+    ? await getDb().select(fields).from(db10Announcements)
+      .where(isNull(db10Announcements.deletedAt))
+      .orderBy(desc(db10Announcements.createdAt), desc(db10Announcements.id))
+      .limit(500)
+    : [];
+  const seen = new Set<string>();
+  const rows = [...direct, ...fallback].filter(row => {
+    if (seen.has(row.id)) return false;
+    seen.add(row.id);
+    return true;
+  });
+  function distanceAtMostTwo(word: string): number {
+    if (Math.abs(word.length - query.length) > 2) return 3;
+    let previous = Array.from({ length: query.length + 1 }, (_, i) => i);
+    for (let i = 0; i < word.length; i++) {
+      const current = [i + 1];
+      for (let j = 0; j < query.length; j++) {
+        current.push(Math.min(
+          previous[j + 1]! + 1, current[j]! + 1,
+          previous[j]! + (word[i] === query[j] ? 0 : 1),
+        ));
+      }
+      previous = current;
+    }
+    return previous[query.length] ?? 3;
+  }
+  function rank(title: string, message: string): number {
+    if (!query) return 1;
+    const name = title.toLowerCase();
+    const body = message.toLowerCase();
+    if (name === query) return 1000;
+    if (name.startsWith(query)) return 900;
+    if (name.split(/\\s+/u).some(word => word.startsWith(query))) return 800;
+    if (name.includes(query)) return 700;
+    if (body.includes(query)) return 500;
+    if (query.length >= 3) {
+      const terms = name.split(/[^\\p{L}\\p{N}]+/u).filter(Boolean).slice(0, 30);
+      const distance = Math.min(3, ...terms.map(distanceAtMostTwo));
+      if (distance <= 2) return 300 - distance;
+    }
+    return 0;
+  }
+  return rows.map(row => ({ ...row, score: rank(row.title, row.message) }))
+    .filter(row => row.score > 0)
+    .sort((a, b) => b.score - a.score ||
+      b.createdAt.getTime() - a.createdAt.getTime() ||
+      a.id.localeCompare(b.id))
+    .slice(0, limit)
+    .map(({ score: _score, createdAt: _createdAt, ...row }) => row);
+}
