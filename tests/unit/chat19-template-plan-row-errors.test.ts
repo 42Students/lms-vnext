@@ -15,5 +15,8 @@ describe("chat-19 template sprint/task per-row errors",()=>{
   expect(source).toContain('rowIssues[key]=prior+" · "+issue.message');
   expect(source).toContain('rowErrors["tasks:"+index]');
   expect(source).toContain('rowErrors["sprints:"+index]');
+  expect(source).toContain('clearRowError("tasks",index)');
+  expect(source).toContain('clearRowError("sprints",index)');
+  expect(source).toContain('clearRowError("releases",index)');
  });
 });
