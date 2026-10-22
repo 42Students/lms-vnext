@@ -20,13 +20,37 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
  const router=useRouter(),{showToast}=useToast(),[open,setOpen]=useState(false),[organizationId,setOrganizationId]=useState(organizations[0]?.id??""),
  [csv,setCsv]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),[results,setResults]=useState<Result[]>([]);
  const [confirmImport,setConfirmImport]=useState(false),[confirmDiscard,setConfirmDiscard]=useState(false);
+ const [leaveHref,setLeaveHref]=useState<string|null>(null);
+ const approvedLeaveRef=useRef(false);
+ const hasDraft=Boolean(csv.trim()&&!results.length);
  useEffect(()=>{
+  if(!hasDraft&&!busy)return;
   const warn=(event:BeforeUnloadEvent)=>{
-   if(csv.trim()&&!results.length){event.preventDefault();event.returnValue="";}
+   if(approvedLeaveRef.current)return;
+   event.preventDefault();event.returnValue="";
+  };
+  const intercept=(event:MouseEvent)=>{
+   if(approvedLeaveRef.current||event.defaultPrevented||event.button!==0||
+      event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||
+      !(event.target instanceof Element))return;
+   const anchor=event.target.closest("a[href]");
+   if(!(anchor instanceof HTMLAnchorElement)||anchor.hasAttribute("download")||
+      (anchor.target&&anchor.target!=="_self"))return;
+   const destination=new URL(anchor.href,window.location.href);
+   if(destination.origin===window.location.origin&&
+      destination.pathname===window.location.pathname&&
+      destination.search===window.location.search&&
+      destination.hash===window.location.hash)return;
+   event.preventDefault();event.stopPropagation();
+   setLeaveHref(destination.href);
   };
   window.addEventListener("beforeunload",warn);
-  return ()=>window.removeEventListener("beforeunload",warn);
- },[csv,results.length]);
+  document.addEventListener("click",intercept,true);
+  return ()=>{
+   window.removeEventListener("beforeunload",warn);
+   document.removeEventListener("click",intercept,true);
+  };
+ },[hasDraft,busy]);
  let valid=0,validation="";
  try{if(csv.trim())valid=parseCollegeImportCsv(csv,organizationId).length;}
  catch(cause){validation=cause instanceof Error?cause.message:"Invalid CSV";}
@@ -126,5 +150,17 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    {(error||validation)?<Alert tone="error">{error||validation}</Alert>:null}
   </ConfirmDialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title="Discard this bulk-import draft?" description="Unsaved CSV content will be discarded. Completed import results are kept." confirmLabel="Discard" cancelLabel="Keep editing" confirmVariant="danger" pending={busy} onConfirm={discard}/>
+  <ConfirmDialog open={leaveHref!==null}
+   onOpenChange={visible=>{if(!visible)setLeaveHref(null);}}
+   title={busy?"Leave while college import is in progress?":"Leave with an unsaved college import?"}
+   description={busy?"The import is in progress; leaving may make the result uncertain.":
+    "Your selected organization and CSV draft will be lost if you leave this page."}
+   confirmLabel="Leave without importing" confirmVariant="danger"
+   confirmDisabled={busy}
+   onConfirm={()=>{
+    if(!leaveHref||busy)return;
+    approvedLeaveRef.current=true;
+    window.location.assign(leaveHref);
+   }}/>
  </section>;
 }
