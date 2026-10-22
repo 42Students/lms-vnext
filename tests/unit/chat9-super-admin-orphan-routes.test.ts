@@ -9,8 +9,14 @@ describe("Super Admin sidebar consolidation retains orphan routes",()=>{
     ["admin/departments/page.tsx","/admin/academics"],
     ["admin/audit/page.tsx","/tracker/audit-findings"],
   ];
-  for(const [page,target] of pairs)
-   expect(readFileSync(join(root,page),"utf8")).toContain('href="'+target+'"');
+  for(const [page,target] of pairs){
+   const source=readFileSync(join(root,page),"utf8");
+   if(page==="admin/departments/page.tsx"){
+     expect(source).toContain("<AcademicSetupSteps step={1}");
+     expect(readFileSync(join(process.cwd(),"src/components/admin/academic-setup-steps.tsx"),"utf8"))
+       .toContain(target);
+   }else expect(source).toContain('href="'+target+'"');
+  }
   expect(existsSync(join(root,"admin/domains/page.tsx"))).toBe(true);
   expect(existsSync(join(root,"admin/academics/page.tsx"))).toBe(true);
   expect(existsSync(join(root,"tracker/audit-findings/page.tsx"))).toBe(true);
