@@ -35,7 +35,7 @@ export const LEGACY_HR_DRIVE_FORM_LABELS={
 export const HR_DRIVE_CTC_STEP=0.1;
 export const HR_DRIVE_PACKAGE_MONEY_STEP=0.5;
 const payPackage = z.strictObject({
- name: z.string().trim().min(1).max(120),
+ name: z.string().trim().min(1).max(100),
  ctcLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
  fixedLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
  variableLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
@@ -100,10 +100,20 @@ export const hrDriveDraftSchema = z.strictObject({
     ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
       message:"An application website is only valid for off-campus drives"});
   }
-  if(data.payPackages && !data.payPackages.some(item=>
-     Number(item.ctcLpa)>0 || Number(item.stipendMonthlyInr)>0)){
-   ctx.addIssue({code:"custom",path:["payPackages"],
-    message:"Set the pay (CTC or stipend) for at least one package"});
+  if(data.payPackages?.length){
+    const seen=new Set<string>();
+    for(const [index,item] of data.payPackages.entries()){
+      const key=item.name.normalize("NFKC").toLocaleLowerCase("en-IN");
+      if(seen.has(key))
+        ctx.addIssue({code:"custom",path:["payPackages",index,"name"],
+          message:"Give each pay package a distinct name"});
+      seen.add(key);
+    }
+    if(!data.payPackages.some(item=>
+       Number(item.ctcLpa)>0 || Number(item.stipendMonthlyInr)>0)){
+      ctx.addIssue({code:"custom",path:["payPackages"],
+       message:"Set the pay (CTC or stipend) for at least one package"});
+    }
   }
   if(data.passingYears?.length && data.passingYear &&
       !data.passingYears.includes(Number(data.passingYear))){

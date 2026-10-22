@@ -67,15 +67,34 @@ export async function createRecruiterApprovedDraftJob(
    externalApplicationUrl:draft.driveMode==="OFF_CAMPUS"?draft.externalApplicationUrl:null,
   }).returning({id:placementJobs.id});
  if(!job)throw new RecruiterDraftApprovalError("REQUEST_STALE");
- await tx.insert(placementJobRoleOptions).values({
+ // Multi-package requests map to ordered role options; never silently
+ // discard the employer's secondary package when TPO approves a drive.
+ const packages=draft.payPackages?.length?draft.payPackages:null;
+ const roles=packages?packages.map((pay,index)=>({
+  jobId:job.id,title:pay.name,employmentType:draft.employmentType,
+  workMode:draft.workMode,locations:[draft.location],position:index,
+  isPrimary:index===0,
+  ctcLpa:pay.ctcLpa||null,
+  fixedLpa:pay.fixedLpa||null,variableLpa:pay.variableLpa||null,
+  joiningBonusLpa:pay.joiningBonusLpa||null,
+  stipendPerMonthInr:pay.stipendMonthlyInr?Number(pay.stipendMonthlyInr).toFixed(2):null,
+  stipendMonths:pay.internshipMonths??null,
+  minimumAnnualCtcInr:pay.ctcLpa?Math.round(Number(pay.ctcLpa)*100000):
+    inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
+  maximumAnnualCtcInr:pay.ctcLpa?Math.round(Number(pay.ctcLpa)*100000):
+    inr(draft.maximumAnnualCtcInr)??legacyAnnualCtc,
+  bondMonths:inr(draft.bondMonths),bondAmount:draft.bondAmountInr||null,
+ })): [{
   jobId:job.id,title:draft.title,employmentType:draft.employmentType,
-  workMode:draft.workMode,locations:[draft.location],isPrimary:true,
+  workMode:draft.workMode,locations:[draft.location],position:0,isPrimary:true,
+  ctcLpa:draft.ctcLpa||null,
   minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
   maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr)??(!draft.minimumAnnualCtcInr?legacyAnnualCtc:null),
   fixedLpa:draft.fixedLpa||(draft.fixedAnnualCtcInr?(Number(draft.fixedAnnualCtcInr)/100000).toFixed(2):null),
   variableLpa:draft.variableLpa||(draft.variableAnnualCtcInr?(Number(draft.variableAnnualCtcInr)/100000).toFixed(2):null),
   bondMonths:inr(draft.bondMonths),bondAmount:draft.bondAmountInr||null,
- });
+ }];
+ await tx.insert(placementJobRoleOptions).values(roles);
  if(draft.rounds.length)await tx.insert(placementJobRounds).values(draft.rounds.map((round,index)=>({
   jobId:job.id,sequence:index+1,kind:round.kind,name:round.name,createdByUserId:actorUserId,
  })));
