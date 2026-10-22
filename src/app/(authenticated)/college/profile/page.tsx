@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { CollegeAdminProfileEditor } from "@/components/college/college-admin-profile-editor";
+import { CollegeProfileRetained } from "@/components/college/college-profile-retained";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -31,29 +31,18 @@ export default async function CollegeAdminProfilePage({
     getOwnAccountSummary(context),
     loadCollegeOwnProfile(context),
   ]);
-  if(profileResult.status==="rejected")return <div className="min-w-0 space-y-6">
-    <PageHeader title="Profile"/>
-    <section className="py-10" aria-label="Profile load error">
-      <ErrorState title="Failed to load profile." description="Couldn't refresh profile. Showing the last profile we loaded."
-        action={<Link href="/college/profile" prefetch={false}
-          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link hover:bg-surface-subtle md:min-h-9">
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none"
-            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18.5 7L20 12M4 12l1.5 5A7 7 0 0 0 18.4 15"/>
-          </svg>Retry
-        </Link>}/>
-    </section>
-  </div>;
-  const profile=profileResult.value;
   const account=accountResult.status==="fulfilled"?accountResult.value:null;
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Profile"
       description="Your personal and contact details. College contact information is managed separately."
       actions={<CollegeProfileRefresh/>}/>
     <section aria-label="Personal profile" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-      <CollegeAdminProfileEditor initial={profile}
-        email={account?.email ?? null} phone={account?.phoneE164 ?? null}
-        college={account?.college?.name ?? null} />
+      <CollegeProfileRetained key={context.user.id+":"+context.membership.id}
+        failed={profileResult.status==="rejected"}
+        current={profileResult.status==="fulfilled"?{
+          profile:profileResult.value,email:account?.email??null,
+          phone:account?.phoneE164??null,college:account?.college?.name??null,
+        }:null}/>
     </section>
     <nav aria-label="Related profile links"
       className="flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-4 md:flex-row md:flex-wrap md:items-center md:gap-4">
