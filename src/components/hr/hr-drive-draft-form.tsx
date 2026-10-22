@@ -254,8 +254,13 @@ export function HrDriveDraftForm({
           !Number.isFinite(Date.parse(response.expiresAt)) ||
           Date.parse(response.expiresAt) <= Date.now())
         throw new Error("Invalid signed read link");
-      if (popup && !popup.closed) popup.location.replace(parsed.toString());
-      else window.location.assign(parsed.toString());
+      // Never navigate the unsent drive-request tab when a popup is blocked.
+      // Its draft and change-confirmation guard must remain intact.
+      if (!popup || popup.closed) {
+        setJdUploadMessage("Allow pop-ups to view the uploaded job description.");
+        return;
+      }
+      popup.location.replace(parsed.toString());
     } catch { popup?.close(); setJdUploadMessage("Could not open the file. Try again after verification."); }
   }
 
