@@ -80,6 +80,7 @@ export function CollegeBrandingForm({
   const [saving, startSave] = useTransition();
   // A dedicated busy state also guards discrete submit events while async work runs.
   const [saveInFlight,setSaveInFlight] = useState(false);
+  const savingRef = useRef(false);
   useEffect(()=>{
     if(lastCollegeRef.current!==collegeId){
       // The owning route keys this editor by college; still guard its
@@ -188,7 +189,8 @@ export function CollegeBrandingForm({
 
   function save(event: React.FormEvent) {
     event.preventDefault();
-    if (!canEdit || !collegeId || fetching || loadError || saveInFlight) return;
+    if (!canEdit || !collegeId || fetching || loadError || savingRef.current) return;
+    savingRef.current = true;
     setSaveInFlight(true);
     startSave(async () => {
       try {
@@ -240,6 +242,7 @@ export function CollegeBrandingForm({
       } catch {
         showToast({title:"Couldn't save branding",description:"Check your connection and try again.",tone:"error"});
       } finally {
+        savingRef.current = false;
         setSaveInFlight(false);
       }
     });

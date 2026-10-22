@@ -8,7 +8,7 @@ export const tpoStudentNudgeTemplates={
  CUSTOM:"",
 } as const;
 export const tpoStudentNudgeLabels={
- REGISTRATION:"Register",
+ REGISTRATION:"Register for placements",
  RESUME:"Upload resume",
  PROFILE:"Complete profile",
  APPLY:"Apply to drives",

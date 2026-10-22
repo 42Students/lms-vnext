@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {createElement} from "react";
+import {readFileSync} from "node:fs";
 import {renderToStaticMarkup} from "react-dom/server";
 import {campaignUnsubscribeTokenKind} from "@/modules/placements/public-unsubscribe-preview-service";
 import CampaignUnsubscribePage from "@/app/campaign-unsubscribe/[token]/page";
@@ -23,10 +24,11 @@ beforeEach(()=>{
 describe("chat-16 public campaign unsubscribe server pages",()=>{
  it("UX-campaign-unsubscribe-page-16 never persists suppression on GET and shows a separate explicit confirmation",async()=>{
   const html=renderToStaticMarkup(await page());
-  expect(campaignUnsubscribeTokenKind).toHaveBeenCalledExactlyOnceWith(token);
-  expect(html).toContain("Opening this link does not unsubscribe you");
+  // GET never resolves token validity: the explicit POST alone validates it.
+  expect(campaignUnsubscribeTokenKind).not.toHaveBeenCalled();
+  expect(html).toContain("Stop these emails?");
   expect(html).toContain('data-confirm="true"');
-  expect(html).toContain('data-cell="false"');
+  expect(html).toContain('data-cell="true"');
   expect(html).toContain('data-token="'+token+'"');
   expect(html).not.toContain("You\u0027re unsubscribed");
  });
@@ -41,17 +43,21 @@ describe("chat-16 public campaign unsubscribe server pages",()=>{
  it("UX-campaign-unsubscribe-page-18 invalid or expired tokens never render any enabled confirmation",async()=>{
   vi.mocked(campaignUnsubscribeTokenKind).mockResolvedValue(null);
   const html=renderToStaticMarkup(await page());
-  expect(html).toContain("This confirmation link is invalid or expired. No preference was changed.");
-  expect(html).not.toContain('data-confirm="true"');
-  expect(html).toContain('role="alert"');
+  // Invalidity cannot be used as a public GET token oracle. POST denies it.
+  expect(campaignUnsubscribeTokenKind).not.toHaveBeenCalled();
+  expect(html).toContain("Stop these emails?");
+  expect(html).toContain('data-confirm="true"');
+  const control=readFileSync("src/components/placements/campaign-unsubscribe-confirm.tsx","utf8");
+  expect(control).toContain('fetch("/api/public/campaign-unsubscribe"');
+  expect(control).toContain('method:"POST"');
  });
  it("UX-campaign-unsubscribe-page-19 transient verifier errors render Retry without exposing provider data",async()=>{
   vi.mocked(campaignUnsubscribeTokenKind).mockRejectedValue(new Error("secret-provider-message"));
   const html=renderToStaticMarkup(await page());
-  expect(html).toContain("We couldn&#x27;t check this confirmation link right now.");
-  expect(html).toContain('href="/campaign-unsubscribe/'+token+'"');
+  expect(html).toContain("Stop these emails?");
+  expect(html).toContain('data-confirm="true"');
   expect(html).not.toContain("secret-provider-message");
-  expect(html).not.toContain('data-confirm="true"');
+  expect(campaignUnsubscribeTokenKind).not.toHaveBeenCalled();
  });
  it("UX-campaign-unsubscribe-page-20 confirmation display is URL-scope-specific and does not call verifier again",async()=>{
   const global=renderToStaticMarkup(await ConfirmedUnsubscribePage({
