@@ -197,9 +197,9 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     <label className="flex items-center gap-2 text-xs font-semibold text-body"><Checkbox className="size-5"
       checked={row.required} onChange={e=>change(i,{required:e.target.checked})}/>Required</label>
     <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:col-span-2">
-      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" up"} disabled={i===0} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];[n[i-1],n[i]]=[n[i],n[i-1]];return n;});}}
+      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" up"} disabled={i===0} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];const previous=n[i-1],current=n[i];if(previous===undefined||current===undefined)return r;n[i-1]=current;n[i]=previous;return n;});}}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Move up</Button>
-      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" down"} disabled={i===rows.length-1} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];[n[i+1],n[i]]=[n[i],n[i+1]];return n;});}}
+      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" down"} disabled={i===rows.length-1} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];const next=n[i+1],current=n[i];if(next===undefined||current===undefined)return r;n[i+1]=current;n[i]=next;return n;});}}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Move down</Button>
       <Button type="button" variant="danger" aria-label={"Remove "+(row.title||"resource")} onClick={()=>remove(i)}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Remove</Button>
