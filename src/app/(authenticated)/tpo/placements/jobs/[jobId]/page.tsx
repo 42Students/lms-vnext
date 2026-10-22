@@ -34,8 +34,8 @@ export default async function TpoPlacementDrivePage({
     if(error instanceof ZodError||error instanceof AuthorizationError)
       notFound();
     if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")
-      return <ErrorState title="Drive not found"
-        description="This drive is unavailable for the selected college."
+      return <ErrorState title="This drive doesn't exist"
+        description="This drive is not available in your college."
         action={<Link href="/tpo/placements/jobs" className="text-link underline">Go to Drives</Link>}/>;
     return <ErrorState title="Could not load drive"
       description="Please retry loading this drive."
@@ -53,6 +53,12 @@ export default async function TpoPlacementDrivePage({
   }
   return (
     <div className="min-w-0 space-y-4">
+      <div className="flex flex-wrap justify-end gap-2" aria-label="Drive discussions">
+        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
+         className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+         Discussion
+        </Link>
+      </div>
       <PlacementDriveWorkspace context={context} jobId={jobId} eyebrow="TPO" openPublish={openPublish}/>
       <details className="group min-w-0 border-t border-border pt-3">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">

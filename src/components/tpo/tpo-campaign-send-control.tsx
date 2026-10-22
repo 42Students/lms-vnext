@@ -31,7 +31,7 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
       "The campaign could not be sent. Refresh before retrying.");
      if (![data.sent,data.failed,data.skipped].every(value=>typeof value==="number" && Number.isSafeInteger(value) && value>=0))
        throw new Error("The campaign response could not be verified. Refresh for receipts.");
-     const summary=data.sent+" accepted by provider · "+data.failed+" failed · "+data.skipped+" skipped.";
+     const summary=data.sent+" sent, "+data.skipped+" skipped, "+data.failed+" failed.";
      setOutcome({sent:data.sent!,failed:data.failed!,skipped:data.skipped!});
      showToast({tone:data.failed?"info":"success",title:"Campaign send recorded",
        description:summary+" Provider acceptance does not prove delivery."});
@@ -49,8 +49,8 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
   This campaign is {status.toLowerCase()}. Provider acceptance does not prove inbox delivery.
  </p>;
  return <section className="min-w-0 space-y-3 border-t border-border pt-4" aria-label="Campaign send">
-  <h2 className="font-semibold">Step 2 of 2 · Send this campaign</h2>
-  <p className="text-sm text-body">Legacy Send an email is now a verified draft-and-confirm workflow. Review the saved subject and recipient selection before final confirmation.</p>
+  <h2 className="font-semibold">Step 2 of 2 · Email {recipients} recruiters</h2>
+  <p className="text-sm text-body">Legacy Send an email is now a verified draft-and-confirm workflow. Review the saved subject and recipient selection before final confirmation. You may save a draft without email delivery configured, but Send requires a ready provider and at least one reachable recipient.</p>
   {!ready?<Alert tone="warning">
    Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.
    {" "}{CAMPAIGN_DELIVERY_UNAVAILABLE}
@@ -61,12 +61,12 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
   {ready&&recipients===0?<p role="status" className="text-sm text-muted-foreground">No eligible recipients are available for this campaign.</p>:null}
   <Button variant="primary" type="button" disabled={!ready||busy||recipients===0}
    className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
-   onClick={()=>setConfirmOpen(true)}>{busy?"Sending…":"Send campaign"}</Button>
+   onClick={()=>setConfirmOpen(true)}>{busy?"Sending…":"Send"}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}} pending={busy}
-    title={"Send to up to "+recipients+" selected recruiter emails?"}
-    description="This cannot be undone." confirmLabel="Send campaign"
+    title={"Email "+recipients+" recruiters?"}
+    description="This sends to the currently reachable recruiters and cannot be undone." confirmLabel="Send"
     onConfirm={()=>void sendCampaign()}/>
-  {outcome?<InlineNotice tone={outcome.failed?"info":"success"} message={outcome.sent+" accepted by provider · "+outcome.failed+" failed · "+outcome.skipped+" skipped. Provider acceptance does not prove delivery."}/>:null}
+  {outcome?<InlineNotice tone={outcome.failed?"info":"success"} message={outcome.sent+" sent, "+outcome.skipped+" skipped, "+outcome.failed+" failed. Provider acceptance does not prove delivery."}/>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }

@@ -1,5 +1,4 @@
 import { PageHeader } from "@/components/ui/page-header";
-import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
@@ -43,6 +42,7 @@ export default async function PublicPlacementSettingsPage({
    {value.ready?<p className="mt-3 text-sm text-muted-foreground">
       Active consented placement cohort: {view.populationCount??"Unavailable"}
     </p>:null}
+   <h2 className="text-base font-semibold text-foreground">{view.enabled?"Placements page is on":"Placements page is off"}</h2>
    {value.ready?<TpoPublicPlacementToggle enabled={view.enabled} canEnable={view.canEnable}/>:
     <Alert tone="warning">
      Public placement settings storage is unavailable until the registered migration is ready. No publication preference was changed.
@@ -52,7 +52,9 @@ export default async function PublicPlacementSettingsPage({
      This is an intentional vNext privacy gate before publishing; the old LMS permitted publication while suppressing each small metric separately.
      <Link href="/tpo/batches" className="ml-1 font-semibold text-link underline underline-offset-2">Review batches and invitations</Link>.
     </Alert>:null}
-   <Disclosure title="How your public placements look" className="mt-5 min-w-0 border-t border-border pt-4" contentClassName="min-w-0 pt-3">
+   <TpoPublicPlacementContentEditor initial={content}/>
+   <section aria-label="Numbers to show preview" className="mt-5 min-w-0 space-y-3 border-t border-border pt-4">
+    <h2 className="text-base font-semibold text-foreground">Numbers to show · live preview</h2>
    <section aria-label="Published placement preview" className="min-w-0 space-y-3">
     <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
     {!view.enabled?<Alert tone="info">Publication is off; this preview does not make any statistics public.</Alert>:null}
@@ -70,8 +72,7 @@ export default async function PublicPlacementSettingsPage({
 })}
     </div>
    </section>
-   </Disclosure>
-   <TpoPublicPlacementContentEditor initial={content}/>
+   </section>
    <Link href="/placements" className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-[13px] sm:w-auto sm:justify-start font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
      Open public placements page
    </Link>
