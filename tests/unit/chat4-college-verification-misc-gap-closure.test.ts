@@ -43,6 +43,21 @@ describe("chat-4 College Verification and Misc verification",()=>{
   expect(retained).toContain(">Retry</Link>");
   expect(editor).toContain("if(saving||readOnly)return;");
   expect(editor).toContain("disabled={readOnly||saving||!dirty}");
+  expect(editor).toContain("if(readOnly||dirty)return;");
+  expect(editor).toContain("savedSnapshot.current=initial;");
+ });
+ it("G2-1-031-026 preserves legacy learner error and accessible last-good recovery",()=>{
+  const page=read("src/app/(authenticated)/learn/profile/page.tsx");
+  const stale=read("src/components/profile/learner-profile-last-good.tsx");
+  const legacy=read("docs/legacy-source/frontend/src/pages/learn/profile.js");
+  expect(legacy).toContain("description=\"Showing the last profile we loaded.\"");
+  expect(page).toContain("We couldn&apos;t load your profile. Please try again.");
+  expect(page).toContain("<LearnerProfileLastGood failed scopeKey={profileScopeKey}>");
+  expect(stale).toContain("Couldn&apos;t refresh profile".replace("'", "&apos;"));
+  expect(stale).toContain("Showing the last profile we loaded.");
+  expect(stale).toContain('role="alert"');
+  expect(stale).toContain('href="/learn/profile"');
+  expect(stale).toContain("<div inert");
  });
  it("COL-verification-misc-03 retains source-backed legacy behavior",()=>{
   {const s=read("src/components/verification/CollegeVerificationPanel.tsx");
