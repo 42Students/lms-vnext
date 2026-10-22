@@ -4,7 +4,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [x] `tests/unit/UX-college-term-mapping-scroll-chat17.test.ts` (1 failing) — preserved the read-only drag guard in product code and corrected outdated exact-source test assertion (19b5eecd).
 - [x] `tests/unit/chat16-email-bridge-hardening-02.test.ts` (1 failing) — updated source assertion for authenticated HMAC key rotation, including previous-secret expiry (db12f7a0).
-- [ ] `tests/unit/chat3-faculty-assessment-report-service-scope.test.ts` (2 failing)
+- [x] `tests/unit/chat3-faculty-assessment-report-service-scope.test.ts` (2 failing) — filter report rows by verified Section roster, preserving scoped reads when roster unavailable (ffa4aa4a; source-reviewed, not executed)
 - [ ] `tests/unit/chat7-college-assessment-export-service-weak.test.ts` (2 failing)
 - [x] `tests/unit/college-drive-applications-model.test.ts` (1 failing) — corrected default sort assertion and AGE_ASC link preservation (647a0bdd, 6db2f8f).
 - [x] `tests/unit/sa-tenants-modules-24-college-mutation-audit.test.ts` (1 failing) — the fourth read transaction verifies persisted permission; updated exact transaction assertion (94368cf).
