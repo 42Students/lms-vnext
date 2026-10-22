@@ -98,7 +98,8 @@ describe("chat-3 Super Admin Academics + People account journeys",()=>{
     expect(academics).toContain("context.adminScope?.collegeId ?? null");
     expect(academics.indexOf("if (!collegeId)"))
       .toBeLessThan(academics.indexOf("getAcademicsWorkspace("));
-    expect(academics).toContain('title="Select a college scope"');
+    expect(academics).toContain('if (!collegeId) redirect("/superadmin/dashboard")');
+    expect(academics).toContain('title="Academic Setup"');
     expect(people).toContain("context.adminScope?.collegeId ?? null");
     expect(people.indexOf("if (!collegeId)"))
       .toBeLessThan(people.indexOf("listCollegePeopleWithRuntime("));

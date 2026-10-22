@@ -8,12 +8,12 @@ describe("TPO public placements publication and copy",()=>{
   expect(p).toContain('if(tenant.kind!=="college"');
   expect(p).toContain("(publicRead?.available&&!published)");
   expect(p).toContain("notFound()");
-  expect(nf).toContain("This page isn&apos;t available");
-  expect(nf).toContain("The placement cell hasn&apos;t published a placements page here.");
+  expect(nf).toContain("This page isn't available");
+  expect(nf).toContain("The placement cell hasn't published a placements page here.");
  });
  it("TPO-campaigns-public-36 uses the college-specific legacy heading and removes platform-only footer",()=>{
   const p=src("src/app/placements/page.tsx");
-  expect(p).toContain('{college?.collegeName??"College placements"}');
+  expect(p).toContain('Placements at {college?.collegeName??"your college"}');
   expect(p).toContain("PublicRecruitFromUs");
   const copy=src("src/components/placements/public-recruit-from-us.tsx");
   expect(copy).toContain('aria-label="Recruit from us"');

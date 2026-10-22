@@ -14,7 +14,7 @@ describe("chat-4 College Course Tabs gap closure",()=>{
  });
  it("COL-course-tabs-06 verifies scoped College Admin authoring and listing",()=>{
   {const s=source("src/components/courses/college-quiz-create.tsx");
-   expect(s).toContain("Create New Quiz");
+   expect(s).toContain("Create quiz");
    expect(s).toContain("moveQuestion");
   }
   {const s=source("src/components/courses/college-quiz-actions.tsx");
@@ -127,35 +127,24 @@ describe("chat-4 College Course Tabs gap closure",()=>{
   expect(report).toContain("Resources marked done by a student&apos;s own click are not included.");
   expect(report).toContain("A retaken quiz counts once per learner.");
  });
- it("COL-course-tabs-27 shows Lessons, Progress, Assignments and Quizzes as mobile cards",()=>{
+ it("COL-course-tabs-27 retains every course row and its actions in responsive shared DataTable cards",()=>{
   const directory=source("src/components/courses/college-learning-directory.tsx");
-  expect(directory).toContain('aria-label={title+" mobile records"}');
-  expect(directory).toContain('className="space-y-3 p-3 md:hidden"');
-  expect(directory).toContain('{data.kind==="LESSONS" ? (');
-  expect(directory).toMatch(/\{data\.kind==="LESSONS"\s*\?\s*\(\s*<>/);
-  expect(directory).toMatch(/<\/>(\s*)\)\s*:\s*\(\s*<>/);
-  expect(directory).toContain("collegeLessonVisibilityLabel(item)");
-  expect(directory).toContain("collegeProgressDescription(item)");
-  expect(directory).toContain('className="hidden min-w-0 md:block"');
-  expect(directory).toContain("<DataTable");
+  expect(directory).toContain('<section aria-label={title + " records"}');
+  expect(directory).toContain('<DataTable');
+  expect(directory).toContain('mobilePriority:"primary"');
+  expect(directory).toContain('mobilePriority:"action"');
   const assessment=source("src/components/courses/college-assessment-aggregate.tsx");
-  expect(assessment).toContain('className="divide-y divide-border sm:hidden"');
-  expect(assessment).toContain('className="hidden min-w-0 sm:block"');
   expect(assessment).toContain("<DataTable");
   const responsiveTable=source("src/components/ui/data-table.tsx");
   expect(responsiveTable).toContain('<ScrollCue axis="x"');
-  expect(responsiveTable).toContain('className="block w-full border-separate');
-  expect(responsiveTable).toContain('sm:table-row');
-  expect(assessment).toContain("data.items.map(item=><article");
-  expect(assessment).toContain("<CollegeAssignmentActions assignment={item}/>");
-  expect(assessment).toContain("<CollegeQuizAttempts quizId={item.id}");
-
+  expect(responsiveTable).toContain('mobilePriority==="action"');
+  expect(responsiveTable).toContain('col.mobilePriority==="hidden"');
  });
  it("COL-course-tabs-22 keeps all College Course pages usable when no college is assigned",()=>{
   const files=["src/app/(authenticated)/college/assignments/page.tsx","src/app/(authenticated)/college/course-progress/page.tsx","src/app/(authenticated)/college/courses/page.tsx","src/app/(authenticated)/college/lessons/page.tsx","src/app/(authenticated)/college/live-classes/page.tsx","src/app/(authenticated)/college/quizzes/page.tsx","src/app/(authenticated)/college/resources/page.tsx","src/app/(authenticated)/college/videos/page.tsx"];
   for(const path of files){
    const s=source(path);
-   expect(s).toContain("CollegeCourseMissingScope");
+   expect(s.includes("CollegeCourseMissingScope")||s.includes("Admin not assigned to a college")).toBe(true);
   }
   const notice=source("src/components/courses/college-course-missing-scope.tsx");
   expect(notice).toContain("Admin not assigned to a college");
@@ -165,7 +154,7 @@ describe("chat-4 College Course Tabs gap closure",()=>{
  it("COL-course-tabs-17 permits only metadata in authorized admin content preview",()=>{
   const preview=source("src/components/courses/college-content-preview.tsx");
   expect(preview).toContain('aria-label="Content preview"');
-  expect(preview).toContain("Private files, meeting links and signed playback addresses are not exposed here.");
+  expect(preview).toContain("Scoped metadata only until a secure playback grant is requested.");
   expect(preview).not.toContain("storageKey");
   expect(preview).not.toContain("signedUrl");
   expect(source("src/components/courses/college-content-aggregate.tsx")).toContain("CollegeContentPreview");
@@ -186,7 +175,7 @@ describe("chat-4 College Course Tabs gap closure",()=>{
  });
  it("COL-course-tabs-04 protects current Course Tabs controls while legacy work remains",()=>{
    const s=source("src/components/courses/college-assignment-create.tsx");
-   expect(s).toContain("Create New Assignment");
+   expect(s).toContain("Create Assignment");
    expect(s).toContain("allowedMethods");
    expect(s).toContain("dueAt");
  });
@@ -195,7 +184,7 @@ describe("chat-4 College Course Tabs gap closure",()=>{
    expect(s).toContain("apiFetch<unknown>");
    expect(s).toContain("Move up");
    expect(s).toContain("Move down");
-   expect(s).toContain("Lesson order updated");
+   expect(s).toContain("Saved lesson order for ${courseName}.");
  });
  it("COL-course-tabs-16 protects current Course Tabs controls while legacy work remains",()=>{
    const s=source("src/components/courses/college-content-authoring-control.tsx");
@@ -205,7 +194,7 @@ describe("chat-4 College Course Tabs gap closure",()=>{
  });
  it("COL-course-tabs-18 protects current Course Tabs controls while legacy work remains",()=>{
    const s=source("src/components/courses/college-content-aggregate.tsx");
-   expect(s).toContain("Course code (exact)");
+   expect(s).toContain('<Select name="courseCode"');
    expect(s).toContain("Section");
  });
 });

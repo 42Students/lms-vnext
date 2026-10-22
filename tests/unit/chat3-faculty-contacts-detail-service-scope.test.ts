@@ -87,7 +87,7 @@ describe("FAC-CONTACTS-DETAIL-01 authorized public contact detail", () => {
   it("blocks a direct URL into a different tab when the contact lacks that role", async () => {
     await expect(getFacultyContactDetail(context(), query("students")))
       .rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
-    expect(state.selectCalls).toBe(3);
+    expect(state.selectCalls).toBe(4);
   });
 
   it("hides unknown/foreign membership, revoked Faculty grant and banned Faculty before returning any contact", async () => {

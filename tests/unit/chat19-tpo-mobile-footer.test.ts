@@ -33,7 +33,7 @@ describe("chat-19 TPO five-icon mobile footer",()=>{
     expect(source).toContain('window.addEventListener("resize",closeOnTablet)');
     expect(source).toContain('window.removeEventListener("resize",closeOnTablet)');
     expect(source).toContain('onClick={()=>setMoreOpen(false)}');
-    expect(source).toContain('className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 md:hidden"');
+    expect(source).toContain('className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid min-w-0 grid-cols-5 md:hidden"');
   });
   it("keeps shared buttons, valid opening/closing tags and icon-label contents",()=>{
     const source=footer();
@@ -50,8 +50,8 @@ describe("chat-19 TPO five-icon mobile footer",()=>{
     expect(css()).toContain("width:24px;height:24px");
     expect(css()).toContain("opacity:.5;transition:opacity .15s ease");
     expect(css()).toContain("transform:scale(.93)");
-    expect(css()).toContain("font-size:10px;font-weight:500;color:#a9a7ae");
+    expect(css()).toContain("font-size:10px;font-weight:500;color:var(--lms-neutral-400)");
     expect(css()).toContain(".lms-tpo-mobile-footer-item.active .lms-tpo-mobile-footer-label");
-    expect(css()).toContain("color:#26bac7;");
+    expect(css()).toContain("color:var(--lms-primary);");
   });
 });

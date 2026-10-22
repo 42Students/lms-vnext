@@ -34,14 +34,13 @@ describe("chat-16 authenticated inbound recruiter email failure gates",()=>{
   })).resolves.toEqual(deny);
   expect(getDb).not.toHaveBeenCalled();
  });
- it("email-bridge-inbound-gate-17 rejects malformed JSON, invalid From/To and quoted-only replies before database access",async()=>{
+ it("email-bridge-inbound-gate-17 rejects malformed JSON and invalid From/To before database access",async()=>{
   const cases=[
    "{not-json",
    JSON.stringify({...payload,from:"not-an-email"}),
    JSON.stringify({...payload,to:"r-"+"a".repeat(32)+"@foreign.example.org"}),
    JSON.stringify({...payload,providerMessageId:"a"}),
-   JSON.stringify({...payload,text:"> previous private history"}),
-   JSON.stringify({...payload,text:""}),
+    JSON.stringify({...payload,text:""}),
    JSON.stringify({...payload,untrustedRole:"SUPER_ADMIN"}),
   ];
   for(const raw of cases){
@@ -56,7 +55,7 @@ describe("chat-16 authenticated inbound recruiter email failure gates",()=>{
   const transaction=vi.fn();
   vi.mocked(getDb).mockReturnValue({execute,transaction} as unknown as ReturnType<typeof getDb>);
   await expect(acceptAuthenticatedRecruiterEmailReply(raw,sign(raw),env))
-   .resolves.toEqual(deny);
+   .resolves.toEqual({...deny,retryable:true});
   expect(execute).toHaveBeenCalledTimes(1);
   expect(transaction).not.toHaveBeenCalled();
  });

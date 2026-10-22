@@ -70,7 +70,8 @@ describe("WEAK-identity and system-roles: stale membership, disabled actors and 
       userId:USER,role:"SUPER_ADMIN"
     },repo)).resolves.toEqual(["SUPER_ADMIN"]);
     expect(repo.loadUser).toHaveBeenCalledOnce();
-    expect(repo.assignRole).toHaveBeenCalledWith(USER,"SUPER_ADMIN");
+    expect(repo.assignRole).toHaveBeenCalledWith(USER,"SUPER_ADMIN",
+      expect.objectContaining({adminScope:null,user:expect.objectContaining({id:USER})}));
     await expect(assignSystemRole(context({superAdmin:true,scope:true}),{
       userId:USER,role:"SUPER_ADMIN"
     },repo)).rejects.toBeInstanceOf(AuthorizationError);
