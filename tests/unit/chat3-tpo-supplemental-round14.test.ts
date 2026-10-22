@@ -124,7 +124,7 @@ describe("TPO supplemental job metadata",()=>{
   expect(form).toContain("plannedTpoRoundRows(roundPreset)");
   expect(form).toContain("saved.rounds.length");
   expect(form).toContain("planned.slice(saved.rounds.length)");
-  expect(form).toContain('"POST",{kind:round.kind,name:round.name}');
+  expect(form).toContain('"POST",{kind:round.kind,name:round.name,mode:round.mode}');
  });
  it("TPO-drives-44 quick and full create both format safe API messages",()=>{
   const full=source("src/components/placements/placement-job-create-form.tsx");
