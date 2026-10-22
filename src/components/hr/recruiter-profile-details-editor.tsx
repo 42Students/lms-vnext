@@ -122,7 +122,8 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
         }
       }
     }
-    if(code==="INVALID_MOBILE")errors.phone="Check the mobile number.";
+    if(code==="INVALID_MOBILE")
+      errors.phone="Enter a valid 10-digit mobile number, or leave it blank";
     setFieldErrors(errors);
     if(Object.keys(errors).length){
      const first=(["firstName","lastName","title","phone"] as const).find(key=>errors[key]);
@@ -152,13 +153,13 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
     <label key={key} className={`grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] ${key==="title"||key==="phone"?"min-[768px]:col-span-2":""}`}>
      {label}{key==="lastName"?<span className="ml-1 text-xs font-normal">(optional)</span>:null}
      <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
-      value={form[key]} required={key==="firstName"} pattern={key==="phone"?"(?:[0-9]{10}|\\+91[0-9]{10})?":undefined}
+      value={form[key]} required={key==="firstName"} pattern={key==="phone"?"[+0-9() .-]*":undefined}
       aria-invalid={Boolean(fieldErrors[key])} aria-describedby={fieldErrors[key]?`recruiter-profile-${key}-error`:undefined}
-      disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?150:100}
+      disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?32:key==="title"?150:100}
       onChange={e=>update(key,e.target.value)}
       className="min-h-11 w-full min-[768px]:min-h-9"/>
      {key==="phone"?<span className="text-xs font-normal text-muted-foreground">
-       Optional. Enter 10 digits, or +91 followed by 10 digits.
+       Optional. Enter 10 digits, +91, or a leading 0. Spaces and hyphens are accepted.
       </span>:null}
      {fieldErrors[key]?<span id={`recruiter-profile-${key}-error`} className="text-xs font-normal text-error">{fieldErrors[key]}</span>:null}
     </label>)}
