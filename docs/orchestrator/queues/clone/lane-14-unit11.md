@@ -6,7 +6,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat13-superadmin-interview-operations.test.ts` (1 failing)
 - [x] `tests/unit/chat2-tpo-team-open-increments.test.ts` (1 failing)
 - [x] `tests/unit/chat6-superadmin-people-verified-closure.test.ts` (1 failing)
-- [x] `tests/unit/chat9-verify2-learner-assignment-retry.test.ts` (2 failing)
+- [ ] `tests/unit/chat9-verify2-learner-assignment-retry.test.ts` (2 failing)
 - [x] `tests/unit/public-auth-error-retry-round5.test.ts` (1 failing)
 
 ## Failures (from CI log)
@@ -155,19 +155,9 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 - `chat2-tpo-team-open-increments.test.ts`: inspected current `src/app/(authenticated)/tpo/team/page.tsx` against the precise failing assertion; `redirect("/tpo/settings/team")` exists in the `people`/`members`/`roster` branch, while UUID conversation aliases are bounded and scoped. This is a stale failure on the recorded main commit, not a reason to change the test. Source checked; no new test execution claimed.
 - `public-auth-error-retry-round5.test.ts`: inspected current `src/components/auth/login-form.tsx`; `safeRetry < 120`, `reason.retryAfterSeconds`, `setCooldown(Math.max(cooldown,safeRetry))`, and the rate-limit copy all exist. The failing string assertion is satisfied by the current branch source. Source checked; no new test execution claimed.
 
-## Current branch source verification (no test execution)
+## Lane-13 overflow review (2026-10-23)
 
-- `UX-college-cross-audit-chat19.test.ts`: `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx` now contains `<DataTable`, `mobilePriority: "primary"`, and the existing shared responsive table implementation. The recorded failure was from older main.
-- `chat13-superadmin-interview-operations.test.ts`: `src/components/admin/super-admin-interview-operations.tsx` currently includes `choices("Type"`, `choices("Status"`, `choices("Mode"`, and `choices("Department"` with retained filter functionality. The recorded failure predates the branch.
-- `chat6-superadmin-people-verified-closure.test.ts`: inspected `parseFacultyBulkCsv` with the shared RFC4180 reader; it returns nonblank rows including trailing line-separated records, and the supplied sample retains one data record with normalized +91 phone. Source review only.
-- `chat9-verify2-learner-assignment-retry.test.ts`: `src/app/(authenticated)/learn/allAssignments/page.tsx` currently contains `Assignments could not be loaded` and `href="/learn/allAssignments?retry=1"`; route retains its alert state rather than presenting an empty list. Source review only.
-
-The historical CI failures are satisfied by currently inspected branch source; no tests or CI were run and these checks do not certify TypeScript build health.
-
-## Current-main recheck (chat-14)
-
-- `public-auth-error-retry-round5.test.ts`: FIXED outdated `safeRetry < 120` source-string assertion; product now bounds server-supplied seconds to 3600 and derives an IST retry window. Commit `2fb070d`.
-- `chat13-superadmin-interview-operations.test.ts`: FIXED outdated `choices("Type"` / `choices("Mode"` assertions; the accessible labeled Type and Mode selectors are inline and still update their respective filters. Commit `6003fe4`.
-- `chat2-tpo-team-open-increments.test.ts`: FIXED outdated roster redirect assertion; current role-scoped bookmark shim directs people/members/roster tabs to `/tpo/settings?tab=team`. Commit `aba8bb2`.
-
-These are source-level corrections on `chatgpt/chat-14-b`; no Vitest or TypeScript check executed, and the remaining historical ticks are not a current CI-pass certification. Lane 15 queue inspected: all rows already ticked, so no unticked lane-15 test was claimed.
+- [chat-13] `UX-college-cross-audit-chat19.test.ts` — FIXED outdated source-file assertion: allocation page delegates its accessible roster to `elective-eligible-selection.tsx`. Kept mobile-priority and table checks in the extracted component. Commit `966933bc24238942e3a7bc81081393a6ef46449b`.
+- [chat-13] `chat13-superadmin-interview-operations.test.ts` — FIXED outdated string assertion for Type and Mode: current real Select controls are inline, while Status/Department use `choices()`. Assertions retain control wiring. Commit `b9684590e3c633ac45991c8b67b7768af50c4f9c`.
+- [chat-13] `chat6-superadmin-people-verified-closure.test.ts` — FIXED CSV fixture with literal escaped newline that produced no faculty rows; retained Department and Faculty Type assertions. Commit `ca5ec43b934c3662fe929a3ac39298d0bfeb74c8`.
+- Verified by source inspection against current main; no test execution claimed.
