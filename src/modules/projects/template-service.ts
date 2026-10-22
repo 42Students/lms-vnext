@@ -142,7 +142,7 @@ export async function resolveLegacyProjectTemplateBookmark(
      inArray(legacyIdMap.legacyEntityType,["project_template","template"]),
      inArray(legacyIdMap.newEntityType,["project_template","template"]),
      eq(legacyIdMap.legacyId,value))).limit(2);
- return rows.length===1?rows[0].id:null;
+ return rows.length===1?rows[0]?.id??null:null;
 }
 
 export async function getProjectTemplateDetail(

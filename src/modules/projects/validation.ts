@@ -975,41 +975,41 @@ export function normalizeLegacyProjectBlueprint(raw:unknown):unknown{
    seen.add(next);return next;
  };
  const sprintSeen=new Set<string>(),taskSeen=new Set<string>(),resourceSeen=new Set<string>();
- const sprints=normalizeRows(input.sprints,"sprints").map(row=>{
-   const legacy=typeof row.key==="string"?row.key:
-     typeof row.sprintKey==="string"?row.sprintKey:"sprint";
+ const sprints=normalizeRows(input["sprints"],"sprints").map(row=>{
+   const legacy=typeof row["key"]==="string"?row["key"]:
+     typeof row["sprintKey"]==="string"?row["sprintKey"]:"sprint";
    return {...row,key:unique(legacy,sprintSeen)};
  });
- const originalSprints=normalizeRows(input.sprints,"sprints");
+ const originalSprints=normalizeRows(input["sprints"],"sprints");
  const sprintMap=new Map(originalSprints.map((row,i)=>[
-   String(row.key??row.sprintKey??""),String(sprints[i]?.key??""),
+   String(row["key"]??row["sprintKey"]??""),String(sprints[i]?.key??""),
  ]));
- const tasks=normalizeRows(input.tasks,"tasks").map(row=>{
-   const original=String(row.key??row.taskKey??row.title??"task");
+ const tasks=normalizeRows(input["tasks"],"tasks").map(row=>{
+   const original=String(row["key"]??row["taskKey"]??row["title"]??"task");
    // Retain invalid original keys for field-specific Zod errors, rather than
    // throwing during conversion or truncating a historical identifier.
    const key=unique(original,taskSeen);
    const legacyKey=original!==key?original:undefined;
-   const oldSprint=typeof row.sprintKey==="string"?row.sprintKey:"";
+   const oldSprint=typeof row["sprintKey"]==="string"?row["sprintKey"]:"";
    return {...row,key,legacyKey,
      sprintKey:oldSprint?(sprintMap.get(oldSprint)||null):null,
-     taskType:typeof row.taskType==="string"?
-       row.taskType.toUpperCase():"STORY",
-     dueLabel:typeof row.dueLabel==="string"?row.dueLabel:undefined};
+     taskType:typeof row["taskType"]==="string"?
+       row["taskType"].toUpperCase():"STORY",
+     dueLabel:typeof row["dueLabel"]==="string"?row["dueLabel"]:undefined};
  });
  const kindMap:Record<string,string>={
    link:"LINK",pdf:"PDF",doc:"DOCUMENT",document:"DOCUMENT",
    ppt:"SLIDES",slides:"SLIDES",video:"VIDEO",file:"FILE",
  };
- const resources=normalizeRows(input.resources,"resources").map(row=>{
-   const original=String(row.key??row.title??"resource");
-   const legacyType=String(row.type??row.resourceType??"LINK").toLowerCase();
+ const resources=normalizeRows(input["resources"],"resources").map(row=>{
+   const original=String(row["key"]??row["title"]??"resource");
+   const legacyType=String(row["type"]??row["resourceType"]??"LINK").toLowerCase();
    const {isPinned:_,isRequired:__,resourceType:___,...rest}=row;
    void _;void __;void ___;
    return {...rest,key:unique(original,resourceSeen),
      type:kindMap[legacyType]??"LINK",
-     pinned:row.pinned===true||row.isPinned===true,
-     required:row.required===true||row.isRequired===true};
+     pinned:row["pinned"]===true||row["isPinned"]===true,
+     required:row["required"]===true||row["isRequired"]===true};
  });
  return {...input,sprints,tasks,resources};
 }
@@ -1024,11 +1024,11 @@ export function normalizeLegacyProjectCreationStatus(
  if(status==="ARCHIVED")return null;
  if(status==="PLANNED")return {initialStatus:"PLANNED",...metadata};
  if(status==="READY")return {initialStatus:"ACTIVE",
-  phase:metadata.phase?.trim()||"Ready",blocker:metadata.blocker};
+  phase:metadata.phase?.trim()||"Ready",...(metadata.blocker===undefined?{}:{blocker:metadata.blocker})};
  if(status==="BLOCKED")return {initialStatus:"ACTIVE",
   phase:metadata.phase?.trim()||"Blocked",
   blocker:metadata.blocker?.trim()||"Blocked (imported workspace)"};
  return {initialStatus:"ACTIVE",
-  phase:metadata.phase?.trim()||(status==="IN_PROGRESS"?"In progress":undefined),
-  blocker:metadata.blocker};
+  ...(metadata.phase?.trim()?{phase:metadata.phase.trim()}:status==="IN_PROGRESS"?{phase:"In progress"}:{}),
+  ...(metadata.blocker===undefined?{}:{blocker:metadata.blocker})};
 }
