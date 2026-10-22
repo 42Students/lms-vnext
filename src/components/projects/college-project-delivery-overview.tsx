@@ -15,10 +15,10 @@ import {ErrorState} from "@/components/ui/error-state";
 type Evidence={kind:"FILE"|"LINK";name:string;fileId:string|null;url:string|null};
 function attachment(item:unknown,index:number):Evidence{
  const value=item&&typeof item==="object"&&!Array.isArray(item)?item as Record<string,unknown>:{};
- const name=[value.label,value.fileName,value.name].find(x=>typeof x==="string"&&x.trim()) as string|undefined;
- return {kind:value.kind==="FILE"?"FILE":"LINK",name:name??"Attachment "+(index+1),
-  fileId:typeof value.fileId==="string"?value.fileId:null,
-  url:typeof value.url==="string"?value.url:null};
+ const name=[value["label"],value["fileName"],value["name"]].find(x=>typeof x==="string"&&x.trim()) as string|undefined;
+ return {kind:value["kind"]==="FILE"?"FILE":"LINK",name:name??"Attachment "+(index+1),
+  fileId:typeof value["fileId"]==="string"?value["fileId"]:null,
+  url:typeof value["url"]==="string"?value["url"]:null};
 }
 function safeUrl(raw:string|null):string|null{
  if(!raw || raw!==raw.trim() || /[\\\x00-\x1f\x7f]/.test(raw))return null;
