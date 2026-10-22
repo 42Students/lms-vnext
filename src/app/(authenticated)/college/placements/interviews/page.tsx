@@ -54,7 +54,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   return route+"?"+query;
  };
  const formatter=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
- const applicantHref=(row:(typeof data.rows)[number])=>"/college/placements/jobs/"+encodeURIComponent(row.jobId)+"/applications?applicationId="+encodeURIComponent(row.applicationId);
+ const applicantHref=(row:(typeof data.rows)[number])=>"/college/placements/jobs/"+encodeURIComponent(row.jobId)+"/applications"+(row.applicationId?"?applicationId="+encodeURIComponent(row.applicationId):"");
  const singleIcsHref=(row:(typeof data.rows)[number])=>build(1,"ics")+"&interviewId="+encodeURIComponent(row.id);
  const hasActiveFilters=Boolean(valid.data.q||valid.data.status!=="ALL"||valid.data.mode!=="ALL"||valid.data.type!=="ALL"||valid.data.companyId||valid.data.departmentId);
  const columns:DataTableColumn<(typeof data.rows)[number]>[]=[
