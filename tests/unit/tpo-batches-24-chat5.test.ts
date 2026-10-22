@@ -16,7 +16,7 @@ describe("TPO own eligibility decisions",()=>{
   expect(service).toContain("summarizeTpoOwnOverrides(facts)");
   const loader=read("src/modules/placements/tpo-batch-workspace-read-service.ts");
   expect(loader).toContain("onlyDirect?exists(");
-  expect(loader.indexOf("onlyDirect?exists(")).toBeLessThan(loader.indexOf(".limit(26).offset"));
+  expect(loader.indexOf("onlyDirect?exists(")).toBeLessThan(loader.indexOf(".limit(pageSize+1).offset"));
   expect(read("src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx"))
    .toContain('view.data.source==="LEARNER"');
   expect(read("src/app/(authenticated)/tpo/batches/[batchId]/page.tsx"))
