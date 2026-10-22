@@ -143,7 +143,7 @@ export async function onboardPerson(
   const identity = await resolveOrCreateIdentity(
     {
       phoneE164: input.phoneE164,
-      email: input.email,
+      ...(input.email !== undefined ? { email: input.email } : {}),
       displayName: input.displayName,
     },
     dependencies.identityDirectory,
@@ -153,10 +153,7 @@ export async function onboardPerson(
     {
       identityUid: identity.uid,
       phoneE164: input.phoneE164,
-      email:
-        input.email ??
-        identity.email ??
-        undefined,
+      ...((input.email ?? identity.email) != null ? { email: input.email ?? identity.email } : {}),
       displayName: input.displayName,
       collegeId: college.id,
       roles: input.roles,
