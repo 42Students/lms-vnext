@@ -33,12 +33,15 @@ async function cleanup() {
   const projectIds = "select id from project_instances where slug like '" + prefix + "%'";
   await pool.query("delete from in_app_notifications where event_id in (select id from activity_events where metadata->>'projectId' in (" + projects + "))");
   await pool.query("delete from activity_events where metadata->>'projectId' in (" + projects + ")");
-  await pool.query("delete from project_members where project_id in (" + projectIds + ")");
-  await pool.query("delete from project_resources where project_id in (" + projectIds + ")");
-  await pool.query("delete from project_tasks where project_id in (" + projectIds + ")");
-  await pool.query("delete from project_sprints where project_id in (" + projectIds + ")");
-  await pool.query("delete from project_releases where project_id in (" + projectIds + ")");
-  await pool.query("delete from project_resource_audit where project_id in (" + projectIds + ")");
+  // Every child FK is UUID-typed; keep metadata text comparison separate.
+  // Delete descendant rows before tasks/resources/sprints and the workspace.
+  for(const table of [
+    "project_meeting_history","project_delivery_events","project_submission_reviews",
+    "project_evaluations","project_task_submissions","project_task_comments",
+    "project_submissions","project_meetings","project_members",
+    "project_resource_audit","project_resources","project_tasks",
+    "project_sprints","project_releases",
+  ]) await pool.query("delete from "+table+" where project_id in ("+projectIds+")");
   await pool.query("delete from project_instances where slug like '" + prefix + "%'");
   const templates = "select id from project_templates where slug like '" + prefix + "%'";
   await pool.query("delete from project_template_college_assignments where template_id in (" + templates + ")");

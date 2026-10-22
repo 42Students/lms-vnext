@@ -7,7 +7,8 @@ const read = (path: string) =>
 describe("Learner withdrawal UX and backend write contracts", () => {
   it("requires explicit reason-bearing confirmation in the existing Applications drawer", () => {
     const ui = read("src/components/placements/learner-applications-browse.tsx");
-    expect(ui).toContain("Confirm application withdrawal");
+    expect(ui).toContain('title={withdrawTarget?(withdrawMode==="REQUEST"?"Ask to withdraw from ":"Withdraw from ")');
+    expect(ui).toContain("You leave this role for good. You cannot undo withdrawing this application.");
     expect(ui).toContain("Keep application");
     expect(ui).toContain("Withdraw application");
     expect(ui).toContain("learnerApplicationWithdrawalSchema.safeParse");
@@ -28,7 +29,8 @@ describe("Learner withdrawal UX and backend write contracts", () => {
     expect(route).toContain("learnerApplicationWithdrawalSchema.parse");
     expect(route).toContain("input.reason");
     expect(service).toContain('can(context, "placements.read"');
-    expect(service).toContain("learnerWithdrawalReasonSchema.optional().parse(reasonInput)");
+    expect(service).toContain("learnerWithdrawalReasonSchema.max(");
+    expect(service).toContain(").optional().parse(reasonInput)");
     expect(service).toContain("recordActivityEventInTransaction");
     expect(service).toContain("placementApplicationStatusHistory");
     expect(service).toContain("reasonProvided");

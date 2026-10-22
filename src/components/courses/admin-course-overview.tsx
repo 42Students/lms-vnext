@@ -101,7 +101,7 @@ export function AdminCourseOverview({
       header: "Image",
       cell:course=>(<div className="h-[35px] w-[50px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
         {course.thumbnailUrl?.startsWith("https://")?
-          <a href={course.thumbnailUrl} target="_blank" rel="noopener noreferrer"
+          <a href={course.thumbnailUrl}
             aria-label={"Preview "+(course.name?.trim()||"Untitled course")+" cover"}
             className="block h-full w-full focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]">
             <img src={course.thumbnailUrl} alt={(course.name?.trim()||"Untitled course")+" cover"}

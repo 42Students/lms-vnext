@@ -18,7 +18,8 @@ describe("chat-3 Drives round 4",()=>{
   expect(service).toContain("statusCounts");
   expect(page).toContain("data.statusCounts.drafts");
   expect(page).toContain("data.needsReviewCount");
-  expect(page).toContain('aria-current={data.view===view?"page":undefined}');
+  expect(page).toContain('aria-current={data.view==="REQUESTS"?"page":undefined}');
+  expect(page).toContain('aria-current={data.view==="ALL"?"page":undefined}');
  });
  it("TPO-drives-45 IST wall time is not the browser local time",()=>{
   expect(driveDeadlineIstToIso("2099-11-05T23:59")).toBe("2099-11-05T18:29:00.000Z");
@@ -35,8 +36,9 @@ describe("chat-3 Drives round 4",()=>{
  });
  it("TPO-drives-49 non-editable drive points to safe clone recovery",()=>{
   const body=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx");
-  expect(body).toContain("This drive is not editable");
-  expect(body).toContain("open Create drive");
+  expect(body).toContain('aria-label="Read-only drive history"');
+  expect(body).toContain('job.editingBlockedReason??("This drive is "+job.status.toLowerCase()+" and cannot be edited.")');
+  expect(body).toContain('href="/tpo/placements/new"');
  });
  it("TPO-drives-35 percentage throughout and verified marks are persisted from Create",()=>{
   const body=source("src/components/placements/placement-job-create-form.tsx");
@@ -59,9 +61,9 @@ describe("chat-3 Drives round 4",()=>{
  it("TPO-drives-R03 preflight shows nonblocking rounds and eligibility warnings",()=>{
   const body=source("src/components/placements/placement-job-create-form.tsx");
   expect(body).toContain("No interview rounds added yet");
-  expect(body).toContain("No eligibility rules set - every registered student will see this drive");
+  expect(body).toContain("Open eligibility is selected; actual reach still depends on registration, membership and learner participation.");
   expect(body).toContain("selectedProgramIds.length===0");
-  expect(body).toContain("These are warnings, not publication blockers.");
+  expect(body).toContain("Draft review does not publish or notify learners. Confirm the server's eligibility reach and missing items on the next screen.");
  });
  it("TPO-drives-R05 numeric validation has correct client upper bounds",()=>{
   const body=source("src/components/placements/placement-job-create-form.tsx");
@@ -162,7 +164,7 @@ describe("chat-3 Drives round 4",()=>{
   expect(body).toContain("Clone a past drive");
   expect(body).toContain("inArray(placementJobs.status");
   expect(body).toContain("eq(placementJobs.collegeId,collegeId)");
-  expect(body).toContain("<TpoDriveCloneAction jobId={job.id}");
+  expect(body).toContain("<TpoDriveClonePicker drives={pastDrives.map(job=>({");
   const service=source("src/modules/placements/tpo-drive-clone-service.ts");
   expect(service).toContain("sourceJobId:source.id");
   expect(service).toContain("cleared:[");
@@ -202,7 +204,7 @@ describe("chat-3 Drives round 4",()=>{
   const create=source("src/components/placements/placement-job-create-form.tsx");
   const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
   expect(workspace).toContain('title="Create drive"');
-  expect(workspace).toContain("Back to drives");
+  expect(workspace).toContain('label="Back to Drives"');
   expect(create).toContain("Create draft");
   expect(create).toContain("Publish");
   expect(edit).toContain("Save changes");
@@ -210,7 +212,7 @@ describe("chat-3 Drives round 4",()=>{
  });
  it("GR-04 TPO-drives-22 edit action never surfaces a raw API error code",()=>{
   const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
-  expect(edit).toContain("await apiFetch(");
+  expect(edit).toContain("await apiFetch<");
   expect(edit).not.toContain("result?.error");
  });
  it("GR-30 TPO-drives-22 edit blocks duplicate writes",()=>{
@@ -239,7 +241,8 @@ describe("chat-3 Drives round 4",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx");
   const boundary=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/error.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/loading.tsx");
-  expect(page).toContain("This drive is closed: nothing here can be changed.");
+  expect(page).toContain('aria-label="Read-only drive history"');
+  expect(page).toContain("job.editingBlockedReason");
   expect(page).toContain('href="/tpo/placements/new"');
   expect(boundary).toContain("Some drive setup data could not be loaded");
   expect(boundary).toContain("<Button onClick={reset}>Retry</Button>");

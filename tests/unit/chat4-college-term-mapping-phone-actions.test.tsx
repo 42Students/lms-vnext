@@ -1,5 +1,6 @@
 import {describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import {ToastProvider} from "@/components/ui/toast";
 import {readFileSync} from "node:fs";
 import {
  reorderTermCourseIds,collegeTermCourseUpdateSchema,collegeTermMappingErrorMessage,
@@ -35,8 +36,8 @@ describe("COL-UX-TERM-MAPPINGS-04 keyboard/mobile curriculum mapping",()=>{
   expect(collegeTermCourseUpdateSchema.safeParse({credits:3,position:0}).success).toBe(false);
  });
  it("retains the empty-state guidance instead of rendering a zero-row modal or phantom mapping",()=>{
-  const html=renderToStaticMarkup(<CollegeTermMappingManager
-   data={{terms:[],courses:[],mapped:[]}}/>);
+  const html=renderToStaticMarkup(<ToastProvider><CollegeTermMappingManager
+   data={{terms:[],courses:[],mapped:[]}}/></ToastProvider>);
   expect(html).toContain("Select a program and semester to view/manage courses");
   expect(html).toContain("Add Courses to Semester");
   expect(html).not.toContain("<table");
@@ -47,7 +48,8 @@ describe("COL-UX-TERM-MAPPINGS-04 keyboard/mobile curriculum mapping",()=>{
   expect(source).toContain('mobilePriority:"primary"');
   expect(source).toContain('mobilePriority:"action"');
   expect(source).toContain('draggable={!pending && editableTerm}');
-  expect(source).toContain('onDrop={event=>');
+  expect(source).toContain('onDrop={event => {');
+  expect(source).toContain("if (draggedId && draggedId !== row.id) event.preventDefault()");
   expect(source).toContain('aria-label={"Move "+row.courseName+" up"}');
   expect(source).toContain('aria-label={"Move "+row.courseName+" down"}');
   expect(source).not.toContain("<table");

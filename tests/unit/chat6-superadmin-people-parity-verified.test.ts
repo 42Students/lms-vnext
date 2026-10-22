@@ -31,7 +31,7 @@ describe("Super Admin legacy people roster verified gaps",()=>{
   const page=source("src/app/(authenticated)/admin/people/directory/page.tsx");
   expect(page).toContain('title="People Directory"');
   for(const label of ['"All contacts"','"Faculty"','"Students"'])expect(page).toContain(label);
-  expect(page).toContain('aria-label="People directory tabs"');
+  expect(page).toContain('<Tabs ariaLabel="People directory tabs"');
  });
  it("SA-academics-people-105 membership directory has contact search page sizing filters and CSV",()=>{
   const page=source("src/app/(authenticated)/admin/people/page.tsx");
@@ -47,7 +47,7 @@ describe("Super Admin legacy people roster verified gaps",()=>{
   const list=source("src/components/admin/super-admin-hr-accounts.tsx");
   const drawer=source("src/components/admin/super-admin-hr-detail-drawer.tsx");
   expect(list).toContain("statusSummary.accounts");
-  expect(list).toContain("statusSummary.archived");
+  expect(list).toContain('["Suspended on page",list?.items.filter(account=>account.status==="ARCHIVED").length??0]');
   expect(list).toContain("quickStatus(account)");
   expect(drawer).toContain("Terminate all sessions");
  });

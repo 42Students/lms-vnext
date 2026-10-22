@@ -255,7 +255,7 @@ export function TpoCompanyMemoryWorkspace({
         </p>
       ) : null}
 
-      <div aria-label="Company numbers" className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[12px] border border-border bg-white sm:grid-cols-3 min-[992px]:grid-cols-5">
+      <section aria-label="Company numbers" className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[12px] border border-border bg-white sm:grid-cols-3 min-[992px]:grid-cols-5">
         {[
           ["Contacts", company.people.length + " · " + activeContacts + " active"],
           ["Drives that ran", String(company.drivesRan)],
@@ -276,7 +276,7 @@ export function TpoCompanyMemoryWorkspace({
             <p className="mt-1 break-words font-semibold leading-6 text-foreground">{value}</p>
           </div>
         ))}
-      </div>
+      </section>
 
       {company.studentsHired == null || countsWarning || company.driveCountsWarning ? (
         <div role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-muted-foreground">

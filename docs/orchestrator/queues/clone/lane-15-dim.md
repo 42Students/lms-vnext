@@ -273,33 +273,33 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
 - [x] `src/components/tpo/tpo-bell-panel.tsx`
 - [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tpo/tpo-campaign-compose.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-drive-request-actions.tsx`
-- [ ] `src/components/tpo/tpo-everyone-controls.tsx`
-- [ ] `src/components/tpo/tpo-find-shortcut.tsx`
-- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
-- [ ] `src/components/tpo/tpo-roster-verification-bulk.tsx`
-- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
-- [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
-- [ ] `src/components/tpo/tpo-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-students-drive-visibility.tsx`
-- [ ] `src/components/tpo/tpo-students-spreadsheet.tsx`
-- [ ] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/date-range-picker.tsx`
-- [ ] `src/components/ui/dropdown.tsx`
-- [ ] `src/components/ui/file-dropzone.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
-- [ ] `src/components/ui/legacy-overlays.css`
-- [ ] `src/components/ui/menu.tsx`
-- [ ] `src/components/ui/popover.tsx`
-- [ ] `src/components/ui/searchable-select.tsx`
-- [ ] `src/components/ui/tabs.tsx`
-- [ ] `src/components/ui/third-party-link.tsx`
-- [ ] `src/components/verification/TpoVerificationSwitch.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
-- [ ] `src/styles/legacy-skin.css`
-- [ ] `src/styles/micro-details.css`
+- [x] `src/components/tpo/tpo-campaign-compose.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-drive-request-actions.tsx`
+- [x] `src/components/tpo/tpo-everyone-controls.tsx`
+- [x] `src/components/tpo/tpo-find-shortcut.tsx`
+- [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
+- [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- [x] `src/components/tpo/tpo-student-quick-panel.tsx`
+- [x] `src/components/tpo/tpo-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-students-drive-visibility.tsx`
+- [x] `src/components/tpo/tpo-students-spreadsheet.tsx`
+- [x] `src/components/tracker/known-errors-workspace.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/date-range-picker.tsx`
+- [x] `src/components/ui/dropdown.tsx`
+- [x] `src/components/ui/file-dropzone.tsx`
+- [x] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/legacy-overlays.css`
+- [x] `src/components/ui/menu.tsx`
+- [x] `src/components/ui/popover.tsx`
+- [x] `src/components/ui/searchable-select.tsx`
+- [x] `src/components/ui/tabs.tsx`
+- [x] `src/components/ui/third-party-link.tsx`
+- [x] `src/components/verification/TpoVerificationSwitch.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/styles/legacy-skin.css`
+- [x] `src/styles/micro-details.css`

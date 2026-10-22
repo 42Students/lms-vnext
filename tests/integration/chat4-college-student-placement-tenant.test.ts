@@ -40,7 +40,7 @@ describe.skipIf(!enabled)("College Admin class placement tenant and actor guard 
    await pool.query("insert into college_memberships(id,user_id,college_id) values($1,$2,$3)",[m,u,c]);
    await pool.query("insert into membership_roles(membership_id,role) values($1,$2)",[m,role]);
   }
-  await pool.query("insert into academic_periods(id,college_id,name,code,start_date,end_date,status) values($1,$2,$3,$4,'2026-07-01','2027-06-30','ACTIVE')",
+  await pool.query("insert into academic_periods(id,college_id,name,code,start_date,end_date,status) values($1::uuid,$2::uuid,$3::text,$4::text,'2026-07-01'::date,'2027-06-30'::date,'ACTIVE')",
    [ids.period,SEED_IDS.collegeA,tag,tag]);
   await pool.query("insert into programs(id,department_id,name,code,duration_terms,status) values($1,$2,$3,$4,8,'ACTIVE')",
    [ids.program,SEED_IDS.departmentA,tag,tag]);

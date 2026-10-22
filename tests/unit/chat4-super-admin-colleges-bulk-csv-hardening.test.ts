@@ -29,7 +29,7 @@ describe("Super Admin colleges bulk CSV adversarial parser",()=>{
    "name,code\n"+Array.from({length:201},(_,i)=>"College "+i+",C"+String(i).padStart(2,"0")).join("\n")
   )).toThrow("at most 200");
   expect(()=>parseCollegeImportCsv("name,code\nFirst,ABC\nSecond,abc"))
-   .toThrow("Duplicate college code");
+   .toThrow("Row 3: duplicate college code abc");
   expect(()=>parseCollegeImportCsv("name,code\n,COLLEGE1")).toThrow("required");
   expect(()=>parseCollegeImportCsv("name,code\n"+"X".repeat(256)+",C")).toThrow("required");
   expect(()=>parseCollegeImportCsv("name,code\nA,"+"C".repeat(65))).toThrow("required");

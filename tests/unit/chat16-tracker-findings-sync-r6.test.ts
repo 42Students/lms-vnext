@@ -8,7 +8,7 @@ describe("chat-16 independent audit findings sync evidence",()=>{
   expect(service).toContain('requireIndependentFindingAccess(context)');
   expect(service).toContain('if(!await independentAuditFindingsStorageReady())return null;');
   expect(service).toContain('eq(db10AuditFindingSyncs.source,"42Students/lms-findings")');
-  expect(service).toContain('refusedCount:row.refusedFiles.length');
+  expect(service).toContain('refusedCount:Math.max(row.refusedFiles.length,refusedFiles.length)');
   expect(page).toContain("readIndependentFindingSyncState(ctx)");
   expect(page).toContain("No verified import has been recorded.");
   expect(page).toContain("No sync was performed by opening this page.");

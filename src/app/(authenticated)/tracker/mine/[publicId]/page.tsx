@@ -56,7 +56,7 @@ export default async function MyTrackerReportDetail({
       <h2 className="mt-4 text-base font-semibold text-[var(--lms-heading)]">Description</h2>
       <p className="mt-2 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{report.description}</p>
       {report.evidenceLink?.startsWith("https://") ? <p className="mt-3 text-sm">
-        <a href={report.evidenceLink} rel="noopener noreferrer" target="_blank" className="font-semibold text-link underline">Open linked evidence</a>
+        <a href={report.evidenceLink} rel="noopener noreferrer" className="font-semibold text-link underline">Open linked evidence</a>
       </p> : null}
       <p className="mt-3 text-xs text-muted-foreground">Reported: <time dateTime={report.createdAt.toISOString()}>{report.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</time></p>
     </section>

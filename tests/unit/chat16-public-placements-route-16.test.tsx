@@ -48,6 +48,9 @@ describe("chat-16 public placements page role and safe-unavailability journeys",
   expect(getPublicPlacementStatistics).not.toHaveBeenCalled();
  });
  it("UX-chat16-public-placement-17 does not render an explicitly unpublished college page",async()=>{
+  vi.mocked(getPublicPlacementPageContent).mockResolvedValue({
+   ready:true,about:"",metricKeys:["STUDENTS","PLACED","OFFERS"],updatedAt:null,
+  });
   await expect(PublicPlacementsPage()).rejects.toThrow("NOT_FOUND");
   expect(getPublicPlacementStatistics).toHaveBeenCalledWith(collegeId);
   expect(notFound).toHaveBeenCalledOnce();

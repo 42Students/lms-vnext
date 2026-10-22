@@ -567,7 +567,7 @@ export function LearnerApplicationsBrowse({
           {companyPreviewId?<Link href={"/learn/my-placements/applications/"+
             encodeURIComponent(companyPreviewId)+"/company"}
             className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
-            target="_blank" rel="noopener noreferrer">Open full preview ↗</Link>:null}
+            rel="noopener noreferrer">Open full preview ↗</Link>:null}
           <Button variant="secondary" type="button" onClick={()=>setCompanyPreviewId(null)}>Close</Button>
         </div>}>
         {companyPreviewId?<div className="space-y-3">

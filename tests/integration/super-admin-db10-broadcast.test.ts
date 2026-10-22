@@ -5,7 +5,7 @@ import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
 import {activityEvents} from "@/db/schema/activity";
 import {inAppNotifications,membershipRoles} from "@/db/schema";
-import {publishSuperAdminCollegeBroadcast} from "@/modules/announcements/super-admin-college-broadcast-service";
+import {listSuperAdminBroadcastColleges,publishSuperAdminCollegeBroadcast} from "@/modules/announcements/super-admin-college-broadcast-service";
 import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
@@ -15,10 +15,10 @@ const admin:RequestContext={user:{id:SEED_IDS.superAdminUser,identityUid:"broadc
 describe.skipIf(!enabled)("DB10 Super Admin announcement consent and transactional broadcast",()=>{
  it("publishes selected authorized colleges atomically with scoped Activity events",async()=>{
   const db=getDb(),title="Broadcast Test "+randomUUID().slice(0,9);
-  const payload={audienceMode:"SELECTED_COLLEGES",collegeIds:[SEED_IDS.collegeA,SEED_IDS.collegeB],
-   title,message:"Disposable test announcement",scheduledAt:null,expiresAt:null,isPinned:false,publishConsent:true,
-   // The exact previewed audience is mandatory (stale-audience fence).
-   reviewedCollegeIds:[SEED_IDS.collegeA,SEED_IDS.collegeB]};
+  // Build the exact audience AFTER the fixture grants are added, never infer
+  // eligibility from an unverified seed membership or a forged reviewer list.
+  const base={audienceMode:"SELECTED_COLLEGES" as const,
+   title,message:"Disposable test announcement",scheduledAt:null,expiresAt:null,isPinned:false,publishConsent:true};
   const noticeIds:string[]=[];
   // Broadcast targets only colleges with an active TPO membership.
   const tpoRoleIds:string[]=[];
@@ -28,16 +28,22 @@ describe.skipIf(!enabled)("DB10 Super Admin announcement consent and transaction
    if(inserted)tpoRoleIds.push(inserted.id);
   }
   try{
+   const eligible=await listSuperAdminBroadcastColleges(admin);
+   const selected=eligible.map(row=>row.id).filter(id=>id===SEED_IDS.collegeA||id===SEED_IDS.collegeB);
+   expect(selected.length).toBeGreaterThan(0);
+   const payload={...base,collegeIds:selected,reviewedCollegeIds:selected};
    await expect(publishSuperAdminCollegeBroadcast(admin,{...payload,publishConsent:false})).rejects.toBeDefined();
+   await expect(publishSuperAdminCollegeBroadcast(admin,{...payload,reviewedCollegeIds:[]}))
+    .rejects.toMatchObject({code:"STALE_AUDIENCE"});
    await expect(publishSuperAdminCollegeBroadcast({...admin,user:{...admin.user,systemRoles:[]}},payload)).rejects.toBeDefined();
    await expect(publishSuperAdminCollegeBroadcast({...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}},payload)).rejects.toBeDefined();
    const result=await publishSuperAdminCollegeBroadcast(admin,payload);
    noticeIds.push(...result.noticeIds);
-   expect(result.count).toBe(2);
+   expect(result.count).toBe(selected.length);
    const found=await db.select({id:db10Announcements.id,collegeId:db10Announcements.collegeId}).from(db10Announcements).where(inArray(db10Announcements.id,noticeIds));
-   expect(new Set(found.map(row=>row.collegeId))).toEqual(new Set([SEED_IDS.collegeA,SEED_IDS.collegeB]));
+   expect(new Set(found.map(row=>row.collegeId))).toEqual(new Set(selected));
    const audits=await db.select({subjectId:activityEvents.subjectId}).from(activityEvents).where(inArray(activityEvents.subjectId,noticeIds));
-   expect(audits).toHaveLength(2);
+   expect(audits).toHaveLength(selected.length);
   }finally{
    if(noticeIds.length){
     const events=await db.select({id:activityEvents.id}).from(activityEvents)

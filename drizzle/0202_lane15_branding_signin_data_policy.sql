@@ -1,3 +1,7 @@
+-- Databases migrated before 0057 gained login_methods (dev applied 0057 earlier)
+-- need the column before reading it; 0277 then only adds the check constraint.
+ALTER TABLE college_branding ADD COLUMN IF NOT EXISTS login_methods varchar(32);
+--> statement-breakpoint
 -- Existing branding preferences and current auth policy are distinct.
 -- Explicit historical values are normalized once; nullable values inherit
 -- the current email-first default and do not manufacture a saved policy.

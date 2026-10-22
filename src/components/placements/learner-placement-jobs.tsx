@@ -622,7 +622,6 @@ function JobActions({
         <>
           <a
             href={safeExternalUrl!}
-            target="_blank"
             rel="noopener noreferrer"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle sm:w-auto md:min-h-9"
           >
@@ -838,7 +837,7 @@ export function LearnerPlacementJobs({
                   {item.job.description}
                 </p>:null}
                 {jobDescriptionUrl?.startsWith("https://")?<a href={jobDescriptionUrl}
-                  target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"
+                  rel="noopener noreferrer" referrerPolicy="no-referrer"
                   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
                   View job description ↗
                 </a>:null}

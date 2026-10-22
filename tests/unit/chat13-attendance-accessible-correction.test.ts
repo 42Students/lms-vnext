@@ -6,7 +6,8 @@ describe("Super Admin attendance correction accessibility",()=>{
   expect(source).not.toContain("window.confirm(");
   expect(source).toContain("<Modal");
   expect(source).toContain('title={');
-  expect(source).toContain("void correct(status)");
+  expect(source).toContain('onClick={()=>void correct("PRESENT")}');
+   expect(source).toContain("onClick={()=>void correct(absenceReason)}");
   expect(source).toContain('useGuardedAction({busyLabel:');
   expect(source).toContain('disabled={correcting}');
   expect(source).toContain("This change is recorded.");

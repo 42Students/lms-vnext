@@ -18,10 +18,10 @@ describe("UX-activity-index-01 Activity Log",()=>{
   expect(page).toContain('grid-cols-1');
   expect(page).toContain('md:grid-cols-2');
   const list=read("src/components/activity/activity-center.tsx");
-  expect(list).toContain('<Card as="article"');
+  expect(list).toContain('<article role="listitem"');
   expect(list).toContain('<EmptyState');
-  expect(list).toContain('No meaningful activity matches these filters.');
-  expect(list).toContain('Technical request noise is intentionally excluded from this center.');
+  expect(list).toContain('No activity in this period. Try another date, category or search.');
+  expect(list).toContain('Nothing important happened in this period.');
   expect(list).toContain('min-h-11');
  });
  it("UX-activity-loading-03 keeps legacy heading and bounded recovery",()=>{

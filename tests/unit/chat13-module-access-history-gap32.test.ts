@@ -34,6 +34,6 @@ describe("SA-tenants-modules-32 bulk history producer",()=>{
   expect(src).toContain("studentCount: auditRows.length");
   expect(src).toContain("requestedCount: input.membershipIds.length");
   expect(src).toContain("auditRecorded");
-  expect(src).toContain("Review learner history.");
+  expect(src).toContain("auditWarning: \"The bulk update was not saved.\"");
  });
 });

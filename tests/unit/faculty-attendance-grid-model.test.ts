@@ -52,7 +52,7 @@ describe("W02 Faculty attendance daily aggregation", () => {
     ]), now);
     expect(cell).toEqual({
       code: "MIXED",
-      label: "1 present, 1 absent, 0 not marked of 2 sessions",
+      label: "1 present, 1 absent, 0 not marked of 2 held sessions",
       present: 1,
       absent: 1,
       notMarked: 0,
@@ -71,12 +71,12 @@ describe("W02 Faculty attendance daily aggregation", () => {
     ], new Map(), now).code).toBe("S");
   });
 
-  it("treats absence evidence as marked for imported sessions lacking session metadata", () => {
+  it("keeps imported medical/excused evidence marked without inventing an absence", () => {
     const cell = facultyAttendanceDayCell([
       { id: "legacy", startsAt: "2026-10-08T03:30:00.000Z", attendanceStatus: null },
     ], new Map([
       ["legacy", { scheduleEventId: "legacy", membershipId: "m", status: "MEDICAL" }],
     ]), now);
-    expect(cell).toMatchObject({ code: "A", absent: 1, notMarked: 0 });
+    expect(cell).toMatchObject({ code: "P", present: 1, absent: 0, notMarked: 0 });
   });
 });

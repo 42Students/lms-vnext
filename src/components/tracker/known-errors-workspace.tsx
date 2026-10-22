@@ -67,7 +67,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           <p className="m-0 break-all font-mono text-xs text-muted-foreground leading-[20px]">
             Signature {item.signatureHash.slice(0, 12)}…
           </p>
-          <h3 className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-base font-semibold text-[var(--lms-heading)]">
+          <h3 className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-base font-semibold text-[var(--lms-heading)]"><span className="sr-only">Known error status:</span>
             <StatusBadge tone={item.fixStatus==="FIXED"?"success":item.fixStatus==="OPEN"?"warning":"info"}>{item.fixStatus}</StatusBadge>
             <StatusBadge tone={item.muted?"warning":"neutral"}>{item.muted ? "Muted" : "Unmuted"}</StatusBadge>
           </h3>
@@ -125,7 +125,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           />
         </label>
       </div>
-      <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
+      <div role="group" aria-label="Known error triage actions" className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending}
           onClick={()=>void navigator.clipboard.writeText(knownErrorSafeSummary({
             signatureHash:item.signatureHash,environment:item.environment,fixStatus:item.fixStatus,
@@ -153,7 +153,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           {item.acknowledgedAt ? "Acknowledged" : "Acknowledge"}
         </Button>
         <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending}
-          aria-expanded={item.muted ? undefined : confirmMute}
+          aria-haspopup="dialog" aria-expanded={item.muted ? undefined : confirmMute}
           onClick={() => {
             if (item.muted) void update({ action: "MUTE", muted: false });
             else setConfirmMute(true);

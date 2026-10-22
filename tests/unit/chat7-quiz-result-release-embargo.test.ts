@@ -16,8 +16,8 @@ describe("COURSES7-07 private answer-key release boundary",()=>{
    expect(learnerQuizResultsReleased({...ready,status},now+1000)).toBe(false);
   }
   expect(learnerQuizResultsReleased({...ready,resultsPublished:false},now+1000)).toBe(false);
-  // Faculty may release results after the persisted due instant without a CLOSED transition.
-  expect(learnerQuizResultsReleased({...ready,status:"PUBLISHED"},now+1000)).toBe(true);
+  // Publishing answers is not sufficient while the quiz is still open.
+  expect(learnerQuizResultsReleased({...ready,status:"PUBLISHED"},now+1000)).toBe(false);
   expect(learnerQuizResultsReleased({...ready,status:"PUBLISHED"},now-1)).toBe(false);
  });
  it("COURSES7-07 invalid or missing due date and nonfinite clocks must fail closed",()=>{

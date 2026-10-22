@@ -9,9 +9,9 @@ const base={
 describe("learner eligibility deny-state explanations",()=>{
  it("LEARNER-placements-R01 names real registration and academic evidence blockers",()=>{
   expect(learnerJobApplyBlockers({...base,registrationState:"REGISTER_FIRST"})).toEqual([
-   "Register for placements to participate in campus drives.",
+   "Register for placements first. It takes a minute, and then you can apply.",
   ]);
-  expect(learnerJobApplyBlockers({...base,registrationState:"CHOSE_OTHER"})[0]).toContain("does not include campus placements");
+  expect(learnerJobApplyBlockers({...base,registrationState:"CHOSE_OTHER"})[0]).toContain("not taking part in placements");
   expect(learnerJobApplyBlockers({...base,eligibilityStatus:"NEEDS_DATA"})[0]).toContain("academic evidence");
  });
  it("LEARNER-placements-R01 explains held-offer and expiry without claiming recruiter rejection",()=>{

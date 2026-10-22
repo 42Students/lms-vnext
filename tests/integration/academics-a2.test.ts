@@ -57,7 +57,6 @@ import {
   getLearnerAttendanceWorkspace,
 } from "@/modules/attendance/learner-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -90,15 +89,21 @@ const collegeAdmin: RequestContext = {
   },
 };
 
+const primaryLearner = {
+  userId: "64000000-0000-4000-8000-000000000001",
+  membershipId: "65000000-0000-4000-8000-000000000001",
+  roleId: "66000000-0000-4000-8000-000000000001",
+  identityUid: "a2-test-primary-learner",
+};
 const learner: RequestContext = {
   user: {
-    id: SEED_IDS.learnerUser,
-    identityUid: "seed-learner",
+    id: primaryLearner.userId,
+    identityUid: primaryLearner.identityUid,
     platformStatus: "ACTIVE",
     systemRoles: [],
   },
   membership: {
-    id: SEED_IDS.learnerCollegeAMembership,
+    id: primaryLearner.membershipId,
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
@@ -141,7 +146,6 @@ const secondLearner = {
 };
 
 async function cleanupA2() {
-  await releaseSeedLearnerPlacementEnrollment(pool);
   await pool.query(
     `delete from course_section_deliveries
      where offering_id in (
@@ -243,19 +247,36 @@ async function cleanupA2() {
   );
 
   await pool.query(
-    "delete from membership_roles where membership_id = $1",
-    [secondLearner.membershipId],
+    "delete from membership_roles where membership_id in ($1,$2)",
+    [primaryLearner.membershipId,secondLearner.membershipId],
   );
   await pool.query(
-    "delete from college_memberships where id = $1",
-    [secondLearner.membershipId],
+    "delete from college_memberships where id in ($1,$2)",
+    [primaryLearner.membershipId,secondLearner.membershipId],
   );
   await pool.query(
-    "delete from users where id = $1",
-    [secondLearner.userId],
+    "delete from users where id in ($1,$2)",
+    [primaryLearner.userId,secondLearner.userId],
   );
 }
 
+async function insertPrimaryLearner(){
+  await pool.query(
+    `INSERT INTO users(id,identity_uid,display_name)
+       VALUES($1,$2,'A2 Primary Learner')`,
+    [primaryLearner.userId,primaryLearner.identityUid],
+  );
+  await pool.query(
+    `INSERT INTO college_memberships(id,user_id,college_id)
+       VALUES($1,$2,$3)`,
+    [primaryLearner.membershipId,primaryLearner.userId,SEED_IDS.collegeA],
+  );
+  await pool.query(
+    `INSERT INTO membership_roles(id,membership_id,role)
+       VALUES($1,$2,'LEARNER')`,
+    [primaryLearner.roleId,primaryLearner.membershipId],
+  );
+}
 async function insertSecondLearner() {
   await pool.query(
     `insert into users
@@ -379,6 +400,7 @@ async function createStructure() {
 
 beforeEach(async () => {
   await cleanupA2();
+  await insertPrimaryLearner();
 });
 
 afterAll(async () => {
@@ -396,7 +418,7 @@ describe("academics A2 against PostgreSQL", () => {
         collegeAdmin,
         {
           membershipId:
-            SEED_IDS.learnerCollegeAMembership,
+            primaryLearner.membershipId,
           programId: structure.program.id,
           cohortId: structure.cohort.id,
         },
@@ -407,7 +429,7 @@ describe("academics A2 against PostgreSQL", () => {
         collegeAdmin,
         {
           membershipId:
-            SEED_IDS.learnerCollegeAMembership,
+            primaryLearner.membershipId,
           programId: structure.program.id,
           cohortId: structure.cohort.id,
         },
@@ -506,7 +528,7 @@ describe("academics A2 against PostgreSQL", () => {
       expect.objectContaining({
         learnerEnrollmentId: enrollment.id,
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          primaryLearner.membershipId,
         status: "ACTIVE",
       }),
     ]);
@@ -573,7 +595,7 @@ describe("academics A2 against PostgreSQL", () => {
         collegeAdmin,
         {
           membershipId:
-            SEED_IDS.learnerCollegeAMembership,
+            primaryLearner.membershipId,
           programId: structure.program.id,
           cohortId: structure.cohort.id,
         },
@@ -647,7 +669,7 @@ describe("academics A2 against PostgreSQL", () => {
         superAdmin,
         {
           membershipId:
-            SEED_IDS.learnerCollegeAMembership,
+            primaryLearner.membershipId,
           programId: foreignProgram.id,
           cohortId: foreignCohort.id,
         },
@@ -691,7 +713,7 @@ describe("academics A2 against PostgreSQL", () => {
         {
           sectionId: structure.sectionA.id,
           membershipId:
-            SEED_IDS.learnerCollegeAMembership,
+            primaryLearner.membershipId,
           role: "COORDINATOR",
         },
       ),
@@ -764,7 +786,7 @@ describe("academics A2 against PostgreSQL", () => {
         collegeAdmin,
         {
           membershipId:
-            SEED_IDS.learnerCollegeAMembership,
+            primaryLearner.membershipId,
           programId: structure.program.id,
           cohortId: structure.cohort.id,
         },
@@ -865,7 +887,7 @@ describe("academics A2 against PostgreSQL", () => {
        values ($1, $2, 'ABSENT', $3, 'A2 learner absence')`,
       [
         event.id,
-        SEED_IDS.learnerCollegeAMembership,
+        primaryLearner.membershipId,
         SEED_IDS.collegeAdminUser,
       ],
     );

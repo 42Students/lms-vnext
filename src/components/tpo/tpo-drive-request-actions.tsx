@@ -67,7 +67,8 @@ export function TpoDriveRequestActions({requestId,status}:{
         </div>
       </Dropdown>
     </div>
-    {action?<div role="group" aria-label={actions.find(x=>x.value===action)?.label}
+    {action?<form onSubmit={event=>{event.preventDefault();void runGuarded(submit);}}
+      aria-label={actions.find(x=>x.value===action)?.label}
       className="space-y-2 border-t border-border pt-4">
       <p className="text-sm font-semibold">{actions.find(x=>x.value===action)?.label}</p>
       <p className="text-sm text-body">{action==="APPROVE_LATER"?
@@ -75,19 +76,19 @@ export function TpoDriveRequestActions({requestId,status}:{
         action==="SEND_BACK"?"Tell the recruiter what needs to change.":
         "Tell the recruiter why this request is not accepted."}</p>
       <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
-        <Textarea value={reason} maxLength={1000} rows={3} disabled={busy||guardedPending}
+        <Textarea autoFocus value={reason} maxLength={1000} rows={3} disabled={busy||guardedPending}
           onChange={event=>setReason(event.target.value)}
           className="mt-1 block w-full border p-2"/>
       </label>
       <p className="text-xs text-body">The recruiter is notified in the app. Email delivery is not enabled.</p>
       <div className="flex flex-wrap gap-2">
-        <Button type="button" onClick={()=>void runGuarded(submit)} disabled={busy||guardedPending||reason.trim().length<3}
+        <Button type="submit" disabled={busy||guardedPending||reason.trim().length<3}
           >
           {busy?"Saving…":"Confirm"}</Button>
         <Button variant="secondary" type="button" disabled={busy} onClick={()=>setAction(null)}
           >Cancel</Button>
       </div>
-    </div>:null}
+    </form>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {message?<p role="status" className="text-sm">{message}</p>:null}
   </div>;

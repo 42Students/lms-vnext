@@ -66,7 +66,7 @@ export default async function SuperAdminDepartmentsPage({
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" className="mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6m0 4h.01"/></svg>
             <div>
               <strong>Select a college to continue</strong>
-              <p>Choose a college in the header above to manage its departments and archived records.</p>
+              <p>Choose a college in the header above to see its departments.</p>
             </div>
           </div>
         </Alert>

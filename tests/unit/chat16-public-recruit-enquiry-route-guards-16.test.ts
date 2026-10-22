@@ -96,7 +96,7 @@ describe("chat-16 anonymous recruiter enquiry HTTP outage and scope safety",()=>
   vi.mocked(submitPublicRecruitEnquiry).mockRejectedValue(new PublicEnquiryError("NOT_READY"));
   const unavailable=await recruit(request(true));
   expect(unavailable.status).toBe(503);
-  expect(await unavailable.json()).toEqual({error:"RECRUITER_ENQUIRIES_UNAVAILABLE"});
+  expect(await unavailable.json()).toEqual({error:"RECRUITER_ENQUIRIES_UNAVAILABLE",message:"Recruitment enquiries are temporarily unavailable."});
  });
  it("PUBLIC-ENQUIRY-SIZE-24 rejects oversize UTF-8 bytes at both public POST routes before services",async()=>{
   const oversized=new Request("https://college.example.edu/api/public/recruit-from-us",{

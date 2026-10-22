@@ -4,7 +4,7 @@ import { Banner } from "@/components/ui/banner";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 export function CollegeArchivedPrograms({ programs }: {
@@ -15,6 +15,7 @@ export function CollegeArchivedPrograms({ programs }: {
   const [open, setOpen] = useState(false);
   const [busy, start] = useTransition();
   const [error, setError] = useState("");
+  const pendingRef = useRef(false);
   return <section aria-label="Archived programs" className="min-w-0 border-t border-border pt-4">
     <Button variant="ghost" type="button" onClick={() => setOpen(value => !value)}
       className="w-full justify-between font-[650] text-primary-text md:w-auto">
@@ -27,7 +28,10 @@ export function CollegeArchivedPrograms({ programs }: {
         <Button variant="secondary" type="button" disabled={busy}
           className="w-full rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650] text-primary-text md:w-auto"
           onClick={async () => {
+            if (pendingRef.current || busy) return;
             if (!(await askConfirm(`Restore ${program.name}? Its active name and code must remain unique.`))) return;
+            if (pendingRef.current) return;
+            pendingRef.current = true;
             setError("");
             start(async () => {
               try {
@@ -38,8 +42,10 @@ export function CollegeArchivedPrograms({ programs }: {
                 );
                 if (!response.ok) throw new Error("Restore denied: program is stale, its department is inactive or name/code conflicts.");
                 router.refresh();
-              } catch (reason) {
-                setError(reason instanceof Error ? reason.message : "Restore failed");
+              } catch {
+                setError("Could not restore this program. Refresh its department and name before trying again.");
+              } finally {
+                pendingRef.current = false;
               }
             });
           }}>Restore</Button>

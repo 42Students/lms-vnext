@@ -50,7 +50,8 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
  });
  it("PUB-auth-public-56 company share carries who, when, expiry and disclosure warning",()=>{
   expect(share()).toContain("Shared with {result.companyName}");
-  expect(share()).toContain("Shared by {result.collegeName}");
+  expect(share()).toContain("Shared by the placement cell on");
+  expect(share()).toContain("new Date(result.sharedAt)");
   expect(share()).toContain("Please do not forward this page.");
   expect(share()).toContain("The link works until");
  });
@@ -69,17 +70,17 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
  it("PUB-auth-public-62 marketing home contains role audience and JSON-LD",()=>{
   const page=src("src/app/home/page.tsx");
   expect(page).toContain("application/ld+json");
-  expect(page).toContain("Who the platform serves");
-  expect(page).toContain("One continuous journey");
+  expect(page).toContain("One platform. Two outcomes.");
+  expect(page).toContain("Build employable graduates. Create stronger talent pipelines.");
  });
  it("PUB-auth-public-63 platform overview describes talent and workforce development",()=>{
-  expect(src("src/app/platform/page.tsx")).toContain("One autonomous AI platform for talent and workforce development");
+  expect(src("src/app/platform/page.tsx")).toContain("One connected platform for learning, projects and placements.");
  });
  it("PUB-auth-public-64 Universities landing has matching headline",()=>{
-  expect(src("src/app/universities/page.tsx")).toContain("Develop Employable Graduates with AI");
+  expect(src("src/app/universities/page.tsx")).toContain("Develop employable graduates through learning and placements");
  });
  it("PUB-auth-public-65 Enterprises landing has matching headline",()=>{
-  expect(src("src/app/enterprises/page.tsx")).toContain("Build High-Performing Workforces with AI");
+  expect(src("src/app/enterprises/page.tsx")).toContain("Build High-Performing Workforces");
  });
  it("PUB-auth-public-66 demo request has mailto action without collecting form data",()=>{
   const page=src("src/app/request-demo/page.tsx");

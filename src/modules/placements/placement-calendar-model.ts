@@ -119,8 +119,8 @@ export function groupPlacementCalendarEvents(
 }
 
 /**
- * Reuses the existing learner calendar's Monday-first week
- * and month boundary calculations.
+ * Reuses shared India-local calendar day calculations while preserving
+ * the legacy TPO Sunday-first week and month grid.
  *
  * Month grids include adjacent-month days, so callers can
  * request the entire visible window from the read service.

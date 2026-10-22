@@ -116,6 +116,9 @@ export async function unsubscribeTpoCampaignRecipient(
     }
     return "APPLY";
   });
+  // A verified but invalid claim must never be reported as a completed opt-out.
+  // Already-used or unknown legacy links retain their indistinguishable success.
+  if(outcome==="DENY")throw new CampaignUnsubscribeInvalid();
   // Client-safe idempotency: unknown, repeated, and successful links have
   // identical outward responses. Do not leak whether a recruiter exists.
   void outcome;

@@ -35,7 +35,8 @@ describe("chat-16 public campaign unsubscribe server pages",()=>{
  it("UX-campaign-unsubscribe-page-17 preserves purpose-scoped placement cell copy, not global suppression claims",async()=>{
   vi.mocked(campaignUnsubscribeTokenKind).mockResolvedValue("PLACEMENT_CELL");
   const html=renderToStaticMarkup(await page());
-  expect(html).toContain("The placement cell that wrote to you will not email you again.");
+  expect(html).toContain("Confirm below to stop further emails from this placement cell.");
+  expect(html).toContain("No preference was changed.");
   expect(html).toContain('data-confirm="true"');
   expect(html).toContain('data-cell="true"');
   expect(html).not.toContain("global email suppression list");

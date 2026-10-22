@@ -3,7 +3,10 @@ import {readFileSync} from "node:fs";
 import type {RequestContext} from "@/modules/identity/context";
 
 const state=vi.hoisted(()=>({
- delivery:vi.fn(),access:vi.fn(),select:vi.fn(),rows:[] as Array<{storageKey:string|null}>,
+ delivery:vi.fn(),access:vi.fn(),select:vi.fn(),rows:[] as Array<{
+  key:string|null;status:string;scan:string;generation:string|null;
+  scanAttestedAt:Date|null;verifiedSize:number|null;
+ }>,
 }));
 vi.mock("@/modules/courses/scope",()=>({loadCourseSectionDeliveryScope:state.delivery}));
 vi.mock("@/modules/courses/learning-access",()=>({requireLearningReadAccess:state.access}));
@@ -14,10 +17,14 @@ const context={} as RequestContext;
 const deliveryId="11111111-1111-4111-8111-111111111111";
 const contentId="22222222-2222-4222-8222-222222222222";
 const offeringId="33333333-3333-4333-8333-333333333333";
+const collegeId="44444444-4444-4444-8444-444444444444";
+const resourceId="55555555-5555-4555-8555-555555555555";
+const storageKey="private/"+collegeId+"/"+resourceId+"/course-resource/"+contentId;
 beforeEach(()=>{
- state.delivery.mockReset().mockResolvedValue({id:deliveryId,offeringId,endedAt:null});
+ state.delivery.mockReset().mockResolvedValue({id:deliveryId,offeringId,collegeId,endedAt:null});
  state.access.mockReset().mockResolvedValue("LEARNER");
- state.rows=[{storageKey:"courses/tenant/lesson/resource.pdf"}];
+ state.rows=[{key:storageKey,status:"READY",scan:"CLEAN",generation:"object-v1",
+  scanAttestedAt:new Date("2026-10-01T00:00:00.000Z"),verifiedSize:1024}];
  state.select.mockReset().mockImplementation(()=>({
   from(){return this;},innerJoin(){return this;},where(){return this;},
   limit:async()=>state.rows,
@@ -41,12 +48,18 @@ describe("LEARNER-COURSE-FILE-EMBARGO-01 private course file read boundary",()=>
  });
  it("returns a private object key only after scoped learner authorization",async()=>{
   expect(await getLearnerCourseFileReference(context,deliveryId,contentId))
-   .toBe("courses/tenant/lesson/resource.pdf");
+   .toBe(storageKey);
   expect(state.delivery).toHaveBeenCalledWith(deliveryId,true);
   expect(state.access).toHaveBeenCalledWith(context,offeringId,deliveryId,{
    includeHistorical:true,
   });
   expect(state.select).toHaveBeenCalledTimes(1);
+ });
+ it("rejects an unscanned or foreign-college file even after learner authorization",async()=>{
+  state.rows=[{...state.rows[0]!,scan:"PENDING"}];
+  expect(await getLearnerCourseFileReference(context,deliveryId,contentId)).toBeNull();
+  state.rows=[{...state.rows[0]!,scan:"CLEAN",key:"private/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/"+resourceId+"/course-resource/"+contentId}];
+  expect(await getLearnerCourseFileReference(context,deliveryId,contentId)).toBeNull();
  });
  it("reports unavailable storage only as null, not a fabricated file key",async()=>{
   state.rows=[];

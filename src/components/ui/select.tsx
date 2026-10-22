@@ -13,6 +13,8 @@ export type SelectProps = ComponentPropsWithRef<"select"> & { error?: boolean };
  * :511-524 (AntD selector 10px, 14px/400). Popup paint varies by OS;
  * we do not replace the accessible native popup or fake popup geometry.
  */
+const selectControlBaseClass = "min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full min-w-0 cursor-pointer appearance-auto";
+
 export function Select({ className, children, error = false, ...props }: SelectProps) {
   const invalid = error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
   return (
@@ -21,7 +23,7 @@ export function Select({ className, children, error = false, ...props }: SelectP
       {...props}
       aria-invalid={invalid ? true : props["aria-invalid"]}
       className={cx(
-        "min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full min-w-0 cursor-pointer appearance-auto",
+        selectControlBaseClass,
         // iOS native picker controls need 16px to avoid forced browser zoom.
         "max-[767px]:text-[16px] max-[767px]:leading-6",
         "rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)]",

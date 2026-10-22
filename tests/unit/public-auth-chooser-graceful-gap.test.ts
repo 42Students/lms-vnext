@@ -6,7 +6,7 @@ describe("public account chooser and failure handling",()=>{
  it("PUB-auth-public-08 restores last used active college as radio default",()=>{
   const s=source("src/components/auth/membership-chooser.tsx");
   expect(s).toContain('window.sessionStorage.getItem("lms_last_membership_key")');
-  expect(s).toContain('setSelectedId(memberships.some');
+  expect(s).toContain('setSelectedId(entries.some(m=>m.id===stored&&m.status==="ACTIVE")');
   expect(s).toContain('membership.id===lastUsed');
   expect(s).toContain("Last used");
   expect(s).toContain('role="radiogroup"');
@@ -27,7 +27,10 @@ describe("public account chooser and failure handling",()=>{
  });
  it("GR-91 retry and recovery buttons are keyboard-accessible",()=>{
   const errors=source("src/components/public/error-recovery-actions.tsx");
-  expect(errors).toContain("focus-visible");
+  expect(errors).toContain('import { Button } from "@/components/ui/button"');
+  const sharedButton=source("src/components/ui/button.tsx");
+  expect(sharedButton).toContain("focus-visible:outline-2");
+  expect(sharedButton).toContain("max-[767px]:min-h-11");
   expect(errors).toContain("Try again");
   expect(errors).toContain("Go back");
   const listError=source("src/app/(authenticated)/learn/projects/error.tsx");

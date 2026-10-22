@@ -13,7 +13,8 @@ describe("College Admin placement register and drive parity",()=>{
   expect(pipeline).toContain('caption="Applications pipeline"');
   expect(pipeline).toContain('mobilePriority:"primary"');
   expect(pipeline).toContain('mobilePriority:"action"');
-  expect(pipeline).toContain('No persisted match score available');
+  expect(pipeline).toContain('if(score===null||score===undefined||!Number.isFinite(score))return "—";');
+  expect(pipeline).toContain('Math.max(0,Math.min(100,Math.round(score)))');
   expect(pipeline).not.toContain("<table");
   const shared=src("src/components/ui/data-table.tsx");
   expect(shared).toContain("More details");

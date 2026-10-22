@@ -24,6 +24,6 @@ describe("HR-BREAK-REPORT-JOINED-51: employer joined stage only includes accepte
   expect(section).toContain("and m.college_id=${collegeId}::uuid");
   expect(section).toContain("m.status='ACTIVE'");
   expect(section).toContain("u.platform_status='ACTIVE'");
-  expect(section).toContain("sc.status='SHORTLISTED'");
+  expect(section).toContain("s.status='SHORTLISTED'");
  });
 });

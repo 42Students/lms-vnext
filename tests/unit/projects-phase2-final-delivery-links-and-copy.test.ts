@@ -18,7 +18,7 @@ describe("PR-S2-07 registered 0091 final delivery links and Project page copy",(
   expect(form).toContain('kind:"LINK"');
  });
  it("keeps one account-level tab strip and legacy labels",()=>{
-  expect(workspace.match(/aria-label="Project workspace sections"/g)).toHaveLength(1);
+  expect(workspace.match(/ariaLabel="Project workspace sections"/g)).toHaveLength(1);
   expect(mentor).toContain("<MentorProjectTabs");
   expect(learner).toContain("<LearnerProjectTabs");
   expect(college).toContain('if (basePath === "/college/projects" || basePath === "/admin/projects") return null;');

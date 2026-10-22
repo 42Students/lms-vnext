@@ -61,7 +61,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
        :<StatusBadge tone="success">Linked employer</StatusBadge>}
      {company.websiteUrl&&safeTpoCompanyWebsiteUrl(company.websiteUrl)
       ?<a href={safeTpoCompanyWebsiteUrl(company.websiteUrl)!}
-        target="_blank" rel="noopener noreferrer"
+        
         aria-label={"Visit "+company.name+" website (opens in a new tab)"}
         className="lms-inline-link inline-flex min-h-11 md:min-h-9 min-w-0 items-center break-all text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {company.websiteUrl}<span aria-hidden="true" className="ml-1">↗</span></a>

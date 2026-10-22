@@ -7,7 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import {useEffect,useState} from "react";
+import {useEffect,useId,useState} from "react";
 import {useRouter} from "next/navigation";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE,CAMPAIGN_DRAFT_UNAVAILABLE,
   tpoCampaignDraftSchema,previewTpoCampaignText} from "@/modules/messaging/tpo-campaign-draft-model";
@@ -23,6 +23,7 @@ const SEGMENTS=[
 ] as const;
 export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{deliveryReady?:boolean;selectedLeadIds?:string[]}){
  const router=useRouter();
+ const formErrorId=useId();
  const [title,setTitle]=useState(""),[subject,setSubject]=useState("");
  const [body,setBody]=useState(""),[segment,setSegment]=useState<(typeof SEGMENTS)[number]["value"]>("ALL_ELIGIBLE");
  const [templateKey,setTemplateKey]=useState("recruiter-campaign"),[busy,setBusy]=useState(false);
@@ -87,7 +88,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   <h2 className="text-lg font-semibold text-foreground">{selectedLeadIds.length?"Email "+selectedLeadIds.length+" recruiters":"Write a campaign"}</h2>
   <p className="text-sm text-body">Step 1 of 2 · Write the email and review its eligible recipients. Save a draft, then open it to confirm sending. Nothing is sent from this form.</p>
   <p className="text-xs text-muted-foreground">Saving a draft is available even when sending is disabled. The Send action is only available after selecting eligible recipients and confirming a verified draft.</p>
-  <form onSubmit={e=>{e.preventDefault();void save();}} className="space-y-4">
+  <form onSubmit={e=>{e.preventDefault();void save();}} aria-describedby={error?formErrorId:undefined} className="space-y-4">
    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Campaign name
     <Input value={title} maxLength={160} aria-required="true" className={field}
      onChange={e=>setTitle(e.target.value)}/>
@@ -161,6 +162,6 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
       Open email campaigns
     </Link>}
   </div>:null}
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error?<div id={formErrorId}><InlineNotice tone="error" message={error}/></div>:null}
  </section>;
 }

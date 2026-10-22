@@ -43,7 +43,7 @@ describe("PROJ-BREAK-COL-PAGES-01 scope and resilience for all seven College Adm
   expect(source).toContain("const templateTitles = new Map(");
   expect(source).toContain("templatesResult.ok ? templatesResult.value : []");
   expect(source).toContain("<ProjectAdminWorkspaceList");
-  expect(source).toContain('emptyTitle="No Projects match these filters"');
+  expect(source).toContain('emptyTitle={query.q||query.status?"No workspaces match your search/filter":"No workspaces available for this college"}');
   expect(source).toContain("<ProjectAdminPagination");
  });
  it("does not produce a class team when authority or published templates are unavailable",()=>{
@@ -53,7 +53,8 @@ describe("PROJ-BREAK-COL-PAGES-01 scope and resilience for all seven College Adm
   expect(source).toContain('if(mode!=="single")await requireTeamCreationAuthority(context,collegeId)');
   expect(source).toContain("templates.length===0?");
   expect(source).toContain("No published Project template is assigned to this college.");
-  expect(source).toContain('href="/college/projects/templates"');
+  expect(source).toContain('href="/college/projects"');
+  expect(source).toContain("No published Project template is assigned to this college.");
   expect(source).toContain("ClassTeamWorkspaceCreator");
   expect(source).toContain('aria-label="Workspace creation modes"');
  });

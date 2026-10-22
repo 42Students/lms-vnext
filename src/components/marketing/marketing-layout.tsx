@@ -89,7 +89,7 @@ export function MarketingLayout({children,path,pageTitle,pageDescription}:{
         ["Instagram",process.env.NEXT_PUBLIC_MARKETING_INSTAGRAM_URL],
         ["YouTube",process.env.NEXT_PUBLIC_MARKETING_YOUTUBE_URL]] as const).map(([label,raw])=>{
         const href=verifiedMarketingSocial(raw);
-        return href?<a key={label} href={href} target="_blank" rel="noopener noreferrer"
+        return href?<a key={label} href={href} rel="noopener noreferrer"
          className="inline-flex min-h-11 items-center text-[var(--lms-primary-text)] underline-offset-4 hover:underline">{label}</a>:null;
        })}
      </div>

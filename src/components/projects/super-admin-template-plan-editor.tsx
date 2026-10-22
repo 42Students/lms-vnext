@@ -123,7 +123,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   }
   function removeSprint(key: string) {
     const result = removeTemplateSprint(draft, key);
-    if (result.error) { setError(result.error); return; }
+    if (result.error) { setError("Could not remove this sprint. Review the plan and try again."); return; }
     setDraft(result.blueprint);
     setError("");
   }
@@ -164,8 +164,8 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
       showToast({tone:"success",title:props.section==="sprints"?"Sprints saved":"Tasks saved"});
       router.refresh();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message :
-        props.section === "sprints" ? "Failed to save sprints" : "Failed to save tasks");
+      setError(props.section === "sprints" ? "Failed to save sprints. Review the template and try again." :
+        "Failed to save tasks. Review the template and try again.");
     } finally {
       setPending(false);
     }

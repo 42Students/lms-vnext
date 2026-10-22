@@ -29,7 +29,7 @@ describe("chat-16 public auth and invitation page journeys",()=>{
   const handoff=read("src/app/auth/handoff/page.tsx");
   const oldSuper=read("src/app/superadmin-login/page.tsx");
   expect(handoff).toContain('redirect("/login?auth=handoff-retired"');
-  expect(oldSuper).toContain('redirect("/login")');
+  expect(oldSuper).toContain('redirect("/login?legacy=superadmin")');
   expect(handoff).not.toContain("exchangeToken");
   expect(oldSuper).not.toContain("createSession");
  });
@@ -61,7 +61,7 @@ describe("chat-16 public auth and invitation page journeys",()=>{
   const confirmed=read("src/app/campaign-unsubscribe/confirmed/page.tsx");
   expect(page).toContain("Opening this link does not unsubscribe you");
   expect(page).toContain("No preference was changed");
-  expect(form).toContain("if(pendingRef.current)return");
+  expect(form).toContain("if(pendingRef.current||confirmed||!token.trim())return;");
   expect(form).toContain('method:"POST"');
   expect(form).toContain('credentials:"same-origin"');
   expect(form).toContain("AbortController");

@@ -25,7 +25,7 @@ describe("Super Admin Academic Setup page copy",()=>{
    expect(code).not.toContain("      <AcademicSetupSteps step={2} />\n        <PageHeader");
   }
   expect(read(base+"batches/page.tsx")).toContain("data ? <AcademicSetupSteps");
-  expect(read(base+"classes/page.tsx")).toContain("data ? <AcademicSetupSteps");
+  expect(read(base+"classes/page.tsx")).toContain("selected?<AcademicSetupSteps");
  });
  it("SA-academics-people-03 omits Super Admin eyebrows on legacy Academic Setup pages",()=>{
   for(const path of ["departments","programs","semesters","batch-promotion","electives","attendance","lecture-halls"]){

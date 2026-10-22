@@ -119,7 +119,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   <Button variant="secondary" type="button" aria-expanded={preview} aria-controls={preview?previewId:undefined} disabled={busy||guardedPending||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
    onClick={()=>{setPreview(true);setError("");setOutcomes([]);}}
    >Preview selected</Button>
-  {preview?<div id={previewId} className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 md:px-4">
+  {preview?<section id={previewId} aria-label="Review selected profile decisions" className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 md:px-4">
    <h3 className="font-semibold">Review {eligible.length} eligible, {skipped.length} left out</h3>
    {skipped.length?<p className="text-sm text-warning-text leading-[22px]">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
    {action==="VERIFY"?<label className="flex gap-2 text-sm"><Checkbox  checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
@@ -130,10 +130,10 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
     {busy?"Saving…":action==="VERIFY"?"Confirm verify selected":"Confirm send back selected"}
    </Button>
    <Button variant="secondary" type="button" disabled={busy}  onClick={()=>setPreview(false)}>Cancel preview</Button>
-  </div>:null}
-  {outcomes.length>0?<div role="status" className="space-y-2 border-t border-border py-3">
+  </section>:null}
+  {outcomes.length>0?<section aria-label="Bulk review results" className="space-y-2 border-t border-border py-3">
    <h3 className="font-semibold">Bulk review results</h3>
-   <p>{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
+   <p role="status">{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
    {outcomes.some(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK")?<p className="text-sm text-muted-foreground">Failed sections remain selected if still waiting. Refresh to retry with their latest versions. Sections no longer waiting cannot be retried.</p>:null}
    <div className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-border">
     <table className="w-full min-w-[420px] text-left text-sm">
@@ -149,7 +149,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
      </tr>)}</tbody>
     </table>
    </div>
-  </div>:null}
+  </section>:null}
   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
  </section>;
 }

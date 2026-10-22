@@ -92,7 +92,8 @@ describe("TPO Students CSV safety", () => {
       `"'=HYPERLINK(""https://invalid.test"")"`,
     );
     expect(csv).toContain('"8"');
-    expect(csv).toContain('"READY_NOT_APPLYING"');
+    expect(csv).toContain('"Ready, not applying"');
+    expect(csv).not.toContain('"READY_NOT_APPLYING"');
     expect(csv.endsWith("\r\n")).toBe(true);
 
     expect(exportTpoStudentsCsv([]).split("\r\n"))

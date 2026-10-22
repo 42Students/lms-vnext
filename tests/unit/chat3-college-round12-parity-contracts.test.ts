@@ -47,14 +47,14 @@ describe("chat-3 college people and attendance source contract audit",()=>{
  });
  it("COL-attendance-05 successful attendance corrections are announced",()=>{
   const code=source("src/components/attendance/admin-attendance-workspace.tsx");
-  expect(code).toContain("Marked present");
+  expect(code).toContain('setNotice("Attendance corrected for "+learnerName');
   expect(code).toContain("role=\"status\"");
  });
  it("COL-attendance-12 day-wise attendance CSV preserves discrete mark codes",()=>{
   const code=source("src/components/attendance/admin-attendance-workspace.tsx");
   expect(code).toContain("sessionDays.map(row=>String(Number(row.day.slice(-2))))");
-  expect(code).toContain("return \"P\"");
-  expect(code).toContain("return \"A\"");
-  expect(code).toContain("return \"N\"");
+  expect(code).toContain('state.code==="P"?"P"');
+  expect(code).toContain('(["A","E","M","L"].includes(state.code)?"A":"N")');
+  expect(code).toContain('if(sessions.length===0)return ""');
  });
 });

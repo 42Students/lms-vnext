@@ -31,7 +31,7 @@ describe("HR legacy inventory B explicit UNKNOWN routes, source parity audit",()
   expect(resolve).toBeGreaterThan(authorize);
   expect(load).toBeGreaterThan(resolve);
   expect(job).toContain('href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"');
-  expect(job).toContain('requestsTab&&requestData?.party==="COMPANY"');
+  expect(job).toContain('discussionTab&&requestData?.party==="COMPANY"');
   expect(job).toContain('<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"');
  });
  it("HR-PARITY-55 direct change-request page rejects the TPO party with the same 404 as missing jobs",()=>{

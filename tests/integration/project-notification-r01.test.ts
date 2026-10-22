@@ -60,6 +60,14 @@ describe.skipIf(!enabled)("COL-projects-R01 / LEARNER-projects-R01 notification 
   await startProjectSprint(mentor,project.id,initial.sprints[0]!.id);
   await pool!.query("update project_tasks set status='BLOCKED',blocker_reason='Awaiting API review' where id=$1",
     [task.id]);
+  // The risk feed deliberately requires an ACTIVE workspace and a persisted,
+  // non-deleted blocker; verify the fixture before exercising its projection.
+  const [projectState,blockerState]=await Promise.all([
+   pool!.query<{status:string}>("select status from project_instances where id=$1",[project.id]),
+   pool!.query<{status:string;blocker_reason:string|null}>("select status,blocker_reason from project_tasks where id=$1 and deleted_at is null",[task.id]),
+  ]);
+  expect(projectState.rows[0]?.status).toBe("ACTIVE");
+  expect(blockerState.rows[0]).toMatchObject({status:"BLOCKED",blocker_reason:"Awaiting API review"});
   const risk=await listProjectAdminRiskQueue(admin,SEED_IDS.collegeA,{
     q:"project-notices-r01-"+suffix,page:1,
   });

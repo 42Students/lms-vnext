@@ -10,7 +10,8 @@ describe("TPO batch-specific placement rules",()=>{
   }
   const page=source("src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx");
   const ui=source("src/components/tpo/tpo-batch-rule-editor.tsx");
-  expect(page).toContain("getCollegePlacementRules");
+  expect(page).toContain("getLegacyCompatibleBatchDetails(ctx,batchId)");
+  expect(page).toContain("detail.batchRules");
   expect(page).toContain("lifecycle?.rulesOverride");
   for(const label of ["Counts as placed when","Offers a student can hold","Once placed, can apply again for at least","Time to respond to an offer","Use the college","Follow the college rules"])
    expect(ui).toContain(label);

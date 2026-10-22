@@ -177,7 +177,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       </label>
     </>:null}
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
-      className="min-h-10 text-sm font-[650] text-link underline">Clear filters</Button>
+      className="min-h-11 text-sm font-[650] text-link underline md:min-h-9">Clear filters</Button>
   </div>
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
     {canReorder?"Drag resources to arrange a draft, then select Save order.":

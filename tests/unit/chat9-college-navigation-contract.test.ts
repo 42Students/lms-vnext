@@ -58,7 +58,7 @@ describe("legacy College Admin full sidebar + group href contract",()=>{
     ];
     for(const [source,target] of anchors){
       const code=readFileSync(join(root,source),"utf8");
-      expect(code.includes('href="'+target+'"'),source).toBe(true);
+      expect(code.includes('href="'+target+'"') || code.includes('href: "'+target+'"'),source).toBe(true);
       expect(existsSync(routeFile(target)),target).toBe(true);
     }
   });

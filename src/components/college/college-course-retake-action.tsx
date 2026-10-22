@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 type Learner={membershipId:string;name:string;rollNumber:string|null};
 
@@ -16,11 +17,11 @@ export function CollegeCourseRetakeAction({learners,offeringId,deliveryId,course
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
   const [success,setSuccess]=useState("");
+  const [confirmOpen,setConfirmOpen]=useState(false);
   const learner=learners.find(value=>value.membershipId===learnerMembershipId);
   async function start(){
     if(!learner||locked.current)return;
-    if(!window.confirm("Start the next attempt for "+learner.name+" in "+courseName+
-      "? The previous attempt will be kept as history."))return;
+    setConfirmOpen(false);
     locked.current=true;setBusy(true);setError("");setSuccess("");
     try{
       const response=await fetch("/api/college/course-progress/start-attempt",{
@@ -63,9 +64,14 @@ export function CollegeCourseRetakeAction({learners,offeringId,deliveryId,course
         </Select>
       </label>
       <Button type="button" variant="primary" disabled={!learner||busy} loading={busy}
-        onClick={()=>void start()}>Start next attempt</Button>
+        onClick={()=>setConfirmOpen(true)}>Start next attempt</Button>
     </div>
     {error?<InlineNotice tone="error" message={error}/>:null}
     {success?<div role="status"><InlineNotice tone="success" message={success}/></div>:null}
+    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+      title="Start next attempt"
+      description={learner ? "Start the next attempt for "+learner.name+" in "+courseName+"? The previous attempt will be kept as history." : "Select a learner first."}
+      confirmLabel="Start next attempt" confirmVariant="primary"
+      confirmDisabled={!learner} pending={busy} onConfirm={()=>void start()}/>
   </section>;
 }

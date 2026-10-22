@@ -28,7 +28,7 @@ describe("Faculty-authored learner assignment materials",()=>{
   expect(service).toContain("requireDeliveryContentMutation(context,deliveryId)");
   expect(service).toContain('.for("update")');
   expect(service).toContain("rows.length>=20");
-  expect(service).toContain("rows.some(row=>row.externalUrl.toLowerCase()");
+  expect(service).toContain("rows.some(row=>row.externalUrl?.toLowerCase()");
   const route=read("src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/materials/route.ts");
   expect(route).toContain("isSameOriginRequest(request)");
   expect(route).toContain("export async function GET");

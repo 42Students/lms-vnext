@@ -455,7 +455,7 @@ export function LearnerAttendanceWorkspace({
                 <strong className="block text-foreground">{timeLabel(row.startsAt)}</strong>
                 <span className="block break-words text-xs text-muted-foreground">{row.title} · {row.courseCode}</span>
               </span>},
-            {key:"status",header:"Present/Absent",mobilePriority:"secondary" as const,
+            {key:"status",header:"Status",mobilePriority:"secondary" as const,
               cell:(row)=><StatusBadge tone={learnerAttendanceStatusTone(row.status)}>{statusLabel(row.status)}</StatusBadge>},
             {key:"details",header:"Faculty / location",mobilePriority:"secondary" as const,
               cell:(row)=>[row.courseName,row.facultyName,row.location].filter(Boolean).join(" · ")||"Not specified"},

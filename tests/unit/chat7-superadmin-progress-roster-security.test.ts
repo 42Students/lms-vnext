@@ -24,9 +24,10 @@ describe("SA-academics-people-67 selected-college learner progress hardening",()
  });
  it("SA-academics-people-67 fetches a sentinel row before marking the 500-row export/page as truncated",()=>{
   const source=read("src/modules/courses/super-admin-student-course-progress.ts");
-  expect(source).toMatch(/limit\s+501\s*`\)/);
-  expect(source).toContain(".slice(0,500).map(");
-  expect(source).toContain("truncated:result.rows.length>500");
+  expect(source).toContain("limit ${pageSize+1} offset ${offset}");
+  expect(source).toContain("const rows=received.slice(0,pageSize).map(");
+  expect(source).toContain("pageSize:z.number().int().min(1).max(500)");
+  expect(source).toContain("truncated:received.length>pageSize || page>1");
   expect(source).not.toContain("truncated:rows.length===500");
  });
  it("SA-academics-people-67 restricts each learner's item denominator to active delivery audience",()=>{

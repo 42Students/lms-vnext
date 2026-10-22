@@ -27,7 +27,7 @@ export function LearnerApplicationResumeLink({applicationId}:{applicationId:stri
  }
  return <span className="mt-1 block text-xs">
   {state.status==="READY"&&state.url
-   ?<a href={state.url} target="_blank" rel="noopener noreferrer"
+   ?<a href={state.url}
      className="font-semibold text-primary-text underline">
       View scanned application resume (temporary private link) ↗
     </a>

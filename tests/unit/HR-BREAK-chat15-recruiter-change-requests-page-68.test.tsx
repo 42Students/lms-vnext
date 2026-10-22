@@ -57,6 +57,17 @@ describe("HR-RECRUITER-PAGE-68: scoped drive change-request page",()=>{
   const node=await render();
   expect(text(node)).toContain("Engineering · Change requests");
   expect(m.read).toHaveBeenCalledTimes(1);
-  expect(JSON.stringify(node)).toContain('"party":"COMPANY"');
+  const props=[] as Array<{party?:string;userId?:string;requests?:unknown[]}>;
+  function visit(value:ReactNode):void{
+   if(Array.isArray(value)){value.forEach(visit);return;}
+   if(!isValidElement(value))return;
+   const child=value.props as {party?:string;userId?:string;requests?:unknown[];children?:ReactNode};
+   props.push(child);
+   visit(child.children);
+  }
+  visit(node);
+  expect(props).toEqual(expect.arrayContaining([
+   expect.objectContaining({party:"COMPANY",userId:"recruiter",requests:[{id:"request-one"}]}),
+  ]));
  });
 });

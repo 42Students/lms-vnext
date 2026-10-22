@@ -43,7 +43,8 @@ describe("chat-7 weak export boundaries: calendar exactness, rollout flags, scop
   const assignment=collegeAssessmentExportHref("ASSIGNMENT",query);
   expect(assignment.startsWith("/api/academics/college-assessment-export/assignment?")).toBe(true);
   expect(new URL(assignment,"https://local.invalid").searchParams.get("results")).toBeNull();
-  expect(collegeAssessmentExportQuerySchema.safeParse({page:1}).success).toBe(false);
+  expect(collegeAssessmentExportQuerySchema.safeParse({exportMode:"PAGE",page:1}).success).toBe(true);
+  expect(collegeAssessmentExportQuerySchema.safeParse({exportMode:"PAGE",page:0}).success).toBe(false);
   expect(collegeAssessmentExportQuerySchema.safeParse({q:"",bad:"foreign-tenant"}).success).toBe(false);
  });
  it("COURSES-WEAK-EXPORT-05 quotes spreadsheet injection and CRLF-bearing assessment values and preserves withheld quiz results",()=>{
