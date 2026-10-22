@@ -74,9 +74,11 @@ export function TpoNoticeLiveReach({targetedReady}:{targetedReady:boolean}){
     <p className="mt-1 text-xs text-[var(--lms-warning-text)]">Targeted recipient storage is not ready. Publishing to this audience is unavailable.</p>:null}
  </div>;
 }
-export function TpoNoticeLiveSubmitControls({minDateTime,targetedReady}:{minDateTime:string;targetedReady:boolean}){
+export function TpoNoticeLiveSubmitControls({minDateTime,targetedReady,deliveryReady}:{
+ minDateTime:string;targetedReady:boolean;deliveryReady:boolean;
+}){
  const preview=usePreview();
- return <TpoNoticeScheduleControls minDateTime={minDateTime}
+ return <TpoNoticeScheduleControls minDateTime={minDateTime} deliveryReady={deliveryReady}
   count={preview.status==="ready"?preview.count:null}
   enabled={preview.status==="ready"&&preview.count!==null&&preview.count>0&&
    canPublishTpoNoticeWithCurrentStorage(preview.audience,targetedReady)}/>;

@@ -15,6 +15,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {parseTpoNoticeSchedule,parseTpoIstMinute} from "./tpo-notice-schedule-model";
+import {tpoNoticeDeliveryVerified} from "./tpo-notice-delivery-readiness";
 
 export const editTpoNoticeSchema=z.object({
  noticeId:z.string().uuid(),expectedVersion:z.number().int().nonnegative(),
@@ -75,6 +76,12 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
     throw new Error("TPO_NOTICE_INVALID_TIME");
   if(input.sendAt!==undefined&&input.showUntil!==undefined)
     parseTpoNoticeSchedule(input,now);
+  // Existing drafts may still be edited or unscheduled while the delivery
+  // worker is unavailable, but creating/extending a future scheduled release
+  // must not promise fanout without an operationally verified producer.
+  if(input.sendAt!==undefined&&schedule.scheduledAt&&
+     schedule.scheduledAt>now&&!tpoNoticeDeliveryVerified())
+    throw new Error("TPO_NOTICE_DELIVERY_UNVERIFIED");
   if(input.audienceChange){
    // Never retarget a visible/delivered notice. The lock covers the frozen
    // recipient set and the version-checked content update together.
@@ -102,10 +109,12 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
     eq(placementTpoNoticeRecipients.announcementId,current.id));
    await tx.delete(placementTpoNoticeAudiences).where(
     eq(placementTpoNoticeAudiences.announcementId,current.id));
+   // Always retain the explicit audience for the scheduler, even when
+   // changing an older targeted notice back to the whole college.
+   await tx.insert(placementTpoNoticeAudiences).values({
+    announcementId:current.id,kind:change.audience,
+   });
    if(change.audience!=="COLLEGE"){
-    await tx.insert(placementTpoNoticeAudiences).values({
-     announcementId:current.id,kind:change.audience,
-    });
     for(let offset=0;offset<frozen.length;offset+=500)
      await tx.insert(placementTpoNoticeRecipients).values(
       frozen.slice(offset,offset+500).map(membershipId=>({

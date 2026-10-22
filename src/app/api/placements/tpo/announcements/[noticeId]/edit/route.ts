@@ -51,6 +51,8 @@ export async function POST(request: Request, {params}: {params: Promise<{noticeI
       return noticePostError(request,"TARGETED_NOTICES_NOT_REGISTERED",503);
     if(error instanceof Error && error.message==="TPO_NOTICE_INVALID_TIME")
       return noticePostError(request,"INVALID_TIME",400);
+    if(error instanceof Error && error.message==="TPO_NOTICE_DELIVERY_UNVERIFIED")
+      return noticePostError(request,"TPO_NOTICE_DELIVERY_UNVERIFIED",503);
     if (error instanceof Error && error.message === "ANNOUNCEMENT_NOT_FOUND")
       return noticePostError(request,"NOT_FOUND",404);
     if (error instanceof Error && error.message === "ANNOUNCEMENT_STALE")

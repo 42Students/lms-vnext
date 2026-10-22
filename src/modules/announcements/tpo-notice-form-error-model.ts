@@ -12,6 +12,7 @@ const MESSAGES:Record<string,string>={
  STALE_VERSION:"This announcement changed since you opened it. Reload and try again.",
  UNDO_WINDOW_EXPIRED:"The 30-second Undo window has ended.",
  ANNOUNCEMENTS_NOT_REGISTERED:"Announcements are temporarily unavailable until their storage is ready.",
+ TPO_NOTICE_DELIVERY_UNVERIFIED:"Announcement delivery has not been verified for this deployment. Scheduling and sending are temporarily unavailable.",
  TARGETED_NOTICES_NOT_REGISTERED:"Targeted announcements are not ready. Choose the whole college instead.",
  TPO_NOTICE_NO_RECIPIENTS:"Nobody currently matches this audience. Choose another audience.",
  NO_RECIPIENTS:"Nobody currently matches this audience. Choose another audience.",
