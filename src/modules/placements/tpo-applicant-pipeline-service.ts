@@ -60,6 +60,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   const projection=await db.transaction(async tx=>{
    const since=tpoApplicantSubmittedSince(input.submittedWithin,new Date());
    const queryPattern=tpoApplicantExportSearchPattern(input.search);
+   const screeningScore=sql<number|null>`(select max(r.score_percent) from placement_round_results r where r.application_id=${placementApplications.id} and r.status='APPLIED' and r.superseded_at is null)`;
    const from=oldFacets.submittedAfter?new Date(oldFacets.submittedAfter+"T00:00:00+05:30"):null;
    const before=oldFacets.submittedBefore?
     new Date(Date.parse(oldFacets.submittedBefore+"T00:00:00+05:30")+86400000-1):null;
@@ -111,8 +112,8 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     before?lte(placementApplications.submittedAt,before):undefined,
     oldFacets.source==="COLLEGE"?sql<boolean>`${placementApplications.submittedByUserId}<>${collegeMemberships.userId}`:
      oldFacets.source==="LEARNER"?eq(placementApplications.submittedByUserId,collegeMemberships.userId):undefined,
-    oldFacets.minScore!==undefined?gte(placementApplicationScreenings.scorePercent,oldFacets.minScore):undefined,
-    oldFacets.maxScore!==undefined?lte(placementApplicationScreenings.scorePercent,oldFacets.maxScore):undefined,
+    oldFacets.minScore!==undefined?gte(screeningScore,oldFacets.minScore):undefined,
+    oldFacets.maxScore!==undefined?lte(screeningScore,oldFacets.maxScore):undefined,
     rosterScope,
     input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
     input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
@@ -184,7 +185,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       order by r.sequence desc,result.updated_at desc limit 1)`,
     applicationStatus:placementApplications.status,
     screeningStatus:placementApplicationScreenings.status,
-    screeningScore:placementApplicationScreenings.scorePercent,
+    screeningScore,
     screeningUpdatedAt:placementApplicationScreenings.updatedAt,
     eligibilityStatus:placementApplications.eligibilityStatus,
     channel:placementApplications.channel,
