@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,inArray,isNotNull,isNull,sql} from "drizzle-orm";
+import {and,eq,gt,inArray,isNotNull,isNull,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,placementCompanyRelationships,placementCompanies,placementRecruiterCollegeGrants,placementRecruiterProfiles,colleges,organizations,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -85,7 +85,9 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+    // Legacy NULL valid_until represents a verified, indefinite grant.
+    or(isNull(placementRecruiterCollegeGrants.validUntil),
+       gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
     sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
@@ -116,7 +118,9 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+    // Legacy NULL valid_until represents a verified, indefinite grant.
+    or(isNull(placementRecruiterCollegeGrants.validUntil),
+       gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
     sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))

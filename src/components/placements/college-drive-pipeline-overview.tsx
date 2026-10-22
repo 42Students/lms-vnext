@@ -13,11 +13,13 @@ type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const stages=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const;
 const labels={APPLIED:"Applied",SHORTLISTED:"Shortlisted",ASSESSMENT:"Assessment",INTERVIEW:"Interview",WAITLISTED:"Waitlisted",OFFERED:"Offered",HIRED:"Hired",REJECTED:"Rejected",WITHDRAWN:"Withdrawn"} as const;
-export async function CollegeDrivePipelineOverview({jobId,data,attention}:{
- jobId:string;data:Funnel;attention:Attention;
+/** Legacy College Admin shows candidate-specific needs-attention before
+ * the company card. Only the authorized current college's candidate rows
+ * are linked, with counts from the scoped aggregate service. */
+export async function CollegeDriveAttentionBanner({jobId,attention}:{
+ jobId:string;attention:Attention;
 }){
  const base="/college/placements/jobs/"+encodeURIComponent(jobId);
-
  const flags=attention.categories.filter(x=>x.jobId===jobId);
  const context=await getCurrentRequestContext();
  const membership=context.membership;
@@ -58,22 +60,8 @@ export async function CollegeDrivePipelineOverview({jobId,data,attention}:{
    category==="MISSING_OFFER_LETTER"?candidate.missingOfferLetter:
    category==="LOW_CONVERSION"?candidate.stage==="APPLIED":false);
  const warningCount=flags.reduce((total,flag)=>total+flag.count,0);
- return <div className="min-w-0 space-y-[var(--lms-space-4)]">
-  <nav aria-label="Drive sections" role="tablist"
-    className="flex min-w-0 flex-wrap gap-4 border-b border-border">
-    {([
-      ["Overview",base],
-      ["Applications",base+"/applications"],
-      ["Schedule",base+"/interviews"],
-      ["Settings",base+"/settings"],
-    ] as const).map(([label,href])=><Link key={href} href={href} role="tab"
-      aria-selected={label==="Overview"} tabIndex={label==="Overview"?0:-1}
-      className={"inline-flex min-h-11 items-center border-b-[3px] px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
-       (label==="Overview"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
-      {label}
-    </Link>)}
-  </nav>
-  {flags.length>0?<section aria-label="Drive needs attention" role="alert" className="rounded-[var(--lms-control-radius)] border border-amber-300 bg-amber-50 px-4 py-3 text-amber-950">
+
+ return <div className="min-w-0">{flags.length>0?<section aria-label="Drive needs attention" role="alert" className="rounded-[var(--lms-control-radius)] border border-amber-300 bg-amber-50 px-4 py-3 text-amber-950">
     <h2 className="text-sm font-semibold">⚠ Needs attention ({warningCount})</h2>
     <ul className="mt-3 space-y-3">{flags.map(flag=>{
       const rows=flaggedCandidates(flag.category);
@@ -97,7 +85,30 @@ export async function CollegeDrivePipelineOverview({jobId,data,attention}:{
       </li>;
     })}</ul>
     <Disclosure title="Evidence note" className="mt-[var(--lms-space-3)]"><p className="max-w-[75ch] pt-2 text-xs leading-5">Only registered private offer-letter records are used when checking evidence.</p></Disclosure>
-  </section>:null}
+  </section>:null}</div>;
+}
+
+export async function CollegeDrivePipelineOverview({jobId,data}:{
+ jobId:string;data:Funnel;
+}){
+ const base="/college/placements/jobs/"+encodeURIComponent(jobId);
+
+ return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  <nav aria-label="Drive sections" role="tablist"
+    className="flex min-w-0 flex-wrap gap-4 border-b border-border">
+    {([
+      ["Overview",base],
+      ["Applications",base+"/applications"],
+      ["Schedule",base+"/interviews"],
+      ["Settings",base+"/settings"],
+    ] as const).map(([label,href])=><Link key={href} href={href} role="tab"
+      aria-selected={label==="Overview"} tabIndex={label==="Overview"?0:-1}
+      className={"inline-flex min-h-11 items-center border-b-[3px] px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
+       (label==="Overview"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
+      {label}
+    </Link>)}
+  </nav>
+
   <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-border pb-3" aria-label="Additional drive actions">
     <Link href={base+"/shortlisted"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       View Shortlisted →
