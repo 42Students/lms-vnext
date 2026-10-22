@@ -18,6 +18,6 @@ describe("LEARNER-course-detail-12 playback settings",()=>{
   expect(source("src/components/courses/learner-course-workspace.tsx")).toContain("saveIntervalMs={workspace.playbackSettings.saveIntervalMs}");
   expect(source("src/components/courses/learner-youtube-player.tsx")).toContain('host: "https://www.youtube-nocookie.com"');
   expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("now-lastAttemptAtRef.current<saveThrottleMs");
-  expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("Math.max(5000,Math.min(120000,saveIntervalMs))");
+  expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("Math.max(5000,Math.min(600000,saveIntervalMs))");
  });
 });
