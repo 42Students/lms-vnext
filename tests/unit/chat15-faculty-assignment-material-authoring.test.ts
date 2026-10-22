@@ -11,7 +11,7 @@ describe("LEARNER-course-detail-03 and LEARNER-learning-misc-02 authoring recove
   const links=read("src/components/courses/faculty-assignment-material-links.tsx");
   expect(links).toContain("Add link");
   expect(links).toContain("Remove this instructor resource link?");
-  expect(links).toContain("File handouts require verified private storage.");
+  expect(links).toContain("File handouts require verified private storage and cannot be published from a public Drive link.");
  });
  it("LEARNER-learning-misc-02 never leaks pending text or fakes a stored file when provider fails",()=>{
   const s=read("src/components/courses/faculty-assignment-material-links.tsx");
