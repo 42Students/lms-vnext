@@ -132,7 +132,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
  it("UX-admin-placements-calendar-02 all calendar chips/events meet phone size and high contrast focus",()=>{
   const page=source("src/components/placements/placement-calendar-workspace.tsx");
   expect(page).toContain("md:min-h-9");
-  expect(source("src/components/ui/filter-chip-link.tsx")).toContain("min-h-11");
+  expect(source("src/components/ui/filter-chip.tsx")).toContain("min-h-11");
   expect(page).toContain("focus-visible:outline-2");
   expect(page).toContain("min-h-11");
  });
