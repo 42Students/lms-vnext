@@ -84,10 +84,11 @@ async function assertProgramUnique(
   const db = getDb();
 
   if (input.name) {
+    // Reserve names across archived rows: legacy case-insensitive identity
+    // survives soft deletion. Reusing one would make a future restore ambiguous.
     const conditions = [
       eq(programs.departmentId, departmentId),
-      eq(programs.status, "ACTIVE"),
-      sql<boolean>`lower(${programs.name}) = ${input.name.toLowerCase()}`,
+      sql<boolean>`lower(${programs.name}) = ${input.name.trim().toLowerCase()}`,
     ];
     if (excludeProgramId) {
       conditions.push(ne(programs.id, excludeProgramId));
@@ -107,10 +108,12 @@ async function assertProgramUnique(
   }
 
   if (input.code) {
+    // Department-local codes are immutable identifiers even when archived.
+    // The active-only SQL index still protects concurrent active creations;
+    // preflight additionally refuses recycling an archived code.
     const conditions = [
       eq(programs.departmentId, departmentId),
-      eq(programs.status, "ACTIVE"),
-      sql<boolean>`lower(${programs.code}) = ${input.code.toLowerCase()}`,
+      sql<boolean>`lower(${programs.code}) = ${input.code.trim().toLowerCase()}`,
     ];
     if (excludeProgramId) {
       conditions.push(ne(programs.id, excludeProgramId));
