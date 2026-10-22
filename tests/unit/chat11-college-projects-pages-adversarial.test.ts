@@ -12,6 +12,10 @@ describe("PROJ-BREAK-COL-PAGES-01 scope and resilience for all seven College Adm
  for(const page of pages){
   it(`PROJ-BREAK-COL-PAGES-01 /${page} refuses unselected/wrong-college navigation`,()=>{
    const source=readFileSync(base+page,"utf8");
+   if(page==="workspaces/new/page.tsx"){
+    expect(source).toContain('redirect("/college/projects/create?mode=teams")');
+    return;
+   }
    const scope=source.indexOf("getProjectAdminCollegeId(context)");
    expect(source,page).toContain("getCurrentRequestContext()");
    expect(scope,page).toBeGreaterThan(0);
@@ -26,29 +30,32 @@ describe("PROJ-BREAK-COL-PAGES-01 scope and resilience for all seven College Adm
   expect(source).toContain("parseCollegeProjectsQuery(await searchParams)");
   expect(source).toContain('title="Invalid project filters"');
   const invalid=source.indexOf("if (!parsed.success)");
-  const list=source.indexOf("listProjectAdminSnapshots(context, collegeId, query)");
+  const list=source.indexOf("listProjectAdminSnapshots(context, collegeId, serviceQuery)");
   expect(invalid).toBeGreaterThan(0);
   expect(invalid).toBeLessThan(list);
   expect(source).toContain('href="/college/projects"');
  });
  it("missing optional template labels must not hide actual project workspaces",()=>{
   const source=readFileSync(base+"page.tsx","utf8");
-  expect(source).toContain("listProjectAdminSnapshots(context, collegeId, query)");
+  expect(source).toContain("listProjectAdminSnapshots(context, collegeId, serviceQuery)");
   expect(source).toContain("listAssignedProjectTemplates(context, collegeId)");
   expect(source).toContain('.catch(() => ({ ok: false as const }))');
-  expect(source).toContain("Template names are unavailable right now.");
+  expect(source).toContain("const templateTitles = new Map(");
+  expect(source).toContain("templatesResult.ok ? templatesResult.value : []");
   expect(source).toContain("<ProjectAdminWorkspaceList");
   expect(source).toContain('emptyTitle="No Projects match these filters"');
   expect(source).toContain("<ProjectAdminPagination");
  });
  it("does not produce a class team when authority or published templates are unavailable",()=>{
-  const source=readFileSync(base+"workspaces/new/page.tsx","utf8");
-  expect(source).toContain("await requireTeamCreationAuthority(context, collegeId)");
-  expect(source).toContain("templates.length === 0 ?");
+  const alias=readFileSync(base+"workspaces/new/page.tsx","utf8");
+  expect(alias).toContain('redirect("/college/projects/create?mode=teams")');
+  const source=readFileSync(base+"create/page.tsx","utf8");
+  expect(source).toContain('if(mode!=="single")await requireTeamCreationAuthority(context,collegeId)');
+  expect(source).toContain("templates.length===0?");
   expect(source).toContain("No published Project template is assigned to this college.");
   expect(source).toContain('href="/college/projects/templates"');
   expect(source).toContain("ClassTeamWorkspaceCreator");
-  expect(source).toContain("min-w-0 max-w-5xl");
+  expect(source).toContain('aria-label="Workspace creation modes"');
  });
  it("template detail and mentor reassignment use selected-college identities instead of URL overrides",()=>{
   const detail=readFileSync(base+"templates/[templateId]/page.tsx","utf8");

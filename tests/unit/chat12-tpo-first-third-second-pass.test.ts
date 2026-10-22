@@ -10,8 +10,7 @@ describe("UX-tpo-first-third-12 explicit denial, recovery and scope contracts",(
   expect(code).toContain(guard);
   expect(code.indexOf(guard)).toBeLessThan(code.indexOf("await listTpoBatches(ctx)"));
   expect(code).toContain("querySchema.safeParse(rawText)");
-  expect(code).toContain('role="alert"');
-  expect(code).toContain("Search must contain 2–100 characters.");
+  expect(code).toContain('<Alert tone="error">Search must contain 2–100 characters.</Alert>');
   expect(code).toContain("encodeURIComponent(s.id)");
  });
  it("UX-tpo-audit-actors-01 rejects malformed filter state without invoking audit query",()=>{
@@ -65,14 +64,16 @@ describe("UX-tpo-first-third-12 explicit denial, recovery and scope contracts",(
  it("UX-tpo-more-01 keeps accessible navigation inside an authorized role shell",()=>{
   const code=page("/more");
   expect(code).toContain('hasMembershipRole(context, "TPO")');
-  expect(code).toContain('aria-label="More TPO destinations"');
-  expect(code).toContain("focus-visible:ring-4");
+  expect(code).toContain("<TpoMoreNavigation");
+  const nav=readFileSync(resolve(process.cwd(),"src/components/tpo/tpo-more-navigation.tsx"),"utf8");
+  expect(nav).toContain('aria-label="More TPO destinations"');
+  expect(nav).toContain("focus-visible:outline-2");
  });
  it("UX-tpo-drive-day-01 distinguishes learner coordinator from TPO operational scope",()=>{
   const code=page("/drive-day");
   expect(code).toContain('(!hasMembershipRole(context, "LEARNER") && !hasMembershipRole(context, "TPO"))');
   expect(code).toContain('redirect("/dashboard")');
-  expect(code).toContain('hasMembershipRole(context, "TPO") && !hasMembershipRole(context, "LEARNER")');
+  expect(code).toContain('if (hasMembershipRole(context, "TPO"))');
   expect(code).toContain("getTpoLiveDriveDaySummary");
  });
 });

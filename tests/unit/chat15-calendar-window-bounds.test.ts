@@ -5,6 +5,8 @@ import {learnerAttendanceMonthWindow} from "@/modules/attendance/learner-attenda
 import {join} from "node:path";
 describe("chat-15 bounded calendar retrieval",()=>{
  it("LEARNER-learning-misc-34 bounds academic schedule to IST visible month and week spillover",()=>{
+  // May 2099 is supported; malformed months still fail before schedule reads.
+  expect(()=>learnerCalendarVisibleWindow("2099-13",new Date("2099-05-15T00:00:00Z"))).toThrow("INVALID_CALENDAR_MONTH");
   const window=learnerCalendarVisibleWindow("2099-05",new Date("2099-05-15T00:00:00Z"));
   expect(window.from.toISOString()).toBe("2099-03-31T18:30:00.000Z");
   expect(window.to.toISOString()).toBe("2099-06-30T18:30:00.000Z");

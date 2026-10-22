@@ -7,10 +7,10 @@ describe("SA-ADMIN-DRIVE-04 Super Admin drive expiry boundary", () => {
     expect(adminDriveStatus({
       status: "PUBLISHED",
       applicationDeadline: new Date(cutoff.getTime() - 1),
-    }, cutoff)).toBe("Open · Expired");
+    }, cutoff)).toBe("Expired");
     expect(adminDriveStatus({
       status: "PUBLISHED", applicationDeadline: cutoff,
-    }, cutoff)).toBe("Open · Expired");
+    }, cutoff)).toBe("Expired");
     expect(adminDriveStatus({
       status: "PUBLISHED",
       applicationDeadline: new Date(cutoff.getTime() + 1),

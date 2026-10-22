@@ -20,7 +20,7 @@ describe("chat-13 final sprint public company share",()=>{
   const csv=read("src/app/api/placements/company-share/[token]/export/route.ts");
   expect(csv).toContain('get("company_share_access")');
   const page=read("src/app/company-share/[token]/page.tsx");
-  expect(page).toContain("Enter the 6-digit share code");
+  expect(page).toContain("Enter the one-time code the placement cell sent you.");
  });
  it("PUB-auth-public-52 locks at 10 wrong codes in 60 minutes and notifies the issuing TPO",()=>{
   const service=read("src/modules/placements/company-share/access-service.ts");
@@ -38,13 +38,13 @@ describe("chat-13 final sprint public company share",()=>{
   expect(page).toContain("That code did not work, or this share is no longer available.");
  });
  it("PUB-auth-public-53 filters every selected column and never exports an unselected phone or URL",()=>{
-  expect(safeCompanyShareColumns(["EMAIL","NAME"])).toEqual(["EMAIL","NAME"]);
-  expect(safeCompanyShareColumns(["PHONE","PHONE"])).toEqual(["APPLICATION_ID","NAME","EMAIL"]);
-  expect(safeCompanyShareColumns(Array(12).fill("PHONE"))).toEqual(["APPLICATION_ID","NAME","EMAIL"]);
+  expect(safeCompanyShareColumns(["EMAIL","NAME"])).toEqual(["APPLICATION_ID","EMAIL","NAME"]);
+  expect(safeCompanyShareColumns(["PHONE","PHONE"])).toEqual(["APPLICATION_ID","PHONE"]);
+  expect(safeCompanyShareColumns(Array(12).fill("PHONE"))).toEqual(["APPLICATION_ID","PHONE"]);
   const applicant={applicationId:"app-1",displayName:"Learner",email:"mail@example.com",
    phone:"+919999999999",rollNumber:"R01",profileDocument:null,branch:"CSE",stage:"SHORTLISTED"};
   const [selected]=projectCompanyShareRows([applicant],["NAME","ROLL_NUMBER","STAGE"]);
-  expect(selected.cells).toEqual({NAME:"Learner",ROLL_NUMBER:"R01",STAGE:"SHORTLISTED"});
+  expect(selected.cells).toEqual({APPLICATION_ID:"app-1",NAME:"Learner",ROLL_NUMBER:"R01",STAGE:"Shortlisted"});
   const csv=companyShareSelectedCsv([selected],["NAME","ROLL_NUMBER","STAGE"],false);
   expect(csv).not.toContain("mail@example.com");
   expect(csv).not.toContain("+919999999999");

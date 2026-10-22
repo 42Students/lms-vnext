@@ -13,7 +13,7 @@ const tpo:RequestContext={
 };
 const source=readFileSync("src/modules/placements/tpo-configuration-read-service.ts","utf8");
 const readers=[
- {name:"getTpoJobTypes",table:"tpoJobTypes",result:"return {ready,rows};"},
+ {name:"getTpoJobTypes",table:"tpoJobTypes",result:"return {ready,rows:rows.map("},
  {name:"getTpoBlockedDates",table:"tpoBlockedDates",result:"return {ready,rows};"},
  {name:"getTpoPrepReadiness",table:"tpoPrepReadiness",result:"return {ready,config:row?.config??null"},
  {name:"listTpoPrepCourses",table:"courses",result:"return tx.select({id:courses.id"},

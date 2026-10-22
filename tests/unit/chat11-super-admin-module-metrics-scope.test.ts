@@ -53,7 +53,7 @@ describe("SA-tenants-modules-R01 module access overview only counts authorized s
   expect(verify).toBeGreaterThan(0);
   expect(aggregates).toBeGreaterThan(verify);
   expect(service).toContain("countDistinct(collegeMemberships.id)");
-  expect(service).toContain("countDistinct(moduleAccessRules.id)");
+  expect(service).toContain("countDistinct(moduleAccessRules.scopeId)");
   expect(service).toContain('eq(membershipRoles.role,"LEARNER")');
   expect(service).toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
