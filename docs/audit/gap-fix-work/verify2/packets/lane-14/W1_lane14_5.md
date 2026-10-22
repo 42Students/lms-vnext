@@ -126,3 +126,33 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/db/schema/projects.ts
 - Legacy: Old commentType varchar30 stores six human/system variants `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectTaskComment.java:37-38` `docs/legacy-source/frontend/src/components/Projects/modals/TaskDetailsModal.jsx:13,21-35`
 - Expected fix: Provide full comment-kind parity and migration aliases.
+
+## Fast verification disposition (22 Oct 2026)
+
+Only narrowly verified schema properties are OK. Deep migration, serialization, authorization and workflow questions remain DEFERRED; no uninspected behavior is claimed fixed.
+
+- G2-18-016-036: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-18-020-011: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-18-020-028: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-19-019-002: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-19-019-008: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-19-019-010: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-19-019-037: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-19-019-048: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-19-019-051: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-19-019-052: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-018-001: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-018-005: OK — legacyStructureStatus explicitly permits COMPLETED and is separate from isActive
+- G2-12-018-006: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-018-009: OK — legacyStartDate/legacyEndDate preserve original 255-character source text
+- G2-12-018-011: OK — legacyStructureStatus keeps ACTIVE, INACTIVE and COMPLETED distinct
+- G2-12-018-027: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-018-032: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-018-035: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-018-047: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-018-051: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-018-052: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-018-054: OK — legacyCourseIds JSONB preserves raw order; legacy text dates retained
+- G2-12-018-056: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-017-007: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
+- G2-12-017-014: DEFERRED — needs source-to-service/migration verification beyond direct schema inspection
