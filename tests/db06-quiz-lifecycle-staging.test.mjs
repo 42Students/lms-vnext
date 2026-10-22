@@ -25,6 +25,7 @@ const validation = fs.readFileSync(
   "src/modules/courses/quiz-validation.ts",
   "utf8",
 );
+const quizService = fs.readFileSync("src/modules/courses/quiz-service.ts","utf8");
 
 test("DB052 quiz lifecycle history remains source-only and unregistered", () => {
   assert.match(staged, /DB-052 \/ DB06 SOURCE-ONLY staging/);
@@ -59,7 +60,7 @@ test("DB052 lifecycle event stores audience actor role state and exact version",
   }
 });
 
-test("DB052 preserves active UNPUBLISH parity while current API still lacks it", () => {
+test("DB052 preserves active UNPUBLISH parity now implemented by validated transition", () => {
   assert.match(sql, /'UNPUBLISH'/);
   assert.match(contract, /PUBLISHED -> DRAFT.*UNPUBLISH/i);
   const transitionStart = validation.indexOf(
@@ -76,7 +77,9 @@ test("DB052 preserves active UNPUBLISH parity while current API still lacks it",
   assert.match(transition, /"PUBLISH"/);
   assert.match(transition, /"CLOSE"/);
   assert.match(transition, /"ARCHIVE"/);
-  assert.doesNotMatch(transition, /"UNPUBLISH"/);
+  assert.match(transition, /"UNPUBLISH"/);
+  assert.match(quizService, /input\.action === "UNPUBLISH" && current\.status !== "PUBLISHED"/);
+  assert.match(quizService, /INVALID_QUIZ_TRANSITION/);
 });
 
 test("DB052 row state machine versions lifecycle mutations exactly once", () => {
