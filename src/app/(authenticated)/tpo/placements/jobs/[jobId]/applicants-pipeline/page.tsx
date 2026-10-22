@@ -131,9 +131,9 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
         id:row.id,label:(row.student ?? "Applicant") + " · " + row.role,
       }))}
       viewCount={data.totalMatching}
-      allRows={data.allFiltered?.map(row=>({
+      {...(data.allFiltered !== undefined ? { allRows: data.allFiltered.map(row=>({
         id:row.id,label:(row.student??"Applicant")+" · "+row.role,
-      }))??undefined}
+      })) } : {})}
     /> : null}
   {!data.rows.length?<div className="flex min-w-0 flex-col gap-3">
     <EmptyState title="No matching applicants" description="No applicants match these filters. Clear the filters or check Registered, not applied to see who still needs to apply."/>
