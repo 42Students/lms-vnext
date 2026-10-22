@@ -3,7 +3,7 @@ import "server-only";
 import { z } from "zod";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { colleges, placementCompanyRelationships, placementRecruiterCollegeGrants, users } from "@/db/schema";
+import { colleges, placementCompanies, placementCompanyRelationships, placementRecruiterCollegeGrants, users } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
 import { hasActiveRecruiter, type RequestContext } from "@/modules/identity/context";
 import { recruiterGrantEffectiveAt } from "./recruiter-grant-expiry-policy";
@@ -39,6 +39,7 @@ async function requireRecruiterStorageScope(context: RequestContext, rawCollegeI
   }).from(placementRecruiterCollegeGrants)
     .innerJoin(placementCompanyRelationships, eq(
       placementCompanyRelationships.id, placementRecruiterCollegeGrants.companyRelationshipId))
+    .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .innerJoin(colleges, eq(colleges.id, placementCompanyRelationships.collegeId))
     .innerJoin(users, eq(users.id, placementRecruiterCollegeGrants.recruiterUserId))
     .where(and(
@@ -47,6 +48,8 @@ async function requireRecruiterStorageScope(context: RequestContext, rawCollegeI
       eq(placementCompanyRelationships.id, grant.companyRelationshipId),
       eq(placementCompanyRelationships.collegeId, collegeId),
       eq(placementCompanyRelationships.status, "ACTIVE"),
+      eq(placementCompanies.id, context.recruiter.companyId),
+      eq(placementCompanies.status, "ACTIVE"),
       eq(colleges.status, "ACTIVE"),
       eq(users.platformStatus, "ACTIVE"),
     )).limit(1);
