@@ -8,6 +8,7 @@ import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProject
 import {
   updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
+import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
 
 export const runtime = "nodejs";
 
