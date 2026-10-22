@@ -83,7 +83,8 @@ describe("College Admin Student groups directory query and role journey", () => 
     expect(code).toContain("<DataTable");
     expect(code).toContain("<StatusBadge");
     expect(code).toContain("CollegeGroupActions");
-    expect(code).toContain("Previous");
-    expect(code).toContain("Next");
+    // Shared Pagination renders previous/next with labelled links rather than page-local copy.
+    expect(code).toContain('<Pagination label="Group pages"');
+    expect(code).toContain("hrefForPage={page=>query((page-1)*limit)}");
   });
 });
