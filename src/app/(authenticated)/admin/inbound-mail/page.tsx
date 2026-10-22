@@ -35,7 +35,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
       No other college's private incoming messages were loaded.
     </Alert>
   </div>;
- const oldShow=one(params.show);
+ const oldShow=one(params["show"]);
  const mappedShow=oldShow==="OPEN"?"NEW":oldShow==="DONE"?"RESOLVED":
     oldShow==="ALL"||oldShow==="POSTED"||oldShow==="REPLIES"?"ALL":null;
  // Duplicate/repeated query keys are ambiguous across proxies and URLs.
@@ -44,19 +44,19 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    Array.isArray(params[key]));
  // A supplied, impossible page must fail closed rather than silently clamp
  // to page 1 (or 10000) and issue an unexpected private inbox read.
- const invalidPage=typeof params.page==="string"&&
-   !/^(?:[1-9][0-9]{0,3}|10000)$/.test(params.page);
+ const invalidPage=typeof params["page"]==="string"&&
+   !/^(?:[1-9][0-9]{0,3}|10000)$/.test(params["page"]);
  const parsed=inboundMailListQuerySchema.safeParse({
-  status:one(params.status)??(oldShow==="POSTED"||oldShow==="REPLIES"?"ALL":mappedShow??"NEW"),
+  status:one(params["status"])??(oldShow==="POSTED"||oldShow==="REPLIES"?"ALL":mappedShow??"NEW"),
   // In the historical inbox "Replies" meant posted to a conversation,
   // including manually marked replies; it was NOT every email of kind REPLY.
   // vNext stores actual posting independently from human triage.
-  kind:optional(params.kind),
-  routingStatus:optional(params.routingStatus)??((oldShow==="POSTED"||
+  kind:optional(params["kind"]),
+  routingStatus:optional(params["routingStatus"])??((oldShow==="POSTED"||
     oldShow==="REPLIES")?"POSTED":undefined),
-  q:one(params.q),recipient:optional(params.recipient),page:one(params.page),
+  q:one(params["q"]),recipient:optional(params["recipient"]),page:one(params["page"]),
  });
- if(repeated||invalidPage||(oldShow&&!mappedShow)||(oldShow&&params.status!==undefined)||!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
+ if(repeated||invalidPage||(oldShow&&!mappedShow)||(oldShow&&params["status"]!==undefined)||!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
    <Alert tone="warning">Invalid filters. <Link href="/admin/inbound-mail" className="inline-flex items-center min-h-11 md:min-h-9 lms-inline-link font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Reset</Link></Alert></div>;
  const result=await listInboundMailForAdmin(context,parsed.data)
   .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
@@ -104,7 +104,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
      if(tab.value==="POSTED"){url.set("status","ALL");url.set("routingStatus","POSTED");}
      else url.set("status",tab.value);
      return {value:tab.value,label:tab.label,
-      count:tab.count===null||tab.count===0?undefined:tab.count,
+      ...(tab.count===null||tab.count===0?{}:{count:tab.count}),
       href:"/admin/inbound-mail?"+url.toString()};
     })}/>
   <form method="get" action="/admin/inbound-mail" role="search" aria-label="Search inbound mail"
