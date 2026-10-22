@@ -33,7 +33,9 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
     const page=read("src/app/(authenticated)/admin/academics/page.tsx");
     expect(page).toContain("context.adminScope?.collegeId ?? null");
     expect(page.indexOf("if (!collegeId)")).toBeLessThan(page.indexOf("getAcademicsWorkspace("));
-    expect(page).toContain('title="Select a college scope"');
+    // Unscoped platform admins return to global tenant setup rather than
+    // loading an arbitrary college's academic workspace.
+    expect(page).toContain('if (!collegeId) redirect("/superadmin/dashboard")');
     const section=read("src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx");
     expect(section).toContain('redirect("/admin/academics")');
     expect(section).toContain("resolveSuperAdminSectionDetail(context, sectionId)");
