@@ -39,12 +39,13 @@ export default async function LearnerPlacementRulesPage({
     effectivePolicySource, effectivePolicyUpdatedAt }=result;
   return (
     <div className="min-w-0 space-y-6">
+      <PageHeader title="Placement rules"
+        description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
       <Link href={back.href}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         ← {back.label}
       </Link>
-      <PageHeader title="Placement rules"
-        description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
+
       {!parsed.success ? <Banner tone="warning" role="status">
         The original navigation filter was invalid and has been reset to this college's saved rules.
       </Banner> : null}
