@@ -230,8 +230,9 @@ export default async function TpoPlacementTeamPage({searchParams}: {
                   removable={sources.teamAssignmentsAvailable && (member.roles.includes("TPO_ADMIN") || member.roles.includes("FACULTY_COORDINATOR"))}
                   isSelf={member.membershipId===actorMembershipId}
                   permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}/>
-                {(member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))&&
-                  member.membershipId!==actorMembershipId&&handoverCandidates.length>1?
+                {(member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN")||
+                  member.roles.includes("FACULTY_COORDINATOR"))&&
+                  member.membershipId!==actorMembershipId&&handoverCandidates.length>0?
                   <TpoTeamHandover sourceMembershipId={member.membershipId}
                     sourceName={member.displayName} members={handoverCandidates}/>:null}
               </div>},

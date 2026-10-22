@@ -10,6 +10,10 @@ vi.mock("@/components/placements/super-admin-bulk-drive-actions",()=>({
   SuperAdminBulkDriveActions:({drives}:{drives:readonly unknown[]})=>`Bulk actions for ${drives.length} drives`,
   SuperAdminDriveRowStatusAction:()=>null,
 }));
+vi.mock("@/components/placements/super-admin-drive-directory-filters",()=>({
+  SuperAdminDriveDirectoryFilters:({q,status,pageSize}:{q:string;status:string;pageSize:number})=>
+   "Drive filters: status "+status+", page size "+pageSize+", query "+(q||"none"),
+}));
 vi.mock("@/components/placements/super-admin-drive-archive",()=>({SuperAdminDriveArchive:()=>null}));
 vi.mock("@/components/placements/super-admin-drive-duplicate",()=>({SuperAdminDriveDuplicate:()=>null}));
 vi.mock("@/components/placements/super-admin-drive-deadline",()=>({SuperAdminDriveDeadline:()=>null}));
@@ -82,6 +86,7 @@ describe("Super Admin drives: page-level behavior, denial and friendly recovery"
     expect(fakes.operations).toHaveBeenCalledWith(admin,collegeId,
       expect.objectContaining({status:"ACTIVE",pageSize:20}));
     expect(html).toContain("1–1 of 1 drives");
+    expect(html).toContain("Drive filters: status ACTIVE, page size 20, query none");
     expect(html).toContain("Visible drive rows: 1");
     expect(html).toContain("Bulk actions for 1 drives");
     expect(html).toContain("Create Job");
