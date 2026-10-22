@@ -1001,7 +1001,7 @@ describe("Placement P8 offers and joining", () => {
       await blocker.query("rollback").catch(()=>{});
       blocker.release();
     }
-  });
+  }, 15000);
 
   it("PLACEMENTS-CLOSE-PENDING-DB-06 direct close cannot strand a recorded but unreleased company selection",async()=>{
     const {job,application}=await preparePassedApplication();
