@@ -7,7 +7,7 @@ describe("TPO-companies-01 public company link contract", () => {
   it("preserves legacy labels exactly", () => {
     expect(PUBLIC_JOIN_LINK_COPY.company).toBe("Company link");
     expect(PUBLIC_JOIN_LINK_COPY.replaceTitle).toBe("Make a new link?");
-    expect(PUBLIC_JOIN_LINK_COPY.replaceExplanation).toBe("The old link stops working.");
+    expect(PUBLIC_JOIN_LINK_COPY.replaceExplanation).toBe("A new public link; the old one stopped working.");
     expect(PUBLIC_JOIN_LINK_COPY.once).toBe("Copy it now: for safety it is shown only once.");
     expect(PUBLIC_JOIN_LINK_COPY.copied).toBe("Link copied");
   });

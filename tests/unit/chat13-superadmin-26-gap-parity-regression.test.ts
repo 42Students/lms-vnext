@@ -57,7 +57,7 @@ const parityCases: ReadonlyArray<readonly [string,string,string]> = [
   [
     "SA-placements-projects-27",
     "src/modules/placements/super-admin-company-identities-service.ts",
-    "Keep at least one company domain."
+    "A company keeps at least one domain"
   ],
   [
     "SA-placements-projects-28",
@@ -82,7 +82,7 @@ const parityCases: ReadonlyArray<readonly [string,string,string]> = [
   [
     "SA-placements-projects-33",
     "src/app/(authenticated)/admin/companies/page.tsx",
-    "This college&apos;s companies"
+    "This college\'s companies"
   ],
   [
     "SA-placements-projects-35",

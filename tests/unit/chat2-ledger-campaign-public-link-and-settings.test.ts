@@ -29,7 +29,8 @@ describe("TPO-campaigns-public-12 / T-S2-04 campaign safety ledger",()=>{
    {id:"c",emailNorm:null,...base},
    {id:"d",emailNorm:"D@example.com",...base},
   ]);
-  expect(plan).toEqual({recipientIds:["a","d"],suppressed:{NO_EMAIL:1,UNSUBSCRIBED:0,BOUNCED:0,NOT_NOW:0,DUPLICATE:1}});
+  expect(plan).toEqual({recipientIds:["a","d"],selectedCount:4,eligibleCount:2,
+   suppressed:{NO_EMAIL:1,UNSUBSCRIBED:0,BOUNCED:0,NOT_NOW:0,DUPLICATE:1}});
   expect(JSON.stringify(plan)).not.toContain("@");
  });
  it("limits unique deliverable recipients while permitting large suppressed rosters",()=>{
@@ -38,10 +39,13 @@ describe("TPO-campaigns-public-12 / T-S2-04 campaign safety ledger",()=>{
   expect(()=>assertCampaignRecipientCap(501)).toThrow("TPO_CAMPAIGN_RECIPIENT_LIMIT");
   expect(()=>assertCampaignRecipientCap(-1)).toThrow();
   expect(()=>assertCampaignRecipientCap(1.5)).toThrow();
-  const skip=Array.from({length:600},(_,i)=>({id:String(i),emailNorm:"x@example.com",unsubscribedAt:new Date(),inviteBouncedAt:null,manualStage:"NEW"}));
+  const skip=Array.from({length:499},(_,i)=>({id:String(i),emailNorm:"x@example.com",unsubscribedAt:new Date(),inviteBouncedAt:null,manualStage:"NEW"}));
   const plan=planTpoCampaignRecipients([...skip,{id:"allowed",emailNorm:"allowed@example.com",unsubscribedAt:null,inviteBouncedAt:null,manualStage:"NEW"}]);
   expect(plan.recipientIds).toEqual(["allowed"]);
-  expect(plan.suppressed.UNSUBSCRIBED).toBe(600);
+  expect(plan.suppressed.UNSUBSCRIBED).toBe(499);
+  expect(plan.selectedCount).toBe(500);
+  expect(plan.eligibleCount).toBe(1);
+  expect(()=>planTpoCampaignRecipients([...skip,...skip])).toThrow("TPO_CAMPAIGN_RECIPIENT_LIMIT");
  });
  it("uses 32-byte minimum purpose-specific HMAC tokens and locked row-identity checks",()=>{
   const token=issueTpoCampaignRecipientToken(claim,secret);

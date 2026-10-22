@@ -33,7 +33,7 @@ describe("chat-16 TPO campaign live recipient recheck",()=>{
   const source=readFileSync("src/modules/messaging/tpo-campaign-dispatch-service.ts","utf8");
   const draftKey=source.indexOf("matchesTpoCampaignEmailRecipientKey(row.recipientKey,row.email,config.key)");
   const claim=source.indexOf("const [claimedRecipient]=await db.update(");
-  const send=source.indexOf("const result=await outbound.send(");
+  const send=source.indexOf("const outcome=await outbound.sendDetailed(");
   expect(draftKey).toBeGreaterThan(-1);
   expect(claim).toBeGreaterThan(draftKey);
   expect(send).toBeGreaterThan(claim);
@@ -54,7 +54,7 @@ describe("chat-16 TPO campaign live recipient recheck",()=>{
   const claim=source.indexOf("if(!claimedRecipient)continue;");
   const live=source.indexOf("const [live]=await db.select(");
   const gate=source.indexOf("campaignRecipientStillMatchesSnapshot(");
-  const send=source.indexOf("const result=await outbound.send(");
+  const send=source.indexOf("const outcome=await outbound.sendDetailed(");
   expect(claim).toBeGreaterThan(-1);
   expect(live).toBeGreaterThan(claim);
   expect(gate).toBeGreaterThan(live);

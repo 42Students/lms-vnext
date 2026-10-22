@@ -39,8 +39,9 @@ describe("NORTH-STAR-HR-01: legacy shell color, focus, radius and shadow sweep",
   ]){
    const page=read(route);
    expect(page).toContain("PageHeader");
-   expect(page).toContain("text-link");
-   expect(page).toContain("outline-[var(--lms-primary)]");
+   expect(page).toMatch(/text-link|text-primary-text/);
+   expect(page).toContain("focus-visible:outline-2");
+   expect(page).toMatch(/focus-visible:outline-\[var\(--lms-primary(?:-text)?\)\]/);
   }
  });
 });

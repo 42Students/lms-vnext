@@ -67,16 +67,20 @@ describe("chat-16 recruiter notifications versioned acknowledgement transaction"
   await expect(markHrNotificationRead(recruiter,id,{expectedCreatedAt:token})).rejects.toThrow();
   expect(getDb).not.toHaveBeenCalled();
  });
- it("hr-notification-read-18 denies missing, already acknowledged and stale-version notifications before mutation",async()=>{
+ it("hr-notification-read-18 denies missing and stale notifications, but idempotently returns a previously acknowledged version",async()=>{
   for(const current of [
    null,
-   {id,createdAt:new Date(token),readAt:new Date("2099-01-02T00:00:00.000Z")},
    {id,createdAt:new Date("2099-01-01T00:00:00.001Z"),readAt:null},
   ]){
    const f=installDatabase(current,{id,readAt:new Date("2099-01-03T00:00:00.000Z")});
    await expect(markHrNotificationRead(recruiter,id,{expectedCreatedAt:token})).rejects.toThrow();
    expect(f.tx.update).not.toHaveBeenCalled();
   }
+  const alreadyRead=new Date("2099-01-02T00:00:00.000Z");
+  const f=installDatabase({id,createdAt:new Date(token),readAt:alreadyRead},null);
+  await expect(markHrNotificationRead(recruiter,id,{expectedCreatedAt:token}))
+   .resolves.toEqual({id,readAt:alreadyRead.toISOString()});
+  expect(f.tx.update).not.toHaveBeenCalled();
  });
  it("hr-notification-read-19 rejects an optimistic race even if the first locked row looked unread",async()=>{
   const f=installDatabase({id,createdAt:new Date(token),readAt:null},null);

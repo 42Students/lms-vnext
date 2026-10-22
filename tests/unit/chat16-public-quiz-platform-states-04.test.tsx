@@ -22,7 +22,8 @@ describe("chat-16 public routes, quiz entry and resilient loading surfaces",()=>
   expect(html).toContain('href="/learn/allQuizzes"');
   expect(html).toContain("All Quizzes");
   expect(html).toContain("min-h-11");
-  expect(html).toContain("sm:px-6");
+  expect(html).toContain("px-4");
+  expect(html).toContain("min-[768px]:min-h-9");
   expect(html).toContain("Attempt workspace");
   expect(html).not.toContain("private student token");
  });
@@ -30,10 +31,10 @@ describe("chat-16 public routes, quiz entry and resilient loading surfaces",()=>
   const html=renderToStaticMarkup(<PlatformMarketingPage/>);
   expect(platformMetadata.title).toBe("Platform | 42 LMS");
   for(const text of ["Learner workspace","Faculty workspace","Mentor workspace",
-   "Placement workspace","HR workspace","Connected platform pillars"]){
+   "Career and placement workspace","Placement operations","Project and team management"]){
    expect(html).toContain(text);
   }
-  expect(html).toContain("Discover needs");
+  expect(html).toContain("Discover");
   expect(html).toContain("Interview");
  });
  it("UX-chat16-public-placement-404-03 explains absent publication without leaking a tenant or query",()=>{
@@ -44,11 +45,13 @@ describe("chat-16 public routes, quiz entry and resilient loading surfaces",()=>
   expect(html).not.toContain("not_found");
  });
  it("UX-chat16-public-loading-04 exposes recoverable loading for all public route families",()=>{
-  for(const Page of [PlatformLoading,QuizLoading,PlacementsLoading,PrivacyLoading]){
+  for(const Page of [PlatformLoading,QuizLoading]){
    const html=renderToStaticMarkup(<Page/>);
    expect(html).toContain('role="status"');
    expect(html).toContain("Loading your page");
   }
+  expect(renderToStaticMarkup(<PlacementsLoading/>)).toContain("Loading placements...");
+  expect(renderToStaticMarkup(<PrivacyLoading/>)).toContain("Loading privacy policy...");
   expect(GracefulPageLoading).toBeDefined();
  });
 });

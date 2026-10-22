@@ -14,7 +14,7 @@ it("TPO-students-43 exposes debarment, waiting requests, eligibility decision pr
 it("TPO-students-31 preserves readiness evidence without fabricating unrecorded prep scores",()=>{
  const panel=src("src/components/tpo/tpo-student-quick-panel.tsx");
  expect(panel).toContain("No resume recorded");
- expect(panel).toContain('"Prep %","Not recorded"');
+ expect(panel).toContain('"Prep %","Not measured — open placement prep readiness"');
 });
 it("TPO-students-25 finds class names without exposing raw contact fields to the browser",()=>{
  const service=src("src/modules/placements/tpo-students-service.ts");

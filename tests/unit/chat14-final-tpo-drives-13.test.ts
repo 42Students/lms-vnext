@@ -5,7 +5,8 @@ describe("chat-14 final sprint",()=>{
  it("TPO-drives-13 verifies the persisted selected-drive export and individual eligibility preflight",()=>{
   const page=read("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
   const component=read("src/components/placements/tpo-bulk-drive-reminder.tsx");
-  expect(page).toContain('name="ids" type="checkbox"');
+  expect(page).toContain('<Checkbox name="ids" value={job.id}');
+  expect(page).toContain('aria-label={"Select "+job.company+" "+job.title}');
   expect(page).toContain("TpoDriveActOnPanel");
   const panel=read("src/components/placements/tpo-drive-act-on-panel.tsx");
   expect(panel).toContain("<TpoBulkDriveReminder/>");
