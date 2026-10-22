@@ -40,8 +40,9 @@ describe("chat-9 route coverage and native DataTable closure",()=>{
  it("UX-admin-projects-project-id-04 /admin/projects/[projectId] remains a canonical redirect with stable encoding",()=>{
   const source=page("/admin/projects/[projectId]");
   expect(source).toContain('import { redirect }');
-  expect(source).toContain("encodeURIComponent(projectId)");
-  expect(source).toContain('"/summary"');
+  expect(source).toContain("projectInstanceIdSchema.safeParse(projectId)");
+  expect(source).toContain("requireProjectManageAccess(context,canonicalId)");
+  expect(source).toContain('encodeURIComponent(canonicalId)+"/summary"');
   expect(source).not.toContain("<main");
  });
  it("UX-admin-projects-templates-template-id-overview-04 /admin/projects/templates/[templateId]/overview validates before redirect",()=>{
