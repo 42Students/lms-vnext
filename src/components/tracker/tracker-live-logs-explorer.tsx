@@ -111,6 +111,8 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
   const detailRequest=useRef(0);
   const [initialLoading,setInitialLoading]=useState(true);
   const [exporting,setExporting]=useState(false);
+  const [rangeStart,setRangeStart]=useState("");
+  const [rangeEnd,setRangeEnd]=useState("");
   const [muteTarget,setMuteTarget]=useState<{id:string;muted:boolean}|null>(null);
   const [muteReason,setMuteReason]=useState("");
   const [mutating,setMutating]=useState(false);
@@ -258,6 +260,34 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
     setNotice("Downloaded "+rows.length+" log entries."+
       (truncated?" Export is incomplete. Narrow the time range for more.":""));
   }
+  function downloadFullRange(){
+    // The legacy 31-day export uses explicitly selected India-local calendar
+    // dates. The server streams bounded provider pages directly to the
+    // browser's download manager; no 240-row snapshot is called complete.
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(rangeStart)||
+       !/^\d{4}-\d{2}-\d{2}$/.test(rangeEnd)){
+      setNotice("Select a From and To date to export redacted logs.");return;
+    }
+    const start=new Date(rangeStart+"T00:00:00+05:30");
+    const selectedEnd=new Date(rangeEnd+"T23:59:59.999+05:30");
+    const end=new Date(Math.min(selectedEnd.getTime(),Date.now()));
+    if(!Number.isFinite(start.getTime())||!Number.isFinite(end.getTime())||
+       start.getTime()>=end.getTime()||
+       end.getTime()-start.getTime()>31*86_400_000){
+      setNotice("Choose a valid date range of up to 31 days ending today or earlier.");return;
+    }
+    const params=new URLSearchParams({
+      from:start.toISOString(),to:end.toISOString(),
+      minimumSeverity,
+    });
+    const link=document.createElement("a");
+    link.href="/api/tracker/live-logs/export?"+params.toString();
+    link.rel="nofollow";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setNotice("Requested the full-range export. Check the downloaded NDJSON _meta.complete field: a provider failure can leave a partial file.");
+  }
   async function downloadRange(format:"csv"|"markdown"|"ndjson"){
     if(exporting||pending)return;
     setExporting(true);setNotice("Preparing export…");
@@ -369,6 +399,28 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       <Button variant="secondary" type="button" onClick={()=>setReportOpen(true)} disabled={!items.length} className="min-h-11 w-full sm:w-auto md:min-h-9">
         Report for Claude
       </Button>
+     </div>
+     <div className="mt-3 grid min-w-0 gap-3 border-t border-border pt-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end">
+       <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
+         From date (IST)
+         <Input type="date" value={rangeStart} onChange={event=>setRangeStart(event.target.value)}
+           className="min-h-11 w-full md:min-h-9"/>
+       </label>
+       <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
+         To date (IST)
+         <Input type="date" value={rangeEnd} onChange={event=>setRangeEnd(event.target.value)}
+           className="min-h-11 w-full md:min-h-9"/>
+       </label>
+       <Button variant="secondary" type="button" onClick={downloadFullRange}
+         disabled={configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
+         Export full date range
+       </Button>
+       <p className="text-xs leading-5 text-muted-foreground sm:col-span-3">
+         Select up to 31 days. This downloads redacted Cloud Logging entries directly
+         in streamed NDJSON, not just the loaded pages. A terminal _meta record
+         shows whether retrieval completed; failed or interrupted exports
+         must not be treated as a complete audit.
+       </p>
      </div>
     </Disclosure>
     {stale?<Alert tone="warning">Showing previously loaded results. Refresh or retry for the latest logs.</Alert>:null}
