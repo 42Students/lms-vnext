@@ -13,6 +13,7 @@ export function tpoJobTypeCompareKey(value:string){
  return canonicalTpoJobTypeName(value).toLocaleLowerCase("en-IN");
 }
 export const tpoJobTypeNameSchema=z.string()
+ .refine(value=>!/[\r\n\u2028\u2029]/u.test(value),"Use a single line for the job type name.")
  .transform(canonicalTpoJobTypeName)
  .pipe(z.string().min(2).max(40)
   .regex(/^[\p{L}\p{M}\p{N} +&\/().,\u0027-]+$/u,"2-40 letters, digits or simple punctuation")

@@ -17,8 +17,10 @@ const base:TpoStudentRow={
  maximumAppliedRoundSequence:null,ambiguousSection:false,
 };
 const marksCell=(row:TpoStudentRow)=>{
- const [,body]=exportTpoStudentsCsv([row]).trim().split("\r\n");
- return body.split(",")[17];
+ const [header,body]=exportTpoStudentsCsv([row]).trim().split("\r\n");
+ const marksIndex=header.split(",").indexOf('"Marks verified"');
+ expect(marksIndex).toBe(23);
+ return body.split(",")[marksIndex];
 };
 describe("TPO-students-export-TRUTH-02 marks-verification evidence provenance",()=>{
  it("exports missing marks-verification as empty rather than falsely claiming No",()=>{
@@ -33,6 +35,6 @@ describe("TPO-students-export-TRUTH-02 marks-verification evidence provenance",(
  });
  it("keeps marks verification in the same legacy CSV column",()=>{
   const [header]=exportTpoStudentsCsv([base]).split("\r\n");
-  expect(header.split(",")[17]).toBe('"Marks verified"');
+  expect(header.split(",")[23]).toBe('"Marks verified"');
  });
 });

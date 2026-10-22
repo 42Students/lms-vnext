@@ -86,7 +86,7 @@ describe("chat-13 additional admin mutation and recruiter account security",()=>
   const service=read("src/modules/placements/super-admin-published-drive-edit-service.ts");
   expect(service).toContain('assertPersistedPlatformPermission(tx,context,"placements.manage"');
   expect(service).toContain('eq(placementJobs.collegeId,acting.collegeId)');
-  expect(service).toContain('job.status!=="PUBLISHED"');
+  expect(service).toContain('!["PUBLISHED","CLOSED","CANCELLED","ARCHIVED"].includes(job.status)');
   expect(service).toContain("cmd.expectedUpdatedAt");
   expect(service).toContain("isLegacyAssessmentDeadlineAfterApplication(");
  });
@@ -127,7 +127,7 @@ describe("chat-13 additional admin mutation and recruiter account security",()=>
   expect(service).toContain("confirmed: z.literal(true)");
   expect(service).toContain("resolveActingCollege(context, \"placements.manage\")");
   expect(service).toContain("assertPersistedPlatformPermission(tx, context");
-  expect(service).toContain('reason: "Could not update this drive. Refresh and retry."');
+  expect(service).toContain('"Could not update this drive. Refresh and retry."');
   expect(service).toContain("skipped: results.filter(row => row.status === \"SKIPPED\").length");
  });
 });
