@@ -227,7 +227,7 @@ export async function applyTpoLegacyBulkStatuses(
    throw new RangeError("Rejection reason must be 500 characters or fewer.");
   if(item.status==="WAITLISTED"&&(
      !item.roundId||!uuid.test(item.roundId)||
-     typeof item.waitlistRank!=="number"||!Number.isInteger(item.waitlistRank)||
+     !Number.isInteger(item.waitlistRank)||!item.waitlistRank||
      item.waitlistRank<1||item.waitlistRank>100000||
      item.expectedCurrentResultId===undefined||
      (item.expectedCurrentResultId!==null&&!uuid.test(item.expectedCurrentResultId))))
@@ -289,12 +289,6 @@ export async function applyTpoLegacyBulkStatuses(
     // Never fabricate a waitlist at the application-status string layer.
     if(applicant.screeningStatus!=="SHORTLISTED")
      throw new RangeError("Shortlist the applicant before recording a waitlist result.");
-    const [openOffer]=await getDb().select({id:placementOffers.id})
-     .from(placementOffers).where(and(
-      eq(placementOffers.applicationId,item.applicationId),
-      inArray(placementOffers.status,["ISSUED","ACCEPTED"]),
-     )).limit(1);
-    if(openOffer)throw new RangeError("Resolve active offers before recording a waitlist result.");
     const [round]=await getDb().select({id:placementJobRounds.id})
      .from(placementJobRounds).where(and(
       eq(placementJobRounds.id,item.roundId!),
