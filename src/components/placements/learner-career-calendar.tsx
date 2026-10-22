@@ -39,6 +39,7 @@ const filters: { key: EventFilter; label: string }[] = [
   { key: "ALL", label: "All" },
   { key: "ASSESSMENT", label: "Assessments" },
   { key: "INTERVIEW", label: "Interviews" },
+  { key: "TALK", label: "Talks" },
   { key: "OTHER", label: "Other" },
 ];
 
@@ -254,6 +255,7 @@ export function LearnerCareerCalendar({
           <strong className="text-foreground">{new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(period.start+"T12:00:00Z"))}: {monthCounts.total} scheduled round{monthCounts.total===1?"":"s"}</strong>
           <span>{monthCounts.assessments} assessments</span>
           <span>{monthCounts.interviews} interviews</span>
+          <span>{monthCounts.talks} talks</span>
           <span>{monthCounts.other} other</span>
         </section>
       ) : null}
@@ -291,7 +293,7 @@ export function LearnerCareerCalendar({
                       className={styles.chip+(chip.eventType==="EXAM_BLOCK"?" !border-error !bg-error-subtle":"")}
                       title={chip.title + " · " + (chip.eventType==="EXAM_BLOCK"?"No drives (exams)":chip.kind)}>
                       {chip.eventType==="EXAM_BLOCK"?"No drives (exams)":chip.eventType==="APPLICATION_DEADLINE"?"Application deadline":
-                        chip.eventType==="JOB_IMPORTANT_DATE"?"Talk":chip.kind === "ASSESSMENT" ? "Assessment" : chip.kind === "INTERVIEW" ? "Interview" : "Other"} · {chip.title}
+                        chip.eventType==="JOB_IMPORTANT_DATE"?"Talk":chip.kind === "ASSESSMENT" ? "Assessment" : chip.kind === "INTERVIEW" ? "Interview" : chip.kind === "TALK" ? "Talk" : "Other"} · {chip.title}
                     </span>
                   ))}
                   {surface!=="schedule"&&chips.hidden > 0 ? <span className={styles.more}>+{chips.hidden} more</span> : null}
@@ -383,7 +385,7 @@ export function LearnerCareerCalendar({
               </div>
               <div className="flex flex-wrap gap-2">
                 <StatusBadge tone={event.kind === "ASSESSMENT" ? "warning" : "info"}>
-                  {event.kind === "ASSESSMENT" ? "Assessment" : event.kind === "INTERVIEW" ? "Interview" : "Other round"}
+                  {event.kind === "ASSESSMENT" ? "Assessment" : event.kind === "INTERVIEW" ? "Interview" : event.kind === "TALK" ? "Talk" : "Other round"}
                 </StatusBadge>
                 {event.rescheduled ? <StatusBadge>Rescheduled</StatusBadge> : null}
               </div>
