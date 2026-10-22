@@ -78,13 +78,13 @@ export default async function CollegeLectureHallsPage({
   const [hallsResult, departmentsResult] = await Promise.allSettled([
     listLectureHalls(context, {
       collegeId: membership.collegeId,
-      q: query.q || undefined,
-      status: query.status === "ALL" ? undefined : query.status,
-      roomType: query.roomType === "ALL" ? undefined : query.roomType,
-      departmentId: query.departmentId,
-      minimumCapacity: query.minimumCapacity,
-      maximumCapacity: query.maximumCapacity,
-      upcoming:query.upcoming==="ALL"?undefined:query.upcoming,
+      ...(query.q ? { q: query.q } : {}),
+      ...(query.status !== "ALL" ? { status: query.status } : {}),
+      ...(query.roomType !== "ALL" ? { roomType: query.roomType } : {}),
+      ...(query.departmentId !== undefined ? { departmentId: query.departmentId } : {}),
+      ...(query.minimumCapacity !== undefined ? { minimumCapacity: query.minimumCapacity } : {}),
+      ...(query.maximumCapacity !== undefined ? { maximumCapacity: query.maximumCapacity } : {}),
+      ...(query.upcoming !== "ALL" ? { upcoming: query.upcoming } : {}),
       limit: pageSize,
       offset: (query.page - 1) * pageSize,
     }),
@@ -139,17 +139,17 @@ export default async function CollegeLectureHallsPage({
           collegeId={membership.collegeId}
           halls={result.items.map(hall=>({...hall,name:hall.name?.trim()||"Unnamed lecture hall"}))}
           departments={managerDepartments}
-          emptyState={total > 0
-            ? {
+          {...(total > 0
+            ? { emptyState: {
                 title: "No halls on this page",
                 description: "Choose an earlier page or reset the filters to see the matching rooms.",
-              }
+              } }
             : filtered
-              ? {
+              ? { emptyState: {
                   title: "No matching lecture halls",
                   description: "No registered rooms match these filters. Clear them or add a new hall.",
-                }
-              : undefined}
+                } }
+              : {})}
         />
       </section>
 
