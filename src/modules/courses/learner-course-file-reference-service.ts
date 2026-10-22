@@ -9,34 +9,38 @@ import {CoursesServiceError} from "./errors";
 import {loadCourseSectionDeliveryScope} from "./scope";
 import {requireLearningReadAccess} from "./learning-access";
 
-/** Reject legacy invalid material indices independently from invalid UUIDs.
- * Never look up a tenant resource using a malformed historical identifier. */
-export class LearnerCourseFileReferenceInputError extends Error {
- constructor(public readonly field:"deliveryId"|"contentId"|"materialIndex"){
-  super(field==="materialIndex"?"Invalid material index.":field==="contentId"
-   ?"Invalid content ID.":"Invalid delivery ID.");
-  this.name="LearnerCourseFileReferenceInputError";
- }
+/** Invalid legacy numeric indices and invalid UUID route IDs have different
+ * field-safe errors. A caller must resolve old positive numeric content IDs
+ * through an authenticated import crosswalk before passing this UUID route.
+ * No untrusted array index selects a private blob.
+ */
+export const learnerResourceReferenceSchema=z.strictObject({
+ deliveryId:z.uuid({error:"A valid Section delivery ID is required"}),
+ contentId:z.uuid({error:"A valid lesson content ID is required"}),
+ legacyMaterialIndex:z.coerce.number().int({error:"Material index must be a whole number"})
+  .min(0,{error:"Material index must not be negative"}).max(2147483647).optional(),
+});
+export function parseLearnerCourseFileReference(
+ deliveryId:unknown,contentId:unknown,legacyMaterialIndex?:unknown,
+){
+ return learnerResourceReferenceSchema.parse({
+  deliveryId,contentId,...(legacyMaterialIndex===undefined?{}:{legacyMaterialIndex}),
+ });
 }
-export function parseLearnerCourseMaterialIndex(raw:unknown):number{
- if(typeof raw!=="string"||!/^(?:0|[1-9][0-9]{0,8})$/.test(raw))
-  throw new LearnerCourseFileReferenceInputError("materialIndex");
- return Number(raw);
-}
-function parseLearnerCourseUuid(raw:unknown,field:"deliveryId"|"contentId"):string{
- const parsed=z.string().uuid().safeParse(raw);
- if(!parsed.success)throw new LearnerCourseFileReferenceInputError(field);
- return parsed.data;
-}
-
 /** LEARNER-course-detail-R04: one scoped material lookup only.
  * Never rehydrate lessons, quizzes, assessments or learner progress to
  * resolve a private file. Signed redirects are generated only after auth. */
 export async function getLearnerCourseFileReference(
  context:RequestContext,deliveryRaw:unknown,contentRaw:unknown,
+ legacyMaterialIndex?:unknown,
 ){
- const deliveryId=parseLearnerCourseUuid(deliveryRaw,"deliveryId");
- const contentId=parseLearnerCourseUuid(contentRaw,"contentId");
+ const identity=parseLearnerCourseFileReference(deliveryRaw,contentRaw,legacyMaterialIndex);
+ const deliveryId=identity.deliveryId,contentId=identity.contentId;
+ // A historical material index is not a verified material UUID. Only index 0
+ // is compatible with the unique-file fallback below; other indices need
+ // the versioned material-ID endpoint and its own authorization checks.
+ if(identity.legacyMaterialIndex!==undefined&&identity.legacyMaterialIndex!==0)
+  throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
  const delivery=await loadCourseSectionDeliveryScope(deliveryId,true);
  const access=await requireLearningReadAccess(context,delivery.offeringId,deliveryId,{
   includeHistorical:true,
