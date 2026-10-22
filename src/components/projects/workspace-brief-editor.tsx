@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useEffect,useId,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
@@ -29,7 +29,10 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
  const router=useRouter(),{showToast}=useToast();
  const currentVersion=new Date(updatedAt).toISOString();
  const [version,setVersion]=useState(currentVersion);
- const [open,setOpen]=useState(false);
+ const [open,setOpen]=useState(true);
+ const headingId=useId();
+ const deliverablesRef=useRef<HTMLTextAreaElement|null>(null);
+ const justSaved=useRef<string|null>(null);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [draft,setDraft]=useState<Draft>(()=>fromBrief(initial));
@@ -44,7 +47,13 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
  useEffect(()=>{
   if(currentVersion===version)return;
   if(open&&dirty){
-   // Never replace a draft merely because another user saved a new version.
+   // Reconcile our own successful PATCH after router.refresh without showing a false conflict.
+   if(justSaved.current===JSON.stringify(fromBrief(initial))){
+    justSaved.current=null;
+    setDraft(fromBrief(initial));setVersion(currentVersion);
+    setError("");setStale(false);return;
+   }
+   // Another writer changed the project while there are unsaved local edits.
    setStale(true);return;
   }
   setDraft(fromBrief(initial));setVersion(currentVersion);
@@ -57,6 +66,11 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
   }
   if(stale||version!==currentVersion){
    setError("This workspace changed while you were editing. Reload the overview before saving.");
+   return;
+  }
+  if(requireDeliverables&&!list(draft.deliverables).length){
+   setError("Add at least one deliverable.");
+   deliverablesRef.current?.focus();
    return;
   }
   const parsed=workspaceBriefSchema.safeParse({
@@ -76,7 +90,9 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/brief","PATCH",{
     brief:parsed.data,expectedUpdatedAt:version,
    });
-   setOpen(false);
+   justSaved.current=JSON.stringify(fromBrief(parsed.data));
+   // Legacy Overview keeps the editor expanded after a save. The next server
+   // snapshot remounts the version token without discarding in-progress edits.
    showToast({tone:"success",title:requireDeliverables?"Overview updated":"Project brief updated"});
    router.refresh();
   }catch(caught){
@@ -107,8 +123,8 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
     }}}>{open?"Close brief editor":"Edit project brief"}</Button>
   </div>
   {open?<div className="space-y-5">
-   <section className="space-y-2 border-t border-border pt-4">
-    <h4 className="text-sm font-semibold text-foreground">Goal</h4>
+   <section className="space-y-2 border-t border-border pt-4" aria-labelledby={headingId+"-goal"}>
+    <h4 id={headingId+"-goal"} className="text-sm font-semibold text-foreground">Goal</h4>
     <p className="text-xs text-body">Why the project exists, who it serves and what success should look like.</p>
     <label className="block text-xs font-semibold text-body">
      Project goal / description
@@ -125,26 +141,28 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
     </label>
    </section>
    <div className="grid min-w-0 gap-5 lg:grid-cols-2">
-    <section className="min-w-0 space-y-2 border-t border-border pt-4">
-     <h4 className="text-sm font-semibold text-foreground">Deliverables</h4>
+    <section className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-labelledby={headingId+"-deliverables"}>
+     <h4 id={headingId+"-deliverables"} className="text-sm font-semibold text-foreground">Deliverables</h4>
      <p className="text-xs text-body">The concrete outputs the team is expected to produce.</p>
-     <label className="block text-xs font-semibold text-body">Deliverables · one per line
-      <Textarea className={textClass} rows={7} value={draft.deliverables}
+     <label className="block text-xs font-semibold text-body">Deliverables
+      <Textarea ref={deliverablesRef} className={textClass} rows={7}
+       aria-invalid={requireDeliverables&&!list(draft.deliverables).length}
+       aria-describedby={headingId+"-deliverables-help"} value={draft.deliverables}
        placeholder={"Wireframes for all core screens\nWorking prototype\nFinal presentation deck"}
        onChange={event=>update("deliverables",event.target.value)}/>
-      <span className="mt-1 block text-xs font-normal text-body">
+      <span id={headingId+"-deliverables-help"} className="mt-1 block text-xs font-normal text-body">
        One per line. These appear as a checklist for mentors and students.
       </span>
       {requireDeliverables&&!list(draft.deliverables).length?
        <span role="alert" className="mt-1 block text-xs text-error">Add at least one deliverable.</span>:null}
      </label>
     </section>
-    <section className="min-w-0 space-y-2 border-t border-border pt-4">
-     <h4 className="text-sm font-semibold text-foreground">Definition of done</h4>
+    <section className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-labelledby={headingId+"-dod"}>
+     <h4 id={headingId+"-dod"} className="text-sm font-semibold text-foreground">Definition of done</h4>
      <p className="text-xs text-body">
       The project-level conditions that mean the work is genuinely complete.
      </p>
-     <label className="block text-xs font-semibold text-body">Completion conditions · one per line
+     <label className="block text-xs font-semibold text-body">Completion conditions
       <Textarea className={textClass} rows={7} value={draft.conditions}
        placeholder={"All acceptance criteria pass\nDeployed to a public URL\nMentor sign-off recorded"}
        onChange={event=>update("conditions",event.target.value)}/>
@@ -154,10 +172,10 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
      </label>
     </section>
    </div>
-   <section className="space-y-2 border-t border-border pt-4">
-    <h4 className="text-sm font-semibold text-foreground">Personas & ownership</h4>
+   <section className="space-y-2 border-t border-border pt-4" aria-labelledby={headingId+"-personas"}>
+    <h4 id={headingId+"-personas"} className="text-sm font-semibold text-foreground">Personas & ownership</h4>
     <p className="text-xs text-body">Explain the working roles students can take and what each one owns.</p>
-    <label className="block text-xs font-semibold text-body">Personas · one per line
+    <label className="block text-xs font-semibold text-body">Personas
      <Textarea className={textClass} rows={4} value={draft.personas}
       placeholder={"Frontend lead — owns the board UI and component structure\nBackend lead — owns the API and data model"}
       onChange={event=>update("personas",event.target.value)}/>
