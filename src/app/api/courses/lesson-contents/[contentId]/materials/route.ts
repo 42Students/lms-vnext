@@ -22,6 +22,20 @@ const fileGrantQuerySchema=z.strictObject({
 }).refine(query => !(query.openMaterialId && query.legacyMaterialIndex !== undefined),{
  message:"Choose one material reference",
 });
+/** Legacy callers supplied id, lessonContentId or lesson_content_id.
+ * An alias may repeat the canonical scoped UUID, but historical integer IDs
+ * are never guessed: a verified college-specific import must map them first. */
+function normalizeContentAliases(
+ contentId:string,raw:Record<string,unknown>,
+):Record<string,unknown>{
+ const {id,lessonContentId,lesson_content_id,...params}=raw;
+ for(const alias of [id,lessonContentId,lesson_content_id]){
+  if(alias===undefined)continue;
+  if(typeof alias!=="string"||!z.string().uuid().safeParse(alias).success||
+     alias!==contentId)throw new StorageFileError("STORAGE_NOT_FOUND");
+ }
+ return params;
+}
 function queryParams(request:Request):Record<string,unknown>{
  const raw:Record<string,unknown>={};
  for(const [key,value] of new URL(request.url).searchParams){
@@ -39,7 +53,7 @@ export async function GET(request:Request,{params}:Route){
  try{
   const {contentId:rawContentId}=await params;
   const contentId=z.string().uuid().parse(rawContentId);
-  const query=fileGrantQuerySchema.parse(queryParams(request));
+  const query=fileGrantQuerySchema.parse(normalizeContentAliases(contentId,queryParams(request)));
   const context=await getCurrentRequestContext();
   const deliveryId=query.deliveryId??null;
   if(query.openMaterialId || query.legacyMaterialIndex !== undefined){
@@ -62,11 +76,12 @@ export async function GET(request:Request,{params}:Route){
 export async function POST(request:Request,{params}:Route){
  if(!isSameOriginRequest(request))return Response.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const {contentId}=await params;
+  const {contentId:rawContentId}=await params;
+  const contentId=z.string().uuid().parse(rawContentId);
   const input=await readResourceMaterialCommandJson(request);
-  const deliveryId=deliveryQuerySchema.parse(queryParams(request)).deliveryId??null;
+  const deliveryId=deliveryQuerySchema.parse(normalizeContentAliases(contentId,queryParams(request))).deliveryId??null;
   const result=await commandLessonResourceMaterial(
-   await getCurrentRequestContext(),z.string().uuid().parse(contentId),deliveryId,input);
+   await getCurrentRequestContext(),contentId,deliveryId,input);
   return Response.json({result},{status:201,headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
