@@ -16,6 +16,7 @@ import {getSuperAdminCourseDependencyCounts} from "@/modules/admin-ui/super-admi
 import {paginateCollegeCourses} from "@/modules/courses/college-course-catalogue-model";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {AdminCoursesLastGood} from "@/components/courses/admin-courses-last-good";
 
 export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[];pageSize?:string|string[];create?:string|string[]}>}) {
   const context =
@@ -159,20 +160,13 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const {catalogueQuery,duplicateCourseId,openCreateCourse}=parsed;
-  // Course availability is critical; optional dependency statistics must
-  // never block the catalogue or scan every course when only one page is shown.
-  const workspaceResult=await getAdminCourseWorkspace(context,collegeId)
-    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
-  if(!workspaceResult.ok)return <section className="min-w-0 space-y-5">
-    <PageHeader title="Courses" description="Manage Courses within the selected college." />
-    <ErrorState title="Could not load courses"
-      description="The courses for this college could not be loaded. Your existing changes were not affected."
-      action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9">Retry</Link>}/>
-  </section>;
-  const workspace=workspaceResult.value;
-  const visibleCourseIds=paginateCollegeCourses(workspace.courses,catalogueQuery).items.map(course=>course.id);
-  const dependenciesResult=await getSuperAdminCourseDependencyCounts(context,visibleCourseIds)
-    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
+  const [workspaceResult,dependenciesResult]=await Promise.all([
+    getAdminCourseWorkspace(context,collegeId)
+      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
+    getSuperAdminCourseDependencyCounts(context)
+      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
+  ]);
+  const workspace=workspaceResult.ok?workspaceResult.value:null;
   const lessonCountByCourse=dependenciesResult.ok?dependenciesResult.value:undefined;
 
   return (
@@ -180,8 +174,8 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       <PageHeader
         title="Courses"
         description="Create New Course and manage Existing Courses."
-        actions={<Link href="/admin/courses?create=1#create-course"
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">Create New Course</Link>}
+        actions={workspace?<Link href="/admin/courses?create=1#create-course"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">Create New Course</Link>:undefined}
       />
       <Tabs ariaLabel="Course and content directories" value="courses" renderPanel={false}
           items={[
@@ -199,16 +193,21 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         Course lesson dependencies could not be verified. Archive decisions must be checked again before proceeding.
         <Link href="/admin/courses" className="ml-2 font-semibold underline">Retry</Link>
       </Banner>:null}
-      <AdminCourseOverview
-        workspace={workspace}
-        openCreateCourse={openCreateCourse}
-        courseBasePath="/admin/courses"
-        duplicateCourseId={duplicateCourseId}
-        catalogueQuery={catalogueQuery}
-        lessonCountByCourse={lessonCountByCourse}
-        offeringBasePath="/admin/courses/offerings"
-      />
-      <AdminCourseRecycleBin collegeId={collegeId}/>
+      <AdminCoursesLastGood key={context.user.id+":"+collegeId}
+        available={Boolean(workspace)} retryHref="/admin/courses">
+        {workspace?<>
+          <AdminCourseOverview
+            workspace={workspace}
+            openCreateCourse={openCreateCourse}
+            courseBasePath="/admin/courses"
+            duplicateCourseId={duplicateCourseId}
+            catalogueQuery={catalogueQuery}
+            lessonCountByCourse={lessonCountByCourse}
+            offeringBasePath="/admin/courses/offerings"
+          />
+          <AdminCourseRecycleBin collegeId={collegeId}/>
+        </>:null}
+      </AdminCoursesLastGood>
     </div>
   );
 }
