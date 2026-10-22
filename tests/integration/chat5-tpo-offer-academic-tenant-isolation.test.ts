@@ -62,11 +62,12 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
 
    // Even a same-college program can point at a cohort whose academic-period
    // belongs to a different college. The label still cannot be exported.
-   await pool.query("insert into cohorts(id,program_id,name,code,start_period_id) values($1,$2,$3,$4,$5)",
-    [wrongPeriodCohort,localProgram,"WRONG COLLEGE START PERIOD","WC-"+marker,foreignPeriod]);
-   await pool.query(
-    "update learner_program_enrollments set program_id=$1,cohort_id=$2 where membership_id=$3",
-    [localProgram,wrongPeriodCohort,member]);
+   await expect(pool.query(
+    "insert into cohorts(id,program_id,name,code,start_period_id) values($1,$2,$3,$4,$5)",
+    [wrongPeriodCohort,localProgram,"WRONG COLLEGE START PERIOD","WC-"+marker,foreignPeriod],
+   )).rejects.toThrow("Cohort program and start period must belong to one college");
+   // The database blocks cross-college references; a mismatched enrollment
+   // must still remain masked by the read layer.
    const foreignPeriodResult=await enrichTpoOfferFacts(fake,SEED_IDS.collegeA);
    expect(foreignPeriodResult[0]?.candidate.batch).toBeNull();
    expect(foreignPeriodResult[0]?.candidate.branch).toBeNull();
