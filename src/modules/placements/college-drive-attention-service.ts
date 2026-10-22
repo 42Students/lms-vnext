@@ -19,11 +19,24 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
   throw Error("Invalid drive identifier.");
  const settingKeys=["placement.staleAppliedDays","placement.closingSoonDays",
   "placement.needsAttentionSampleCap","placement.lowConversionThreshold"];
- const overrides=await db.select({key:platformSettingOverrides.key,value:platformSettingOverrides.value})
-  .from(platformSettingOverrides)
-  .where(and(eq(platformSettingOverrides.scopeType,"GLOBAL"),
-   eq(platformSettingOverrides.scopeId,"GLOBAL"),inArray(platformSettingOverrides.key,settingKeys)));
- const values=new Map(overrides.map(row=>[row.key,row.value]));
+ // Use the selected college's persisted override first; inherit the
+ // platform default only when this college has no explicit value.
+ const overrides=await db.select({
+  key:platformSettingOverrides.key,value:platformSettingOverrides.value,
+  scopeType:platformSettingOverrides.scopeType,
+ }).from(platformSettingOverrides).where(and(
+  inArray(platformSettingOverrides.key,settingKeys),
+  or(
+   and(eq(platformSettingOverrides.scopeType,"GLOBAL"),
+    eq(platformSettingOverrides.scopeId,"GLOBAL")),
+   and(eq(platformSettingOverrides.scopeType,"COLLEGE"),
+    eq(platformSettingOverrides.scopeId,collegeId)),
+  ),
+ ));
+ const values=new Map(overrides.filter(row=>row.scopeType==="GLOBAL")
+  .map(row=>[row.key,row.value]));
+ for(const row of overrides)if(row.scopeType==="COLLEGE")
+  values.set(row.key,row.value);
  const staleDays=storedPlacementPolicyValue("placement.staleAppliedDays",values.get("placement.staleAppliedDays"));
  const closingDays=storedPlacementPolicyValue("placement.closingSoonDays",values.get("placement.closingSoonDays"));
  const sampleCap=storedPlacementPolicyValue("placement.needsAttentionSampleCap",values.get("placement.needsAttentionSampleCap"));
@@ -89,7 +102,7 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
     select 1 from placement_offers o
     where o.application_id=${placementApplications.id}
      and o.status in ('ISSUED','ACCEPTED')
-     and (o.offer_letter_url is null or trim(o.offer_letter_url)='')
+     and nullif(trim(o.offer_letter_url),'') is null and nullif(trim(o.offer_letter_object_path),'') is null
   ))::integer`.as("missing_offer_letter"),
   shortlisted:sql<number>`count(*) filter (where
     coalesce(${placementCollegeApplicationStages.stage},
@@ -152,7 +165,7 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
    missingLetter:sql<boolean>`exists(select 1 from placement_offers o
       where o.application_id=${placementApplications.id}
        and o.status in ('ISSUED','ACCEPTED')
-       and (o.offer_letter_url is null or trim(o.offer_letter_url)=''))`,
+       and nullif(trim(o.offer_letter_url),'') is null and nullif(trim(o.offer_letter_object_path),'') is null)`,
   }).from(placementApplications)
    .innerJoin(collegeMemberships,and(
     eq(collegeMemberships.id,placementApplications.membershipId),
@@ -179,7 +192,7 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
       or exists(select 1 from placement_offers o
        where o.application_id=${placementApplications.id}
         and o.status in ('ISSUED','ACCEPTED')
-        and (o.offer_letter_url is null or trim(o.offer_letter_url)=''))
+        and nullif(trim(o.offer_letter_url),'') is null and nullif(trim(o.offer_letter_object_path),'') is null)
      )`,
      lowConversionJobs.length?and(
       inArray(placementApplications.jobId,lowConversionJobs),
