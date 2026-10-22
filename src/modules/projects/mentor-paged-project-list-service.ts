@@ -44,10 +44,24 @@ export async function listPagedMentorProjects(context:RequestContext,query:Mento
  ];
  if(query.search?.trim()){
    const term=containsLikePattern(query.search.trim());
+   // Resolve names only through ACTIVE same-college mentor memberships.
+   // The EXISTS predicate runs before count/pagination, so searching by a
+   // colleague's name never returns a cross-tenant project or a fake total.
+   const mentorName=sql<boolean>`exists (
+     select 1 from project_members pm_name
+     join college_memberships cm_name on cm_name.id=pm_name.membership_id
+     join users u_name on u_name.id=cm_name.user_id
+     where pm_name.project_id=${projectInstances.id}
+       and cm_name.college_id=${membership.collegeId}
+       and cm_name.status='ACTIVE' and u_name.platform_status='ACTIVE'
+       and pm_name.ended_at is null and pm_name.deleted_at is null
+       and pm_name.role='MENTOR'
+       and u_name.display_name ilike ${term}
+   )`;
    conditions.push(or(ilike(projectInstances.title,term),
      ilike(projectInstances.slug,term),
      ilike(projectInstances.courseLabel,term),
-     ilike(projectInstances.summary,term))!);
+     ilike(projectInstances.summary,term),mentorName)!);
  }
  if(query.assignment==="PRIMARY") conditions.push(eq(projectMembers.isPrimary,true));
  if(query.assignment==="SUPPORTING") conditions.push(eq(projectMembers.isPrimary,false));

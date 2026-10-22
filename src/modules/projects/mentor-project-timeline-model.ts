@@ -8,8 +8,27 @@ export const mentorTimelineQuerySchema=z.object({
 export type MentorTimelineQuery=z.infer<typeof mentorTimelineQuerySchema>;
 
 type Release={id:string;title:string;sequence:number;status:string;};
-type Sprint={id:string;releaseId:string;title:string;sequence:number;status:string;};
+type Sprint={id:string;releaseId:string;title:string;sequence:number;status:string;startDate?:string|null;dueDate?:string|null;};
 type Task={sprintId:string|null;status:string;};
+export type LegacySprintProgressStatus="UPCOMING"|"IN_PROGRESS"|"COMPLETED"|"OVERDUE";
+/** Legacy sprintStatus was a progress badge independent of sprintState,
+ * the separate actionable PLANNED/ACTIVE/COMPLETED lifecycle field. */
+export function derivedSprintProgressStatus(input:{
+ state:string;completedTasks:number;totalTasks:number;
+ startDate?:string|null;dueDate?:string|null;
+},today=new Date()):LegacySprintProgressStatus{
+ const pieces=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(today);
+ const part=(key:Intl.DateTimeFormatPartTypes)=>pieces.find(item=>item.type===key)?.value??"";
+ const midnight=part("year")+"-"+part("month")+"-"+part("day");
+ if(input.state==="COMPLETED"||
+  (input.totalTasks>0&&input.completedTasks===input.totalTasks))return "COMPLETED";
+ if(input.dueDate&&input.dueDate<midnight)return "OVERDUE";
+ if(input.state==="ACTIVE"||input.completedTasks>0||
+   (input.startDate!==undefined&&input.startDate!==null&&input.startDate<=midnight))
+  return "IN_PROGRESS";
+ return "UPCOMING";
+}
+
 export function mentorProjectTimeline(
   releases:readonly Release[],sprints:readonly Sprint[],tasks:readonly Task[],
   query:Pick<MentorTimelineQuery,"projectId"|"releaseStatus"|"page"> &
@@ -36,6 +55,9 @@ export function mentorProjectTimeline(
           return {
             ...sprint,taskCount:group.length,doneCount:done,
             progressPercent:group.length>0?Math.round(done/group.length*100):null,
+            derivedStatus:derivedSprintProgressStatus({state:sprint.status,
+              completedTasks:done,totalTasks:group.length,
+              startDate:sprint.startDate,dueDate:sprint.dueDate}),
           };
         }),
     })),
