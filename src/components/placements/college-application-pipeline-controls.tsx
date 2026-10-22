@@ -398,7 +398,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     description={filtered?"Try another search or clear the filters.":"Applicants will appear here when students apply for this drive."}
     action={filtered?<Link href={clearHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>:undefined}/>}/>
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
-    applicationId={detailId} initialDetail={detailPayload??undefined} basePath={basePath}
+    applicationId={detailId} {...(detailPayload !== null ? {initialDetail:detailPayload} : {})} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
   <Dialog open={dialog} onOpenChange={next=>{if(!next)closeMoveDialog();}} title={dialogTitle} dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
     <Button type="button" disabled={busy} variant="secondary" onClick={closeMoveDialog}>Close</Button>
