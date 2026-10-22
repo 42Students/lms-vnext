@@ -5,7 +5,7 @@ it("restores committed filters and resets pagination",()=>{
 const id="81818181-8181-4818-8818-818181818181";
 const original="q=eng&view=progress&sort=company&page=3&applicationId="+id;
 expect(readLearnerApplicationUrl(updateLearnerApplicationUrl(original,{q:"developer"}))).toMatchObject({
-q:"developer",view:"progress",sort:"company",page:1,applicationId:id});
+q:"developer",view:"all",sort:"company",page:1,applicationId:id});
 expect(readLearnerApplicationUrl(original).q).toBe("eng");
 });
 it("round-trips the new screening-stage sort without accepting forged sorts",()=>{

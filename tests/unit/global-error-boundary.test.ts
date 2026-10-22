@@ -10,9 +10,10 @@ describe("GR-11 custom root error boundary", () => {
       error: Object.assign(new Error("SECRET_STACK_MARKER: DB password hidden"), { digest: "secret-digest" }),
       reset,
     }));
-    expect(markup).toContain("This page is temporarily unavailable");
+    expect(markup).toContain("Server Error");
     expect(markup).toContain("Try again");
-    expect(markup).toContain("Go to home");
+    expect(markup).toContain("Go to Home");
+    expect(markup).toContain("Go back");
     expect(markup).toContain("<html");
     expect(markup).toContain("<body");
     expect(markup).not.toContain("SECRET_STACK_MARKER");
