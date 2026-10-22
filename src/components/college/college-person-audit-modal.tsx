@@ -27,7 +27,8 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
  return <>
   <Button variant="secondary" type="button" onClick={()=>void show()}
    className="min-h-11 w-full md:min-h-9 md:w-auto">Audit trail</Button>
-  <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={"Audit trail for "+name} footer={<Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto"
+  <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={"Audit trail for "+name}
+   className="max-w-[800px]" footer={<Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto"
       onClick={close}>Close</Button>}>
     
     {busy?<Skeleton variant="row" count={3} label="Loading audit trail"/>:null}
