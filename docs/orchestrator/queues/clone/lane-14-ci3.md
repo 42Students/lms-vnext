@@ -5,4 +5,4 @@ Do these right after your ci1 queue. CI checks every push to main. Push after ev
 - [ ] `docs/audit/gap-fix-work/ci3/packets/CI3U_lane14_1.md` (4 test files)
 - [ ] `docs/audit/gap-fix-work/ci3/packets/CI3U_lane14_2.md` (4 test files)
 - [x] `docs/audit/gap-fix-work/ci3/packets/CI3X_lane14_source_contracts.md` (CI job: source-contracts (7 failing node:test checks))
-- [ ] `docs/audit/gap-fix-work/ci3/packets/CI3X_lane14_browser.md` (CI job: browser (E2E database prep / build))
+- [x] `docs/audit/gap-fix-work/ci3/packets/CI3X_lane14_browser.md` (CI job: browser (E2E database prep / build))
