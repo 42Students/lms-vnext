@@ -447,7 +447,9 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,sectio
                  workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName??
                  workspace.members.find(member=>member.role==="MENTOR")?.displayName??null]
                 .filter(Boolean).join(" · ")||"Project workspace"
-              : mode==="ADMIN"&&section==="sprints"?
+              : mode==="ADMIN"&&section==="overview"?
+                "Shape the project brief mentors and students use to understand the work.":
+                mode==="ADMIN"&&section==="sprints"?
                 "Plan sprint outcomes, release alignment and delivery cadence for this workspace.":
                 mode==="ADMIN"&&section==="tasks"?
                 "Shape the work breakdown and review learner submission activity for this workspace.":
@@ -645,7 +647,8 @@ export function ProjectWorkspace({
           backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
       {mode === "ADMIN" ? (
         <Breadcrumbs items={[
-          { label: "Projects", href: backHref },
+          { label: "Projects", href: sectionBaseHref ? sectionBaseHref.replace(/\/[^/]+$/, "") : backHref },
+          ...(sectionBaseHref ? [{label:"Workspaces",href:backHref}] : []),
           { label: workspace.project.title?.trim()||"Workspace",
             href: sectionBaseHref ? sectionBaseHref+"/summary"+sectionQuerySuffix : undefined },
           ...(activeSection ? [{label: PROJECT_WORKSPACE_SECTION_LABELS[activeSection]}] : []),
@@ -961,7 +964,9 @@ export function ProjectWorkspace({
                 ) : <p>No deliverables have been recorded yet.</p>}
               </div>
             </div>
-          ) : <p className="mt-2 text-sm text-body">No authored project brief is available.</p>}
+          ) : mode==="ADMIN"&&!readOnly
+            ? <p className="mt-2 text-sm text-body">Start by describing the project goal, deliverables and completion conditions in the editor above.</p>
+            : <p className="mt-2 text-sm text-body">No authored project brief is available.</p>}
           {mode === "LEARNER" ? (
             <div className="mt-3 space-y-2 text-sm text-body">
               {workspace.project.phase ? <p>Phase: <strong>{workspace.project.phase}</strong></p> : null}
