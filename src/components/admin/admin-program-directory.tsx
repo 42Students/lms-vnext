@@ -189,9 +189,9 @@ export function AdminProgramDirectory({
             setFieldErrors({name:"Program name already exists in this department"});
             setCreateError("Program name already exists in this department");
           }else if(error.code==="PROGRAM_CODE_CONFLICT")setCreateError("Program code already exists in this department");
-          else if(error.fieldErrors.name)setFieldErrors({name:error.fieldErrors.name});
-          else if(error.fieldErrors.departmentId)setFieldErrors({department:error.fieldErrors.departmentId});
-          else if(error.fieldErrors.durationTerms)setFieldErrors({duration:error.fieldErrors.durationTerms});
+          else if(error.fieldErrors["name"])setFieldErrors({name:error.fieldErrors["name"]});
+          else if(error.fieldErrors["departmentId"])setFieldErrors({department:error.fieldErrors["departmentId"]});
+          else if(error.fieldErrors["durationTerms"])setFieldErrors({duration:error.fieldErrors["durationTerms"]});
         }else if(/dept_id|departmentId|department/i.test(message))setFieldErrors({department:message});
         else if(/duration_years|durationTerms|durationYears/i.test(message))setFieldErrors({duration:message});
         else if(/(?:program )?name/i.test(message))setFieldErrors({name:message});
@@ -227,7 +227,7 @@ export function AdminProgramDirectory({
               aria-label="Search departments" placeholder="Search departments" maxLength={100}/>
             <Select
               className="min-h-11 md:min-h-9" id="admin-program-department" value={departmentId}
-              onChange={(event) => {setDepartmentId(event.target.value);setFieldErrors(old=>({...old,department:undefined}));}}
+              onChange={(event) => {setDepartmentId(event.target.value);setFieldErrors(({department: _department,...rest})=>rest);}}
               aria-invalid={Boolean(fieldErrors.department)} aria-describedby={fieldErrors.department?"admin-program-department-error":undefined}
               required
             >
@@ -241,7 +241,7 @@ export function AdminProgramDirectory({
           <div>
             <label htmlFor="admin-program-name" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program Name</label>
             <Input className="min-h-11 md:min-h-9" id="admin-program-name" value={name} maxLength={255} required
-              onChange={(event) => {setName(event.target.value);setFieldErrors(old=>({...old,name:undefined}));}}
+              onChange={(event) => {setName(event.target.value);setFieldErrors(({name: _name,...rest})=>rest);}}
               aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name?"admin-program-name-error":undefined}
               placeholder="e.g., B.Tech Computer Science" />
             {fieldErrors.name?<p id="admin-program-name-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.name}</p>:null}
@@ -256,7 +256,7 @@ export function AdminProgramDirectory({
             <label htmlFor="admin-program-duration" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (Years)</label>
             <div className="flex min-w-0 items-stretch">
               <Input className="min-h-11 min-w-0 flex-1 rounded-r-none md:min-h-9" id="admin-program-duration" type="number" value={durationYears}
-               onChange={(event) => {setDurationYears(event.target.value);setFieldErrors(old=>({...old,duration:undefined}));}}
+               onChange={(event) => {setDurationYears(event.target.value);setFieldErrors(({duration: _duration,...rest})=>rest);}}
                aria-invalid={Boolean(fieldErrors.duration)} aria-describedby={fieldErrors.duration?"admin-program-duration-error":undefined}
                placeholder="e.g., 4" min={1} max={10} step={1} required />
               <span className="inline-flex shrink-0 items-center rounded-r-[var(--lms-control-radius)] border border-l-0 border-border bg-muted px-3 text-sm text-body">Years</span>
