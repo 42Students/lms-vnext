@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { outboundFetch } from "@/lib/outbound";
 import { writeStructuredLog } from "@/observability/logger";
 import { createExotelSmsProvider, type ExotelConfig } from "@/modules/notifications/exotel-sms";
@@ -29,11 +29,17 @@ const sendEmail = (toEmail: string) =>
 
 beforeEach(() => {
   vi.resetAllMocks();
+  // Developer-stage mail is allowlisted; production requires verified
+  // credential rotation and must not be bypassed by the test fixture.
+  vi.stubEnv("DEV_MAIL_ALLOW","learner@example.org");
+  vi.stubEnv("APP_ENV","development");
+  vi.stubEnv("STAGE","development");
 });
+afterEach(()=>vi.unstubAllEnvs());
 
 describe("chat-16 OTP channel acceptance, validation and graceful failure", () => {
   it("AUTH-OTP-DELIVERY-01 requires an affirmative Exotel state and valid SID, not HTTP 200", async () => {
-    for (const status of ["rejected", "failed", "undelivered", "pending", "unknown"]) {
+    for (const status of ["rejected", "failed", "undelivered", "unknown"]) {
       vi.mocked(outboundFetch).mockResolvedValueOnce(response({
         SMSMessage: { Sid: "SM-42", Status: status },
       }));
@@ -43,16 +49,20 @@ describe("chat-16 OTP channel acceptance, validation and graceful failure", () =
       SMSMessage: { Sid: "SM\n-42", Status: "sent" },
     }));
     expect(await sendSms()).toBe(false);
-    vi.mocked(outboundFetch).mockResolvedValueOnce(response({
-      SMSMessage: { Sid: "SM-42", Status: "queued" },
-    }));
-    expect(await sendSms()).toBe(true);
+    // Exotel "pending" acknowledges receipt, not handset delivery.
+    for(const status of ["pending","queued"]){
+      vi.mocked(outboundFetch).mockResolvedValueOnce(response({
+        SMSMessage:{Sid:"SM-42",Status:status},
+      }));
+      expect(await sendSms()).toBe(true);
+    }
     expect(outboundFetch).toHaveBeenCalledTimes(7);
   });
 
   it("AUTH-OTP-DELIVERY-01 rejects malformed codes and phones without sending", async () => {
     expect(await sendSms("12ab56")).toBe(false);
-    expect(await sms.sendOtp("9876543210", "123456")).toBe(false);
+    expect(await sms.sendOtp("1234567890", "123456")).toBe(false);
+    expect(await sms.sendOtp("+919876543210;DROP", "123456")).toBe(false);
     expect(outboundFetch).not.toHaveBeenCalled();
   });
 

@@ -15,7 +15,9 @@ describe("chat-14 final sprint",()=>{
   expect(evaluateTpoDriveEdit("PUBLISHED","ACTIVE",parsed)).toBe("ALLOW");
   expect(evaluateTpoDriveEdit("DRAFT","ACTIVE",parsed)).toBe("ALLOW");
   expect(evaluateTpoDriveEdit("CLOSED","ACTIVE",parsed)).toBe("READ_ONLY");
-  expect(evaluateTpoDriveEdit("PUBLISHED","CLOSED",parsed)).toBe("READ_ONLY");
+  // Inactive seasons freeze recruitment, not auditable correction of an
+  // otherwise published drive; closed drive state itself stays read-only.
+  expect(evaluateTpoDriveEdit("PUBLISHED","CLOSED",parsed)).toBe("ALLOW");
  });
  it("TPO-drives-48 rejects removal of a live deadline and invalid CGPA",()=>{
   expect(evaluateTpoDriveEdit("PUBLISHED","ACTIVE",tpoDriveEditSchema.parse({...valid,applicationDeadline:null}))).toBe("INVALID_DEADLINE");
