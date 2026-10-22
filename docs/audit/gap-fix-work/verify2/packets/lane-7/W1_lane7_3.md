@@ -38,11 +38,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Verify provider SMS delivery, identity collision, session revocation timing and no wrong-college session leak
 
 ## G2-20-031-011 [P1] MISSING facet F03
+- [ ] Partial: secure six-digit Open form, conditional Email me a code instead, CSV download implemented; bulk resume ZIP intentionally retired, so ZIP parity requires product approval.
 - Files: src/app/company-share/[token]/page.tsx
 - Legacy: Legacy share password card has six-digit input, Open, optional 'Email me a code instead', ZIP and CSV buttons `company-share/[token].js:145-162`.
 - Expected fix: Implement parity for resend code and ZIP resume archive only if backed by supported vNext service; otherwise explicitly mark migration decision and disable unavailable control.
 
 ## G2-20-031-024 [P1] MISSING facet F08
+- [x] Verified: optional authorized recruiter code email POST has distinct SENT, TOO_SOON (429 Retry-After 60), LIMITED (429 Retry-After 3600), and UNAVAILABLE (503) feedback; emailed challenge expires after 15 minutes.
 - Files: src/app/company-share/[token]/page.tsx
 - Legacy: Legacy share `sendShareCode` distinguishes SENT, TOO_SOON, LIMIT with 15-min/1-min copy `company-share/[token].js:85-100`.
 - Expected fix: Restore bounded resend-code path and differentiated transient/toast outcomes if vNext backend supports it.
@@ -53,6 +55,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Map every legacy share action to new server action; verify access logging, resend and ZIP beyond CSV; preserve token confidentiality.
 
 ## G2-20-031-036 [P1] MISSING facet F14
+- [ ] Partial: CSV export uses scoped server endpoint, and legacy ZIP is explicitly retired for per-file audit and malware-scan reasons; historical ZIP parity is not restored.
 - Files: src/app/company-share/[token]/page.tsx
 - Legacy: Legacy public share downloads CSV client-side and resumes ZIP with action logging `company-share/[token].js:106-125,156-160`.
 - Expected fix: Expose ZIP if still supported or document product omission; audit export headers, filename, safeHref and download logs.
