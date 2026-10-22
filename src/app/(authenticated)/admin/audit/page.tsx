@@ -118,17 +118,18 @@ export default async function SuperAdminAuditPage({searchParams}:{
         <th scope="col" className="p-3">Outcome</th>
         <th scope="col" className="p-3">Details</th>
        </tr></thead>
-       <tbody>{smsRead.rows.map(item=><tr key={item.id} className="border-t border-border">
-        <td className="p-3 tabular-nums">{smsDate(new Date(item.createdAt))}</td>
-        <td className="p-3">{item.purpose}</td>
-        <td className="p-3">{item.recipientSuffix?"••••"+item.recipientSuffix:"Masked"}</td>
-        <td className="p-3"><StatusBadge tone={item.outcome==="PROVIDER_ACCEPTED"?"success":"warning"}>{item.outcome==="PROVIDER_ACCEPTED"?"Accepted by provider":item.outcome}</StatusBadge></td>
+       <tbody>{smsRead.rows.map(item=><tr key={String(item.id)} className="border-t border-border">
+        <td className="p-3 tabular-nums">{smsDate(item.createdAt instanceof Date
+         ?item.createdAt:new Date(typeof item.createdAt==="string"||typeof item.createdAt==="number"?item.createdAt:NaN))}</td>
+        <td className="p-3">{typeof item.purpose==="string"?item.purpose:"—"}</td>
+        <td className="p-3">{typeof item.recipientSuffix==="string"&&item.recipientSuffix?"••••"+item.recipientSuffix:"Masked"}</td>
+        <td className="p-3"><StatusBadge tone={item.outcome==="PROVIDER_ACCEPTED"?"success":"warning"}>{item.outcome==="PROVIDER_ACCEPTED"?"Accepted by provider":String(item.outcome??"Unknown")}</StatusBadge></td>
         <td className="p-3"><details><summary className="min-h-9 cursor-pointer font-semibold text-primary-text">View details</summary>
          <dl className="min-w-0 space-y-2 py-2 text-xs">
-          <div><dt className="font-semibold">Attempt ID</dt><dd className="break-all">{item.id}</dd></div>
-          <div><dt className="font-semibold">Provider ID</dt><dd className="break-all">{item.providerMessageId??"Not available"}</dd></div>
-          <div><dt className="font-semibold">Provider</dt><dd>{item.provider}</dd></div>
-          <div><dt className="font-semibold">Error code</dt><dd>{item.safeFailureCode??"—"}</dd></div>
+          <div><dt className="font-semibold">Attempt ID</dt><dd className="break-all">{String(item.id)}</dd></div>
+          <div><dt className="font-semibold">Provider ID</dt><dd className="break-all">{typeof item.providerMessageId==="string"?item.providerMessageId:"Not available"}</dd></div>
+          <div><dt className="font-semibold">Provider</dt><dd>{typeof item.provider==="string"?item.provider:"—"}</dd></div>
+          <div><dt className="font-semibold">Failure detail</dt><dd>{typeof item.failureSummary==="string"?item.failureSummary:"—"}</dd></div>
          </dl>
         </details></td>
        </tr>)}</tbody>

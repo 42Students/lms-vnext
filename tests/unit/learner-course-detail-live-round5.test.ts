@@ -25,7 +25,7 @@ describe("learner live sessions and recovery",()=>{
  it("LEARNER-course-detail-18 warns when a requested lesson or content is not published",()=>{
   const ui=code("src/components/courses/learner-course-workspace.tsx");
   expect(ui).toContain("Lesson not found.");
-  expect(ui).toContain("Content unavailable.");
+  expect(ui).toContain("Content locked or unavailable.");
   expect(ui).toContain("role=\"alert\"");
  });
 });

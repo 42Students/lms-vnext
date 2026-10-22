@@ -4,11 +4,14 @@ import {join} from "node:path";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("TPO settings gracious save behavior",()=>{
  it("TPO-settings-audit-21 preserves the edited job type after a failed network write",()=>{
-  const file=source("src/components/tpo/tpo-job-types-editor.tsx");
-  expect(file).toContain("apiFetch(url");
-  expect(file).toContain("FriendlyFetchError");
-  expect(file).toContain("<InlineNotice");
-  expect(file).toContain('if(method==="POST"){setLabel("");setCountsAsPlaced(null);}');
+  const wrapper=source("src/components/tpo/tpo-job-types-editor.tsx");
+  const file=source("src/components/tpo/tpo-unified-job-types-editor.tsx");
+  expect(wrapper).toContain("TpoUnifiedJobTypesEditor");
+  expect(file).toContain('fetch("/api/placements/tpo/settings/job-types"');
+  expect(file).toContain("if (!response.ok)");
+  expect(file).toContain("setError(detail)");
+  expect(file).toContain("Unsaved changes");
+  expect(file).toContain("setSaved(rows.map");
  });
  it("TPO-settings-audit-31 applies friendly save errors and retains outcome label edits",()=>{
   const file=source("src/components/tpo/tpo-outcome-labels-editor.tsx");

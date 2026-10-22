@@ -60,7 +60,7 @@ describe("HR recruiter Request Drive draft preview", () => {
   it("checks complete fixed/variable annual CTC against both endpoints of the advertised range", () => {
     const draft = {...emptyHrDriveDraft(), title:"Engineer",
       description:"A full-stack engineering position with clear eligibility.",
-      location:"Hyderabad",minimumAnnualCtcInr:"500000",maximumAnnualCtcInr:"750000",
+      location:"Hyderabad",ctcLpa:"7.5",minimumAnnualCtcInr:"500000",maximumAnnualCtcInr:"750000",
       fixedAnnualCtcInr:"500000",variableAnnualCtcInr:"100000"};
     expect(hrDriveDraftSchema.safeParse(draft).success).toBe(true);
     expect(hrDriveDraftSchema.safeParse({...draft,variableAnnualCtcInr:"300000"}).success).toBe(false);

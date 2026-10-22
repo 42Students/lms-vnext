@@ -1316,6 +1316,7 @@ export async function listOwnNotificationPage(
         eventType: activityEvents.eventType,
         importance: activityEvents.importance,
         occurredAt: activityEvents.occurredAt,
+        metadata: activityEvents.metadata,
       },
     })
     .from(inAppNotifications)
