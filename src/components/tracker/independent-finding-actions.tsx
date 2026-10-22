@@ -86,7 +86,7 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
   <h2 className="font-semibold text-foreground">Update finding</h2>
   <div className="grid min-w-0 gap-3 md:grid-cols-2">
   <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
-   <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as Action)}
+   <Select value={action} disabled={pending} onChange={e=>{setAction(e.target.value as Action);setError(null);setConfirmOpen(false);}}
     className="min-h-11 text-sm md:min-h-9">
     {(["STATUS","SEVERITY","ASSIGNEE","DUPLICATE","FIX_COMMIT","COMMENT"] as const).map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
    </Select>
@@ -125,11 +125,12 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
    </label>:null}
   </div>
   <div className="flex min-w-0 flex-col gap-2 md:items-end">
-  <Button variant="primary" type="button" onClick={()=>void submit()} loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||(action==="ASSIGNEE"&&assignee.trim()===(currentAssignee??""))||(action==="SEVERITY"&&nextSeverity===severity)||(action==="STATUS"&&nextStatus===status)}>{pending?"Saving…":submitLabel}</Button>
+  <Button variant="primary" type="button" aria-haspopup="dialog" onClick={()=>void submit()} loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||(action==="ASSIGNEE"&&assignee.trim()===(currentAssignee??""))||(action==="SEVERITY"&&nextSeverity===severity)||(action==="STATUS"&&nextStatus===status)}>{pending?"Saving…":submitLabel}</Button>
   {error&&!confirmOpen?<p role="alert" className="min-w-0 break-words [overflow-wrap:anywhere] text-sm text-error">{error}</p>:null}
   </div>
   <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!pending)setConfirmOpen(next);}}
-    title="Save this finding update? An immutable audit event will be recorded."
+    title={"Confirm "+submitLabel.toLowerCase()}
+    description={"Finding "+externalId+" · Expected version "+version+". The action creates a permanent audit event."}
     confirmLabel={submitLabel} confirmVariant="primary" pending={pending}
     onConfirm={()=>void submit(true)}>
     {error?<InlineNotice tone="error" message={error}/>:null}

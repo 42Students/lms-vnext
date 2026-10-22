@@ -124,7 +124,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
     <section className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
       <div>
         <h2 className="m-0 text-lg font-semibold text-foreground">Issue status</h2>
-        <p className="mt-1 text-sm text-body">Super Admin only. Version {issue.version}; stale writes are rejected.</p>
+        <p className="mt-1 text-sm text-body">Super Admin only. Status changes save immediately; engineering details are saved separately. Version {issue.version}; stale writes are rejected.</p>
       </div>
       <div className="grid min-w-0 gap-4 sm:grid-cols-2">
         <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
@@ -141,21 +141,21 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
         <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Resolution
-          <Select className="w-full min-w-0" value={resolution} onChange={(e) => setResolution(e.target.value)}>
+          <Select className="w-full min-w-0" disabled={pending} value={resolution} onChange={(e) => setResolution(e.target.value)}>
             <option value="">No resolution</option>
             {BUG_RESOLUTIONS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
         <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Affected layer
-          <Select className="w-full min-w-0" value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
+          <Select className="w-full min-w-0" disabled={pending} value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
             <option value="">Not set</option>
             {BUG_AFFECTED_LAYERS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
         <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Regression test
-          <Select className="w-full min-w-0" value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
+          <Select className="w-full min-w-0" disabled={pending} value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
             {BUG_REGRESSION_TEST_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
@@ -203,7 +203,9 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           <h3 className="m-0 text-base font-semibold text-foreground">Ready for retest</h3>
           <p className="text-sm font-semibold text-body">Does it work now?</p>
           <p className="text-sm text-body">Check the same flow once more. One click sends it back to engineering or closes it.</p>
-          <Textarea className="w-full min-w-0" value={retestNote} maxLength={1000} placeholder="Optional note — what did you observe?" onChange={(e) => setRetestNote(e.target.value)} />
+          <label className="grid min-w-0 gap-1 text-sm font-semibold">Retest notes (optional)
+            <Textarea className="w-full min-w-0" value={retestNote} disabled={pending} maxLength={1000} placeholder="What did you observe?" onChange={(e) => setRetestNote(e.target.value)} />
+          </label>
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button variant="danger" disabled={pending} loading={pending} onClick={() => retest("FAIL")} className="min-h-11 w-full md:min-h-9 md:w-auto">Still broken</Button>
             <Button disabled={pending} loading={pending} onClick={() => retest("PASS")} className="min-h-11 w-full md:min-h-9 md:w-auto">Works now</Button>
