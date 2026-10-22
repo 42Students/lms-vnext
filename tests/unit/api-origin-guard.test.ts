@@ -16,6 +16,11 @@ import { describe, expect, it } from "vitest";
  * that authenticates with its own signature instead of a cookie).
  */
 const ALLOWED: Record<string, string> = {
+  "src/app/api/internal/inbound-mail/route.ts POST":
+    "Inbound mail provider uses signed x-inbound-mail-signature, verified by ingestVerifiedInboundMail; no browser session.",
+  "src/app/api/internal/notifications/release/route.ts POST":
+    "Scheduler-only bearer token with timingSafeEqual; no browser session or Origin header.",
+
   // "src/app/api/example/route.ts POST": "authenticated by provider signature",
   "src/app/api/internal/alerts/tick/route.ts POST":
     "secret-authenticated scheduler with timing-safe x-internal-alerts-key verification and no browser session cookie; Origin is not available for scheduled callers",
@@ -129,6 +134,17 @@ describe("state-changing API routes", () => {
     expect(source).toContain('process.env.INTERNAL_ALERT_TICK_SECRET');
     expect(source).toContain('if (!provided || !expected) return false;');
     expect(source).not.toContain('getCurrentRequestContext');
+  });
+
+  it("origin exceptions use independent non-cookie authentication",()=>{
+    const inbound=fs.readFileSync(path.join(ROOT,"api/internal/inbound-mail/route.ts"),"utf8");
+    expect(inbound).toContain('request.headers.get("x-inbound-mail-signature")');
+    expect(inbound).toContain("ingestVerifiedInboundMail(");
+    expect(inbound).not.toContain("getCurrentRequestContext");
+    const scheduler=fs.readFileSync(path.join(ROOT,"api/internal/notifications/release/route.ts"),"utf8");
+    expect(scheduler).toContain("timingSafeEqual(actual, expected)");
+    expect(scheduler).toContain("!secret || !incoming");
+    expect(scheduler).not.toContain("getCurrentRequestContext");
   });
 
   it("every POST/PUT/PATCH/DELETE handler checks the request origin", () => {

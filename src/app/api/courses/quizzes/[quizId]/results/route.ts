@@ -42,5 +42,6 @@ export async function POST(
 
 /** Legacy PATCH results maps to the same authorized results transition as POST. */
 export async function PATCH(request: Request, route: RouteContext) {
+  if (!isSameOriginRequest(request)) return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   return POST(request, route);
 }
