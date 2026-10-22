@@ -231,7 +231,10 @@ async function validateDeliveryForSection(
   const delivery =
     await loadCourseSectionDeliveryScope(deliveryId);
 
-  if (delivery.sectionId !== sectionId) {
+  // The scheduling picker exposes only active deliveries. Refuse a stale
+  // course choice on submit rather than creating an event linked to a closed
+  // or draft offering that the current class no longer teaches.
+  if (delivery.sectionId !== sectionId || delivery.offeringStatus !== "ACTIVE") {
     throw new AcademicsServiceError(
       "SCHEDULE_COURSE_DELIVERY_MISMATCH",
     );
@@ -294,6 +297,9 @@ const scheduleRangeSchema=z.strictObject({
   toDate:z.iso.date().optional(),
   courseSlug:z.string().trim().max(160).optional(),
   courseId:z.string().trim().max(160).optional(),
+  // Omitted means the admin's any-faculty view; the supplied UUID scopes
+  // faculty-specific timetable reads without promoting section access.
+  facultyMembershipId:z.uuid().optional(),
   status:z.enum(["SCHEDULED","CANCELLED","ALL"]).default("ALL"),
 }).refine(value=>!value.fromDate||!value.toDate||value.fromDate<=value.toDate,
   {path:["toDate"],message:"startDate must be before or equal to endDate"});
@@ -312,7 +318,8 @@ function scheduleFilters(raw:unknown){
   const courseId=courseSlug?undefined:input.courseId;
   if(courseId&&!z.uuid().safeParse(courseId).success)
     throw new AcademicsServiceError("SCHEDULE_COURSE_NOT_FOUND");
-  return {start,end,courseSlug,courseId,status:input.status};
+  return {start,end,courseSlug,courseId,
+    facultyMembershipId:input.facultyMembershipId,status:input.status};
 }
 
 function eventConditions(
@@ -321,6 +328,8 @@ function eventConditions(
 ){
   return and(
     eq(sectionScheduleEvents.sectionId,sectionId),
+    filter.facultyMembershipId
+      ?eq(sectionScheduleEvents.facultyMembershipId,filter.facultyMembershipId):undefined,
     filter.start?gte(sectionScheduleEvents.startsAt,filter.start):undefined,
     filter.end?lt(sectionScheduleEvents.startsAt,filter.end):undefined,
     filter.courseSlug?eq(courses.slug,filter.courseSlug):undefined,
