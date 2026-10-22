@@ -125,10 +125,10 @@ export async function PlacementJobCreateWorkspace({
       {canClone?<Disclosure title="Clone a past drive" defaultOpen={pastDrives.length>0}
         className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]"
         contentClassName="min-w-0 pt-3">
-        {pastDrives.length>0?<TpoDriveClonePicker collegeAdmin={!hasMembershipRole(context,"TPO")} drives={pastDrives.map(job=>({
+        {pastDrives.length>0?<TpoDriveClonePicker drives={pastDrives.map(job=>({
           id:job.id,title:job.title,status:job.status,
           createdAt:job.createdAt.toISOString(),
-        }))}/>:<p className="text-sm text-muted-foreground">
+        }))} collegeAdmin={!hasMembershipRole(context,"TPO")}/>:<p className="text-sm text-muted-foreground">
           No completed or cancelled drives are available to clone yet.
           Create a new drive below.
         </p>}
