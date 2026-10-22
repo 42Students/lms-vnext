@@ -15,6 +15,7 @@ import {
   placementCompanies,
   placementApplications,
   collegeMemberships,
+  colleges,
   inAppNotifications,
   placementOffers,
   placementOfferStatusHistory,
@@ -271,6 +272,78 @@ export async function listPlacementJobsPage(
   totalPages:Math.ceil(Number(total?.count??0)/pageSize),
   hasMore:page*pageSize<Number(total?.count??0),
   empty:items.length===0};
+}
+
+/**
+ * The legacy organization-wide Job list is projected from each ACTIVE
+ * member college. vNext deliberately has no nullable placement_jobs.college_id:
+ * a shared legacy job must be imported as separately authorized college drives
+ * (and linked by its preserved legacyJobId), not as an unscoped mutable row.
+ *
+ * Only a SUPER_ADMIN who selected the matching organization (or a global
+ * Super Admin with no more restrictive selection) may aggregate all colleges.
+ * A College Admin/TPO remains bound to the existing single-college list.
+ */
+export async function listOrganizationPlacementJobsPage(
+  context:RequestContext,
+  organizationIdInput:string,
+  options:PlacementJobListOptions={},
+){
+ const organizationId=z.string().uuid().parse(organizationIdInput);
+ if(!context.user.systemRoles.includes("SUPER_ADMIN") ||
+    context.user.platformStatus!=="ACTIVE" ||
+    (context.adminScope?.organizationId!==null &&
+     context.adminScope?.organizationId!==undefined &&
+     context.adminScope.organizationId!==organizationId) ||
+    context.adminScope?.collegeId){
+   throw new AuthorizationError("placements.manage");
+ }
+ requirePermission(context,"placements.manage",{organizationId});
+ const page=Number.isSafeInteger(options.page)&&options.page!>0?
+  Math.min(options.page!,10000):1;
+ const pageSize=Number.isSafeInteger(options.pageSize)&&
+  options.pageSize!>=1&&options.pageSize!<=100?options.pageSize!:20;
+ const term=options.q?.trim();
+ const where=and(
+  eq(colleges.organizationId,organizationId),
+  eq(colleges.status,"ACTIVE"),
+  options.status==="ARCHIVED"?
+   eq(placementJobs.status,"ARCHIVED"):isNull(placementJobs.archivedAt),
+  options.status&&options.status!=="ALL"?
+   eq(placementJobs.status,options.status):undefined,
+  options.applicationMode&&options.applicationMode!=="ALL"?
+   eq(placementJobs.applicationMode,options.applicationMode):undefined,
+  term?or(ilike(placementJobs.title,placementJobSearchPattern(term)),
+   ilike(placementCompanies.name,placementJobSearchPattern(term))):undefined,
+ );
+ const rows=getDb().select({
+  job:placementJobs,collegeId:colleges.id,
+  companyName:placementCompanies.name,
+ }).from(placementJobs)
+  .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
+  .innerJoin(placementCompanyRelationships,
+   and(eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,colleges.id)))
+  .innerJoin(placementCompanies,
+   eq(placementCompanies.id,placementCompanyRelationships.companyId))
+  .where(where);
+ const [items,[count]]=await Promise.all([
+  rows.orderBy(desc(placementJobs.createdAt),asc(placementJobs.id))
+   .limit(pageSize).offset((page-1)*pageSize),
+  getDb().select({n:sql<number>`count(*)::int`})
+   .from(placementJobs)
+   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
+   .innerJoin(placementCompanyRelationships,
+    and(eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+     eq(placementCompanyRelationships.collegeId,colleges.id)))
+   .innerJoin(placementCompanies,eq(placementCompanies.id,
+     placementCompanyRelationships.companyId))
+   .where(where),
+ ]);
+ const totalCount=Number(count?.n??0);
+ return {items,page,pageSize,totalCount,
+  totalPages:Math.ceil(totalCount/pageSize),
+  hasMore:page*pageSize<totalCount};
 }
 
 /** Resolve numeric old links or historic slugs only inside an already
