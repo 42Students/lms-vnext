@@ -4,7 +4,7 @@ CI run 39849936419 on main (3c24c0c0), the LATEST run failed these unit tests. T
 
 - [ ] `tests/unit/COURSES-BREAK-FACULTY-06.test.ts` (2 failing)
 - [x] `tests/unit/chat2-tpo-team-open-increments.test.ts` (1 failing)
-- [ ] `tests/unit/learner-syllabus-soft-delete-visibility.test.ts` (1 failing)
+- [x] `tests/unit/learner-syllabus-soft-delete-visibility.test.ts` (1 failing)
 
 ## Failures (from CI log)
 
