@@ -2,6 +2,7 @@
 import {useMemo,useState} from "react";
 import {Input} from "@/components/ui/input";
 import {TpoDriveCloneAction} from "./tpo-drive-clone-action";
+import {CollegeDriveDuplicateAction} from "./college-drive-duplicate-action";
 
 export type CloneableTpoDrive={
   id:string;title:string;status:string;
@@ -11,7 +12,7 @@ export type CloneableTpoDrive={
 /** College-scoped historical drafts that have finished or been cancelled.
  * The selector never authorizes cloning; the server command rechecks owner,
  * status, source policy and current season before creating a new DRAFT. */
-export function TpoDriveClonePicker({drives}:{drives:readonly CloneableTpoDrive[]}){
+export function TpoDriveClonePicker({drives,collegeAdmin=false}:{drives:readonly CloneableTpoDrive[];collegeAdmin?:boolean}){
  const [search,setSearch]=useState("");
  const filtered=useMemo(()=>{
   const needle=search.trim().toLocaleLowerCase("en-IN");
@@ -46,7 +47,8 @@ export function TpoDriveClonePicker({drives}:{drives:readonly CloneableTpoDrive[
           .format(new Date(drive.createdAt))}
        </p>
       </div>
-      <TpoDriveCloneAction jobId={drive.id} label="Clone drive"/>
+      {collegeAdmin?<CollegeDriveDuplicateAction jobId={drive.id}/>:
+       <TpoDriveCloneAction jobId={drive.id} label="Clone drive"/>}
     </li>)}
    </ul>}
    {drives.length>=60?<p className="text-xs text-muted-foreground">
