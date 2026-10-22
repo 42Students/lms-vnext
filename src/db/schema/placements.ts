@@ -2640,3 +2640,23 @@ export const LEGACY_RECRUITER_SUSPENSION_ACTION={
  revokeOutstandingLoginChallenges:true,
  retainCollegeGrantsForAudit:true,
 } as const;
+
+/** A global company may have several college relationships; that does not
+ * create new global company identities. Aliases require one canonical UUID
+ * and verified-domain proof before switching active recruiter grants. */
+export function legacyCompanyCanonicalization(input:{
+ legacyCompanyId:number;canonicalCompanyId:string;collegeId:string;
+ relationshipId:string;verifiedDomain:boolean;aliasCompanyId:string|null;
+}){
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!Number.isSafeInteger(input.legacyCompanyId)||input.legacyCompanyId<1||
+   !uuid.test(input.canonicalCompanyId)||!uuid.test(input.collegeId)||
+   !uuid.test(input.relationshipId)||!input.verifiedDomain)
+  throw Error("Cannot promote unverified global company alias");
+ if(input.aliasCompanyId!==null&&!uuid.test(input.aliasCompanyId))
+  throw Error("Company alias needs a canonical identity");
+ if(input.aliasCompanyId===input.canonicalCompanyId)
+  throw Error("Company cannot alias itself");
+ return {...input,requiresRelationshipGrant:true as const,
+   reuseCanonicalCompany:true as const};
+}

@@ -72,3 +72,37 @@ export const colleges = pgTable(
     ),
   ],
 );
+
+/** Source integer chair/vice-chair are never vNext user IDs. A verified
+ * same-college membership and persisted FACULTY role are required before
+ * an optional leadership FK can be set. The membership owner may be an
+ * ADMIN or TPO as well, but the faculty role is independently mandatory. */
+export function mapLegacyCollegeLeadership(input:{
+ legacyCollegeId:number;legacyOrganizationId:number;
+ resolvedCollegeId:string;resolvedOrganizationId:string;
+ sourceCode:string;chairLegacyId:number|null;viceChairLegacyId:number|null;
+ membershipMapping:readonly {legacyFacultyId:number;membershipId:string;
+  collegeId:string;active:boolean;isFaculty:boolean}[];
+}){
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!Number.isSafeInteger(input.legacyCollegeId)||input.legacyCollegeId<1||
+   !Number.isSafeInteger(input.legacyOrganizationId)||input.legacyOrganizationId<1||
+   !uuid.test(input.resolvedCollegeId)||!uuid.test(input.resolvedOrganizationId))
+  throw new Error("Unmapped legacy college/organization");
+ const resolved=(id:number|null)=>{
+  if(id===null)return null;
+  const member=input.membershipMapping.filter(m=>m.legacyFacultyId===id&&
+   m.collegeId===input.resolvedCollegeId&&m.active&&m.isFaculty&&
+   uuid.test(m.membershipId));
+  if(member.length!==1)throw new Error("College leadership role needs reviewed faculty mapping");
+  return member[0].membershipId;
+ };
+ const chairMembershipId=resolved(input.chairLegacyId);
+ const viceChairMembershipId=resolved(input.viceChairLegacyId);
+ if(chairMembershipId&&chairMembershipId===viceChairMembershipId)
+  throw new Error("Chair and vice chair need distinct memberships");
+ const code=input.sourceCode.trim();
+ if(!code||code.length>64)throw new Error("Invalid historic college code");
+ return {collegeId:input.resolvedCollegeId,organizationId:input.resolvedOrganizationId,
+  sourceCode:code,chairMembershipId,viceChairMembershipId};
+}

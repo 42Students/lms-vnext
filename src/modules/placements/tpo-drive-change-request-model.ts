@@ -77,6 +77,12 @@ export const driveChangeCommandSchema=z.discriminatedUnion("action",[
     message:"Give the new value, or ask for it instead"});
   }
   if(mode==="ASK")return;
+  if(value.field==="PAY"||value.field==="ELIGIBILITY"){
+   ctx.addIssue({code:"custom",path:["field"],message:value.field==="PAY"
+     ?"Select CTC or Stipend for a proposed pay change, or Ask a question."
+     :"Select Minimum CGPA or Eligible branches, or Ask a question."});
+   return;
+  }
   const proposed=value.proposedValue;
   if(value.field==="ROLE_TITLE"&&(proposed.length<3||proposed.length>255))
    ctx.addIssue({code:"custom",path:["proposedValue"],message:"Enter a role title (3–255 characters)"});
