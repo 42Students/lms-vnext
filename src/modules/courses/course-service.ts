@@ -407,7 +407,7 @@ export async function createCourse(
           description: input.description ?? null,
         })
         .returning();
-      if (!created) throw new CoursesServiceError("COURSE_CREATE_FAILED");
+      if (!created) throw new Error("COURSE_CREATE_FAILED");
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.COURSES_CATALOG_CREATED,
         collegeId: department.collegeId, organizationId: department.organizationId,
