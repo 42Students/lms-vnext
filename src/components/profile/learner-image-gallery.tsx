@@ -67,7 +67,7 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
     const file = selectedFile;
     if (!["image/jpeg", "image/png"].includes(file.type) ||
         file.size < 1 || file.size > 5 * 1024 * 1024 ||
-        !/\\.(?:jpe?g|png)$/i.test(file.name)) {
+        !/\.(?:jpe?g|png)$/i.test(file.name)) {
       setError("Choose a JPEG or PNG image no larger than 5 MB.");
       return;
     }

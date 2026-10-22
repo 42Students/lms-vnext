@@ -80,7 +80,7 @@ const galleryFileSchema = z.strictObject({
   sizeBytes: z.number().int().min(1).max(MAX_GALLERY_UPLOAD_BYTES),
 });
 const galleryKeySchema = z.string().regex(
-  /^private\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\/profile-verification\\/[0-9a-f-]{36}$/i,
+  /^private\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/profile-verification\/[0-9a-f-]{36}$/i,
 );
 
 /** Gallery photos may only be initiated and published by the actual learner.
@@ -102,7 +102,7 @@ export async function initiateOwnLearnerGalleryUpload(
 ) {
   const input = galleryFileSchema.parse(raw);
   const suffix = input.originalName.toLowerCase().split(".").at(-1);
-  if (/[\\/\\\\\\x00-\\x1f\\x7f]/.test(input.originalName) ||
+  if (/[\/\\\x00-\x1f\x7f]/.test(input.originalName) ||
       (input.contentType === "image/jpeg" && suffix !== "jpg" && suffix !== "jpeg") ||
       (input.contentType === "image/png" && suffix !== "png"))
     throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
