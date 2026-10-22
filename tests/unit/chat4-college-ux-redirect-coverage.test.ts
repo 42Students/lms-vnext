@@ -8,7 +8,7 @@ describe("chat-4 College UX canonical redirects and shared-kit coverage", () => 
   it("COL-ux-redirect-01 People entry lands on read-only contacts rather than privileged account management", () => {
     const source = read(root + "/people/page.tsx");
     expect(source).toContain('import CollegeContactsPage from "../contacts/page"');
-    expect(source).toContain("<CollegeContactsPage");
+    expect(source).toContain("return CollegeContactsPage({searchParams})");
     expect(source).not.toContain('redirect("/college/people/manage")');
     const destination = read(root + "/contacts/page.tsx");
     expect(destination).toContain("getCurrentRequestContext()");

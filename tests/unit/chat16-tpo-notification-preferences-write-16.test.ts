@@ -24,9 +24,13 @@ const input={morningDigest:true,recruiterMessages:true,requests:true,
 function mockDb(current:Record<string,unknown>|null){
  const collegeLimit=vi.fn(async()=>[{id:college,status:"ACTIVE"}]);
  const prefLimit=vi.fn(async()=>current?[current]:[]);
- const select=vi.fn()
-  .mockImplementationOnce(()=>({from:()=>({where:()=>({for:()=>({limit:collegeLimit})})})}))
-  .mockImplementationOnce(()=>({from:()=>({where:()=>({limit:prefLimit})})}));
+ // The college lock selects status, whereas the preference read selects all
+ // fields. Do not infer which SQL builder ran from mock call order.
+ const select=vi.fn((projection?:Record<string,unknown>)=>
+  projection&&"status" in projection
+   ?{from:()=>({where:()=>({for:()=>({limit:collegeLimit})})})}
+   :{from:()=>({where:()=>({limit:prefLimit})})}
+ );
  const auditValues=vi.fn(async(_input:unknown)=>undefined);
  const prefValues=vi.fn((_input:unknown)=>({
   onConflictDoUpdate:()=>({returning:async()=>[{updatedAt:new Date("2026-10-18T12:00:00Z")}]}),

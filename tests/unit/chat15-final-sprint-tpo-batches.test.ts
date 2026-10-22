@@ -45,7 +45,7 @@ describe("chat-15 final sprint: TPO batch workflow parity and adversarial bounda
    {...message,admin:true},
   ])expect(tpoStudentNudgeInputSchema.safeParse(bad).success).toBe(false);
   expect(Object.values(tpoStudentNudgeLabels)).toEqual([
-   "Register","Upload resume","Complete profile",
+   "Register for placements","Upload resume","Complete profile",
    "Apply to drives","Answer your offer","Write a message",
   ]);
   const nudge=text("src/components/tpo/tpo-student-nudge-panel.tsx");
