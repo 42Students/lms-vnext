@@ -113,7 +113,7 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
     </Button>
     <ConfirmDialog open={confirmOpen} onOpenChange={open=>{if(!busy)setConfirmOpen(open);}}
       title="Merge company identities?"
-      description={`Merge "${companies.find(c=>c.id===source)?.name??source}" into "${allCompanies.find(c=>c.id===keep)?.name??keep}"? Jobs and recruiter grants in this college are reassigned; the source relationship is archived. Existing company domains, aliases and per-college notes are NOT bulk-migrated by this operation. Review those separately. This cannot be undone.`}
+      description={`Merge "${companies.find(c=>c.id===source)?.name??source}" into "${allCompanies.find(c=>c.id===keep)?.name??keep}"? Jobs and recruiter grants in this college are reassigned; the source relationship is archived. Verified domains, company aliases, the original company name and private notes in the selected college are transferred with audit history. A source linked to any other college is rejected; this does not merge all colleges. This cannot be undone.`}
       confirmLabel="Merge companies" confirmVariant="danger" pending={busy}
       confirmDisabled={busy||!keep||!source||keep===source} onConfirm={()=>void merge()}>
       {error?<p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{error}</p>:null}
