@@ -12,7 +12,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { driveInterviewsHref, driveInterviewsParams, driveRoundTime } from "@/modules/placements/college-drive-interviews-model";
+import { driveInterviewDateIst, driveInterviewsHref, driveInterviewsParams, driveRoundTime } from "@/modules/placements/college-drive-interviews-model";
 import { listCollegeDriveInterviews } from "@/modules/placements/college-drive-interviews-service";
 import { getCollegeRoundSlotAppointments } from "@/modules/placements/college-round-slot-action-service";
 import { CollegeInterviewAppointments } from "@/components/placements/college-interview-appointments";
@@ -282,10 +282,10 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           · {appointments.appointmentPageSize} per page</p>
         {query.applicationId&&appointments.candidateConflicts.length>0?
           <Banner tone="warning">
-            <strong>This learner has scheduled interviews elsewhere in the college.</strong>
+            <strong>This learner already has scheduled interviews in this college.</strong>
             <ul className="mt-2 list-disc pl-5">
               {appointments.candidateConflicts.slice(0,5).map(conflict=><li key={conflict.id}>
-                {conflict.jobTitle} · {driveRoundTime(new Date(conflict.startsAt),"Asia/Kolkata")}
+                {conflict.jobTitle} · {driveInterviewDateIst(new Date(conflict.startsAt))}
               </li>)}
             </ul>
             {appointments.candidateConflictsHasMore||appointments.candidateConflicts.length>5?
