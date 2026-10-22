@@ -155,6 +155,9 @@ export function careerCalendarEvents(
     }];
   });
   const extras:CareerCalendarEvent[]=supplements.flatMap(item=>{
+    // All supplementary feeds are membership-scoped by the caller, and an
+    // explicitly hidden event must never become visible via calendar merge.
+    if(item.visible===false)return [];
     if(item.kind==="APPLICATION_DEADLINE" && (item.visible!==true||item.applied===true))return [];
     if(!/^\d{4}-\d{2}-\d{2}$/.test(item.day))return [];
     const start=new Date(item.day+"T00:00:00+05:30");

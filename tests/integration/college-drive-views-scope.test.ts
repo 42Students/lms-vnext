@@ -80,11 +80,12 @@ describe.skipIf(!enabled)("College Admin drive read views: isolated PostgreSQL",
     expect(own.items).toContainEqual(expect.objectContaining({ id: ids.job, companyName: code, seasonName: code }));
     expect(foreign.items).toEqual([]);
   });
-  it("resolves the drive, keeps selected null, and does not leak a foreign job", async () => {
+  it("resolves real drive counters and does not leak a foreign job", async () => {
     const overview = await getCollegeDriveOverview(adminA, ids.job);
     expect(overview.drive.companyName).toBe(code);
     expect(overview.counts).toEqual({
-      applications: 1, shortlisted: 0, selected: null, offered: 0,
+      applications: 1, shortlisted: 0, selected: 0, offered: 0,
+      withdrawn: 0, external: 0,
     });
     await expect(getCollegeDriveOverview(adminB, ids.job))
       .rejects.toMatchObject({ code: "PLACEMENT_JOB_NOT_FOUND" });
@@ -103,10 +104,10 @@ describe.skipIf(!enabled)("College Admin drive read views: isolated PostgreSQL",
       .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
     await expect(listCollegeDriveApplications(learner,ids.job,{})).rejects.toBeInstanceOf(AuthorizationError);
   });
-  it("lists persisted own-college interview round with unknown individual slots and denies foreign job", async () => {
+  it("lists persisted own-college interview round with registered slot support and denies foreign job", async () => {
     const own=await listCollegeDriveInterviews(adminA,ids.job,{kind:"INTERVIEW"});
     expect(own.items).toContainEqual(expect.objectContaining({id:ids.round,kind:"INTERVIEW",status:"PENDING",venue:null}));
-    expect(own.individualSlotsAvailable).toBe(false);
+    expect(own.individualSlotsAvailable).toBe(true);
     await expect(listCollegeDriveInterviews(adminB,ids.job,{}))
       .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
     await expect(listCollegeDriveInterviews(learner,ids.job,{}))

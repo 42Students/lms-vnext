@@ -14,6 +14,7 @@ describe("TPO-home-02 exact legacy needs-you line",()=>{
  });
  it("the server page renders the computed line from live seven-row data",()=>{
   const page=readFileSync("src/app/(authenticated)/tpo/home/page.tsx","utf8");
-  expect(page).toContain("{tpoHomeNeedsLine(rows)}");
+  expect(page).toContain("{tpoHomeNeedsLine(Array.from(");
+  expect(page).toContain("rows.filter(row=>row.needsAttention).length");
  });
 });

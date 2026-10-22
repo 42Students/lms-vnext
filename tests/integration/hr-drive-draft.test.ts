@@ -1,5 +1,6 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import { randomUUID } from "node:crypto";
+import { Pool } from "pg";
 import { afterAll, describe, expect, it } from "vitest";
 import { closeDatabaseConnection } from "@/db/client";
 import { createPlacementCompany } from "@/modules/placements/company-service";
@@ -21,7 +22,8 @@ const tpo: RequestContext = {
 };
 
 describe.skipIf(!enabled)("Recruiter authorized Hire Again preview", () => {
-  afterAll(async () => { await closeDatabaseConnection(); });
+  const pool = enabled ? new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1}) : null;
+  afterAll(async () => { await pool?.end(); await closeDatabaseConnection(); });
   it("copies a company-owned job while hiding the same job from foreign company, college and wrong role", async () => {
     const nonce = randomUUID().slice(0, 8);
     const a = await createPlacementCompany(tpo, {
@@ -37,6 +39,17 @@ describe.skipIf(!enabled)("Recruiter authorized Hire Again preview", () => {
       title: "Recruiter Draft " + nonce, description: "Hiring engineer test fixture",
       employmentType: "FULL_TIME", workMode: "HYBRID", applicationMode: "INTERNAL", ...publishableJobTerms,
     });
+    // Publication now requires a live hiring step and explicit scoped
+    // eligibility policy. Build both instead of bypassing the guard.
+    if (!pool) throw new Error("Disposable PostgreSQL fixture required");
+    await pool.query(
+      "INSERT INTO placement_job_rounds(job_id,sequence,kind,name,created_by_user_id) VALUES($1,1,'INTERVIEW','Interview',$2)",
+      [job.id,SEED_IDS.facultyUser],
+    );
+    await pool.query(
+      "INSERT INTO placement_job_eligibility_policies(job_id,updated_by_user_id) VALUES($1,$2)",
+      [job.id,SEED_IDS.facultyUser],
+    );
     await publishPlacementJob(tpo, job.id);
     const userId = randomUUID();
     const hr = (companyId: string, relation: string, collegeId: string): RequestContext => ({

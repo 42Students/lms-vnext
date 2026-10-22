@@ -9,7 +9,7 @@ describe("chat-14 recruiter reassignment batch 2",()=>{
   const code=read("src/components/placements/recruiter-placement-portfolio.tsx");
   expect(code).toContain("unansweredRequests[b.job.id]");
   expect(code).toContain("unansweredRequests[a.job.id]");
-  expect(code).toContain("border-warning bg-surface-secondary");
+  expect(code).toContain('"border-warning":"border-[var(--lms-canvas-border)]"');
   expect(code).toContain("The placement cell asked for a change.");
  });
  it("REC-home-drives-27 validates only the role title and required CTC among editable prose fields",()=>{
@@ -34,8 +34,8 @@ describe("chat-14 recruiter reassignment batch 2",()=>{
  });
  it("REC-home-drives-32 protects all unsent drafts with an accessible discard confirmation",()=>{
   const code=read("src/components/hr/hr-drive-draft-form.tsx");
-  expect(code).toContain('title="Discard this drive draft?"');
-  expect(code).toContain('consequence="Leave without these changes?"');
+  expect(code).toContain('title="Leave without these changes?"');
+  expect(code).toContain('consequence="The role, eligibility and round changes on this screen will be cleared."');
   expect(code).toContain("window.addEventListener(\"beforeunload\",beforeUnload)");
   expect(code).toContain("setPendingLeave(destination.pathname+destination.search+destination.hash)");
   expect(code).toContain("router.push(href)");
@@ -57,7 +57,8 @@ describe("chat-14 recruiter reassignment batch 2",()=>{
  });
  it("REC-calendar-messages-profile-23 avoids marking older unseen notifications as read",()=>{
   const code=read("src/components/hr/hr-recruiter-bell.tsx");
-  expect(code).toContain('state.items.filter(item=>item.unread).length>=state.unread');
+  expect(code).toContain("state.hiddenUnread>0");
+  expect(code).toContain('state.items.length===0)return;');
   expect(code).toContain("void markAll()");
   expect(code).toContain("setOpen(value=>!value)");
  });
