@@ -20,13 +20,20 @@ vi.mock("@/modules/courses/assignment-scope",()=>({
 }));
 vi.mock("@/db/client",()=>({
  getDb:()=>({
-  select:()=>{
+  select:(projection?:{count?:unknown})=>{
    const call=state.reads++;
    const chain={
     from(){return chain;},
     innerJoin(){return chain;},
-    where(condition:unknown){state.conditions.push(condition);return chain;},
-    orderBy(){return Promise.resolve(call===0?state.attempts:state.answers);},
+    where(condition:unknown){
+     state.conditions.push(condition);
+     return projection?Promise.resolve([{count:state.attempts.length}]):chain;
+    },
+    orderBy(){
+     return Object.assign(Promise.resolve(call===0?state.attempts:state.answers),{
+      limit(){return {offset(){return Promise.resolve(state.attempts);}};},
+     });
+    },
     limit(){return Promise.resolve(state.submission);},
    };
    return chain;
@@ -65,7 +72,7 @@ describe("COURSES7-07 / COURSES7-08 learner owner isolation and historical submi
   state.attempts=[attempt];state.answers=[answer];
   const out=await getMyQuizAttempts(context,quizId,deliveryId);
   expect(out).toHaveLength(1);
-  expect(state.conditions.length).toBe(2);
+  expect(state.conditions.length).toBe(3);
   const sql=sqlWhere(state.conditions[0]);
   expect(sql).toContain("quiz_id");
   expect(sql).toContain("membership_id");
