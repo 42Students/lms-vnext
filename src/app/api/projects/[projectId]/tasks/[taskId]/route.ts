@@ -32,7 +32,7 @@ export async function PATCH(
   try {
     const context = await getCurrentRequestContext();
     const { projectId, taskId } = await params;
-    const body = await request.json();
+    const body = await readMentorProjectCommandBody(request);
     const task = await updateProjectTaskStatus(
       context,
       projectId,
@@ -42,8 +42,11 @@ export async function PATCH(
 
     return NextResponse.json({ task });
   } catch (error) {
-    if (error instanceof SyntaxError) {
-      return NextResponse.json({ error: "INVALID_PROJECT_COMMAND_BODY" }, { status: 400 });
+    if (error instanceof MentorProjectCommandBodyError) {
+      return NextResponse.json(
+        { error: error.code, message: mentorProjectBodyFailureMessage(error.status) },
+        { status: error.status, headers: { "Cache-Control": "no-store" } },
+      );
     }
     return apiErrorResponse(error);
   }
