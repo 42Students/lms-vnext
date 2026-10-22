@@ -1,7 +1,8 @@
 export type RoundScheduleRow={id:string;name:string;sequence:number;status:string;
  scheduledAt:Date|null;durationMinutes:number|null;mode:string|null;venue:string|null};
 export function hrScheduledRoundRows(rows:readonly RoundScheduleRow[]){
- const scheduled=rows.filter(row=>(row.status==="SCHEDULED"||row.status==="COMPLETED")&&
+ // Booked/timed rounds may still be PENDING in the legacy workflow.
+ const scheduled=rows.filter(row=>["PENDING","SCHEDULED","COMPLETED"].includes(row.status)&&
    row.scheduledAt!==null&&Number.isFinite(row.scheduledAt.getTime()));
  return scheduled.map(row=>{
   const start=row.scheduledAt!;

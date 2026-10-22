@@ -27,6 +27,7 @@ import {
 } from "@/modules/module-access/admin-read-service";
 import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
 import {placementFeatureEffects} from "@/modules/platform-settings/placement-feature-controls-model";
+import {readModuleDisableImpact} from "@/modules/module-access/admin-module-impact-service";
 import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
 import {LearnerModuleAccessDrawer} from "@/components/admin/learner-module-access-drawer";
 import {DescendantFeatureRuleEditor} from "@/components/admin/descendant-feature-rule-editor";
@@ -86,6 +87,8 @@ export default async function SuperAdminCollegeModuleAccessPage({
   if (!result) notFound();
 
   const { college, modules, ancestors } = result;
+  const placementImpact = await readModuleDisableImpact(context,college.id,"placements")
+    .catch(error=>{if(error instanceof AuthorizationError)throw error;return null;});
   const academicRead = await listCollegeModuleScopeChoices(context,college.id,academicPage)
     .then(value => ({ok:true as const,value}))
     .catch(error => {
@@ -212,14 +215,17 @@ export default async function SuperAdminCollegeModuleAccessPage({
             <p>{placementFeatureEffects(decision.enabled).impact}</p>
             <p className="text-xs text-muted-foreground">Placement cell decides learner eligibility. Historical academic Placements rules may still be stored, but this preview does not treat them as eligibility decisions.</p>
             <p className="text-xs text-muted-foreground">Turning access off does not delete historical jobs, applications or learner placement records.</p>
-            <Banner tone="warning" role="status">
-              Active jobs, in-progress applications, pending offers and upcoming interviews:
-              verified impact counts are not available from this module-access read.
-              Review the selected college in Placement Operations before disabling access.
-              <Link href="/admin/placements" className="ml-2 font-semibold text-primary-text underline">
-                Review placements
-              </Link>
-            </Banner>
+            {placementImpact ? <dl aria-label="Placements disable impact" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {(["Active jobs","In-progress applications","Pending offers","Upcoming interviews"] as const).map((label,index)=>
+                <div key={label} className="min-w-0 border-b border-border p-3">
+                  <dt className="text-xs text-muted-foreground">{label}</dt>
+                  <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{placementImpact.counts[index]??0}</dd>
+                </div>)}
+            </dl>:<Banner tone="warning" role="status">
+              Verified placements impact counts could not be loaded. Review
+              college jobs, applications, offers and interviews before disabling access.
+              <Link href="/admin/placements" className="ml-2 font-semibold text-primary-text underline">Review placements</Link>
+            </Banner>}
           </div>
         ))}
         </Disclosure>
