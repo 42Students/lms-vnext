@@ -38,9 +38,9 @@ export function buildScoreDistribution(
   ];
   for (const percent of percentages) {
     if (!Number.isFinite(percent) || percent < 0 || percent > 100) continue;
-    // Inclusive whole-number bands must also cover fractional percentages;
-    // keep a score like 89.5 in the 80–89 band, not the 90–100 band.
-    const bandPercent = Math.floor(percent);
+    // Legacy report display rounds percentages before grouping them into
+    // inclusive integer bands: 59.5% is 60–69%, 89.5% is 90–100%.
+    const bandPercent = Math.round(percent);
     const bucket = buckets.find(
       (candidate) =>
         bandPercent >= candidate.min && bandPercent <= candidate.max,
