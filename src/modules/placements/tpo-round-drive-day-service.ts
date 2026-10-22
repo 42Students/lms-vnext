@@ -159,6 +159,14 @@ export async function getTpoRoundDriveDay(
                 and slot.round_id=${roundId}::uuid and slot.job_id=${scope.jobId}::uuid
                 and slot.status='BOOKED'
               order by slot.starts_at desc,slot.id desc limit 1)`,
+            // The operator calls the earliest booked candidate in each room.
+            // Resolve the same selected slot as assignedRoom above; a cancelled
+            // slot must never determine the queue or grant room access.
+            slotStartsAt:sql<Date|null>`(select slot.starts_at from placement_round_candidate_slots slot
+              where slot.application_id=${placementApplications.id}
+                and slot.round_id=${roundId}::uuid and slot.job_id=${scope.jobId}::uuid
+                and slot.status='BOOKED'
+              order by slot.starts_at desc,slot.id desc limit 1)`, 
           })
           .from(placementApplications)
           .innerJoin(
@@ -251,6 +259,7 @@ export async function getTpoRoundDriveDay(
         phoneE164:callHref?phone:null,
         callHref,
         assignedRoom:detail?.assignedRoom??null,
+        slotStartsAt:detail?.slotStartsAt?.toISOString()??null,
         currentRoom:null as string|null,
         avatarUrl:null as string|null,
       };
