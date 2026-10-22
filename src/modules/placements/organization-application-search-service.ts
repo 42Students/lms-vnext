@@ -18,7 +18,7 @@ export const organizationApplicantSearchSchema=z.strictObject({
  organizationId:z.string().uuid().optional(),
  search:z.string().trim().max(120).default(""),
  status:z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW",
-  "OFFERED","REJECTED","HIRED","WITHDRAWN"]).default("ALL"),
+  "WAITLISTED","OFFERED","REJECTED","HIRED","WITHDRAWN"]).default("ALL"),
  sort:z.enum(["SCORE","NEWEST","NAME"]).default("SCORE"),
  page:z.coerce.number().int().min(1).max(100000).default(1),
  pageSize:z.coerce.number().int().min(1).max(100).default(50),
@@ -37,12 +37,23 @@ async function organizationScope(context:RequestContext,requested:string|undefin
  return acting.organizationId;
 }
 
+// An accepted offer is not a joining outcome. Only a persisted JOINED
+// record can put a learner into HIRED; accepted offers awaiting joining remain
+// OFFERED. The college's persisted pipeline stage takes precedence over a
+// guessed stage from older screening and round-result records.
+const collegeStage=sql<string|null>`(select s.stage::text
+ from placement_college_application_stages s
+ where s.application_id=${placementApplications.id} limit 1)`;
 const legacyStage=sql<string>`case
  when ${placementApplications.status}='WITHDRAWN' then 'WITHDRAWN'
  when exists(select 1 from placement_offers o
-  where o.application_id=${placementApplications.id} and o.status='ACCEPTED') then 'HIRED'
+  join placement_joining_outcomes j on j.offer_id=o.id
+  where o.application_id=${placementApplications.id}
+   and o.status='ACCEPTED' and j.status='JOINED') then 'HIRED'
  when exists(select 1 from placement_offers o
-  where o.application_id=${placementApplications.id} and o.status='ISSUED') then 'OFFERED'
+  where o.application_id=${placementApplications.id}
+   and o.status in ('ISSUED','ACCEPTED')) then 'OFFERED'
+ when ${collegeStage} is not null then ${collegeStage}
  when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
  when exists(select 1 from placement_round_results rr
   join placement_job_rounds round on round.id=rr.round_id
