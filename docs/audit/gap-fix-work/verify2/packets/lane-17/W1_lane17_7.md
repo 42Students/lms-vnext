@@ -146,7 +146,6 @@ Only the rows backed by directly inspected implementation are OK. All other rows
 - G2-13-022-021: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-6-025-008: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-6-030-038: DEFERRED — requires complete implementation and consumer/legacy cross-check
-- G2-6-004-012: OK — Email and Contact columns remain with privacy-preserving Private values
 - G2-6-024-049: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-6-011-009: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-6-011-010: DEFERRED — requires complete implementation and consumer/legacy cross-check
@@ -159,3 +158,4 @@ Only the rows backed by directly inspected implementation are OK. All other rows
 - G2-11-014-017: OK — `src/modules/placements/tpo-home-legacy-rows.ts:29-65,92-99` prioritizes DRIVE_REQUESTS, RESULTS_READY, SELECTIONS_TO_VERIFY, DEADLINE_TODAY, SHARE_APPLICANTS and other actionable needs, formats drive status, attention and request destination; compared with `docs/legacy-source/frontend/src/components/tpo/home/homeRows.js:74-84,92-96`.
 - G2-11-014-022: OK — `src/modules/placements/tpo-home-legacy-rows.ts:70-78,96-99` keeps null pending request and message counts explicitly unavailable, never conflating unknown with no requests; compared with `docs/legacy-source/frontend/src/components/tpo/home/homeRows.js:82-84,92-105`. The newer unavailable distinction is intentional.
 - G2-11-014-040: OK — `src/modules/placements/tpo-home-legacy-rows.ts:70-78` displays "No requests or messages waiting" only when both inputs are known and zero; compared with `docs/legacy-source/frontend/src/components/tpo/home/homeRows.js:100-102`.
+- G2-6-004-012: OK — `src/components/courses/faculty-contacts-table.tsx:32-34,42-44,54-74` preserves the Email, Contact and conditional Role columns in desktop and mobile directory views, withholding unauthorized personal details as "Private"; contrasted against `docs/legacy-source/frontend/src/components/contacts/contactColumns.js:3-27`. Privacy masking is the approved vNext deviation.
