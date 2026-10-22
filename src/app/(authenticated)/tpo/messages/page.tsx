@@ -4,6 +4,7 @@ import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-r
 import {getTpoRecruiterThreadDetail} from "@/modules/placements/tpo-recruiter-thread-detail-service";
 import bubbleStyles from "@/components/tpo/tpo-conversation-bubble.module.css";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
+import {TpoMessagesTabs} from "@/components/tpo/tpo-messages-tabs";
 import { redirect } from "next/navigation";
 import { AuthorizationError } from "@/modules/permissions/policy";
 
@@ -67,14 +68,7 @@ export default async function TpoMessagesPage({
   }
 
   const now = new Date();
-  const tabs=(selected:"recruiters"|"team")=><nav role="tablist" aria-label="Messages" className="flex gap-2 border-b border-border pb-2">
-    {(["recruiters","team"] as const).map(value=><Link role="tab" key={value}
-      aria-selected={selected===value} id={"tpo-messages-tab-"+value} aria-controls={"tpo-messages-panel-"+value} href={"/tpo/messages?tab="+value}
-      className={"inline-flex min-h-11 items-center border-b-[3px] px-4 text-sm font-semibold md:min-h-9 "+
-        (selected===value?"border-primary text-link":"border-transparent text-body hover:text-link")}>
-      {value==="recruiters"?"Recruiters":"Team"}
-    </Link>)}
-  </nav>;
+
   // Team talk deep links use the old about=COMPANY:<normalized company> topic.
   // It is a search among authorized threads, not a public thread locator.
   const about=first(raw.about)??"";
@@ -82,7 +76,7 @@ export default async function TpoMessagesPage({
   if(selectedTab==="team")return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages" description="Your placement team's own conversations: who does what, and what you decided. Recruiters and students never see these."/>
     <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 md:p-6">
-      {tabs("team")}
+      <TpoMessagesTabs selected="team"/>
       {companySearch?<p role="status" className="text-sm text-body">Team conversations about {companySearch} · <Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Clear topic</Link></p>:null}
       <section id="tpo-messages-panel-team" role="tabpanel" aria-labelledby="tpo-messages-tab-team">
         <TpoTeamMessagesDirectory context={context} query={companySearch||(first(raw.q)??"")}
@@ -113,7 +107,7 @@ export default async function TpoMessagesPage({
           title="Messages"
           description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."
         />
-        {tabs("recruiters")}
+        <TpoMessagesTabs selected="recruiters"/>
         <ErrorState
           title="Invalid message filters"
           description="Check status, date range, search and pagination values. No communication data was loaded."
@@ -139,7 +133,7 @@ export default async function TpoMessagesPage({
   });
   if (!result) return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
-    {tabs("recruiters")}
+    <TpoMessagesTabs selected="recruiters"/>
     <ErrorState title="Could not load conversations" description="This refresh failed. The recruiter inbox could not be verified; no existing messages have been changed."
       action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
   </div>;
@@ -169,7 +163,7 @@ export default async function TpoMessagesPage({
   if(!isRecruiterInbox)return <div className="min-w-0 space-y-6">
    <PageHeader title="Messages"
     description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
-   {tabs("recruiters")}
+   <TpoMessagesTabs selected="recruiters"/>
    <ErrorState title="Could not load conversations"
     description="Recruiter conversations are unavailable. Placement notifications remain separate and this does not mean your conversations were deleted."
     action={<div className="flex flex-wrap gap-3">
@@ -216,7 +210,7 @@ export default async function TpoMessagesPage({
   return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
     <section className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
-      {tabs("recruiters")}
+      <TpoMessagesTabs selected="recruiters"/>
       <TpoLiveRefresh intervalMs={4000} pulseHref="/api/placements/tpo/messages/pulse"/>
       {recipientsUnavailable?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm">The recruiter directory could not refresh. Existing conversations remain available; starting a new conversation is temporarily unavailable. <Link href="/tpo/messages" className="font-semibold text-link underline">Retry</Link></p>:null}
       <div role="tabpanel" id="tpo-messages-panel-recruiters" aria-labelledby="tpo-messages-tab-recruiters" aria-label="Recruiter conversations"

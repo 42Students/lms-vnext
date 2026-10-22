@@ -14,11 +14,20 @@ export async function POST(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const body = z.object({
-      action: z.enum(["PREVIEW", "IMPORT", "LEGACY_PREVIEW"]),
+      action: z.enum(["PREVIEW", "IMPORT", "CORRECT", "LEGACY_PREVIEW"]),
       rows: z.array(z.unknown()).min(1).max(5000),
       skipUnmatched: z.boolean().optional(),
+      mode: z.enum(["BULK", "SINGLE"]).optional(),
     }).parse(await request.json());
-    const input = { rows: body.rows, skipUnmatched: body.skipUnmatched ?? false };
+    // Legacy single-record PUT is the CORRECT action here. A one-row
+    // correction must never silently skip a missing or out-of-college learner.
+    // Bulk preview and import keep their existing contract.
+    const mode = body.action === "CORRECT" ? "SINGLE" : body.mode ?? "BULK";
+    if ((body.action === "CORRECT" || mode === "SINGLE") && body.rows.length !== 1)
+      return NextResponse.json({error:"ACADEMIC_CORRECTION_REQUIRES_ONE_STUDENT",
+        message:"Choose exactly one learner to correct.",
+      },{status:422,headers:{"Cache-Control":"private, no-store"}});
+    const input = {rows:body.rows,mode,skipUnmatched:body.action==="CORRECT"?false:body.skipUnmatched??false};
     if(body.action==="LEGACY_PREVIEW")
       return NextResponse.json({
         preview:await previewTpoLegacyAcademicImport(context,body.rows),
@@ -58,7 +67,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       result,updated:result.updated,skipped:result.skipped,
       updatedCount:result.updated,
-      message:result.updated===0?"No academic records were changed.":"Academic records updated",
+      message:result.updated===0?"No academic records were changed.":mode==="SINGLE"?"Academic record corrected":"Academic records updated",
       identifierType:"COLLEGE_LEARNER_MEMBERSHIP_UUID",
     },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) { return apiErrorResponse(error); }
