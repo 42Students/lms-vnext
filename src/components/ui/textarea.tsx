@@ -12,6 +12,9 @@ export type TextareaProps = ComponentPropsWithRef<"textarea"> & { error?: boolea
  */
 export function Textarea({ className, error = false, rows, ...props }: TextareaProps) {
   const invalid = error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
+  // Both states retain at least the 44px accessible touch target. Unspecified
+  // rows keep the legacy 112px multi-line default without shrinking controls.
+  const touchHeightClass = rows === undefined ? "min-h-[112px]" : "min-h-11";
   return (
     <textarea
       data-slot="textarea"
@@ -20,7 +23,7 @@ export function Textarea({ className, error = false, rows, ...props }: TextareaP
       data-explicit-rows={rows === undefined ? undefined : "true"}
       aria-invalid={invalid ? true : props["aria-invalid"]}
       className={cx(
-        rows === undefined ? "min-h-[112px]" : "min-h-11",
+        touchHeightClass,
         "w-full min-w-0 resize-y disabled:resize-none font-[inherit] scroll-mt-3",
         "rounded-[var(--lms-field-radius)] border-0",
         "bg-[var(--lms-form-bg)] px-[10px] py-[15px]",

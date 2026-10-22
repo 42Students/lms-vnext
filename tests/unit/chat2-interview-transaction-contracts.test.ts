@@ -52,7 +52,8 @@ describe("chat-2 TPO round and interview transaction boundaries",()=>{
   expect(s).toContain('!preview.ready');
   expect(s).toContain('input.expectedPreviewToken!==preview.previewToken');
   expect(s).toContain('preview.rows.filter(r=>r.status==="STAGED")');
-  expect(s).toContain("applyPlacementRoundResult(context,row.resultId,row.version)");
+  expect(s).toContain("applyPlacementRoundResult(context,row.resultId,row.version,notifyLearners)");
+  expect(s).toContain("notifyLearners=true");
   expect(core).toContain("expectedVersion?: number");
   expect(core).toContain('current.result.version !== expectedVersion');
   expect(core).toContain('lockedResult.version !== expectedVersion');
