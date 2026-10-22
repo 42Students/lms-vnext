@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,inArray,sql} from "drizzle-orm";
+import {desc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
  db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs,
@@ -21,7 +21,7 @@ const fixable=new Set(["NEW","CONFIRMED","IN_PROGRESS","NEEDS_INFO","CANT_REPROD
  * creates audit_finding_file with the schema's unique constraints. */
 export function independentAuditImporterReady(){
  return independentAuditFindingsReady() &&
-  process.env.DB10_AUDIT_FINDINGS_LEDGER_READY==="LEDGER_VERIFIED" &&
+  process.env["DB10_AUDIT_FINDINGS_LEDGER_READY"]==="LEDGER_VERIFIED" &&
   independentAuditGithubConfigured();
 }
 type LedgerAction="IMPORT"|"UPDATE"|"DELETE";
