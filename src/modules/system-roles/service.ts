@@ -85,7 +85,7 @@ export async function bootstrapSuperAdmin(
     identity = await resolveOrCreateIdentity(
       {
         phoneE164: input.phoneE164,
-        email: input.email,
+        ...(input.email !== undefined ? { email: input.email } : {}),
         displayName: input.displayName,
       },
       dependencies.identityDirectory,
@@ -103,7 +103,7 @@ export async function bootstrapSuperAdmin(
   return dependencies.repository.persistBootstrapUser({
     identityUid: identity.uid,
     phoneE164: input.phoneE164,
-    email: input.email ?? identity.email ?? undefined,
+    ...((input.email ?? identity.email) !== undefined ? { email: input.email ?? identity.email } : {}),
     displayName: input.displayName,
   });
 }
