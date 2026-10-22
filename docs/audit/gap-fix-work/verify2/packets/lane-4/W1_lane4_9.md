@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: (none, new feature)
 - Legacy: LBE/model/Course.java:42-45 stores active, enabled, allowedForDisplay separately.
 - Expected fix: Differentiate hidden visibility from archived course lifecycle; avoid conflating user hide with archive.
+
+## Chat-12 final quick verification (2026-10-22)
+
+- G2-5-002-028: OK — placement calendar shows retryable inline failures without replacing successful data.
+- G2-5-002-064: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-5-002-067: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-5-006-066: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-5-007-005: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-5-007-036: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-5-008-077: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-5-010-031: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-5-012-007: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-5-012-071: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-5-030-058: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-6-020-038: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-6-019-010: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-11-017-045: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-11-026-007: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-12-011-006: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-15-024-011: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-17-030-077: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-6-016-034: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-6-006-001: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-12-027-002: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-13-023-026: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-14-030-038: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-17-031-011: DEFERRED — deeper feature parity, integration or migration checks required.
+- G2-19-027-066: DEFERRED — deeper feature parity, integration or migration checks required.
