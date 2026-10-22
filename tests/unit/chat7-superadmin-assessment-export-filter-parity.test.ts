@@ -43,6 +43,7 @@ describe("Super Admin assessment filtered export contracts",()=>{
   const assignment=readFileSync(new URL("src/app/(authenticated)/admin/assignments/page.tsx",base),"utf8");
   const quiz=readFileSync(new URL("src/app/(authenticated)/admin/quizzes/page.tsx",base),"utf8");
   expect(assignment).toContain('adminAssessmentExportHref("ASSIGNMENT",query.data)');
+  expect(quiz).toContain('adminAssessmentExportHref("QUIZ",query.data,"PAGE")');
   expect(quiz).toContain('adminAssessmentExportHref("QUIZ",query.data)');
  });
 });

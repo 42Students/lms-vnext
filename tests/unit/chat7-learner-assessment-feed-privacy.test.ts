@@ -41,12 +41,12 @@ beforeEach(()=>{
  state.select.mockImplementation(()=>{
   const rows=index++%2===0?state.assignmentRows:state.quizRows;
   return {from(){return this;},innerJoin(){return this;},leftJoin(){return this;},
-   where(){return Promise.resolve(rows);}};
+   where(){return this;},orderBy(){return this;},limit(){return this;},offset(){return Promise.resolve(rows);}};
  });
 });
 describe("LEARNER-ASSESSMENT-FEED-PRIVACY-01 selected course dashboard projection",()=>{
  it("never queries the database for a learner with no authorized deliveries",async()=>{
-  expect(await listOwnLearnerAssessmentRows([],member,now)).toEqual({assignments:[],quizzes:[]});
+  expect(await listOwnLearnerAssessmentRows([],member,now)).toEqual({assignments:[],quizzes:[],totals:{assignments:0,quizzes:0}});
   expect(state.select).not.toHaveBeenCalled();
  });
  it("never exposes privately saved grades or feedback before publish, even when graded",async()=>{

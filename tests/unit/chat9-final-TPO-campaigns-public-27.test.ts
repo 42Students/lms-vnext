@@ -13,8 +13,8 @@ describe("chat-9 final sprint",()=>{
  expect(companyJoinEmailCandidate("person@company.example","company.example")).toBe(true);
  const send=read("src/modules/placements/public-join/send-code-service.ts");
  const join=read("src/modules/placements/public-join/join-service.ts");
- expect(send).toContain('scope === "COMPANY" && !companyJoinEmailCandidate');
- expect(join).toContain('scope==="COMPANY"&&!matchesCompanyDomain');
+ expect(send).toContain('scope==="COMPANY"&&(!availableLink.companyId||');
+ expect(join).toContain('!companyJoinEmailCandidate(email,[link.companyDomain');
  expect(join).toContain('return "OTHER_COMPANY_EMAIL"');
  });
 });

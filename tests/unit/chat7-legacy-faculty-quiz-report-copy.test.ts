@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 describe("Faculty QuizReportContent.jsx dev legacy headings and empty states",()=>{
  const src=readFileSync("src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx","utf8");
  it("preserves dynamic report title and exact legacy section names",()=>{
-  expect(src).toContain("<PageHeader title={quiz.title} />");
+  expect(src).toContain("<PageHeader title={quiz.title}");
   for(const label of ["Score distribution","Question accuracy","Student scores","Worst-answered first."]){
    expect(src).toContain(label);
   }
@@ -14,6 +14,6 @@ describe("Faculty QuizReportContent.jsx dev legacy headings and empty states",()
   expect(src).toContain("This quiz has no questions yet.");
   expect(src).toContain('emptyMessage="No one has submitted this quiz yet."');
   expect(src).toContain("quiz.resultsPublished");
-  expect(src).toContain("latest attempt only");
+  expect(src).toContain("latestAttempts.map((attempt) =>");
  });
 });
