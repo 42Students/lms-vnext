@@ -46,7 +46,7 @@ vi.mock("@/modules/projects/member-service",()=>({
   state.rosterCalls++;
   return [{memberRole:"MENTOR",isPrimaryMentor:true,
    project:{id:"11111111-1111-4111-8111-111111111111",
-    title:"Atlas",status:"ACTIVE"}}];
+    title:"Atlas",status:"ACTIVE",collegeId:"college-a"}}];
  },
 }));
 vi.mock("@/db/client",()=>({

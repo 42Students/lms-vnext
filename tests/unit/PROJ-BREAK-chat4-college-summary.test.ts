@@ -118,7 +118,8 @@ describe("College Admin Projects summary break-it journeys", () => {
 
   it("PROJ-BREAK-COL-TENANT-01 summary write keeps project and section inside persisted college", () => {
     const source = service();
-    expect(source).toContain("requireProjectManageAccess(context,projectId)");
+    expect(source).toContain("requireProjectManageAccess(context,resolvedId)");
+    expect(source).toContain('assertPersistedPlatformPermission(tx,context,"projects.manage"');
     expect(source).toContain("eq(projectInstances.collegeId,scope.collegeId)");
     expect(source).toContain("eq(departments.collegeId,scope.collegeId)");
     expect(source).toContain("recordActivityEventInTransaction(tx,context");

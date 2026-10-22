@@ -101,7 +101,7 @@ describe("HR-BREAK-MESSAGING-HISTORY-01: persisted TPO/HR boundary and immutable
     expect(mocked.selected).not.toHaveBeenCalled();
   });
   it("rejects invalid history filters before touching the database",async()=>{
-    for(const bad of [{purpose:"x".repeat(161)},{page:"-5"},{unexpected:true}]){
+    for(const bad of [{purpose:"x".repeat(161)},{page:"not-a-number"},{unexpected:true}]){
       await expect(exportTpoMessagingHistory(tpo,bad)).rejects.toThrow();
       expect(mocked.getDb).not.toHaveBeenCalled();
     }
