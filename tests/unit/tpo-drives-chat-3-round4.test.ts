@@ -63,7 +63,7 @@ describe("chat-3 Drives round 4",()=>{
   expect(body).toContain("No interview rounds added yet");
   expect(body).toContain("Open eligibility is selected; actual reach still depends on registration, membership and learner participation.");
   expect(body).toContain("selectedProgramIds.length===0");
-  expect(body).toContain("These are warnings, not publication blockers.");
+  expect(body).toContain("Draft review does not publish or notify learners. Confirm the server's eligibility reach and missing items on the next screen.");
  });
  it("TPO-drives-R05 numeric validation has correct client upper bounds",()=>{
   const body=source("src/components/placements/placement-job-create-form.tsx");
