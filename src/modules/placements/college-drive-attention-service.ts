@@ -37,6 +37,9 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
  }).from(placementJobs).where(eq(placementJobs.collegeId,collegeId));
  const allDriveCount=driveCounts?.all??0;
  const activeDriveCount=driveCounts?.published??0;
+ // Every request recomputes current attention and the uncapped counts. The
+ // 60-row cap only bounds visible cards, never all-college totals.
+ const snapshotAt=new Date();
  const jobs=await db.select({id:placementJobs.id,title:placementJobs.title,
   companyName:placementCompanies.name,
   deadline:placementJobs.applicationDeadline,status:placementJobs.status})
@@ -47,7 +50,8 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
   .where(and(eq(placementJobs.collegeId,collegeId),
     eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.archivedAt)))
-  .orderBy(desc(placementJobs.createdAt)).limit(60);
+  .orderBy(desc(sql`coalesce(${placementJobs.publishedAt},${placementJobs.legacyPostedAt},${placementJobs.createdAt})`),
+    desc(placementJobs.id)).limit(60);
  // Include a directly opened older or archived job without widening its
  // visibility to public discovery or silently limiting attention to 60 drives.
  if(rawJobId&&!jobs.some(job=>job.id===rawJobId)){
@@ -63,7 +67,8 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
   if(target)jobs.push(target);
  }
  if(!jobs.length)return {jobs:[],total:0,categories:[] as AttentionItem[],hasOfferLetterEvidence:true,lookbackDays:staleDays,
-  allDriveCount,activeDriveCount,inactiveDriveCount:allDriveCount-activeDriveCount};
+  allDriveCount,activeDriveCount,inactiveDriveCount:allDriveCount-activeDriveCount,
+  snapshotAt:snapshotAt.toISOString()};
  const records=await db.select({
   jobId:placementApplications.jobId,
   total:sql<number>`count(*)::integer`.as("app_count"),
@@ -111,10 +116,14 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
    category:"INTERVIEW_UNSCHEDULED",count:row.withoutSlot,href:base+"?stage=INTERVIEW",examples:[]});
   if(row.missingOfferLetter>0)categories.push({jobId:job.id,title:job.title,
    category:"MISSING_OFFER_LETTER",count:row.missingOfferLetter,href:base+"?stage=OFFERED",examples:[]});
-  if(job.deadline&&job.deadline.getTime()>now&&job.deadline.getTime()-now<closingDays*86400000&&
-    row.total>=5&&row.shortlisted/row.total<conversionThreshold){
+  // Historic closingSoonLowConversion is a per-DRIVE signal: one
+  // attention item for any published drive with at least one application,
+  // not one item per learner, and it has no application-stage tab.
+  if(job.deadline&&job.deadline.getTime()>=now&&
+    job.deadline.getTime()-now<=closingDays*86400000&&row.total>0&&
+    row.shortlisted/row.total<conversionThreshold){
     categories.push({jobId:job.id,title:job.title,category:"LOW_CONVERSION",
-     count:row.total-row.shortlisted,href:base+"?stage=APPLIED",examples:[]});
+     count:1,href:"/college/placements/jobs/"+job.id,examples:[]});
   }
  }
  // The aggregate is the authoritative count; this bounded read supplies
@@ -208,5 +217,6 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
   total:categories.reduce((count,item)=>count+item.count,0),
   categories,hasOfferLetterEvidence:true,
   allDriveCount,activeDriveCount,inactiveDriveCount:allDriveCount-activeDriveCount,
-  lookbackDays:staleDays,closingSoonDays:closingDays,sampleCap,conversionThreshold};
+  lookbackDays:staleDays,closingSoonDays:closingDays,sampleCap,conversionThreshold,
+  snapshotAt:snapshotAt.toISOString()};
 }
