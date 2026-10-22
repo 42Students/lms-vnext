@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
+import {Alert} from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { driveInterviewDateIst, driveInterviewsHref, driveInterviewsParams, driveRoundTime, filterDriveCandidateAppointments, driveInterviewFilterError } from "@/modules/placements/college-drive-interviews-model";
@@ -25,6 +27,19 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       description="Contact your administrator for a College Admin assignment before opening a placement drive."
       action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
   </div>;
+  const access=await resolveOptionalModuleAccess(context);
+  if(!access.placements.enabled)return <section role="status" className="min-w-0 space-y-4">
+    <PageHeader title="Interviews"/>
+    <Alert tone="warning" title="Placements is switched off for this college">
+      Interview schedules and applicant actions are not available while the
+      Placements module is disabled. Existing records are retained. Ask a
+      Super Admin to enable the module, then revisit this page.
+    </Alert>
+    <Link href="/college/module-access"
+      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      View college module access
+    </Link>
+  </section>;
   const {jobId}=await params;
   const query=driveInterviewsParams(await searchParams);
   if(!query) return <ErrorState title="Invalid interview filters"

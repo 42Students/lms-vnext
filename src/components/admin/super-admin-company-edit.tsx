@@ -64,10 +64,10 @@ export function SuperAdminCompanyEdit({company}:{company:Company}){
      <Input required minLength={2} maxLength={150} name="name" defaultValue={company.name} className={cls}/>
     </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Website
-     <Input type="url" name="website" placeholder="https://" defaultValue={company.website??""} className={cls}/>
+     <Input type="url" name="website" maxLength={500} placeholder="https://" defaultValue={company.website??""} className={cls}/>
     </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Logo link
-     <Input type="url" name="logoPublicUrl" placeholder="https://" defaultValue={company.logoPublicUrl??""} className={cls}/>
+     <Input type="url" name="logoPublicUrl" maxLength={500} placeholder="https://" defaultValue={company.logoPublicUrl??""} className={cls}/>
     </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Industry
      <Input name="industry" maxLength={100} defaultValue={company.industry??""} className={cls}/>
