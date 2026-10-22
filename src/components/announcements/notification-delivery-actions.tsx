@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
+import {Button} from "@/components/ui/button";
 
 const responseSchema = z.object({
   message: z.string().optional(),
@@ -66,11 +67,11 @@ export function NotificationDeliveryActions({
   return <div className="space-y-2">
     <div className="flex flex-wrap gap-2">
       {available.map(({ action, label }) => (
-        <button key={action} type="button" disabled={busy}
+        <Button variant="secondary" key={action} type="button" disabled={busy}
           onClick={() => void submit(action)}
-          className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+          >
           {busy ? "Updating…" : label}
-        </button>
+        </Button>
       ))}
     </div>
     {feedback ? <p role="status" aria-live="polite" className="text-sm">{feedback}</p> : null}
