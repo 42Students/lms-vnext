@@ -123,7 +123,7 @@ describe("chat-2 last-third report runtime SSR contract: by-branch and CTC",()=>
     expect(html).toContain("No placement season available");
     expect(html).toContain("Branch placement outcomes require a selected placement season");
     expect(html).not.toContain("Branch performance");
-    expect(html).toContain("sm:px-6");
+    expect(html).toContain('class="min-w-0 space-y-4"');
   });
 
   it("TPO-by-branch-04 renders recorded branch evidence and old heading with no fabricated package",async()=>{
@@ -156,7 +156,7 @@ describe("chat-2 last-third report runtime SSR contract: by-branch and CTC",()=>
     expect(html).toContain("Accepted full-time offers by annual package band");
     expect(html).toContain("8–10 LPA");
     expect(html).toContain("contributes twice");
-    expect(html).toContain("sm:grid-cols-2");
+    expect(html).toContain("grid-cols-2 gap-3 lg:grid-cols-4");
   });
 
   it("TPO-packages-06 displays actual empty states and propagates backend faults to route recovery",async()=>{

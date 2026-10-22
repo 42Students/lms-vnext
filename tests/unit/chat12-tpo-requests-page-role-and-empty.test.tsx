@@ -36,7 +36,7 @@ const query={
  page:1,pageSize:25,urgentOnly:false,
 };
 const empty={
- query,requests:[],total:0,page:1,totalPages:0,
+ query,requests:[],branches:[],total:0,page:1,totalPages:0,
  summary:{total:0,pending:0,approved:0,rejected:0,cancelled:0},
 };
 

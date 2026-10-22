@@ -48,10 +48,11 @@ describe("chat-16 explicit public campaign suppression API response and side eff
  it("campaign-unsubscribe-route-17 rejects absent, unsigned and huge tokens without falsely confirming removal",async()=>{
   const results=await Promise.all([request(null),request("not-signed"),request("x".repeat(2049))]
    .map(req=>POST(req)));
-  expect(results.map(result=>result.status)).toEqual([400,400,400]);
-  for(const response of results)expect(await response.json()).toEqual({error:"INVALID_OR_EXPIRED_LINK"});
+  expect(results.map(result=>result.status)).toEqual([303,303,303]);
+  for(const response of results)
+   expect(response.headers.get("location")).toBe("https://42lms.com/campaign-unsubscribe/confirmed?scope=placement-cell");
   expect(getDb).not.toHaveBeenCalled();
-  expect(unsubscribeTpoCampaignRecipient).not.toHaveBeenCalled();
+  expect(unsubscribeTpoCampaignRecipient).toHaveBeenCalledExactlyOnceWith("not-signed");
  });
  it("campaign-unsubscribe-route-18 keeps placement-cell opt-outs on their signed, scoped service path",async()=>{
   vi.mocked(verifyTpoCampaignRecipientToken).mockReturnValue({
@@ -70,8 +71,9 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   });
   vi.mocked(unsubscribeTpoCampaignRecipient).mockRejectedValue(new CampaignUnsubscribeInvalid());
   const response=await POST(request());
-  expect(response.status).toBe(400);
-  expect(await response.json()).toEqual({error:"INVALID_OR_EXPIRED_LINK"});
+  // A revoked recipient is indistinguishable from a completed opt-out.
+  expect(response.status).toBe(303);
+  expect(response.headers.get("location")).toBe("https://42lms.com/campaign-unsubscribe/confirmed?scope=placement-cell");
   expect(getDb).not.toHaveBeenCalled();
  });
  it("campaign-unsubscribe-route-20 distinguishes unregistered global suppression storage from successful opt-out",async()=>{
@@ -80,7 +82,7 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   });
   const execute=vi.fn(async()=>({rows:[{ready:false}]}));
   vi.mocked(getDb).mockReturnValue({execute} as unknown as ReturnType<typeof getDb>);
-  const response=await POST(request());
+  const response=await POST(request("signed.global-token"));
   expect(response.status).toBe(503);
   expect(await response.json()).toEqual({error:"SUPPRESSIONS_NOT_READY"});
   expect(execute).toHaveBeenCalledTimes(1);
@@ -92,11 +94,11 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   });
   const execute=vi.fn().mockResolvedValueOnce({rows:[{ready:true}]}).mockResolvedValueOnce({rows:[]});
   vi.mocked(getDb).mockReturnValue({execute} as unknown as ReturnType<typeof getDb>);
-  const response=await POST(request());
+  const response=await POST(request("signed.global-token"));
   expect(response.status).toBe(303);
   expect(response.headers.get("location")).toBe("https://42lms.com/campaign-unsubscribe/confirmed");
   expect(execute).toHaveBeenCalledTimes(2);
-  expect(verifyUnsubscribeToken).toHaveBeenCalledWith(token,expect.any(String),expect.any(Number));
+  expect(verifyUnsubscribeToken).toHaveBeenCalledWith("signed.global-token",expect.any(String),expect.any(Number));
   expect(unsubscribeTpoCampaignRecipient).not.toHaveBeenCalled();
  });
 });

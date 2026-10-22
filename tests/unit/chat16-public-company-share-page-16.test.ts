@@ -15,14 +15,18 @@ const request=(search:Record<string,string>={})=>({
 beforeEach(()=>{
  vi.clearAllMocks();
  vi.mocked(cookies).mockResolvedValue({get:()=>undefined} as Awaited<ReturnType<typeof cookies>>);
- vi.mocked(getPublicCompanyApplicantShare).mockResolvedValue({kind:"CODE_REQUIRED"});
+ vi.mocked(getPublicCompanyApplicantShare).mockResolvedValue({
+  kind:"CODE_REQUIRED",title:"Graduate Engineer",companyName:"Acme",
+  expiresAt:"2027-10-01T00:00:00.000Z",
+ });
 });
 
 describe("chat-16 public company-share page private applicant and access states",()=>{
  it("UX-chat16-company-share-16 requires a separate six-digit access proof before rendering applicants",async()=>{
   const html=renderToStaticMarkup(await CompanySharePage(request()));
   expect(metadata.robots).toEqual({index:false,follow:false});
-  expect(html).toContain("Enter the 6-digit share code");
+  expect(html).toContain("Enter the one-time code the placement cell sent you.");
+  expect(html).toContain("6-digit code");
   expect(html).toContain('method="post"');
   expect(html).toContain('pattern="[0-9]{6}"');
   expect(html).not.toContain("Shared applicants</caption>");
@@ -34,14 +38,14 @@ describe("chat-16 public company-share page private applicant and access states"
   vi.mocked(getPublicCompanyApplicantShare).mockResolvedValue({kind:"UNAVAILABLE"});
   const html=renderToStaticMarkup(await CompanySharePage(request()));
   expect(html).toContain("This link is not valid any more.");
-  expect(html).toContain('role="alert"');
+  expect(html).toContain('aria-label="Restricted applicant share"');
   expect(html).not.toContain('method="post"');
   expect(html).not.toContain("shortlisted applicants");
  });
  it("UX-chat16-company-share-18 keeps temporary provider errors private and provides a retry",async()=>{
   vi.mocked(getPublicCompanyApplicantShare).mockRejectedValue(new Error("private database credentials"));
   const html=renderToStaticMarkup(await CompanySharePage(request()));
-  expect(html).toContain("This page is temporarily unavailable. Try again.");
+  expect(html).toContain("We could not load this share. Please retry.");
   expect(html).toContain("Try again");
   expect(html).not.toContain("private database credentials");
   expect(html).not.toContain("Enter the 6-digit share code");
@@ -58,7 +62,7 @@ describe("chat-16 public company-share page private applicant and access states"
   });
   const html=renderToStaticMarkup(await CompanySharePage(request({q:"Ada"})));
   expect(html).toContain("Ada Student");
-  expect(html).toContain("Shared with Acme");
+  expect(html).toContain("for Acme. Please do not forward this page.");
   expect(html).toContain("Everything you open is logged");
   expect(html).not.toContain("private-student@example.org");
   expect(html).not.toContain("Student mobile");

@@ -15,7 +15,7 @@ describe("SA-placements-projects-21 audited internal note correction",()=>{
   expect(s).toContain("Edit Internal Notes");
   expect(s).toContain("Notes updated");
   expect(s).toContain("amendsNoteId");
-  expect(s).toContain("Save correction");
-  expect(s).toContain("preserves its history");
+  expect(s).toContain('{saving?"Saving…":"Save"}');
+  expect(s).toContain("preserves the previous text");
  });
 });

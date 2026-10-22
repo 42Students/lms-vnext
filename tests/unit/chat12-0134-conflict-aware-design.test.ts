@@ -37,6 +37,8 @@ describe("0134 conflict-aware schema",()=>{
   expect(service).toContain("pg_get_constraintdef(oid)");
   expect(service).toContain("await requireRegisteredKind(tx,input.kind)");
   expect(service).toContain('throw new TpoGeneralRequestError("UNAVAILABLE")');
-  expect(src("docs/proposed-migrations/chat-12-0134-general-requests-correction.sql")).not.toContain("ALTER COLUMN target_key TYPE text");
+  // The obsolete proposed SQL file was removed after its correction was
+  // superseded by registered schema constraints and the live kind check.
+  expect(getTableColumns(placementLearnerGeneralRequests).targetKey.getSQLType()).toBe("varchar(150)");
  });
 });

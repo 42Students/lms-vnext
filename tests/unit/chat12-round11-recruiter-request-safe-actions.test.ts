@@ -28,7 +28,7 @@ describe("chat-12 recruiter drive request safe review",()=>{
   expect(service).toContain('recruiterDriveApprovalPolicy({');
   expect(service).toContain('if(policy.autoApprove){');
   expect(service).toContain('createRecruiterApprovedDraftJob(tx,created,context.user.id)');
-  expect(service).toContain('return {request:finalRequest,replayed:false}');
+  expect(service).toContain('return {request:finalRequest,replayed:false,...driveRequestReceipt(finalRequest)}');
   expect(service).not.toContain('verificationPending:scope.grant.verificationStatus!=="VERIFIED"');
  });
  it("TPO-requests-verification-01 recognizes the registered 0133 request kinds but refuses unsupported approval effects",()=>{

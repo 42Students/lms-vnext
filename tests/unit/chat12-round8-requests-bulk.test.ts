@@ -20,7 +20,7 @@ describe("chat-12 Requests actual persisted bulk decisions and legacy copy",()=>
   expect(page).not.toContain('eyebrow="TPO · Operations"');
   expect(page).toContain("Urgent ones come first.");
   expect(page).toContain("Nothing is waiting for you.");
-  expect(page).toContain("No requests in this period.");
+  expect(page).toContain("No requests in this period");
  });
  it("TPO-requests-verification-02 sends an empty approval note as a valid string instead of null",()=>{
   const form=src("src/components/placements/tpo-request-decision-control.tsx");
@@ -30,7 +30,8 @@ describe("chat-12 Requests actual persisted bulk decisions and legacy copy",()=>
   expect(form).not.toContain("note:decisionText||null");
  });
  it("TPO-requests-verification-18 retains request loading and retryable friendly error states",()=>{
-  expect(src("src/app/(authenticated)/tpo/requests/loading.tsx")).toContain('aria-busy="true"');
+  expect(src("src/app/(authenticated)/tpo/requests/loading.tsx")).toContain("<GracefulPageLoading");
+  expect(src("src/components/ui/graceful-page-loading.tsx")).toContain("aria-busy={true}");
   expect(src("src/app/(authenticated)/tpo/requests/error.tsx")).toContain("Retry requests");
  });
  it("TPO-requests-verification-23 counts authorized verification requests before server pagination",()=>{

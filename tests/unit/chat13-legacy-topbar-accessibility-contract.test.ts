@@ -14,7 +14,7 @@ describe("chat-13 old LMS topbar keyboard, signed-out, and notification interact
   expect(s).toContain('role="combobox"');
   expect(s).toContain("aria-expanded={open}");
   expect(s).toContain("/api/courses/learner");
-  expect(s).toContain('"/learn/courses/" + encodeURIComponent(course.deliveryId) + "/home"');
+  expect(s).toContain('"/learn/courses/"+encodeURIComponent(course.deliveryId)+"/home"');
   expect(s).toContain("topbarCommands(pathname, items)");
  });
  it("TOPBAR-07 keeps the existing signout API, multi-tab logoff and both switchers",()=>{
@@ -25,7 +25,7 @@ describe("chat-13 old LMS topbar keyboard, signed-out, and notification interact
   expect(s).toContain("<MembershipSwitcher");
   expect(s).toContain("{copy.accountHref ? <Link href={copy.accountHref}");
   expect(s).toContain("aria-expanded={open}");
-  expect(s).toContain('event.key !== "Escape"');
+  expect(s).toContain('event.key === "Escape"');
  });
  it("TOPBAR-08 retains existing authenticated notification sources without substituting fabricated unread values",()=>{
   const s=read("notification-actions.tsx");
