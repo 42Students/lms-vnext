@@ -66,10 +66,13 @@ export const createPlacementCompanyInputObjectSchema = z
   })
   .strict();
 
-export const companyWebsiteOrDomainRule = {
-  check:(value:{primaryDomain?:string|undefined;websiteUrl?:string|undefined})=>Boolean(value.primaryDomain||value.websiteUrl),
+export const companyWebsiteOrDomainRule: {
+  check:(value:{primaryDomain?:string|undefined;websiteUrl?:string|undefined})=>boolean;
+  issue:{path:string[];message:string};
+} = {
+  check:(value)=>Boolean(value.primaryDomain||value.websiteUrl),
   issue:{path:["primaryDomain"],message:"Add the company's website or a company email domain"},
-} as const;
+};
 
 export const createPlacementCompanyInputSchema = createPlacementCompanyInputObjectSchema
   .refine(companyWebsiteOrDomainRule.check,companyWebsiteOrDomainRule.issue);
