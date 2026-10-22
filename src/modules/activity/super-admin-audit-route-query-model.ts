@@ -61,19 +61,19 @@ export function validateSuperAdminAuditRouteQuery(
   verifiedOrganizationId:string|null=null,
 ) {
   const mapped:Record<string,string|string[]|undefined>={...raw};
-  const legacyCategory=mapped.category;
+  const legacyCategory=mapped["category"];
   if(legacyCategory!==undefined){
     if(typeof legacyCategory!=="string"||!legacyCategories.some(x=>x===legacyCategory))
       return null;
-    if(mapped.view!==undefined&&mapped.view!==legacyCategory)return null;
-    mapped.view=legacyCategory;
-    delete mapped.category;
+    if(mapped["view"]!==undefined&&mapped["view"]!==legacyCategory)return null;
+    mapped["view"]=legacyCategory;
+    delete mapped["category"];
     // Legacy audit.searchByCategory ignored the other raw action and entity
     // fields, even when old bookmarks included them. Do not accidentally
     // narrow a category view to zero rows by remapping those stale aliases.
-    delete mapped.actionKey;
-    delete mapped.entityType;
-    delete mapped.entityId;
+    delete mapped["actionKey"];
+    delete mapped["entityType"];
+    delete mapped["entityId"];
   }
   for(const [alias,target] of [
     ["actionKey","eventType"],["entityType","subjectType"],["entityId","subjectId"],
@@ -102,10 +102,10 @@ export function validateSuperAdminAuditRouteQuery(
   // Legacy organization links may carry a scope ID, but it must match the
   // signed-in Super Admin's selected organization. Never use query parameters
   // to select a tenant; ActivityPage derives the SQL scope from the context.
-  if(mapped.organizationId!==undefined){
-    if(typeof mapped.organizationId!=="string" ||
-      !verifiedOrganizationId || mapped.organizationId!==verifiedOrganizationId)return null;
-    delete mapped.organizationId;
+  if(mapped["organizationId"]!==undefined){
+    if(typeof mapped["organizationId"]!=="string" ||
+      !verifiedOrganizationId || mapped["organizationId"]!==verifiedOrganizationId)return null;
+    delete mapped["organizationId"];
   }
   const result=superAdminAuditRouteQuerySchema.safeParse(mapped);
   return result.success?result.data:null;
