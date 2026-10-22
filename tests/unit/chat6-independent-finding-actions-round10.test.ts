@@ -18,7 +18,13 @@ describe("Independent audit finding action workflow",()=>{
   expect(detail).toContain("<IndependentFindingActions");
   expect(detail).toContain("Audit event history");
   const client=src("src/components/tracker/independent-finding-actions.tsx");
-  for(const v of ["FIX_COMMIT","COMMENT","DUPLICATE","Save details","<ConfirmDialog","onConfirm={()=>void submit(true)}","if(!confirmed){setConfirmOpen(true);return;}"])expect(client).toContain(v);
+  for(const v of ["FIX_COMMIT","COMMENT","DUPLICATE","<ConfirmDialog","onConfirm={()=>void submit(true)}","if(!confirmed){setConfirmOpen(true);return;}"])expect(client).toContain(v);
+  // Each audit action has a descriptive submit label; the same label appears on
+  // its action button and version-checked confirmation dialog.
+  expect(client).toContain('action==="COMMENT"?"Add comment":action==="STATUS"?"Set to status":');
+  expect(client).toContain('action==="DUPLICATE"?"Mark duplicate":"Attach fix commit";');
+  expect(client).toContain('>{pending?"Saving…":submitLabel}</Button>');
+  expect(client).toContain('confirmLabel={submitLabel} confirmVariant="primary"');
   expect(client).not.toContain("window.confirm(");
  });
 });
