@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {Dialog} from "@/components/ui/dialog";
 type Student={membershipId:string;name:string;active:boolean};
 type Preview={membershipId:string;name:string;effective:boolean;
  winnerLevel:string;winnerLocked:boolean;
@@ -23,6 +24,9 @@ export function CollegeStudentBulkModuleAccess({students}:{
  const [error,setError]=useState("");
  const [receipt,setReceipt]=useState("");
  const [busy,setBusy]=useState(false);
+ const [review,setReview]=useState<{
+   ids:string[];snapshot:Preview[];selectedModule:Module;next:Operation;
+ }|null>(null);
  const serial=useRef(0);
  const active=students.filter(row=>row.active);
  useEffect(()=>{setPreview([]);setError("");serial.current++;},[selected,module]);
@@ -51,16 +55,18 @@ export function CollegeStudentBulkModuleAccess({students}:{
    }catch{if(serial.current===token)setError("Preview unavailable. No changes were saved.");}
    finally{setBusy(false);}
  }
- async function save(){
+ function requestSave(){
    if(busy||!preview.length||preview.length!==selected.length)return;
-   const ids=[...selected],snapshot=[...preview],next=operation;
-   if(!confirm("Apply "+next+" to "+module+" for "+ids.length+
-      " students? Inherit removes the individual override and uses college/ancestor settings."))
-      return;
+   setReview({ids:[...selected],snapshot:[...preview],selectedModule:module,next:operation});
+ }
+ async function save(){
+   if(!review||busy)return;
+   const {ids,snapshot,selectedModule,next}=review;
+   setReview(null);
    setBusy(true);setError("");setReceipt("");
    try{
      const result=await call<{applied:number;changed:number;unchanged:number}>({
-       action:"APPLY",module,operation:next,membershipIds:ids,
+       action:"APPLY",module:selectedModule,operation:next,membershipIds:ids,
        expected:snapshot.map(row=>({membershipId:row.membershipId,
           enabled:row.stored?.enabled??null,locked:row.stored?.locked??false})),
        confirmed:true,
@@ -103,7 +109,7 @@ export function CollegeStudentBulkModuleAccess({students}:{
      <Button variant="secondary" disabled={busy||selected.length===0} type="button"
        onClick={()=>void loadPreview()}>Preview effective access</Button>
      <Button variant="primary" disabled={busy||selected.length===0||
-       preview.length!==selected.length} type="button" onClick={()=>void save()}>
+       preview.length!==selected.length} type="button" onClick={requestSave}>
        {busy?"Saving…":"Apply to selected"}
      </Button>
    </div>
@@ -123,6 +129,17 @@ export function CollegeStudentBulkModuleAccess({students}:{
        </tr>)}</tbody>
      </table>
    </div>:null}
+   <Dialog open={review!==null} role="alertdialog" title="Apply bulk module access?"
+     description={review?"Apply "+review.next+" to "+review.selectedModule+" for "+review.ids.length+
+       " students? Inherit removes the individual override and uses college/ancestor settings.":undefined}
+     onOpenChange={next=>{if(!next&&!busy)setReview(null);}}
+     dismissible={!busy}
+     footer={<>
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>setReview(null)}>Keep editing</Button>
+       <Button type="button" variant="primary" disabled={busy} onClick={()=>void save()}>Confirm changes</Button>
+     </>}>
+     <p className="text-sm text-[var(--lms-body-text)]">Review the selected students and effective permissions before applying the change. Locked rules are not overridden.</p>
+   </Dialog>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    {receipt?<p role="status" className="text-sm">{receipt}</p>:null}
  </section>;

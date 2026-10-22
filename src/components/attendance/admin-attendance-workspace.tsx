@@ -525,7 +525,14 @@ export function AdminAttendanceWorkspace({
         </Button>
       </div>
 
-      {data.deliveries.length === 0 ? (
+      {data.gridLookupFailed && !viewGrid ? (
+        <div role="alert" className="min-w-0 space-y-3 border-b border-border pb-4">
+          <p className="text-sm font-semibold text-error">Couldn't load monthly attendance</p>
+          <p className="text-sm text-body">The attendance grid could not be refreshed. The selected class, course and month are unchanged.</p>
+          <Button type="button" variant="secondary" disabled={refreshing}
+            onClick={()=>startRefresh(()=>router.refresh())}>Retry attendance</Button>
+        </div>
+      ) : data.deliveries.length === 0 ? (
         <EmptyState
           title="No assigned class courses"
           description="There are no active class/course deliveries for this college yet."
