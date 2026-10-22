@@ -8,7 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {headObject,presignUrl,getObjectStream,replaceObjectMetadata}
  from "@/modules/storage/s3-client";
-import {bugScreenshotType,validateBugScreenshotUpload,
+import {validateBugScreenshotUpload,
  validateBugScreenshotConfirmation,BUG_SCREENSHOT_MAX_PER_ISSUE}
  from "./access-and-attachments";
 import {trackerAdminRuntimeEnabled} from "./readiness";
@@ -109,7 +109,7 @@ export async function handleOwnTrackerAttachment(context:RequestContext,
     scanner!=="lms-vnext-privileged-scanner"){
   // Development-only visual-format attestation is not antivirus. Production
   // requires an actual privileged scanner and keeps screenshots unavailable.
-  if(process.env.APP_ENV!=="development"&&process.env.APP_ENV!=="test")
+  if(process.env["APP_ENV"]!=="development"&&process.env["APP_ENV"]!=="test")
    throw new Error("TRACKER_ATTACHMENT_UNVERIFIED");
   if(!await sniffMagic(input.storageKey,valid.contentType))
    throw new Error("TRACKER_ATTACHMENT_UNVERIFIED");
@@ -137,6 +137,7 @@ export async function handleOwnTrackerAttachment(context:RequestContext,
   const [added]=await tx.insert(db10BugReportAttachments).values({
    bugReportId:report.id,...valid,
   }).returning({id:db10BugReportAttachments.id});
+  if(!added)throw new Error("TRACKER_ATTACHMENT_STALE");
   return {action:"CONFIRM" as const,attached:true,replayed:false,id:added.id};
  });
 }
