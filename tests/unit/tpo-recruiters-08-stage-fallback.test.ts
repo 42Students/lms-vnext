@@ -34,9 +34,11 @@ describe("TPO-recruiters-08 legacy inferred execution stages",()=>{
   {jobId:"drive-b",jobStatus:"CLOSED",archivedAt:null,offerStatus:"ACCEPTED",joiningStatus:null},
   {jobId:"drive-other",jobStatus:"CLOSED",archivedAt:null,offerStatus:"ACCEPTED",joiningStatus:null},
  ];
- it("includes every same-company drive even when legacy names map to multiple relationships",()=>{
-  expect(deriveOwnRecruiterLeadStage(lead,jobs,facts)).toBe("RECRUITED");
-  expect(deriveOwnRecruiterLeadStage(lead,jobs,[facts[0]])).toBe("DRIVE_PLANNED");
+ it("does not borrow hiring evidence from ambiguous company-name matches",()=>{
+  expect(deriveOwnRecruiterLeadStage(lead,jobs,facts)).toBe("NEW");
+  expect(deriveOwnRecruiterLeadStage(lead,jobs,[facts[0]])).toBe("NEW");
+  const linked={...lead,companyRelationshipId:"rel-b"};
+  expect(deriveOwnRecruiterLeadStage(linked,jobs,facts)).toBe("RECRUITED");
  });
  it("includes the recruiter's own drive and excludes unrelated employer drives",()=>{
   const personal={...lead,companyName:"Unknown employer",recruiterUserId:"recruiter-one"};
