@@ -95,9 +95,12 @@ describe("Chat-6 /admin middle-third read and application correctness",()=>{
   expect(shared).toContain("if(!context.adminScope?.collegeId)");
   expect(shared).toContain('title==="Registered Students"?"Select a College to manage Learners"');
   expect(shared).toContain('"Select a college to continue"');
-  for(const screen of ["applications","hiring","interviews","job-settings","joining","offers","screenings","seasons"]){
+  for(const screen of ["applications","interviews","job-settings","joining","offers","screenings","seasons"]){
    const page=source("src/app/(authenticated)/admin/placements/"+screen+"/page.tsx");
    expect(page).toContain("<AdminScopedReadPage");
   }
+  const hiring=source("src/app/(authenticated)/admin/placements/hiring/page.tsx");
+  expect(hiring).toContain('redirect("/admin/placements/analytics"');
+  expect(hiring).not.toContain("listSuperAdminApplications");
  });
 });
