@@ -63,6 +63,16 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   clearRowError(index);
   setRows(old=>old.map((row,i)=>i===index?{...row,...patch}:row));
  };
+ const changeOptional=(index:number,key:"url"|"description"|"accessNotes",value:string)=>{
+  clearRowError(index);
+  setRows(old=>old.map((row,i)=>{
+   if(i!==index)return row;
+   if(value)return {...row,[key]:value};
+   const next={...row};
+   delete next[key];
+   return next;
+  }));
+ };
  const changeTitle=(index:number,titleValue:string)=>{
   clearRowError(index);
   setRows(old=>old.map((row,i)=>{
@@ -173,23 +183,23 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
       {["ACTIVE","DRAFT","ARCHIVED"].map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
     <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">URL (for a Link)<Input value={row.url??""}
-      onChange={e=>change(i,{url:e.target.value||undefined})}
+      onChange={e=>changeOptional(i,"url",e.target.value)}
       placeholder="https://example.com/resource" className={cls}/></label>
     <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
-     <Textarea value={row.description??""} onChange={e=>change(i,{description:e.target.value||undefined})}
+     <Textarea value={row.description??""} onChange={e=>changeOptional(i,"description",e.target.value)}
       placeholder="What this resource is for" className={cls+" min-h-20"}/></label>
     <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Access notes (optional)
      <Input maxLength={2000} value={row.accessNotes??""}
-      onChange={e=>change(i,{accessNotes:e.target.value||undefined})}
+      onChange={e=>changeOptional(i,"accessNotes",e.target.value)}
       placeholder="e.g. Requires college email to view" className={cls}/></label>
     <label className="flex items-center gap-2 text-xs font-semibold text-body"><Checkbox className="size-5"
       checked={row.pinned??false} onChange={e=>change(i,{pinned:e.target.checked})}/>Pinned</label>
     <label className="flex items-center gap-2 text-xs font-semibold text-body"><Checkbox className="size-5"
       checked={row.required} onChange={e=>change(i,{required:e.target.checked})}/>Required</label>
     <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:col-span-2">
-      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" up"} disabled={i===0} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];[n[i-1],n[i]]=[n[i],n[i-1]];return n;});}}
+      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" up"} disabled={i===0} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];const previous=n[i-1],current=n[i];if(previous===undefined||current===undefined)return r;n[i-1]=current;n[i]=previous;return n;});}}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Move up</Button>
-      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" down"} disabled={i===rows.length-1} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];[n[i+1],n[i]]=[n[i],n[i+1]];return n;});}}
+      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" down"} disabled={i===rows.length-1} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];const next=n[i+1],current=n[i];if(next===undefined||current===undefined)return r;n[i+1]=current;n[i]=next;return n;});}}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Move down</Button>
       <Button type="button" variant="danger" aria-label={"Remove "+(row.title||"resource")} onClick={()=>remove(i)}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Remove</Button>
