@@ -6,8 +6,9 @@ describe("chat-3 final sprint companies accessibility, exporting and safety",()=
  it("TPO-companies-18 preserves scoped company UI and privacy guarantees",()=>{
   expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("visibleCompanies");
   expect(read("src/app/(authenticated)/tpo/companies/page.tsx")).toContain("Companies");
-  expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("Export companies CSV");
+  expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("onExportCsv={()=>exportCompanies()}");
   expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("visibleCompanies");
+  expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("<GridWorkspace rows={visibleCompanies}");
  });
  it("TPO-companies-24 preserves scoped company UI and privacy guarantees",()=>{
   expect(read("src/components/shell/legacy-sidebar-active-model.ts")).toContain("pathname===\"/tpo/companies\"");

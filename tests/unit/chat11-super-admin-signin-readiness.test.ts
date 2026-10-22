@@ -96,7 +96,7 @@ describe("SA-tenants-modules-READY-01: persisted readiness does not imply launch
   expect(branding).toMatch(/getSuperAdminCollegeBrandingPreview\(context,\s*collegeId\)/);
   expect(branding).toContain("getSuperAdminTenantLifecycleDetail(context,collegeId)");
   expect(branding).toContain('can(context,"college.manage",{collegeId,organizationId:tenant.organizationId})');
-  expect(modules).toContain('requirePermission(context,"admin-scope.select")');
+  expect(modules).toMatch(/requirePermission\(context,\s*"admin-scope\.select"\)/);
   expect(modules).toContain("getModuleAccessOverviewMetrics(context, [collegeId])");
  });
 });

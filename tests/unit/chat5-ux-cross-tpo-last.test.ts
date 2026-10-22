@@ -95,7 +95,9 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
   expect(control).toContain('action: "REVOKE"');
   expect(control).toContain('action:"EXTEND"');
   expect(control).toContain('months');
-  expect(control).not.toContain("min-h-9");
+  // Phone controls retain a 44px target; desktop restores the legacy compact size.
+   expect(control).toContain("min-h-11");
+   expect(control).toContain("md:min-h-9");
  });
  it("UX-tpo-requests-10 preserves server-authorized request decisions and 44px approval targets",()=>{
   const control=source("src/components/placements/tpo-request-decision-control.tsx");
