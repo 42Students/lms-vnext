@@ -431,3 +431,33 @@ export function currentPlacementSeasonCopy(season:{
   :{label:"No current placement season",currentSeasonId:null,
      empty:true as const};
 }
+
+
+/** Legacy active season, registration-open, and displayed/current season are
+ * three distinct dimensions. A closed registration window cannot be made
+ * open merely by selecting the ACTIVE season. */
+export function legacySeasonPageProjection(input:{
+ id:string;name:string;collegeId:string;
+ status:"ACTIVE"|"CLOSED"|"DRAFT";
+ isRegistrationOpen:boolean;registrationDeadline:Date|null;
+ currentCollegeId:string;at:Date;
+}){
+ if(input.collegeId!==input.currentCollegeId)
+  throw new Error("Cross-college season projection");
+ const expired=input.registrationDeadline!==null&&
+  input.registrationDeadline.getTime()<=input.at.getTime();
+ return {id:input.id,name:input.name,
+  current:input.status==="ACTIVE",
+  registrationOpen:input.status==="ACTIVE"&&
+    input.isRegistrationOpen&&!expired,
+  registrationClosedReason:input.status!=="ACTIVE"?"SEASON_NOT_ACTIVE":
+    expired?"DEADLINE_PASSED":
+    !input.isRegistrationOpen?"REGISTRATION_PAUSED":null};
+}
+export const LEGACY_PLACEMENT_SEASON_ROUTES={
+ "GET /api/v2/placement-season/current":"currentPlacementSeason",
+ "GET /api/v2/placement-season/list":"listPlacementSeasons",
+ "POST /api/v2/placement-season":"createPlacementSeason",
+ "POST /api/v2/placement-season/close":"closePlacementSeason",
+ "POST /api/v2/placement-season/register":"batchRegistrationService; requires fresh cohort consent",
+} as const;
