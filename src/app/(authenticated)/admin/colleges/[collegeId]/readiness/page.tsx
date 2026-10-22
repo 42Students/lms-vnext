@@ -204,7 +204,7 @@ export default async function CollegeReadinessPage({
             label: "Total checks",
             count: evaluation.counts.total,
           },
-        ].map(metric => <StatTile className={collegeStyles.tile} key={metric.label} label={metric.label} value={metric.count}/>)}
+        ].map(metric => <StatTile {...(collegeStyles["tile"] === undefined ? {} : {className:collegeStyles["tile"]})} key={metric.label} label={metric.label} value={metric.count}/>)}
       </section>
 
       <section aria-label="Must fix before launch" className="min-w-0 space-y-3 border-t border-border pt-6">
