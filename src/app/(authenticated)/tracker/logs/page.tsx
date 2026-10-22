@@ -14,7 +14,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { Alert } from "@/components/ui/alert";
 import { isSuperAdmin } from "@/modules/identity/context";
 import {
-  listKnownErrorsForAdmin,
+  pageKnownErrorsForAdmin,
   readLogAlertAdminState,
 } from "@/modules/log-alerts/admin-service";
 import { cloudLogPollConfigured, logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
@@ -37,7 +37,7 @@ export const metadata: Metadata = { title: "Logs · 42 Tracker" };
 export default async function TrackerLogsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ environment?: string; query?: string; insertId?: string; logName?: string; detail?: string }>;
+  searchParams: Promise<{ environment?: string; query?: string; insertId?: string; logName?: string; detail?: string; knownOffset?: string }>;
 }) {
   // Logs are platform-wide and can contain operational identifiers. A named,
   // unscoped Super Admin session is required; never recreate the old shared
@@ -89,6 +89,8 @@ export default async function TrackerLogsPage({
     typeof search.logName === "string" ? search.logName : "";
   const liveQuery = typeof search.query === "string"
     ? search.query.slice(0, 150) : legacyReference.slice(0, 150);
+  const offsetRaw = search.knownOffset ?? "0";
+  const knownOffset = /^\d{1,6}$/.test(offsetRaw) ? Number(offsetRaw) : Number.NaN;
   const parsed = knownErrorListSchema.safeParse({ environment, limit: 40 });
   const alertsReady = logAlertsRuntimeEnabled();
   const pollingReady = cloudLogPollConfigured();
@@ -111,7 +113,7 @@ export default async function TrackerLogsPage({
     </>
   );
 
-  if (!parsed.success) {
+  if (!parsed.success || !Number.isSafeInteger(knownOffset) || knownOffset > 100000) {
     return (
       <div className="min-w-0 space-y-4">
         {header}
@@ -125,11 +127,12 @@ export default async function TrackerLogsPage({
   // DB10 Known Errors persistence feature has not been enabled by operations.
   const knownErrors = alertsReady
     ? await Promise.all([
-        listKnownErrorsForAdmin(context, parsed.data),
+        pageKnownErrorsForAdmin(context, { ...parsed.data, offset: knownOffset }),
         readLogAlertAdminState(context),
       ])
     : null;
-  const items = knownErrors?.[0] ?? [];
+  const knownPage = knownErrors?.[0] ?? null;
+  const items = knownPage?.items ?? [];
   const lastViewedAt = knownErrors?.[1].adminLastViewedAt ?? null;
   const newSinceLastVisit = lastViewedAt
     ? items.filter(item => item.lastSeenAt.getTime() > lastViewedAt.getTime()).length
@@ -165,7 +168,11 @@ export default async function TrackerLogsPage({
          <p className="text-sm text-body">Durable signatures, recurrence, acknowledgements and triage are kept separate from the live log feed.</p>
          {knownErrors ? <>
            <KnownErrorsWorkspace items={items} lastViewedAt={lastViewedAt} backendStartedAt={backendStartedAt}/>
-           {items.length===40?<p className="text-xs leading-5 text-muted-foreground">Showing the 40 most recent signatures; live logs can contain more events.</p>:null}
+           {knownPage ? <nav aria-label="Known error history pages" className="flex flex-wrap items-center gap-4 text-sm">
+             <span>Showing {knownPage.total === 0 ? 0 : knownPage.offset + 1}–{knownPage.offset + items.length} of {knownPage.total} saved signatures</span>
+             {knownPage.offset > 0 ? <Link className="font-semibold text-primary-text underline" href={`/tracker/logs?environment=${environment}&knownOffset=${Math.max(0,knownPage.offset-40)}`}>Newer signatures</Link> : null}
+             {knownPage.hasMore && knownPage.nextOffset !== null ? <Link className="font-semibold text-primary-text underline" href={`/tracker/logs?environment=${environment}&knownOffset=${knownPage.nextOffset}`}>Older signatures</Link> : null}
+           </nav> : null}
          </> : <Alert tone="warning">Known errors persistence is not enabled or its migration replay has not been verified. This does not mean there are no errors. Live logging above remains available independently.</Alert>}
        </section>
        <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
