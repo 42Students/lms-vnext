@@ -142,8 +142,8 @@ export function mapLegacyModuleSetting(candidate:LegacyModuleSettingCandidate){
  const moduleKeys:Record<string,"projects"|"placements"|"electives">={
   PROJECTS:"projects",PLACEMENTS:"placements",ELECTIVES:"electives",
  };
- const module=moduleKeys[candidate.settingKey.trim().toUpperCase()];
- if(!module)throw new Error("Unapproved historical module setting");
+ const moduleKey=moduleKeys[candidate.settingKey.trim().toUpperCase()];
+ if(!moduleKey)throw new Error("Unapproved historical module setting");
  const scopes:Record<LegacyModuleScope,CanonicalModuleScope>={
   GLOBAL:"GLOBAL",ORGANIZATION:"ORGANIZATION",COLLEGE:"COLLEGE",
   DEPARTMENT:"DEPARTMENT",PROGRAM:"PROGRAM",BATCH:"COHORT",
@@ -162,7 +162,7 @@ export function mapLegacyModuleSetting(candidate:LegacyModuleSettingCandidate){
     !/(?:Z|[+-]\d{2}:\d{2})$/.test(candidate.updatedAt))
   throw new Error("Historical setting time requires explicit source zone");
  return {sourceId,scopeType,scopeId:scopeType==="GLOBAL"?null:id,
-  module,enabled:candidate.enabled,locked:candidate.locked,
+  module:moduleKey,enabled:candidate.enabled,locked:candidate.locked,
   deleted:candidate.deleted,updatedAt:date.toISOString()};
 }
 export function planLegacyModuleRuleImport(rows:readonly LegacyModuleSettingCandidate[]){

@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { safeReturnTo } from "@/lib/return-to";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -185,9 +186,9 @@ export default async function HomePage({
         <div className={styles.brandRow}>
           {/* The mark and letterforms are the original LMS SVG, not a CSS approximation. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <a href="/" aria-label="42 LMS home">
+          <Link href="/" aria-label="42 LMS home">
             <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
-          </a>
+          </Link>
         </div>
         {branding?.collegeName ? (
           <div className={styles.collegeBrand}>
