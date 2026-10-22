@@ -8,10 +8,10 @@ export const learnerContactEditSchema = z.object({
     contactEmail:z.string().trim().max(320),
   }).strict().optional(),
   contacts: z.object({
-    alternatePhone: z.string().trim().max(32).refine(value=>{
-      const length=value.replace(/\D/g,"").length;
-      return !value || (length>=10 && length<=15);
-    },"Alternate phone number must be 10 to 15 digits"),
+    alternatePhone: z.string().trim().max(32).refine(
+      value=>value==="" || /^\d{10,15}$/.test(value),
+      "Alternate phone number must be 10 to 15 digits",
+    ),
     contactEmail: z.string().trim().max(320),
   }).strict(),
 }).strict().superRefine((value, ctx) => {
