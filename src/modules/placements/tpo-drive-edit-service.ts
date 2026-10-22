@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,sql,inArray,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementJobRoleOptions,placementJobs,placementSeasons,placementCompanyRelationships,placementCompanies,placementJobEligibilityPolicies,placementApplications,placementRecruiterDriveRequests,collegeMemberships,users,inAppNotifications,activityEvents,cohorts,programs,departments,learnerProgramEnrollments,membershipRoles} from "@/db/schema";
+import {placementJobRoleOptions,placementJobRounds,placementJobs,placementSeasons,placementCompanyRelationships,placementCompanies,placementJobEligibilityPolicies,placementApplications,placementRecruiterDriveRequests,collegeMemberships,users,inAppNotifications,activityEvents,cohorts,programs,departments,learnerProgramEnrollments,membershipRoles} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {placementJobIdSchema} from "./validation";
@@ -96,6 +96,16 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
  }).from(placementJobRoleOptions).where(and(
   eq(placementJobRoleOptions.jobId,jobId),eq(placementJobRoleOptions.status,"ACTIVE")))
   .orderBy(asc(placementJobRoleOptions.position),asc(placementJobRoleOptions.id));
+ const roundRows=await getDb().select({
+  id:placementJobRounds.id,name:placementJobRounds.name,kind:placementJobRounds.kind,
+  status:placementJobRounds.status,sequence:placementJobRounds.sequence,
+  scheduledAt:placementJobRounds.scheduledAt,
+ }).from(placementJobRounds).where(eq(placementJobRounds.jobId,jobId))
+  .orderBy(asc(placementJobRounds.sequence),asc(placementJobRounds.id)).limit(101);
+ const roundsComplete=roundRows.length<=100;
+ const rounds=roundRows.slice(0,100).map(item=>({
+  ...item,scheduledAt:item.scheduledAt?.toISOString()??null,
+ }));
  const [counter]=await getDb().select({total:sql<number>`count(distinct ${placementApplications.membershipId})::int`})
   .from(placementApplications)
   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
@@ -116,7 +126,7 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
   minPostgraduatePctBasisPoints:policy?.minPostgraduatePctBasisPoints??null,
   allowedPassingYears:policy?.allowedPassingYears??[],
   allowedProgramIds,availablePrograms,
-  roleOptions,
+  roleOptions,rounds,roundsComplete,
   allowedCohortIds,availableBatches,applicantCount:Number(counter?.total??0),
   editable:["DRAFT","PUBLISHED"].includes(job.status)&&companyReady,
   editingBlockedReason:!companyReady?"Add the company. The linked employer is unavailable.":
