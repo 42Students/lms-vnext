@@ -28,7 +28,7 @@ export class LearnerGalleryError extends Error {
 }
 function requireGalleryReady() {
   // Promotion requires receipt-owned migration replay and scanner negative tests.
-  if (process.env.DB04_PROFILE_GALLERY_READY !== "DB04_VERIFIED")
+  if (process.env["DB04_PROFILE_GALLERY_READY"] !== "DB04_VERIFIED")
     throw new LearnerGalleryError("GALLERY_NOT_READY");
 }
 async function galleryAccess(context: RequestContext, rawMembershipId: unknown): Promise<GalleryAccess> {
