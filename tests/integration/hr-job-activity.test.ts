@@ -26,7 +26,7 @@ describe.skipIf(!enabled)("HR job activity PG scopes",()=>{
    const j=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:rel,
     title,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
    await seedPublishableJobReadiness(j.id,tpo.user.id);
-   await publishPlacementJob(tpo,j.id);return j;
+   await publishPreparedPlacementJob(tpo,j.id);return j;
   };
   const own=await make(a.relationship.id,"HR Feed Own "+n);
   const other=await make(b.relationship.id,"HR Feed Other "+n);

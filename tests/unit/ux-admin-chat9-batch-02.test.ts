@@ -30,7 +30,10 @@ describe("chat-9 last-third admin UX rollout, batch 02",()=>{
   expect(page).toContain("text-primary-text");
   expect(page).toContain("focus-visible:outline");
   expect(page).not.toContain("min-h-10");
-  for(const component of ["<Input","<Select","<Button","<Pagination"])expect(page).toContain(component);
+  for(const component of ["<SuperAdminTemplateAutoSearch","<Select","<Button","<Pagination"])expect(page).toContain(component);
+  const search=source("src/components/projects/super-admin-template-auto-search.tsx");
+  expect(search).toContain("<Input");
+  expect(search).toContain('aria-label="Search title or slug"');
   expect(page).toMatch(/PageHeader|SuperAdminTemplateSubviewPage|ProjectAdmin|redirect\(|<SuperAdminTemplateTabs/);
  });
  it("UX-admin-projects-templates-template-id-01 preserves verified shared UX contract",()=>{
