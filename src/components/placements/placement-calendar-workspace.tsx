@@ -743,7 +743,7 @@ export async function PlacementCalendarWorkspace({
         actions={
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <div
-            className={"grid w-full min-w-0 grid-cols-3 gap-2 sm:flex sm:w-auto sm:flex-wrap "+(isTpo?calendarStyles.tpoViewSwitch:"")}
+            className={"grid w-full min-w-0 grid-cols-3 gap-2 sm:flex sm:w-auto sm:flex-wrap "+(isTpo?calendarStyles["tpoViewSwitch"]:"")}
             role="group"
             aria-label="Calendar view"
           >
@@ -832,7 +832,7 @@ export async function PlacementCalendarWorkspace({
        {needsKnown?<p className="mt-3 text-sm text-body">
         {nextSeven.length?
          "Next 7 days: "+nextSeven.length+" "+(nextSeven.length===1?"item":"items")+
-         ", first "+nextSeven[0].title+" on "+dayLabel(placementCalendarDayKey(nextSeven[0].startsAt))+".":
+         ", first "+nextSeven[0]?.title+" on "+dayLabel(placementCalendarDayKey(nextSeven[0]?.startsAt ?? now))+".":
          "Nothing in the next 7 days."}
        </p>:null}
       </section>:null}
@@ -918,7 +918,7 @@ export async function PlacementCalendarWorkspace({
         </Banner>:null}
         {(!bookings?.failed||bookings.stale)?<SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false}/>:null}
        </PlacementPanelErrorBoundary> : null}
-      <section className={isTpo?"border-b border-border pb-5 "+calendarStyles.tpoCommandBar:"border-b border-border pb-5"}>
+      <section className={isTpo?"border-b border-border pb-5 "+calendarStyles["tpoCommandBar"]:"border-b border-border pb-5"}>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -936,7 +936,7 @@ export async function PlacementCalendarWorkspace({
           </div>
         </div>
 
-        <div className={"mt-4 grid min-w-0 grid-cols-3 items-center gap-2 sm:flex sm:flex-wrap "+(isTpo?calendarStyles.tpoNavigationRow:"")}>
+        <div className={"mt-4 grid min-w-0 grid-cols-3 items-center gap-2 sm:flex sm:flex-wrap "+(isTpo?calendarStyles["tpoNavigationRow"]:"")}>
           <Link
             href={calendarHref(
               basePath,
@@ -1195,9 +1195,9 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`} tabIndex={0}
-          className={"min-w-0 overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1rem),transparent_100%)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] "+(isTpo?calendarStyles.tpoMonthFrame:"")}
+          className={"min-w-0 overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1rem),transparent_100%)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] "+(isTpo?calendarStyles["tpoMonthFrame"]:"")}
         >
-          <CalendarGrid variant="hairline" className={"min-w-[42rem] min-[992px]:min-w-[56rem] "+calendarStyles.calendarHairline}>
+          <CalendarGrid variant="hairline" className={"min-w-[42rem] min-[992px]:min-w-[56rem] "+calendarStyles["calendarHairline"]}>
             {[
               "Mon",
               "Tue",
@@ -1209,7 +1209,7 @@ export async function PlacementCalendarWorkspace({
             ].map((label, index) => (
               <div
                 key={label}
-                className={"py-3 text-center text-xs font-bold uppercase text-muted-foreground "+calendarStyles.calendarWeekday+" "+(index===6?calendarStyles.calendarSunday:"")}
+                className={"py-3 text-center text-xs font-bold uppercase text-muted-foreground "+calendarStyles["calendarWeekday"]+" "+(index===6?calendarStyles["calendarSunday"]:"")}
               >
                 {label}
               </div>
@@ -1230,9 +1230,9 @@ export async function PlacementCalendarWorkspace({
               );
 
               const dayCellClass =
-                "min-h-32 border p-2 " +calendarStyles.calendarDay+" "+
-                (day===today?calendarStyles.calendarCurrentDay+" ":"")+
-                (new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday+" ":"")+
+                "min-h-32 border p-2 " +calendarStyles["calendarDay"]+" "+
+                (day===today?calendarStyles["calendarCurrentDay"]+" ":"")+
+                (new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles["calendarSunday"]+" ":"")+
                 (outsideMonth?"bg-muted/40":"bg-surface");
               return (
                 <div
@@ -1246,7 +1246,7 @@ export async function PlacementCalendarWorkspace({
                       (day === today
                         ? "m-0 text-xs font-bold text-[var(--lms-link-text)]"
                         : "m-0 text-xs font-semibold text-foreground") +
-                      (day!==today&&new Date(day+"T12:00:00Z").getUTCDay()===0?" "+calendarStyles.calendarSunday:"")
+                      (day!==today&&new Date(day+"T12:00:00Z").getUTCDay()===0?" "+calendarStyles["calendarSunday"]:"")
                     }
                   >
                     {dayLabel(day)}
