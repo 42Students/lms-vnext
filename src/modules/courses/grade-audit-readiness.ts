@@ -14,9 +14,9 @@ export const GRADE_AUDIT_PARITY_REQUIREMENTS={
 } as const;
 
 export function gradeAuditParityConfigured(){
- return process.env.DB045_GRADE_HISTORY_READY==="DB045_VERIFIED" &&
-  process.env.DB045_GRADE_PRODUCERS_READY==="DB045_VERIFIED" &&
-  process.env.DB045_GRADE_REPLAY_READY==="DB045_VERIFIED";
+ return process.env["DB045_GRADE_HISTORY_READY"]==="DB045_VERIFIED" &&
+  process.env["DB045_GRADE_PRODUCERS_READY"]==="DB045_VERIFIED" &&
+  process.env["DB045_GRADE_REPLAY_READY"]==="DB045_VERIFIED";
 }
 
 /** Fail closed: do not advertise grade audit history or purge old grade
