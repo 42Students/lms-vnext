@@ -3,7 +3,7 @@ import {and,eq,gt,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanies,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,placementJobRoundEvents,
- placementRoundResults,activityEvents,colleges,organizations,users} from "@/db/schema";
+ placementRoundResults,colleges,organizations,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
