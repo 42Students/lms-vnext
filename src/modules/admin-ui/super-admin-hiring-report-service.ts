@@ -32,8 +32,8 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
  if(!selected.collegeId&&!selected.organizationId)
   throw new AuthorizationError("placements.read");
  requirePermission(context,"placements.read",{
-  collegeId:selected.collegeId??undefined,
-  organizationId:selected.organizationId??undefined,
+  ...(selected.collegeId !== null ? {collegeId:selected.collegeId} : {}),
+  ...(selected.organizationId !== null ? {organizationId:selected.organizationId} : {}),
  });
  // Academic facet IDs are meaningful only inside a selected college; they
  // must not leak into organization-wide aggregates through an old URL.
