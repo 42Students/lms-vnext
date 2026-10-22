@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {updateOwnRecruiterProfileDetails} from "@/modules/placements/recruiter-profile-details-service";
+import {normalizeLegacyRecruiterMobile} from "@/modules/placements/recruiter-profile-details-model";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
 export const runtime="nodejs";
 export async function PATCH(request:Request){
@@ -30,8 +31,7 @@ export async function PATCH(request:Request){
   // before attempting a mutation, not a misleading stale-version response.
   if(normalized&&typeof normalized==="object"&&!Array.isArray(normalized)){
     const candidate=(normalized as Record<string,unknown>).phone;
-    if(typeof candidate==="string"&&candidate.trim()&&
-       !/^(?:[0-9]{10}|\+91[0-9]{10})$/.test(candidate.trim())){
+    if(typeof candidate==="string"&&normalizeLegacyRecruiterMobile(candidate)===null){
       return NextResponse.json({
         error:"INVALID_MOBILE",
         message:"Enter a valid 10-digit mobile number, or leave it blank",
