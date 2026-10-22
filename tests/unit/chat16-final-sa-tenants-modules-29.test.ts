@@ -7,7 +7,7 @@ describe("SA-tenants-modules-29 population-aware confirmation",()=>{
   expect(s).toContain('"/impact?module="+encodeURIComponent(module)');
   expect(s).toContain("const canSave=students!==null&&(students<100||acknowledgedPopulation)");
   expect(s).toContain("Student population could not be confirmed. The change will not be saved.");
-  expect(s).toContain("confirmDisabled={busy||impactBusy||!dirty||(ancestorLocked&&choice!==\"INHERIT\")||!canSave}");
+  expect(s).toContain('confirmDisabled={busy||impactBusy||!dirty||(ancestorLocked&&choice!=="INHERIT")||!canSave}');
  });
  it("SA-tenants-modules-29 requires acknowledgement at 100 learners and separately warns for lock changes",()=>{
   const s=read("src/components/admin/college-feature-rule-editor.tsx");
