@@ -48,9 +48,9 @@ import {
  * Student identity is always the active membership in the job's college.
  */
 export const LEGACY_PLACEMENT_ELIGIBILITY_FIELD_CROSSWALK=[
- {legacy:"job.eligibilityCriteria.minimumCgpa",source:"placement_job_eligibility_policies.min_cgpa"},
- {legacy:"job.eligibilityCriteria.minimumTenthPercent",source:"placement_job_eligibility_policies.min_tenth_pct"},
- {legacy:"job.eligibilityCriteria.minimumTwelfthPercent",source:"placement_job_eligibility_policies.min_twelfth_pct"},
+ {legacy:"job.eligibilityCriteria.minimumCgpa",source:"placement_job_eligibility_policies.min_cgpa_hundredths"},
+ {legacy:"job.eligibilityCriteria.minimumTenthPercent",source:"placement_job_eligibility_policies.min_tenth_pct_basis_points"},
+ {legacy:"job.eligibilityCriteria.minimumTwelfthPercent",source:"placement_job_eligibility_policies.min_twelfth_pct_basis_points"},
  {legacy:"job.eligibilityCriteria.maximumBacklogs",source:"placement_job_eligibility_policies.max_active_backlogs"},
  {legacy:"job.eligibilityCriteria.maximumGapYears",source:"placement_job_eligibility_policies.max_gap_years"},
  {legacy:"student.academicRecord",source:"placement_candidate_academic_evidence (verified source and missing state)"},
