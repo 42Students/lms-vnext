@@ -75,7 +75,7 @@ export async function updateOwnLearnerContacts(
       .from(learnerProfiles).where(eq(learnerProfiles.membershipId,membership.id))
       .for("update").limit(1);
     const current=learnerProfileDocumentSchema.shape.contacts.parse(
-      (locked?.document as Record<string,unknown>|null|undefined)?.contacts,
+      (locked?.document as Record<string,unknown>|null|undefined)?.["contacts"],
     );
     if(input.expectedContacts && learnerContactsAreStale(current,input.expectedContacts))
       throw new PeopleServiceError("LEARNER_CONTACT_STALE");
