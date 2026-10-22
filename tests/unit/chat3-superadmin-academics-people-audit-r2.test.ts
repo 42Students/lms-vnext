@@ -23,7 +23,7 @@ describe("Chat-3 second-eye Super Admin academics and people audit",()=>{
   expect(s).toContain('data.contactVisible?row.email??"—":"Email masked"');
   expect(s).toContain("const base=new URL(adminUsersHref({...data.query,page:1})");
   expect(s).toContain("hrefForPage={page=>href(page)}");
-  expect(s).toContain('title="No matching users"');
+  expect(s).toContain('title={data.query.q?"No matching contacts":"No contacts found"}');
  });
  it("SA3-PEOPLE-05 membership detail masks contacts and limits platform block to unscoped Super Admin",()=>{
   const s=page("people/directory/[membershipId]");

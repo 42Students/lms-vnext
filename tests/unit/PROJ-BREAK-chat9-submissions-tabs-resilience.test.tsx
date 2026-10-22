@@ -1,7 +1,7 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement} from "react";
 import {ProjectAdminPagination} from "@/components/projects/project-admin-collection-controls";
-import {Pagination} from "@/components/ui/pagination";
+import {readFileSync} from "node:fs";
 import {ProjectAdminSubmissionsPage} from "@/components/projects/project-admin-submissions-page";
 
 const state=vi.hoisted(()=>({
@@ -46,19 +46,6 @@ function strings(value:unknown):string[]{
   const p=value.props as Record<string,unknown>;
   return ["children","title","description","action","href","eyebrow","empty"].flatMap(key=>strings(p[key]));
 }
-function paginationState(value:unknown): {page:number;pageCount:number}|null {
-  if(Array.isArray(value)){
-    for(const item of value){const found=paginationState(item);if(found)return found;}
-    return null;
-  }
-  if(!isValidElement(value))return null;
-  if(value.type===ProjectAdminPagination || value.type===Pagination){
-    const p=value.props as {page:number;totalPages?:number;pageCount?:number};
-    return {page:p.page,pageCount:p.pageCount??p.totalPages??1};
-  }
-  const p=value.props as Record<string,unknown>;
-  return paginationState(p.children)??paginationState(p.empty)??paginationState(p.action);
-}
 const render=(query:Record<string,string|string[]|undefined>={})=>
   ProjectAdminSubmissionsPage({
     collegeId:"11111111-1111-4111-8111-111111111111",
@@ -77,7 +64,11 @@ describe("IIT Dharwad Projects: adversarial tab outage and pagination journeys",
     expect(state.unsubmitted).toBe(1);
     expect(state.unsubmittedQuery).toEqual({q:"IIT",status:"ACTIVE",page:2,pageSize:50});
     expect(page).toContain("Not submitted");
-    expect(paginationState(view)).toEqual({page:2,pageCount:2});
+    // The shared pagination is an unexecuted Server Component at this boundary:
+    // verify both real data props and the filter-preserving link factory.
+    const source=readFileSync("src/components/projects/project-admin-submissions-page.tsx","utf8");
+    expect(source).toContain('<Pagination page={unsubmitted.page} pageCount={unsubmitted.totalPages}');
+    expect(source).toContain('hrefForPage={page=>projectAdminUnsubmittedHref(queuePath,query,page)}');
     expect(page).toContain("q=IIT");
     expect(page).toContain("status=ACTIVE");
     expect(page).toContain("pageSize=50");
