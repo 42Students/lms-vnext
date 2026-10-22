@@ -9,10 +9,10 @@ export const confirmedTpoRoundResultSchema = z.object({
 
 /** Explicitly model the legacy labels without inventing a SELECTED state. */
 export const TPO_RESULT_LABELS = {
-  PASS: "Shortlisted for next round",
-  FAIL: "Not selected in this round",
-  HOLD: "On hold / waitlisted",
-  ABSENT: "Absent from round",
+  PASS: "Pass",
+  FAIL: "Not cleared",
+  HOLD: "Waitlist",
+  ABSENT: "Absent",
 } as const;
 
 export function canEditTpoRoundResult(
