@@ -63,8 +63,8 @@ export function LearnerPlacementsTabs({
           value: tab.href,
           href: tab.href,
           label: tab.label,
-          count: tab.label==="Notices" && unreadCollegeAnnouncements!==null && unreadCollegeAnnouncements>0
-            ? unreadCollegeAnnouncements : undefined,
+          ...(tab.label==="Notices" && unreadCollegeAnnouncements!==null && unreadCollegeAnnouncements>0
+            ? {count: unreadCollegeAnnouncements} : {}),
         }))} />
     </div>
   );
