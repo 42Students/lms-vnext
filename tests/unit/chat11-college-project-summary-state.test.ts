@@ -61,7 +61,8 @@ describe("PROJ-BREAK-COL-SUMMARY-01 College Admin project editing",()=>{
  });
  it("locks and rechecks the persisted college before CAS, writes audit and sends after transaction event",()=>{
   const service=source("src/modules/projects/college-project-summary-service.ts");
-  expect(service).toContain("requireProjectManageAccess(context,projectId)");
+  expect(service).toContain("requireProjectManageAccess(context,resolvedId)");
+  expect(service).toContain('assertPersistedPlatformPermission(tx,context,"projects.manage"');
   expect(service).toContain("eq(projectInstances.collegeId,scope.collegeId)");
   expect(service).toContain('.for("update")');
   const archived=service.indexOf('row.status==="ARCHIVED"');
