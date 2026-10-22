@@ -4,6 +4,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {useEffect,useMemo,useRef,useState} from "react";
@@ -18,7 +19,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge";
 type Row={id:string;name:string|null;email:string|null;collegeName:string;ageDays:number;
  source:string;submittedAt:Date|string;rollNumber:string|null;roleTitle:string;
- status:string;screening:string|null;stage:string;previousStage:string|null;stageVersion:number|null;
+ status:string;screening:string|null;screeningScore?:number|null;partialScore?:number|null;
+ stage:string;previousStage:string|null;stageVersion:number|null;
  allowedNextStages?:readonly string[];stageMovedByName?:string|null;stageMovedAt?:string|null;};
 const transitions=COLLEGE_APPLICATION_TRANSITIONS;
 const istDateTime=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
@@ -45,6 +47,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  const [detailPayload,setDetailPayload]=useState<CollegeApplicationDetail|null>(null);
  const [target,setTarget]=useState<string>("SHORTLISTED");
  const [reason,setReason]=useState("");
+ const [assessmentUrl,setAssessmentUrl]=useState("");
+ const [saveAssessmentUrlToJob,setSaveAssessmentUrlToJob]=useState(true);
  const [action,setAction]=useState<"MOVE"|"REINSTATE">("MOVE");
  const [dialog,setDialog]=useState(false);
  const [busy,setBusy]=useState(false);
@@ -55,12 +59,14 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   scopeEpoch.current+=1;
   setSelected([]);setAllMatching(false);setDetailId(null);setDetailPayload(null);
   setDialog(false);setBusy(false);setError("");setOutcome(null);setFailedDetailId(null);
+  setAssessmentUrl("");setSaveAssessmentUrlToJob(true);
  },[activeScope]);
  useEffect(()=>{
   // Reject late drawer responses and hidden selection after filter changes.
   scopeEpoch.current+=1;
   setAllMatching(false);setSelected([]);setDetailId(null);setDetailPayload(null);
   setFailedDetailId(null);setDialog(false);setError("");setOutcome(null);
+  setAssessmentUrl("");setSaveAssessmentUrlToJob(true);
  },[filterScope]);
  useEffect(()=>{
   // The detail API separately rechecks selected-college access.
@@ -90,13 +96,26 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  }
  function selectRow(row:Row,next:string){
   setAllMatching(false);setSelected([row.id]);setTarget(next);setAction(next==="REINSTATE"?"REINSTATE":"MOVE");
-  setReason("");setOutcome(null);setError("");setDialog(true);
+  setReason("");setOutcome(null);setError("");setAssessmentUrl("");
+  setSaveAssessmentUrlToJob(true);setDialog(true);
  }
  function chooseBulk(next:string){
-  setAction(next==="REINSTATE"?"REINSTATE":"MOVE");setTarget(next);setReason("");setOutcome(null);setError("");setDialog(true);
+  setAction(next==="REINSTATE"?"REINSTATE":"MOVE");setTarget(next);setReason("");
+  setAssessmentUrl("");setSaveAssessmentUrlToJob(true);
+  setOutcome(null);setError("");setDialog(true);
  }
  async function save(){
   if(!selectedCount||reason.trim().length<3||busy)return;
+  const assessment=assessmentUrl.trim();
+  if(action==="MOVE"&&target==="ASSESSMENT"&&assessment){
+   try{
+    const url=new URL(assessment);
+    if(url.protocol!=="https:"||!url.hostname||url.username||url.password||assessment.length>2048)
+     throw Error("Invalid assessment URL");
+   }catch{
+    setError("Enter an HTTPS assessment URL, or leave it blank.");return;
+   }
+  }
   const epoch=scopeEpoch.current;
   setBusy(true);setError("");setOutcome(null);
   try{
@@ -104,7 +123,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,applicationIds:allMatching?[]:selected,
       matchingFilter:allMatching?query:undefined,stage:action==="MOVE"?target:undefined,
-      reason:reason.trim(),notifyByEmail:false,confirmed:true}),
+      reason:reason.trim(),notifyByEmail:false,confirmed:true,
+      ...(action==="MOVE"&&target==="ASSESSMENT"&&assessment?{
+       assessmentUrl:assessment,saveAssessmentUrlToJob,
+      }:{}),
+     }),
    });
    if(scopeEpoch.current!==epoch)return;
    const moved=payload.moved??0,skipped=payload.skipped??0;
@@ -158,6 +181,18 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      <span className="text-xs text-muted-foreground" title="Last stage change">{istDateTime.format(new Date(row.stageMovedAt))} IST</span>:null}
    </span>},
   {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening?<StatusBadge tone={applicationStatusTone(row.screening)}>{stageLabel(row.screening)}</StatusBadge>:"—"},
+  {key:"score",header:"Match Score",mobilePriority:"secondary",cell:row=>{
+   const score=row.screeningScore;
+   if(score===null||score===undefined||!Number.isFinite(score))return "—";
+   const percent=Math.max(0,Math.min(100,Math.round(score)));
+   const tone=percent>=70?"bg-[#f9f0ff] text-[#722ed1]":
+    percent>=40?"bg-[#e6fffb] text-[#08979c]":"bg-surface-secondary text-muted-foreground";
+   return <span className="inline-flex flex-wrap items-center gap-1.5">
+    <span className={"rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums "+tone}>{percent}%</span>
+    {row.partialScore!==null&&row.partialScore!==undefined?
+     <span className="text-xs text-muted-foreground">Partial</span>:null}
+   </span>;
+  }},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=>
    <div className="flex min-w-[210px] flex-wrap items-center gap-2">
     <Button type="button" variant="secondary" onClick={()=>void openDetail(row.id)}
@@ -258,7 +293,20 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Reason
      <Textarea rows={3} required minLength={3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
       className="w-full text-base sm:text-sm"/></label>
-    {target==="ASSESSMENT"?<p className="text-sm text-body">Assessment links are managed through the drive's registered rounds. This status update does not send or save an assessment URL.</p>:null}
+    {action==="MOVE"&&target==="ASSESSMENT"?<div className="space-y-2">
+      <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+       Assessment URL (optional)
+       <Input type="url" maxLength={2048} placeholder="https://..."
+        value={assessmentUrl} onChange={event=>setAssessmentUrl(event.target.value)}
+        disabled={busy} className="w-full text-base sm:text-sm"/>
+      </label>
+      <label className="flex min-h-10 items-center gap-2 text-sm text-body">
+       <Checkbox checked={saveAssessmentUrlToJob} disabled={busy||!assessmentUrl.trim()}
+        onChange={event=>setSaveAssessmentUrlToJob(event.target.checked)}/>
+       Save link to job
+      </label>
+      <p className="text-xs text-muted-foreground">The secure link is stored for successfully moved candidates. Saving it to the job also updates its assessment metadata.</p>
+     </div>:null}
     {target==="INTERVIEW"?<p className="text-sm text-body">Moving a candidate to Interview does not schedule an appointment. Use Schedule Interview in the applicant row after the update.</p>:null}
     {target==="OFFERED"||target==="HIRED"?<p className="text-sm text-body">An existing issued offer is required for Offered, and accepted offer plus confirmed joining are required for Hired. This action does not create an offer or joining outcome.</p>:null}
     <p className="text-xs text-muted-foreground">Successful updates send in-app notifications only. Email delivery is unavailable.</p>
