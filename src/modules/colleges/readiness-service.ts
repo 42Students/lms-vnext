@@ -505,13 +505,21 @@ export async function getSuperAdminCollegeReadiness(
     return latest;
   });
   facts.collegeStatus=currentCollege.status;
+  const evaluation=evaluateCollegeReadiness(facts);
+  const domainLoginReady=domainTotal===null||domainPrimary===null||
+    verifiedPrimaryDomains===null?null:
+      currentCollege.status==="ACTIVE"&&legacyBlockers.length===0;
+  const tenantSetupComplete=evaluation.overall==="INCOMPLETE"?null:
+    evaluation.overall==="READY";
   return {
     college:{...college,status:currentCollege.status},
-    evaluation:
-      evaluateCollegeReadiness(facts),
+    evaluation,
+    // Domain-based login may be configured even if the college has no active
+    // placement season, programmes or TPO team. Never label those operational
+    // setup gaps as a login outage. Runtime DNS/auth still need probing.
+    readinessGates:{domainLoginReady,tenantSetupComplete},
     legacyDomainReadiness:{
-      readyForDomainLogin:domainTotal===null||domainPrimary===null||
-        verifiedPrimaryDomains===null?null:legacyBlockers.length===0,
+      readyForDomainLogin:domainLoginReady,
       blockers:legacyBlockers,
       warnings:legacyWarnings,
       recommendedActions:legacyActions,

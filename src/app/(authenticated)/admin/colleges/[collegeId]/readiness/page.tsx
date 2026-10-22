@@ -112,6 +112,7 @@ export default async function CollegeReadinessPage({
     evaluation,
     supplemental,
     legacyDomainReadiness,
+    readinessGates,
   } = result;
   const shownChecks=visibleReadinessChecks(evaluation.checks,parsed.status,parsed.area);
   // SA-tenants-modules-23: distinguish measured blockers from optional
@@ -154,6 +155,34 @@ export default async function CollegeReadinessPage({
         </p>
       </div>
 
+      <section aria-label="Domain and tenant readiness verdicts"
+        className="grid gap-3 border-y border-border py-4 sm:grid-cols-2">
+        <div className="min-w-0 space-y-2">
+          <h2 className="text-sm font-semibold">Domain login configuration</h2>
+          <StatusBadge tone={readinessGates.domainLoginReady===null?"warning":
+            readinessGates.domainLoginReady?"success":"error"}>
+            {readinessGates.domainLoginReady===null?"Unknown":
+              readinessGates.domainLoginReady?"Configured":"Domain blockers"}
+          </StatusBadge>
+          <p className="text-xs text-body">
+            Checks the verified primary domain and active college only; a
+            missing TPO, programme or placement season does not block domain login.
+            Live DNS and sign-in require separate verification.
+          </p>
+        </div>
+        <div className="min-w-0 space-y-2">
+          <h2 className="text-sm font-semibold">Tenant setup completion</h2>
+          <StatusBadge tone={readinessGates.tenantSetupComplete===null?"warning":
+            readinessGates.tenantSetupComplete?"success":"error"}>
+            {readinessGates.tenantSetupComplete===null?"Incomplete evidence":
+              readinessGates.tenantSetupComplete?"Persisted checks pass":"Setup requirements remaining"}
+          </StatusBadge>
+          <p className="text-xs text-body">
+            All ten operational setup requirements are evaluated independently
+            of domain login readiness.
+          </p>
+        </div>
+      </section>
       <section
         aria-label="Readiness summary"
         className="grid gap-3 md:grid-cols-2 min-[1366px]:grid-cols-4"
