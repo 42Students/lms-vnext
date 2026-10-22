@@ -58,7 +58,7 @@ export function TpoBatchInvitationControl(props: Props) {
         throw new Error(response.status === 409 ? "Batch changed. Refresh before inviting." :
           errors[body.error ?? ""] ?? "Could not invite this batch.");
       setMessage((body.notifiedCount === 0 ? "Deadline set to " +
-        formatTpoBatchInviteSuccess(0, date).split("register by ")[1] ?? date :
+        (formatTpoBatchInviteSuccess(0, date).split("register by ")[1] ?? date) :
         formatTpoBatchInviteSuccess(body.notifiedCount ?? props.invitable, date)) +
         ". In-app only; email delivery is not enabled.");
       router.refresh();
