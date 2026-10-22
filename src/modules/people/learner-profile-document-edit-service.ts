@@ -1,7 +1,8 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,eq,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
+import {profilePrivateDocumentReceipts} from "@/db/schema/profile-verification";
 import {collegeMemberships,learnerProfiles,membershipRoles,placementCandidatePreferences,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -67,7 +68,38 @@ export async function updateOwnLearnerProfileDocument(context:RequestContext,raw
       });
     }
     const fields=learnerProfileChangedFields(current,nextDocument);
-    if(fields.includes("education")) learnerProfileEducationWriteSchema.parse(nextDocument.education);
+    if(fields.includes("education")){
+      learnerProfileEducationWriteSchema.parse(nextDocument.education);
+      // A UUID in profile JSON is not proof of document ownership or scanning.
+      // Every referenced certificate must belong to the authenticated learner,
+      // match this education entry, and be a live CLEAN receipt.
+      const references=nextDocument.education.flatMap(entry=>
+        entry.certificateReceiptId?[{entryId:entry.id,id:entry.certificateReceiptId}]:[]);
+      const receiptIds=[...new Set(references.map(reference=>reference.id))];
+      if(receiptIds.length){
+        const receipts=await tx.select({
+          id:profilePrivateDocumentReceipts.id,
+          owner:profilePrivateDocumentReceipts.owningMembershipId,
+          purpose:profilePrivateDocumentReceipts.purpose,
+          relatedEntryId:profilePrivateDocumentReceipts.relatedEntryId,
+          scanStatus:profilePrivateDocumentReceipts.scanStatus,
+          revokedAt:profilePrivateDocumentReceipts.revokedAt,
+          retentionUntil:profilePrivateDocumentReceipts.retentionUntil,
+        }).from(profilePrivateDocumentReceipts)
+          .where(and(inArray(profilePrivateDocumentReceipts.id,receiptIds),
+            eq(profilePrivateDocumentReceipts.owningMembershipId,member.id)));
+        const byId=new Map(receipts.map(receipt=>[receipt.id,receipt]));
+        const now=new Date();
+        if(references.some(reference=>{
+          const receipt=byId.get(reference.id);
+          return !receipt||receipt.owner!==member.id||
+            !["EDUCATION_CERTIFICATE","MARKSHEET"].includes(receipt.purpose)||
+            (receipt.relatedEntryId!==null&&receipt.relatedEntryId!==reference.entryId)||
+            receipt.scanStatus!=="CLEAN"||receipt.revokedAt!==null||
+            (receipt.retentionUntil!==null&&receipt.retentionUntil<=now);
+        }))throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
+      }
+    }
     if(!fields.length)return {...locked,profileDocument:current};
     if(current.jobPreferences.jobNotificationsEnabled !==
        nextDocument.jobPreferences.jobNotificationsEnabled){
