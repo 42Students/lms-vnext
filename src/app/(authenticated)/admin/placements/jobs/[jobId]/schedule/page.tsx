@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { ErrorState } from "@/components/ui/error-state";
@@ -173,23 +174,16 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           </svg> Refresh
         </Link>
       </div>}/>
-    <nav aria-label="Drive workspace" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-2">
-      {navItems.map(item=><Link key={item.name} href={item.href}
-        aria-current={item.name==="Schedule"?"page":undefined}
-        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold md:min-h-9 "+
-          (item.name==="Schedule"?"border-b-2 border-[var(--lms-primary)] bg-primary-subtle text-primary-text":
-          "text-body hover:bg-primary-subtle hover:text-primary-text")}>
-        {item.name}
-      </Link>)}
-    </nav>
-    <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4">
+    <Tabs ariaLabel="Drive workspace" value="Schedule" renderPanel={false}
+      items={navItems.map(item=>({value:item.name,label:item.name,href:item.href}))}/>
+    <div className="grid min-w-0 grid-cols-2 divide-x-0 divide-y divide-border border-y border-border sm:grid-cols-4 sm:divide-x sm:divide-y-0">
       {[
         {label:"Today (this page)",count:todayCount},
         {label:"Upcoming (this page)",count:upcomingCount},
         {label:"Completed (this page)",count:completedCount},
         {label:"Cancelled / No show (this page)",count:cancelledCount},
       ].map(item=><div key={item.label}
-        className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-3">
+        className="min-w-0 px-3 py-3 first:pl-0 last:pr-0">
         <p className="text-xs font-semibold text-muted-foreground">{item.label}</p>
         <p className="mt-1 text-2xl font-semibold text-foreground">{item.count}</p>
       </div>)}
@@ -198,7 +192,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       {candidateCount} matching interviews · counts above reflect appointments loaded on this page.
     </p>
     <form method="get" aria-label="Filter interviews"
-      className="grid min-w-0 grid-cols-1 items-end gap-3 rounded-[var(--lms-radius-card)] border border-border bg-surface-subtle p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <input type="hidden" name="appointmentPage" value="1"/>
       <input type="hidden" name="page" value="1"/>
       <label className="grid min-w-0 gap-2 text-sm font-semibold text-muted-foreground">

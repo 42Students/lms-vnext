@@ -119,11 +119,12 @@ export default async function TpoLeadsReportPage({
 
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <ReportNavigation workspace={workspace} />
-      <nav aria-label="Recruiter engagement cross-check" className="flex min-w-0 flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:flex-wrap sm:items-center">
-       <p className="min-w-0 flex-1 text-sm text-body">This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.</p>
-       <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">Open Engage →</Link>
-       <Link href="/tpo/companies" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">Company memory →</Link>
-      </nav>
+      <Banner tone="info" action={<div className="flex min-w-0 flex-wrap items-center gap-2">
+        <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open Engage →</Link>
+        <Link href="/tpo/companies" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Company memory →</Link>
+      </div>}>
+        This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.
+      </Banner>
 
       <section
         aria-label="Lead conversion metrics"

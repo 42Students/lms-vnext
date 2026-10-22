@@ -11,13 +11,13 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 
 - [x] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/new/page.tsx`
 - [x] `src/app/(authenticated)/admin/recruiters/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/page.tsx`
 - [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/programs/page.tsx`
+- [x] `src/app/(authenticated)/college/programs/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`
 - [ ] `src/app/(authenticated)/college/quizzes/page.tsx`
 - [ ] `src/app/(authenticated)/college/verification/page.tsx`
@@ -27,5 +27,5 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/messages/page.tsx`
 - [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
 - [x] `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx`
