@@ -109,7 +109,7 @@ export async function GET(request:Request,{params}:{params:Promise<{token:string
  ].join("\n")+"\n";
  entries.push({name:"manifest.txt",bytes:new TextEncoder().encode(manifest)});
  const archive=new Uint8Array(makeStoredZip(entries));
- return new Response(archive,{
+ return new Response(archive.buffer,{
   status:200,headers:{...privateHeaders,
    "Content-Type":"application/zip",
    "Content-Disposition":'attachment; filename="company-shortlisted-resumes.zip"',
