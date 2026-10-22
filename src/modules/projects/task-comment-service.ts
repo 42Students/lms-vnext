@@ -84,11 +84,11 @@ export async function listProjectTaskComments(context:RequestContext,projectId:s
   sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
  )).orderBy(asc(activityEvents.occurredAt),asc(activityEvents.id));
  const systemComments=events.map(event=>{
-  const nextStatus=typeof event.metadata.nextStatus==="string"
-    ?event.metadata.nextStatus:null;
-  const oldStatus=typeof event.metadata.previousStatus==="string"
-    ?event.metadata.previousStatus:null;
-  const progress=event.metadata.progressValue;
+  const nextStatus=typeof event.metadata["nextStatus"]==="string"
+    ?event.metadata["nextStatus"]:null;
+  const oldStatus=typeof event.metadata["previousStatus"]==="string"
+    ?event.metadata["previousStatus"]:null;
+  const progress=event.metadata["progressValue"];
   const progressValue=typeof progress==="number"&&Number.isInteger(progress)
     &&progress>=0&&progress<=100?progress:null;
   const commentKind=event.eventType===ACTIVITY_EVENT_TYPES.PROJECTS_TASK_REVIEWED
