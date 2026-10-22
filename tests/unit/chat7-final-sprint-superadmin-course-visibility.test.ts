@@ -54,6 +54,11 @@ describe("SA-academics-people-52/53 selected-course retry integrity",()=>{
   expect(service).toContain("Math.min(100,Math.max(1,limit))");
   expect(service).toContain("ids.slice(i,i+25)");
   expect(service).toContain("COURSE_VISIBILITY_BULK_TOO_LARGE");
-  expect(service).toContain("selected.length!==input.courseIds.length");
+  // Legacy bulk actions retain authorized course changes and report each
+  // non-matching or foreign-college selection for a precise retry.
+  expect(service).toContain("const unauthorizedIds=input.courseIds.filter(id=>!validIds.includes(id))");
+  expect(service).toContain("const failedCourses=new Set<string>(unauthorizedIds)");
+  expect(service).toContain("failedCourseIds:input.courseIds.filter(id=>failedCourses.has(id))");
+  expect(service).toContain("eq(departments.collegeId,acting.collegeId)");
  });
 });
