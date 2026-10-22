@@ -726,7 +726,8 @@ async function recordEligibilityOverrideAudit(
   subjectType:"placement_eligibility_override",subjectId:overrideId,
   summary:action==="SET"?"Drive eligibility override saved (ELIGIBILITY_"+(decision??"INCLUDE")+")":
     "Drive eligibility override cleared",
-  metadata:{jobId,membershipId,reason,decision:decision??null},
+  metadata:{jobId,membershipId,reason,decision:decision??null,
+   contextHint:decision==="INCLUDE"?"Company agreed":null},
  });
 }
 
