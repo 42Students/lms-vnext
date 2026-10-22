@@ -2,7 +2,7 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
 import type {ReactNode} from "react";
 import LandingPage from "@/app/(authenticated)/mentor/page";
-import ProjectsPage from "@/app/(authenticated)/mentor/projects/page";
+import { MentorProjectsContent } from "@/app/(authenticated)/mentor/projects/page";
 import WorkspacePage from "@/app/(authenticated)/mentor/projects/[projectId]/page";
 import CalendarPage from "@/app/(authenticated)/mentor/calendar/page";
 
@@ -82,7 +82,7 @@ vi.mock("@/modules/projects/mentor-paged-project-list-service",()=>({
 }));
 const renderLanding=async()=>renderToStaticMarkup(await LandingPage());
 const renderProjects=async(q:Record<string,string|string[]|undefined>={})=>
- renderToStaticMarkup(await ProjectsPage({searchParams:Promise.resolve(q)}));
+ renderToStaticMarkup(await MentorProjectsContent({searchParams:Promise.resolve(q)}));
 const renderWorkspace=async(q:{tab?:string}={})=>
  renderToStaticMarkup(await WorkspacePage({
   params:Promise.resolve({projectId}),searchParams:Promise.resolve(q),
@@ -109,12 +109,12 @@ describe("Mentor landing, project directory/workspace and calendar role journeys
   const html=await renderLanding();
   expect(html).toContain("Projects is currently unavailable");
   expect(html).toContain("View notifications");
-  expect(html).toContain("college administrator");
+  expect(html).toContain("You can still check notifications.");
  });
  it("PROJ-BREAK-MENTOR-293 policy outage shows retry rather than pretending feature disabled",async()=>{
   state.policyFailure=true;
   const html=await renderLanding();
-  expect(html).toContain("Projects could not be loaded");
+  expect(html).toContain("Could not verify Projects access");
   expect(html).toContain("Retry access check");
   expect(html).not.toContain("Projects is disabled for this account");
  });
