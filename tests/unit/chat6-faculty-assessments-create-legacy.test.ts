@@ -15,6 +15,11 @@ describe("faculty assessment create legacy two-step entry",()=>{
   expect(src).toContain('const selectedContext=kind==="QUIZ"?snapshot:');
   expect(src).toContain('setSnapshot({deliveryId:course.deliveryId,lessonId:lesson.lessonId,nextSequence:lesson.nextSequence})');
   expect(src).toContain("open&&continued");
-  expect(src).toContain("deliveryId={course.deliveryId}");
+  // The quiz builder must remain bound to the frozen Continue snapshot,
+  // not a mutable dropdown selection after Continue.
+  expect(src).toContain("deliveryId={selectedContext.deliveryId}");
+  expect(src).toContain("lessonId={selectedContext.lessonId}");
+  expect(src).toContain("key={selectedContext.deliveryId");
+  expect(src).toContain("nextQuizSequence={selectedContext.nextSequence}");
  });
 });
