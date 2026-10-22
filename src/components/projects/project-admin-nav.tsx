@@ -27,7 +27,7 @@ export function ProjectAdminNav({
       ? ""
       : "/" + active;
 
-  return <Tabs className={styles.legacy} ariaLabel="Projects" renderPanel={false} value={activePath}
+  return <Tabs {...(styles["legacy"] !== undefined ? {className:styles["legacy"]} : {})} ariaLabel="Projects" renderPanel={false} value={activePath}
     items={PROJECT_ADMIN_SECTIONS.map(({suffix,label})=>({
       value:suffix,
       label,
