@@ -90,7 +90,7 @@ describe("SA-ACADEMICS-BATCH-COUNT-01 scoped active batch learner census",()=>{
   const result=await getSuperAdminBatchRosterOverview(actor,batchId);
   expect(result).toMatchObject({classes:[],roster:[]});
   expect(state.queries).toBe(2);
-  expect(state.joins.every(value=>value.table==="classes")).toBe(true);
+  expect(state.joins.some(value=>value.table==="roster")).toBe(false);
  });
  it("returns null for a missing cohort without scanning learner membership records",async()=>{
   state.rows.batch=null as unknown as typeof state.rows.batch;

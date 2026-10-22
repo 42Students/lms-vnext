@@ -114,7 +114,7 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     const fallback=read("src/components/projects/mentor-calendar-load-failure.tsx");
     expect(page).toContain("listMyMentorCalendarMeetings(context)");
     expect(page).toContain("calendarRead.items===null");
-    expect(page).toContain("<MentorCalendarLoadFailure/>");
+    expect(page).toContain('<MentorCalendarLoadFailure reason={calendarRead.reason??"UNKNOWN"}/>');
     expect(fallback).toContain("We couldn&apos;t load your meetings.");
     expect(fallback).toContain("router.refresh()");
     expect(fallback).toContain("Retry");
