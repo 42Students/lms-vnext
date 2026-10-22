@@ -71,7 +71,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
   {!loading&&!error&&links.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No instructor resources yet.</p>:null}
   <ul className="divide-y divide-border">
    {links.map(link=><li key={link.id} className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] py-[var(--lms-space-3)] text-sm md:flex-row md:items-center md:justify-between">
-    <a href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 min-w-0 max-w-full items-center break-words [overflow-wrap:anywhere] font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{link.title}</a>
+    <a href={link.href} className="inline-flex min-h-11 min-w-0 max-w-full items-center break-words [overflow-wrap:anywhere] font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{link.title}</a>
     <Button variant="secondary" type="button" disabled={disabled||pending} onClick={()=>setRemoveId(link.id)} size="md">Remove</Button>
    </li>)}
   </ul>
