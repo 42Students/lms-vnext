@@ -33,10 +33,10 @@ function renderText(node:ReactNode):string {
 function links(node:ReactNode):string[] {
  if(Array.isArray(node))return node.flatMap(links);
  if(!isValidElement(node))return [];
- const p=node.props as {href?:unknown,children?:ReactNode,action?:ReactNode,items?:readonly {href?:string}[]};
+ const p=node.props as {href?:unknown,children?:ReactNode,action?:ReactNode,actions?:ReactNode,items?:readonly {href?:string}[]};
  return [...(typeof p.href==="string"?[p.href]:[]),
   ...(p.items?.flatMap(item=>typeof item.href==="string"?[item.href]:[])??[]),
-  ...links(p.action),...links(p.children)];
+  ...links(p.action),...links(p.actions),...links(p.children)];
 }
 
 describe("HR-BREAK-chat19-notifications-page: recruiter-scoped page behavior",()=>{
