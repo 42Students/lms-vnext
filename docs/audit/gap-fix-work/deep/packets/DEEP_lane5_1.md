@@ -10,7 +10,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-9-036-120  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-036-122  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-16-005-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_4.md)
-- [ ] G2-11-022-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-11-022-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-13-030-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-13-030-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-13-030-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
@@ -21,3 +21,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 ## Results
 
 - G2-9-036-122 — OK: `src/modules/module-access/service.ts:120-129,155-156,170-172` ignores membership, section, cohort, program and department overrides for Placements; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/ModuleFeatureCatalog.java:63-67,79-85` (college-only module policy). Learner eligibility remains independently enforced by placement services.
+- G2-11-022-019 — OK: `src/app/(authenticated)/tpo/reports/page.tsx:233,253,284-292,375` uses `studentsAccepted` for accepted learners, separates raw offer count, and explicitly warns against mixing denominators; matches `docs/legacy-source/frontend/src/pages/tpo/reports/index.js:63-72` (`acceptedUnique` is distinct from `offers`).
