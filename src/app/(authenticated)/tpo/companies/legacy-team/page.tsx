@@ -17,8 +17,8 @@ export default async function LegacyCompanyTeamPage({searchParams}:{
  const ctx=await getCurrentRequestContext();
  if(!ctx.membership||!hasPlacementTeamMembership(ctx))redirect("/dashboard");
  const params=await searchParams;
- if(Object.keys(params).some(key=>key!=="name")||typeof params.name!=="string")notFound();
- const key=legacyCompanyTeamName(params.name);
+ if(Object.keys(params).some(key=>key!=="name")||typeof params["name"]!=="string")notFound();
+ const key=legacyCompanyTeamName(params["name"]);
  if(!key)notFound();
  const collegeId=await requireTpoBatchActor(ctx);
  const candidates=await getDb().selectDistinct({id:placementCompanies.id,name:placementCompanies.name})
