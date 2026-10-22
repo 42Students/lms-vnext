@@ -64,6 +64,7 @@ export default async function CollegeQuizzesPage({
     leading={authoringResult.status==="fulfilled"
       ? <CollegeQuizCreate lessons={authoringResult.value} deliveries={data.reviewDeliveries}/>
       : <Banner tone="warning" role="status">
-          Quiz authoring options could not be loaded. Existing quizzes remain available. Refresh to retry.
+          Quiz authoring options could not be loaded. Existing quizzes remain available.
+          <div className="mt-3"><CurrentPageRetry label="Retry options" /></div>
         </Banner>} />;
 }
