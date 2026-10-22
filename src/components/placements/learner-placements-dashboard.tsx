@@ -135,7 +135,7 @@ export function LearnerPlacementsDashboard({
             ) : null}
           </div>
           <Link
-            href={next.href}
+            href={quietHero?"/learn/profile":next.href}
             className="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-6 text-base font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto"
           >
             {quietHero?"Update profile":legacyCta} →
@@ -173,6 +173,37 @@ export function LearnerPlacementsDashboard({
             :"Nothing to do right now. We\u0027ll list it here the moment something needs you."}
         </p>}
       </section>
+      <section aria-labelledby="sp-week-title"
+        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5">
+        <header className="flex flex-wrap items-center justify-between gap-3">
+          <h3 id="sp-week-title" className="text-lg font-semibold text-foreground">Next 7 days</h3>
+          <Link href="/learn/my-placements/calendar"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+            Full schedule →
+          </Link>
+        </header>
+        {display.weekEvents===null?<p role="status" className="mt-3 text-sm text-body">
+          Upcoming events are temporarily unavailable. No empty schedule is assumed.
+        </p>:display.weekEvents.length===0?<p className="mt-3 text-sm text-body">
+          No tests or interviews in the next 7 days. When the placement cell books you, it shows here and you get a notice.
+        </p>:<ul className="mt-3 grid gap-3 sm:grid-cols-2">
+          {display.weekEvents.slice(0,4).map(event=><li key={event.applicationId+":"+event.roundId}
+            className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3">
+            <span className="text-xs font-semibold uppercase tracking-wide text-primary-text">
+              {event.kind==="ASSESSMENT"?"Assessment":event.kind==="INTERVIEW"?"Interview":"Round"}
+            </span>
+            <p className="mt-1 break-words text-sm font-semibold text-foreground">
+              {event.roundName} · {event.companyName}
+            </p>
+            <p className="mt-1 text-xs text-body">{formatWhen(event.when)} · {event.rescheduled?"Rescheduled":"Scheduled"}</p>
+            <Link href={event.href}
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+              See details →
+            </Link>
+          </li>)}
+        </ul>}
+      </section>
+
       {onboarding.length>0 ? (
         <section className="border-b border-border pb-5" aria-label="First placement steps">
           <h3 className="m-0 text-base font-semibold text-foreground">Get started with placements</h3>
@@ -189,10 +220,10 @@ export function LearnerPlacementsDashboard({
         </section>
       ) : null}
 
-      <section aria-labelledby="learner-dashboard-stages-heading" className="border-b border-border pb-5">
+      <section aria-labelledby="learner-dashboard-stages-heading" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 id="learner-dashboard-stages-heading" className="text-base font-semibold text-foreground">Where your applications stand</h3>
-          <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>
+          <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">All applications →</Link>
         </div>
         {display.applications===0 ? <p role="status" className="mt-2 text-sm text-body">
             You haven't applied to a drive yet.{" "}

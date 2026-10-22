@@ -21,7 +21,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_college-drive-applications-service.ts.md` (edit src/modules/placements/college-drive-applications-service.ts; 37 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_college-application-detail-drawer.tsx.md` (edit src/components/placements/college-application-detail-drawer.tsx; 31 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_tpo-round-drive-day-read-only.tsx.md` (edit src/components/placements/tpo-round-drive-day-read-only.tsx; 29 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_learner-placements-dashboard.tsx.md` (edit src/components/placements/learner-placements-dashboard.tsx; 27 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_learner-placements-dashboard.tsx.md` (edit src/components/placements/learner-placements-dashboard.tsx; 27 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_eligibility-service.ts.md` (edit src/modules/placements/eligibility-service.ts; 25 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_learner-applications-browse.tsx.md` (edit src/components/placements/learner-applications-browse.tsx; 22 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-public-join-link-service.ts.md` (edit src/modules/placements/tpo-public-join-link-service.ts; 21 findings; best P2)
