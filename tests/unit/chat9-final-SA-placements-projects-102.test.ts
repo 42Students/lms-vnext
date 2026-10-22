@@ -9,7 +9,7 @@ describe("chat9 final quick-report launcher",()=>{
   const form=read("src/components/tracker/tracker-report-form.tsx");
   expect(shell).toContain('import { TrackerQuickReportLauncher } from "@/components/tracker/tracker-quick-report-launcher"');
   expect(shell).toContain("<TrackerQuickReportLauncher />");
-  expect(launcher).toContain('event.altKey&&!event.repeat&&event.key.toLowerCase()==="b"');
+  expect(launcher).toContain('event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.repeat&&event.key.toLowerCase()==="b"');
   const drawer=read("src/components/ui/drawer.tsx");
   expect(drawer).toContain("modal.showModal()");
   expect(drawer).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");

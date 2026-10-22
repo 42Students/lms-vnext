@@ -10,7 +10,7 @@ expect(source).toContain("Ready to ship");
 });
 it("MEN-projects-meetings-38 mentor-visible release/sprint vocabulary and empty state",()=>{
 const source=read("src/components/projects/project-workspace.tsx");
-expect(source).toContain("mode===\"ADMIN\"?\"Execution\":\"Releases and Sprints\"");
+expect(source).toContain('"Sprint plan":"Execution"):"Releases and Sprints"');
 expect(source).toContain("No sprints yet. Add the sprints");
 });
 it("MEN-projects-meetings-41 board task evidence includes owner blocker estimate and due",()=>{
