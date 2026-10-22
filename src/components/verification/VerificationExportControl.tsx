@@ -18,7 +18,7 @@ export function VerificationExportControl({query,url="/api/college/verification/
     const a=document.createElement("a");
     // Legacy verification exports follow the active tab. Keep a caller's
     // explicit custom filename, but replace the old one-size-fits-all name.
-    const tab=(query.tab||"waiting").toLowerCase().replace(/[^a-z0-9-]/g,"").slice(0,32)||"waiting";
+    const tab=(query["tab"]||"waiting").toLowerCase().replace(/[^a-z0-9-]/g,"").slice(0,32)||"waiting";
     const scopedName=filename==="super-admin-profile-verification.csv"||
       filename==="college-profile-verification.csv"
       ?"verification-"+tab+".csv":filename;
