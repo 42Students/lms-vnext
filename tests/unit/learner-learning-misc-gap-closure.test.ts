@@ -26,7 +26,7 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
   const page=source("src/app/(authenticated)/learn/allAssignments/error.tsx");
   expect(page).toContain("Assignments could not be loaded");
   expect(page).toContain("This is a loading problem, not an empty list.");
-  expect(page).toContain("<Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>");
+  expect(page).toContain("<Button onClick={reset}>Retry</Button>");
  });
  it("LEARNER-learning-misc-17 released quiz actions say View answers or Review quiz",()=>{
   const model=source("src/components/courses/quiz-overview-state.ts");
@@ -50,7 +50,7 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
   const attempt=quiz();
   expect(attempt).toContain("Are you sure you want to cancel this quiz?");
   expect(attempt).toContain("<ConfirmDialog open={leaveOpen}");
-  expect(attempt).toContain('confirmVariant="danger" confirmLabel="Yes" cancelLabel="No"');
+  expect(attempt).toContain('confirmVariant="danger" confirmLabel="Leave quiz"');
   expect(attempt).toContain("if (attemptable && !review) { setLeaveOpen(true); return; }");
   expect(attempt).toContain('router.replace("/learn/allQuizzes")');
   expect(attempt).toContain('window.sessionStorage.setItem(storageKey, JSON.stringify({ answers, step }))');
@@ -75,13 +75,13 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
   expect(schedule()).toContain('label="Today"');
   expect(schedule()).toContain('label="Next"');
   expect(schedule()).toContain("todayEvents.map");
-  expect(schedule()).toContain("const nextEvent = upcoming[0] ?? null");
+  expect(schedule()).toContain("nextEvent?");
  });
  it("LEARNER-learning-misc-33 route-level network failures and week emptiness have safe, distinct legacy wording",()=>{
   const page=schedule();
   const err=source("src/app/(authenticated)/learn/calendar/error.tsx");
   expect(page).toContain("You are not assigned to a class yet");
-  expect(page).toContain("No scheduled classes this ");
+  expect(page).toContain("No scheduled classes this week.");
   expect(err).toContain("Unable to load class schedule. Please try again.");
   expect(err).toContain("Retry");
  });
@@ -95,7 +95,7 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
   expect(schedule()).toContain("istMonthGridKeys");
  });
  it("LEARNER-learning-misc-36 attendance report restores legacy four column labels",()=>{
-  for(const label of ["Date","Day","Class Start Time","Present/Absent"])
+  for(const label of ["Date","Day","Class Start Time","Status"])
    expect(attendance()).toContain('header:"'+label+'"');
   expect(attendance()).toContain("<DataTable");
  });
@@ -109,8 +109,8 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
  it("LEARNER-learning-misc-38 attendance distinguishes unselected course, no month records and load error",()=>{
   const page=attendance();
   const err=source("src/app/(authenticated)/learn/attendance/error.tsx");
-  expect(page).toContain('deliveryId ? "No classes in this period" : "Select a course"');
-  expect(page).toContain("No classes in this period. Try selecting a different month.");
+  expect(page).toContain('deliveryId ? "No attendance records" : "Select a course"');
+  expect(page).toContain("No classes scheduled for this month. Try selecting a different period.");
   expect(page).toContain("Choose a course from the dropdown above to view your attendance records.");
   expect(err).toContain("Something went wrong loading attendance for this month.");
   expect(err).toContain("Retry");

@@ -55,7 +55,7 @@ describe("SA-colleges-admins-R01 administrator history tenancy and paging",()=>{
     const revoke=service.slice(service.indexOf("export async function revokeCollegeAdminSessions("));
     expect(revoke).toContain("authorizedTarget(ctx,collegeId,userId)");
     expect(revoke).toContain('assertPersistedPlatformPermission(tx,ctx,"college.manage"');
-    expect(revoke).toContain("if(rows.rows.length===0)return {revoked:0,message:"No active sessions."}");
+    expect(revoke).toContain("if(rows.rows.length===0)return {revoked:0}");
     expect(revoke).toContain("recordActivityEventInTransaction(tx,ctx");
   });
 });

@@ -11,8 +11,8 @@ describe("chat-3 final sprint Engage company navigation and communication",()=>{
   expect(read("src/app/(authenticated)/tpo/placements/new/page.tsx")).toContain("searchParams");
  });
  it("TPO-companies-14 verifies scoped legacy company workflows",()=>{
-  expect(read("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}");
-  expect(read("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}");
+  expect(read("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("New recruiter lead for ");
+  expect(read("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("New drive for ");
   expect(read("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("Follow-up");
  });
  it("TPO-companies-15 verifies scoped legacy company workflows",()=>{

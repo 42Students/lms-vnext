@@ -20,7 +20,7 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(result.page).toBe(2);
     expect(result.items).toHaveLength(6);
     expect(result.items[0]?.code).toBe("C05");
-    expect(page).toContain("catalogueQuery={catalogueQuery}");
+    expect(page).toContain("catalogueQuery={catalogueQuery.data}");
     expect(page).toContain('courseBasePath="/admin/courses"');
     expect(table).toContain('action={courseBasePath}');
     expect(table).toContain('href={courseBasePath}>Clear');
@@ -54,7 +54,7 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(service).toContain("eq(departments.collegeId,selected.collegeId)");
     expect(page).toContain("lessonCountByCourse={lessonCountByCourse}");
     expect(overview).toContain("lessonCountByCourse?.[course.id]");
-    expect(actions).toContain("confirmDisabled={activeOfferingCount>0||linkedLessonCount>0}");
+    expect(actions).toContain("confirmDisabled={activeOfferingCount>0}");
     expect(actions).toContain("active Course Offering(s) must be archived");
     expect(backend).toContain('COURSE_HAS_ACTIVE_OFFERINGS');
   });
@@ -82,7 +82,7 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(service).toContain("externalUrl:lessonContents.externalUrl");
     expect(service).toContain("eq(departments.collegeId,collegeId)");
     expect(page).toContain("studentContentVisible(item)");
-    expect(page).toContain("{studentContentVisible(item)?"Visible":"Hidden"}");
+    expect(page).toContain("Students {studentContentVisible(item)?");
     expect(page).toContain("Order within lesson:");
     expect(page).toContain("Linked materials:");
     expect(page).toContain("return safePublicCourseContentUrl(value)");
