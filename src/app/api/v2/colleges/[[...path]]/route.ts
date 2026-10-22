@@ -1,5 +1,5 @@
 import {NextResponse} from "next/server";
-import {and,inArray,sql} from "drizzle-orm";
+import {inArray,sql} from "drizzle-orm";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -27,13 +27,17 @@ function fuzzy(a:string,b:string):boolean{
   const next=[i];
   let minimum=i;
   for(let j=1;j<=b.length;j++){
-   next[j]=Math.min(next[j-1]+1,previous[j]+1,previous[j-1]+(a[i-1]===b[j-1]?0:1));
-   minimum=Math.min(minimum,next[j]);
+   const insertion=(next[j-1]??j)+1;
+   const deletion=(previous[j]??j)+1;
+   const substitution=(previous[j-1]??(j-1))+(a[i-1]===b[j-1]?0:1);
+   const distance=Math.min(insertion,deletion,substitution);
+   next[j]=distance;
+   minimum=Math.min(minimum,distance);
   }
   if(minimum>2)return false;
   previous=next;
  }
- return previous[b.length]<=2;
+ return (previous[b.length]??Number.POSITIVE_INFINITY)<=2;
 }
 function searchScore(row:{name:string;code:string;city:string|null;state:string|null},query:string):number{
  if(!query)return 1;
