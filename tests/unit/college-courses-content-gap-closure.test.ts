@@ -33,7 +33,7 @@ describe("College Courses & Content gap closure",()=>{
  });
  it("COL-courses-content-04 Duplicate produces distinct unoccupied code, retains metadata, not students",()=>{
   const courses=[{id:"a",name:"Algorithms",code:"CS1",departmentId:"d",description:"Learn"},{id:"b",name:"Copy",code:"CS1-COPY",departmentId:"d",description:null}];
-  expect(collegeCourseDuplicatePrefill(courses,"a")).toMatchObject({code:"CS1-COPY2",name:"Algorithms",departmentId:"d"});
+  expect(collegeCourseDuplicatePrefill(courses,"a")).toMatchObject({code:"CS1-COPY2",name:"Algorithms (Copy)",departmentId:"d"});
   expect(collegeCourseDuplicatePrefill(courses,"missing")).toBeNull();
   expect(creation()).toContain("Cancel copy");
  });
