@@ -22,7 +22,7 @@ export async function POST(request: Request, { params }: RouteContext) {
     const context = await getCurrentRequestContext();
     const { projectId, fileId } = await params;
     const body = (await readOptionalJsonBody(request)) as { disposition?: "inline" | "attachment" };
-    const grant = await issueProjectFileDownloadGrant(context, projectId, fileId, { disposition: body.disposition });
+    const grant = await issueProjectFileDownloadGrant(context, projectId, fileId, { ...(body.disposition!==undefined?{disposition:body.disposition}:{}) });
     return storageJson({ grant });
   } catch (error) {
     return apiErrorResponse(error);
