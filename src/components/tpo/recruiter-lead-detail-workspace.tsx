@@ -764,7 +764,7 @@ export function RecruiterLeadDetailWorkspace({
               <form className="space-y-3" onSubmit={e => void saveEdit(e)}>
                 {(["name", "email", "phone", "designation", "companyName"] as const).map(name => (
                   <label key={name} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                    {name === "companyName" ? "Company name" : name[0].toUpperCase() + name.slice(1)}
+                    {name === "companyName" ? "Company name" : name.charAt(0).toUpperCase() + name.slice(1)}
                     <Input className="mt-[6px] min-w-0 min-h-11 md:min-h-9" value={edit[name]}
                       autoFocus={name==="name"} required={name==="name"||name==="companyName"} type={name==="email"?"email":"text"}
                       onChange={e => setEdit(current => ({ ...current, [name]: e.target.value }))} />
