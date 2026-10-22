@@ -34,7 +34,6 @@ export function CollegeRecurringPreview({
   defaultSectionId?: string; onCancel?:()=>void;
   errors?: { classes:boolean; halls:boolean; faculty:boolean; deliveries:boolean } }) {
   const router=useRouter();
-  const cancel=()=>{if(onCancel)onCancel();else router.push("/college/classes");};
   const chosen = classes.find(item => item.id === defaultSectionId);
   const [sectionId, setSectionId] = useState(chosen?.id ?? "");
   const [title, setTitle] = useState("Class session");
