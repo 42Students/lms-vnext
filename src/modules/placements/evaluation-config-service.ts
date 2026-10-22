@@ -309,6 +309,7 @@ export async function replacePlacementEvaluationConfig(
             createdByUserId: context.user.id,
           })
           .returning();
+        if (!created) throw new Error("Evaluation round insert did not return a row");
         await tx
           .insert(placementJobRoundEvents)
           .values({
