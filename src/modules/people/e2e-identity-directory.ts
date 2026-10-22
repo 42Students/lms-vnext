@@ -141,11 +141,11 @@ export async function persistIsolatedE2EIdentityUsers(input:{
 }):Promise<{namespace:string;userIds:Record<"facultyA"|"facultyB"|"adminA"|"learnerA"|"learnerB",string>;
  reused:number;created:number}>{
  if(process.env.NODE_ENV==="production"||
-    process.env.APP_ENV!=="test"||
-    process.env.E2E_SEED_ENABLED!=="true"||
-    process.env.E2E_ISOLATED_DATABASE!=="true"||
-    process.env.E2E_ALLOW_GRAPH_WRITES!=="true"||
-    process.env.APP_E2E_SEED_ENABLED!=="true"||
+    process.env["APP_ENV"]!=="test"||
+    process.env["E2E_SEED_ENABLED"]!=="true"||
+    process.env["E2E_ISOLATED_DATABASE"]!=="true"||
+    process.env["E2E_ALLOW_GRAPH_WRITES"]!=="true"||
+    process.env["APP_E2E_SEED_ENABLED"]!=="true"||
     !input.operatorAuthorized)
   throw new Error("E2E_SEED_DISABLED");
  const manifest=buildE2EFixtureManifest(input.namespace);
@@ -190,7 +190,7 @@ export async function persistIsolatedE2EIdentityUsers(input:{
  * grant a role, membership, token or object-read permission. */
 export function previewNonproductionE2ESeed(namespace="e2e-dev"){
  if(process.env.NODE_ENV==="production"||
-    process.env.E2E_SEED_ENABLED!=="true")
+    process.env["E2E_SEED_ENABLED"]!=="true")
   throw new Error("E2E_SEED_DISABLED");
  const manifest=buildE2EFixtureManifest(namespace);
  const decisions=reconcileE2EFixtureManifest(manifest,new Map());

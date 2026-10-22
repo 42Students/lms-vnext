@@ -19,7 +19,9 @@ export function parseFacultyBulkCsv(source: string): FacultyBulkRow[] {
   const rows = parseTpoImportCsvRecords(source, 501);
   if (!rows.length) throw new Error("Choose a CSV file with faculty records.");
   const norm = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
-  const headers = rows[0].map(norm);
+  const headerRow=rows[0];
+  if(!headerRow)throw new Error("Choose a CSV file with faculty records.");
+  const headers = headerRow.map(norm);
   const known = {
     firstName: ["firstname","first","givenname"],
     lastName: ["lastname","last","surname"],
@@ -57,7 +59,7 @@ export function parseFacultyBulkCsv(source: string): FacultyBulkRow[] {
     positions.phone<0?"Mobile Number":null,
   ].filter((name):name is string=>Boolean(name));
   if(missing.length){
-    const found=rows[0].slice(0,25).map(value=>value.trim().slice(0,64)).join(", ");
+    const found=headerRow.slice(0,25).map(value=>value.trim().slice(0,64)).join(", ");
     throw new Error("Required columns missing: "+missing.join(", ")+". Found: "+(found||"(none)"));
   }
   const data=rows.slice(1);

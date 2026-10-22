@@ -68,7 +68,8 @@ export async function ingestIndependentAuditFindingFile(
    input.action==="DELETE"?"DELETED":changed?"TAMPERED":"ACCEPTED";
   let errorCode:string|null=changed?"SOURCE_BLOB_CHANGED":null;
   if(result==="ACCEPTED"){
-   const finding=input.finding!;
+   const finding=input.finding;
+   if(!finding)throw new Error("AUDIT_IMPORT_MISSING_FINDING");
    const [existing]=await tx.select({
     id:db10AuditFindings.id,sourcePath:db10AuditFindings.sourcePath,
     sourceRepo:db10AuditFindings.sourceRepo,
@@ -90,6 +91,7 @@ export async function ingestIndependentAuditFindingFile(
      status:"NEW",sourceRepo:input.source,
      sourcePath:input.sourcePath,sourceCommitSha:input.sourceCommitSha??null,
     }).returning({id:db10AuditFindings.id});
+    if(!created)throw new Error("AUDIT_IMPORT_INSERT_FAILED");
     findingId=created.id;
    }
   }
@@ -98,6 +100,7 @@ export async function ingestIndependentAuditFindingFile(
    action:input.action,result,errorCode,findingId,
    sourceCommitSha:input.sourceCommitSha??null,runId:input.runId??null,
   }).returning({id:db10AuditFindingFiles.id});
+  if(!file)throw new Error("AUDIT_IMPORT_LEDGER_INSERT_FAILED");
   const sourceEvent=classifyAuditFindingSourceEvent(input.action,result);
   if(findingId&&sourceEvent){
    // A refused/tampered replacement never overwrites the original finding.
