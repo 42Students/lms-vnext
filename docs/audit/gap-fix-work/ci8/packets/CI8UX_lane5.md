@@ -2,5 +2,5 @@
 
 Fix the CODE so npm run ux:guard (scripts/check-ux-anti-drift.mjs) passes for these lines. No waivers, no guard edits. Same old-LMS look, accessible.
 
-- [ ] src/components/placements/tpo-accreditation-export-preflight.tsx:21: white-on-teal
-- [ ] src/components/placements/tpo-accreditation-export-preflight.tsx:32: white-on-teal
+- [x] src/components/placements/tpo-accreditation-export-preflight.tsx:21: white-on-teal
+- [x] src/components/placements/tpo-accreditation-export-preflight.tsx:32: white-on-teal

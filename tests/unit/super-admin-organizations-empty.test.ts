@@ -8,6 +8,7 @@ describe("Super Admin organization directory",()=>{
  });
  it("does not expose create form without permission",()=>{
   expect(page).toContain('{canCreateGlobal?<section aria-label="Create New Organization"');
-  expect(page).toContain("<OrganizationCreateForm />");
+  expect(page).toMatch(/<OrganizationCreateForm\s*\/>/);
+  expect(page).toContain("const canCreateGlobal=canCreate&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId;");
  });
 });

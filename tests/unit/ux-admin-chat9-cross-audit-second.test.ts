@@ -27,8 +27,10 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   expect(page).not.toContain("text-[#26bac7]");
   expect(page).toContain('"Could not save the room. Try again."');
   expect(page).toContain('if (!response.ok)');
-  expect(page).toContain('!value && !pending && setEditing(null)');
-  expect(page).toContain("grid-cols-1 gap-3 sm:grid-cols-2");
+  expect(page).toContain('if (editing && originalEditRef.current !== snapshot(draft))');
+  expect(page).toContain('setDiscardOpen(true)');
+  expect(page).toContain('onConfirm={finishEdit}');
+  expect(page).toContain("lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]");
  });
  it("UX-admin-organizations-02 mounts one responsive DataTable, not duplicate action forms",()=>{
   const page=route("organizations");
