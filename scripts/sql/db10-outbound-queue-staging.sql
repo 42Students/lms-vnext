@@ -5,7 +5,11 @@
 -- Apply after registered baseline, followed by the independent global-email
 -- suppression proposal and DB067 composite parent-FK candidate.
 -- No plaintext addresses, invitation tokens or template variables are stored.
-CREATE TABLE outbound_messages (
+-- Replays are only permitted in an isolated database whose registered
+-- migrations already supplied the corresponding canonical table shape.
+-- IF NOT EXISTS prevents duplicate relation failures; it never drops data,
+-- constraints, tenant checks or historical suppression evidence.
+CREATE TABLE IF NOT EXISTS outbound_messages (
   id uuid PRIMARY KEY NOT NULL,
   organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE RESTRICT,
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
@@ -64,12 +68,12 @@ CREATE TABLE outbound_messages (
     OR (status <> 'CLAIMED' AND claimed_by IS NULL AND claim_expires_at IS NULL)
   )
 );
-CREATE UNIQUE INDEX db10_outbound_idempotency_uq ON outbound_messages(idempotency_key);
-CREATE INDEX db10_outbound_due_idx ON outbound_messages(status,next_attempt_at,not_before);
-CREATE INDEX db10_outbound_scope_idx ON outbound_messages(organization_id,college_id,created_at);
-CREATE INDEX db10_outbound_claim_expiry_idx ON outbound_messages(claim_expires_at,status);
+CREATE UNIQUE INDEX IF NOT EXISTS db10_outbound_idempotency_uq ON outbound_messages(idempotency_key);
+CREATE INDEX IF NOT EXISTS db10_outbound_due_idx ON outbound_messages(status,next_attempt_at,not_before);
+CREATE INDEX IF NOT EXISTS db10_outbound_scope_idx ON outbound_messages(organization_id,college_id,created_at);
+CREATE INDEX IF NOT EXISTS db10_outbound_claim_expiry_idx ON outbound_messages(claim_expires_at,status);
 
-CREATE TABLE outbound_suppressions (
+CREATE TABLE IF NOT EXISTS outbound_suppressions (
   id uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
   organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE RESTRICT,
   channel varchar(16) NOT NULL,
@@ -88,10 +92,10 @@ CREATE TABLE outbound_suppressions (
     cleared_at IS NULL OR cleared_at >= created_at
   )
 );
-CREATE UNIQUE INDEX db10_outbound_suppressions_active_uq
+CREATE UNIQUE INDEX IF NOT EXISTS db10_outbound_suppressions_active_uq
   ON outbound_suppressions(organization_id,channel,recipient_hash)
   WHERE cleared_at IS NULL;
-CREATE INDEX db10_outbound_suppressions_scope_idx
+CREATE INDEX IF NOT EXISTS db10_outbound_suppressions_scope_idx
   ON outbound_suppressions(organization_id,created_at);
 
 -- Deliberately NOT part of registered Drizzle journal.
