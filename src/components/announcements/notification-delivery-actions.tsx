@@ -22,6 +22,7 @@ export function NotificationDeliveryActions({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [pending, setPending] = useState<Action | null>(null);
   const available: Array<{ action: Action; label: string }> =
     deliveryStatus === "SCHEDULED"
       ? [{ action: "resend", label: "Send now" },
@@ -30,12 +31,13 @@ export function NotificationDeliveryActions({
         ? [{ action: "resend", label: "Retry delivery" }]
         : [];
 
+  const question = pending === "cancel-schedule"
+    ? "Cancel this pending notification schedule?"
+    : "Queue this notification for immediate delivery?";
+
   async function submit(action: Action) {
     if (busy) return;
-    const question = action === "cancel-schedule"
-      ? "Cancel this pending notification schedule?"
-      : "Queue this notification for immediate delivery?";
-    if (!window.confirm(question)) return;
+    setPending(null);
     setBusy(true);
     setFeedback(null);
     try {
@@ -68,12 +70,19 @@ export function NotificationDeliveryActions({
     <div className="flex flex-wrap gap-2">
       {available.map(({ action, label }) => (
         <Button variant="secondary" key={action} type="button" disabled={busy}
-          onClick={() => void submit(action)}
+          onClick={() => { setFeedback(null); setPending(action); }}
           >
           {busy ? "Updating…" : label}
         </Button>
       ))}
     </div>
+    {pending ? <div role="alertdialog" aria-label="Confirm delivery change" className="space-y-2 text-sm">
+      <p>{question}</p>
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" disabled={busy} onClick={() => void submit(pending)}>Confirm</Button>
+        <Button variant="secondary" type="button" disabled={busy} onClick={() => setPending(null)}>Keep as is</Button>
+      </div>
+    </div> : null}
     {feedback ? <p role="status" aria-live="polite" className="text-sm">{feedback}</p> : null}
   </div>;
 }
