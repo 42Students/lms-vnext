@@ -3,10 +3,9 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementRound} from "@/modules/placements/round-service";
 import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
-import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
-import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrDriveOverview} from "@/modules/placements/hr-drive-overview-model";
 import type {RequestContext} from "@/modules/identity/context";
@@ -24,14 +23,15 @@ describe.skipIf(!enabled)("HR Drive Overview PG guard",()=>{
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Overview HR B "+nonce,primaryDomain:"hrob-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
    title:"Overview Job "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
-  await upsertJobEligibilityPolicy(tpo,job.id,{missingEvidencePolicy:"ALLOW_WITH_FLAG"});
-  await publishPreparedPlacementJob(tpo,job.id,{round:{kind:"TEST",name:"Screening",durationMinutes:60}});
-  const identityUid="hr-overview-"+nonce;
-  const recruiter=await createPersistedJobRecruiter({companyId:a.company.id,companyRelationshipId:a.relationship.id,
-    collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
-  const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>persistedRecruiterContext({
-    userId:recruiter.userId,identityUid,companyId,grantId:recruiter.grantId,collegeId,
-    organizationId:SEED_IDS.organization,companyRelationshipId:rel});
+  // Publish requires both a real interview plan and an eligibility policy.
+  await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"HR overview screening"});
+  await upsertJobEligibilityPolicy(tpo,job.id,{});
+  await publishPlacementJob(tpo,job.id);
+  const uid=randomUUID();
+  const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({
+    user:{id:uid,identityUid:"hr-overview-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
+    recruiter:{userId:uid,companyId,companyName:"Fixture",title:null,status:"ACTIVE",
+     grants:[{id:randomUUID(),collegeId,organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:rel}]}});
   const own=await getHrJobRead(hr(a.company.id,a.relationship.id,SEED_IDS.collegeA),job.id,{tab:"overview"});
   expect(buildHrDriveOverview({job:own.workspace.job,applicants:own.applicants.counts,
     offers:own.offers,rounds:own.workspace.rounds},new Date()).shared).toBe(0);
