@@ -20,12 +20,12 @@ export function legacyLearnerNotificationCategory(value:unknown){
  const normalized=value.trim().toLowerCase();
  return z.enum(["all","course","project","general","job"]).safeParse(normalized).data??null;
 }
-/** External job assessments follow the old new-tab behaviour without allowing
- * unsafe schemes, embedded credentials or opener access. Internal app links
+/** External job assessments navigate in the same tab as required by LMS links,
+ * rejecting unsafe schemes and embedded credentials. Internal app links
  * remain governed by learnerNotificationTarget below. */
 export function learnerExternalAssessmentLaunch(value:string|null|undefined){
  const href=safeExternalAssessmentUrl(value);
- return href?{href,target:"_blank" as const,rel:"noopener noreferrer" as const}:null;
+ return href?{href}:null;
 }
 /** Announcement/broadcast notices never acquire an invented unread state. */
 export function learnerNotificationIsUnread(item:{source?:"ANNOUNCEMENT";readAt:string|null}){
