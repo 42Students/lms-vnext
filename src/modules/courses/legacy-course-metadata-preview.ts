@@ -56,7 +56,7 @@ function preview(key:string,raw:unknown):string {
 export function legacyCourseMetadataPreview(
  raw:Record<string,unknown>|null|undefined,
 ):LegacyCourseMetadataField[]{
- return LEGACY_COURSE_METADATA_FIELDS.map(spec=>{
+ return LEGACY_COURSE_METADATA_FIELDS.map((spec):LegacyCourseMetadataField=>{
   const exists=Boolean(raw)&&(
    Object.prototype.hasOwnProperty.call(raw,spec.key)||
    Object.prototype.hasOwnProperty.call(raw,spec.alternate));
