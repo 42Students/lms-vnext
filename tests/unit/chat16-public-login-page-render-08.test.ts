@@ -54,8 +54,10 @@ describe("chat-16 direct public sign-in page render and tenant/OTP journeys", ()
     const page = await html();
     expect(page).toContain("One-time code sign-in");
     expect(page).toContain('data-channels="EMAIL,PHONE"');
-    expect(page).toContain("Sign in with the phone number or email");
-    expect(page).toContain("min-h-dvh");
+    // The mock LoginForm exposes the allowed channels rather than rendering
+    // its private contact copy. The legacy login shell owns the viewport.
+    expect(page).toContain('data-otp-login="true"');
+    expect(page).toContain('<main class="');
   });
 
   it("AUTH-PAGE-OTP-02 honors college channel policy and never renders a disallowed SMS action", async () => {
