@@ -2780,3 +2780,43 @@ export function legacyInterviewFeedbackImport(input:{
  return {...input,submittedAt:new Date(input.submittedAt),
   staffOnly:true as const,affectsCurrentTerminalStatus:false as const};
 }
+
+
+/** College CRM data from an old IndustryCompany stays private to that
+ * college's relationship; never attach the contact or notes to the global
+ * canonical company row. Merge restoration does not imply a new grant. */
+export function legacyCollegeCompanyRelationshipImport(input:{
+  companyId:string;collegeId:string;
+  sourceCompanyId:number;legacyStatus:string;legacyArchivedAt:string|null;
+  contactName:string|null;contactEmail:string|null;contactPhone:string|null;
+  internalNotes:string|null;ownerMembershipId:string|null;
+  ownerCollegeId:string|null;
+}){
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!uuid.test(input.companyId)||!uuid.test(input.collegeId)||
+    !Number.isSafeInteger(input.sourceCompanyId)||input.sourceCompanyId<1)
+  throw new Error("Unverified historic company relationship");
+ if(input.ownerMembershipId!==null&&(
+    !uuid.test(input.ownerMembershipId)||input.ownerCollegeId!==input.collegeId))
+  throw new Error("Company CRM owner outside this college");
+ const status=input.legacyStatus==="ACTIVE"?"ACTIVE":
+   ["DELETED","INACTIVE","ARCHIVED"].includes(input.legacyStatus)?"ARCHIVED":null;
+ if(!status)throw new Error("Unsupported historic company relationship status");
+ const at=input.legacyArchivedAt===null?null:new Date(input.legacyArchivedAt);
+ if(at!==null&&(!Number.isFinite(at.getTime())||
+   !/(?:Z|[+-]\d{2}:\d{2})$/.test(input.legacyArchivedAt!)))
+  throw new Error("Archive date needs verified timezone");
+ if(input.contactName!==null&&input.contactName.length>150||
+    input.contactEmail!==null&&input.contactEmail.length>150||
+    input.contactPhone!==null&&input.contactPhone.length>30||
+    input.internalNotes!==null&&input.internalNotes.length>2000)
+  throw new Error("Company contact or notes exceed the private CRM limit");
+ return {collegeId:input.collegeId,companyId:input.companyId,status,
+  archivedAt:status==="ARCHIVED"?at??new Date(0):null,
+  ownerMembershipId:input.ownerMembershipId,
+  contactPersonName:input.contactName?.trim()??null,
+  contactEmail:input.contactEmail?.trim()??null,
+  contactPhone:input.contactPhone?.trim()??null,
+  internalNotes:input.internalNotes?.trim()??null,
+  newRecruiterGrantAuthorized:false as const};
+}
