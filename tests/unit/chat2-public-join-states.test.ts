@@ -20,7 +20,7 @@ describe("Public recruiter invitation parity",()=>{
   const ui=src("src/components/placements/public-recruiter-join-form.tsx");
   expect(ui).toContain('setAlreadyJoined((result.outcome??result.status)==="ALREADY_JOINED")');
   expect(ui).toContain('alreadyJoined?"You already have access to "+college');
-  expect(ui).toContain('setSignInEmail(result.signInEmail)');
+  expect(ui).toContain('setSignInEmail(result.signInEmail||result.email||email)');
  });
  it("TPO-campaigns-public-R01 uses persisted optional mobile rather than dropping it on join",()=>{
   const service=src("src/modules/placements/public-join/join-service.ts");
@@ -42,6 +42,7 @@ describe("Public recruiter invitation parity",()=>{
   expect(domain).toContain("registrableWorkDomain");
   expect(domain).toContain("matchesCompanyDomain");
   const ui=src("src/modules/placements/public-join/client-error-model.ts");
-  expect(ui).toContain('matchesCompanyDomain');
+  expect(ui).toContain('publicWorkEmailIssue(email)');
+  expect(ui).toContain('publicWorkEmailIssueCopy(emailIssue)');
  });
 });

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getDb } from "@/db/client";
 import {
-  CampaignUnsubscribeInvalid, unsubscribeTpoCampaignRecipient,
+  unsubscribeTpoCampaignRecipient,
 } from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 import { issueTpoCampaignRecipientToken } from "@/modules/messaging/tpo-campaign-recipient-token";
 
@@ -82,7 +82,7 @@ describe("chat-16 purpose-bound unsubscribe gate before storage access", () => {
     expect(tx.insert).not.toHaveBeenCalled();
   });
 
-  it("T-S2-04-UNSUB-05 forged cross-college recipient ID fails without updating or revealing identity", async () => {
+  it("T-S2-04-UNSUB-05 forged cross-college recipient ID returns indistinguishable success without writing", async () => {
     const limit = vi.fn(async () => []);
     const tx = {
       select: vi.fn(() => ({ from: vi.fn(() => ({
@@ -99,7 +99,8 @@ describe("chat-16 purpose-bound unsubscribe gate before storage access", () => {
         operation(tx)),
     } as never);
     await expect(unsubscribeTpoCampaignRecipient(issueTpoCampaignRecipientToken(claim, secret)))
-      .rejects.toBeInstanceOf(CampaignUnsubscribeInvalid);
+      .resolves.toEqual({unsubscribed:true});
+    expect(tx.select).toHaveBeenCalledTimes(1);
     expect(tx.update).not.toHaveBeenCalled();
     expect(tx.insert).not.toHaveBeenCalled();
   });
