@@ -9,13 +9,13 @@ describe("chat-13 stale cloud CI report regression fences",()=>{
  });
  it("SA-placements-projects-21 keeps current eligibility and nonfabricated match score copy",()=>{
   const ui=read("src/components/placements/college-application-detail-drawer.tsx");
-  for(const phrase of ["Re-screen","Current eligibility:","No fabricated public resume URL or match score is shown.","It does not fabricate a match score or reverse an existing screening decision."])
+  for(const phrase of ["Re-screen","Current eligibility:","const privateResumeUrl=detail?.resume.available","It does not fabricate a match score or reverse an existing screening decision."])
    expect(ui).toContain(phrase);
  });
  it("SA-placements-projects-36 preserves recruiter lifecycle labels even when controls change",()=>{
   const ui=read("src/components/admin/super-admin-hr-accounts.tsx");
   expect(ui).toContain('aria-label="Recruiter account lifecycle"');
-  expect(ui).toContain('<h2 className="text-base font-semibold">Recruiter account lifecycle</h2>');
+  expect(ui).toContain('<h2 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h2>');
  });
  it("SA-placements-projects-14 validates cross-level section cascade in the form",()=>{
   const form=read("src/components/placements/placement-job-create-form.tsx");

@@ -16,7 +16,7 @@ describe("TPO recruiter grant final sprint export",()=>{
   expect(csv).not.toContain("contact");
   expect(csv).toContain("MALICIOUS()");
   const exportRoute=readFileSync("src/app/api/placements/tpo/settings/recruiter-grants/export/route.ts","utf8");
-  expect(exportRoute).toContain('filename="recruiters.csv"');
+  expect(exportRoute).toContain('gridExportFilename("recruiters", "csv")');
   expect(exportRoute).toContain("listTpoRecruiterAccess(await getCurrentRequestContext()");
   expect(exportRoute).toContain("private, no-store");
   expect(tpoRecruiterGrantExportHref({status:"REVOKED",q:"Example"})).toContain("status=REVOKED");

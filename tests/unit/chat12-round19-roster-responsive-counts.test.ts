@@ -13,7 +13,7 @@ describe("TPO Students phone presentation and scoped selection summary",()=>{
  it("TPO-students-51 shows two-column phone journey, focused row summary and collapsible details/actions",()=>{
   const page=src("src/app/(authenticated)/tpo/students/page.tsx");
   const grid=src("src/components/tpo/tpo-spreadsheet-grid.tsx");
-  expect(page).toContain('className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Student placement journey"');
+  expect(page).toContain('className="mt-5 grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-4" aria-label="Student placement journey"');
   expect(grid).toContain("const mobilePrimary = mobilePrimaryKeys?.length");
   expect(grid).toContain("mobilePrimaryKeys.includes(column.key)");
   expect(grid).toContain(": display.slice(0,5)");

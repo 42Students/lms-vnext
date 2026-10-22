@@ -25,7 +25,8 @@ describe("TPO forced student drive inclusion",()=>{
   const ui=src("src/components/tpo/tpo-students-bulk-add.tsx");
   expect(ui).toContain("Add students who are not eligible anyway");
   expect(ui).toContain("overrideReason.trim()");
-  expect(ui).toContain("runGuarded(submit)");
+  expect(ui).toContain("await runGuarded(async()=>{");
+  expect(ui).toContain("onClick={()=>void submit()}");
   expect(ui).toContain("formatTpoStudentsBulkOutcome(result)");
  });
 });

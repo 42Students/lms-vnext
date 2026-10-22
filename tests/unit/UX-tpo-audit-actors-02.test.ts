@@ -6,7 +6,7 @@ describe("UX-tpo-audit-actors-02",()=>{
   expect(source).toContain("<DataTable");
   expect(source).toContain("getRowKey=");
   expect(source).toContain("mobilePriority");
-  expect(source).toContain("empty={<p");
+  expect(source).toContain("empty={<EmptyState");
   expect(source).toContain("No canonical placement events match these exact filters.");
   expect(source).not.toContain("<table");
  });

@@ -15,7 +15,7 @@ const source=(path:string)=>readFileSync(path,"utf8");
 describe("chat-16 reassigned mentor acceptance, round 2",()=>{
   it("MEN-projects-meetings-53 displays persisted metadata in both resource editors",()=>{
     const editor=source("src/components/projects/project-resource-controls.tsx");
-    for(const field of ["Related sprint","Related task","Access notes","Pinned","Status","resourceType:metadata.resourceType"]) {
+    for(const field of ["Related sprint","Related task","Access notes","Pinned","Status","canonicalResourceType(metadata.resourceType)"]) {
       expect(editor).toContain(field);
     }
     expect(source("src/modules/projects/resource-service.ts"))
@@ -132,7 +132,7 @@ describe("chat-16 reassigned Tracker acceptance, round 2",()=>{
   it("SA-placements-projects-118 keeps logs Super Admin-only, not a password bypass",()=>{
     const logs=source("src/app/(authenticated)/tracker/logs/page.tsx");
     expect(logs).toContain("isSuperAdmin(context)");
-    expect(logs).toContain('redirect("/dashboard")');
+    expect(logs).toContain('<PageHeader title="Logs access"');
     expect(logs).not.toContain("managerPassword");
   });
 
