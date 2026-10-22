@@ -13,7 +13,7 @@ describe("Chat-7 learner notice action and audience parity", () => {
     };
     expect(learnerPlacementNoticeFeed([base])[0]).toMatchObject({
       buttonLabel: "View preparation", buttonUrl: "https://example.edu/prep",
-      senderLabel: "Placement cell", audienceLabel: "College",
+      senderLabel: "Placement cell", audienceLabel: null,
     });
     expect(safeLearnerNoticeAction("View", "javascript:alert(1)")).toBeNull();
     expect(safeLearnerNoticeAction("View", "http://example.edu/prep")).toBeNull();

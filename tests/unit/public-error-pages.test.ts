@@ -9,7 +9,8 @@ describe("shared public error pages", () => {
   it("GR-13 keeps a customer-friendly no-code 404 route", () => {
     const page = read("src/app/not-found.tsx");
     expect(page).toContain('title="Page not found"');
-    expect(page).toContain('homeHref="/"');
+    expect(page).toContain('homeHref={homeHref}');
+    expect(page).toContain('let homeHref = "/dashboard"');
     expect(page).not.toContain('code="404"');
   });
   it("GR-11 uses a root fatal boundary without exposing error internals", () => {

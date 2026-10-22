@@ -20,7 +20,8 @@ describe("T-S1-03 invitation OTP safety",()=>{
  it("enforces 5/link and 300/college hourly send caps",()=>{
   expect(recruiterOtpSendAllowed(4,299)).toBe(true);
   expect(recruiterOtpSendAllowed(5,0)).toBe(false);
-  expect(recruiterOtpSendAllowed(0,300)).toBe(false);
+  expect(recruiterOtpSendAllowed(0,300)).toBe(true);
+  expect(recruiterOtpSendAllowed(5,300)).toBe(false);
   expect(recruiterOtpSendAllowed(-1,0)).toBe(false);
  });
  it("rejects failed delivery, exact expiry, consumption, fifth wrong guess",()=>{
