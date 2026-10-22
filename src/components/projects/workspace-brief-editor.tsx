@@ -114,7 +114,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
    justSaved.current=JSON.stringify(fromBrief(parsed.data));
    // Legacy Overview keeps the editor expanded after a save. The next server
    // snapshot remounts the version token without discarding in-progress edits.
-   showToast({tone:"success",title:requireDeliverables?"Overview updated":"Project brief updated"});
+   showToast({tone:"success",title:"Overview updated"});
    router.refresh();
   }catch(caught){
    const reason=caught instanceof Error?caught.message:"The overview could not be saved.";
