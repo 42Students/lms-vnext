@@ -44,8 +44,9 @@ export function parseMemberEmailCsv(csv: string): Array<{ rowNumber: number; val
   if (field.length > 0 || row.length > 0) {
     row.push(field); rows.push(row);
   }
-  if (rows.length === 0 || rows[0].length !== 1 ||
-      rows[0][0].trim().toLowerCase() !== "email") throw new Error("CSV_HEADER_EMAIL_REQUIRED");
+  const header = rows[0];
+  if (!header || header.length !== 1 ||
+      header[0]?.trim().toLowerCase() !== "email") throw new Error("CSV_HEADER_EMAIL_REQUIRED");
   const entries = rows.slice(1);
   if (entries.length > GROUP_IMPORT_MAX_ROWS) throw new Error("CSV_ROW_LIMIT");
   return entries.map((record, i) => ({
