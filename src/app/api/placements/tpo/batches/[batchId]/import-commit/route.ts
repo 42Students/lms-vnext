@@ -33,6 +33,7 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
    reason:string|null;expectedVersion:string}[]=[];
   for(let index=0;index<preview.preview.length;index++){
    const candidate=preview.preview[index],row=preview.rows[index];
+   if(!candidate||!row)return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
    if(body.previewMemberIds&&candidate.membershipId!==body.previewMemberIds[index])
     return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
    if(candidate.status!=="matched"||!candidate.membershipId||!candidate.expectedVersion)
