@@ -21,13 +21,16 @@ export function FormField({ id, label, required = false, helper, error, action, 
     rendered.type !== Fragment
     ? cloneElement(rendered, {
         id,
-        required: required || rendered.props.required || undefined,
-        "aria-invalid": error ? true : rendered.props["aria-invalid"],
-        "aria-errormessage": error ? `${id}-error` : rendered.props["aria-errormessage"],
-        "aria-describedby": [...new Set([
-          ...(rendered.props["aria-describedby"]?.split(/\s+/) ?? []),
-          ...(describedBy?.split(/\s+/) ?? []),
-        ].filter(Boolean))].join(" ") || undefined,
+        ...(required || rendered.props.required ? {required: true} : {}),
+        ...(error || rendered.props["aria-invalid"] !== undefined ? {"aria-invalid": error ? true : rendered.props["aria-invalid"]} : {}),
+        ...(error || rendered.props["aria-errormessage"] !== undefined ? {"aria-errormessage": error ? `${id}-error` : rendered.props["aria-errormessage"]} : {}),
+        ...(() => {
+          const ids = [...new Set([
+            ...(rendered.props["aria-describedby"]?.split(/\s+/) ?? []),
+            ...(describedBy?.split(/\s+/) ?? []),
+          ].filter(Boolean))].join(" ");
+          return ids ? {"aria-describedby": ids} : {};
+        })(),
       })
     : rendered;
   return <div data-slot="form-field" className={compact ? "min-w-0 space-y-1 text-[13px]" : "min-w-0 space-y-[var(--lms-space-2)] text-[13px]"}>
