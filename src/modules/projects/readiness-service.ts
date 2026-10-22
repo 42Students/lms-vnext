@@ -86,7 +86,9 @@ export async function getProjectReadiness(
       .innerJoin(projectTasks,eq(projectTasks.id,projectTaskSubmissions.taskId))
       .where(and(eq(projectTaskSubmissions.projectId,projectId),
         eq(projectTasks.projectId,projectId),
-        sql`(upper(${projectTasks.status})='DONE' or upper(${projectTasks.status}) like 'COMPLET%')`,
+        sql`(upper(btrim(${projectTasks.status})) in ('DONE','COMPLETE','COMPLETED')
+          or left(upper(btrim(${projectTasks.status})),8)='COMPLET_'
+          or right(upper(btrim(${projectTasks.status})),10)='_COMPLETED')`,
         isNull(projectTasks.deletedAt),
         sql`length(trim(${projectTaskSubmissions.submissionUrl})) > 0`)),
   ]);
