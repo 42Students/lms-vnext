@@ -22,11 +22,11 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
  const collegeId=(await params).collegeId;
  const context=await getCurrentRequestContext();
  const raw=await searchParams;
- const rawPage=raw.page;
+ const rawPage=raw['page'];
  const validPage=Object.keys(raw).every(key=>key==="page"||key==="role")&&
    (rawPage===undefined||(typeof rawPage==="string"&&/^[1-9][0-9]{0,4}$/.test(rawPage)&&Number(rawPage)<=10000));
- const role=(raw.role==="COLLEGE_ADMIN"||raw.role==="TPO")?raw.role:"ALL";
- if(raw.role!==undefined&&raw.role!=="COLLEGE_ADMIN"&&raw.role!=="TPO"&&raw.role!=="ALL")
+ const role=(raw['role']==="COLLEGE_ADMIN"||raw['role']==="TPO")?raw['role']:"ALL";
+ if(raw['role']!==undefined&&raw['role']!=="COLLEGE_ADMIN"&&raw['role']!=="TPO"&&raw['role']!=="ALL")
   return <div className="min-w-0 space-y-4"><PageHeader title="College administrators"/>
    <ErrorState title="Invalid administrator role" description="Choose Admin or TPO."
     action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} className="text-link underline">Clear filters</Link>}/>
@@ -95,7 +95,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
       {key:"org",header:"Org",cell:()=>data.college.organizationId},
       {key:"college",header:"College",cell:()=>data.college.name},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="ACTIVE"?"success":"warning"}>{item.status==="ACTIVE"?"Enabled":"Suspended"}</StatusBadge>},
-      {key:"access",header:"Access",mobilePriority:"action",cell:item=><Disclosure title="Access" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]"><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")} displayName={item.name??undefined}/></Disclosure>},
+      {key:"access",header:"Access",mobilePriority:"action",cell:item=><Disclosure title="Access" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]"><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")} {...(item.name===undefined?{}:{displayName:item.name})}/></Disclosure>},
       {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link title="View active devices"
         href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)}
         className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
