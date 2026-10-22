@@ -126,3 +126,9 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/college-application-stage-service.ts, src/modules/placements/tpo-bulk-application-stage-service.ts
 - Legacy: Legacy status updates lock job and other applications in consistent order `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/PlacementJobServiceImpl.java:1169-1186` `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/PlacementJobServiceImpl.java:1290-1327`
 - Expected fix: Document and test global lock ordering including interview/offers
+
+
+## Fast verification triage — chat-4
+- OK (direct source inspection): G2-14-010-007, G2-14-010-009, G2-14-010-010, G2-14-010-012, G2-14-010-024, G2-14-010-025, G2-14-010-046, G2-14-011-049.
+- DEFERRED (not validated or fixed; needs deeper parity review): G2-14-005-087, G2-14-005-089, G2-14-002-076, G2-14-011-002, G2-14-011-011, G2-14-011-020, G2-14-011-021, G2-14-011-026, G2-14-011-038, G2-14-011-040, G2-14-011-041, G2-14-011-042, G2-14-011-046, G2-14-011-052, G2-14-011-061, G2-14-011-062, G2-14-011-074.
+- This is a triage disposition, not an assertion of feature parity. Deferred facets remain open for implementation and independent comparison.

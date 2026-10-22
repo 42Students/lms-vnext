@@ -126,3 +126,9 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/api/courses/learner/route.ts
 - Legacy: `docs/legacy-source/frontend/src/api/Services/SemesterService.js:49-67`
 - Expected fix: Legacy has GET byStudent, GET byStudent semesters and GET byClass; vNext exposes only GET /api/courses/learner (with server-side setup reads). Build/record 3-to-many endpoint mapping.
+
+
+## Fast verification triage — chat-4
+- OK (direct source inspection): none conclusively verified in this pass.
+- DEFERRED (not validated or fixed; needs deeper parity review): G2-3-012-055, G2-3-006-018, G2-3-006-022, G2-3-006-031, G2-3-006-034, G2-3-006-037, G2-3-006-038, G2-3-006-039, G2-3-006-055, G2-3-006-058, G2-3-006-059, G2-11-016-077, G2-11-025-044, G2-11-025-047, G2-11-025-085, G2-17-027-001, G2-17-027-020, G2-3-027-018, G2-3-027-042, G2-3-027-052, G2-3-027-061, G2-3-027-086, G2-3-025-001, G2-3-025-026, G2-3-025-034.
+- This is a triage disposition, not an assertion of feature parity. Deferred facets remain open for implementation and independent comparison.
