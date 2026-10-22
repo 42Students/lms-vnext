@@ -19,7 +19,9 @@ describe("UX-superadmin-legacy-01",()=>{
   expect(code).not.toContain("window.location");
   const loading=source("src/app/(authenticated)/superadmin/[...legacy]/loading.tsx");
   const error=source("src/app/(authenticated)/superadmin/[...legacy]/error.tsx");
-  expect(loading).toContain("GracefulPageLoading");
+  expect(loading).toContain('role="status"');
+  expect(loading).toContain('aria-live="polite"');
+  expect(loading).toContain("Array.from({length:6}");
   expect(error).toContain("GracefulErrorBoundary");
   expect(error).toContain("reset={reset}");
  });
