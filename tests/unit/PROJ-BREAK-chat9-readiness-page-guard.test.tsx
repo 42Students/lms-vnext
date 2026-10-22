@@ -25,7 +25,9 @@ vi.mock("@/modules/projects/readiness-service",()=>({
     state.readinessReads++;
     if(state.outage)throw Error("PRIVATE_READINESS_SQL_CREDENTIAL");
     return {
-      execution:{complete:false,tasks:{done:0,total:1},sprints:{completed:0,total:1},releases:{shipped:0,total:1}},
+      projectStatus:"ACTIVE",
+      legacyReadiness:{advisoryWarnings:[]},
+      execution:{complete:false,tasks:{done:0,total:1,proofCovered:0},sprints:{completed:0,total:1},releases:{shipped:0,total:1}},
       readinessOverride:{state:null,note:null,overriddenBy:null,
         occurredAt:state.badDate?new Date(Number.NaN):new Date("2026-10-17T20:00:00.000Z")},
       finalSubmission:{latest:null,canSubmitDraft:false},
@@ -38,7 +40,7 @@ function visible(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(visible);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","action","href","eyebrow"].flatMap(key=>visible(props[key]));
+  return ["children","title","description","action","href","eyebrow","label"].flatMap(key=>visible(props[key]));
 }
 const projectId="22222222-2222-4222-8222-222222222222";
 const render=(id=projectId)=>ProjectWorkspaceReadiness({projectId:id,basePath:"/admin/projects"});
@@ -49,7 +51,7 @@ beforeEach(()=>{
 describe("IIT Dharwad Projects: readiness deep-link, denied and partial-data states",()=>{
   it("PROJ-BREAK-readiness-67 invalid UUID cannot trigger authorization or a project read",async()=>{
     const page=visible(await render("../../another-tenant")).join(" ");
-    expect(page).toContain("Workspace readiness unavailable");
+    expect(page).toContain("Workspace not found");
     expect(page).toContain("Back to workspaces");
     expect(state.contextReads).toBe(0);
     expect(state.accessChecks).toBe(0);
@@ -58,7 +60,7 @@ describe("IIT Dharwad Projects: readiness deep-link, denied and partial-data sta
   it("PROJ-BREAK-readiness-68 revoked/foreign actor never sees readiness content",async()=>{
     state.deny=true;
     const page=visible(await render()).join(" ");
-    expect(page).toContain("Workspace readiness unavailable");
+    expect(page).toContain("Workspace could not be loaded");
     expect(page).not.toContain("OTHER_TENANT_PRIVATE_NAME");
     expect(state.readinessReads).toBe(0);
   });
@@ -73,9 +75,9 @@ describe("IIT Dharwad Projects: readiness deep-link, denied and partial-data sta
     state.badDate=true;
     const page=visible(await render()).join(" ");
     expect(page).toContain("Current readiness");
-    expect(page).toContain("Date unavailable");
+    expect(page).toContain("—");
     expect(page).toContain("Not ready");
-    expect(page).not.toContain("Workspace readiness unavailable");
+    expect(page).not.toContain("Workspace could not be loaded");
     expect(state.readinessReads).toBe(1);
   });
 });

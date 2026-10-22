@@ -35,7 +35,7 @@ describe("SA-tenants-modules-LIFECYCLE-11 cross-tenant and concurrent lifecycle 
   const tx=source.indexOf("return db.transaction(async tx=>");
   const role=source.indexOf('assertPersistedPlatformPermission(tx,context,"organization.manage"',tx);
   const parentLock=source.indexOf('.for("update").limit(1)',role);
-  const childCheck=source.indexOf("const [activeCollege] = await tx.select(",parentLock);
+  const childCheck=source.indexOf("const dependentCounts=await tx.select(",parentLock);
   const update=source.indexOf("tx.update(organizations)",childCheck);
   const event=source.indexOf("recordActivityEventInTransaction(tx,context",update);
   expect(tx).toBeGreaterThan(0);
@@ -44,6 +44,8 @@ describe("SA-tenants-modules-LIFECYCLE-11 cross-tenant and concurrent lifecycle 
   expect(childCheck).toBeGreaterThan(parentLock);
   expect(update).toBeGreaterThan(childCheck);
   expect(event).toBeGreaterThan(update);
+  expect(source).toContain(".where(eq(colleges.organizationId,organizationId)).groupBy(colleges.status)");
+  expect(source).toContain("blockerCounts.active+blockerCounts.archived>0");
   expect(source).not.toContain("const [activeCollege] = await db.select(");
  });
  it("locks active organization and current admin before inserting a new college",()=>{

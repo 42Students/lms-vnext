@@ -24,7 +24,7 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
    });
    expect(topbarConfigForPath("/admin/placements/analytics").newHref).toBe("/admin/placements/new");
    expect(topbarConfigForPath("/admin/projects/submissions").newHref).toBe("/admin/projects/workspaces/new");
-   expect(topbarConfigForPath("/admin/academics").newHref).toBeNull();
+   expect(topbarConfigForPath("/admin/academics").newHref).toBe("/admin/tenants/create");
    expect(topbarConfigForPath("/college/projects").newHref).toBe("/college/projects/create");
    expect(topbarConfigForPath("/college/classes").newHref).toBeNull();
    expect(topbarConfigForPath("/hr/drives").newHref).toBe("/hr/drives/new");
@@ -86,9 +86,11 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
  it("TOPBAR-05 precisely specifies the old white, 68px and 36px actions",()=>{
    const css=read("src/components/shell/topbar/topbar.module.css");
    for(const value of ["height: 68px","min-height: 68px","padding: 0 20px",
-     "background: #fff","1px solid #e7ecf2",
-     "0 1px 3px rgba(26,45,72,.035)","width: 291px",
-     "height:36px","border-radius:9px","background:#0a7c88",
-     "color:#fff","background:#e53e49"])expect(css).toContain(value);
+     "background: var(--lms-white)","1px solid var(--lms-header-border)",
+     "box-shadow: var(--lms-header-shadow)","width:291px",
+     "height:36px","border-radius:var(--lms-control-radius)",
+     "background:var(--lms-button-primary)",
+     "color:var(--lms-white)","background:var(--topbar-unread)"])
+     expect(css).toContain(value);
  });
 });

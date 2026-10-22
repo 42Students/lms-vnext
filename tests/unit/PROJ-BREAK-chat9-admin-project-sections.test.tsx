@@ -13,6 +13,9 @@ vi.mock("@/auth/request-context",()=>({
     membership:null,adminScope:{collegeId:"college"},
   }),
 }));
+vi.mock("@/modules/projects/admin-college-scope",()=>({
+  getProjectAdminCollegeId:()=> "college",
+}));
 vi.mock("@/modules/projects/access",()=>({
   requireProjectManageAccess:async()=>{
     state.accessCalls+=1;
@@ -49,9 +52,11 @@ describe("Super Admin last-third Project detail role and route guard",()=>{
   });
   it("PROJ-BREAK-idor-55 unauthorized Super Admin scope fails before workspace view read",async()=>{
     state.authorized=false;
-    await expect(AdminProjectSectionPage({
+    const result=await AdminProjectSectionPage({
       projectId,section:"summary",basePath:"/admin/projects",
-    })).rejects.toThrow("Missing permission: projects.manage");
+    });
+    // A revoked admin gets a safe recovery panel, never the private workspace.
+    expect(props(result)).toMatchObject({role:"alert","aria-live":"polite"});
     expect(state.accessCalls).toBe(1);
     expect(state.viewCalls).toBe(0);
   });

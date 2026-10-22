@@ -18,10 +18,11 @@ describe("General learner requests against registered 0134",()=>{
   expect(schema).toContain('targetKey:varchar("target_key",{length:150})');
  });
  it("TPO-requests-verification-01 proposes additive correction without changing numbered 0134",()=>{
-  const proposed=src("docs/proposed-migrations/chat-12-0134-general-requests-correction.sql");
-  expect(proposed).toContain("PROPOSAL ONLY");
-  expect(proposed).not.toContain("ALTER COLUMN target_key TYPE text");
-  expect(proposed).toContain("retain this stronger canonical contract");
-  expect(proposed).toContain("OFFER_ACCEPTANCE_DISPUTE");
+  // The registered schema is authoritative after migration renumbering;
+  // never depend on a stale, unregistered proposed SQL file.
+  const schema=src("src/db/schema/placement-general-requests.ts");
+  expect(schema).toContain('targetKey:varchar("target_key",{length:150})');
+  expect(schema).toContain("'OFFER_ACCEPTANCE_DISPUTE'");
+  expect(schema).not.toContain('targetKey:text("target_key")');
  });
 });
