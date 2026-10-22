@@ -7,7 +7,8 @@ describe("chat-3 final six round13 audited functional closures",()=>{
  it("TPO-drives-05 displays real persisted lifecycle stages rather than static placeholder",()=>{
   const page=codeOf("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
   const model=codeOf("src/modules/placements/tpo-drive-lifecycle-list-model.ts");
-  expect(page).toContain("Where it is: {tpoDriveWhereItIs(job,data.asOf)}");
+  expect(page).toContain(">Where it is</th>");
+  expect(page).toContain("{tpoDriveWhereItIs(job,data.asOf)}");
   for(const value of ["Taking applications","Applications closed","Offers · ",
     'job.status==="CANCELLED"','job.status==="CLOSED"'])
     expect(model).toContain(value);
@@ -36,15 +37,15 @@ describe("chat-3 final six round13 audited functional closures",()=>{
   const page=codeOf("src/components/academics/learner-class-schedule.tsx");
   const error=codeOf("src/app/(authenticated)/learn/calendar/error.tsx");
   expect(page).toContain("You are not assigned to a class yet");
-  expect(page).toContain("No scheduled classes this week.");
+  expect(page).toContain('title={"No scheduled classes this " + view + "."}');
   expect(error).toContain("Unable to load class schedule. Please try again.");
   expect(error).toContain("Retry");
  });
  it("LEARNER-learning-misc-38 preserves separate no-course/no-record/error messages",()=>{
   const page=codeOf("src/components/attendance/learner-attendance-workspace.tsx");
   const error=codeOf("src/app/(authenticated)/learn/attendance/error.tsx");
-  expect(page).toContain('deliveryId ? "No attendance records" : "Select a course"');
-  expect(page).toContain("No classes scheduled for this month. Try selecting a different period.");
+  expect(page).toContain('deliveryId ? "No classes in this period" : "Select a course"');
+  expect(page).toContain("No classes in this period. Try selecting a different month.");
   expect(error).toContain("Something went wrong loading attendance for this month.");
   expect(error).toContain("Retry");
  });

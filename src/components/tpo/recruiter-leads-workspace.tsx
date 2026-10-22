@@ -812,13 +812,15 @@ export function RecruiterLeadsWorkspace({
                 ["OVERDUE","Follow-ups due",rows.filter(row=>dueByEndOfTodayIst(row.nextFollowupAt)).length],
                 ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
                 ["QUIET","Gone quiet",rows.filter(row=>row.chips?.includes("QUIET")).length],
-              ] as const).map(([key,label,count])=>
+              ] as const).filter(([, ,count])=>count>0).map(([key,label,count])=>
                 <FilterChip key={key} type="button" data-testid={"needs-"+key.toLowerCase().replaceAll("_","-")}
                   aria-pressed={attention===key} onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>
                   {label} · <strong>{count}</strong>
                 </FilterChip>)}
-              <FilterChip type="button" data-testid="needs-unassigned" aria-pressed={need==="UNASSIGNED"}
-                onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>Unassigned · <strong>{needCounts.unassigned}</strong></FilterChip>
+              {needCounts.unassigned>0?<FilterChip type="button" data-testid="needs-unassigned" aria-pressed={need==="UNASSIGNED"}
+                onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>Unassigned · <strong>{needCounts.unassigned}</strong></FilterChip>:null}
+              {!rows.some(row=>dueByEndOfTodayIst(row.nextFollowupAt)||row.chips?.includes("NO_NEXT_STEP")||row.chips?.includes("QUIET"))&&needCounts.unassigned===0?
+                <span className="text-sm text-muted-foreground">Nothing right now.</span>:null}
             </div>
             <Link className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9"
               href="/tpo/settings/recruiters">{rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access</Link>
