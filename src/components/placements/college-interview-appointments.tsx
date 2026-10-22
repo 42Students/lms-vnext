@@ -255,9 +255,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
     body:JSON.stringify({...body,confirmed:true}),
    });
-   setSuccess(body.action==="SCHEDULE"?"Interview scheduled and candidate notified." :
+   setSuccess(body["action"]==="SCHEDULE"?"Interview scheduled and candidate notified." :
     "Interview "+(data.status??"updated").toLowerCase().replaceAll("_"," ")+". The learner was notified.");
-   if(body.action==="SCHEDULE"){
+   if(body["action"]==="SCHEDULE"){
     showToast({tone:"success",title:"Interview scheduled successfully",
      description:"Interview scheduled and candidate notified."});
    }
@@ -514,7 +514,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        placeholder="Explain this interview round and how candidates should prepare"
        onChange={event=>{setRoundDescription(event.target.value);setDirty(true);}}
        className="w-full"/>
-      {fieldErrors.roundDescription?<span role="alert" className="text-error">{fieldErrors.roundDescription}</span>:null}
+      {fieldErrors["roundDescription"]?<span role="alert" className="text-error">{fieldErrors["roundDescription"]}</span>:null}
      </label>
     </div>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
