@@ -6,7 +6,10 @@ describe("Faculty shared surface mobile and focus rollout",()=>{
  it("UX-teacher-courses-shared-02 preserves course summary roles and 44px filter disclosures",()=>{
   const src=read("src/components/courses/faculty-course-list.tsx");
   expect(src).toContain("<Disclosure");
-  expect(read("src/components/ui/disclosure.tsx")).toContain("flex min-h-11 cursor-pointer");
+  const disclosure=read("src/components/ui/disclosure.tsx");
+  expect(disclosure).toContain("style={{minHeight:44}}");
+  expect(disclosure).toContain("flex cursor-pointer");
+  expect(disclosure).toContain("focus-visible:outline-2");
   expect(src).toContain("facultyCourseListHref(query)");
   expect(src).toContain("No teaching assignments found. Please contact your administrator.");
   expect(src).not.toContain("text-on-primary");
