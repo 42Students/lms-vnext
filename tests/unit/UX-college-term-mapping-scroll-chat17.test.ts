@@ -12,7 +12,7 @@ describe("UX-UNOWNED-GRID-09 college semester mapping remains keyboard- and touc
   const table=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
   expect(source).toContain('<DataTable');
   expect(table).toContain('<ScrollCue axis="x"');
-  expect(source).toContain('draggable={!pending && editableTerm}');
+  expect(source).toContain('draggable={!pending && editableTerm && !readOnly}');
   expect(source).toContain('onDragStart=');
   expect(source).toContain('onDrop=');
   expect(source).toContain('aria-label={"Move "+row.courseName+" up"}');
