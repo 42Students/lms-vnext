@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { PageHeader } from "@/components/ui/page-header";
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import {MarketingHeaderClient} from "./marketing-header-client";
@@ -85,9 +84,9 @@ export function MarketingLayout({children,path,pageTitle,pageDescription}:{
      </Link>
      <p className="max-w-xs leading-6 text-[var(--lms-body-text)]">Connected learning, projects and placements for universities and enterprises.</p>
      <div className="flex flex-wrap gap-3">
-      {([["LinkedIn",process.env.NEXT_PUBLIC_MARKETING_LINKEDIN_URL],
-        ["Instagram",process.env.NEXT_PUBLIC_MARKETING_INSTAGRAM_URL],
-        ["YouTube",process.env.NEXT_PUBLIC_MARKETING_YOUTUBE_URL]] as const).map(([label,raw])=>{
+      {([["LinkedIn",process.env["NEXT_PUBLIC_MARKETING_LINKEDIN_URL"]],
+        ["Instagram",process.env["NEXT_PUBLIC_MARKETING_INSTAGRAM_URL"]],
+        ["YouTube",process.env["NEXT_PUBLIC_MARKETING_YOUTUBE_URL"]]] as const).map(([label,raw])=>{
         const href=verifiedMarketingSocial(raw);
         return href?<a key={label} href={href} rel="noopener noreferrer"
          className="inline-flex min-h-11 items-center text-[var(--lms-primary-text)] underline-offset-4 hover:underline">{label}</a>:null;
