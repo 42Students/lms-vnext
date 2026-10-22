@@ -15,7 +15,8 @@ describe("TPO Students historical grid filters",()=>{
   const panel=source("src/components/tpo/tpo-grid-filter-panel.tsx");
   expect(panel).toContain('aria-label="Active grid filters"');
   expect(panel).toContain("activeCount} active");
-  expect(panel).toContain(">Clear all</button>");
+  expect(panel).toContain(">Clear all</Button>");
+  expect(panel).toContain("clearTpoGridFilters(new URLSearchParams(query.toString()),fields)");
   expect(source("src/app/(authenticated)/tpo/students/page.tsx")).toContain("students in this view");
  });
 });
