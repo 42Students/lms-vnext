@@ -1,6 +1,7 @@
 "use client";
 import {Checkbox} from "@/components/ui/checkbox";
 import { Disclosure } from "@/components/ui/disclosure";
+import { Dialog } from "@/components/ui/dialog";
 
 import {useRouter,usePathname,useSearchParams} from "next/navigation";
 import {ScrollCue} from "@/components/ui/scroll-cue";
@@ -82,6 +83,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
  }
  const [failed,setFailed]=useState<string[]>([]);
  const [retryTarget,setRetryTarget]=useState<boolean|null>(null);
+ const [confirmBulk,setConfirmBulk]=useState<{next:boolean;ids:string[]}|null>(null);
  const [message,setMessage]=useState("");
  const [messageTone,setMessageTone]=useState<"success"|"warning"|"error">("success");
  const [pending,start]=useTransition();
@@ -97,8 +99,6 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
  }
  function apply(next:boolean,ids=selected){
   if(pending||ids.length===0)return;
-  const action=next?"Show to students":"Hide from students";
-  if(!window.confirm(action+" for "+ids.length+" selected Lessons?"))return;
   setRetryTarget(next);
   start(async()=>{
    try{
@@ -136,7 +136,8 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    }catch(error){setMessageTone("error");setMessage(error instanceof Error?error.message:friendlyApiError({}));}
   });
  }
- return <Disclosure title="Show to students / Hide from students" className="border-y border-border py-3 text-sm text-body">
+ return <>
+ <Disclosure title="Show to students / Hide from students" className="border-y border-border py-3 text-sm text-body">
   
   <p className="mt-2 text-xs text-muted-foreground">
    Select Lessons across pages of the same Course/search filter (up to 100). Changing Course or search clears this selection. Saved visibility does not delete student progress.
@@ -161,13 +162,18 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
     </StatusBadge>
    </label>)}
   </div></ScrollCue>
-  <div className="mt-3 flex flex-wrap gap-2">
+  <div className="mt-3 flex flex-wrap items-center gap-2">
+   <span aria-live="polite" className="mr-2 text-sm font-semibold">{selected.length} selected</span>
+   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
+    disabled={pending||selected.length===0} onClick={()=>{selectRows([]);setFailed([]);setMessage("");}}>
+    Clear selection
+   </Button>
    <Button type="button" variant="primary" className="min-h-11 md:min-h-9" loading={pending} disabled={pending||!selected.length}
-    onClick={()=>apply(true)}>
+    onClick={()=>setConfirmBulk({next:true,ids:[...selected]})}>
     Show to students
    </Button>
    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" loading={pending} disabled={pending||!selected.length}
-    onClick={()=>apply(false)}>
+    onClick={()=>setConfirmBulk({next:false,ids:[...selected]})}>
     Hide from students
    </Button>
    {failed.length?<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>{
@@ -177,5 +183,32 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    </Button>:null}
   </div>
   {message?<Alert tone={messageTone} role="status" className="mt-2">{message}</Alert>:null}
- </Disclosure>;
+ </Disclosure>
+ <Dialog open={confirmBulk!==null} onOpenChange={open=>{if(!open&&!pending)setConfirmBulk(null);}}
+  role="alertdialog" dismissible={!pending}
+  title={confirmBulk?.next?"Show selected lessons to students?":"Hide selected lessons from students?"}
+  description={`${confirmBulk?.ids.length??0} selected Lessons`}
+  footer={<>
+   <Button type="button" variant="secondary" disabled={pending}
+    onClick={()=>setConfirmBulk(null)}>Cancel</Button>
+   <Button type="button" loading={pending} disabled={pending||!confirmBulk?.ids.length}
+    variant={confirmBulk?.next?"primary":"danger"} onClick={()=>{
+     if(!confirmBulk)return;
+     const {next,ids}=confirmBulk;
+     setConfirmBulk(null);
+     apply(next,ids);
+    }}>Confirm {confirmBulk?.next?"Show":"Hide"}</Button>
+  </>}>
+  <p className="text-sm text-body">The following Lessons will be updated:</p>
+  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-body">
+   {(confirmBulk?.ids??[]).slice(0,5).map(id=><li key={id} className="break-words">
+    {selectedRecords.find(row=>row.id===id)?.name??"Lesson"}
+   </li>)}
+  </ul>
+  {(confirmBulk?.ids.length??0)>5?<p className="mt-2 text-sm text-muted-foreground">
+   And {(confirmBulk?.ids.length??0)-5} more Lessons.
+  </p>:null}
+  <p className="mt-3 text-sm text-body">Files and existing student progress are retained. Only student visibility changes.</p>
+ </Dialog>
+ </>;
 }
