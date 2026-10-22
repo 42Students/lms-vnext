@@ -5,27 +5,27 @@ import {
  type PlacementReportFacts,type PlacementReportDetailedOffer,
 } from "@/modules/placements/report-model";
 const jobs=[
- {id:"j1",title:"Engineer",companyId:"c1",companyName:"Acme",employmentType:"FULL_TIME"},
- {id:"j2",title:"Intern",companyId:"c2",companyName:"Beta",employmentType:"INTERNSHIP"},
+ {id:"j1",title:"Engineer",companyId:"c1",companyName:"Acme",employmentType:"FULL_TIME",countsAsPlaced:true},
+ {id:"j2",title:"Intern",companyId:"c2",companyName:"Beta",employmentType:"INTERNSHIP",countsAsPlaced:false},
 ];
 const offers:PlacementReportDetailedOffer[]=[
  {id:"o1",jobId:"j1",jobTitle:"Engineer",companyId:"c1",companyName:"Acme",
-  membershipId:"m1",employmentType:"FULL_TIME",status:"ACCEPTED",
+  membershipId:"m1",employmentType:"FULL_TIME",countsAsPlaced:true,status:"ACCEPTED",
   annualCtcInr:1000000,expiresAt:null,joiningStatus:"JOINED"},
  {id:"o2",jobId:"j1",jobTitle:"Engineer",companyId:"c1",companyName:"Acme",
-  membershipId:"m2",employmentType:"FULL_TIME",status:"ISSUED",
+  membershipId:"m2",employmentType:"FULL_TIME",countsAsPlaced:true,status:"ISSUED",
   annualCtcInr:500000,expiresAt:"2026-10-17T00:00:00Z",joiningStatus:null},
  {id:"o3",jobId:"j2",jobTitle:"Intern",companyId:"c2",companyName:"Beta",
-  membershipId:"m4",employmentType:"INTERNSHIP",status:"ACCEPTED",
+  membershipId:"m4",employmentType:"INTERNSHIP",countsAsPlaced:false,status:"ACCEPTED",
   annualCtcInr:4000000,expiresAt:null,joiningStatus:null},
  {id:"o4",jobId:"j1",jobTitle:"Engineer",companyId:"c1",companyName:"Acme",
-  membershipId:"m3",employmentType:"FULL_TIME",status:"ACCEPTED",
+  membershipId:"m3",employmentType:"FULL_TIME",countsAsPlaced:true,status:"ACCEPTED",
   annualCtcInr:null,expiresAt:null,joiningStatus:null},
 ];
 describe("chat-13 Super Admin placement report fraud, counting and CSV integrity",()=>{
  it("SA-REPORT-METRICS-01 counts only permitted milestones and full-time offers",()=>{
   const policy=(offerStatus:string,countsAsPlacedAt:"SELECTED"|"OFFER_RELEASED"|"OFFER_ACCEPTED",employmentType="FULL_TIME",offerKind="OFFER",selectedOutcome=false)=>
-   countsAsPlacedByCollegeRule({offerStatus,countsAsPlacedAt,employmentType,offerKind,selectedOutcome});
+   countsAsPlacedByCollegeRule({offerStatus,countsAsPlacedAt,employmentType,countsAsPlaced:employmentType==="FULL_TIME",offerKind,selectedOutcome});
   expect(policy("ACCEPTED","OFFER_ACCEPTED")).toBe(true);
   expect(policy("ISSUED","OFFER_ACCEPTED")).toBe(false);
   expect(policy("ISSUED","OFFER_RELEASED")).toBe(true);

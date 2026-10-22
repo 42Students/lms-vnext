@@ -14,6 +14,7 @@ const fixtures: PlacementReportFacts = {
       companyId: "company-a",
       companyName: "Synthetic Software",
       employmentType: "FULL_TIME",
+      countsAsPlaced: true,
     },
     {
       id: "drive-b",
@@ -21,6 +22,7 @@ const fixtures: PlacementReportFacts = {
       companyId: "company-b",
       companyName: "Synthetic Research",
       employmentType: "INTERNSHIP",
+      countsAsPlaced: false,
     },
   ],
   registrations: [
@@ -230,6 +232,17 @@ describe("placement report aggregations", () => {
     expect(report.metrics.applications).toBe(3);
     expect(report.metrics.offers).toBe(4);
     expect(report.metrics.studentsPlaced).toBe(1);
+  });
+
+  it("never infers counts-as-placed from employment type when the policy is missing", () => {
+    const withUnknownPolicy: PlacementReportFacts = {
+      ...fixtures,
+      jobs: fixtures.jobs.map(({countsAsPlaced: _ignored, ...job}) => job),
+    };
+    const result = summarizePlacementReports(withUnknownPolicy);
+    expect(result.metrics.studentsPlaced).toBe(0);
+    expect(result.metrics.studentsAccepted).toBe(0);
+    expect(result.metrics.studentsWithPackage).toBe(0);
   });
 
   it("returns truthful empty and denominator-zero results", () => {
