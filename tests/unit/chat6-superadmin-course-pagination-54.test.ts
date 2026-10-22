@@ -22,7 +22,9 @@ describe("Super Admin Courses bounded page size",()=>{
  it("SA-academics-people-54 wires bounded UI page size and Refresh into the Super Admin page",()=>{
   const page=source("src/app/(authenticated)/admin/courses/page.tsx");
   const overview=source("src/components/courses/admin-course-overview.tsx");
-  expect(page).toContain("pageSize:query.pageSize");
+  expect(page).toContain("catalogueQuery={catalogueQuery}");
+  expect(page).toContain("parseSuperAdminCourseQuery(query)");
+  expect(overview).toContain("paginateCollegeCourses(workspace.courses,catalogueQuery)");
   expect(overview).toContain('name="pageSize"');
   expect(overview).toContain(">Refresh</Link>");
   expect(overview).toContain("{catalogue.pageSize} per page");
