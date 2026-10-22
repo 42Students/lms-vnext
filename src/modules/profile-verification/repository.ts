@@ -71,7 +71,7 @@ export function createProfileVerificationRepository(
     const mask = (raw:string) => raw ? "XXXXXXXX" + raw.slice(-4) : "";
     // Reuse the previous submitted salt for this learner only, so editing an
     // unchanged identity number does not create a false "new" submission.
-    const identitySalt = stableIdentitySalt(priorSnapshot?.identityHashSalt,
+    const identitySalt = stableIdentitySalt(priorSnapshot?.["identityHashSalt"],
       ()=>randomBytes(32).toString("hex"));
     const raw: SafeSnapshot = section === "IDENTITY"
       ? { aadhaarNumber:mask(profile.identity.aadhaarNumber),
