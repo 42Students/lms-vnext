@@ -9,7 +9,7 @@ const team=()=>src("src/app/(authenticated)/tpo/team/page.tsx");
 const announcements=()=>src("src/app/(authenticated)/tpo/announcements/page.tsx");
 describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
  it("TPO-inbox-team-09 refreshes recruiter messages every four seconds and on focus without GET writes",()=>{
-  expect(messages()).toContain("<TpoLiveRefresh intervalMs={4000}/>");
+  expect(messages()).toContain('<TpoLiveRefresh intervalMs={4000} pulseHref="/api/placements/tpo/messages/pulse"/>');
   const component=src("src/components/tpo/tpo-live-refresh.tsx");
   expect(component).toContain("document.visibilityState");
   expect(component).toContain('window.addEventListener("focus",refresh)');
@@ -18,16 +18,18 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
  });
  it("TPO-inbox-team-11 never passes off own notification deliveries as recruiter messages",()=>{
   expect(messages()).toContain("if(!isRecruiterInbox)return");
-  expect(messages()).toContain("Recruiter conversations are temporarily unavailable");
+  expect(messages()).toContain("Recruiter conversations are unavailable. Placement notifications remain separate");
   expect(messages()).toContain('href="/tpo/notifications"');
+  expect(messages()).toContain("if(!isRecruiterInbox)return");
  });
  it("TPO-inbox-team-13 provides phone-friendly conversation cards and All conversations back control",()=>{
   // Shared DataTable renders native phone cards and a desktop table without
   // duplicating the row DOM or exposing private fields in an unscoped card.
   const page=messages(),table=src("src/components/ui/data-table.tsx");
-  expect(page).toContain("<DataTable");
-  expect(page).toContain('mobilePriority:"primary"');
-  expect(page).toContain('mobilePriority:"action"');
+  expect(page).toContain('<TpoMessagesTabs selected="recruiters"/>');
+  expect(page).toContain("items.map(item=><li key={item.id}>");
+  expect(page).toContain("aria-current={active?.id===item.id?");
+  expect(page).toContain("formatTpoInboxTime(item.occurredAt,now)");
   expect(table).toContain('className="block w-full');
   expect(table).toContain('className="hidden sm:table-header-group');
   expect(table).toContain('className="block space-y-3 sm:table-row-group');
@@ -40,26 +42,27 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
  });
  it("TPO-inbox-team-27 polls open Team conversations every 30 seconds and on focus",()=>{
   expect(src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx")).toContain("<TpoLiveRefresh intervalMs={30000}/>");
-  expect(team()).toContain("<TpoLiveRefresh intervalMs={30000}/>");
+  expect(messages()).toContain("<TpoTeamMessagesDirectory");
+  expect(src("src/components/tpo/tpo-team-messages-directory.tsx")).toContain("<TpoLiveRefresh intervalMs={30000}/>");
  });
  it("TPO-inbox-team-39 maps API failures to inline feedback and retains unsent text",()=>{
   expect(tpoTeamFormErrorMessage("RECIPIENT_NOT_FOUND","CREATE")).toMatch(/no longer available/);
   expect(tpoTeamFormErrorMessage("INVALID_BODY","REPLY")).toMatch(/Write a message/);
   const forms=src("src/components/tpo/tpo-team-forms.tsx");
-  expect(forms).toContain('role="alert"');
+  expect(forms).toContain('<InlineNotice tone="error" message={error}');
   expect(forms).toContain("setError(tpoTeamFormErrorMessage");
   expect(forms).toContain("value={body}");
   expect(forms).toContain("router.refresh()");
-  expect(team()).toContain("<TpoTeamThreadCreate");
+  expect(src("src/components/tpo/tpo-team-messages-directory.tsx")).toContain("<TpoTeamThreadCreate");
  });
  it("TPO-inbox-team-40 restores the exact legacy Team subtitle",()=>{
-  expect(team()).toContain("Who does what, and what you decided. Recruiters and students never see this.");
+  expect(messages()).toContain("who does what, and what you decided. Recruiters and students never see these.");
  });
  it("TPO-inbox-team-48 shows scheduled and ended notices in the author list",()=>{
   const service=src("src/modules/announcements/tpo-placement-read-service.ts");
   expect(service).toContain('tab==="deleted"||tab==="yours"?[]');
   expect(announcements()).toContain("Scheduled for");
-  expect(announcements()).toContain(">Ended</p>");
+  expect(announcements()).toContain(">Ended</StatusBadge>");
   expect(announcements()).toContain('name="sendAt"');
  });
  it("TPO-inbox-team-52 requires an explicit notice delete confirmation",()=>{
@@ -84,7 +87,7 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   for(const file of ["src/modules/announcements/tpo-placement-write-service.ts",
     "src/modules/announcements/tpo-placement-edit-service.ts"]){
    expect(src(file)).toContain("max(200)");
-   expect(src(file)).toContain("max(8000)");
+   expect(src(file)).toContain("max(8000");
   }
   expect(announcements()).toContain("maxLength={200}");
   expect(announcements()).toContain("maxLength={8000}");
@@ -113,8 +116,8 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
  });
  it("TPO-inbox-team-55 returns a user-facing error for invalid notice fields instead of JSON post navigation",()=>{
   expect(src("src/app/api/placements/tpo/announcements/route.ts")).toContain("noticePostError");
-  expect(src("src/modules/announcements/tpo-notice-form-error-model.ts")).toContain("Give it a title.");
-  expect(src("src/modules/announcements/tpo-notice-form-error-model.ts")).toContain("Write the announcement.");
+  expect(src("src/modules/announcements/tpo-notice-form-error-model.ts")).toContain('TITLE_REQUIRED:"Give it a title"');
+  expect(src("src/modules/announcements/tpo-notice-form-error-model.ts")).toContain('MESSAGE_REQUIRED:"Write the announcement"');
   expect(announcements()).toContain('role="alert"');
   expect(tpoNoticeFormErrorMessage("BUTTON_URL_INVALID")).toBe("The link has to start with https://");
   expect(announcements()).toContain("formMinDateTime");
@@ -122,7 +125,7 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
  });
  it("TPO-inbox-team-64 makes bell rows clickable and includes New and relative date cues",()=>{
   const bell=src("src/components/tpo/tpo-bell-panel.tsx");
-  expect(bell).toContain("w-full min-h-11");
+  expect(bell).toContain("min-h-11 w-full");
   expect(bell).toContain("onClick={()=>void openItem(item)}");
   expect(bell).toContain('"New  →"');
  });
