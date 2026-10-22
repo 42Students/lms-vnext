@@ -134,7 +134,7 @@ export async function getTpoLearnerParticipation(
       eq(learnerProgramEnrollments.membershipId, membershipId),
       eq(learnerProgramEnrollments.status, "ACTIVE"),
     )).limit(2);
-  if (enrollments.length !== 1 || enrollments[0].collegeId !== college.id) {
+  if (enrollments.length !== 1 || !enrollments[0] || enrollments[0].collegeId !== college.id) {
     return unavailable();
   }
   const enrollment = enrollments[0];
@@ -265,15 +265,16 @@ export async function decideTpoLearnerParticipation(
         eq(learnerProgramEnrollments.membershipId, membershipId),
         eq(learnerProgramEnrollments.status, "ACTIVE"),
       )).limit(2);
-    if (enrollments.length !== 1 || enrollments[0].collegeId !== college.id) {
+    if (enrollments.length !== 1 || !enrollments[0] || enrollments[0].collegeId !== college.id) {
       return unavailable();
     }
+    const enrollment = enrollments[0];
 
     if (await placementTableExists("placement_batch_lifecycles")) {
       const [batchLifecycle] = await tx.select({finishedAt:placementBatchLifecycles.finishedAt})
         .from(placementBatchLifecycles)
         .where(and(eq(placementBatchLifecycles.collegeId,college.id),
-          eq(placementBatchLifecycles.cohortId,enrollments[0].cohortId)))
+          eq(placementBatchLifecycles.cohortId,enrollment.cohortId)))
         .limit(1);
       if (batchLifecycle?.finishedAt) throw new TpoParticipationConflictError();
     }
