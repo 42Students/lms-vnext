@@ -140,6 +140,8 @@ export async function getSuperAdminCollegeReadiness(
     collegeId: college.id,
   });
 
+  const scopedCollegeId = college.id;
+
   function roleCount(
     role: MembershipRole,
   ) {
