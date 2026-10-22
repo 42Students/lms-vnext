@@ -239,10 +239,12 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   }
 
   const shell = (children: React.ReactNode) => (
-    <main className={`${authStyles.page} flex min-h-dvh min-w-0 items-center justify-center bg-[#f5f7f9] px-4 py-8 md:py-12`}>
+    <main className={authStyles.page}>
+      <div className="flex min-h-dvh min-w-0 items-center justify-center bg-[#f5f7f9] px-4 py-8 md:py-12">
       <Card as="section" className="w-full max-w-[440px]">
         {children}
       </Card>
+      </div>
     </main>
   );
 
