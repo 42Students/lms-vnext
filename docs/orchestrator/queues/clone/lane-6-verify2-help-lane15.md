@@ -8,4 +8,13 @@ Record of assistance by chat-15. Do **not** modify `lane-6-verify2.md`. Reviewed
 - [x] **G2-9-034-111 (OK):** Paginates canonical company IDs at 50/page before relationship enrichments, separate from 10/page college relationships.
 - [x] **G2-9-034-112 (FIXED):** Linked-college counts require active non-archived relationships. Global drive count, last-active and drive-count sort require matching persisted job/relation college IDs, active relationships, non-archived jobs. Added source-boundary regression tests.
 
-Next packet: `W1_lane6_20.md` (process from its last row upward).
+## W1_lane6_20 — verified from the bottom upward (partial packet)
+
+- [x] **G2-9-034-068 / G2-9-034-047 / G2-9-034-046 / G2-9-034-030 / G2-9-034-026 / G2-9-034-015 / G2-9-034-010 (OK):** Global catalogue pages 50 canonical company UUID rows independent of relationship multiplicity, including distinct same-name employers. Global view rejects acting-college/organization scope and tells the operator to clear it. Matching-college and active-only global statistics corrected in W1_lane6_21.
+- [x] **G2-9-033-047 / G2-9-033-061 / G2-9-033-062 (OK):** College page uses 10 relationship rows and exposes contact person/email only in exact-college scope; global/organization reads project NULL for private contact fields.
+- [x] **G2-9-033-077 / G2-9-033-079 (OK):** Create parser requires website or company domain and enforces HTTPS website/logo; matching form shows legacy identity and invalid-link feedback.
+- [x] **G2-9-022-028 (OK):** Unexpected promotion-preview errors return fail-closed `Couldn't verify promotion` with Retry; confirmation renders only from verified ready preview.
+- [x] **G2-9-014-042 (FIXED):** Bulk Assessment move now shows actual moved count with stage-specific legacy success wording, explicit skipped count for partial writes and specific failure prefix. Added dedicated unit and source-wiring tests.
+- [ ] Other W1_lane6_20 rows require further service-level verification; this packet is NOT claimed closed and lane 6's queue remains unchanged.
+
+Next: continue W1_lane6_20 remaining rows from bottom upward before W1_lane6_19.
