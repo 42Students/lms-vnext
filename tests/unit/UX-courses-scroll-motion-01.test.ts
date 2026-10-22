@@ -7,7 +7,7 @@ describe("UX-courses-scroll-motion-01 accessible overflow cues",()=>{
   const cue=read("src/components/ui/scroll-cue.tsx");
   const preview=read("src/components/courses/college-content-preview.tsx");
   const roadmap=read("src/components/courses/learner-roadmap-item-dialog.tsx");
-  expect(preview).toContain("<Dialog open={open}");
+  expect(preview).toMatch(/<Dialog\s+open=\{open\}/);
   expect(roadmap).toContain("<Dialog open={open}");
   expect(dialog).toContain('<ScrollCue axis="y"');
   expect(dialog).toContain("opener.current?.focus()");

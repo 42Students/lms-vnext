@@ -55,9 +55,9 @@ describe("HR-PORTFOLIO-OWNER-24 no unauthorized employer portfolio enumeration",
   const portfolio=service.slice(service.indexOf("export async function listOwnRecruiterPlacementJobs"));
   expect(portfolio).toContain('isNull(placementJobs.archivedAt)');
   expect(portfolio).toContain('inArray(placementJobs.status, [');
-  expect(portfolio).toContain('eq(placementCompanyRelationships.status,');
-  expect(portfolio).toContain('eq(placementCompanies.status, "ACTIVE")');
-  expect(portfolio).toContain('eq(colleges.status, "ACTIVE")');
+  expect(portfolio).toMatch(/eq\(\s*placementCompanyRelationships\.status,\s*"ACTIVE"/);
+  expect(portfolio).toMatch(/eq\(\s*placementCompanies\.status,\s*"ACTIVE"/);
+  expect(portfolio).toMatch(/eq\(\s*colleges\.status,\s*"ACTIVE"/);
   expect(portfolio).toContain('recruiterOwnJobPredicate(context.user.id)');
   expect(portfolio).toContain('eq(users.id,context.user.id)');
   expect(portfolio).toContain('eq(users.platformStatus,"ACTIVE")');

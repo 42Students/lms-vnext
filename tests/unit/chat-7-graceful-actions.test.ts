@@ -7,7 +7,8 @@ describe("chat-7 graceful operation on touched pages",()=>{
   expect(text).toContain("ConfirmDialog");
   expect(text).toContain("Delete this task?");
   expect(text).not.toContain("window.confirm");
-  expect(text).toContain("if(pending)return");
+  expect(text).toContain("if(pending||inFlight.current)return");
+  expect(text).toContain("inFlight.current=true");
  });
  it("GR-35 REC-home-drives-49 previews bulk results in a keyboard-reachable confirmation dialog",()=>{
   const text=src("src/components/placements/recruiter-result-controls.tsx");

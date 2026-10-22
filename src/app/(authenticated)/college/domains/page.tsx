@@ -43,7 +43,7 @@ export default async function CollegeDomainsPage() {
   );
 
   return (
-    <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
+    <div className="min-w-0 max-w-full overflow-x-clip space-y-[var(--lms-space-4)]">
       <PageHeader
         title="Tenant domains"
         description="Connect and verify college hostnames without changing the canonical tenant boundary."

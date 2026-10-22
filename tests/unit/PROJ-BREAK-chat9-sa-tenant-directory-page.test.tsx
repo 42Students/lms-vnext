@@ -10,6 +10,7 @@ vi.mock("@/auth/request-context",()=>({
   }),
 }));
 vi.mock("@/modules/permissions/policy",()=>({
+  can:()=>state.authorized,
   requirePermission:()=>{
     if(!state.authorized)throw Error("Missing permission: admin-scope.select");
   },
@@ -59,7 +60,10 @@ describe("Super Admin last-third tenants directory: failures, denial and invalid
   });
   it("SA-tenants-idor-58 disabled Super Admin is denied before tenant PII read",async()=>{
     state.authorized=false;
-    await expect(render()).rejects.toThrow("Missing permission: admin-scope.select");
+    const view=treeText(await render()).join(" ");
+    expect(view).toContain("Tenant directory access denied");
+    expect(view).toContain("Back to dashboard");
+    expect(view).not.toContain("No matching tenants");
     expect(state.calls).toBe(0);
   });
   it("SA-tenants-ux-11 genuine zero matches are distinct from an unavailable directory",async()=>{

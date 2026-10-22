@@ -26,7 +26,7 @@ describe("HR-BREAK-OFFER-FOLLOWUP-15: withdrawn/unshared students never produce 
   for(const guard of [
    "inArray(placementJobs.id,ids)",
    "eq(placementJobs.collegeId,collegeId)",
-   'eq(placementJobs.status,"PUBLISHED")',
+   "inArray(placementJobs.status,[...HR_FOLLOWUP_JOB_STATUSES])",
    "isNull(placementJobs.archivedAt)",
    'eq(placementApplications.status,"SUBMITTED")',
    "eq(collegeMemberships.collegeId,collegeId)",
@@ -36,6 +36,8 @@ describe("HR-BREAK-OFFER-FOLLOWUP-15: withdrawn/unshared students never produce 
   ])expect(query).toContain(guard);
   expect(query).toContain('"ISSUED","ACCEPTED","DECLINED"');
   expect(source).toContain("count(distinct");
+  const allowedStatuses=readFileSync("src/modules/placements/hr-today-offer-followup-model.ts","utf8");
+  expect(allowedStatuses).toContain('HR_FOLLOWUP_JOB_STATUSES=["PUBLISHED","CLOSED"]');
  });
  it("short-circuits empty scoped job IDs before any DB read",()=>{
   const source=readFileSync("src/modules/placements/hr-today-offer-actions-service.ts","utf8");

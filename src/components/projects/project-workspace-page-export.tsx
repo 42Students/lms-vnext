@@ -1,18 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
-import {projectAdminCsv} from "@/modules/projects/project-admin-csv-model";
-import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-status-label";
+import {projectWorkspacePageCsv} from "@/modules/projects/admin-workspace-page-export-model";
 type Item={id:string;title:string;status:string;mentorName:string|null;memberCount:number;progressPercent:number;updatedAt:Date;templateId?:string|null;riskReasons?:readonly string[]};
 export function ProjectWorkspacePageExport({items}:{items:Item[]}){
  const [notice,setNotice]=useState("");
  function exportCsv(){
-  const columns=["Workspace","Status","Progress","Mentor","Template ID"];
-  const body=items.map(item=>[
-    item.title,collegeWorkspaceStatusLabel(item.status,item.riskReasons),
-    item.progressPercent+"%",item.mentorName??"",item.templateId??"",
-  ]);
-  const csv=projectAdminCsv([columns,...body]);
+  const csv=projectWorkspacePageCsv(items);
   const file=new Blob([csv],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(file);const link=document.createElement("a");
   link.href=url;link.download="project-workspaces-page.csv";link.click();URL.revokeObjectURL(url);

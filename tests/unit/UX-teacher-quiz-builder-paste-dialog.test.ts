@@ -16,7 +16,7 @@ describe("Quiz builder paste options and mobile touch UX",()=>{
   const s=source();
   expect(s).toContain("facultyRemoveQuizOption");
   expect(s).toContain("q.options.length>=20");
-  expect(s).toContain("min-h-11 rounded border border-border");
+  expect(s).toContain("min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border");
   expect(s).not.toContain("min-h-10");
   expect(s).not.toContain("text-on-primary");
  });
