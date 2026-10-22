@@ -120,6 +120,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Specify delete dependency semantics and distinct archive safety.
 
 ## G2-5-010-029 [P1] GAP facet F06 Forms
+- [x] Verified: create/edit Class capacity controls enforce 1–200, and create/update Zod schemas enforce the same whole-number bound and minimum-size invariant.
 - Files: (none, new feature)
 - Legacy: Edit maxStudents 1–200, lower limit invariant (docs/legacy-source/frontend/src/pages/superadmin/sections/Classes.js:33-48; docs/legacy-source/frontend/src/pages/superadmin/sections/Classes.js:91-105)
 - Expected fix: Keep same 1–200 range create/edit.
