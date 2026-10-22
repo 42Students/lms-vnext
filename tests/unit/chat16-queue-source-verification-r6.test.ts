@@ -70,7 +70,7 @@ const contracts=[
   [
     "MEN-projects-meetings-73",
     "src/modules/projects/mentor-attention.ts",
-    "[\"PLANNED\",\"ACTIVE\"]"
+    "[\"PLANNED\",\"ACTIVE\",\"IN_PROGRESS\"]"
   ],
   [
     "MEN-projects-meetings-74",
@@ -165,7 +165,7 @@ const contracts=[
   [
     "SA-placements-projects-122",
     "src/app/(authenticated)/tracker/audit-findings/page.tsx",
-    "Release (critical & high)"
+    "<IndependentAuditFindingsBoard rows={data.items}"
   ]
 ] as const;
 
