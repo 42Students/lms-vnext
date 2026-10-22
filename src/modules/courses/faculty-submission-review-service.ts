@@ -60,9 +60,12 @@ export async function getFacultySubmissionReviewPage(context: RequestContext, ra
  */
 const facultyStatsRequest=z.strictObject({
  deliveryId:z.string().uuid(),
- assignmentIds:z.array(z.string().uuid()).min(1).max(100),
-}).refine(input=>new Set(input.assignmentIds).size===input.assignmentIds.length,
- {message:"Assignment IDs must be unique",path:["assignmentIds"]});
+ // Legacy bulk stats accepts repeat IDs. Bound the incoming body first, then
+ // deduplicate before the maximum 100 distinct IDs reach SQL.
+ assignmentIds:z.array(z.string().uuid()).min(1).max(500),
+}).transform(input=>({...input,assignmentIds:[...new Set(input.assignmentIds)]}))
+ .refine(input=>input.assignmentIds.length<=100,
+  {message:"Select no more than 100 distinct assignments",path:["assignmentIds"]});
 
 export async function getFacultyAssignmentSubmissionStatsBulk(
  context:RequestContext,raw:unknown,
