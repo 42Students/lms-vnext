@@ -15,7 +15,7 @@ export function SuperAdminStudentImportHistory({ runs }: { runs: readonly Run[] 
       Import History
     </Button>
     <Dialog open={open} onOpenChange={setOpen} title="Import History"
-      className="max-w-[640px]" bodyClassName="min-w-0"
+      className="max-w-[640px] max-h-[calc(100dvh-2rem)]" bodyClassName="min-w-0 overflow-y-auto overscroll-contain"
       footer={<Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Close</Button>}>
       <div role="region" aria-label="Bulk import history records"
         className="min-w-0">

@@ -96,7 +96,7 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
   }
   const css=read("src/app/globals.css");
   expect(css).toContain("--lms-motion-fast: 150ms");
-  expect(css).toContain("--lms-motion-base: 200ms");
+  expect(css).toContain("--lms-motion-base: 250ms");
   expect(css).toContain("prefers-reduced-motion");
  });
  it("UX-admin-scroll-motion-11 /admin/projects/readiness and /admin/projects/templates use responsive tables without hidden raw scroll traps",()=>{
