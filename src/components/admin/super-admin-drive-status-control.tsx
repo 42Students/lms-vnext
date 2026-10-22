@@ -7,31 +7,36 @@ import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {useToast} from "@/components/ui/toast";
 
-/** Only use the currently authorized status route. Reopen is not a
- * Super Admin capability until the selected-college mutation supports it. */
+/** Close and reopen use the same selected-college lifecycle guard, with an
+ * explicit confirmation for each status transition. No draft is published here. */
 export function SuperAdminDriveStatusControl({jobId,status}:{
  jobId:string;status:string;
 }){
  const router=useRouter();
  const {showToast}=useToast();
- const [confirm,setConfirm]=useState(false);
+ const [confirm,setConfirm]=useState<"CLOSE"|"REOPEN"|null>(null);
  const [pending,setPending]=useState(false);
  const [error,setError]=useState("");
- async function closeDrive(){
-  if(pending||status!=="PUBLISHED")return;
+ async function changeStatus(action:"CLOSE"|"REOPEN"){
+  if(pending||(action==="CLOSE"&&status!=="PUBLISHED")||
+     (action==="REOPEN"&&status!=="CLOSED"))return;
   setPending(true);setError("");
   try{
    const response=await fetch("/api/placements/jobs/"+encodeURIComponent(jobId)+"/status",{
     method:"POST",headers:{"content-type":"application/json"},
-    body:JSON.stringify({action:"CLOSE"}),
+    body:JSON.stringify(action==="REOPEN"?{action:"REOPEN",confirmed:true}:{action:"CLOSE"}),
    });
    const result:unknown=await response.json().catch(()=>null);
    if(!response.ok){
-    const detail=result&&typeof result==="object"&&"error" in result?String(result.error):"Could not close drive";
-    throw Error("Failed to update drive status ("+detail+"). Review pending selections, then retry.");
+    const detail=result&&typeof result==="object"&&"error" in result?String(result.error):
+      action==="REOPEN"?"Could not reopen drive":"Could not close drive";
+    throw Error("Drive status was not changed ("+detail+"). Review the current season and employer, then retry.");
    }
-   setConfirm(false);
-   showToast({tone:"success",title:"Drive closed",description:"New applications stopped. Offers and recorded history follow the authorized close workflow."});
+   setConfirm(null);
+   showToast({tone:"success",title:action==="REOPEN"?"Drive reopened":"Drive closed",
+     description:action==="REOPEN"?
+       "Applications are open again; historical offers and decisions remain unchanged.":
+       "New applications stopped. Existing offers and history were retained."});
    router.refresh();
   }catch(caught){
    const message=caught instanceof Error?caught.message:"Failed to update drive status";
@@ -44,15 +49,21 @@ export function SuperAdminDriveStatusControl({jobId,status}:{
    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Drive status</h2>
    <StatusBadge tone={status==="PUBLISHED"?"success":status==="DRAFT"?"warning":"neutral"}>{status}</StatusBadge>
   </div>
-  {status==="PUBLISHED"?<Button type="button" variant="danger" disabled={pending} onClick={()=>{setError("");setConfirm(true);}}>
-   Close drive</Button>:status==="CLOSED"?<Alert tone="info">
-   This drive is closed. Reopening from Super Admin settings requires a separately authorized college-scoped lifecycle action; no older offers are automatically restored.
-  </Alert>:status==="DRAFT"?<p className="text-sm text-body">Complete the draft and its eligibility checks before publishing through the drive workspace.</p>:
+  {status==="PUBLISHED"?<Button type="button" variant="danger" disabled={pending} onClick={()=>{setError("");setConfirm("CLOSE");}}>
+   Close drive</Button>:status==="CLOSED"?<div className="space-y-2">
+   <Alert tone="info">This drive is closed. You can reopen it only while its placement season and employer relationship are active. Earlier offers remain unchanged.</Alert>
+   <Button type="button" variant="secondary" disabled={pending}
+     onClick={()=>{setError("");setConfirm("REOPEN");}}>Reopen drive</Button>
+  </div>:status==="DRAFT"?<p className="text-sm text-body">Complete the draft and its eligibility checks before publishing through the drive workspace.</p>:
    <p className="text-sm text-muted-foreground">This drive is not open for applications.</p>}
   {error?<Alert tone="error" role="alert">{error}</Alert>:null}
-  <ConfirmDialog open={confirm} onOpenChange={next=>{if(!pending)setConfirm(next);}}
-   title="Close this drive?" description="Closing stops new applications. Pending selections and issued offers may be affected."
-   confirmLabel="Yes, close drive" cancelLabel="No" confirmVariant="danger"
-   pending={pending} onConfirm={()=>void closeDrive()}/>
+  <ConfirmDialog open={confirm!==null} onOpenChange={next=>{if(!pending&&!next)setConfirm(null);}}
+   title={confirm==="REOPEN"?"Reopen this drive?":"Close this drive?"}
+   description={confirm==="REOPEN"?
+     "Reopening allows new applications again. Older offers and historical decisions are not restored.":
+     "Closing stops new applications. Pending selections and issued offers may be affected."}
+   confirmLabel={confirm==="REOPEN"?"Yes, reopen drive":"Yes, close drive"}
+   cancelLabel="No" confirmVariant={confirm==="CLOSE"?"danger":"primary"}
+   pending={pending} onConfirm={()=>{if(confirm)void changeStatus(confirm);}}/>
  </section>;
 }
