@@ -27,10 +27,10 @@ type Stored={query:z.infer<typeof selection>;pinned:boolean;lastUsedAt?:string;u
 function viewData(raw:unknown):Stored{
  if(!raw||typeof raw!=="object")return{query:{pageSize:25},pinned:false};
  const obj=raw as Record<string,unknown>;
- const q=selection.safeParse(obj.query);
- return{query:q.success?q.data:{pageSize:25},pinned:obj.pinned===true,
-  lastUsedAt:typeof obj.lastUsedAt==="string"?obj.lastUsedAt:undefined,
-  updatedAt:typeof obj.updatedAt==="string"?obj.updatedAt:undefined};
+ const q=selection.safeParse(obj["query"]);
+ return{query:q.success?q.data:{pageSize:25},pinned:obj["pinned"]===true,
+  ...(typeof obj["lastUsedAt"]==="string"?{lastUsedAt:obj["lastUsedAt"]}:{}),
+  ...(typeof obj["updatedAt"]==="string"?{updatedAt:obj["updatedAt"]}:{})};
 }
 export async function listTpoStudentSavedViews(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
@@ -64,7 +64,8 @@ export async function mutateTpoStudentSavedView(ctx:RequestContext,raw:unknown){
   }
   const now=new Date().toISOString();
   if(input.action==="OPEN"){
-   const old=viewData(existing!.filters);
+   if(!existing)throw Error("Saved view not found.");
+   const old=viewData(existing.filters);
    await tx.update(placementTpoSavedViews).set({
     filters:{...old,lastUsedAt:now},
    }).where(eq(placementTpoSavedViews.id,input.id));
@@ -76,8 +77,9 @@ export async function mutateTpoStudentSavedView(ctx:RequestContext,raw:unknown){
    throw Error("You already have a saved view with these filters.");
   const pinned=other.filter(row=>viewData(row.filters).pinned).length;
   if(input.pinned&&pinned>=5)throw Error("Only five views may be pinned.");
+  const previousLastUsedAt=existing?viewData(existing.filters).lastUsedAt:undefined;
   const record:Stored={query:input.filters,pinned:input.pinned,
-   lastUsedAt:existing?viewData(existing.filters).lastUsedAt:undefined,updatedAt:now};
+   ...(previousLastUsedAt!==undefined?{lastUsedAt:previousLastUsedAt}:{}),updatedAt:now};
   const [saved]=input.action==="CREATE"
    ?await tx.insert(placementTpoSavedViews).values({
      collegeId,userId:ctx.user.id,scope:"STUDENTS",name:input.name,filters:record,
@@ -85,6 +87,7 @@ export async function mutateTpoStudentSavedView(ctx:RequestContext,raw:unknown){
    :await tx.update(placementTpoSavedViews).set({
      name:input.name,filters:record,
     }).where(eq(placementTpoSavedViews.id,input.id)).returning({id:placementTpoSavedViews.id});
+  if(!saved)throw Error("Saved view could not be saved.");
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,
    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
