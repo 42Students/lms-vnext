@@ -9,6 +9,8 @@ import type {
   IdentityDirectoryUser,
 } from "./identity";
 import {PeopleServiceError} from "./errors";
+import {buildE2EFixtureManifest,reconcileE2EFixtureManifest} from "./e2e-fixture-manifest";
+export {buildE2EFixtureManifest,reconcileE2EFixtureManifest} from "./e2e-fixture-manifest";
 
 function toDirectoryUser(row: {
   identityUid: string;
@@ -122,3 +124,16 @@ export const e2eIdentityDirectory: IdentityDirectory = {
     };
   },
 };
+
+/** Preview only; fixture creation must be performed by explicit module-owned
+ * service writers. This can never create synthetic production identities or
+ * grant a role, membership, token or object-read permission. */
+export function previewNonproductionE2ESeed(namespace="e2e-dev"){
+ if(process.env.NODE_ENV==="production"||
+    process.env.E2E_SEED_ENABLED!=="true")
+  throw new Error("E2E_SEED_DISABLED");
+ const manifest=buildE2EFixtureManifest(namespace);
+ const decisions=reconcileE2EFixtureManifest(manifest,new Map());
+ return {manifest,decisions,persisted:false as const,
+  message:"Fixture plan generated. Database seeding and file attestation still require an authorized writer."};
+}
