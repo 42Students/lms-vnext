@@ -40,7 +40,7 @@ function normalizeSubmissionStatus(value: string | undefined) {
 
 export function parseProjectAdminSubmissionsQuery(params: Record<string,string|string[]|undefined>, options: {superAdmin?:boolean} = {}) {
   if (Object.values(params).some(Array.isArray) ||
-      Object.keys(params).some(key=>!["view","q","status","submissionStatus","sort","page","pageSize","tab","projectId"].includes(key)))
+      Object.keys(params).some(key=>!["view","q","status","submissionStatus","sort","page","pageSize","tab","projectId","focusedProjectId"].includes(key)))
     return schema.safeParse(null);
   const rawStatus=first(params.status)?.trim();
   const workspaceStatus=rawStatus && ["PLANNED","ACTIVE","COMPLETED","ARCHIVED"].includes(rawStatus.toUpperCase())
@@ -48,7 +48,7 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
   const legacySubmission=rawStatus && !workspaceStatus ? normalizeSubmissionStatus(rawStatus) : undefined;
   const entries = {
     view:first(params.view)??(first(params.tab)?.toLowerCase()==="notsubmitted"?"NOT_SUBMITTED":"ALL"),
-    q:first(params.q),focusedProjectId:first(params.projectId),status:workspaceStatus,
+    q:first(params.q),focusedProjectId:first(params.focusedProjectId)??first(params.projectId),status:workspaceStatus,
     sort:first(params.sort),
     submissionStatus:normalizeSubmissionStatus(first(params.submissionStatus) ?? legacySubmission),
     page:first(params.page),pageSize:first(params.pageSize) ?? (options.superAdmin ? "10" : undefined),
