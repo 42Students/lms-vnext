@@ -49,8 +49,8 @@ export function collegeActivityItem(record:ActivitySubject,targetNames:Record<st
   const value=payload[key];
   if(typeof value==="string"&&value.trim())return value.trim();
  }
- const first=typeof payload.firstName==="string"?payload.firstName.trim():"";
- const last=typeof payload.lastName==="string"?payload.lastName.trim():"";
+ const first=typeof payload["firstName"]==="string"?payload["firstName"].trim():"";
+ const last=typeof payload["lastName"]==="string"?payload["lastName"].trim():"";
  if(first||last)return [first,last].filter(Boolean).join(" ");
  const found=(record.targetNames??targetNames)[record.subjectType.toLowerCase()+":"+record.subjectId];
  if(found?.trim())return found.trim();
