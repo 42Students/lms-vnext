@@ -211,5 +211,12 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 
 Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
 
-- [ ] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+
+## Current-main reconciliation (2026-10-23)
+
+All seven listed unit-test files were already marked repaired in current `main` before this pass; no additional failing test file remained in this queue. The associated previous repair commits and behavior notes are preserved under Repair results above. Lane-5 unit11 is also fully ticked, so there are no unticked next-lane unit11 files to claim. Unit tests were not executed in this GitHub-only pass.
+
+- Deep G2-19-002-095: FIXED — preserve India wall-clock legacy assignment deadline at import (b9e8c84); documented in DEEP_agent2_4.md.
+- Deep G2-4-017-049: OK — legacy recoverability remains separate from archive/deletion status (`src/db/schema/projects.ts:231-263`); documented in DEEP_agent2_4.md.
