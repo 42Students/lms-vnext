@@ -499,25 +499,25 @@ export function AdminCourseOverview({
         contentClassName="py-3">
       <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] lg:grid-cols-4">
         <StatTile
-          className={collegeStyles.tile}
+          {...(collegeStyles["tile"] !== undefined ? {className:collegeStyles["tile"]} : {})}
           label="Courses"
           value={workspace.summary.courses}
           detail=""
         />
         <StatTile
-          className={collegeStyles.tile}
+          {...(collegeStyles["tile"] !== undefined ? {className:collegeStyles["tile"]} : {})}
           label="Offerings"
           value={workspace.summary.offerings}
           detail=""
         />
         <StatTile
-          className={collegeStyles.tile}
+          {...(collegeStyles["tile"] !== undefined ? {className:collegeStyles["tile"]} : {})}
           label="Deliveries"
           value={workspace.summary.deliveries}
           detail=""
         />
         <StatTile
-          className={collegeStyles.tile}
+          {...(collegeStyles["tile"] !== undefined ? {className:collegeStyles["tile"]} : {})}
           label="Teaching assignments"
           value={
             workspace.summary
@@ -541,7 +541,7 @@ export function AdminCourseOverview({
         contentClassName="min-w-0 pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
       <AdminCourseCreatePanel
         key={duplicateCourseId??"new-course"}
-        duplicateCourseId={duplicateCourseId}
+        {...(duplicateCourseId !== undefined ? {duplicateCourseId} : {})}
         courseBasePath={courseBasePath}
         departments={workspace.departments}
         periods={workspace.periods}
@@ -607,7 +607,7 @@ export function AdminCourseOverview({
         {courseBasePath.startsWith("/admin/") ? <SuperAdminCourseBulkVisibility
           key={workspace.collegeId}
           collegeId={workspace.collegeId}
-          maxSelection={(() => { const n=Number(process.env.COURSE_BULK_STATUS_MAX??"100"); return Number.isInteger(n)?Math.min(100,Math.max(1,n)):100; })()}
+          maxSelection={(() => { const n=Number(process.env["COURSE_BULK_STATUS_MAX"]??"100"); return Number.isInteger(n)?Math.min(100,Math.max(1,n)):100; })()}
           courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
         {!courseBasePath.startsWith("/admin/")?<CollegeCourseBulkVisibility
          key={workspace.collegeId}
