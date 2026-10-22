@@ -32,7 +32,7 @@ describe("chat-12 Students responsive grid and column preference",()=>{
   expect(grid).toContain("mobileActionsCollapsible ?");
   expect(grid).toContain('aria-label="Row actions"');
   expect(grid).toContain("mobileActionsCollapsible=false");
-  expect(grid).toContain('<div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');
+  expect(grid).toContain('<div role="group" aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');
   expect(sheet).toContain("rows={sortedRows}");
  });
  it("GR-39 uses break-words and min-width guards on narrow screen grid rows",()=>{
