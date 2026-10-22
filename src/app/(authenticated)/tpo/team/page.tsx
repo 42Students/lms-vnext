@@ -38,7 +38,7 @@ export default async function TpoTeamLegacyRedirect({
   // The canonical Messages route owns the Recruiters and Team tabs; Settings
   // owns the People roster. The current role and college remain server-scoped.
   if (tab === "people" || tab === "members" || tab === "roster") {
-    redirect("/tpo/settings/team");
+    redirect("/tpo/settings?tab=team");
   }
   if (tab === "recruiters" || tab === "recruiter") {
     const target = new URLSearchParams({ tab: "recruiters" });
