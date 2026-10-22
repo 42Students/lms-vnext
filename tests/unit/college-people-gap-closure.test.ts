@@ -6,6 +6,7 @@ import {FACULTY_CSV_COLUMNS} from "@/modules/people/college-faculty-csv-columns"
 import {LEGACY_STUDENT_CSV_COLUMNS,MAX_STUDENT_CSV_ROWS,parseStudentCsv} from "@/modules/people/college-student-csv-model";
 import {collegeRoleDirectoryQuerySchema,parseCollegeRoleDirectorySearchParams,assertCompatibleCollegeRoleDirectoryFilters,collegeRoleDirectoryHref} from "@/modules/people/college-role-directory-model";
 import {escapeRoleDirectoryCsvCell,ROLE_DIRECTORY_EXPORT_LIMIT} from "@/modules/people/college-role-directory-export";
+import {projectAdminReassignMentorHref} from "@/modules/projects/admin-reassign-mentor-query-model";
 const src=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 const directory=()=>src("src/components/college/college-role-directory-workspace.tsx");
 describe("College People legacy audited page contracts",()=>{
@@ -244,7 +245,7 @@ describe("College People legacy audited page contracts",()=>{
   expect(grant).toContain('requirePermission(context, "admin-scope.select")');
   expect(remove).toContain('requirePermission(context, "admin-scope.select")');
   expect(panel).toContain("Only a Super Admin can change the College Admin role.");
-  expect(panel).toContain("The College Admin role can only be assigned or removed by a Super Admin.");
+  expect(panel).toContain("Only a Super Admin can manage College Admin or TPO access.");
   const policy=src("src/modules/permissions/policy.ts");
   expect(policy).toContain('permission === "admin-scope.select"');
   expect(policy).toContain("return isSuperAdmin(context);");
@@ -261,7 +262,10 @@ describe("College People legacy audited page contracts",()=>{
   expect(table).toContain("row.atRisk");
   expect(table).toContain("Overloaded");
   expect(page).toContain('"UNASSIGNED"');
-  expect(page).toContain("fromMentorId=");
+  expect(page).toContain('name="fromMentorId"');
+   expect(projectAdminReassignMentorHref("/college/projects/workspaces",{
+     fromMentorId:"UNASSIGNED",mentorSearch:"",mentorPage:1,page:1,pageSize:10,
+   })).toBe("/college/projects/workspaces/reassign-mentor?fromMentorId=UNASSIGNED");
   expect(svc).toContain("listCollegeProjectMentorWorkload");
  });
  it("COL-people-22 preserves current-mentor filters and skips already-assigned workspace selection",()=>{
