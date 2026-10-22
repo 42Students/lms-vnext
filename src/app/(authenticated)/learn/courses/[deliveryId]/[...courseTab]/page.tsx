@@ -16,6 +16,7 @@ import { LearnerCourseDiscussion } from "@/components/courses/learner-course-dis
 import { LearnerCourseOverview } from "@/components/courses/learner-course-overview";
 import { LearnerCourseTabs, learnerCourseTabs } from "@/components/courses/learner-course-tabs";
 import { LearnerCourseWorkspace } from "@/components/courses/learner-course-workspace";
+import { LearnerCourseStateRetry } from "@/components/courses/learner-course-state-retry";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { learnerCourseAttendanceIstMonth,learnerCourseAttendanceIstWindow } from "@/modules/attendance/learner-course-attendance-ist-model";
@@ -127,8 +128,7 @@ export default async function LearnerCourseTabPage({
         {activeTab==="roadmap"
          ?"Lesson content could not be loaded. Your progress has not been changed; retry to load the latest lesson and completion state."
          :"Could not load course. Content and completion counts may be incomplete."}
-        <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/"+(activeTab??"home")}
-          className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>
+        <LearnerCourseStateRetry label="Retry" />
       </Banner>
       <Link href="/learn/courses" className="font-semibold text-primary-text underline">
         {LEARNER_BACK_TO_COURSES}
