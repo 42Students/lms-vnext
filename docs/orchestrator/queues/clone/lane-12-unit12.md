@@ -2,8 +2,8 @@
 
 CI run 39840114517 on main (06b36804), the LATEST run failed these unit tests. These STILL FAIL even though unit11 was ticked: ticking is not fixing. Read the CURRENT failure below, change code, and only tick after you pushed a real code or test change that makes the assertion pass. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/chat11-super-admin-tenant-lifecycle-races.test.ts` (1 failing)
-- [ ] `tests/unit/chat6-superadmin-lecture-hall-role-24.test.tsx` (1 failing)
+- [x] `tests/unit/chat11-super-admin-tenant-lifecycle-races.test.ts` (1 failing) — commit `1d56faac`: use legacy ACTIVE-only college blocker assertion.
+- [x] `tests/unit/chat6-superadmin-lecture-hall-role-24.test.tsx` (1 failing) — commit `449679cb`: mock and verify read-only organization directory.
 
 ## Failures (from CI log)
 
