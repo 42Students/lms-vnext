@@ -4,7 +4,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import { Button } from "@/components/ui/button";
 import { MetricBar } from "@/components/ui/metric-bar";
 import barStyles from "@/components/placements/report-bar-chart.module.css";
-import {useEffect,useRef,useState} from "react";
+import {useCallback,useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 
@@ -17,7 +17,7 @@ export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SEN
  const pending=useRef(false);
  const [unreadOpen,setUnreadOpen]=useState(false);
  const isSent=status==="SENT";
- async function load(){
+ const load=useCallback(async()=>{
   if(pending.current)return;
   pending.current=true;setBusy(true);setError("");
   try{
@@ -27,15 +27,13 @@ export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SEN
    setData(result);
   }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));}
   finally{pending.current=false;setBusy(false);}
- }
+ },[id]);
  useEffect(()=>{
   // Each sent notice shows its current persisted read/recipient counts without
   // first requiring an extra disclosure click. Failures leave a retry control.
   if (!isSent) return;
   void load();
-  // An announcement ID is stable for the mounted card.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
- },[id,isSent]);
+ },[isSent,load]);
  async function remind(){
   if(pending.current||!isSent||!data?.unread.length||data.read>=data.delivered)return;
   pending.current=true;setBusy(true);setError("");setReminder("");

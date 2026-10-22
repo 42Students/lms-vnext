@@ -148,13 +148,23 @@ export default async function AdminPlacementsPage({ searchParams }: {
         </dl>
       </section>
 
+      <section aria-label="Placement quick actions"
+        className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
+        <h2 className="font-semibold text-[var(--lms-heading)]">Quick actions</h2>
+        <p className="text-sm text-body">
+          Use the student lookup, company directory, organization jobs and
+          retention reports without opening a secondary menu.
+        </p>
+        {directoryActions}
+      </section>
       <PlacementOperationsWorkspace
         context={context}
         collegeId={collegeId}
         basePath="/admin/placements"
         staleDays={staleDays}
       />
-      <Disclosure title="Drive actions" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
+      <section aria-label="Drive actions" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
+        <h2 className="font-semibold text-[var(--lms-heading)]">Drive actions</h2>
         <p className="mb-[var(--lms-space-3)] text-sm text-body">
           Open, duplicate or extend a published drive from this overview. All actions remain scoped to the selected college.
         </p>
@@ -184,7 +194,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
             ) : null}
           </div>
         )}
-      </Disclosure>
+      </section>
       <AdminRetentionInlinePreview key={collegeId} collegeId={collegeId} />
       <section aria-label="Student placement lookup" className="min-w-0 border-b border-border pb-4">
         <h2 className="mb-2 font-semibold text-foreground">Find a student's placement status</h2>
@@ -196,9 +206,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
           <Button type="submit" className="min-h-11 w-full shrink-0 sm:w-auto">Search students</Button>
         </form>
       </section>
-      <Disclosure title="Related directories" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
-        {directoryActions}
-      </Disclosure>
+
     </div>
   );
 }
