@@ -282,19 +282,19 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </label>
       <h3 className="sm:col-span-2 lg:col-span-3 mt-2 font-semibold text-foreground">Pay and response</h3>
       <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Min. applied
-        <Input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
+        <Input name="minApplied" type="number" disabled={!data.countsAvailable} min={0} max={100000} defaultValue={data.minApplied??""}
           className="mt-[6px] block w-full"/>
       </label>
       <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Max. applied
-        <Input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
+        <Input name="maxApplied" type="number" disabled={!data.countsAvailable} min={0} max={100000} defaultValue={data.maxApplied??""}
           className="mt-[6px] block w-full"/>
       </label>
       <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Min. offers
-        <Input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
+        <Input name="minOffers" type="number" disabled={!data.countsAvailable} min={0} max={100000} defaultValue={data.minOffers??""}
           className="mt-[6px] block w-full"/>
       </label>
       <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Max. offers
-        <Input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
+        <Input name="maxOffers" type="number" disabled={!data.countsAvailable} min={0} max={100000} defaultValue={data.maxOffers??""}
           className="mt-[6px] block w-full"/>
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Pay category
@@ -310,6 +310,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <Button type="submit" className="w-full sm:w-auto">Apply</Button>
       </div>
     </form>
+    {!data.countsAvailable?<Alert tone="warning">Could not load applicant and pipeline counts. Count-dependent filters are unavailable; the drive list remains accessible. Refresh to retry.</Alert>:null}
     {supportError?<Alert tone="warning">Job type filters are unavailable. The drive list remains available; retry to load the missing filter choices. <a href={retryHref} className="ml-2 inline-flex min-h-11 items-center font-semibold underline underline-offset-4 md:min-h-9">Retry missing data</a></Alert>:null}
     <TpoDriveSavedViews scopeKey={savedViewScope}/>
 
