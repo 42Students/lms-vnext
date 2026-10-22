@@ -19,6 +19,6 @@ describe("Super Admin course in-tab entry points",()=>{
   expect(code).toContain('<Select');
   expect(code).toContain('getSuperAdminLearningFilterOptions');
   expect(code).toContain('parseSuperAdminLearningQuery');
-  expect(source("src/components/courses/super-admin-lesson-bulk-visibility.tsx")).toContain("Show selected");
+  expect(source("src/components/courses/super-admin-lesson-bulk-visibility.tsx")).toContain("Show to students");
  });
 });

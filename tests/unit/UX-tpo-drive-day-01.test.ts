@@ -7,7 +7,7 @@ describe("UX-tpo-drive-day-01 /tpo/drive-day",()=>{
     expect(source).not.toContain("text-on-primary");
     expect(source).not.toMatch(/(?:^|[\s"'\x60])min-h-(?:9|10)\b/);
     expect(source).toContain("min-h-11");
-    expect(source).toContain("md:min-h-9");
+    expect(source).toContain("min-[768px]:min-h-[var(--lms-control-height)]");
     expect(source).toMatch(/<PageHeader\b|<h1\b|redirect\(/);
   });
 });
