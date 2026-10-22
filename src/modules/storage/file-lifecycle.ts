@@ -36,7 +36,7 @@ export const PRODUCTION_SCANNER_ID = "lms-vnext-privileged-scanner";
  * never served until a real scanner records a verdict.
  */
 export function devAttestationAllowed(env: NodeJS.ProcessEnv = process.env) {
-  return env.APP_ENV === "development" || env.APP_ENV === "test";
+  return env["APP_ENV"] === "development" || env["APP_ENV"] === "test";
 }
 
 function mapStorageError(error: unknown): never {
@@ -267,7 +267,7 @@ export async function verifyUploadedObject(
     kind: upload.kind,
     contentType: verified.contentType,
     sizeBytes: verified.sizeBytes,
-    env: options.env,
+    ...(options.env !== undefined ? { env: options.env } : {}),
   });
   if (!attestation.ok) {
     return { outcome: "QUARANTINED", failureCode: attestation.failureCode };
