@@ -88,7 +88,7 @@ export default async function SuperAdminLectureHallsPage({
   );
 
   return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader title="Lecture Halls" />
+    <PageHeader title="Lecture Halls" description={"Lecture halls in "+halls.collegeName} />
     <Tabs ariaLabel="Academic Setup" renderPanel={false} value="/admin/lecture-halls"
       items={[
        {value:"/admin/academics",label:"Academic Setup",href:"/admin/academics"},

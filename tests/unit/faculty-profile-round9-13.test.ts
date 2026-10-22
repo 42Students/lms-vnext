@@ -3,6 +3,6 @@ import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty
 it("lists every actual Faculty self-profile editor exactly once with stable anchors",()=>{
  expect(FACULTY_PROFILE_NAV).toHaveLength(13);
  expect(new Set(FACULTY_PROFILE_NAV.map(item=>item.section)).size).toBe(13);
- expect(new Set(FACULTY_PROFILE_NAV.map(item=>facultyProfileAnchor(item.section))).size).toBe(12);
+ expect(new Set(FACULTY_PROFILE_NAV.map(item=>facultyProfileAnchor(item.section))).size).toBe(13);
  expect(facultyProfileAnchor("socialProfiles")).toBe("faculty-socialProfiles");
 });
