@@ -74,7 +74,7 @@ export async function ProjectAdminSubmissionsPage({
     </div>;
   }
   const { view, ...safeQuery } = parsed.data;
-  const query = safeQuery;
+  // Keep the Zod-narrowed workspace status; broad collection filters also\n  // include legacy display-only statuses not accepted by submission links.\n  const query = safeQuery satisfies Parameters<typeof projectAdminSubmissionHref>[1];
   const sort=query.sort??"SUBMITTED_DESC";
   const focus=query.focusedProjectId;
   // An unsubmitted tab must not depend on unrelated final-delivery reads:

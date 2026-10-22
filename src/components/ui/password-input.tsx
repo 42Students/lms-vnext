@@ -19,7 +19,7 @@ export function PasswordInput({ error = false, className, ...props }: PasswordIn
   // A disabled password must never remain in a previously revealed text state.
   useEffect(() => { if (props.disabled) setVisible(false); }, [props.disabled]);
   const fieldRef = useRef<HTMLInputElement | null>(null);
-  // React owns callback/object-ref assignment. Expose the mounted native input
+  // A commit-phase imperative handle replaces mutating forwarded refs in a\n  // render-created callback, which React lint rejects.\n  // Expose the mounted native input
   // through its imperative ref hook rather than mutating a caller's ref.
   useImperativeHandle(props.ref, () => {
     const node = fieldRef.current;
