@@ -13,7 +13,9 @@ function heading(value:string) {return value.trim().toLowerCase().replace(/[^a-z
 export function parseTpoEligibilitySheetCsv(source:string):TpoSheetRow[] {
   const records=parseTpoImportCsvRecords(source,5001);
   if(!records.length)throw new Error("No student records found.");
-  const headers=records[0].map(heading);
+  const firstRecord=records[0];
+  if(!firstRecord)throw new Error("No student records found.");
+  const headers=firstRecord.map(heading);
   const match=(choices:string[])=>headers.findIndex(item=>choices.includes(item));
   const codeColumn=match(["studentcode","rollno","rollnumber","regdno","regno","usn","studentid","membershipid"]);
   const decisionColumn=match(["decision","status","outcome","eligibility","eligible"]);
@@ -52,10 +54,11 @@ export function previewTpoEligibilitySheet(rows:readonly TpoSheetRow[],
     if(!key)return {index,status:"unusable" as const,reason:"Roll number is missing",membershipId:null,expectedVersion:null};
     if(seen.has(key))return {index,status:"unusable" as const,reason:"Roll number appears twice",membershipId:null,expectedVersion:null};
     seen.add(key);
-    const found=byId.has(key)?[byId.get(key)!]:byRoll.get(key)??[];
-    if(found.length!==1)return {index,status:"unusable" as const,
-      reason:found.length?"Roll number appears twice":"No student with this roll number",membershipId:null,expectedVersion:null};
+    const direct=byId.get(key);
+    const found=direct?[direct]:byRoll.get(key)??[];
     const match=found[0];
+    if(found.length!==1||!match)return {index,status:"unusable" as const,
+      reason:found.length?"Roll number appears twice":"No student with this roll number",membershipId:null,expectedVersion:null};
     if(seenMembers.has(match.membershipId))return {index,status:"unusable" as const,reason:"Roll number appears twice",membershipId:null,expectedVersion:null};
     seenMembers.add(match.membershipId);
     if(row.decision==="INVALID")
