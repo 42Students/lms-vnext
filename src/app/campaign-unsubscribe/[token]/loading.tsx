@@ -1,7 +1,7 @@
 import authStyles from "@/components/public/public-auth-skin.module.css";
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
-const loadingPageClass = `${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 items-center px-4 pb-8 pt-24 min-[768px]:py-12`;
+const loadingPageClass = `${authStyles["page"]} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 items-center px-4 pb-8 pt-24 min-[768px]:py-12`;
 
 export default function Loading() {
   return <main className={loadingPageClass}>
