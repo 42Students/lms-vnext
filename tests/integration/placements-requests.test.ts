@@ -147,6 +147,14 @@ async function cleanup() {
   await pool.query(
     "delete from placement_application_status_history",
   );
+  // Application-specific College Admin pipeline stages and their audit
+  // history retain foreign keys to applications even after TPO stages clear.
+  await pool.query(
+    "delete from placement_college_application_stage_history",
+  );
+  await pool.query(
+    "delete from placement_college_application_stages",
+  );
   await pool.query(
     "delete from placement_applications",
   );
