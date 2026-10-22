@@ -223,9 +223,12 @@ export async function resolveLegacyCourseProgressScope(
  const id=z.union([z.uuid(),z.coerce.number().int().positive()]);
  const courseId=id.parse(raw.courseId);
  const classId=raw.classId==null?null:id.parse(raw.classId);
+ // A legacy class-specific bookmark may refer to a completed term whose
+ // offering has since been archived. Do not drop that historic assignment;
+ // without a class, only live offerings can be inferred unambiguously.
  const filter=and(eq(departments.collegeId,collegeId),
   typeof courseId==="number"?eq(courses.legacyCourseId,courseId):eq(courses.id,courseId),
-  eq(courseOfferings.status,"ACTIVE"));
+  classId===null?eq(courseOfferings.status,"ACTIVE"):undefined);
  if(classId===null){
   const matches=await getDb().selectDistinct({offeringId:courseOfferings.id})
    .from(courseOfferings)
@@ -243,7 +246,11 @@ export async function resolveLegacyCourseProgressScope(
   eq(courseSectionDeliveries.offeringId,courseOfferings.id))
  .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
  .where(and(filter,typeof classId==="number"
-  ?eq(sections.legacyClassId,classId):eq(sections.id,classId)))
+  ?eq(sections.legacyClassId,classId):eq(sections.id,classId),
+  // Class and course must have been taught together, not merely offered in
+  // the same semester. Ended associations are valid for historical reporting.
+  sql`exists (select 1 from course_teaching_assignments ta
+    where ta.delivery_id = ${courseSectionDeliveries.id})`))
  .limit(2);
  return matches.length===1?matches[0]!:null;
 }
