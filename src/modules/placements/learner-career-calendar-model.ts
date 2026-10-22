@@ -20,7 +20,7 @@ export type CareerCalendarEvent = {
   title: string;
   companyName: string;
   roleTitle: string;
-  kind: "ASSESSMENT" | "INTERVIEW" | "OTHER";
+  kind: "ASSESSMENT" | "INTERVIEW" | "TALK" | "OTHER";
   start: Date;
   dayKey: string;
   rescheduled: boolean;
@@ -132,7 +132,8 @@ export function careerCalendarEvents(
     if (!raw) return [];
     const start = new Date(raw);
     if (!Number.isFinite(start.getTime())) return [];
-    const kind: CareerCalendarEvent["kind"] = isCareerRoundVisible("ASSESSMENT", round.roundKind)
+    const kind: CareerCalendarEvent["kind"] = round.roundKind==="TALK" ? "TALK" :
+      isCareerRoundVisible("ASSESSMENT", round.roundKind)
       ? "ASSESSMENT" : isCareerRoundVisible("INTERVIEW", round.roundKind)
         ? "INTERVIEW" : "OTHER";
     return [{
