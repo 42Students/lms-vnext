@@ -32,9 +32,11 @@ beforeEach(async () => {
       status: "ACTIVE", roles: ["LEARNER"],
     },
   };
+  // Alternate contact is only permitted when a distinct primary login phone exists.
+  const primaryPhone="+919"+Number.parseInt(next.user.slice(0,7),16).toString().padStart(9,"0");
   await pool.query(
-    "INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,$3)",
-    [next.user, context.user.identityUid, "Profile contact test " + next.user],
+    "INSERT INTO users(id,identity_uid,display_name,phone_e164) VALUES($1,$2,$3,$4)",
+    [next.user, context.user.identityUid, "Profile contact test " + next.user,primaryPhone],
   );
   await pool.query(
     "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')",
@@ -110,7 +112,10 @@ describe("Learner contact-only PATCH succeeds and denies in PostgreSQL", () => {
     const primary = await pool.query<{ phone_e164: string | null; email: string | null }>(
       "SELECT phone_e164,email FROM users WHERE id=$1", [keys.user],
     );
-    expect(primary.rows[0]).toEqual({ phone_e164: null, email: null });
+    expect(primary.rows[0]).toEqual({
+      phone_e164: "+919"+Number.parseInt(keys.user.slice(0,7),16).toString().padStart(9,"0"),
+      email: null,
+    });
 
     const events = await pool.query<{
       event_type:string;actor_user_id:string;actor_membership_id:string|null;
