@@ -318,7 +318,7 @@ export async function createCohort(
     if(!initialProgression||initialProgression.currentTermNumber!==1||
        initialProgression.currentPeriodId!==input.startPeriodId||
        initialProgression.version!==0){
-      throw new AcademicsServiceError("COHORT_PROGRESSION_INVALID_STATE");
+      throw new Error("Cohort progression initialization failed its persisted invariant");
     }
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_COHORT_CREATED,
