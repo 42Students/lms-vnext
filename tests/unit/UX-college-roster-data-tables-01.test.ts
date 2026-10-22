@@ -20,7 +20,7 @@ describe("UX-college-roster-data-tables-01 responsive roster and faculty detail"
     expect(selection).toContain("<Checkbox");
     expect(selection).toContain('name="membershipId" value={id}');
     expect(selection).toContain("ids.map(id=><input");
-    expect(s).toMatch(/mobilePriority:\s*"action"/);
+    expect(selection).toMatch(/mobilePriority:\s*"action"/);
     expect(s).toContain('name="identifiers"');
     expect(s).toContain("Allocate selected to");
     expect(s).not.toContain("<table");
