@@ -16,8 +16,13 @@ const updateDb=(rows:readonly {id:string;status:"NEW"|"TRIAGED"|"RESOLVED";versi
  const where=vi.fn(()=>({returning}));
  const set=vi.fn(()=>({where}));
  const update=vi.fn(()=>({set}));
- vi.mocked(getDb).mockReturnValue({update} as unknown as ReturnType<typeof getDb>);
- return {returning,where,set,update};
+ const values=vi.fn(async()=>undefined);
+ const insert=vi.fn(()=>({values}));
+ // The write and immutable audit receipt now share a single transaction.
+ const transaction=vi.fn(async(callback:(tx:{update:typeof update;insert:typeof insert})=>Promise<unknown>)=>
+  callback({update,insert}));
+ vi.mocked(getDb).mockReturnValue({transaction} as unknown as ReturnType<typeof getDb>);
+ return {returning,where,set,update,insert,values,transaction};
 };
 beforeEach(()=>{
  vi.clearAllMocks();
@@ -65,12 +70,15 @@ describe("chat-16 inbound mail admin versioned triage service",()=>{
   expect(mocks.update).toHaveBeenCalledTimes(1);
   expect(mocks.set).toHaveBeenCalledWith(expect.objectContaining({status:"RESOLVED"}));
   expect(mocks.where).toHaveBeenCalledTimes(1);
+  expect(mocks.insert).not.toHaveBeenCalled();
  });
  it("inbound-mail-write-21 allows NEW to TRIAGED with optimistic version lock",async()=>{
   const mocks=updateDb([{id,status:"TRIAGED",version:3}]);
   await expect(changeInboundMailStatusForAdmin(admin,{...mutation,status:"TRIAGED"}))
    .resolves.toEqual({kind:"UPDATED",id,status:"TRIAGED",version:3});
   expect(mocks.set).toHaveBeenCalledWith(expect.objectContaining({status:"TRIAGED"}));
+  expect(mocks.insert).toHaveBeenCalledTimes(1);
+  expect(mocks.values).toHaveBeenCalledWith(expect.objectContaining({subjectType:"INBOUND_MAIL"}));
  });
  it("inbound-mail-write-22 rejects RESOLVED to TRIAGED without reopening",async()=>{
   await expect(changeInboundMailStatusForAdmin(admin,{
@@ -84,5 +92,6 @@ describe("chat-16 inbound mail admin versioned triage service",()=>{
    kind:"UPDATED",id,status:"RESOLVED",version:3,
   });
   expect(mocks.returning).toHaveBeenCalledTimes(1);
+  expect(mocks.insert).toHaveBeenCalledTimes(1);
  });
 });
