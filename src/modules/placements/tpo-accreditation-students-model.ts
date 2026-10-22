@@ -35,14 +35,18 @@ export function buildAccreditationStudentRows(offers:readonly AccreditationStude
  const output:AccreditationStudentRow[]=[];
  for(const [membershipId,group] of members){
   const accepted=group.filter(x=>countsAsPlacedByCollegeRule({
-   employmentType:"FULL_TIME",offerStatus:x.status,offerKind:x.kind,
-   countsAsPlaced:x.countsAsPlaced===true,releasedAt:x.releasedAt,
-   countsAsPlacedAt,selectedOutcome:x.selectedOutcome,
+   employmentType:"FULL_TIME",offerStatus:x.status,
+   ...(x.kind!==undefined?{offerKind:x.kind}:{}),
+   countsAsPlaced:x.countsAsPlaced===true,
+   ...(x.releasedAt!==undefined?{releasedAt:x.releasedAt}:{}),
+   countsAsPlacedAt,
+   ...(x.selectedOutcome!==undefined?{selectedOutcome:x.selectedOutcome}:{}),
   }));
   if(accepted.length===0)continue;
   // Deterministic ordering: known best CTC first; never turn unknown pay into zero.
   const best=[...accepted].sort((a,b)=>(b.annualCtcInr??-1)-(a.annualCtcInr??-1)
    ||a.offerId.localeCompare(b.offerId))[0];
+  if(!best)continue;
   output.push({membershipId,name:best.name,rollNumber:best.rollNumber,
    programme:best.programme,branch:best.branch,batch:best.batch,
    employer:best.company,employerContact:best.employerContact??null,packageInr:best.annualCtcInr,
