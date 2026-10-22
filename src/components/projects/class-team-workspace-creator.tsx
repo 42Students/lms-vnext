@@ -57,6 +57,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   const {showToast}=useToast();
   const [classes,setClasses]=useState<ClassChoice[]>([]);
   const [classQuery,setClassQuery]=useState("");
+  const [classPage,setClassPage]=useState(0);
   const [classesRetry,setClassesRetry]=useState(0);
   const [classId,setClassId]=useState("");
   const [roster,setRoster]=useState<Roster|null>(null);
@@ -72,6 +73,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   const [slugEdited,setSlugEdited]=useState(false);
   const [primaryMentorMembershipId,setPrimaryMentorMembershipId]=useState("");
   const [mentorQuery,setMentorQuery]=useState("");
+  const [mentorPage,setMentorPage]=useState(0);
   const [mentors,setMentors]=useState<{membershipId:string;displayName:string;email:string}[]>([]);
   const [mentorsLoading,setMentorsLoading]=useState(false);
   const [mentorsError,setMentorsError]=useState("");
@@ -137,7 +139,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
     setLoading(true);
     const timer=window.setTimeout(()=>{
       void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(collegeId)+
-        "&q="+encodeURIComponent(classQuery.trim())+"&limit=100",
+        "&q="+encodeURIComponent(classQuery.trim())+"&limit=100&offset="+(classPage*100),
         {signal:controller.signal,cache:"no-store"})
         .then(async response=>{
           if(!response.ok)throw Error(await projectApiError(response));
@@ -154,13 +156,13 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
     },400);
     return()=>{window.clearTimeout(timer);controller.abort();};
-  },[collegeId,classId,classQuery,classesRetry]);
+  },[collegeId,classId,classQuery,classesRetry,classPage]);
   useEffect(()=>{
     const ctl=new AbortController();
     setMentorsLoading(true);setMentorsError("");
     const timer=window.setTimeout(()=>{
       void fetch("/api/projects/mentor-candidates?collegeId="+encodeURIComponent(collegeId)+
-        "&q="+encodeURIComponent(mentorQuery.trim())+"&limit=100",
+        "&q="+encodeURIComponent(mentorQuery.trim())+"&limit=100&offset="+(mentorPage*100),
         {cache:"no-store",signal:ctl.signal})
         .then(async response=>{
           if(!response.ok)throw new Error("Could not search eligible mentors.");
@@ -176,7 +178,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         }).finally(()=>{if(!ctl.signal.aborted)setMentorsLoading(false);});
     },400);
     return()=>{window.clearTimeout(timer);ctl.abort();};
-  },[collegeId,mentorQuery,primaryMentorMembershipId]);
+  },[collegeId,mentorQuery,primaryMentorMembershipId,mentorPage]);
 
   const rosterKey=collegeId+"|"+classId+"|"+rosterRefreshKey;
   const [prevRosterKey,setPrevRosterKey]=useState(rosterKey);
@@ -395,11 +397,20 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
         <Input type="search" aria-label="Find a class" placeholder="Search class name or code"
           value={classQuery} maxLength={120} disabled={pending}
-          onChange={event=>setClassQuery(event.target.value)} />
+          onChange={event=>{setClassQuery(event.target.value);setClassPage(0);}} />
         <Select value={classId} onChange={e=>setClassId(e.target.value)} disabled={loading||pending}>
           <option value="">{loading?"Loading classes…":"Select a class"}</option>
           {classes.map(c=><option key={c.id} value={c.id}>{c.name?.trim()||"Class "+c.id.slice(0,8)}{c.code?" ("+c.code+")":""}</option>)}
         </Select>
+        <span className="flex flex-wrap items-center gap-2 text-xs text-body">
+          <Button type="button" size="sm" variant="secondary"
+            disabled={loading||pending||classPage===0}
+            onClick={()=>setClassPage(page=>Math.max(0,page-1))}>Previous classes</Button>
+          Page {classPage+1}
+          <Button type="button" size="sm" variant="secondary"
+            disabled={loading||pending||classes.length<100||classPage>=999}
+            onClick={()=>setClassPage(page=>Math.min(999,page+1))}>Next classes</Button>
+        </span>
         {!classId&&!loading?<span className="block text-xs text-warning">
           {mode==="INDIVIDUAL"?"Pick the class to create one workspace per student.":"Pick the class to split into teams."}
         </span>:null}
@@ -448,7 +459,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mentor
         <Input type="search" value={mentorQuery} maxLength={120} disabled={pending}
           aria-label="Search project mentors" placeholder="Search mentors by name or email"
-          onChange={event=>setMentorQuery(event.target.value)}/>
+          onChange={event=>{setMentorQuery(event.target.value);setMentorPage(0);}}/>
         <Select value={primaryMentorMembershipId} disabled={pending||mentorsLoading}
           onChange={event=>setPrimaryMentorMembershipId(event.target.value)}>
           <option value="">Assign later</option>
@@ -456,6 +467,15 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
             {row.displayName} · {row.email}
           </option>)}
         </Select>
+        <span className="flex flex-wrap items-center gap-2 text-xs text-body">
+          <Button type="button" size="sm" variant="secondary"
+            disabled={pending||mentorsLoading||mentorPage===0}
+            onClick={()=>setMentorPage(page=>Math.max(0,page-1))}>Previous mentors</Button>
+          Page {mentorPage+1}
+          <Button type="button" size="sm" variant="secondary"
+            disabled={pending||mentorsLoading||mentors.length<100||mentorPage>=999}
+            onClick={()=>setMentorPage(page=>Math.min(999,page+1))}>Next mentors</Button>
+        </span>
         {mentorsLoading?<span className="text-xs text-body">Loading mentors…</span>:null}
         {mentorsError?<span role="alert" className="text-xs text-error">{mentorsError}</span>:null}
       </label>

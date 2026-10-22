@@ -55,10 +55,12 @@ export function CreateProjectControl({
   const [mentorMembershipId, setMentorMembershipId] = useState("");
   const [mentorsLoading, setMentorsLoading] = useState(false);
   const [mentorQuery, setMentorQuery] = useState("");
+  const [mentorPage,setMentorPage]=useState(0);
   const [mentorsError, setMentorsError] = useState<string | null>(null);
   const [classes,setClasses]=useState<{id:string;name:string;code:string}[]>([]);
   const [showClassSelector,setShowClassSelector]=useState(false);
   const [classQuery,setClassQuery]=useState("");
+  const [classPage,setClassPage]=useState(0);
   const [classesError,setClassesError]=useState(false);
   const [classesRetry,setClassesRetry]=useState(0);
   const [sectionId,setSectionId]=useState("");
@@ -115,7 +117,7 @@ export function CreateProjectControl({
       void fetch(
         "/api/projects/mentor-candidates?collegeId=" +
           encodeURIComponent(collegeId) + "&q=" + encodeURIComponent(mentorQuery.trim()) +
-          "&limit=100",
+          "&limit=100&offset="+(mentorPage*100),
         { signal: controller.signal, cache: "no-store" },
       )
         .then(async response => {
@@ -140,14 +142,14 @@ export function CreateProjectControl({
         });
     }, 400);
     return () => { clearTimeout(timer); controller.abort(); };
-  }, [open, collegeId, mentorQuery, mentorMembershipId]);
+  }, [open, collegeId, mentorQuery, mentorMembershipId,mentorPage]);
 
   useEffect(()=>{
     if(!open||!showClassSelector)return;
     const ctl=new AbortController();
     const timer=window.setTimeout(()=>{
       void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(collegeId)+
-        "&q="+encodeURIComponent(classQuery.trim())+"&limit=100",
+        "&q="+encodeURIComponent(classQuery.trim())+"&limit=100&offset="+(classPage*100),
         {signal:ctl.signal,cache:"no-store"})
         .then(r=>r.ok?r.json():Promise.reject(Error("Classes unavailable")))
         .then((v:{classes:typeof classes})=>{if(!ctl.signal.aborted){
@@ -160,7 +162,7 @@ export function CreateProjectControl({
         .catch(()=>{if(!ctl.signal.aborted)setClassesError(true);});
     },400);
     return ()=>{window.clearTimeout(timer);ctl.abort();};
-  },[open,showClassSelector,collegeId,classQuery,classesRetry,sectionId]);
+  },[open,showClassSelector,collegeId,classQuery,classesRetry,sectionId,classPage]);
   const rosterActive=Boolean(open&&sectionId);
   const [prevRosterActive,setPrevRosterActive]=useState(rosterActive);
   if(prevRosterActive!==rosterActive){
@@ -429,7 +431,7 @@ export function CreateProjectControl({
             <Input className="mb-2" type="search" value={mentorQuery}
               placeholder={initialStatus==="ACTIVE"?"Required — search by faculty name":"Search by faculty name"} aria-label="Search mentors"
               disabled={pending} maxLength={120}
-              onChange={event => setMentorQuery(event.target.value)} />
+              onChange={event => {setMentorPage(0);setMentorQuery(event.target.value);}} />
             <Select
               value={mentorMembershipId}
               aria-invalid={attempted&&initialStatus==="ACTIVE"&&!mentorMembershipId}
@@ -452,6 +454,15 @@ export function CreateProjectControl({
                 </option>
               ))}
             </Select>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-body">
+              <Button type="button" size="sm" variant="secondary"
+                disabled={pending||mentorsLoading||mentorPage===0}
+                onClick={()=>setMentorPage(page=>Math.max(0,page-1))}>Previous mentors</Button>
+              <span>Page {mentorPage+1}</span>
+              <Button type="button" size="sm" variant="secondary"
+                disabled={pending||mentorsLoading||mentors.length<100||mentorPage>=999}
+                onClick={()=>setMentorPage(page=>Math.min(999,page+1))}>Next mentors</Button>
+            </div>
             <span className="mt-1 block text-xs text-muted-foreground">
               {initialStatus==="ACTIVE"?
                 "Required — search by faculty name. Active workspaces must have a primary Mentor.":
@@ -472,13 +483,22 @@ export function CreateProjectControl({
           {showClassSelector?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
             <Input type="search" value={classQuery} maxLength={120}
               placeholder="Search class name or code" aria-label="Search classes"
-              onChange={event=>setClassQuery(event.target.value)}/>
+              onChange={event=>{setClassQuery(event.target.value);setClassPage(0);}}/>
             <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);
               setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
               className="w-full">
               <option value="">Choose class</option>
               {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
             </Select>
+            <span className="flex flex-wrap items-center gap-2 text-xs font-normal">
+              <Button size="sm" variant="secondary" type="button"
+                disabled={pending||classPage===0} onClick={()=>setClassPage(page=>Math.max(0,page-1))}>
+                Previous classes</Button>
+              <span>Page {classPage+1}</span>
+              <Button size="sm" variant="secondary" type="button"
+                disabled={pending||classes.length<100||classPage>=999}
+                onClick={()=>setClassPage(page=>Math.min(999,page+1))}>Next classes</Button>
+            </span>
           </label>:null}
           {showClassSelector&&classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try Again</Button></p>:null}
           <div className="grid min-w-0 gap-4 md:col-span-2 sm:grid-cols-2">
