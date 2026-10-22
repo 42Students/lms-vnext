@@ -83,14 +83,14 @@ describe("TPO-settings-audit-55 communication settings service under retries and
   expect(state.db).not.toHaveBeenCalled();
  });
  it("TPO-settings-audit-55 rejects concurrent revocation before any setting/audit update",async()=>{
-  state.rows=[[{organizationId:"org-a"}],[existing]];
+  state.rows=[[{organizationId:"org-a",status:"ACTIVE"}],[existing]];
   state.persisted.mockRejectedValueOnce(new Error("ROLE_REVOKED_DURING_WRITE"));
   await expect(updateTpoCommunicationSettings(actor,valid)).rejects.toThrow("ROLE_REVOKED_DURING_WRITE");
   expect(state.updates).toHaveLength(0);
   expect(state.audit).toHaveLength(0);
  });
  it("TPO-settings-audit-55 rejects stale value changes and emits no activity event",async()=>{
-  state.rows=[[{organizationId:"org-a"}],[existing]];
+  state.rows=[[{organizationId:"org-a",status:"ACTIVE"}],[existing]];
   await expect(updateTpoCommunicationSettings(actor,{
    ...valid,expectedVersion:"2099-07-01T00:00:01.000Z",
   })).rejects.toMatchObject({code:"TPO_SETTINGS_STALE"});
@@ -98,7 +98,7 @@ describe("TPO-settings-audit-55 communication settings service under retries and
   expect(state.audit).toHaveLength(0);
  });
  it("TPO-settings-audit-55 makes identical retries no-op even when their CAS token expired",async()=>{
-  state.rows=[[{organizationId:"org-a"}],[existing]];
+  state.rows=[[{organizationId:"org-a",status:"ACTIVE"}],[existing]];
   const result=await updateTpoCommunicationSettings(actor,{
    ...valid,emailSignature:existing.emailSignature,expectedVersion:null,
   });
@@ -107,7 +107,7 @@ describe("TPO-settings-audit-55 communication settings service under retries and
   expect(state.audit).toHaveLength(0);
  });
  it("TPO-settings-audit-55 writes changed section and audit only after scoped live actor and matching CAS",async()=>{
-  state.rows=[[{organizationId:"org-a"}],[existing]];
+  state.rows=[[{organizationId:"org-a",status:"ACTIVE"}],[existing]];
   const result=await updateTpoCommunicationSettings(actor,valid);
   expect(result).toEqual({saved:true,version:"2099-07-01T00:00:00.001Z"});
   expect(state.persisted).toHaveBeenCalledWith(expect.anything(),actor,"placements.manage",{
