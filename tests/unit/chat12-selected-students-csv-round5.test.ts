@@ -14,7 +14,8 @@ describe("chat12 selected student CSV",()=>{
   expect(source).toContain("const chosen=sortedRows.filter");
   expect(source).toContain("exportTpoStudentsCsv(chosen");
   expect(source).toContain("permitted.has(row.membershipId)");
-  expect(source).toContain('anchor.download=legacyGridExportFilename(viewName,"csv")');
+  expect(source).toContain('legacySavedViewExportFilename(savedViewName,"csv")');
+  expect(source).toContain('legacyGridExportFilename("Students","csv")');
   expect(source).toContain('role="alert"');
  });
 });

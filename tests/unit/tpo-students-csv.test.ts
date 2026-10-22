@@ -87,7 +87,7 @@ describe("TPO Students CSV safety", () => {
     const row = deriveTpoStudent(source, now);
     const csv = exportTpoStudentsCsv([row]);
 
-    expect(csv).toContain('"Student","Roll number"');
+    expect(csv).toContain('"Student","Roll no.","Batch","Class","Branch","Stage","After college","Profile"');
     expect(csv).toContain(
       `"'=HYPERLINK(""https://invalid.test"")"`,
     );
@@ -95,6 +95,7 @@ describe("TPO Students CSV safety", () => {
     expect(csv).toContain('"Ready, not applying"');
     expect(csv).not.toContain('"READY_NOT_APPLYING"');
     expect(csv.endsWith("\r\n")).toBe(true);
+    expect(csv).toContain('"B.Tech · 2026"');
 
     expect(exportTpoStudentsCsv([]).split("\r\n"))
       .toHaveLength(2);

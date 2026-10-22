@@ -41,3 +41,12 @@ export function legacyGridExportFilename(
     .slice(0, 80) || "export";
   return `${clean}.${extension}`;
 }
+
+/** A saved view includes the IST export date, exactly like old GridWorkspace. */
+export function legacySavedViewExportFilename(
+  name: string,
+  extension: "csv" | "xlsx",
+  now: Date = new Date(),
+): string {
+  return legacyGridExportFilename(`${name} – ${exportedDay.format(now)}`, extension);
+}

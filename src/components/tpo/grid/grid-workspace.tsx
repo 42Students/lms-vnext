@@ -11,7 +11,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
 import {TpoGridFilterPanel,type TpoFilterField} from "@/components/tpo/tpo-grid-filter-panel";
 import {chosenTpoGridColumns,exportTpoGridCsv,tpoGridExportColumns,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
-import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
+import {legacyGridExportFilename,legacySavedViewExportFilename} from "@/modules/placements/grid-export-filename";
 import {gridClipboardTsv} from "./grid-export";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
@@ -136,7 +136,8 @@ export function GridWorkspace<Row>({
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const link=document.createElement("a");
-    link.href=url;link.download=legacyGridExportFilename(exportName,"csv");
+    link.href=url;link.download=params.get("view")===exportName?
+      legacySavedViewExportFilename(exportName,"csv"):legacyGridExportFilename(exportName,"csv");
     document.body.appendChild(link);link.click();link.remove();
    }finally{URL.revokeObjectURL(url);}
    setNotice("Exported "+exportedRows.length+" authorized row(s) from this page.");
