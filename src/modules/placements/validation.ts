@@ -71,7 +71,7 @@ export const companyWebsiteOrDomainRule: {
   issue:{path:string[];message:string};
 } = {
   check:(value)=>Boolean(value.primaryDomain||value.websiteUrl),
-  issue:{path:["primaryDomain"],message:"Add the company’s website or a company email domain"},
+  issue:{path:["primaryDomain"],message:"Add the company's website or a company email, so each company is kept once"},
 };
 
 export const createPlacementCompanyInputSchema = createPlacementCompanyInputObjectSchema
