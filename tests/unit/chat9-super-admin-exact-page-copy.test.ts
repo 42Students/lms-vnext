@@ -19,7 +19,10 @@ const copy=[
 describe("Super Admin exact dev-legacy per-page title strings (legacy-copy-B)",()=>{
  for(const [file,title] of copy){
   it(file+" uses the exact title case",()=>{
-   const source=readFileSync(join(root,file),"utf8");
+   const source=readFileSync(join(root,file==="admin/tenants/page.tsx"?"admin/tenants/directory/page.tsx":file),"utf8");
+   if(file==="admin/tenants/page.tsx") {
+    expect(readFileSync(join(root,file),"utf8")).toContain('<TenantDirectory searchParams={Promise.resolve(raw)}');
+   }
    expect(source).toContain('title="'+title+'"');
   });
  }
