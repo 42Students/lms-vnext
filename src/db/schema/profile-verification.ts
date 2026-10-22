@@ -199,7 +199,7 @@ export function legacyProfileVerificationCrosswalk(input:{
   membershipId:string}[]):string|null{
   const matches=known.filter(x=>x.legacyCollegeId===input.collegeId &&
     x.legacyLearnerId===input.learnerId);
-  return matches.length===1?matches[0].membershipId:null;
+  return matches.length===1?(matches[0]?.membershipId??null):null;
 }
 
 /** A college missing an imported verification setting needs admin review;
