@@ -99,7 +99,9 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  const fullText=plainMailText(input.text,input.html).slice(0,200000);
  // Legacy stores up to 200k in the restricted inbox but only a 4k reply in
  // a conversation; slice by JS UTF-16 code units to match imported records.
- const replyBody=extractRecruiterEmailReply(fullText).slice(0,4000);
+ // An all-quoted reply is a valid authenticated receipt for human triage.
+ // The extractor already enforces the maximum reply length and can return null.
+ const replyBody=extractRecruiterEmailReply(fullText)??"";
  const match=/^r-([a-f0-9]{32})@(.+)$/.exec(input.to);
  const isReply=Boolean(match&&match[2]===domain);
  const tokenHash=isReply&&match?createHash("sha256").update(match[1]).digest("hex"):null;
@@ -203,8 +205,10 @@ export async function acceptAuthenticatedRecruiterEmailReply(
   `);
   if(!auth.rows[0])return auditResult("ACCESS_ENDED");
   const msgHash=createHash("sha256").update(state.threadId+"\u0000"+sourceMessageId).digest("hex");
-  const [duplicate]=await tx.select({id:placementRecruiterInboundEmailEvents.id,
-    threadId:placementRecruiterInboundEmailEvents.threadId})
+  const [duplicate]=await tx.select({
+    threadId:placementRecruiterInboundEmailEvents.threadId,
+    messageId:placementRecruiterInboundEmailEvents.messageId,
+  })
     .from(placementRecruiterInboundEmailEvents)
     .where(eq(placementRecruiterInboundEmailEvents.messageIdHash,msgHash)).limit(1);
   if(duplicate){
@@ -213,7 +217,8 @@ export async function acceptAuthenticatedRecruiterEmailReply(
    // misleading unrouted NEW message in the operator triage queue.
    await tx.update(inboundMailMessages).set({
     kind:"REPLY",routingStatus:"POSTED",status:"RESOLVED",
-    threadId:duplicate.threadId,postedMessageId:duplicate.id,
+    // The dedup ledger UUID is not the conversation message UUID.
+    threadId:duplicate.threadId,postedMessageId:duplicate.messageId,
     recruiterUserId:state.recruiterUserId,collegeId:auth.rows[0].college_id,
     routeAttemptCount:1,lastRouteAttemptAt:new Date(),
     lastRouteErrorCode:null,version:1,
