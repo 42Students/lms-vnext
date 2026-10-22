@@ -6,8 +6,8 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat17-tenant-domain-service-journeys.test.ts` (1 failing) — FIXED `9a3b069`: isolate second attempt's verification-write assertion with mockClear while retaining its fail-closed expectation.
 - [x] `tests/unit/chat3-superadmin-applications-retained.test.ts` (1 failing) — FIXED test expectation for scope-keyed `LastKnownGoodApplications` and verified stale snapshot alert/inert/retry (`40ac7b6`).
 - [x] `tests/unit/chat7-lesson-inline-transaction-verify2b.test.ts` (1 failing) — FIXED `0a3745e`: preserve strict nested-content transaction assertions while expecting scoped legacy course identifiers in destructuring.
-- [ ] `tests/unit/company-share-code-live-grant-guard.test.ts` (1 failing)
-- [ ] `tests/unit/t-s2-07-tpo-undo.test.ts` (1 failing)
+- [x] `tests/unit/company-share-code-live-grant-guard.test.ts` (1 failing) — FIXED `d247882`: verify canonical shared throttle model and live grant guard without obsolete inline 3-send assumption.
+- [x] `tests/unit/t-s2-07-tpo-undo.test.ts` (1 failing) — FIXED `8918a82`: verify undo anchor uses persisted sentAt only, rather than obsolete createdAt fallback.
 
 ## Failures (from CI log)
 
