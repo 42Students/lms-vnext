@@ -109,8 +109,12 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
    </div>},
   {key:"type",header:"Type",cell:item=>detail(item,"Type")},
   {key:"status",header:"Status",cell:item=><StatusBadge
-    tone={item.status==="CONFIRMED"||item.status==="COMPLETED"?"success":
-      item.status==="CANCELLED"||item.status==="NO_SHOW"?"warning":"neutral"}>{item.status.replaceAll("_"," ")}</StatusBadge>},
+    tone={item.status==="SCHEDULED"?"info":
+      item.status==="CONFIRMED"?"success":
+      item.status==="RESCHEDULE_REQUESTED"?"warning":
+      item.status==="CANCELLED"||item.status==="NO_SHOW"?"error":"neutral"}>
+    {item.status==="RESCHEDULE_REQUESTED"?"Reschedule":
+      item.status==="NO_SHOW"?"No Show":item.status.replaceAll("_"," ")}</StatusBadge>},
   {key:"date",header:"Date & Time",cell:item=><span className="whitespace-nowrap">{detail(item,"Date & Time")}</span>},
   {key:"interviewer",header:"Interviewer",cell:item=>detail(item,"Interviewer")},
   {key:"mode",header:"Mode",cell:item=>detail(item,"Mode").replaceAll("_"," ")},
