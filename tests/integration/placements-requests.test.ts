@@ -582,7 +582,7 @@ describe("Placement learner requests and exceptions", () => {
     );
   });
 
-  it("extends an issued offer only through approval and blocks application withdrawal while the offer is active", async () => {
+  it("extends an issued offer on approval and withdraws only after closing an unaccepted offer", async () => {
     const { job } =
       await createJob("Offer");
     const round =
@@ -714,8 +714,11 @@ describe("Placement learner requests and exceptions", () => {
       "2035-11-05T18:29:59.000Z",
     );
 
-    await expect(
-      createPlacementRequest(
+    // An ISSUED offer has been released but not accepted. The learner may
+    // request withdrawal; only the placement cell may approve it, and that
+    // approval must atomically decline the unaccepted offer.
+    const withdrawal =
+      await createPlacementRequest(
         learner,
         {
           requestType:
@@ -723,13 +726,39 @@ describe("Placement learner requests and exceptions", () => {
           applicationId:
             application.id,
           reason:
-            "Trying to withdraw after offer",
+            "Unable to join after receiving the offer",
         },
-      ),
-    ).rejects.toMatchObject({
-      code:
-        "PLACEMENT_REQUEST_EFFECT_INVALID",
-    });
+      );
+    expect(withdrawal.status).toBe("PENDING");
+
+    const withdrawn =
+      await actOnPlacementRequest(
+        tpo,
+        withdrawal.id,
+        {
+          action: "APPROVE",
+          note: "Unaccepted offer closed before withdrawal",
+        },
+      );
+    expect(withdrawn.status).toBe("APPROVED");
+
+    const offerStatus = await pool.query<{ status: string }>(
+      "select status from placement_offers where id = $1",
+      [offer.id],
+    );
+    expect(offerStatus.rows[0]?.status).toBe("DECLINED");
+
+    const applicationStatus = await pool.query<{ status: string }>(
+      "select status from placement_applications where id = $1",
+      [application.id],
+    );
+    expect(applicationStatus.rows[0]?.status).toBe("WITHDRAWN");
+
+    const declineHistory = await pool.query<{ to_status: string }>(
+      "select to_status from placement_offer_status_history where offer_id = $1 order by created_at desc",
+      [offer.id],
+    );
+    expect(declineHistory.rows[0]?.to_status).toBe("DECLINED");
 
     const events =
       await pool.query<{
