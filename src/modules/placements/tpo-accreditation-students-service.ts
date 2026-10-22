@@ -22,7 +22,9 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
  if(collegeId!==query.collegeId)throw Error("BATCH_COLLEGE_MISMATCH");
  requirePermission(context,"placements.manage",{collegeId:query.collegeId,...(context.membership?.organizationId!==undefined?{organizationId:context.membership.organizationId}:{})});
  const report=await getPlacementAccreditationReport(context,{collegeId,
-  seasonId:query.seasonId,jobId:query.jobId});
+  ...(query.seasonId!==undefined?{seasonId:query.seasonId}:{}),
+  ...(query.jobId!==undefined?{jobId:query.jobId}:{}),
+ });
  if(!report.selectedSeasonId){
   const rows=buildAccreditationStudentRows([]);
   return {rows,csv:accreditationStudentCsv(rows),batch,warning:ACCREDITATION_STUDENT_WARNING};
