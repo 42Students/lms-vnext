@@ -11,7 +11,7 @@ export default async function SuperAdminTenantLanding({searchParams}:{
  const raw=await searchParams;
  const directoryRequest=Object.keys(raw).some(key=>
   ["q","status","organizationId","page"].includes(key)) ||
-  raw.tab==="directory";
+  raw["tab"]==="directory";
  if(directoryRequest)return <TenantDirectory searchParams={Promise.resolve(raw)}/>;
  return <SuperAdminTenantSetup searchParams={Promise.resolve(raw)}/>;
 }
