@@ -30,7 +30,7 @@ export default function CollegeWebAddress({params}:{params:Promise<{collegeId:st
   <CollegeWebAddressContent params={params}/>
  </Suspense>;
 }
-async function CollegeWebAddressContent({ params }: {
+export async function CollegeWebAddressContent({ params }: {
  params: Promise<{collegeId: string}>;
 }) {
  const {collegeId} = await params;

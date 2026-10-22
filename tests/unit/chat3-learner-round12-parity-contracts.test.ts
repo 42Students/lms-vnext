@@ -18,7 +18,8 @@ describe("chat-3 learner misc second-source verification",()=>{
   const code=source("src/components/courses/learner-quiz-attempt.tsx");
   expect(code).toContain("Are you sure you want to cancel this quiz?");
   expect(code).toContain('<ConfirmDialog open={leaveOpen}');
-  expect(code).toContain('confirmLabel="Leave quiz"');
+  expect(code).toContain('confirmLabel="Yes" cancelLabel="No"');
+  expect(code).toContain("router.replace(returnTo)");
   expect(code).not.toContain("window.confirm");
  });
  it("LEARNER-learning-misc-30 hourly and all-day sessions are distinguished",()=>{

@@ -48,10 +48,12 @@ describe("chat-5 core placement drive transition invariants",()=>{
    .toContain("SEASON_NOT_ACTIVE");
  });
  it("PLACEMENTS-LIFECYCLE-03 prevents reopen after results and accepted offers",()=>{
-  expect(evaluateTpoDriveLifecycle("REOPEN",{...facts,jobStatus:"CLOSED"}).allowed).toBe(true);
+  const closed=evaluateTpoDriveLifecycle("REOPEN",{...facts,jobStatus:"CLOSED"});
+  expect(closed.allowed).toBe(false);
+  expect(closed.blockers).toContain("CLOSED_DRIVE_TERMINAL");
   expect(evaluateTpoDriveLifecycle("REOPEN",{...facts,jobStatus:"CLOSED",
    appliedResultCount:1,acceptedOfferCount:1}).blockers)
-   .toEqual(["APPLIED_RESULTS_EXIST","ACCEPTED_OFFERS_EXIST"]);
+   .toEqual(["CLOSED_DRIVE_TERMINAL","APPLIED_RESULTS_EXIST","ACCEPTED_OFFERS_EXIST"]);
  });
  it("PLACEMENTS-LIFECYCLE-04 confirmation is strict and requires a meaningful reason",()=>{
   const valid={action:"PUBLISH",expectedStatus:"DRAFT",confirmed:true,

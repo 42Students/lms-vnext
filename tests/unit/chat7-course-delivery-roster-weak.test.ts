@@ -28,7 +28,7 @@ describe("COURSES-WEAK-DELIVERY-ROSTER-01 exact College, Section and Elective en
   state.learners=[result];
   const rows=await listActiveDeliveryLearners(scope);
   expect(rows).toEqual([result]);
-  expect(state.select).toHaveBeenCalledTimes(2);
+  expect(state.select).toHaveBeenCalledTimes(3);
  });
  it("uses elective group learners instead of leaking the normal Section roster for elective-backed delivery",async()=>{
   state.elective=[{groupId:"group-1",offeringStatus:"ACTIVE",offeringDeletedAt:null,slotStatus:"ACTIVE",slotDeletedAt:null,groupStatus:"ACTIVE",groupDeletedAt:null}];

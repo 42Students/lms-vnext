@@ -14,7 +14,7 @@ describe("TPO public campaign ambiguous lifecycle decisions",()=>{
  });
  it("TPO-campaigns-public-25 gives the public link an explicit audited on/off/replacement lifecycle rather than silent expiry",()=>{
   const service=source("src/modules/placements/tpo-public-join-link-service.ts");
-  expect(service).toContain('expiresAt: new Date("9999-12-31T00:00:00.000Z")');
+  expect(service).toContain("expiresAt:publicJoinRenewalDeadline(now)");
   expect(service).toContain("setTpoPublicJoinLinkEnabled");
   expect(service).toContain("revokedAt: now");
   expect(service).toContain("metadata:{scope:input.scope,enabled:input.enabled}");

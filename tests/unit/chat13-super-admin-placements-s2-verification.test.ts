@@ -24,7 +24,7 @@ describe("Chat 13 Super Admin placement S1/S2 source contracts", () => {
     const code = source("src/components/placements/super-admin-drive-quick-search.tsx");
     expect(code).toContain("Search by drive or company");
     expect(code).toContain("Active drives");
-    expect(code).toContain("Open drive");
+    expect(code).toContain('href={basePath+"/jobs/"+encodeURIComponent(job.id)}');
   });
   it("SA-placements-projects-06 draft clone", () => {
     const code = source("src/components/placements/super-admin-drive-duplicate.tsx");
@@ -42,16 +42,14 @@ describe("Chat 13 Super Admin placement S1/S2 source contracts", () => {
     const code = source("src/app/(authenticated)/admin/placements/drives/page.tsx");
     expect(code).toContain("All drives");
     expect(code).toContain("pageSize");
-    expect(code).toContain("Search by drive or company");
-    expect(code).toContain("Open drive");
+    expect(code).toContain('title="Jobs Management (LMS)"');
   });
   it("SA-placements-projects-17 drive navigation", () => {
     const code = source("src/app/(authenticated)/admin/placements/jobs/[jobId]/layout.tsx");
     expect(code).toContain("Drive breadcrumb");
-    expect(code).toContain("Overview");
-    expect(code).toContain("Applications");
-    expect(code).toContain("Schedule");
-    expect(code).toContain("Settings");
+    expect(code).toContain("<AdminPlacementJobTabs basePath={base} />");
+    const tabs=source("src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx");
+    for(const label of ["Overview","Applications","Schedule","Settings"])expect(tabs).toContain(label);
   });
   it("SA-placements-projects-19 academic applicant filters", () => {
     const code = source("src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx");
@@ -88,13 +86,14 @@ describe("Chat 13 Super Admin placement S1/S2 source contracts", () => {
   it("SA-placements-projects-42 company report", () => {
     const code = source("src/app/(authenticated)/admin/placements/analytics/page.tsx");
     expect(code).toContain("COMPANY_HIRING_COLUMNS");
-    expect(code).toContain("Export report (CSV)");
+    expect(code).toContain("Export report");
+    expect(code).toContain("/api/admin/placements/hiring-report/export?");
     expect(code).toContain("Company total");
   });
   it("SA-placements-projects-49 announcement receipts", () => {
     const code = source("src/app/(authenticated)/admin/announcements/page.tsx");
     expect(code).toContain("Placement-cell read receipts");
     expect(code).toContain("getSuperAdminBroadcastReceiptCounts");
-    expect(code).toContain("<progress");
+    expect(code).toContain('<MetricBar role="progressbar"');
   });
 });

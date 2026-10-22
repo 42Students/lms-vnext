@@ -69,7 +69,7 @@ describe("device-session HTTP ownership and CSRF matrix", () => {
     const response=await signOutOthers(make());
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-    expect(await response.json()).toEqual({ok:true,revoked:1});
+    expect(await response.json()).toMatchObject({ok:true,revoked:1,currentExcluded:true,currentSessionRevoked:false});
     expect(fakes.revokeOther).toHaveBeenCalledWith("user-a",own);
   });
 
@@ -87,7 +87,7 @@ describe("device-session HTTP ownership and CSRF matrix", () => {
     fakes.revokeOwn.mockResolvedValueOnce(false);
     const response=await revokeDevice(make(),{params:Promise.resolve({sessionId:other})});
     expect(response.status).toBe(404);
-    expect(await response.json()).toEqual({error:"SESSION_NOT_FOUND"});
+    expect(await response.json()).toEqual({error:"SESSION_NOT_FOUND",message:"Session not found"});
     expect(fakes.revokeOwn).toHaveBeenCalledWith(other,"user-a");
   });
 

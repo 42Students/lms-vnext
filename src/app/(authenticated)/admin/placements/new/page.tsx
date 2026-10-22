@@ -22,9 +22,9 @@ export default async function AdminNewPlacementPage() {
   // Require the platform role and exact selected-college write permission before
   // rendering the form or loading any company, learner or season options.
   requireSuperAdminSelectedCollege(context,"placements.manage");
-  const loaded=await PlacementJobCreateWorkspace({
+  const loaded=await Promise.resolve(PlacementJobCreateWorkspace({
     context,collegeId,basePath:"/admin/placements",
-  }).then(view=>({ok:true as const,view}))
+  })).then(view=>({ok:true as const,view}))
     .catch(error=>{
       if (error instanceof AuthorizationError) throw error;
       return {ok:false as const};

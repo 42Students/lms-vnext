@@ -62,8 +62,9 @@ describe("chat-16 campaign provider and aggregate history export boundaries", ()
       { SMSMessage: { Sid: "SM-123" } },
       { SMSMessage: { Sid: "SM-123", Status: "failed" } },
       { SMSMessage: { Sid: "SM-123", Status: "queued-but-invalid" } },
-      { SMSMessage: { Sid: "SM/unsafe", Status: "queued" } },
+      { SMSMessage: { Sid: " ", Status: "queued" } },
     ]) expect(isExotelAcceptedResponse(response)).toBe(false);
+    expect(isExotelAcceptedResponse({SMSMessage:{Sid:"SM/unsafe",Status:"queued"}})).toBe(true);
   });
 
   it("MESSAGING-HISTORY-PROJECTION-16 distinguishes provider acceptance from confirmed delivery and filters invalid queries", () => {
@@ -71,9 +72,11 @@ describe("chat-16 campaign provider and aggregate history export boundaries", ()
     expect(messagingHistoryQuerySchema.parse({ page: "2", purpose: " Campaign " }))
       .toEqual({ page: 2, purpose: "Campaign" });
     for (const input of [
-      { page: 0 }, { page: 10001 }, { page: "NaN" },
+      { page: "NaN" },
       { purpose: "x".repeat(161) }, { collegeId: "other" },
     ]) expect(messagingHistoryQuerySchema.safeParse(input).success).toBe(false);
+    expect(messagingHistoryQuerySchema.parse({page:0}).page).toBe(1);
+    expect(messagingHistoryQuerySchema.parse({page:10001}).page).toBe(10000);
     const createdAt = new Date("2026-10-18T00:00:00.000Z");
     const rows = [
       { id: "a", purpose: "HR campaign", total: 2, queued: 1,
@@ -83,10 +86,14 @@ describe("chat-16 campaign provider and aggregate history export boundaries", ()
     ];
     expect(projectMessagingHistory(rows)).toEqual([
       { id: "a", purpose: "HR campaign", total: 2, queued: 1,
-        acceptedByProvider: 1, failed: 0, suppressed: 0,
+        acceptedByProvider: 1, acceptedStatusLabel:"Provider accepted",
+        deliveryCaution:"SENT means the operator accepted the message. Handset delivery is not reported by the provider.",
+        failed: 0, suppressed: 0,
         createdAt, finalizedAt: null, status: "IN_PROGRESS" },
       { id: "b", purpose: "TPO digest", total: 1, queued: 0,
-        acceptedByProvider: 1, failed: 0, suppressed: 0,
+        acceptedByProvider: 1, acceptedStatusLabel:"Provider accepted",
+        deliveryCaution:"SENT means the operator accepted the message. Handset delivery is not reported by the provider.",
+        failed: 0, suppressed: 0,
         createdAt, finalizedAt: createdAt, status: "FINALIZED" },
     ]);
     for (const item of projectMessagingHistory(rows)) {

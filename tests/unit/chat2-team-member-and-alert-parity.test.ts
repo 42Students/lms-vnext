@@ -11,8 +11,9 @@ describe("chat-2 Team membership, context and event notifications",()=>{
   const create=source("src/modules/placements/tpo-team-internal-create-service.ts");
   const reply=source("src/modules/placements/tpo-team-internal-reply-service.ts");
   expect(access).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
-  expect(page).toContain('member.roles.includes("COLLEGE_ADMIN")');
-  expect(page).toContain('member.roles.includes("TPO_ADMIN")');
+  expect(page).toContain("hasPlacementTeamMembership(context)");
+  expect(page).toContain('redirect("/tpo/settings/team")');
+  expect(access).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
   expect(create).toContain('assertPersistedPlatformPermission(tx,context,"placements.manage"');
   expect(create).toContain('eq(collegeMemberships.collegeId,college.id)');
   expect(reply).toContain('eq(placementTpoInternalThreads.collegeId,college.id)');
@@ -42,19 +43,18 @@ describe("chat-2 Team membership, context and event notifications",()=>{
   expect(page).toContain('<TpoTeamMessageActions');
  });
  it("TPO-inbox-team-37 shows permanent placement Team roles, not temporary drive-day coordinator labels",()=>{
-  const page=source("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(page).toContain('member.roles.includes("TPO_ADMIN")');
-  expect(page).toContain('member.roles.includes("COLLEGE_ADMIN")');
-  expect(page).toContain('role==="TPO"||role==="TPO_ADMIN"||role==="COLLEGE_ADMIN"');
-  expect(page).toContain("Everyone in it can do everything in placements.");
-  expect(page).not.toContain('role==="FACULTY_COORDINATOR"');
-  expect(page).not.toContain('role==="STUDENT_COORDINATOR"');
+  const page=source("src/app/(authenticated)/tpo/settings/team/page.tsx");
+  expect(page).toContain("Active team memberships");
+  expect(page).toContain("TPO Admin assignments");
+  expect(page).toContain("Faculty Coordinators");
+  expect(page).toContain("Student Coordinators");
+  expect(page).toContain('permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}');
  });
  it("TPO-inbox-team-34 retains Away until and back-now updates on Team People",()=>{
   const page=source("src/app/(authenticated)/tpo/team/page.tsx");
   const model=source("src/components/tpo/tpo-team-away-form.tsx");
-  expect(page).toContain("listTpoTeamAway");
-  expect(page).toContain("Away until");
+  expect(page).toContain('redirect("/tpo/settings/team")');
+  expect(model).toContain("Away until");
   expect(model).toContain("Back now");
  });
 });

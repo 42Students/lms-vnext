@@ -15,7 +15,7 @@ describe("chat-14 final sprint",()=>{
   const interceptor=read("src/components/auth/session-response-guard.tsx");
   const notice=read("src/components/auth/portal-access-notice.tsx");
   const root=read("src/app/(authenticated)/layout.tsx");
-  expect(interceptor).toContain('new Event("lms:access-denied")');
+  expect(interceptor).toContain('new CustomEvent("lms:access-denied"');
   expect(notice).toContain('role="alert"');
   expect(notice).toContain('search.get("access")==="denied"');
   expect(root).toContain("<PortalAccessNotice/>");

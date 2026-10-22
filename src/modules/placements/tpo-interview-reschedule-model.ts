@@ -7,8 +7,9 @@ export const tpoInterviewRescheduleSchema=z.object({
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]),
  venue:z.string().trim().min(1).max(500).optional(),
  meetingUrl:z.url({protocol:/^https$/}).max(2000).refine(value=>{
+  if(!URL.canParse(value))return false;
   const url=new URL(value);
-  return !url.username&&!url.password;
+  return url.protocol==="https:"&&!url.username&&!url.password;
  },{message:"Use a secure meeting link without embedded credentials"}).optional(),
  reason:z.string().trim().min(10).max(1000),
 }).strict().superRefine((value,ctx)=>{

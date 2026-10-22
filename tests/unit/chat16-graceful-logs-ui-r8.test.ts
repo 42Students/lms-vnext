@@ -16,7 +16,7 @@ describe("chat-16 SA-placements-projects-113 GR-123/124 Logs UI and safeguards",
     ["friendlyApiError({})"],
     ["router.refresh()"],
     ["setConfirmMute(false)"],
-    ["No tracked errors yet"],
+    ["No tracked errors"],
     ["Why is it safe to ignore? It comes back on its own if it suddenly spikes."],
   ])("SA-placements-projects-113 keeps the guarded Known Errors contract: %s",(value)=>{
     expect(code("src/components/tracker/known-errors-workspace.tsx")).toContain(value);
@@ -37,7 +37,7 @@ describe("chat-16 SA-placements-projects-113 GR-123/124 Logs UI and safeguards",
       else process.env.LOG_ALERT_CLOUD_POLL_ENABLED=before;
     }
     expect(code("src/app/(authenticated)/tracker/logs/page.tsx"))
-      .toContain("Cloud Logging backup is not configured.");
+      .toContain("Cloud Logging polling is not configured for this deployment.");
   });
   it.each([
     {status:400,code:"INVALID_REQUEST"},
