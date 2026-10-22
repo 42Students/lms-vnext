@@ -7,7 +7,8 @@ import {hrRecruiterNameFieldsSchema} from "./hr-recruiter-name-fields-model";
 export function normalizeLegacyRecruiterMobile(raw:string):string|null{
  const text=raw.trim();
  if(!text)return "";
- if(text.length>32||!/^[+0-9() .-]+$/.test(text))return null;
+ if(text.length>32||!/^[+0-9() .-]+$/.test(text)||
+   (text.includes("+")&&(!text.startsWith("+")||text.indexOf("+",1)!==-1)))return null;
  let digits=text.replace(/\D/g,"");
  if(digits.length===12&&digits.startsWith("91"))digits=digits.slice(2);
  else if(digits.length===11&&digits.startsWith("0"))digits=digits.slice(1);
