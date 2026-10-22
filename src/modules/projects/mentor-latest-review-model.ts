@@ -16,7 +16,8 @@ export function currentPendingMentorSubmissions<T extends {
   }
   for(const [projectId,row] of latest){
     if(!["SUBMITTED","UNDER_REVIEW","IN_REVIEW"].includes(row.status)||
-      !row.submittedAt||row.reopenedAt||
+      !row.submittedAt||
+      row.reopenedAt&&row.submittedAt.getTime()<=row.reopenedAt.getTime()||
       row.reviewedAt&&row.submittedAt.getTime()<=row.reviewedAt.getTime()){
       latest.delete(projectId);
     }
