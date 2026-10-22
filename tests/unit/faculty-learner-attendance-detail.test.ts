@@ -39,14 +39,14 @@ describe("Faculty attendance learner detail (read-only)", () => {
     });
   });
 
-  it("uses persisted absence evidence on historic sessions without a session marker", () => {
+  it("treats an imported medical excusal as attended evidence, never an unexplained absence", () => {
     const result = facultyLearnerAttendanceDetail("student",
       [session("historic", "2026-10-08T03:00:00Z", null)],
       [{ scheduleEventId: "historic", membershipId: "student", status: "MEDICAL", note: "medical", markedAt: "2026-10-08T05:00:00Z" }],
       NOW,
     );
-    expect(result).toMatchObject({ absent: 1, marked: 1, attendedPercent: 0 });
-    expect(result.rows[0]).toMatchObject({ code: "A", note: "medical" });
+    expect(result).toMatchObject({ present: 1, absent: 0, marked: 1, attendedPercent: 100 });
+    expect(result.rows[0]).toMatchObject({ code: "P", note: "medical" });
   });
 });
 
@@ -64,7 +64,7 @@ describe("Faculty monthly class-health report", () => {
     ];
     const health = facultyAttendanceMonthSummary(["A", "B", "A"], sessions, records, NOW);
     expect(health).toMatchObject({
-      learnerCount: 2, sessionCount: 3, markedSessions: 1,
+      learnerCount: 2, sessionCount: 1, markedSessions: 1,
       unmarkedSessions: 1, upcomingSessions: 1,
       presentMarks: 1, absentMarks: 1, unmarkedMarks: 2,
       upcomingMarks: 2, markedMarks: 2, averagePercent: 50,

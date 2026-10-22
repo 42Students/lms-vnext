@@ -67,6 +67,9 @@ describe("College Admin program write contracts", () => {
     })).toBe(true);
     expect(hasUnsavedCollegeProgramEdit(saved, {
       name: "B.Tech CSE ", code: "CSE", durationTerms: "8",
+    })).toBe(false);
+    expect(hasUnsavedCollegeProgramEdit(saved, {
+      name: "B.Tech CS", code: "CSE", durationTerms: "8",
     })).toBe(true);
   });
 

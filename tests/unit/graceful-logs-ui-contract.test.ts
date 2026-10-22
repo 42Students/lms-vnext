@@ -30,7 +30,8 @@ describe("known error triage UI resilience", () => {
   });
   it("GR-123 preserves legacy Known errors empty and mute confirmation wording", () => {
     const ui = readFileSync("src/components/tracker/known-errors-workspace.tsx", "utf8");
-    expect(ui).toContain("No tracked errors yet");
+    expect(ui).toContain('title="No tracked errors"');
+    expect(ui).toContain("This does not prove that live Cloud Logging contains no errors.");
     expect(ui).toContain("Mute this error");
     expect(ui).toContain("Why is it safe to ignore? It comes back on its own if it suddenly spikes.");
     expect(ui).toContain("setConfirmMute(true)");
@@ -48,7 +49,8 @@ describe("known error triage UI resilience", () => {
       else process.env.LOG_ALERT_CLOUD_POLL_ENABLED = original;
     }
     const source = readFileSync("src/app/(authenticated)/tracker/logs/page.tsx", "utf8");
-    expect(source).toContain("Cloud Logging backup is not configured.");
+    expect(source).toContain("Cloud Logging polling is not configured for this deployment.");
+    expect(source).toContain("this is not a healthy-log result.");
   });
   it("GR-124 shows plain errors rather than raw codes for expected admin failures", () => {
     for (const [status, code] of [[400, "INVALID_REQUEST"], [403, "FORBIDDEN"], [404, "KNOWN_ERROR_NOT_FOUND"]] as const) {
