@@ -63,7 +63,7 @@ export async function ProjectAdminReassignMentorPage({
         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Clear filters</Link>}/>
   </div>;
   const {fromMentorId,projectId:initialProjectId,mentorSearch,mentorPage,...filters}=parsed.data;
-  const query:ProjectAdminCollectionQuery={...filters,fromMentorId};
+  const query={...filters,fromMentorId} satisfies ProjectAdminCollectionQuery;
   // The roster, eligible mentors and workload must all be verified before
   // presenting mutation controls. A failed dependency is not an empty list.
   const [projectsRead,mentorsRead,workloadRead]=await Promise.allSettled([

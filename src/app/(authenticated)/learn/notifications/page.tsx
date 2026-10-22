@@ -73,16 +73,19 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
   // Personal notifications are required. A failed announcement source must
   // not turn a healthy personal inbox into an empty state or hard error.
   let personalLoadFailed=false;
-  const personalPage = await listOwnNotificationPage(context,{
-    limit:60,collegeId:membership.collegeId,
-    ...(cursorDate?.success&&cursorId?.success?{
-      beforeCreatedAt:new Date(cursorDate.data),beforeId:cursorId.data,
-    }:{}),
-  }).catch((error:unknown)=>{
-    if(error instanceof AuthorizationError)throw error;
-    personalLoadFailed=true;
-    return {items:[],nextCursor:null} as Awaited<ReturnType<typeof listOwnNotificationPage>>;
-  });
+  let personalPage: Awaited<ReturnType<typeof listOwnNotificationPage>>;
+  try {
+    personalPage = await listOwnNotificationPage(context,{
+      limit:60,collegeId:membership.collegeId,
+      ...(cursorDate?.success&&cursorId?.success?{
+        beforeCreatedAt:new Date(cursorDate.data),beforeId:cursorId.data,
+      }:{}),
+    });
+  } catch (error: unknown) {
+    if (error instanceof AuthorizationError) throw error;
+    personalLoadFailed = true;
+    personalPage = {items:[],nextCursor:null};
+  }
   let announcements:Awaited<ReturnType<typeof listVisibleAnnouncementsForMembership>>=[];
   let announcementsLoadFailed=false;
   if(announcementsEnabled){
