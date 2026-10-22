@@ -500,7 +500,7 @@ export function LearnerCourseDiscussion({
       <h2 className="sr-only">Discussions</h2>
       {pinned ? (
         <section className="flex min-w-0 items-start gap-2.5 rounded-[12px] border border-[#d8e7ea] bg-[#f6fbfb] px-[14px] py-3">
-          <span className="mt-0.5 shrink-0 text-[#1a95a1]"><DiscussionPinIcon filled /></span>
+          <span className="mt-0.5 shrink-0 text-[var(--lms-primary-text)]"><DiscussionPinIcon filled /></span>
           <div className="min-w-0 flex-1">
           <p className="break-words text-sm font-semibold text-foreground">{pinned.messageText}</p>
           <small title={learnerDiscussionTimeLabel(pinned.createdAt)}
@@ -514,7 +514,7 @@ export function LearnerCourseDiscussion({
               title="Unpin this message" aria-label="Unpin this message"
               disabled={pinningId!==null}
               onClick={()=>void togglePin(pinned.id)}
-              className="min-h-9 min-w-9 p-2 text-[#1a95a1]">
+              className="min-h-9 min-w-9 p-2 text-[var(--lms-primary-text)]">
               <DiscussionPinIcon />
             </Button>
           ) : null}
@@ -542,7 +542,7 @@ export function LearnerCourseDiscussion({
           if(destination)router.push(destination);
         }}/>
       {moderationError?<Alert tone="error">{moderationError}</Alert>:null}
-      <section className="relative min-w-0 overflow-hidden border border-[#e5e9f0] bg-white">
+      <section className="relative min-w-0 overflow-hidden border border-[var(--lms-canvas-border)] bg-white">
         {loadError && messages.length > 0 && loadedOnce.current && !refreshDismissed ? (
           <div role="alert" className="flex flex-wrap items-center gap-3 border-b border-[#f2e3b9] bg-[#fffbea] px-3 py-2 text-sm">
             <div className="min-w-0 flex-1">
@@ -570,7 +570,7 @@ export function LearnerCourseDiscussion({
           ) : loading ? (
             <div className="flex min-h-64 items-center justify-center" aria-busy="true"
               aria-label="Loading discussion messages" role="status">
-              <span aria-hidden="true" className="size-7 motion-safe:animate-spin rounded-full border-2 border-[#e5e9f0] border-t-[#0a7c88]"/>
+              <span aria-hidden="true" className="size-7 motion-safe:animate-spin rounded-full border-2 border-[var(--lms-canvas-border)] border-t-[var(--lms-button-primary)]"/>
             </div>
           ) : loadError && messages.length === 0 ? (
             <div className="flex min-h-64 flex-col items-center justify-center text-center">
@@ -680,7 +680,7 @@ export function LearnerCourseDiscussion({
                           title={row.item.pinned?"Unpin this message":"Pin this message"}
                           disabled={pinningId!==null}
                           onClick={()=>void togglePin(row.item.id)}
-                          className="min-h-9 min-w-9 p-2 !text-[#1a95a1]">
+                          className="min-h-9 min-w-9 p-2 !text-[var(--lms-primary-text)]">
                           <DiscussionPinIcon filled={row.item.pinned}/>
                         </Button> : null}
                         {(moderate || row.item.isMine) ? <Button
