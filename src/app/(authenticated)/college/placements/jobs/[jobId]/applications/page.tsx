@@ -116,7 +116,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       </div>
     </section>
     {safeAssessmentUrl ? <Alert tone="info" title="Assessment link">
-      <a href={safeAssessmentUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-link underline underline-offset-4">Open the drive assessment</a>
+      <a href={safeAssessmentUrl} className="font-semibold text-link underline underline-offset-4">Open the drive assessment</a>
     </Alert> : <Alert tone="info">No assessment URL is recorded for this drive.</Alert>}
     {filterResult.status==="rejected" ? <Alert tone="warning">
       Department, program and batch choices could not be refreshed. Existing filters and the applicant register are still available.
