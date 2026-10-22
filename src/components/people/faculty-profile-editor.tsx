@@ -123,11 +123,11 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
       className="inline-flex min-h-11 shrink-0 snap-start items-center rounded-[var(--lms-control-radius)] border-b-[3px] border-transparent bg-transparent px-[var(--lms-space-3)] py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] transition-[border-color,color] duration-[200ms] ease-in-out hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] motion-reduce:transition-none"
       href={item.href} aria-label={item.editable?item.label:item.label+" (read-only)"}>{item.label}</a>)}</div>
   </nav>
-  <div className="grid min-w-0 gap-4 lg:grid-cols-2 [&>form]:min-w-0 [&>form]:rounded-[var(--lms-control-radius)] [&>form]:border [&>form]:border-border [&>form]:px-4 [&>form]:py-3">
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
    description="Introduce your teaching and research interests."
    fields={ABOUT_FIELDS} initial={{description:document.about.description}} pending={pending} onSave={save}/>
-  <FacultyProfileTextSection key={"personalDetails-"+(sectionRevisions.personalDetails??0)} section="personalDetails" title="Personal details"
+  <div className="grid min-w-0 gap-4 lg:grid-cols-2 [&>form]:min-w-0 [&>form]:rounded-[var(--lms-control-radius)] [&>form]:border [&>form]:border-border [&>form]:px-4 [&>form]:py-3">
+  <FacultyProfileTextSection key={"personalDetails-"+(sectionRevisions.personalDetails??0)} section="personalDetails" title="Personal Details"
    description="Self-reported details only; college identity records remain separate."
    fields={PERSONAL_DETAILS_FIELDS}
    initial={{gender:document.personalDetails.gender,dateOfBirth:document.personalDetails.dateOfBirth,bloodGroup:document.personalDetails.bloodGroup}} pending={pending} onSave={save}/>
@@ -158,24 +158,12 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    section="awards" title="Awards & Recognitions" description="Maintain your own awards history. Draft deletions require Save."
    initial={document.awards} fields={AWARDS_FIELDS} maxItems={100}
    create={newFacultyAward} pending={pending} onSave={save}/>
-  <FacultyProfileTextSection key={"socialProfiles-"+(sectionRevisions.socialProfiles??0)} section="socialProfiles" title="Social profiles"
+  <FacultyProfileTextSection key={"socialProfiles-"+(sectionRevisions.socialProfiles??0)} section="socialProfiles" title="Social Profiles"
    description="Optional HTTPS links to professional work and research."
    fields={SOCIAL_PROFILES_FIELDS}
    initial={{linkedIn:document.socialProfiles.linkedIn,github:document.socialProfiles.github,portfolio:document.socialProfiles.portfolio,twitter:document.socialProfiles.twitter,googleScholar:document.socialProfiles.googleScholar,researchGate:document.socialProfiles.researchGate}} pending={pending} onSave={save}/>
-  <FacultyProfileTextSection key={"address-"+(sectionRevisions.address??0)} section="address" title="Address"
-   description="Private mailing information; never exported to Faculty directories."
-   fields={ADDRESS_FIELDS}
-   initial={{currentAddress:document.address.currentAddress,currentCity:document.address.currentCity,currentState:document.address.currentState,currentPincode:document.address.currentPincode,permanentAddress:document.address.permanentAddress,permanentCity:document.address.permanentCity,permanentState:document.address.permanentState,permanentPincode:document.address.permanentPincode,city:document.address.city,state:document.address.state,pincode:document.address.pincode}} pending={pending} onSave={save}/>
-  {/* Legacy About grid places Contacts immediately after Address, before Additional Information. */}
-   <FacultyProfileTextSection key={"contact-"+(sectionRevisions.contact??0)} section="contact" title="Contacts"
-    description="Change your self-reported contacts. Your college-managed sign-in phone and email stay unchanged."
-    fields={CONTACT_FIELDS}
-    initial={{contactMobile:document.contact.contactMobile,contactPhone:document.contact.contactPhone,contactMail:document.contact.contactMail}}
-    pending={pending} onSave={save}/>
-  <FacultyProfileMetadata key={"metadata-"+(sectionRevisions.metadata??0)} initial={document.metadata} pending={pending} onSave={save}/>
-
    <section id="faculty-identity-readonly" aria-label="Identity documents" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">
-    <h2 className="text-base font-semibold text-foreground">Identity documents</h2>
+    <h2 className="text-base font-semibold text-foreground">Identity Documents</h2>
     <p className="text-sm text-muted-foreground">College-managed records. Private documents are not downloadable from the public profile.</p>
     <dl className="grid min-w-0 gap-2 text-sm">
      <div><dt className="font-semibold">Aadhaar (masked)</dt><dd className="break-words text-body">{document.identitySummary.aadhaarLast4?"•••• "+document.identitySummary.aadhaarLast4:"Not provided"}</dd></div>
@@ -205,6 +193,18 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
       }}
     />
    </section>
+  <FacultyProfileTextSection key={"address-"+(sectionRevisions.address??0)} section="address" title="Address"
+   description="Private mailing information; never exported to Faculty directories."
+   fields={ADDRESS_FIELDS}
+   initial={{currentAddress:document.address.currentAddress,currentCity:document.address.currentCity,currentState:document.address.currentState,currentPincode:document.address.currentPincode,permanentAddress:document.address.permanentAddress,permanentCity:document.address.permanentCity,permanentState:document.address.permanentState,permanentPincode:document.address.permanentPincode,city:document.address.city,state:document.address.state,pincode:document.address.pincode}} pending={pending} onSave={save}/>
+  {/* Legacy About grid places Contacts immediately after Address, before Additional Information. */}
+   <FacultyProfileTextSection key={"contact-"+(sectionRevisions.contact??0)} section="contact" title="Contacts"
+    description="Change your self-reported contacts. Your college-managed sign-in phone and email stay unchanged."
+    fields={CONTACT_FIELDS}
+    initial={{contactMobile:document.contact.contactMobile,contactPhone:document.contact.contactPhone,contactMail:document.contact.contactMail}}
+    pending={pending} onSave={save}/>
+  <FacultyProfileMetadata key={"metadata-"+(sectionRevisions.metadata??0)} initial={document.metadata} pending={pending} onSave={save}/>
+
    <div className="min-w-0 lg:col-span-2">
      <FacultyProfileAttachments document={document} version={version} pending={pending}
        onChanged={change=>{
