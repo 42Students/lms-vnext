@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import {z} from "zod";
-import {projectTemplateBlueprintSchema,reviseProjectTemplateInputSchema} from "@/modules/projects/validation";
+import {projectTemplateBlueprintSchema} from "@/modules/projects/validation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -103,7 +103,11 @@ export async function PATCH(
       });
       return NextResponse.json({...result,message:"Project template updated"});
     }
-    const result = await reviseProjectTemplate(\n      context,\n      templateId,\n      reviseProjectTemplateInputSchema.parse(body),\n    );
+    const result = await reviseProjectTemplate(
+      context,
+      templateId,
+      body,
+    );
 
     return NextResponse.json({...result,message:"Project template updated"});
   } catch (error) {
