@@ -11,7 +11,8 @@ expect(source).toContain("Ready to ship");
 it("MEN-projects-meetings-38 mentor-visible release/sprint vocabulary and empty state",()=>{
 const source=read("src/components/projects/project-workspace.tsx");
 expect(source).toContain('"Sprint plan":"Execution"):"Releases and Sprints"');
-expect(source).toContain("No sprints yet. Add the sprints");
+expect(source).toContain("No sprints yet. Add the first sprint when a release is ready.");
+expect(source).toContain("Add the sprints this project should be measured against.");
 });
 it("MEN-projects-meetings-41 board task evidence includes owner blocker estimate and due",()=>{
 const source=read("src/components/projects/mentor-lane-board.tsx");
