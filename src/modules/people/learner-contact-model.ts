@@ -35,11 +35,11 @@ export const learnerContactEditSchema = z.object({
  * Enforce comparison on the locked, persisted canonical user row, never a
  * primary number supplied by the browser. */
 export function validateLearnerAlternatePhoneAgainstPrimary(alternateRaw:string,primaryRaw:string|null){
- const alternate=alternateRaw.replace(/\D/g,"");
+ const alternate=alternateRaw.trim();
  const primary=(primaryRaw??"").replace(/\D/g,"");
  if(!alternate)return null;
+ if(!/^\d{10,15}$/.test(alternate))return "ALTERNATE_PHONE_INVALID" as const;
  if(!primary)return "ALTERNATE_PHONE_PRIMARY_REQUIRED" as const;
- if(alternate.length<10||alternate.length>15)return "ALTERNATE_PHONE_INVALID" as const;
  return alternate.slice(-10)===primary.slice(-10)
   ? "ALTERNATE_PHONE_SAME_AS_PRIMARY" as const:null;
 }
