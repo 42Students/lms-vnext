@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { AdminPlacementStudentSearch } from "@/components/placements/admin-placement-student-search";
 import { AdminPlacementStudentProfileEditor } from "@/components/placements/admin-placement-student-profile-editor";
-import { lookupCollegeStudentPlacement, getCollegeStudentPlacementDetails } from "@/modules/placements/college-placement-student-lookup-service";
+import { suggestCollegePlacementLearners, getCollegeStudentPlacementDetails } from "@/modules/placements/college-placement-student-lookup-service";
 import { parseSuperAdminPlacementStudentSearch } from "@/modules/admin-ui/super-admin-placement-student-search-model";
 
 function humanStage(raw: string | null, offer: string | null, joining: string | null) {
@@ -54,11 +54,14 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
   const params = await searchParams;
   const { query, invalid } = parseSuperAdminPlacementStudentSearch(params);
   const q = query ?? "";
+  const historyPage=typeof params.historyPage==="string"&&
+    /^[1-9][0-9]{0,4}$/.test(params.historyPage)
+    ?Math.min(100000,Number(params.historyPage)):1;
   const scope = ctx.adminScope?.collegeId ?? null;
   // Memberships and application history are fetched only for the selected,
   // authorized college. A forged learner ID never bypasses this result set.
   const lookup = query && scope
-    ? await lookupCollegeStudentPlacement(ctx, query)
+    ? await suggestCollegePlacementLearners(ctx, query)
         .then(value => ({ ok: true as const, value }))
         .catch(() => ({ ok: false as const }))
     : null;
@@ -69,16 +72,17 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
     ? params.student : null;
   const selectedStudent = choices.find(person => person.membershipId === requestedStudent) ?? null;
   const selectedDetail = selectedStudent
-    ? await getCollegeStudentPlacementDetails(ctx,{membershipId:selectedStudent.membershipId})
+    ? await getCollegeStudentPlacementDetails(ctx,{membershipId:selectedStudent.membershipId,page:historyPage})
         .then(value=>({ok:true as const,value}))
         .catch(()=>({ok:false as const,value:null}))
     : null;
   const selectedProfile = selectedDetail?.value?.student.profile;
-  const fullApplicationRows = selectedDetail?.value?.applications??[];
-  const byApplicationId = new Map(fullApplicationRows.map(row=>[row.applicationId,row]));
-  const studentLabel = selectedStudent
-    ? selectedStudent.name?.trim() || selectedStudent.email || `Student #${selectedStudent.membershipId}`
-    : "";
+  const history=selectedDetail?.value??null;
+  const fullApplicationRows=history?.applications??[];
+  const studentLabel=selectedStudent?.label??"";
+  const historyHref=(page:number)=>"/admin/placements/student-lookup?"+
+    new URLSearchParams({q,student:selectedStudent?.membershipId??"",
+      historyPage:String(page)}).toString();
 
   return <div className="min-w-0 space-y-4">
     <div>
@@ -92,7 +96,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
         initialQuery={q} selectedId={selectedStudent?.membershipId ?? null}
         choices={choices.map(person => ({
           membershipId: person.membershipId,
-          label: person.name?.trim() || person.email || `Student #${person.membershipId}`,
+          label: person.label,
           roll: person.roll ?? null,
           email: person.email ?? null,
         }))} unavailable={Boolean(lookup && !lookup.ok)}
@@ -115,9 +119,11 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
       aria-label={`Placement history for ${studentLabel}`}>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <strong className="break-words text-sm text-[var(--lms-heading)]">{studentLabel}</strong>
-        <StatusBadge tone={selectedStudent.placed ? "success" : "neutral"}>
-          {selectedStudent.placed ? "Joined (confirmed)" : "No confirmed joining recorded"}
-        </StatusBadge>
+        {history?<StatusBadge tone={history.placed?"success":"neutral"}>
+          {history.placed?"Joined (confirmed)":"No confirmed joining recorded"}
+        </StatusBadge>:<span role="status" className="text-xs text-muted-foreground">
+          Joining status unavailable until the selected learner's record loads.
+        </span>}
       </div>
       <p className="text-xs text-muted-foreground">{selectedStudent.roll ?? "No roll number"}
         {selectedStudent.email ? ` · ${selectedStudent.email}` : ""}
@@ -147,11 +153,13 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
           Refresh placement history
         </Link>
       </div>
-      {selectedStudent.applications.length === 0
-        ? <EmptyState title="No applications yet" description="No applications yet — this student hasn't applied to any job posting." />
+      {!history?<p role="alert" className="text-sm text-error">
+        The selected student's placement history is unavailable. Retry before assuming there are no applications.
+      </p>:fullApplicationRows.length === 0
+        ? <EmptyState title={history.total===0?"No applications yet":"No applications on this page"}
+          description={history.total===0?"No applications yet — this student hasn't applied to any job posting.":"Choose an earlier history page to review the remaining records."} />
         : <ul className="min-w-0 divide-y divide-border border-y border-border">
-          {selectedStudent.applications.map((row, index) => {
-            const detailed=byApplicationId.get(row.applicationId);
+          {fullApplicationRows.map((row, index) => {
             const { status, label } = humanStage(row.legacyStage??row.applicationStatus, row.offerStatus, row.joining);
             return <li key={row.jobId + ":" + index} className="min-w-0 space-y-1.5 py-3">
               <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
@@ -169,19 +177,28 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
                   row.joining === "JOINED" ? " · Joined" :
                   row.offerStatus === "ACCEPTED" ? " · Offer accepted" : ""}
               </p>
-              {detailed?.rejectionReason ? <p className="text-xs text-error">Rejection reason: {detailed.rejectionReason}</p> : null}
-              {detailed?.nextInterview ? <p className="text-xs text-body">
-                Next interview: {detailed.nextInterview.roundName} · {new Intl.DateTimeFormat("en-IN",{
+              {row.rejectionReason ? <p className="text-xs text-error">Rejection reason: {row.rejectionReason}</p> : null}
+              {row.nextInterview ? <p className="text-xs text-body">
+                Next interview: {row.nextInterview.roundName} · {new Intl.DateTimeFormat("en-IN",{
                   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-                }).format(new Date(detailed.nextInterview.startsAt))} IST
-                {detailed.nextInterview.room?" · "+detailed.nextInterview.room:""}
+                }).format(new Date(row.nextInterview.startsAt))} IST
+                {row.nextInterview.room?" · "+row.nextInterview.room:""}
               </p> : null}
             </li>;
           })}
         </ul>}
-      {selectedStudent.truncated ? <p className="text-xs text-muted-foreground">
-        Showing the newest 100 application/offer records. Use the learner’s full placement history to review older records.
-      </p> : null}
+      {history?<nav aria-label="Student placement history pages"
+        className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
+        <span role="status">Showing {history.total===0?0:(history.page-1)*history.pageSize+1}–{Math.min(history.total,history.page*history.pageSize)}
+          {" "}of {history.total} applications · Page {history.page}
+        </span>
+        <div className="flex flex-wrap gap-3">
+          {history.page>1?<Link href={historyHref(history.page-1)}
+            className="inline-flex min-h-9 items-center font-semibold text-link underline">Previous</Link>:null}
+          {history.hasMore?<Link href={historyHref(history.page+1)}
+            className="inline-flex min-h-9 items-center font-semibold text-link underline">Load more / Next 25</Link>:null}
+        </div>
+      </nav>:null}
     </section> : null}
     <div className="flex justify-end">
       <Link href="/admin/placements/analytics" className="text-sm font-semibold text-link underline">Analytics</Link>
