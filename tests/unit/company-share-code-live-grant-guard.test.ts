@@ -31,7 +31,11 @@ describe("company share email challenge live-grant authorization",()=>{
  it("does not accept an arbitrary recipient and preserves send limits",()=>{
   expect(dispatch).toContain("toEmail:recipient.email");
   expect(dispatch).not.toContain("rawRecipient");
-  expect(dispatch).toContain("if(sent.length>=3)return");
-  expect(dispatch).toContain('return "TOO_SOON"');
+  expect(dispatch).toContain("companyShareEmailThrottle(sent.map(row=>row.occurredAt),now)");
+  expect(dispatch).toContain("if(throttle)return throttle");
+  const throttleModel=readFileSync("src/modules/placements/company-share/email-code-throttle-model.ts","utf8");
+  expect(throttleModel).toContain("COMPANY_SHARE_EMAILS_PER_HOUR=5");
+  expect(throttleModel).toContain('return "TOO_SOON"');
+  expect(throttleModel).toContain('?"LIMITED":null');
  });
 });
