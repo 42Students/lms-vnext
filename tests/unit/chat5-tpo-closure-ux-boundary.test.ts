@@ -57,10 +57,11 @@ describe("chat-5 TPO drive closure and correction journeys",()=>{
   const page=src("src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx");
   expect(service).toContain('eq(placementWaitlistPromotions.status,"PENDING")');
   expect(service).toContain("pendingPromotions===0");
-  expect(service).toContain("if(pendingPromotions>0)");
+  expect(service).toContain("pendingPromotions===0");
+  expect(service).toContain("if(!canCancelTpoDrive(job.status,season?.status??null,pendingPromotions))");
   expect(service).toContain('throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE")');
   const locked=service.indexOf('from(placementJobs)\n      .where(and(eq(placementJobs.id, jobId)');
-  const check=service.lastIndexOf("if(pendingPromotions>0)");
+  const check=service.lastIndexOf("if(!canCancelTpoDrive(job.status,season?.status??null,pendingPromotions))");
   expect(locked).toBeGreaterThanOrEqual(0);
   expect(check).toBeGreaterThan(locked);
   expect(page).toContain("preview.pendingPromotions>0");
@@ -108,7 +109,8 @@ describe("chat-5 TPO drive closure and correction journeys",()=>{
   expect(component).toContain("timeoutMs: 35000");
   expect(component).toContain("friendlyApiError({})");
   expect(component).toContain("<ConfirmDialog");
-  expect(component).toContain('role="alert"');
+  expect(component).toContain('<InlineNotice tone="error" message={error}/>');
+  expect(src("src/components/ui/inline-notice.tsx")).toContain('role={tone === "error" ? "alert" : "status"}');
   expect(component).not.toContain("await fetch(");
   expect(component).not.toContain("window.confirm(");
  });

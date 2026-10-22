@@ -42,7 +42,7 @@ function AttentionCard({title,icon,count,href,empty,children,shown,pending}:Atte
     </header>
     <div className="min-w-0 flex-1 px-4 py-3 text-[13px] leading-5 text-[var(--lms-body-text)]">
       {count === null
-        ? <p role="status" className="text-amber-700">Couldn't load this. Refresh to try again.</p>
+        ? <p role="alert" className="text-amber-700">Couldn't load this. Refresh to try again.</p>
         : count === 0
           ? <p role="status" className="flex gap-2 text-emerald-700"><span aria-hidden="true">✓</span>{empty}</p>
           : <>{children}{count > shown ? <Link href={href}
