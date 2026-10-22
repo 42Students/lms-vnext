@@ -6,7 +6,6 @@ import {activityEvents,organizations} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {LEGACY_TENANT_SETTING_MAP} from "./legacy-setting-specs";
 
 const organizationIdSchema=z.uuid();
 const keySchema=z.string().trim().min(1).max(120).regex(/^[A-Za-z][A-Za-z0-9._-]*$/);
@@ -28,10 +27,7 @@ export class OrganizationSettingsError extends Error{
 }
 const prohibited=/secret|token|password|credential|api[._-]?key|private[._-]?key/i;
 function safeKey(k:string){
- if(prohibited.test(k)||LEGACY_TENANT_SETTING_MAP.has(k)||
-  /^(?:module[._-])?courses(?:[._-]|$)/i.test(k))
-  throw new OrganizationSettingsError("INVALID_SETTING");
- return k;
+ return keySchema.parse(k);
 }
 async function authorize(ctx:RequestContext,raw:string){
  const organizationId=organizationIdSchema.parse(raw);
