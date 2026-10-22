@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { updateCourseLessonInputSchema } from "@/modules/courses/validation";
 import {
   archiveCourseLesson,
   updateCourseLesson,
@@ -41,7 +42,7 @@ export async function PATCH(
     const lesson = await updateCourseLesson(
       context,
       lessonId,
-      body,
+      updateCourseLessonInputSchema.parse(body),
     );
 
     return NextResponse.json({ lesson });

@@ -3,6 +3,8 @@ import { z } from "zod";
 // Preserve historic phase and blocker status selectors while keeping current
 // persisted PLANNED/COMPLETED bookmarks valid.
 const statuses = ["PLANNED","ACTIVE","IN_PROGRESS","READY","BLOCKED","COMPLETED","ARCHIVED"] as const;
+const COLLEGE_PROJECTS_PAGE_SIZES = [10,20,50,100] as const;
+const DEFAULT_COLLEGE_PROJECTS_PAGE_SIZE = 20;
 // URL page values must be base-10 integers. z.coerce.number() also accepts
 // scientific notation, hexadecimal and surrounding whitespace from hostile URLs.
 const positivePageNumber = (max: number, defaultValue: number) =>

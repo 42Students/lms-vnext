@@ -12,7 +12,7 @@ export function IndependentFindingSyncAction({ready}:{ready:boolean}){
  const router=useRouter();
  const inFlight=useRef(false);
  const [pending,setPending]=useState(false);
- const [feedback,setFeedback]=useState<{tone:"success"|"warning"|"error";message:string}|null>(null);
+ const [feedback,setFeedback]=useState<{tone:"success"|"info"|"error";message:string}|null>(null);
  async function sync(){
   if(!ready||inFlight.current)return;
   inFlight.current=true;
@@ -24,10 +24,10 @@ export function IndependentFindingSyncAction({ready}:{ready:boolean}){
    );
    const result=response.result;
    if(!result.ran){
-    setFeedback({tone:"warning",message:result.busy?
+    setFeedback({tone:"info",message:result.busy?
      "Sync didn't run: another import is in progress.":result.message});
    }else{
-    setFeedback({tone:result.refused||result.tampered||result.deleted?"warning":"success",
+    setFeedback({tone:result.refused||result.tampered||result.deleted?"info":"success",
      message:"Synced: "+result.imported+" findings, "+result.updates+
       " updates, "+result.refused+" refused, "+result.tampered+" changed and "+
       result.deleted+" deleted files."});
