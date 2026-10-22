@@ -351,6 +351,8 @@ export const projectInstances = pgTable(
     index("project_instances_template_version_idx").on(
       table.templateVersionId,
     ),
+    check("project_instances_template_pair_ck",
+      sql`(${table.templateId} is null) = (${table.templateVersionId} is null)`),
     check(
       "project_instances_status_ck",
       sql`${table.status} in ('PLANNED', 'ACTIVE', 'COMPLETED', 'ARCHIVED')`,
