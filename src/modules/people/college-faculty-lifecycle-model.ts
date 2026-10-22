@@ -7,8 +7,9 @@ export const collegeFacultyLifecycleSchema = z.discriminatedUnion("action", [
     expectedStatus: z.literal("ACTIVE"),
     /** Optional millisecond-CAS token to prevent ACTIVE→SUSPENDED→ACTIVE ABA. */
     expectedUpdatedAt:z.iso.datetime({offset:true}).optional(),
-    // Match the legacy no-reason lifecycle request while capping any supplied explanation.
-    reason: z.string().trim().max(1000).optional(),
+    // Match the audited College Admin membership suspension contract: a
+    // meaningful reason is required and persisted alongside session revocation.
+    reason: z.string().trim().min(3,"Enter a suspension reason of at least 3 characters.").max(1000),
     confirm: z.literal(true),
   }).strict(),
   z.object({
