@@ -57,7 +57,7 @@ export async function GET(
         readOnlyReason:protectedRole&&!isSuperAdmin(context)
           ?"Protected staff profiles are read-only for College Admins":null,
         roleScope:"COLLEGE_STAFF",
-      });
+      },{headers:{"Cache-Control":"private, no-store"}});
     }
     const profile = await getFacultyProfileWithRuntime(context,membershipId);
     return NextResponse.json({ profile });
