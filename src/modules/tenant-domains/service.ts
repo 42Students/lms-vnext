@@ -276,26 +276,23 @@ export async function verifyTenantDomain(
     repository,
   );
 
-  // Rechecking a verified host updates diagnostics without revoking its
-  // existing binding. Issue a challenge only when the historical token is
-  // absent; the repository retains isVerified and verifiedAt on failure.
-  const checkedDomain = domain.isVerified && !domain.verificationToken
-    ? await ensureTenantDomainVerificationToken(context, domain.id, repository)
-    : domain;
-  if (!checkedDomain.verificationToken) {
+  // A verified binding is idempotent: re-verification must not issue
+  // a new challenge or contact DNS. Token repair is an explicit operation.
+  if (domain.isVerified) return domain;
+  if (!domain.verificationToken) {
     throw new TenantDomainServiceError("DOMAIN_NOT_VERIFIED");
   }
 
   const result = await verifier.verify(
-    checkedDomain.host,
-    checkedDomain.verificationToken,
+    domain.host,
+    domain.verificationToken,
   );
 
-  return repository.recordVerificationResult(checkedDomain.id, {
+  return repository.recordVerificationResult(domain.id, {
     ...result,
     checkedAt: new Date(),
-    expectedHost:checkedDomain.host,
-    expectedToken:checkedDomain.verificationToken,
+    expectedHost:domain.host,
+    expectedToken:domain.verificationToken,
     context,
   });
 }
