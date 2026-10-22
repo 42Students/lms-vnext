@@ -40,7 +40,7 @@ export function projectMeetingPlanFieldsChanged(before: {
   title: string;meetingKey:string|null;meetingType:string;meetingUrl:string|null;
   outcome:string|null;agenda: string | null; startsAt: Date; endsAt: Date;
   linkedSprintId: string | null; linkedTaskId: string | null;
-}, next: ProjectMeetingPlanRow) {
+}, next: Omit<ProjectMeetingPlanRow, "id">) {
   return before.title!==next.title||
     (before.meetingKey??"")!==next.key||
     before.meetingType!==next.meetingType||
