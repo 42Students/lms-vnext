@@ -1,4 +1,7 @@
 import { legacyGridExportFilename,legacySavedViewExportFilename } from "@/modules/placements/grid-export-filename";
+import {and,eq,inArray} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {cohorts,departments,programs,sections} from "@/db/schema";
 import {tpoStudentExportViewName} from "@/modules/placements/tpo-students-url-guard";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -30,7 +33,17 @@ export async function GET(request:Request){
   if(idsList&&(idsList.length>200||new Set(idsList).size!==idsList.length||
     idsList.some(id=>!matched.some(row=>row.membershipId===id))))return Response.json({error:"Invalid selected rows"},{status:400});
   const subset=idsList?matched.filter(row=>idsList.includes(row.membershipId)):matched;
-  const bytes=exportTpoStudentsXlsx(subset,cols,viewName);
+  const classIds=[...new Set(subset.flatMap(row=>row.classIds))];
+  const sectionNames=classIds.length?await getDb().select({
+    id:sections.id,name:sections.name,
+  }).from(sections)
+    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(and(eq(departments.collegeId,ctx.membership.collegeId),
+      inArray(sections.id,classIds))):[];
+  const bytes=exportTpoStudentsXlsx(subset,cols,viewName,
+    Object.fromEntries(sectionNames.map(row=>[row.id,row.name])));
   return new Response(new Uint8Array(bytes),{headers:{
    "Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
    "Content-Disposition":'attachment; filename="' + (!savedViewRequested?legacyGridExportFilename(downloadName, "xlsx"):
