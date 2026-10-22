@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-2-012-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
-- [ ] G2-2-014-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
+- [x] G2-2-014-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-2-019-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-20-004-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-20-008-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
@@ -29,3 +29,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-9-014-004: OK — `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx:36-46` explicitly explains the missing College Admin assignment and asks the user to contact their college administrator; matches recovery behavior in `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/shortlisted.js:20-31`.
 - G2-2-012-049: OK — independent accurate totals with an eight-row preview: `src/modules/admin-ui/college-dashboard-attendance-service.ts:43-78`, `src/modules/admin-ui/college-dashboard-risk-service.ts:92-105`, `src/modules/admin-ui/college-dashboard-grading-service.ts:40-67`, `src/modules/admin-ui/college-dashboard-staffing-service.ts:62-99`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCollegeDashboardController.java:47,149-154,170-179,181-211` (full counts separate from preview).
 - G2-7-012-035: OK — `src/modules/projects/readiness-service.ts:101-109,132-157,184-195` gates execution on sprints/tasks rather than shipped releases, and reports unshipped releases only as advisory; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/projects/ProjectReadinessDTO.java:14-19` (release counts explicitly informational).
+
+- G2-2-014-028: OK — `src/app/api/courses/bulk-status/route.ts:9-23` exposes the college-admin POST with same-origin protection and current request context; `src/components/courses/college-course-bulk-visibility.tsx:70-111,136-176` provides authorized bulk selection/confirmation and per-course failure retry; `src/modules/courses/super-admin-course-bulk-visibility.ts` handles the scoped bulk operation. This matches the authenticated, per-course access checks and independent updates of `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java:96-145`.
