@@ -43,10 +43,9 @@ describe("chat-16 TPO recipient unsubscribe live row decision",()=>{
   await expect(unsubscribeTpoCampaignRecipient("invalid.with.dot"))
    .resolves.toEqual({unsubscribed:true});
   expect(getDb).not.toHaveBeenCalled();
-  const unknown=fakeDb(true,null);
   await expect(unsubscribeTpoCampaignRecipient("untrusted"))
    .resolves.toEqual({unsubscribed:true});
-  expect(unknown.db.transaction).toHaveBeenCalledOnce();
+  expect(getDb).not.toHaveBeenCalled();
  });
  it("campaign-unsubscribe-service-17 refuses missing campaign recipient registration without pretending success",async()=>{
   const f=fakeDb(false,null);
@@ -55,7 +54,7 @@ describe("chat-16 TPO recipient unsubscribe live row decision",()=>{
   expect(f.tx.select).not.toHaveBeenCalled();
  });
  it("campaign-unsubscribe-service-18 validates locked college/campaign/recipient identity before changes",async()=>{
-  const f=fakeDb(true,null);
+  const f=fakeDb(true,{id:recipient,collegeId:"55555555-5555-4555-8555-555555555555",campaignId:campaign,leadId:lead,unsubscribedAt:null});
   await expect(unsubscribeTpoCampaignRecipient(token)).rejects.toBeInstanceOf(CampaignUnsubscribeInvalid);
   expect(f.db.transaction).toHaveBeenCalledOnce();
   expect(f.limit).toHaveBeenCalledWith(1);
