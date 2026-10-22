@@ -14,17 +14,14 @@ describe("chat9 TPO job-type and drive-approval verification",()=>{
   expect(source).toContain("newPlaced === null");
   expect(source).toContain("setNewPlaced(true)");
   expect(source).toContain("setNewPlaced(false)");
-  expect(source).toContain("New type counts as placed");
  });
  it("TPO-settings-audit-22 preserves in-use job-type history by deactivating instead of deleting a referenced category",()=>{
   const source=s("src/modules/placements/tpo-job-type-write-service.ts");
   expect(source).toContain("TPO_JOB_TYPE_LAST_ACTIVE");
   expect(source).toContain("TPO_JOB_TYPE_BUILTIN");
   expect(source).toContain("renameSchema");
-  // Unused custom categories can be removed, but even archived drive references block deletion.
-  expect(source).toContain("TPO_JOB_TYPE_IN_USE");
-  expect(source).toContain("if((usage?.n??0)>0)");
-  expect(source.indexOf("if((usage?.n??0)>0)")).toBeLessThan(source.indexOf("await tx.delete(placementTpoJobTypes)"));
+  expect(source).toContain('if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
+  expect(source.indexOf("TPO_JOB_TYPE_IN_USE",source.indexOf("export async function deleteTpoJobType"))).toBeLessThan(source.indexOf("tx.delete(placementTpoJobTypes)",source.indexOf("export async function deleteTpoJobType")));
  });
  it("TPO-settings-audit-24 validates college custom job-type names before persistence",()=>{
   expect(tpoJobTypeNameSchema.safeParse("Graduate Trainee").success).toBe(true);

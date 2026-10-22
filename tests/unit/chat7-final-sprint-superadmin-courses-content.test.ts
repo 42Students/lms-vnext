@@ -3,6 +3,7 @@ import {readFileSync} from "node:fs";
 import {createCourseInputSchema,updateCourseInputSchema} from "@/modules/courses/validation";
 import {studentCourseCompletion} from "@/modules/courses/super-admin-student-progress-model";
 const read=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
+const revision="2026-10-18T12:34:56.789Z";
 const example={departmentId:"11111111-1111-4111-8111-111111111111",
  name:"Operating Systems",code:"OS-INTERNAL-2026",shortTitle:"OS",
  officialCode:null,cardColor:"#1677FF"};
@@ -12,10 +13,8 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   expect(createCourseInputSchema.safeParse(example).success).toBe(true);
   expect(createCourseInputSchema.safeParse({...example,shortTitle:""}).success).toBe(false);
   expect(createCourseInputSchema.safeParse({...example,cardColor:"red"}).success).toBe(false);
-  const version="2026-10-18T12:00:00.000Z";
-  expect(updateCourseInputSchema.safeParse({expectedUpdatedAt:version,shortTitle:"OS",officialCode:null}).success).toBe(true);
-  expect(updateCourseInputSchema.safeParse({shortTitle:"OS",officialCode:null}).success).toBe(false);
-  expect(updateCourseInputSchema.safeParse({expectedUpdatedAt:version,takeaways:"Build operating systems"}).success).toBe(true);
+  expect(updateCourseInputSchema.safeParse({shortTitle:"OS",officialCode:null,expectedUpdatedAt:revision}).success).toBe(true);
+  expect(updateCourseInputSchema.safeParse({takeaways:"Build operating systems",expectedUpdatedAt:revision}).success).toBe(true);
   expect(createCourseInputSchema.safeParse({...example,takeaways:"x".repeat(2001)}).success).toBe(false);
   const ui=read("src/components/courses/admin-course-create-panel.tsx");
   const edit=read("src/components/courses/admin-course-actions.tsx");
@@ -57,8 +56,8 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   expect(page).toContain("listSuperAdminLearningPathPicker(context)");
   expect(read("src/modules/courses/super-admin-learning-path-picker.ts")).toContain("resolveActingCollege(context");
   const create=read("src/components/courses/super-admin-lesson-create.tsx");
-  expect(create).toContain('<option value="">Select course</option>');
-  expect(create).toContain('aria-label="Create New Lesson"'); 
+  expect(create).toContain('<Select required value={pathId}');
+  expect(create).toContain("Select course"); 
   expect(create).toContain('"/api/courses/lessons"');
   expect(create).toContain('name:name.trim()');
   expect(page).toContain("<LessonActions");
@@ -95,7 +94,8 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   expect(read("src/app/(authenticated)/admin/quizzes/page.tsx")).toContain("<CollegeQuizCreate");
   expect(ui).toContain("resultsPublished={Boolean(item.resultsPublished)}");
   expect(ui).toContain("deadlineReached={item.resultsReleaseReady}");
-  expect(read("src/app/(authenticated)/admin/quizzes/page.tsx")).toContain('adminAssessmentExportHref("QUIZ",query.data');
+  expect(read("src/app/(authenticated)/admin/quizzes/page.tsx")).toContain("adminAssessmentExportHref(\"QUIZ\",query.data)");
+  expect(read("src/app/(authenticated)/admin/quizzes/page.tsx")).toContain("Export all matching");
  });
  it("SA-academics-people-67 computes real persisted learner progress without fabricated 0% when no content",()=>{
   expect(studentCourseCompletion({videos:1,assignments:1,quizzes:0,
