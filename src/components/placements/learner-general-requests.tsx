@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Dialog} from "@/components/ui/dialog";
 import {FileUpload} from "@/components/ui/file-upload";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -17,11 +18,27 @@ const kinds:readonly [Kind,string][]=[
  ["ABSENCE_DISPUTE","Absence dispute"],["OFFER_ACCEPTANCE_DISPUTE","Externally reported acceptance"],["CORRECTION_WITH_PROOF","Correction with proof"],
  ["PLACEMENT_AFTER_PLACEMENT","Placement after placement"]];
 const box="min-h-11 md:min-h-9";
+const requestState:Record<string,{label:string;tone:string}>={
+ PENDING:{label:"Waiting for the placement cell",tone:"border-[var(--lms-warning)] bg-[var(--lms-warning-subtle)]"},
+ APPROVED:{label:"Approved",tone:"border-[var(--lms-success)] bg-[var(--lms-success-subtle)]"},
+ AUTO_APPROVED:{label:"Approved",tone:"border-[var(--lms-success)] bg-[var(--lms-success-subtle)]"},
+ REJECTED:{label:"Not approved",tone:"border-[var(--lms-error)] bg-[var(--lms-error-subtle)]"},
+};
+function sentAgo(iso:string):string {
+ const delta=(new Date(iso).getTime()-Date.now())/1000;
+ if(!Number.isFinite(delta))return "";
+ const abs=Math.abs(delta);
+ const [unit,divisor]:[Intl.RelativeTimeFormatUnit,number]=
+  abs<60?["second",1]:abs<3600?["minute",60]:abs<86400?["hour",3600]:abs<2592000?["day",86400]:
+  abs<31536000?["month",2592000]:["year",31536000];
+ return "Sent "+new Intl.RelativeTimeFormat("en",{numeric:"auto"}).format(Math.round(delta/divisor),unit);
+}
 export function LearnerGeneralRequests({
- initialKind="OFF_CAMPUS_OFFER",initialApplicationId="",initialRoundId="",initialOfferId="",
-}:{initialKind?:Kind;initialApplicationId?:string;initialRoundId?:string;initialOfferId?:string}){
+ initialKind="OFF_CAMPUS_OFFER",initialApplicationId="",initialRoundId="",initialOfferId="",initialNoticeBody="",
+}:{initialKind?:Kind;initialApplicationId?:string;initialRoundId?:string;initialOfferId?:string;initialNoticeBody?:string}){
  const [rows,setRows]=useState<History[]>([]),[cohortId,setCohortId]=useState("");
- const [kind,setKind]=useState<Kind>(initialKind),[reason,setReason]=useState("");
+ const [kind,setKind]=useState<Kind>(initialKind),[reason,setReason]=useState(initialNoticeBody?`Disputing: "${initialNoticeBody}"`:"");
+ const [asking,setAsking]=useState(Boolean(initialApplicationId||initialOfferId||initialNoticeBody));
  const [target,setTarget]=useState(initialKind==="OFFER_ACCEPTANCE_DISPUTE"?initialOfferId:initialApplicationId),[aux,setAux]=useState(initialRoundId),[proofUrl,setProofUrl]=useState("");
  const [consent,setConsent]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
  const [discardOpen,setDiscardOpen]=useState(false),[afterDiscardKind,setAfterDiscardKind]=useState<Kind|null>(null);
@@ -32,7 +49,7 @@ export function LearnerGeneralRequests({
   setReason("");setTarget("");setAux("");setProofUrl("");setConsent(false);
   setNotice("");setError("");
  };
- const cancelDraft=()=>{if(pending)return;if(dirty)setDiscardOpen(true);else resetDraft();};
+ const cancelDraft=()=>{if(pending)return;if(dirty)setDiscardOpen(true);else{resetDraft();setAsking(false);}};
  const {run,pending}=useGuardedAction();
  async function refresh(){
   try{
@@ -43,7 +60,7 @@ export function LearnerGeneralRequests({
  useEffect(()=>{void Promise.resolve().then(refresh);},[]);
  const payload=()=>{
   switch(kind){
-   case "OFF_CAMPUS_OFFER":return {kind,reason,companyName:target,ctcLpa:aux,proofUrl};
+   case "OFF_CAMPUS_OFFER":return {kind,reason,companyName:target,ctcLpa:aux.trim()||"0",proofUrl};
    case "REGISTRATION_CHANGE":return {kind,reason,cohortId,choice:target||"HIGHER_STUDIES",consentConfirmed:consent};
    case "ABSENCE_DISPUTE":return {kind,reason,applicationId:target,roundId:aux,proofUrl};
    case "CORRECTION_WITH_PROOF":return {kind,reason,section:"EDUCATION" as const,field:target,proposedValue:aux,proofUrl};
@@ -71,16 +88,26 @@ export function LearnerGeneralRequests({
    await run(async()=>{
     await apiFetch("/api/placements/requests/general",{method:"POST",credentials:"same-origin",
      headers:{"content-type":"application/json"},body:JSON.stringify(parsed.data)});
-    resetDraft();
+    resetDraft();setAsking(false);
     setNotice("Sent to the placement cell");
     await refresh();
    });
   }catch{setError("The request could not be sent. Your entered details are still here; please retry.");}
  }
  return <section aria-labelledby="learner-general-requests-title" className="min-w-0 space-y-4 border-b border-border pb-5">
-  <h2 id="learner-general-requests-title" className="text-lg font-semibold">Other placement requests</h2>
+  <div className="flex flex-wrap items-center justify-between gap-3">
+   <h2 id="learner-general-requests-title" className="text-lg font-semibold">Your requests</h2>
+   <Button type="button" size="sm" disabled={pending} onClick={()=>{resetDraft();setAsking(true);}}>New request</Button>
+  </div>
+  <Dialog open={asking} title="New request" dismissible={!pending}
+   onOpenChange={open=>{if(open)setAsking(true);else cancelDraft();}}
+   footer={<>
+    <Button type="button" variant="secondary" disabled={pending} onClick={cancelDraft}>Cancel</Button>
+    <Button type="button" disabled={pending} loading={pending} onClick={()=>void submit()}>{pending?"Sending…":"Send"}</Button>
+   </>}>
+  <div className="space-y-4">
   <p className="text-sm">Tell your placement cell about an off-campus offer, registration change, disputed absence, record correction or a request to apply after placement.</p>
-  <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Request kind<Select className={box} disabled={pending} value={kind}
+  <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">What do you need?<Select className={box} disabled={pending} value={kind}
    onChange={e=>{
     if(pending)return;
     if(dirty){setAfterDiscardKind(e.target.value as Kind);setError("");setDiscardOpen(true);return;}
@@ -88,20 +115,20 @@ export function LearnerGeneralRequests({
    }}>
    {kinds.map(([id,name])=><option key={id} value={id}>{name}</option>)}
   </Select></label>
-  {kind==="REGISTRATION_CHANGE"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">New choice
+  {kind==="REGISTRATION_CHANGE"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Change to
    <Select className={box} value={target||"HIGHER_STUDIES"} onChange={e=>setTarget(e.target.value)}>
-    {["HIGHER_STUDIES","PLACEMENTS","NOT_INTERESTED"].map(key=>
-     <option key={key} value={key}>{key.replaceAll("_"," ").toLowerCase()}</option>)}
+    {([["PLACEMENTS","Placements"],["HIGHER_STUDIES","Higher studies"],["NOT_INTERESTED","Not interested"]] as const).map(([key,label])=>
+     <option key={key} value={key}>{label}</option>)}
    </Select>
   </label>:
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{kind==="OFF_CAMPUS_OFFER"?"Company name":
+   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{kind==="OFF_CAMPUS_OFFER"?"Company":
     kind==="ABSENCE_DISPUTE"?"Application ID":kind==="OFFER_ACCEPTANCE_DISPUTE"?"Offer ID":kind==="CORRECTION_WITH_PROOF"?"Record field":"Requested drive ID"}
-    <Input className={box} maxLength={kind==="OFF_CAMPUS_OFFER"?150:kind==="CORRECTION_WITH_PROOF"?140:200} value={target} onChange={e=>setTarget(e.target.value)}/>
+    <Input className={box} maxLength={kind==="OFF_CAMPUS_OFFER"?200:kind==="CORRECTION_WITH_PROOF"?140:200} placeholder={kind==="OFF_CAMPUS_OFFER"?"e.g. Acme Corp":undefined} value={target} onChange={e=>setTarget(e.target.value)}/>
    </label>}
   {kind!=="REGISTRATION_CHANGE"&&kind!=="OFFER_ACCEPTANCE_DISPUTE"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-   {kind==="OFF_CAMPUS_OFFER"?"Annual CTC in LPA":
+   {kind==="OFF_CAMPUS_OFFER"?"CTC (LPA)":
     kind==="ABSENCE_DISPUTE"?"Round ID":kind==="CORRECTION_WITH_PROOF"?"Corrected value":"Justification"}
-   <Input className={box} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
+   <Input className={box} type={kind==="OFF_CAMPUS_OFFER"?"number":"text"} min={kind==="OFF_CAMPUS_OFFER"?0:undefined} step={kind==="OFF_CAMPUS_OFFER"?0.1:undefined} placeholder={kind==="OFF_CAMPUS_OFFER"?"e.g. 8.5":undefined} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
   </label>:target==="PLACEMENTS"?<label className="flex min-h-11 min-w-0 items-start gap-2 py-2 text-sm">
    <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
    I request placement registration and consent to the placement rules.
@@ -111,7 +138,7 @@ export function LearnerGeneralRequests({
    <div className="flex items-center gap-2 text-sm font-semibold text-body">
     <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
      <path d="M7 18V7a5 5 0 0 1 10 0v11a3 3 0 0 1-6 0V8a1 1 0 0 1 2 0v8"/>
-    </svg> Offer letter / supporting proof
+    </svg> Offer letter
    </div>
    <FileUpload label="Attach a proof file" accept=".pdf,.png,.jpg,.jpeg"
     onFiles={()=>{}} pickerUnavailable showSelectedFiles
@@ -128,28 +155,32 @@ export function LearnerGeneralRequests({
     Proof link supplied. The placement cell will review access and authenticity; no file has been uploaded.
   </p>:null}
  </div>:null}
-  <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Why are you requesting this?
+  <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Tell the placement cell why
    <Textarea ref={reasonRef} className={box} rows={3} maxLength={999} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} aria-invalid={error==="Please explain"} aria-describedby={error==="Please explain"?"learner-general-requests-error":undefined}/>
   </label>
-  <div className="flex min-w-0 flex-wrap items-center gap-3">
-   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>void submit()}>{pending?"Sending…":"Send request"}</Button>
-   <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending}
-    onClick={cancelDraft}>Cancel</Button>
+  {error?<p role="alert" id="learner-general-requests-error" className="text-sm text-error">{error}</p>:null}
   </div>
+  </Dialog>
   <ConfirmDialog open={discardOpen} onOpenChange={open=>{setDiscardOpen(open);if(!open)setAfterDiscardKind(null);}} title="Discard this request?"
    description="Your unsent request details, any proof link and registration choice will be lost."
    confirmLabel="Discard request" confirmVariant="danger"
-   onConfirm={()=>{resetDraft();if(afterDiscardKind)setKind(afterDiscardKind);setAfterDiscardKind(null);setDiscardOpen(false);}}>
+   onConfirm={()=>{resetDraft();if(afterDiscardKind)setKind(afterDiscardKind);else setAsking(false);setAfterDiscardKind(null);setDiscardOpen(false);}}>
    <p className="text-sm text-body">Changes to this request have not been sent to the placement cell.</p>
   </ConfirmDialog>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
-  {error?<p role="alert" id="learner-general-requests-error" className="text-sm text-error">{error}</p>:null}
-  <h3 id="learner-general-requests-history" className="font-semibold">Request history</h3>
-  {!rows.length?<p role="status" className="text-sm">No other placement requests recorded yet.</p>:
-   <ul className="divide-y divide-border">{rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-3 text-sm last:border-b-0">
-    <strong>{row.kind.replaceAll("_"," ")}</strong> · {row.status.replaceAll("_"," ")}
-    <p className="break-words">{row.reason}</p>
-    {row.decisionNote?<p>Placement cell: {row.decisionNote}</p>:null}
-   </li>)}</ul>}
+  <h3 id="learner-general-requests-history" className="sr-only">Request history</h3>
+  {!rows.length?<p role="status" className="text-sm">Need more time on an offer, a correction to your details, or to report an off-campus offer? Send a request and the placement cell will reply here.</p>:
+   <ul className="divide-y divide-border">{rows.map(row=>{
+    const state=requestState[row.status]??{label:row.status.replaceAll("_"," "),tone:"border-[var(--lms-canvas-border)] bg-surface"};
+    return <li key={row.id} className="flex min-w-0 flex-wrap justify-between gap-3 border-b border-border py-3 text-sm last:border-b-0">
+     <div className="min-w-0 flex-1">
+      <strong>{kinds.find(([id])=>id===row.kind)?.[1]??row.kind.replaceAll("_"," ")}</strong>
+      <p className="break-words">{row.reason}</p>
+      {row.decisionNote?<p className="break-words"><strong>Reply:</strong> {row.decisionNote}</p>:null}
+      {row.requestedAt?<p className="text-xs text-muted-foreground">{sentAgo(row.requestedAt)}</p>:null}
+     </div>
+     <span className={`self-start rounded-full border px-2 py-1 text-xs font-medium ${state.tone}`}>{state.label}</span>
+    </li>;
+   })}</ul>}
  </section>;
 }
