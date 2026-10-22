@@ -16,7 +16,7 @@ export function formatSuperAdminAttentionWhen(value:Date):string{
   get("hour")+":"+get("minute")+" "+get("dayPeriod").toUpperCase()+" IST";
 }
 export type SuperAdminTodayMetrics={
- classesScheduled:number;classesEnded:number;attendanceTaken:number;
+ classesScheduled:number;classesEnded:number;classesHeld?:number;attendanceTaken:number;
  attendanceNotTaken:number;coursesWithoutTeacher:number;quizzesClosingThisWeek:number;
  quizDeadlineLabels?:readonly string[];
  /** Independent legacy Today previews. Unknown totals stay null; never imply an all-clear. */
