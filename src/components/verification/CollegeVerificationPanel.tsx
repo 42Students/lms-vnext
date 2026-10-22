@@ -146,7 +146,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </section>}
   <section aria-label="Verification queue" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <div className="flex min-w-0 flex-wrap items-center gap-2">
-   <NeedsDoingChips label="Needs a closer look:" selectedKey={query.attention}
+   <NeedsDoingChips label="Needs a closer look:" {...(query["attention"] !== undefined ? { selectedKey: query["attention"] } : {})}
     items={verificationAttentionShortcuts.map(item=>({
       key:item.attention,label:item.attention==="MISSING_MARKSHEET"?"A marksheet missing":
         item.attention==="VERIFIED_DETAILS_CHANGED"?"Updates to verified details":
@@ -156,7 +156,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
      const choice=verificationAttentionShortcuts.find(item=>item.attention===key);
      if(choice)navigate(verificationAttentionShortcutPatch(choice.attention));
     }}/>
-   {query.attention&&query.attention!=="ALL"&&<Button variant="ghost" type="button"
+   {query["attention"]&&query["attention"]!=="ALL"&&<Button variant="ghost" type="button"
     onClick={()=>navigate({attention:"ALL",page:"1"})}>All attention states</Button>}
   </div>
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} programChoices={programChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
@@ -220,9 +220,9 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   <div className="max-h-[calc(100vh-380px)] min-h-56 overflow-y-auto overscroll-contain" role="region" aria-label="Scrollable verification table" tabIndex={0}>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts} legacyCollegeCopy hideHeader
    selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} selectionDisabled={bulkBusy} disableLocalSearch preserveServerOrder allowCollegeStudentLinks allowCollegeContactLinks
-   initialTab={activeTab} initialKind={initialKind} sort={query.sort==="NAME"?"NAME":query.sort==="NEWEST"?"NEWEST":"OLDEST"}
-   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":"",ageBand:tab==="WAITING"?query.ageBand??"ANY":"",attention:tab!=="WAITING"&&["VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"].includes(query.attention)?"ALL":query.attention??"ALL"})}
-   onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1",...(kind==="IDENTITY"?{marksheets:"ANY",attention:query.attention==="MISSING_MARKSHEET"?"ALL":query.attention}:{})})}
+   initialTab={activeTab} initialKind={initialKind} sort={query["sort"]==="NAME"?"NAME":query["sort"]==="NEWEST"?"NEWEST":"OLDEST"}
+   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query["waitingState"]??"ALL":"",ageBand:tab==="WAITING"?query["ageBand"]??"ANY":"",attention:tab!=="WAITING"&&["VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"].includes(query["attention"])?"ALL":query["attention"]??"ALL"})}
+   onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1",...(kind==="IDENTITY"?{marksheets:"ANY",attention:query["attention"]==="MISSING_MARKSHEET"?"ALL":query["attention"]}:{})})}
    onReview={row=>setSelected(row)}/>
   </div>
   {bulkResult&&<section aria-label="Bulk review outcome" role="status" className="space-y-2 border-y border-[var(--lms-canvas-border)] py-3">
@@ -236,7 +236,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   {bulkError&&<Banner tone="error">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</Banner>}
   <section aria-label="Verification queue controls" className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 text-[13px] leading-[22px] sm:grid-cols-2 md:flex md:flex-wrap md:items-center">
    <Button variant="secondary" type="button" disabled={bulkBusy} className="min-h-11 sm:min-h-9" onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}}>Refresh</Button>
-   <label className="grid min-w-0 gap-1">Sort by <Select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="w-full md:w-auto">
+   <label className="grid min-w-0 gap-1">Sort by <Select value={query["sort"]??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="w-full md:w-auto">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option><option value="NAME">Learner name A–Z</option>
    </Select></label>
    <label className="grid min-w-0 gap-1">Requests per page <Select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="w-full md:w-auto">
@@ -250,10 +250,8 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </section>
   {selected&&<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
     row={selected}
-    sequenceProgress={sequential?sequenceLabel:undefined}
-    onNext={sequential?()=>nextInSequence():undefined}
-    onFinish={sequential?()=>{setSelected(null);setSequential(null);
-      setReviewFeedback(verificationSessionStopped(sequential.index,sequential.keys.length));}:undefined}
+    {...(sequential ? {sequenceProgress:sequenceLabel, onNext:()=>nextInSequence(), onFinish:()=>{setSelected(null);setSequential(null);
+      setReviewFeedback(verificationSessionStopped(sequential.index,sequential.keys.length));}} : {})}
     onClose={()=>{if(sequential)setReviewFeedback(
       verificationSessionStopped(sequential.index,sequential.keys.length));
       setSelected(null);setSequential(null);}}
