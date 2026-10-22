@@ -198,8 +198,10 @@ async function verifiedReceipt(pending: Receipt, collegeId: string) {
 export async function completeCourseImage(context: RequestContext, rawId: string, receiptId: string) {
   const scope = await authorize(context, rawId, true);
   uploader(context, scope.collegeId);
-  let oldKey: string | undefined;
-  let status: "READY" | "VERIFYING" = "VERIFYING";
+  const outcome = {
+    oldKey: undefined as string | undefined,
+    status: "VERIFYING" as "READY" | "VERIFYING",
+  };
   try {
     await getDb().transaction(async tx => {
       const [locked] = await tx.select({
@@ -216,7 +218,7 @@ export async function completeCourseImage(context: RequestContext, rawId: string
       if (Date.parse(pending.expiresAt) + 60 * 60 * 1000 < Date.now() &&
         pending.status === "UPLOADING") fail("COURSE_IMAGE_UPLOAD_EXPIRED", 409);
       const verification = await verifiedReceipt(pending, scope.collegeId);
-      status = verification.status;
+      outcome.status = verification.status;
       if (verification.status === "VERIFYING") {
         await tx.update(courses).set({
           legacyMetadata: nextMeta(locked.legacyMetadata, {
@@ -225,7 +227,7 @@ export async function completeCourseImage(context: RequestContext, rawId: string
         }).where(eq(courses.id, scope.id));
         return;
       }
-      oldKey = previous.active?.key;
+      outcome.oldKey = previous.active?.key;
       const active: Receipt = {
         ...pending, status: "READY",
         generation: verification.generation, etag: verification.etag,
@@ -257,8 +259,12 @@ export async function completeCourseImage(context: RequestContext, rawId: string
       });
     });
   } catch (error) { return safeError(error); }
-  if (status === "READY" && oldKey) await safelyDelete(oldKey);
-  return { status, imageUrl: status === "READY" ? urlFor(scope.id) : null };
+  if (outcome.status === "READY" && outcome.oldKey)
+    await safelyDelete(outcome.oldKey);
+  return {
+    status: outcome.status,
+    imageUrl: outcome.status === "READY" ? urlFor(scope.id) : null,
+  };
 }
 
 /** A manager may resume verification after a refresh, but never receives
