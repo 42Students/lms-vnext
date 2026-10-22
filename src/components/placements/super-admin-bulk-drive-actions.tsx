@@ -34,7 +34,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     setPreview(null); setResult(null);
   }
   async function send(confirm: boolean) {
-    if (busy || inFlightRef.current || !selected.length || selected.length > 25) return;
+    if (busy || inFlightRef.current || !selected.length || selected.length > 100) return;
     inFlightRef.current=true;
     setBusy(true); setError("");
     try {
@@ -64,16 +64,27 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
   }
   return <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]"
     aria-label="Super Admin bulk drive actions">
-    <details className="group min-w-0">
-      <summary className="flex min-h-11 w-full cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Bulk Open / Close <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
-      <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
+    <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
+      <div className="flex min-h-11 flex-wrap items-center justify-between gap-3 text-sm">
+       <h2 className="font-semibold">Bulk Open / Close</h2>
+       <p className="text-xs text-muted-foreground">Select up to 100 drives; changes run in groups of 25.</p>
+      </div>
+      {selected.length>0?<div role="status"
+        className="flex min-h-11 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-[#91caff] bg-[#e6f4ff] px-3 py-2 text-sm text-[#0958d9]">
+        <strong>{selected.length} selected</strong>
+        <div className="flex flex-wrap items-center gap-2">
+         <Button type="button" size="sm" disabled={busy} onClick={()=>{setAction("OPEN");setPreview(null);setResult(null);}}>Open</Button>
+         <Button type="button" size="sm" disabled={busy} onClick={()=>{setAction("CLOSE");setPreview(null);setResult(null);}}>Close</Button>
+         <Button type="button" variant="link" size="sm" disabled={busy} onClick={()=>{setSelected([]);setPreview(null);setResult(null);}}>Clear selection</Button>
+        </div>
+       </div>:null}
        <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-center">
       <label className="flex min-h-11 items-center gap-2 text-sm text-body">
         <Checkbox disabled={busy || !eligible.length}
-          checked={eligible.length>0 && eligible.slice(0,25).every(d=>selected.includes(d.id))}
-          onChange={e=>{setSelected(e.target.checked?eligible.slice(0,25).map(d=>d.id):[]);
+          checked={eligible.length>0 && eligible.slice(0,100).every(d=>selected.includes(d.id))}
+          onChange={e=>{setSelected(e.target.checked?eligible.slice(0,100).map(d=>d.id):[]);
             setPreview(null);setResult(null);}}/>
-        Select up to 25 eligible drives ({eligible.length} available)
+        Select up to 100 eligible drives ({eligible.length} available)
       </label>
       <label className="flex min-w-0 flex-col items-start gap-[6px] text-[13px]">Action
         <Select value={action} aria-label="Bulk action" disabled={busy} onChange={e=>{
@@ -84,7 +95,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
           <option value="OPEN">Open closed drives</option>
         </Select>
       </label>
-      <Button type="button" disabled={busy || !selected.length || selected.length>25}
+      <Button type="button" disabled={busy || !selected.length || selected.length>100}
         onClick={()=>void send(false)} className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
         Preview {selected.length} drive(s)
       </Button>
@@ -94,7 +105,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       className="grid max-h-56 min-w-0 gap-2 overflow-y-auto overscroll-contain border-y border-border py-2 sm:grid-cols-2 xl:grid-cols-3">
       {eligible.map(d=><div key={d.id} className="min-w-0 border-b border-border py-2">
         <label className="flex min-h-11 min-w-0 items-start gap-2 text-sm">
-          <Checkbox disabled={busy || (!selected.includes(d.id) && selected.length>=25)} checked={selected.includes(d.id)}
+          <Checkbox disabled={busy || (!selected.includes(d.id) && selected.length>=100)} checked={selected.includes(d.id)}
             onChange={()=>toggle(d.id)}/>
           <span className="min-w-0 break-words"><strong>{d.title}</strong><span className="block break-words text-muted-foreground">
             {d.companyName} · {d.status}</span></span>
@@ -133,7 +144,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       </div>
     </div>:null}
     {result?<div role="region" aria-label="Bulk drive action results" className="space-y-2 text-sm">
-      <p>{result.updated} updated, {result.skipped} failed. Retry will target only failed drives.</p>
+      <p>{result.updated} {action==="OPEN"?"opened":"closed"}, {result.skipped} failed. Retry will target only failed drives.</p>
       {result.results.filter(x=>x.status==="SKIPPED").map(x=>
         <p key={x.jobId}>{drives.find(d=>d.id===x.jobId)?.title??"Drive"}: {x.reason}</p>)}
       {result.skipped>0?<Button type="button" variant="link" onClick={()=>void send(false)}
@@ -145,7 +156,6 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         onClick={()=>void send(false)}>Retry impact preview</Button>
     </div>:null}
       </div>
-    </details>
     <ConfirmDialog open={confirmOpen&&preview!==null} pending={busy}
       onOpenChange={next=>{if(!next&&!busy)setConfirmOpen(false);}}
       title={"Confirm "+action.toLowerCase()+" for "+(preview?.eligible??0)+" drives?"}
@@ -228,7 +238,7 @@ export function SuperAdminDriveRowStatusAction({jobId,title,status}:{
    description={action==="CLOSE"?
     "Closing prevents further learner applications. Existing application and interview history remains retained. Issued offers may be withdrawn and affected learners notified according to the audited close workflow. This is not a delete.":
     "Opening restores the drive to its published state if the season and company are still active. Withdrawn offers are not reissued."}
-   confirmLabel={action==="CLOSE"?"Close drive":"Open drive"}
+   confirmLabel={action==="CLOSE"?"Yes, close":"Yes, open"}
    confirmVariant={action==="CLOSE"?"danger":"primary"}
    onConfirm={()=>void submit()}/>
  </div>;
