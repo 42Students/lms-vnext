@@ -13,7 +13,7 @@ describe("TPO spreadsheet mounted on authorized Students and Applications",()=>{
    expect(read(pair[0])).toContain("<"+pair[1]);
   }
   for(const path of ["src/components/tpo/tpo-students-spreadsheet.tsx","src/components/tpo/tpo-applications-spreadsheet.tsx"]){
-   expect(read(path)).toContain("<TpoSpreadsheetGrid");
+   expect(read(path)).toContain("<TpoGrid integratedWorkspace");
    expect(read(path)).toContain("<GridWorkspace");
    expect(read(path)).toContain("filters={filters}");
   }
