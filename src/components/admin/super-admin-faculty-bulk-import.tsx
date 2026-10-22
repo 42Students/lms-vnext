@@ -28,6 +28,9 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
  const [error,setError]=useState("");
  const [results,setResults]=useState<Result[]>([]);
  const [previewVersion,setPreviewVersion]=useState(-1);
+ const [previewDepartment,setPreviewDepartment]=useState("");
+ const [previewIssues,setPreviewIssues]=useState<string[]>([]);
+ const [previewBusy,setPreviewBusy]=useState(false);
  let parsedRows:ReturnType<typeof parseFacultyBulkCsv> = [],issue="";
  try{if(csv.trim())parsedRows=parseFacultyBulkCsv(csv);}
  catch(cause){issue=cause instanceof Error?cause.message:"Invalid faculty file";}
@@ -51,7 +54,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
   loadedCsv.current=null;
   // Never let a rejected or slow replacement upload reuse the previously
   // validated CSV while displaying the new filename.
-  setCsv("");setResults([]);setError("");setPreviewVersion(-1);setFilename(file?.name??"");
+  setCsv("");setResults([]);setError("");setPreviewVersion(-1);setPreviewIssues([]);setFilename(file?.name??"");
   if(!file)return;
   if(!file.name.toLowerCase().endsWith(".csv")){setError("Choose a .csv faculty file.");return;}
   if(file.size>1_500_000){setError("The CSV file exceeds 1.5 MB.");return;}
@@ -74,15 +77,15 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
    busy,count,issue,error,filename,snapshotVersion:version,
    currentVersion:fileVersion.current,csvMatchesLoaded:Boolean(loaded)&&inputCsv===csv,
   });
-  if(!allowed()||previewVersion!==version||rowIssues.length>0||!departmentId||
+  if(!allowed()||previewVersion!==version||previewDepartment!==departmentId||previewIssues.length>0||rowIssues.length>0||!departmentId||
      !departments.some(item=>item.id===departmentId))return;
   // React state updates do not synchronously disable the button. Reserve
   // the action through confirmation and the network call to reject double
   // clicks, while allowing cancel or a different file to release the guard.
   submissionInProgress.current=true;
   try{
-   if(!(await askConfirm("Create "+count+" faculty from this locally previewed file? The server will check identities as it creates them. Some rows may fail; there is no server-only validation preview."))||
-      !allowed()||previewVersion!==version||rowIssues.length>0||
+   if(!(await askConfirm("Create "+count+" faculty from this server-validated file? The server rechecks identity and college before each record."))||
+      !allowed()||previewVersion!==version||previewDepartment!==departmentId||previewIssues.length>0||rowIssues.length>0||
       !departments.some(item=>item.id===departmentId))return;
    setBusy(true);setError("");setResults([]);
    try{
@@ -97,6 +100,34 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
    }catch(cause){setError(cause instanceof Error?cause.message:"Bulk import failed.");}
    finally{setBusy(false);}
   }finally{submissionInProgress.current=false;}
+ }
+ async function validate(){
+  if(busy||previewBusy||!departmentId||!count||rowIssues.length||issue||error)return;
+  const loaded=loadedCsv.current;
+  if(!loaded||loaded.version!==fileVersion.current||loaded.text!==csv)return;
+  const version=loaded.version,selectedDepartment=departmentId;
+  setPreviewBusy(true);setPreviewVersion(-1);setPreviewIssues([]);setResults([]);
+  try{
+   const response=await fetch("/api/admin/faculty/bulk-import",{
+    method:"POST",headers:{"content-type":"application/json"},
+    body:JSON.stringify({collegeId,departmentId:selectedDepartment,csv,preview:true}),
+   });
+   const value:unknown=await response.json().catch(()=>null);
+   if(!response.ok||!value||typeof value!=="object")
+    throw new Error("Server validation failed. Check the department and retry.");
+   const parsed=value as Record<string,unknown>;
+   if(!Array.isArray(parsed.results)||typeof parsed.needsReview!=="number")
+    throw new Error("The server preview could not be verified.");
+   const problems=parsed.results.flatMap(entry=>{
+    if(!entry||typeof entry!=="object")return ["Invalid preview response"];
+    const item=entry as Record<string,unknown>;
+    return item.status==="READY"?[]:
+     [`Row ${String(item.row)}: ${String(item.message??"Review required")}`];
+   });
+   if(version!==fileVersion.current||selectedDepartment!==departmentId)return;
+   setPreviewIssues(problems);setPreviewDepartment(selectedDepartment);setPreviewVersion(version);
+  }catch(cause){setError(cause instanceof Error?cause.message:"Server validation failed.");}
+  finally{setPreviewBusy(false);}
  }
  const downloadSample=()=>{
   const sample="First Name,Last Name,Mobile Number,Email,Department,Faculty Type\r\nJohn,Doe,9876543210,john@example.com,,LECTURER\r\nJane,Smith,9876543211,,,MENTOR\r\n";
@@ -118,7 +149,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
   <label className="grid max-w-lg min-w-0 gap-1 text-sm font-semibold text-[var(--lms-neutral-400)]">
     Department for imported faculty
     <Select value={departmentId} onChange={event=>{
-      setDepartmentId(event.target.value);setPreviewVersion(-1);setResults([]);
+      setDepartmentId(event.target.value);setPreviewVersion(-1);setPreviewIssues([]);setResults([]);
     }} disabled={busy||departments.length===0} required className="min-h-11 w-full md:min-h-9">
       <option value="">Choose department</option>
       {departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
@@ -137,6 +168,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
     Parsed {count} row(s). Choose an active department, then Validate or Create.
   </p>:null}
   {(issue||error)?<Alert tone="error">{error||issue}</Alert>:null}
+  {previewIssues.length>0?<Alert tone="error"><p>Server preview needs review:</p><ul className="list-disc pl-5">{previewIssues.slice(0,25).map((message,i)=><li key={i}>{message}</li>)}</ul></Alert>:null}
   {rowIssues.length>0?<Alert tone="error">
     <p>Resolve duplicate rows before creating faculty accounts:</p>
     <ul className="list-disc pl-5">{rowIssues.slice(0,25).map((problem,index)=><li key={index}>{problem}</li>)}</ul>
@@ -146,11 +178,11 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
     <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
       disabled={busy||!count||Boolean(issue||error)||rowIssues.length>0||!filename||
         !departments.some(item=>item.id===departmentId)}
-      onClick={()=>{setError("");setPreviewVersion(fileVersion.current);}}>Validate</Button>
+      onClick={()=>void validate()}>{previewBusy?"Validating…":"Validate"}</Button>
     <Button type="button" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9 print:hidden"
       loading={busy} onClick={()=>void submit()}
       disabled={busy||!count||Boolean(issue||error)||rowIssues.length>0||!filename||
-        !departments.some(item=>item.id===departmentId)||previewVersion!==fileVersion.current}>
+        !departments.some(item=>item.id===departmentId)||previewVersion!==fileVersion.current||previewDepartment!==departmentId||previewIssues.length>0}>
       {busy?"Importing…":"Create"}
     </Button>
   </div>
@@ -172,9 +204,9 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
     {count>10?<p className="px-3 py-2 text-xs text-muted-foreground">Showing first 10 of {count} rows.</p>:null}
    </div>:null}
   {previewVersion===fileVersion.current&&count>0&&rowIssues.length===0?(
-    <Alert tone="warning" role="status">
-      Validated {count} row(s) locally for {departments.find(item=>item.id===departmentId)?.name??"the selected department"}.
-      Existing identities and department ownership are rechecked by the server on Create.
+    <Alert tone={previewIssues.length?"warning":"success"} role="status">
+      Server preview checked {count} row(s) for {departments.find(item=>item.id===departmentId)?.name??"the selected department"}.
+      Existing identities and department ownership are rechecked on Create. Resolve all server preview issues first.
       Create faculty will begin irreversible onboarding after confirmation.
     </Alert>
   ):null}

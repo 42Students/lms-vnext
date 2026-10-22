@@ -7,13 +7,14 @@ import { parseFacultyBulkCsv } from "@/modules/people/faculty-bulk-import-model"
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getDb } from "@/db/client";
-import { users } from "@/db/schema";
-import { inArray, or } from "drizzle-orm";
+import { users,departments } from "@/db/schema";
+import { and,eq,inArray,isNull,or } from "drizzle-orm";
 import { z } from "zod";
 
 const previewSchema=z.object({
   collegeId:z.string().uuid(),
   csv:z.string().min(1).max(1_500_000),
+  departmentId:z.string().uuid(),
   preview:z.literal(true),
 }).strict();
 export const runtime="nodejs";
@@ -33,6 +34,17 @@ export async function POST(request:Request){
       const acting=await resolveActingCollege(context,"people.manage");
       if(acting.collegeId!==input.collegeId)throw new AuthorizationError("people.manage");
       const rows=parseFacultyBulkCsv(input.csv);
+      const options=await getDb().select({id:departments.id,name:departments.name})
+        .from(departments).where(and(eq(departments.collegeId,input.collegeId),
+          isNull(departments.archivedAt))).limit(1001);
+      if(options.length>1000)return Response.json({error:"TOO_MANY_DEPARTMENTS"},{status:409});
+      if(!options.some(item=>item.id===input.departmentId))
+        return Response.json({error:"DEPARTMENT_UNAVAILABLE"},{status:409});
+      const departmentsByName=new Map<string,string|null>();
+      for(const item of options){
+        const key=item.name.trim().toLowerCase();
+        departmentsByName.set(key,departmentsByName.has(key)?null:item.id);
+      }
       const phones=rows.map(row=>row.phoneE164);
       const emails=rows.flatMap(row=>row.email?[row.email]:[]);
       const matches=await getDb().select({
@@ -43,17 +55,22 @@ export async function POST(request:Request){
       ));
       const seenPhone=new Set(matches.map(row=>row.phone));
       const seenEmail=new Set(matches.map(row=>row.email).filter((x):x is string=>Boolean(x)));
-      const results=rows.map((row,index)=>({
-        row:index+1,name:(row.firstName+" "+row.lastName).trim(),
-        status:seenPhone.has(row.phoneE164)||(row.email?seenEmail.has(row.email):false)
-          ?"REVIEW_EXISTING_IDENTITY" as const:"READY" as const,
-        message:seenPhone.has(row.phoneE164)||(row.email?seenEmail.has(row.email):false)
-          ?"A matching identity exists. Review the college membership before importing."
-          :"Validated; ready for confirmation.",
-      }));
+      const results=rows.map((row,index)=>{
+        const validDepartment=!row.departmentName||
+          Boolean(departmentsByName.get(row.departmentName.trim().toLowerCase()));
+        const collision=seenPhone.has(row.phoneE164)||
+          Boolean(row.email&&seenEmail.has(row.email));
+        return {row:index+2,name:(row.firstName+" "+row.lastName).trim(),
+          status:!validDepartment?"INVALID_DEPARTMENT" as const:
+            collision?"REVIEW_EXISTING_IDENTITY" as const:"READY" as const,
+          message:!validDepartment
+            ?"Department must match exactly one active department in this college."
+            :collision?"A matching identity exists. Review the college membership before importing."
+            :"Validated; ready for confirmation."};
+      });
       return Response.json({preview:true,total:rows.length,
         ready:results.filter(row=>row.status==="READY").length,
-        needsReview:results.filter(row=>row.status==="REVIEW_EXISTING_IDENTITY").length,
+        needsReview:results.filter(row=>row.status!=="READY").length,
         results},{headers:{"Cache-Control":"private, no-store"}});
     }
     return Response.json(await importFacultyCsv(context,command.value),
