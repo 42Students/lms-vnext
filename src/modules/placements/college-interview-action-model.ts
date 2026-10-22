@@ -2,14 +2,14 @@ import {z} from "zod";
 const id=z.string().uuid();
 /** Storage accepts the legacy InterviewForm's 255-character interviewer and
  * 500-character venue. Notes use the versioned outcome reason (up to 1000).
- * College-configured duration bounds may be narrower than the safe 5–480
+ * College-configured duration bounds may be narrower than the legacy 15–480
  * minute server guard; the UI can call this pure helper before submission.
  */
 export function collegeInterviewDurationBounds(settings?:{
  minMinutes?:number|null;maxMinutes?:number|null;defaultMinutes?:number|null;
 }){
- const min=Number.isInteger(settings?.minMinutes)&&Number(settings?.minMinutes)>=5
-   ?Math.min(480,Number(settings?.minMinutes)):5;
+ const min=Number.isInteger(settings?.minMinutes)&&Number(settings?.minMinutes)>=15
+   ?Math.min(480,Number(settings?.minMinutes)):15;
  const max=Number.isInteger(settings?.maxMinutes)&&Number(settings?.maxMinutes)>=min
    ?Math.min(480,Number(settings?.maxMinutes)):480;
  const initial=Number.isInteger(settings?.defaultMinutes)?Number(settings?.defaultMinutes):60;
@@ -26,7 +26,7 @@ function isSafeInterviewMeetingUrl(value:string|null){
 }
 const appointment=z.object({
  roundId:id,applicationId:id,scheduledAt:z.iso.datetime({offset:true}),
- durationMinutes:z.number().int().min(5).max(480),
+ durationMinutes:z.number().int().min(15).max(480),
  // Legacy interview vocabulary; optional for already-versioned round clients.
  interviewType:z.enum(["SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"],
   {error:"Please select interview type"}).optional(),
