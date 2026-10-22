@@ -1,10 +1,11 @@
 import "server-only";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,eq,gt,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
  placementApplicationPrivateArtifacts,placementApplicationScreenings,placementApplicationScreeningHistory,
  placementJoiningOutcomes,placementJobs,placementOffers,users} from "@/db/schema";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
@@ -153,6 +154,34 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
        inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(1);
      if(live.length)throw Error("Resolve active offers before rejecting this application.");
     }
+    // A transition away from Interview or a rejection cancels only future
+    // uncompleted candidate bookings. Never erase historical appointments,
+    // feedback, or a different learner's slot.
+    const cancelBookedInterview=(from==="INTERVIEW"&&next!=="INTERVIEW")||
+     next==="REJECTED";
+    let cancelledInterviewCount=0;
+    if(cancelBookedInterview){
+     const pendingSlots=await tx.select({id:placementRoundCandidateSlots.id})
+      .from(placementRoundCandidateSlots).where(and(
+       eq(placementRoundCandidateSlots.applicationId,applicationId),
+       eq(placementRoundCandidateSlots.jobId,jobId),
+       eq(placementRoundCandidateSlots.status,"BOOKED"),
+       isNull(placementRoundCandidateSlots.interviewOutcome),
+       gt(placementRoundCandidateSlots.startsAt,new Date()),
+      )).for("update").limit(100);
+     for(const slot of pendingSlots){
+      const [cancelled]=await tx.update(placementRoundCandidateSlots).set({
+       status:"CANCELLED",applicationId:null,
+       changedByUserId:context.user.id,updatedAt:new Date(),
+       version:sql`${placementRoundCandidateSlots.version}+1`,
+      }).where(and(eq(placementRoundCandidateSlots.id,slot.id),
+       eq(placementRoundCandidateSlots.jobId,jobId),
+       eq(placementRoundCandidateSlots.status,"BOOKED"),
+       eq(placementRoundCandidateSlots.applicationId,applicationId)))
+       .returning({id:placementRoundCandidateSlots.id});
+      if(cancelled)cancelledInterviewCount++;
+     }
+    }
     let screeningStatus=screening.status;
     if(input.action==="REINSTATE"){
      if(screeningStatus!=="REJECTED")
@@ -256,6 +285,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       "College Admin moved application to "+readableStage,
      metadata:{jobId,from,to:next,reason:input.reason,
       exceptionalCorrection:input.action==="CORRECT",
+      cancelledInterviewCount,
       assessmentLinkAttached:next==="ASSESSMENT"&&Boolean(input.assessmentUrl),
       assessmentLinkSavedToJob:next==="ASSESSMENT"&&Boolean(input.saveAssessmentUrlToJob)},
     }).returning({id:activityEvents.id});
@@ -264,7 +294,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      title:"Your placement application was updated",
      body:next==="REJECTED"?
       "Your application was not selected. See My applications for the latest status.":
-      "Your placement stage is now "+readableStage+".",
+      "Your placement stage is now "+readableStage+"."+
+       (cancelledInterviewCount>0?" Your future interview appointment was cancelled.":""),
      actionHref:"/learn/my-placements/applications",
     }).onConflictDoNothing();
     return next;

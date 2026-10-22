@@ -7,6 +7,8 @@ import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {ErrorState} from "@/components/ui/error-state";
 import {TpoDriveEditForm} from "@/components/placements/tpo-drive-edit-form";
+import {PlacementRoleOptions} from "@/components/placements/placement-role-options";
+import {listPlacementRoleOptions} from "@/modules/placements/role-option-service";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveEditState} from "@/modules/placements/tpo-drive-edit-service";
@@ -26,6 +28,9 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
        className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Retry setup data</Link>}/>
   </div>;
  }
+ // Named non-primary packages are editable through the existing authorized
+ // DRAFT-only role-option service. Live drives retain read-only packages.
+ const roles=job.status==="DRAFT"?await listPlacementRoleOptions(context,job.id):[];
  return <div className="min-w-0 space-y-4">
   <PageHeader title={"Edit drive · "+job.title}
     description={"Saved "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(job.updatedAt))+" IST"}
@@ -53,6 +58,12 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
     </dl>
     <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Create drive</Link>
    </section>}
+  {job.status==="DRAFT"?<section aria-label="Named pay packages" className="space-y-3 border-t border-border pt-4">
+   <h2 className="text-base font-semibold text-foreground">Pay packages</h2>
+   <p className="text-sm text-body">Add, edit or remove separately named role packages before publishing.
+    The primary role remains linked to the job form above.</p>
+   <PlacementRoleOptions jobId={job.id} jobStatus={job.status} roles={roles}/>
+  </section>:null}
   <section aria-label="Other drive settings" className="space-y-2 border-t border-border pt-4">
    <h2 className="text-base font-semibold text-foreground">Company, eligibility and rounds</h2>
    <p className="text-sm text-muted-foreground">
