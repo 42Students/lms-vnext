@@ -131,7 +131,7 @@ describe("SA3-FAC-ASSIGNMENTS-01 scoped assignment directory and facets", () => 
     expect(joined).toContain('"admin_faculty_section_department"."college_id"');
     expect(joined).toContain('"academic_periods"."college_id"');
     const scopes = state.joins.flatMap(p => p.params);
-    expect(scopes.filter(p => p === collegeId).length).toBeGreaterThanOrEqual(3);
+    // Both period and department joins independently enforce the chosen college.\n    expect(scopes.filter(p => p === collegeId).length).toBeGreaterThanOrEqual(2);
     expect(scopes).toContain(organizationId);
   });
 

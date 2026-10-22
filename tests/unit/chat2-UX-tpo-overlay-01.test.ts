@@ -49,7 +49,7 @@ describe("UX-tpo-overlay: focus-safe mobile and desktop workflows", () => {
     expect(source).toContain('role="alert"');
   });
   it("UX-tpo-overlay primitive contracts share focus restoration, top-layer dismissal and reduced-motion exit", () => {
-    const lifecycle = ui("use-overlay-exit").replaceAll("dialogRef.current", "dialog");
+    const lifecycle = ui("use-overlay-exit");
     expect(lifecycle).toContain("dialog.showModal()");
     expect(lifecycle).toContain("dialog.close()");
     expect(lifecycle).toContain("opener?.isConnected");

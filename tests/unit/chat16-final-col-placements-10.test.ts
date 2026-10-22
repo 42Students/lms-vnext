@@ -10,7 +10,10 @@ describe("COL-placements-10 needs attention",()=>{
   expect(source).toContain('tab:"APPLIED"');
   expect(source).toContain('tab:"INTERVIEW"');
   expect(source).toContain('tab:"ALL"');
-  expect(source).toContain('encodeURIComponent(item.jobId)+"/applications?stage="+category.tab');
+  expect(source).toContain('params.set("stage",category.tab)');
+  expect(source).toContain('"/applications?"+params.toString()');
+  expect(source).toContain('params.set("attention",category.code)');
+  expect(source).toContain('params.set("returnTo",basePath)');
  });
  it("COL-placements-10 keeps an explicit no-attention state without manufacturing flagged drives",()=>{
   const panel=read("src/components/placements/super-admin-needs-attention.tsx");
