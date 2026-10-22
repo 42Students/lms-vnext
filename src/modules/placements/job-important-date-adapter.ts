@@ -85,6 +85,58 @@ export function authoredImportantDateRoundTrip(row:{
 /** "No important dates" is different from a source that could not provide
  * the old DTO field at all. The latter must not be presented as a verified
  * empty event collection. A malformed supplied array also fails closed. */
+
+/**
+ * The old primary JobImportantDateEventDTO and the frontend's fallback
+ * job.importantDates JSON must carry precisely the same authored type.
+ * A missing type is unknown; the display layer may then use its legacy
+ * label classifier, but cannot fabricate type from the label here.
+ * Only callers with an authorized job may use this projection.
+ */
+export type LegacyJobImportantDateProjection = {
+  jobId: string;
+  jobTitle: string;
+  companyName: string;
+  label: string;
+  date: string;
+  eventType: "JOB_IMPORTANT_DATE";
+  type: string | null;
+  source: "PRIMARY" | "FALLBACK";
+  sourceIndex: number;
+};
+
+export function projectLegacyJobImportantDate(
+  event: ImportedJobImportantDate,
+  job: { title: string; companyName: string },
+  source: LegacyJobImportantDateProjection["source"],
+): LegacyJobImportantDateProjection {
+  return {
+    jobId: event.jobId,
+    jobTitle: job.title,
+    companyName: job.companyName,
+    label: event.label,
+    date: event.at.toISOString(),
+    eventType: event.eventType,
+    type: event.originalType,
+    source,
+    sourceIndex: event.index,
+  };
+}
+
+/** Same normalized events feed both DTO and JSON fallback projections,
+ * including dateType when the original type property was absent. */
+export function legacyJobImportantDateProjectionPair(
+  jobId: string,
+  details: unknown,
+  identity: { title: string; companyName: string },
+) {
+  const events = importedJobImportantDates(jobId, details);
+  return {
+    primary: events.map(event => projectLegacyJobImportantDate(event, identity, "PRIMARY")),
+    fallback: events.map(event => projectLegacyJobImportantDate(event, identity, "FALLBACK")),
+  };
+}
+
 export function importedImportantDateSourceState(details:unknown):
  "UNSUPPORTED"|"EMPTY"|"AVAILABLE"|"INVALID"{
  if(!details||typeof details!=="object"||Array.isArray(details)||
