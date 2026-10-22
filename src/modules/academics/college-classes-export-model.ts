@@ -40,10 +40,10 @@ export function renderCollegeClassesCsv(rows: readonly ClassExportRow[], _trunca
   const headers = ["ID", "Class/Section Name", "Program ID", "Batch ID", "Start Date", "End Date", "Minimum Students", "Maximum Students"];
   const lines = [headers.map(escapeActivityCsvCell).join(",")];
   for (const row of rows) lines.push([
-    row.id, row.name, row.linkedProgramId ?? "", row.cohortId,
+    row.id ?? "", row.name ?? "", row.linkedProgramId ?? "", row.cohortId ?? "",
     row.periodStart ?? "", row.periodEnd ?? "",
-    row.minSize === null ? "" : String(row.minSize),
-    row.capacity === null ? "" : String(row.capacity),
+    row.minSize == null ? "" : String(row.minSize),
+    row.capacity == null ? "" : String(row.capacity),
   ].map(escapeActivityCsvCell).join(","));
   return "\ufeff" + lines.join("\r\n");
 }
