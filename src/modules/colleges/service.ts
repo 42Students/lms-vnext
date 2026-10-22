@@ -14,6 +14,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {
   academicPeriods,
   collegeMemberships,
+  membershipRoles,
   colleges,
   departments,
   organizations,
@@ -558,13 +559,20 @@ export async function updateCollege(
     if(!parent)throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
     const appointIds=[input.chairMembershipId,input.viceChairMembershipId]
       .filter((id):id is string=>typeof id==="string");
+    if(input.chairMembershipId&&input.viceChairMembershipId&&
+      input.chairMembershipId===input.viceChairMembershipId)
+      throw new CollegeServiceError("COLLEGE_APPOINTEE_INVALID");
     for(const membershipId of new Set(appointIds)){
       const [eligible]=await tx.select({id:collegeMemberships.id})
         .from(collegeMemberships)
+        .innerJoin(membershipRoles,and(
+          eq(membershipRoles.membershipId,collegeMemberships.id),
+          eq(membershipRoles.role,"FACULTY"),
+        ))
         .where(and(eq(collegeMemberships.id,membershipId),
           eq(collegeMemberships.collegeId,collegeId),
           eq(collegeMemberships.status,"ACTIVE")))
-        .limit(1);
+        .for("share",{of:collegeMemberships}).limit(1);
       if(!eligible)throw new CollegeServiceError("COLLEGE_APPOINTEE_INVALID");
     }
     const [updated]=await tx.update(colleges).set({

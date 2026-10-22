@@ -395,11 +395,23 @@ export async function createCourseDiscussionMessage(
        !facultyReplyParentTokenMatches(parent.updatedAt,input.expectedParentUpdatedAt)))
       throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
     const messageText=formatDiscussionReply(input.messageText,parent?.id??null);
+    // Capture the persisted sender identity inside the same transaction.
+    // Historical messages must not change when a learner edits their profile.
+    const [sender]=await tx.select({name:users.displayName})
+      .from(collegeMemberships)
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .where(and(eq(collegeMemberships.id,membership.id),
+        eq(collegeMemberships.collegeId,membership.collegeId),
+        eq(collegeMemberships.status,"ACTIVE")))
+      .limit(1);
+    if(!sender)throw new CoursesServiceError("DISCUSSION_ACCESS_DENIED");
+    const senderName=sender.name?.trim().slice(0,160)||null;
     const [created] = await tx.insert(courseDiscussionMessages).values({
       deliveryId,
       lessonContentId:input.lessonContentId??null,
       senderMembershipId: membership.id,
       senderRole,
+      senderNameSnapshot:senderName,
       messageText,
     }).returning();
     await recordActivityEventInTransaction(tx, context, {
