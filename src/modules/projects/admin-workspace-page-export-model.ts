@@ -1,5 +1,6 @@
 import {collegeWorkspaceStatusLabel} from "./college-workspace-status-label";
 import {projectAdminCsv,projectAdminCsvCell} from "./project-admin-csv-model";
+import {formatProjectAdminUpdatedDateIst} from "./project-admin-date-model";
 
 export type VisibleWorkspaceExportRow = {
   title: string;
@@ -12,7 +13,7 @@ export type VisibleWorkspaceExportRow = {
   updatedAt: Date;
 };
 
-const headings = ["Workspace","Status","Progress","Mentor","Template ID"] as const;
+const headings = ["Workspace","Status","Progress","Mentor","Template ID","Updated at (IST)"] as const;
 
 /** Spreadsheet-safe CSV escaping for user-authored project workspace names. */
 export function projectWorkspaceCsvCell(value: string | number | null): string {
@@ -29,6 +30,7 @@ export function projectWorkspacePageCsv(
     item.progressPercent,
     item.mentorName ?? "Unassigned",
     item.templateId ?? "Not available",
+    formatProjectAdminUpdatedDateIst(item.updatedAt),
   ]);
   return projectAdminCsv([headings,...rows]);
 }
