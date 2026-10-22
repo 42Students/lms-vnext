@@ -45,6 +45,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Restore date row editor with validators and datepicker.
 
 ## G2-10-030-011 [P1] GAP facet F04
+- [ ] Partial: description field is now required with 280px height; full rich-text editing remains unavailable.
 - Files: src/components/placements/placement-job-create-form.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js:684-693 — Job Description required rich-text editor height280.
 - Expected fix: Restore rich text and nonempty HTML-stripped validation.
@@ -60,6 +61,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Map cascade and target audience semantics by role.
 
 ## G2-10-030-021 [P1] GAP facet F06
+- [x] FIXED: draft creation now rejects whitespace-only/HTML-tag-only job descriptions using HTML-stripped meaningful text and the exact legacy warning.
 - Files: src/components/placements/placement-job-create-form.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js:33-38,684-693 — whitespace-only rich HTML rejected Please enter job description.
 - Expected fix: Add required HTML-stripped rule.
