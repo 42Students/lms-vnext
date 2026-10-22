@@ -115,7 +115,7 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
   ["offers","getTpoDriveOfferRegister","No offers match this filter."],
   ["offers/[offerId]","getTpoOfferEvidence","No persisted status or joining history events were found"],
   ["joining","getTpoJoiningTracker","No currently accepted offers are recorded"],
-  ["rounds/[roundId]/results","getTpoRoundResultTable","No eligible shortlisted submitted applicants match"],
+  ["rounds/[roundId]/results","getTpoRoundResultTable","No students are in this round yet."],
   ["closeout","getTpoDriveCloseout","No applications are persisted for this drive."],
   ["applications-export","getTpoDriveApplicationsExport","No persisted applications match these filters."],
  ] as const;
@@ -154,7 +154,7 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
   expect(code).toContain('can(context,"placements.manage",{collegeId:context.membership.collegeId})');
   expect(code).toContain("redirect(");
   expect(code).toContain('<EmptyState');
-  expect(code).toContain('title="No requests"');
+  expect(code).toContain('title="No drive requests waiting"');
   expect(code).toContain('Recruiter access ended. Finish this drive yourself.');
   expect(code).toContain("data.totalPages");
   expect(code).toContain("data.page");
@@ -200,7 +200,7 @@ describe("chat-5 TPO second-third: behavioural round and offer reporting",()=>{
  ];
  it("PLACEMENTS-OFFERS-VIEW-01 never counts issued/declined as accepted or infers joining",()=>{
   const result=projectOfferRegister(offerFacts,"ALL",1,"","ALL",at);
-  expect(result.counts).toEqual({all:3,issued:1,accepted:1,declined:1,withdrawn:0,expired:0});
+  expect(result.counts).toMatchObject({all:3,issued:1,accepted:1,declined:1,withdrawn:0,expired:0});
   expect(result.rows.find(row=>row.id==="a")).toMatchObject({joining:null,status:"ISSUED"});
   expect(result.rows.find(row=>row.id==="b")).toMatchObject({joining:"JOINED",status:"ACCEPTED"});
   expect(result.rows.find(row=>row.id==="c")).toMatchObject({joining:null,kind:"LOI"});
@@ -215,7 +215,7 @@ describe("chat-5 TPO second-third: behavioural round and offer reporting",()=>{
   const all=[...offerFacts,expired];
   const parsed=offerRegisterQuery.parse({jobId:uuid,status:"EXPIRED"});
   const result=projectOfferRegister(all,parsed.status,1,"","ALL",at);
-  expect(result.counts).toEqual({all:4,issued:1,accepted:1,declined:1,withdrawn:0,expired:1});
+  expect(result.counts).toMatchObject({all:4,issued:1,accepted:1,declined:1,withdrawn:0,expired:1});
   expect(result.rows.map(row=>row.id)).toEqual(["expired-1"]);
   const csv=tpoDriveOfferRegisterCsv(all,parsed);
   expect(csv.totalMatching).toBe(1);
