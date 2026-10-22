@@ -43,6 +43,11 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
  const [confirmLeave,setConfirmLeave]=useState(false);
  const [leaveHref,setLeaveHref]=useState<string|null>(null);
  const {pending,run}=useGuardedAction();
+ // An incomplete detail/academic prefill is never permission to overwrite a
+ // published drive with defaults. Historic job types remain editable only
+ // when the saved value is present and the employer is in this college.
+ const canEdit=sourceReady&&job.targeting!==null&&Boolean(job.jobTypeLabel.trim())&&
+   companies.some(company=>company.relationshipId===job.companyRelationshipId);
  const formRef=useRef<HTMLFormElement>(null);
  const [confirmSave,setConfirmSave]=useState(false);
  const [importantDates,setImportantDates]=useState(job.importantDates);
@@ -132,11 +137,24 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
  }
  function reviewSave(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
-  if(pending||!sourceReady){setError("Saved job details could not be verified. Reload before editing.");return;}
+  if(pending||!canEdit){setError("Saved job details could not be verified. Reload before editing.");return;}
   const data=new FormData(event.currentTarget);
   const description=String(data.get("description")??"").trim();
   if(!description.replace(/<[^>]*>/g,"").trim()){
    setError("Please enter job description.");return;
+  }
+  const selectedType=String(data.get("jobTypeLabel")??"").trim();
+  if(!selectedType){setError("Please select job type");return;}
+  if(!jobTypes.some(type=>type.label===selectedType)&&selectedType!==job.jobTypeLabel){
+   setError("Please select job type");return;
+  }
+  const company=String(data.get("companyRelationshipId")??"");
+  if(!companies.some(option=>option.relationshipId===company)){
+   setError("Choose a verified company from this college.");return;
+  }
+  const assessmentUrl=String(data.get("assessmentUrl")??"").trim();
+  if(assessmentUrl&&(assessmentUrl.length>2048||!/^https?:\/\/[^\s/]+/i.test(assessmentUrl))){
+   setError("Enter a valid assessment URL starting with http:// or https://.");return;
   }
   const assessmentAt=String(data.get("assessmentDeadline")??"");
   const deadlineAt=String(data.get("deadline")??"");
@@ -158,11 +176,23 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
   setConfirmSave(true);
  }
  async function save(){
-  if(!formRef.current||pending||!sourceReady)return;
+  if(!formRef.current||pending||!canEdit)return;
   const data=new FormData(formRef.current);
   const description=String(data.get("description")??"").trim();
   if(!description.replace(/<[^>]*>/g,"").trim()){
    setError("Please enter job description.");return;
+  }
+  const selectedType=String(data.get("jobTypeLabel")??"").trim();
+  if(!selectedType||(!jobTypes.some(type=>type.label===selectedType)&&selectedType!==job.jobTypeLabel)){
+   setError("Please select job type");return;
+  }
+  const company=String(data.get("companyRelationshipId")??"");
+  if(!companies.some(option=>option.relationshipId===company)){
+   setError("Choose a verified company from this college.");return;
+  }
+  const assessmentUrl=String(data.get("assessmentUrl")??"").trim();
+  if(assessmentUrl&&(assessmentUrl.length>2048||!/^https?:\/\/[^\s/]+/i.test(assessmentUrl))){
+   setError("Enter a valid assessment URL starting with http:// or https://.");return;
   }
   const enteredDeadline=String(data.get("deadline")??"");
   const applicationDeadline=enteredDeadline===istLocal(job.applicationDeadline)
@@ -179,8 +209,8 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
      body:JSON.stringify({confirmed:true,expectedUpdatedAt:job.updatedAt,
       reason:String(data.get("reason")??"").trim(),title:String(data.get("title")??"").trim(),
       description:sanitizeRichSource(description),
-      companyRelationshipId:String(data.get("companyRelationshipId")??""),
-      assessmentUrl:String(data.get("assessmentUrl")??"").trim(),
+      companyRelationshipId:company,
+      assessmentUrl,
       assessmentDeadline:String(data.get("assessmentDeadline")??"")===istLocal(job.assessmentDeadline)
        ?job.assessmentDeadline
        :String(data.get("assessmentDeadline")??"")
@@ -224,8 +254,8 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
  return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="font-semibold">Edit drive</h2>
   <p className="text-xs text-body">Changes to job terms are audited. Historic applications, offers, eligibility and decisions are not rewritten.</p>
-  {!sourceReady?<p role="alert" className="text-sm text-error">Saved job options or eligibility details could not be loaded. Reload settings before editing; no partial changes can be saved.</p>:null}
-  {!open?<Button type="button" variant="secondary" disabled={!sourceReady}
+  {!canEdit?<p role="alert" className="text-sm text-error">Saved job options, company or academic eligibility details could not be verified. Reload settings before editing; no partial changes can be saved.</p>:null}
+  {!open?<Button type="button" variant="secondary" disabled={!canEdit}
     onClick={()=>{setDirty(false);setImportantDates(job.importantDates);
       setCustomRules(job.customEligibilityRules);setOpen(true);}}>
    {"Edit "+job.status.toLowerCase()+" drive"}</Button>:
@@ -364,7 +394,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
      <Textarea name="reason" required minLength={10} maxLength={1000} rows={2} className={cls}/></label>
     {error?<p role="alert" className="text-sm text-error sm:col-span-2 min-[992px]:col-span-3">{error}</p>:null}
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center sm:col-span-2 min-[992px]:col-span-3">
-     <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!sourceReady}>
+     <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!canEdit}>
       {pending?"Saving…":"Review and save published changes"}</Button>
      <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={closeEditor}>Cancel</Button>
     </div>
