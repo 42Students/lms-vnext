@@ -5,11 +5,11 @@ describe("chat-13 Super Admin source reconciliation — placements and academic 
  it("SA-academics-people-R03 preserves the verified source behavior",()=>{
   const code=source("src/modules/admin-ui/legacy-superadmin-destination-model.ts");
   expect(code).toContain("legacySuperAdminPaths");
-  expect(code).toContain("return null; // Never forge nested IDs");
+  expect(code).toContain("if(pathSegments.length!==1)return null;");
  });
  it("SA-academics-people-R05 preserves the verified source behavior",()=>{
   const code=source("src/components/attendance/admin-attendance-workspace.tsx");
-  expect(code).toContain("<Drawer");
+  expect(code).toContain("<Modal");
   expect(code).toContain("correctionGuard.run");
  });
  it("SA-placements-projects-11 preserves the verified source behavior",()=>{
@@ -45,7 +45,7 @@ describe("chat-13 Super Admin source reconciliation — placements and academic 
  it("SA-placements-projects-27 preserves the verified source behavior",()=>{
   const code=source("src/modules/placements/super-admin-company-identities-service.ts");
   expect(code).toContain("normalizeCompanyDomain");
-  expect(code).toContain("Domain belongs to another company.");
+  expect(code).toContain("already belongs to another company. Merge them instead.");
  });
  it("SA-placements-projects-28 preserves the verified source behavior",()=>{
   const code=source("src/modules/placements/super-admin-company-identities-service.ts");
@@ -72,7 +72,9 @@ describe("chat-13 Super Admin source reconciliation — placements and academic 
 describe("SA-placements-projects-30 deliberate global/college boundary",()=>{
  it("SA-placements-projects-30 keeps global employer edits global but supports authorized college relationship creation and lifecycle",()=>{
   const edit=source("src/modules/placements/super-admin-company-edit-service.ts");
-  expect(edit).toContain("isGlobalCompanyScope(context.adminScope)");
+  expect(edit).toContain("isSuperAdmin(context)");
+  expect(edit).toContain('requirePermission(context,"admin-scope.select")');
+  expect(edit).toContain('assertPersistedPlatformPermission(tx,context,"admin-scope.select")');
   const college=source("src/components/admin/super-admin-college-company-actions.tsx");
   for(const copy of ["Create company","Delete company","Restore company"])
    expect(college).toContain(copy);
