@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray, isNull, ne, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNull, ne, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   assignmentSubmissions, courseAssignments, courseLearningPaths, courseLessons, courseQuizzes, lessonContents,
@@ -13,7 +13,19 @@ import type { RequestContext } from "@/modules/identity/context";
  * active teaching deliveries first and batch the read across those offerings.
  * Section-local records must never be exposed to a sibling Section.
  */
-export async function getFacultyAssessmentOverview(context: RequestContext) {
+/** Paged consumers receive bounded SQL assessment reads and true DB totals.
+ * Shared assessments can appear in several authorized teaching sections;
+ * totals count physical assessments while visibleCourseCount is page-local.
+ * Existing unpaged authoring/report callers keep the full scoped overview. */
+export async function getFacultyAssessmentOverview(context: RequestContext,
+ pagingInput?:{page?:number;pageSize?:number},
+) {
+  const paging=pagingInput===undefined?null:{
+   page:pagingInput.page??1,pageSize:pagingInput.pageSize??20,
+  };
+  if(paging&&(!Number.isSafeInteger(paging.page)||paging.page<1||paging.page>100000||
+    !Number.isSafeInteger(paging.pageSize)||paging.pageSize<1||paging.pageSize>100))
+   throw new RangeError("Invalid faculty assessment page");
   const courses = await listFacultyCourseDeliveries(context);
   const empty = {
     courses: courses.map(course => ({
@@ -29,6 +41,8 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
       courseName: string; courseCode: string; sectionName: string; sectionCode: string;
       academicPeriodName: string; lessonName: string; facultyOwned: boolean;hasSubmissions:boolean;
     } & {deliveryId: string}>,
+    pagination:paging?{page:paging.page,pageSize:paging.pageSize,
+     totalAssignments:0,totalQuizzes:0,visibleCourseCount:0}:undefined,
     quizzes: [] as Array<typeof courseQuizzes.$inferSelect & {
       kind: "QUIZ"; authoredDeliveryId: string | null;
       courseName: string; courseCode: string; sectionName: string; sectionCode: string;
@@ -66,18 +80,31 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
   const contentAudience = or(isNull(lessonContents.deliveryId),
     inArray(lessonContents.deliveryId, deliveryIds));
 
+  const assignmentWhere=and(inArray(courseAssignments.lessonId,lessonIds),assignmentAudience);
+  const quizWhere=and(inArray(courseQuizzes.lessonId,lessonIds),quizAudience);
+  const assignmentQuery=getDb().select().from(courseAssignments).where(assignmentWhere)
+   .orderBy(desc(courseAssignments.createdAt),desc(courseAssignments.id));
+  const quizQuery=getDb().select().from(courseQuizzes).where(quizWhere)
+   .orderBy(desc(courseQuizzes.createdAt),desc(courseQuizzes.id));
   const [assignmentRows, quizRows, contentOrders] = await Promise.all([
-    getDb().select().from(courseAssignments)
-      .where(and(inArray(courseAssignments.lessonId, lessonIds),
-        assignmentAudience)),
-    getDb().select().from(courseQuizzes)
-      .where(and(inArray(courseQuizzes.lessonId, lessonIds),
-        quizAudience)),
+    paging?assignmentQuery.limit(paging.pageSize).offset((paging.page-1)*paging.pageSize):assignmentQuery,
+    paging?quizQuery.limit(paging.pageSize).offset((paging.page-1)*paging.pageSize):quizQuery,
     getDb().select({lessonId:lessonContents.lessonId,deliveryId:lessonContents.deliveryId,
       sequence:lessonContents.sequence}).from(lessonContents)
       .where(and(inArray(lessonContents.lessonId, lessonIds),
         contentAudience, ne(lessonContents.status,"ARCHIVED"))),
   ]);
+  if(paging){
+   const [assignmentsCount,quizzesCount]=await Promise.all([
+    getDb().select({total:count()}).from(courseAssignments).where(assignmentWhere),
+    getDb().select({total:count()}).from(courseQuizzes).where(quizWhere),
+   ]);
+   empty.pagination={
+    page:paging.page,pageSize:paging.pageSize,
+    totalAssignments:assignmentsCount[0]?.total??0,
+    totalQuizzes:quizzesCount[0]?.total??0,visibleCourseCount:0,
+   };
+  }
 
   // FAC-assessments-15: one scoped aggregate read, no per-card submission query.
   // The faculty editor can display the lock *before* a rejected save.
@@ -154,5 +181,11 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
     b.createdAt.getTime()-a.createdAt.getTime() || b.id.localeCompare(a.id);
   empty.assignments.sort(newestFirst);
   empty.quizzes.sort(newestFirst);
+  if(empty.pagination){
+   empty.pagination.visibleCourseCount=new Set([
+    ...empty.assignments.map(item=>item.courseCode),
+    ...empty.quizzes.map(item=>item.courseCode),
+   ]).size;
+  }
   return empty;
 }
