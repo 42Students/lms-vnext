@@ -62,7 +62,8 @@ export function FacultyAssignmentResourceDraftFields({
   if(blocked)return;
   const mime=file.type.toLowerCase();
   if(!file.size||file.size>50*1024*1024||
-      !allowedTypes.has(mime)||(kind==="PDF"&&mime!=="application/pdf")){
+      !allowedTypes.has(mime)||(kind==="PDF"&&
+       (mime!=="application/pdf"||!file.name.toLowerCase().endsWith(".pdf")))){
    setError("Choose a supported, non-empty "+(kind==="PDF"?"PDF":"file")+
      " no larger than 50 MB.");return;
   }
@@ -78,6 +79,8 @@ export function FacultyAssignmentResourceDraftFields({
    });
    if(!response.ok)throw new Error(
     response.status===403?"You do not have permission to upload to this Section.":
+    [429,502,503,504].includes(response.status)
+      ?"Private upload is temporarily unavailable. Your resource draft is intact; retry the upload.":
     "Cannot create private upload. Check your file and try again.");
    const result=await response.json() as {grant?:Grant};
    const grant=result.grant;
@@ -163,7 +166,7 @@ export function FacultyAssignmentResourceDraftFields({
     </Button>)}
   </div>
   {uploading?<p role="status" className="text-sm">Uploading private file…</p>:null}
-  {error?<Alert tone="error">{error}</Alert>:null}
+  {error?<Alert tone="error" role="alert">{error}</Alert>:null}
   {message?<Alert tone="info">{message}</Alert>:null}
  </fieldset>;
 }

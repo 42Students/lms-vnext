@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import {useEffect,useState,type ComponentProps} from "react";
+import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {useEffect,useState,useTransition,type ComponentProps} from "react";
 import {CollegeAdminProfileEditor} from "./college-admin-profile-editor";
 import {ErrorState} from "@/components/ui/error-state";
 import {Alert} from "@/components/ui/alert";
@@ -19,10 +20,13 @@ type ProfileSnapshot={
 export function CollegeProfileRetained({current,failed}:{
  current:ProfileSnapshot|null;failed:boolean;
 }){
+ const router=useRouter();
+ const [refreshPending,startRefresh]=useTransition();
+ const retry=()=>startRefresh(()=>router.refresh());
  const [remembered,setRemembered]=useState<ProfileSnapshot|null>(current);
  useEffect(()=>{if(current)setRemembered(current)},[current]);
  const snapshot=current??remembered;
- return <div className="min-w-0 space-y-4">
+ return <div className="min-w-0 space-y-4" aria-busy={refreshPending}>
   {failed&&snapshot?<Alert tone="warning" role="alert" title="Couldn't refresh profile">
    <div className="flex min-w-0 flex-wrap items-center gap-3">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none"
@@ -30,14 +34,18 @@ export function CollegeProfileRetained({current,failed}:{
      <path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5M12 18h.01"/>
     </svg>
     <p className="min-w-0 flex-1">Showing the last profile we loaded.</p>
-    <Link href="/college/profile" prefetch={false}
-     className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-link underline underline-offset-2 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry</Link>
+    <Button type="button" variant="secondary" size="sm"
+     className="min-h-11 md:min-h-9" disabled={refreshPending} onClick={retry}>
+     {refreshPending?"Refreshing profile…":"Retry"}
+    </Button>
    </div>
   </Alert>:null}
   {failed&&!snapshot?<ErrorState title="Failed to load profile."
    description="Your profile could not be loaded. Try again."
-   action={<Link href="/college/profile" prefetch={false}
-    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry</Link>}/>:null}
+   action={<Button type="button" variant="secondary" size="sm"
+    className="min-h-11 md:min-h-9" disabled={refreshPending} onClick={retry}>
+     {refreshPending?"Refreshing profile…":"Retry"}
+    </Button>}/>:null}
   {snapshot?<CollegeAdminProfileEditor readOnly={failed} initial={snapshot.profile}
     email={snapshot.email} phone={snapshot.phone} college={snapshot.college}/>:null}
  </div>;
