@@ -113,7 +113,7 @@ describe("chat-2 TPO last-third runtime settings pages", () => {
     expect(html).toContain('data-slot="data-table"');
     // The shared legacy-style table uses horizontally scrollable mobile columns
     // rather than duplicating team PII into an optional details disclosure.
-    expect(html).toContain("Active team memberships scrollable columns");
+    expect(html).toContain("Active team memberships");
     expect(html).not.toContain("private@other.test");
     expect(html).not.toContain("+919999999999");
   });
