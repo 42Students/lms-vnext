@@ -81,6 +81,8 @@ export async function PATCH(
 /** Legacy PUT /fetch-update callers may send the same complete name payload.
  * Keep the vNext origin, role, schema and archived-parent checks in PATCH. */
 export async function PUT(request: Request, context: RouteContext) {
+  if (!isSameOriginRequest(request))
+    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   return PATCH(request, context);
 }
 

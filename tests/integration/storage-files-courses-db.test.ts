@@ -210,6 +210,7 @@ async function publishedAssignment(structure: Awaited<ReturnType<typeof createSt
     lessonId: structure.lesson.id,
     deliveryId: structure.deliveryA.id,
     title: "SFV File Assignment",
+    allowedMethods: ["PDF_UPLOAD"],
     dueAt: "2027-12-01T12:00:00.000Z",
     maxPoints: 10,
     sequence: 0,
@@ -456,7 +457,7 @@ describe("database guarantees for submission files", () => {
       await client.query(
         `insert into assignment_submissions (assignment_id, delivery_id, membership_id, submission_type)
          values ($1, $2, $3, 'FILE')`,
-        [assignment.id, structure.deliveryA.id, SEED_IDS.learnerCollegeAMembership],
+        [assignment.id, structure.deliveryA.id, fileLearnerMembershipId],
       );
       await expect(client.query("commit")).rejects.toMatchObject({
         constraint: "assignment_submissions_file_required_trg",
@@ -720,7 +721,7 @@ describe("lesson videos against PostgreSQL", () => {
 
     await pool.query(
       `insert into learner_content_progress (membership_id, lesson_content_id, last_position_seconds) values ($1, $2, 125)`,
-      [SEED_IDS.learnerCollegeAMembership, content.id],
+      [fileLearnerMembershipId, content.id],
     );
     const grant = await issueVideoPlaybackGrant(learner, done.id, { deliveryId: structure.deliveryA.id });
     expect(grant.resumePositionSeconds).toBe(125);

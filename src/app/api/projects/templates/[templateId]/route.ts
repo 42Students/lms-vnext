@@ -124,6 +124,8 @@ export async function PATCH(
  * submitted section into the immutable current blueprint; never a blind write.
  */
 export async function PUT(request:Request,context:RouteContext) {
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return PATCH(request,context);
 }
 
