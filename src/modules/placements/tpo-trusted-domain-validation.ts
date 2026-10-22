@@ -1,19 +1,29 @@
 import {z} from "zod";
+import {registrableCompanyHost} from "./public-suffix-policy";
 
-/** Parse the legacy email / @domain / website spellings into a host without
- * treating an arbitrary URL path, username or query as a trusted domain.
+/** Legacy email, @domain, website and raw host inputs all resolve to a
+ * registrable domain under the complete ICANN/PRIVATE Public Suffix List.
+ * Keep IP inputs distinguishable for the explicit legacy error message.
+ * A bare public suffix, host with path or malformed authority cannot be
+ * treated as a company's exclusive domain.
  */
 export function normalizeTpoTrustedDomainInput(input:string):string{
  const value=input.trim().toLowerCase();
+ let host:string;
  try{
   if(/^https?:\/\//.test(value)){
    const url=new URL(value);
-   if(url.username||url.password||url.search||url.hash)return "";
-   return url.hostname.replace(/^www\./,"");
+   if(url.username||url.password||url.port||url.search||url.hash)return "";
+   host=url.hostname;
+  }else if(value.includes("@")){
+   host=value.slice(value.lastIndexOf("@")+1);
+  }else{
+   host=value;
   }
- }catch{return "";}
- if(value.includes("@"))return value.slice(value.lastIndexOf("@")+1);
- return value.replace(/^www\./,"");
+ }catch{return ""}
+ host=host.replace(/^www\./,"");
+ const canonical=registrableCompanyHost(host);
+ return canonical||(/^(?:[0-9.]+|\[[0-9a-f:]+\])$/i.test(host)?host:"");
 }
 /** Strict DNS labels for the existing explicit company-email allowlist. */
 export function validTpoTrustedHost(host:string):boolean {
