@@ -12,6 +12,18 @@ import {publicIndependentPlacementCount} from "./independent-count-model";
 import {publicPublicationFresh} from "./publication-freshness-model";
 import {publicSalaryMetricsAllowed} from "./salary-privacy-model";
 
+/** Legacy PlacementsPageService median uses HALF_UP at two LPA decimals,
+ * without a mandatory trailing zero. Values remain aggregate-only and cannot
+ * be calculated from fewer than the public salary disclosure threshold. */
+function publicMedianLpa(valueInr:number|null):string|null{
+ if(valueInr===null||!Number.isFinite(valueInr)||valueInr<0)return null;
+ const rounded=Math.round((valueInr/100000)*100)/100;
+ return rounded.toFixed(2).replace(/\.0+$/,"").replace(/(\.\d*[1-9])0+$/,"$1")+" LPA";
+}
+/** The old PublicJobResponseDTO has no verified live old consumer and its
+ * retired public job URL is intentionally private in vNext. Only explicitly
+ * authorized external HYBRID/EXTERNAL_ONLY slugs are published separately. */
+
 /** Only aggregated, college-scoped opt-in PUBLIC statistics leave this
  * boundary. No learner name, contact, offer body, letter or individual
  * compensation is returned. Offer-ledger rows are queried internally to
@@ -74,6 +86,8 @@ export async function getPublicPlacementStatistics(collegeId:string){
         eq(placementOffers.kind, "OFFER"),
       ));
   const actual = totals[0];
+  const salaryAllowed=publicSalaryMetricsAllowed(actual?.ctcStudentCount??0,row.population);
+  const median=actual?.medianCtc==null?null:Number(actual.medianCtc);
   const placedCount = actual?.acceptedStudents ?? 0;
   const input={enabled:row.enabled,collegeActive:true,population:row.population};
   // Offers and hiring employers can exceed the number of unique students.
@@ -91,13 +105,18 @@ export async function getPublicPlacementStatistics(collegeId:string){
     eligibilitySnapshotWarning:publicationFresh?null:
       "The eligible student count is an older published snapshot. Ask the placement cell to refresh it.",
     populationBasis:"PUBLISHED_ELIGIBLE_SNAPSHOT" as const,
+    // Snapshot freshness is explicit; live 12-month accepted-offer ledger is
+    // recomputed on each public read, not cached as a private learner roster.
+    aggregateBasisAsOf:now.toISOString(),
+    metricsMayLagPublication:!publicationFresh,
     placementBasis:"ACCEPTED_OFFERS" as const,
     offerWindowMonths:12,
     placed:publicMetricRelease({...input,count:placedCount}),
     population:publicMetricRelease({...input,count:row.population}),
     offers:publicIndependentPlacementCount(actual?.offers ?? 0,row.population),
     employers:publicIndependentPlacementCount(actual?.employers ?? 0,row.population),
-    medianCtcInr: publicSalaryMetricsAllowed(actual?.ctcStudentCount ?? 0,row.population) ? Number(actual?.medianCtc ?? 0) : null,
-    highestCtcInr: publicSalaryMetricsAllowed(actual?.ctcStudentCount ?? 0,row.population) ? Number(actual?.highestCtc ?? 0) : null,
+    medianCtcInr:salaryAllowed?median:null,
+    medianLpaDisplay:salaryAllowed?publicMedianLpa(median):null,
+    highestCtcInr:salaryAllowed&&actual?.highestCtc!=null?Number(actual.highestCtc):null,
   };
 }
