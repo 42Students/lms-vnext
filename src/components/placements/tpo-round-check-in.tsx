@@ -60,7 +60,7 @@ export function TpoRoundCheckIn({
     <div className="mt-2 grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
       {attendance !== "PRESENT" ? (
         <Button variant="secondary" type="button" disabled={busy} onClick={() => setTarget("PRESENT")}
-          className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-60 sm:w-auto md:min-h-9">
+          className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-60 sm:w-auto">
           ✓ Present
         </Button>
       ) : null}
@@ -70,7 +70,7 @@ export function TpoRoundCheckIn({
         onClick={()=>setTarget("DONE")}>Done</Button>:null}
       {attendance !== "ABSENT" && attendance!=="DONE" && attendance!=="IN_INTERVIEW" ? (
         <Button variant="secondary" type="button" disabled={busy} onClick={() => setTarget("ABSENT")}
-          className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-error/50 px-3 text-sm font-semibold text-error disabled:opacity-60 sm:w-auto md:min-h-9">
+          className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-error/50 px-3 text-sm font-semibold text-error disabled:opacity-60 sm:w-auto">
           ⚠ Absent
         </Button>
       ) : null}
