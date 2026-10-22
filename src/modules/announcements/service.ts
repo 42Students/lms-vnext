@@ -327,7 +327,7 @@ export async function updateAnnouncement(
         .from(announcementBroadcastGroups)
         .where(eq(announcementBroadcastGroups.id,current.broadcastGroupId!))
         .for("update").limit(1);
-      if(!group||group.organizationId!==current.organizationId)
+      if(!group)
         throw new AnnouncementError("TARGET_NOT_FOUND");
       const copies=await tx.select().from(db10Announcements)
         .where(eq(db10Announcements.broadcastGroupId,group.id))
@@ -415,7 +415,7 @@ export async function deleteAnnouncement(
         .from(announcementBroadcastGroups)
         .where(eq(announcementBroadcastGroups.id,current.broadcastGroupId!))
         .for("update").limit(1);
-      if(!group||group.organizationId!==current.organizationId)
+      if(!group)
         throw new AnnouncementError("TARGET_NOT_FOUND");
       const copies=await tx.select().from(db10Announcements)
         .where(eq(db10Announcements.broadcastGroupId,group.id))
@@ -491,7 +491,7 @@ export async function restoreAnnouncement(
         .from(announcementBroadcastGroups)
         .where(eq(announcementBroadcastGroups.id,current.broadcastGroupId!))
         .for("update").limit(1);
-      if(!group||group.organizationId!==current.organizationId)
+      if(!group)
         throw new AnnouncementError("TARGET_NOT_FOUND");
       const copies=await tx.select().from(db10Announcements)
         .where(eq(db10Announcements.broadcastGroupId,group.id))
