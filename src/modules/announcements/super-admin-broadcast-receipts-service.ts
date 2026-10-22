@@ -70,8 +70,11 @@ export async function getSuperAdminBroadcastGroupReceiptCounts(
   groupKey:activityEvents.groupKey,
   targetColleges:countDistinct(activityEvents.collegeId),
   cellRead:sql<number>`count(distinct ${placementCellAnnouncementReads.collegeId})::integer`.mapWith(Number),
-  deliveredRecipients:countDistinct(inAppNotifications.userId),
-  readRecipients:sql<number>`count(distinct ${inAppNotifications.userId}) filter (where ${inAppNotifications.readAt} is not null)::integer`.mapWith(Number),
+  // A TPO may hold memberships in multiple target colleges: count each
+  // (notice, user) bell receipt, rather than deduplicating the person
+  // across distinct authorized college notifications.
+  deliveredRecipients:countDistinct(inAppNotifications.id),
+  readRecipients:sql<number>`count(distinct ${inAppNotifications.id}) filter (where ${inAppNotifications.readAt} is not null)::integer`.mapWith(Number),
  }).from(activityEvents)
   .leftJoin(inAppNotifications,eq(inAppNotifications.eventId,activityEvents.id))
   .leftJoin(placementCellAnnouncementReads,
