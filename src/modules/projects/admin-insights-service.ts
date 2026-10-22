@@ -230,7 +230,8 @@ export async function listProjectAdminSnapshots(
         updatedAt: projectReleases.updatedAt,
       })
       .from(projectReleases)
-      .where(inArray(projectReleases.projectId, ids)),
+      .where(and(inArray(projectReleases.projectId, ids),
+        isNull(projectReleases.deletedAt))),
     db
       .select({
         id: projectSubmissions.id,

@@ -125,7 +125,8 @@ export async function listCollegeReadinessReleases(context:RequestContext,colleg
  const releases=await db.select({id:projectReleases.id,title:projectReleases.title,
   status:projectReleases.status,sequence:projectReleases.sequence,
   targetDate:projectReleases.targetDate})
-  .from(projectReleases).where(eq(projectReleases.projectId,id)).orderBy(asc(projectReleases.sequence));
+  .from(projectReleases).where(and(eq(projectReleases.projectId,id),
+    isNull(projectReleases.deletedAt))).orderBy(asc(projectReleases.sequence));
  if(!releases.length)return [];
  const ids=releases.map(r=>r.id);
  const sprints=await db.select({id:projectSprints.id,releaseId:projectSprints.releaseId,
