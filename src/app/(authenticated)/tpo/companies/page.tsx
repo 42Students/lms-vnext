@@ -112,13 +112,23 @@ export default async function TpoCompanyMemoryPage({
       results.items.length+" matching global employer"+(results.items.length===1?"":"s")+
       " (up to "+results.limit+" shown)":
       "Enter a company name or domain to search."}</p>
+    <div className="flex flex-wrap items-center gap-3 border-y border-border py-3">
+      <span className="text-sm text-body">Company not listed? Add other or link a known employer.</span>
+      <TpoCompanyCreateForm />
+    </div>
     {results?.items.length?<ul className="divide-y divide-border border-y border-border">
      {results.items.map(item=><li key={item.companyId} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3">
       <div className="min-w-0"><p className="font-semibold">{item.name}</p>
        <p className="break-all text-sm text-body">{item.primaryDomain??"No verified primary domain"}</p>
       </div>
-      <span className="text-sm text-muted-foreground">{item.linkedToCollege?
-       "Linked to your college":"Not linked to your college"}</span>
+      <div className="flex flex-wrap items-center gap-2">
+       <span className="text-sm text-muted-foreground">{item.linkedToCollege?
+        "Linked to your college":"Not linked to your college"}</span>
+       {item.linkedToCollege?<Link href={"/tpo/companies?name="+encodeURIComponent(item.name)}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Open company details
+       </Link>:<span className="text-xs text-body">Use Add other above to link this employer.</span>}
+      </div>
      </li>)}
     </ul>:q?<EmptyState title="No matching companies" description="Try another name or verified domain."/>:null}
     <Link href="/tpo/companies?directory=1" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
@@ -127,13 +137,8 @@ export default async function TpoCompanyMemoryPage({
    </div>;
   }
 
-  // Preserve named Company Memory deep links, but keep the legacy Engage
-  // Companies view as the default without losing bookmarked directory filters.
-  if (!name && first(raw.directory)!=="1" && !first(raw.search) &&
-      !first(raw.sort) && !first(raw.page) && !first(raw.pageSize)) {
-    redirect("/tpo/recruiters?view=companies");
-  }
-
+  // The directory is a first-class company picker as well as the management
+  // spreadsheet; the legacy Engage view remains available in its own tab.
   // Preserve the existing Company Memory URL and its behavior.
   if (name) {
     return (
@@ -168,7 +173,8 @@ export default async function TpoCompanyMemoryPage({
         actions={
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-end">
             <TpoCompanyCreateForm />
-            <Link href="/tpo/companies?discover=1" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Find global company</Link>
+            <Link href="/tpo/companies?discover=1" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Find or link company</Link>
+            <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Create drive</Link>
             <details className="group min-w-0 sm:relative">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link marker:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">
                 Company links
