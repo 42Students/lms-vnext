@@ -688,6 +688,24 @@ describe("courses C4C assessment aggregation", () => {
       },
     );
 
+    const gradeLedger = (await pool.query<{
+      action:string;previous_points:number|null;new_points:number|null;
+      submission_version_before:number;submission_version_after:number;
+    }>(
+      `select action,previous_points,new_points,
+        submission_version_before,submission_version_after
+       from assignment_grade_events where assignment_submission_id=$1
+       order by submission_version_after`,
+      [submission.id],
+    )).rows;
+    // Grading and publishing are separately committed immutable versions.
+    expect(gradeLedger).toMatchObject([
+      {action:"GRADE",previous_points:null,new_points:8,
+        submission_version_before:0,submission_version_after:1},
+      {action:"PUBLISH_GRADE",previous_points:8,new_points:8,
+        submission_version_before:1,submission_version_after:2},
+    ]);
+
     const afterAssignment =
       await getLearnerCourseWorkspace(
         learner,
