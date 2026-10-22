@@ -20,6 +20,16 @@ describe("chat-6 selected-college People gap verification",()=>{
   expect(s).toContain('status==="FAILED"');
   expect(source("src/modules/people/faculty-bulk-import-model.ts")).toContain("if(data.length>500)");
  });
+ it("G2-15-027-052 keeps legacy department and faculty type in import preview and report",()=>{
+  const rows=parseFacultyBulkCsv("First Name,Last Name,Mobile Number,Email,Department,Faculty Type\\nAnjali,Sharma,9876543210,anjali@example.edu,Computer Science,MENTOR\\n");
+  expect(rows[0]).toMatchObject({departmentName:"Computer Science",facultyType:"MENTOR"});
+  const view=source("src/components/admin/super-admin-faculty-bulk-import.tsx");
+  expect(view).toContain("Email,Department,Faculty Type");
+  expect(view).toContain('key:"department",header:"Department"');
+  expect(view).toContain('key:"facultyType",header:"Faculty Type"');
+  expect(view).toContain("parsedRows[row.row-2]?.departmentName");
+  expect(view).toContain("parsedRows[row.row-2]?.facultyType");
+ });
  it("SA-academics-people-93 registers a student with a chosen program batch and class",()=>{
   const s=source("src/components/college/college-student-register-form.tsx");
   for(const field of ["First Name","Last Name","Mobile Number","Roll Number","Program","Batch","Class/Section","dateOfBirth","gender","address"])expect(s).toContain(field);
