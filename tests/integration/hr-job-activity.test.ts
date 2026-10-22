@@ -52,7 +52,9 @@ describe.skipIf(!enabled)("HR job activity PG scopes",()=>{
   const second=await listRecruiterJobActivity(hr(a.company.id,a.relationship.id),
     {collegeId:SEED_IDS.collegeA,page:2,limit:40});
   expect(second.status).toBe("READY");
-  expect(second.events).toEqual([]);
+  // Out-of-range pages are clamped to the last available page, not falsely empty.
+  expect(second.page).toBe(1);
+  expect(second.events).toEqual(result.events);
   const published=await listRecruiterJobActivity(hr(a.company.id,a.relationship.id),
     {collegeId:SEED_IDS.collegeA,kind:"PUBLISHED"});
   expect(published.events.every(e=>e.status==="Published")).toBe(true);
