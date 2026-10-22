@@ -27,7 +27,7 @@ export async function reviewSuperAdminVerificationBulk(
    if(!target||target.collegeId!==scope.collegeId||target.organizationId!==scope.organizationId)
     throw new AuthorizationError("profile-verification.review");
    const saved=await reviewProfileVerification(ctx,{
-    ...item,action:input.action,...(input.action==="SEND_BACK"?{reason:input.reason}:{})
+    ...item,action:input.action,...(input.action==="SEND_BACK"&&input.reason!==undefined?{reason:input.reason}:{})
    },repository);
    results.push({learnerMembershipId:item.learnerMembershipId,section:item.section,
     result:saved.status==="VERIFIED"?"VERIFIED":"SENT_BACK"});

@@ -24,7 +24,7 @@ export async function reviewCollegeVerificationBulk(context:RequestContext,raw:u
   await requireCollegeVerificationActor(context);
   try{
    const saved=await reviewProfileVerification(context,{
-    ...item,action:input.action,...(input.action==="SEND_BACK"?{reason:input.reason}:{})
+    ...item,action:input.action,...(input.action==="SEND_BACK"&&input.reason!==undefined?{reason:input.reason}:{})
    },repository);
    outcomes.push({learnerMembershipId:item.learnerMembershipId,section:item.section,
     result:saved.status==="VERIFIED"?"VERIFIED":"SENT_BACK"});

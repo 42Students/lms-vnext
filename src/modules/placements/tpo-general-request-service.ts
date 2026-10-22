@@ -34,7 +34,7 @@ async function requireRegisteredKind(tx:Tx,kind:string){
    and conname='placement_general_request_kind_ck' and contype='c'
    and pg_get_constraintdef(oid) like '%OFFER_ACCEPTANCE_DISPUTE%'
  ) as enabled`);
- if(result.rows[0]?.enabled!==true)throw new TpoGeneralRequestError("UNAVAILABLE");
+ if(result.rows[0]?.["enabled"]!==true)throw new TpoGeneralRequestError("UNAVAILABLE");
 }
 
 async function requireLearner(ctx:RequestContext){
@@ -215,8 +215,8 @@ export async function listTpoGeneralRequests(ctx:RequestContext){
 async function approveEffect(tx:Tx,ctx:RequestContext,row:typeof placementLearnerGeneralRequests.$inferSelect){
  const p=row.payload;
  if(row.kind==="OFF_CAMPUS_OFFER"){
-  const company=typeof p.companyName==="string"?p.companyName.trim():"";
-  const compensation=p.ctcLpa==null?null:typeof p.ctcLpa==="string"?p.ctcLpa.trim():null;
+  const company=typeof p["companyName"]==="string"?p["companyName"].trim():"";
+  const compensation=p["ctcLpa"]==null?null:typeof p["ctcLpa"]==="string"?p["ctcLpa"].trim():null;
   if(!company||company.length>200||
      (compensation!==null&&!/^(?:0|[1-9][0-9]{0,7})(?:\.[0-9]{1,2})?$/.test(compensation)))
    throw new TpoGeneralRequestError("TARGET_CHANGED");
@@ -225,20 +225,21 @@ async function approveEffect(tx:Tx,ctx:RequestContext,row:typeof placementLearne
    companyName:company,ctcLpa:compensation,submittedByUserId:row.requestedByUserId,
    status:"VERIFIED",reviewedByUserId:ctx.user.id,reviewedAt:new Date(),
   }).returning({id:placementExternalOffers.id});
+  if(!offer)throw new TpoGeneralRequestError("TARGET_CHANGED");
   await tx.insert(placementExternalOfferEvents).values({
    offerId:offer.id,priorStatus:null,nextStatus:"VERIFIED",actorUserId:ctx.user.id,
   });
   return {effect:"VERIFIED_EXTERNAL_OFFER",id:offer.id};
  }
  if(row.kind==="REGISTRATION_CHANGE"){
-  const cohortId=String(p.cohortId??""),choice=String(p.choice??"");
+  const cohortId=String(p["cohortId"]??""),choice=String(p["choice"]??"");
   if(!["PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","ENTREPRENEURSHIP","COMPETITIVE_EXAMS"].includes(choice))
    throw new TpoGeneralRequestError("TARGET_CHANGED");
   const [enrollment]=await tx.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
    .where(and(eq(learnerProgramEnrollments.membershipId,row.membershipId),
     eq(learnerProgramEnrollments.cohortId,cohortId),
     eq(learnerProgramEnrollments.status,"ACTIVE"))).limit(1);
-  if(!enrollment||choice==="PLACEMENTS"&&p.consentConfirmed!==true)
+  if(!enrollment||choice==="PLACEMENTS"&&p["consentConfirmed"]!==true)
    throw new TpoGeneralRequestError("TARGET_CHANGED");
   const [existing]=await tx.select().from(placementBatchRegistrations).where(and(
    eq(placementBatchRegistrations.membershipId,row.membershipId),
@@ -253,6 +254,7 @@ async function approveEffect(tx:Tx,ctx:RequestContext,row:typeof placementLearne
    set:{choice,source:"TPO",recordedByUserId:ctx.user.id,
     consentVersion:consent?"TPO-REQUEST-01":null,consentAt:consent?now:null,
     version:(existing?.version??0)+1,updatedAt:now}}).returning({id:placementBatchRegistrations.id});
+  if(!saved)throw new TpoGeneralRequestError("TARGET_CHANGED");
   await tx.insert(placementBatchRegistrationEvents).values({
    registrationId:saved.id,previousChoice:existing?.choice??null,nextChoice:choice,
    consentVersion:consent?"TPO-REQUEST-01":null,consentAt:consent?now:null,
@@ -263,7 +265,7 @@ async function approveEffect(tx:Tx,ctx:RequestContext,row:typeof placementLearne
  if(row.kind==="ABSENCE_DISPUTE"){
   // A dispute changes a real persisted ABSENT mark, never merely its queue
   // status. Recheck ownership/college/round association at decision time.
-  const applicationId=sqlUuid.safeParse(p.applicationId),roundId=sqlUuid.safeParse(p.roundId);
+  const applicationId=sqlUuid.safeParse(p["applicationId"]),roundId=sqlUuid.safeParse(p["roundId"]);
   if(!applicationId.success||!roundId.success)throw new TpoGeneralRequestError("TARGET_CHANGED");
   const [record]=await tx.select({id:placementRoundAttendance.id,status:placementRoundAttendance.status})
    .from(placementRoundAttendance)

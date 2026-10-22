@@ -12,7 +12,7 @@ export function proxy(request: NextRequest) {
   const forwardHeaders = new Headers(request.headers);
   forwardHeaders.set("x-lms-path", path + request.nextUrl.search);
   forwardHeaders.set("x-request-id", requestId);
-  if (process.env.MAINTENANCE_MODE === "1" && path !== "/ready" && path !== "/api/hello") {
+  if (process.env["MAINTENANCE_MODE"] === "1" && path !== "/ready" && path !== "/api/hello") {
     const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>42LMS is temporarily unavailable</title>

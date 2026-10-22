@@ -43,7 +43,7 @@ export async function reviewTpoVerificationBulk(context:RequestContext,raw:unkno
   try{
    const saved=await reviewProfileVerification(context,{
     ...item,action:input.action,
-    ...(input.action==="SEND_BACK"?{reason:input.reason}:{}),
+    ...(input.action==="SEND_BACK"&&input.reason!==undefined?{reason:input.reason}:{}),
    },repository);
    outcomes.push({learnerMembershipId:item.learnerMembershipId,section:item.section,
     result:saved.status==="VERIFIED"?"VERIFIED":"SENT_BACK"});
