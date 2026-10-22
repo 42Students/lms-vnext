@@ -8,7 +8,8 @@ import { buildSuperAdminAuditCsv, superAdminAuditExportSchema, SUPER_ADMIN_AUDIT
 export async function exportSuperAdminActivity(context:RequestContext,raw:unknown){
  if(!isSuperAdmin(context))throw new AuthorizationError("activity.read");
  requirePermission(context,"activity.read",{
-  collegeId:context.adminScope?.collegeId,organizationId:context.adminScope?.organizationId,
+  ...(context.adminScope?.collegeId !== undefined ? {collegeId:context.adminScope.collegeId} : {}),
+  ...(context.adminScope?.organizationId !== undefined ? {organizationId:context.adminScope.organizationId} : {}),
  });
  const query=superAdminAuditExportSchema.parse(raw);
  const rows:SuperAdminAuditRow[]=[];
