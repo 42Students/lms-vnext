@@ -13,7 +13,7 @@ async function readStoredCollegeSignInMethod(collegeId:string|null){
  if(!collegeId)return {method:fallback,requiresAdminReview:false,source:"DEFAULT" as const};
  const db=getDb();
  const result=await db.execute(sql<{present:boolean}>`select to_regclass('public.college_signin_policies') is not null as present`);
- if(!result.rows[0]?.present)return {method:fallback,requiresAdminReview:false,source:"DEFAULT" as const};
+ if(!result.rows[0]?.["present"])return {method:fallback,requiresAdminReview:false,source:"DEFAULT" as const};
  const [row]=await db.select({method:collegeSigninPolicies.method}).from(collegeSigninPolicies)
   .where(eq(collegeSigninPolicies.collegeId,collegeId)).limit(1);
  if(!row)return {method:fallback,requiresAdminReview:false,source:"DEFAULT" as const};
