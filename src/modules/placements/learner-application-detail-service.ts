@@ -152,26 +152,18 @@ export async function getOwnLearnerApplicationHistory(
   // The learner feed may have thousands of historic transitions: this reader
   // intentionally returns the full scoped history rather than hiding old rows
   // behind an arbitrary LIMIT, matching legacy service behavior.
+  // Legacy's pre-history fallback records the observed current status once,
+  // at the original application time; it does not invent an intermediate
+  // SUBMITTED transition (which could misrepresent a withdrawn import).
   const initialAt = application.firstAppliedAt ?? application.submittedAt ??
     application.statusUpdatedAt ?? new Date();
-  const currentAt = application.statusUpdatedAt &&
-    application.statusUpdatedAt.getTime()>=initialAt.getTime()
-      ? application.statusUpdatedAt : initialAt;
   const synthetic: {id:string;fromStatus:string|null;toStatus:string;occurredAt:Date}[] =
     rows.length === 0 ? [{
       id: application.applicationId + ":initial",
       fromStatus: null,
-      toStatus: "SUBMITTED",
+      toStatus: application.applicationStatus,
       occurredAt: initialAt,
     }] : [];
-  if (rows.length === 0 && application.applicationStatus !== "SUBMITTED") {
-    synthetic.push({
-      id: application.applicationId + ":current",
-      fromStatus: "SUBMITTED",
-      toStatus: application.applicationStatus,
-      occurredAt: currentAt,
-    });
-  }
   return {
     applicationId: application.applicationId,
     publicRef: application.publicRef,
