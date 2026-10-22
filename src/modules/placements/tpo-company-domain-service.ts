@@ -8,6 +8,7 @@ import {AuthorizationError,can,requirePermission} from "@/modules/permissions/po
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
 import {companyDomainSchema} from "./company-curation-domain-model";
+import {companyDomainAcceptsMail} from "./company-mail-domain-resolver";
 
 export const addCompanyDomainSchema=z.strictObject({
  // Legacy accepts bare domain, @domain, work email and http(s) company URLs.
@@ -25,6 +26,15 @@ export async function addTpoCompanyDomain(context:RequestContext,raw:unknown){
  if(!can(context,"placements.manage",{collegeId:college.id}))throw new AuthorizationError("placements.manage");
  requirePermission(context,"placements.manage",{collegeId:college.id});
  const input=addCompanyDomainSchema.parse(raw);
+ // The public recruiter/OTP and TPO company editor share the legacy DNS
+ // acceptance policy. An authoritative NO_MAIL must not become a recruiter
+ // identity; UNKNOWN (transient DNS/network failure) is not proof of denial.
+ // Keep this bounded network operation outside the SQL write transaction.
+ const mail=await companyDomainAcceptsMail(input.domain,true);
+ if(mail.rejected)throw new z.ZodError([{
+  code:"custom",path:["domain"],
+  message:"This domain doesn't receive email. Check the spelling",
+ }]);
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
