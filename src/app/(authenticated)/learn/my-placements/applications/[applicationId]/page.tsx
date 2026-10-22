@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { Banner } from "@/components/ui/banner";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge";
 import { LearnerApplicationDetailWithdraw } from "@/components/placements/learner-application-detail-withdraw";
 import { getOwnLearnerApplicationHistory } from "@/modules/placements/learner-application-detail-service";
@@ -18,7 +21,19 @@ export default async function LearnerApplicationDetailPage({params}:{
   const {applicationId}=await params;
   if(!placementApplicationIdSchema.safeParse(applicationId).success)notFound();
   const context=await getCurrentRequestContext();
-  const record=await getOwnLearnerApplicationHistory(context,applicationId);
+  let record:Awaited<ReturnType<typeof getOwnLearnerApplicationHistory>>;
+  try {
+    record=await getOwnLearnerApplicationHistory(context,applicationId);
+  }catch(error){
+    if(error instanceof AuthorizationError)throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Application details" />
+      <ErrorState title="Could not load application details"
+        description="Your recorded application status is unavailable. No changes were made."
+        action={<Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry application details</Link>} />
+    </div>;
+  }
   if(!record)notFound();
   const scheduled=await readOptionalLearnerPlacementSource(()=>getLearnerPlacementRequestWorkspace(context));
   const requiresRequest=!scheduled.available || scheduled.value.rounds.some(
@@ -30,6 +45,10 @@ export default async function LearnerApplicationDetailPage({params}:{
     <PageHeader title={record.roleTitle}
       description={record.companyName+" · Own application status and timeline"}
       actions={<StatusBadge tone={applicationStatusTone(record.currentStatus)}>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
+    {!scheduled.available ? <Banner tone="warning" role="status">
+      Round bookings could not be checked. Withdrawal is temporarily restricted to a placement-cell review for your safety.
+      <Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)} className="ml-2 font-semibold underline">Retry round bookings</Link>
+    </Banner> : null}
     <section className="border-b border-border py-4 md:py-6">
       <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Application actions</h2>
