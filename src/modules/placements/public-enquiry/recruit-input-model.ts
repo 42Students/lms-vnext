@@ -8,6 +8,7 @@ import { normalizedTpoLeadPhoneSchema } from "../tpo-crm-validation";
  * the textual enquiry/audit record rather than discarding input silently. */
 function cleanRecruitText(value:string,max:number):string{
  return value.replace(/<[^>]*>/g," ").replace(/[<>\u0000-\u001f\u007f]/g," ")
+  .replace(/[\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g," ")
   .replace(/\s+/g," ").trim().slice(0,max);
 }
 export const publicRecruitEnquirySchema=z.strictObject({
