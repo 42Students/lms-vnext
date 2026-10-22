@@ -21,7 +21,7 @@ describe("Chat12 company depth and URL filters",()=>{
   expect(sheet).not.toContain("<TpoGrid integratedWorkspace mobileActionsCollapsible");
   expect(sheet).toContain("rowActions={row=><div");
   expect(grid).toContain("mobileActionsCollapsible=false");
-  expect(grid).toContain('<div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');
+  expect(grid).toContain('<div role="group" aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');
   expect(sheet).toContain('filters={filters} rollOf=');
   expect(s("components/tpo/grid/grid-workspace.tsx")).toContain('<TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet autoOpenMobile');
  });
