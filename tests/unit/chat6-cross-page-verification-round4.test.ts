@@ -9,7 +9,8 @@ describe("chat-6 cross-page gap source verification", () => {
     const fields = source("src/components/courses/super-admin-course-progress-selector.tsx");
     expect(page).toContain("SuperAdminCourseProgressSelector");
     expect(page).toContain("parseSuperAdminCourseProgressParams");
-    expect(page).toContain("selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}");
+    expect(page).toContain("{...(data.query.courseCode !== undefined ? {selectedCourse:data.query.courseCode} : {})}");
+    expect(page).toContain("{...(data.query.cohortCode !== undefined ? {selectedCohort:data.query.cohortCode} : {})}");
     expect(page).toContain("Progress counts videos watched to the end, assignments submitted and quizzes attempted.");
     expect(page).toContain("Resources are not counted, because they are marked done by the student");
     expect(fields).toContain('name="courseCode"');
@@ -84,7 +85,7 @@ describe("chat-6 cross-page gap source verification", () => {
     expect(page).toContain('status:"SUSPENDED"');
     expect(page).toContain('label:"Visible now"');
     expect(page).toContain('heading(directoryKind?"People"');
-    expect(faculty).toContain('kind:"FACULTY"');
-    expect(students).toContain('kind:"LEARNER"');
+    expect(faculty).toContain('kind: "FACULTY" as const');
+    expect(students).toContain('kind:"LEARNER" as const');
   });
 });
