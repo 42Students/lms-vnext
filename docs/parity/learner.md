@@ -1516,3 +1516,14 @@ Learner ledger CLOSED status is claimed from these changes.
 
 
 **2026-10-16 chat-7 legacy navigation correction (source FIXED, acceptance pending):** `docs/audit/legacy-copy-A.md` dev learner `studentNavigationMenu` (lists.js L55–123) has Courses, Quizzes, Assignments, Class Schedule, Attendance, My Placements, Projects, Notifications and Profile, with no Drive Day row. Removed the extra conditional `Drive Day` learner shell row even when a dated coordinator assignment is active. The existing `/tpo/drive-day` coordinator workflow, route and authorization were not changed; role-specific TPO navigation remains. Updated the shell regression. The specific phase2 chat-7 brief is absent from `docs/orchestrator/briefs/phase2/` at this revision, and `docs/audit/logic-fix-backlog.md` has no learner courses-specific IDs for this round. Learner content, assessments and other existing ledger gaps are not being marked CLOSED from source-only work.
+
+
+## Legacy learner notification audience and bookmark crosswalk (W1 G2-17-026-002)
+
+- Old `classId` maps to a college-owned section UUID, resolved only through an **active** section enrollment and active learner program enrollment for the verified learner membership. It is not a selector for arbitrary learners.
+- Old `courseId` or `courseSlug` is resolved within the chosen college to an active course and its non-ended, active course-section deliveries. Class-and-course notice targeting additionally requires that exact course delivery in the exact class, never a cross-college shortcut. Only currently active section enrollments with active users/memberships become delivery recipients.
+- Imported notification `classId` and `courseId` in server-authored activity metadata are **additional filters** after the personal recipient query, never new permissions. Private event author and recipient records are not exposed as unrestricted college feeds.
+- Old `/learn/notifications?tab=course|project|general|job|all` links redirect to the same authenticated inbox with a validated `category` filter **after** persisted learner membership reauthorization. Unrecognized tabs go to All; conflicting duplicate selectors are rejected. Notification CTA destinations are reduced to safe internal paths; an external assessment link, when allowed, is vetted separately.
+- **Known acceptance gap:** SSE reconnect/update frequency is not established by the current migration projection. A page reload and authorized recipient read work independently; do not claim background/live parity without executing a connected-browser and delivery test.
+
+Source: `src/modules/activity/notification-service.ts`, `src/modules/activity/learner-notification-membership-service.ts`, `src/app/(authenticated)/learn/notifications/page.tsx`. This is a **source-level crosswalk**, not production runtime acceptance.
