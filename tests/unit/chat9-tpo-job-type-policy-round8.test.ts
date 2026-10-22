@@ -21,7 +21,12 @@ describe("chat9 TPO job-type and drive-approval verification",()=>{
   expect(source).toContain("TPO_JOB_TYPE_BUILTIN");
   expect(source).toContain("renameSchema");
   expect(source).toContain('if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
-  expect(source.indexOf("TPO_JOB_TYPE_IN_USE",source.indexOf("export async function deleteTpoJobType"))).toBeLessThan(source.indexOf("tx.delete(placementTpoJobTypes)",source.indexOf("export async function deleteTpoJobType")));
+  const remove=source.slice(source.indexOf("export async function removeTpoJobType("),source.indexOf("const bulkJobTypeSchema="));
+  expect(remove).toContain('if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
+  expect(remove.indexOf('if((usage?.n??0)>0)')).toBeLessThan(remove.indexOf("tx.delete(placementTpoJobTypes)"));
+  const bulk=source.slice(source.indexOf("export async function saveTpoJobTypes("));
+  expect(bulk).toContain('if(oldDrives>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
+  expect(bulk.indexOf("if(oldDrives>0)")).toBeLessThan(bulk.indexOf("tx.delete(placementTpoJobTypes)"));
  });
  it("TPO-settings-audit-24 validates college custom job-type names before persistence",()=>{
   expect(tpoJobTypeNameSchema.safeParse("Graduate Trainee").success).toBe(true);
