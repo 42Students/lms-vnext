@@ -9,8 +9,9 @@ import type {
   IdentityDirectoryUser,
 } from "./identity";
 import {PeopleServiceError} from "./errors";
-import {buildE2EFixtureManifest,reconcileE2EFixtureManifest} from "./e2e-fixture-manifest";
-export {buildE2EFixtureManifest,reconcileE2EFixtureManifest} from "./e2e-fixture-manifest";
+import {buildE2EFixtureManifest,reconcileE2EFixtureManifest,E2E_FIXTURE_INSERT_ORDER} from "./e2e-fixture-manifest";
+export {buildE2EFixtureManifest,reconcileE2EFixtureManifest,buildE2EFixtureSeedLedger,E2E_FIXTURE_INSERT_ORDER} from "./e2e-fixture-manifest";
+export {seedIsolatedE2EAcademicGraph} from "./e2e-fixture-seed-service";
 
 function toDirectoryUser(row: {
   identityUid: string;
@@ -143,6 +144,8 @@ export async function persistIsolatedE2EIdentityUsers(input:{
     process.env.APP_ENV!=="test"||
     process.env.E2E_SEED_ENABLED!=="true"||
     process.env.E2E_ISOLATED_DATABASE!=="true"||
+    process.env.E2E_ALLOW_GRAPH_WRITES!=="true"||
+    process.env.APP_E2E_SEED_ENABLED!=="true"||
     !input.operatorAuthorized)
   throw new Error("E2E_SEED_DISABLED");
  const manifest=buildE2EFixtureManifest(input.namespace);
@@ -191,6 +194,7 @@ export function previewNonproductionE2ESeed(namespace="e2e-dev"){
   throw new Error("E2E_SEED_DISABLED");
  const manifest=buildE2EFixtureManifest(namespace);
  const decisions=reconcileE2EFixtureManifest(manifest,new Map());
- return {manifest,decisions,persisted:false as const,
+ return {manifest,decisions,requiredWriteOrder:E2E_FIXTURE_INSERT_ORDER,
+  persisted:false as const,
   message:"Fixture plan generated. Database seeding and file attestation still require an authorized writer."};
 }

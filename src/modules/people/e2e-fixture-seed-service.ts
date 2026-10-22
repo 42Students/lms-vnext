@@ -26,7 +26,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {projectTemplateBlueprintSchema} from "@/modules/projects/validation";
 import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation";
 import {
- buildE2EFixtureManifest,type E2EFixtureKey,
+ buildE2EFixtureManifest,buildE2EFixtureSeedLedger,type E2EFixtureKey,
 } from "./e2e-fixture-manifest";
 
 /** Every auxiliary UUID uses the same deterministic v4/variant shape as
@@ -118,6 +118,9 @@ export async function seedIsolatedE2EAcademicGraph(
    {id:d.org42Learn,name:"E2E 42Learn "+namespace},
   ]){
    await tx.insert(organizations).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({name:organizations.name})
+    .from(organizations).where(eq(organizations.id,row.id)).limit(1);
+   if(stored?.name!==row.name)throw new Error("E2E_ORGANIZATION_COLLISION");
   }
   seeded.add("orgColleges");seeded.add("org42Learn");
   for(const row of [
@@ -125,12 +128,27 @@ export async function seedIsolatedE2EAcademicGraph(
     name:"E2E College A "+namespace,code:code("CA")},
    {id:d.collegeB,organizationId:d.orgColleges,
     name:"E2E College B "+namespace,code:code("CB")},
-  ])await tx.insert(colleges).values(row).onConflictDoNothing();
+  ]){
+   await tx.insert(colleges).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({
+    organizationId:colleges.organizationId,code:colleges.code,name:colleges.name,
+   }).from(colleges).where(eq(colleges.id,row.id)).limit(1);
+   if(!stored||stored.organizationId!==row.organizationId||
+      stored.code!==row.code||stored.name!==row.name)
+    throw new Error("E2E_COLLEGE_COLLISION");
+  }
   seeded.add("collegeA");seeded.add("collegeB");
   for(const row of [
    {id:d.deptA,collegeId:d.collegeA,name:"E2E Computer Science "+namespace},
    {id:d.deptB,collegeId:d.collegeB,name:"E2E Electronics "+namespace},
-  ])await tx.insert(departments).values(row).onConflictDoNothing();
+  ]){
+   await tx.insert(departments).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({
+    collegeId:departments.collegeId,name:departments.name,
+   }).from(departments).where(eq(departments.id,row.id)).limit(1);
+   if(!stored||stored.collegeId!==row.collegeId||stored.name!==row.name)
+    throw new Error("E2E_DEPARTMENT_COLLISION");
+  }
   seeded.add("deptA");seeded.add("deptB");
   for(const row of [
    {id:d.programA,departmentId:d.deptA,name:"E2E BTech CS "+namespace,
@@ -182,6 +200,12 @@ export async function seedIsolatedE2EAcademicGraph(
     membershipId:d[persona.key],role:roleOf[persona.key],
     assignedByUserId:actor.user.id,
    }).onConflictDoNothing();
+   const [role]=await tx.select({role:membershipRoles.role})
+    .from(membershipRoles).where(and(
+     eq(membershipRoles.membershipId,d[persona.key]),
+     eq(membershipRoles.role,roleOf[persona.key]),
+    )).limit(1);
+   if(!role)throw new Error("E2E_ROLE_COLLISION");
    seeded.add(persona.key);
   }
   for(const learner of [
@@ -206,7 +230,17 @@ export async function seedIsolatedE2EAcademicGraph(
     code:code("C1"),createdByOrganizationId:d.org42Learn},
    {id:d.courseB,departmentId:d.deptB,name:"E2E Circuits Course "+namespace,
     code:code("C2"),createdByOrganizationId:d.org42Learn},
-  ])await tx.insert(courses).values(row).onConflictDoNothing();
+  ]){
+   await tx.insert(courses).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({
+    departmentId:courses.departmentId,code:courses.code,
+    createdByOrganizationId:courses.createdByOrganizationId,
+   }).from(courses).where(eq(courses.id,row.id)).limit(1);
+   if(!stored||stored.departmentId!==row.departmentId||
+      stored.code!==row.code||
+      stored.createdByOrganizationId!==row.createdByOrganizationId)
+    throw new Error("E2E_COURSE_COLLISION");
+  }
   seeded.add("courseA");seeded.add("courseB");
   const lessonDeliveries={} as Record<"A"|"B",string>;
   for(const row of [
@@ -498,16 +532,13 @@ export async function seedIsolatedE2EAcademicGraph(
   }).onConflictDoNothing();
   seeded.add("qualificationA");
 
-  const missing=manifest.nodes
-   .filter(node=>!seeded.has(node.key))
-   .map(node=>({key:node.key,requires:node.requires,
-     reason:node.externalBinaryRequired?"PRIVATE_SCANNED_UPLOAD_REQUIRED":
-      "DOMAIN_WRITER_REQUIRED"}));
+  const ledger=buildE2EFixtureSeedLedger(manifest,seeded);
+  const missing=ledger.missing;
   // Do not report success for the unseeded placements, calendar, video, image
   // and project workspace. This response is an actual partial DB seed, not
   // the speculative fixture manifest treated as a persisted graph.
   return {
-   status:"PARTIAL" as const,manifest,actualUserIds:manifestUsers,
+   status:ledger.status,manifest,ledger,actualUserIds:manifestUsers,
    persistedNodeCount:seeded.size,
    remainingNodeCount:missing.length,missing,
    source:"ISOLATED_TEST_DATABASE" as const,

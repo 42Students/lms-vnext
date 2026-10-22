@@ -28,4 +28,4 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_learner-profile-delete-confirm-model.ts.md` (edit src/modules/people/learner-profile-delete-confirm-model.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_components_people_faculty-profile-editor.tsx.md` (edit src/components/people/faculty-profile-editor.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_college-role-directory-service.ts.md` (edit src/modules/people/college-role-directory-service.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_e2e-identity-directory.ts.md` (edit src/modules/people/e2e-identity-directory.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_e2e-identity-directory.ts.md` (edit src/modules/people/e2e-identity-directory.ts; 1 findings; best P1)

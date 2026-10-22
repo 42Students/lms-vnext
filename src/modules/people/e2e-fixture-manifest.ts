@@ -52,13 +52,13 @@ const definitions:readonly [E2EFixtureKey,string,readonly E2EFixtureKey[],string
  ["classB","sections",["batchB"],"E2E Class B"],
  ["courseA","courses",["deptA","org42Learn"],"E2E Course A"],
  ["courseB","courses",["deptB","org42Learn"],"E2E Course B"],
- ["lessonA","lessons",["courseA"],"E2E Lesson A"],
- ["lessonB","lessons",["courseB"],"E2E Lesson B"],
- ["lectureA","lesson_content",["lessonA","classA"],"E2E Lecture A"],
- ["videoA","lesson_videos",["lessonA","classA"],"E2E Video A",true],
- ["youtubeA","lesson_content",["lessonA","classA"],"E2E YouTube A"],
+ ["lessonA","course_lessons",["courseA"],"E2E Lesson A"],
+ ["lessonB","course_lessons",["courseB"],"E2E Lesson B"],
+ ["lectureA","lesson_contents",["lessonA","classA"],"E2E Lecture A"],
+ ["videoA","lesson_contents",["lessonA","classA"],"E2E Video A",true],
+ ["youtubeA","lesson_contents",["lessonA","classA"],"E2E YouTube A"],
  ["assignmentA","course_assignments",["lessonA","classA"],"E2E Assignment A"],
- ["lectureB","lesson_content",["lessonB","classB"],"E2E Lecture B"],
+ ["lectureB","lesson_contents",["lessonB","classB"],"E2E Lecture B"],
  ["facultyA","college_memberships",["collegeA","deptA"],"E2E Teacher A"],
  ["facultyB","college_memberships",["collegeB","deptB"],"E2E Teacher B"],
  ["adminA","college_memberships",["collegeA","deptA"],"E2E Admin A"],
@@ -71,18 +71,18 @@ const definitions:readonly [E2EFixtureKey,string,readonly E2EFixtureKey[],string
  ["announcementA","announcements",["collegeA","adminA"],"E2E Announcement A"],
  ["jobA","placement_jobs",["collegeA","programA","adminA"],"E2E Job A"],
  ["jobApplicationA","placement_applications",["jobA","learnerA"],"E2E Application A"],
- ["jobHistoryA","placement_application_stage_history",["jobApplicationA"],"E2E Application History"],
+ ["jobHistoryA","placement_college_application_stage_history",["jobApplicationA"],"E2E Application History"],
  ["interviewA","placement_round_candidate_slots",["jobApplicationA","jobA"],"E2E Interview A"],
- ["discussionA","course_discussion_posts",["lectureA","learnerA"],"E2E Discussion A"],
- ["skillJava","db10_skills",[],"Java"],
- ["skillSynonymJdk","db10_skill_synonyms",["skillJava"],"jdk"],
- ["skillSynonymLanguage","db10_skill_synonyms",["skillJava"],"java language"],
+ ["discussionA","course_discussion_messages",["lectureA","learnerA"],"E2E Discussion A"],
+ ["skillJava","skills",[],"Java"],
+ ["skillSynonymJdk","skill_synonyms",["skillJava"],"jdk"],
+ ["skillSynonymLanguage","skill_synonyms",["skillJava"],"java language"],
  ["qualificationA","learner_profiles",["learnerA"],"E2E Qualification A"],
- ["videoProgressA","lesson_progress",["videoA","learnerA"],"E2E Video Progress"],
- ["youtubeProgressA","lesson_progress",["youtubeA","learnerA"],"E2E YouTube Progress"],
+ ["videoProgressA","learner_content_progress",["videoA","learnerA"],"E2E Video Progress"],
+ ["youtubeProgressA","learner_content_progress",["youtubeA","learnerA"],"E2E YouTube Progress"],
  ["assignmentSubmissionA","assignment_submissions",["assignmentA","learnerA"],"E2E Submission A"],
  ["studentImageA","profile_private_document_receipts",["learnerA"],"E2E Profile Image",true],
- ["projectWorkspaceA","project_workspaces",["collegeA","facultyA","learnerA","classA"],"E2E Project A"],
+ ["projectWorkspaceA","project_instances",["collegeA","facultyA","learnerA","classA"],"E2E Project A"],
 ];
 
 /** Legacy SeedResult has every entity category; these values are stable
@@ -135,4 +135,63 @@ export function e2eFixtureActivationReady(input:{
  return input.developmentMode&&input.operatorAuthorized&&
   input.schemaMigrationsReady&&input.persistedNodeCount===manifest.nodes.length&&
   input.verifiedMediaCount>=manifest.nodes.filter(x=>x.externalBinaryRequired).length;
+}
+
+// Real FK-order contract for the authorized test-only graph writer. These
+// tables are from the vNext schema, not 1:1 legacy model names; auxiliary
+// rows (periods, offerings, users, seasons, templates) must be persisted
+// before the manifest nodes which depend on them.
+export const E2E_FIXTURE_INSERT_ORDER = [
+ "users", "organizations", "colleges", "departments", "programs",
+ "academic_periods", "cohorts", "sections", "college_memberships",
+ "membership_roles", "learner_program_enrollments", "section_enrollments",
+ "courses", "course_offerings", "course_section_deliveries",
+ "course_teaching_assignments", "course_learning_paths", "course_lessons",
+ "lesson_contents", "course_assignments", "assignment_submissions",
+ "activity_events", "in_app_notifications", "course_discussion_messages",
+ "lecture_halls", "section_schedule_events", "attendance_sessions",
+ "attendance_records", "announcements", "skills", "skill_synonyms",
+ "learner_content_progress", "placement_companies",
+ "placement_company_relationships", "placement_seasons", "placement_jobs",
+ "placement_job_role_options", "placement_job_rounds",
+ "placement_applications", "placement_college_application_stages",
+ "placement_college_application_stage_history",
+ "placement_round_candidate_slots", "project_templates",
+ "project_template_versions", "project_instances", "project_members",
+ "learner_profiles",
+] as const;
+
+export type E2EFixtureSeedLedger = {
+ schemaVersion:typeof E2E_FIXTURE_SCHEMA_VERSION;
+ namespace:string;
+ prospectiveIds:Record<E2EFixtureKey,string>;
+ persistedIds:Partial<Record<E2EFixtureKey,string>>;
+ missing:readonly {
+   key:E2EFixtureKey;
+   requires:readonly E2EFixtureKey[];
+   reason:string;
+ }[];
+ status:"PARTIAL"|"COMPLETE";
+};
+
+/** Build an honest persisted-vs-planned manifest summary. Never count
+ * prospective IDs or fake unscanned media as written database rows. */
+export function buildE2EFixtureSeedLedger(
+ manifest:ReturnType<typeof buildE2EFixtureManifest>,
+ actualKeys:ReadonlySet<E2EFixtureKey>,
+):E2EFixtureSeedLedger {
+ const persistedIds:Partial<Record<E2EFixtureKey,string>>={};
+ const missing:E2EFixtureSeedLedger["missing"][number][]=[];
+ for(const node of manifest.nodes){
+  if(actualKeys.has(node.key)){
+   persistedIds[node.key]=node.id;
+  }else{
+   missing.push({key:node.key,requires:node.requires,
+    reason:node.externalBinaryRequired
+     ?"PRIVATE_SCANNED_UPLOAD_REQUIRED":"DOMAIN_WRITER_REQUIRED"});
+  }
+ }
+ return {schemaVersion:E2E_FIXTURE_SCHEMA_VERSION,
+  namespace:manifest.namespace,prospectiveIds:manifest.ids,
+  persistedIds,missing,status:missing.length?"PARTIAL":"COMPLETE"};
 }
