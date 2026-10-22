@@ -8,9 +8,8 @@ import {
  placementOffers,placementJoiningOutcomes,
 } from "@/db/schema";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory} from "@/db/schema/placement-college-application-stages";
-import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
-import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
-
+import type {RequestContext} from "@/modules/identity/context";
+import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {superAdminHiringReportQuery,SUPER_ADMIN_HIRING_EXPORT_CAP,type SuperAdminHiringRow} from "./super-admin-hiring-report-model";
 /**
  * Legacy Dayjs boundaries denote IST calendar days. Use the next midnight as
@@ -32,22 +31,12 @@ function istStartOfNextDay(value:string):Date {
  */
 export async function getSuperAdminCompanyHiringReport(context:RequestContext,raw:unknown){
  const query=superAdminHiringReportQuery.parse(raw);
- // A reviewed organization selection is also a legitimate legacy scope.
- // An unselected global scope is not: never issue an unrestricted report.
- if(!isSuperAdmin(context)||(!context.adminScope?.collegeId&&!context.adminScope?.organizationId))
-  throw new AuthorizationError("placements.read");
- const selected={collegeId:context.adminScope?.collegeId??null,
-  organizationId:context.adminScope?.organizationId??null};
- requirePermission(context,"placements.read",{
-  ...(selected.collegeId?{collegeId:selected.collegeId}:{}),
-  ...(selected.organizationId?{organizationId:selected.organizationId}:{}),
- });
- const db=getDb();
+ const selected=requireSuperAdminSelectedCollege(context,"placements.read"),db=getDb();
  const pattern=query.q?"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%":null;
  const matchingAcademic= query.departmentId||query.programId||query.cohortId
   ?exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
     .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
-    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,placementJobs.collegeId)))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
     .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
       eq(cohorts.programId,learnerProgramEnrollments.programId)))
     .where(and(eq(learnerProgramEnrollments.membershipId,placementApplications.membershipId),
@@ -132,11 +121,10 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
  }).from(placementJobs)
   .innerJoin(placementCompanyRelationships,and(
     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
-    eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
-    selected.collegeId?eq(placementCompanyRelationships.collegeId,selected.collegeId):undefined)))
+    eq(placementCompanyRelationships.collegeId,selected.collegeId)))
   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
   .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
-    selected.collegeId?eq(colleges.id,selected.collegeId):undefined,
+    eq(colleges.id,selected.collegeId),
     selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined))
   // A legacy free-text-only company is normalized to a required per-college
   // relationship on import. This join must NOT invent a cross-college job.
@@ -149,7 +137,7 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
     applicationFilters,
     exists(db.select({id:collegeMemberships.id}).from(collegeMemberships)
       .where(and(eq(collegeMemberships.id,placementApplications.membershipId),
-        eq(collegeMemberships.collegeId,placementJobs.collegeId)))),
+        eq(collegeMemberships.collegeId,selected.collegeId)))),
   ))
   .leftJoin(placementCollegeApplicationStages,and(
     eq(placementCollegeApplicationStages.applicationId,placementApplications.id),
@@ -160,46 +148,13 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
     pattern?or(ilike(placementJobs.title,pattern),ilike(placementCompanies.name,pattern)):undefined,
   ))
   .groupBy(placementJobs.id,placementJobs.title,placementCompanies.id,placementCompanies.name)
-  .orderBy(asc(placementCompanies.name),asc(placementJobs.id));
- // Keep the display/CSV safety cap, not a cap on aggregate truth. The
- // database already performs company/job grouping; accumulate all matching
- // grouped rows on the server before returning only the first capped page.
+  .orderBy(asc(placementCompanies.name),asc(placementJobs.id))
+  .limit(SUPER_ADMIN_HIRING_EXPORT_CAP+1);
  const bounded=result.slice(0,SUPER_ADMIN_HIRING_EXPORT_CAP);
- const fullTotals={
-  totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,
-  offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0,
- };
- const fullFunnelTotals={
-  applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,
- };
- let shortlistWeightedHours=0,shortlistObservationCount=0;
- for(const row of result){
-  for(const key of ["totalApplications","applied","shortlisted","assessment",
-   "interview","offered","hired","rejected","withdrawn","waitlisted"] as const)
-   fullTotals[key]+=row[key];
-  for(const key of ["applied","shortlisted","assessment","interview","offered","hired"] as const){
-   const field=("funnel"+key[0]!.toUpperCase()+key.slice(1)) as
-    "funnelApplied"|"funnelShortlisted"|"funnelAssessment"|"funnelInterview"|"funnelOffered"|"funnelHired";
-   fullFunnelTotals[key]+=row[field];
-  }
-  if(typeof row.firstShortlistHours==="number"&&
-     Number.isFinite(row.firstShortlistHours)&&row.firstShortlistHours>=0&&
-     row.firstShortlistCount>0){
-   shortlistWeightedHours+=row.firstShortlistHours*row.firstShortlistCount;
-   shortlistObservationCount+=row.firstShortlistCount;
-  }
- }
- const fullShortlistMeanHours=shortlistObservationCount>0?
-  Math.round(shortlistWeightedHours/shortlistObservationCount):null;
  return {
   query,
   // These rows preserve the mutually exclusive current-status snapshot.
   rows:bounded as SuperAdminHiringRow[],
-  matchingJobCount:result.length,
-  // All filters were applied by the same selected-college SQL joins as the
-  // displayed job rows. These aggregates cover *all* matching jobs, even
-  // when the CSV and company rows are capped for response size.
-  fullTotals,fullFunnelTotals,fullShortlistMeanHours,
   // Do NOT derive the funnel from rows.applied/shortlisted: an applicant who
   // later moved stages still contributes to earlier stages in this view.
   funnelRows:bounded.map(row=>({
@@ -220,7 +175,7 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
    applicationClock:"FIRST_APPLIED_AT_OR_SUBMITTED_AT" as const,
    hiredEvidence:"ACCEPTED_OFFER_AND_JOINED_OUTCOME" as const,
    firstShortlistLatency:"FIRST_VALID_SHORTLIST_TRANSITION" as const,
-   sharedJobs:selected.collegeId?"SELECTED_COLLEGE_ONLY" as const:"AUTHORIZED_ORGANIZATION_ONLY" as const,
+   sharedJobs:"SELECTED_COLLEGE_ONLY" as const,
    companyReportJobFilter:"EXPLICIT_JOB_SCOPE_EXTENSION" as const,
    // Snapshot stages count only submitted applications. Withdrawn rows
    // remain in totalApplications and in a distinct withdrawn bucket;

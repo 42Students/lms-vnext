@@ -10,6 +10,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {PopoverPanel} from "@/components/ui/popover";
+import {Input} from "@/components/ui/input";
 
 type College={
  id:string;name:string;code?:string;location?:string|null;
@@ -130,10 +131,10 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    <div className="flex min-w-0 flex-wrap items-end gap-2">
     <label className="w-full text-[13px] font-semibold text-body sm:w-[240px]">
       Search college
-      <input type="search" value={filter}
+      <Input type="search" value={filter}
        placeholder="Search colleges..."
        aria-label="Search colleges"
-       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm md:min-h-9"
+       className="mt-1 w-full"
        onChange={event=>setFilter(event.target.value)}/>
     </label>
     {filter?<Button type="button" size="sm" variant="secondary"
