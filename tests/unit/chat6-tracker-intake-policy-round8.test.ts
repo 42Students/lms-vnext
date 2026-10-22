@@ -7,6 +7,7 @@ describe("42 Tracker reporter access security",()=>{
   const issues=readFileSync("src/app/(authenticated)/tracker/issues/page.tsx","utf8");
   expect(audit).toContain("SA-placements-projects-101 — SKIP, owner decision OD-27");
   expect(decisions).toContain("OD-27");
-  expect(issues).toContain('if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") redirect');
+  expect(issues).toContain('if (!isSuperAdmin(context) || context.adminScope?.collegeId ||');
+  expect(issues).toContain('context.adminScope?.organizationId) redirect("/dashboard")');
  });
 });

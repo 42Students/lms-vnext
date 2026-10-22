@@ -3,7 +3,8 @@ import {readFileSync} from "node:fs";
 describe("Final sprint legacy recruiter task links",()=>{
  it("REC-home-drives-10 legacy task deep links map onto authorized recruiter workspaces",()=>{
   const page=readFileSync("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx","utf8");
-  expect(page).toContain('const safeTab=tab==="interviews"||tab==="results"?"rounds"');
+  expect(page).toContain('const safeTab=query.review==="1"&&!tab?"applicants":');
+  expect(page).toContain('tab==="interviews"||tab==="results"?"rounds"');
   expect(page).toContain('tab==="selections"?"offers"');
   expect(page).toContain('tab==="messages"||tab==="requests"||tab==="discussion"?"overview"');
   expect(page).toContain("await getHrJobRead(context, jobId");

@@ -38,10 +38,10 @@ describe("chat-4 tenant lifecycle and sign-in behavioral security", () => {
   });
 
   it("SA-colleges-directory-09 paginates bounded tenant results and never generates out-of-range links", () => {
-    expect(TENANT_LIFECYCLE_PAGE_SIZE).toBe(20);
+    expect(TENANT_LIFECYCLE_PAGE_SIZE).toBe(25);
     expect(tenantLifecyclePaging(0, 1)).toMatchObject({ total: 0, totalPages: 1, page: 1, offset: 0 });
-    expect(tenantLifecyclePaging(55, 2)).toMatchObject({ total: 55, totalPages: 3, page: 2, offset: 20 });
-    expect(tenantLifecyclePaging(55, 99)).toMatchObject({ page: 3, offset: 40 });
+    expect(tenantLifecyclePaging(55, 2)).toMatchObject({ total: 55, totalPages: 3, page: 2, offset: 25 });
+    expect(tenantLifecyclePaging(55, 99)).toMatchObject({ page: 3, offset: 50 });
     expect(tenantLifecycleHref({})).toBe("/admin/tenants");
     expect(tenantLifecycleHref({ q: "  IIT ", status: "ARCHIVED", page: 2 }))
       .toBe("/admin/tenants?q=IIT&status=ARCHIVED&page=2");

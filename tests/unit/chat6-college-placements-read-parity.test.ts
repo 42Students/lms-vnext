@@ -9,7 +9,8 @@ describe("College Admin placement register and drive parity",()=>{
   for(const col of ["Email","College","Source","Applied Date","Age","Match Score"]){
    expect(pipeline).toContain('header:"'+col+'"');
   }
-  expect(pipeline).toContain('<DataTable columns={columns} rows={rows}');
+  expect(pipeline).toContain('<DataTable columns={legacyShortlisted?');
+  expect(pipeline).toContain('caption="Applications pipeline"');
   expect(pipeline).toContain('mobilePriority:"primary"');
   expect(pipeline).toContain('mobilePriority:"action"');
   expect(pipeline).toContain('No persisted match score available');
@@ -25,11 +26,11 @@ describe("College Admin placement register and drive parity",()=>{
   // UX playbook: the shared DataTable now renders the mobile card layout
   // and expandable secondary fields from the same accessible row DOM.
   expect(page).toContain("DataTable");
-  expect(page).toContain('caption="College placement drives"');
+  expect(page).toContain('caption="College placement jobs"');
   expect(page).toContain('mobilePriority:"primary"');
   expect(page).toContain('mobilePriority:"action"');
   const table=src("src/components/ui/data-table.tsx");
-  expect(table).toContain('sm:table-row');
+  expect(table).toContain('md:table-row');
   expect(table).toContain('More details');
   expect(table).toContain('min-h-11');
   expect(page).toContain("CollegeDriveBulkActions");

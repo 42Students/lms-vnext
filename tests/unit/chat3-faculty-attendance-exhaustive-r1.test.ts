@@ -39,7 +39,8 @@ describe("FAC attendance time, edit-state and version boundaries",()=>{
   expect(facultyAttendanceScheduleSchema.safeParse(good).success).toBe(true);
   expect(facultyAttendanceScheduleSchema.safeParse({...good,confirm:false}).success).toBe(false);
   expect(facultyAttendanceScheduleSchema.safeParse({...good,endsAt:good.startsAt}).success).toBe(false);
-  expect(facultyAttendanceScheduleSchema.safeParse({...good,title:"x"}).success).toBe(false);
+  expect(facultyAttendanceScheduleSchema.safeParse({...good,title:"x"}).success).toBe(true);
+  expect(facultyAttendanceScheduleSchema.safeParse({...good,title:"x".repeat(161)}).success).toBe(false);
   expect(facultyAttendanceScheduleSchema.safeParse({...good,unexpected:true}).success).toBe(false);
   expect(facultyAttendanceScheduleSchema.safeParse({...good,action:"RESCHEDULE",sessionId:"bad",expectedUpdatedAt:good.startsAt}).success).toBe(false);
   expect(facultyAttendanceScheduleSchema.safeParse({...good,action:"RESCHEDULE",sessionId:"11111111-1111-4111-8111-111111111111",expectedUpdatedAt:good.startsAt}).success).toBe(true);
