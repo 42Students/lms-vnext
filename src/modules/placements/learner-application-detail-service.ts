@@ -20,6 +20,10 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { placementApplicationIdSchema } from "./validation";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
+  placementCollegeApplicationStages,
+  placementCollegeApplicationStageHistory,
+} from "@/db/schema/placement-college-application-stages";
+import {
   learnerApplicationHistoryTimeline,
   learnerCompanyPreview,
 } from "./learner-application-detail-model";
@@ -117,24 +121,29 @@ export async function getOwnLearnerApplicationHistory(
   const application = await loadOwnedApplication(context, rawApplicationId);
   if (!application) return null;
 
-  const rows = await getDb()
-    .select({
-      id: placementApplicationStatusHistory.id,
-      fromStatus: placementApplicationStatusHistory.fromStatus,
-      toStatus: placementApplicationStatusHistory.toStatus,
-      occurredAt: placementApplicationStatusHistory.createdAt,
-    })
-    .from(placementApplicationStatusHistory)
-    .where(
-      eq(
-        placementApplicationStatusHistory.applicationId,
-        application.applicationId,
-      ),
-    )
-    .orderBy(
-      asc(placementApplicationStatusHistory.createdAt),
-      asc(placementApplicationStatusHistory.id),
-    );
+  // Current application status and staff-owned pipeline stages have separate
+  // immutable histories in vNext. Combine their safe status/timestamps only:
+  // never expose actor IDs, internal reason or private screening feedback.
+  const [rows,stageRows] = await Promise.all([
+    getDb().select({
+      id:placementApplicationStatusHistory.id,
+      fromStatus:placementApplicationStatusHistory.fromStatus,
+      toStatus:placementApplicationStatusHistory.toStatus,
+      occurredAt:placementApplicationStatusHistory.createdAt,
+    }).from(placementApplicationStatusHistory)
+     .where(eq(placementApplicationStatusHistory.applicationId,application.applicationId))
+     .orderBy(asc(placementApplicationStatusHistory.createdAt),asc(placementApplicationStatusHistory.id)),
+    getDb().select({
+      id:placementCollegeApplicationStageHistory.id,
+      fromStatus:placementCollegeApplicationStageHistory.fromStage,
+      toStatus:placementCollegeApplicationStageHistory.toStage,
+      occurredAt:placementCollegeApplicationStageHistory.movedAt,
+    }).from(placementCollegeApplicationStageHistory)
+     .innerJoin(placementCollegeApplicationStages,
+       eq(placementCollegeApplicationStages.id,placementCollegeApplicationStageHistory.stageId))
+     .where(eq(placementCollegeApplicationStages.applicationId,application.applicationId))
+     .orderBy(asc(placementCollegeApplicationStageHistory.movedAt),asc(placementCollegeApplicationStageHistory.id)),
+  ]);
 
   // Imported and pre-history applications still need an accessible initial
   // status. This synthetic learner-facing event is read-only: no database
@@ -178,7 +187,9 @@ export async function getOwnLearnerApplicationHistory(
     companyName: application.companyName,
     currentStatus: application.applicationStatus,
     // Actor IDs and free-text internal history reasons are not selected.
-    events: learnerApplicationHistoryTimeline(rows.length ? rows : synthetic),
+    events: learnerApplicationHistoryTimeline([
+      ...(rows.length?rows:synthetic),...stageRows,
+    ]),
   };
 }
 

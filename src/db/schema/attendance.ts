@@ -218,3 +218,25 @@ export function legacyAttendanceSessionState(input:{
 export function legacyAttendanceCollegeThreshold(percent:number|null):number{
   return percent!==null&&Number.isInteger(percent)&&percent>=1&&percent<=100?percent:75;
 }
+
+/** The historical all-scheduled count is NOT the attendance denominator.
+ * Include only already-started, non-cancelled class events; for subject
+ * eligibility pass a verified courseSectionDeliveryId and use that course
+ * instead of silently combining all subjects. A legitimately unmarked but
+ * started session contributes to the "held" count as in legacy backend. */
+export function countHeldLegacyScheduleEvents(
+ rows:readonly {
+  sectionId:string;courseSectionDeliveryId:string|null;
+  status:string;startsAt:Date;legacyWasDeleted?:boolean|null;
+ }[],
+ options:{sectionId:string;courseSectionDeliveryId?:string;now:Date},
+):number{
+ const time=options.now.getTime();
+ if(!Number.isFinite(time))throw new Error("Invalid attendance cutoff");
+ return rows.filter(row=>row.sectionId===options.sectionId&&
+  (options.courseSectionDeliveryId===undefined||
+   row.courseSectionDeliveryId===options.courseSectionDeliveryId)&&
+  row.status==="SCHEDULED"&&row.legacyWasDeleted!==true&&
+  Number.isFinite(row.startsAt.getTime())&&
+  row.startsAt.getTime()<=time).length;
+}

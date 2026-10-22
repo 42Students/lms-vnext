@@ -39,7 +39,21 @@ export function learnerApplicationHistoryTimeline(
           ? "Application withdrawn"
           : event.toStatus === "REJECTED"
             ? learnerApplicationRejectionLabel(event.fromStatus)
-            : "Application status updated",
+            : event.toStatus === "APPLIED"
+              ? "Application received"
+              : event.toStatus === "SHORTLISTED"
+                ? "Shortlisted"
+                : event.toStatus === "ASSESSMENT"
+                  ? "Assessment stage"
+                  : event.toStatus === "INTERVIEW"
+                    ? "Interview stage"
+                    : event.toStatus === "WAITLISTED"
+                      ? "Waitlisted"
+                      : event.toStatus === "OFFERED"
+                        ? "Offer stage"
+                        : event.toStatus === "HIRED"
+                          ? "Placement confirmed"
+                          : "Application status updated",
     }));
 }
 

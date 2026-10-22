@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import {
-  boolean,
   check,
   date,
   index,
@@ -618,4 +617,56 @@ export function effectiveAcademicClassDates(input:{
 }):{startDate:string;endDate:string}{
  return {startDate:input.startsOn??input.periodStartsOn,
   endDate:input.endsOn??input.periodEndsOn};
+}
+
+/** The old class_schedule row was not an enrolment or course-section record.
+ * Resolve every old numeric ID against the selected college before insertion:
+ * ClassSchedule.classId → sections.id (or GROUP_BACKED offering with active
+ * LMS group roster); courseId → course_section_deliveries.id through an
+ * authorized course/section pairing; facultyId → active faculty membership;
+ * lectureHallId → same-college lecture_halls.id. Its transient courseSlug is
+ * display provenance, never a cross-tenant access key. MarkedAt belongs in
+ * attendance_sessions; old deleted=true cancels the schedule event. */
+export const LEGACY_CLASS_SCHEDULE_FIELD_MAP={
+ id:"section_schedule_events.legacy_schedule_id",
+ classId:"section_schedule_events.section_id or group-backed delivery crosswalk",
+ courseId:"section_schedule_event_courses.course_section_delivery_id",
+ courseSlug:"section_schedule_events.legacy_course_slug",
+ facultyId:"section_schedule_events.faculty_membership_id",
+ lectureHallId:"section_schedule_events.lecture_hall_id",
+ title:"section_schedule_events.title",
+ startTime:"section_schedule_events.starts_at",
+ endTime:"section_schedule_events.ends_at",
+ markedAt:"attendance_sessions.marked_at",
+ isDeleted:"section_schedule_events.status=CANCELLED",
+ createdAt:"section_schedule_events.created_at",
+ updatedAt:"section_schedule_events.updated_at",
+} as const;
+
+/** Strictly parse unzoned historical MySQL ClassSchedule wall-clock instants
+ * as Asia/Kolkata time. Explicit offset/Z instants retain their own zone.
+ * Reject rollover dates and missing seconds, never rely on the server locale. */
+export function parseLegacyClassScheduleInstant(raw:string):Date{
+ const value=raw.trim().replace(" ","T");
+ const plain=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
+ const absolute=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/;
+ if(!plain.test(value)&&!absolute.test(value))
+  throw new Error("Legacy class schedule time needs documented timezone");
+ const instant=new Date(plain.test(value)?value+"+05:30":value);
+ if(!Number.isFinite(instant.getTime()))
+  throw new Error("Invalid class schedule time");
+ if(plain.test(value)){
+  const recovered=new Date(instant.getTime()+330*60_000).toISOString().slice(0,19);
+  if(recovered!==value)throw new Error("Invalid legacy civil date/time");
+ }
+ return instant;
+}
+/** Half-open interval overlap: touching endpoints are not a conflict. Caller
+ * must lock college schedule changes under pg_advisory_xact_lock or use a DB
+ * exclusion constraint before writing; this predicate alone is not race-safe. */
+export function legacySchedulesOverlap(
+ left:{startsAt:Date;endsAt:Date},right:{startsAt:Date;endsAt:Date},
+):boolean{
+ return left.startsAt.getTime()<right.endsAt.getTime()&&
+  right.startsAt.getTime()<left.endsAt.getTime();
 }
