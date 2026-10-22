@@ -103,9 +103,10 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
  const [refreshing,setRefreshing]=useState(false);
  const [stale,setStale]=useState(false);
  const [staleDismissed,setStaleDismissed]=useState(false);
+ const [accessDenied,setAccessDenied]=useState(false);
  const [lastRefreshAt,setLastRefreshAt]=useState<string|null>(null);
  const refreshInFlight=useRef(false);
- useEffect(()=>{setSnapshotRows(rows);setStale(false);setStaleDismissed(false);},[rows]);
+ useEffect(()=>{setSnapshotRows(rows);setStale(false);setStaleDismissed(false);setAccessDenied(false);},[rows]);
  async function refreshGrid(){
   if(!refreshHref||refreshInFlight.current)return;
   refreshInFlight.current=true;setRefreshing(true);
@@ -114,6 +115,13 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
     method:"GET",credentials:"same-origin",cache:"no-store",
     headers:{Accept:"application/json"},
    });
+   if(response.status===401||response.status===403){
+    // A revoked persisted TPO grant is not a transient network failure:
+    // retaining previously private rows here would disclose stale scoped data.
+    setSnapshotRows([]);setSelected([]);setStale(false);
+    setStaleDismissed(false);setAccessDenied(true);
+    return;
+   }
    if(!response.ok)throw new Error("Audit revalidation failed");
    const payload:unknown=await response.json();
    if(!payload||typeof payload!=="object"||!("items" in payload)||
@@ -123,6 +131,7 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
    setSnapshotRows(payload.items as TpoAuditRow[]);
    setStale(false);
    setStaleDismissed(false);
+   setAccessDenied(false);
    setSelected([]);
    setLastRefreshAt(new Date().toISOString());
   }catch{
@@ -183,6 +192,10 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
     loading={refreshing} disabled={refreshing}
     onClick={()=>void refreshGrid()}>{stale?"Retry audit refresh":"Refresh audit rows"}</Button>:null}
   </div>
+  {accessDenied?<p role="alert" className="border-l-2 border-error px-3 py-2 text-sm text-body">
+    Access to the audit log was denied. Previously loaded audit rows were cleared.
+    Return to your dashboard and reopen this page after your permissions are restored.
+   </p>:null}
   {stale && !staleDismissed?<div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm text-body">
    <p>This refresh failed. Showing the last successfully loaded audit rows on this page.
      Changes and totals cannot be verified until Retry succeeds.</p>
