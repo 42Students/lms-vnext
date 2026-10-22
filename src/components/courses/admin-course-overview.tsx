@@ -136,10 +136,11 @@ export function AdminCourseOverview({
             {course.name?.trim()||"Untitled course"}
           </Link>
           <p className="mt-1 text-xs font-semibold text-primary-text">{course.code}</p>
-          {(course.description || (courseBasePath.startsWith("/admin/") && (course.shortTitle || course.takeaways))) ? (
+          {(course.description || course.introductionHeading || (courseBasePath.startsWith("/admin/") && (course.shortTitle || course.takeaways))) ? (
             <Disclosure title="Course details" className="mt-2" contentClassName="space-y-2 px-2 pb-2 text-xs leading-5 text-muted-foreground">
               {courseBasePath.startsWith("/admin/") && course.shortTitle ? <p>Short display name: {course.shortTitle}</p> : null}
               {courseBasePath.startsWith("/admin/") && course.takeaways ? <p className="break-words">Takeaways: {course.takeaways}</p> : null}
+              {course.introductionHeading ? <p className="font-semibold text-body">In this Course Heading: {course.introductionHeading}</p> : null}
               {course.description ? <p className="max-w-xl break-words">{course.description}</p> : null}
             </Disclosure>
           ) : null}
