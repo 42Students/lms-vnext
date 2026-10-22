@@ -71,6 +71,7 @@ export function CreateProjectControl({
   const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
   const [displayStatus,setDisplayStatus]=useState<"PLANNED"|"ACTIVE"|"IN_PROGRESS"|"READY"|"BLOCKED">("PLANNED");
   const titleRef = useRef<HTMLInputElement|null>(null);
+  const templateRef = useRef<HTMLSelectElement|null>(null);
   const submitLock = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -182,6 +183,7 @@ export function CreateProjectControl({
     if (submitLock.current) return;
     setAttempted(true);
     if (!templateId || !templates.some(item => item.templateId === templateId)) {
+      templateRef.current?.focus();
       setError("Select a template to start from its sprint and task plan.");
       return;
     }
@@ -294,7 +296,11 @@ export function CreateProjectControl({
             className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">Templates</Link>}
         />
       ) : (
-        <Button size="sm" variant="secondary" disabled>No assigned templates</Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button size="sm" disabled>Create Project</Button>
+          <span className="text-xs text-body">Assign a published template to this college before creating a project.</span>
+          <Link href={basePath+"/templates"} className="text-xs font-semibold text-link underline">View templates</Link>
+        </div>
       )
     );
   }
@@ -310,6 +316,7 @@ export function CreateProjectControl({
               aria-label="Find assigned template" placeholder="Search by template title"
               value={templateQuery} onChange={event=>setTemplateQuery(event.target.value)}/>
             <Select
+              ref={templateRef}
               aria-invalid={attempted&&!templateId}
               required
               value={templateId}
@@ -446,7 +453,7 @@ export function CreateProjectControl({
                   key={mentor.membershipId}
                   value={mentor.membershipId}
                 >
-                  {mentor.displayName} · {mentor.membershipId}
+                  {mentor.displayName} · {mentor.membershipId.slice(0,8)}
                 </option>
               ))}
             </Select>
@@ -461,8 +468,7 @@ export function CreateProjectControl({
               {showClassSelector?"Remove class link":"Link to a class (optional)"}
             </Button>
             <p className="text-xs text-body">
-              Select college learners without including the entire class. Link a class only
-              to restrict the picker to an enrolled roster.
+              Select eligible students directly or add a whole class. You can remove individual students after using the class shortcut.
             </p>
           </div>
           {showClassSelector?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
