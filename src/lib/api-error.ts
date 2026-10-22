@@ -281,13 +281,11 @@ export function apiErrorResponse(error: unknown) {
     return respond(
       { error: error.code },
       {
-        status: error.code === "PLACEMENT_APPLICATION_RATE_LIMITED"
-          ? 429
-          : notFound.has(error.code)
-            ? 404
-            : forbidden.has(error.code)
-              ? 403
-              : 409,
+        status: notFound.has(error.code)
+          ? 404
+          : forbidden.has(error.code)
+            ? 403
+            : 409,
       },
     );
   }
@@ -321,11 +319,13 @@ export function apiErrorResponse(error: unknown) {
     return respond(
       { error: error.code },
       {
-        status: notFound.has(error.code)
-          ? 404
-          : forbidden.has(error.code)
-            ? 403
-            : 409,
+        status: error.code === "PLACEMENT_APPLICATION_RATE_LIMITED"
+          ? 429
+          : notFound.has(error.code)
+            ? 404
+            : forbidden.has(error.code)
+              ? 403
+              : 409,
       },
     );
   }
