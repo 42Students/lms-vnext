@@ -86,16 +86,16 @@ async function loadBranding(collegeId: string) {
 function toView(row: Awaited<ReturnType<typeof loadBranding>>): CollegeBrandingView {
   if (!row) return { ...EMPTY_BRANDING, version: 0 };
   return {
-    logoUrl: row.logoUrl,
-    faviconUrl: row.faviconUrl,
-    loginBackgroundUrl: row.loginBackgroundUrl,
-    loginBackgroundUrlMobile: row.loginBackgroundUrlMobile,
-    primaryColor: row.primaryColor,
-    secondaryColor: row.secondaryColor,
-    supportEmail: row.supportEmail,
-    supportPhone: row.supportPhone,
-    termsUrl: row.termsUrl,
-    privacyUrl: row.privacyUrl,
+    logoUrl: row.logoUrl ?? null,
+    faviconUrl: row.faviconUrl ?? null,
+    loginBackgroundUrl: row.loginBackgroundUrl ?? null,
+    loginBackgroundUrlMobile: row.loginBackgroundUrlMobile ?? null,
+    primaryColor: row.primaryColor ?? null,
+    secondaryColor: row.secondaryColor ?? null,
+    supportEmail: row.supportEmail ?? null,
+    supportPhone: row.supportPhone ?? null,
+    termsUrl: row.termsUrl ?? null,
+    privacyUrl: row.privacyUrl ?? null,
     version: row.version,
   };
 }
