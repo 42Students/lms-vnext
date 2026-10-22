@@ -4,6 +4,7 @@ import {
   desc,
   eq,
   sql,
+  count,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -54,6 +55,7 @@ export const PLACEMENT_SCREENING_PROVENANCE = {
   screenedAt: null,
   rankingPolicy: "SUBMISSION_TIME",
   rescreenPolicy: "MANAGER_REPAIR_ONLY",
+  immutableAlgorithmProvenance: "LEGACY_NOT_IMPORTED",
 } as const;
 
 /** The legacy single status is split across persisted vNext facts. A
@@ -260,6 +262,70 @@ export async function listPlacementScreeningQueue(
     );
 }
 
+/** Legacy job+organization+version screening page adapter. vNext has no
+ * automatic numeric screening run: the version gate can select only the
+ * imported job policy, NOT imply that numeric scores exist. Pages are bounded
+ * and stably ordered by manual status, submission instant and UUID. */
+export async function listPlacementScreeningQueuePage(
+ context:RequestContext,jobIdInput:string,raw:{
+  page?:number;size?:number;legacyScreeningVersion?:number;
+ }={},
+){
+ const jobId=placementJobIdSchema.parse(jobIdInput);
+ const page=raw.page??1,size=raw.size??25;
+ if(!Number.isInteger(page)||page<1||page>1000||
+  !Number.isInteger(size)||size<1||size>100)
+   throw new RangeError("Choose a valid screening page and size");
+ const [job]=await getDb().select({
+  id:placementJobs.id,collegeId:placementJobs.collegeId,
+  legacyScreeningVersion:placementJobs.legacyScreeningVersion,
+ }).from(placementJobs).where(eq(placementJobs.id,jobId)).limit(1);
+ if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ await requirePlacementManageScope(context,job.collegeId);
+ if(raw.legacyScreeningVersion!==undefined&&
+    (!Number.isInteger(raw.legacyScreeningVersion)||
+     raw.legacyScreeningVersion!==job.legacyScreeningVersion))
+   throw new RangeError("No persisted screening results for this algorithm version");
+ const scope=and(eq(placementApplications.jobId,jobId),
+  eq(placementApplications.status,"SUBMITTED"));
+ const [items,totalRows]=await Promise.all([
+  getDb().select({
+   screening:placementApplicationScreenings,
+   application:placementApplications,
+   roleOption:placementJobRoleOptions,
+   candidate:{membershipId:collegeMemberships.id,userId:users.id,
+    displayName:users.displayName,email:users.email,phoneE164:users.phoneE164},
+  }).from(placementApplicationScreenings)
+   .innerJoin(placementApplications,
+     eq(placementApplications.id,placementApplicationScreenings.applicationId))
+   .innerJoin(placementJobRoleOptions,
+     eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
+   .innerJoin(collegeMemberships,
+     eq(collegeMemberships.id,placementApplications.membershipId))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(scope)
+   .orderBy(asc(placementApplicationScreenings.status),
+     desc(placementApplications.submittedAt),asc(placementApplications.id))
+   .limit(size).offset((page-1)*size),
+  getDb().select({total:count()}).from(placementApplicationScreenings)
+   .innerJoin(placementApplications,
+     eq(placementApplications.id,placementApplicationScreenings.applicationId))
+   .where(scope),
+ ]);
+ return {
+  items:items.map(row=>({
+   ...row,overallScore:null,rank:null,scoreAvailable:false as const,
+   scoreUnavailableReason:"Automated screening scores were not migrated.",
+   algorithmVersion:job.legacyScreeningVersion,
+   screenedAt:null,decidedAt:row.screening.decidedAt,
+  })),
+  page,size,total:totalRows[0]?.total??0,
+  sort:"STATUS_SUBMITTED_AT_ID" as const,
+  scoreSortAvailable:false as const,
+  provenance:PLACEMENT_SCREENING_PROVENANCE,
+ };
+}
+
 export async function getPlacementScreening(
   context: RequestContext,
   applicationIdInput: string,
@@ -293,6 +359,12 @@ export async function getPlacementScreening(
     automatedScreening: {
       status: "NOT_RUN" as const, overallScore: null, skillsScore: null,
       educationScore: null, screenedAt: null, failureReason: null,
+    },
+    screeningTimes:{createdAt:null,screenedAt:null,decidedAt:row.screening.decidedAt},
+    immutableProvenance:{
+      legacyJobScreeningVersion:row.job.legacyScreeningVersion??null,
+      algorithmScore:null,algorithmActor:null,algorithmMethod:null,
+      decisionActor:row.screening.decidedByUserId,
     },
     history:
       await loadScreeningHistory(applicationId),
