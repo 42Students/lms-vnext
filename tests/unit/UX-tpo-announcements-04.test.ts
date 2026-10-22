@@ -6,6 +6,7 @@ describe("UX-tpo-announcements-04",()=>{
   expect(source).toContain("<Input");
   expect(source).toContain("<Textarea");
   expect(source).toContain("<Button");
-  expect(source).toContain('<input type="hidden" name="audience"');
+  expect(source).toContain("<TpoNoticeAudiencePicker");
+  expect(source).toContain('action="/api/placements/tpo/announcements"');
  });
 });

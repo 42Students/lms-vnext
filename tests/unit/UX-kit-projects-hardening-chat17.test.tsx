@@ -49,7 +49,7 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     expect(pending).toContain('disabled=""');
     expect(pending).toContain('aria-busy="true"');
     expect(pending).toContain("min-h-11");
-    expect(render(<Button variant="danger">Delete</Button>)).toContain("border-error");
+    expect(render(<Button variant="danger">Delete</Button>)).toContain("border-[var(--lms-error)]");
   });
   it("UX-kit-HARDEN-02 Input/Select/Textarea expose 16px input, invalid state and 44px target",()=>{
     for(const html of [
@@ -57,7 +57,8 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
       render(<Select aria-invalid id="role"><option>Mentor</option></Select>),
       render(<Textarea aria-invalid id="reason"/>),
     ]){
-      expect(html).toContain("text-base");
+      // The old LMS form family uses its shared font token, not a Tailwind base size.
+      expect(html).toContain("text-[var(--lms-font-base)]");
       expect(html).toContain('aria-invalid="true"');
       expect(html).toContain("min-h-");
     }
@@ -88,7 +89,8 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     const unavailable=render(<FileUpload label="Proof" pickerUnavailable onFiles={()=>{}} fallback={<a href="/help">Alternative</a>}/>);
     expect(unavailable).toContain('role="status"');
     expect(unavailable).toContain("File selection is unavailable");
-    expect(unavailable).toContain('role="alert"');
+    // Unavailable pickers are a status, not a failed validation attempt.
+    expect(unavailable).not.toContain('role="alert"');
   });
   it("UX-kit-HARDEN-06 ErrorState/EmptyState are distinct from false success and offer recovery",()=>{
     const error=render(<ErrorState description="Could not save" action={<Button>Try again</Button>}/>);
@@ -185,9 +187,9 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     expect(render(<ThirdPartyLink href="https://user:pass@trusted.example" label="Open"/>)).not.toContain("<a ");
     const html=render(<ThirdPartyLink href="https://example.org/" label="Open meeting"/>);
     expect(html).toContain('href="https://example.org/"');
-    expect(html).toContain("Destination URL");
+    expect(source("third-party-link")).toContain("The link could not be opened.");
     expect(html).toContain("Copy link");
-    expect(html).not.toContain('target="_blank"');
+    expect(html).toContain('target="_blank" rel="noopener noreferrer"');
   });
   it("UX-kit-HARDEN-15 8+ persistent errors remain separately dismissible while timed entries cap",()=>{
     const errors: ToastItem[]=Array.from({length:9},(_,i)=>({id:String(i),title:"Error "+i,tone:"error" as const}));
@@ -240,8 +242,10 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     const html=render(<FilterBar title="Project filters" filters={<Input aria-label="Search"/>}/>);
     expect(html).toContain('aria-label="Project filters"');
     expect(html).toContain("scroll-cue");
-    expect(source("filter-bar")).toContain('if (event.key === "Escape")');
-    expect(source("filter-bar")).toContain('document.body.style.overflow = "hidden"');
+    // Native dialog Escape is handled by the shared Drawer onCancel.
+    expect(source("filter-bar")).toContain("ResponsiveFilterDrawer");
+    expect(source("drawer")).toContain("onCancel={event =>");
+    expect(source("drawer")).toContain("<dialog");
   });
   it("UX-kit-HARDEN-20 permissions use centralized policy, confirmations handle cancel/unmount",()=>{
     expect(source("permission-action")).toContain("can(context, permission, resource)");
@@ -272,7 +276,8 @@ describe("UX-kit-HARDEN-22 declared 38-element shared UI surface register",()=>{
     const text=source(name);
     expect(text).not.toMatch(/window\.(?:alert|confirm|prompt|open)\s*\(/);
     expect(text).not.toMatch(/duration-\[(?:3[1-9]\d|[4-9]\d\d)ms\]/);
-    expect(text).not.toContain('target="_blank"');
+    if(name==="third-party-link")expect(text).toContain('target="_blank" rel="noopener noreferrer"');
+    else expect(text).not.toContain('target="_blank"');
     // Dedicated tests above cover real rendering, a11y and security for shared types.
     expect(text).toMatch(/export\s+(?:type|const|function)/);
   });

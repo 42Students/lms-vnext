@@ -16,8 +16,11 @@ describe("UX-HR-PAGES-07: recruiter and tracker page role, error and alias contr
   const guard=code.indexOf("hasActiveRecruiter(context)");
   expect(context).toBeGreaterThan(-1);
   expect(guard).toBeGreaterThan(context);
-  expect(code).toContain('redirect("/dashboard")');
-  expect(code).toContain('eyebrow="Recruiter"');
+  if(path==="hr/profile/page.tsx"){
+   expect(code).toContain('title="Recruiter profile access denied"');
+   expect(code).toContain('href="/dashboard"');
+  }else expect(code).toContain('redirect("/dashboard")');
+  expect(code).toContain("<PageHeader");
  });
  it("UX-HR-INPUT-07: malformed recruiter page filters keep a visible recovery path",()=>{
   const drives=read("hr/drives/page.tsx");
@@ -29,10 +32,10 @@ describe("UX-HR-PAGES-07: recruiter and tracker page role, error and alias contr
   expect(company).toContain('title="Invalid team filter"');
   const conversations=read("hr/conversations/page.tsx");
   expect(conversations).toContain("hrConversationQuerySchema.safeParse");
-  expect(conversations).toContain("Invalid conversation filters.");
+  expect(conversations).toContain('title="Invalid conversation filters"');
   const notifications=read("hr/notifications/page.tsx");
   expect(notifications).toContain("hrNotificationsQuerySchema.safeParse");
-  expect(notifications).toContain("Invalid inbox filter.");
+  expect(notifications).toContain('title="Invalid inbox filter"');
   expect(notifications).toContain("Reset");
   const calendar=read("hr/calendar/page.tsx");
   expect(calendar).toContain("validDay(");
@@ -42,7 +45,11 @@ describe("UX-HR-PAGES-07: recruiter and tracker page role, error and alias contr
   for(const [alias,target] of [
    ["home","home"],["drives","drives"],["profile","profile"],
   ]){
-   expect(read("recruiter/"+alias+"/page.tsx"))
+   const source=read("recruiter/"+alias+"/page.tsx");
+   if(alias==="home"){
+    expect(source).toContain('import HrHome from "@/app/(authenticated)/hr/home/page"');
+    expect(source).toContain("<HrHome searchParams={searchParams}/>");
+   }else expect(source)
     .toContain('export { default } from "@/app/(authenticated)/hr/'+target+'/page"');
   }
   expect(read("hr/messages/page.tsx")).toContain(

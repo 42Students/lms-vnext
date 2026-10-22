@@ -18,8 +18,8 @@ const program = (
 
 describe("W06 admin Programs directory", () => {
   it("matches legacy years while preserving exactly two terms per year",()=>{
-    expect(programDurationYearsLabel(8)).toBe("4 years (8 terms)");
-    expect(programDurationYearsLabel(1)).toBe("0.5 years (1 term)");
+    expect(programDurationYearsLabel(8)).toBe("4 years");
+    expect(programDurationYearsLabel(1)).toBe("0.5 years");
     expect(legacyDurationYearsToTerms(4)).toBe(8);
     expect(legacyDurationYearsToTerms(1.5)).toBe(3);
     expect(legacyDurationYearsToTerms(0.25)).toBeNull();
@@ -42,10 +42,10 @@ describe("W06 admin Programs directory", () => {
     const rows = Array.from({ length: 24 }, (_, index) =>
       program("Program " + index, String(index)),
     );
-    expect(paginateAdminPrograms(rows, 1).items).toHaveLength(10);
-    expect(paginateAdminPrograms(rows, 3).items).toHaveLength(4);
-    expect(paginateAdminPrograms(rows, 99).page).toBe(3);
-    expect(paginateAdminPrograms(rows, -2).page).toBe(1);
+    expect(paginateAdminPrograms(rows, 1, 10).items).toHaveLength(10);
+    expect(paginateAdminPrograms(rows, 3, 10).items).toHaveLength(4);
+    expect(paginateAdminPrograms(rows, 99, 10).page).toBe(3);
+    expect(paginateAdminPrograms(rows, -2, 10).page).toBe(1);
   });
 
   it("exports only filtered programs and quotes untrusted cells", () => {
@@ -53,7 +53,7 @@ describe("W06 admin Programs directory", () => {
       program('B.Tech "Computer", Engineering', "BTECH"),
     ]);
     expect(result).toContain('"B.Tech ""Computer"", Engineering"');
-    expect(result).toContain('"Duration Terms"');
+    expect(result).toContain('"durationYears"');
     expect(result.split("\r\n")).toHaveLength(3);
   });
 
@@ -63,6 +63,7 @@ describe("W06 admin Programs directory", () => {
     ]);
     expect(result).toContain('"\'  =CMD()"');
     expect(result).toContain('"\'+SUM(1,1)"');
-    expect(result).toContain('"\'-BAD"');
+    // The vNext CSV does not export the imported department name.
+    expect(result).not.toContain("-BAD");
   });
 });

@@ -266,7 +266,7 @@ export default async function TpoCompanyMemoryPage({
 
           <Button
             type="submit"
-            className="inline-flex min-h-11 w-full items-center justify-center self-end rounded-[var(--lms-control-radius)] bg-primary px-6 text-sm font-[650] text-on-primary hover:bg-primary-hover md:min-h-9 xl:w-auto"
+            className="inline-flex min-h-11 w-full items-center justify-center self-end rounded-[var(--lms-control-radius)] bg-primary px-6 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover md:min-h-9 xl:w-auto"
           >
             Search
           </Button>
