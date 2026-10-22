@@ -15,7 +15,7 @@ export default async function TpoPlacementDrivePage({
   searchParams,
 }: {
   params: Promise<{ jobId: string }>;
-  searchParams: Promise<{ publish?: string | string[]; tab?: string | string[] }>;
+  searchParams: Promise<{ publish?: string | string[]; tab?: string | string[]; roundId?: string | string[] }>;
 }) {
   const context = await getCurrentRequestContext();
   if (
@@ -43,7 +43,13 @@ export default async function TpoPlacementDrivePage({
   }
   const tab=Array.isArray(query.tab)?query.tab[0]:query.tab;
   if(tab&&["applicants","rounds","offers","drive-day","discussion","about","overview"].includes(tab)){
-    redirect(tpoDriveTabHref(jobId,tab==="overview"?"about":tab));
+    const roundId=Array.isArray(query.roundId)?query.roundId[0]:query.roundId;
+    // Preserve /tpo/drives/:jobId?tab=rounds-style deep links while the
+    // vNext tab is a routed page. Only UUID round anchors are accepted.
+    const focus=tab==="rounds"&&roundId&&
+      /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(roundId)
+      ? "#round-"+encodeURIComponent(roundId):"";
+    redirect(tpoDriveTabHref(jobId,tab==="overview"?"about":tab)+focus);
   }
   // Legacy opens About for requests and drafts, Applicants for live/closed
   // drives. The explicit publish workflow still stays in this root workspace.
