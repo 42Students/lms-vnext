@@ -40,7 +40,7 @@ async function scope(context:RequestContext){
  return requirePlacementManageScope(context,member.collegeId);
 }
 export async function tpoCampaignDraftStorageReady(){
- if(process.env.DB09_TPO_API_READY!=="DB09_VERIFIED")return false;
+ if(process.env["DB09_TPO_API_READY"]!=="DB09_VERIFIED")return false;
  try{
   const check=await getDb().execute<{ready:boolean}>(sql`select
    to_regclass('public.placement_tpo_campaign_drafts') is not null as ready`);
