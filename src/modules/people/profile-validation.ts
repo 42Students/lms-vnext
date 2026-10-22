@@ -73,9 +73,11 @@ const phoneValue = z
   .refine(
     (value) => {
       if (value === "") return true;
-      // Legacy contacts accept numeric digits only; separators and + prefixes
-      // must not bypass the 10–15 digit alternate-phone bound.
-      return /^\d{10,15}$/.test(value);
+      // Accept legacy international formatting while counting actual digits.
+      // Reject letters and other punctuation; separators never bypass the
+      // 10–15 digit bound.
+      return /^\+?[0-9][0-9 ()-]*$/.test(value) &&
+        /^\d{10,15}$/.test(value.replace(/\D/g, ""));
     },
     "Phone number must be 10-15 digits",
   )
