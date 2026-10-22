@@ -192,7 +192,7 @@ export function AdminCourseDisplayEditor({
               expectedUpdatedAt:metadata.updatedAt,
               ...(name!==metadata.name?{name:name.trim()}:{}),
               ...(code!==metadata.code?{code:code.trim()}:{}),
-              ...(shortTitle!==(metadata.shortTitle??"")?{shortTitle:shortTitle.trim()||name.trim().slice(0,255)}:{}),
+              ...(shortTitle!==(metadata.shortTitle??"")?{shortTitle:shortTitle.trim()||name.trim().slice(0,64)}:{}),
               ...(officialCode!==(metadata.officialCode??"")?{officialCode:officialCode.trim()||null}:{}),
               ...(cardColor!==(metadata.cardColor??"")?{cardColor:cardColor.trim()||null}:{}),
               ...(description!==(metadata.description??"")?{description:description.trim()||null}:{}),
@@ -267,7 +267,7 @@ export function AdminCourseDisplayEditor({
     bodyHtml !== (savedDisplay?.bodyHtml ?? "") ||
     takeaways !== (savedDisplay?.takeaways ?? []).join("\n") ||
     thumbnailUrl !== (savedDisplay?.thumbnailUrl ?? "");
-  const metadataIssue=Boolean(metadata&&(!name.trim()||!code.trim()||shortTitle.length>255||officialCode.length>40||
+  const metadataIssue=Boolean(metadata&&(!name.trim()||!code.trim()||shortTitle.length>64||officialCode.length>40||
     Boolean(cardColor.trim()&&!/^#[a-f0-9]{6}$/i.test(cardColor.trim()))));
   const thumbnailIssue = Boolean(
     thumbnailUrl.trim() && !uploadedThumbnail && !courseThumbnailUrlSchema.safeParse(thumbnailUrl.trim()).success,
