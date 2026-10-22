@@ -56,7 +56,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
  });
  it("PROJ-BREAK-archive-02 archived project IDs cannot be selected for readiness releases",()=>{
   const page=moduleSource("college-readiness-releases-service");
-  expect(page.match(/ne\(projectInstances.status,"ARCHIVED"\)/g)?.length).toBe(2);
+  expect(page.match(/ne\(projectInstances.status,"ARCHIVED"\)/g)?.length).toBe(3);
   expect(page).toContain("eq(projectInstances.collegeId,college.id)");
   expect(page).toContain("requirePermission(context");
  });
@@ -165,7 +165,8 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
  it("PROJ-BREAK-ux-01 admin and college Project screens preserve explicit empty/denied UX, no raw crash",()=>{
   const projectPage=source("src/app/(authenticated)/admin/projects/page.tsx");
   const collegePage=source("src/app/(authenticated)/college/projects/page.tsx");
-  expect(projectPage).toContain("<EmptyState");
+  expect(projectPage).toContain("<ErrorState");
+  expect(projectPage).toContain('emptyTitle={query.q||query.status?');
   expect(collegePage).toContain("Select a college to continue.");
   expect(collegePage).toContain('role="alert"');
   expect(collegePage).toContain('href="/dashboard"');

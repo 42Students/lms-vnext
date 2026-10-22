@@ -248,14 +248,14 @@ describe("recruiter calendar projection", () => {
     );
   });
 
-  it("reuses Monday-first week and shared month and agenda windows", () => {
+  it("preserves the Sunday-first legacy TPO calendar and rolling agenda windows", () => {
     const week = placementCalendarWindow(
       "2026-10-14",
       "week",
     );
 
-    expect(week.from).toBe("2026-10-12");
-    expect(week.to).toBe("2026-10-18");
+    expect(week.from).toBe("2026-10-11");
+    expect(week.to).toBe("2026-10-17");
     expect(week.days).toHaveLength(7);
 
     const month = placementCalendarWindow(
@@ -264,15 +264,15 @@ describe("recruiter calendar projection", () => {
     );
 
     expect(month.days).toHaveLength(42);
-    expect(month.days[0]).toBe("2026-09-28");
+    expect(month.days[0]).toBe("2026-09-27");
 
     const agenda = placementCalendarWindow(
       "2026-10-14",
       "agenda",
     );
 
-    expect(agenda.from).toBe("2026-10-01");
-    expect(agenda.to).toBe("2026-10-31");
+    expect(agenda.from).toBe("2026-10-14");
+    expect(agenda.to).toBe("2026-11-13");
   });
 
   it("does not invent events for an empty authorized portfolio", () => {

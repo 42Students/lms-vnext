@@ -20,7 +20,8 @@ describe("TPO-home-03 legacy seven-row contract",()=>{
   expect(rows[0].status).toContain("35 of 80 registered");
   expect(rows[0].needsAttention).toBe(true);
   expect(rows[1].status).toContain("3 live");
-  expect(rows[4].status).toBe("2 requests");
+  expect(rows[4].status).toContain("2 requests");
+  expect(rows[4].status).toContain("Messages unavailable");
   expect(rows[4].href).toBe("/tpo/requests");
  });
 });
