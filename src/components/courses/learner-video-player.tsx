@@ -69,7 +69,7 @@ export function LearnerVideoPlayer({
         }), keepalive,
       });
       if (!response.ok) {
-        if (!keepalive) setSaveError(await courseApiError(response));
+        if (!keepalive) setSaveError((await courseApiError(response)) ?? null);
         return;
       }
       const payload = await response.json() as {
