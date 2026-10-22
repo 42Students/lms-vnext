@@ -13,7 +13,7 @@ export async function GET(){
   const requests=await listOwnTpoGeneralRequests(ctx);
   const memberships=ctx.membership?await getDb().select({cohortId:learnerProgramEnrollments.cohortId}).from(learnerProgramEnrollments)
    .where(and(eq(learnerProgramEnrollments.membershipId,ctx.membership.id),eq(learnerProgramEnrollments.status,"ACTIVE"))).limit(2):[];
-  return NextResponse.json({requests,cohortId:memberships.length===1?memberships[0].cohortId:null},
+  return NextResponse.json({requests,cohortId:memberships.length===1?(memberships[0]?.cohortId??null):null},
   {headers:{"Cache-Control":"private, no-store"}});}
  catch(error){
   if(error instanceof TpoGeneralRequestError&&error.code==="UNAVAILABLE")
