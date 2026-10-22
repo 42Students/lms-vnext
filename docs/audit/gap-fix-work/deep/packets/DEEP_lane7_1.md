@@ -10,7 +10,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-4-031-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-4-031-071  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-5-005-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-5-006-044  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-5-006-044  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-5-007-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-5-009-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-5-011-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
@@ -26,3 +26,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-4-031-067: OK — `src/components/admin/college-signin-method-form.tsx:34,49-80` guards dirty navigation and reports dirty/busy to parent; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSignIn.js:78-88`.
 
 - G2-5-024-002: FIXED — commit `41305e4fc10fe11b31d590958087c04991ecdfc4`, `src/app/api/admin/onboarding/resolve-preview/route.ts:1-24`; adds a read-only guarded GET adapter to the existing globally scoped host preview, matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java:273-313` (the response uses the vNext tenant-resolution envelope).
+
+- G2-5-006-044: OK — `src/components/admin/super-admin-attendance-settings-editor.tsx:20-27,31-40,189-215` distinguishes effective defaults from saved college overrides, labels matching-default saved values separately, and provides whole-override reset with explicit warning; matches default/custom badges in `docs/legacy-source/frontend/src/components/admin/PolicySettingField.js:128-169`. Inheritance beyond college/default is explicitly not claimed.
