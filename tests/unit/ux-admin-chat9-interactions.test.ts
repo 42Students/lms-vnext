@@ -8,7 +8,8 @@ describe("chat-9 UX last-third substantive interactions",()=>{
   for(const slot of ["<DataTable","<Input","<Select","<Button","<Pagination"])expect(page).toContain(slot);
   expect(page).toContain('mobilePriority:"primary"');
   expect(page).toContain('mobilePriority:"action"');
-  expect(page).toContain("No semesters found. Create a program first, then add semesters.");
+  expect(page).toContain('title="No semesters found"');
+  expect(page).toContain("No semesters match these filters. Create a program first, then add semesters.");
   expect(page).toContain('hrefForPage={page=>pageHref({...data.query,page})}');
   expect(page).not.toContain("<table");
  });
