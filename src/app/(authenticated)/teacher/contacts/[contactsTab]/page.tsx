@@ -98,6 +98,12 @@ export default async function FacultyContactsPage({
 
   const baseHref =
     `/teacher/contacts/${contactsTab}`;
+  // Keep the legacy Contacts search and row-count preference when changing
+  // All Contacts / Teachers / Students. The role switch never changes access.
+  const tabQuery = new URLSearchParams();
+  if (search) tabQuery.set("q", search);
+  if (pageSize !== 10) tabQuery.set("pageSize", String(pageSize));
+  const tabSuffix = tabQuery.size ? `?${tabQuery.toString()}` : "";
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
@@ -105,7 +111,7 @@ export default async function FacultyContactsPage({
 
       <Tabs ariaLabel="Contacts sections" value={contactsTab} renderPanel={false}
         items={Object.entries(tabs).map(([key,tab])=>({
-          value:key,label:tab.label,href:`/teacher/contacts/${key}`,
+          value:key,label:tab.label,href:`/teacher/contacts/${key}${tabSuffix}`,
         }))} />
 
       <section aria-label="Contact directory results" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
