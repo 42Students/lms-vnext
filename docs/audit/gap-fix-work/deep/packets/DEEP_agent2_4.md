@@ -1,0 +1,7 @@
+# DEEP agent 2 / packet 4 — lane chat-13 verification
+
+## Results
+
+- **G2-2-015-092 — OK (source implementation, deployment conditional).** `src/db/schema/courses.ts:594,609-621` defines the existing attempt field, uniqueness on membership/content/attempt and latest-attempt index. `drizzle/0212_learner_content_progress_attempts.sql:4-9` replaces the legacy two-column unique index and creates the descending latest-attempt index; `drizzle/0098_academics_legacy_fidelity_columns.sql:4` already introduced the attempt column. Legacy reference: `docs/legacy-source/backend/src/main/resources/db/migration/V132__learner_content_progress_attempt.sql:19-32`. **Caveat:** 0212 explicitly says registration is gated until latest-attempt-aware readers and serialized resets are ready; source presence is not proof the migration has been deployed.
+
+- **G2-4-028-012 — OK (guarded remove path).** `src/app/(authenticated)/tpo/settings/team/page.tsx` renders `TpoSettingsTeamRemove` for each relevant team entry. `src/components/tpo/tpo-settings-team-manage.tsx` checks removal impact with a scoped API request before presenting an accessible in-page confirmation; disables removal while owned work remains, protects self and permanent roles, and reports failures without pretending success. Legacy reference: `docs/legacy-source/frontend/src/components/tpo/team/TeamPeople.jsx:79-86,161-164,228-244`. The new flow requires separately handing off owned work before retrying, rather than removing directly with an assignee selected in the same modal.
