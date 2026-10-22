@@ -103,7 +103,7 @@ export function TpoRoundDriveDayReadOnly({
   const lastSnapshotAt=useRef(Date.now());
   const [staleSnapshot,setStaleSnapshot]=useState(false);
   const [roomBusy,setRoomBusy]=useState<string|null>(null);
-  const inFlight=useRef(false);
+  const inFlightRef=useRef(false);
   const [pasteOpen,setPasteOpen]=useState(false);
   const [pasteText,setPasteText]=useState("");
   const [pasteBusy,setPasteBusy]=useState(false);
@@ -120,7 +120,7 @@ export function TpoRoundDriveDayReadOnly({
   useEffect(()=>{
     const timer=window.setInterval(()=>{
       if(Date.now()-lastSnapshotAt.current>60_000)setStaleSnapshot(true);
-      if(!inFlight.current&&!pasteOpen&&document.visibilityState==="visible")
+      if(!inFlightRef.current&&!pasteOpen&&document.visibilityState==="visible")
         router.refresh();
     },20_000);
     return ()=>window.clearInterval(timer);
@@ -152,8 +152,8 @@ export function TpoRoundDriveDayReadOnly({
     })).sort((a,b)=>a.room.localeCompare(b.room));
   },[data.rows]);
   async function callNext(student:RoundRow,room:string){
-    if(locked||inFlight.current||student.attendance!=="PRESENT")return;
-    inFlight.current=true;setRoomBusy(room);setGateError("");setGateSuccess("");
+    if(locked||inFlightRef.current||student.attendance!=="PRESENT")return;
+    inFlightRef.current = true;setRoomBusy(room);setGateError("");setGateSuccess("");
     try{
       const response=await fetch("/api/placements/tpo/drive-day/"+
         encodeURIComponent(data.round.id)+"/check-in",{
@@ -173,10 +173,10 @@ export function TpoRoundDriveDayReadOnly({
       router.refresh();
     }catch(error){
       setGateError(error instanceof Error?error.message:"Unable to call the next candidate.");
-    }finally{setRoomBusy(null);inFlight.current=false;}
+    }finally{setRoomBusy(null);inFlightRef.current = false;}
   }
   function prepareGate(){
-    if(locked||inFlight.current)return;
+    if(locked||inFlightRef.current)return;
     setGateError("");setGateSuccess("");setGateCandidates([]);
     const text=gateInput.trim();
     if(!text){setGateError("Enter a roll number.");return;}
@@ -197,8 +197,8 @@ export function TpoRoundDriveDayReadOnly({
     setGateTarget(match.student);
   }
   async function markPresent(student:RoundRow):Promise<boolean>{
-    if(locked||inFlight.current)return false;
-    inFlight.current=true;setGateBusy(true);
+    if(locked||inFlightRef.current)return false;
+    inFlightRef.current = true;setGateBusy(true);
     try{
       const response=await fetch(
         "/api/placements/tpo/drive-day/"+encodeURIComponent(data.round.id)+"/check-in",{
@@ -218,7 +218,7 @@ export function TpoRoundDriveDayReadOnly({
     }catch(error){
       setGateError(error instanceof Error?error.message:"Check-in failed.");
       return false;
-    }finally{setGateBusy(false);inFlight.current=false;}
+    }finally{setGateBusy(false);inFlightRef.current = false;}
   }
   const pastePreview=useMemo(()=>{
     const pasteTokens=pasteText.split(/[\n,;]+/).map(value=>value.trim()).filter(Boolean);
@@ -242,8 +242,9 @@ export function TpoRoundDriveDayReadOnly({
     return {matched,unresolved,unmatched,ambiguous,duplicates,tooMany:pasteTokens.length>50};
   },[data.rows,pasteText]);
   async function markPasted(){
-    if(locked||pasteBusy||inFlight.current||pastePreview.tooMany||pastePreview.matched.length===0)return;
-    setPasteBusy(true);inFlight.current=true;setPasteFailure("");setPasteFeedback("");
+    if(inFlightRef.current)return;
+    if(locked||pasteBusy||inFlightRef.current||pastePreview.tooMany||pastePreview.matched.length===0)return;
+    setPasteBusy(true);inFlightRef.current = true;setPasteFailure("");setPasteFeedback("");
     let done=0,already=0;
     const failed=[...pastePreview.unresolved];
     try{
@@ -276,7 +277,7 @@ export function TpoRoundDriveDayReadOnly({
         failed.length+" roll number(s) were unmatched, ambiguous or could not be saved. Review the remaining lines.");
       router.refresh();
       if(failed.length===0)setPasteOpen(false);
-    }finally{inFlight.current=false;setPasteBusy(false);}
+    }finally{inFlightRef.current = false;setPasteBusy(false);}
   }
   const summary = [
     ["On roster", data.counts.total],

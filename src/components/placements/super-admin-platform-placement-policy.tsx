@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,10 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
  const [busy,setBusy]=useState<string|null>(null);
  const [error,setError]=useState<string|null>(null);
  const [notice,setNotice]=useState<string|null>(null);
+ const mutationRef=useRef(false);
  async function refresh(){
+  if(mutationRef.current)return;
+  mutationRef.current = true;
   setBusy("reload");setError(null);
   try{
    const response=await fetch("/api/admin/placements/platform-policy",{cache:"no-store"});
@@ -21,15 +24,16 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
    const data=await response.json() as {fields:Field[]};
    setFields(data.fields);setDrafts({});setNotice("Current policy reloaded.");
   }catch(e){setError(e instanceof Error?e.message:"Unable to reload policy.");}
-  finally{setBusy(null);}
+  finally{setBusy(null);mutationRef.current = false;}
  }
  async function submit(field:Field,reset:boolean){
-  if(busy)return;
+  if(mutationRef.current||busy)return;
   const value=reset?null:Number(drafts[field.key]??String(field.value));
   if(value!==null&&(Number.isNaN(value)||value<field.min||value>field.max||
     (field.step===1&&!Number.isInteger(value)))){
     setError("Enter a value within the allowed range.");return;
   }
+  mutationRef.current = true;
   setBusy(field.key);setError(null);setNotice(null);
   try{
    const response=await fetch("/api/admin/placements/platform-policy",{
@@ -48,7 +52,7 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
    setNotice(reset?"Default restored.":"Policy saved.");
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Policy update failed.");}
-  finally{setBusy(null);}
+  finally{setBusy(null);mutationRef.current = false;}
  }
  return <section aria-labelledby="platform-placement-policy" aria-busy={Boolean(busy)} className="min-w-0 space-y-[var(--lms-space-4)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-4)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
