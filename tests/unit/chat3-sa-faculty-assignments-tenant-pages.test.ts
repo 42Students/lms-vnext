@@ -33,6 +33,15 @@ vi.mock("@/db/client", () => ({
             if (condition) state.filters.push(sqlPart(condition));
             return this;
           }
+          orderBy() {
+            return { limit: (pageSize: number) => ({
+              offset: async (value: number) => {
+                state.offset = value;
+                state.pageSize = pageSize;
+                return state.rows.slice(value, value + pageSize);
+              },
+            }) };
+          }
           as() {
             return {
               teacherName: fields.teacherName,

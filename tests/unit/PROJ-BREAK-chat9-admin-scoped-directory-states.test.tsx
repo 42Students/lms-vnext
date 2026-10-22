@@ -27,7 +27,7 @@ function display(value:unknown):string[]{
   if(Array.isArray(value))return value.flatMap(display);
   if(!isValidElement(value))return [];
   const p=value.props as Record<string,unknown>;
-  return ["children","title","description","href","action"].flatMap(key=>display(p[key]));
+  return ["children","title","description","href","action","empty"].flatMap(key=>display(p[key]));
 }
 const loader=async(raw:unknown):Promise<SuperAdminReadResult>=>{
   state.loaderCalls++;
@@ -95,7 +95,7 @@ describe("Super Admin last-third shared scoped directories: no false empties or 
   });
   it("UX-admin-directory-106 legitimate empty list remains a distinct zero-state",async()=>{
     const message=display(await render()).join(" ");
-    expect(message).toContain("0 matching records");
+    expect(message).toContain("No students found. Register students to get started.");
     expect(message).not.toContain("Directory totals are temporarily unavailable.");
     expect(message).not.toContain("Directory unavailable");
     expect(state.loaderCalls).toBe(4);
