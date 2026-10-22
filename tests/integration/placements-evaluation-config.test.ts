@@ -88,6 +88,9 @@ async function cleanup() {
   await pool.query(
     "delete from placement_application_status_history",
   );
+  // This registered FK child is retained by the newer college pipeline;
+  // clean it before applications without relaxing referential integrity.
+  await pool.query("delete from placement_college_application_stages");
   await pool.query(
     "delete from placement_applications",
   );
@@ -294,7 +297,7 @@ describe("Placement evaluation configuration", () => {
       {
         action: "SCHEDULE",
         scheduledAt:
-          new Date("2026-10-20T04:30:00.000Z"),
+          new Date("2035-10-20T04:30:00.000Z"),
         timezone: "Asia/Kolkata",
         mode: "VIRTUAL",
         meetingUrl:
