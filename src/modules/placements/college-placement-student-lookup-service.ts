@@ -16,7 +16,7 @@ export function collegeStudentLookupLabel(row:{
  name:string|null;email:string|null;roll:string|null;
  legacyLearnerId:number|null;membershipId:string;
 }):string{
- const name=row.name?.trim().replace(/\s+/g," ");
+ const name=row.name?.trim().replace(/\\s+/g," ");
  return name||row.email?.trim()||
   (row.legacyLearnerId!==null?"Student #"+row.legacyLearnerId:null)||
   row.roll?.trim()||"Student #"+row.membershipId;
@@ -36,7 +36,7 @@ export function formatCollegePlacementAppliedDate(at:Date|string|null|undefined)
 export async function suggestCollegePlacementLearners(ctx:RequestContext,raw:unknown){
  const q=z.string().trim().min(2).max(150).parse(raw);
  const collegeId=await requireCollegePlacementAdmin(ctx),db=getDb();
- const escaped=q.replace(/[\\%_]/g,"\\const escaped=q.replace(/[\\\\%_]/g,"\\$&");");
+ const escaped=q.replace(/[\\\\%_]/g,"\\$&");
  const people=await db.select({
   membershipId:collegeMemberships.id,name:users.displayName,
   roll:learnerProfiles.rollNumber,email:users.email,
