@@ -30,12 +30,13 @@ export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPrev
      await Promise.all(plan.ids.slice(offset,offset+previewConcurrency).map(async id=>{
        try {
          const record=await getTpoLearnerParticipation(context,id);
+         const reason=plan.action==="ELIGIBLE"&&record.direct.status==="ELIGIBLE"?
+           "Already eligible":plan.action==="INELIGIBLE"&&record.direct.status==="INELIGIBLE"?
+           "Already ineligible":plan.action==="CLEAR_OVERRIDE"&&record.direct.status===null?
+           "No direct override to clear":undefined;
          current.set(id,{version:tpoBulkStudentVersion(record.direct),
            ready:tpoBulkStudentReady(plan.action,record.direct.status),
-           ...( (plan.action==="ELIGIBLE"&&record.direct.status==="ELIGIBLE"?
-            "Already eligible":plan.action==="INELIGIBLE"&&record.direct.status==="INELIGIBLE"?
-            "Already ineligible":plan.action==="CLEAR_OVERRIDE"&&record.direct.status===null?
-            "No direct override to clear":undefined) !== undefined ? {reason:plan.action==="ELIGIBLE"&&record.direct.status==="ELIGIBLE"?"Already eligible":plan.action==="INELIGIBLE"&&record.direct.status==="INELIGIBLE"?"Already ineligible":"No direct override to clear"} : {})});
+           ...(reason===undefined?{}:{reason})});
        }catch(error){
          if(!(error instanceof AuthorizationError))throw error;
        }
