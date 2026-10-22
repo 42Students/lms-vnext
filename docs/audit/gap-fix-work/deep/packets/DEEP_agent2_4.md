@@ -2,7 +2,7 @@
 
 Rows still unchecked after the first deep pass. Each row ends OK (vNext file:line + docs/legacy-source file) or FIXED. DEFERRED is not allowed.
 
-- [x] G2-16-005-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [ ] G2-16-005-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-16-027-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-17-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
@@ -19,7 +19,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-2-017-052  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-017-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-017-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-017-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -36,6 +36,4 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 
 ## Results
 
-- OK G2-16-005-045 — `src/app/(authenticated)/tracker/logs/page.tsx:29-71` checks named active Super Admin request context before rendering the Cloud Logging explorer and logs denied/accepted access; the legacy `docs/legacy-source/frontend/src/pages/tracker/logs.js:770-815` used a browser-side session hint plus token refresh. The old password/session-hint bypass is intentionally not preserved: access now requires the authenticated server-side role, which is stricter than legacy.
-
-- **OK G2-16-005-045:** `src/app/(authenticated)/tracker/logs/page.tsx:45-85` requires an active, unscoped named Super Admin and explicitly retires password-only access; `src/app/api/tracker/live-logs/route.ts` guards GET/POST (POST also same-origin), `src/app/api/tracker/live-logs/export/route.ts` guards the export, and `src/app/api/tracker/issues/[publicId]/nearby-logs/route.ts` guards contextual reads. Legacy source `docs/legacy-source/frontend/src/pages/tracker/logs.js` uses `TrackerLogsAccessGate` and token refresh. Policy difference is intentional: password/session hints never independently grant Cloud Logging access. Static review only; tests not run.
+- **G2-4-017-018 FIXED (static specification):** `src/db/schema/projects.ts:229-240` records legacy recoverability separately from archive/delete, specifies retained child rows and safe restore constraints; `src/modules/projects/instance-service.ts:588-605` archives without deleting children. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:93-95`. No restore operation or runtime parity claimed. Commit `162a5b848095119a86baad213778aa725c42f8c6`.
