@@ -28,7 +28,8 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
    expect(service).toContain('eq(placementRoundResults.status,"APPLIED")');
    expect(service).toContain('eq(placementRoundResults.applicationId,placementApplications.id)');
    expect(service).toContain('eq(placementJoiningOutcomes.status,"JOINED")');
-   expect(service).toContain('const stageCondition=and(where,filters.stage==="ALL"?undefined:stageConditions[filters.stage])');
+   expect(service).toContain('const stageCondition=and(where,filters.stage==="ALL"?undefined:stageConditions[filters.stage],');
+   expect(service).toContain('activeMilestoneStage?eq(placementApplications.status,"SUBMITTED"):undefined');
    expect(service).toContain('const selectedTotal = stageCounts[filters.stage]');
    expect(page).toContain("HR_RECRUITER_STAGES.map");
    expect(page).toContain("stageCounts[stage]");
@@ -153,7 +154,8 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
  it("REC-home-drives-46 keeps inline legacy round controls and counts stage decisions",()=>{
   const editor=source("src/components/hr/recruiter-round-inline-editor.tsx");
   expect(editor).toContain("Company talk");
-  expect(editor).toContain("Online test");
+  expect(editor).toContain('["TEST","Test"]');
+  expect(editor).toContain('["VENDOR_TEST","Vendor test"]');
   expect(editor).toContain("Round added. The placement cell will set its date.");
   expect(editor).toContain("Round updated");
   expect(editor).toContain("Round removed");
@@ -194,7 +196,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(route).toContain('placementTableExists("placement_recruiter_private_reviews")');
   expect(route).toContain('error:"SERVICE_UNAVAILABLE"');
   expect(route).toContain('status:503,headers');
-  expect(route).toContain('if(!hasActiveRecruiter(context))');
+  expect(route).toContain('if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)');
   expect(route).toContain('status:404,headers');
   expect(route).toContain('"Cache-Control":"private, no-store"');
  });
@@ -227,7 +229,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   const component=source("src/components/hr/recruiter-conversation-reply-form.tsx");
   expect(component).toContain('document.addEventListener("click",intercept,true)');
   expect(component).toContain('title="Discard this unsent message?"');
-  expect(component).toContain('consequence="Your draft reply will be lost."');
+  expect(component).toContain('description="Your draft reply will be lost."');
   expect(component).toContain('if(href)router.push(href)');
   expect(component).toContain('runGuarded(()=>fetch(');
  });

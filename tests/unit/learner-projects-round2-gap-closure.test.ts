@@ -12,8 +12,8 @@ describe("learner/projects round-two gap verification",()=>{
   const page=source("src/app/(authenticated)/learn/projects/page.tsx");
   for(const status of ["ACTIVE","IN_PROGRESS","READY","BLOCKED"])
    expect(list).toContain(status);
-  for(const phrase of ['query.status==="IN_PROGRESS"','query.status==="READY"',
-   'query.status==="BLOCKED"'])expect(page).toContain(phrase);
+  for(const status of ['"IN_PROGRESS"','"READY"','"BLOCKED"'])expect(page).toContain(status);
+  expect(page).toContain('status: statusSchema.safeParse(status).data');
  });
  it("LEARNER-projects-06 shows legacy loading failure Retry and both empty messages",()=>{
   expect(source("src/app/(authenticated)/learn/projects/error.tsx")).toContain("Projects could not be loaded");
@@ -26,8 +26,8 @@ describe("learner/projects round-two gap verification",()=>{
   const listPage=source("src/app/(authenticated)/learn/projects/page.tsx");
   expect(listPage).toContain('<PageHeader title="Projects" description="Choose a project to open its workspace." />');
   const s=workspace();
-  expect(s).toContain('title={workspace.project.title}');
-  expect(s).toContain('workspace.project.summary ?? undefined');
+  expect(s).toContain('title={workspace.project.title?.trim()||"Workspace"}');
+  expect(s).toContain('workspace.project.summary??undefined');
  });
  it("LEARNER-projects-14 displays task donut lane counts empty state and signoff note",()=>{
   const s=workspace();expect(s).toContain('aria-label="Task completion donut"');
@@ -45,9 +45,9 @@ describe("learner/projects round-two gap verification",()=>{
   expect(s).toContain("No meetings yet.");
  });
  it("LEARNER-projects-21 shows project team role explanation and roster count",()=>{
-  const s=workspace();expect(s).toContain('"Project team"');
-  expect(s).toContain("See who is assigned, what role they play, and how the project is staffed.");
-  expect(s).toContain("member(s)");
+  const s=workspace();expect(s).toContain("Project team · Works on assigned tasks and shared submissions");
+  expect(s).toContain('mode==="LEARNER"?workspace.members.map');
+  expect(s).toContain('workspace.members.length + " member"');
  });
  it("LEARNER-projects-34 distinguishes no resource, malformed address and popup failures",()=>{
   const s=source("src/components/projects/project-resource-open-link.tsx");
