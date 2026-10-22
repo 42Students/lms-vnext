@@ -978,9 +978,10 @@ export function normalizeLegacyProjectBlueprint(raw:unknown):unknown{
  ]));
  const tasks=normalizeRows(input.tasks).map(row=>{
    const original=String(row.key??row.taskKey??row.title??"task");
-   if(original.length>120)throw new Error("Legacy task key exceeds 120 characters");
+   // Retain invalid original keys for field-specific Zod errors, rather than
+   // throwing during conversion or truncating a historical identifier.
    const key=unique(original,taskSeen);
-   const legacyKey=original!==key&&original.length<=120?original:undefined;
+   const legacyKey=original!==key?original:undefined;
    const oldSprint=typeof row.sprintKey==="string"?row.sprintKey:"";
    return {...row,key,legacyKey,
      sprintKey:oldSprint?(sprintMap.get(oldSprint)||null):null,

@@ -500,7 +500,7 @@ export function ProjectTemplateActions({
             }}
           >
             {assignedToSelectedCollege
-              ? "Revoke selected college"
+              ? "Remove from college"
               : "Assign selected college"}
           </Button>
         ) : null}

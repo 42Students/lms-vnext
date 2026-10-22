@@ -51,12 +51,18 @@ export function LearnerProjectMobileFilters({query}:{query:ProjectParticipantLis
         <div className={label+" w-full sm:w-[300px]"}>
           <label htmlFor="learner-project-search">Search</label>
           <div className="relative min-w-0">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground">
+              <circle cx="10.5" cy="10.5" r="6.5"/>
+              <path d="m16 16 5 5"/>
+            </svg>
             <Input id="learner-project-search" type="search" name="search"
               aria-label="Search my projects" autoComplete="off"
               maxLength={100} value={search}
               onChange={event=>scheduleSearch(event.target.value)}
               placeholder="Search project title, course or slug"
-              className={"min-h-11 w-full pr-11 "+(search?"[background-image:none]":"")} />
+              className={"min-h-11 w-full pl-10 pr-11 "+(search?"[background-image:none]":"")} />
             {search ? (
               <Button type="button" variant="ghost" size="icon-sm" aria-label="Clear project search"
                 className="absolute inset-y-0 right-0 my-auto"
