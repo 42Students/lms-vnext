@@ -786,7 +786,7 @@ export function FacultyLessonAuthoring({
           onSubmit={submit}
         >
           <fieldset disabled={submitting}>
-            {error ? <Alert tone="error" className="mb-4">{error}</Alert> : null}
+            {error ? <Alert tone="error" role="alert" className="mb-4">{error}</Alert> : null}
             {pendingPublish?.mode===mode&&pendingPublish.lessonId===lessonId&&
               pendingPublish.deliveryId===deliveryId?
               <div className="mb-4 flex flex-wrap items-center gap-3 rounded-md border border-amber-200 bg-amber-50 p-3">
