@@ -123,13 +123,13 @@ export async function registerCollegeStudent(context: RequestContext, raw: unkno
       const doc = learnerProfileDocumentSchema.parse({
         ...existing.document,
         personalDetails: {
-          ...(typeof existing.document.personalDetails === "object" && existing.document.personalDetails !== null
-            ? existing.document.personalDetails : {}),
+          ...(typeof existing.document["personalDetails"] === "object" && existing.document["personalDetails"] !== null
+            ? existing.document["personalDetails"] : {}),
           gender: input.gender, dateOfBirth: input.dateOfBirth,
         },
         address: {
-          ...(typeof existing.document.address === "object" && existing.document.address !== null
-            ? existing.document.address : {}),
+          ...(typeof existing.document["address"] === "object" && existing.document["address"] !== null
+            ? existing.document["address"] : {}),
           currentAddress: input.address,
         },
       });
