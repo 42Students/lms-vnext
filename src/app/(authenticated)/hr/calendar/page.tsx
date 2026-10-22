@@ -257,9 +257,16 @@ export default async function HrCalendarPage({
   const view =
     VIEWS.find(
       (candidate) => candidate === requestedView,
-    ) ?? "agenda";
+    ) ?? "week";
 
-  const window = placementCalendarWindow(anchor, view);
+  // Recruiter legacy calendar starts on Monday and displays seven days by default.
+  // Other placement calendars retain their own Sunday-first week conventions.
+  const window = view === "week" ? (() => {
+    const weekday = new Date(anchor + "T12:00:00Z").getUTCDay();
+    const monday = shiftCareerCalendarDay(anchor, "day", -(weekday === 0 ? 6 : weekday - 1));
+    const days = Array.from({ length: 7 }, (_, index) => shiftCareerCalendarDay(monday, "day", index));
+    return { from: days[0]!, to: days[6]!, days };
+  })() : placementCalendarWindow(anchor, view);
   const grants = context.recruiter?.grants ?? [];
   const requestedCollegeId = first(query.collegeId);
   if (requestedCollegeId && (!z.string().uuid().safeParse(requestedCollegeId).success ||
