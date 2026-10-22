@@ -4,6 +4,7 @@ import { Alert } from "@/components/ui/alert";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCollegeDriveOverview } from "@/modules/placements/college-drive-overview-service";
@@ -21,6 +22,14 @@ export default async function CollegeDriveOverviewPage({ params }: {
     <ErrorState title="Admin not assigned to a college"
       description="Contact your administrator for a College Admin assignment before opening a placement drive."
       action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+  </div>;
+  // A direct/bookmarked URL must honor the same optional-module switch as
+  // navigation. Do not fetch job, applicant or pipeline data when disabled.
+  const access = await resolveOptionalModuleAccess(context);
+  if (!access.placements.enabled) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Drive overview"/>
+    <Alert tone="warning">Placements is disabled for this college. Contact your administrator to enable the Placements module.</Alert>
+    <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to Drives</Link>
   </div>;
   const {jobId}=await params;
   const [jobResult,overviewResult,funnelResult,attentionResult]=await Promise.allSettled([
