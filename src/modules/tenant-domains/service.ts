@@ -330,7 +330,7 @@ export async function editTenantDomainHost(
   if(domain.host!==input.expectedHost)
     throw new TenantDomainServiceError("DOMAIN_HOST_STALE");
   if(input.host===domain.host)return domain;
-  const base=managedBaseDomain(process.env.TENANT_MANAGED_BASE_DOMAIN,true);
+  const base=managedBaseDomain(process.env["TENANT_MANAGED_BASE_DOMAIN"],true);
   if(base&&(domain.host.endsWith("."+base)||input.host.endsWith("."+base)))
     throw new TenantDomainServiceError("MANAGED_HOST_EDIT_UNSUPPORTED");
   return repository.editDomainHost({
