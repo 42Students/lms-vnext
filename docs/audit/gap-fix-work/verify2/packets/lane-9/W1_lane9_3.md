@@ -129,7 +129,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 
 ## Chat-18 fast verification triage (2026-10-22)
 
-- G2-17-029-014: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-17-029-014: DEFERRED — chat interval and progress-save keys are labeled STORED_ONLY in legacy-setting-specs.ts, but complete consumer inventory remains unverified.
 - G2-17-029-016: OK — Stored-only scheduling override is explicitly labeled with 0..1440 bounds and non-effective cutoff.
 - G2-19-019-014: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
 - G2-12-005-006: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
@@ -151,6 +151,6 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - G2-18-018-035: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
 - G2-18-018-039: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
 - G2-19-022-007: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
-- G2-14-008-022: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-14-008-022: OK — learner-playback-settings.ts defaults progress saving to 15000ms and accepts bounded global overrides of 5000–600000ms; player wiring still needs runtime confirmation.
 - G2-14-008-036: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
 - G2-14-008-037: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
