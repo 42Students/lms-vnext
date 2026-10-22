@@ -3,9 +3,12 @@ import {createProjectTemplateInputSchema} from "./validation";
 export type TemplateCreateRelease={key:string;title:string;description:string};
 export type TemplateCreateSprint={key:string;releaseKey:string;title:string;
   description:string;goal:string;dueLabel:string};
-export type TemplateCreateTask={key:string;sprintKey:string;title:string;
-  description:string;priority:"LOW"|"MEDIUM"|"HIGH"|"CRITICAL";acceptanceCriteria:string};
-export type TemplateCreateResource={key:string;title:string;url:string;description:string};
+export type TemplateCreateTask={key:string;sprintKey:string|null;title:string;
+  description:string;priority:"LOW"|"MEDIUM"|"HIGH"|"CRITICAL";acceptanceCriteria:string;
+  taskType?:"STORY"|"BUG"|"CHORE"|"SPIKE";dueLabel?:string;approach?:string;
+  estimatePoints?:number};
+export type TemplateCreateResource={key:string;title:string;url:string;description:string;
+  type?:"LINK"|"PDF"|"DOCUMENT"|"SLIDES"|"VIDEO"|"FILE"};
 
 /** Compatibility with the first-release draft as well as the old repeating
  * Create Template workflow. Row keys are stable across reorders and edits.
@@ -27,10 +30,10 @@ export function initialSuperAdminTemplateDraft(input:{
   description:input.releaseDescription??""}];
  const sprints=input.sprints??[{key:"sprint-1",releaseKey:"release-1",
   title:input.sprint??"Sprint 1",description:input.sprintDescription??"",goal:"",dueLabel:""}];
- const tasks=input.tasks??[{key:"task-1",sprintKey:"sprint-1",title:input.task??"",
+ const tasks:readonly TemplateCreateTask[]=input.tasks??[{key:"task-1",sprintKey:"sprint-1",title:input.task??"",
   description:input.taskDescription??"",acceptanceCriteria:input.acceptanceCriteria??"",
   priority:(input.priority??"MEDIUM") as TemplateCreateTask["priority"]}];
- const resources=input.resources??(input.resourceTitle?.trim()||input.resourceUrl?.trim()
+ const resources:readonly TemplateCreateResource[]=input.resources??(input.resourceTitle?.trim()||input.resourceUrl?.trim()
   ?[{key:"resource-1",title:input.resourceTitle??"",url:input.resourceUrl??"",description:""}]
   :[]);
  const clean=(value:string)=>value.trim();
@@ -72,9 +75,13 @@ export function initialSuperAdminTemplateDraft(input:{
     sequence:sprints.slice(0,index).filter(s=>s.releaseKey===row.releaseKey).length,
    })),
    tasks:tasks.map((row,index)=>({
-    key:clean(row.key),sprintKey:clean(row.sprintKey),title:clean(row.title),
+    key:clean(row.key),sprintKey:row.sprintKey?clean(row.sprintKey):null,
+    title:clean(row.title),taskType:row.taskType??"STORY",
     ...(clean(row.description)?{description:clean(row.description)}:{}),
     ...(clean(row.acceptanceCriteria)?{acceptanceCriteria:clean(row.acceptanceCriteria)}:{}),
+    ...(clean(row.dueLabel??"")?{dueLabel:clean(row.dueLabel??"")}:{}),
+    ...(clean(row.approach??"")?{approach:clean(row.approach??"")}:{}),
+    ...(row.estimatePoints!==undefined?{estimatePoints:row.estimatePoints}:{}),
     priority:row.priority,
     sequence:tasks.slice(0,index).filter(t=>t.sprintKey===row.sprintKey).length,
    })),
@@ -82,7 +89,7 @@ export function initialSuperAdminTemplateDraft(input:{
     key:clean(row.key),title:clean(row.title),
     ...(clean(row.url)?{url:clean(row.url)}:{}),
     ...(clean(row.description)?{description:clean(row.description)}:{}),
-    required:false,sequence,
+    type:row.type??"LINK",required:false,sequence,
    })),
   },
  };
