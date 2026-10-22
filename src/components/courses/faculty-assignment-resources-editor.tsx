@@ -298,7 +298,9 @@ export function FacultyAssignmentResourcesEditor({
      </div>
      <p className="text-xs text-muted-foreground">
       Existing learner submissions lock resource changes. A saved PDF or File is not public;
-      only a clean, verified object can be included in an assignment.
+      only a clean, verified object can be included in an assignment. You can also
+      choose a downloaded or locally synced Drive file for private upload;
+      a public Drive URL is not treated as an imported binary file.
      </p>
     </div>:null}
     {error?<Alert tone="error">{error}</Alert>:null}

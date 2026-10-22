@@ -46,7 +46,7 @@ export async function commandFacultyAssignment(
   }
   const normalizedResources=("resources" in input&&input.resources!==undefined)
     ?await attestFacultyAssignmentResources(context,delivery.collegeId,input.resources,
-      input.action==="EDIT"?input.assignmentId:undefined):undefined;
+      input.action==="EDIT"||input.action==="RESOURCES"?input.assignmentId:undefined):undefined;
   try{
     return await getDb().transaction(async tx=>{
       const [liveDelivery]=await tx.select({id:courseSectionDeliveries.id,endedAt:courseSectionDeliveries.endedAt})
