@@ -29,10 +29,10 @@ function SettingsLayout({children}:{children:ReactNode}){
   <PageHeader title="Settings" description="How your placement cell runs"/>
   <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-[13.5rem_minmax(0,1fr)] md:gap-6">
    <TpoSettingsNav active="rules"/>
-   <main className="min-w-0 space-y-5" aria-label="Placement rules settings">
+   <section className="min-w-0 space-y-5" aria-label="Placement rules settings">
     <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Placement rules</h2>
     {children}
-   </main>
+   </section>
   </div>
  </div>;
 }
