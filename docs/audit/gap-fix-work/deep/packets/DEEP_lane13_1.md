@@ -12,13 +12,15 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-12-023-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-12-023-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-15-021-048  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
-- [ ] G2-20-006-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
+- [x] G2-20-006-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-20-009-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-20-009-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [x] G2-20-009-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [x] G2-20-009-054  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 
 ## Results
+
+- OK G2-20-006-032 — `src/app/page.tsx:224-229` wires verified college sign-in to `LoginForm`, which accepts only policy-enabled EMAIL/PHONE contact, and `src/components/auth/login-form.tsx:263-280` validates those identifiers before requesting OTP. The legacy DGIPUC roll-number login and its `Roll number is required` validation at `docs/legacy-source/frontend/src/loginPages/DgipucLogin.js:105-121` have been retired rather than silently accepted as a credential; restoring its message to an email/phone field would falsely advertise unsupported roll-number authentication. `src/components/auth/dgipuc-sign-in.tsx:10-24` retains only the legacy Student/Teacher visual switch without granting a role. This closes the conditional requirement **if DGIPUC roll-number login is preserved**; it is not preserved.
 
 - OK G2-20-009-032 — `src/modules/storage/r2-config.ts:45-82` requires a dedicated production `R2_PRIVATE_BUCKET` and rejects reuse of the legacy `R2_BUCKET_NAME`; `docs/architecture/r2-vnext-cutover.md` requires old-public-URL depublication and signed-owner-scope checks before any historical migration is certified. This intentionally removes legacy public bucket behavior documented in `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/R2StorageUtils.java:276-282`. This is a secure design/cutover contract, not a claim production has been provisioned.
 - OK G2-20-009-054 — `src/modules/storage/r2-config.ts:45-82` does not accept the public bucket as production storage, while `src/modules/storage/private-object-storage.ts:269-310` signs attested private GET grants rather than returning public R2 URLs. It intentionally replaces the public fallback at `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/R2StorageUtils.java:276-282`; operator provisioning and signed-GET verification remain explicit requirements in `docs/architecture/r2-vnext-cutover.md`.
