@@ -7,9 +7,9 @@ import {
 const collegeId = "20000000-0000-4000-8000-000000000001";
 
 describe("DB09-A V162 TPO placement settings validation", () => {
-  it("allows legacy placement counting stages and partial rule updates", () => {
+  it("allows released and accepted offer counting stages and partial rule updates", () => {
     for (const countsAsPlacedAt of [
-      "SELECTED", "OFFER_RELEASED", "OFFER_ACCEPTED",
+      "OFFER_RELEASED", "OFFER_ACCEPTED",
     ]) {
       expect(
         placementCollegeRulesPatchSchema.parse({
@@ -28,6 +28,7 @@ describe("DB09-A V162 TPO placement settings validation", () => {
     const base = { collegeId, expectedVersion: 0 };
     for (const extra of [
       { countsAsPlacedAt: "OFFER_PENDING" },
+      { countsAsPlacedAt: "SELECTED" },
       { maxHeldOffers: 0 },
       { upliftPct: -1 },
       { minResponseHours: 0 },
