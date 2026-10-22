@@ -14,7 +14,8 @@ describe("chat-16 public and auth-adjacent page rendering",()=>{
    expect(html).toContain('href="'+href+'"');
   }
   expect(html).toContain("Build employable graduates. Create stronger talent pipelines.");
-  expect(html).toContain('aria-label="Public navigation"');
+  expect(html).toContain('aria-label="Product"');
+  expect(html).toContain('aria-label="Get started"');
   expect(html).toContain('application/ld+json');
  });
  it("UX-chat16-public-universities-02 provides a campus-specific overview and next step",()=>{
@@ -40,7 +41,8 @@ describe("chat-16 public and auth-adjacent page rendering",()=>{
   expect(demoMetadata.title).toBe("Request a Demo — 42 LMS");
   expect(html).toContain("See 42 LMS in action");
   expect(html).toContain("What to expect");
-  expect(html).toContain('href="mailto:hello@42lms.com?subject=Request%20a%20Demo"');
+  expect(html).toContain('href="mailto:hello@42lms.com?subject=');
+  expect(html).toContain('&amp;body=');
   expect(html).toContain("No form data is collected on this page.");
   expect(html).not.toContain("<form");
  });

@@ -69,7 +69,9 @@ describe("UX-admin-courses-content-audit-01 Super Admin scoped courses and conte
    expect(src).toContain("AdminAssessmentDirectory");
   }
   const ui=read("src/components/courses/admin-assessment-read-directory.tsx");
-  expect(ui).toContain("Open offering builder / submissions");
+  expect(ui).toContain('href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}');
+  expect(ui).toContain("<SuperAdminAssignmentSubmissionsDialog");
+  expect(ui).toContain("<SuperAdminQuizSubmissionsDialog");
   expect(ui).toContain("AdminQuizResultsActions");
   expect(ui).toContain("CollegeAssignmentReview");
   expect(ui).toContain("CollegeQuizAttempts");
@@ -82,8 +84,8 @@ describe("UX-admin-courses-content-audit-01 Super Admin scoped courses and conte
   expect(overview).toContain("a learner completion percentage is available only");
   expect(students).toContain("studentCourseCompletion");
   expect(students).toContain("No completion percentage is available until work is assigned.");
-  expect(students).toContain('aria-label="Per student progress table"');
-  expect(students).toContain('className="w-full min-w-[860px] border-collapse text-left text-sm tabular-nums"');
+  expect(students).toContain('aria-label="Per student progress"');
+  expect(students).toContain('<DataTable caption="Student Course Progress"');
   expect(students).toContain("No students in this section.");
   expect(students).toContain('aria-label="Student course progress pages"');
  });

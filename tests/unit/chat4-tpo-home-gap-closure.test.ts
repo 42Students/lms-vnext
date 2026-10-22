@@ -46,7 +46,8 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   expect(unknown[0].status).toBe("Batch");
   expect(unknown[2].status).toBe("Registration data unavailable");
   expect(unknown[3].status).toBe("Recruiter data unavailable");
-  expect(unknown[4].status).toBe("Requests unavailable · Messages unavailable");
+  expect(unknown[4].status).toBe("Messages unavailable");
+  expect(rows({pendingRequests:null,messages:null})[4].status).toBe("Requests unavailable · Messages unavailable");
   expect(unknown[5].status).toBe("Team updates unavailable");
   const known=rows({recruiterLeads:3,followUps:2,recruiterAccess:1});
   expect(known[3].status).toBe("3 recruiters · 2 follow-ups today · 1 new account to approve");
