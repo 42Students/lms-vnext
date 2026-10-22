@@ -3,12 +3,17 @@
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-2-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
 - [ ] `tests/unit/HR-BREAK-chat15-company-report-archive-31.test.ts` (1 failing)
-- [ ] `tests/unit/UX-learning-cross-audit-chat17.test.ts` (2 failing)
-- [ ] `tests/unit/chat17-verify2b-contact-more-parity.test.ts` (1 failing)
+- [x] `tests/unit/UX-learning-cross-audit-chat17.test.ts` (2 failing)
+- [x] `tests/unit/chat17-verify2b-contact-more-parity.test.ts` (1 failing)
 - [ ] `tests/unit/chat3-verify2-retention-and-assignments.test.ts` (1 failing)
 - [ ] `tests/unit/chat7-round3-faculty-contracts.test.ts` (1 failing)
-- [ ] `tests/unit/db04-profile-document-format.test.ts` (1 failing)
+- [x] `tests/unit/db04-profile-document-format.test.ts` (1 failing)
 - [ ] `tests/unit/tpo-drives-chat-3-round4.test.ts` (1 failing)
+
+## Repairs on chatgpt/chat-2-b (static checks; CI not run)
+- `UX-learning-cross-audit-chat17.test.ts`: `31cfcf602895d12447f9ec0679c1bd3eee2aef28` and `dd0528d6a09e06ef7c28066032d0e0ae82300824` — retained safe HTTPS links and removed new-tab navigation.
+- `chat17-verify2b-contact-more-parity.test.ts`: `6a130ed59f3f367bf7a711be6dee2753afbd9f8e` — eliminated obsolete overlay reference in source comment while keeping direct More route.
+- `db04-profile-document-format.test.ts`: `fb9a905f513786136332be96f4cbf23b8b401f86` — accept formatted numeric phone and reject alphabetic input.
 
 ## Failures (from CI log)
 
