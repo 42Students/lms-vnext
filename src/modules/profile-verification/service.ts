@@ -163,7 +163,7 @@ export async function reviewProfileVerification(
       : false;
     return planVerificationReview({
       existing, expectedVersion: input.expectedVersion, action: input.action,
-      actor: reviewer, reason: input.reason, documentsReviewedAndAccepted, now,
+      actor: reviewer, ...(input.reason !== undefined ? { reason: input.reason } : {}), documentsReviewedAndAccepted, now,
     });
   });
 }
