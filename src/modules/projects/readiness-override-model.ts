@@ -24,3 +24,9 @@ export function isDuplicateProjectReadinessOverride(
   if (priorState !== next.state) return false;
   return next.state === "CLEAR" || current.note === next.note;
 }
+
+/** Old override: true forces unlock; false forces block; null restores the evaluator.
+ * Never coerce strings or numbers, which older REST handlers also rejected. */
+export function legacyBooleanProjectReadinessState(value:boolean|null):ReadinessOverrideState {
+  return value===null?"CLEAR":value?"FORCE_UNLOCK":"FORCE_BLOCK";
+}
