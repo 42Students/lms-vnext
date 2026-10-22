@@ -41,7 +41,7 @@ export function learnerEducationValidationProblem(input:{
  // Historical EducationDTO permits an ungraded qualification. Preserve a
  // partially completed draft; grading becomes validated only when supplied.
  // Screening-specific completeness belongs to the placement eligibility flow.
- const examYear=String(input.examDetails?.passingYear??"").trim();
+ const examYear=String(input.examDetails?.["passingYear"]??"").trim();
  if(examYear && (!/^\d{4}$/.test(examYear)||Number(examYear)<1900||Number(examYear)>2200))
   return {field:"examDetails.passingYear",message:"Enter a valid four-digit exam year (1900–2200)"};
  if(input.isCurrentlyPursuing&&input.endYear?.trim()&&Number(input.endYear)<new Date().getUTCFullYear())
@@ -58,7 +58,6 @@ export function learnerEducationValidationProblem(input:{
  if(!grade)return null;
  if(input.gradingType!=="CGPA"&&input.gradingType!=="Percentage")return null;
  const num=Number(grade);
- const max=input.gradingType==="CGPA"?10:100;
  if(!Number.isFinite(num)||num<0||
     (input.gradingType==="Percentage"&&num>100))
   return {field:"gradeObtained",message:"Enter a "+input.gradingType+

@@ -57,8 +57,8 @@ export async function provisionPlatformIdentity(
   }).parse(rawInput);
   const identity = await resolveOrCreateIdentity(
     {
-      phoneE164: input.phoneE164,
-      email: input.email,
+      ...(input.phoneE164 !== undefined ? {phoneE164: input.phoneE164} : {}),
+      ...(input.email !== undefined ? {email: input.email} : {}),
       displayName: input.displayName,
     },
     dependencies.identityDirectory,
@@ -67,16 +67,12 @@ export async function provisionPlatformIdentity(
   // OTP delivery, session revocation and selected-college authorization are
   // enforced by their separate runtime services, not by provisioning. A
   // canonical identity alone must never grant an active college session.
+  const resolvedPhone = identity.phoneNumber ?? input.phoneE164;
+  const resolvedEmail = identity.email ?? input.email;
   const persisted=await dependencies.repository.persistResolvedIdentity({
     identityUid: identity.uid,
-    phoneE164:
-      identity.phoneNumber ??
-      input.phoneE164 ??
-      undefined,
-    email:
-      identity.email ??
-      input.email ??
-      undefined,
+    ...(resolvedPhone !== undefined ? {phoneE164: resolvedPhone} : {}),
+    ...(resolvedEmail !== undefined ? {email: resolvedEmail} : {}),
     displayName: input.displayName,
   });
   // Persisting a user neither sends an invitation nor establishes that the
