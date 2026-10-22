@@ -9,7 +9,8 @@ const editor = readFileSync(
 describe("mentor empty sprint workflow", () => {
   it("MEN-projects-meetings-R06 has truthful empty state and actionable first step", () => {
     expect(workspace).toContain('workspace.releases.length===0');
-    expect(workspace).toContain("No sprints yet. Add the sprints this project should be measured against.");
+    expect(workspace).toContain('title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}');
+    expect(workspace).toContain("Add the sprints this project should be measured against.");
     expect(workspace).toContain('href="#mentor-project-add-release"');
     expect(workspace).toContain('id="mentor-project-add-release"');
     expect(workspace).toContain("This workspace is read-only, so sprints cannot be added.");
