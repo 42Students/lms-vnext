@@ -54,9 +54,9 @@ export function planLegacyLectureHallImport(input:{
     throw new Error("Historic room identity is not mapped to this college");
   const roomType=LEGACY_ROOM_TYPES[input.legacyRoomTypeOrdinal];
   if(!roomType)throw new Error("Historic room type requires review");
-  const departmentId=input.legacyDepartmentId===null?null:
+  const departmentId=(input.legacyDepartmentId===null||input.legacyDepartmentId===0)?null:
     mapping.departmentByLegacyId.get(input.legacyDepartmentId);
-  if(input.legacyDepartmentId!==null&&!departmentId)
+  if(input.legacyDepartmentId!==null&&input.legacyDepartmentId!==0&&!departmentId)
     throw new Error("Historic room department needs a college-scoped mapping");
   if(!input.name?.trim()||!Number.isSafeInteger(input.capacity)||
     input.capacity<1||input.capacity>5000)
