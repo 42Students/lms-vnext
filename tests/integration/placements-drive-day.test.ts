@@ -15,6 +15,7 @@ import {
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { replacePlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
+import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import {
   createPlacementJob,
   publishPlacementJob,
