@@ -52,9 +52,9 @@ export default async function SuperAdminProjectPage({
           eq(projectInstances.collegeId,collegeId),
           isNull(projectInstances.deletedAt),
           legacyId!==null?eq(projectInstances.legacyProjectId,legacyId):
-            eq(projectInstances.slug,legacySlug!),
+            eq(projectInstances.slug,legacySlug ?? ""),
         )).limit(2);
-      if(candidates.length===1)canonicalId=candidates[0]!.id;
+      if(candidates.length===1)canonicalId=candidates[0]?.id ?? null;
     }
   }
   if(!canonicalId)return <ErrorState title="Could not load this workspace."
