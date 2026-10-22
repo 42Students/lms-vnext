@@ -2,7 +2,7 @@ import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {sortTpoBatchWorkingPriority} from "@/modules/placements/tpo-batch-priority-sort-model";
 const page=()=>readFileSync("src/app/(authenticated)/tpo/batches/page.tsx","utf8");
-const a={id:"active",name:"Alpha",finishedAt:null,endYear:2099};
+const a={id:"active",name:"Alpha",finishedAt:null,endYear:2099,state:"IN_PLACEMENTS"};
 const b={id:"with-students",name:"Bravo",finishedAt:null,endYear:2100};
 const c={id:"empty",name:"Charlie",finishedAt:null,endYear:2101};
 const d={id:"finished",name:"Delta",finishedAt:new Date("2099-02-01T00:00:00Z"),endYear:2102};
@@ -20,7 +20,7 @@ describe("TPO Batches resilient working set",()=>{
   const ui=page();
   expect(ui).not.toContain("migration is pending.");
   expect(ui).not.toContain("storage is registered.");
-  expect(ui).toContain("Some batch details are temporarily unavailable.");
+  expect(ui).toContain("Some batch details are temporarily unavailable; academic batches remain visible.");
  });
  it("TPO-batches-28 treats optional counts as independently fallible without hiding the batch list",()=>{
   const ui=page();
@@ -33,7 +33,8 @@ describe("TPO Batches resilient working set",()=>{
  });
  it("GR-38 does not show zero when a KPI could not be loaded",()=>{
   expect(page()).toContain('{data.ready&&value!==null?value:"—"}');
-  expect(page()).toContain('journey===null?"—"');
+  expect(page()).toContain("const placedCount=journey===null?null:");
+  expect(page()).toContain('data.ready&&value!==null?value:"—"');
  });
  it("GR-72 keeps the academic batch directory usable on secondary-service failure",()=>{
   const ui=page();
@@ -46,7 +47,8 @@ describe("TPO Batches resilient working set",()=>{
   const overview=readFileSync("src/app/(authenticated)/tpo/batches/[batchId]/page.tsx","utf8");
   expect(reader).toContain("startYear:sql<number|null>");
   expect(reader).toContain("endYear:sql<number|null>");
-  expect(overview).toContain("← Placement eligibility");
+  expect(overview).toContain("Placement eligibility");
+  expect(overview).toContain("tpoBatchReturnHref(query.returnTo)");
   expect(overview).toContain("tpoBatchPlacementState");
   expect(overview).toContain("batch.endYear");
  });
