@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useRef,
   useState,
   useTransition,
@@ -60,6 +61,7 @@ export function PersonOnboardDialog({
   const [bio,setBio]=useState("");
   const [fieldError,setFieldError]=useState<{ field: string; message: string } | null>(null);
   const [discardOpen,setDiscardOpen]=useState(false);
+  const [leaveHref,setLeaveHref]=useState<string|null>(null);
   const [profileIncomplete,setProfileIncomplete]=useState(false);
   const [onboardError,setOnboardError]=useState("");
   const [roles, setRoles] = useState<MembershipRole[]>(
@@ -82,12 +84,34 @@ export function PersonOnboardDialog({
     setRoles(onboardingRoleSelection(forcedRole));
   }
 
-  function isDirty() {
-    return Boolean(displayName.trim() || firstName.trim() || lastName.trim() || phoneE164.trim() ||
+  const dirty=Boolean(displayName.trim() || firstName.trim() || lastName.trim() || phoneE164.trim() ||
       email.trim() || registerAsMentor || departmentId || facultyType || gender || dateOfBirth ||
       address.trim() || bio.trim() ||
       (!forcedRole && roles.join(",") !== onboardingRoleSelection(forcedRole).join(",")));
-  }
+  function isDirty() { return dirty; }
+  useEffect(()=>{
+    if(!open||(!dirty&&!pending))return;
+    const beforeUnload=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    const interceptLink=(event:MouseEvent)=>{
+      if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.altKey||
+         event.metaKey||event.shiftKey||!(event.target instanceof Element))return;
+      const anchor=event.target.closest("a[href]");
+      if(!(anchor instanceof HTMLAnchorElement)||anchor.hasAttribute("download")||
+         (anchor.target&&anchor.target!=="_self"))return;
+      const next=new URL(anchor.href,window.location.href);
+      if(next.origin!==window.location.origin||
+         (next.pathname===window.location.pathname&&next.search===window.location.search))return;
+      event.preventDefault();event.stopPropagation();
+      if(pending){showToast({tone:"info",title:"Wait until onboarding finishes."});return;}
+      setLeaveHref(next.pathname+next.search+next.hash);
+    };
+    window.addEventListener("beforeunload",beforeUnload);
+    document.addEventListener("click",interceptLink,true);
+    return ()=>{
+      window.removeEventListener("beforeunload",beforeUnload);
+      document.removeEventListener("click",interceptLink,true);
+    };
+  },[open,dirty,pending,showToast]);
   function requestClose() {
     if (pending || inFlightRef.current) return;
     if (isDirty() && !profileIncomplete) { setDiscardOpen(true); return; }
@@ -380,6 +404,11 @@ export function PersonOnboardDialog({
           </fieldset> : null}
         </div>
       </Dialog>
+      <ConfirmDialog open={leaveHref!==null} onOpenChange={open=>{if(!open)setLeaveHref(null);}}
+        title="Leave without saving administrator details?"
+        description="This college's unsaved administrator fields will be discarded."
+        confirmLabel="Leave without saving" confirmVariant="danger" pending={pending}
+        onConfirm={()=>{if(!leaveHref||pending)return;const target=leaveHref;setLeaveHref(null);reset();setOpen(false);router.push(target);}}/>
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
         title="Discard unsaved onboarding details?"
         description="Your unsaved changes will be lost."
