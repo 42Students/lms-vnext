@@ -318,7 +318,7 @@ export function LectureHallManager({
           <h2 className="mb-[var(--lms-space-3)] text-base font-semibold text-foreground">Existing Lecture Halls / Rooms</h2>
           <div className="flex min-w-0 flex-wrap gap-2 print:hidden">
             <label htmlFor="hall-search" className="sr-only">Search halls</label>
-            <Input id="hall-search" type="search" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Search halls" className="min-h-9 w-44"/>
+            <Input id="hall-search" type="search" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Search halls" className="min-h-11 w-full md:min-h-9 md:w-44"/>
             <Button type="button" size="sm" variant="secondary" disabled={pending} loading={pending} onClick={()=>startTransition(()=>router.refresh())}>Refresh</Button>
             <Button type="button" size="sm" variant="secondary" disabled={pending||visibleHalls.length===0} onClick={exportCsv}>Export CSV</Button>
           </div>

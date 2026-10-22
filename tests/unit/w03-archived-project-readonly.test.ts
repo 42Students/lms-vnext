@@ -18,7 +18,8 @@ const mentorPage = readFileSync(
 describe("W03 archived project read-only UI contract", () => {
   it("derives one read-only flag from persisted ARCHIVED status", () => {
     expect(workspace).toContain('workspace.project.status === "ARCHIVED"');
-    expect(workspace).toContain("Archived workspace · read only");
+    expect(workspace).toContain('{archived?"Archived workspace"');
+    expect(workspace).toContain('const readOnly = archived || workspace.project.status === "COMPLETED"');
     expect(workspace).toContain("Mutations are disabled");
   });
 
