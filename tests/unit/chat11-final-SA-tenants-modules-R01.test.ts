@@ -23,7 +23,8 @@ describe("Super Admin control-page overview final sprint",()=>{
   for(const word of ["Runtime configuration","Settings with explicit execution scope","Documented controls","Stored keys","Editing"])
    expect(settings).toContain(word);
   expect(features).toContain("adminControlScopeTag(context.adminScope)");
-  expect(access).toContain("getModuleAccessOverviewMetrics(context,result.items.map(item=>item.id))");
+  expect(access).toContain("getModuleAccessOverviewMetrics(context, [collegeId])");
+  expect(access).toContain("if (!collegeId) {");
   expect(settings).toContain("editorData?.ready?editorData.entries.length");
  });
  it("SA-tenants-modules-R01 never inflates visible module counts with disabled or duplicate settings",()=>{

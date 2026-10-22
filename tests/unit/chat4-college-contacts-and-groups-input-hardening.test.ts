@@ -35,8 +35,8 @@ describe("College Admin contact directory and study-group export boundaries", ()
     for (const value of ["0x14", "2e1", " 20", "+20", "20.0", "20 ", "100"]) {
       expect(() => parseCollegeContactsSearchParams({ pageSize: value })).toThrow();
     }
-    expect(parseCollegeContactsSearchParams({page:"-1"}).page).toBe(1);
-    expect(parseCollegeContactsSearchParams({page:"0"}).page).toBe(1);
+    expect(() => parseCollegeContactsSearchParams({page:"-1"})).toThrow();
+    expect(() => parseCollegeContactsSearchParams({page:"0"})).toThrow();
     expect(parseCollegeContactsSearchParams({pageSize:"0"}).pageSize).toBe(10);
     expect(() => parseCollegeContactsSearchParams({ page: ["1", "2"] })).toThrow();
     expect(() => parseCollegeContactsSearchParams({ unknownTenant: member })).toThrow();
