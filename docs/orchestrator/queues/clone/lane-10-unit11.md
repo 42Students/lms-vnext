@@ -177,9 +177,7 @@ AssertionError: expected 'import {\n  and,\n  asc,\n  count,\n …' to contain '
 ```
 
 
-## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+## Deep rows (from DEEP_agent2_4.md)
 
-Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
-
-- [ ] G2-2-010-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-4-018-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-2-010-025 — OK: all attendance policy writes require Super Admin at the service boundary; read-only legacy college-admin controller verified; [chat-10] dfbb239e.
+- [ ] G2-4-018-074 — legacy project-delivery soft-delete and retention mapping still requires verification against the import model.
