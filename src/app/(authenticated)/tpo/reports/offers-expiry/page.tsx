@@ -27,12 +27,12 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
     <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
-        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Reports</Link>{process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Reports</Link>{process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
           className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-[650] text-on-primary">
           Export CSV
         </a> : null}</div>}
       />
-      {process.env.DB09_TPO_API_READY !== "DB09_VERIFIED" ? (
+      {process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED" ? (
         <Alert tone="warning">CSV export is unavailable until the DB09 verification gate is enabled.</Alert>
       ) : null}
       <form action="/tpo/reports/offers-expiry" method="get"

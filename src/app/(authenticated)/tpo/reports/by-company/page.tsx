@@ -55,28 +55,28 @@ export default async function TpoByCompanyReportPage({
   if(!viewQuery.success)return <section className="min-w-0 space-y-3"><PageHeader title="Invalid company report filters" /><Alert tone="error"><p className="mt-2 text-sm text-body">Check search length and page number.</p><Link href="/tpo/reports/by-company" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Clear filters</Link></Alert></section>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
-    seasonId: first(query.seasonId) || undefined,
-    jobId: first(query.jobId) || undefined,
+    ...(first(query.seasonId) ? {seasonId:first(query.seasonId)} : {}),
+    ...(first(query.jobId) ? {jobId:first(query.jobId)} : {}),
   });
 
   const view=paginateCompanyReport(workspace.report.byCompany,viewQuery.data);
   const companyLinks=buildTpoCompanyReportLinks(view.rows);
-  const href=(page:number)=>companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page});
+  const href=(page:number)=>companyReportViewHref({...(workspace.selectedSeasonId ? {seasonId:workspace.selectedSeasonId} : {}),...(workspace.selectedJobId ? {jobId:workspace.selectedJobId} : {}),q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page});
   return (
     <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="By company"
-        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/by-company"].description}
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/by-company"]?.description??""}
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <ReportCsvLink workspace={workspace} kind="by-company" />
-          <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
-            jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})+"&all=1"}
+          <a href={tpoCompanyPageCsvHref({...(workspace.selectedSeasonId ? {seasonId:workspace.selectedSeasonId} : {}),
+            ...(workspace.selectedJobId ? {jobId:workspace.selectedJobId} : {}),q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})+"&all=1"}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-[var(--lms-control-height)]">
             Export all {view.total} filtered companies CSV
           </a>
-          <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
-            jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})}
+          <a href={tpoCompanyPageCsvHref({...(workspace.selectedSeasonId ? {seasonId:workspace.selectedSeasonId} : {}),
+            ...(workspace.selectedJobId ? {jobId:workspace.selectedJobId} : {}),q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-[var(--lms-control-height)]">
             Export visible companies CSV
           </a>
@@ -108,7 +108,7 @@ export default async function TpoByCompanyReportPage({
       <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope. Export all filtered companies for every matching row, or export only this visible page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
       {view.total===0&&companyReportHasUserFilters(view.query)?<EmptyState title="No company records match these filters within the selected reporting scope." action={
-        <Link href={companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined})}
+        <Link href={companyReportViewHref({...(workspace.selectedSeasonId ? {seasonId:workspace.selectedSeasonId} : {}),...(workspace.selectedJobId ? {jobId:workspace.selectedJobId} : {})})}
           className="mt-3 inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline">
           Clear company filters
         </Link>}/>:null}
