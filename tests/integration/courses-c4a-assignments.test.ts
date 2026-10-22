@@ -1,4 +1,5 @@
 import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
+import { randomUUID } from "node:crypto";
 import {
   afterAll,
   beforeEach,
@@ -39,7 +40,7 @@ import {
   submitCourseAssignment,
 } from "@/modules/courses/assignment-submission-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
+
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -88,15 +89,20 @@ const faculty: RequestContext = {
   },
 };
 
+// Dedicated disposable learner: other PG suites reuse the seeded learner for placement access.
+// Never change an unrelated program enrollment just to set up assessment tests.
+const c4aUserId=randomUUID();
+const c4aMembershipId=randomUUID();
+const c4aEmail="c4a-"+c4aUserId+"@example.test";
 const learner: RequestContext = {
   user: {
-    id: SEED_IDS.learnerUser,
-    identityUid: "seed-learner",
+    id: c4aUserId,
+    identityUid: "c4a-"+c4aUserId,
     platformStatus: "ACTIVE",
     systemRoles: [],
   },
   membership: {
-    id: SEED_IDS.learnerCollegeAMembership,
+    id: c4aMembershipId,
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
@@ -105,7 +111,6 @@ const learner: RequestContext = {
 };
 
 async function cleanupC4A() {
-  await releaseSeedLearnerPlacementEnrollment(pool);
   await pool.query(
     `delete from assignment_submissions
      where assignment_id in (
@@ -317,7 +322,7 @@ async function createStructure() {
       collegeAdmin,
       {
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          c4aMembershipId,
         programId: program.id,
         cohortId: cohort.id,
       },
@@ -363,6 +368,19 @@ async function createStructure() {
 
 beforeEach(async () => {
   await cleanupC4A();
+  // Keep canonical identities for immutable audit references after the suite.
+  await pool.query(
+    "INSERT INTO users(id,identity_uid,display_name,email,platform_status) VALUES($1,$2,'C4A Learner',$3,'ACTIVE') ON CONFLICT(id) DO NOTHING",
+    [c4aUserId,"c4a-"+c4aUserId,c4aEmail],
+  );
+  await pool.query(
+    "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE') ON CONFLICT(id) DO NOTHING",
+    [c4aMembershipId,c4aUserId,SEED_IDS.collegeA],
+  );
+  await pool.query(
+    "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER') ON CONFLICT(membership_id,role) DO NOTHING",
+    [c4aMembershipId],
+  );
 });
 
 afterAll(async () => {
@@ -522,7 +540,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
       assignmentId: assignment.id,
       deliveryId: structure.deliveryA.id,
       membershipId:
-        SEED_IDS.learnerCollegeAMembership,
+        c4aMembershipId,
       submissionType: "TEXT",
       gradePublished: false,
       pointsAwarded: null,
@@ -685,9 +703,9 @@ describe("courses C4A assignments against PostgreSQL", () => {
       expect.objectContaining({
         id: submitted.id,
         version: 0,
-        learnerDisplayName: "Seed Learner",
+        learnerDisplayName: "C4A Learner",
         learnerEmail:
-          "learner.seed@example.com",
+          c4aEmail,
       }),
     ]);
 

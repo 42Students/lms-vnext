@@ -17,11 +17,11 @@ fixture=newLearnerCareerCalendarFixture();await seedLearnerCareerCalendarFixture
 const f=fixture;requestId=randomUUID();
 const approved=new Date("2026-10-17T06:00:00Z");
 await pool.query(
-"INSERT INTO placement_learner_requests(id,application_id,learner_membership_id,request_type,round_id,scope_key,reason,effect_payload,status,requested_by_user_id,decided_by_user_id,decided_at) VALUES($1,$2,(SELECT membership_id FROM placement_applications WHERE id=$2),'ROUND_RESCHEDULE',$3,$4,'Schedule adjustment', $5::jsonb,'APPROVED',$6,$7,now())",
+"INSERT INTO placement_learner_requests(id,application_id,learner_membership_id,request_type,round_id,scope_key,reason,effect_payload,status,requested_by_user_id,decided_by_user_id,decided_at) VALUES($1,$2,$8,'ROUND_RESCHEDULE',$3,$4,'Schedule adjustment', $5::jsonb,'APPROVED',$6,$7,now())",
 [requestId,f.applicationId,f.roundId,"learner-reschedule-"+requestId,JSON.stringify({
 scheduledAt:approved.toISOString(),timezone:"Asia/Kolkata",mode:"VIRTUAL",
 meetingUrl:"https://calendar.example.test/new-interview",
-}),f.drive.learner.ids.user,SEED_IDS.collegeAdminUser]);
+}),f.drive.learner.ids.user,SEED_IDS.collegeAdminUser,f.drive.learner.ids.membership]);
 await pool.query(
 "INSERT INTO placement_application_round_exceptions(id,application_id,round_id,request_id,scheduled_at,timezone,mode,meeting_url) VALUES($1,$2,$3,$4,$5,'Asia/Kolkata','VIRTUAL',$6)",
 [randomUUID(),f.applicationId,f.roundId,requestId,approved,"https://calendar.example.test/new-interview"]);
