@@ -125,7 +125,16 @@ export async function GET(request:Request,{params}:RouteContext){
  }
  const download=values[0]==="1";
  const query=download?{"response-content-disposition":'attachment; filename="'+fileName(displayName??key)+'"'}:undefined;
- const signed=presignUrl(config,{method:"GET",key,expiresSeconds:900,query});
+ let signed:string;
+ try{
+  signed=presignUrl(config,{method:"GET",key,expiresSeconds:900,query});
+ }catch{
+  // Signing failure is an unavailable dependency, never an unhandled 500
+  // or a disclosure of R2 credentials to the learner.
+  return Response.json({error:"COURSE_FILE_UNAVAILABLE",
+   message:"Cannot sign Resource file URL"},
+   {status:503,headers:{"Cache-Control":"private, no-store"}});
+ }
  // Legacy clients can opt into an authorized JSON link response; browser
  // navigation retains the download/playback redirect and R2 Range support.
  if(request.headers.get("accept")?.includes("application/json"))
