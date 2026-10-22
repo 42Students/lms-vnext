@@ -69,7 +69,7 @@ describe("Super Admin placement lookup — real service orchestration of bounded
     expect(result.students[0]?.truncated).toBe(true);
     expect(result.students[1]?.placed).toBe(false);
     expect(selectDistinct).toHaveBeenCalledTimes(1);
-    expect(select).toHaveBeenCalledTimes(11);
+    expect(select).toHaveBeenCalledTimes(21);
     expect(mocks.requireCollegePlacementAdmin).toHaveBeenCalledWith(admin);
   });
 
