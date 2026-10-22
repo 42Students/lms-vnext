@@ -3,9 +3,9 @@
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-3-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
 - [x] `tests/unit/HR-BREAK-chat15-superadmin-tracker-scope-67.test.ts` (4 failing)
-- [ ] `tests/unit/UX-superadmin-import-tables-chat17.test.ts` (1 failing)
+- [x] `tests/unit/UX-superadmin-import-tables-chat17.test.ts` (1 failing)
 - [x] `tests/unit/chat19-clone-sidebar-checkpoint.test.ts` (1 failing)
-- [ ] `tests/unit/chat4-college-ux-round5.test.ts` (1 failing)
+- [x] `tests/unit/chat4-college-ux-round5.test.ts` (1 failing)
 - [x] `tests/unit/chat7-semester-layout-verify2b.test.ts` (1 failing)
 - [x] `tests/unit/faculty-assessment-report.test.ts` (1 failing)
 - [ ] `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` (1 failing)
@@ -203,3 +203,6 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 
 - `HR-BREAK-chat15-superadmin-tracker-scope-67.test.ts`: FIXED in `deb168c261a8e2e75551fa43c32b8667bdcf66a7`; mock denied-access audit persistence for isolated unit test while retaining asserted audit call and production fail-closed policy.
 - `chat19-clone-sidebar-checkpoint.test.ts`: FIXED in `81858c3f827faa9b6e37d311a567722de04e63dd`; assert actual same-tab accessible `<Link>` footer rather than retired `<Button>` markup, preserving navigation and alias checks.
+
+- `chat4-college-ux-round5.test.ts`: FIXED in `83762c690e67014fcd7ddd4f3994369fe81dba3b`; checks rendered extracted selection component without dropping table, ScrollCue, caption or keyboard target requirements.
+- `UX-superadmin-import-tables-chat17.test.ts`: FIXED in `ae80d175cd537b0f910918fc5a417bac7bd3af7f`; confirmation text now asserts the actual server-validated preview flow, rather than obsolete locally-only validation copy.
