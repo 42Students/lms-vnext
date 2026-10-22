@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { addProjectMemberInputSchema } from "@/modules/projects/validation";
 import {
   addProjectMember,
   listProjectMembers,
@@ -66,7 +67,7 @@ export async function POST(
     const member = await addProjectMember(
       context,
       projectId,
-      body,
+      addProjectMemberInputSchema.parse(body),
     );
 
     return NextResponse.json(

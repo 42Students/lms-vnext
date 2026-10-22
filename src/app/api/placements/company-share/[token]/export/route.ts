@@ -109,7 +109,11 @@ export async function GET(request:Request,{params}:{params:Promise<{token:string
  ].join("\n")+"\n";
  entries.push({name:"manifest.txt",bytes:new TextEncoder().encode(manifest)});
  const archive=makeStoredZip(entries);
- return new Response(archive,{
+ // BufferSource returned by the ZIP writer may use SharedArrayBuffer. A
+ // fresh ArrayBuffer is a valid response body across Node/DOM typings.
+ const body = new ArrayBuffer(archive.byteLength);
+ new Uint8Array(body).set(archive);
+ return new Response(body,{
   status:200,headers:{...privateHeaders,
    "Content-Type":"application/zip",
    "Content-Disposition":'attachment; filename="company-shortlisted-resumes.zip"',

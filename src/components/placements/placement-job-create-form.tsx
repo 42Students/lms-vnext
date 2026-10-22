@@ -729,7 +729,9 @@ export function PlacementJobCreateForm({
         selectedProgramIds:[...effectiveProgramIds].sort(),
         selectedCohortIds:[...effectiveCohortIds].sort(),
         selectedSectionIds:[...effectiveSectionIds].sort(),
-        companyMode,companyRelationshipId,driveMode,applicationMode,roundPreset,importantDateRows,customRuleRows,roundRows,extraPackages,
+        companyMode,companyRelationshipId,driveMode,
+        applicationMode:String(data.get("applicationMode")??"INTERNAL"),
+        roundPreset,importantDateRows,customRuleRows,roundRows,extraPackages,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
         throw new Error("A draft has already been created. Open the existing draft to edit your latest changes.");
