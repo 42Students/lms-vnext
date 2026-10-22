@@ -7,7 +7,7 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-17-006-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [x] G2-17-006-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-17-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-17-010-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-18-009-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
@@ -31,3 +31,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-19-002-092: FIXED — `d98c27b` adds `docs/audit/gap-fix/legacy-lesson-content-import-crosswalk-chat4.md` mapping source lesson/course/class/faculty and JSON, sequence, visibility, points, deadlines and source IDs to scoped vNext destinations. Destination `src/db/schema/courses.ts:451-495`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LessonContents.java:23-58`. Defines importer requirements, not a completed data migration.
 - G2-19-002-094: FIXED — `d98c27b`, `docs/audit/gap-fix/legacy-lesson-content-import-crosswalk-chat4.md` identifies video/YouTube/live/PPT/PDF/resource normalized kinds and preserves raw historical type, while assignment and quiz kinds require dedicated entity imports with crosswalks and quarantine. Legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/LessonContent.js:92-109` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LessonContents.java:35-41`.
+
+- G2-17-006-030: OK — vNext `src/modules/courses/learner-course-service.ts:526-535` checks course `status`, `enabled`, and `legacyAllowedForDisplay` before fetching learner content even for historical UUID bookmarks; `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx:111-121` converts denied lesson access into a not-found state, while `:181-187` restricts historical classes to read-only. Legacy `docs/legacy-source/frontend/src/pages/learn/courses/[courseId]/[...courseTab].js:66-70` denies unavailable courses and `docs/legacy-source/frontend/src/utils/courseUtils/contentAvailability.js:47-84` distinguishes invisible vs locked.
