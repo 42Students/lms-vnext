@@ -23,7 +23,7 @@ export function collegeHiringFunnelCsv(data:Awaited<ReturnType<typeof getCollege
  for(const row of data.companyRows){
   rows.push([row.company,row.job,...stages.map(stage=>row.byStage[stage]??0)]);
   const summary=companies.get(row.company)??{company:row.company,byStage:Object.fromEntries(stages.map(stage=>[stage,0]))};
-  for(const stage of stages)summary.byStage[stage]+=(row.byStage[stage]??0);
+  for(const stage of stages)summary.byStage[stage]=(summary.byStage[stage]??0)+(row.byStage[stage]??0);
   companies.set(row.company,summary);
  }
  rows.push([],["Company Totals"],["Company",...stages.map(label)]);
