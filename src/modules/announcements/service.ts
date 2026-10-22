@@ -1,9 +1,9 @@
 import {
-  and, desc, eq, gt, isNotNull, isNull, lt, lte, or, sql, type SQL,
+  and, desc, eq, gt, inArray, isNotNull, isNull, lt, lte, or, sql, type SQL,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10Announcements,announcementBroadcastGroups } from "@/db/schema/db10-announcements";
-import { activityEvents } from "@/db/schema/activity";
+import { activityEvents, inAppNotifications } from "@/db/schema/activity";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { colleges } from "@/db/schema/colleges";
 import { departments } from "@/db/schema/departments";
@@ -435,6 +435,18 @@ export async function deleteAnnouncement(
         eq(db10Announcements.version,expectedVersion),
         isNull(db10Announcements.deletedAt))).returning();
       if(deleted.length!==copies.length)throw new AnnouncementError("STALE_VERSION");
+      // Withdraw every already-created bell card for every recipient copy,
+      // not merely hide the source announcement. History remains audited.
+      // A group DELETE is atomic with the corresponding notification tombstones.
+      const noticeIds=copies.map(copy=>copy.id);
+      const events=await tx.select({id:activityEvents.id})
+        .from(activityEvents).where(and(
+          eq(activityEvents.subjectType,"announcement"),
+          inArray(activityEvents.subjectId,noticeIds),
+        ));
+      if(events.length)await tx.update(inAppNotifications).set({deletedAt:now})
+        .where(and(inArray(inAppNotifications.eventId,events.map(row=>row.id)),
+          isNull(inAppNotifications.deletedAt)));
       await tx.update(announcementBroadcastGroups).set({updatedAt:now})
         .where(eq(announcementBroadcastGroups.id,group.id));
       return deleted.find(row=>row.id===id)!;

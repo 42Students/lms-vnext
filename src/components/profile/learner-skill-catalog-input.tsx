@@ -89,9 +89,12 @@ export function LearnerSkillCatalogInput({value,onChange,disabled=false,showPopu
   onChange(item.displayName);
   setPopupOpen(false);setActiveIndex(-1);
   // Legacy counts *explicit catalog selections*, not text input edits or profile saves.
+  const selectionId=crypto.randomUUID();
   void fetch("/api/skills/selection",{
-   method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
-   body:JSON.stringify({requestId:crypto.randomUUID(),skillIds:[item.id]}),
+   method:"POST",credentials:"same-origin",headers:{
+    "content-type":"application/json","idempotency-key":selectionId,
+   },
+   body:JSON.stringify({requestId:selectionId,skillIds:[item.id]}),
   }).then(response=>{
    if(response.ok)setSelectionFeedback("Selection recorded");
    else if(response.status!==503)setSelectionFeedback("Couldn't record skill selection");
