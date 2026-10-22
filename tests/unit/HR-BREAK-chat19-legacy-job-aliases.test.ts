@@ -5,9 +5,12 @@ import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {hrApplicantFilterSchema} from "@/modules/placements/hr-job-applicants-model";
 const m=vi.hoisted(()=>({ctx:vi.fn(),read:vi.fn(),redirect:vi.fn(),notFound:vi.fn(),
- alias:vi.fn()}));
+ alias:vi.fn(),colleges:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:m.ctx}));
 vi.mock("@/modules/placements/hr-job-read-service",()=>({getHrJobRead:m.read}));
+vi.mock("@/modules/placements/recruiter-self-grants-service",()=>({
+ getRecruiterSelfGrantOverview:m.colleges,
+}));
 vi.mock("next/navigation",()=>({redirect:m.redirect,notFound:m.notFound}));
 vi.mock("@/app/(authenticated)/hr/conversations/page",()=>({default:m.alias}));
 import HrJobPage from "@/app/(authenticated)/hr/placements/jobs/[jobId]/page";
@@ -38,12 +41,14 @@ describe("HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect",(
   m.redirect.mockImplementation(()=>{throw new Error("REDIRECT");});
   m.notFound.mockImplementation(()=>{throw new Error("NOT_FOUND");});
   m.read.mockRejectedValue(new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND"));
+  m.colleges.mockResolvedValue({grants:[]});
  });
- it("an expired recruiter cannot load a URL-guessed hiring job",async()=>{
+ it("an expired recruiter sees access recovery before any job read",async()=>{
   m.ctx.mockResolvedValue({...actor,user:{...actor.user,platformStatus:"DISABLED"}});
-  await expect(page()).rejects.toThrow("REDIRECT");
-  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  const response=await page();
+  expect(pageText(response)).toContain("No access to this college");
   expect(m.read).not.toHaveBeenCalled();
+  expect(m.redirect).not.toHaveBeenCalled();
  });
  it("active recruiter cannot open a job outside their persisted employer grant",async()=>{
   await expect(page()).rejects.toThrow("NOT_FOUND");
@@ -67,22 +72,25 @@ describe("HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect",(
    expect(m.redirect).not.toHaveBeenCalled();
   });
  it("legacy Messages redirect happens only after hiring job authorization",async()=>{
-  m.read.mockResolvedValue({workspace:{job:{id:job}}});
+  m.read.mockResolvedValue({workspace:{job:{id:job}},applicants:{rows:[]}});
   await expect(page(job,{tab:"messages"})).rejects.toThrow("REDIRECT");
   expect(m.read).toHaveBeenCalledWith(actor,job,expect.objectContaining({tab:"overview"}));
   expect(m.redirect).toHaveBeenCalledWith(expect.stringContaining(job));
  });
- it("retired recruiter college directory resolves to scoped Today, not an exposed index",()=>{
-  expect(()=>HrCollegesRetiredRoute()).toThrow("REDIRECT");
-  expect(m.redirect).toHaveBeenCalledWith("/hr/home");
+ it("recruiter college directory only renders persisted authorized grants",async()=>{
+  const result=await HrCollegesRetiredRoute({searchParams:Promise.resolve({})});
+  expect(pageText(result)).toContain("No active college access");
+  expect(m.colleges).toHaveBeenCalledWith(actor);
+  expect(m.redirect).not.toHaveBeenCalled();
  });
  it("legacy /hr/messages exports the recruiter conversation inbox, not notification bell",()=>{
   expect(HrMessagesAlias).toBe(m.alias);
  });
- it("HR-BREAK-JOB-PRINCIPAL-27 rejects wrong-user recruiter before job reads",async()=>{
+ it("HR-BREAK-JOB-PRINCIPAL-27 refuses wrong-user recruiter before job reads",async()=>{
   m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-account"}});
-  await expect(page()).rejects.toThrow("REDIRECT");
-  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  const response=await page();
+  expect(pageText(response)).toContain("No access to this college");
+  expect(m.redirect).not.toHaveBeenCalled();
   expect(m.read).not.toHaveBeenCalled();
  });
 });

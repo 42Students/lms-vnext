@@ -1,13 +1,14 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement,type ReactNode} from "react";
 const mock=vi.hoisted(()=>({
- ctx:vi.fn(),enabled:vi.fn(),list:vi.fn(),get:vi.fn(),
+ ctx:vi.fn(),enabled:vi.fn(),list:vi.fn(),get:vi.fn(),history:vi.fn(),screenshots:vi.fn(),
  redirect:vi.fn(),notFound:vi.fn(),
 }));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mock.ctx}));
 vi.mock("@/modules/bug-tracker/readiness",()=>({trackerAdminRuntimeEnabled:mock.enabled}));
 vi.mock("@/modules/bug-tracker/reporter-service",()=>({
  listMyTrackerReports:mock.list,getMyTrackerReport:mock.get,
+ listMyTrackerReportHistory:mock.history,listMyTrackerReportScreenshots:mock.screenshots,
 }));
 vi.mock("next/navigation",()=>({redirect:mock.redirect,notFound:mock.notFound}));
 import MyTrackerReportsPage from "@/app/(authenticated)/tracker/mine/page";
@@ -17,7 +18,10 @@ function text(node:ReactNode):string{
  if(node===null||node===undefined||typeof node==="boolean")return "";
  if(typeof node==="string"||typeof node==="number")return String(node);
  if(Array.isArray(node))return node.map(text).join(" ");
- if(isValidElement(node))return text((node.props as {children?:ReactNode}).children);
+ if(isValidElement(node)){
+  const p=node.props as {children?:ReactNode;title?:string;description?:string;action?:ReactNode;actions?:ReactNode};
+  return [p.title??"",p.description??"",text(p.children),text(p.action),text(p.actions)].join(" ");
+ }
  return "";
 }
 function hrefs(node:ReactNode):string[]{
@@ -37,6 +41,8 @@ describe("HR-BREAK-tracker-pages-01: reporter-owned routes and recovery",()=>{
   mock.enabled.mockReturnValue(true);
   mock.list.mockResolvedValue([]);
   mock.get.mockResolvedValue(report);
+  mock.history.mockResolvedValue([]);
+  mock.screenshots.mockResolvedValue([]);
   mock.redirect.mockImplementation(()=>{throw new Error("REDIRECT");});
   mock.notFound.mockImplementation(()=>{throw new Error("NOT_FOUND");});
  });
