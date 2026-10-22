@@ -30,7 +30,7 @@ import {
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { loadCourseSectionDeliveryScope } from "@/modules/courses/scope";
 import { AcademicsServiceError } from "./errors";
@@ -621,6 +621,29 @@ export async function createSectionScheduleEvent(
 
     return created!;
   });
+}
+
+/** Legacy recurring schedule creation commits each date independently:
+ * a room/time collision cannot roll back another date's successful class.
+ * Keep the original per-date permission and resource validation. */
+export async function createSectionScheduleEventsIndependently(
+ context:RequestContext,raw:unknown,
+) {
+ const events=z.array(createSectionScheduleEventInputSchema).min(1).max(60).parse(raw);
+ const results:Array<{index:number;id:string|null;errorCode:string|null}>=[];
+ for(const [index,input] of events.entries()){
+  try{
+   const event=await createSectionScheduleEvent(context,input);
+   results.push({index,id:event.id,errorCode:null});
+  }catch(error){
+   // Authorization is never converted to a partial-success item.
+   if(error instanceof AuthorizationError)throw error;
+   results.push({index,id:null,errorCode:error instanceof AcademicsServiceError
+     ?error.code:"SCHEDULE_EVENT_CONFLICT"});
+  }
+ }
+ return {results,createdCount:results.filter(item=>item.id!==null).length,
+  failedCount:results.filter(item=>item.errorCode!==null).length};
 }
 
 export async function updateSectionScheduleEvent(
