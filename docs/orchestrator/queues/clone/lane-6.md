@@ -51,9 +51,9 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/admin/placements/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/retention/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/shortlisted/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx`
-- [ ] `src/app/auth/handoff/page.tsx`
-- [ ] `src/app/enterprises/page.tsx`
-- [ ] `src/app/login/page.tsx`
-- [ ] `src/app/privacy-policy/page.tsx`
-- [ ] `src/app/universities/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx`
+- [x] `src/app/auth/handoff/page.tsx`
+- [x] `src/app/enterprises/page.tsx`
+- [x] `src/app/login/page.tsx`
+- [x] `src/app/privacy-policy/page.tsx`
+- [x] `src/app/universities/page.tsx`
