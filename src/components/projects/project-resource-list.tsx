@@ -252,9 +252,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          resourceType:(["FILE","LINK","DOCUMENT","CODE","NOTE","ENVIRONMENT"].includes(resource.resourceType??"")
            ?resource.resourceType:"LINK") as "FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT",
          status:resource.status==="DRAFT"?"DRAFT":resource.status==="ARCHIVED"?"ARCHIVED":"ACTIVE",
-         pinned:resource.pinned,accessNotes:resource.accessNotes,
+         ...(resource.pinned === undefined ? {} : { pinned: resource.pinned }),
+         ...(resource.accessNotes === undefined ? {} : { accessNotes: resource.accessNotes }),
          updatedAt:resource.updatedAt,
-         sprintId:resource.sprintId,taskId:resource.taskId}}
+         ...(resource.sprintId === undefined ? {} : { sprintId: resource.sprintId }),
+         ...(resource.taskId === undefined ? {} : { taskId: resource.taskId })}}
         sprints={sprints} tasks={tasks}/>:null}
      </div>
     </article>;
