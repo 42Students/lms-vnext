@@ -39,9 +39,7 @@ export async function getOwnLearnerPlacementAlerts(context: RequestContext,raw:u
       // Announcements also generate bell events; their independent receipt
       // feed is the sole source of notice read state, even with no action href.
       ne(activityEvents.subjectType,"announcement"),
-   ne(activityEvents.eventType,"PLACEMENT_ANNOUNCEMENT"),
-      // Legacy updates intentionally omit the announcement bell event, even
-      // when an imported event used another subjectType or action URL.
+      // Imported announcement events can use a different subject type.
       ne(activityEvents.eventType,"PLACEMENT_ANNOUNCEMENT"),
       isNull(inAppNotifications.deletedAt),
       sql`coalesce(${inAppNotifications.deliveryStatus},'SENT')='SENT'`,
@@ -73,6 +71,7 @@ export async function getUnreadOwnLearnerPlacementAlertCount(context:RequestCont
    eq(activityEvents.collegeId,membership.collegeId),
    eq(activityEvents.module,"PLACEMENTS"),
    ne(activityEvents.subjectType,"announcement"),
+   ne(activityEvents.eventType,"PLACEMENT_ANNOUNCEMENT"),
    isNull(inAppNotifications.deletedAt),
    sql`coalesce(${inAppNotifications.deliveryStatus},'SENT')='SENT'`,
    or(isNull(inAppNotifications.scheduledAt),sql`${inAppNotifications.deliveredAt} is not null`),
