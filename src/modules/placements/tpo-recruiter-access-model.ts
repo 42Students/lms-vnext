@@ -36,9 +36,9 @@ export function parseTpoRecruiterAccessParams(
   if(Object.keys(raw).some(key=>!["status","q","page"].includes(key)))return null;
   if(Object.values(raw).some(Array.isArray))return null;
   const parsed=tpoRecruiterAccessQuerySchema.safeParse({
-    status:raw.status||undefined,
-    q:raw.q||"",
-    page:raw.page||undefined,
+    status:raw["status"]||undefined,
+    q:raw["q"]||"",
+    page:raw["page"]||undefined,
   });
   return parsed.success?parsed.data:null;
 }
