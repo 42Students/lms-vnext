@@ -92,6 +92,7 @@ export const ACTIVITY_EVENT_TYPES = {
   COURSES_CATALOG_CREATED: "courses.catalog.created",
   COURSES_CATALOG_UPDATED: "courses.catalog.updated",
   COURSES_CATALOG_ARCHIVED: "courses.catalog.archived",
+  COURSES_BULK_STATUS_UPDATE: "courses.bulk_status_update",
   COURSES_OFFERING_CREATED: "courses.offering.created",
   COURSES_OFFERING_UPDATED: "courses.offering.updated",
   COURSES_OFFERING_ARCHIVED: "courses.offering.archived",
