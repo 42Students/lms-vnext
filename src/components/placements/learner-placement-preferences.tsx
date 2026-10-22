@@ -206,7 +206,7 @@ export function LearnerPlacementPreferences({
             Employment types
           </span>
           <div className="flex min-w-0 flex-wrap gap-x-4 gap-y-2 py-1">
-            {[
+            {([
               ["FULL_TIME", "Full time"],
               ["INTERNSHIP", "Internship"],
               ["CONTRACT", "Contract"],
