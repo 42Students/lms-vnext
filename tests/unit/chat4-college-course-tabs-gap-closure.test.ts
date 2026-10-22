@@ -22,7 +22,8 @@ describe("chat-4 College Course Tabs gap closure",()=>{
    expect(s).toContain("Delete this quiz?");
   }
   {const s=source("src/components/courses/college-quiz-attempts.tsx");
-   expect(s).toContain("Submissions");
+   expect(s).toContain('aria-label="Quiz submissions"');
+   expect(s).toContain("No submissions yet");
    expect(s).toContain("Previous");
    expect(s).toContain("Next");
   }
@@ -148,7 +149,8 @@ describe("chat-4 College Course Tabs gap closure",()=>{
   }
   const notice=source("src/components/courses/college-course-missing-scope.tsx");
   expect(notice).toContain("Admin not assigned to a college");
-  expect(notice).toContain("Ask a Super Admin to assign a college");
+  expect(notice).toContain("You must be assigned to a college to view and manage courses.");
+  expect(notice).toContain("Contact your administrator.");
  });
 
  it("COL-course-tabs-17 permits only metadata in authorized admin content preview",()=>{
