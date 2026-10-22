@@ -33,6 +33,8 @@ describe.skipIf(!enabled)("DB10 Super Admin announcement consent and transaction
    expect(selected.length).toBeGreaterThan(0);
    const payload={...base,collegeIds:selected,reviewedCollegeIds:selected};
    await expect(publishSuperAdminCollegeBroadcast(admin,{...payload,publishConsent:false})).rejects.toBeDefined();
+   await expect(publishSuperAdminCollegeBroadcast(admin,{...payload,reviewedCollegeIds:[]}))
+    .rejects.toMatchObject({code:"STALE_AUDIENCE"});
    await expect(publishSuperAdminCollegeBroadcast({...admin,user:{...admin.user,systemRoles:[]}},payload)).rejects.toBeDefined();
    await expect(publishSuperAdminCollegeBroadcast({...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}},payload)).rejects.toBeDefined();
    const result=await publishSuperAdminCollegeBroadcast(admin,payload);
