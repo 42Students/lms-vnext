@@ -126,3 +126,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/learner-job-service.ts, src/modules/placements/learner-jobs-browse-model.ts
 - Legacy: Legacy status closed includes job.isActive false OR expired deadline; vNext source only PUBLISHED and deadlinePassed with status at job level — `docs/legacy-source/frontend/src/components/Placements/JobsListContent.jsx:144-151,658-662`
 - Expected fix: Show past closed saves and approved nonactive historical jobs where access permitted
+
+## Lane-3 verification triage
+
+Fast triage (2026-10-22): DEFERRED: all 25 rows need application/offer persistence, migration, provider, or eligibility review. No status marked OK without code-level evidence.
