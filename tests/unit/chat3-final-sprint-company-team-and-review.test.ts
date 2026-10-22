@@ -38,7 +38,7 @@ describe("Chat-3 final sprint team and review contracts",()=>{
   expect(service).toContain("Date.now()-message.createdAt.getTime()>15*60*1000");
   expect(service).toContain('message.askAssigneeMembershipId!==membership.id');
   expect(service).toContain('message.authorMembershipId!==membership.id');
-  expect(ui).toContain("Open in Team");
+  expect(ui).toContain('aria-label={"Company Team conversation for "+companyName}');
   expect(ui).toContain("window.setInterval");
   expect(ui).toContain("30000");
   expect(ui).toContain('role="log"');
@@ -48,11 +48,11 @@ describe("Chat-3 final sprint team and review contracts",()=>{
  });
  it("TPO-companies-05 uses proposed schema, bounded messages and truthful unavailable migration state",()=>{
   const schema=read("src/db/schema/tpo-company-team.ts");
-  const sql=read("docs/proposed-migrations/chat3-tpo-company-team.sql");
   const service=read("src/modules/placements/tpo-company-team-service.ts");
   expect(schema).toContain('placement_tpo_company_team_messages');
-  expect(sql.toLowerCase()).toContain("create table if not exists placement_tpo_company_team_messages");
-  expect(sql).toContain("tpo_company_team_author_college_fk");
+  expect(schema).toContain('tpo_company_team_author_college_fk');
+  expect(schema).toContain('tpo_company_team_assignee_college_fk');
+  expect(service).toContain('placementTableExists("placement_tpo_company_team_messages")');
   expect(service).toContain('status:"NOT_REGISTERED"');
   expect(service).toContain(".limit(101)");
  });
@@ -60,7 +60,9 @@ describe("Chat-3 final sprint team and review contracts",()=>{
   const service=read("src/modules/placements/tpo-company-team-service.ts");
   const ui=read("src/components/tpo/tpo-company-team-conversation.tsx");
   expect(service).toContain("inAppNotifications");
-  expect(service).toContain("notifyIds.delete(membership.id)");
+  expect(service).toContain("prioritizedCompanyTeamRecipients({");
+  expect(service).toContain("actorMembershipId:membership.id");
+  expect(service).toContain('inArray(collegeMemberships.id,notifyIds)');
   expect(service).toContain('eq(collegeMemberships.collegeId,college.id)');
   expect(service).toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
