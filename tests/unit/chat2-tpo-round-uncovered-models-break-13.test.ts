@@ -23,7 +23,7 @@ describe("TPO-BREAK-round-model-13: non-silent round results and live schedule p
   }
   const hold=tpoRoundResultEntryFormSchema.parse({...base,outcome:"HOLD",waitlistRank:"100000"});
   expect(hold.result).toMatchObject({outcome:"HOLD",waitlistRank:100000,candidateMessage:base.note});
-  expect(TPO_RESULT_LABELS.HOLD).toBe("On hold / waitlisted");
+  expect(TPO_RESULT_LABELS.HOLD).toBe("Waitlist");
  });
  it("TPO-drive-workspace-40 never converts scientific, padded or overflow ranks into a valid stage",()=>{
   for(const rank of ["1e2","0x10","0001","1.5","0","-1","100001","999999","NaN"]){
