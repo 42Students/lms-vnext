@@ -13,6 +13,10 @@ import { publicEnquiryTablesReady } from "./readiness";
 import { enquiryMacMatches } from "./otp-model";
 import { publicEnquiryNetworkTag,PublicEnquiryError } from "./send-service";
 
+function safePublicText(value:string,maxLength:number):string {
+ return value.replace(/<[^>]*>/g," ").replace(/[<>\u0000-\u001f\u007f]/g," ").replace(/\s+/g," ").trim().slice(0,maxLength);
+}
+
 export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,verifiedIp:string|null){
  const parsed=publicRecruitEnquirySchema.safeParse(raw);
  if(!parsed.success||!z.string().uuid().safeParse(collegeId).success){
@@ -26,7 +30,10 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
  const ipTag=publicEnquiryNetworkTag(verifiedIp,secret);
  const ready=await getDb().execute<{ready:boolean}>(sql`select to_regclass('public.placement_public_enquiry_rate_events') is not null as ready`);
  if(ready.rows[0]?.ready!==true)throw new PublicEnquiryError("NOT_READY");
- const {email,code,name,company,mobile,hiringFor}=parsed.data;
+ const {email,code,mobile}=parsed.data;
+ const name=safePublicText(parsed.data.name,120);
+ const company=safePublicText(parsed.data.company,160);
+ const hiringFor=safePublicText(parsed.data.hiringFor,320);
  const outcome=await getDb().transaction(async tx=>{
   const now=new Date(),hourAgo=new Date(now.getTime()-3600000);
   const [page]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
@@ -61,10 +68,8 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
    .returning({id:placementPublicEnquiryChallenges.id});
   if(!consumed)throw new PublicEnquiryError("INVALID");
   const [enquiry]=await tx.insert(placementPublicRecruitEnquiries).values({
-   collegeId,challengeId:challenge.id,fullName:name.slice(0,120),companyName:company.slice(0,160),
-   message:(hiringFor.length>=10?hiringFor:"Recruiter reached out through the public placements page.")+
-    (name.length>120?" · Full recruiter name: "+name:"")+
-    (company.length>160?" · Full company: "+company:""),
+   collegeId,challengeId:challenge.id,fullName:name,companyName:company,
+   message:hiringFor.length>=10?hiringFor:"Recruiter reached out through the public placements page.",
   }).returning({id:placementPublicRecruitEnquiries.id});
   if(!enquiry)throw new PublicEnquiryError("INVALID");
   const [created]=await tx.insert(placementTpoLeads).values({
@@ -86,8 +91,7 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
    subjectId:lead.id,subjectLabel:"Recruiter enquiry",
    summary:name+" wants to recruit from you",
    metadata:{leadId:lead.id,enquiryId:enquiry.id,
-    ...(name.length>120?{fullRecruiterName:name}:{}),
-    ...(company.length>150?{fullCompanyName:company}:{})},
+    recruiterName:name,companyName:company},
   }).returning({id:activityEvents.id});
   if(!event)throw new PublicEnquiryError("INVALID");
   const recipients=await tx.selectDistinct({userId:collegeMemberships.userId})
