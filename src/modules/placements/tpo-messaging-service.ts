@@ -585,6 +585,7 @@ export async function sendThreadMessage(
         createdAt: now,
       })
       .returning();
+    if (!message) throw new Error("THREAD_MESSAGE_PERSISTENCE_FAILED");
     await tx
       .update(placementTpoMessageThreads)
       .set({ lastMessageAt: now })
