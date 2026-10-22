@@ -105,7 +105,7 @@ describe("IIT Dharwad College Admin roster retries and concurrent tabs (PostgreS
       learnerMembershipIds: [SEED_IDS.learnerCollegeAMembership], expectedUpdatedAt: oldToken,
     });
     await expect(replaceCollegeProjectLearners(admin, project.id, {
-      learnerMembershipIds: [], expectedUpdatedAt: oldToken,
+      learnerMembershipIds: [], mode:"REPLACE", confirmRemoval:true, expectedUpdatedAt: oldToken,
     })).rejects.toMatchObject({ code: "PROJECT_MEMBER_CONFLICT" });
     const members = await listProjectMembers(admin, project.id);
     expect(members.filter(row => row.role === "LEARNER").map(row => row.membershipId))
