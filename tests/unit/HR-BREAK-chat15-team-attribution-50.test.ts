@@ -15,7 +15,8 @@ const college="123e4567-e89b-42d3-a456-426614174001";
 const relation="123e4567-e89b-42d3-a456-426614174002";
 const otherCollege="123e4567-e89b-42d3-a456-426614174003";
 const context={
- user:{id:"recruiter-a"},recruiter:{grants:[{collegeId:college,companyRelationshipId:relation}]},
+ user:{id:"recruiter-a",platformStatus:"ACTIVE"},
+ recruiter:{userId:"recruiter-a",status:"ACTIVE",grants:[{collegeId:college,companyRelationshipId:relation}]},
 };
 const job=(id:string,author="creator",scope=college,relationship=relation)=>({
  job:{id,createdByUserId:author},collegeId:scope,relationshipId:relationship,

@@ -43,7 +43,7 @@ describe("HR-CALENDAR-PAGE-85: recruiter role, malformed query and safe empty sc
  });
  it("duplicate filter keys reject before reading private schedules",async()=>{
   const output=await view({date:["2099-01-01","2099-01-02"]});
-  expect(text(output)).toContain("Invalid calendar filters.");
+  expect(text(output)).toContain("Invalid calendar filters");
   expect(text(output)).toContain("Clear filters");
   expect(m.calendar).not.toHaveBeenCalled();
  });
@@ -57,7 +57,8 @@ describe("HR-CALENDAR-PAGE-85: recruiter role, malformed query and safe empty sc
  it("authorized empty week shows zero event counts without inventing an interview or result",async()=>{
   const output=await view({date:"2099-01-01",view:"week",category:"ALL"});
   expect(text(output)).toContain("Rounds, interview slots, deadlines and results due");
-  expect(text(output)).toContain("Results due");
+  expect(text(output)).toContain("Nothing scheduled this week");
+  expect(text(output)).not.toContain("Results due ·");
   expect(m.calendar).toHaveBeenCalledWith(actor,expect.objectContaining({
    from:expect.any(String),to:expect.any(String),
   }));
