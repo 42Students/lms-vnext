@@ -7,11 +7,11 @@ const otherCollege="22222222-2222-4222-8222-222222222222";
 const projectId="33333333-3333-4333-8333-333333333333";
 const state=vi.hoisted(()=>({
   reads:0,scope:0,liveChecks:0,transactionCalls:0,lock:"",revoked:false,
-  rows:[{projectId,metadata:{state:"FORCE_UNLOCK",note:"Approved exception"},
+  rows:[{projectId:"33333333-3333-4333-8333-333333333333",metadata:{state:"FORCE_UNLOCK",note:"Approved exception"},
     by:"College Admin",at:new Date("2026-10-17T20:00:00.000Z")}] as {
       projectId:string;metadata:{state:string;note?:string};by:string|null;at:Date;
     }[],
-  projectRows:[{id:projectId,title:"Dharwad team",status:"ACTIVE"}] as {id:string;title:string;status:string}[],
+  projectRows:[{id:"33333333-3333-4333-8333-333333333333",title:"Dharwad team",status:"ACTIVE"}] as {id:string;title:string;status:string}[],
 }));
 vi.mock("@/modules/projects/scope",()=>({
   loadProjectCollegeScope:async(id:string)=>{
