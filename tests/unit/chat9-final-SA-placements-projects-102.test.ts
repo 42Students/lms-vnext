@@ -11,7 +11,10 @@ describe("chat9 final quick-report launcher",()=>{
   expect(shell).toContain("<TrackerQuickReportLauncher />");
   expect(launcher).toContain('event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.repeat&&event.key.toLowerCase()==="b"');
   const drawer=read("src/components/ui/drawer.tsx");
-  expect(drawer).toContain("modal.showModal()");
+  expect(drawer).toContain("useOverlayExit(ref, opener, open, 200)");
+  const lifecycle=read("src/components/ui/use-overlay-exit.ts");
+  expect(lifecycle).toContain("dialog.showModal()");
+  expect(lifecycle).toContain("if (opener?.isConnected) opener.focus()");
   expect(drawer).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");
   expect(drawer).toContain("aria-labelledby={titleId}");
   expect(launcher).toContain("window.location.pathname+window.location.search");
