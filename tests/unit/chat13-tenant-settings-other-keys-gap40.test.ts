@@ -22,7 +22,7 @@ describe("SA-tenants-modules-40 Other stored keys",()=>{
  });
  it("SA-tenants-modules-40 displays unknown stored keys and wrong-scope warning",()=>{
   const ui=read("src/components/admin/tenant-settings-other-keys.tsx");
-  for(const label of ["Other stored keys","Add setting","Remove setting","Never read here","Typos create unused keys"])
+  for(const label of ["Other stored keys","Add setting","Remove setting","Never read here","A typo creates a new unused key"])
    expect(ui).toContain(label);
   expect(ui).toContain("expectedVersion:entry?.version");
   expect(read("src/components/admin/tenant-settings-editor.tsx")).toContain("<OtherTenantSettings");

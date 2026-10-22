@@ -9,7 +9,7 @@ describe("chat-16 mentor editor safeguards",()=>{
     expect(editor).toContain("onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}");
     expect(editor).toContain("onOpenChange={next=>{if(!next)guard.requestClose();}}");
     expect(editor).toContain("onConfirm={guard.confirmDiscard}");
-    expect(editor).toContain("You have unsaved project changes. Leave this page and discard them?");
+    expect(editor).toContain("You have unsaved changes. Leave without saving them?");
   });
   it("MEN-projects-meetings-R09 preserves the project estimation unit on the sprint editor",()=>{
     const editor=source("src/components/projects/mentor-sprint-details-edit.tsx");

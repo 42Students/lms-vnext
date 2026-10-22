@@ -46,7 +46,7 @@ describe("SA-HIRING-REPORT-MODEL-10 strict filters and reconciled employer total
     expect(hiringCompanyRollups([])).toEqual([]);
     expect(SUPER_ADMIN_HIRING_EXPORT_CAP).toBe(5000);
     expect(COMPANY_HIRING_COLUMNS).toEqual([
-      "Company","Drive","Total Applications","Applied","Shortlisted","Assessment",
+      "Company","Job","Total Applications","Applied","Shortlisted","Assessment",
       "Interview","Offered","Hired","Rejected","Withdrawn","Waitlisted",
     ]);
   });

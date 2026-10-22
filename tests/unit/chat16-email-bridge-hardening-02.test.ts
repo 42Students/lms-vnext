@@ -48,7 +48,8 @@ describe("chat-16 recruiter email bridge security and resend policy",()=>{
   expect(extractRecruiterEmailReply("New answer\n-----Original Message-----\nold")).toBe("New answer");
   expect(extractRecruiterEmailReply("> quoted only")).toBeNull();
   expect(extractRecruiterEmailReply("")).toBeNull();
-  expect(extractRecruiterEmailReply("x".repeat(20001))).toBeNull();
+  expect(extractRecruiterEmailReply("x".repeat(20001))).toBe("x".repeat(4000));
+  expect(extractRecruiterEmailReply("x".repeat(200001))).toBeNull();
   expect(extractRecruiterEmailReply("A\u0000B")).toBe("AB");
   // REC-calendar-messages-profile-R01: forwarded history and Outlook-style
   // headers must never be persisted as a new recruiter message.

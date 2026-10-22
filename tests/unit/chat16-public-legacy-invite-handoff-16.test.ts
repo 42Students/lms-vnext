@@ -28,9 +28,11 @@ describe("chat-16 legacy invitation and handoff page-level journeys", () => {
     expect(notFound).toHaveBeenCalledTimes(4);
   });
 
-  it("UX-handoff-direct-16 ignores legacy cross-host credentials and never accepts token exchange", () => {
-    expect(() => RetiredHandoffPage()).toThrow("NEXT_REDIRECT:/?auth=handoff-retired");
+  it("UX-handoff-direct-16 ignores legacy cross-host credentials and never accepts token exchange", async () => {
+    await expect(RetiredHandoffPage({
+      searchParams:Promise.resolve({token:"opaque-stolen-token",next:"https://hostile.example/admin"}),
+    })).rejects.toThrow("NEXT_REDIRECT:/login?auth=handoff-retired");
     expect(redirect).toHaveBeenCalledOnce();
-    expect(redirect).toHaveBeenCalledWith("/?auth=handoff-retired");
+    expect(redirect).toHaveBeenCalledWith("/login?auth=handoff-retired");
   });
 });
