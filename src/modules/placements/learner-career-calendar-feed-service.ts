@@ -4,6 +4,7 @@ import {and,desc,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementApplications,placementJobs,placementCompanyRelationships,placementCompanies} from "@/db/schema";
 import { listLearnerPlacementJobs } from "./learner-job-service";
+import {importedImportantDateSourceState} from "./job-important-date-adapter";
 import { careerDayKey,legacyJobImportantDatesToSupplements,
  type CareerCalendarSupplement } from "./learner-career-calendar-model";
 
@@ -17,6 +18,17 @@ export async function loadLearnerCareerCalendarSupplements(
   const jobs = await listLearnerPlacementJobs(context, now);
   const supplements: CareerCalendarSupplement[] = [];
   const warnings: string[] = [];
+  const dateSourceSummary={available:0,empty:0,unsupported:0,invalid:0};
+  const observedDateJobs=new Set<string>();
+  const observeSource=(jobId:string,details:unknown)=>{
+    if(observedDateJobs.has(jobId))return;
+    observedDateJobs.add(jobId);
+    const state=importedImportantDateSourceState(details);
+    if(state==="AVAILABLE")dateSourceSummary.available++;
+    else if(state==="EMPTY")dateSourceSummary.empty++;
+    else if(state==="INVALID")dateSourceSummary.invalid++;
+    else dateSourceSummary.unsupported++;
+  };
   const historicalJobIds = new Set<string>();
   const appliedJobIds = new Set(
     jobs.filter(row => row.application !== null).map(row => row.job.id),
@@ -27,6 +39,7 @@ export async function loadLearnerCareerCalendarSupplements(
     const job = row.job;
     if (seen.has(job.id)) continue;
     seen.add(job.id);
+    observeSource(job.id,job.legacyPostingDetails);
     // Important dates in currently eligible/discoverable jobs belong on the
     // learner calendar even before application. An applied job is projected
     // only by the private application-history query below, so each source
@@ -92,6 +105,7 @@ export async function loadLearnerCareerCalendarSupplements(
     historicalJobIds.add(row.jobId);
     if(seenHistory.has(row.jobId))continue;
     seenHistory.add(row.jobId);
+    observeSource(row.jobId,row.posting);
     const details=row.posting?.importantDates;
     if(Array.isArray(details)){
      supplements.push(...legacyJobImportantDatesToSupplements({
@@ -119,5 +133,7 @@ export async function loadLearnerCareerCalendarSupplements(
     const jobId = item.jobId;
     return item.applied || jobId == null || !historicalJobIds.has(jobId);
   });
-  return { supplements:merged, warnings };
+  if(dateSourceSummary.invalid>0)
+    warnings.push("Some imported job dates could not be verified. Check the affected job details.");
+  return { supplements:merged, warnings, dateSourceSummary };
 }

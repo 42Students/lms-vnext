@@ -81,3 +81,17 @@ export function authoredImportantDateRoundTrip(row:{
  return {label,at:row.at,
   ...(type?{type}:{}),...(dateType?{dateType}:{})};
 }
+
+/** "No important dates" is different from a source that could not provide
+ * the old DTO field at all. The latter must not be presented as a verified
+ * empty event collection. A malformed supplied array also fails closed. */
+export function importedImportantDateSourceState(details:unknown):
+ "UNSUPPORTED"|"EMPTY"|"AVAILABLE"|"INVALID"{
+ if(!details||typeof details!=="object"||Array.isArray(details)||
+   !Object.prototype.hasOwnProperty.call(details,"importantDates"))
+   return "UNSUPPORTED";
+ const rows=(details as {importantDates?:unknown}).importantDates;
+ if(!Array.isArray(rows))return "INVALID";
+ if(rows.length===0)return "EMPTY";
+ return importedJobImportantDates("owned-job",details).length>0?"AVAILABLE":"INVALID";
+}
