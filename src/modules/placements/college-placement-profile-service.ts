@@ -62,8 +62,8 @@ export async function editCollegeStudentPlacementProfile(context:RequestContext,
   if(!locked||locked.version!==input.expectedVersion)
    throw new Error("Learner profile changed. Reload before editing this skill.");
   const source=locked.document??{};
-  const oldSkills=learnerProfileDocumentSchema.shape.skills.parse(source.skills??[]);
-  const oldPreferences=learnerProfileDocumentSchema.shape.jobPreferences.parse(source.jobPreferences??{});
+  const oldSkills=learnerProfileDocumentSchema.shape.skills.parse(source["skills"]??[]);
+  const oldPreferences=learnerProfileDocumentSchema.shape.jobPreferences.parse(source["jobPreferences"]??{});
   const nextSkills=[...oldSkills];
   let nextPreferences=oldPreferences;
   if(input.action==="ADD_SKILL"){
