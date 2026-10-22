@@ -12,7 +12,9 @@ describe("NORTH-STAR-CHAT19: recruiter legacy navigation and controls", () => {
     expect(tabs).toContain("ariaLabel");
     expect(tabs).toContain('aria-current={item.value === value ? "page" : undefined}');
     expect(tabs).toContain("after:h-[3px]");
-    expect(tabs).toContain("after:w-full after:opacity-100");
+    expect(tabs).toContain("after:w-0 after:-translate-x-1/2");
+    expect(tabs).toContain("aria-[current=page]:after:w-full aria-[current=page]:after:opacity-100");
+    expect(tabs).toContain("aria-selected:after:w-full aria-selected:after:opacity-100");
     expect(tabs).toContain("border-transparent");
     expect(source).not.toContain('className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text');
   });
