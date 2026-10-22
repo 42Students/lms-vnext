@@ -46,7 +46,7 @@ export default async function CollegeDriveSettingsPage({
   </div>;
   const {jobId}=await params;
   const base="/college/placements/jobs/"+encodeURIComponent(jobId);
-  const rawReturn=(await searchParams).returnTo;
+  const rawReturn=(await searchParams)["returnTo"];
   const returnTo=typeof rawReturn==="string"&&
     /^\/college\/placements\/drives(?:\?(?!\/)[^#]*)?$/.test(rawReturn)
     ?rawReturn:"/college/placements/drives";

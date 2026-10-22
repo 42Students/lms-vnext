@@ -43,7 +43,7 @@ export default async function CollegePlacementsPage({searchParams}:{
     </section>
   );
   const incoming=await searchParams;
-  const rawSearch=incoming.q;
+  const rawSearch=incoming["q"];
   if(Array.isArray(rawSearch)||(typeof rawSearch==="string"&&rawSearch.length>100))
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Placement Drives"/>
@@ -51,7 +51,7 @@ export default async function CollegePlacementsPage({searchParams}:{
         className="font-semibold text-link underline">Clear search</Link></Alert>
     </div>;
   const q=typeof rawSearch==="string"?rawSearch.trim():"";
-  const rawReturnTo=incoming.returnTo;
+  const rawReturnTo=incoming["returnTo"];
   const returnTo=typeof rawReturnTo==="string"&&
     rawReturnTo.startsWith("/college/")&&!rawReturnTo.startsWith("//")
     ?rawReturnTo:"";
