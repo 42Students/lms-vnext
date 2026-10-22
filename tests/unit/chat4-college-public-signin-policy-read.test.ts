@@ -56,7 +56,7 @@ describe("COL-tenant-public-signin-01 resolved-host policy and fail-closed chann
  it("never treats a corrupt persisted policy as a permissive unconfigured policy",async()=>{
   mocks.execute.mockResolvedValue({rows:[{present:true}]});
   mocks.limit.mockResolvedValue([{method:"UNRECOGNIZED_CHANNEL"}]);
-  await expect(effectiveCollegeSignInMethod(id)).rejects.toBeDefined();
+  await expect(effectiveCollegeSignInMethod(id)).rejects.toThrow("INVALID_COLLEGE_SIGNIN_POLICY");
   expect(mocks.select).toHaveBeenCalledTimes(1);
  });
 });
