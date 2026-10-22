@@ -18,7 +18,7 @@ export async function campaignUnsubscribeTokenKind(
     token, resolveTpoCampaignRecipientSecret(process.env), now,
   )) return "PLACEMENT_CELL";
   if (verifyUnsubscribeToken(
-    token, process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 ?? "", now,
+    token, process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"] ?? "", now,
   )) return "GLOBAL";
   if (token.length <= 200 && !token.includes(".") && token.trim() === token)
     return "PLACEMENT_CELL";
