@@ -5,7 +5,7 @@ import {activityEvents,colleges,collegeMemberships,membershipRoles,users,inAppNo
 import {tpoCampaignUnsubscribeEvent} from "./tpo-campaign-unsubscribe-notification-model";
 import {getDb} from "@/db/client";
 import {placementTpoLeads,placementTpoLeadActivities,placementTpoEmailCampaignRecipients} from "@/db/schema/tpo-crm";
-import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision,resolveTpoCampaignRecipientSecret} from "./tpo-campaign-recipient-token";
+import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision,resolveTpoCampaignRecipientSecret,legacyCampaignRecipientTokenDigest} from "./tpo-campaign-recipient-token";
 
 export class CampaignUnsubscribeInvalid extends Error {
   constructor(){super("CAMPAIGN_UNSUBSCRIBE_INVALID");this.name="CampaignUnsubscribeInvalid";}
@@ -31,7 +31,7 @@ export async function unsubscribeTpoCampaignRecipient(
   // migrated SHA-256 digest, never by an address, token prefix or numeric ID.
   // Both a missing digest and a reused digest return the same safe success.
   const legacyCandidate=!claim && typeof token==="string" &&
-    token.length>0 && token.length<=200 && !token.includes(".");
+    legacyCampaignRecipientTokenDigest(token)!==null;
   if(!claim && !legacyCandidate)return {unsubscribed:true};
   const legacyHash=legacyCandidate?createHash("sha256").update(token).digest("hex"):null;
   const db=getDb();

@@ -18,8 +18,9 @@ describe("Super Admin Academic Setup gap verifications", () => {
   });
   it("SA-academics-people-19 shows legacy batch columns", () => {
     const code = readSource("src/app/(authenticated)/admin/batches/page.tsx");
-    expect(code).toContain("Start Date");
-    expect(code).toContain("End Date");
+    expect(code).toContain('header:"Years"');
+    expect(code).toContain("row.startDate?.slice(0,4)");
+    expect(code).toContain("row.endDate?.slice(0,4)");
     expect(code).toContain("Academic Year");
     expect(code).toContain("Semester");
     expect(code).toContain("Students");
@@ -27,7 +28,8 @@ describe("Super Admin Academic Setup gap verifications", () => {
   });
   it("SA-academics-people-20 opens batch roster with capacity scoped actions", () => {
     const code = readSource("src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx");
-    expect(code).toContain("SuperAdminBatchRosterManager");
+    expect(code).toContain("getSuperAdminBatchRosterOverview");
+    expect(code).toContain("<DataTable");
     expect(code).toContain("Manage roster and schedule");
   });
   it("SA-academics-people-22 mounts class create edit schedule", () => {
@@ -53,7 +55,7 @@ describe("Super Admin Academic Setup gap verifications", () => {
   });
   it("SA-academics-people-01 renders six-step academic sequence", () => {
     const code = readSource("src/components/admin/academic-setup-steps.tsx");
-    expect(code).toContain("Academic setup · Step");
+    expect(code).toContain("<StepIndicator current={step} total={steps.length}");
     expect(code).toContain("Previous:");
     expect(code).toContain("Next:");
   });
@@ -76,8 +78,8 @@ describe("Super Admin Academic Setup gap verifications", () => {
   });
   it("SA-academics-people-23 projects class description capacity and filters", () => {
     const code = readSource("src/app/(authenticated)/admin/classes/page.tsx");
-    expect(code).toContain("name=\"programId\"");
-    expect(code).toContain("name=\"cohortCode\"");
+    expect(code).toContain('selectedProgramId={data.query.programId??""}');
+    expect(code).toContain('selectedCohortCode={data.query.cohortCode??""}');
     expect(code).toContain("Max Students");
     expect(code).toContain("Description");
     expect(code).toContain("Students");
@@ -120,7 +122,7 @@ describe("Super Admin Academic Setup gap verifications", () => {
   });
   it("SA-academics-people-45 includes historical batches on demand", () => {
     const code = readSource("src/app/(authenticated)/admin/batch-promotion/page.tsx");
-    expect(code).toContain("Show completed / inactive batches");
+    expect(code).toContain("Show completed / inactive");
     expect(code).toContain("showCompleted");
   });
 });

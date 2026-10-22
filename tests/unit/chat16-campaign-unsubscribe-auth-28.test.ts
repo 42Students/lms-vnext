@@ -30,8 +30,10 @@ describe("chat-16 purpose-bound unsubscribe gate before storage access", () => {
       "x".repeat(2049),
       issueTpoCampaignRecipientToken(claim, "wrong-secret".repeat(5)),
     ]) {
+      // All rejected link inputs have the same idempotent outward response.
+      // They must not reach a private recipient read or send a notification.
       await expect(unsubscribeTpoCampaignRecipient(token))
-        .rejects.toBeInstanceOf(CampaignUnsubscribeInvalid);
+        .resolves.toEqual({unsubscribed:true});
     }
     expect(getDb).not.toHaveBeenCalled();
   });
@@ -59,7 +61,9 @@ describe("chat-16 purpose-bound unsubscribe gate before storage access", () => {
       id: claim.recipientId, campaignId: claim.campaignId,
       collegeId: claim.collegeId, unsubscribedAt: new Date(),
     }]);
-    const where = vi.fn(() => ({ for: vi.fn(() => ({ limit })) }));
+    const where = vi.fn(() => ({ orderBy: vi.fn(() => ({
+      for: vi.fn(() => ({ limit })),
+    })) }));
     const tx = {
       select: vi.fn(() => ({ from: vi.fn(() => ({ where })) })),
       update: vi.fn(),
@@ -82,7 +86,9 @@ describe("chat-16 purpose-bound unsubscribe gate before storage access", () => {
     const limit = vi.fn(async () => []);
     const tx = {
       select: vi.fn(() => ({ from: vi.fn(() => ({
-        where: vi.fn(() => ({ for: vi.fn(() => ({ limit })) })),
+        where: vi.fn(() => ({ orderBy: vi.fn(() => ({
+          for: vi.fn(() => ({ limit })),
+        })) })),
       })) })),
       update: vi.fn(),
       insert: vi.fn(),

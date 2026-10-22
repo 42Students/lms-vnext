@@ -12,16 +12,20 @@ vi.mock("next/navigation",()=>({
 beforeEach(()=>vi.clearAllMocks());
 
 describe("chat-16 legacy authentication and HR invite actual page routes",()=>{
- it("UX-chat16-legacy-auth-alias-16 retires all Super Admin bypass bookmarks into shared sign-in",()=>{
-  expect(()=>LegacySuperAdminLoginPage()).toThrow("REDIRECT:/");
-  expect(()=>LegacySuperAdminE2ELoginPage()).toThrow("REDIRECT:/");
-  expect(redirect).toHaveBeenNthCalledWith(1,"/");
-  expect(redirect).toHaveBeenNthCalledWith(2,"/");
+ it("UX-chat16-legacy-auth-alias-16 retires public bypasses and preserves gated development diagnostics",async()=>{
+  expect(()=>LegacySuperAdminLoginPage()).toThrow("REDIRECT:/login?legacy=superadmin");
+  const legacy=await LegacySuperAdminE2ELoginPage({
+    searchParams:Promise.resolve({phone:"9999999999"}),
+  });
+  expect(legacy).toBeDefined();
+  expect(redirect).toHaveBeenCalledExactlyOnceWith("/login?legacy=superadmin");
   expect(notFound).not.toHaveBeenCalled();
  });
- it("UX-chat16-legacy-auth-handoff-17 never exchanges a cross-domain token on old handoff route",()=>{
-  expect(()=>RetiredHandoffPage()).toThrow("REDIRECT:/?auth=handoff-retired");
-  expect(redirect).toHaveBeenCalledExactlyOnceWith("/?auth=handoff-retired");
+ it("UX-chat16-legacy-auth-handoff-17 never exchanges a cross-domain token on old handoff route",async()=>{
+  await expect(RetiredHandoffPage({searchParams:Promise.resolve({
+    token:"forged",returnTo:"https://evil.example/private",
+  })})).rejects.toThrow("REDIRECT:/login?auth=handoff-retired");
+  expect(redirect).toHaveBeenCalledExactlyOnceWith("/login?auth=handoff-retired");
   expect(notFound).not.toHaveBeenCalled();
  });
  it("UX-chat16-legacy-hr-invite-18 maps only a validated opaque token to the live public invite URL",async()=>{

@@ -134,7 +134,8 @@ describe("chat-16 public recruiter company and college OTP HTTP security",()=>{
   const response=await route.join(request);
   expect(response.status).toBe(400);
   expect(await response.json()).toEqual({error:"COULD_NOT_JOIN"});
-  expect(acceptPublicRecruiterJoin).toHaveBeenCalledWith(route.scope,null,null);
+  // Broken JSON is rejected before any scoped join-service invocation.
+  expect(acceptPublicRecruiterJoin).not.toHaveBeenCalled();
  });
  it.each(scopeRoutes)("REC-JOIN-HTTP-22 $scope preserves explicit persisted join rejection",async route=>{
   vi.mocked(acceptPublicRecruiterJoin).mockRejectedValue(new PublicJoinAcceptError("PHONE_STORAGE_NOT_READY"));
