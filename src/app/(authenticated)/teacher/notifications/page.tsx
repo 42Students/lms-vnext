@@ -118,16 +118,16 @@ export default async function FacultyNotificationsPage({
         ]}/>
       {!notificationRead.available?<Alert tone="error">
         <strong>Couldn't load notifications.</strong> Notifications could not be loaded. Retry without leaving this page.
-        <Link href={FACULTY_INBOX+"?view="+view} className="ml-2 font-semibold text-link underline">Retry</Link>
+        <Link href={FACULTY_INBOX+"?view="+view} className="ml-2 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>
       </Alert>:null}
       {announcementsEnabled&&!announcementRead.available?<Alert tone="warning">
         Couldn't load college announcements. Personal notifications remain available.
-        <Link href={FACULTY_INBOX} className="ml-2 font-semibold text-link underline">Retry</Link>
+        <Link href={FACULTY_INBOX} className="ml-2 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>
       </Alert>:null}
       {invalid?<Alert tone="error">
         The notification filters or page link are invalid.
         <Link href={FACULTY_INBOX+"?view="+view}
-          className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">View all notifications</Link>
+          className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View all notifications</Link>
       </Alert>:null}
       <section aria-labelledby="faculty-feed-heading" className="min-w-0 space-y-4">
         <h2 id="faculty-feed-heading" className="text-lg font-semibold text-[var(--lms-heading)]">
@@ -139,11 +139,11 @@ export default async function FacultyNotificationsPage({
           emptyText={allEmpty?"No notifications yet":view==="unread"?"No unread notifications yet":
             "No "+(scopeTab==="all"?"new":scopeTab)+" notifications yet"}
           emptyAction={feed.length===0&&!allEmpty?<Link href={FACULTY_INBOX+"?view=all"}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline">
+            className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             View all
           </Link>:null}/>
         {nextHref&&(scopeTab==="personal"||scopeTab==="all")?<div className="flex justify-start">
-          <Link href={nextHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle">
+          <Link href={nextHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Older notifications
           </Link>
         </div>:null}
