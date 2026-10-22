@@ -1363,7 +1363,8 @@ export function PlacementJobCreateForm({
               Job Description
             </span>
             <Textarea
-              className={textareaClass+" min-h-[280px]"}
+              className={textareaClass}
+              style={{minHeight:280}}
               name="description"
               required
               maxLength={15000}
