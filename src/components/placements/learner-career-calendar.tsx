@@ -32,6 +32,8 @@ import {
 } from "@/modules/placements/learner-career-calendar-model";
 import {Button} from "@/components/ui/button";
 import {FilterChip} from "@/components/ui/filter-chip";
+import {LearnerRoundConfirmAttendance} from "./learner-round-confirm-attendance";
+import {LearnerScheduleReschedule} from "./learner-schedule-reschedule";
 
 const views: CareerCalendarView[] = ["agenda", "month", "week", "day"];
 type EventFilter = LearnerCalendarUrlState["kind"];
@@ -67,12 +69,15 @@ function hrefForEvent(event: CareerCalendarEvent) {
 export function LearnerCareerCalendar({
   rounds,
   supplements=[],
+  actionableRoundKeys=[],
   initialAnchor,
   todayAnchor=initialAnchor,
   surface="calendar",
 }: {
   rounds: readonly CareerCalendarSourceRound[];
   supplements?:readonly CareerCalendarSupplement[];
+  /** Server-verified bookings only: excludes talks, past, outcomes and pending moves. */
+  actionableRoundKeys?:readonly string[];
   initialAnchor: string;
   todayAnchor?:string;
   surface?: "calendar" | "schedule";
@@ -90,6 +95,7 @@ export function LearnerCareerCalendar({
   const [selectedKey,setSelectedKey]=useState<string|null>(null);
   const [selectedDayKey,setSelectedDayKey]=useState<string|null>(null);
 
+  const verifiedActionKeys=new Set(actionableRoundKeys);
   const events = careerCalendarEvents(rounds,supplements);
   const filtered = filter === "ALL"
     ? events
@@ -425,6 +431,17 @@ export function LearnerCareerCalendar({
                   {event.durationMinutes?<p className="text-body">Duration: {event.durationMinutes} minutes</p>:null}
                   {event.note?<p className="text-body">{event.note}</p>:null}
                   {event.eventType==="EXAM_BLOCK"?<p role="alert" className="text-sm font-semibold text-error">The college has blocked this day. No drives run on it.</p>:null}
+                  {event.eventType==="ROUND" && event.booked &&
+                    verifiedActionKeys.has(event.applicationId+":"+event.roundId) ? (
+                    <div className="space-y-2 border-l-2 border-[var(--lms-primary)] pl-3">
+                      <LearnerRoundConfirmAttendance applicationId={event.applicationId}
+                        roundId={event.roundId} confirmed={Boolean(event.learnerConfirmedAt)}/>
+                      {(event.mode==="ON_CAMPUS"||event.mode==="VIRTUAL")?
+                        <LearnerScheduleReschedule applicationId={event.applicationId}
+                          roundId={event.roundId} mode={event.mode}
+                          venue={event.venue??null} meetingUrl={event.meetingUrl??null}/>:null}
+                    </div>
+                  ):null}
                   <div className="flex flex-wrap gap-3">
                     {(!event.eventType||event.eventType==="ROUND")?<>
                     <Link href={learnerCareerCalendarEventTarget(event)}

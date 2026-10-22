@@ -81,6 +81,8 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   // Calendar extras and job deadlines have independent sources, scoped
   // to the learner's active college. Keep the rounds if either fails.
   const needsConfirmation=ahead.filter(row=>roundCanBeManaged(row)&&!row.learnerConfirmedAt).length;
+  const actionableRoundKeys=workspace.rounds.filter(roundCanBeManaged)
+    .map(row=>row.applicationId+":"+row.roundId);
   const rounds = workspace.rounds.map(row => ({
     ...row,
     scheduledAt: row.scheduledAt?.toISOString() ?? null,
@@ -278,6 +280,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         </p>:null}
         <Suspense fallback={<p role="status">Calendar</p>}>
           <LearnerCareerCalendar initialAnchor={today} todayAnchor={today}
+            actionableRoundKeys={actionableRoundKeys}
             rounds={rounds} supplements={[...(extras?.supplements??[]),...(deadlineExtras?.supplements??[])]}
             surface="schedule" />
         </Suspense>
