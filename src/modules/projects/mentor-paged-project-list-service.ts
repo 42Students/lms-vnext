@@ -18,9 +18,10 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
  * an unbounded project list in application memory.
  */
 export async function listPagedMentorProjects(context:RequestContext,query:MentorProjectListQuery){
- // Validate again at the exported service boundary: runtime callers need not
- // have come through the Mentor page's strict URL schema.
- query=mentorProjectListQuerySchema.parse(query);
+ // The caller passes the schema's *normalized* one-based page. Validate at
+ // this boundary without reinterpreting it as a legacy zero-based ?page=N;
+ // parsing the already-normalized page directly would silently skip page 1.
+ query=mentorProjectListQuerySchema.parse({...query,page1:query.page});
  const membership=context.membership;
  if(!membership || membership.status!=="ACTIVE" ||
    !membership.roles.includes("MENTOR")||context.user.platformStatus!=="ACTIVE"||
