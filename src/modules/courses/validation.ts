@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   COURSE_OFFERING_TYPES,
   COURSE_TEACHING_ROLES,
-  LESSON_CONTENT_TYPES,
 } from "./constants";
 
 export const courseIdSchema = z.string().uuid();
