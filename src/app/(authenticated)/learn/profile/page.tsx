@@ -18,6 +18,8 @@ import {getOwnLearnerVerificationStatus} from "@/modules/placements/learner-veri
 import {learnerProfileMissingItems} from "@/modules/placements/learner-profile-missing-items-model";
 import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verification-notice-model";
 import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verification-live-refresh";
+import { LearnerDefaultResumePicker } from "@/components/profile/learner-default-resume-picker";
+import { listLearnerDefaultResumes } from "@/modules/placements/learner-default-resume-service";
 
 type ProfileParams={section?:string|string[]};
 function ProfileLoading() {
@@ -71,6 +73,7 @@ async function LearnerProfileContent({
   const academic=academicRecovery.summary;
   const verificationOutcome=await Promise.allSettled([getOwnLearnerVerificationStatus(context)]);
   const verification=verificationOutcome[0]?.status==="fulfilled"?verificationOutcome[0].value:null;
+  const defaultResumes=await listLearnerDefaultResumes(context).catch(()=>null);
   const missing=verification?learnerProfileMissingItems(verification):[];
 
   return (
@@ -157,6 +160,8 @@ async function LearnerProfileContent({
           </Link>
         </nav>
       </section>
+      {defaultResumes ? <LearnerDefaultResumePicker initial={defaultResumes} /> :
+        <Banner tone="warning">Default resume choices are temporarily unavailable. No resume was selected.</Banner>}
       {sectionNotice ? <Banner tone="warning">{sectionNotice}</Banner> : null}
       <section aria-label="Academic identity" className="min-w-0 border-b border-border pb-4">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Academic identity</h2>
