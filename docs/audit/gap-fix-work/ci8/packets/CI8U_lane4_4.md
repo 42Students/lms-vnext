@@ -1,0 +1,35 @@
+# CI unit-test packet (round 8)
+
+These tests FAIL in CI on main. For each failing assertion decide:
+1. The code change was intentional (old-LMS clone parity, wording parity, audit fix): UPDATE THE TEST to assert the new correct behaviour. Keep the test meaningful; never make it trivially pass.
+2. The code regressed (broken behaviour, missing guard, wrong permission): FIX THE CODE, not the test.
+3. The test reads a file that no longer exists or tests removed functionality: point it at the new location, or delete only that test case with a one-line reason in the commit message.
+Never use .skip/.todo, any, @ts-ignore or eslint-disable to get green. Source-text tests (readFileSync + toContain) are the most common: check the current component and update the expected strings when the new markup is intended.
+
+## tests/unit/chat9-final-named-gap-verification.test.ts (1 failing)
+- chat-9 final named gap source acceptance > COL-academic-setup-21 is NOT-A-GAP: departments are sorted, searchable and pageable with a result count
+
+  ```
+  AssertionError: expected [ 'Zoology', 'Biology', 'Physics' ] to deeply equal [ 'Biology', 'Physics', 'Zoology' ]
+  - Expected
+  + Received
+  [
+  +   "Zoology",
+  "Biology",
+  "Physics",
+  -   "Zoology",
+  ```
+
+## tests/unit/learner-placements-chat7-schedule-surface.test.ts (1 failing)
+- Chat-7 schedule parity > LEARNER-placements-41 exposes online assessments without pretending schedule is attendance
+
+  ```
+  AssertionError: expected '"use client";\n\nimport { useId, useS…' to contain 'target="_blank" rel="noopener norefer…'
+  - Expected
+  + Received
+  - target="_blank" rel="noopener noreferrer"
+  + "use client";
+  +
+  + import { useId, useState } from "react";
+  + import { Button } from "@/components/ui/button";
+  ```
