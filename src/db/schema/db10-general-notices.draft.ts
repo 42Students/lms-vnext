@@ -12,7 +12,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
-  boolean, check, date, index, integer, jsonb, pgTable, text,
+  boolean, check, date, index, integer, jsonb, pgTable,
   timestamp, uniqueIndex, uuid, varchar,
 } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
