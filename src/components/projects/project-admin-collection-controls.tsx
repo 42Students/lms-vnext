@@ -137,11 +137,11 @@ export function ProjectAdminFilters({
             value={searchText}
             onChange={event=>setSearchText(event.target.value)}
           />
-          {searchText?<button type="button" aria-label="Clear search"
+          {searchText?<Button variant="secondary" type="button" aria-label="Clear search"
             onClick={()=>{setSearchText("");updateUrl(searchKey,"");}}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded border border-border bg-surface text-primary-text md:min-h-9 md:min-w-9">
+            className="min-w-11 md:min-w-9">
             ×
-          </button>:null}
+          </Button>:null}
         </span>
       </label>
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
