@@ -23,12 +23,12 @@ export function matchesSubmittedFrom(submittedAt:Date,submittedFrom:string|undef
  if(!Number.isFinite(valid.getTime())||valid.toISOString().slice(0,10)!==submittedFrom)throw Error("INVALID_SUBMITTED_FROM");
  return submittedAt.getTime()>=new Date(submittedFrom+"T00:00:00+05:30").getTime();
 }
-export function verificationSubmissionWindowValid(filter:{submittedFrom?:string;waitingSince?:string}):boolean {
+export function verificationSubmissionWindowValid(filter:{submittedFrom?:string|undefined;waitingSince?:string|undefined}):boolean {
  return !(filter.submittedFrom&&filter.waitingSince&&filter.submittedFrom>filter.waitingSince);
 }
 
 /** Pure, fixed-offset IST day boundaries. Upper bound is exclusive next midnight. */
-export function verificationSubmittedSqlBounds(filter:{submittedFrom?:string;waitingSince?:string}){
+export function verificationSubmittedSqlBounds(filter:{submittedFrom?:string|undefined;waitingSince?:string|undefined}){
  const valid=(value:string)=>/^\d{4}-\d{2}-\d{2}$/.test(value)&&
   new Date(value+"T00:00:00Z").toISOString().slice(0,10)===value;
  const start=(value:string)=>{
