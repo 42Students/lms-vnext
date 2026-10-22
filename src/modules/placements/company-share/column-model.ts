@@ -94,7 +94,7 @@ export function projectCompanyShareRows(source:readonly Candidate[],rawColumns:u
   return {applicationId:row.applicationId,
    displayName:values.NAME??"Unnamed learner",
    email:columns.includes("EMAIL")?row.email:null,
-   cells:Object.fromEntries(columns.map(key=>[key,values[key]??"-"])) as Partial<Record<CompanyShareColumn,string|null>>,
+   cells:Object.fromEntries(columns.map(key=>[key,values[key]??(key==="RESUME"?"Link not shown":"-")])) as Partial<Record<CompanyShareColumn,string|null>>,
   };
  });
 }

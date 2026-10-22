@@ -88,4 +88,6 @@ it("discloses resumes only through an unexpired short-lived HTTPS grant", () => 
     ...applicant, resumeSignedUrl: "javascript:alert(1)", resumeExpiresAt: validExpiry,
   }], ["RESUME"])[0];
   expect(unsafe?.cells.RESUME).toBe("Link not shown");
+  const absent=projectCompanyShareRows([applicant],["RESUME"])[0];
+  expect(absent?.cells.RESUME).toBe("Link not shown");
 });
