@@ -1,0 +1,35 @@
+# CI unit-test packet (round 8)
+
+These tests FAIL in CI on main. For each failing assertion decide:
+1. The code change was intentional (old-LMS clone parity, wording parity, audit fix): UPDATE THE TEST to assert the new correct behaviour. Keep the test meaningful; never make it trivially pass.
+2. The code regressed (broken behaviour, missing guard, wrong permission): FIX THE CODE, not the test.
+3. The test reads a file that no longer exists or tests removed functionality: point it at the new location, or delete only that test case with a one-line reason in the commit message.
+Never use .skip/.todo, any, @ts-ignore or eslint-disable to get green. Source-text tests (readFileSync + toContain) are the most common: check the current component and update the expected strings when the new markup is intended.
+
+## tests/unit/UX-chat15-scroll-motion-01.test.ts (1 failing)
+- UX-chat15-scroll-motion-01 > UX-tracker-scroll-motion-01 shared Drawer handles viewport and keyboard scrolling
+
+  ```
+  AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain 'min-h-0'
+  - Expected
+  + Received
+  - min-h-0
+  + "use client";
+  +
+  + import { useEffect, useId, useRef, type ReactNode, type RefObject, type CSSProperties } from "react";
+  + import { Button } from "@/components/ui/button";
+  ```
+
+## tests/unit/chat12-grid-columns-round3.test.ts (1 failing)
+- chat-12 Students responsive grid and column preference > TPO-students-51 keeps mobile row actions always visible while preserving filters
+
+  ```
+  AssertionError: expected '"use client";\nimport {Checkbox} from…' to contain '<TpoGridFilterPanel fields={filters} …'
+  - Expected
+  + Received
+  - <TpoGridFilterPanel fields={filters} mobileSheet/>
+  + "use client";
+  + import {Checkbox} from "@/components/ui/checkbox";
+  + import { Disclosure } from "@/components/ui/disclosure";
+  + import {Select} from "@/components/ui/select";
+  ```
