@@ -3,6 +3,7 @@ import { afterAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import type { RequestContext } from "@/modules/identity/context";
 import { closeDatabaseConnection } from "@/db/client";
+import { SEED_IDS } from "../../scripts/db-seed-data";
 import { drizzleTenantDomainRepository } from "@/modules/tenant-domains/repository";
 import {
   deleteTenantDomain,
@@ -135,7 +136,7 @@ describe("DB01 tenant host lifecycle — real repository SQL", () => {
     await withTenantFixture(async (fixture) => {
       const superAdmin: RequestContext = {
         user: {
-          id: "isolated-test-superadmin",
+          id: SEED_IDS.superAdminUser,
           identityUid: "isolated-test-superadmin-uid",
           platformStatus: "ACTIVE",
           systemRoles: ["SUPER_ADMIN"],

@@ -142,7 +142,9 @@ export async function deliverRecordedLearnerPlacementEvent(
   status:applicationStatus,statusUpdatedAt:applicationStatusUpdatedAt,
   assessmentUrl:input.applicationId?input.approvedAssessmentUrl:undefined,
  });
- const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],message);
+ const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],{
+  title:message.title,body:message.body,actionHref:message.actionHref,
+ });
  return {delivered:delivered.delivered>0,skipped:null};
 }
 
@@ -183,7 +185,9 @@ export async function deliverRecordedJobApplicantsPlacementEvent(tx:Tx,input:{
  let delivered=0;
  for(let start=0;start<usersToNotify.length;start+=PLACEMENT_NOTICE_DELIVERY_POLICY.inAppBatchSize){
   const result=await deliverInAppNotificationInTransaction(tx,input.eventId,
-   usersToNotify.slice(start,start+PLACEMENT_NOTICE_DELIVERY_POLICY.inAppBatchSize),notice);
+   usersToNotify.slice(start,start+PLACEMENT_NOTICE_DELIVERY_POLICY.inAppBatchSize),{
+    title:notice.title,body:notice.body,actionHref:notice.actionHref,
+   });
   delivered+=result.delivered;
  }
  return delivered;
