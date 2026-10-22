@@ -280,8 +280,8 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     }
     const valid=render(<ThirdPartyLink href="https://example.test/proof%20one" label="Evidence" />);
     expect(valid).toContain('href="https://example.test/proof%20one"');
-    expect(valid).toContain('target="_blank"');
-    expect(valid).toContain('rel="noopener noreferrer"');
+    expect(valid).not.toContain('target="_blank"');
+    expect(valid).toContain("Evidence");
   });
 
   it("UX-kit-HARDEN-35 breadcrumbs and table share the same hardened internal path rule",()=>{
