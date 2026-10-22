@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import {
   createZeptoMailEmailProvider,
   isSecureMailProviderEndpoint,
@@ -36,6 +36,12 @@ const otp = {
 };
 
 describe("chat-16 OTP notification provider boundaries (isolated transport)", () => {
+  beforeEach(() => {
+    vi.stubEnv("APP_ENV", "development");
+    vi.stubEnv("STAGE", "development");
+    vi.stubEnv("DEV_MAIL_ALLOW", "alice@example.org");
+  });
+  afterEach(() => vi.unstubAllEnvs());
   it("notification-zepto-config-16 strips env token wrapper and rejects insecure endpoints", () => {
     const config = readZeptoMailConfig({ ZEPTOMAIL_TOKEN: '  "local-token"  ' });
     expect(config.token).toBe("local-token");
@@ -117,7 +123,7 @@ describe("chat-16 OTP notification provider boundaries (isolated transport)", ()
     const transport = vi.fn(async () => new Response("{}", { status: 200 }));
     const cases: Array<{ config: ExotelConfig; phone: string; code: string }> = [
       { config: smsConfig, phone: "+919876543210", code: "12ab" },
-      { config: smsConfig, phone: "9876543210", code: "123456" },
+      { config: smsConfig, phone: "1234567890", code: "123456" },
       { config: { ...smsConfig, dltEntityId: "" }, phone: "+919876543210", code: "123456" },
       { config: { ...smsConfig, accountSid: "../unsafe" }, phone: "+919876543210", code: "123456" },
     ];
@@ -140,9 +146,10 @@ describe("chat-16 OTP notification provider boundaries (isolated transport)", ()
     const [url, request] = transport.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe("https://api.exotel.com/v1/Accounts/example-account/Sms/send.json");
     expect(request.method).toBe("POST");
-    expect(request.headers).toMatchObject({
-      "Content-Type": "application/x-www-form-urlencoded",
-    });
+    expect(new Headers(request.headers).get("Content-Type"))
+      .toBe("application/x-www-form-urlencoded");
+    expect(new Headers(request.headers).get("Authorization"))
+      .toMatch(/^Basic [A-Za-z0-9+/=]+$/);
     const fields = request.body as URLSearchParams;
     expect(fields.get("DltEntityId")).toBe(smsConfig.dltEntityId);
     expect(fields.get("DltTemplateId")).toBe(smsConfig.otpDltTemplateId);
