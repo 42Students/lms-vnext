@@ -2,7 +2,6 @@ import { Tabs } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Suspense } from "react";
@@ -36,7 +35,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   ]);
   if(workspaceResult.status==="rejected"){
     if(workspaceResult.reason instanceof AuthorizationError)throw workspaceResult.reason;
-    return <div className="min-w-0 space-y-4"><PageHeader title="Schedule"/>
+    return <div className="min-w-0 space-y-4">
      <ErrorState title="Could not load your schedule"
       description="The schedule is unavailable; no empty list has been assumed."
       action={<Link href="/learn/my-placements/schedule" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Retry schedule</Link>}/>
@@ -219,7 +218,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   };
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader title="Schedule" description="Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice." />
+      <p className="text-sm leading-6 text-body">Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice.</p>
       {resultsUnavailable?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">Official results are unavailable. Scheduled appointments remain visible; retry to check final outcomes. <Link href="/learn/my-placements/schedule" className="font-semibold text-link underline">Retry</Link></p>:null}
       {needsConfirmation>0?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm font-semibold">{needsConfirmation===1?"One round needs":String(needsConfirmation)+" rounds need"} your confirmation. Check your booking time, location and application before confirming.</p>:null}
       <Tabs ariaLabel="Schedule view" value={view} renderPanel={false} items={[

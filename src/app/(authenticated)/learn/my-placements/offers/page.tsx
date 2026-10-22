@@ -3,7 +3,6 @@ import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { learnerOffersQueryHasInvalidFields } from "@/modules/placements/learner-offers-query-feedback-model";
 import {learnerOfferStatusTabLabel} from "@/modules/placements/learner-offer-status-label-model";
@@ -97,7 +96,7 @@ export default async function LearnerOffersPage({
     }
     const retry="/learn/my-placements/offers"+(params.size?"?"+params.toString():"");
     return <section className="min-w-0 space-y-4">
-      <PageHeader title="My offers" description="Your official placement offers and recorded joining outcomes." />
+      <p className="text-sm text-body">Your official placement offers and recorded joining outcomes.</p>
       <Banner tone="warning">We could not load your offers.
         <Link href={retry} className="ml-2 inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Retry</Link>
       </Banner>
@@ -182,16 +181,6 @@ export default async function LearnerOffersPage({
   );
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader title="My Placements" description="Opportunities and your application journey" />
-      <Tabs ariaLabel="Placements sections" renderPanel={false} value="/learn/my-placements/offers" items={[
-        {value:"/learn/my-placements",label:"Home",href:"/learn/my-placements"},
-        {value:"/learn/my-placements/jobs",label:"Jobs",href:"/learn/my-placements/jobs"},
-        {value:"/learn/my-placements/applications",label:"Applications",href:"/learn/my-placements/applications"},
-        {value:"/learn/my-placements/calendar",label:"Schedule",href:"/learn/my-placements/calendar"},
-        {value:"/learn/my-placements/offers",label:"Offers",href:"/learn/my-placements/offers"},
-        {value:"/learn/my-placements/announcements",label:"Announcements",href:"/learn/my-placements/announcements"},
-        {value:"/learn/my-placements/rules",label:"Placements",href:"/learn/my-placements/rules"},
-      ]}/>
       <Link
         href="/learn/my-placements/applications"
         className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline md:min-h-[var(--lms-control-height)]"

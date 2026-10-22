@@ -1,4 +1,3 @@
-import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { PageLoading } from "@/components/ui/page-loading";
 import {StatusBadge,applicationStatusTone} from "@/components/ui/status-badge";
@@ -35,7 +34,6 @@ export default async function LearnerPlacementApplicationsPage() {
   } catch(error) {
     if(error instanceof AuthorizationError)throw error;
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Applications" />
       <ErrorState title="Could not load applications"
         description="Your application history could not be loaded. No applications are assumed missing or withdrawn."
         action={<Link href="/learn/my-placements/applications"
@@ -89,11 +87,11 @@ export default async function LearnerPlacementApplicationsPage() {
 
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader title="Applications" actions={(
+      <nav aria-label="Application actions" className="flex min-w-0 flex-wrap justify-end gap-3">
         <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Review all official offers →
       </Link>
-      )} />
+      </nav>
 
       
       {rows.length>0?<section aria-label="Application cards" className="min-w-0 border-y border-border py-3">
