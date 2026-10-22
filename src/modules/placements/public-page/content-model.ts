@@ -40,8 +40,12 @@ export function formatPublicPlacementMetric(key:PublicPlacementMetricKey,values:
    Math.round(100*values.placed/values.population):null):
   key==="OFFERS"?values.offers:key==="HIRING_COMPANIES"?values.employers:
   key==="HIGHEST_CTC"?values.highestCtcInr:values.medianCtcInr;
- // A suppressed aggregate is absent, not an empty tile exposing the choice.
+ // Suppressed or small-cohort metrics must be completely absent, not
+ // represented as a zero/blank tile that exposes a group smaller than five.
  if(amount===null||!Number.isFinite(amount))return null;
+ if((key==="STUDENTS"||key==="PLACED"||key==="OFFERS"||key==="HIRING_COMPANIES") && amount<5)return null;
+ if(key==="PERCENT"&&(values.population===null||values.population<5 ||
+    values.placed===null || (values.placed>0&&values.placed<5)))return null;
  if(key==="HIGHEST_CTC"||key==="MEDIAN_CTC")return new Intl.NumberFormat("en-IN",{maximumFractionDigits:2}).format(amount/100000)+" LPA";
  if(key==="PERCENT")return amount+"%";
  return new Intl.NumberFormat("en-IN").format(amount);
