@@ -153,6 +153,7 @@ export function resolveModuleAccessFromRules(
   ): ModuleAccessResolution => {
     for (let index = chain.length - 1; index >= 0; index -= 1) {
       const scope = chain[index];
+      if (scope === undefined) continue;
       if(isModuleScopeIgnored(module,scope.scopeType))continue;
       const rule = byPair.get(
         pairKey(scope.scopeType, scope.scopeId, module),

@@ -12,7 +12,7 @@ export function isCollegeRuleDirty(choice:CollegeChoice,locked:boolean,stored:Ob
 export function collegeRuleReceipt(data:unknown,module:CollegeModule,choice:CollegeChoice,locked:boolean):boolean{
  if(!data||typeof data!=="object"||!("rule" in data)||!data.rule||typeof data.rule!=="object")return false;
  const rule=data.rule as Record<string,unknown>;
- return rule.module===module&&rule.enabled===(choice==="INHERIT"?null:choice==="ON")&&rule.locked===(choice==="INHERIT"?false:locked)&&typeof rule.unchanged==="boolean";
+ return rule["module"]===module&&rule["enabled"]===(choice==="INHERIT"?null:choice==="ON")&&rule["locked"]===(choice==="INHERIT"?false:locked)&&typeof rule["unchanged"]==="boolean";
 }
 export function collegeRuleSelection(stored:ObservedCollegeRule):CollegeChoice{
  return stored===null?"INHERIT":stored.enabled?"ON":"OFF";
@@ -25,7 +25,7 @@ export function parseCollegeRuleRecheck(raw:unknown,module:CollegeModule):Observ
  if(matches.length!==1)return undefined;
  const entry=matches[0] as Record<string,unknown>;
  if(!Object.hasOwn(entry,"stored"))return undefined;
- const stored=entry.stored;
+ const stored=entry["stored"];
  if(stored===null)return null;
  if(stored&&typeof stored==="object"&&"enabled" in stored&&"locked" in stored&&typeof stored.enabled==="boolean"&&typeof stored.locked==="boolean")
   return {enabled:stored.enabled,locked:stored.locked};

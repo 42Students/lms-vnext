@@ -17,13 +17,13 @@ export function parseRecruiterPrivateReviewReceipt(value:unknown):
  RecruiterPrivateReviewReceipt|null{
  if(value===null||typeof value!=="object"||Array.isArray(value))return null;
  const object=value as Record<string,unknown>;
- const rating=object.rating;
+ const rating=object["rating"];
  if(rating!==null&&(typeof rating!=="number"||!Number.isInteger(rating)||
   rating<1||rating>5))return null;
- if(typeof object.note!=="string"||object.note.length>1000)return null;
- const version=object.updatedAt;
+ if(typeof object["note"]!=="string"||object["note"].length>1000)return null;
+ const version=object["updatedAt"];
  if(version!==null&&!isIsoTimestamp(version))return null;
- return {rating:rating as number|null,note:object.note,updatedAt:version};
+ return {rating:rating as number|null,note:object["note"],updatedAt:version};
 }
 
 /** A PATCH receipt must confirm the exact submitted edit, not a stale or
