@@ -15,6 +15,34 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import {getPrivateR2Config} from "@/modules/storage/r2-config";
+import {headObject,presignUrl} from "@/modules/storage/s3-client";
+
+/** A legacy company logo URL was public. Private vNext logo keys only
+ * become readable through a short-lived, company-scoped signed GET after the
+ * exact persisted grant and storage metadata have been checked.
+ */
+async function recruiterCompanyLogoUrl(company:{
+ id:string;logoObjectPath:string|null;logoPublicUrl:string|null;
+}):Promise<string|null>{
+ const publicUrl=company.logoPublicUrl;
+ const publicLogo=publicUrl&&/^https:\/\/[^\s]+$/i.test(publicUrl)?publicUrl:null;
+ const key=company.logoObjectPath;
+ if(!key||!key.startsWith("companies/"+company.id+"/"))return publicLogo;
+ try{
+  const config=getPrivateR2Config();
+  const head=await headObject(config,key);
+  if(!head||head.sizeBytes<1||head.sizeBytes>2*1024*1024||
+     !["image/png","image/jpeg","image/webp"].includes(head.contentType)||
+     head.metadata["company-id"]!==company.id||
+     head.metadata["asset-type"]!=="company-logo")
+    return publicLogo;
+  return presignUrl(config,{method:"GET",key,expiresSeconds:120});
+ }catch{
+  // An unconfigured private bucket or missing logo never blocks the profile.
+  return publicLogo;
+ }
+}
 
 export type RecruiterCompanyScope =
   | { status: "NO_ACCESS"; choices: readonly RecruiterGrant[] }
@@ -60,6 +88,7 @@ export async function getRecruiterCompanyTeam(
       websiteUrl: placementCompanies.websiteUrl,
       primaryDomain: placementCompanies.primaryDomain,
       logoObjectPath: placementCompanies.logoObjectPath,
+      logoPublicUrl: placementCompanies.logoPublicUrl,
       relationshipId: placementCompanyRelationships.id,
       trusted: placementCompanyRelationships.isTrusted,
     })
@@ -113,6 +142,7 @@ export async function getRecruiterCompanyTeam(
   // a silently guessed company. Nullable expiry remains valid until revoked.
   if (!company) throw new AuthorizationError("placements.recruiter.read");
 
+  const logoUrl=await recruiterCompanyLogoUrl(company);
   // Company overview remains available even if the Team roster is slow or
   // unavailable; query colleagues only on the explicitly selected Team tab.
   const team = includeTeam ? await db
@@ -143,14 +173,25 @@ export async function getRecruiterCompanyTeam(
     ))
     .orderBy(asc(users.displayName), asc(users.email)) : [];
 
+  // Keep imported source object keys private; no raw key is serialized into
+  // the recruiter page. The fallback initial is always safe to render.
+  const {logoObjectPath:_logoObjectPath,...safeCompany}=company;
+  void _logoObjectPath;
+  const orderedTeam=team.map(member=>({
+   ...member,isYou:member.userId===context.user.id,
+  })).sort((a,b)=>{
+   if(a.isYou!==b.isYou)return a.isYou?-1:1;
+   const first=(value:string|null)=>value?.trim().split(/\s+/)[0]??"";
+   return first(a.displayName).localeCompare(first(b.displayName),"en-IN",{sensitivity:"base",numeric:true})||
+    (a.displayName??"").localeCompare(b.displayName??"","en-IN",{sensitivity:"base",numeric:true})||
+    (a.email??"").localeCompare(b.email??"","en-IN",{sensitivity:"base"})||
+    a.userId.localeCompare(b.userId);
+  });
   return {
     status: "READY" as const,
     grant: scope.grant,
     choices: scope.choices,
-    company,
-    team: team.map((member) => ({
-      ...member,
-      isYou: member.userId === context.user.id,
-    })),
+    company:{...safeCompany,logoUrl,logoInitial:company.name.trim().slice(0,1).toUpperCase()||"C"},
+    team: orderedTeam,
   };
 }

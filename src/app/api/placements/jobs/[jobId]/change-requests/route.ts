@@ -17,6 +17,26 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {readTpoInternalConversation} from "@/modules/placements/tpo-team-conversation-service";
 import {postTpoInternalMessage} from "@/modules/placements/tpo-team-internal-reply-service";
 
+import {legacyDriveChangeStatus} from "@/modules/placements/tpo-drive-change-request-model";
+
+/**
+ * Legacy /api/v1/tpo compatibility map (G2-5-023-001/034):
+ * GET  /drives/{jobId}/change-requests -> GET this route
+ * POST /drives/{jobId}/change-requests -> POST {action:"CREATE",mode,field,...}
+ * POST /change-requests/{id}/accept  -> POST {action:"ACCEPT",requestId,expectedUpdatedAt}
+ * POST /change-requests/{id}/answer  -> POST {action:"ANSWER",requestId,expectedUpdatedAt,note}
+ * POST /change-requests/{id}/reply   -> POST {action:"DECLINE",requestId,expectedUpdatedAt,note}
+ * POST /change-requests/{id}/withdraw -> POST {action:"WITHDRAW",requestId,expectedUpdatedAt}
+ *
+ * Old integer job/request IDs must be resolved by an authorized tenant-bound
+ * importer first. They MUST NOT be accepted as vNext UUIDs or used to infer a
+ * college. Each command is checked by mutateDriveChangeRequest against the
+ * live college, actor role, request version, and persisted transition.
+ * DECLINED with a reply is exposed as legacy REPLIED without rewriting the
+ * canonical database status. Accepted requests retain ACCEPTED only after
+ * the corresponding drive edit commits in the same transaction.
+ * No unauthenticated /api/v1/tpo alias route is exposed.
+ */
 const internalNoteSchema=z.strictObject({
  kind:z.literal("INTERNAL_NOTE"),threadId:z.string().uuid(),
  body:z.string().trim().min(1).max(4000),
@@ -79,8 +99,11 @@ export async function GET(req:Request,{params}:Props){
    return NextResponse.json({...data,messages:data.messages.filter(row=>!row.removed)},{
     headers:{"Cache-Control":"private, no-store"}});
   }
-  return NextResponse.json(await getDriveChangeRequests(context,jobId),
-   {headers:{"Cache-Control":"private, no-store"}});
+  const page=await getDriveChangeRequests(context,jobId,url.searchParams.get("cursor"));
+  return NextResponse.json({...page,requests:page.requests.map(request=>({
+   ...request,
+   legacyStatus:legacyDriveChangeStatus(request.status,request.replyText),
+  }))},{headers:{"Cache-Control":"private, no-store"}});
  }catch(e){return apiErrorResponse(e);}
 }
 export async function POST(req:Request,{params}:Props){
@@ -104,7 +127,9 @@ export async function POST(req:Request,{params}:Props){
     messageId:created.id,notified:created.notified},
     {status:201,headers:{"Cache-Control":"private, no-store"}});
   }
-  return NextResponse.json(await mutateDriveChangeRequest(context,jobId,body),
+  const result=await mutateDriveChangeRequest(context,jobId,body);
+  return NextResponse.json({...result,
+   legacyStatus:result.status==="DECLINED"?"REPLIED":legacyDriveChangeStatus(result.status,null)},
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(e){return apiErrorResponse(e);}
 }
