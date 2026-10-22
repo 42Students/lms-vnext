@@ -17,10 +17,11 @@ describe("TPO campaigns and company page remaining audited increments",()=>{
   expect(join).toContain("tx.insert(inAppNotifications)");
   expect(join).toContain("placementPublicJoinLinks.joinsCount");
  });
- it("TPO-companies-20 routes the default list to legacy Engage Companies while preserving explicit named memory and scoped directory URLs",()=>{
+ it("TPO-companies-20 preserves the college-scoped company directory and named memory routes",()=>{
   const page=src("src/app/(authenticated)/tpo/companies/page.tsx");
-  expect(page).toContain('redirect("/tpo/recruiters?view=companies")');
-  expect(page).toContain('first(raw.directory)!=="1"');
+  expect(page).toContain('await requireTpoBatchActor(context)');
+  expect(page).toContain('getTpoCompaniesView(context, query)');
+  expect(page).toContain('href="/tpo/recruiters"');
   expect(page).toContain("TpoCompanyMemoryWorkspace");
   expect(page).toContain("tpoCompaniesQuerySchema.safeParse");
  });
