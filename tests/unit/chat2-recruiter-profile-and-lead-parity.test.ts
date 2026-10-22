@@ -5,9 +5,9 @@ const src=(p:string)=>readFileSync(p,"utf8");
 describe("Recruiter legacy profile and lead company parity",()=>{
  it("REC-calendar-messages-profile-28 uses exact profile titles and help text",()=>{
   const profile=src("src/app/(authenticated)/hr/profile/page.tsx");
-  for(const s of ["Manage your recruiter details.","Your details","College access",
+  for(const s of ["Manage your recruiter details and review your college access.","Your details","College access",
    "Work email","Only for the placement cell to call you. You never sign in with it.",
-   "Your company comes from your work email. Ask 42 if its name or logo is wrong."])
+   "Your company comes from your work email. Ask your placement cell if its name or logo is wrong."])
    expect(profile).toContain(s);
   expect(profile).toContain("new work email and a new account.");
  });

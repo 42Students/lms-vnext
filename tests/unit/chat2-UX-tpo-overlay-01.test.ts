@@ -8,17 +8,17 @@ describe("UX-tpo-overlay: focus-safe mobile and desktop workflows", () => {
   it("UX-tpo-overlay-01 student panel uses Drawer focus isolation and sticky next/previous actions", () => {
     const source = file("tpo-student-quick-panel");
     expect(source).toContain("<Drawer open={true} onOpenChange=");
-    expect(source).toContain('title={"Student panel for "+student.displayName}');
+    expect(source).toContain('title={student.displayName+" · "+(student.rollNumber');
     expect(source).toContain("footer={");
     expect(source).toContain("onNavigate(rows[index-1].membershipId)");
     expect(source).toContain("onNavigate(rows[index+1].membershipId)");
-    expect(source).toContain("grid-cols-1 gap-3 sm:grid-cols-2");
-    expect(source).toContain("Retry loading student details");
+    expect(source).toContain("grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr]");
+    expect(source).toContain('onClick={()=>void fetchDetail()}>Retry</Button>');
     expect(source).not.toContain('role="dialog"');
   });
   it("UX-tpo-overlay-02 notice composer uses native shared modal behavior", () => {
     const source = file("tpo-notice-composer-dialog");
-    expect(source).toContain("<Dialog open={open} onOpenChange={setOpen} title={title}>");
+    expect(source).toContain("<Dialog open={open} onOpenChange={setOpen} title={title}");
     expect(source).toContain("Edit announcement");
     expect(source).toContain("New announcement");
     expect(source).not.toContain("<dialog ref=");
@@ -43,17 +43,21 @@ describe("UX-tpo-overlay: focus-safe mobile and desktop workflows", () => {
   });
   it("UX-tpo-overlay-05 bell opens a named Drawer and exposes retry paths", () => {
     const source = file("tpo-bell-panel");
-    expect(source).toContain("<Drawer open={open} onOpenChange={changeOpen}");
+    expect(source).toContain('<Drawer id="tpo-notification-drawer" open={open} onOpenChange={changeOpen}');
     expect(source).toContain('description="Most recent notifications from your own college."');
     expect(source).toContain("setRefreshing(true)");
     expect(source).toContain('role="alert"');
   });
-  it("UX-tpo-overlay primitive contracts isolate focus, lock background and restore opener", () => {
+  it("UX-tpo-overlay primitive contracts share focus restoration, top-layer dismissal and reduced-motion exit", () => {
+    const lifecycle = ui("use-overlay-exit").replaceAll("dialogRef.current", "dialog");
+    expect(lifecycle).toContain("dialog.showModal()");
+    expect(lifecycle).toContain("dialog.close()");
+    expect(lifecycle).toContain("opener?.isConnected");
+    expect(lifecycle).toContain("opener.focus()");
+    expect(lifecycle).toContain("prefers-reduced-motion: reduce");
     for (const name of ["dialog", "drawer", "bottom-sheet"]) {
       const source = ui(name);
-      expect(source).toContain("modal.showModal()");
-      expect(source).toContain("modal.close()");
-      expect(source).toContain("opener.current?.focus()");
+      expect(source).toContain("useOverlayExit(ref, opener, open,");
       expect(source).toContain("aria-labelledby={titleId}");
       expect(source).toContain("onCancel={event =>");
       expect(source).toContain("onClick={event =>");

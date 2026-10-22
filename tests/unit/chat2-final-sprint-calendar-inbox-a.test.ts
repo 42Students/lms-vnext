@@ -5,7 +5,7 @@ describe("Final sprint recruiter calendar and inbox parity — group A",()=>{
  it("REC-calendar-messages-profile-03 shows scheduled start and end in IST when available",()=>{
   const calendar=read("src/app/(authenticated)/hr/calendar/page.tsx");
   const service=read("src/modules/placements/recruiter-calendar-service.ts");
-  expect(calendar).toContain('event.endsAt ? ` to ${eventTime(event.endsAt)}`');
+  expect(calendar).toContain('event.endsAt?<span>– <time dateTime={event.endsAt.toISOString()}>{eventTime(event.endsAt)} IST</time>');
   expect(calendar).toContain('timeZone: "Asia/Kolkata"');
   expect(service).toContain("durationMinutes: placementJobRounds.durationMinutes");
  });
@@ -21,7 +21,7 @@ describe("Final sprint recruiter calendar and inbox parity — group A",()=>{
   const calendar=read("src/app/(authenticated)/hr/calendar/page.tsx");
   const service=read("src/modules/placements/recruiter-calendar-service.ts");
   expect(service).toContain("collegeName: row.collegeName");
-  expect(calendar).toContain('College: {event.collegeName}');
+  expect(calendar).toContain('{event.companyName} · College: {event.collegeName}');
  });
  it("REC-calendar-messages-profile-07 sends rounds to Rounds and deadlines to drive Overview",()=>{
   const calendar=read("src/app/(authenticated)/hr/calendar/page.tsx");
@@ -32,9 +32,10 @@ describe("Final sprint recruiter calendar and inbox parity — group A",()=>{
  });
  it("REC-calendar-messages-profile-09 keeps unread and conversation count, general-chat summary and search copy",()=>{
   const inbox=read("src/app/(authenticated)/hr/conversations/page.tsx");
-  expect(inbox).toContain("unread across ");
+  expect(inbox).toContain('result.unreadTotal+" unread message"');
   expect(inbox).toContain("Conversations with the placement cell, one per drive, plus a general one.");
-  expect(inbox).toContain(" conversation(s) · ");
+  expect(inbox).toContain('result.total.toLocaleString("en-IN")+" conversation"');
+  expect(inbox).toContain('Showing {result.first.toLocaleString("en-IN")}');
   expect(inbox).toContain("Search by drive or message");
   expect(inbox).toContain('name="q"');
  });
