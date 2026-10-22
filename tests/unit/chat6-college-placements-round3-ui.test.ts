@@ -20,7 +20,8 @@ describe("College Admin drive UI and graceful failure",()=>{
   expect(applications).toContain("onChange={()=>toggle(row.id)}");
   // The approved UX rollout replaced duplicate mobile/desktop markup
   // with the shared DataTable, retaining row lifecycle and detail actions.
-  expect(drives).toContain('caption="College placement drives"');
+  expect(drives).toContain('caption="College placement jobs"');
+  expect(drives).toContain('aria-label="College placement jobs mobile cards"');
   expect(drives).toContain('mobilePriority:"primary"');
   expect(drives).toContain('mobilePriority:"action"');
   expect(drives).toContain("CollegeDriveRowLifecycleAction");

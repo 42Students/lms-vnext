@@ -74,7 +74,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
      </Select>
     </label>
     <Dropdown mobileSheet align="end" label="Report column filters" trigger={"Column filters ("+Object.values(columnFilters).filter(v=>v.trim()).length+")"}>
-     <div role="region" aria-label="Report column filters, scroll for more" tabIndex={0} className="min-h-0 space-y-2">
+     <div role="region" aria-label="Report column filters, scroll for more" tabIndex={0} className="max-h-[min(70dvh,480px)] min-h-0 space-y-2 overflow-y-auto overscroll-contain pb-[max(0.5rem,env(safe-area-inset-bottom))] [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">
       <Button variant="secondary" type="button" onClick={event=>{
         const disclosure=event.currentTarget.closest("details");
         disclosure?.removeAttribute("open");
@@ -91,7 +91,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
      </div>
     </Dropdown>
     <Dropdown mobileSheet align="end" label="Report visible columns" trigger={"Columns ("+(headings.length-hidden.length)+"/"+headings.length+")"}>
-     <fieldset aria-label="Report columns, scroll for more" tabIndex={0} className="min-h-0 space-y-2">
+     <fieldset aria-label="Report columns, scroll for more" tabIndex={0} className="max-h-[min(70dvh,480px)] min-h-0 space-y-2 overflow-y-auto overscroll-contain pb-[max(0.5rem,env(safe-area-inset-bottom))] [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">
       <legend className="sr-only">Choose report columns</legend>
       <Button variant="secondary" type="button" onClick={event=>{
         const disclosure=event.currentTarget.closest("details");

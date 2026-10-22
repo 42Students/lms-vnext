@@ -15,7 +15,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
  });
  it("UX-placements-selection-targets-01 keeps Select matching and Clear selection 44px tall",()=>{
   for(const label of ["Select matching (max 100)","Clear selection"]){
-   const start=selection.lastIndexOf("<button",selection.indexOf(label));
+   const start=selection.lastIndexOf("<Button",selection.indexOf(label));
    expect(start).toBeGreaterThanOrEqual(0);
    expect(selection.slice(start,selection.indexOf(">",start))).toContain("min-h-11");
   }
@@ -26,7 +26,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(selection).not.toMatch(/throw Error\(payload\?\.issues|throw Error\(payload\?\.error/);
   expect(selection).toContain("Your selected students are preserved");
   expect(selection).toContain("Selections changed while you were reviewing");
-  expect(selection).toContain("if(!mode||!chosen.length||pending)return");
+  expect(selection).toContain("if(!mode||!chosen.length||pending||submitRef.current)return;");
   expect(selection).toContain("setChosen([])");
   expect(selection).toContain("expectedRecordedAt");
   expect(selection).toContain("<ConfirmDialog");
@@ -50,7 +50,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(page.match(/inline-flex min-h-11 items-center/g)?.length).toBeGreaterThanOrEqual(2);
   expect(waiting).toContain("expectedPreviewToken:preview.previewToken");
   expect(waiting).toContain("confirmed:true");
-  expect(waiting).toContain('empty={<p role="status">No applied waitlist results in the final round.</p>}');
+  expect(waiting).toContain('empty={<EmptyState title="No applied waitlist results in the final round."/>');
   expect(waiting).toContain("<ConfirmDialog");
  });
  it("UX-tpo-placements-jobs-jobid-offers-02 binds export to validated filters and ownership",()=>{
@@ -61,7 +61,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(page).toContain("new URLSearchParams");
   expect(page).toContain("csvFilters.set");
   expect(page).toContain("No offers match this filter.");
-  expect(page).toContain('aria-label="Offer register pages"');
+  expect(page).toContain('<Pagination label="Offer register pages"');
   expect(page).toContain("inline-flex min-h-11 items-center");
  });
  it("UX-tpo-placements-jobs-jobid-offers-offerid-02 never infers employer acceptance from letter delivery",()=>{
@@ -71,12 +71,12 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(page).toContain("getTpoOfferEvidence(context,parsed.data)");
   expect(page).toContain("No persisted status or joining history events");
   expect(page).toContain("This page does not verify letter delivery");
-  expect(page).toContain("inline-flex min-h-11 items-center");
+  expect(page).toContain("inline-flex min-h-11 w-full items-center");
  });
  it("PLACEMENTS-JOINING-CONFIRM-01 does not mutate before confirmation, and retains corrected draft",()=>{
   const form=source("src/components/placements/tpo-joining-update-form.tsx");
   const gate=form.indexOf("if (!confirmed)");
-  const mutation=form.indexOf("await fetch(");
+  const mutation=form.indexOf("await apiFetch(");
   expect(gate).toBeGreaterThan(0);
   expect(mutation).toBeGreaterThan(gate);
   expect(form).toContain("setConfirmOpen(true)");
@@ -88,7 +88,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
  });
  it("UX-placements-bulk-round-targets-01 makes mass-selection a full touch target",()=>{
   const bulk=source("src/components/placements/tpo-bulk-round-result-recorder.tsx");
-  expect(bulk).toContain('className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked');
+  expect(bulk).toContain('className="inline-flex min-h-11 w-full items-center justify-center px-4 font-[650] text-primary-text sm:w-auto md:min-h-9">Select first 25 unmarked');
   expect(bulk).toContain("pendingTotal > 25");
   expect(bulk).toContain("if(!confirmed){setConfirmOpen(true);return;}");
  });
@@ -107,7 +107,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(page).toContain('hasMembershipRole(context,"TPO")');
   expect(page).toContain("tpoRoundResultViewSchema.safeParse");
   expect(page).toContain("Invalid round result filters. No learner data loaded.");
-  expect(page).toContain("Bulk staging is unavailable when the eligible roster exceeds 500");
+  expect(page).toContain("Stage results for this roster page (up to 500 learners).");
   expect(page).toContain("TpoRoundApplyControl");
   expect(page).toContain("No eligible shortlisted submitted applicants");
   expect(page).toContain("inline-flex min-h-11 items-center");

@@ -39,7 +39,7 @@ describe("SA-academics-people-101 role edit transactional contract",()=>{
   expect(page).toContain("TeachingAssignmentActions");
   expect(page).toContain('row.status!=="ACTIVE"');
   const controls=read("src/components/admin/super-admin-faculty-assignment-create.tsx");
-  expect(controls).toContain("Save role");
+  expect(controls).toContain("Save Changes");
   expect(controls).toContain('method:"PATCH"');
  });
 });
