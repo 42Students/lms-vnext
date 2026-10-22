@@ -8,7 +8,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat5-program-server-directory-wiring.test.ts` (1 failing)
 - [x] `tests/unit/chat8-verify2-audit-credits.test.ts` (1 failing)
 - [x] `tests/unit/learner-coding-profile-privacy.test.ts` (branch already expects valid HTTPS GitHub URL; rejects spoofed hosts and HTTP) (1 failing)
-- [ ] `tests/unit/tpo-team-workload-chat2.test.ts` (2 failing)
+- [x] `tests/unit/tpo-team-workload-chat2.test.ts` (2 failing)
 
 ## Failures (from CI log)
 
@@ -178,3 +178,5 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 
 - `chat8-verify2-audit-credits.test.ts`: test asserted `.trim()` on a nullable credits field; corrected to match safe optional chaining and the unchanged required error messages in `src/components/academics/college-term-mapping-manager.tsx:203-213`, commit `d95a68d96ec8248732e58d64e08e40053302bf99`.
 - `PROJ-BREAK-SA-workspace-brief-isolation.test.ts`: metadata-bearing persisted JSON is deliberately rejected by `parseWorkspaceBrief` (`src/modules/projects/workspace-brief-model.ts:24-29`) to avoid importing another tenant's brief. Test now expects the empty brief instead of hostile metadata's text, commit `18824600108cfc85ef3bac9ed94a03415158c582`. Strict editor validation remains intact. Tests not locally executed.
+
+- `tpo-team-workload-chat2.test.ts`: branch already corrects both main-CI stale redirects to canonical `/tpo/settings?tab=team`; verified `src/app/(authenticated)/tpo/team/page.tsx:28-47` and tenant-scoped OPEN ask aggregation `src/modules/placements/tpo-team-workload-service.ts:13-35`. No product change or assertion weakening; tests not locally run.
