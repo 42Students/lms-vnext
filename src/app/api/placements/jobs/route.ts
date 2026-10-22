@@ -5,6 +5,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listLearnerPlacementJobs} from "@/modules/placements/learner-job-service";
+import {DEFAULT_LEARNER_JOB_FILTERS,filterLearnerPlacementJobs} from "@/modules/placements/learner-jobs-browse-model";
 import {
   createPlacementJob,
   listPlacementJobs,
@@ -99,15 +100,28 @@ export async function GET(request: Request) {
             message:"Learner program and department come from your active enrollment."},
             {status:400});
         const own=await listLearnerPlacementJobs(context);
-        const match=parsed.data.q.toLocaleLowerCase("en");
-        const filtered=own.filter(item=>
+        // One authenticated, audience-scoped source powers both job cards
+        // and typeahead. The legacy search combines title, employer,
+        // description, responsibilities, job type, location and academic
+        // targeting rather than silently limiting matches to two fields.
+        const normalized=own.map(item=>({
+          ...item,
+          job:{...item.job,
+            applicationDeadline:item.job.applicationDeadline?.toISOString()??null,
+            publishedAt:item.job.publishedAt?.toISOString()??null,
+            responsibilities:item.job.legacyPostingDetails?.responsibilities??null,
+          },
+        }));
+        const permitted=normalized.filter(item=>
           (parsed.data.status==="ALL"||parsed.data.status==="PUBLISHED")&&
           (parsed.data.applicationMode==="ALL"||
-            item.job.applicationMode===parsed.data.applicationMode)&&
-          (!parsed.data.jobType||item.job.jobTypeLabel?.toLowerCase()===
-            parsed.data.jobType.toLowerCase())&&
-          (!match||item.job.title.toLocaleLowerCase("en").includes(match)||
-            item.company.name.toLocaleLowerCase("en").includes(match)));
+            item.job.applicationMode===parsed.data.applicationMode));
+        const filtered=filterLearnerPlacementJobs(permitted,{
+          ...DEFAULT_LEARNER_JOB_FILTERS,
+          search:parsed.data.q,
+          jobType:parsed.data.jobType||undefined,
+          sort:"newest",
+        });
         const ordered=parsed.data.sort==="TITLE_ASC"?
           [...filtered].sort((a,b)=>a.job.title.localeCompare(b.job.title)):
           parsed.data.sort==="POSTED_ASC"?[...filtered].reverse():filtered;
