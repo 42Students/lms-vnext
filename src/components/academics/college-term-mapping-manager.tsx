@@ -479,7 +479,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             { type: editing.type, isMandatory: editing.isMandatory });
         }}>
         <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Credits
-          <Input type="number" min={1} max={10} step={1} required
+          <Input type="number" min={0} max={30} step={1} required
             value={editing.credits}
             onChange={event => {
               setFieldErrors(current => ({ ...current, credits: undefined }));
