@@ -45,6 +45,14 @@ export const superAdminAuditRouteQuerySchema = z.strictObject({
     ctx.addIssue({ code: "custom", path: ["to"], message: "From must be before To" });
 });
 
+/** Old audit DateTimeFormat.ISO.DATE_TIME deep links omit an offset.
+ * Interpret their wall-clock date/time as IST rather than server local time;
+ * the activity boundary parser then validates the actual ISO timestamp. */
+function auditLegacyLocalTime(value:string){
+ return /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d{1,3})?)?$/.test(value)
+  ?value+"+05:30":value;
+}
+
 /** Translate supported legacy action/category/subject names before validation.
  * Old integer actor/org/college IDs must be resolved by a trusted migration,
  * never translated by coercion or unscoped text matching. */
@@ -67,6 +75,21 @@ export function validateSuperAdminAuditRouteQuery(raw:Record<string,string|strin
     mapped[target]=mapped[alias];
     delete mapped[alias];
   }
+  for(const [legacy,modern] of [["since","from"],["until","to"]] as const){
+    if(mapped[legacy]===undefined)continue;
+    if(typeof mapped[legacy]!=="string")return null;
+    const time=auditLegacyLocalTime(mapped[legacy]);
+    if(mapped[modern]!==undefined&&mapped[modern]!==time)return null;
+    mapped[modern]=time;
+    delete mapped[legacy];
+  }
+  for(const boundary of ["from","to"] as const){
+    if(typeof mapped[boundary]==="string")
+      mapped[boundary]=auditLegacyLocalTime(mapped[boundary]);
+  }
+  // Legacy size permits 500 event rows; cursor-backed vNext limits to 100.
+  // Invalid size values fail closed instead of silently widening a tenant
+  // query, and the UI must explain the newer bounded result contract.
   // The ActivityPage server read currently scopes to the selected header
   // organization, not arbitrary query organization IDs. Reject explicit org
   // selectors until that route passes them into requirePermission and SQL.
