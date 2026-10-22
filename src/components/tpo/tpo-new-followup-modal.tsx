@@ -30,6 +30,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const [earliest,setEarliest]=useState("");
  const [selectedLead,setSelectedLead]=useState<LeadChoice|null>(null);
  const requestVersion=useRef(0);
+ const opener=useRef<HTMLButtonElement|null>(null);
  const [leadId,setLeadId]=useState("");
  const [when,setWhen]=useState("");
  const [note,setNote]=useState("");
@@ -96,6 +97,10 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
   },250);
   return ()=>{window.clearTimeout(timer);controller.abort();requestVersion.current++;};
  },[open,collegeId,search,page,searchRetry]);
+ useEffect(()=>{
+  if(open)document.getElementById(formId+"-recruiter-search")?.focus();
+  else opener.current?.focus();
+ },[open,formId]);
  function formattedWhenIst(value:string){
   if(!value)return "";
   try{
@@ -137,6 +142,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  return <>
   <Button variant="ghost" type="button" onClick={event=>{
     if(loading||saving)return;
+    opener.current=event.currentTarget;
     const menu=event.currentTarget.closest("details");
     if(menu){menu.open=false;menu.querySelector("summary")?.focus();}
     void show();
@@ -156,7 +162,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
      <div className="grid gap-2">
       <label htmlFor={formId+"-recruiter-search"} className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Recruiter</label>
       <Input id={formId+"-recruiter-search"} type="search" maxLength={100} autoComplete="off"
-       placeholder="Search recruiter or company (2+ characters)" value={search}
+       placeholder="Type a name or company" value={search}
        onChange={event=>{setSearch(event.target.value);setPage(1);setSearchError("");}}
        disabled={saving} className={field}/>
       <Select aria-label="Choose recruiter" value={leadId}
@@ -194,14 +200,14 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
        {formattedWhenIst(when)} IST · 5-minute intervals</span>:null}
      </label>
      <Disclosure title="Note (optional)" className="border-t border-border" contentClassName="px-2 pb-2">
-      <Textarea aria-label="Note (optional)" rows={3} maxLength={500} value={note} onChange={event=>setNote(event.target.value)}
+      <Textarea aria-label="Note (optional)" rows={2} maxLength={500} value={note} onChange={event=>setNote(event.target.value)}
        disabled={saving} className={field}/>
      </Disclosure>
      {error?<InlineNotice tone="error" message={error}/>:null}
     </form>
   </Dialog>
   <ConfirmDialog open={confirmLeave} onOpenChange={setConfirmLeave}
-   title="Discard this unfinished follow-up?" confirmLabel="Discard" confirmVariant="danger"
+   title="Discard this follow-up draft?" description="Your changes will not be saved." cancelLabel="Keep editing" confirmLabel="Discard" confirmVariant="danger"
    onConfirm={()=>{
     const href=pendingHref;
     setConfirmLeave(false);setPendingHref(null);setOpen(false);

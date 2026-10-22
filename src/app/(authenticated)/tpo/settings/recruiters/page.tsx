@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 import { TpoRecruiterGrantForm, TpoRecruiterRevoke, TpoRecruiterExtend } from "@/components/placements/tpo-recruiter-grant-controls";
 import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-card";
 import { getTpoPublicJoinLinkStatus } from "@/modules/placements/tpo-public-join-link-service";
-import { getTpoTrustedCompanies } from "@/modules/placements/tpo-settings-people-service";
+import { getTpoTrustedCompanies,getTpoPlacementTeam } from "@/modules/placements/tpo-settings-people-service";
 import {
   getCurrentRequestContext,
 } from "@/auth/request-context";
@@ -95,11 +95,15 @@ export default async function TpoRecruiterAccessPage({
     );
   }
 
+  // Legacy recruiter grants are administered by the current college's TPO
+  // admins. Generic TPO members may inspect scoped grants, not issue, revoke
+  // or extend them. Resolve effective assignment before rendering actions.
   const loaded=await Promise.all([
     listTpoRecruiterAccess(context, parsed),
     getTpoTrustedCompanies(context, context.membership.collegeId),
     getTpoPublicJoinLinkStatus(context, "COLLEGE"),
     getTpoCommunicationSettings(context),
+    getTpoPlacementTeam(context,context.membership.collegeId),
   ]).then(values=>({ok:true as const,values}))
    .catch(()=>({ok:false as const}));
   if(!loaded.ok)return <div className="min-w-0 space-y-4">
@@ -111,7 +115,10 @@ export default async function TpoRecruiterAccessPage({
      Retry
     </a>}/>
   </div>;
-  const [data,linkedCompanies,publicLink,communication]=loaded.values;
+  const [data,linkedCompanies,publicLink,communication,team]=loaded.values;
+  const actor=team.members.find(item=>item.membershipId===context.membership?.id);
+  const canManage=Boolean(actor?.roles.includes("TPO_ADMIN")||
+    actor?.roles.includes("COLLEGE_ADMIN"));
 
   const {
     query,
@@ -153,17 +160,20 @@ export default async function TpoRecruiterAccessPage({
        className="min-w-0 border-t border-border pt-3"
        contentClassName="min-w-0 space-y-4 pt-3">
 
-      {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
-       <Alert tone="warning">Recruiter access duration settings are not available yet.</Alert>}
-      <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
+      {canManage?
+       communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
+        <Alert tone="warning">Recruiter access duration settings are not available yet.</Alert>:
+       <p className="text-sm text-body">Only a TPO admin can change recruiter access duration.</p>}
+      {canManage?<TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />:null}
       </Disclosure>
-      <section aria-label="Grant recruiter access" className="min-w-0 space-y-2 border-b border-border pb-4">
+      {!canManage?<Alert tone="info">Recruiter access is managed by the TPO admins. Ask a TPO admin to extend or remove a grant.</Alert>:null}
+      {canManage?<section aria-label="Grant recruiter access" className="min-w-0 space-y-2 border-b border-border pb-4">
        <Disclosure title="Give recruiter access" className="min-w-0" contentClassName="pt-3">
         <TpoRecruiterGrantForm companies={linkedCompanies.companies.map(company=>({
          relationshipId:company.relationshipId,name:company.name,
         }))}/>
        </Disclosure>
-      </section>
+      </section>:null}
       <section className="border-t border-border pt-4">
         <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg md:leading-7 min-[992px]:text-xl">
           Recruiters with access to your college
@@ -301,7 +311,7 @@ export default async function TpoRecruiterAccessPage({
                </div>},
               {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
                <div className="flex min-w-0 flex-wrap items-center gap-2">
-                {item.status==="ACTIVE"&&item.grantId&&item.expectedUpdatedAt?<>
+                {canManage&&item.status==="ACTIVE"&&item.grantId&&item.expectedUpdatedAt?<>
                  <TpoRecruiterExtend grantId={item.grantId}
                   expectedUpdatedAt={item.expectedUpdatedAt}
                   displayName={item.displayName} ended={item.ended}/>
@@ -309,7 +319,7 @@ export default async function TpoRecruiterAccessPage({
                   expectedUpdatedAt={item.expectedUpdatedAt}
                   displayName={item.displayName}/>:null}
                 </>:<span className="text-xs text-muted-foreground">
-                  {item.status==="ACTIVE"?"Expired":"Removed"}
+                  {!canManage?"TPO admin only":item.status==="ACTIVE"?"Expired":"Removed"}
                 </span>}
                </div>},
               {key:"granted",header:"Granted",mobilePriority:"secondary",cell:item=>item.grantedDate},

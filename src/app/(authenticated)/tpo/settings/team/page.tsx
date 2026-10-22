@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -37,10 +38,18 @@ export default async function TpoPlacementTeamPage() {
     redirect("/dashboard");
   }
 
-  const data = await getTpoPlacementTeam(
-    context,
-    context.membership.collegeId,
-  );
+  let data:Awaited<ReturnType<typeof getTpoPlacementTeam>>;
+  try{
+    data=await getTpoPlacementTeam(context,context.membership.collegeId);
+  }catch{
+    return <div className="min-w-0 space-y-5">
+      <PageHeader title="Placement team"/>
+      <TpoSettingsNav active="team" compact/>
+      <ErrorState title="Could not verify your placement team access"
+       description="Your college team records are temporarily unavailable. No changes have been made."
+       action={<Link href="/tpo/settings/team" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Retry</Link>}/>
+    </div>;
+  }
 
   const { members, summary, sources } = data;
   const actorMembershipId = context.membership.id;
@@ -52,7 +61,7 @@ export default async function TpoPlacementTeamPage() {
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Placement team"
-        description="Manage faculty coordinators and review active TPO memberships and dated Drive Day student coordinators in your college."
+        description="Who is on your team, who owns what, and who is away. Manage faculty coordinators and Drive Day student duties for your college."
         actions={
           <Link
             href="/tpo/settings/trusted"
@@ -190,6 +199,9 @@ export default async function TpoPlacementTeamPage() {
       <Disclosure title="About placement team records" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         Faculty coordinator assignments are scoped to your selected college.
+        When removing someone, verify that their private team-conversation
+        membership and notification access are revoked by the central service;
+        this page does not grant them new conversation permissions.
         Changing an assignment does not change the permanent TPO or College Admin
         membership roles. Removing a team assignment cannot delete or hand over
         other work automatically. Review the confirmation before removing someone.
