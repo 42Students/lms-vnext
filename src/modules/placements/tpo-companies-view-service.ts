@@ -312,7 +312,13 @@ export async function getTpoCompaniesView(
     unlinkedLeadGroups: all.filter(
       (company) => company.unlinkedLeadGroup,
     ).length,
-    page: filterTpoCompanyRows(all, input),
+    page: filterTpoCompanyRows(all, {
+      collegeId: input.collegeId,
+      sort: input.sort,
+      page: input.page,
+      pageSize: input.pageSize,
+      ...(input.search !== undefined ? { search: input.search } : {}),
+    }),
   };
 }
 
@@ -323,7 +329,10 @@ export async function exportTpoCompanyDirectory(
  const input=tpoCompaniesQuerySchema.parse(raw);
  const source=await loadCompanySources(context,input.collegeId);
  const all=buildTpoCompanyRows(source);
- const result=filterTpoCompanyRows(all,{...input,page:1,pageSize:2001});
+ const result=filterTpoCompanyRows(all,{
+  collegeId:input.collegeId,sort:input.sort,page:1,pageSize:2001,
+  ...(input.search !== undefined ? {search:input.search} : {}),
+ });
  if(result.total>2000)throw new Error("COMPANY_EXPORT_TOO_LARGE");
  return result.items;
 }

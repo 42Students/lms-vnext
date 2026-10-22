@@ -43,11 +43,11 @@ export async function undoTpoStudentBulkRun(ctx:RequestContext,raw:unknown){
    eq(activityEvents.eventType,"PLACEMENTS_BULK_RUN"),eq(activityEvents.actorUserId,ctx.user.id),
    eq(activityEvents.actorMembershipId,member.id),
   )).for("update").limit(1);
-  if(!run||run.metadata.target!=="STUDENTS")throw new TpoStudentBulkUndoError("NOT_FOUND");
+  if(!run||run.metadata["target"]!=="STUDENTS")throw new TpoStudentBulkUndoError("NOT_FOUND");
   const age=Date.now()-run.occurredAt.getTime();
   if(age<0||age>TPO_STUDENT_BULK_UNDO_WINDOW_MS)
    throw new TpoStudentBulkUndoError("EXPIRED");
-  const rows=z.array(rowSchema).min(1).max(200).safeParse(run.metadata.undoRows);
+  const rows=z.array(rowSchema).min(1).max(200).safeParse(run.metadata["undoRows"]);
   if(!rows.success||new Set(rows.data.map(row=>row.membershipId)).size!==rows.data.length)
    throw new TpoStudentBulkUndoError("UNSAFE_RUN");
   const [already]=await tx.select({id:activityEvents.id}).from(activityEvents).where(
