@@ -3,7 +3,9 @@ import type { ProjectTemplateBlueprint } from "./validation";
 type Sprint = ProjectTemplateBlueprint["sprints"][number];
 type Task = ProjectTemplateBlueprint["tasks"][number];
 
-/** SA-placements-projects-83/84: only siblings in the same release/sprint are reordered. */
+/** SA-placements-projects-83/84: reordering never silently reassigns
+ * a task to another sprint. The old repeating editor was a flat array,
+ * but vNext must explicitly change sprintKey to move across groups. */
 export function moveTemplateSprint(
   blueprint: ProjectTemplateBlueprint, key: string, direction: -1 | 1,
 ): ProjectTemplateBlueprint {
@@ -21,6 +23,21 @@ export function moveTemplateSprint(
       ? { ...item, sequence: adjacent.sequence }
       : item.key === adjacent.key ? { ...item, sequence: row.sequence } : item),
   };
+}
+
+/** A disabled move at a sprint/backlog boundary requires explicit
+ * reassignment; callers can show this reason instead of a no-op button. */
+export function templateTaskMoveAvailability(
+  blueprint: ProjectTemplateBlueprint, key: string, direction: -1 | 1,
+): {canMove:boolean; reason:string|null} {
+  const task=blueprint.tasks.find(item=>item.key===key);
+  if(!task)return {canMove:false,reason:"Task no longer exists."};
+  const siblings=blueprint.tasks.filter(item=>item.sprintKey===task.sprintKey)
+    .sort((a,b)=>a.sequence-b.sequence||a.key.localeCompare(b.key));
+  const index=siblings.findIndex(item=>item.key===key);
+  return index+direction>=0&&index+direction<siblings.length
+    ?{canMove:true,reason:null}
+    :{canMove:false,reason:"Task order is limited to the same sprint or backlog. Change its sprint explicitly to move it to another group."};
 }
 
 export function moveTemplateTask(
@@ -76,11 +93,22 @@ export function removeTemplateSprint(
   };
 }
 
-export function nextTemplatePlanKey(keys: readonly string[], prefix: string): string {
-  const taken = new Set(keys);
-  for (let index = 1; ; index += 1) {
-    const key = prefix + "-" + index;
-    if (!taken.has(key)) return key;
+/** Title-based legacy key materialization with seeded explicit keys and
+ * numeric collision suffixes. Already assigned keys stay stable on rename.
+ * When title is absent the existing task-N/sprint-N draft identity remains. */
+export function nextTemplatePlanKey(
+  keys: readonly string[], prefix: string, title?: string,
+): string {
+  const taken=new Set(keys.map(key=>key.trim().toLowerCase()).filter(Boolean));
+  const cleaned=(title??"").normalize("NFKD")
+    .replace(/[\\u0300-\\u036f]/g,"").toLowerCase()
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+  const base=(cleaned||prefix).slice(0,56).replace(/-+$/g,"")||"item";
+  if(cleaned&&!taken.has(base))return base;
+  for(let index=cleaned?2:1;;index+=1){
+    const suffix="-"+index;
+    const key=base.slice(0,64-suffix.length).replace(/-+$/g,"")+suffix;
+    if(!taken.has(key))return key;
   }
 }
 

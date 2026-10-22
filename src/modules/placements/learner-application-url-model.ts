@@ -17,12 +17,23 @@ for(const key of allowed){
  // Validate each independent facet without losing other valid selections.
  if(learnerApplicationUrlSchema.safeParse({[key]:values[0]}).success)safe[key]=values[0];
 }
+// Legacy links used ?show=live|ended|all; an application-specific
+// notice link must not disappear behind a narrower saved view.
+const showValues=params.getAll("show");
+if(!("view" in safe)&&showValues.length===1){
+ const show=showValues[0];
+ safe.view=show==="all"?"all":show==="ended"?"completed":"progress";
+}
+if(safe.applicationId)safe.view="all";
 return learnerApplicationUrlSchema.parse(safe);
 }
 export function updateLearnerApplicationUrl(current:string,changes:Record<string,string|null>){
 const allowed=["q","view","stage","sort","page","applicationId"];
 const query=new URLSearchParams(),old=new URLSearchParams(current);
 for(const key of allowed){const values=old.getAll(key);if(values.length===1&&values[0]&&learnerApplicationUrlSchema.safeParse({[key]:values[0]}).success)query.set(key,values[0]);}
+// Unlike the old shallow router.replace({query:{show}}), keep bounded
+// search, sorting and selected application deep links when switching tabs.
+// This intentional vNext behavior avoids losing a notification destination.
 for(const [key,value] of Object.entries(changes)){
 if(!allowed.includes(key))continue;
 if(!value||(value==="all"&&key!=="view"))query.delete(key);
@@ -30,5 +41,6 @@ else if(learnerApplicationUrlSchema.safeParse({[key]:value}).success)query.set(k
 else query.delete(key);
 }
 if(!Object.prototype.hasOwnProperty.call(changes,"page"))query.delete("page");
+if(query.has("applicationId"))query.set("view","all");
 return learnerApplicationUrlSchema.safeParse(Object.fromEntries(query.entries())).success?query.toString():"";
 }
