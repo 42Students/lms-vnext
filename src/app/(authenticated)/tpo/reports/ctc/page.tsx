@@ -71,7 +71,7 @@ export default async function TpoCtcReportPage({
     <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         title="Packages"
-        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/ctc"].description}
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/ctc"]?.description ?? "Packages"}
         actions={<ReportCsvLink workspace={workspace} kind="ctc" />}
       />
 
