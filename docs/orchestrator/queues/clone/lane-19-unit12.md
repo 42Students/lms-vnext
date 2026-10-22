@@ -56,9 +56,9 @@ Record each result under ## Results in the deep packet named next to the row: OK
 
 - [x] G2-4-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md; record in: docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md)
 
-## Chat-18 overflow repairs
+## Repair notes (chat-19)
 
-- G2-4-018-046 — OK recorded in `DEEP_agent2_4.md` (`92a47d1`).
-- Tenant domain verification — fixed idempotent verified-domain return and unverified missing-token rejection (`2ebb4e1`).
-- Learner course recovery — strengthened test against the existing accessible retry component rather than obsolete inline-link markup (`6bfcf60`).
-- Not executed locally as instructed; CI re-run required to confirm.
+- G2-4-018-046: verified legacy revision count is independent of the optimistic token and submission ordinal; result recorded in DEEP_agent2_4.md (commit 4f1b88e).
+- Tenant domain: verified hosts are idempotent, with no redundant DNS verifier or record write; genuinely unverified missing-token domains still reject (commit 2788f33).
+- Learner course: outdated inline-link class expectation replaced with assertions against the actual accessible Retry button (pending disabled state and hit target) and the back-to-courses link (commit 710c726).
+- Changes were reviewed statically; test execution and CI results were not available in this environment.
