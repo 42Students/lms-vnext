@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {changeTpoSeasonRegistration} from "@/modules/placements/tpo-season-write-service";
+import {changeTpoSeasonRegistration,TpoSettingsStaleError} from "@/modules/placements/tpo-season-write-service";
 
 export const runtime="nodejs";
 export async function POST(request:Request,{params}:{params:Promise<{seasonId:string}>}){
@@ -16,5 +16,11 @@ export async function POST(request:Request,{params}:{params:Promise<{seasonId:st
     const payload={...raw,seasonId};
     const season=await changeTpoSeasonRegistration(await getCurrentRequestContext(),payload);
     return NextResponse.json({season},{headers:{"Cache-Control":"private, no-store"}});
-  }catch(error){return apiErrorResponse(error);}
+  }catch(error){
+    if(error instanceof TpoSettingsStaleError)
+      return NextResponse.json({error:"TPO_SETTINGS_STALE"},{status:409});
+    if(error instanceof RangeError)
+      return NextResponse.json({error:"INVALID_REGISTRATION_DEADLINE"},{status:400});
+    return apiErrorResponse(error);
+  }
 }
