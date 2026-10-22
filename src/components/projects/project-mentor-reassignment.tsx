@@ -257,9 +257,9 @@ export function ProjectMentorReassignment({
                   <th scope="col" className="w-12 px-3 py-2">
                     <Checkbox aria-label="Select all workspaces on this page"
                       disabled={pending} checked={allPageSelected}
-                      onChange={checked=>setSelected(old=>{
+                      onChange={event=>setSelected(old=>{
                         const ids=visibleWorkspaces.map(row=>row.id);
-                        return checked?[...new Set([...old,...ids])]:
+                        return event.target.checked?[...new Set([...old,...ids])]:
                           old.filter(id=>!ids.includes(id));
                       })}/>
                   </th>
