@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-5-007-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
-- [ ] G2-5-009-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-5-009-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-5-011-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-5-026-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-5-027-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
@@ -19,6 +19,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-5-032-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 
 ## Results
+- G2-5-009-030: FIXED — `908238ad03d6d45dce21d48eaf99799a1a703fcd`, `src/components/attendance/admin-attendance-workspace.tsx` (failed record-detail reads now have a direct Retry record action and correction remains disabled until a verified record is available; legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:52-71,258-266`).
 - G2-5-026-021: OK — `src/app/(authenticated)/admin/inbound-mail/page.tsx:21-35,94-140` provides private global Super Admin inbox with OTHER kind and FAILED routing filters, while `src/modules/inbound-mail/admin-service.ts:45-82,86-106` reads persisted events with safe previews and global authorization. Legacy separation of OTHER and failed inbound routing: `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/InboundReplyService.java:23-32`.
 - G2-5-027-060: OK — `src/modules/people/college-student-csv-model.ts:4-52` accepts structured `students` JSON (max 500) and deterministically transforms to CSV, enforced by existing Zod request schema used at `src/app/api/people/student-import/route.ts:19-21`. Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/BulkRegisterRequest.java:20-34` accepts up to 500 learner objects; legacy numeric academic IDs require explicit UUID resolution.
 - G2-5-011-005: OK — `src/app/(authenticated)/teacher/calendar/page.tsx:69-103` renders one Class Schedule heading, Next classes, and a single primary calendar; optional second month grid is behind a disclosure at `:104-174`. Matches `docs/legacy-source/frontend/src/components/CalendarComp/ClassScheduleContent.jsx:357-436`.
