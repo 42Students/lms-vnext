@@ -60,7 +60,7 @@ export function LearnerGeneralRequests({
  useEffect(()=>{void Promise.resolve().then(refresh);},[]);
  const payload=()=>{
   switch(kind){
-   case "OFF_CAMPUS_OFFER":return {kind,reason,companyName:target,ctcLpa:aux.trim()||"0",proofUrl};
+   case "OFF_CAMPUS_OFFER":return {kind,reason,companyName:target,ctcLpa:aux.trim()||null,proofUrl};
    case "REGISTRATION_CHANGE":return {kind,reason,cohortId,choice:target||"HIGHER_STUDIES",consentConfirmed:consent};
    case "ABSENCE_DISPUTE":return {kind,reason,applicationId:target,roundId:aux,proofUrl};
    case "CORRECTION_WITH_PROOF":return {kind,reason,section:"EDUCATION" as const,field:target,proposedValue:aux,proofUrl};
@@ -126,9 +126,9 @@ export function LearnerGeneralRequests({
     <Input className={box} maxLength={kind==="OFF_CAMPUS_OFFER"?200:kind==="CORRECTION_WITH_PROOF"?140:200} placeholder={kind==="OFF_CAMPUS_OFFER"?"e.g. Acme Corp":undefined} value={target} onChange={e=>setTarget(e.target.value)}/>
    </label>}
   {kind!=="REGISTRATION_CHANGE"&&kind!=="OFFER_ACCEPTANCE_DISPUTE"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-   {kind==="OFF_CAMPUS_OFFER"?"CTC (LPA)":
+   {kind==="OFF_CAMPUS_OFFER"?"CTC (LPA, optional)":
     kind==="ABSENCE_DISPUTE"?"Round ID":kind==="CORRECTION_WITH_PROOF"?"Corrected value":"Justification"}
-   <Input className={box} type={kind==="OFF_CAMPUS_OFFER"?"number":"text"} min={kind==="OFF_CAMPUS_OFFER"?0:undefined} step={kind==="OFF_CAMPUS_OFFER"?0.1:undefined} placeholder={kind==="OFF_CAMPUS_OFFER"?"e.g. 8.5":undefined} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
+   <Input className={box} type={kind==="OFF_CAMPUS_OFFER"?"number":"text"} min={kind==="OFF_CAMPUS_OFFER"?0:undefined} step={kind==="OFF_CAMPUS_OFFER"?0.01:undefined} placeholder={kind==="OFF_CAMPUS_OFFER"?"e.g. 8.5":undefined} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
   </label>:target==="PLACEMENTS"?<label className="flex min-h-11 min-w-0 items-start gap-2 py-2 text-sm">
    <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
    I request placement registration and consent to the placement rules.
