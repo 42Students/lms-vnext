@@ -77,10 +77,10 @@ export default async function CollegeAttendancePage({
           { value: "/college/attendance/settings", label: "Attendance policy", href: "/college/attendance/settings" },
         ]}/>
       <Banner tone="warning" role="alert">
-        <strong>Couldn't load classes/courses for this college</strong>
-        <p className="mt-1">Attendance options are unavailable. Your chosen month and filters are preserved.</p>
+        <strong>{query.sectionId?"Couldn't verify which courses are taught to this class":"Couldn't load classes/courses for this college"}</strong>
+        <p className="mt-1">{query.sectionId?"Class courses could not be verified. Your selected class and month are preserved.":"Attendance options are unavailable. Your chosen month and filters are preserved."}</p>
         <Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">{query.sectionId?"Retry class courses":"Retry"}</Link>
       </Banner>
     </div>;
   }
