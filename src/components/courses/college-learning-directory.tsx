@@ -27,6 +27,11 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
   const lessons = data.kind === "LESSONS";
   const title = lessons ? COLLEGE_COURSE_TAB_COPY.lessonsTitle : COLLEGE_COURSE_TAB_COPY.progressTitle;
   const href = lessons ? "/college/lessons" : "/college/course-progress";
+  const lessonDestinations=data.kind==="LESSONS"
+    ?[...new Map(data.items.map(row=>[row.learningPathId,{
+      learningPathId:row.learningPathId,
+      label:row.courseName+" ("+row.courseCode+") · "+row.cohortName+" · "+row.periodName,
+    }])).values()]:[];
   const activeAdvanced = Object.entries(data.query).some(([key,value]) =>
     !["q","page","pageSize"].includes(key) && value != null && value !== "" && value !== "ALL"
   );
@@ -624,10 +629,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                         <CollegeDirectoryLessonMove
                           lesson={{id:item.id,name:item.name,learningPathId:item.learningPathId,
                             updatedAt:item.updatedAt.toISOString()}}
-                          destinations={[...new Map(data.items.map(row=>[row.learningPathId,{
-                            learningPathId:row.learningPathId,
-                            label:row.courseName+" ("+row.courseCode+") · "+row.cohortName+" · "+row.periodName,
-                          }])).values()]}
+                          destinations={lessonDestinations}
                         />
                         <p className="text-xs leading-5 text-muted-foreground">
                           Only destinations currently visible in this directory page are offered.
