@@ -100,10 +100,10 @@ export function TpoDriveActOnPanel(){
    setNotice("Failed drive IDs copied.");
   }catch{setNotice("Clipboard unavailable. Failed drives remain listed below.");}
  }
- return <section aria-label="Act on selected drives" className="min-w-0 space-y-3">
+ return <section aria-label="Act on selected drives" className="min-w-0 space-y-3" aria-busy={pending}>
   <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setOpen(!open)} aria-expanded={open}
    aria-controls="tpo-drive-bulk-actions">Act on selected drives</Button>
-  {open?<div id="tpo-drive-bulk-actions" className="min-w-0 space-y-4 border-t border-border pt-4">
+  {open?<div id="tpo-drive-bulk-actions" role="region" aria-label="Selected drive actions" className="min-w-0 space-y-4 border-t border-border pt-4">
    <p className="text-sm text-body leading-[22px]">Actions only apply to checked rows on this page. Every drive is rechecked by the placement server before applying a change.</p>
    <details className="min-w-0 border-b border-border pb-3">
     <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Other selected-drive actions</summary>

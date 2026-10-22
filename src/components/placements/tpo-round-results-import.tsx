@@ -57,8 +57,8 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   }catch(e){setError(e instanceof Error?e.message:"Import failed");}
   finally{setBusy(false);}
  }
- return <section className="min-w-0 space-y-4 border-b border-border pb-5">
-  <h2 className="text-lg font-semibold text-foreground">Import company round results</h2>
+ return <section aria-labelledby="tpo-round-import-title" className="min-w-0 space-y-4 border-b border-border pb-5">
+  <h2 id="tpo-round-import-title" className="text-lg font-semibold text-foreground">Import company round results</h2>
   <p className="text-sm text-body">Upload a CSV or Excel (.xlsx) result list. All supplied Application ID, email and roll identifiers must agree.
    Company portal IDs with no matching application are left unmatched. Contradictory IDs, email and roll must be reviewed; a manual match is audited. Nothing is applied to the round until the separate Apply results step.</p>
   <a href={url} download className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 sm:w-auto text-sm font-[650] text-[var(--lms-link-text)] hover:bg-primary-subtle underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden hover:underline">Download CSV template</a>

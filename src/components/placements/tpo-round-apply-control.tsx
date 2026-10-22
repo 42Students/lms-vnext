@@ -64,8 +64,8 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Results could not be applied");}finally{setBusy(false);}
  }
- return <section className="space-y-3 border-b border-border pb-6">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Apply round results</h2>
+ return <section aria-labelledby="tpo-round-apply-title" className="space-y-3 border-b border-border pb-6">
+  <h2 id="tpo-round-apply-title" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Apply round results</h2>
   <p className="text-sm text-body leading-[22px]">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void load()}
    >

@@ -210,14 +210,14 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`
 - [x] `src/components/placements/super-admin-drive-archive.tsx`
 - [x] `src/components/placements/super-admin-drive-deadline.tsx`
-- [ ] `src/components/placements/super-admin-drive-duplicate.tsx`
-- [ ] `src/components/placements/super-admin-platform-placement-policy.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [ ] `src/components/placements/tpo-request-bulk-decision.tsx`
-- [ ] `src/components/placements/tpo-round-apply-control.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/placements/tpo-selection-import.tsx`
+- [x] `src/components/placements/super-admin-drive-duplicate.tsx`
+- [x] `src/components/placements/super-admin-platform-placement-policy.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [x] `src/components/placements/tpo-request-bulk-decision.tsx`
+- [x] `src/components/placements/tpo-round-apply-control.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/placements/tpo-selection-import.tsx`
 - [ ] `src/components/profile/learner-profile-workspace.tsx`
 - [ ] `src/components/profile/learner-skill-catalog-input.tsx`
 - [ ] `src/components/profile/learner-verification-withdraw.tsx`

@@ -27,7 +27,7 @@ export function SuperAdminDriveDuplicate({jobId,title}:{jobId:string;title:strin
   }catch(e){setError(e instanceof Error?e.message:"Could not duplicate drive.");}
   finally{inFlightRef.current=false;setBusy(false);}
  }
- return <div className="space-y-2">
+ return <div aria-busy={busy} className="space-y-2">
   <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{setError("");setConfirmOpen(true);}} disabled={busy}>
    {busy?"Creating draft…":"Duplicate as new drive"}</Button>
   {error&&!confirmOpen?<InlineNotice tone="error" message={error}/>:null}
