@@ -654,8 +654,8 @@ export function ProjectWorkspace({
           backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
       {mode === "ADMIN" ? (
         <Breadcrumbs items={[
-          { label: "Projects", href: sectionBaseHref ? sectionBaseHref.replace(/\/[^/]+$/, "") : backHref },
-          ...(sectionBaseHref ? [{label:"Workspaces",href:backHref}] : []),
+          { label: "Projects", ...(sectionBaseHref ? { href: sectionBaseHref.replace(/\/[^/]+$/, "") } : backHref ? { href: backHref } : {}) },
+          ...(sectionBaseHref ? [{label:"Workspaces",...(backHref ? {href:backHref} : {})}] : []),
           { label: workspace.project.title?.trim()||"Workspace",
             ...(sectionBaseHref ? { href: sectionBaseHref+"/summary"+sectionQuerySuffix } : {}) },
           ...(activeSection ? [{label: PROJECT_WORKSPACE_SECTION_LABELS[activeSection]}] : []),
