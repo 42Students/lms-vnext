@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {ProjectsServiceError} from "@/modules/projects/errors";
+import {reviewProjectSubmissionInputSchema} from "@/modules/projects/validation";
 import {listProjectSubmissions,reviewProjectSubmission} from "@/modules/projects/submission-service";
 export const runtime="nodejs";
 export async function POST(request:Request,{params}:{params:Promise<{projectId:string}>}){
@@ -20,12 +21,12 @@ export async function POST(request:Request,{params}:{params:Promise<{projectId:s
     throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   const action=body.submitAction??body.decision;
   const decision=action==="REQUEST_CHANGES"?"CHANGES_REQUESTED":action;
-  const reviewed=await reviewProjectSubmission(context,projectId,latest.id,{
-    decision,
-    feedback:body.feedback,
+  const validated=reviewProjectSubmissionInputSchema.parse({
+    decision,feedback:body.feedback,
     expectedVersion:latest.version,
     expectedUpdatedAt:body.expectedUpdatedAt,
   });
+  const reviewed=await reviewProjectSubmission(context,projectId,latest.id,validated);
   return NextResponse.json({message:"Project delivery reviewed",review:reviewed});
  }catch(error){return apiErrorResponse(error);}
 }
