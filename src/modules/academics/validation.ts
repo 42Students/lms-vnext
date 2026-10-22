@@ -37,7 +37,8 @@ export const academicDateSchema = z
     "Date is invalid",
   );
 
-const programDurationTermsSchema = z.number().int().min(1).max(24);
+// Legacy program duration: at most ten academic years, 20 two-term semesters.
+const programDurationTermsSchema = z.number().int().min(1).max(20);
 const programDurationYearsSchema = z.number().int().min(1, "Duration must be between 1 and 10 years").max(10, "Duration must be between 1 and 10 years");
 
 function validateProgramDuration(

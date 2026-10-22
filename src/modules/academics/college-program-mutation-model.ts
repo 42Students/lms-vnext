@@ -5,7 +5,8 @@ const name = z.string().trim()
   .max(255, "Maximum 255 characters");
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid program code");
-const durationTerms = z.number().int().min(1).max(24);
+// Legacy ten-year academic maximum: two terms per year, 20 total.
+const durationTerms = z.number().int().min(1).max(20);
 
 export const createCollegeProgramSchema = z.object({
   departmentId: z.string().uuid("Please select a department"),
@@ -50,7 +51,7 @@ export function programDurationYearsToTerms(years:number,termsPerYear=2):number|
     !Number.isInteger(termsPerYear)||termsPerYear<1||termsPerYear>3)
     return null;
   const result=years*termsPerYear;
-  return result>=1&&result<=24?result:null;
+  return result>=1&&result<=20?result:null;
 }
 
 /** Permit legacy department/name/duration presentation while preserving
@@ -74,7 +75,7 @@ export function canReduceProgramDuration(
   highestReferencedTerm: number,
 ): boolean {
   return Number.isInteger(nextDurationTerms) &&
-    nextDurationTerms >= 1 && nextDurationTerms <= 24 &&
+    nextDurationTerms >= 1 && nextDurationTerms <= 20 &&
     nextDurationTerms >= highestReferencedTerm;
 }
 

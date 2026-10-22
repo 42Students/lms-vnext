@@ -4,6 +4,7 @@ import {
   colleges,
   organizations,
   placementCompanies,
+  placementCompanyDomains,
   placementCompanyRelationships,
   placementRecruiterCollegeGrants,
   placementRecruiterProfiles,
@@ -142,7 +143,12 @@ export async function getRecruiterCompanyTeam(
   // a silently guessed company. Nullable expiry remains valid until revoked.
   if (!company) throw new AuthorizationError("placements.recruiter.read");
 
-  const logoUrl=await recruiterCompanyLogoUrl(company);
+  const [logoUrl,domainRows]=await Promise.all([
+   recruiterCompanyLogoUrl(company),
+   db.select({domain:placementCompanyDomains.domain}).from(placementCompanyDomains)
+    .where(eq(placementCompanyDomains.companyId,company.id))
+    .orderBy(asc(placementCompanyDomains.domain)).limit(25),
+  ]);
   // Company overview remains available even if the Team roster is slow or
   // unavailable; query colleagues only on the explicitly selected Team tab.
   const team = includeTeam ? await db
@@ -191,7 +197,12 @@ export async function getRecruiterCompanyTeam(
     status: "READY" as const,
     grant: scope.grant,
     choices: scope.choices,
-    company:{...safeCompany,logoUrl,logoInitial:company.name.trim().slice(0,1).toUpperCase()||"C"},
+    company:{...safeCompany,logoUrl,
+     domains:[...new Set([
+      ...domainRows.map(row=>row.domain),
+      ...(company.primaryDomain?[company.primaryDomain]:[]),
+     ])],
+     logoInitial:company.name.trim().slice(0,1).toUpperCase()||"C"},
     team: orderedTeam,
   };
 }
