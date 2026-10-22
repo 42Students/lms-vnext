@@ -7,8 +7,8 @@ describe("College placement verified operational parity",()=>{
   {const body=source("src/app/(authenticated)/college/placements/student-lookup/page.tsx");expect(body).toContain("Student placement lookup");expect(body).toContain("lookupCollegeStudentPlacement");}
   {const body=source("src/modules/placements/college-retention-report-service.ts");expect(body).toContain("collegeApplicationRetentionCutoff(new Date(),days)");expect(body).toContain(".limit(200)");
     const policy=source("src/modules/placements/college-retention-report-policy.ts");
-    expect(policy).toContain("COLLEGE_APPLICATION_RETENTION_DAYS = 180");
-    expect(policy).toContain("COLLEGE_APPLICATION_RETENTION_DAYS * 86400000");
+    expect(policy).toContain("COLLEGE_APPLICATION_RETENTION_DAYS = 365");
+    expect(policy).toContain("days * 86400000");
     expect(policy).toContain("Number.isFinite(now.getTime())");}
 
  });

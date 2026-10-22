@@ -28,12 +28,12 @@ describe("TPO prep derived reader compile and tenant isolation contract",()=>{
  });
 });
 describe("PLACEMENTS-RETENTION-01 read-only application retention boundary",()=>{
- it("uses exactly the 180-day lookback and refuses malformed clocks",()=>{
-  expect(COLLEGE_APPLICATION_RETENTION_DAYS).toBe(180);
+ it("uses the configured 365-day lookback and refuses malformed clocks",()=>{
+  expect(COLLEGE_APPLICATION_RETENTION_DAYS).toBe(365);
   const instant=new Date("2099-10-18T12:00:00.000Z");
   const cutoff=collegeApplicationRetentionCutoff(instant);
-  expect(cutoff.getTime()).toBe(instant.getTime()-180*86400000);
-  expect(collegeApplicationRetentionCutoff(new Date(cutoff.getTime()+180*86400000))).toEqual(cutoff);
+  expect(cutoff.getTime()).toBe(instant.getTime()-365*86400000);
+  expect(collegeApplicationRetentionCutoff(new Date(cutoff.getTime()+365*86400000))).toEqual(cutoff);
   expect(()=>collegeApplicationRetentionCutoff(new Date(Number.NaN))).toThrow("Invalid retention reference date");
  });
  it("PLACEMENTS-RETENTION-02 keeps every old row college scoped and read-only in the persisted report",()=>{
@@ -46,9 +46,9 @@ describe("PLACEMENTS-RETENTION-01 read-only application retention boundary",()=>
   expect(service).toContain("lt(placementApplications.updatedAt,cutoff)");
   expect(service).toContain("lt(sql<Date>");
   expect(service).toContain("coalesce(");
-  expect(service).toContain("collegeApplicationRetentionCutoff(new Date())");
+  expect(service).toContain("collegeApplicationRetentionCutoff(new Date(),days)");
   expect(service).toContain("COLLEGE_APPLICATION_RETENTION_DAYS");
-  expect(service).toContain(".limit(200)");
+  expect(service).toContain(".limit(pageSize)");
   expect(service).toContain("This read-only report never removes application, offer, audit or student records.");
   expect(service).not.toContain(".delete(");
   expect(service).not.toContain("hardDelete");
