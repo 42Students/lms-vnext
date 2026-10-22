@@ -24,7 +24,40 @@ export const LEGACY_INTERVIEW_SLOT_ACTIONS = {
   RESCHEDULE: "placement_learner_requests.ROUND_RESCHEDULE",
   COMPLETE: "college-interview-action-service",
   FEEDBACK: "college-interview-action-service",
+  LEARNER_CONFIRM: "confirmOwnPlacementRound",
+  LEARNER_RESCHEDULE: "placement_learner_requests.ROUND_RESCHEDULE",
+  PAST_CANCELLED: "getTpoInterviewSlotWorkspace.cancelledSlots",
 } as const;
+
+/** Legacy per-interview intent, resolved through authenticated learner scope. */
+export function learnerInterviewLegacyEntry(applicationId:string,roundId:string){
+ return "/learn/my-placements/interviews?"+
+   new URLSearchParams({applicationId,roundId}).toString();
+}
+function interviewTimeIst(at:Date){
+ return new Intl.DateTimeFormat("en-IN",{
+  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+ }).format(at)+" IST";
+}
+function readLegacyReschedulePreferences(value:unknown){
+ const data=value&&typeof value==="object"&&!Array.isArray(value)
+  ?value as Record<string,unknown>:{};
+ const preferredWindows=Array.isArray(data.preferredWindows)
+  ?data.preferredWindows.filter((window):window is {startsAt:string;endsAt:string}=>{
+    if(!window||typeof window!=="object"||Array.isArray(window))return false;
+    const item=window as Record<string,unknown>;
+    return typeof item.startsAt==="string"&&typeof item.endsAt==="string"&&
+     Number.isFinite(Date.parse(item.startsAt))&&Number.isFinite(Date.parse(item.endsAt))&&
+     Date.parse(item.endsAt)>Date.parse(item.startsAt);
+   }).slice(0,5):[];
+ const requestedSlotAt=typeof data.scheduledAt==="string"&&
+  Number.isFinite(Date.parse(data.scheduledAt))?data.scheduledAt:null;
+ return {
+  originalNote:typeof data.note==="string"?data.note.slice(0,2000):null,
+  preferredWindows,requestedSlotAt,
+  timezone:typeof data.timezone==="string"?data.timezone:null,
+ };
+}
 
 
 async function scope(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
@@ -63,6 +96,11 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
   .where(and(eq(placementRoundCandidateSlots.roundId,info.round.id),
    ne(placementRoundCandidateSlots.status,"CANCELLED")))
   .orderBy(asc(placementRoundCandidateSlots.startsAt),asc(placementRoundCandidateSlots.room)):[];
+ // Keep bounded authorized cancellation history separate from live roster.
+ const cancelledSlots=await getDb().select().from(placementRoundCandidateSlots)
+  .where(and(eq(placementRoundCandidateSlots.roundId,info.round.id),
+   eq(placementRoundCandidateSlots.status,"CANCELLED")))
+  .orderBy(desc(placementRoundCandidateSlots.updatedAt)).limit(200);
  const recruiterProposals=await placementTableExists("placement_hr_interview_slots")?
   await getDb().select({
    id:hrInterviewSlots.id,startsAt:hrInterviewSlots.startAt,endsAt:hrInterviewSlots.endAt,
@@ -74,6 +112,7 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
  const reschedules=await getDb().select({
   id:placementLearnerRequests.id,applicationId:placementLearnerRequests.applicationId,
   reason:placementLearnerRequests.reason,requestedAt:placementLearnerRequests.requestedAt,
+   effectPayload:placementLearnerRequests.effectPayload,
   name:users.displayName,
  }).from(placementLearnerRequests)
   .innerJoin(placementApplications,eq(placementApplications.id,placementLearnerRequests.applicationId))
@@ -92,7 +131,14 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
  const now=new Date();
  return {...info,storageReady,roster,unassigned:roster.filter(r=>!booked.has(r.applicationId)),
   upcomingSlotCount:slots.filter(slot=>slot.startsAt>=now).length,
-  pastSlotCount:slots.filter(slot=>slot.startsAt<now).length,
+  pastSlotCount:slots.filter(slot=>slot.startsAt<now).length+cancelledSlots.length,
+   cancelledSlotCount:cancelledSlots.length,
+   cancelledSlots:cancelledSlots.map(row=>({
+    ...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString(),
+    createdAt:row.createdAt.toISOString(),updatedAt:row.updatedAt.toISOString(),
+    confirmedAt:row.confirmedAt?.toISOString()??null,
+    applicationId:row.applicationId??null,
+   })),
   pendingRescheduleCount:reschedules.length,
   // A pending change request does not cancel the existing confirmed slot.
   upcomingApplicationIds:slots.filter(slot=>slot.status==="BOOKED"&&slot.startsAt>=now)
@@ -101,7 +147,10 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
   pastApplicationIds:slots.filter(slot=>slot.status==="BOOKED"&&slot.startsAt<now)
    .map(slot=>slot.applicationId).filter((id):id is string=>Boolean(id)),
   recruiterProposals:recruiterProposals.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString()})),
-  reschedules:reschedules.map(row=>({...row,requestedAt:row.requestedAt.toISOString()})),
+  reschedules:reschedules.map(row=>({
+    ...row,requestedAt:row.requestedAt.toISOString(),
+    ...readLegacyReschedulePreferences(row.effectPayload),
+   })),
   slots:slots.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString(),
    createdAt:row.createdAt.toISOString(),updatedAt:row.updatedAt.toISOString(),
    confirmedAt:row.confirmedAt?.toISOString()??null}))};
@@ -146,8 +195,13 @@ async function assertLearnerTimeAvailable(tx:TpoJobTx,collegeId:string,
  if(conflict)throw Error("This learner already has an interview at that time. "+
   "Choose another slot; the existing booking has been preserved.");
 }
-async function notice(tx:TpoJobTx,context:RequestContext,job:{id:string;title:string},applicationId:string,
- action:string,message:string){
+async function notice(tx:TpoJobTx,context:RequestContext,job:{
+ id:string;title:string;round?:{id:string;name:string;mode:string|null;meetingUrl:string|null};
+},applicationId:string,action:string,message:string){
+ const safeUrl=job.round?.mode==="VIRTUAL"&&job.round.meetingUrl?.startsWith("https://")
+  ?job.round.meetingUrl:null;
+ const fullMessage=(job.round?"Round: "+job.round.name+". ":"")+message+
+  (safeUrl?" Join: "+safeUrl:"");
  const [learner]=await tx.select({userId:collegeMemberships.userId})
   .from(placementApplications).innerJoin(collegeMemberships,
    eq(collegeMemberships.id,placementApplications.membershipId))
@@ -158,12 +212,16 @@ async function notice(tx:TpoJobTx,context:RequestContext,job:{id:string;title:st
   organizationId:context.membership!.organizationId,collegeId:context.membership!.collegeId,
   actorUserId:context.user.id,actorMembershipId:context.membership!.id,
   module:"PLACEMENTS",eventType:action,subjectType:"placement_application",
-  subjectId:applicationId,summary:message,metadata:{jobId:job.id},
+  subjectId:applicationId,summary:fullMessage,metadata:{
+    jobId:job.id,roundId:job.round?.id??null,roundName:job.round?.name??null,
+   },
  }).returning({id:activityEvents.id});
  if(!event)throw Error("Interview slot audit failed");
  await tx.insert(inAppNotifications).values({
   userId:learner.userId,eventId:event.id,title:"Your interview schedule has changed",
-  body:message,actionHref:"/learn/my-placements/interviews",
+  body:fullMessage,actionHref:job.round?
+    learnerInterviewLegacyEntry(applicationId,job.round.id):
+    "/learn/my-placements/interviews",
  }).onConflictDoNothing();
 }
 export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:unknown,rawRoundId:unknown,raw:unknown){
@@ -194,7 +252,7 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    .from(placementJobRounds).where(eq(placementJobRounds.id,info.round.id))
    .for("update").limit(1);
   if(current?.status!=="SCHEDULED")throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
-  const job={id:info.round.jobId,title:info.round.jobTitle};
+  const job={id:info.round.jobId,title:info.round.jobTitle,round:info.round};
   if(input.action==="GENERATE_DAY"){
    const proposed=planInterviewDay(input);
    if(proposed.length>300)throw Error("Create up to 300 interview slots at a time.");
@@ -381,7 +439,9 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     eq(placementLearnerRequests.status,"PENDING"))).returning({id:placementLearnerRequests.id});
    if(!decided)throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
    await notice(tx,context,job,request.applicationId,"PLACEMENTS_TPO_INTERVIEW_RESCHEDULE_APPROVED",
-    "Your interview reschedule was approved. New slot: "+target.startsAt.toISOString()+
+    "Your interview reschedule was approved. Previous slot: "+
+    (existing?interviewTimeIst(existing.startsAt)+" ("+existing.room+")":"not recorded")+
+    "; new slot: "+interviewTimeIst(target.startsAt)+
     " ("+target.room+"). "+input.reason);
    return {moved:1,requestId:request.id};
   }
@@ -468,7 +528,7 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     .returning({id:placementRoundCandidateSlots.id});
    if(!saved)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
    await notice(tx,context,job,input.applicationId,"PLACEMENTS_TPO_INTERVIEW_BOOKED",
-    "Your interview for "+job.title+" is booked for "+slot.startsAt.toISOString()+" ("+slot.room+").");
+    "Your interview for "+job.title+" is booked for "+interviewTimeIst(slot.startsAt)+" ("+slot.room+").");
    return {booked:1};
   }
   if(input.action==="CANCEL"){
