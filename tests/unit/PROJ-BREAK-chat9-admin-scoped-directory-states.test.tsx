@@ -95,7 +95,8 @@ describe("Super Admin last-third shared scoped directories: no false empties or 
   });
   it("UX-admin-directory-106 legitimate empty list remains a distinct zero-state",async()=>{
     const message=display(await render()).join(" ");
-    expect(message).toContain("0 of 0 students");
+    expect(message).toContain("0 matching records");
+    expect(message).not.toContain("Directory totals are temporarily unavailable.");
     expect(message).not.toContain("Directory unavailable");
     expect(state.loaderCalls).toBe(4);
   });
