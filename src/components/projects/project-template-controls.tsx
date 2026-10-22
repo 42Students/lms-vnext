@@ -427,20 +427,24 @@ export function ProjectTemplateActions({
     <>
       <div className="flex flex-wrap gap-2">
         {allowGlobalActions && lifecycle.canPublish ? (
-          <Button
-            size="sm"
-            loading={pending === "Publish template"}
-            disabled={pending !== null || overviewDirty || missing.length>0}
+          <span className="inline-flex"
+            tabIndex={overviewDirty||missing.length>0?0:undefined}
+            aria-describedby={overviewDirty||missing.length>0?templateId+"-publish-blocker":undefined}
             title={overviewDirty?"Save your overview changes before publishing":
-              missing.length?"Complete "+missing.join(", ")+" before publishing":undefined}
-            onClick={() => setConfirmLifecycle("PUBLISH")}
-          >
-            {pending === "Publish template" ? "Publishing…" : "Publish"}
-          </Button>
+              missing.length?"Complete "+missing.join(", ")+" before publishing":undefined}>
+            <Button
+              size="sm"
+              loading={pending === "Publish template"}
+              disabled={pending !== null || overviewDirty || missing.length>0}
+              onClick={() => setConfirmLifecycle("PUBLISH")}
+            >
+              {pending === "Publish template" ? "Publishing…" : "Publish"}
+            </Button>
+          </span>
         ) : null}
 
         {allowGlobalActions&&lifecycle.canPublish&&(overviewDirty||missing.length>0)?
-          <p role="status" className="text-xs text-warning-text">
+          <p id={templateId+"-publish-blocker"} role="status" className="text-xs text-warning-text">
             {overviewDirty?"Save your overview changes before publishing.": "Publishing requires "+
             missing.join(", ")+". "}
             {missing.includes("deliverables")?<a className="ml-1 underline"
