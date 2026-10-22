@@ -20,21 +20,20 @@ vi.mock("@/modules/courses/assignment-scope",()=>({
 }));
 vi.mock("@/db/client",()=>({
  getDb:()=>({
-  select:(projection?:{count?:unknown})=>{
+  select:()=>{
    const call=state.reads++;
+   const countRows=Promise.resolve([{count:state.attempts.length}]);
    const chain={
     from(){return chain;},
     innerJoin(){return chain;},
-    where(condition:unknown){
-     state.conditions.push(condition);
-     return projection?Promise.resolve([{count:state.attempts.length}]):chain;
-    },
+    where(condition:unknown){state.conditions.push(condition);return chain;},
     orderBy(){
      return Object.assign(Promise.resolve(call===0?state.attempts:state.answers),{
       limit(){return {offset(){return Promise.resolve(state.attempts);}};},
      });
     },
     limit(){return Promise.resolve(state.submission);},
+    then:countRows.then.bind(countRows),
    };
    return chain;
   },
