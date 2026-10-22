@@ -852,9 +852,9 @@ export default async function TpoStudentsPage({
           rows={roster.items.map(student=>({id:student.membershipId,
             label:student.displayName+" · "+student.branchName}))}
           viewCount={roster.total}
-          allRows={roster.total<=5000?data.exportRows?.map(student=>({
-            id:student.membershipId,label:student.displayName+" · "+student.branchName
-          }))??undefined:undefined}/>
+          {...(roster.total<=5000 && data.exportRows ? {allRows:data.exportRows.map(student=>({
+             id:student.membershipId,label:student.displayName+" · "+student.branchName
+           }))} : {})}/>
 
         {manageAllowed?<TpoStudentsDriveVisibility
           learners={(roster.total<=5000?data.exportRows??roster.items:roster.items).map(student=>({
@@ -878,12 +878,12 @@ export default async function TpoStudentsPage({
               branchName: student.branchName,
               readinessSignal: student.readinessSignal,
             }))}
-            allLearners={roster.total<=5000?data.exportRows?.map(student=>({
+            {...(roster.total<=5000 && data.exportRows ? {allLearners:data.exportRows.map(student=>({
               membershipId:student.membershipId,
               displayName:student.displayName,
               branchName:student.branchName,
               readinessSignal:student.readinessSignal,
-            }))??undefined:undefined}
+            }))} : {})}
             drives={bulkDriveChoices}
           />
         ) : null}
@@ -984,9 +984,9 @@ export default async function TpoStudentsPage({
               <Link
                 key={state}
                 href={scopedHref(tpoJourneyDrillFilters({
-                  branchId:query.branchId,
-                  search:query.search,
-                  columns:first(raw.columns)?.slice(0,800),
+                  ...(query.branchId!==undefined?{branchId:query.branchId}:{}),
+                   ...(query.search!==undefined?{search:query.search}:{}),
+                   ...(first(raw.columns)!==undefined?{columns:first(raw.columns)?.slice(0,800)}:{}),
                   pageSize:query.pageSize,
                 },state))}
                 aria-current={selected ? "page" : undefined}
@@ -1089,9 +1089,9 @@ export default async function TpoStudentsPage({
                     <td className="px-4 py-3">
                       <Link
                         href={scopedHref(tpoBranchDrillFilters({
-                          journeyState:query.journeyState,
-                          search:query.search,
-                          columns:first(raw.columns)?.slice(0,800),
+                          ...(query.journeyState!==undefined?{journeyState:query.journeyState}:{}),
+                           ...(query.search!==undefined?{search:query.search}:{}),
+                           ...(first(raw.columns)!==undefined?{columns:first(raw.columns)?.slice(0,800)}:{}),
                           pageSize:query.pageSize,
                         },branch.branchId))}
                         className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
@@ -1127,8 +1127,9 @@ export default async function TpoStudentsPage({
         {data.branches.length ? <ul className="space-y-3 px-4 pt-4 md:hidden" aria-label="Branch intelligence">
           {data.branches.map(branch => <li key={branch.branchId} className="min-w-0 border-b border-border py-4">
             <Link href={scopedHref(tpoBranchDrillFilters({
-              journeyState:query.journeyState, search:query.search,
-              columns:first(raw.columns)?.slice(0,800), pageSize:query.pageSize,
+              ...(query.journeyState!==undefined?{journeyState:query.journeyState}:{}),
+                           ...(query.search!==undefined?{search:query.search}:{}),
+                           ...(first(raw.columns)!==undefined?{columns:first(raw.columns)?.slice(0,800)}:{}), pageSize:query.pageSize,
             },branch.branchId))} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{branch.branchName}</Link>
             <dl className="grid grid-cols-2 gap-3 text-sm">
               <div><dt className="text-body">Learners</dt><dd className="font-semibold tabular-nums">{branch.activeLearners}</dd></div>
