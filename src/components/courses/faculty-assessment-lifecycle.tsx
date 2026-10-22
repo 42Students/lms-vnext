@@ -107,11 +107,11 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
    open={confirmAction!==null}
    onOpenChange={open=>{if(!open && pending===null)setConfirmAction(null);}}
    title={confirmAction==="ARCHIVE"?(kind==="ASSIGNMENT"?"Delete this assignment?":"Delete this quiz?"):confirmAction==="CLOSE"?"Close assessment":"Publish assessment"}
-   description={confirmAction==="ARCHIVE"
+   {...(confirmAction===null?{}:{description:confirmAction==="ARCHIVE"
     ?(kind==="ASSIGNMENT"
        ?"Learners will no longer be able to access this assignment. This action cannot be undone from this screen. Existing submissions and files are retained for audit."
        :"Learners will no longer be able to access this quiz. Existing attempts are retained for audit.")
-    :confirmAction===null?undefined:facultyAssessmentLifecycleWarning(kind,confirmAction)}
+    :facultyAssessmentLifecycleWarning(kind,confirmAction)})}
    confirmLabel={confirmAction==="ARCHIVE"?"Delete":confirmAction==="CLOSE"?"Close":"Publish"}
    confirmVariant={confirmAction==="ARCHIVE"||confirmAction==="CLOSE"?"danger":"primary"}
    pending={pending!==null}
