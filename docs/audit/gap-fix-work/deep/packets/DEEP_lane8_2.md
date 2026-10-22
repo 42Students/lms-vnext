@@ -12,7 +12,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-4-017-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-018-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-025-075  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -25,3 +25,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - OK G2-4-017-070 — `src/db/schema/projects.ts:215-231,237-274,279-289,320-345` documents the verified legacy integer-to-UUID crosswalk, imported legacy identifiers, org/class associations, template-version binding, and tenant-scoped constraints; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:13-125`.
 - OK G2-4-018-046 — `src/db/schema/projects.ts:1016-1029,1081-1092` stores source `legacyRevisionCount` independently from per-project version ordinal and the separate `legacyOptimisticVersion`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java:63-64,123-129`.
 - OK G2-4-018-074 — `src/db/schema/projects.ts:1039-1047` keeps each historical delivery's `deletedAt` separate from immutable review/history events at `src/db/schema/projects.ts:1128-1178`; matches legacy soft-delete and active finder semantics in `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/ProjectDeliveryRepository.java:13-22`.
+- OK G2-4-018-067 — `src/db/schema/projects.ts:1016-1030` separates native delivery ordinals from imported JPA optimistic row versions, while `src/modules/projects/submission-service.ts:117-207,523-569` serializes creation and uses expected-version guards inside transactions; matches nullable new-row `@Version` in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java:123-129`.
