@@ -18,7 +18,8 @@ vi.mock("@/modules/projects/admin-insights-service",()=>({
   listProjectAdminSnapshots:async(_context:unknown,_collegeId:unknown,query:unknown)=>{
     state.workspaceReads++;state.receivedQuery=query;
     if(state.failWorkspaces)throw Error("PRIVATE_PROJECT_DATABASE_CREDENTIAL");
-    return {items:[],total:0,page:1,pageSize:25,totalPages:1};
+    const selectedPage=query && typeof query==="object" && "page" in query && query.page===2?2:1;
+    return {items:[],total:50,page:selectedPage,pageSize:25,totalPages:2};
   },
 }));
 vi.mock("@/modules/projects/template-service",()=>({
@@ -46,8 +47,8 @@ describe("IIT Dharwad College Admin Projects: independent outage and view contra
   it("PROJ-BREAK-college-resilience-23 primary read outage shows a filter-preserving retry without leaking DB internals",async()=>{
     state.failWorkspaces=true;
     const content=visible(await render({q:"IIT Dharwad",status:"ACTIVE",page:"2",pageSize:"50",view:"cards"})).join(" ");
-    expect(content).toContain("Project workspaces unavailable");
-    expect(content).toContain("Retry loading workspaces");
+    expect(content).toContain("Workspaces could not be loaded");
+    expect(content).toContain("Retry");
     expect(content).toContain("q=IIT+Dharwad");
     expect(content).toContain("status=ACTIVE");
     expect(content).toContain("page=2");
