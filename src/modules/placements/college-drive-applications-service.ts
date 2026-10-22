@@ -34,7 +34,8 @@ export async function listCollegeDriveApplications(
   const jobId = collegeDriveIdSchema.parse(jobIdInput);
   const query = driveApplicationsQuerySchema.parse(raw);
   if(query.appliedFrom && query.appliedTo && query.appliedFrom>query.appliedTo)
-    throw new PlacementsServiceError("INVALID_APPLICATION_DATE_RANGE");
+    throw new z.ZodError([{code:"custom",path:["appliedTo"],
+      message:"Applied before must not precede Applied after."}]);
   const appliedFrom=query.appliedFrom?new Date(`${query.appliedFrom}T00:00:00+05:30`):null;
   const appliedTo=query.appliedTo?new Date(new Date(`${query.appliedTo}T00:00:00+05:30`).getTime()+86_400_000):null;
   const collegeId = await requireCollegePlacementAdmin(context);
