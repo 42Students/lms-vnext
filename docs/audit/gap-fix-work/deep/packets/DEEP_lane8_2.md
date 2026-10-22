@@ -10,7 +10,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-4-017-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-017-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-018-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -32,3 +32,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - OK G2-4-017-046 — `src/db/schema/projects.ts:225-228,275-285` explicitly maps imported IN_PROGRESS to ACTIVE while preserving imported progress and separately defines new PLANNED lifecycle; sprint length and estimation unit are distinct; legacy defaults in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:31-56`.
 - OK G2-4-018-072 — `src/db/schema/projects.ts:1009-1080` preserves legacy integer delivery ID, source status/snapshot, actor names/types, file metadata, timestamps and optimistic version as independently named import columns alongside relational UUID and revision ordinal; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java:19-129`.
+
+- OK G2-4-018-045 — `src/db/schema/projects.ts:1016-1025` retains both imported `legacyStatus` and independent free-text `legacyReviewStatus` alongside the native `DRAFT` lifecycle status; `src/modules/projects/evaluation-service.ts` exposes the imported review status without inventing a fixed enumeration. Matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java:22-23,87-88` (source default `Draft`, nullable free-text review status).
