@@ -5,11 +5,20 @@ const read=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 const base="src/app/(authenticated)/admin/";
 describe("Super Admin Academic Setup page copy",()=>{
  it("SA-academics-people-02 shows the legacy no-college guidance without exposing the six-step strip",()=>{
-  for(const path of ["batches","classes","semester-courses","batch-promotion","electives","attendance"]){
+  const guidance:Record<string,readonly string[]>={
+   batches:["Select a college to manage Batches","Batches belong to a specific college"],
+   classes:["Select a college to continue.","Choose a college in the header above to see its classes"],
+   "semester-courses":["Select a college to manage Semester–Course Mapping","Choose an Organization + College"],
+   electives:["Select a college from the header","Choose a college in the header above to see its electives"],
+   attendance:["Select a college to continue","Choose a college in the header above to see its attendance"],
+  };
+  for(const [path,expected] of Object.entries(guidance)){
    const code=read(base+path+"/page.tsx");
-   expect(code).toContain("Select a college to continue");
-   expect(code).toContain("Choose a college in the header above to see its");
+   for(const phrase of expected)expect(code).toContain(phrase);
   }
+  // Batch-promotion is guarded via the shared scoped component, rather than
+  // rendering the old no-college text in its route wrapper.
+  expect(read(base+"batch-promotion/page.tsx")).toContain("BatchPromotion");
   for(const path of ["departments","programs"]){
    const code=read(base+path+"/page.tsx");
    expect(code).not.toContain("      <AcademicSetupSteps step={1} />\n        <PageHeader");

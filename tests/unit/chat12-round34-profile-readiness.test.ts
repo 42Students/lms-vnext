@@ -16,5 +16,5 @@ it("TPO-students-29 supplies PG, degree, entrance and profile-owned links while 
 it("TPO-students-31 exposes a per-student readiness note and eligibility provenance without inventing prep test averages",()=>{
  const grid=src("src/components/tpo/tpo-students-spreadsheet.tsx");
  for(const term of ["Readiness note","No resume","Academics incomplete","Eligibility set by","Eligibility set at"])expect(grid).toContain(term);
- expect(src("src/components/tpo/tpo-student-quick-panel.tsx")).toContain('"Prep %","Not recorded"');
+ expect(src("src/components/tpo/tpo-student-quick-panel.tsx")).toContain('"Prep %","Not measured — open placement prep readiness"');
 });
