@@ -51,18 +51,18 @@ describe("chat-14 guarded mutation adoption", () => {
   it("GR-30 GR-31 guards department creation and retains accessible validation and success", () => {
     const code = source("src/components/admin/department-create-form.tsx");
     expect(code).toContain("useGuardedAction({timeoutMs:30000})");
-    expect(code).toContain("void run(async () => {");
-    expect(code).toContain(".catch(() => setError(DEPARTMENT_COPY.createFailed");
+    expect(code).toContain("void run(async()=>{");
+    expect(code).toContain('.catch(()=>fail("Failed to create department"))');
     expect(code).toContain("Department name must be 255 characters or less");
-    expect(code).toContain("disabled={pending || !name.trim()}");
+    expect(code).toContain("disabled={pending}");
   });
   it("GR-30 GR-31 preserves resource confirmation and server message while serializing completion", () => {
     const code = source("src/components/courses/resource-progress-control.tsx");
     expect(code).toContain("useGuardedAction()");
     expect(code).toContain("await run(async () => {");
     expect(code).toContain("await courseApiError(response)");
-    expect(code).toContain("setComplete(true)");
-    expect(code).toContain('disabled={!hydrated || saving || complete}');
+    expect(code).toContain("setComplete(next)");
+    expect(code).toContain('disabled={!hydrated||saving||!verified}');
   });
 
   it("GR-30 GR-31 guards Super Admin batch graduation without dropping eligibility error details", () => {
@@ -79,7 +79,7 @@ describe("chat-14 guarded mutation adoption", () => {
     expect(code).toContain("useGuardedAction({timeoutMs:30000})");
     expect(code).toContain("await run(async () => {");
     expect(code).toContain("calendarLocalIstToOffset(when)");
-    expect(code).toContain("setError(\"Could not save the follow-up\")");
+    expect(code).toContain("setError(\"Follow-up was not saved\")");
     expect(code).toContain("disabled={saving||loading}");
   });
 

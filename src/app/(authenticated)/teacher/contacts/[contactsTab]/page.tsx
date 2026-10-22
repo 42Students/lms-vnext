@@ -114,7 +114,7 @@ export default async function FacultyContactsPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader title="Contacts" />
+      <PageHeader title={selected.label} />
 
       <Tabs ariaLabel="Contacts sections" value={contactsTab} renderPanel={false}
         items={Object.entries(tabs).map(([key, tab]) => ({
