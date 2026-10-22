@@ -4,7 +4,7 @@ const source=readFileSync(new URL("../../src/app/(authenticated)/tpo/find/page.t
 describe("UX-tpo-find-03",()=>{
  it("uses shared controls without changing legacy labels or authorized data",()=>{
   expect(source).toContain("<Input type=\"search\"");
-  expect(source).toContain("<Button type=\"submit\" className=\"self-end\">Find</Button>");
+  expect(source).toContain("<Button type=\"submit\" className=\"min-h-11 w-full self-end sm:w-auto md:min-h-9\">Find</Button>");
   expect(source).toContain("role=\"alert\"");
  });
 });
