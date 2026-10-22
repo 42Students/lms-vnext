@@ -9,6 +9,8 @@ export type AdminProgramRow = {
 };
 
 export function programDurationYearsLabel(durationTerms:number) {
+  // Legacy durations were whole years; a nonstandard odd term count must never render fractional years.
+  if(Number.isInteger(durationTerms)&&durationTerms>0&&durationTerms%2===1)return `${durationTerms} ${durationTerms===1?"semester":"semesters"}`;
   const years=durationTerms/2;
   return Number.isFinite(years)&&years>0?`${years} ${years===1?"year":"years"}`:"—";
 }

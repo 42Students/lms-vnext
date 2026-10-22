@@ -61,7 +61,9 @@ export function normalizeProgramDurationTerms(input: {
 }
 
 export function programDurationYears(durationTerms: number) {
-  return durationTerms / 2;
+  // Legacy duration_years is a whole number: never expose fractional years
+  // for nonstandard term counts (durationTerms stays authoritative).
+  return Math.ceil(durationTerms / 2);
 }
 
 function withLegacyProgramDuration<
