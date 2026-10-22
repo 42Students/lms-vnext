@@ -14,7 +14,7 @@ export const collegeLiveClassQuerySchema=collegeContentQuerySchema.omit({format:
    (Date.parse(q.to+"T00:00:00Z")-Date.parse(q.from+"T00:00:00Z"))/86400000<31,
    {message:"Date range exceeds 31 days"});
 export function istDayBoundary(day:string,nextDay=false){
- const [year,month,date]=day.split("-").map(Number);
+ const [year=Number.NaN,month=Number.NaN,date=Number.NaN]=day.split("-").map(Number);
  return new Date(Date.UTC(year,month-1,date+(nextDay?1:0))-330*60000);
 }
 export function collegeLiveClassHref(query:{q:string;courseCode?:string;status:string;page:number;view:"ALL"|"UPCOMING"|"PAST";from?:string;to?:string;scope?:"ALL"|"SHARED"|"SECTION";deliveryId?:string}){

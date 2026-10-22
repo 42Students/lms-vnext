@@ -24,7 +24,6 @@ import {
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
-  COLLEGE_CONTENT_PAGE_SIZE,
   collegeContentPageCount,
   collegeContentQuerySchema,
   collegeContentTypes,
