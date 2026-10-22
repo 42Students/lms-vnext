@@ -20,7 +20,7 @@ describe("Super Admin colleges/organizations canvas and page states",()=>{
     page.indexOf("parseAdminDirectorySearchParams("));
   }
   expect(colleges).toContain("No colleges match your search");
-  expect(organizations).toContain("No organizations in this scope");
+  expect(organizations).toContain("No organizations found.");
  });
  it("UX-COL-ONE-CANVAS-02 preserves archived states and college-bound setup links",()=>{
   const detail=read("colleges/[collegeId]/page.tsx");
