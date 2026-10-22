@@ -35,7 +35,7 @@ function visible(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(visible);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","action","href"].flatMap(key=>visible(props[key]));
+  return ["children","title","description","action","href","label"].flatMap(key=>visible(props[key]));
 }
 beforeEach(()=>{
   state.role="ADMIN";state.directory=0;state.organizations=0;

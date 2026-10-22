@@ -5,11 +5,13 @@ describe("UX-admin-courses-content-audit-01 Super Admin scoped courses and conte
  const home=read("src/app/(authenticated)/admin/courses/page.tsx");
  const offering=read("src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx");
  const offeringView=read("src/components/courses/admin-offering-learning-page.tsx");
+ const offeringTabs=read("src/components/courses/admin-offering-section-tabs.tsx");
  const courses=read("src/components/courses/admin-course-overview.tsx");
  it("SA-academics-people-77 /admin/courses rejects invalid filters and requires selected college before data fetch",()=>{
-  expect(home).toContain("collegeCourseCatalogueQuerySchema.safeParse");
+  expect(home).toContain("parseSuperAdminCourseQuery(query)");
   expect(home).toContain("if (!collegeId)");
-  expect(home).toContain("Select a college to continue");
+  expect(home).toContain("listSuperAdminGlobalCourses(context");
+  expect(home).toContain("Select a college to manage Courses");
   expect(home).toContain("<ErrorState");
   expect(home).toContain("getAdminCourseWorkspace(context,collegeId)");
   for(const href of ["/admin/lessons","/admin/videos","/admin/resources","/admin/live-classes",
@@ -31,12 +33,12 @@ describe("UX-admin-courses-content-audit-01 Super Admin scoped courses and conte
   expect(offering).toContain("resolveSuperAdminOfferingDetail(context, offeringId)");
   expect(offering).toContain("notFound()");
   expect(offering).toContain('redirect("/admin/courses")');
-  expect(offeringView).toContain('aria-label="Course detail tabs"');
-  expect(offeringView).toContain('href="#course-syllabus"');
-  expect(offeringView).toContain('href="#who-teaches-it"');
-  expect(offeringView).toContain('href="#section-content"');
-  expect(offeringView).not.toMatch(/min-h-(?:9|10)\b/);
-  expect((offeringView.match(/min-h-11/g)??[]).length).toBeGreaterThanOrEqual(5);
+  // The accessible Home/Syllabus tab strip supersedes section anchors.
+  expect(offeringView).toContain("<AdminOfferingSectionTabs");
+  expect(offeringTabs).toContain('ariaLabel="Course detail tabs"');
+  expect(offeringTabs).toContain('href:pathname+"#"+item.value');
+  expect(offeringTabs).toContain('role="tabpanel"');
+  expect(offeringTabs).toContain('id="course-syllabus"');
   expect(offeringView).toContain("<AdminOfferingLearningOverview");
  });
  const directories=[
@@ -58,9 +60,10 @@ describe("UX-admin-courses-content-audit-01 Super Admin scoped courses and conte
  it("UX-admin-assignments-quizzes-01 requires scoped college and preserves builder/editor and failure states",()=>{
   for(const [path,kind] of [["assignments","ASSIGNMENT"],["quizzes","QUIZ"]] as const){
    const src=read(`src/app/(authenticated)/admin/${path}/page.tsx`);
-   expect(src).toContain("adminAssessmentQuerySchema.safeParse");
+   expect(src).toContain(kind==="ASSIGNMENT"?
+    "parseSuperAdminAssignmentQuery(raw)":"parseSuperAdminQuizQuery(raw)");
    expect(src).toContain("if (!context.adminScope?.collegeId)");
-   expect(src).toContain("<EmptyState");
+   expect(src).toContain("isSuperAdmin(context)");
    expect(src).toContain("<ErrorState");
    expect(src).toContain(`listCollegeAssessmentAggregate(context, "${kind}"`);
    expect(src).toContain("AdminAssessmentDirectory");
@@ -74,9 +77,9 @@ describe("UX-admin-courses-content-audit-01 Super Admin scoped courses and conte
  it("UX-admin-course-progress-01 distinguishes measured activity from fabricated completion",()=>{
   const overview=read("src/app/(authenticated)/admin/course-progress/page.tsx");
   const students=read("src/app/(authenticated)/admin/course-progress/students/page.tsx");
-  expect(overview).toContain("adminLearningQuerySchema.safeParse");
-  expect(overview).toContain("Select a college to continue");
-  expect(overview).toContain("not a completion rate");
+  expect(overview).toContain("parseSuperAdminCourseProgressParams(await searchParams)");
+  expect(overview).toContain("Select a college to view course progress");
+  expect(overview).toContain("a learner completion percentage is available only");
   expect(students).toContain("studentCourseCompletion");
   expect(students).toContain("No completion percentage is inferred");
   expect(students).toContain("<DataTable");

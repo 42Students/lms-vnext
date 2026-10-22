@@ -109,7 +109,9 @@ describe("Super Admin Tenant Setup: unauthorized and incomplete readiness must f
   });
   it("SA-tenants-setup-16 failed authority blocks both workflows before DB reads",async()=>{
     state.allowed=false;
-    await expect(render("STRUCTURE")).rejects.toThrow("Missing permission: admin-scope.select");
+    const denied=content(walk(await render("STRUCTURE")));
+    expect(denied).toContain("Tenant setup access denied");
+    expect(denied).not.toContain("Create New Organization");
     expect(state.orgReads+state.directoryReads+state.collegeReads+state.readinessReads).toBe(0);
   });
 });
