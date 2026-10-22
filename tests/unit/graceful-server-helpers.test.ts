@@ -14,7 +14,9 @@ describe("server error envelope", () => {
   });
   it("GR-06 maps domain statuses and never includes unknown error.message", () => {
     const code = source("src/lib/api-error.ts");
-    expect(code).toContain("message: friendlyApiError({ status, code })");
+    expect(code).toContain("friendlyApiError({ status, code })");
+    expect(code).toContain("message: code ===");
+    expect(code).toContain("FACULTY_TEACHING_SCOPE_REQUIRED");
     expect(code).not.toContain("error.message");
     expect(code).toContain("error instanceof PlacementsServiceError");
   });

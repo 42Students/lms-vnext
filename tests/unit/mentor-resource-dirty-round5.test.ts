@@ -10,6 +10,6 @@ describe("mentor editor draft safety",()=>{
   expect(ui).toContain("requestEditClose()");
   expect(ui).toContain("Discard this resource?");
   expect(ui).toContain("Discard resource changes?");
-  expect(ui).toContain("You have unsaved project changes.");
+  expect(ui).toContain("You have unsaved changes. Leave without saving them?");
  });
 });

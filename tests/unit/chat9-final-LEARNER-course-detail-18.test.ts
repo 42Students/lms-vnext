@@ -14,7 +14,7 @@ describe("chat-9 final sprint",()=>{
  expect(resolveLearnerRoadmapFocusFilter("all","lesson-one","item-one",lessons)).toBe("resources");
  const ui=read("src/components/courses/learner-course-workspace.tsx");
  expect(ui).toContain("Lesson not found.");
- expect(ui).toContain("Content unavailable.");
+ expect(ui).toContain("Content locked or unavailable. This item is not published in the selected lesson.");
  const schema=read("src/db/schema/courses.ts");
  expect(schema).toContain("lessonContents");
  });

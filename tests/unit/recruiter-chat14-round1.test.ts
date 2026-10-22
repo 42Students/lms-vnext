@@ -13,10 +13,10 @@ describe("chat-14 recruiter reassigned exact-parity round 1",()=>{
  it("REC-calendar-messages-profile-12 preserves the message draft on in-app navigation until explicit Discard",()=>{
   const code=read("src/components/hr/recruiter-conversation-reply-form.tsx");
   expect(code).toContain('title="Discard this unsent message?"');
-  expect(code).toContain('consequence="Your draft reply will be lost."');
+  expect(code).toContain('description="Your draft reply will be lost."');
   expect(code).toContain('document.addEventListener("click",intercept,true)');
   expect(code).toContain('event.preventDefault();event.stopPropagation()');
-  expect(code).toContain('confirmLabel="Discard"');
+  expect(code).toContain('confirmLabel="Discard message"');
   expect(code).toContain('if(href)router.push(href)');
   expect(code).toContain('setPendingLeave(destination.pathname+destination.search+destination.hash)');
   expect(code).toContain('window.addEventListener("beforeunload",warn)');
@@ -50,7 +50,7 @@ describe("chat-14 recruiter reassigned exact-parity round 1",()=>{
  });
  it("REC-calendar-messages-profile-28 preserves recruiter profile card titles and legacy help",()=>{
   for(const sentence of ["Your details","College access","Account",
-    "These details identify you to the placement cell.","Manage your recruiter details."]){
+    "These details identify you to the placement cell.","Manage your recruiter details and review your college access."]){
    expect(profile).toContain(sentence);
   }
   expect(profile).toContain("Work email");
@@ -69,7 +69,7 @@ describe("chat-14 recruiter reassigned exact-parity round 1",()=>{
   expect(code).toContain("You will not be contacted about this again.");
  });
  it("REC-calendar-messages-profile-47 redirects legacy recruiter and colleges entrypoints to Today",()=>{
-  for(const path of loginRoutes)expect(read(path)).toContain('redirect("/hr/home")');
+  for(const path of loginRoutes)expect(read(path)).toContain('redirect("/recruiter/home")');
  });
  it("REC-calendar-messages-profile-R03 links the notification footer to working recruiter conversations",()=>{
   const page=read("src/app/(authenticated)/hr/notifications/page.tsx");
@@ -78,8 +78,8 @@ describe("chat-14 recruiter reassigned exact-parity round 1",()=>{
  });
  it("REC-home-drives-11 offers the legacy account load recovery and Retry action",()=>{
   const failure=read("src/app/(authenticated)/hr/home/error.tsx");
-  expect(failure).toContain("We couldn&apos;t load your account");
-  expect(failure).toContain(">Retry</button>");
+  expect(failure).toContain("We couldn't load your account");
+  expect(failure).toContain(">Retry</Button>");
  });
  it("REC-home-drives-31 keeps exact legacy round preset labels",()=>{
   expect(HR_DRIVE_ROUND_PRESETS.map(v=>v.label)).toEqual([

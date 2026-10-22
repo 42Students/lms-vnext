@@ -4,7 +4,12 @@ it("keeps authorized college notices with valid dates while excluding invalid da
  const rows=[{id:"a",title:"A",message:"M",createdAt:new Date("bad"),isPinned:false,senderType:"TPO"},
  {id:"b",title:"B",message:"M",createdAt:new Date("2026-10-15T00:00:00Z"),isPinned:true,senderType:"TPO"}];
  const notices=learnerPlacementNoticeFeed(rows);
- expect(notices).toHaveLength(1);
- expect(notices[0].id).toBe("b");
- expect(notices[0].senderLabel).toBe("Placement cell");
+ expect(notices).toHaveLength(2);
+ expect(notices[0]).toMatchObject({
+  id:"a",createdAt:"",publicationDateUnavailable:true,senderLabel:"Placement cell",
+ });
+ expect(notices[1]).toMatchObject({
+  id:"b",publicationDateUnavailable:false,senderLabel:"Placement cell",
+ });
+ expect(notices.every(notice=>notice.createdAt===""||!Number.isNaN(Date.parse(notice.createdAt)))).toBe(true);
 });

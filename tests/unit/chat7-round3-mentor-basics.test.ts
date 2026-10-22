@@ -4,7 +4,7 @@ const read=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),"u
 describe("chat-7 round 3 mentor access and state",()=>{
 it("MEN-projects-meetings-01 module lookup failure does not assert disabled state",()=>{
  const source=read("src/components/projects/mentor-projects-unavailable.tsx");
- expect(source).toContain("Projects could not be loaded");
+ expect(source).toContain("Could not verify Projects access");
  expect(source).toContain("Retry access check");
  expect(source).toContain("This does not mean Projects is disabled.");
 });

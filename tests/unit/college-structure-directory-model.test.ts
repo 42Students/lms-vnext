@@ -14,11 +14,11 @@ import {
 describe("College Admin classes/electives read-only filters", () => {
   it("parses bounded filters and refuses a caller-controlled college", () => {
     expect(collegeStructureQuerySchema.parse({})).toEqual({
-      q: "", status: "ACTIVE", page: 1, pageSize: 10,
+      q: "", status: "ACTIVE", page: 1, pageSize: 25,
     });
     expect(collegeStructureQuerySchema.parse({
       q: "  Science  ", status: "ARCHIVED", page: "3",
-    })).toEqual({ q: "Science", status: "ARCHIVED", page: 3, pageSize: 10 });
+    })).toEqual({ q: "Science", status: "ARCHIVED", page: 3, pageSize: 25 });
     for (const invalid of [
       { collegeId: "00000000-0000-4000-8000-000000000001" },
       { page: "0" },

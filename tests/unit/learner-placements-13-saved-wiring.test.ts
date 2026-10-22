@@ -18,7 +18,10 @@ describe("LEARNER-placements-13 saved job request wiring",()=>{
  it("LEARNER-placements-13 only exposes current membership and published scoped saved jobs",()=>{
   const service=load("src/modules/placements/saved-job-service.ts");
   expect(service).toContain("eq(placementSavedJobs.membershipId, learner.id)");
-  expect(service).toContain('eq(placementJobs.status, "PUBLISHED")');
+  expect(service).toContain('eq(placementJobs.collegeId, learner.collegeId)');
+  expect(service).toContain('row.jobStatus==="PUBLISHED"');
+  expect(service).toContain("visibleIds.has(row.jobId)");
+  expect(service).toContain("historicalJobStatuses.has(row.jobStatus)");
   expect(service).toContain("visibleIds.has(row.jobId)");
  });
 });
