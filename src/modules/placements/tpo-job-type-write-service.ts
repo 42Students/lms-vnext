@@ -359,6 +359,10 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
   }).from(placementJobs).where(eq(placementJobs.collegeId,collegeId))
    .groupBy(sql`lower(job_type_label)`);
   const counts=new Map(usage.map(item=>[item.label,item.count]));
+  // Capture the original drive labels before changing any of them. A single
+  // UPDATE after all job types have been saved is necessary for swap renames
+  // (A -> B and B -> A): separate UPDATEs would rename A's drives twice.
+  const driveChanges:{oldLabel:string;newLabel:string;countsAsPlaced:boolean}[]=[];
   // Remove absent custom types before renames; only unused labels may be removed.
   for(const old of existing){
    if(old.isBuiltin||isTpoBuiltinJobType(old.label)||seenIds.has(old.id))continue;
@@ -395,12 +399,7 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
     throw new TpoConfigError("TPO_SETTINGS_STALE");
    if(old){
     if(old.label!==item.label||old.countsAsPlaced!==item.countsAsPlaced){
-     await tx.execute(sql`update placement_jobs
-      set job_type_label = ${item.label},
-          counts_as_placed = ${item.countsAsPlaced},
-          version = version + 1,
-          updated_at = greatest(clock_timestamp(), date_trunc('milliseconds', updated_at) + interval '1 millisecond')
-      where college_id = ${collegeId} and lower(job_type_label) = lower(${old.label})`);
+     driveChanges.push({oldLabel:old.label,newLabel:item.label,countsAsPlaced:item.countsAsPlaced});
     }
     await tx.update(placementTpoJobTypes).set({
      label:item.label,active:item.active,countsAsPlaced:item.countsAsPlaced,sortOrder:index,
@@ -412,6 +411,21 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
      countsAsPlaced:item.countsAsPlaced,sortOrder:index,
     });
    }
+  }
+  // Apply all renamed/retiered labels from the original snapshot at once.
+  // The college row and persisted job-type rows remain locked in this transaction.
+  if(driveChanges.length){
+   const mappings=sql.join(driveChanges.map(change=>
+    sql`(${change.oldLabel}::text,${change.newLabel}::text,${change.countsAsPlaced}::boolean)`),sql`,`);
+   await tx.execute(sql`with changes(old_label,new_label,placed) as (values ${mappings})
+    update placement_jobs as jobs
+    set job_type_label = changes.new_label,
+        counts_as_placed = changes.placed,
+        version = jobs.version + 1,
+        updated_at = greatest(clock_timestamp(),date_trunc('milliseconds',jobs.updated_at) + interval '1 millisecond')
+    from changes
+    where jobs.college_id = ${collegeId}
+      and lower(jobs.job_type_label) = lower(changes.old_label)`);
   }
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
