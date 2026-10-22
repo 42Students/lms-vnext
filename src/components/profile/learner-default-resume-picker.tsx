@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +22,7 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
   const [file, setFile] = useState<File | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const [working, setWorking] = useState(false);
+  const writeRef=useRef(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
 
@@ -47,7 +48,9 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
     router.refresh();
   }
   async function select(id: string) {
+    if(writeRef.current)return;
     if (working) return;
+    writeRef.current = true;
     setWorking(true);setError(false);setMessage("");
     try {
       await command({ action: "SELECT", receiptId: id });
@@ -57,6 +60,7 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
       setError(true);
       setMessage(cause instanceof Error ? cause.message : "Resume selection failed.");
     } finally {
+      writeRef.current = false;
       setWorking(false);
     }
   }
@@ -67,11 +71,13 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
     setMessage("Scanned resume selected as your default.");
   }
   async function upload() {
+    if(writeRef.current)return;
     if (!file || working) return;
     if (file.type !== "application/pdf" || file.size < 1 ||
         file.size > 10 * 1024 * 1024) {
       setError(true);setMessage("Choose a PDF smaller than 10 MB.");return;
     }
+    writeRef.current = true;
     setWorking(true);setError(false);setMessage("");
     try {
       const grant = await command({
@@ -96,11 +102,14 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
       setError(true);
       setMessage(cause instanceof Error ? cause.message : "Upload failed.");
     } finally {
+      writeRef.current = false;
       setWorking(false);
     }
   }
   async function retryScan() {
+    if(writeRef.current)return;
     if (!pendingKey || working) return;
+    writeRef.current = true;
     setWorking(true);setError(false);setMessage("");
     try {
       await confirm(pendingKey);
@@ -108,6 +117,7 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
       setError(true);
       setMessage(cause instanceof Error ? cause.message : "Scanning is not complete.");
     } finally {
+      writeRef.current = false;
       setWorking(false);
     }
   }

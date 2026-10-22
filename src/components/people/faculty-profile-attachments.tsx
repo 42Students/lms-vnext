@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import type {FacultyProfileDocument} from "@/modules/people/faculty-profile-document";
@@ -12,6 +12,7 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
  onChanged:(change:Changed)=>void;
 }){
  const [busy,setBusy]=useState(false);
+ const mutationRef=useRef(false);
  const [stage,setStage]=useState<"IDLE"|"GRANT"|"TRANSFER"|"SCANNING"|"OPENING">("IDLE");
  const [awaiting,setAwaiting]=useState<{purpose:Purpose;entryId:string;key:string}|null>(null);
  const [link,setLink]=useState<{key:string;url:string;expiresAt:number}|null>(null);
@@ -32,8 +33,9 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
   ]),
  ];
  async function upload(item:Item,file:File){
+  if(mutationRef.current)return;
   if(locked)return;
-  setBusy(true);setError("");setStatus("");setLink(null);setStage("GRANT");
+  mutationRef.current = true;setBusy(true);setError("");setStatus("");setLink(null);setStage("GRANT");
   try{
    if(!["application/pdf","image/jpeg","image/png","image/webp"].includes(file.type)||
       file.size<1||file.size>10*1024*1024)
@@ -55,11 +57,12 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
    setAwaiting({purpose:item.purpose,entryId:item.entryId,key:result.grant.objectKey});
    setStatus("Upload finished. Security scanning must finish before the attachment can be saved.");
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to upload file.");setStage("IDLE");}
-  finally{setBusy(false);}
+  finally{mutationRef.current = false;setBusy(false);}
  }
  async function confirm(){
+  if(mutationRef.current)return;
   if(locked||!awaiting)return;
-  setBusy(true);setError("");setStatus("");setStage("SCANNING");
+  mutationRef.current = true;setBusy(true);setError("");setStatus("");setStage("SCANNING");
   try{
    const response=await fetch(ENDPOINT,{
     method:"PATCH",headers:{"content-type":"application/json"},
@@ -77,11 +80,12 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
    onChanged({...saved,receiptId:saved.receiptId});
    setAwaiting(null);setStage("IDLE");setStatus("Private attachment saved.");
   }catch(reason){setError(reason instanceof Error?reason.message:"Save failed.");}
-  finally{setBusy(false);}
+  finally{mutationRef.current = false;setBusy(false);}
  }
  async function open(item:Item){
+  if(mutationRef.current)return;
   if(locked||!item.receiptId)return;
-  setBusy(true);setError("");setStatus("");setLink(null);setStage("OPENING");
+  mutationRef.current = true;setBusy(true);setError("");setStatus("");setLink(null);setStage("OPENING");
   try{
    const params=new URLSearchParams({
     purpose:item.purpose,entryId:item.entryId,receiptId:item.receiptId});
@@ -95,12 +99,13 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
    setLink({key:item.purpose+":"+item.entryId,url:data.readUrl,expiresAt});
    setStatus("Signed read link is available for five minutes.");
   }catch(reason){setError(reason instanceof Error?reason.message:"Read unavailable.");}
-  finally{setBusy(false);setStage("IDLE");}
+  finally{mutationRef.current = false;setBusy(false);setStage("IDLE");}
  }
  async function revoke(item:Item){
+  if(mutationRef.current)return;
   if(locked||!item.receiptId)return;
   setRevokeItem(null);
-  setBusy(true);setError("");setLink(null);
+  mutationRef.current = true;setBusy(true);setError("");setLink(null);
   try{
    const response=await fetch(ENDPOINT,{
     method:"DELETE",credentials:"same-origin",headers:{"content-type":"application/json"},
@@ -114,7 +119,7 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
     receiptId:null,version:saved.version});
    setStatus("Private attachment removed from your active profile.");
   }catch(reason){setError(reason instanceof Error?reason.message:"Removal failed.");}
-  finally{setBusy(false);}
+  finally{mutationRef.current = false;setBusy(false);}
  }
  return <section aria-label="Faculty private qualification attachments"
    className="space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">

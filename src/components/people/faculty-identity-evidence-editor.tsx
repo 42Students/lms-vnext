@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Purpose="AADHAAR"|"PAN";
@@ -14,6 +14,7 @@ export function FacultyIdentityEvidenceEditor({
  onRevoked:(value:{kind:Purpose;version:number})=>void;
 }){
  const [busy,setBusy]=useState(false);
+ const mutationRef=useRef(false);
  const [revokeKind,setRevokeKind]=useState<Purpose|null>(null);
  const [checking,setChecking]=useState<{kind:Purpose;key:string}|null>(null);
  const [message,setMessage]=useState("");
@@ -21,7 +22,10 @@ export function FacultyIdentityEvidenceEditor({
  const [readLink,setReadLink]=useState<{kind:Purpose;href:string;expiresAt:number}|null>(null);
  const blocked=busy||pending;
  async function begin(kind:Purpose,file:File){
+  if(mutationRef.current)return;
   if(blocked)return;
+  mutationRef.current = true;
+  mutationRef.current = true;
   setBusy(true);setError("");setMessage("");setReadLink(null);
   try{
    if(!["application/pdf","image/png","image/jpeg","image/webp"].includes(file.type)||
@@ -40,9 +44,10 @@ export function FacultyIdentityEvidenceEditor({
    setChecking({kind,key:data.grant.objectKey});
    setMessage("Checking file. A clean security scan is required before this evidence is saved.");
   }catch(cause){setError(cause instanceof Error?cause.message:"Upload failed.");}
-  finally{setBusy(false);}
+  finally{mutationRef.current = false;setBusy(false);}
  }
  async function finish(){
+  if(mutationRef.current)return;
   if(blocked||!checking)return;
   setBusy(true);setError("");setMessage("");
   try{
@@ -58,10 +63,12 @@ export function FacultyIdentityEvidenceEditor({
     throw Error("Save confirmation could not be verified. Refresh the profile.");
    onSaved(result);setChecking(null);setMessage("Private evidence saved successfully.");
   }catch(cause){setError(cause instanceof Error?cause.message:"Save unavailable.");}
-  finally{setBusy(false);}
+  finally{mutationRef.current = false;setBusy(false);}
  }
  async function open(kind:Purpose,receiptId:string){
+  if(mutationRef.current)return;
   if(blocked)return;
+  mutationRef.current = true;
   setBusy(true);setError("");setReadLink(null);
   try{
    const query=new URLSearchParams({kind,receiptId});
@@ -76,9 +83,10 @@ export function FacultyIdentityEvidenceEditor({
    setReadLink({kind,href:result.readUrl,expiresAt});
    setMessage("A private document link is available for five minutes.");
   }catch(cause){setError(cause instanceof Error?cause.message:"Document unavailable.");}
-  finally{setBusy(false);}
+  finally{mutationRef.current = false;setBusy(false);}
  }
  async function revoke(kind:Purpose){
+  if(mutationRef.current)return;
   if(blocked)return;
   setBusy(true);setError("");setReadLink(null);
   try{
@@ -91,7 +99,7 @@ export function FacultyIdentityEvidenceEditor({
    if(!result.saved)throw Error("The evidence is not current. Refresh the profile.");
    onRevoked({kind,version:result.version});setMessage("Private evidence access removed.");setRevokeKind(null);
   }catch(cause){setError(cause instanceof Error?cause.message:"Removal unavailable.");}
-  finally{setBusy(false);}
+  finally{mutationRef.current = false;setBusy(false);}
  }
  const entries=[{kind:"AADHAAR" as const,label:"Aadhaar evidence",id:aadhaarReceiptId},
    {kind:"PAN" as const,label:"PAN evidence",id:panReceiptId}];
