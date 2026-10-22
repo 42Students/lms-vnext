@@ -81,13 +81,18 @@ export function reconcileLegacyAccountRoleEvidence(input: {
     input.userType,input.facultyType,input.legacyPersonId,
   );
   if(!input.claimedUserType)return resolved;
+  // A role match from a DIFFERENT source principal is not a valid migration.
+  if(input.legacyPersonId!=null && input.claimedSubjectId!=null &&
+     String(input.legacyPersonId)!==String(input.claimedSubjectId))
+    return {kind:"UNMAPPED"};
   const claimed=resolveLegacyAccountRole(
     input.claimedUserType,input.claimedFacultyType,input.claimedSubjectId,
   );
   if(resolved.kind==="UNMAPPED"||claimed.kind!==resolved.kind)
     return {kind:"UNMAPPED"};
   if(resolved.kind==="SYSTEM"||resolved.kind==="MEMBERSHIP")
-    return claimed.role===resolved.role?resolved:{kind:"UNMAPPED"};
+    return (claimed.kind==="SYSTEM"||claimed.kind==="MEMBERSHIP") &&
+      claimed.role===resolved.role?resolved:{kind:"UNMAPPED"};
   return claimed.kind==="RECRUITER_PROFILE"?resolved:{kind:"UNMAPPED"};
 }
 
