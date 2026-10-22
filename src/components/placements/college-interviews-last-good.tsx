@@ -27,6 +27,6 @@ export function CollegeInterviewsStaleFallback({retryHref}:{retryHref:string}){
       {sameRoute?"Showing the last successfully loaded interview schedule; it may be out of date. Changes are unavailable until refresh succeeds.":"The latest interview schedule could not be loaded."}
       {" "}<Link href={retryHref} prefetch={false} className="font-semibold text-link underline">Retry</Link>
     </div>
-    {sameRoute?<div aria-label="Previously loaded interview schedule" className="pointer-events-none opacity-80">{previous.content}</div>:null}
+    {sameRoute?<div aria-label="Previously loaded interview schedule" inert className="pointer-events-none opacity-80">{previous.content}</div>:null}
   </div>;
 }
