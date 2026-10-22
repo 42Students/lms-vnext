@@ -10,6 +10,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import {requirePlacementManageScope} from "./scope";
 import {hasDriveOwnerColumn} from "./tpo-team-unowned-service";
+import {placementTpoTeamMembers} from "@/db/schema/tpo-collaboration";
 
 /** TPO-inbox-team-36: move work, NEVER silently revoke membership, grant roles,
  * change a private conversation's participants or reassign an unrelated ask.
@@ -41,8 +42,17 @@ export async function handoverTpoTeamWork(context:RequestContext,raw:unknown){
    .from(membershipRoles).where(and(
     inArray(membershipRoles.membershipId,memberIds),
     inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])));
-  if(new Set(roles.map(row=>row.membershipId)).size!==2)
-   throw new Error("TEAM_MEMBER_NOT_FOUND");
+  const permanent=new Set(roles.map(row=>row.membershipId));
+  // A faculty coordinator may hand over owned work to a permanent TPO/admin.
+  if(!permanent.has(input.targetMembershipId))throw new Error("TEAM_MEMBER_NOT_FOUND");
+  if(!permanent.has(input.sourceMembershipId)){
+   const [coordinator]=await tx.select({id:placementTpoTeamMembers.id})
+    .from(placementTpoTeamMembers).where(and(
+     eq(placementTpoTeamMembers.collegeId,college.id),
+     eq(placementTpoTeamMembers.membershipId,input.sourceMembershipId)))
+    .limit(1);
+   if(!coordinator)throw new Error("TEAM_MEMBER_NOT_FOUND");
+  }
   if(!mayHandoverOwnTeamWork({
    actorMembershipId:actor.id,sourceMembershipId:input.sourceMembershipId,
    targetMembershipId:input.targetMembershipId,sourceActive:true,targetActive:true,
@@ -50,8 +60,7 @@ export async function handoverTpoTeamWork(context:RequestContext,raw:unknown){
   const jobs=await tx.update(placementJobs).set({
     ownerMembershipId:input.targetMembershipId,updatedAt:new Date(),
    }).where(and(eq(placementJobs.collegeId,college.id),
-    eq(placementJobs.ownerMembershipId,input.sourceMembershipId),
-    inArray(placementJobs.status,["DRAFT","PUBLISHED"])))
+    eq(placementJobs.ownerMembershipId,input.sourceMembershipId)))
    .returning({id:placementJobs.id});
   const companies=await tx.update(placementCompanyRelationships).set({
     ownerMembershipId:input.targetMembershipId,updatedAt:new Date(),

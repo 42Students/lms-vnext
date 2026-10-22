@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Dialog} from "@/components/ui/dialog";
+import {apiFetch} from "@/lib/api-fetch";
 
 type Candidate={membershipId:string;displayName:string;hasTpoRole:boolean};
 const endpoint="/api/placements/tpo/settings/team";
@@ -69,15 +70,36 @@ export function TpoSettingsTeamManage({candidates,activeIds,available}:{
   </div>:null}
  </section>;
 }
+type RemovalImpact={drives:number;companies:number;recruiterLeads:number;followups:number};
 export function TpoSettingsTeamRemove({membershipId,displayName,removable,isSelf,permanentRole}:{
  membershipId:string;displayName:string;removable:boolean;isSelf:boolean;permanentRole:boolean;
 }){
  const router=useRouter();
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false);
+ const [checking,setChecking]=useState(false);
+ const [impact,setImpact]=useState<RemovalImpact|null>(null);
  const [error,setError]=useState(""),[success,setSuccess]=useState("");
  const removalLock=useRef(false);
+ const ownedWork=(impact?.drives??0)+(impact?.companies??0)+
+  (impact?.recruiterLeads??0)+(impact?.followups??0);
+ async function reviewRemoval(){
+  if(checking||busy)return;
+  setChecking(true);setImpact(null);setError("");
+  try{
+   const receipt=await apiFetch<{impact:RemovalImpact}>(
+    endpoint+"?"+new URLSearchParams({membershipId}).toString(),{cache:"no-store"});
+   const next=receipt.impact;
+   if(!next||!["drives","companies","recruiterLeads","followups"].every(key=>
+     Object.prototype.hasOwnProperty.call(next,key))||
+     !Object.values(next).every(value=>Number.isSafeInteger(value)&&value>=0))
+    throw new Error("Invalid impact receipt");
+   setImpact(next);setOpen(true);
+  }catch{
+   setError("Could not verify what this team member owns. Retry before removing them.");
+  }finally{setChecking(false);}
+ }
  async function remove(){
-  if(removalLock.current)return;
+  if(removalLock.current||checking||!impact||ownedWork>0)return;
   removalLock.current=true;
   setBusy(true);setError("");
   try{await send("DELETE",membershipId);setOpen(false);setSuccess("Removed from the team");
@@ -87,18 +109,27 @@ export function TpoSettingsTeamRemove({membershipId,displayName,removable,isSelf
  }
  if(!removable||isSelf)return <span className="text-xs text-muted-foreground">{isSelf?"Your membership":"Managed by college"}</span>;
  return <div className="min-w-0 space-y-2">
-  <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);setError("");}}>Remove member</Button>
+  <Button type="button" size="sm" variant="secondary" disabled={checking||busy}
+   onClick={()=>void reviewRemoval()}>{checking?"Checking ownership…":"Hand over and remove"}</Button>
   {success?<p className="text-xs text-[var(--lms-primary-text)]" role="status">{success}</p>:null}
+  {error&&!open?<InlineNotice tone="error" message={error}/>:null}
   <Dialog open={open} role="alertdialog" title={"Remove "+displayName+" from the placement team?"}
    description="They lose placement team assignment access at once, including private conversations. What they wrote stays, marked “left the team”."
    className="max-w-sm" dismissible={!busy} onOpenChange={next=>{if(!busy)setOpen(next);}}
    footer={<div className="flex w-full flex-wrap justify-end gap-2">
     <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
-    <Button type="button" size="sm" variant="danger" loading={busy} disabled={busy} onClick={()=>void remove()}>
+    <Button type="button" size="sm" variant="danger" loading={busy}
+     disabled={busy||checking||!impact||ownedWork>0} onClick={()=>void remove()}>
      {busy?"Removing…":"Remove"}</Button>
    </div>}>
    {permanentRole?<p className="text-xs text-muted-foreground">Their permanent TPO or College Admin membership is not removed.</p>:null}
-   <p className="text-sm">Reassign any active drives and recruiter relationships before removing their team assignment.</p>
+   {impact?<p role="status" className="text-sm">
+    Owned work: {impact.drives} live drives, {impact.companies} companies,
+    {impact.recruiterLeads} recruiter leads and {impact.followups} follow-ups.
+   </p>:null}
+   {ownedWork>0?<InlineNotice tone="warning"
+    message="Hand over this member’s work to another active placement team member before removing them. Then choose Hand over and remove again to recheck ownership."/>:
+    <p className="text-sm">No owned work remains. Confirm to remove this team assignment; existing messages remain recorded.</p>}
    {error?<InlineNotice tone="error" message={error}/>:null}
   </Dialog>
  </div>;

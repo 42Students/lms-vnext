@@ -257,7 +257,7 @@ export default async function HrCalendarPage({
   const view =
     VIEWS.find(
       (candidate) => candidate === requestedView,
-    ) ?? "week";
+    ) ?? "agenda";
 
   const window = placementCalendarWindow(anchor, view);
   const grants = context.recruiter?.grants ?? [];
