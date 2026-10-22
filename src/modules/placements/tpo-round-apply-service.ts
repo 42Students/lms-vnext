@@ -60,7 +60,7 @@ export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:un
   previewToken:roundApplyPreviewToken(roundId+"|"+scope.roundUpdatedAt.toISOString(),rows),
   skippedUnrecordedNote:"Applicants with no staged result remain pending; they are not automatically failed."};
 }
-export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown,rawRoundId:unknown,raw:unknown){
+export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown,rawRoundId:unknown,raw:unknown,notifyLearners=true){
  const input=roundApplyInputSchema.parse(raw);
  const preview=await getTpoRoundApplyPreview(context,rawJobId,rawRoundId);
  if(!preview.ready)throw new PlacementsServiceError("PLACEMENT_RESULT_ROUND_NOT_READY");
@@ -97,7 +97,7 @@ export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown
  const results:Array<{resultId:string;applicationId:string;student:string;outcome:string;status:"applied"|"skipped";reason?:string}>=[];
  for(const row of preview.rows.filter(r=>r.status==="STAGED")){
   try{
-   await applyPlacementRoundResult(context,row.resultId,row.version);
+   await applyPlacementRoundResult(context,row.resultId,row.version,notifyLearners);
    results.push({...row,status:"applied"});
   }catch(error){
    results.push({...row,status:"skipped",reason:roundApplyFailureReason(error)});
@@ -120,7 +120,8 @@ export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown
    summary:"Round results applied: "+applied+" applied, "+skipped+" skipped, "+unchanged+" unchanged",
    metadata:{action:"ROUND_RESULTS_APPLIED",jobId:placementJobIdSchema.parse(rawJobId),
     roundId:preview.scope.roundId,applied,skipped,unchanged,total:preview.rows.length,
-    retryRequiresFreshPreview:skipped>0,previewToken:preview.previewToken},
+    retryRequiresFreshPreview:skipped>0,previewToken:preview.previewToken,
+    notifyLearners},
    groupKey:"placement-job:"+placementJobIdSchema.parse(rawJobId)+":results",
    dedupeKey:"round-results-applied:"+preview.scope.roundId+":"+preview.previewToken,
   });
@@ -129,5 +130,5 @@ export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown
   applied,skipped,partial:skipped>0,
   completion:"ROUND_ALREADY_COMPLETED" as const,
   retryRequiresFreshPreview:skipped>0,
-  unchanged,results};
+  unchanged,results,notifyLearners};
 }
