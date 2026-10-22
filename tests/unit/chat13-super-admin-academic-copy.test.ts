@@ -15,7 +15,8 @@ describe("Super Admin Academic Setup legacy copy and defaults",()=>{
   const manager=read("src/components/admin/lecture-hall-manager.tsx");
   const copy=read("src/modules/academics/lecture-hall-copy.ts");
   expect(manager).toContain('capacity: "50"');
-  expect(manager).toContain('roomType: "LECTURE_HALL"');
+  expect(manager).toContain('roomType: ""');
+  expect(manager).toContain('if (!values.roomType) return setError("Select a room type")');
   expect(copy).toContain("Create New Lecture Hall / Room");
   expect(copy).toContain("Lecture hall created successfully!");
   expect(copy).toContain("Laboratory");
@@ -33,7 +34,7 @@ describe("Super Admin Academic Setup legacy copy and defaults",()=>{
   expect(overview).toContain("legacyAcademicStatus(period.status)");
  });
  it("SA-academics-people-37 restores legacy department and lecture-hall empty list copy",()=>{
-  expect(read("src/components/admin/department-directory.tsx")).toContain("No departments found. Create a college first, then add departments.");
+  expect(read("src/components/admin/department-directory.tsx")).toContain("No departments found. Create a department to get started.");
   expect(read("src/components/admin/lecture-hall-manager.tsx")).toContain("No lecture halls found.");
   expect(read("src/app/(authenticated)/admin/lecture-halls/page.tsx")).toContain("No lecture halls found.");
  });

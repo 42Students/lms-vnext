@@ -77,7 +77,7 @@ describe("chat-16 shared OTP admission guard HTTP and tenant isolation", () => {
     await deny(unavailable, 503, "TENANT_LOOKUP_UNAVAILABLE");
     if (!unavailable.ok) {
       expect(unavailable.response.headers.get("Retry-After")).toBe("30");
-      expect(unavailable.response.headers.get("Cache-Control")).toBe("no-store");
+      expect(unavailable.response.headers.get("Cache-Control")).toBe("private, no-store");
     }
   });
   it("AUTH-GUARD-05 passes exact college resolved from trusted host, not caller-owned fields", async () => {

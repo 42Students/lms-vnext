@@ -5,7 +5,7 @@ import {
 } from "@/modules/inbound-mail/triage-transition-model";
 import {createInboundMailTriageGate} from "@/modules/inbound-mail/triage-submit-model";
 import {
- inboundMailMetadataSchema,inboundMailListQuerySchema,safeInboundPreview,
+ inboundMailMetadataSchema,inboundMailListQuerySchema,safeInboundPreview,normalizeInboundMailSender,
 } from "@/modules/inbound-mail/message-model";
 
 const statuses:InboundMailStatus[]=["NEW","TRIAGED","RESOLVED"];
@@ -46,14 +46,17 @@ describe("chat-16 inbound mail ledger transition and mutation gate",()=>{
   };
   expect(inboundMailMetadataSchema.safeParse(valid).success).toBe(true);
   expect(inboundMailMetadataSchema.safeParse({...valid,status:"DELETED"}).success).toBe(false);
-  expect(inboundMailMetadataSchema.safeParse({...valid,fromAddress:"bad-address"}).success).toBe(false);
+  // Unverified RFC From values stay visible to staff for forensic triage.
+  expect(inboundMailMetadataSchema.safeParse({...valid,fromAddress:"bad-address"}).success).toBe(true);
+  expect(normalizeInboundMailSender("bad-address").address).toBeNull();
   expect(inboundMailMetadataSchema.safeParse({...valid,bodyPlain:"private body"}).success).toBe(false);
  });
  it("INBOUND-TRIAGE-05 enforces a bounded inbox query and safe preview text",()=>{
   expect(inboundMailListQuerySchema.parse({})).toMatchObject({status:"ALL",page:1,q:""});
-  expect(inboundMailListQuerySchema.safeParse({page:0}).success).toBe(false);
-  expect(inboundMailListQuerySchema.safeParse({status:"DELETED"}).success).toBe(false);
+  expect(inboundMailListQuerySchema.parse({page:0}).page).toBe(1);
+  expect(inboundMailListQuerySchema.parse({status:"DELETED"}).status).toBe("ALL");
   expect(inboundMailListQuerySchema.safeParse({recipient:"bad"}).success).toBe(false);
+  expect(inboundMailListQuerySchema.parse({recipient:"USER@EXAMPLE.ORG"}).recipient).toBe("user@example.org");
   expect(inboundMailListQuerySchema.safeParse({q:"x".repeat(121)}).success).toBe(false);
   expect(inboundMailListQuerySchema.safeParse({collegeId:"foreign"}).success).toBe(false);
   expect(safeInboundPreview("A\nB\tC\u0000D",20)).toBe("A B C D");

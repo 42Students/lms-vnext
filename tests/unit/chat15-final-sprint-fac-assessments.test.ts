@@ -22,15 +22,16 @@ describe("chat-15 final sprint: faculty assessments audit decision verification"
  });
  it("FAC-assessments-25 NOT-A-GAP: overview shows course, lesson, due-date and draft visibility",()=>{
   const overview=source("src/components/courses/faculty-assessment-overview.tsx");
-  for(const label of ["Course: {item.courseName}","Lesson: {item.lessonName}",
-   "Needs due date","Draft · hidden from students","Created:"]){
+  for(const label of ['{item.courseName} · {item.sectionName} · {item.lessonName}',
+   '>{viewedItem.courseName} ({viewedItem.courseCode})</dd>',
+   '>{viewedItem.lessonName}</dd>',"Needs due date","Draft · hidden from students","Created:"]){
    expect(overview).toContain(label);
   }
  });
  it("FAC-assessments-26 NOT-A-GAP: a draft still has an explicit zero-submission review",()=>{
   const review=source("src/components/courses/faculty-assignment-review.tsx");
   expect(review).toContain('if(status==="DRAFT")');
-  expect(review).toContain("No submissions yet. Publish this assignment");
+  expect(review).toContain('<EmptyState title="No submissions yet" description="Publish this assignment to allow students to submit work."');
   expect(review).not.toContain("Published assignments cannot be edited");
  });
  it("FAC-assessments-28 NOT-A-GAP: both report types retain legacy sections and guarded incomplete PDF",()=>{

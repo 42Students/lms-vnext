@@ -48,7 +48,8 @@ describe("chat-16 public campaign opt-out body limit and POST-only persistence",
   expect((await POST(new Request(url,{
    method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},
    body:new URLSearchParams({other:"no-token"}),
-  }))).status).toBe(400);
+  }))).status).toBe(303);
+  // Unknown tokens are acknowledged identically to opt-outs to avoid leaking recipient existence.
   expect(verifyTpoCampaignRecipientToken).not.toHaveBeenCalled();
   expect(getDb).not.toHaveBeenCalled();
  });
