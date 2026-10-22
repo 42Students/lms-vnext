@@ -40,11 +40,12 @@ export default async function LearnerApplicationDetailPage({params}:{
     round=>round.applicationId===applicationId,
   );
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/my-placements/applications"
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">← Applications</Link>
     <PageHeader title={record.roleTitle}
       description={record.companyName+" · Own application status and timeline"}
       actions={<StatusBadge tone={applicationStatusTone(record.currentStatus)}>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
+    <Link href="/learn/my-placements/applications"
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">← Applications</Link>
+
     {!scheduled.available ? <Banner tone="warning" role="status">
       Round bookings could not be checked. Withdrawal is temporarily restricted to a placement-cell review for your safety.
       <Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)} className="ml-2 font-semibold underline">Retry round bookings</Link>
