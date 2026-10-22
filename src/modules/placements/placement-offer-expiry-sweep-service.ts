@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, isNotNull, lte } from "drizzle-orm";
+import { and, asc, eq, gt, isNotNull, lte, notExists, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
  activityEvents,colleges,placementApplications,placementJobs,
@@ -128,4 +128,84 @@ export async function drainExpiredPlacementOffers(actorUserId:string,now:Date,op
   if(changed<batchSize)return {expired,batches,drained:true};
  }
  return {expired,batches,drained:false};
+}
+
+/**
+ * Hourly legacy "offers expiring soon" counterpart. This is separate from
+ * overdue expiry transitions: no status or deadline is changed here.
+ * One scoped reminder per issued offer is recorded as an immutable,
+ * deduplicated event. The JOIN to the learner application controls audience.
+ */
+export async function remindExpiringPlacementOffers(
+  actorUserId: string, now: Date, limit = 100,
+): Promise<number> {
+  if (!Number.isInteger(limit) || limit < 1 || limit > 100 ||
+      !Number.isFinite(now.getTime())) {
+    throw new Error("Invalid offer reminder run bounds");
+  }
+  const horizon = new Date(now.getTime() + 24 * 60 * 60_000);
+  return getDb().transaction(async tx => {
+    const previouslyReminded = tx.select({ id: activityEvents.id })
+      .from(activityEvents)
+      .where(and(
+        eq(activityEvents.subjectType, "placement_offer"),
+        eq(activityEvents.subjectId, placementOffers.id),
+        eq(activityEvents.eventType, "PLACEMENTS_OFFER_EXPIRING"),
+      ));
+    const rows = await tx.select({
+      id: placementOffers.id,
+      expiresAt: placementOffers.expiresAt,
+      roleTitle: placementOffers.roleTitle,
+      membershipId: placementApplications.membershipId,
+      collegeId: placementJobs.collegeId,
+      jobId: placementJobs.id,
+      jobTitle: placementJobs.title,
+      organizationId: colleges.organizationId,
+    }).from(placementOffers)
+      .innerJoin(placementApplications,
+        eq(placementApplications.id, placementOffers.applicationId))
+      .innerJoin(placementJobs,
+        eq(placementJobs.id, placementApplications.jobId))
+      .innerJoin(colleges, eq(colleges.id, placementJobs.collegeId))
+      .where(and(
+        eq(placementOffers.status, "ISSUED"),
+        eq(placementApplications.status, "SUBMITTED"),
+        eq(colleges.status, "ACTIVE"),
+        isNotNull(placementOffers.expiresAt),
+        gt(placementOffers.expiresAt, now),
+        lte(placementOffers.expiresAt, horizon),
+        notExists(previouslyReminded),
+      ))
+      .orderBy(asc(placementOffers.expiresAt), asc(placementOffers.id))
+      .limit(limit).for("update", { of: placementOffers, skipLocked: true });
+
+    let reminded = 0;
+    for (const row of rows) {
+      const [event] = await tx.insert(activityEvents).values({
+        organizationId: row.organizationId,
+        collegeId: row.collegeId,
+        actorUserId,
+        actorMembershipId: null,
+        module: "PLACEMENTS",
+        eventType: "PLACEMENTS_OFFER_EXPIRING",
+        subjectType: "placement_offer",
+        subjectId: row.id,
+        subjectLabel: row.roleTitle,
+        summary: "Offer expires within 24 hours for " + row.jobTitle,
+        metadata: { offerId: row.id, jobTitle: row.jobTitle,
+          expiryAt: row.expiresAt?.toISOString() ?? null },
+        groupKey: "placement-job:" + row.jobId + ":offers",
+        dedupeKey: "placement-offer-expiring:" + row.id,
+      }).onConflictDoNothing().returning({ id: activityEvents.id });
+      if (!event) continue;
+      await deliverRecordedLearnerPlacementEvent(tx, {
+        eventId: event.id, collegeId: row.collegeId,
+        membershipId: row.membershipId,
+        kind: "APPLICATION_STATUS_CHANGED",
+        subject: "Offer expires soon for " + row.jobTitle,
+      });
+      reminded += 1;
+    }
+    return reminded;
+  });
 }
