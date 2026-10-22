@@ -126,3 +126,8 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/college/college-person-edit-action.tsx, src/app/(authenticated)/admin/students/page.tsx
 - Legacy: Legacy editable first/last/mobile/email/roll/program/class; vNext canonical Name/Login Mobile/Login Email readonly and class in separate action — `docs/legacy-source/frontend/src/pages/superadmin/sections/Students.js:1593-1715`
 - Expected fix: Unify profile + placement edit controls with explicit permission verification
+
+## Lane chat-2 fast verification disposition (2026-10-22)
+
+- OK (source inspected): G2-11-009-006, G2-11-012-094, G2-13-007-018, G2-13-007-079, G2-14-002-032. TPO role selects TPO branch, lifecycle failure uses scoped stale snapshot, directory effective status checks account and membership, and registration requires nonblank roll with legacy validation copy.
+- DEFERRED (cannot claim parity from brief source inspection): G2-12-005-007, G2-13-007-014, G2-13-007-038, G2-13-007-040, G2-13-007-044, G2-13-007-045, G2-13-007-046, G2-13-007-050, G2-13-007-051, G2-13-007-076, G2-13-007-078, G2-17-23-056, G2-17-028-044, G2-18-026-007, G2-19-029-017, G2-13-006-064, G2-18-021-004, G2-19-026-005, G2-14-002-034, G2-14-002-036. Needs endpoint/security or full workflow confirmation and/or legacy migration product decision. No auth changes or irreversible deletion made during this packet.
