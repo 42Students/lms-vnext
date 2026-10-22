@@ -19,7 +19,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
    expect(start).toBeGreaterThanOrEqual(0);
    expect(selection.slice(start,selection.indexOf(">",start))).toContain("min-h-11");
   }
-  expect(selection).toContain('empty={<p role="status">No selections yet.</p>}');
+  expect(selection).toContain('empty={<EmptyState title="No selections yet."/>');
   expect(selection).toContain("mobilePriority:\"primary\"");
  });
  it("PLACEMENTS-SELECTION-ERROR-01 masks raw API codes and retains chosen selections on failure",()=>{
@@ -109,7 +109,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(page).toContain("Invalid round result filters. No learner data loaded.");
   expect(page).toContain("Stage results for this roster page (up to 500 learners).");
   expect(page).toContain("TpoRoundApplyControl");
-  expect(page).toContain("No eligible shortlisted submitted applicants");
+  expect(page).toContain("No students are in this round yet.");
   expect(page).toContain("inline-flex min-h-11 items-center");
  });
 });
