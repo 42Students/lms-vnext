@@ -1,3 +1,4 @@
+import {CollegeDriveApplicationsSizeControl} from "@/components/placements/college-drive-applications-size-control";
 import { CollegeDriveApplicationsExport } from "@/components/college/college-drive-applications-export";
 import Link from "next/link";
 import { z } from "zod";
@@ -97,6 +98,9 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
           {value:"settings",label:"Settings",href:"/college/placements/jobs/"+jobId+"/settings"},
         ]}/>
     </nav>
+    <CollegeDriveApplicationsSizeControl
+      action={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
+      query={query}/>
     <section aria-label="Drive and application summary" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
       <div className="flex flex-wrap items-center gap-3 text-[var(--lms-font-sm)]">
         <strong className="font-semibold">{job?.title ?? data.drive.title}</strong>

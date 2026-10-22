@@ -59,6 +59,8 @@ export type TpoCrmErrorCode =
 
 const TPO_CRM_ERROR_MESSAGES: Partial<Record<TpoCrmErrorCode, string>> = {
   TPO_CRM_LEAD_DUPLICATE: "This recruiter is already in your list. Search for them to open it.",
+  TPO_CRM_LEAD_NOT_FOUND: "This recruiter contact is no longer available in this college.",
+  TPO_CRM_FOLLOWUP_NOT_FOUND: "This follow-up could not be found. Reload your calendar and try again.",
   TPO_CRM_FOLLOWUP_ALREADY_DONE: "A finished follow-up cannot be moved",
 };
 
@@ -175,6 +177,9 @@ export async function listTpoLeads(
   const now = new Date();
   const activityByLead=new Map(activities.map(row=>[row.leadId,row]));
   const ownerByMembership=new Map(owners.map(row=>[row.membershipId,row.ownerName]));
+  // The old list's Stage board was manual first, last activity next.
+  // Today we preserve the latest-contact ordering with ID tie-break while
+  // exposing the derived stage and the manual legacy stage separately.
   return rows.map(row => ({
     ...tpoLeadView(row, recruiterAttentionFromPersistedFacts({
     createdAt: row.createdAt,
@@ -468,7 +473,8 @@ export async function listDueTpoFollowups(
       isNull(placementTpoFollowups.doneAt),
       lte(placementTpoFollowups.dueAt, now),
     ))
-    .orderBy(asc(placementTpoFollowups.dueAt));
+    .orderBy(asc(placementTpoFollowups.dueAt),
+      asc(placementTpoFollowups.id));
 }
 
 export async function moveTpoFollowup(
@@ -480,6 +486,14 @@ export async function moveTpoFollowup(
  const input=moveTpoFollowupSchema.parse(raw);
  const college=await requirePlacementManageScope(context,input.collegeId);
  const followup=await getDb().transaction(async tx=>{
+  const [prior]=await tx.select()
+   .from(placementTpoFollowups)
+   .where(and(eq(placementTpoFollowups.id,followupId),
+    eq(placementTpoFollowups.collegeId,input.collegeId)))
+   .for("update").limit(1);
+  if(!prior||prior.doneAt)return null;
+  // Re-submitted identical dates must not generate duplicate activity.
+  if(prior.dueAt.getTime()===new Date(input.dueAt).getTime())return prior;
   const [changed]=await tx.update(placementTpoFollowups)
    .set({dueAt:new Date(input.dueAt)})
    .where(and(eq(placementTpoFollowups.id,followupId),
@@ -510,7 +524,7 @@ export async function finishTpoFollowup(
 ) {
   const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
   const followupId = tpoCrmFollowupIdSchema.parse(rawFollowupId);
-  await requirePlacementManageScope(context, collegeId);
+  const college=await requirePlacementManageScope(context, collegeId);
   return getDb().transaction(async (tx) => {
     const [existing] = await tx.select()
       .from(placementTpoFollowups)
@@ -528,6 +542,16 @@ export async function finishTpoFollowup(
         eq(placementTpoFollowups.id, existing.id),
         isNull(placementTpoFollowups.doneAt),
       )).returning();
+    if(updated)await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId,
+      actorUserId:context.user.id,
+      actorMembershipId:ownerMembership(context,collegeId),
+      module:"PLACEMENTS",eventType:"placements.tpo_followup.finished",
+      subjectType:"placement_tpo_followup",subjectId:updated.id,
+      subjectLabel:"Recruiter follow-up",summary:"TPO completed a recruiter follow-up",
+      metadata:{followupId:updated.id,leadId:updated.leadId,
+        completedAt:updated.doneAt?.toISOString()??null},
+    });
     return updated ?? existing;
   });
 }

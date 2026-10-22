@@ -57,6 +57,8 @@ export type TpoRecruiterGrantSourceRow = {
   capabilities?: string[];
   verificationStatus?: string;
   grantedByType?: string|null;
+  /** Raw phone stays server-side; only asterisks and last four are emitted. */
+  phoneE164?:string|null;
 };
 
 export type TpoRecruiterGrantView = {
@@ -73,6 +75,8 @@ export type TpoRecruiterGrantView = {
   capabilities: string[];
   verificationStatus: string;
   joinedVia: "Public link"|"Company link"|"Invitation"|"Not recorded";
+  maskedPhone?:string|null;
+  grantSourceLabel?:string;
 };
 
 const istDateFormatter = new Intl.DateTimeFormat(
@@ -135,6 +139,12 @@ export function tpoRecruiterGrantExpiryLabel(
   return row.ended ? "Ended" : `Until ${row.validUntilDate}`;
 }
 
+export function maskedTpoRecruiterPhone(phone:string|null|undefined):string|null{
+ const digits=(phone??"").replace(/\D/g,"");
+ if(digits.length<4)return null;
+ // Never return a leading national or international dialing prefix.
+ return "•••• "+digits.slice(-4);
+}
 export function toTpoRecruiterGrantView(
   row: TpoRecruiterGrantSourceRow,
 ): TpoRecruiterGrantView {
@@ -167,6 +177,11 @@ export function toTpoRecruiterGrantView(
     joinedVia:row.grantedByType==="PUBLIC_LINK"?"Public link":
       row.grantedByType==="COMPANY_LINK"?"Company link":
       row.grantedByType==="INVITE"?"Invitation":"Not recorded",
+    maskedPhone:maskedTpoRecruiterPhone(row.phoneE164),
+    grantSourceLabel:row.grantedByType==="PUBLIC_LINK"?"Public link":
+      row.grantedByType==="COMPANY_LINK"?"Company link":
+      row.grantedByType==="INVITE"?"Invitation":
+      row.grantedByType==="TPO"?"Placement cell": "Source not recorded",
   };
 }
 

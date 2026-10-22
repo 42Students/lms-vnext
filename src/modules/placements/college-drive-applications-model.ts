@@ -15,15 +15,22 @@ export const driveApplicationsQuerySchema = z.object({
   skills:z.string().trim().max(100).default(""),
   screening: z.enum(["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
+  size:z.coerce.number().int().refine(value=>[10,20,50,100].includes(value),{
+    message:"Choose 10, 20, 50 or 100 applications per page",
+  }).default(20),
 }).strict();
-export type DriveApplicationsQuery = z.infer<typeof driveApplicationsQuerySchema>;
+// Programmatic legacy links may omit page size. Parsed URLs always fill it.
+export type DriveApplicationsQuery = Omit<z.infer<typeof driveApplicationsQuerySchema>,"size"> & {size?:number};
+/** Legacy admin table used 10 rows; the drive register defaults to 20
+ * with an explicit 10/20/50/100 choice. Export/bulk caps are independent. */
 export const DRIVE_APPLICATIONS_PAGE_SIZE = 20;
+export const DRIVE_APPLICATION_PAGE_SIZE_OPTIONS=[10,20,50,100] as const;
 export const DRIVE_APPLICATION_EXPORT_CAP = 1000;
 export const DRIVE_APPLICATION_BULK_CAP = 3000;
 
 export function driveApplicationsParams(raw: Record<string,string|string[]|undefined>) {
   const input: Record<string,string> = {};
-  for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","appliedFrom","appliedTo","minScore","maxScore","skills","page"] as const) {
+  for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","appliedFrom","appliedTo","minScore","maxScore","skills","page","size"] as const) {
     const value = raw[key];
     // The legacy page tolerates malformed optional filters, but identifiers
     // must fail closed rather than silently broadening an academic scope.
@@ -43,6 +50,17 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
     if (input[key] && !allowed[key].includes(input[key])) delete input[key];
   }
   if (input.page && !/^[1-9]\d{0,3}$/.test(input.page)) delete input.page;
+  // Old table deep links used ?pageSize and some API clients used ?limit.
+  // Conflicting or repeated choices are invalid instead of silently widening
+  // a filtered export or changing how many learners are selected in bulk.
+  for(const alias of ["pageSize","limit"]){
+    const supplied=raw[alias];
+    if(Array.isArray(supplied))return null;
+    if(typeof supplied==="string"&&supplied!==""){
+      if(input.size&&input.size!==supplied)return null;
+      input.size=supplied;
+    }
+  }
   // Legacy callers use appliedAfter/appliedBefore. Resolve their aliases to
   // the canonical IST-inclusive filter names without silently widening scope
   // when both spellings disagree or contain repeated values.
@@ -76,6 +94,8 @@ export function driveApplicationsHref(jobId: string, query: DriveApplicationsQue
   if(query.skills)params.set("skills",query.skills);
   if (query.screening !== "ALL") params.set("screening",query.screening);
   if (!exportCsv && query.page > 1) params.set("page",String(query.page));
+  if(!exportCsv&&query.size!==undefined&&query.size!==DRIVE_APPLICATIONS_PAGE_SIZE)
+    params.set("size",String(query.size));
   const suffix = exportCsv ? "/export" : "";
   return "/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications" + suffix +
     (params.size ? "?" + params.toString() : "");

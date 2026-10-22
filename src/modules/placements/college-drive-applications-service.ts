@@ -39,9 +39,10 @@ export async function listCollegeDriveApplications(
   const appliedTo=query.appliedTo?new Date(new Date(`${query.appliedTo}T00:00:00+05:30`).getTime()+86_400_000):null;
   const collegeId = await requireCollegePlacementAdmin(context);
   const db = getDb();
-  const pageSize = options.pageSize===undefined||!Number.isFinite(options.pageSize)
+  const requestedPageSize=options.pageSize??query.size??DRIVE_APPLICATIONS_PAGE_SIZE;
+  const pageSize = !Number.isFinite(requestedPageSize)
     ?DRIVE_APPLICATIONS_PAGE_SIZE
-    :Math.max(1,Math.min(100,Math.floor(options.pageSize)));
+    :Math.max(1,Math.min(100,Math.floor(requestedPageSize)));
   // Only the audited legacy CSV adapter may request the historic 20k cap.
   const exportCap=options.exportCap===LEGACY_CSV_EXPORT_CAP?
     LEGACY_CSV_EXPORT_CAP:DRIVE_APPLICATION_EXPORT_CAP;

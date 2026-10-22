@@ -90,6 +90,7 @@ export async function listTpoRecruiterAccess(
       updatedAt: placementRecruiterCollegeGrants.updatedAt,
       displayName:
         users.displayName,
+      phoneE164:users.phoneE164,
       designation:placementRecruiterProfiles.title,
       companyName:
         placementCompanies.name,
@@ -179,6 +180,7 @@ export async function listTpoRecruiterAccess(
           updatedAt: scopedGrants.updatedAt,
           displayName:
             scopedGrants.displayName,
+          phoneE164:scopedGrants.phoneE164,
           designation:scopedGrants.designation,
           companyName:
             scopedGrants.companyName,
