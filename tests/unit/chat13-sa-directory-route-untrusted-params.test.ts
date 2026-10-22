@@ -40,6 +40,18 @@ describe("chat-13 Super Admin company and drive URL authorization-adjacent input
     }
   });
 
+  it("interprets legacy unverified=false as all companies, not only verified ones", () => {
+    const all = parseAdminCompanyDirectoryParams({view:"GLOBAL",unverified:"false"});
+    expect(all.success).toBe(true);
+    if(all.success)expect(all.data.verified).toBe("ALL");
+    const unverified = parseAdminCompanyDirectoryParams({view:"GLOBAL",unverified:"true"});
+    expect(unverified.success).toBe(true);
+    if(unverified.success)expect(unverified.data.verified).toBe("NOT_VERIFIED");
+    expect(parseAdminCompanyDirectoryParams({
+      view:"GLOBAL",unverified:"true",verified:"VERIFIED",
+    }).success).toBe(false);
+  });
+
   it("SA-ADMIN-DRIVE-05 rejects forged raw filter keys and duplicate URL values", () => {
     expect(adminDriveDirectoryQuerySchema.parse({ q: "Acme", page: "2" }))
       .toMatchObject({ q: "Acme", page: 2 });

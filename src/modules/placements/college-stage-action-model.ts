@@ -95,3 +95,18 @@ export function collegeStageOptionsForLegacyStatus(raw:unknown){
  return {move:[...(COLLEGE_APPLICATION_TRANSITIONS[status]??[])],
   correct:[...(COLLEGE_APPLICATION_CORRECTIONS[status]??[])]};
 }
+
+/** Legacy Assessment bulk feedback must identify the destination and the
+ * actual number moved; a partially applied batch is never called successful. */
+export function collegeStageMoveFeedback(
+ action:"MOVE"|"REINSTATE"|"CORRECT",stage:string,moved:number,skipped:number,
+):{title:string;failurePrefix:string}{
+ const assessment=action==="MOVE"&&stage==="ASSESSMENT";
+ return {
+  title:assessment
+   ? moved+" application"+(moved===1?"":"s")+" moved to Assessment"+
+     (skipped?" · "+skipped+" skipped":"")
+   : skipped?moved+" updated, "+skipped+" skipped":"Application status updated",
+  failurePrefix:assessment?"Failed to move to Assessment. ":"",
+ };
+}
