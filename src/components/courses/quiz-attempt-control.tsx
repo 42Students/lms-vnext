@@ -132,7 +132,7 @@ export function QuizAttemptControl({
 
       if (!response.ok) {
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? null,
         );
         return;
       }
@@ -175,7 +175,7 @@ export function QuizAttemptControl({
 
       if (!response.ok) {
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? null,
         );
         return;
       }
@@ -274,7 +274,7 @@ export function QuizAttemptControl({
 
       if (!response.ok) {
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? null,
         );
         return;
       }
