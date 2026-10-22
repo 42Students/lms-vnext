@@ -164,9 +164,10 @@ export function FacultyQuizReview({
 
       if (thisRequest!==requests.current||controller.signal.aborted)return;
       if (!response.ok) {
-        setError(
-          await courseApiError(response),
-        );
+        const message = await courseApiError(response);
+        if (thisRequest === requests.current && !controller.signal.aborted) {
+          setError(message);
+        }
         return;
       }
 
