@@ -18,17 +18,23 @@ export function LearnerNoticeReadOnView({
 }) {
   const router = useRouter();
   const attempted = useRef<string | null>(null);
+  const receiptRef=useRef(false);
+  const activeReceiptKey=useRef<string | null>(null);
   const [failed, setFailed] = useState(false);
   const [retry, setRetry] = useState(0);
   const key = [...new Set(notificationIds)].sort().join(",");
 
   useEffect(() => {
     const attemptKey = key + ":" + retry;
+    if(receiptRef.current && activeReceiptKey.current===attemptKey)return;
     if (attempted.current === attemptKey) return;
     attempted.current = attemptKey;
+    activeReceiptKey.current=attemptKey;
+    receiptRef.current = true;
     let cancelled = false;
     const ids = key ? key.split(",") : [];
     async function acknowledge() {
+      try {
       if (!ids.length) {
         window.dispatchEvent(new CustomEvent("placement-announcements-read"));
         return;
@@ -50,6 +56,7 @@ export function LearnerNoticeReadOnView({
         window.dispatchEvent(new CustomEvent("placement-announcements-read"));
         router.refresh();
       }
+      }finally{if(activeReceiptKey.current===attemptKey)receiptRef.current = false;}
     }
     void acknowledge();
     return () => { cancelled = true; };

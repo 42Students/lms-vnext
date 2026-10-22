@@ -8,14 +8,21 @@ import { parseLearnerPlaybackGrant, storageApiError } from "@/modules/courses/le
 
 export function FacultyVideoPreview({videoId,deliveryId}:{videoId:string;deliveryId:string}){
  const videoRef=useRef<HTMLVideoElement|null>(null);
+ const grantRef=useRef(false);
+ const grantGeneration=useRef(0);
  const [error,setError]=useState<string|null>(null);
  const [loading,setLoading]=useState(true);
  useEffect(()=>{
+  const generation=++grantGeneration.current;
+  grantRef.current = false;
   const controller=new AbortController();
   const video=videoRef.current;
   let timeout:ReturnType<typeof setTimeout>|null=null;
   async function grant(){
-   if(!video)return;
+   if(!video||controller.signal.aborted)return;
+   if(grantRef.current)return;
+   grantRef.current = true;
+   try{
    const previous=Number.isFinite(video.currentTime)?video.currentTime:0;
    const response=await fetch(`/api/courses/videos/${encodeURIComponent(videoId)}/playback-grant`,{
     method:"POST",credentials:"same-origin",cache:"no-store",signal:controller.signal,
@@ -34,9 +41,10 @@ export function FacultyVideoPreview({videoId,deliveryId}:{videoId:string;deliver
    timeout=setTimeout(()=>{
     void grant().catch(cause=>{if(!controller.signal.aborted){reportVideoFailure(cause);setError(cause instanceof Error?cause.message:"Video preview expired.");}});
    },Math.max(1000,Date.parse(result.expiresAt)-Date.now()-30_000));
+   }finally{if(grantGeneration.current===generation)grantRef.current = false;}
   }
   void grant().catch(cause=>{if(!controller.signal.aborted){reportVideoFailure(cause);setLoading(false);setError(cause instanceof Error?cause.message:"Video preview unavailable.");}});
-  return()=>{controller.abort();if(timeout)clearTimeout(timeout);if(video){video.pause();video.removeAttribute("src");video.removeAttribute("poster");video.load();}};
+  return()=>{controller.abort();if(grantGeneration.current===generation)grantRef.current = false;if(timeout)clearTimeout(timeout);if(video){video.pause();video.removeAttribute("src");video.removeAttribute("poster");video.load();}};
  },[videoId,deliveryId]);
  return <section aria-label="Video preview" className="space-y-2">
   {loading?<PageLoading label="Preparing video preview" variant="card" count={1} />:null}
