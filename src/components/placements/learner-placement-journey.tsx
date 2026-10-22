@@ -138,9 +138,9 @@ export function LearnerPlacementJourney({
 }) {
   if (items.length === 0) {
     return (
-      <section className="space-y-3">
+      <section aria-labelledby="learner-journey-heading" className="space-y-3">
         <div>
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <h2 id="learner-journey-heading" className="m-0 text-base font-semibold text-foreground">
             My placement journey
           </h2>
           <p className="mt-1 text-sm text-body">
@@ -156,17 +156,17 @@ export function LearnerPlacementJourney({
   }
 
   return (
-    <section className="space-y-3">
+    <section aria-labelledby="learner-journey-heading" className="space-y-3">
       <div>
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 id="learner-journey-heading" className="m-0 text-base font-semibold text-foreground">
           My placement journey
         </h2>
         <p className="mt-1 text-sm text-body">
           One view of your applications, screening state and confirmed round outcomes.
         </p>
       </div>
-      <section aria-label="Where your applications stand" className="space-y-3 border-b border-border pb-5">
-        <h3 className="text-base font-semibold text-foreground">Where your applications stand</h3>
+      <section aria-labelledby="learner-journey-summary" className="space-y-3 border-b border-border pb-5">
+        <h3 id="learner-journey-summary" className="text-base font-semibold text-foreground">Where your applications stand</h3>
         <p className="text-sm text-body">Your recorded application and selection progress. Future rounds only appear after your placement team records them.</p>
         <div className="grid min-w-0 gap-3 md:grid-cols-2">
           {items.map(item=>(
@@ -237,7 +237,7 @@ export function LearnerPlacementJourney({
             </div>
 
             {isPlacementCellApplied(item.channel) && item.applicationStatus==="SUBMITTED" ? (
-              <aside role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+              <aside aria-label="Application submitted by placement cell" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
                 <p className="font-semibold text-foreground">The placement cell applied for you</p>
                 <p className="mt-1 text-sm text-body">
                   If you don&apos;t want this one, withdraw before {formatOptOutDeadline(item.staffOptOutUntil??new Date(item.submittedAt.getTime()+48*60*60*1000))}.

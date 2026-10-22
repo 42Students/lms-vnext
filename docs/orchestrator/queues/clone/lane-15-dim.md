@@ -192,24 +192,24 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/placements/learner-jobs-browse.tsx`
 - [x] `src/components/placements/learner-placement-alert-action.tsx`
 - [x] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/learner-placement-offers.tsx`
-- [ ] `src/components/placements/learner-placement-registration.tsx`
-- [ ] `src/components/placements/learner-placements-dashboard.tsx`
-- [ ] `src/components/placements/learner-round-confirm-attendance.tsx`
-- [ ] `src/components/placements/learner-schedule-reschedule.tsx`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
-- [ ] `src/components/placements/placement-bulk-offer-withdraw.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
-- [ ] `src/components/placements/public-join-preview-retry.tsx`
-- [ ] `src/components/placements/public-recruit-from-us.tsx`
-- [ ] `src/components/placements/public-recruiter-join-form.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
-- [ ] `src/components/placements/super-admin-drive-archive.tsx`
-- [ ] `src/components/placements/super-admin-drive-deadline.tsx`
+- [x] `src/components/placements/learner-placement-journey.tsx`
+- [x] `src/components/placements/learner-placement-offers.tsx`
+- [x] `src/components/placements/learner-placement-registration.tsx`
+- [x] `src/components/placements/learner-placements-dashboard.tsx`
+- [x] `src/components/placements/learner-round-confirm-attendance.tsx`
+- [x] `src/components/placements/learner-schedule-reschedule.tsx`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/placement-bulk-offer-withdraw.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/public-join-preview-retry.tsx`
+- [x] `src/components/placements/public-recruit-from-us.tsx`
+- [x] `src/components/placements/public-recruiter-join-form.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`
+- [x] `src/components/placements/super-admin-drive-archive.tsx`
+- [x] `src/components/placements/super-admin-drive-deadline.tsx`
 - [ ] `src/components/placements/super-admin-drive-duplicate.tsx`
 - [ ] `src/components/placements/super-admin-platform-placement-policy.tsx`
 - [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`

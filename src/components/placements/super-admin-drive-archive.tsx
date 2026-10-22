@@ -39,8 +39,8 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
     setPreview(null);}
   });}finally{endDriveMutation(jobId);}
  }
- return <section aria-label="Danger zone" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border border-[#ffccc7] bg-[#fff1f0] p-[var(--lms-space-4)]">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[#cf1322]">Danger zone · Delete drive</h2>
+ return <section aria-labelledby="super-admin-drive-danger-title" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border border-[#ffccc7] bg-[#fff1f0] p-[var(--lms-space-4)]">
+  <h2 id="super-admin-drive-danger-title" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[#cf1322]">Danger zone · Delete drive</h2>
   <p className="text-sm leading-[22px] text-[#7a231b]">This action archives the drive, rather than permanently deleting its applicant records.
    Application history is retained. Scheduled interviews and unaccepted offers are cancelled,
    and affected learners are notified by the registered in-app notice flow.</p>

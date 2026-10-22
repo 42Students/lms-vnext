@@ -50,8 +50,8 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   }catch(e){setError(e instanceof Error?e.message:"Could not extend the deadline");}
   finally{inFlightRef.current=false;setBusy(false);endDriveMutation(jobId);}
  }
- return <div className="space-y-3"><form onSubmit={review} className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
-  <h2 className="text-base font-semibold">Extend deadline</h2>
+ return <div className="space-y-3"><form onSubmit={review} aria-labelledby="super-admin-deadline-heading" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
+  <h2 id="super-admin-deadline-heading" className="text-base font-semibold">Extend deadline</h2>
   <p className="text-sm text-body">Current deadline: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
   <p className="max-w-2xl text-xs leading-5 text-muted-foreground">
     Choose a later date and time (YYYY-MM-DD HH:mm). If the previous deadline has passed,
@@ -60,10 +60,10 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
     Important Dates are managed separately and are not automatically shifted.
   </p>
   <label className="grid w-full max-w-md gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
-   <Input name="deadline" type="datetime-local" required className="w-full" value={dateDraft}
+   <Input name="deadline" type="datetime-local" required aria-invalid={Boolean(error)} aria-describedby={error?"super-admin-deadline-error":undefined} className="w-full" value={dateDraft}
      onChange={event=>{setDateDraft(event.target.value);setError("");setSavedIso(null);}}/>
   </label>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" id="super-admin-deadline-error" className="text-sm text-error">{error}</p>:null}
   {savedIso?<p role="status" className="text-sm text-success">Deadline extended to {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(savedIso))}</p>:null}
   <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}>
    {busy?"Saving…":"Extend deadline"}</Button>
@@ -75,7 +75,7 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   <p className="text-sm text-body">Current: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
   <p className="mt-2 text-sm text-body">New: {pendingIso?new Date(pendingIso).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"—"}</p>
   <p className="mt-2 text-xs text-muted-foreground">Important Dates will not move when you extend the application deadline.</p>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" id="super-admin-deadline-error" className="text-sm text-error">{error}</p>:null}
  </ConfirmDialog>
  </div>;
 }

@@ -1042,7 +1042,7 @@ export function PlacementJobCreateForm({
         <Link href={basePath+"/jobs/"+encodeURIComponent(existingDrive.jobId)} className="font-semibold text-primary-text underline">Open it</Link>
       </div>:null}
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
-      <fieldset disabled={pending||loadingCopy} className="min-w-0 space-y-4">
+      <fieldset disabled={pending||loadingCopy} aria-label="Drive configuration" className="min-w-0 space-y-4">
       <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)] lg:hidden">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></summary>
         <nav aria-label="Drive setup review" className="min-w-0 pt-3">
@@ -1055,7 +1055,7 @@ export function PlacementJobCreateForm({
           ))}
         </ol>
         <p className="mt-3 text-xs text-body">Eligibility reach is checked from current learner records after the draft is saved. No students are notified until you confirm publication.</p>
-        <div aria-label="Publish preflight warnings" className="mt-3 space-y-1 text-xs text-body">
+        <div role="note" aria-label="Publish preflight warnings" className="mt-3 space-y-1 text-xs text-body">
           {plannedTpoRoundRows(roundPreset).length===0?
            <p role="status">No interview rounds added yet</p>:null}
           {!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"&&selectedProgramIds.length===0&&selectedCohortIds.length===0?
