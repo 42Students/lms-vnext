@@ -27,16 +27,16 @@ export class VerificationQueueLimitError extends Error {
 }
 export async function listCollegeVerificationQueue(context:RequestContext,raw:unknown,superAdminCollegeId?:string) {
  const filter=verificationQueueFilters.parse(raw);
- if(!verificationSubmissionWindowValid(filter))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
+ if(!verificationSubmissionWindowValid({ ...(filter.submittedFrom!==undefined?{submittedFrom:filter.submittedFrom}:{}), ...(filter.waitingSince!==undefined?{waitingSince:filter.waitingSince}:{}) }))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
  if(!verificationWaitingStateValid(filter))throw Error("INVALID_VERIFICATION_WAITING_STATE");
- if(!verificationEnrollmentFiltersValid(filter))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
+ if(!verificationEnrollmentFiltersValid({ enrollment:filter.enrollment, ...(filter.programId!==undefined?{programId:filter.programId}:{}), ...(filter.batchId!==undefined?{batchId:filter.batchId}:{}), ...(filter.branchId!==undefined?{branchId:filter.branchId}:{}), ...(filter.sectionId!==undefined?{sectionId:filter.sectionId}:{}) }))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
  if(!verificationAgeBandValid(filter))throw Error("INVALID_VERIFICATION_AGE_BAND");
- if(!verificationSectionEvidenceFiltersValid(filter))throw Error("INVALID_VERIFICATION_SECTION_EVIDENCE_FILTERS");
+ if(!verificationSectionEvidenceFiltersValid({ marksheets:filter.marksheets,attention:filter.attention,...(filter.kind!==undefined?{kind:filter.kind}:{}) }))throw Error("INVALID_VERIFICATION_SECTION_EVIDENCE_FILTERS");
  if(!verificationWaitingAttentionValid(filter))throw Error("INVALID_VERIFICATION_ATTENTION_TAB");
  if(!verificationAttentionAgeCompatible(filter))throw Error("INVALID_VERIFICATION_ATTENTION_AGE");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
- const dateBounds=verificationSubmittedSqlBounds(filter);
+ const dateBounds=verificationSubmittedSqlBounds({ ...(filter.submittedFrom!==undefined?{submittedFrom:filter.submittedFrom}:{}), ...(filter.waitingSince!==undefined?{waitingSince:filter.waitingSince}:{}) });
  const evaluatedAt=new Date();
  const ageBounds=verificationAgeSqlBounds(filter.ageBand,evaluatedAt);
  const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles}).from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
