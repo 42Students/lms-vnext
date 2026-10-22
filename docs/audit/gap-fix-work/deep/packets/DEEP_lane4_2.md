@@ -11,7 +11,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-17-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-17-010-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-18-009-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
-- [ ] G2-18-009-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [x] G2-18-009-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-18-009-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-19-001-087  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-002-034  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
@@ -21,3 +21,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 ## Results
 
 - G2-18-009-019: OK — vNext `src/components/attendance/faculty-attendance-workspace.tsx:787-848` renders every calendar day per learner, including no-class cells and unmarked/upcoming sessions; legacy `docs/legacy-source/frontend/src/components/Attendance/TeacherAttendanceView.jsx:327-419` (source packet reference).
+- G2-18-009-014: OK — vNext `src/components/attendance/faculty-attendance-workspace.tsx:974-989` places status pill and Schedule Class action beside the session heading, showing explicit `Marking unavailable` under vNext's enforced window; legacy `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TakeAttendance.js:279-307` places `Ready to mark` and Schedule Class in the same header. Timed access remains a documented intentional policy difference.
