@@ -76,7 +76,15 @@ export async function ProjectAdminAtRiskPage({
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>} />
     </div>;
   }
-  const query: ProjectAdminCollectionQuery = parsed.data;
+  const { page, pageSize, riskBucket, riskSort, q, status } = parsed.data;
+  const query: ProjectAdminCollectionQuery = {
+    page,
+    pageSize,
+    ...(riskBucket !== undefined ? { riskBucket } : {}),
+    ...(riskSort !== undefined ? { riskSort } : {}),
+    ...(q !== undefined ? { q } : {}),
+    ...(status !== undefined ? { status } : {}),
+  };
   const riskResult = await listProjectAdminRiskQueue(context, collegeId, query)
     .then(value => ({ ok: true as const, value }))
     .catch(error => ({ ok: false as const, error }));

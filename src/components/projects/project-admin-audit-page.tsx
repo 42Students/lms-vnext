@@ -47,17 +47,17 @@ function destructiveProjectActivity(event:{eventType:string;metadata:Record<stri
  if(destructiveProjectEventTypes.has(event.eventType))return true;
  // Task removals preserve their history as a details event with a tombstone.
  if(event.eventType===ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED)
-  return event.metadata.deleted===true;
+  return event.metadata["deleted"]===true;
  // A release deletion matters after shipping; do not conflate draft cleanup.
  if(event.eventType===ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_DELETED)
-  return event.metadata.afterShip===true||event.metadata.shipped===true;
+  return event.metadata["afterShip"]===true||event.metadata["shipped"]===true;
  return false;
 }
 function linkedWorkspaceId(event:{
  subjectId:string;subjectType:string;metadata:Record<string,unknown>;
 }):string|null{
  const candidate=event.subjectType==="project_instance"||event.subjectType==="project"
-   ?event.subjectId:event.metadata.projectId;
+   ?event.subjectId:event.metadata["projectId"];
  return typeof candidate==="string"&&z.string().uuid().safeParse(candidate).success
    ?candidate:null;
 }
@@ -90,7 +90,7 @@ function projectActionLabel(raw:string){
    return "Template unassigned";
  const key=raw.replace(/^projects[._]/i,"").replaceAll("_"," ").replaceAll("."," ");
  const phrase=key.trim().toLowerCase();
- return phrase?phrase[0].toUpperCase()+phrase.slice(1):"Updated";
+ return phrase?phrase.charAt(0).toUpperCase()+phrase.slice(1):"Updated";
 }
 function destructiveProjectAction(raw:string){
  return /(^|[._])(archive|delete|deleted|revoke|revoked|remove|removed|unassign|rollback|restore)([._]|$)/i.test(raw);
@@ -104,13 +104,6 @@ function auditEntityType(raw:string){
 }
 function projectEventTime(value:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST";
-}
-function projectEventDay(value:Date){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long",day:"2-digit",
-  month:"short",year:"numeric"}).format(value);
-}
-function projectEventDayKey(value:Date){
- return new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(value);
 }
 /** Legacy payloads include arrays, nested maps and occasionally JSON serialized as text. */
 function auditDetailValue(value:unknown,depth=0):ReactNode{
@@ -166,7 +159,7 @@ export async function ProjectAdminAuditPage({
   // Resource-history paging belongs to its independent trail, not to
   // the project activity filter parser or cursor.
   const activitySearchParams={...searchParams};
-  delete activitySearchParams.resourcePage;
+  delete activitySearchParams["resourcePage"];
   const legacyLink=projectLegacyAuditLink(activitySearchParams,new Date());
   const filters = parseProjectAdminAuditQuery(legacyLink.params);
   const { eventType, importance, subjectType, subjectId, from, to } = filters;
@@ -207,7 +200,7 @@ export async function ProjectAdminAuditPage({
   // conflate a filtered project-activity page with its resource event trail.
   const resourceWorkspaceId=(subjectType==="project"||subjectType==="project_instance")&&
     subjectId&&z.string().uuid().safeParse(subjectId).success?subjectId:null;
-  const rawResourcePage=searchParams.resourcePage;
+  const rawResourcePage=searchParams["resourcePage"];
   const resourcePage=typeof rawResourcePage==="string" &&
     /^[1-9]\d{0,3}$/.test(rawResourcePage)?Number(rawResourcePage):1;
   const resourceRead=resourceWorkspaceId
