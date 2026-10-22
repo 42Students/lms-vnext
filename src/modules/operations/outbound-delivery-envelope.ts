@@ -33,14 +33,14 @@ function indiaReminderParts(instant: Date | string) {
   });
   const entries=Object.fromEntries(format.formatToParts(date).map(part=>[part.type,part.value]));
   return {
-    day:String(Number(entries.day)),
-    paddedDay:entries.day??"",
-    month:entries.month??"",
-    year:entries.year??"",
-    hour:String(Number(entries.hour)),
-    paddedHour:entries.hour??"",
-    minute:entries.minute??"",
-    period:(entries.dayPeriod??"").toUpperCase(),
+    day:String(Number(entries["day"])),
+    paddedDay:entries["day"]??"",
+    month:entries["month"]??"",
+    year:entries["year"]??"",
+    hour:String(Number(entries["hour"])),
+    paddedHour:entries["hour"]??"",
+    minute:entries["minute"]??"",
+    period:(entries["dayPeriod"]??"").toUpperCase(),
   };
 }
 export type AssignmentReminderTemplateInput={
