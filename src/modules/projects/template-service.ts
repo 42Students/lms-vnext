@@ -98,18 +98,22 @@ async function loadTemplateVersion(
   return templateVersion;
 }
 
+export type ProjectTemplateCatalogFilter="ALL"|"ACTIVE"|"DRAFT"|"PUBLISHED"|"ARCHIVED";
+/** A global read shows full history by default. Catalog tabs may opt in to
+ * the historic active/published filters without silently hiding audits. */
 export async function listProjectTemplates(
   context: RequestContext,
+  filter:ProjectTemplateCatalogFilter="ALL",
 ) {
   requirePermission(
     context,
     "project-template.read",
   );
 
-  return getDb()
-    .select()
-    .from(projectTemplates)
-    .orderBy(asc(projectTemplates.title));
+  const predicate=filter==="ACTIVE"?isNull(projectTemplates.archivedAt)
+    :filter==="ALL"?undefined:eq(projectTemplates.status,filter);
+  return getDb().select().from(projectTemplates)
+    .where(predicate).orderBy(asc(projectTemplates.title),asc(projectTemplates.id));
 }
 
 /** Historic slug/numeric links must resolve under a verified global
@@ -515,6 +519,10 @@ export async function publishProjectTemplate(
       );
     }
 
+    const activeAssignments=await tx.select({id:projectTemplateCollegeAssignments.id})
+      .from(projectTemplateCollegeAssignments)
+      .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
+        isNull(projectTemplateCollegeAssignments.revokedAt)));
     // Legacy college assignments point at the template, not a historical
     // version. Existing workspaces stay pinned to their materialized version,
     // but future workspaces in every currently assigned college must use the
@@ -541,7 +549,11 @@ export async function publishProjectTemplate(
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_PUBLISHED,
       subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
-      summary:"Project template published",metadata:{previousStatus:template.status,publishedVersion:published.publishedVersion,previousPublishedVersion:template.publishedVersion},groupKey:"template:"+templateId,
+      summary:"Project template published",metadata:{previousStatus:template.status,publishedVersion:published.publishedVersion,
+        previousPublishedVersion:template.publishedVersion,
+        affectedFutureCollegeAssignments:activeAssignments.length,
+        existingWorkspaceInstancesChanged:0,
+      },groupKey:"template:"+templateId,
     });
     return published;
   });
@@ -589,7 +601,11 @@ export async function unpublishProjectTemplate(
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNPUBLISHED,
       subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
-      summary:"Project template unpublished",metadata:{previousStatus:template.status,previousPublishedVersion:template.publishedVersion},groupKey:"template:"+templateId,
+      summary:"Project template unpublished",metadata:{previousStatus:template.status,
+        previousPublishedVersion:template.publishedVersion,
+        existingWorkspaceInstancesChanged:0,
+        futureWorkspaceCreationUsesUnpublishedTemplate:false,
+      },groupKey:"template:"+templateId,
     });
     return draft!;
   });
@@ -1104,4 +1120,32 @@ export async function listAssignedProjectTemplates(
       ),
     )
     .orderBy(asc(projectTemplateVersions.title));
+}
+
+
+/** Exact old POST /api/v1/admin/project-templates compatibility envelope:
+ * The vNext API remains POST /api/projects/templates with a typed blueprint.
+ * Public callers may consume status/message/data without treating the source
+ * numeric template ID as a live UUID permission grant. */
+export const LEGACY_PROJECT_TEMPLATE_ROUTE_CONTRACT={
+ sourceCreate:"POST /api/v1/admin/project-templates",
+ currentCreate:"POST /api/projects/templates",
+ sourceCatalog:"GET /api/v1/admin/project-templates",
+ currentCatalog:"GET /api/projects/templates",
+ createdStatus:201,
+ successMessage:"Project template created",
+} as const;
+
+export function projectTemplatePublicationImpact(input:{
+ status:string;currentVersion:number;publishedVersion:number|null;
+ activeAssignedColleges:number;
+}){
+ return {
+  visibleInPublishedCatalog:input.status==="PUBLISHED"&&input.publishedVersion!==null,
+  displayedVersion:input.publishedVersion??input.currentVersion,
+  futureWorkspacesUsePublishedVersion:input.status==="PUBLISHED"&&input.publishedVersion!==null,
+  activeAssignedColleges:input.activeAssignedColleges,
+  existingWorkspaceInstancesChanged:0 as const,
+  note:"Publishing updates future workspaces in assigned colleges. Existing workspaces retain their pinned template version.",
+ };
 }
