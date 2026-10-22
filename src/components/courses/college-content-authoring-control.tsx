@@ -483,7 +483,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       onClick={()=>setResourceFiles(old=>old.filter((_,at)=>at!==index))}>Remove</Button>
     </div>)}
     {resourceUploadStatus?<p role="status" className="text-xs text-muted-foreground">{resourceUploadStatus}</p>:null}
-    {busy&&resourceUploadStatus?<progress value={resourceProgress} max={100} className="w-full"/>:null}
+    {busy&&resourceUploadStatus?<div className="flex items-center gap-3">
+     <progress aria-label="Resource file upload progress" value={resourceProgress} max={100} className="min-w-0 flex-1"/>
+     {resourceXhr.current?<Button type="button" size="sm" variant="secondary"
+      onClick={()=>{resourceXhr.current?.abort();setResourceUploadStatus("Upload cancelled; the Resource remains saved.");}}>
+      Cancel upload
+     </Button>:null}
+    </div>:null}
     <p className="text-xs text-muted-foreground">After saving the Resource, selected files upload via verified private grants. Scanner-pending files remain unavailable to learners.</p>
    </div>:null}
    {kind==="RESOURCE"&&!editing&&materialsEnabled?<label className="flex items-start gap-2 text-sm md:col-span-2">
