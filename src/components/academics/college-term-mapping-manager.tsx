@@ -411,7 +411,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 event.preventDefault();
                 const source = currentMappings.find(item => item.id === draggedId);
                 if (source && source.termId === row.termId && source.id !== row.id) {
-                  updateMapping(source.id, String(source.credits ?? 3), orderedPeers(row).findIndex(item => item.id === row.id) + 1);
+                  updateMapping(source.id, null, orderedPeers(row).findIndex(item => item.id === row.id) + 1);
                 }
                 setDraggedId(null);
               }}
@@ -422,7 +422,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                   const index = orderedPeers(row).findIndex(item => item.id === row.id);
                   const next = index + step;
                   if (next >= 0 && next < currentMappings.length)
-                    updateMapping(row.id, String(row.credits ?? 3), next + 1);
+                    updateMapping(row.id, null, next + 1);
                 }
               }} className={draggedId === row.id ? "cursor-grabbing bg-muted" : "cursor-grab"}>
               <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
@@ -437,7 +437,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 event.preventDefault();
                 const source = currentMappings.find(item => item.id === draggedId);
                 if (source && source.termId === row.termId && source.id !== row.id)
-                  updateMapping(source.id, String(source.credits ?? 3), orderedPeers(row).findIndex(item => item.id === row.id) + 1);
+                  updateMapping(source.id, null, orderedPeers(row).findIndex(item => item.id === row.id) + 1);
                 setDraggedId(null);
               }}>
               <span className="font-semibold">{row.courseName?.trim() || data.courses.find(c => c.id === row.courseId)?.name || "Course " + row.courseId}</span>

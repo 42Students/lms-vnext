@@ -21,6 +21,8 @@ describe("semester mapping legacy mandatory/type independence", () => {
     );
     expect(manager).toContain("creditsValue === null ? null : parseTermCourseCreditsDraft(creditsValue)");
     expect(manager.match(/onClick=\{\(\)=>updateMapping\(row\.id,null,/g)).toHaveLength(2);
+    expect(manager.match(/updateMapping\(source\.id, null,/g)).toHaveLength(2);
+    expect(manager).toContain("updateMapping(row.id, null, next + 1)");
     expect(manager).toContain("changedCredits && creditsResult?.success");
     const service = readFileSync(
       "src/modules/academics/college-term-mapping-service.ts", "utf8",
