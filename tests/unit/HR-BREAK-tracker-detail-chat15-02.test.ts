@@ -68,6 +68,17 @@ describe("HR-BREAK-tracker-detail-chat15-02: reporter privacy and failure semant
   expect(textOf(view)).toContain("Reports are temporarily unavailable");
   expect(mocks.report).not.toHaveBeenCalled();
  });
+ it("keeps the issue visible if independent activity and screenshot reads fail",async()=>{
+  mocks.history.mockRejectedValue(new Error("private database timeout"));
+  mocks.screenshots.mockRejectedValue(new Error("private file store timeout"));
+  const view=await MyTrackerReportDetail(params("LMS-1234"));
+  expect(view.type).toBe("article");
+  const copy=textOf(view);
+  expect(copy).toContain("Activity could not be loaded");
+  expect(copy).toContain("Screenshots could not be loaded");
+  expect(copy).not.toContain("private database timeout");
+  expect(copy).not.toContain("No screenshots attached");
+ });
  it("passes only the authenticated reporter context into the scoped query",async()=>{
   const view=await MyTrackerReportDetail(params("LMS-1234"));
   expect(view.type).toBe("article");
