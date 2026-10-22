@@ -4,7 +4,7 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-2/W1_lane2_5.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-2/W1_lane2_7.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-3/W1_lane3_18.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-3/W1_lane3_18.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_4.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-7/W1_lane7_4.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_6.md` (25 rows)
@@ -19,3 +19,5 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - Intentional vNext safety contracts: new reschedule approvals require an exact future proposed slot; historical text-only requests are displayed but not promoted into unverified bookings. Arbitrary remote URL importing is retired; signed/private file uploads and separately validated HTTPS links are the secure replacement. DB05 lesson order returns a coded 503 until the migration gate is enabled. No migration of legacy production data is claimed.
 
 - W1_lane2_7: **triaged, not feature-complete**. OK from inspected implementation: G2-4-028-048; DEFERRED (not verified, no parity claim): G2-4-026-080, G2-4-010-068, G2-4-022-002, G2-4-022-065, G2-12-025-002, G2-12-025-009, G2-12-025-026, G2-13-031-079, G2-13-031-080, G2-13-031-081, G2-13-031-082, G2-13-031-084, G2-13-031-086, G2-13-031-099, G2-13-031-102, G2-13-031-104, G2-5-002-060, G2-5-006-036, G2-5-008-045, G2-5-010-017, G2-5-012-059, G2-5-012-096, G2-5-022-004, G2-5-022-006. Remaining items require per-file implementation and/or migration review; no code fix is claimed in this pass.
+
+- W1_lane3_18: **triaged, not feature-complete**. OK from inspected implementation: none; DEFERRED (not verified, no parity claim): G2-5-020-044, G2-5-024-034, G2-5-024-039, G2-5-024-064, G2-5-030-032, G2-6-009-025, G2-6-020-028, G2-6-027-061, G2-11-017-042, G2-11-026-005, G2-12-011-004, G2-15-024-006, G2-6-016-031, G2-6-005-009, G2-12-027-001, G2-13-023-014, G2-14-030-037, G2-17-031-010, G2-19-027-064, G2-7-002-019, G2-7-004-022, G2-7-007-002, G2-7-009-006, G2-7-011-039, G2-7-013-037. Remaining items require per-file implementation and/or migration review; no code fix is claimed in this pass.
