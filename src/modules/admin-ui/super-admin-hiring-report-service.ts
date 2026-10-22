@@ -36,8 +36,8 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
  // An unselected global scope is not: never issue an unrestricted report.
  if(!isSuperAdmin(context)||(!context.adminScope?.collegeId&&!context.adminScope?.organizationId))
   throw new AuthorizationError("placements.read");
- const selected={collegeId:context.adminScope.collegeId??null,
-  organizationId:context.adminScope.organizationId??null};
+ const selected={collegeId:context.adminScope?.collegeId??null,
+  organizationId:context.adminScope?.organizationId??null};
  requirePermission(context,"placements.read",{
   ...(selected.collegeId?{collegeId:selected.collegeId}:{}),
   ...(selected.organizationId?{organizationId:selected.organizationId}:{}),
