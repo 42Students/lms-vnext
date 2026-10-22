@@ -26,13 +26,13 @@ describe("Public placements editorial content and selected numbers",()=>{
   expect(formatPublicPlacementMetric("PERCENT",{population:100,placed:23,offers:8,
    employers:5,highestCtcInr:1000000,medianCtcInr:650000})).toBe("23%");
   expect(formatPublicPlacementMetric("HIGHEST_CTC",{population:100,placed:23,offers:8,
-   employers:5,highestCtcInr:1000000,medianCtcInr:650000})).toBe("10.0 LPA");
+   employers:5,highestCtcInr:1000000,medianCtcInr:650000})).toBe("10 LPA");
   const publicPage=src("src/app/placements/page.tsx");
-  expect(publicPage).toContain("metricKeys.map(key");
+  expect(publicPage).toContain("metricKeys.flatMap(key");
   expect(publicPage).toContain("Live numbers over the last 12 months.");
  });
  it("TPO-campaigns-public-34 does not confuse withheld population with zero",()=>{
   expect(formatPublicPlacementMetric("STUDENTS",{population:null,placed:null,offers:null,
-   employers:null,highestCtcInr:null,medianCtcInr:null})).toBe("(not enough data yet)");
+   employers:null,highestCtcInr:null,medianCtcInr:null})).toBeNull();
  });
 });

@@ -146,6 +146,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
     </FilterChip>
    </div>
    <DataTable
+    mobileMode="card"
     caption={title}
     rows={visibleRows}
     getRowKey={row=>String(row.key)}

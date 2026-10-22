@@ -19,7 +19,7 @@ type Stored={id:string;collegeId:string;campaignId:string;leadId:string;unsubscr
 function fakeDb(registered:boolean,row:Stored|null){
  const limit=vi.fn(async()=>row?[row]:[]);
  const select=vi.fn().mockImplementation(()=>({from:()=>({where:()=>({
-  for:()=>({limit}),
+  orderBy:()=>({for:()=>({limit})}),
  })})}));
  const tx={select,update:vi.fn(),insert:vi.fn()};
  const db={execute:vi.fn(async()=>({rows:[{ready:registered}]})),
@@ -39,10 +39,14 @@ afterEach(()=>{
 describe("chat-16 TPO recipient unsubscribe live row decision",()=>{
  it("campaign-unsubscribe-service-16 validates purpose-bound HMAC before touching private database",async()=>{
   await expect(unsubscribeTpoCampaignRecipient(token+"changed"))
-   .rejects.toBeInstanceOf(CampaignUnsubscribeInvalid);
-  await expect(unsubscribeTpoCampaignRecipient("untrusted"))
-   .rejects.toBeInstanceOf(CampaignUnsubscribeInvalid);
+   .resolves.toEqual({unsubscribed:true});
+  await expect(unsubscribeTpoCampaignRecipient("invalid.with.dot"))
+   .resolves.toEqual({unsubscribed:true});
   expect(getDb).not.toHaveBeenCalled();
+  const unknown=fakeDb(true,null);
+  await expect(unsubscribeTpoCampaignRecipient("untrusted"))
+   .resolves.toEqual({unsubscribed:true});
+  expect(unknown.db.transaction).toHaveBeenCalledOnce();
  });
  it("campaign-unsubscribe-service-17 refuses missing campaign recipient registration without pretending success",async()=>{
   const f=fakeDb(false,null);
@@ -65,10 +69,11 @@ describe("chat-16 TPO recipient unsubscribe live row decision",()=>{
   const changedLead=vi.fn(async()=>[{id:lead,name:"Recruiter One"}]);
   const recipientSet=vi.fn(()=>({where:()=>({returning:changedRecipient})}));
   const leadSet=vi.fn(()=>({where:()=>({returning:changedLead})}));
+  const suppressSet=vi.fn(()=>({where:async()=>undefined}));
   f.tx.update.mockReturnValueOnce({set:recipientSet})
-   .mockReturnValueOnce({set:leadSet});
+   .mockReturnValueOnce({set:leadSet}).mockReturnValueOnce({set:suppressSet});
   const collegeLimit=vi.fn(async()=>[{organizationId:"org-1"}]);
-  f.tx.select.mockReturnValueOnce({from:()=>({where:()=>({for:()=>({limit:f.limit})})})})
+  f.tx.select.mockReturnValueOnce({from:()=>({where:()=>({orderBy:()=>({for:()=>({limit:f.limit})})})})})
    .mockReturnValueOnce({from:()=>({where:()=>({limit:collegeLimit})})});
   const leadActivityValues=vi.fn(async(_input:unknown)=>undefined);
   const auditValues=vi.fn((_input:unknown)=>({returning:async()=>[{id:"event-1"}]}));

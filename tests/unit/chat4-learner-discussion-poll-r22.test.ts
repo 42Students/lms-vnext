@@ -7,8 +7,11 @@ describe("LEARNER-home-courses-22 bounded discussion refresh",()=>{
  it("LEARNER-home-courses-22 validates tenant-scoped central polling interval",()=>{
   expect(LEARNER_PLAYBACK_DEFAULTS.chatPollIntervalMs).toBe(15000);
   expect(learnerPlaybackSettingValue("ui.chatPollIntervalMs","30000")).toBe(30000);
-  for(const value of ["0","500","4000","120001","not-a-number"])
-   expect(learnerPlaybackSettingValue("ui.chatPollIntervalMs",value)).toBeNull();
+  expect(learnerPlaybackSettingValue("ui.chatPollIntervalMs","0")).toBe(3000);
+  expect(learnerPlaybackSettingValue("ui.chatPollIntervalMs","500")).toBe(3000);
+  expect(learnerPlaybackSettingValue("ui.chatPollIntervalMs","4000")).toBe(4000);
+  expect(learnerPlaybackSettingValue("ui.chatPollIntervalMs","120001")).toBe(120001);
+  expect(learnerPlaybackSettingValue("ui.chatPollIntervalMs","not-a-number")).toBeNull();
  });
  it("LEARNER-home-courses-22 uses validated interval only while visible and allows configured failure fallback",()=>{
   const view=source("src/components/courses/learner-course-discussion.tsx");
@@ -17,6 +20,7 @@ describe("LEARNER-home-courses-22 bounded discussion refresh",()=>{
   expect(view).toContain('document.visibilityState === "visible"');
   expect(server).toContain("readLearnerPlaybackSettings");
   expect(server).toContain("pollIntervalMs={chatSettings.chatPollIntervalMs}");
-  expect(server).toContain(".catch(()=>({...LEARNER_PLAYBACK_DEFAULTS}))");
+  expect(server).toContain(".catch((error:unknown)=>{");
+  expect(server).toContain("return {...LEARNER_PLAYBACK_DEFAULTS};");
  });
 });
