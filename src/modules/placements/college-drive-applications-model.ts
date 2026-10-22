@@ -86,6 +86,39 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
     (result.data.minScore!==undefined&&result.data.maxScore!==undefined&&result.data.minScore>result.data.maxScore))return null;
   return result.data;
 }
+/** Parse the exported view without silently dropping its screening, skills,
+ * stage, attention or cohort constraints. A repeated selector is ambiguous;
+ * even a syntactically valid first value must not widen a private export.
+ */
+export function driveApplicationsExportParams(search: URLSearchParams):
+  {ok:true;query:NonNullable<ReturnType<typeof driveApplicationsParams>>}|
+  {ok:false;status:400|422;message:string} {
+  if(["minScore","maxScore","scoreFrom","scoreTo"].some(key=>search.has(key)))
+    return {ok:false,status:422,message:"Score filtering is not available for this drive."};
+  const allowed=new Set([
+    "q","status","screening","source","stage","departmentId","programId",
+    "cohortId","appliedFrom","appliedTo","appliedAfter","appliedBefore",
+    "skills","attention","sort","page","size","pageSize","limit",
+  ]);
+  const raw:Record<string,string|string[]|undefined>={};
+  for(const [key,value] of search){
+    if(!allowed.has(key)||raw[key]!==undefined)
+      return {ok:false,status:400,message:"Invalid export filters"};
+    raw[key]=value;
+  }
+  const query=driveApplicationsParams(raw);
+  if(!query)return {ok:false,status:400,message:"Invalid export filters"};
+  // The interactive directory tolerates old malformed optional filters, but
+  // exports must not turn an invalid supplied stage into an unrestricted CSV.
+  for(const key of ["status","source","stage","screening","attention","sort"] as const){
+    if(raw[key]!==undefined&&raw[key]!==query[key])
+      return {ok:false,status:400,message:"Invalid export filters"};
+  }
+  if(raw.page!==undefined&&String(query.page)!==raw.page)
+    return {ok:false,status:400,message:"Invalid export filters"};
+  return {ok:true,query};
+}
+
 export function driveApplicationsHref(jobId: string, query: DriveApplicationsQuery, exportCsv = false) {
   const params = new URLSearchParams();
   if (query.q) params.set("q",query.q);
