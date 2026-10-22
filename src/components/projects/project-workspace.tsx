@@ -383,9 +383,9 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
      {latest?.attachments.map((item,index)=>{
       if(!item||typeof item!=="object")return null;
       const row=item as Record<string,unknown>;
-      if(row.kind!=="FILE"||typeof row.fileId!=="string")return null;
+      if(row["kind"]!=="FILE"||typeof row["fileId"]!=="string")return null;
       return <ProjectDeliveryEvidenceDownload key={index} projectId={workspace.project.id}
-       fileId={row.fileId} name={typeof row.name==="string"?row.name:"Open submitted file"}/>;
+       fileId={row["fileId"]} name={typeof row["name"]==="string"?row["name"]:"Open submitted file"}/>;
      })}
      {source?<a href={source} target="_blank" rel="noopener noreferrer"
       className="font-semibold text-link underline">Open source link</a>:null}
@@ -407,14 +407,14 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
     <ul className="mt-3 space-y-3">{delivery.attachments.map((item,index)=>{
      if(!item||typeof item!=="object")return null;
      const row=item as Record<string,unknown>;
-     const name=typeof row.label==="string"?row.label:
-      typeof row.fileName==="string"?row.fileName:
-      typeof row.name==="string"?row.name:`Attachment ${index+1}`;
-     const href=typeof row.url==="string"?safeHttpHref(row.url):null;
+     const name=typeof row["label"]==="string"?row["label"]:
+      typeof row["fileName"]==="string"?row["fileName"]:
+      typeof row["name"]==="string"?row["name"]:`Attachment ${index+1}`;
+     const href=typeof row["url"]==="string"?safeHttpHref(row["url"]):null;
      return <li key={index} className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
       <span>{name}</span>
-      {row.kind==="FILE"&&typeof row.fileId==="string"?
-       <ProjectDeliveryEvidenceDownload projectId={workspace.project.id} fileId={row.fileId} name={name}/>:
+      {row["kind"]==="FILE"&&typeof row["fileId"]==="string"?
+       <ProjectDeliveryEvidenceDownload projectId={workspace.project.id} fileId={row["fileId"]} name={name}/>:
        href?<a href={href} target="_blank" rel="noopener noreferrer" className="text-link underline">Open</a>:
        <span className="text-muted-foreground">Unavailable link</span>}
      </li>;
@@ -657,7 +657,7 @@ export function ProjectWorkspace({
           { label: "Projects", href: sectionBaseHref ? sectionBaseHref.replace(/\/[^/]+$/, "") : backHref },
           ...(sectionBaseHref ? [{label:"Workspaces",href:backHref}] : []),
           { label: workspace.project.title?.trim()||"Workspace",
-            href: sectionBaseHref ? sectionBaseHref+"/summary"+sectionQuerySuffix : undefined },
+            ...(sectionBaseHref ? { href: sectionBaseHref+"/summary"+sectionQuerySuffix } : {}) },
           ...(activeSection ? [{label: PROJECT_WORKSPACE_SECTION_LABELS[activeSection]}] : []),
         ]} />
       ) : null}
@@ -1908,15 +1908,15 @@ export function ProjectWorkspace({
                         {submission.attachments.map((item, index) => {
                           if (!item || typeof item !== "object") return null;
                           const row = item as Record<string, unknown>;
-                          const name = typeof row.name === "string" ? row.name : "Evidence";
-                          const href = typeof row.url === "string" ? safeHttpHref(row.url) : null;
+                          const name = typeof row["name"] === "string" ? row["name"] : "Evidence";
+                          const href = typeof row["url"] === "string" ? safeHttpHref(row["url"]) : null;
                           return <p key={index} className="text-xs text-body">
-                            {href && row.kind === "LINK" ?
+                            {href && row["kind"] === "LINK" ?
                               <a href={href} rel="noopener noreferrer" target="_blank"
                                 className="text-link hover:underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open link · {name}</a> :
-                              row.kind === "FILE" && typeof row.fileId === "string"
+                              row["kind"] === "FILE" && typeof row["fileId"] === "string"
                                 ? <ProjectDeliveryEvidenceDownload projectId={workspace.project.id}
-                                    fileId={row.fileId} name={name}/>
+                                    fileId={row["fileId"]} name={name}/>
                                 : <span>File · {name} (not available)</span>}
                           </p>;
                         })}
