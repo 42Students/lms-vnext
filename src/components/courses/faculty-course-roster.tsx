@@ -148,7 +148,7 @@ export function FacultyCourseRoster({
            "bg-amber-50 text-amber-800","roll"],
           [contacts+" contacts","bg-emerald-50 text-emerald-800","contacts"],
         ].map(([text,tint,id])=><span key={id}
-          className={"inline-flex min-h-9 items-center gap-2 rounded-[var(--lms-radius-full)] border border-border px-3 text-sm font-semibold "+tint}>
+          className={"inline-flex items-center gap-2 rounded-[var(--lms-radius-full)] border border-border px-3 py-2 text-sm font-semibold "+tint}>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
             fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
             {id==="students"?<><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M18 6a3 3 0 0 1 0 6m0 3a4 4 0 0 1 3 4"/></>:
