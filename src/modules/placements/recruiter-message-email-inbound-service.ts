@@ -74,7 +74,11 @@ function senderVerified(auth:string|undefined,fromAddress:string){
  const senderDomain=fromAddress.toLowerCase().split("@")[1]??"";
  if(!senderDomain||!/^([a-z0-9-]+\.)+[a-z]{2,63}$/.test(senderDomain)||
     /\bdmarc\s*=\s*fail\b/.test(lower))return false;
- if(/\bdmarc\s*=\s*pass\b/.test(lower))return true;
+ // DMARC PASS is meaningful only for the same RFC5322 From domain.
+ // A pass for an unrelated forwarded header must never authenticate a
+ // message as the persisted recruiter account.
+ const dmarc=lower.match(/\bdmarc\s*=\s*pass\b[^;\r\n]*\bheader\.from\s*=\s*([a-z0-9.-]+)/);
+ if(dmarc?.[1]===senderDomain)return true;
  // If no DMARC PASS is available, only a domain explicitly paired with
  // its own passing SPF/DKIM result may be accepted. Unknown or unaligned
  // header values remain safely stored for manual triage.

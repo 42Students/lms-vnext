@@ -3,9 +3,11 @@ import "server-only";
 import {
   and,
   asc,
+  eq,
   gte,
   inArray,
   lt,
+  ne,
   or,
 } from "drizzle-orm";
 import { z } from "zod";
@@ -52,7 +54,7 @@ export function defaultRecruiterCalendarRange(now=new Date()){
  };
  const from=day(now);
  const start=parseActivityDateBoundary(from,"from");
- return {from,to:day(new Date(start.getTime()+30*DAY_MS))};
+ return {from,to:day(new Date(start.getTime()+29*DAY_MS))};
 }
 
 export const recruiterCalendarQuerySchema = z
@@ -233,7 +235,15 @@ export async function listRecruiterCalendarEvents(
       status:hrInterviewSlots.status,timezone:hrInterviewSlots.timezone,
       meetingLocation:hrInterviewSlots.meetingLocation})
     .from(hrInterviewSlots)
+    // A slot can remain in storage after its parent round is cancelled.
+    // Keep the same-job composite relationship and parent state in the
+    // reader so stale slots never appear as active interviews.
+    .innerJoin(placementJobRounds,and(
+      eq(placementJobRounds.id,hrInterviewSlots.roundId),
+      eq(placementJobRounds.jobId,hrInterviewSlots.jobId),
+    ))
     .where(and(inArray(hrInterviewSlots.jobId,authorizedJobIds),
+      ne(placementJobRounds.status,"CANCELLED"),
       inArray(hrInterviewSlots.status,["PROPOSED","OFFERED","BOOKED"]),
       gte(hrInterviewSlots.startAt,startsAt),lt(hrInterviewSlots.startAt,endsBefore)))
     .orderBy(asc(hrInterviewSlots.startAt),asc(hrInterviewSlots.id));

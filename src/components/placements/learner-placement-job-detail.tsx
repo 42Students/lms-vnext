@@ -17,12 +17,23 @@ import {learnerDrivePayFacts} from "@/modules/placements/learner-drive-pay-model
 
 function relativePostedDate(value:string|null|undefined){
  if(!value||!Number.isFinite(Date.parse(value)))return "Not specified";
- const days=Math.max(0,Math.floor((Date.now()-Date.parse(value))/86_400_000));
+ // Compare IST calendar dates, not elapsed 24-hour intervals: a drive
+ // posted yesterday at 23:50 IST is still "Yesterday" at 00:10 today.
+ const dayFormatter=new Intl.DateTimeFormat("en-CA",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+ });
+ const civilDay=(instant:Date)=>{
+  const parts=dayFormatter.formatToParts(instant);
+  const part=(key:string)=>Number(parts.find(item=>item.type===key)?.value);
+  return Date.UTC(part("year"),part("month")-1,part("day"));
+ };
+ const posted=new Date(value);
+ const days=Math.max(0,Math.round((civilDay(new Date())-civilDay(posted))/86_400_000));
  if(days===0)return "Today";
  if(days===1)return "Yesterday";
  if(days<7)return days+" days ago";
  if(days<30)return Math.floor(days/7)+" week"+(days>=14?"s":"")+" ago";
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(value));
+ return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(posted);
 }
 function humanize(value: string) {
   return value.toLowerCase().split("_").map((part) =>
