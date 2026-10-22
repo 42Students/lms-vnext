@@ -875,14 +875,19 @@ export async function endProjectMember(
     if (member.role === "LEARNER" && project.teamGroupId)
       throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
     const [fresh] = await tx.select().from(projectMembers)
-      .where(and(eq(projectMembers.id, member.id), isNull(projectMembers.endedAt)))
+      .where(and(eq(projectMembers.id,member.id),
+        eq(projectMembers.projectId,scope.project.id),
+        isNull(projectMembers.endedAt)))
       .for("update");
     if (!fresh) throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
     if (!project || !mayRemovePrimaryProjectMentor(project.status,fresh.role,fresh.isPrimary))
       throw new ProjectsServiceError("PROJECT_INVALID_STATE");
     const now = new Date();
     const [ended] = await tx.update(projectMembers)
-      .set({ endedAt: now, isPrimary: false, updatedAt: now })
+      .set({
+        endedAt:now,deletedAt:now,deletedByWorkspace:false,
+        legacyMemberStatus:"REMOVED",isPrimary:false,updatedAt:now,
+      })
       .where(and(eq(projectMembers.id, fresh.id),
         eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
       .returning();
@@ -919,7 +924,15 @@ export async function listProjectMembers(
       canMutate: projectMembers.canMutate,
       isPrimary: projectMembers.isPrimary,
       roleLabel: projectMembers.roleLabel,
-      displayName: users.displayName,
+      // Prefer the old LMS snapshot only for imported memberships. Native
+      // vNext participants show the current in-college display name.
+      displayName:sql<string>`coalesce(nullif(${projectMembers.legacyDisplayName},''),${users.displayName})`,
+      legacyDisplayName:projectMembers.legacyDisplayName,
+      legacyUserType:projectMembers.legacyUserType,
+      legacyMemberId:projectMembers.legacyMemberId,
+      legacyVersion:projectMembers.legacyVersion,
+      memberStatus:sql<string>`coalesce(nullif(${projectMembers.legacyMemberStatus},''),'ACTIVE')`,
+      deletedByWorkspace:projectMembers.deletedByWorkspace,
       startedAt: projectMembers.startedAt,
     })
     .from(projectMembers)
