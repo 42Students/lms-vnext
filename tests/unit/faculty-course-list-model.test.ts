@@ -16,11 +16,11 @@ describe("Faculty Course list query and bounded cards", () => {
   }
   expect(facultyCourseWorkspaceRevokedError(new Error("Database timeout"))).toBe(false);
  });
- it("pages before loading workspaces and clamps stale out-of-range pages", () => {
+ it("loads cumulative course windows and clamps stale out-of-range pages", () => {
   const first=pageFacultyCourseList(rows,facultyCourseListQuerySchema.parse({}));
   expect(first.items).toHaveLength(48); expect(first.total).toBe(75);
   const last=pageFacultyCourseList(rows,facultyCourseListQuerySchema.parse({page:999}));
-  expect(last.page).toBe(2); expect(last.items).toHaveLength(27);
+  expect(last.page).toBe(2); expect(last.items).toHaveLength(75);
   expect(rows).toHaveLength(75);
  });
  it("intersects literal search, period and role within authorized rows", () => {

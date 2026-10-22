@@ -7,16 +7,16 @@ function read(path: string) {
 describe("Learner published placement Job Detail", () => {
   it("does not disclose unpublished/other-college jobs on arbitrary job IDs", () => {
     const page = read("src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx");
-    expect(page).toContain("listLearnerPlacementJobs(context)");
+    expect(page).toContain("listLearnerPlacementJobs(context,new Date(),jobId)");
     expect(page).toContain("row.job.id===jobId");
-    expect(page).toContain("notFound()");
-    expect(page).toContain("initialSaved={savedJobs.some(row=>row.jobId===jobId)}");
+    expect(page).toContain('<EmptyState title="Job unavailable"');
+    expect(page).toContain("bookmarkActionsEnabled={savedJobs.available}");
     // Own historical applications remain readable after a drive is closed or
     // cancelled; an arbitrary unowned unpublished job still returns not-found.
     expect(page).toContain("getOwnLearnerDriveJourney(context,jobId)");
-    expect(page).toContain("if(rows.length===0&&!journey)notFound()");
+    expect(page).toContain("if(rows.length===0&&!journey)return");
     expect(page).toContain("<LearnerPlacementJobDetail items={rows.map(toItem)}");
-    expect(page).toContain("returnHref={back} initialSaved={savedJobs.some(row=>row.jobId===jobId)}");
+    expect(page).toContain("returnHref={back} initialSaved={savedJobs.available&&savedJobs.value.some(row=>row.jobId===jobId)}");
     const historical=read("src/modules/placements/learner-historical-drive-service.ts");
     expect(historical).toContain("requireLearnerPlacementAccess(context)");
     expect(historical).toContain("eq(placementJobs.collegeId,member.collegeId)");
@@ -24,7 +24,7 @@ describe("Learner published placement Job Detail", () => {
   });
   it("uses a dedicated detail instead of generic uncontextualized cards", () => {
     const source = read("src/components/placements/learner-placement-job-detail.tsx");
-    expect(source).toContain("Placement breadcrumbs");
+    expect(source).toContain("<Breadcrumbs items={[");
     expect(source).toContain("Eligibility breakdown");
     expect(source).toContain("check.actual");
     expect(source).toContain("check.required");
@@ -45,8 +45,10 @@ describe("Learner published placement Job Detail", () => {
   });
   it("distinguishes loading/failure from not-found and allows retry", () => {
     expect(read("src/app/(authenticated)/learn/my-placements/jobs/[jobId]/loading.tsx"))
-      .toContain('aria-busy="true"');
-    expect(read("src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx"))
-      .toContain("reset");
+      .toContain('<GracefulPageLoading label="Loading placement job details"');
+    const error=read("src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx");
+    expect(error).toContain("reset");
+    expect(error).toContain("Application status unavailable");
+    expect(error).toContain("Do not submit a second application until it is confirmed.");
   });
 });
