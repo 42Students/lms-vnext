@@ -84,7 +84,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
       <FilterBar title="Filters"
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {classes ? "Class, batch or program" : "Elective, program or description"}
-          <Input form="college-structure-directory-filters" type="search" name="q" maxLength={100} defaultValue={data.query.q}
+          <Input form="college-structure-directory-filters" type="search" name="q" maxLength={100} defaultValue={"q" in data.query ? data.query.q : undefined}
             className="min-h-11 min-w-0 md:min-h-9" placeholder={classes ? "Search classes" : "Search slots"} />
         </label>}
         action={filtered ? <Link href={path}

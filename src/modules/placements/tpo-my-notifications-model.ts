@@ -37,7 +37,7 @@ export function parseTpoMyNotificationsParams(
   if(Object.keys(raw).some(key=>!["view","page","pageSize"].includes(key)))return null;
   if(Object.values(raw).some(Array.isArray))return null;
   const parsed=tpoMyNotificationsQuerySchema.safeParse({
-    view:raw.view||undefined,page:raw.page||undefined,pageSize:raw.pageSize||undefined,
+    view:raw["view"]||undefined,page:raw["page"]||undefined,pageSize:raw["pageSize"]||undefined,
   });
   return parsed.success?parsed.data:null;
 }
