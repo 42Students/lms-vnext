@@ -40,9 +40,9 @@ export function inspectLegacyRecruiterUnsentDraft(
   const parsed:unknown=JSON.parse(raw);
   if(!parsed||typeof parsed!=="object"||Array.isArray(parsed))return unavailable;
   const entry=parsed as Record<string,unknown>;
-  if(!entry.values||typeof entry.values!=="object"||Array.isArray(entry.values))
+  if(!entry["values"]||typeof entry["values"]!=="object"||Array.isArray(entry["values"]))
    return unavailable;
-  const values=entry.values as Record<string,unknown>;
+  const values=entry["values"] as Record<string,unknown>;
   const draft=emptyHrDriveDraft();
   const text=(field:string)=>typeof values[field]==="string"?values[field] as string:"";
   const bounded=(field:string,max:number)=>text(field).slice(0,max);
@@ -53,20 +53,20 @@ export function inspectLegacyRecruiterUnsentDraft(
   draft.location=bounded("location",180);
   draft.employmentType=jobType==="Internship"?"INTERNSHIP":
    jobType==="Internship + full-time"?"INTERNSHIP_FULL_TIME":"FULL_TIME";
-  draft.driveMode=values.driveMode==="OFF_CAMPUS"?"OFF_CAMPUS":"ON_CAMPUS";
-  draft.ctcLpa=String(values.ctcLpa??"").slice(0,12);
-  draft.fixedLpa=String(values.fixedLpa??"").slice(0,12);
-  draft.variableLpa=String(values.variableLpa??"").slice(0,12);
-  draft.stipendMonthlyInr=String(values.stipendPerMonth??"").slice(0,9);
-  draft.minimumCgpa=String(values.minCgpa??"").slice(0,8);
-  draft.branches=Array.isArray(values.branches)?
-   values.branches.filter((value):value is string=>typeof value==="string")
+  draft.driveMode=values["driveMode"]==="OFF_CAMPUS"?"OFF_CAMPUS":"ON_CAMPUS";
+  draft.ctcLpa=String(values["ctcLpa"]??"").slice(0,12);
+  draft.fixedLpa=String(values["fixedLpa"]??"").slice(0,12);
+  draft.variableLpa=String(values["variableLpa"]??"").slice(0,12);
+  draft.stipendMonthlyInr=String(values["stipendPerMonth"]??"").slice(0,9);
+  draft.minimumCgpa=String(values["minCgpa"]??"").slice(0,8);
+  draft.branches=Array.isArray(values["branches"])?
+   values["branches"].filter((value):value is string=>typeof value==="string")
     .slice(0,30).map(value=>value.slice(0,120)):[];
-  draft.passingYears=Array.isArray(values.passingYears)?
-   [...new Set(values.passingYears.map(Number).filter(year=>
+  draft.passingYears=Array.isArray(values["passingYears"])?
+   [...new Set(values["passingYears"].map(Number).filter(year=>
     Number.isInteger(year)&&year>=2000&&year<=2100))].slice(0,101):[];
-  draft.rounds=Array.isArray(entry.rounds)?
-   entry.rounds.filter((row):row is {kind:"TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";name:string}=>
+  draft.rounds=Array.isArray(entry["rounds"])?
+   entry["rounds"].filter((row):row is {kind:"TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";name:string}=>
     Boolean(row)&&typeof row==="object"&&
     ["TALK","TEST","VENDOR_TEST","GD","INTERVIEW"].includes((row as {kind?:unknown}).kind as string)&&
     typeof (row as {name?:unknown}).name==="string")
@@ -110,13 +110,13 @@ export function restoreHrUnsentDraft(raw:string|null,now:number):HrDriveDraft|nu
   const input:unknown=JSON.parse(raw);
   if(!input||typeof input!=="object"||Array.isArray(input))return null;
   const envelope=input as Record<string,unknown>;
-  if(typeof envelope.savedAt!=="number"||!Number.isInteger(envelope.savedAt)||
-      envelope.savedAt>now||now-envelope.savedAt>lifetime)return null;
-  if(envelope.version===1){
-    const valid=hrDriveDraftSchema.safeParse(envelope.draft);
+  if(typeof envelope["savedAt"]!=="number"||!Number.isInteger(envelope["savedAt"])||
+      envelope["savedAt"]>now||now-envelope["savedAt"]>lifetime)return null;
+  if(envelope["version"]===1){
+    const valid=hrDriveDraftSchema.safeParse(envelope["draft"]);
     return valid.success?valid.data:null;
   }
-  return envelope.version===2&&isEditableHrDraft(envelope.draft)?envelope.draft:null;
+  return envelope["version"]===2&&isEditableHrDraft(envelope["draft"])?envelope["draft"]:null;
  }catch{return null;}
 }
 
