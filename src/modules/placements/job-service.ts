@@ -92,6 +92,7 @@ async function loadJob(jobId: string) {
 
 export type PlacementJobListOptions={
  page?:number;pageSize?:number;q?:string;
+ jobType?:string;programId?:string;deptId?:string;
  status?:"ALL"|"DRAFT"|"PUBLISHED"|"CLOSED"|"CANCELLED"|"ARCHIVED";
  sort?:"TITLE_ASC"|"POSTED_DESC"|"POSTED_ASC"|"DEADLINE_ASC"|"DEADLINE_DESC";
  applicationMode?:"ALL"|"INTERNAL"|"HYBRID"|"EXTERNAL_ONLY";
@@ -153,6 +154,29 @@ function scopedPlacementJobPredicate(collegeId:string,options?:PlacementJobListO
    eq(placementJobs.applicationMode,options.applicationMode):undefined,
   term?or(ilike(placementJobs.title,placementJobSearchPattern(term)),
    ilike(placementCompanies.name,placementJobSearchPattern(term))):undefined,
+  options?.jobType?sql`lower(${placementJobs.jobTypeLabel})=lower(${options.jobType}::text)`:undefined,
+  // Legacy learner program / department filters are restricted to the
+  // requested college before the optional job eligibility policy is applied.
+  options?.programId?sql`exists (
+   select 1 from programs p join departments d on d.id=p.department_id
+    where p.id=${options.programId}::uuid and d.college_id=${collegeId}::uuid
+  ) and (
+   not exists (select 1 from placement_job_eligibility_policies ep
+    where ep.job_id=${placementJobs.id} and cardinality(ep.allowed_program_ids)>0)
+   or exists (select 1 from placement_job_eligibility_policies ep
+    where ep.job_id=${placementJobs.id}
+     and ${options.programId}::uuid=any(ep.allowed_program_ids))
+  )`:undefined,
+  options?.deptId?sql`exists (
+   select 1 from departments d where d.id=${options.deptId}::uuid
+    and d.college_id=${collegeId}::uuid
+  ) and (
+   not exists (select 1 from placement_job_eligibility_policies ep
+    where ep.job_id=${placementJobs.id} and cardinality(ep.allowed_program_ids)>0)
+   or exists (select 1 from placement_job_eligibility_policies ep
+    join programs p on p.id=any(ep.allowed_program_ids)
+    where ep.job_id=${placementJobs.id} and p.department_id=${options.deptId}::uuid)
+  )`:undefined,
  );
 }
 export async function listPlacementJobs(
@@ -167,7 +191,7 @@ export async function listPlacementJobs(
 
   const page=Number.isSafeInteger(options?.page)&&options!.page!>0?
    Math.min(10000,options!.page!):1;
-  const pageSize=[10,20,50,100].includes(options?.pageSize??20)?options?.pageSize??20:20;
+  const pageSize=Number.isSafeInteger(options?.pageSize)&&options!.pageSize!>=1&&options!.pageSize!<=100?options!.pageSize!:20;
   const query=getDb()
     .select({
       job: placementJobs,
@@ -235,7 +259,7 @@ export async function listPlacementJobsPage(
 ){
  const collegeId=createPlacementJobInputSchema.shape.collegeId.parse(collegeIdInput);
  const page=Number.isSafeInteger(options.page)&&options.page!>0?Math.min(10000,options.page!):1;
- const pageSize=[10,20,50,100].includes(options.pageSize??20)?options.pageSize??20:20;
+ const pageSize=Number.isSafeInteger(options.pageSize)&&options.pageSize!>=1&&options.pageSize!<=100?options.pageSize!:20;
  const scoped={...options,page,pageSize};
  const items=await listPlacementJobs(context,collegeId,scoped);
  const [total]=await getDb().select({count:sql<number>`count(*)::int`}).from(placementJobs)
