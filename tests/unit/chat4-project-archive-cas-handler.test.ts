@@ -31,7 +31,11 @@ describe("PROJ-BREAK-COLLEGE-04-ARCHIVE-07 optimistic College Admin archive",()=
   const expectedUpdatedAt="2099-10-18T04:30:00.000Z";
   const response=await POST(request({expectedUpdatedAt}),params);
   expect(response.status).toBe(200);
-  expect(await response.json()).toEqual({project:{id:projectId,status:"ARCHIVED"}});
+  expect(await response.json()).toEqual({
+    project:{id:projectId,status:"ARCHIVED"},message:"Project archived",
+    destructive:false,legacyOperation:"ARCHIVE",
+    recovery:{action:"RESTORE",href:"/api/projects/"+projectId+"/restore",method:"POST"},
+  });
   expect(mocks.archive).toHaveBeenCalledOnce();
   expect(mocks.archive).toHaveBeenCalledWith(context,projectId,{expectedUpdatedAt});
  });

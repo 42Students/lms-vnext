@@ -229,6 +229,7 @@ export function RecruiterLeadsWorkspace({
 }) {
   const router=useRouter();
   const [rows, setRows] = useState<Lead[]>([]);
+  const [needsExpanded,setNeedsExpanded]=useState(true);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
   const [visibleColumns,setVisibleColumns]=useState<EngageColumn[]>([...ENGAGE_DEFAULT_COLUMNS]);
   const [rosterSort,setRosterSort]=useState<EngageSort>("LAST_ACTIVITY");
@@ -800,6 +801,12 @@ export function RecruiterLeadsWorkspace({
       ) : (
         <>
           <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
+            <button type="button" aria-expanded={needsExpanded} aria-controls="engage-needs-content"
+              onClick={()=>setNeedsExpanded(open=>!open)}
+              className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              Needs doing <span aria-hidden="true">{needsExpanded?"▴":"▾"}</span>
+            </button>
+            <div id="engage-needs-content" hidden={!needsExpanded} className="space-y-2">
             <div className="flex min-w-0 flex-wrap gap-2">
               {([
                 ["OVERDUE","Follow-ups due",rows.filter(row=>dueByEndOfTodayIst(row.nextFollowupAt)).length],
@@ -815,6 +822,7 @@ export function RecruiterLeadsWorkspace({
             </div>
             <Link className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9"
               href="/tpo/settings/recruiters">{rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access</Link>
+            </div>
           </section>
           <div className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
             <label className="min-w-48 flex-1 text-sm">

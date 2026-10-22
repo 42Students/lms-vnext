@@ -11,7 +11,8 @@ describe("chat-4 college company identity",()=>{
   expect(service).toContain("industry:placementCompanies.industry");
   expect(view).toContain("Verified by 42");
   expect(view).toContain("Deleted");
-  expect(view).toContain("Domains:");
+  expect(view).toContain("item.primaryDomain??");
+  expect(view).toContain("No domain registered");
   expect(view).toContain("A company is kept once across colleges by its website or company email domain");
   expect(page).toContain("verifiedAt:item.verifiedAt");
   expect(view).toContain("Trusted employer relationship");
