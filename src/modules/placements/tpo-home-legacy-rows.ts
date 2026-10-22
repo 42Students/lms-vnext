@@ -93,7 +93,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
   {key:"team",title:"Team",status:(d.teamAsks??0)>0?plural(d.teamAsks!,"ask")+" for you":
    (d.teamMentions??0)>0?plural(d.teamMentions!,"mention"):
    (d.teamUnread??0)>0?plural(d.teamUnread!,"new message"):
-   d.teamAsks===null||d.teamMentions===null?"Team updates unavailable":"Nothing waiting on you",
+   d.teamAsks===null||d.teamMentions===null||d.teamUnread===null?"Team updates unavailable":"Nothing waiting on you",
    href:(d.teamAsks??0)+(d.teamMentions??0)>0?"/tpo/team?filter=me":"/tpo/team",
    needsAttention:(d.teamAsks??0)+(d.teamMentions??0)>0},
   {key:"week",title:"This week",status:next?showWhen(next.startsAt)+" · "+next.title+
