@@ -784,7 +784,7 @@ export function PlacementDraftEditForm({
         </details>
 
         <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
-          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Eligibility rules — enforced</summary>
+          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Target Audience — enforced eligibility rules</summary>
           <div className="min-w-0 pb-4">
           <p className="mt-1 text-xs leading-5 text-body">
             Leave programs and cohorts unselected to keep the opportunity college-wide.
