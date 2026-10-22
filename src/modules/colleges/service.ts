@@ -14,6 +14,8 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {
   academicPeriods,
   collegeMemberships,
+  membershipRoles,
+  users,
   colleges,
   departments,
   organizations,
@@ -556,14 +558,28 @@ export async function updateCollege(
       .where(and(eq(organizations.id,college.organizationId),eq(organizations.status,"ACTIVE")))
       .for("share").limit(1);
     if(!parent)throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
+    // Keep appointments on the separate, college-scoped faculty membership
+    // association. A learner or placement-only membership cannot become a
+    // faculty chair simply because its UUID belongs to this college.
+    const [prior]=await tx.select({
+      id:colleges.id,chairMembershipId:colleges.chairMembershipId,
+      viceChairMembershipId:colleges.viceChairMembershipId,
+    }).from(colleges).where(and(eq(colleges.id,collegeId),
+      eq(colleges.status,"ACTIVE"))).for("update").limit(1);
+    if(!prior)throw new CollegeServiceError("COLLEGE_NOT_FOUND");
     const appointIds=[input.chairMembershipId,input.viceChairMembershipId]
       .filter((id):id is string=>typeof id==="string");
     for(const membershipId of new Set(appointIds)){
       const [eligible]=await tx.select({id:collegeMemberships.id})
         .from(collegeMemberships)
+        .innerJoin(membershipRoles,and(
+          eq(membershipRoles.membershipId,collegeMemberships.id),
+          eq(membershipRoles.role,"FACULTY")))
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
         .where(and(eq(collegeMemberships.id,membershipId),
           eq(collegeMemberships.collegeId,collegeId),
-          eq(collegeMemberships.status,"ACTIVE")))
+          eq(collegeMemberships.status,"ACTIVE"),
+          eq(users.platformStatus,"ACTIVE")))
         .limit(1);
       if(!eligible)throw new CollegeServiceError("COLLEGE_APPOINTEE_INVALID");
     }
@@ -576,7 +592,12 @@ export async function updateCollege(
       collegeId:updated.id,organizationId:updated.organizationId,
       subjectType:"college",subjectId:updated.id,subjectLabel:updated.name,
       summary:"College details updated",
-      metadata:{code:updated.code},
+      metadata:{code:updated.code,
+       ...(input.chairMembershipId!==undefined?{
+        chairMembershipId:{before:prior.chairMembershipId,after:updated.chairMembershipId}}:{}),
+       ...(input.viceChairMembershipId!==undefined?{
+        viceChairMembershipId:{before:prior.viceChairMembershipId,after:updated.viceChairMembershipId}}:{}),
+      },
     });
     return updated;
   });
