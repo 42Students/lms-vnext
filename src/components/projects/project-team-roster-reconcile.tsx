@@ -32,7 +32,7 @@ export function ProjectTeamRosterReconcile({ projectId }: { projectId: string })
       }
     } catch (error) {
       showToast({ tone: "error", title: "Could not check the roster.",
-        description: error instanceof Error ? error.message : undefined });
+        ...(error instanceof Error ? { description: error.message } : {}) });
     } finally {
       inFlight.current = false;
       setPending(false);
