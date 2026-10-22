@@ -40,6 +40,20 @@ import {
   loadLessonContentScope,
 } from "./scope";
 
+/** Legacy remote-URL imports were a browser-to-backend fetch. They cannot be
+ * reenabled by forwarding arbitrary URLs: the old flow lacks DNS/IP SSRF
+ * pinning, a bounded download worker and object-scan attestations. The only
+ * currently authorized path is a size-checked private signed PUT followed by
+ * asynchronous READY/FAILED/QUARANTINED verification.
+ * Do not claim legacy import benchmark or success while disabled. */
+export const LESSON_VIDEO_IMPORT_POLICY={
+ remoteUrlImportEnabled:false,
+ privateSignedUploadEnabled:true,
+ requiresScannerAttestation:true,
+ requiresDeclaredByteLimit:true,
+ cleanupRetainsAuditRows:true,
+ operatorMessage:"Remote URL import is unavailable. Upload a verified file directly; publishing is enabled only after the scan completes.",
+} as const;
 type VideoRow = typeof lessonVideoAssets.$inferSelect;
 
 const idSchema = z.string().uuid();
@@ -529,6 +543,27 @@ export async function removeLessonVideo(context: RequestContext, videoIdInput: s
   await removeStoredObject(row.objectKey);
   if (row.thumbnailObjectKey) await removeStoredObject(row.thumbnailObjectKey);
   return { id: row.id, deleted: true as const };
+}
+
+/** Retry best-effort object cleanup after a previously authorized delete.
+ * The historical row, uploader and storage event remain for audit; no new
+ * deletion event is forged, and no active video can be removed by this path.
+ * An operator may safely replay cleanup if the original backend deletion
+ * succeeded but cloud storage was temporarily unavailable. */
+export async function retryDeletedLessonVideoObjectCleanup(
+ context:RequestContext,videoIdInput:string,
+){
+ const id=idSchema.parse(videoIdInput);
+ const [row]=await getDb().select().from(lessonVideoAssets)
+  .where(and(eq(lessonVideoAssets.id,id),ne(lessonVideoAssets.deletedAt,null)))
+  .limit(1);
+ if(!row||!row.deletedAt)throw new StorageFileError("STORAGE_NOT_FOUND");
+ const lesson=await authorizeOrNotFound(()=>loadCourseLessonScope(row.lessonId,true));
+ if(lesson.collegeId!==row.collegeId)throw new StorageFileError("STORAGE_NOT_FOUND");
+ await authorizeOrNotFound(()=>requireManage(context,lesson,row.deliveryId));
+ await removeStoredObject(row.objectKey);
+ if(row.thumbnailObjectKey)await removeStoredObject(row.thumbnailObjectKey);
+ return {id:row.id,cleanupRetried:true as const,historyRetained:true as const};
 }
 
 /** Instructor or admin: optional thumbnail image (JPEG, PNG or WebP up to 5 MiB). */
