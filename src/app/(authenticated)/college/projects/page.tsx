@@ -54,7 +54,12 @@ export default async function CollegeProjectsPage({
       />
     </div>;
   }
-  const query = parsed.data;
+  const { q, status, ...requiredQuery } = parsed.data;
+  const query = {
+    ...requiredQuery,
+    ...(q !== undefined ? { q } : {}),
+    ...(status !== undefined ? { status } : {}),
+  };
   const viewHref = (targetView: "table" | "cards") => {
     const params = new URLSearchParams();
     params.set("view", targetView);
