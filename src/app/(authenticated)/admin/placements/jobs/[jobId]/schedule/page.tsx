@@ -83,12 +83,12 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     const left=candidateRows[i]!;
     const leftFrom=Date.parse(left.scheduledAt);
     const leftTo=leftFrom+left.durationMinutes*60_000;
-    if(left.status!=="SCHEDULED"||!Number.isFinite(leftFrom))continue;
+    if(!["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"].includes(left.status)||!Number.isFinite(leftFrom))continue;
     for(let j=i+1;j<candidateRows.length;j++){
       const right=candidateRows[j]!;
       const rightFrom=Date.parse(right.scheduledAt);
       const rightTo=rightFrom+right.durationMinutes*60_000;
-      if(right.status!=="SCHEDULED"||!Number.isFinite(rightFrom)||
+      if(!["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"].includes(right.status)||!Number.isFinite(rightFrom)||
          leftFrom>=rightTo||rightFrom>=leftTo)continue;
       const sameApplicant=Boolean(left.applicationId&&
         left.applicationId===right.applicationId);
