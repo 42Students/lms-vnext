@@ -1,7 +1,15 @@
 import { recruiterTodayHref } from "./hr-today-deeplink-model";
+
+/** Display calendar instants in the application's IST convention, never
+ * expose UTC ISO wire timestamps as the employer-facing reply deadline. */
+function recruiterDueAtIst(value:Date):string{
+ return new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+ }).format(value)+" IST";
+}
 type Job = {collegeId:string;companyId:string;job:{id:string;title:string;status:string;archivedAt:Date|null;applicationDeadline?:Date|null}};
 type Due={id:string;jobId:string;jobTitle:string;roundName:string;dueAt:Date;
- status?:string;isOutstanding?:boolean};
+ status?:string;roundKind?:string;isOutstanding?:boolean};
 type UnreadThread={id:string;href:string;label:string;unread:number};
 /** REC-home-drives-01: only verified scoped signals become next-up actions.
  * A recorded result due date is not proof results are still outstanding. */
@@ -65,7 +73,7 @@ export function buildRecruiterActionQueue(input:{
       row.status==="PENDING_VERIFICATION"?"Await selection verification · "+row.jobTitle:
       row.status==="SELECTED"?"Selection recorded · "+row.jobTitle:"Review offers · "+row.jobTitle,
     description:row.jobTitle+(awaitingReply&&respondBy?
-      " · Reply by "+respondBy.toISOString():" · "+row.count+" "+row.status.toLowerCase()+" offers recorded for college-shared applicants."),
+      " · Reply by "+recruiterDueAtIst(respondBy):" · "+row.count+" "+row.status.toLowerCase()+" offers recorded for college-shared applicants."),
     href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=offers"};
   });
  const conversations=(input.unreadConversations??[]).filter(item=>item.unread>0)
@@ -81,18 +89,27 @@ export function buildRecruiterActionQueue(input:{
     href:"/recruiter/drives/new?collegeId="+encodeURIComponent(input.collegeId)+
       "&fix="+encodeURIComponent(row.id)}));
  const due=(input.resultsDue??[]).filter(item=>authorized.has(item.jobId)&&
-   // A due date alone is informational; only persisted outstanding evidence
-   // can create an action, and completed or talk rounds are excluded.
-   item.isOutstanding===true &&
-   item.status!=="COMPLETED" && item.status!=="TALK" &&
+   // TALK rounds have no assessment result. A due date from the calendar is
+   // informational unless a separate results ledger confirms outstanding work.
+   // Completed assessment rounds can still have results awaiting publication.
+   item.roundKind!=="TALK" &&
+   (item.status==="SCHEDULED"||item.status==="COMPLETED") &&
    Number.isFinite(item.dueAt.getTime()) &&
    (!input.now || (item.dueAt.getTime()>=input.now.getTime()-14*86400000 &&
                    item.dueAt.getTime()<=input.now.getTime()+2*86400000)))
   .sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime()||a.id.localeCompare(b.id))
-  .map(item=>({key:"due:"+item.id, tone:(input.now&&item.status==="SCHEDULED"&&item.dueAt.getTime()<input.now.getTime()?"URGENT":"SOON") as "URGENT"|"SOON", at:item.dueAt,
-    label:"Check results deadline · "+item.roundName,
-    description:"Recorded deadline for "+item.jobTitle+"; this does not establish whether results are outstanding.",
-    href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=rounds&roundId="+encodeURIComponent(item.id)}));
+  .filter(item=>item.isOutstanding!==false)
+  .map(item=>{
+   const confirmed=item.isOutstanding===true;
+   const overdue=confirmed&&Boolean(input.now)&&item.dueAt.getTime()<input.now!.getTime();
+   return {key:"due:"+item.id,
+    tone:(confirmed?(overdue?"URGENT":"SOON"):"FINE") as "URGENT"|"SOON"|"FINE",
+    at:item.dueAt,
+    label:(confirmed?"Results overdue · ":"Verify results due · ")+item.roundName,
+    description:item.jobTitle+" · "+recruiterDueAtIst(item.dueAt)+
+     (confirmed?" · Results are recorded as outstanding.":" · Check the results ledger; the deadline alone does not prove that results are outstanding."),
+    href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=rounds&roundId="+encodeURIComponent(item.id)};
+  });
  const live=input.jobs.filter(row=>row.collegeId===input.collegeId&&row.companyId===input.companyId&&
    row.job.status==="PUBLISHED"&&row.job.archivedAt===null);
  const deadlines = input.now ? live

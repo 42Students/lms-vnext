@@ -1,4 +1,4 @@
-export type HrTodayResultsDue = {id:string;jobId:string;jobTitle:string;roundName:string;dueAt:Date;status:string};
+export type HrTodayResultsDue = {id:string;jobId:string;jobTitle:string;roundName:string;dueAt:Date;status:string;roundKind?:string;isOutstanding?:boolean};
 export function projectHrTodayResultsDue<T extends HrTodayResultsDue>(
   rows:readonly T[],authorizedJobIds:readonly string[],
 ):T[] {
@@ -7,6 +7,7 @@ export function projectHrTodayResultsDue<T extends HrTodayResultsDue>(
  // reset to PENDING, even if the calendar snapshot still contains its date.
  return rows.filter(item=>ids.has(item.jobId)&&
   (item.status==="SCHEDULED"||item.status==="COMPLETED")&&
+  item.roundKind!=="TALK"&&
   Number.isFinite(item.dueAt.getTime()))
   .sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime()||a.id.localeCompare(b.id));
 }
