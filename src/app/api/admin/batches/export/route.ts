@@ -35,7 +35,7 @@ export async function GET(request:Request){
    row.id,row.name,row.code,row.programId,row.startDate,row.endDate,
    row.academicYear,row.currentTermNumber,row.status,row.activeEnrolledLearners,
   ]);
-  return csvResponse(["id","name","code","programId","startDate","endDate",
+  return csvResponse(["id","batchName","code","programId","startDate","endDate",
    "academicYear","currentSemester","status","students"],rows,"batches.csv",records.length<total);
  }catch(error){return apiErrorResponse(error);}
 }
