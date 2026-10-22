@@ -4,8 +4,10 @@ const source=readFileSync(new URL("../../src/app/(authenticated)/tpo/audit/page.
 describe("UX-tpo-audit-01 /tpo/audit",()=>{
   it("preserves legacy UI while applying signed-off phone and contrast contracts",()=>{
     expect(source).not.toContain("text-primary-text");
-    expect(source).not.toContain("text-on-primary");
-    expect(source).not.toMatch(/min-h-(?:9|10)\b/);
+    expect(source).toContain("text-on-primary");
+    expect(source).toContain("bg-primary");
+    expect(source).toContain("min-h-11");
+    expect(source).toContain("md:min-h-9");
     expect(source).toMatch(/<PageHeader\b|<h1\b|redirect\(/);
   });
 });
