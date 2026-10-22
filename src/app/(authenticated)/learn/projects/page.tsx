@@ -12,7 +12,7 @@ import { ProjectList } from "@/components/projects/project-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
-import { listMyLearnerProjectAttention } from "@/modules/projects/learner-attention-service";
+import { listMyLearnerProjectPageAttention } from "@/modules/projects/learner-attention-service";
 import { listMyLearnerProjectPage } from "@/modules/projects/member-service";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
@@ -88,9 +88,9 @@ export default async function LearnerProjectsPage({
 
   const directory = await listMyLearnerProjectPage(context,query);
   const {rows,total,page,totalPages} = directory;
-  const attentionRows=await listMyLearnerProjectAttention(context);
   const pageProjectIds=rows.map(row=>row.project.id);
-  const [teamSummaries,projectProgress,dueStates]=await Promise.all([
+  const [attentionRows,teamSummaries,projectProgress,dueStates]=await Promise.all([
+    listMyLearnerProjectPageAttention(context,pageProjectIds),
     listMyLearnerProjectTeams(context,pageProjectIds),
     listMyLearnerProjectProgress(context,pageProjectIds),
     listMyLearnerProjectDueStates(context,pageProjectIds),
