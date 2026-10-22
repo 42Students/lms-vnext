@@ -64,6 +64,7 @@ export function safeMentorMeetingJoinUrl(item: MentorMeetingCalendarItem, now?: 
   // Keep safe URL validation; neither a past date nor COMPLETED/REQUESTED
   // status alone suppresses an otherwise legitimate meeting link.
   if (item.status === "CANCELLED" || !item.meetingUrl) return null;
+  if (now && !Number.isFinite(now.getTime())) return null;
   try {
     const url = new URL(item.meetingUrl);
     return (url.protocol === "https:" || url.protocol === "http:") &&
