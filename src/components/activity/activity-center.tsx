@@ -53,7 +53,7 @@ function humanize(value: string) {
 // normalized event stream uses module.entity_verb. Both are display-only inputs.
 const ACTION_WORDS: Readonly<Record<string,string>> = {
  CREATE:"created",ADD:"added",UPDATE:"updated",UPDATED:"updated",EDIT:"edited",DELETE:"deleted",
- REMOVE:"removed",RESTORE:"restored",PROMOTE:"promoted",SUSPEND:"suspended",
+ REMOVE:"removed",RESTORE:"restored",PROMOTE:"promoted",PROMOTED:"promoted",SUSPEND:"suspended",
  REACTIVATE:"reactivated",IMPERSONATE:"impersonated",ASSIGN:"assigned",UNASSIGN:"unassigned",
  SET:"changed",TOGGLE:"switched",READ:"viewed",VIEW:"viewed",MARK:"marked",
  SYNC:"synced",REORDER:"reordered",PUBLISH:"published",UNPUBLISH:"unpublished",

@@ -62,7 +62,7 @@ describe("AUTH-sessions-08 admin session route: origin, payload, tenancy and no-
       method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId,confirm:true}),
     }),route);
     expect(result.status).toBe(200);
-    expect(await result.json()).toEqual({revoked:2});
+    expect(await result.json()).toMatchObject({revoked:2,ok:true,partial:false,refreshSessions:true});
     expect(result.headers.get("Cache-Control")).toBe("private, no-store");
     expect(revokeCollegeAdminSessions).toHaveBeenCalledOnce();
     expect(revokeCollegeAdminSessions).toHaveBeenCalledWith(ctx,collegeId,userId);
@@ -90,7 +90,7 @@ describe("AUTH-sessions-08 admin session route: origin, payload, tenancy and no-
   });
 
   it("AUTH-sessions-08 GET requires target UUID, returns no-store sessions, never revokes",async()=>{
-    vi.mocked(listCollegeAdminSessions).mockResolvedValue({sessions:[],total:0} as never);
+    vi.mocked(listCollegeAdminSessions).mockResolvedValue({devices:[],total:0} as never);
     const bad=await GET(new Request(url+"?userId=not-a-uuid"),route);
     expect(bad.status).toBe(400);
     expect(listCollegeAdminSessions).not.toHaveBeenCalled();

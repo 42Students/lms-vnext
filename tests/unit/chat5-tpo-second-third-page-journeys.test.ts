@@ -16,7 +16,7 @@ describe("chat-5 second-third TPO page journeys",()=>{
    expect(source).toContain('hasMembershipRole(context,"TPO")');
    expect(source).toContain("notFound()");
    expect(source).toContain('<Alert tone="warning">');
-   expect(source).toContain("inline-flex min-h-11 items-center");
+   expect(source).toContain("inline-flex min-h-11 w-full items-center");
    expect(source).toContain("<PageHeader");
    expect(source).toContain("preview.");
   }

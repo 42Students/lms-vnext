@@ -20,12 +20,12 @@ describe("chat-7 round 2: mentor project card and read-only legacy parity", () =
   it("MEN-projects-meetings-14 real mentor/course subtitle", () => {
     const source = readFileSync("src/components/projects/project-workspace.tsx", "utf8");
     expect(source).toContain("description={mode===\"MENTOR\"");
-    expect(source).toContain("\"Mentor: \"");
+    expect(source).toContain("member.role===\"MENTOR\"");
     expect(source).toContain("courseLabel");
   });
   it("MEN-projects-meetings-15 archived/completed read-only message", () => {
     const source = readFileSync("src/components/projects/project-workspace.tsx", "utf8");
-    expect(source).toContain("This workspace is archived. You can read everything here");
+    expect(source).toContain("This workspace is archived. You can review historical tasks, resources, meetings and submissions, but cannot change them.");
     expect(source).toContain("Completed project · read only");
   });
 });
