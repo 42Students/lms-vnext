@@ -29,7 +29,7 @@ beforeEach(()=>{
  mocks.context.mockResolvedValue(user);
  mocks.create.mockResolvedValue({id,title:"Workspace"});
  mocks.list.mockResolvedValue([{id,title:"Workspace"}]);
- mocks.reassign.mockResolvedValue({updated:1,skipped:0});
+ mocks.reassign.mockResolvedValue({reassignedCount:1,failures:[],skipped:0});
  mocks.error.mockImplementation(()=>NextResponse.json({
   error:"SAFE_CONFLICT",message:"The Project changed; refresh and retry.",
  },{status:409}));
@@ -48,17 +48,25 @@ describe("PROJ-BREAK-COL-HTTP-01 actual College Admin Projects API boundaries",(
    expect(service).not.toHaveBeenCalled();
   });
   it(`uses server principal rather than forged user data on ${name}`,async()=>{
-   const submitted={collegeId:"foreign",userId:"forged",expectedUpdatedAt:"2026-10-18T11:00:00Z"};
+   const submitted=name==="create"
+    ?{collegeId:id,templateId:template,title:"Workspace",userId:"forged"}
+    :{collegeId:id,projectIds:[id],mentorMembershipId:template};
    const res=await handler(request("POST",submitted));
    expect(res.status).toBe(name==="create"?201:200);
    expect(service).toHaveBeenCalledTimes(1);
    expect(service.mock.calls[0][0]).toBe(user);
-   expect(service.mock.calls[0][1]).toEqual(submitted);
+   expect(service.mock.calls[0][1]).toMatchObject(
+    name==="create"?{collegeId:id,templateId:template,title:"Workspace"}:submitted,
+   );
+   expect(JSON.stringify(service.mock.calls[0][1])).not.toContain("forged");
    expect(JSON.stringify(await res.json())).not.toContain("forged");
   });
   it(`maps stale-tab/expired-session ${name} failures without exposing internals`,async()=>{
    service.mockRejectedValueOnce(new Error("SQL internal secret"));
-   const res=await handler(request("POST",{}));
+   const submitted=name==="create"
+    ?{collegeId:id,templateId:template,title:"Workspace"}
+    :{collegeId:id,projectIds:[id],mentorMembershipId:template};
+   const res=await handler(request("POST",submitted));
    expect(res.status).toBe(409);
    expect(JSON.stringify(await res.json())).not.toMatch(/SQL internal|secret/);
    expect(mocks.error).toHaveBeenCalledTimes(1);
@@ -68,7 +76,10 @@ describe("PROJ-BREAK-COL-HTTP-01 actual College Admin Projects API boundaries",(
   const req=new Request("https://college.example/api/projects?collegeId="+id,{method:"GET"});
   const res=await GET(req);
   expect(res.status).toBe(200);
-  expect(await res.json()).toEqual({projects:[{id,title:"Workspace"}]});
+  expect(await res.json()).toMatchObject({
+    projects:[{id,title:"Workspace"}],status:"success",
+    legacyEndpoints:{list:"GET /api/v1/admin/projects"},
+   });
   expect(mocks.list).toHaveBeenCalledWith(user,id);
   expect(mocks.create).not.toHaveBeenCalled();
   expect(mocks.reassign).not.toHaveBeenCalled();
