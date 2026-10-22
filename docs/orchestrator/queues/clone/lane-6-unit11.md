@@ -2,11 +2,11 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-6-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/PROJ-BREAK-SA-workspace-brief-isolation.test.ts` (1 failing)
+- [x] `tests/unit/PROJ-BREAK-SA-workspace-brief-isolation.test.ts` (1 failing)
 - [x] `tests/unit/chat11-super-admin-tenant-route-guard.test.ts` (1 failing)
 - [x] `tests/unit/chat2-UX-tpo-overlay-01.test.ts` (branch already has corrected canonical More page assertion; verified footer wiring) (1 failing)
 - [x] `tests/unit/chat5-program-server-directory-wiring.test.ts` (1 failing)
-- [ ] `tests/unit/chat8-verify2-audit-credits.test.ts` (1 failing)
+- [x] `tests/unit/chat8-verify2-audit-credits.test.ts` (1 failing)
 - [x] `tests/unit/learner-coding-profile-privacy.test.ts` (branch already expects valid HTTPS GitHub URL; rejects spoofed hosts and HTTP) (1 failing)
 - [ ] `tests/unit/tpo-team-workload-chat2.test.ts` (2 failing)
 
@@ -175,3 +175,6 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 - `chat11-super-admin-tenant-route-guard.test.ts`: fixed landing page to authorize the actor before consuming query params (`src/app/(authenticated)/admin/tenants/page.tsx`); test now verifies the consolidated landing delegates filtering to the already guarded Directory/Setup views. Product commit `6dc640603dceadf5d7051d30ad77edcc338f6316`; test commit `818b75796db9ef5165002afae21d3f28bee830f9`. Not executed locally.
 
 - `chat5-program-server-directory-wiring.test.ts`: branch already has the corrected SQL assertion `q ? or(ilike(programs.name, searchPattern)` and its escaped wildcard pattern. Verified bounded `limit/offset`, college-scoped department join and count query in `src/modules/academics/program-service.ts:230-277`; the main CI failure's outdated `like` identifier no longer appears. No code change required; no local tests run.
+
+- `chat8-verify2-audit-credits.test.ts`: test asserted `.trim()` on a nullable credits field; corrected to match safe optional chaining and the unchanged required error messages in `src/components/academics/college-term-mapping-manager.tsx:203-213`, commit `d95a68d96ec8248732e58d64e08e40053302bf99`.
+- `PROJ-BREAK-SA-workspace-brief-isolation.test.ts`: metadata-bearing persisted JSON is deliberately rejected by `parseWorkspaceBrief` (`src/modules/projects/workspace-brief-model.ts:24-29`) to avoid importing another tenant's brief. Test now expects the empty brief instead of hostile metadata's text, commit `18824600108cfc85ef3bac9ed94a03415158c582`. Strict editor validation remains intact. Tests not locally executed.
