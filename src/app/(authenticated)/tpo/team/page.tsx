@@ -30,7 +30,7 @@ export default async function TpoTeamLegacyRedirect({
   // Legacy routing prioritizes tab=people/members, dropping every other
   // query parameter even if a conversation filter also happens to be set.
   if (tab === "people" || tab === "members" || tab === "roster") {
-    redirect("/tpo/settings?tab=team");
+    redirect("/tpo/settings/team");
   }
   // Student requests belong to the role-scoped placement request inbox,
   // not an invented student-private team conversation kind.
