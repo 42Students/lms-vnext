@@ -90,7 +90,8 @@ export default async function TpoDriveRoundsPage({
         {drive.rounds.map((round) => {
           const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
           const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
-          return <article key={round.id} className="min-w-0 py-4">
+          return <article key={round.id} id={"round-"+round.id} tabIndex={-1}
+            className="min-w-0 scroll-mt-24 py-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-xs font-semibold text-body">Round {round.sequence} · {round.kind}</p>
