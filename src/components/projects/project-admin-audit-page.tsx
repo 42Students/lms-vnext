@@ -293,7 +293,7 @@ export async function ProjectAdminAuditPage({
       <nav aria-label="Audit time range" className="flex flex-wrap items-center gap-2">
         {auditRangeTabs.map(item=><Link key={item.value} href={item.href} aria-current={item.value===selectedAuditRange?"page":undefined}
           className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold md:min-h-9 "+
-           (item.value===selectedAuditRange?"border-[var(--lms-primary)] bg-[var(--lms-primary)] text-white":"border-border bg-surface text-link hover:bg-primary-subtle")}>{item.label}</Link>)}
+           (item.value===selectedAuditRange?"border-[var(--lms-primary)] bg-[var(--lms-primary)] text-[var(--lms-on-primary)]":"border-border bg-surface text-link hover:bg-primary-subtle")}>{item.label}</Link>)}
         {subjectId?<Link href={basePath+"/audit"+(()=>{
           const params=new URLSearchParams(preservedRefreshQuery);
           params.delete("subjectId");

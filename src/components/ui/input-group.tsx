@@ -19,10 +19,10 @@ export type InputGroupProps = Omit<ComponentPropsWithRef<"div">, "children"> & {
  */
 export function InputGroup({ prefix, suffix, prefixInteractive = false, suffixInteractive = false, children, className, label, ...props }: InputGroupProps) {
   return (
-    <div {...props} data-slot="input-group" role={label ? "group" : props.role}
+    <div {...props} style={{...props.style, minHeight:44}} data-slot="input-group" role={label ? "group" : props.role}
       aria-label={label ?? props["aria-label"]}
       className={cx(
-        "flex w-full min-h-[var(--lms-control-height)] max-[767px]:min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-field-radius)]",
+        "flex w-full min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-field-radius)]",
         "border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3",
         "focus-within:border-[var(--lms-primary)] focus-within:shadow-[var(--lms-control-shadow)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-[3px] has-[:focus-visible]:outline-[var(--lms-primary-text)]",
         "has-[[aria-invalid=true]]:border-[var(--lms-error)] has-[[aria-invalid=true]]:bg-[rgba(239,68,68,0.06)]",
@@ -31,11 +31,11 @@ export function InputGroup({ prefix, suffix, prefixInteractive = false, suffixIn
         "has-[:read-only]:bg-[var(--lms-neutral-50)]",
         className,
       )}>
-      {prefix ? <span data-slot="input-prefix" aria-hidden={prefixInteractive ? undefined : true} className={cx("inline-flex max-w-[40%] min-w-0 items-center break-words text-[13px] text-[var(--lms-muted-text)]", prefixInteractive && "min-h-11 md:min-h-[var(--lms-control-height)]")}>{prefix}</span> : null}
+      {prefix ? <span data-slot="input-prefix" aria-hidden={prefixInteractive ? undefined : true} className={cx("inline-flex max-w-[40%] min-w-0 items-center break-words text-[13px] text-[var(--lms-muted-text)]", prefixInteractive && "h-11 md:h-[var(--lms-control-height)]")}>{prefix}</span> : null}
       <div className="min-w-0 flex-1 [&_[data-slot=input]]:min-w-0 [&_[data-slot=input]]:w-full [&_[data-slot=input]]:border-0 [&_[data-slot=input]]:bg-transparent [&_[data-slot=input]]:px-0 [&_[data-slot=input]]:shadow-none [&_[data-slot=input]]:outline-none">
         {children}
       </div>
-      {suffix ? <span data-slot="input-suffix" aria-hidden={suffixInteractive ? undefined : true} className={cx("inline-flex max-w-[40%] min-w-0 items-center break-words text-[13px] text-[var(--lms-muted-text)]", suffixInteractive && "min-h-11 md:min-h-[var(--lms-control-height)]")}>{suffix}</span> : null}
+      {suffix ? <span data-slot="input-suffix" aria-hidden={suffixInteractive ? undefined : true} className={cx("inline-flex max-w-[40%] min-w-0 items-center break-words text-[13px] text-[var(--lms-muted-text)]", suffixInteractive && "h-11 md:h-[var(--lms-control-height)]")}>{suffix}</span> : null}
     </div>
   );
 }
