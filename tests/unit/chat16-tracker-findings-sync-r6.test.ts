@@ -11,7 +11,7 @@ describe("chat-16 independent audit findings sync evidence",()=>{
   expect(service).toContain('refusedCount:Math.max(row.refusedFiles.length,refusedFiles.length)');
   expect(page).toContain("readIndependentFindingSyncState(ctx)");
   expect(page).toContain("No verified import has been recorded.");
-  expect(page).toContain("No sync was performed by opening this page.");
+  expect(page).toContain("Viewing this page never triggers a sync.");
   expect(page).toContain('sync?.lastResult==="FAILED"');
   expect(page).toContain("The last sync failed.");
   expect(page).toContain('sync?.lastResult==="PARTIAL"');

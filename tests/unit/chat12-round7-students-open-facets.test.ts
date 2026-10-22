@@ -69,7 +69,7 @@ describe("chat-12 reopened Students URL facets and UI contracts",()=>{
   expect(sheet).toContain('storageKey="tpo-students-columns-v1"');
   expect(shared).toContain("<summary");
   expect(shared).toContain("mobileActionsCollapsible=false");
-  expect(shared).toContain('<div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');
+  expect(shared).toContain('<div role="group" aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');
  });
  it("TPO-students-53 distinguishes issued offers from accepted offers and pending answers",()=>{
   const model=src("src/modules/placements/tpo-students-model.ts");

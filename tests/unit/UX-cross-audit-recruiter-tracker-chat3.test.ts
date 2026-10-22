@@ -27,7 +27,7 @@ expect(s).toContain("expectedVersion");
 expect(s).toContain("<Button");
 });
 it("UX-tracker-audit-findings-publicId-02" ,()=>{const s=read("src/components/tracker/independent-finding-actions.tsx");
-expect(s).toContain("Save this finding update? An immutable audit event will be recorded.");
+expect(s).toContain("The action creates a permanent audit event.");
 expect(s).toContain("<ConfirmDialog");
 expect(s).toContain("onConfirm={()=>void submit(true)}");
 expect(s).toContain("expectedVersion:version");
@@ -40,7 +40,7 @@ it("UX-tracker-02" ,()=>{const s=read("src/components/tracker/tracker-report-for
 expect(s).toContain('aria-label="Similar issues"');
 expect(s).toContain("setSimilarError(\"Related issues are temporarily unavailable. You can still submit your report.\")");
 expect(s).toContain("setSimilarError(\"Related issues are temporarily unavailable. You can still report.\")");
-expect(s).toContain("if (pending) return;");
+expect(s).toContain("if (pending||submitLock.current) return;");
 expect(s).toContain("clearDraft()");
 });
 it("UX-tracker-issues-03" ,()=>{const s=read("src/components/tracker/tracker-issue-bulk-actions.tsx");
