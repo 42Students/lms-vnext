@@ -118,7 +118,7 @@ function ProgressBar({
           {value}%
         </span>
       </div>
-      <MetricBar size="medium" className={progressStyles.track} role="progressbar"
+      <MetricBar size="medium" {...(progressStyles["track"] !== undefined ? { className: progressStyles["track"] } : {})} role="progressbar"
         label={label} value={value} maximum={100} unit="percent" />
     </div>
   );
@@ -1139,7 +1139,7 @@ export function LearnerCourseWorkspace({
                             caption={"Assignment"+(!assignment.submissionId&&
                               assignment.dueAt&&assignment.dueAt.getTime()<workspace.snapshotNowMs
                                ?" · Not submitted":"")}
-                            dueText={assignment.dueAt?(formatDateTime(assignment.dueAt)??undefined):undefined}
+                            {...(assignmentDueText != null ? { dueText: assignmentDueText } : {})}
                             progress={item.progress.status}
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
@@ -1171,7 +1171,7 @@ export function LearnerCourseWorkspace({
                             ?"Quiz · Unavailable · deadline missing":quiz.progress.status==="MISSED"
                               ?"Quiz · Missed":"Quiz"}
                           locked={!quiz.dueAt&&quiz.attemptsUsed===0}
-                          dueText={quiz.dueAt?(formatDateTime(quiz.dueAt)??undefined):undefined}
+                          {...(quizDueText != null ? { dueText: quizDueText } : {})}
                           progress={item.progress.status}
                           initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                           highlighted={focusContentId===item.id && focusLessonId===lesson.id}

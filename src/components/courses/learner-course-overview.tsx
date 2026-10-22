@@ -166,7 +166,6 @@ export function LearnerCourseOverview({
     .sort((left, right) => left.priority - right.priority);
   // Keep the update feed time-ordered, but never allow its six-item display
   // cap to hide an assessment when picking the next action.
-  const activity = allUpcomingActivity.slice(0, 6);
   // The old home feed allocates 3 pending deadlines, 2 announcements and
   // 2 live meetings, then displays at most six. Completed work belongs in
   // the progress view, not in this feed.
