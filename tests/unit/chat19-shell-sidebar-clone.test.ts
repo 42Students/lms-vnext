@@ -29,7 +29,7 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(css()).toContain("min-width:96px");
     expect(css()).toContain("width:256px");
     expect(css()).toContain("transition:width .15s cubic-bezier(.2,0,0,1)");
-    expect(css()).toContain("box-shadow:inset 3px 0 #26bac7");
+    expect(css()).toContain("box-shadow:inset 3px 0 var(--lms-primary)");
   });
 
   it("uses legacy learner rail inset and admin row padding only for the matching visible role", () => {
@@ -55,7 +55,7 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(mobile).toContain('import {Button} from "@/components/ui/button"');
     expect(mobile).toContain('side="left"');
     expect(mobile).toContain('headerLeading={<ShellLogoMark />}');
-    expect(mobile).toContain('!px-3 !pt-2 !pb-[calc(24px+env(safe-area-inset-bottom,0px))]');
+    expect(mobile).toContain('!px-[var(--lms-space-3)] !pt-[var(--lms-space-2)] !pb-[calc(24px+env(safe-area-inset-bottom,0px))]');
     expect(css()).toContain('.lms-mobile-sidebar[data-slot="drawer"]');
     expect(css()).toContain("width:82vw");
     expect(css()).toContain("max-width:300px");
