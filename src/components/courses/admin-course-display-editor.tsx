@@ -57,6 +57,100 @@ export function AdminCourseDisplayEditor({
     );
   const [thumbnailUrl, setThumbnailUrl] =
     useState(initial?.thumbnailUrl ?? "");
+  const [imageFile,setImageFile]=useState<File|null>(null);
+  const [imageBusy,setImageBusy]=useState(false);
+  const [imageError,setImageError]=useState("");
+  const [imagePending,setImagePending]=useState<{receiptId:string;status:string}|null>(null);
+  const courseImageUrl="/api/courses/"+encodeURIComponent(courseId)+"/image";
+  const uploadedThumbnail=thumbnailUrl===courseImageUrl;
+
+  useEffect(()=>{
+    if(!enabled)return;
+    const controller=new AbortController();
+    void fetch(courseImageUrl+"/status",{cache:"no-store",credentials:"same-origin",
+      signal:controller.signal}).then(async response=>{
+      if(!response.ok)return;
+      const payload:unknown=await response.json();
+      if(!payload||typeof payload!=="object"||!("image" in payload))return;
+      const state=(payload as {image?:{pending?:{receiptId:string;status:string}|null}}).image;
+      if(!controller.signal.aborted&&state?.pending)
+        setImagePending({receiptId:state.pending.receiptId,status:state.pending.status});
+    }).catch(()=>{/* A missing status route never enables an unverified image. */});
+    return ()=>controller.abort();
+  },[courseImageUrl,enabled]);
+
+  async function refreshDisplayAfterImage(nextUrl:string){
+    const result=await apiFetch<{display:Display}>(
+      "/api/courses/"+encodeURIComponent(courseId)+"/display");
+    setSavedDisplay(result.display);
+    setSavedVersion(result.display?.version??null);
+    setThumbnailUrl(nextUrl);
+    router.refresh();
+  }
+  async function completeImage(receiptId:string){
+    const result=await apiFetch<{image:{status:"READY"|"VERIFYING";imageUrl:string|null}}>(
+      courseImageUrl+"/complete",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({receiptId}),
+      });
+    if(result.image.status==="READY"){
+      setImagePending(null);setImageFile(null);
+      await refreshDisplayAfterImage(result.image.imageUrl??courseImageUrl);
+      showToast({tone:"success",title:"Course image uploaded",
+        description:"The verified image is now available in Course Home."});
+    }else{
+      setImagePending({receiptId,status:"VERIFYING"});
+      showToast({tone:"info",title:"Checking file",
+        description:"The image will remain private until verification finishes."});
+    }
+  }
+  async function uploadImage(){
+    if(!imageFile||imageBusy||pending)return;
+    if(!["image/jpeg","image/png","image/webp"].includes(imageFile.type)||
+      imageFile.size<1||imageFile.size>5*1024*1024){
+      setImageError("Choose a JPEG, PNG or WebP image no larger than 5 MiB.");return;
+    }
+    setImageBusy(true);setImageError("");
+    try{
+      const result=await apiFetch<{grant:{
+        receiptId:string;method:"PUT";uploadUrl:string;expiresAt:string;
+        requiredHeaders:Record<string,string>;
+      }}>(courseImageUrl,{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({originalName:imageFile.name,contentType:imageFile.type,
+          sizeBytes:imageFile.size}),
+      });
+      setImagePending({receiptId:result.grant.receiptId,status:"UPLOADING"});
+      const reply=await fetch(result.grant.uploadUrl,{
+        method:"PUT",body:imageFile,headers:result.grant.requiredHeaders,
+        credentials:"omit",cache:"no-store",
+      });
+      if(!reply.ok)throw new Error("Image upload failed. Select the file and try again.");
+      await completeImage(result.grant.receiptId);
+    }catch(error){
+      setImageError(error instanceof Error?error.message:"Image upload failed.");
+    }finally{setImageBusy(false);}
+  }
+  async function checkImage(){
+    if(!imagePending||imageBusy)return;
+    setImageBusy(true);setImageError("");
+    try{await completeImage(imagePending.receiptId);}
+    catch(error){setImageError(error instanceof Error?error.message:
+      "Image verification could not be completed.");}
+    finally{setImageBusy(false);}
+  }
+  async function removeUploadedImage(){
+    if(imageBusy||pending)return;
+    setImageBusy(true);setImageError("");
+    try{
+      await apiFetch(courseImageUrl,{method:"DELETE"});
+      setImagePending(null);setImageFile(null);
+      await refreshDisplayAfterImage("");
+      showToast({tone:"success",title:"Course image removed"});
+    }catch(error){setImageError(error instanceof Error?error.message:
+      "The image could not be removed.");}
+    finally{setImageBusy(false);}
+  }
 
   useEffect(()=>{
     const controller=new AbortController();
@@ -173,7 +267,7 @@ export function AdminCourseDisplayEditor({
   const metadataIssue=Boolean(metadata&&(!name.trim()||!code.trim()||shortTitle.length>120||officialCode.length>40||
     Boolean(cardColor.trim()&&!/^#[a-f0-9]{6}$/i.test(cardColor.trim()))));
   const thumbnailIssue = Boolean(
-    thumbnailUrl.trim() && !/^https:\/\//i.test(thumbnailUrl.trim()),
+    thumbnailUrl.trim() && !uploadedThumbnail && !/^https:\/\//i.test(thumbnailUrl.trim()),
   );
 
   if (!enabled) {
@@ -284,38 +378,70 @@ export function AdminCourseDisplayEditor({
               stripped; simple formatting/list/table tags are retained.
             </span>
           </label>
-          <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] text-[13px] leading-4">
-            Thumbnail URL
-            <Input
-              className="mt-[var(--lms-space-2)] w-full"
-              type="url"
-              inputMode="url"
-              value={thumbnailUrl}
-              error={thumbnailIssue}
-              aria-describedby={thumbnailIssue ? "course-thumbnail-issue" : undefined}
-              placeholder="https://..."
-              disabled={pending}
-              onChange={(event) => setThumbnailUrl(event.target.value)}
-            />
+          <div className="min-w-0 space-y-3">
+            <h4 className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Course image</h4>
+            <p className="text-xs leading-5 text-muted-foreground">
+              Choose a JPEG, PNG or WebP image up to 5 MiB. Upload directly to private storage,
+              then check the receipt before it appears in the course.
+            </p>
+            <label className="grid min-w-0 gap-2 text-sm font-semibold">
+              Upload image
+              <input type="file" accept="image/jpeg,image/png,image/webp"
+                className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
+                disabled={pending||imageBusy}
+                onChange={event=>{setImageFile(event.currentTarget.files?.[0]??null);
+                  setImageError("");}}/>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="secondary" disabled={!imageFile||pending||imageBusy}
+                loading={imageBusy} onClick={()=>void uploadImage()}>
+                {imageBusy?"Working…":"Upload image"}
+              </Button>
+              {imagePending?<Button type="button" variant="secondary"
+                disabled={imageBusy||pending} onClick={()=>void checkImage()}>
+                Check verification
+              </Button>:null}
+            </div>
+            {imagePending?<p role="status" className="text-xs text-muted-foreground">
+              {imagePending.status==="VERIFYING"
+                ?"Checking file. The image is not available until verified."
+                :"Upload receipt issued. Complete the upload to make the image available."}
+            </p>:null}
+            {imageError?<p role="alert" className="text-sm text-error">{imageError}</p>:null}
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              Thumbnail URL (legacy HTTPS link or uploaded image)
+              <Input className="w-full" type={uploadedThumbnail?"text":"url"}
+                inputMode="url" value={thumbnailUrl} error={thumbnailIssue}
+                aria-describedby={thumbnailIssue?"course-thumbnail-issue":undefined}
+                placeholder="https://..." disabled={pending||imageBusy||uploadedThumbnail}
+                onChange={event=>setThumbnailUrl(event.target.value)}/>
+            </label>
             {thumbnailUrl.trim()&&!thumbnailIssue?(
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <a href={thumbnailUrl.trim()} target="_blank" rel="noopener noreferrer"
-                  className="text-sm font-semibold text-primary-text underline">Preview thumbnail</a>
-                <Button type="button" size="sm" variant="secondary" disabled={pending}
-                  onClick={()=>setThumbnailUrl("")}>Remove image</Button>
+              <div className="min-w-0 space-y-2">
+                {/* The active private route never leaks a bucket/object key or signed URL. */}
+                <img src={thumbnailUrl.trim()} width={240} height={140}
+                  alt="Course thumbnail preview" loading="lazy"
+                  className="max-h-40 max-w-full rounded-[var(--lms-control-radius)] border border-border object-contain"/>
+                <div className="flex flex-wrap items-center gap-2">
+                  {uploadedThumbnail?<Button type="button" size="sm" variant="secondary"
+                    disabled={pending||imageBusy} onClick={()=>void removeUploadedImage()}>
+                    Remove image
+                  </Button>:
+                  <Button type="button" size="sm" variant="secondary" disabled={pending||imageBusy}
+                    onClick={()=>setThumbnailUrl("")}>Remove image</Button>}
+                </div>
               </div>
             ):null}
-            {thumbnailIssue ? (
-              <span id="course-thumbnail-issue" className="mt-1 block text-xs font-normal text-[var(--lms-error-text)]">
-                Enter an HTTPS thumbnail URL.
-              </span>
-            ) : null}
-            <span className="mt-1 block text-xs font-normal leading-5 text-muted-foreground">
-              HTTPS only. Upload-backed thumbnails require a verified private
-              storage grant and must not be replaced by an untracked object URL.
+            {thumbnailIssue?<span id="course-thumbnail-issue"
+              className="block text-xs font-normal text-[var(--lms-error-text)]">
+              Enter an HTTPS thumbnail URL or upload a verified course image.
+            </span>:null}
+            <p className="text-xs font-normal leading-5 text-muted-foreground">
+              Private images require the selected college membership and a verified
+              upload receipt. In production, scanner-pending images remain hidden.
               Legacy price, category and enrollment dates are not active Course Home fields.
-            </span>
-          </label>
+            </p>
+          </div>
         </Disclosure>
       </div>
 
@@ -327,7 +453,7 @@ export function AdminCourseDisplayEditor({
           type="button"
           className="w-full sm:w-auto"
           loading={pending}
-          disabled={pending || (!dirty && !metadataDirty) || thumbnailIssue || metadataIssue || Boolean(metadataError)}
+          disabled={pending || imageBusy || (!dirty && !metadataDirty) || thumbnailIssue || metadataIssue || Boolean(metadataError)}
           onClick={save}
         >
           {pending ? "Saving…" : "Save Course"}
