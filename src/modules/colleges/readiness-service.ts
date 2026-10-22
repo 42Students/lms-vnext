@@ -464,7 +464,7 @@ export async function getSuperAdminCollegeReadiness(
   const domainPolicy=evaluateLegacyDomainLoginReadiness({
     requireVerifiedDomains,domainTotal,domainVerified,domainPrimary,verifiedPrimaryDomains,
     hasLogo:college.logoObjectPath?.trim()||college.legacyLogoUrl?.trim()?true:
-      brandingLogo===undefined?null:Boolean(brandingLogo.trim()),
+      brandingLogo===undefined?null:Boolean(brandingLogo?.trim()),
     departments:activeDepartments,facultyMemberships,enrolledLearners,
   });
 
