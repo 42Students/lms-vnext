@@ -106,10 +106,6 @@ export default async function CollegeProjectsPage({
   }));
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
-      <ProjectAdminNav
-        basePath="/college/projects"
-        active="workspaces"
-      />
       <PageHeader
         title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
@@ -119,6 +115,7 @@ export default async function CollegeProjectsPage({
           <Link href="/college/projects/deleted" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Deleted workspaces</Link>
         </div>}
       />
+      <ProjectAdminNav basePath="/college/projects" active="workspaces" />
 
       {!templatesResult.ok && <Banner tone="warning">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</Banner>}
       <FilterBar title="Filters"><ProjectAdminFilters query={query} legacyWorkspaces

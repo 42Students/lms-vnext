@@ -104,7 +104,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Authentication and privileged access checklist →</Link>}
       />
 
-      <section aria-label="Tenant Settings overview" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
+      <section aria-label="Tenant Settings overview" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-sm font-semibold text-body">Runtime configuration</p>
           <span className="rounded-full border border-[var(--lms-primary)] bg-primary-subtle px-3 py-1 text-xs font-semibold text-primary-text">{scopeLabel}</span>
@@ -166,7 +166,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <strong>Clear the college in the header to edit platform-wide settings</strong>
           <p className="mt-2">While a college is selected, platform-wide settings are locked, so a change for every college is never made by accident while working on one.</p>
         </Banner>:null}
-        <div className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <div className="mt-3 flex flex-wrap items-center gap-3 border-y border-border py-3">
           <span className="text-sm font-semibold">Editing scope:</span>
           <span className="rounded-md border border-border px-3 py-2 text-sm">{organizationOnly?"Organization — unused":editorScope==="COLLEGE"?"College settings":"Platform-wide settings"}</span>
           <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Choose another scope</Link>
