@@ -113,7 +113,7 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
    <TpoStudentNudgePanel rows={nudgeRows}/>
   </details>:null}
   <VerificationWorkspace key={JSON.stringify(filters)+serverTab+serverKind} rows={visible}
-   legacyTpoCopy initialTab={serverTab} initialKind={serverKind} counts={counts}
+   legacyTpoCopy initialTab={serverTab} initialKind={serverKind} {...(counts !== undefined ? {counts} : {})}
    disableLocalSearch preserveServerOrder showTabCounts={true}
    onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?(params.get("waitingState")??"ALL"):"ALL",waitingSince:tab==="WAITING"?(params.get("waitingSince")??"ALL"):"ALL"})}
    onKindChange={kind=>navigate({kind,page:"1"})}
@@ -122,7 +122,7 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
    key={active.learnerMembershipId+active.section} row={active}
    apiBase="/api/tpo/verification"
    onClose={()=>sequenceIndex!==null?finishSequential():setSelected(null)}
-   sequenceProgress={sequenceIndex===null?undefined:(sequenceIndex+1)+" of "+sequenceRows.length}
+   {...(sequenceIndex !== null ? {sequenceProgress:(sequenceIndex+1)+" of "+sequenceRows.length} : {})}
    onNext={nextSequential} onFinish={finishSequential}
    onSaved={saved} />}
  </section>;
