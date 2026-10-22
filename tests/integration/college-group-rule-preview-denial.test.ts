@@ -36,29 +36,26 @@ const learner: RequestContext = {
 describe.skipIf(!enabled)("College group rule preview — isolated PostgreSQL", () => {
   it("reads valid rule matches, prevents foreign college and non-admin visibility, and never writes", async () => {
     const ids = {
-      period: randomUUID(), program: randomUUID(), cohort: randomUUID(),
-      enrollment: randomUUID(), group: randomUUID(), rule: randomUUID(),
-      roster: randomUUID(),
+      group: randomUUID(), rule: randomUUID(), roster: randomUUID(),
     };
     const marker = "ruleprev-" + ids.group.slice(0, 8);
     await expect(getDb().transaction(async tx => {
-      await tx.execute(sql`insert into academic_periods(id,college_id,name,code,start_date,end_date)
-        values (${ids.period},${SEED_IDS.collegeA},${marker},${marker},'2026-07-01','2026-12-31')`);
-      await tx.execute(sql`insert into programs(id,department_id,name,code,duration_terms)
-        values (${ids.program},${SEED_IDS.departmentA},${marker},${marker},4)`);
-      await tx.execute(sql`insert into cohorts(id,program_id,name,code,start_period_id)
-        values (${ids.cohort},${ids.program},${marker},${marker},${ids.period})`);
-      await tx.execute(sql`insert into learner_program_enrollments
-        (id,membership_id,program_id,cohort_id,status)
-        values (${ids.enrollment},${SEED_IDS.learnerCollegeAMembership},
-          ${ids.program},${ids.cohort},'ACTIVE')`);
+      // Registered schema permits only one ACTIVE program enrollment per learner.
+      // Use the already-active seed learner's academic program rather than
+      // forging a concurrent second enrollment and invalidating the transaction.
+      const enrolled=await tx.execute(sql<{program_id:string}>`
+        select program_id from learner_program_enrollments
+        where membership_id=${SEED_IDS.learnerCollegeAMembership}
+          and status='ACTIVE' limit 1`);
+      const programId=enrolled.rows[0]?.program_id;
+      if(!programId)throw new Error("Seed learner must have an active program enrollment");
       await tx.execute(sql`insert into lms_groups
         (id,kind,owner_scope,college_id,name,status,created_by_user_id)
         values (${ids.group},'STUDY_GROUP','COLLEGE',${SEED_IDS.collegeA},
           ${marker},'ACTIVE',${SEED_IDS.collegeAdminUser})`);
       await tx.execute(sql`insert into lms_group_rules(id,group_id,criteria_json,criteria_version,auto_refresh)
         values (${ids.rule},${ids.group},
-          jsonb_build_object('allowedProgramIds',jsonb_build_array(${ids.program}::text)),
+          jsonb_build_object('allowedProgramIds',jsonb_build_array(${programId}::text)),
           1,false)`);
       const run = (ctx: RequestContext, raw: unknown) =>
         previewCollegeGroupRule(ctx, raw, tx);
