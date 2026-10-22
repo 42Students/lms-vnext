@@ -174,6 +174,17 @@ async function cleanup() {
   );
 }
 
+/** Registered publish requires persisted eligibility policy and an
+ * evaluative round. Every fixture path uses the same real publication checks.
+ */
+async function seedPublishableEligibilityPolicy(jobId:string){
+  await pool.query(
+    "INSERT INTO placement_job_eligibility_policies(job_id,updated_by_user_id) "+
+    "VALUES($1,$2) ON CONFLICT (job_id) DO NOTHING",
+    [jobId,SEED_IDS.facultyUser],
+  );
+}
+
 async function createApplication(
   suffix: string,
 ) {
@@ -201,6 +212,10 @@ async function createApplication(
       applicationMode: "INTERNAL",
     },
   );
+  await createPlacementRound(tpo,job.id,{
+    kind:"INTERVIEW",name:"Evaluative interview",
+  });
+  await seedPublishableEligibilityPolicy(job.id);
   await publishPlacementJob(tpo, job.id);
   const application =
     await applyToPlacementJob(
@@ -403,6 +418,7 @@ describe("Placement learner requests and exceptions", () => {
         },
       );
 
+    await seedPublishableEligibilityPolicy(job.id);
     await publishPlacementJob(
       tpo,
       job.id,
@@ -585,6 +601,7 @@ describe("Placement learner requests and exceptions", () => {
         },
       );
 
+    await seedPublishableEligibilityPolicy(job.id);
     await publishPlacementJob(
       tpo,
       job.id,
