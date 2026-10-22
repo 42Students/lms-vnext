@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-5-027-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-5-032-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-5-032-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [x] G2-6-001-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-6-001-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-6-015-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
@@ -27,3 +27,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-6-001-047: OK — `src/modules/people/faculty-bulk-import-model.ts:11,28,76-91` accepts and validates the Faculty Type CSV field as only LECTURER or MENTOR; `src/modules/people/faculty-bulk-import-service.ts:75-82` preserves the lecturer/mentor distinction during import. Matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Faculty.js:600,666-668,718`.
 
 - G2-15-001-018: FIXED — `c01687f12a2c3e3b37c31b558e36c7f460054de4`, `9d52a62eb422defe8ab16c5f778ea652000f7f07` (`src/components/courses/learner-course-list.tsx`, `src/app/(authenticated)/learn/courses/page.tsx`): restored legacy `class_id` first / batch, academic-year, section fallback grouping headers on learner cards. Legacy `docs/legacy-source/frontend/src/utils/courseListingUtils.js:33-36`.
+
+- G2-5-032-012: FIXED — `396b17bb8f8b0fe59ed6877d12ad3664106d5f2e`, `src/modules/operations/log-digest-selection.ts` restores the legacy bounded top-10 new-error (frequency sorted), regression, and fixed selections, active count, quiet flag and 3,800-character output bound; reference `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/LogDigestService.java:43-89,113-128`. This implements digest selection; deployment scheduler/Telegram wiring remains separate.
