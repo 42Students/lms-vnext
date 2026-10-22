@@ -57,7 +57,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   const errorFor=(field:Field)=>fieldErrors[field];
   const clearField=(field:Field)=>setFieldErrors(previous=>({...previous,[field]:undefined}));
   const showError=(error:unknown,fallback:string)=>{
-    if(error instanceof FriendlyFetchError && (error.status===404 || error.status===410)){
+    if(error instanceof FriendlyFetchError && (error["status"]===404 || error["status"]===410)){
       setState("invalid");
       return;
     }
@@ -129,7 +129,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       }).catch(()=>undefined);
     }).catch(error=>{
       if(controller.signal.aborted)return;
-      setState(error instanceof FriendlyFetchError && (error.status===404||error.status===410)?"invalid":"load_error");
+      setState(error instanceof FriendlyFetchError && (error["status"]===404||error["status"]===410)?"invalid":"load_error");
     });
     return () => controller.abort();
   }, [token,retrySequence]);
@@ -187,18 +187,18 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         return;
       }
       const result=outcome as Record<string,unknown>;
-      if(result.accepted!==true ||
-         (result.outcome!=="JOINED" && result.outcome!=="PENDING_CONSENT") ||
-         result.status!==(result.outcome==="PENDING_CONSENT"?"PENDING_HR":"JOINED") ||
-         typeof result.signInEmail!=="string" || !result.signInEmail.trim() ||
-         result.signInEmail.trim().toLowerCase()!==verifiedRecipient.toLowerCase()){
+      if(result["accepted"]!==true ||
+         (result["outcome"]!=="JOINED" && result["outcome"]!=="PENDING_CONSENT") ||
+         result["status"]!==(result["outcome"]==="PENDING_CONSENT"?"PENDING_HR":"JOINED") ||
+         typeof result["signInEmail"]!=="string" || !result["signInEmail"].trim() ||
+         result["signInEmail"].trim().toLowerCase()!==verifiedRecipient.toLowerCase()){
         // An accepted response must affirm the SAME email that received OTP.
         // An unrelated mailbox is not proof of an authorized college grant.
         setActionError(UNCONFIRMED);
         return;
       }
-      setJoinedEmail(result.signInEmail);
-      setState(result.outcome==="PENDING_CONSENT"?"pending":"joined");
+      setJoinedEmail(result["signInEmail"]);
+      setState(result["outcome"]==="PENDING_CONSENT"?"pending":"joined");
     }catch(error){
       showError(error,"Something went wrong. Please try again.");
     }
@@ -222,7 +222,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         } : {}),
       });
       if(!delivery || typeof delivery!=="object" || Array.isArray(delivery) ||
-         (delivery as Record<string,unknown>).sent!==true){
+         (delivery as Record<string,unknown>)["sent"]!==true){
         setActionError("We couldn't confirm that the code was sent. Please retry.");
         return;
       }
@@ -239,7 +239,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   }
 
   const shell = (children: React.ReactNode) => (
-    <main className={authStyles.page}>
+    <main className={authStyles["page"]}>
       <div className="flex min-h-dvh min-w-0 items-center justify-center bg-[#f5f7f9] px-4 py-8 md:py-12">
       <Card as="section" className="w-full max-w-[440px]">
         {children}
