@@ -77,6 +77,7 @@ export function HrDriveDraftForm({
   const [submitting,setSubmitting] = useState(false);
   const [jdUploading,setJdUploading] = useState(false);
   const [jdUploadMessage,setJdUploadMessage] = useState("");
+  const [jdPendingKey,setJdPendingKey] = useState<string|null>(null);
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
   const submittedRef=useRef(false);
   const submittingRef=useRef(false);
@@ -188,6 +189,25 @@ export function HrDriveDraftForm({
       setNotice("Restored local draft. It has not been submitted or sent.");}
     catch{setNotice("Unable to access saved drafts in this browser.");}
   }
+  async function confirmJobDescription(objectKey: string) {
+    setJdUploading(true);
+    try {
+      await apiFetch("/api/placements/recruiter/drives/jd-upload", {
+        method: "POST", credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "CONFIRM", collegeId, objectKey }),
+      });
+      setDraft(current => ({ ...current, jdObjectKey: objectKey }));
+      setJdPendingKey(null);
+      setJdUploadMessage("Job description uploaded");
+    } catch {
+      // Malware scanning may finish after a successful PUT. Preserve the
+      // private key for a same-scope retry; never claim the file is verified.
+      setJdPendingKey(objectKey);
+      setJdUploadMessage("The file was transferred and is waiting for verification. Retry verification before sending.");
+    } finally { setJdUploading(false); }
+  }
+
   async function uploadJobDescription(file: File | undefined) {
     if (!file || jdUploading || submitting) return;
     const extension = file.name.toLowerCase().split(".").pop();
@@ -213,13 +233,8 @@ export function HrDriveDraftForm({
       const uploaded = await fetch(grant.uploadUrl, { method: "PUT", body: file,
         headers: grant.requiredHeaders, credentials: "omit", redirect: "error" });
       if (!uploaded.ok) throw new Error("Upload was rejected");
-      await apiFetch("/api/placements/recruiter/drives/jd-upload", {
-        method: "POST", credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "CONFIRM", collegeId, objectKey: grant.objectKey }),
-      });
-      setDraft(current => ({ ...current, jdObjectKey: grant.objectKey }));
-      setJdUploadMessage("Job description uploaded");
+      setJdPendingKey(grant.objectKey);
+      await confirmJobDescription(grant.objectKey);
     } catch {
       setJdUploadMessage("Could not upload the file. Try again. If the file is being scanned, retry after verification.");
     } finally { setJdUploading(false); }
@@ -252,7 +267,7 @@ export function HrDriveDraftForm({
   }
 
   async function sendFormalDriveRequest(){
-    if(submitting||jdUploading||submittingRef.current||submittedRef.current)return;
+    if(submitting||jdUploading||jdPendingKey||submittingRef.current||submittedRef.current)return;
     const valid=hrDriveDraftSchema.safeParse(draft);
     if(!valid.success){
       const fields: Record<string, string> = {};
@@ -463,10 +478,12 @@ export function HrDriveDraftForm({
               disabled={submitting || jdUploading} className="max-w-full text-sm"
               onChange={event => { const file = event.currentTarget.files?.[0];
                 void uploadJobDescription(file); event.currentTarget.value = ""; }} />
+            {jdPendingKey ? <Button type="button" variant="secondary" disabled={jdUploading || submitting}
+              onClick={() => void confirmJobDescription(jdPendingKey)}>Retry verification</Button> : null}
             {draft.jdObjectKey ? <>
               <Button type="button" variant="secondary" onClick={() => void viewUploadedJobDescription()}>View the uploaded file</Button>
               <Button type="button" variant="secondary" disabled={jdUploading || submitting}
-                onClick={() => { setDraft(current => ({ ...current, jdObjectKey: undefined })); setJdUploadMessage(""); }}>Remove</Button>
+                onClick={() => { setDraft(current => ({ ...current, jdObjectKey: undefined })); setJdPendingKey(null); setJdUploadMessage(""); }}>Remove</Button>
             </> : null}
           </div>
           {jdUploadMessage ? <span role="status" className="text-xs text-muted-foreground">{jdUploadMessage}</span> : null}
@@ -667,7 +684,7 @@ export function HrDriveDraftForm({
                 rememberFieldErrors(fields);
               } else setFieldErrors({});
             }}>Preview and validate</Button>
-          <Button type="button" disabled={!result.success||submitting||jdUploading}
+          <Button type="button" disabled={!result.success||submitting||jdUploading||Boolean(jdPendingKey)}
             loading={submitting} aria-busy={submitting}
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
@@ -761,7 +778,7 @@ export function HrDriveDraftForm({
       </aside>
       </div>
       <div className="flex justify-stretch border-t border-border pt-4 lg:hidden">
-        <Button type="button" className="w-full" disabled={!result.success || submitting || jdUploading}
+        <Button type="button" className="w-full" disabled={!result.success || submitting || jdUploading || Boolean(jdPendingKey)}
           loading={submitting} aria-busy={submitting}
           onClick={() => void sendFormalDriveRequest()}>
           {fixRequestId ? editMode === "EDIT" ? "Save changes" : "Fix and Resend" : "Send for review"}

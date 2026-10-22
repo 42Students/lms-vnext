@@ -1,6 +1,9 @@
 import "server-only";
 
 import { z } from "zod";
+import { and, eq } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { colleges, placementCompanyRelationships, placementRecruiterCollegeGrants, users } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
 import { hasActiveRecruiter, type RequestContext } from "@/modules/identity/context";
 import { recruiterGrantEffectiveAt } from "./recruiter-grant-expiry-policy";
@@ -19,17 +22,35 @@ const types = {
 } as const;
 const maxBytes = 5 * 1024 * 1024;
 
-function requireRecruiterStorageScope(context: RequestContext, rawCollegeId: string) {
+async function requireRecruiterStorageScope(context: RequestContext, rawCollegeId: string) {
   const collegeId = uuid.parse(rawCollegeId);
   if (context.user.platformStatus !== "ACTIVE" ||
       !hasActiveRecruiter(context) || !context.recruiter ||
       context.recruiter.userId !== context.user.id)
     throw new Error("JD_ACCESS_DENIED");
   const grant = context.recruiter.grants.find(item => item.collegeId === collegeId);
-  if (!grant || !recruiterGrantEffectiveAt(grant, new Date(), "DRIVES") ||
-      !can(context, "placements.recruiter.read", {
+  if (!grant || !can(context, "placements.recruiter.read", {
         collegeId, placementCompanyRelationshipId: grant.companyRelationshipId,
-      }))
+      })) throw new Error("JD_ACCESS_DENIED");
+  // Context grants only contain identity, not expiry/verification. Confirm
+  // persisted capability and active company/college on every grant request.
+  const [record] = await getDb().select({
+    grant: placementRecruiterCollegeGrants,
+  }).from(placementRecruiterCollegeGrants)
+    .innerJoin(placementCompanyRelationships, eq(
+      placementCompanyRelationships.id, placementRecruiterCollegeGrants.companyRelationshipId))
+    .innerJoin(colleges, eq(colleges.id, placementCompanyRelationships.collegeId))
+    .innerJoin(users, eq(users.id, placementRecruiterCollegeGrants.recruiterUserId))
+    .where(and(
+      eq(placementRecruiterCollegeGrants.id, grant.id),
+      eq(placementRecruiterCollegeGrants.recruiterUserId, context.user.id),
+      eq(placementCompanyRelationships.id, grant.companyRelationshipId),
+      eq(placementCompanyRelationships.collegeId, collegeId),
+      eq(placementCompanyRelationships.status, "ACTIVE"),
+      eq(colleges.status, "ACTIVE"),
+      eq(users.platformStatus, "ACTIVE"),
+    )).limit(1);
+  if (!record || !recruiterGrantEffectiveAt(record.grant, new Date(), "DRIVES"))
     throw new Error("JD_ACCESS_DENIED");
   // A recruiter is not a college member. Use their authenticated user UUID as
   // the storage owner segment, never a client-provided membership or key prefix.
@@ -58,7 +79,7 @@ export async function initiateOwnRecruiterJdUpload(context: RequestContext, raw:
     collegeId: uuid, originalName: z.string().min(1).max(255),
     contentType: z.string(), sizeBytes: z.number().int().positive(),
   }).parse(raw);
-  const owner = requireRecruiterStorageScope(context, input.collegeId);
+  const owner = await requireRecruiterStorageScope(context, input.collegeId);
   const verified = validateRecruiterJdFile(input);
   const grant = await createPrivateUploadGrant({
     ...owner, namespace: "placement-document",
@@ -76,7 +97,7 @@ export async function initiateOwnRecruiterJdUpload(context: RequestContext, raw:
 export async function verifyOwnRecruiterJdObject(
   context: RequestContext, collegeId: string, rawObjectKey?: string,
 ) {
-  const owner = requireRecruiterStorageScope(context, collegeId);
+  const owner = await requireRecruiterStorageScope(context, collegeId);
   if (!rawObjectKey) return null;
   const objectKey = keySchema.parse(rawObjectKey);
   const proof = await readPrivateObjectAttestation(objectKey, owner);
@@ -91,7 +112,7 @@ export async function readOwnRecruiterJd(
 ) {
   const proof = await verifyOwnRecruiterJdObject(context, collegeId, objectKey);
   if (!proof) throw new Error("JD_NOT_FOUND");
-  const owner = requireRecruiterStorageScope(context, collegeId);
+  const owner = await requireRecruiterStorageScope(context, collegeId);
   const grant = await createPrivateReadGrant({
     ...owner, objectKey: proof.objectKey,
   });
