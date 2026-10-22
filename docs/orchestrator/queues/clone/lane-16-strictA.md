@@ -3,7 +3,7 @@
 No-mercy program part A (compiler flags). Work packets in order; each lists files and their baseline errors. Fix at the cause, push after every file, tick the packet line when all its files are pushed.
 
 - [x] `docs/audit/strictness/A/packets/A_016.md` — 96e0715, 694f21e
-- [ ] `docs/audit/strictness/A/packets/A_036.md`
+- [x] `docs/audit/strictness/A/packets/A_036.md` — 8 source files corrected on chatgpt/chat-16-b
 - [ ] `docs/audit/strictness/A/packets/A_056.md`
 - [ ] `docs/audit/strictness/A/packets/A_076.md`
 - [ ] `docs/audit/strictness/A/packets/A_096.md`
