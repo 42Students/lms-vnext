@@ -255,25 +255,34 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <p className="text-xs text-muted-foreground">Class syllabus order includes Videos, Resources, YouTube and Live Classes in one sequence per Lesson and Section. Choose a Section from a content row, then use the accessible Up/Down controls and Save lesson order. Keyboard users can tab to the move controls.</p>
   {data.items.length?<div role="table" aria-label={"Existing "+title}
     className="min-w-0 overflow-x-auto border-y border-border" tabIndex={0}>
-   <div role="row" className="grid min-w-[680px] grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)] gap-3 border-b border-border py-3 text-xs font-semibold tracking-wide text-muted-foreground">
-    {["Title","Visibility","Students","Materials","Action"].map(column=>
+   <div role="row" className="grid min-w-[900px] grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,2fr)_minmax(0,1.5fr)] gap-3 border-b border-border py-3 text-xs font-semibold tracking-wide text-muted-foreground">
+    {["Title","Type","Order","Students","Content","Action"].map(column=>
      <span role="columnheader" key={column}>{column}</span>)}
    </div>
    {data.items.map(item=><article role="row" key={item.id}
-    className="grid min-w-[680px] grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)] gap-3 border-b border-border py-3 last:border-b-0">
+    className="grid min-w-[900px] grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,2fr)_minmax(0,1.5fr)] gap-3 border-b border-border py-3 last:border-b-0">
     <div role="cell" className="min-w-0">
      <h2 className="m-0 break-words text-sm font-semibold text-foreground">{item.title?.trim()||"Untitled"}</h2>
      <p className="mt-1 break-words text-xs text-muted-foreground">{item.courseName} ({item.courseCode}) · {item.lessonName}</p>
      <p className="mt-1 break-words text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
     </div>
     <div role="cell" className="min-w-0 space-y-1">
-      <p className="text-xs font-semibold text-muted-foreground">
+      <span className="block text-xs font-semibold text-muted-foreground lg:hidden">Type</span>
+      <StatusBadge tone="neutral">{item.contentType==="YOUTUBE"?"YouTube":
+        item.contentType==="LIVE_CLASS"?"Live class":
+        item.contentType==="RESOURCE"?"Resource":"Video"}</StatusBadge>
+      <p className="text-xs text-muted-foreground">
+        {item.deliveryId?"Section-specific":"Shared"}
+      </p>
+    </div>
+    <div role="cell" className="min-w-0 space-y-1">
+      <span className="block text-xs font-semibold text-muted-foreground lg:hidden">Order</span>
+      <span className="text-sm font-medium tabular-nums">{item.sequence+1}</span>
+      <p className="text-xs text-muted-foreground">
         {item.deliveryId?
           sections.find(section=>section.id===item.deliveryId)?.sectionName??"Specific section":
           "All sections"}
       </p>
-      <StatusBadge tone="neutral">{item.deliveryId?"One specific section":"Shared"}</StatusBadge>
-      <p className="text-xs text-muted-foreground">Order {item.sequence+1}</p>
     </div>
     <div role="cell" className="min-w-0 space-y-2">
      <span className="block text-xs font-semibold text-muted-foreground xl:hidden">Students</span>
@@ -283,7 +292,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      <p className="text-xs text-muted-foreground">Requires published content, lesson and offering ancestry.</p>
     </div>
     <div role="cell" className="min-w-0 space-y-1">
-     <span className="block text-xs font-semibold text-muted-foreground xl:hidden">Materials</span>
+     <span className="block text-xs font-semibold text-muted-foreground xl:hidden">Content</span>
      <p className="text-xs text-muted-foreground">
        {item.contentType==="RESOURCE"
         ?"Materials: "+item.materialCount
