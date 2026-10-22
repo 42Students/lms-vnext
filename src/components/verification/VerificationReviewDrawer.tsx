@@ -133,6 +133,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
       </section>}
     <section className="rounded-[var(--lms-radius-card)] border border-border p-4">
      <h3 className="font-semibold">{row.section==="EDUCATION"?"Education documents":"Identity documents"}</h3>
+     <p className="mt-1 text-xs text-muted-foreground">Private supporting documents require an authorized, signed link.</p>
      {detail.review.documents.some(doc=>doc.purpose==="RESUME")&&<p className="mb-2 text-sm font-semibold">
        Resume available: open the private signed link below.
      </p>}

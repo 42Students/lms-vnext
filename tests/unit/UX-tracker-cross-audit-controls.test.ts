@@ -27,7 +27,11 @@ describe("Cross-audit Tracker directory and actions",()=>{
   it("UX-tracker-shared-"+name+"-02 removes undersized actions and low-contrast link ink",()=>{
    const s=src(file);expect(s).not.toContain("min-h-10");
    expect(s).toContain("min-h-11");
-   expect(s).toContain("focus-visible:");
+   if(file.endsWith("tracker-issue-bulk-actions.tsx")){
+     // Shared controls supply focus styles, rather than duplicating classes in callers.
+     expect(s).toContain('import { Button } from "@/components/ui/button"');
+     expect(src("src/components/ui/button.tsx")).toContain("focus-visible:outline-2");
+   }else expect(s).toContain("focus-visible:");
   });
  }
 });
