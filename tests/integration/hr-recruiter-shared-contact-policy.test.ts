@@ -10,7 +10,6 @@ import {createPlacementRound} from "@/modules/placements/round-service";
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
-import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=Boolean(process.env.TEST_DATABASE_URL)&&process.env.DB03_ISOLATED_TEST_DATABASE==="1";
 if(enabled) assertDb018DisposableTarget(process.env,{serviceBound:true});
