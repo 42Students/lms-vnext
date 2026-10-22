@@ -57,10 +57,16 @@ export function buildAccreditationExport(
   period: AccreditationPeriod,
   facts: AccreditationFacts,
 ) {
-  const report = summarizePlacementReports({
+  const baseReport = summarizePlacementReports({
     ...facts,
     registrations: [],
   });
+  // Without a certified graduating-cohort denominator, zero is not a
+  // meaningful placement rate. Do not report 0% as an observed outcome.
+  const report = {...baseReport, metrics: {
+    ...baseReport.metrics, placementRatePercent: null,
+    placementRateOneDecimal: null,
+  }};
   const rows: AccreditationRow[] = [];
   const issues: string[] = [...ACCREDITATION_LIMITATIONS];
   const seasonName = period?.name ?? "";
