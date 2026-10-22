@@ -43,7 +43,8 @@ describe("chat-11 faculty attendance gap closure verification",()=>{
  it("FAC-attendance-grades-09 shows marked and unmarked session counts with monthly report tiles",()=>{
    const code=ui();expect(code).toContain("present marks across");
    expect(code).toContain('session${monthSummary.unmarkedSessions === 1 ? "" : "s"} not yet marked');
-   for(const label of ['["Students",','["Sessions",','["Absences",','["Not marked",'])expect(code).toContain(label);
+   for(const label of ['label:"Students"','label:"Sessions"','label:"Absences"','label:"Not marked"'])expect(code).toContain(label);
+   expect(code).toContain("<SummaryStrip");
  });
  it("FAC-attendance-grades-11 searches the roster with the legacy student-name label",()=>{
    const code=ui();expect(code).toContain('aria-label="Find a student by name"');
