@@ -24,7 +24,7 @@ export const superAdminCourseBulkSchema=z.strictObject({
  * learner workspace URL. Never treat a visibility operation as deletion. */
 export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:unknown){
  const input=superAdminCourseBulkSchema.parse(raw);
- const limit=Number(process.env.COURSE_BULK_STATUS_MAX??"100");
+ const limit=Number(process.env["COURSE_BULK_STATUS_MAX"]??"100");
  const allowed=Number.isSafeInteger(limit)?Math.min(100,Math.max(1,limit)):100;
  if(input.courseIds.length>allowed)
   throw new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE");
