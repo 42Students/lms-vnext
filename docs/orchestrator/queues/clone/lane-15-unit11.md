@@ -2,12 +2,12 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-15-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/UX-college-projects-workspaces-workspaceId-01.test.ts` (1 failing)
-- [ ] `tests/unit/chat15-faculty-assignment-material-authoring.test.ts` (1 failing)
-- [ ] `tests/unit/chat2-tpo-unowned-work-parity.test.ts` (1 failing)
-- [ ] `tests/unit/chat6-tracker-log-scope-policy.test.ts` (1 failing)
-- [ ] `tests/unit/chat9-verify2-learner-course-recovery.test.ts` (1 failing)
-- [ ] `tests/unit/public-auth-login-gap-verification.test.ts` (1 failing)
+- [x] `tests/unit/UX-college-projects-workspaces-workspaceId-01.test.ts` (1 failing)
+- [x] `tests/unit/chat15-faculty-assignment-material-authoring.test.ts` (1 failing)
+- [x] `tests/unit/chat2-tpo-unowned-work-parity.test.ts` (1 failing)
+- [x] `tests/unit/chat6-tracker-log-scope-policy.test.ts` (1 failing)
+- [x] `tests/unit/chat9-verify2-learner-course-recovery.test.ts` (1 failing)
+- [x] `tests/unit/public-auth-login-gap-verification.test.ts` (1 failing)
 
 ## Failures (from CI log)
 
@@ -137,3 +137,14 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 + import {FRIENDLY_MESSAGES} from "@/lib/friendly-error";
 ```
 
+
+## Lane chat-15 repair dispositions
+
+- `UX-college-projects-workspaces-workspaceId-01.test.ts`: the redirect uses `legacyWorkspaceSummaryQuery(query)` (sanitized string), not a `URLSearchParams.size` local; updated assertion in commit `4accd98b` to check both sanitizer call and final same-tab redirect.
+- `chat15-faculty-assignment-material-authoring.test.ts`: the current warning additionally forbids public Drive links; updated the exact-copy assertion without removing protection in commit `20b03817`.
+- `chat2-tpo-unowned-work-parity.test.ts`: old bookmark `/tpo/team` redirects roster requests to `/tpo/settings?tab=team` and retains the role/membership gate; updated assertion in commit `c582bc76`.
+- `chat6-tracker-log-scope-policy.test.ts`: page additionally checks ACTIVE platform status and both acting scopes; updated test to assert those controls in commit `ce8f8ac4`.
+- `chat9-verify2-learner-course-recovery.test.ts`: failure branch derives `lessonReadFailed` from the rejected roadmap request and renders Retry; updated assertions in commit `cf5d8036`.
+- `public-auth-login-gap-verification.test.ts`: recovery calls `loadLoginAttempt(tenantKey)` so a code never resumes for the wrong tenant; updated test and expiration assertion in commit `18dd2247`.
+
+Static source review only: current runner is unavailable; CI pass is not claimed. No test files were deleted or skipped.
