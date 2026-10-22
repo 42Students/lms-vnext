@@ -20,7 +20,7 @@ describe("Learner assessment due bucket page wiring", () => {
     expect(ui).toContain("Awaiting employer schedule");
     expect(ui).toContain("learnerAssessmentDueBucketSchema.safeParse");
     expect(ui).toContain("visibleRows.length === 0");
-    expect(ui).toContain("sm:grid-cols-3");
+    expect(ui).toContain("md:grid-cols-3");
   });
   it("does not conflate failures with no assessments", () => {
     const loading = read("src/app/(authenticated)/learn/my-placements/assessments/loading.tsx");
