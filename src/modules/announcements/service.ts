@@ -555,6 +555,11 @@ export async function listVisibleAnnouncementsForMembership(
     and(
       eq(db10Announcements.receiverType, "COLLEGE"),
       eq(db10Announcements.receiverId, membership.collegeId),
+      // Placement broadcasts with the legacy ALL audience reach learners,
+      // not every faculty or administrator who belongs to the college.
+      membership.roles.includes("LEARNER")
+        ? undefined
+        : sql`${db10Announcements.senderType} <> 'TPO'`,
     )!,
   ];
 
