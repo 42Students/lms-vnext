@@ -59,8 +59,9 @@ export type AcademicsServiceErrorCode =
 export class AcademicsServiceError extends Error {
   constructor(
     public readonly code: AcademicsServiceErrorCode,
+    message: string = code,
   ) {
-    super(code);
+    super(message);
     this.name = "AcademicsServiceError";
   }
 }
