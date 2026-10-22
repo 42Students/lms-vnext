@@ -39,7 +39,7 @@ export function learnerAssignmentUploadHeadersSafe(headers: Record<string, strin
       !requiredUploadHeaders.every(name => Object.hasOwn(headers, name))) return false;
   if (headers["x-amz-meta-malware-scan-status"] !== "PENDING") return false;
   const size = headers["x-amz-meta-expected-size"];
-  if (!/^[1-9][0-9]{0,7}$/.test(size) || Number(size) > 50 * 1024 * 1024) return false;
+  if (size === undefined || !/^[1-9][0-9]{0,7}$/.test(size) || Number(size) > 50 * 1024 * 1024) return false;
   return Object.entries(headers).every(([name, value]) =>
     requiredUploadHeaders.some(allowed => name === allowed) &&
     /^[a-z0-9-]+$/.test(name) && value.length > 0 && value.length <= 1024 &&
