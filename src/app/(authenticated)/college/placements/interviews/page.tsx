@@ -109,7 +109,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
    <form method="get" role="search" aria-label="Interview appointment filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
     <input type="hidden" name="pageSize" value={String(valid.data.pageSize)}/>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student, company or role
-     <Input type="search" name="q" defaultValue={valid.data.q} maxLength={100} />
+     <Input type="search" name="q" defaultValue={valid.data.q} maxLength={100} placeholder="Search..." />
     </label>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
       <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Apply filters</Button>
@@ -165,6 +165,13 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
         <option value="STUDENT">Student</option>
       </Select>
       <form method="get" id="interview-sort-form" action="/college/placements/interviews">
+        <input type="hidden" name="pageSize" value={String(valid.data.pageSize)}/>
+        {valid.data.q?<input type="hidden" name="q" value={valid.data.q}/>:null}
+        {valid.data.status!=="ALL"?<input type="hidden" name="status" value={valid.data.status}/>:null}
+        {valid.data.mode!=="ALL"?<input type="hidden" name="mode" value={valid.data.mode}/>:null}
+        {valid.data.type!=="ALL"?<input type="hidden" name="type" value={valid.data.type}/>:null}
+        {valid.data.companyId?<input type="hidden" name="companyId" value={valid.data.companyId}/>:null}
+        {valid.data.departmentId?<input type="hidden" name="departmentId" value={valid.data.departmentId}/>:null}
         <Button type="submit" variant="secondary">Sort</Button>
       </form>
     </span>
