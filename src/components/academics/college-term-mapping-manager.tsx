@@ -213,20 +213,33 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       return;
     }
     setError(null); setFieldErrors({});
+    const nextOrder = peers.map(peer => peer.id).filter(peerId => peerId !== id);
+    nextOrder.splice(position - 1, 0, id);
     if (oldPosition !== position) {
-      const ids = peers.map(peer => peer.id).filter(peerId => peerId !== id);
-      ids.splice(position - 1, 0, id);
-      setOptimisticByTerm(current => ({ ...current, [termId]: ids }));
+      setOptimisticByTerm(current => ({ ...current, [termId]: nextOrder }));
       setNotice("Saving course order…");
     }
     inFlight.current=true;
     start(async () => {
       try {
-        await apiFetch("/api/academics/semester-course-mappings/" + encodeURIComponent(id), {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(parsed.data),
-        });
+        if (oldPosition !== position && !changedCredits && !editFields) {
+          // Legacy drag/arrow reorder is a COMPLETE ordered set. The PUT
+          // endpoint locks the semester and validates set equality before
+          // committing, rejecting an out-of-date or mixed-college list.
+          await apiFetch("/api/academics/semester-course-mappings", {
+            method: "PUT",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ programTermId: termId, mappingIds: nextOrder }),
+          });
+        } else {
+          // The edit modal can change credits, type, mandatory and position
+          // together; preserve the single-record atomic PATCH for that case.
+          await apiFetch("/api/academics/semester-course-mappings/" + encodeURIComponent(id), {
+            method: "PATCH",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(parsed.data),
+          });
+        }
         const message = oldPosition === position
           ? `Updated mapping for “${previous?.courseName ?? "course"}”.`
           : "Semester course order saved.";
