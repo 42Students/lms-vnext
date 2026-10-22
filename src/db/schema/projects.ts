@@ -550,7 +550,10 @@ export const projectTasks = pgTable(
     ),
     /** PR-S2-04: required when status is BLOCKED (enforced in the service). */
     blockerReason: text("blocker_reason"),
-    // Historical display only: actual authorization uses active membership.
+    // Historical source ID is meaningful only within (source entity type,
+    // verified college). A numeric learner ID may equal a faculty ID.
+    // Authorization ALWAYS uses assigneeMembershipId, never these snapshots.
+    legacyAssigneeId: integer("legacy_assignee_id"),
     legacyAssigneeType: varchar("legacy_assignee_type", { length: 32 }),
     legacyAssigneeName: text("legacy_assignee_name"),
     createdByMembershipId: uuid("created_by_membership_id")
@@ -587,6 +590,9 @@ export const projectTasks = pgTable(
       table.sequence,
     ),
     index("project_tasks_source_order_idx").on(table.projectId,table.sprintId,table.legacySortOrder,table.id),
+    index("project_tasks_legacy_assignee_lookup_idx")
+      .on(table.projectId,table.legacyAssigneeType,table.legacyAssigneeId)
+      .where(sql`${table.legacyAssigneeId} is not null`),
     index("project_tasks_backlog_project_idx")
       .on(table.projectId, table.sequence)
       .where(sql`${table.sprintId} is null`),
