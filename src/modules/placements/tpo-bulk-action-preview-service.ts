@@ -32,10 +32,10 @@ export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPrev
          const record=await getTpoLearnerParticipation(context,id);
          current.set(id,{version:tpoBulkStudentVersion(record.direct),
            ready:tpoBulkStudentReady(plan.action,record.direct.status),
-           reason:plan.action==="ELIGIBLE"&&record.direct.status==="ELIGIBLE"?
+           ...( (plan.action==="ELIGIBLE"&&record.direct.status==="ELIGIBLE"?
             "Already eligible":plan.action==="INELIGIBLE"&&record.direct.status==="INELIGIBLE"?
             "Already ineligible":plan.action==="CLEAR_OVERRIDE"&&record.direct.status===null?
-            "No direct override to clear":undefined});
+            "No direct override to clear":undefined) !== undefined ? {reason:plan.action==="ELIGIBLE"&&record.direct.status==="ELIGIBLE"?"Already eligible":plan.action==="INELIGIBLE"&&record.direct.status==="INELIGIBLE"?"Already ineligible":"No direct override to clear"} : {})});
        }catch(error){
          if(!(error instanceof AuthorizationError))throw error;
        }
@@ -66,11 +66,11 @@ export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPrev
        :plan.action==="SEND_MESSAGE"
          ?row.applicationUpdatedAt.toISOString()
          :row.updatedAt?.toISOString()??"unavailable";
-     current.set(row.id,{version,ready,reason:ready?undefined:
+     current.set(row.id,{version,ready,...(ready?{}:{reason:
        row.jobStatus!=="PUBLISHED"&&row.jobStatus!=="CLOSED"?"Drive is not active":
        row.applicationStatus!=="SUBMITTED"?"Application is no longer submitted":
        plan.action==="SHORTLISTED"||plan.action==="REJECTED"?
-        "Applicant is not awaiting a screening decision":"Action is unavailable for this applicant"});
+        "Applicant is not awaiting a screening decision":"Action is unavailable for this applicant"})});
    }
  }
  return current;
