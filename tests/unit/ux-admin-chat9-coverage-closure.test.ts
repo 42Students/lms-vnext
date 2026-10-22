@@ -54,7 +54,8 @@ describe("chat-9 route coverage and native DataTable closure",()=>{
  });
  it("UX-admin-recruiters-04 /admin/recruiters retains the scoped Super Admin HR editor without a duplicate permission surface",()=>{
   const source=page("/admin/recruiters");
-  expect(source).toContain('export { default } from "../hr/page"');
+  expect(source).toContain('import SuperAdminHrPage from "../hr/page"');
+  expect(source).toContain("<SuperAdminHrPage searchParams={searchParams}/>");
   expect(source).not.toContain("<main");
  });
  it("UX-admin-route-coverage-04 every /admin last-third route has a named source contract and route path",()=>{
