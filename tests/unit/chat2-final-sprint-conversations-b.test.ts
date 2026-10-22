@@ -18,7 +18,7 @@ describe("Final sprint recruiter conversation parity — group B",()=>{
   expect(inbox).toContain('aria-label="General placement-cell messages"');
   expect(inbox).toContain("<RecruiterConversationReplyForm");
   expect(composer).toContain("event.ctrlKey||event.metaKey");
-  expect(inbox).toContain("Open general conversation");
+  expect(inbox).toContain("Open full conversation");
  });
  it("REC-calendar-messages-profile-13 refreshes recruiter inbox and detail every four seconds while visible",()=>{
   const refresh=read("src/components/hr/recruiter-conversation-live-refresh.tsx");
