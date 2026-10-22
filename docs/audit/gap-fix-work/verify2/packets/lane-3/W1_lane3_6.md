@@ -127,8 +127,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: docs/legacy-source/frontend/src/pages/learn/courses/[courseId]/[...courseTab].js:17-22 uses legacy slug or numeric courseId and first catch-all segment; docs/legacy-source/frontend/src/utils/learnerCourseDetail.js:2-10 resolves by slug or integer.
 - Expected fix: Create explicit old slug/numeric-to-delivery resolver for legacy bookmarks or record intentional unsupported ID scheme.
 
-## Lane 9 verification notes (2026-10-22)
+## Lane 9 verification disposition (2026-10-22)
 
-- OK — G2-16-016-010: quiz question points are 1–100; options accept 1–20 in `quiz-validation.ts` (the runtime additionally validates correct-choice cardinality).
-- OK — G2-16-016-014: `quizQuestionInputSchema.points` uses `.max(100)`.
-- DEFERRED — Remaining 23 rows: not yet individually inspected; no implementation claim or packet completion is implied.
+- DEFERRED — G2-15-008-016: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-15-008-025: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-15-008-064: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-15-008-068: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-16-003-056: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-16-008-017: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-16-008-028: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-16-008-036: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-16-008-040: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-16-008-044: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-16-008-065: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-16-008-071: Not independently verified against all cited behavior; implementation and regression check remain open.
+- OK — G2-16-016-010: Target source contains the specified validation or expected-set CAS contract.
+- OK — G2-16-016-014: Target source contains the specified validation or expected-set CAS contract.
+- DEFERRED — G2-16-028-001: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-16-028-052: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-17-020-011: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-17-020-025: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-17-020-026: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-17-019-006: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-17-019-019: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-17-019-020: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-17-019-035: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-17-019-039: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-17-006-001: Not independently verified against all cited behavior; implementation and regression check remain open.
