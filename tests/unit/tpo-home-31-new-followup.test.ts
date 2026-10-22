@@ -15,7 +15,7 @@ describe("TPO-home-31 quick-create follow-up modal",()=>{
   expect(ui).toContain('"/api/placements/tpo/calendar/follow-ups"');
   expect(ui).toContain("Choose a recruiter");
   expect(ui).toContain("Pick a date and time");
-  expect(ui).toContain("Follow-up added. It shows on the calendar.");
+  expect(ui).toContain('showToast({tone:"success",title:"Follow-up added"})');
   expect(ui).toContain("Could not save the follow-up");
   expect(layout).toContain("<TpoTopbarNewMenu collegeId={context.membership!.collegeId}/>");
   expect(menu).toContain("<TpoNewFollowupModal collegeId={collegeId}/>");
