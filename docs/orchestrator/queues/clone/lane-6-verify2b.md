@@ -6,7 +6,7 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-3/W1_lane3_3.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-4/W1_lane4_5.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_9.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-7/W1_lane7_9.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-7/W1_lane7_9.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_11.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_7.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_15.md` (25 rows)
