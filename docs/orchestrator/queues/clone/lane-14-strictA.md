@@ -2,7 +2,7 @@
 
 No-mercy program part A (compiler flags). Work packets in order; each lists files and their baseline errors. Fix at the cause, push after every file, tick the packet line when all its files are pushed.
 
-- [ ] `docs/audit/strictness/A/packets/A_014.md`
+- [x] `docs/audit/strictness/A/packets/A_014.md`
 - [ ] `docs/audit/strictness/A/packets/A_034.md`
 - [ ] `docs/audit/strictness/A/packets/A_054.md`
 - [ ] `docs/audit/strictness/A/packets/A_074.md`
