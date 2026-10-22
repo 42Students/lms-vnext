@@ -101,7 +101,7 @@ export function nextTemplatePlanKey(
 ): string {
   const taken=new Set(keys.map(key=>key.trim().toLowerCase()).filter(Boolean));
   const cleaned=(title??"").normalize("NFKD")
-    .replace(/[\\u0300-\\u036f]/g,"").toLowerCase()
+    .replace(/[\u0300-\u036f]/g,"").toLowerCase()
     .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
   const base=(cleaned||prefix).slice(0,56).replace(/-+$/g,"")||"item";
   if(cleaned&&!taken.has(base))return base;
