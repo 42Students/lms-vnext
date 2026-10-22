@@ -201,7 +201,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
          inboundMailStatusActions(overrides[selected.id]?.status??selected.status)).map(action=>
          <Button key={action.status} type="button" size="sm"
           variant={action.status==="RESOLVED"?"primary":"secondary"}
-          disabled={busy||detailLoading||!detail} loading={busy} onClick={()=>void change(detail,action.status)}>
+          disabled={busy||detailLoading||!detail} loading={busy} onClick={()=>void change(detail??selected,action.status)}>
           {action.label}
          </Button>)}
       </div>
