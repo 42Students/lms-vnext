@@ -52,7 +52,7 @@ export function CollegeLegacyDriveSettings({
   if(status==="DRAFT")return null;
   return <section className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-4)]">
     <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Drive status</h2>
-    <StatusBadge tone={status==="PUBLISHED"?"success":status==="DRAFT"?"warning":"neutral"}>{status}</StatusBadge>
+    <StatusBadge tone={status==="PUBLISHED"?"success":"neutral"}>{status}</StatusBadge>
     {action?<div className="space-y-3">
       {confirmation==="CLOSE"?<div className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3" role="dialog" aria-modal="false" aria-label={action.confirmation}>
         <p>{action.confirmation}</p>
