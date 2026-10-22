@@ -9,8 +9,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [ ] G2-8-022-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-8-028-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
-- [ ] G2-8-028-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
-- [ ] G2-8-028-064  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
+- [x] G2-8-028-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
+- [x] G2-8-028-064  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-002-087  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [x] G2-9-008-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [x] G2-9-008-011  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
@@ -25,3 +25,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-9-008-006: FIXED — `749a337` in `src/components/placements/college-hiring-funnel.tsx`; all nine baseline status metrics remain immediately visible and average time appears only when available, matching `docs/legacy-source/frontend/src/pages/superadmin/sections/HiringDashboard.js:437-499`.
 - G2-9-008-011: FIXED — `749a337` in `src/components/placements/college-hiring-funnel.tsx`; previous-stage conversion tags use the legacy `% of [stage]` phrasing, matching `docs/legacy-source/frontend/src/pages/superadmin/sections/HiringDashboard.js:510-525`.
+
+- G2-8-028-058: OK — `src/components/projects/class-team-workspace-creator.tsx:260-264,778-778` tracks dirty fields and invokes `useProjectEditorDiscardGuard`; `src/components/projects/project-editor-discard-guard.ts:15-65,67-91` blocks beforeunload, in-app navigation and supported history navigation until explicit discard confirmation. Matches `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/new.js:10,59,360-363`.
+
+- G2-8-028-064: OK — `src/app/(authenticated)/college/projects/create/page.tsx:16-18,61-81` defaults to `single`, exposes explicit mode navigation and renders `CreateProjectControl` in single mode; `src/components/projects/class-team-workspace-creator.tsx:415-420` links back to that single-workspace form instead of requiring a slug within the class-team planner. Matches `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/new.js:35-37,404-416`.
