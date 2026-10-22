@@ -19,8 +19,8 @@ export default async function TenantResolvePreviewPage({
   !context.adminScope?.organizationId&&!context.adminScope?.collegeId;
  const params=await searchParams;
  const valid=Object.keys(params).every(key=>key==="host")&&
-  (params.host===undefined||typeof params.host==="string");
- const host=valid&&typeof params.host==="string"?params.host.trim():"";
+  (params["host"]===undefined||typeof params["host"]==="string");
+ const host=valid&&typeof params["host"]==="string"?params["host"].trim():"";
  let result:Awaited<ReturnType<typeof previewTenantHostResolutionWithRuntime>>|null=null;
  let failed=false;
  if(globalScope&&host&&host.length<=253){
@@ -42,7 +42,7 @@ export default async function TenantResolvePreviewPage({
     </label>
     <Button type="submit">Preview</Button>
    </form>
-   {!valid||params.host!==undefined&&!host||host.length>253||failed?
+   {!valid||params["host"]!==undefined&&!host||host.length>253||failed?
     <Alert tone="error" title="Unable to preview this host">
      Enter a valid fully qualified hostname, with no protocol, port or path. No tenant data was returned.
     </Alert>:result?.status==="TENANT_NOT_FOUND"?
