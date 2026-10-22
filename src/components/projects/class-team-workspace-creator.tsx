@@ -314,6 +314,18 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           });
         });
         if(!allowed)return;
+        // Confirmation may stay open while another administrator changes
+        // cohort coverage. Never submit a plan based on stale counts.
+        const latest=await fetchPreflight();
+        setPreflight({...latest,scopeKey:preflightScopeKey});
+        if(latest.toCreate!==fresh.toCreate||
+           latest.alreadyCovered!==fresh.alreadyCovered||
+           latest.eligible!==fresh.eligible||
+           latest.duplicates!==fresh.duplicates||
+           JSON.stringify(latest.items)!==JSON.stringify(fresh.items)){
+          setError("Cohort coverage changed while confirming. Review the refreshed preflight and confirm again. Nothing was created.");
+          return;
+        }
       }
       // Distinguish a request that may have committed from a failed preflight:
       // only dispatched requests produce uncertain per-learner recovery rows.
