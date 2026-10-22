@@ -24,7 +24,7 @@ describe("SA-tenants-modules-SETUP-08 tenant setup role and journey",()=>{
   const source=readFileSync("src/app/(authenticated)/admin/tenants/setup/page.tsx","utf8");
   const context=source.indexOf("getCurrentRequestContext()");
   const gate=source.indexOf('!isSuperAdmin(context)||!can(context,"admin-scope.select")');
-  const parse=source.indexOf("parseSuperAdminTenantSetupQuery(await searchParams)");
+  const parse=source.indexOf("parseSuperAdminTenantSetupQuery(Object.fromEntries(");
   const read=source.indexOf("getSuperAdminTenantLifecycleDirectory(context");
   expect(context).toBeGreaterThan(-1);
   expect(context).toBeLessThan(gate);
@@ -37,11 +37,12 @@ describe("SA-tenants-modules-SETUP-08 tenant setup role and journey",()=>{
  it("links to distinct tenant-specific branding, sign-in, module and readiness checks",()=>{
   const steps=superAdminTenantSetupSteps(tenant);
   expect(steps.map(step=>step.id)).toEqual([
-   "brand","login","host","academics","people","features","readiness",
+   "brand","login","host","preview","academics","people","features","readiness",
   ]);
   for(const step of steps)expect(step.href.startsWith("/admin/")).toBe(true);
   expect(steps.find(step=>step.id==="brand")?.href).toBe("/admin/colleges/"+tenant+"/branding");
   expect(steps.find(step=>step.id==="login")?.href).toBe("/admin/colleges/"+tenant+"/signin");
+  expect(steps.find(step=>step.id==="preview")?.href).toBe("/admin/tenants/resolve-preview");
   expect(steps.find(step=>step.id==="features")?.href).toBe("/admin/features/"+tenant);
   expect(steps.find(step=>step.id==="readiness")?.href).toBe("/admin/colleges/"+tenant+"/readiness");
  });

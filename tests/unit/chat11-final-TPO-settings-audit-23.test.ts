@@ -13,7 +13,8 @@ describe("TPO job type persistence final sprint",()=>{
   expect(write).toContain("setTpoJobTypeActive");
   expect(write).toContain("setTpoJobTypeCountsAsPlaced");
   expect(read).toContain("getTpoJobTypes");
-  expect(page).toContain("<TpoJobTypesEditor");
+  expect(page).toContain("<TpoUnifiedJobTypesEditor");
+  expect(page).toContain("types={[...builtin,...custom]}");
   expect(TPO_BUILTIN_JOB_TYPES).toHaveLength(5);
   expect(isTpoBuiltinJobType("Full-time")).toBe(true);
   expect(isTpoBuiltinJobType("my custom job type")).toBe(false);
