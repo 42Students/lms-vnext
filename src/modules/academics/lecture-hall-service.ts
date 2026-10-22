@@ -419,7 +419,7 @@ export async function updateLectureHall(
           ));
         const conflict = lectureHallScheduledConflict({
           archiving: input.status === "ARCHIVED" && hall.status !== "ARCHIVED",
-          nextCapacity: input.capacity,
+          ...(input.capacity !== undefined ? { nextCapacity: input.capacity } : {}),
           scheduledCapacityRows: busy.map(row => row.classCapacity),
         });
         if (conflict) {
@@ -463,15 +463,15 @@ export async function updateLectureHall(
  * A caller must resolve them to an entitled UUID before entering this service. */
 export function normalizeLegacyLectureHallCreate(raw: unknown) {
   const old = z.record(z.string(), z.unknown()).parse(raw);
-  const legacyDepartment = old.departmentId ?? old.deptId ?? old.dept_id;
+  const legacyDepartment = old["departmentId"] ?? old["deptId"] ?? old["dept_id"];
   const departmentId = legacyDepartment === 0 || legacyDepartment === "0"
     ? null : legacyDepartment ?? null;
   return createLectureHallSchema.parse({
-    collegeId: old.collegeId ?? old.college_id,
-    name: old.name ?? old.displayName,
-    capacity: old.capacity ?? 50,
-    roomType: old.roomType ?? old.room_type,
-    description: old.description ?? null,
+    collegeId: old["collegeId"] ?? old["college_id"],
+    name: old["name"] ?? old["displayName"],
+    capacity: old["capacity"] ?? 50,
+    roomType: old["roomType"] ?? old["room_type"],
+    description: old["description"] ?? null,
     departmentId,
   });
 }
@@ -483,10 +483,10 @@ export function normalizeLegacyLectureHallUpdate(raw: unknown) {
     if (Object.prototype.hasOwnProperty.call(old, key)) patch[key] = old[key];
   }
   if ("roomType" in old || "room_type" in old)
-    patch.roomType = old.roomType ?? old.room_type;
+    patch["roomType"] = old["roomType"] ?? old["room_type"];
   if ("departmentId" in old || "deptId" in old || "dept_id" in old) {
-    const dept = old.departmentId ?? old.deptId ?? old.dept_id;
-    patch.departmentId = dept === 0 || dept === "0" ? null : dept;
+    const dept = old["departmentId"] ?? old["deptId"] ?? old["dept_id"];
+    patch["departmentId"] = dept === 0 || dept === "0" ? null : dept;
   }
   return updateLectureHallSchema.parse(patch);
 }
