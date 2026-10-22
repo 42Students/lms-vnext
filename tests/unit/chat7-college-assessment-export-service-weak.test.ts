@@ -7,6 +7,7 @@ vi.mock("@/modules/courses/college-assessment-aggregate-service",()=>({
   state.reader(context,kind,query),
 }));
 import {exportCollegeAssessments} from "@/modules/courses/college-assessment-export-service";
+import {COLLEGE_ASSESSMENT_PAGE_SIZE} from "@/modules/courses/college-assessment-aggregate-model";
 const context={} as Parameters<typeof exportCollegeAssessments>[0];
 const row=(i:number)=>({
  id:String(i),title:"Quiz "+i,courseName:"Course",courseCode:"CS"+i,
@@ -35,7 +36,7 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
   state.reader.mockImplementation(async (_ctx,kind,query)=>{
    expect(kind).toBe("QUIZ");
    const page=query.page as number;
-   return {items:Array.from({length:page===3?1:25},(_,i)=>row((page-1)*25+i)),
+   return {items:Array.from({length:page===3?11:COLLEGE_ASSESSMENT_PAGE_SIZE},(_,i)=>row((page-1)*COLLEGE_ASSESSMENT_PAGE_SIZE+i)),
     total:51,totalPages:3};
   });
   const out=await exportCollegeAssessments(context,"QUIZ",{status:"PUBLISHED",exportMode:"ALL"});
@@ -53,14 +54,15 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
  });
  it("cannot silently export more than 1000 rows, labels truncated set and never fetches page 41",async()=>{
   state.reader.mockImplementation(async (_ctx,_kind,query)=>({
-   items:Array.from({length:25},(_,i)=>row((query.page-1)*25+i)),
-   total:1001,totalPages:41,
+   items:Array.from({length:COLLEGE_ASSESSMENT_PAGE_SIZE},(_,i)=>row((query.page-1)*COLLEGE_ASSESSMENT_PAGE_SIZE+i)),
+   total:1001,totalPages:Math.ceil(1001/COLLEGE_ASSESSMENT_PAGE_SIZE),
   }));
   const out=await exportCollegeAssessments(context,"ASSIGNMENT",{exportMode:"ALL"});
   expect(out.rows).toHaveLength(1000);
   expect(out.truncated).toBe(true);
   expect(out.cap).toBe(1000);
-  expect(state.reader).toHaveBeenCalledTimes(40);
+  expect(state.reader).toHaveBeenCalledTimes(1000/COLLEGE_ASSESSMENT_PAGE_SIZE);
+  expect(state.reader.mock.calls.every(call=>call[2]?.page<=1000/COLLEGE_ASSESSMENT_PAGE_SIZE)).toBe(true);
   expect(out.csv).toContain("EXPORT TRUNCATED");
   expect(out.csv).toContain("Only the first 1000 matching records");
   expect(out.csv).not.toContain("Quiz 1000");

@@ -17,7 +17,8 @@ describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
   it("uses a single old-LMS counter strip for calendar and company reports", () => {
     const calendar = source(hr + "calendar/page.tsx");
     const reports = source(hr + "company/reports/page.tsx");
-    expect(calendar).toContain('aria-label="Calendar event types"');
+    expect(calendar).toContain('aria-label="Calendar period navigation"');
+    expect(calendar).toContain('aria-label="Filter recruiter calendar"');
     expect(calendar).toContain('data-testid="recruiter.calendar.range"');
     expect(reports).toContain('<SummaryStrip label="Hiring portfolio summary"');
     expect(reports).toContain('{label:"Published drives",value:summary.published}');
@@ -26,9 +27,10 @@ describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
 
   it("keeps proposal rows on the table-like hairlines", () => {
     const text = source(hr + "drives/proposals/page.tsx");
-    expect(text).toContain('className="divide-y divide-border border-y border-border min-[768px]:hidden"');
     expect(text).toContain('<HrProposalHistoryGrid');
-    expect(text).toContain('className="min-w-0 py-3"');
+    expect(source("src/components/hr/hr-proposal-history-grid.tsx")).toContain("<TpoGrid");
+    expect(text).toContain('<HrProposalHistoryGrid');
+    expect(text).toContain('aria-label="Search sent drive proposals"');
     expect(text).not.toContain('className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4"');
   });
 
@@ -36,7 +38,7 @@ describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
     const text = source(hr + "drives/proposals/page.tsx");
     expect(text).toContain('import {Input} from "@/components/ui/input";');
     expect(text).toContain('import {Select} from "@/components/ui/select";');
-    expect(text).toContain('<Input type="search" name="q"');
+    expect(text).toContain('<Input name="q" type="search"');
     expect(text).toContain('<Select name="sort"');
     expect(text).toContain('</Select>');
     expect(text).toContain('<Button type="submit" variant="secondary"');

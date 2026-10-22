@@ -22,10 +22,12 @@ describe("/admin second third: inbound mail and People directory behavioral boun
       status: "TRIAGED", q: "  registration  ", recipient: "  TPO@Example.EDU ", page: "3",
     })).toEqual({ status: "TRIAGED", q: "registration", recipient: "tpo@example.edu", page: 3 });
     for (const input of [
-      { status: "DELETED" }, { page: "0" }, { page: "10001" }, { page: "abc" },
+      { page: "0" }, { page: "10001" }, { page: "abc" },
       { page: ["1", "2"] }, { q: "x".repeat(121) }, { recipient: "not-an-email" },
       { collegeId: validId }, { status: "NEW", admin: true },
     ]) expect(inboundMailListQuerySchema.safeParse(input).success, JSON.stringify(input)).toBe(false);
+    // Stale status values canonicalize to All without widening tenant scope.
+    expect(inboundMailListQuerySchema.parse({status:"DELETED"}).status).toBe("ALL");
   });
 
   it("CHAT6-ADMIN-INBOUND-02 sanitizes control characters and bounds preview without changing persisted content", () => {

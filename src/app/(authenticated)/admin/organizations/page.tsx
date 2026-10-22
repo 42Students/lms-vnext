@@ -30,7 +30,8 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
   const context = await getCurrentRequestContext();
   requirePermission(context, "admin-scope.select");
   const raw=await searchParams;
-  const filters=parseAdminDirectorySearchParams({q:raw.q,page:raw.page,pageSize:raw.pageSize});
+  const unsafeKeys=Object.keys(raw).some(key=>!["q","page","pageSize","type"].includes(key));
+  const filters=unsafeKeys?null:parseAdminDirectorySearchParams({q:raw.q,page:raw.page,pageSize:raw.pageSize});
   const selectedRestoreType=raw.type??"organization";
   if(!isRecoveryEntityType(selectedRestoreType))return <div className="min-w-0 space-y-4">
     <PageHeader title="Deleted Items"/>

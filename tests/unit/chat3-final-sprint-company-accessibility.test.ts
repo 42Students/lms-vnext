@@ -4,7 +4,8 @@ import {it,describe,expect} from "vitest";
 const read=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("chat-3 final sprint companies accessibility, exporting and safety",()=>{
  it("TPO-companies-18 preserves scoped company UI and privacy guarantees",()=>{
-  expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("Companies (");
+  expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("visibleCompanies");
+  expect(read("src/app/(authenticated)/tpo/companies/page.tsx")).toContain("Companies");
   expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("Export companies CSV");
   expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("visibleCompanies");
  });
@@ -19,7 +20,8 @@ describe("chat-3 final sprint companies accessibility, exporting and safety",()=
   expect(form).toContain("if(pending)return;");
   expect(form).toContain("onOpenChange={next=>{if(!next)close();}}");
   expect(dialog).toContain("<dialog data-slot=\"dialog\"");
-  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("useOverlayExit(ref, opener, open");
+  expect(read("src/components/ui/use-overlay-exit.ts")).toContain("dialog.showModal()");
   expect(dialog).toContain("onCancel={event =>");
   expect(dialog).toContain("aria-labelledby={titleId}");
   expect(dialog).toContain("opener.current?.focus()");

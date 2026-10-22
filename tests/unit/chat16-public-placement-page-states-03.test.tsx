@@ -1,5 +1,10 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+
+// Module imports may share a worker with server DB configuration readers.
+// These isolated public-page assertions mock every data service; set a
+// non-routable fallback DSN so configuration parsing never depends on CI secrets.
+vi.hoisted(()=>{process.env.DATABASE_URL??="postgresql://unit:unit@127.0.0.1:1/isolated_public_test";});
 import {headers} from "next/headers";
 import {notFound} from "next/navigation";
 import {resolveRequestTenant} from "@/modules/auth/request-tenant";
