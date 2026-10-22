@@ -39,6 +39,8 @@ export async function previewCollegeInterviewConflicts(
   const start=new Date(input.scheduledAt);
   const end=new Date(start.getTime()+input.durationMinutes*60_000);
   const buffer=15*60_000;
+  const proposedInterviewer=(input.interviewer??"").trim().toLowerCase();
+  const proposedRoom=(input.room??"").trim().toLowerCase();
   const rows=await db.select({
     studentId:placementApplications.membershipId,
     companyRelationshipId:placementJobs.companyRelationshipId,
@@ -53,11 +55,11 @@ export async function previewCollegeInterviewConflicts(
       eq(slots.status,"BOOKED"),
       or(
         eq(placementApplications.membershipId,candidate.studentId),
-        input.interviewer?.trim()?and(
+        proposedInterviewer?and(
           eq(placementJobs.companyRelationshipId,job.companyRelationshipId),
-          sql`lower(trim(coalesce(nullif(${slots.legacyInterviewerName},''),${slots.panel},'')))=${input.interviewer.trim().toLowerCase()}`,
+          sql`lower(trim(coalesce(nullif(${slots.legacyInterviewerName},''),${slots.panel},'')))=${proposedInterviewer}`,
         ):undefined,
-        input.room?.trim()?sql`lower(trim(${slots.room}))=${input.room.trim().toLowerCase()}`:undefined,
+        proposedRoom?sql`lower(trim(${slots.room}))=${proposedRoom}`:undefined,
       ),
       input.excludingInterviewId?ne(slots.id,input.excludingInterviewId):undefined,
       lt(slots.startsAt,new Date(end.getTime()+buffer)),
