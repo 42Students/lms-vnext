@@ -4,10 +4,12 @@ import {learnerPlacementHeroPriority} from "@/modules/placements/learner-dashboa
 const read=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
 describe("chat-7 learner Placements legacy tabs and hero",()=>{
 it("LEARNER-placements-03 has no duplicate heading below shared tab strip",()=>{
+ const layout=read("src/app/(authenticated)/learn/my-placements/layout.tsx");
+ expect(layout).toContain('<PageHeader title="My Placements" />');
+ expect(layout).toContain("<LearnerPlacementsTabs");
  for(const p of ["src/app/(authenticated)/learn/my-placements/applications/page.tsx","src/app/(authenticated)/learn/my-placements/jobs/page.tsx","src/app/(authenticated)/learn/my-placements/schedule/page.tsx","src/app/(authenticated)/learn/my-placements/offers/page.tsx","src/app/(authenticated)/learn/my-placements/placement/page.tsx"]){
   const page=read(p);
-  expect(page).toContain("<PageHeader");
-  expect(page).toContain("title=");
+  expect(page,p).not.toContain("<PageHeader");
  }
  expect(read("src/app/(authenticated)/learn/my-placements/schedule/page.tsx")).toContain("Your tests, talks and interviews.");
 });

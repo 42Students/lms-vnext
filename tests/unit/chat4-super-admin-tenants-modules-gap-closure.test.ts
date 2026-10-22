@@ -68,7 +68,7 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
  it("SA-tenants-modules-61 preserves the audited admin workflow",()=>{
   const s=source("src/modules/announcements/super-admin-college-broadcast-model.ts");
   expect(s).toContain(".max(200,{error:");
-  expect(s).toContain(".max(8000)");
+  expect(s).toContain(".max(8000,{error:");
   expect(s).toContain(".max(60)");
   expect(s).toContain(".max(500)");
   const values={audienceMode:"ALL_COLLEGES",collegeIds:[],title:"T",message:"M",
@@ -129,7 +129,8 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
   expect(activityEventSentence({eventType:"academics.batch.promoted",subjectType:"cohort",subjectLabel:"Cohort 2027"},
     {displayName:"Ananya",email:null})).toBe("Ananya promoted cohort Cohort 2027");
   const center=source("src/components/activity/activity-center.tsx");
-  expect(center).toContain("Object.entries(item.event.metadata)");
+  expect(center).toContain("activitySafeMetadata(item.event.metadata)");
+  expect(center).toContain("Object.entries(metadata).filter");
   expect(center).toContain('"Today"');
   expect(center).toContain('"Yesterday"');
   expect(source("src/app/(authenticated)/activity/page.tsx")).toContain("sanitizeActivityMetadata(group.latest.event.metadata)");
