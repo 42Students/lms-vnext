@@ -4,10 +4,10 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [x] `tests/unit/PROJ-BREAK-SA-admin-pages-and-scope.test.ts` (1 failing)
 - [x] `tests/unit/chat10-campaign-unsubscribe-legacy-path.test.ts` (1 failing)
-- [ ] `tests/unit/chat19-tpo-mobile-footer.test.ts` (3 failing)
-- [ ] `tests/unit/chat5-final-faculty-courses-a.test.ts` (1 failing)
-- [x] `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` (2 failing) — already corrected on current main: assessment reader receives `(context,kind,{...params.data,page})`, carrying page and filters through pagination; static verification only (no CI run).
-- [ ] `tests/unit/learner-coding-profile-link.test.ts` (1 failing)
+- [x] `tests/unit/chat19-tpo-mobile-footer.test.ts` (3 failing)
+- [x] `tests/unit/chat5-final-faculty-courses-a.test.ts` (1 failing)
+- [x] `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` (2 failing; rechecked CURRENT main: assessment reader is called with all three arguments and a paginated filter object; the CI failure was from older main; not locally executed)
+- [x] `tests/unit/learner-coding-profile-link.test.ts` (1 failing)
 - [x] `tests/unit/tpo-team-person-context-chat2.test.ts` (1 failing)
 
 ## Failures (from CI log)
@@ -206,3 +206,5 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 
 - Super Admin organization applications: replaced the raw table with labelled responsive records preserving all columns, links and scoped query (`35430384dd3ff512de3044ee754c43548131263f`).
 - TPO mobile footer test: replaced stale BottomSheet expectations with same-tab `/tpo/more`, route-active, authorization and accessibility checks (`53776239a831f6600f51b79eeb0977a83d696a26`).
+
+- Assessment export pagination recheck: `src/modules/admin-ui/super-admin-learning-csv-service.ts` currently invokes `listCollegeAssessmentAggregate(context,kind,{...params.data,page})` in its assessment loop, preserving quiz `results`/`scope`/`courseCode` filters across up to 20 pages and using a 500-row export cap. This addresses the historic `query`-undefined trace; runtime CI confirmation remains necessary.
