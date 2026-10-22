@@ -6,8 +6,8 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [ ] `tests/unit/UX-superadmin-import-tables-chat17.test.ts` (1 failing)
 - [ ] `tests/unit/chat19-clone-sidebar-checkpoint.test.ts` (1 failing)
 - [ ] `tests/unit/chat4-college-ux-round5.test.ts` (1 failing)
-- [ ] `tests/unit/chat7-semester-layout-verify2b.test.ts` (1 failing)
-- [ ] `tests/unit/faculty-assessment-report.test.ts` (1 failing)
+- [x] `tests/unit/chat7-semester-layout-verify2b.test.ts` (1 failing)
+- [x] `tests/unit/faculty-assessment-report.test.ts` (1 failing)
 - [ ] `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` (1 failing)
 
 ## Failures (from CI log)
@@ -195,3 +195,8 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 +   return Array.isArray(value) ? value[0] : value;
 ```
 
+
+## Lane-3 repairs
+
+- `chat7-semester-layout-verify2b.test.ts`: FIXED in `1559fe7451550fe392fbab0628ed0915eccdd0f7`; responsive form/directory grid now stacks on mobile and uses 10/14 split at lg.
+- `faculty-assessment-report.test.ts`: FIXED in `ce33522f3749fb3a0e3df7e59f252f42902ab525`; retain fractional graded percentages before rounding the final average (1/7 and 2/7 average to 21%, not 22%).
