@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,sql} from "drizzle-orm";
+import {and,desc,eq,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectReleases,projectSprints} from "@/db/schema";
@@ -39,7 +39,8 @@ export async function writeMentorProjectRelease(
   // Prevent a stale tab from publishing release changes after Mentor grant revocation.
   await assertPersistedProjectMutationActor(tx,context,scope);
   const [existing]=releaseId?await tx.select().from(projectReleases).where(and(
-   eq(projectReleases.id,releaseId),eq(projectReleases.projectId,projectId)
+   eq(projectReleases.id,releaseId),eq(projectReleases.projectId,projectId),
+   isNull(projectReleases.deletedAt)
   )).for("update").limit(1):[null];
   if(releaseId&&!existing)throw new ProjectsServiceError("PROJECT_RELEASE_NOT_FOUND");
   let change:Mode;
@@ -119,9 +120,19 @@ export async function writeMentorProjectRelease(
    const [sprint]=await tx.select({id:projectSprints.id}).from(projectSprints)
     .where(and(eq(projectSprints.projectId,projectId),eq(projectSprints.releaseId,existing.id))).limit(1);
    if(sprint)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
-   await tx.delete(projectReleases).where(and(eq(projectReleases.id,existing.id),
-    eq(projectReleases.projectId,projectId)));
-   result=existing;change="DELETED";
+   // Preserve release identity and reserved key as a tombstone. A release
+   // with child sprints cannot be removed (checked above).
+   const removedAt=nextMentorReleaseUpdateAt(existing.updatedAt,new Date());
+   if(!removedAt)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
+   const [removed]=await tx.update(projectReleases).set({
+    deletedAt:removedAt,updatedAt:removedAt,
+    version:sql`${projectReleases.version} + 1`,
+   }).where(and(eq(projectReleases.id,existing.id),
+    eq(projectReleases.projectId,projectId),
+    isNull(projectReleases.deletedAt),
+    sql`date_trunc('milliseconds', ${projectReleases.updatedAt}) = ${existing.updatedAt.toISOString()}::timestamptz`)).returning();
+   if(!removed)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
+   result=removed;change="DELETED";
   }
   if(!result)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
   await recordActivityEventInTransaction(tx,context,{
@@ -132,7 +143,8 @@ export async function writeMentorProjectRelease(
    subjectType:"project_release",subjectId:result.id,subjectLabel:result.title,
    summary:"Project release "+change.toLowerCase(),
    metadata:{projectId,releaseId:result.id,change,legacyVersionMapping:"UPDATED_AT_MS_CAS",releaseKey:result.templateKey,
-    previousStatus:existing?.status??null,updatedStatus:change==="DELETED"?null:result.status},
+    previousStatus:existing?.status??null,updatedStatus:change==="DELETED"?null:result.status,
+     softDeletedAt:change==="DELETED"?result.deletedAt?.toISOString()??null:null},
    groupKey:"project:"+projectId,
   });
   return {release:result,change};

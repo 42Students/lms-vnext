@@ -44,9 +44,8 @@ export async function getProjectReadiness(
     db
       .select({ status: projectReleases.status })
       .from(projectReleases)
-      .where(
-        eq(projectReleases.projectId, projectId),
-      )
+      .where(and(eq(projectReleases.projectId, projectId),
+           isNull(projectReleases.deletedAt)))
       .orderBy(asc(projectReleases.sequence)),
     db
       .select({ status: projectSprints.status })
