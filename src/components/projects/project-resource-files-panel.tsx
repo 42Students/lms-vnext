@@ -216,7 +216,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       {progress!==null&&<div role="status" className="text-xs text-body">
         Uploading… {progress}%
         <MetricBar role="progressbar" label="Project file upload progress"
-          value={progress} maximum={100} unit="percent" className={barStyles.track+" mt-2 w-full"} />
+          value={progress} maximum={100} unit="percent" className={barStyles["track"]+" mt-2 w-full"} />
       </div>}
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Button variant="primary" type="submit" loading={busy} disabled={busy||!selected}
