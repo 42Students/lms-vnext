@@ -4,7 +4,7 @@ import { z } from "zod";
 // booleans, hexadecimal and exponents silently changes the operator's filters.
 const decimalSelection = z.union([
  z.number().int(),
- z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int()),
+ z.string().regex(/^[1-9][0-9]*$/).transform(Number).pipe(z.number().int()),
 ]);
 export const adminDriveDirectoryQuerySchema=z.object({
  q:z.string().trim().max(100).default(""),
