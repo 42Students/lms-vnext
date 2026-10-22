@@ -2,10 +2,10 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-14-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/UX-college-cross-audit-chat19.test.ts` (1 failing)
-- [ ] `tests/unit/chat13-superadmin-interview-operations.test.ts` (1 failing)
+- [x] `tests/unit/UX-college-cross-audit-chat19.test.ts` (1 failing)
+- [x] `tests/unit/chat13-superadmin-interview-operations.test.ts` (1 failing)
 - [x] `tests/unit/chat2-tpo-team-open-increments.test.ts` (1 failing)
-- [ ] `tests/unit/chat6-superadmin-people-verified-closure.test.ts` (1 failing)
+- [x] `tests/unit/chat6-superadmin-people-verified-closure.test.ts` (1 failing)
 - [ ] `tests/unit/chat9-verify2-learner-assignment-retry.test.ts` (2 failing)
 - [x] `tests/unit/public-auth-error-retry-round5.test.ts` (1 failing)
 
@@ -154,3 +154,10 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 
 - `chat2-tpo-team-open-increments.test.ts`: inspected current `src/app/(authenticated)/tpo/team/page.tsx` against the precise failing assertion; `redirect("/tpo/settings/team")` exists in the `people`/`members`/`roster` branch, while UUID conversation aliases are bounded and scoped. This is a stale failure on the recorded main commit, not a reason to change the test. Source checked; no new test execution claimed.
 - `public-auth-error-retry-round5.test.ts`: inspected current `src/components/auth/login-form.tsx`; `safeRetry < 120`, `reason.retryAfterSeconds`, `setCooldown(Math.max(cooldown,safeRetry))`, and the rate-limit copy all exist. The failing string assertion is satisfied by the current branch source. Source checked; no new test execution claimed.
+
+## Lane-13 overflow review (2026-10-23)
+
+- [chat-13] `UX-college-cross-audit-chat19.test.ts` — FIXED outdated source-file assertion: allocation page delegates its accessible roster to `elective-eligible-selection.tsx`. Kept mobile-priority and table checks in the extracted component. Commit `966933bc24238942e3a7bc81081393a6ef46449b`.
+- [chat-13] `chat13-superadmin-interview-operations.test.ts` — FIXED outdated string assertion for Type and Mode: current real Select controls are inline, while Status/Department use `choices()`. Assertions retain control wiring. Commit `b9684590e3c633ac45991c8b67b7768af50c4f9c`.
+- [chat-13] `chat6-superadmin-people-verified-closure.test.ts` — FIXED CSV fixture with literal escaped newline that produced no faculty rows; retained Department and Faculty Type assertions. Commit `ca5ec43b934c3662fe929a3ac39298d0bfeb74c8`.
+- Verified by source inspection against current main; no test execution claimed.
