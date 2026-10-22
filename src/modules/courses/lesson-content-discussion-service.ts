@@ -31,7 +31,7 @@ const writeInput = z.strictObject({
 
 /** Feature gate remains false until DB05 SQL/journal and security tests pass. */
 export function lessonContentDiscussionsEnabled(): boolean {
-  return process.env.DB05_LESSON_DISCUSSIONS_READY === "DB05_VERIFIED";
+  return process.env["DB05_LESSON_DISCUSSIONS_READY"] === "DB05_VERIFIED";
 }
 
 async function requireContentDiscussionScope(

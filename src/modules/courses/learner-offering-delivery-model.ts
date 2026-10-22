@@ -22,6 +22,7 @@ export function resolveLearnerOfferingDelivery(
     .filter(row => (seen.has(row.deliveryId) ? false : (seen.add(row.deliveryId), true)))
     .map(row => ({ deliveryId: row.deliveryId, courseName: row.courseName }));
   if (options.length === 0) return { kind: "none" };
-  if (options.length === 1) return { kind: "selected", deliveryId: options[0].deliveryId };
+  const only = options[0];
+  if (only) return { kind: "selected", deliveryId: only.deliveryId };
   return { kind: "choose", options };
 }

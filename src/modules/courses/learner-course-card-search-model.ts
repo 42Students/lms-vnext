@@ -54,13 +54,13 @@ export function learnerCourseSearchScore(value:string,needle:string,usage=0):num
   for(let i=1;i<=a.length;i++){
    const next=[i];
    for(let j=1;j<=b.length;j++){
-    next[j]=Math.min(next[j-1]+1,previous[j]+1,
-     previous[j-1]+(a[i-1]===b[j-1]?0:1));
+    next[j]=Math.min((next[j-1] ?? Infinity)+1,(previous[j] ?? Infinity)+1,
+     (previous[j-1] ?? Infinity)+(a[i-1]===b[j-1]?0:1));
    }
    if(Math.min(...next)>2)return false;
    previous=next;
   }
-  return previous[b.length]<=2;
+  return (previous[b.length] ?? Infinity)<=2;
  }
  return words.some(word=>withinTwo(word,q))?40+bonus:0;
 }

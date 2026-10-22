@@ -16,7 +16,7 @@ import {legacyCourseBulkFlagsSchema} from "./legacy-course-bulk-flags-model";
 export async function updateLegacyCourseBulkFlags(context:RequestContext,raw:unknown){
  const input=legacyCourseBulkFlagsSchema.parse(raw);
  const acting=await resolveActingCollege(context,"courses.manage");
- const configured=Number(process.env.COURSE_BULK_STATUS_MAX??"100");
+ const configured=Number(process.env["COURSE_BULK_STATUS_MAX"]??"100");
  const maximum=Number.isSafeInteger(configured)?Math.min(100,Math.max(1,configured)):100;
  if(input.courseIds.length>maximum)
   throw new Error("COURSE_VISIBILITY_BULK_TOO_LARGE");
