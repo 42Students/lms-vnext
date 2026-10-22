@@ -23,8 +23,9 @@ export function FacultyIdentityEvidenceEditor({
  const blocked=busy||pending;
  async function begin(kind:Purpose,file:File){
   if(mutationRef.current)return;
-  if(blocked)return;  mutationRef.current = true;
-setBusy(true);setError("");setMessage("");setReadLink(null);
+  if(blocked)return;
+  mutationRef.current = true;
+  setBusy(true);setError("");setMessage("");setReadLink(null);
   try{
    if(!["application/pdf","image/png","image/jpeg","image/webp"].includes(file.type)||
       file.size<1||file.size>10*1024*1024)
