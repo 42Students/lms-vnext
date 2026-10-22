@@ -22,8 +22,10 @@ export async function GET(
   { params }: RouteContext,
 ) {
   const query=new URL(request.url).searchParams;
-  if([...query.keys()].some(key=>key!=="view"&&key!=="page") ||
+  if([...query.keys()].some(key=>key!=="view"&&key!=="page"&&key!=="resourceKey") ||
      query.getAll("page").length>1 ||
+     query.getAll("resourceKey").length>1 ||
+     (query.has("resourceKey")&&query.get("view")!=="audit") ||
      (query.has("page") && !/^[1-9][0-9]{0,4}$/.test(query.get("page")??"")) ||
      (query.has("page") && query.get("view")!=="audit") ||
      query.getAll("view").length>1 ||
@@ -33,19 +35,19 @@ export async function GET(
     const context = await getCurrentRequestContext();
     const { projectId } = await params;
     if(query.get("view")==="audit"){
-      const history=await getProjectResourceHistory(context,projectId);
-      const page=Number(query.get("page")??"1");
-      const pageSize=10;
-      const total=history.rows.length;
-      const start=(page-1)*pageSize;
-      const rows=history.rows.slice(start,start+pageSize);
-      const first=rows.length?start+1:0;
-      const last=rows.length?start+rows.length:0;
+      const history=await getProjectResourceHistory(context,projectId,{
+        page:query.get("page")??"1",pageSize:10,
+        ...(query.get("resourceKey")?{resourceKey:query.get("resourceKey")}:{}),
+      });
+      const first=history.rows.length?(history.page-1)*history.pageSize+1:0;
+      const last=history.rows.length?first+history.rows.length-1:0;
       return NextResponse.json({
-        message:"Resource audit retrieved",history:rows,
-        hasMore:history.hasMore||last<total,
-        pagination:{page,pageSize,totalLoaded:total,
-          rangeLabel:first+"–"+last+" of "+(history.hasMore?"at least "+total:total)+" matching changes",
+        message:"Resource audit retrieved",history:history.rows,
+        hasMore:history.hasMore,
+        pagination:{page:history.page,pageSize:history.pageSize,
+          total:history.total,totalPages:history.pageCount,
+          totalLoaded:history.rows.length,
+          rangeLabel:first+"–"+last+" of "+history.total+" matching changes",
           hasUnloadedHistory:history.hasMore},
       },{headers:{"Cache-Control":"private, no-store"}});
     }

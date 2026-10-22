@@ -70,15 +70,15 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   query.appliedTo?lt(appliedAt,istStartOfNextDay(query.appliedTo)):undefined,
   matchingAcademic,
  );
- const perJob=db.select({
+ const result=await db.select({
   companyId:placementCompanies.id,companyName:placementCompanies.name,
   jobId:placementJobs.id,jobTitle:placementJobs.title,
-  totalApplications:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number).as("total_applications"),
-  applied:tally("APPLIED").as("applied"),
-  withdrawn:sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplications.status} = 'WITHDRAWN')::integer`.mapWith(Number).as("withdrawn"),
-  waitlisted:tally("WAITLISTED").as("waitlisted"),
-  shortlisted:tally("SHORTLISTED").as("shortlisted"),assessment:tally("ASSESSMENT").as("assessment"),interview:tally("INTERVIEW").as("interview"),
-  offered:tally("OFFERED").as("offered"),
+  totalApplications:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number),
+  applied:tally("APPLIED"),
+  withdrawn:sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplications.status} = 'WITHDRAWN')::integer`.mapWith(Number),
+  waitlisted:tally("WAITLISTED"),
+  shortlisted:tally("SHORTLISTED"),assessment:tally("ASSESSMENT"),interview:tally("INTERVIEW"),
+  offered:tally("OFFERED"),
   // A mutable pipeline stage alone cannot prove that a learner joined.
   // Use the accepted offer + persisted JOINED outcome, consistent with
   // the selected-college employer-history tally. EXISTS prevents multiple
@@ -86,15 +86,15 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   hired:sql<number>`count(distinct ${placementApplications.id}) filter (
     where ${placementApplications.status} = 'SUBMITTED'
     and ${verifiedJoined}
-  )::integer`.mapWith(Number).as("hired"),
-  rejected:tally("REJECTED").as("rejected"),
+  )::integer`.mapWith(Number),
+  rejected:tally("REJECTED"),
   // Cumulative funnel distinct from mutually exclusive snapshot metrics:
   // all applications begin APPLIED, including later withdrawals.
-  funnelApplied:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number).as("funnel_applied"),
-  funnelShortlisted:reached("SHORTLISTED").as("funnel_shortlisted"),
-  funnelAssessment:reached("ASSESSMENT").as("funnel_assessment"),
-  funnelInterview:reached("INTERVIEW").as("funnel_interview"),
-  funnelOffered:reached("OFFERED").as("funnel_offered"),
+  funnelApplied:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number),
+  funnelShortlisted:reached("SHORTLISTED"),
+  funnelAssessment:reached("ASSESSMENT"),
+  funnelInterview:reached("INTERVIEW"),
+  funnelOffered:reached("OFFERED"),
   // A joined placement is not always accompanied by a synthetic HIRED
   // college stage. Use the real offer+joining evidence as a second route.
   funnelHired:sql<number>`count(distinct ${placementApplications.id}) filter (
@@ -105,19 +105,19 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
           and h.to_stage = 'HIRED'
       )
     )
-  )::integer`.mapWith(Number).as("funnel_hired"),
+  )::integer`.mapWith(Number),
   firstShortlistCount:sql<number>`count((
     select min(h.moved_at) from ${placementCollegeApplicationStageHistory} h
     where h.stage_id = ${placementCollegeApplicationStages.id}
       and h.to_stage = 'SHORTLISTED' and h.moved_at >= ${appliedAt}
-  ))::integer`.mapWith(Number).as("first_shortlist_count"),
+  ))::integer`.mapWith(Number),
   firstShortlistHours:sql<number|null>`avg((
     select extract(epoch from (min(h.moved_at)-${appliedAt}))/3600
     from ${placementCollegeApplicationStageHistory} h
     where h.stage_id = ${placementCollegeApplicationStages.id}
       and h.to_stage = 'SHORTLISTED'
       and h.moved_at >= ${appliedAt}
-  ))`.mapWith(Number).as("first_shortlist_hours"),
+  ))`.mapWith(Number),
  }).from(placementJobs)
   .innerJoin(placementCompanyRelationships,and(
     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
@@ -148,56 +148,46 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
     pattern?or(ilike(placementJobs.title,pattern),ilike(placementCompanies.name,pattern)):undefined,
   ))
   .groupBy(placementJobs.id,placementJobs.title,placementCompanies.id,placementCompanies.name)
-  .as("hiring_per_job");
- // Aggregate the whole authorized, filtered set IN PostgreSQL. Only the
- // rendered job table/CSV is capped; a 5000-row cap must never turn a
- // dashboard's headline counts into plausible but incorrect totals.
- const [result,totalsRows]=await Promise.all([
-  db.select().from(perJob)
-   .orderBy(asc(perJob.companyName),asc(perJob.jobId))
-   .limit(SUPER_ADMIN_HIRING_EXPORT_CAP+1),
-  db.select({
-   matchingJobCount:sql<number>`count(*)::integer`.mapWith(Number),
-   totalApplications:sql<number>`coalesce(sum(${perJob.totalApplications}),0)::integer`.mapWith(Number),
-   applied:sql<number>`coalesce(sum(${perJob.applied}),0)::integer`.mapWith(Number),
-   shortlisted:sql<number>`coalesce(sum(${perJob.shortlisted}),0)::integer`.mapWith(Number),
-   assessment:sql<number>`coalesce(sum(${perJob.assessment}),0)::integer`.mapWith(Number),
-   interview:sql<number>`coalesce(sum(${perJob.interview}),0)::integer`.mapWith(Number),
-   offered:sql<number>`coalesce(sum(${perJob.offered}),0)::integer`.mapWith(Number),
-   hired:sql<number>`coalesce(sum(${perJob.hired}),0)::integer`.mapWith(Number),
-   rejected:sql<number>`coalesce(sum(${perJob.rejected}),0)::integer`.mapWith(Number),
-   withdrawn:sql<number>`coalesce(sum(${perJob.withdrawn}),0)::integer`.mapWith(Number),
-   waitlisted:sql<number>`coalesce(sum(${perJob.waitlisted}),0)::integer`.mapWith(Number),
-   funnelApplied:sql<number>`coalesce(sum(${perJob.funnelApplied}),0)::integer`.mapWith(Number),
-   funnelShortlisted:sql<number>`coalesce(sum(${perJob.funnelShortlisted}),0)::integer`.mapWith(Number),
-   funnelAssessment:sql<number>`coalesce(sum(${perJob.funnelAssessment}),0)::integer`.mapWith(Number),
-   funnelInterview:sql<number>`coalesce(sum(${perJob.funnelInterview}),0)::integer`.mapWith(Number),
-   funnelOffered:sql<number>`coalesce(sum(${perJob.funnelOffered}),0)::integer`.mapWith(Number),
-   funnelHired:sql<number>`coalesce(sum(${perJob.funnelHired}),0)::integer`.mapWith(Number),
-   shortlistCount:sql<number>`coalesce(sum(${perJob.firstShortlistCount}),0)::integer`.mapWith(Number),
-   shortlistWeightedHours:sql<number>`coalesce(sum(${perJob.firstShortlistHours} * ${perJob.firstShortlistCount}),0)::double precision`.mapWith(Number),
-  }).from(perJob),
- ]);
+  .orderBy(asc(placementCompanies.name),asc(placementJobs.id));
+ // Keep the display/CSV safety cap, not a cap on aggregate truth. The
+ // database already performs company/job grouping; accumulate all matching
+ // grouped rows on the server before returning only the first capped page.
  const bounded=result.slice(0,SUPER_ADMIN_HIRING_EXPORT_CAP);
- const total=totalsRows[0]!;
+ const fullTotals={
+  totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,
+  offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0,
+ };
+ const fullFunnelTotals={
+  applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,
+ };
+ let shortlistWeightedHours=0,shortlistObservationCount=0;
+ for(const row of result){
+  for(const key of ["totalApplications","applied","shortlisted","assessment",
+   "interview","offered","hired","rejected","withdrawn","waitlisted"] as const)
+   fullTotals[key]+=row[key];
+  for(const key of ["applied","shortlisted","assessment","interview","offered","hired"] as const){
+   const field=("funnel"+key[0]!.toUpperCase()+key.slice(1)) as
+    "funnelApplied"|"funnelShortlisted"|"funnelAssessment"|"funnelInterview"|"funnelOffered"|"funnelHired";
+   fullFunnelTotals[key]+=row[field];
+  }
+  if(typeof row.firstShortlistHours==="number"&&
+     Number.isFinite(row.firstShortlistHours)&&row.firstShortlistHours>=0&&
+     row.firstShortlistCount>0){
+   shortlistWeightedHours+=row.firstShortlistHours*row.firstShortlistCount;
+   shortlistObservationCount+=row.firstShortlistCount;
+  }
+ }
+ const fullShortlistMeanHours=shortlistObservationCount>0?
+  Math.round(shortlistWeightedHours/shortlistObservationCount):null;
  return {
-  matchingJobCount:total.matchingJobCount,
-  fullTotals:{
-   totalApplications:total.totalApplications,applied:total.applied,
-   shortlisted:total.shortlisted,assessment:total.assessment,
-   interview:total.interview,offered:total.offered,hired:total.hired,
-   rejected:total.rejected,withdrawn:total.withdrawn,waitlisted:total.waitlisted,
-  },
-  fullFunnelTotals:{
-   applied:total.funnelApplied,shortlisted:total.funnelShortlisted,
-   assessment:total.funnelAssessment,interview:total.funnelInterview,
-   offered:total.funnelOffered,hired:total.funnelHired,
-  },
-  fullShortlistMeanHours:total.shortlistCount>0
-   ?Math.round(total.shortlistWeightedHours/total.shortlistCount):null,
   query,
   // These rows preserve the mutually exclusive current-status snapshot.
   rows:bounded as SuperAdminHiringRow[],
+  matchingJobCount:result.length,
+  // All filters were applied by the same selected-college SQL joins as the
+  // displayed job rows. These aggregates cover *all* matching jobs, even
+  // when the CSV and company rows are capped for response size.
+  fullTotals,fullFunnelTotals,fullShortlistMeanHours,
   // Do NOT derive the funnel from rows.applied/shortlisted: an applicant who
   // later moved stages still contributes to earlier stages in this view.
   funnelRows:bounded.map(row=>({

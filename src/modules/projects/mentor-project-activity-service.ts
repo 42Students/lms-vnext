@@ -27,7 +27,8 @@ export async function getMentorProjectActivityHistory(
   if(!enabled)return {
     enabled:false as const,title:"",query,
     ...mentorProjectActivityPage(0,1,query.pageSize),
-    items:[] as {id:string;label:string;importance:string;occurredAt:Date}[],
+    items:[] as {id:string;eventCode:string;eventType:string;label:string;
+      sourceTab:string;importance:string;occurredAt:Date}[],
   };
   const scope=await requireProjectReadAccess(context,query.projectId);
   if(scope.access!=="MENTOR" || scope.collegeId!==membership.collegeId ||
@@ -68,9 +69,20 @@ export async function getMentorProjectActivityHistory(
     .limit(paging.pageSize).offset((paging.page-1)*paging.pageSize);
   return {
     enabled:true as const,title:scope.project.title,query,...paging,
-    items:rows.map(row=>({
-      id:row.id,label:safeMentorProjectEventLabel(row.eventType),
-      importance:row.importance,occurredAt:row.occurredAt,
-    })),
+    items:rows.map(row=>{
+      // Legacy eventType was a readable description while eventCode was a
+      // machine key. Return both without leaking actor, summary or metadata.
+      const label=safeMentorProjectEventLabel(row.eventType);
+      const sourceTab=row.eventType.startsWith("projects.task.")?"Tasks":
+        row.eventType.startsWith("projects.resource.")?"Resources":
+        row.eventType.startsWith("projects.meeting.")?"Meetings":
+        row.eventType.startsWith("projects.delivery.")?"Deliveries":
+        row.eventType.startsWith("projects.team_member.")?"Team":
+        row.eventType.startsWith("projects.mentor.")?"Assignments":
+        row.eventType.startsWith("projects.sprint.")?"Sprints":
+        row.eventType.startsWith("projects.evaluation.")?"Evaluations":"Project";
+      return {id:row.id,eventCode:row.eventType,eventType:label,
+        label,sourceTab,importance:row.importance,occurredAt:row.occurredAt};
+    }),
   };
 }

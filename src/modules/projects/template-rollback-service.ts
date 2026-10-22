@@ -11,13 +11,17 @@ import {ProjectsServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {projectTemplateBlueprintSchema} from "./validation";
-const rollbackSchema=z.strictObject({
+/** Browser rollback POST contract, matching the selected snapshot, CAS token,
+ * explicit confirmation and scoped preview counters. No collegeId is read
+ * from a browser payload: project-template.manage checks the persisted actor. */
+export const projectTemplateRollbackRequestSchema=z.strictObject({
  versionId:z.string().uuid(),
  expectedTemplateVersion:z.number().int().min(1),
  confirmed:z.literal(true),
  expectedAssignedCollegeCount:z.number().int().min(0).optional(),
  expectedPinnedWorkspaceCount:z.number().int().min(0).optional(),
 });
+export type ProjectTemplateRollbackRequest=z.infer<typeof projectTemplateRollbackRequestSchema>;
 
 /** Read-only blast-radius preview. No workspaces are mutated on content
  * rollback: current project instances are pinned to their materialized
@@ -63,7 +67,7 @@ export async function previewProjectTemplateRollbackImpact(
 export async function rollbackProjectTemplate(context:RequestContext,templateIdInput:string,raw:unknown){
  requirePermission(context,"project-template.manage");
  const templateId=z.string().uuid().parse(templateIdInput);
- const input=rollbackSchema.parse(raw);
+ const input=projectTemplateRollbackRequestSchema.parse(raw);
  return getDb().transaction(async tx=>{
   const [template]=await tx.select().from(projectTemplates)
     .where(eq(projectTemplates.id,templateId)).for("update").limit(1);
