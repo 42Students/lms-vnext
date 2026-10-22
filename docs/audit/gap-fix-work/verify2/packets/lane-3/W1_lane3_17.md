@@ -84,6 +84,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Define nullable due and roster-loss behavior, historical period roster snapshot.
 
 ## G2-4-028-054 [P1] GAP facet F20
+- [x] Verified: people/members redirects intentionally discard c/m, while conversation routes retain compatible query parameters; legacy teamRedirect separates tab from rest.
 - Files: src/app/(authenticated)/tpo/team/page.tsx
 - Legacy: c/m forwarded for conversations but dropped for members (`docs/legacy-source/frontend/src/pages/tpo/team.js:7-9`)
 - Expected fix: Match query precedence for membership destinations.
