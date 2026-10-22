@@ -12,8 +12,13 @@ const retainedKeys=[
 /** Keep open task context and paging during tab transitions. */
 export function learnerProjectTabHref(
   projectId:string,tab:string,query:Pick<URLSearchParams,"get">,
+  currentProjectId:string=projectId,
 ):string {
   const params=new URLSearchParams({tab});
+  // A different project/account must not inherit another project's open
+  // editor, cursor, or private in-progress filters.
+  if(currentProjectId!==projectId)
+    return "/learn/projects/"+encodeURIComponent(projectId)+"?"+params.toString();
   for(const key of retainedKeys){
     const value=query.get(key);
     if(value && safeToken.safeParse(value).success)params.set(key,value);
@@ -36,8 +41,9 @@ export function learnerProjectTaskFocusOnTabChange(input:{
 export function learnerProjectTabSwitchAllowed(input:{
  currentProjectId:string;targetProjectId:string;dirty:boolean;confirmedDiscard:boolean;
 }):{allowed:boolean;prompt:string|null}{
- if(input.currentProjectId!==input.targetProjectId)return {allowed:true,prompt:null};
  if(input.dirty&&!input.confirmedDiscard)return {allowed:false,
-  prompt:"You have unsaved changes. Discard changes and switch tabs?"};
+  prompt:input.currentProjectId!==input.targetProjectId
+   ?"You have unsaved changes. Discard changes and switch projects?"
+   :"You have unsaved changes. Discard changes and switch tabs?"};
  return {allowed:true,prompt:null};
 }
