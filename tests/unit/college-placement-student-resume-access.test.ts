@@ -27,6 +27,8 @@ describe("G2-15-002-030: college placement learner resume privacy",()=>{
   expect(page).toContain('selectedProfile?.resumeAvailable?<a');
   expect(page).toContain("View verified resume");
   expect(page).toContain("Resume replacement is learner-owned");
-  expect(page).toContain('rel="noopener noreferrer"');
+  expect(page).toContain('href={"/api/placements/college/students/"+encodeURIComponent(selectedStudent.membershipId)+"/resume"}');
+  expect(page).not.toContain('target="_blank"');
+  expect(page).not.toContain("window.open(");
  });
 });
