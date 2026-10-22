@@ -31,12 +31,12 @@ async function RetentionReportContent({searchParams}:RetentionParams){
  const query=await searchParams;
  const expanded=query.details==="1";
  const context=await getCurrentRequestContext();
- if(!context.adminScope?.collegeId)return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]"><PageHeader title="Data retention report" actions={<div className="flex flex-wrap gap-2"><PageBackLink href="/admin/placements" label="Placements" /><Link href="/admin/placements/retention" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Collapse report</Link></div>}/>
+ if(!context.adminScope?.collegeId)return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]"><PageHeader title="Data retention report" actions={<div className="flex flex-wrap gap-2"><PageBackLink href="/admin/placements" label="Placements" /></div>}/>
   <EmptyState title="Select a college" description="Choose a college to review candidate retention candidates."/></div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
  if(!expanded)return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Data retention report" actions={<PageBackLink href="/admin/placements" label="Placements"/>}/>
-  <Disclosure title="Data retention (180 days)" className="rounded-lg border border-border p-4" contentClassName="pt-4">
+  <Disclosure title="Data retention (180 days)" className="border-b border-[var(--lms-canvas-border)] pb-4" contentClassName="pt-4">
    <p className="text-sm text-body">Review rejected or withdrawn applications with no updates in the past 180 days. The report shows up to 200 candidates and does not delete data.</p>
    <Link href="/admin/placements/retention?details=1"
      className="mt-3 inline-flex min-h-11 items-center gap-2 font-semibold text-primary-text underline md:min-h-9">
@@ -54,7 +54,7 @@ async function RetentionReportContent({searchParams}:RetentionParams){
    <PageHeader title="Data retention report" actions={<PageBackLink href="/admin/placements" label="Placements" />}/>
    <ErrorState title="Couldn't load the data retention report."
     description="The retention review could not be loaded. Nothing has been deleted or marked for deletion."
-    action={<Link href="/admin/placements/retention?retry=1" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 font-semibold text-primary-text hover:border-[var(--lms-primary)] md:min-h-9">Retry</Link>}/>
+    action={<Link href="/admin/placements/retention?details=1&retry=1" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 font-semibold text-primary-text hover:border-[var(--lms-primary)] md:min-h-9">Retry</Link>}/>
   </div>;
  }
  const fmt=(d:Date)=>d.toLocaleDateString("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});

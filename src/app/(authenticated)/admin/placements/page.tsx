@@ -87,8 +87,8 @@ export default async function AdminPlacementsPage({ searchParams }: {
         </div>}
       />
       <SuperAdminPlacementOversightNav />
-      <section aria-label="Placements policy" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-white p-4">
-        <h2 className="text-lg font-semibold text-foreground">Placements policy</h2>
+      <section aria-label="Placements policy" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Placements policy</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Platform-wide — clear the college selection in the header to edit.
         </p>
