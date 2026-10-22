@@ -6,8 +6,8 @@ import {
 } from "@/lib/env";
 
 type DbState = {
-  pool?: Pool;
-  db?: ReturnType<typeof drizzle>;
+  pool?: Pool | undefined;
+  db?: ReturnType<typeof drizzle> | undefined;
 };
 
 const globalForDb = globalThis as typeof globalThis & {
