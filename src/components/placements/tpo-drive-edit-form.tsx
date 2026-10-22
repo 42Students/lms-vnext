@@ -28,6 +28,7 @@ type Draft={id:string;title:string;description:string;updatedAt:string;status:st
   minimumAnnualCtcInr?:number|null;maximumAnnualCtcInr?:number|null;
   stipendPerMonthInr?:number|null}>;
  companyRelationshipId?:string;
+ companyName:string|null;companyReady:boolean;
  employmentType:string;
  workMode:string;recruiterDriveMode:string;
  jobTypeLabel:string|null;
@@ -316,8 +317,9 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
   <section aria-label="Employer relationship" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3">
    <h3 className="text-sm font-semibold text-foreground">Company</h3>
+   <p className="mt-1 text-base font-semibold text-foreground">{job.companyName??"Add the company"}</p>
    <p className="mt-1 text-xs leading-5 text-body">
-    The verified employer relationship on this saved drive is read-only here.
+    The selected employer relationship for this saved drive is read-only here.
     Changing the company requires its separately authorized reassignment workflow;
     saving job terms cannot silently transfer company or recruiter access.
    </p>
