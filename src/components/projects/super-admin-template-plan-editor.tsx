@@ -135,11 +135,26 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
     if(draft.tasks.length>500){
       setError("Remove "+(draft.tasks.length-500)+" tasks. Maximum 500 items.");return;
     }
-    const firstEmpty=props.section==="tasks"?draft.tasks.findIndex(row=>!row.title.trim()):
-      draft.sprints.findIndex(row=>!row.title.trim());
-    if(firstEmpty>=0){
-      setRowErrors({[props.section+":"+firstEmpty]:"Title required"});
-      setError("Item "+(firstEmpty+1)+": Title required");return;
+    // Collect all invalid rows before returning so a single Save exposes
+    // every missing title rather than only the first row.
+    const titleIssues:Record<string,string>={};
+    const currentSection=props.section==="tasks"?draft.tasks:draft.sprints;
+    currentSection.forEach((row,index)=>{
+      if(!row.title.trim())titleIssues[props.section+":"+index]="Title required";
+    });
+    if(props.section==="sprints")draft.releases.forEach((row,index)=>{
+      if(!row.title.trim())titleIssues["releases:"+index]="Title required";
+    });
+    if(Object.keys(titleIssues).length){
+      setRowErrors(titleIssues);
+      if(props.section==="tasks"){
+        const index=draft.tasks.findIndex(row=>!row.title.trim());
+        setTaskSearch("");setTaskPage(Math.floor(Math.max(0,index)/25)+1);
+        const invalid=draft.tasks[index];
+        if(invalid)setCollapsedTaskIds(current=>current.filter(key=>key!==invalid.key));
+      }
+      setError("Complete the highlighted "+Object.keys(titleIssues).length+
+        " required title field(s) before saving.");return;
     }
     const normalized = normalizeTemplatePlan(preparePlanKeys(draft));
     const parsed = projectTemplateBlueprintSchema.safeParse(normalized);
@@ -150,7 +165,12 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         if((section==="sprints"||section==="tasks"||section==="releases")&&
           typeof index==="number"){
           const key=section+":"+index;
-          if(!rowIssues[key])rowIssues[key]=issue.message;
+          // Keep distinct validation messages for each row; do not mask
+          // secondary key, sequence or parent-reference errors.
+          const prior=rowIssues[key];
+          if(!prior)rowIssues[key]=issue.message;
+          else if(!prior.split(" · ").includes(issue.message))
+            rowIssues[key]=prior+" · "+issue.message;
         }
       }
       setRowErrors(rowIssues);

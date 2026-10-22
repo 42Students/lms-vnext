@@ -32,26 +32,39 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
  const router=useRouter(),[open,setOpen]=useState(true),[pending,setPending]=useState(false),
  [version,setVersion]=useState(currentVersion),[rows,setRows]=useState(blueprint.resources),
  [error,setError]=useState(""),[message,setMessage]=useState("");
+ const [rowErrors,setRowErrors]=useState<Record<number,string[]>>({});
  const [search,setSearch]=useState("");
  const [removed,setRemoved]=useState<{row:Resource;index:number}|null>(null);
- const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
-  rows.length<=12||!search.trim()||[row.title,row.key,row.description,row.url,row.accessNotes].some(
+ const visibleRows=rows.map((row,index)=>({row,index})).filter(({row,index})=>
+  Boolean(rowErrors[index]?.length)||rows.length<=12||!search.trim()||[row.title,row.key,row.description,row.url,row.accessNotes].some(
    value=>String(value??"").toLowerCase().includes(search.trim().toLowerCase())));
  function remove(index:number){
+  setRowErrors({});
   setRemoved({row:rows[index]!,index});
   setRows(old=>old.filter((_,at)=>at!==index));
  }
  function undo(){
   if(!removed)return;
+  setRowErrors({});
   setRows(old=>{const next=[...old];next.splice(Math.min(removed.index,next.length),0,removed.row);return next;});
   setRemoved(null);
  }
  const dirty=JSON.stringify(rows)!==JSON.stringify(blueprint.resources);
  const guard=useProjectEditorDiscardGuard(open,dirty,pending,()=>{
-  setOpen(false);setRows(blueprint.resources);setError("");
+  setOpen(false);setRows(blueprint.resources);setError("");setRowErrors({});
  });
- const change=(index:number,patch:Partial<Resource>)=>setRows(old=>old.map((row,i)=>i===index?{...row,...patch}:row));
+ function clearRowError(index:number){
+  setRowErrors(current=>{
+   if(!current[index])return current;
+   const next={...current};delete next[index];return next;
+  });
+ }
+ const change=(index:number,patch:Partial<Resource>)=>{
+  clearRowError(index);
+  setRows(old=>old.map((row,i)=>i===index?{...row,...patch}:row));
+ };
  const changeTitle=(index:number,titleValue:string)=>{
+  clearRowError(index);
   setRows(old=>old.map((row,i)=>{
    if(i!==index)return row;
    const currentKey=row.key||"";
@@ -62,6 +75,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   }));
  };
  function add(){
+  setRowErrors({});
   if(rows.length>=200){setError("Maximum 200 resources in this template version.");return;}
   const key=uniqueKey("New resource",rows.map(r=>r.key));
   setRows(old=>[...old,{key,title:"",required:false,sequence:old.length,
@@ -69,24 +83,37 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
  }
  async function save(){
   const ordered=rows.map((row,i)=>({...row,sequence:i}));
+  const issues:Record<number,string[]>={};
+  const report=(index:number,message:string)=>{
+   issues[index]=[...(issues[index]??[]),message];
+  };
   for(let index=0;index<ordered.length;index++){
    const row=ordered[index]!;
-   if(!row.title.trim()){setError("Item "+(index+1)+": Title required");return;}
+   if(!row.title.trim())report(index,"Title required");
    if(row.url?.trim()){
     try{
      const url=new URL(row.url);
      if(!["http:","https:"].includes(url.protocol)||!url.hostname||url.username||url.password)
       throw new Error("unsafe");
-    }catch{setError("Item "+(index+1)+": Links must be ordinary http(s) URLs.");return;}
+    }catch{report(index,"Links must be ordinary http(s) URLs.");}
    }
   }
   const parsed=projectTemplateBlueprintSchema.safeParse({...blueprint,resources:ordered});
+  let generalError="";
   if(!parsed.success){
-   const issue=parsed.error.issues[0];
-   const index=issue?.path.find(part=>typeof part==="number");
-   setError((typeof index==="number"?"Item "+(index+1)+": ":"")+(issue?.message??"Invalid resources"));
+   for(const issue of parsed.error.issues){
+    const [section,index]=issue.path;
+    if(section==="resources"&&typeof index==="number"){
+     if(!(issues[index]??[]).includes(issue.message))report(index,issue.message);
+    }else if(!generalError)generalError=issue.message;
+   }
+  }
+  setRowErrors(issues);
+  if(Object.keys(issues).length){
+   setError("Fix the highlighted resource rows before saving."+(generalError?" "+generalError:""));
    return;
   }
+  if(!parsed.success){setError(generalError||"Check the template resource fields.");return;}
   if(!(await askConfirm("Save resource changes as a new template version?")))return;
   setPending(true);setError("");setMessage("");
   try{
@@ -95,7 +122,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     blueprint:parsed.data,changeNote:"Updated template resources",
    }) as {version?:number;template?:{currentVersion:number}};
    setVersion(result.template?.currentVersion??result.version??version+1);
-   setRows(ordered);setRemoved(null);setMessage("");setOpen(true);
+   setRows(ordered);setRemoved(null);setRowErrors({});setMessage("");setOpen(true);
    showToast({tone:"success",title:"Resources saved"});router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Failed to save resources");}
   finally{setPending(false);}
@@ -119,10 +146,13 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     <span>Removed {removed.row.title||"resource"} (unsaved).</span>
     <Button type="button" variant="link" onClick={undo} disabled={pending}>Undo remove</Button>
    </div>:null}
-   {visibleRows.map(({row,index:i})=><details key={row.key+":"+i} className="min-w-0 border-b border-border py-2" open={undefined}>
+   {visibleRows.map(({row,index:i})=><details key={row.key+":"+i} className="min-w-0 border-b border-border py-2" open={rowErrors[i]?.length?true:undefined}>
     <summary className="flex min-h-11 cursor-pointer items-center gap-2 break-words text-sm font-semibold text-[var(--lms-heading)]">
-      {row.title||"Untitled resource"} <span className="ml-auto text-xs font-normal text-muted-foreground">Resource {i+1}</span>
+      {row.title||"Untitled resource"} <span className="ml-auto text-xs font-normal text-muted-foreground">Resource {i+1}{rowErrors[i]?.length?" · Fix "+rowErrors[i].length+" error(s)":""}</span>
     </summary>
+    {rowErrors[i]?.length?<ul role="alert" className="list-disc space-y-1 px-5 py-2 text-xs text-danger-text">
+      {rowErrors[i].map((issue,index)=><li key={index}>{issue}</li>)}
+    </ul>:null}
     <fieldset disabled={pending} className="grid min-w-0 gap-3 pb-4 pt-3 md:grid-cols-2 md:gap-3">
     <legend className="sr-only">Edit {row.title||"resource "+(i+1)}</legend>
     <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Key<Input value={row.key} maxLength={64}
@@ -130,7 +160,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
       className={cls}/><span className="mt-1 block text-xs font-normal text-muted-foreground">
        Generated key: {uniqueKey(row.title||"resource",rows.filter((_,at)=>at!==i).map(item=>item.key))}
       </span></label>
-    <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title *<Input value={row.title} required maxLength={200} placeholder="e.g. Project brief"
+    <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title *<Input value={row.title} required maxLength={200} aria-invalid={Boolean(rowErrors[i]?.length)} placeholder="e.g. Project brief"
       onChange={e=>changeTitle(i,e.target.value)} className={cls}/></label>
     <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Type<Select value={row.type??"LINK"}
       onChange={e=>change(i,{type:e.target.value as Resource["type"]})} className={cls}>
@@ -157,9 +187,9 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     <label className="flex items-center gap-2 text-xs font-semibold text-body"><Checkbox className="size-5"
       checked={row.required} onChange={e=>change(i,{required:e.target.checked})}/>Required</label>
     <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:col-span-2">
-      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" up"} disabled={i===0} onClick={()=>setRows(r=>{const n=[...r];[n[i-1],n[i]]=[n[i],n[i-1]];return n;})}
+      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" up"} disabled={i===0} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];[n[i-1],n[i]]=[n[i],n[i-1]];return n;});}}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Move up</Button>
-      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" down"} disabled={i===rows.length-1} onClick={()=>setRows(r=>{const n=[...r];[n[i+1],n[i]]=[n[i],n[i+1]];return n;})}
+      <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" down"} disabled={i===rows.length-1} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];[n[i+1],n[i]]=[n[i],n[i+1]];return n;});}}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Move down</Button>
       <Button type="button" variant="danger" aria-label={"Remove "+(row.title||"resource")} onClick={()=>remove(i)}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Remove</Button>
