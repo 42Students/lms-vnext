@@ -7,7 +7,7 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-4-014-048  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-4-014-048  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-4-015-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-4-020-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-4-020-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
@@ -20,3 +20,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
+- G2-4-014-048: FIXED — 861c231b57bc7d393627f62433453e643cec1548; `src/app/(authenticated)/admin/colleges/page.tsx` (bounded activity bonus applies to ranked text/fuzzy matches), legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/core/GenericSearchCache.java:310-352`.
