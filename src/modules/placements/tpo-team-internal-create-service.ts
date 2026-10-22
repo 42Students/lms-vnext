@@ -84,12 +84,12 @@ export async function createTpoInternalThread(context:RequestContext,raw:unknown
      eq(activityEvents.actorUserId,context.user.id),
      eq(activityEvents.collegeId,college.id))).limit(1);
    if(existing){
-    if(existing.metadata.topicHash!==topicHash||
-     (existing.metadata.firstMessageHash??null)!==firstMessageHash||
-     existing.metadata.recipientMembershipId!==input.recipientMembershipId||
-     (existing.metadata.participantsHash??null)!==participantsHash||
-     typeof existing.metadata.threadId!=="string")throw new Error("TEAM_IDEMPOTENCY_CONFLICT");
-    return {id:existing.metadata.threadId};
+    if(existing.metadata["topicHash"]!==topicHash||
+     (existing.metadata["firstMessageHash"]??null)!==firstMessageHash||
+     existing.metadata["recipientMembershipId"]!==input.recipientMembershipId||
+     (existing.metadata["participantsHash"]??null)!==participantsHash||
+     typeof existing.metadata["threadId"]!=="string")throw new Error("TEAM_IDEMPOTENCY_CONFLICT");
+    return {id:existing.metadata["threadId"]};
    }
   }
   const [thread]=await tx.insert(placementTpoInternalThreads).values({
