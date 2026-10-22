@@ -1,6 +1,12 @@
 import {describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
 
+vi.mock("next/navigation",()=>({
+ useRouter:()=>({push:vi.fn(),replace:vi.fn(),refresh:vi.fn()}),
+ useSearchParams:()=>new URLSearchParams(),
+ usePathname:()=>"/college/academics",
+}));
+
 vi.mock("@/components/academics/college-semester-management",async()=>{
  const {createElement}=await import("react");
  return {

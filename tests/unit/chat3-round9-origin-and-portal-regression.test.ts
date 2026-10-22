@@ -10,7 +10,9 @@ describe("Chat-3 Round 9 restored contracts",()=>{
   const safe=read("src/components/ui/third-party-link.tsx");
   expect(safe).toContain('url.protocol === "https:"');
   expect(safe).toContain("!url.username && !url.password");
-  expect(safe).not.toContain('target="_blank"');
+  expect(safe).toContain('target="_blank" rel="noopener noreferrer"');
+  expect(safe).toContain('role="alert"');
+  expect(safe).toContain("The link could not be opened.");
   expect(src).toContain("Open employer portal");
  });
  it("api-origin-guard protects POST and DELETE assignment materials at route boundaries",()=>{
