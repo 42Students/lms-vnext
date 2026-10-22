@@ -44,8 +44,8 @@ export function normalizeSmsSupportFilter(input:{
     !Number.isSafeInteger(size)||size<1||size>200)
   throw new Error("INVALID_SMS_SUPPORT_PAGE");
  return {page,size,...(suffix?{suffix}:{}),
-  ...(purpose?{purpose:purpose as PrivilegedSmsAttemptSearch["purpose"]}:{}),
-  ...(input.outcome?{outcome:input.outcome as PrivilegedSmsAttemptSearch["outcome"]}:{})};
+  ...(purpose?{purpose:purpose as NonNullable<PrivilegedSmsAttemptSearch["purpose"]>}:{}),
+  ...(input.outcome?{outcome:input.outcome as NonNullable<PrivilegedSmsAttemptSearch["outcome"]>}:{})};
 }
 
 export function operatorDeliveryOutcome(record: Pick<DeliveryRecord,"status"|"reason">):

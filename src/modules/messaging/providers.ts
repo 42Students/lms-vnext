@@ -167,8 +167,8 @@ export function createOutboundProvider(
       // meeting link or venue is mapped only after the one-of validation.
       if(template.legacyEvent==="INTERVIEW_REMINDER"||
          template.legacyEvent==="INTERVIEW_CONFIRMED"){
-        variables.interviewLocation=variables.interviewLocation||
-          variables.meetingLink||variables.venueAddress;
+        variables["interviewLocation"]=variables["interviewLocation"] ||
+          variables["meetingLink"] || variables["venueAddress"] || "";
       }
       if (!template.zeptoTemplateKey || !isCampaignTemplateKey(template.zeptoTemplateKey) ||
         template.zeptoTemplateKey === config.email.otpTemplateKey) {
@@ -186,11 +186,11 @@ export function createOutboundProvider(
       const effectiveEnv = { ...env, ...override };
       const result = await sendZeptoMailTemplate({
         purpose, toEmail: request.recipient,
-        recipientName: variables.learnerName ?? variables.name ?? request.recipient,
+        recipientName: variables["learnerName"] ?? variables["name"] ?? request.recipient,
         mergeInfo: variables,
-        senderName: template.senderName?.trim() || undefined,
-        fromAddress: template.fromAddress?.trim() || undefined,
-        replyTo: template.replyTo?.trim() || undefined,
+        ...(template.senderName?.trim() ? {senderName: template.senderName.trim()} : {}),
+        ...(template.fromAddress?.trim() ? {fromAddress: template.fromAddress.trim()} : {}),
+        ...(template.replyTo?.trim() ? {replyTo: template.replyTo.trim()} : {}),
       }, config.email, fetchImpl, effectiveEnv);
       if (result.accepted) return { status: "ACCEPTED" };
       if (result.code === "TEMPLATE_NOT_CONFIGURED" || result.code === "TOKEN_NOT_CONFIGURED" ||
@@ -322,9 +322,9 @@ export function legacyJobSmsTemplate(
   env: Record<string, string | undefined> = process.env,
   approvedOverrides: { dltId?: string; body?: string; senderId?: string } = {},
 ): OutboundTemplate | null {
-  const dltId = (approvedOverrides.dltId ?? env.EXOTEL_JOB_DLT_TEMPLATE_ID ?? "").trim();
-  const senderId = (approvedOverrides.senderId ?? env.EXOTEL_JOB_SENDER_ID ?? "FLERNR").trim();
-  const body = approvedOverrides.body ?? env.EXOTEL_JOB_UPDATE_TEMPLATE_BODY ?? DEFAULT_JOB_SMS_BODY;
+  const dltId = (approvedOverrides.dltId ?? env["EXOTEL_JOB_DLT_TEMPLATE_ID"] ?? "").trim();
+  const senderId = (approvedOverrides.senderId ?? env["EXOTEL_JOB_SENDER_ID"] ?? "FLERNR").trim();
+  const body = approvedOverrides.body ?? env["EXOTEL_JOB_UPDATE_TEMPLATE_BODY"] ?? DEFAULT_JOB_SMS_BODY;
   if (!safeDltId(dltId) || !safeSenderId(senderId) ||
     !body.includes("{#var#}") || body.indexOf("{#var#}") !== body.lastIndexOf("{#var#}") ||
     body.length > 1500) return null;
@@ -335,7 +335,7 @@ export function legacyJobSmsTemplate(
     requiredVariables:[],
     maxSmsLength:1600,
     renderSms: (variables) => body.replace("{#var#}",
-      dltSafeRecipientName(variables.learnerName ?? variables.recipientName)),
+      dltSafeRecipientName(variables["learnerName"] ?? variables["recipientName"])),
   };
 }
 
@@ -401,9 +401,9 @@ export function registeredNoticeSmsTemplate(
   approvedBody?: string,
   approvedDltId?: string,
 ): OutboundTemplate | null {
-  const senderId = (env.EXOTEL_NOTIFICATION_SENDER_ID ?? "FLERNR").trim();
-  const dltId = (approvedDltId ?? env.EXOTEL_NOTIFICATION_DLT_TEMPLATE_ID ?? "").trim();
-  const body = (approvedBody ?? env.EXOTEL_NOTIFICATION_TEMPLATE_BODY ?? "").trim();
+  const senderId = (env["EXOTEL_NOTIFICATION_SENDER_ID"] ?? "FLERNR").trim();
+  const dltId = (approvedDltId ?? env["EXOTEL_NOTIFICATION_DLT_TEMPLATE_ID"] ?? "").trim();
+  const body = (approvedBody ?? env["EXOTEL_NOTIFICATION_TEMPLATE_BODY"] ?? "").trim();
   if (!safeSenderId(senderId) || !safeDltId(dltId) ||
     body.length < 1 || body.length > 1500 ||
     !body.includes("{#var#}") ||
@@ -413,7 +413,7 @@ export function registeredNoticeSmsTemplate(
     oneOfVariables:[["recipientName","learnerName"]],
     maxSmsLength:1600,
     renderSms: (variables) => body.replace("{#var#}",
-      dltSafeRecipientName(variables.recipientName ?? variables.learnerName)),
+      dltSafeRecipientName(variables["recipientName"] ?? variables["learnerName"])),
   };
 }
 
@@ -431,7 +431,7 @@ export function registeredAttendanceSmsTemplate(
 ):OutboundTemplate|null {
  const key=purpose==="attendance.absence"?"ABSENCE":"CORRECTION";
  const dltId=(env["EXOTEL_ATTENDANCE_"+key+"_DLT_TEMPLATE_ID"]??"").trim();
- const senderId=(env.EXOTEL_ATTENDANCE_SENDER_ID??"FLERNR").trim();
+ const senderId=(env["EXOTEL_ATTENDANCE_SENDER_ID"]??"FLERNR").trim();
  const body=(env["EXOTEL_ATTENDANCE_"+key+"_TEMPLATE_BODY"]??"").trim();
  if(!safeDltId(dltId)||!safeSenderId(senderId)||body.length>1500 ||
     (body.match(/%s/g)??[]).length!==3)return null;
@@ -441,7 +441,7 @@ export function registeredAttendanceSmsTemplate(
   renderSms:variables=>{
    const cleaned=(raw:string|undefined)=>String(raw??"").replace(/[\\r\\n<>]/g," ").trim().slice(0,80);
    let index=0;
-   const values=[cleaned(variables.courseName),cleaned(variables.startTime),cleaned(variables.endTime)];
+   const values=[cleaned(variables["courseName"]),cleaned(variables["startTime"]),cleaned(variables["endTime"])];
    return body.replace(/%s/g,()=>values[index++]??"");
   }};
 }

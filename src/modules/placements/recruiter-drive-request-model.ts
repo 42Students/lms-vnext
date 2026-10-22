@@ -86,7 +86,7 @@ export function recruiterDraftFromLegacyForm(raw:unknown):
  // legacy JSON rather than making an invalid role visible as valid pay.
  let roleOption:Record<string,unknown>|null=null;
  try{
-  const rawOptions=typeof form.roleOptions==="string"?JSON.parse(form.roleOptions) as unknown:form.roleOptions;
+  const rawOptions=typeof form["roleOptions"]==="string"?JSON.parse(form["roleOptions"]) as unknown:form["roleOptions"];
   const option=Array.isArray(rawOptions)?rawOptions[0]:null;
   if(option&&typeof option==="object"&&!Array.isArray(option))roleOption=option as Record<string,unknown>;
  }catch{/* Malformed legacy role-options were treated as missing. */}
@@ -98,31 +98,31 @@ export function recruiterDraftFromLegacyForm(raw:unknown):
   "eligibility","applicationDeadline","seasonId","recordedOutside","notifyApplicants"]
   .filter(field=>form[field]!==undefined&&form[field]!==null);
  const base=emptyHrDriveDraft();
- const employmentType=form.jobType==="Internship"?"INTERNSHIP":
-   form.jobType==="Internship + full-time"?"INTERNSHIP_FULL_TIME":
-   form.jobType==="Contract"?"CONTRACT":"FULL_TIME";
+ const employmentType=form["jobType"]==="Internship"?"INTERNSHIP":
+   form["jobType"]==="Internship + full-time"?"INTERNSHIP_FULL_TIME":
+   form["jobType"]==="Contract"?"CONTRACT":"FULL_TIME";
  const roundKinds=["TALK","TEST","VENDOR_TEST","GD","INTERVIEW"] as const;
- const rounds=Array.isArray(form.rounds)?
-  form.rounds.flatMap(item=>{
+ const rounds=Array.isArray(form["rounds"])?
+  form["rounds"].flatMap(item=>{
    if(!item||typeof item!=="object")return [];
    const fields=item as Record<string,unknown>;
-   const kind=typeof fields.kind==="string"?fields.kind.toUpperCase():"";
-   const name=typeof fields.name==="string"?fields.name.trim():"";
+   const kind=typeof fields["kind"]==="string"?fields["kind"].toUpperCase():"";
+   const name=typeof fields["name"]==="string"?fields["name"].trim():"";
    return roundKinds.some(v=>v===kind)&&name.length>=2
     ? [{kind:kind as typeof roundKinds[number],name}]:[];
   }):base.rounds;
  const candidate={
   ...base,
-  title:typeof form.jobTitle==="string"?form.jobTitle:"",
-  description:typeof form.jobDescription==="string"?form.jobDescription:"",
-  location:typeof form.location==="string"?form.location:"",
+  title:typeof form["jobTitle"]==="string"?form["jobTitle"]:"",
+  description:typeof form["jobDescription"]==="string"?form["jobDescription"]:"",
+  location:typeof form["location"]==="string"?form["location"]:"",
   employmentType,
-  driveMode:form.driveMode==="OFF_CAMPUS"?"OFF_CAMPUS" as const:"ON_CAMPUS" as const,
-  externalApplicationUrl:typeof form.externalApplyUrl==="string"?form.externalApplyUrl:"",
-  ctcLpa:pay(roleOption?.ctcLpa)||base.ctcLpa,
-  fixedLpa:pay(roleOption?.fixedLpa)||base.fixedLpa,
-  variableLpa:pay(roleOption?.variableLpa)||base.variableLpa,
-  stipendMonthlyInr:pay(roleOption?.stipendPerMonth)||base.stipendMonthlyInr,
+  driveMode:form["driveMode"]==="OFF_CAMPUS"?"OFF_CAMPUS" as const:"ON_CAMPUS" as const,
+  externalApplicationUrl:typeof form["externalApplyUrl"]==="string"?form["externalApplyUrl"]:"",
+  ctcLpa:pay(roleOption?.["ctcLpa"])||base.ctcLpa,
+  fixedLpa:pay(roleOption?.["fixedLpa"])||base.fixedLpa,
+  variableLpa:pay(roleOption?.["variableLpa"])||base.variableLpa,
+  stipendMonthlyInr:pay(roleOption?.["stipendPerMonth"])||base.stipendMonthlyInr,
   rounds,
  };
  const parsed=hrDriveDraftSchema.safeParse(candidate);
@@ -143,9 +143,9 @@ export function trustedRecruiterRequestFromLegacy(
  if(!raw||typeof raw!=="object"||Array.isArray(raw))
   throw new Error(RECRUITER_DRIVE_FORM_REQUIRED_ERROR);
  const record=raw as Record<string,unknown>;
- if(record.collegeId!==undefined && record.collegeId!==trustedCollegeId)
+ if(record["collegeId"]!==undefined && record["collegeId"]!==trustedCollegeId)
   throw new Error("Selected college does not match the authorized recruiter scope");
- const parsed=recruiterDraftFromLegacyForm(record.form??record.draft??record);
+ const parsed=recruiterDraftFromLegacyForm(record["form"]??record["draft"]??record);
  if(!parsed.ok)throw new Error(parsed.reason);
  return recruiterDriveRequestInputSchema.parse({
   collegeId:trustedCollegeId,submissionId,draft:parsed.draft,

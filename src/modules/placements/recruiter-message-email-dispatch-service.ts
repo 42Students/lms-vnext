@@ -131,8 +131,9 @@ export async function dispatchRecruiterUnreadMessageDigests(
       state.lastNotifiedMessageId?sql`(${placementTpoMessages.createdAt},${placementTpoMessages.id}) >
        (select created_at,id from placement_tpo_messages where id=${state.lastNotifiedMessageId}::uuid)`:undefined))
     .orderBy(desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id)).limit(3);
-   if(!messages.length)return false;
-   const first=new Date(candidate.first_unread_at),last=messages[0].createdAt;
+   const latestMessage=messages[0];
+   if(!latestMessage)return false;
+   const first=new Date(candidate.first_unread_at),last=latestMessage.createdAt;
    if(!isRecruiterUnreadReminderDue({firstUnreadAt:first,lastMessageAt:last,
      lastSentAt:state.lastSentAt,now}))return false;
    const token=recruiterReplyTokenForThread(replySecret,candidate.thread_id);
@@ -155,7 +156,7 @@ export async function dispatchRecruiterUnreadMessageDigests(
     return false;
    }
    await tx.update(placementRecruiterMessageMailState).set({
-     lastSentAt:now,lastNotifiedMessageId:messages[0].id,
+     lastSentAt:now,lastNotifiedMessageId:latestMessage.id,
      replyTokenHash:createHash("sha256").update(token).digest("hex"),
      replyTokenExpiresAt:new Date(now.getTime()+90*24*60*60_000),
      updatedAt:now,

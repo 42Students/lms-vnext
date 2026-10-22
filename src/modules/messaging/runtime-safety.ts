@@ -13,10 +13,10 @@ export function canContactRecipientAtRuntime(
 ): boolean {
   const recipient = normalizeRecipient(channel, rawRecipient);
   if (!isValidRecipient(channel, recipient)) return false;
-  if (env.APP_ENV === "production") return true;
+  if (env["APP_ENV"] === "production") return true;
   const allowlist = parseAuthTestAllowlist({
-    emailAddresses: env.AUTH_TEST_EMAILS,
-    phoneNumbers: env.AUTH_TEST_PHONES,
+    ...(env["AUTH_TEST_EMAILS"] !== undefined ? { emailAddresses: env["AUTH_TEST_EMAILS"] } : {}),
+    ...(env["AUTH_TEST_PHONES"] !== undefined ? { phoneNumbers: env["AUTH_TEST_PHONES"] } : {}),
   });
   return channel === "EMAIL"
     ? allowlist.testEmails.includes(recipient)
