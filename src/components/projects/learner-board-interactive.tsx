@@ -90,7 +90,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   const id=event.dataTransfer.getData("text/plain");
   if(statuses.includes(lane as EditableStatus))void move(id,lane as EditableStatus);
  }
- return <section aria-label="Project Board lanes" className="space-y-3">
+ return <section aria-label="Project Board lanes" aria-busy={busy} className="space-y-3">
   <p className="text-sm text-body leading-[22px]">{readOnly
     ?"This workspace is read-only. Task moves and backlog pulls are disabled."
     :"Drag your own task into a lane, or use the move control for touch and keyboard."}</p>

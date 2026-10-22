@@ -18,3 +18,5 @@
     transition: none;
   }
 }
+
+/* ARIA: selected links use aria-current=page; interactive tab buttons use aria-selected and retain native focus outlines. */

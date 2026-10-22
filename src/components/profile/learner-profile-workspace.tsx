@@ -129,9 +129,9 @@ function initials(name: string | null) {
 
 function Card({ id, title, action, children }: { id?: string; title: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <section id={id} className="min-w-0 scroll-mt-24 border-b border-border pb-5">
+    <section id={id} aria-labelledby={id+"-heading"} className="min-w-0 scroll-mt-24 border-b border-border pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{title}</h2>
+        <h2 id={id+"-heading"} className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{title}</h2>
         {action}
       </div>
       <div className="mt-4 min-w-0">{children}</div>
@@ -616,7 +616,7 @@ export function LearnerProfileWorkspace(props: {
           <Link href="/learn/profile/completeness" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
             Review full checklist
           </Link>
-          <div className="flex items-center gap-3" aria-label={percent+" percent complete"}>
+          <div className="flex items-center gap-3">
             <svg viewBox="0 0 64 64" width="64" height="64" role="img" aria-label={percent+"% complete"}>
               <circle cx="32" cy="32" r="26" fill="none" strokeWidth="7"
                 className="stroke-border"/>

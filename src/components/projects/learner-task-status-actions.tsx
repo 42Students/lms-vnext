@@ -56,8 +56,8 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
   finally{setPending(false);}
  }
  if(!mine)return <p className="mt-3 text-xs text-muted-foreground">Only the assigned learner can update this task.</p>;
- return <section aria-label="My task actions" className="mt-[var(--lms-space-5)] min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-  <h3 className="font-semibold">Task actions</h3>
+ return <section aria-labelledby="learner-task-actions-heading" className="mt-[var(--lms-space-5)] min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+  <h3 id="learner-task-actions-heading" className="font-semibold">Task actions</h3>
   {task.blockerReason?<p className="text-sm text-body">Blocker: {task.blockerReason}</p>:null}
   {canBlock?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What is blocking this task?
    <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
@@ -69,7 +69,7 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
    {canBlock?<Button type="button" disabled={pending} onClick={()=>void change("BLOCKED")}
      variant="secondary" className="w-full sm:w-auto">Report blocker</Button>:null}
   </div>
-  {["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?<div className="flex min-w-0 flex-wrap gap-[var(--lms-space-2)]" aria-label="Reorder my task">
+  {["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?<div role="group" className="flex min-w-0 flex-wrap gap-[var(--lms-space-2)]" aria-label="Reorder my task">
    <Button type="button" disabled={pending} onClick={()=>void reorder("MOVE_UP")}
     variant="secondary" className="min-h-9">Move up</Button>
    <Button type="button" disabled={pending} onClick={()=>void reorder("MOVE_DOWN")}

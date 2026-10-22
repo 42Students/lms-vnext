@@ -50,7 +50,7 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
   }catch(e){setError(e instanceof Error?e.message:"Policy update failed.");}
   finally{setBusy(null);}
  }
- return <section aria-labelledby="platform-placement-policy" className="min-w-0 space-y-[var(--lms-space-4)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-4)]">
+ return <section aria-labelledby="platform-placement-policy" aria-busy={Boolean(busy)} className="min-w-0 space-y-[var(--lms-space-4)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-4)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
    <div><h2 id="platform-placement-policy" className="text-lg font-semibold text-foreground">Placements policy</h2>
     <p className="text-sm text-muted-foreground">Platform-wide defaults. Clear the college selection to review global settings. Changes require Super Admin access.</p>
@@ -62,7 +62,7 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
      <label htmlFor={"policy-"+field.key} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field.label}</label>
      <p className="text-xs text-muted-foreground">Default: {field.defaultValue} {field.unit} · Allowed: {field.min}–{field.max} {field.unit} · {field.isOverridden?"Overridden":"Using default"}</p>
      <div className="flex flex-wrap items-center gap-2">
-      <Input id={"policy-"+field.key} type="number" min={field.min} max={field.max} step={field.step}
+      <Input id={"policy-"+field.key} type="number" min={field.min} max={field.max} step={field.step} aria-invalid={(() => {const n=Number(drafts[field.key]??String(field.value));return !Number.isFinite(n)||n<field.min||n>field.max;})()}
        value={drafts[field.key]??String(field.value)}
        onChange={event=>setDrafts(current=>({...current,[field.key]:event.target.value}))}
        className="min-h-11 min-w-0 flex-1 md:min-h-9" />

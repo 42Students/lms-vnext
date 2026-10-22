@@ -75,7 +75,7 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   <p className="text-sm text-body">Current: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
   <p className="mt-2 text-sm text-body">New: {pendingIso?new Date(pendingIso).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"—"}</p>
   <p className="mt-2 text-xs text-muted-foreground">Important Dates will not move when you extend the application deadline.</p>
-  {error?<p role="alert" id="super-admin-deadline-error" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </ConfirmDialog>
  </div>;
 }

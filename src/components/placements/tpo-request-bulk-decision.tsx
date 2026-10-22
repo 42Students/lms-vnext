@@ -115,7 +115,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
    setError("The request review did not finish. Check the decisions before retrying.");
   }
  }
- return <section aria-label="Bulk request decisions" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
+ return <section aria-label="Bulk request decisions" aria-busy={pending} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
    <h2 className="min-w-0 text-[var(--lms-font-md)] font-semibold leading-[26px]">
     <Button variant="ghost" type="button" aria-expanded={expanded} aria-controls={selectionId} disabled={pending}

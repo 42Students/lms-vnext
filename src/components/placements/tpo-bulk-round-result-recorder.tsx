@@ -139,9 +139,9 @@ export function TpoBulkRoundResultRecorder({
   }
 
   return (
-    <section aria-label="Bulk stage round results" className="min-w-0 space-y-4 border-b border-border pb-4">
+    <section aria-labelledby="tpo-bulk-result-heading" className="min-w-0 space-y-4 border-b border-border pb-4">
       <div>
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Bulk stage round results</h2>
+        <h2 id="tpo-bulk-result-heading" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Bulk stage round results</h2>
         <p className="mt-1 text-sm text-body leading-[22px]">
           Stage a common outcome for up to 25 applicants without an existing result.
           Each row is separately verified, transactionally stored and audited.

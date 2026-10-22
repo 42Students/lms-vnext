@@ -35,7 +35,7 @@ export function LearnerVerificationWithdraw({
    setPending(false);
   }
  }
- return <div className="mt-3 space-y-2">
+ return <div aria-busy={pending} className="mt-3 space-y-2">
   {!confirm?<Button type="button" onClick={()=>setConfirm(true)}
    variant="secondary" className="min-h-11 min-[768px]:min-h-9">
    Withdraw
