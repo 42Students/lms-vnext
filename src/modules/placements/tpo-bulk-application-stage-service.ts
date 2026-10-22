@@ -4,12 +4,13 @@ import {getDb} from "@/db/client";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {activityEvents,collegeMemberships,colleges,placementApplications,
  placementApplicationScreenings,placementApplicationScreeningHistory,
- placementJobRounds,placementJobs,users} from "@/db/schema";
+ placementJobRounds,placementJobs,placementOffers,users} from "@/db/schema";
 import {placementTpoApplicationStages} from "@/db/schema/placement-tpo-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 import {decidePlacementScreening} from "./screening-service";
+import {confirmTpoRoundResult} from "./tpo-confirmed-round-result-service";
 import {PlacementsServiceError} from "./errors";
 
 export type TpoBulkStageAction="MOVE_TEST"|"MOVE_INTERVIEW";
@@ -18,6 +19,7 @@ export const TPO_BULK_STAGE_LIMIT = 100;
 export const TPO_LEGACY_APPLICATION_STAGE_MAP = {
  APPLIED:"Application submission",SHORTLISTED:"Screening shortlist",
  ASSESSMENT:"TPO test round",INTERVIEW:"TPO interview round",
+ WAITLISTED:"On hold / waitlisted round result",
  OFFERED:"Placement offer",HIRED:"Offer and joining outcome",
  REJECTED:"Screening or college pipeline rejection",
 } as const;
@@ -195,7 +197,7 @@ export async function moveTpoBulkApplicationStages(
  * assigning a string to an application. Assessment links belong to the drive
  * round setup, and are refused here if not persisted there first. */
 export type TpoLegacyBulkStatus =
- "SHORTLISTED"|"REJECTED"|"ASSESSMENT"|"INTERVIEW"|"OFFERED"|"HIRED";
+ "APPLIED"|"SHORTLISTED"|"REJECTED"|"ASSESSMENT"|"INTERVIEW"|"WAITLISTED"|"OFFERED"|"HIRED";
 
 export async function applyTpoLegacyBulkStatuses(
  ctx:RequestContext,jobId:string,
@@ -203,6 +205,7 @@ export async function applyTpoLegacyBulkStatuses(
   applicationId:string;status:TpoLegacyBulkStatus;
   expectedScreeningUpdatedAt?:string;expectedStageVersion?:string;
   rejectionReason?:string;assessmentUrl?:string;
+  roundId?:string;waitlistRank?:number;expectedCurrentResultId?:string|null;
  }[],
 ){
  if(!items.length)throw new RangeError("Select at least one application.");
@@ -212,7 +215,7 @@ export async function applyTpoLegacyBulkStatuses(
  if(!uuid.test(jobId))throw new RangeError("Select a valid placement drive.");
  const seen=new Set<string>();
  const valid:readonly TpoLegacyBulkStatus[]=[
-  "SHORTLISTED","REJECTED","ASSESSMENT","INTERVIEW","OFFERED","HIRED",
+  "APPLIED","SHORTLISTED","REJECTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED",
  ];
  for(const item of items){
   if(!uuid.test(item.applicationId))throw new RangeError("Select valid application IDs.");
@@ -222,6 +225,13 @@ export async function applyTpoLegacyBulkStatuses(
    throw new RangeError("Rejection reason is required.");
   if(item.status==="REJECTED"&&item.rejectionReason!.trim().length>500)
    throw new RangeError("Rejection reason must be 500 characters or fewer.");
+  if(item.status==="WAITLISTED"&&(
+     !item.roundId||!uuid.test(item.roundId)||
+     !Number.isInteger(item.waitlistRank)||!item.waitlistRank||
+     item.waitlistRank<1||item.waitlistRank>100000||
+     item.expectedCurrentResultId===undefined||
+     (item.expectedCurrentResultId!==null&&!uuid.test(item.expectedCurrentResultId))))
+    throw new RangeError("Select a valid round, waitlist rank and current result revision.");
   if(item.assessmentUrl){
    try{
     const url=new URL(item.assessmentUrl);
@@ -234,28 +244,63 @@ export async function applyTpoLegacyBulkStatuses(
  await getDb().transaction(async tx=>requireTpoJobActor(tx,ctx));
  // A same-college but different-drive ID must not be changed merely because
  // the actor may manage both drives. Scope the complete submitted batch first.
- const scoped=await getDb().select({id:placementApplications.id})
-  .from(placementApplications)
+ const scoped=await getDb().select({
+   id:placementApplications.id,status:placementApplications.status,
+   screeningStatus:placementApplicationScreenings.status,
+   jobStatus:placementJobs.status,
+  }).from(placementApplications)
   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .leftJoin(placementApplicationScreenings,
+   eq(placementApplicationScreenings.applicationId,placementApplications.id))
   .where(and(eq(placementApplications.jobId,jobId),
    eq(placementJobs.collegeId,collegeId),
    inArray(placementApplications.id,items.map(item=>item.applicationId))));
- const allowed=new Set(scoped.map(row=>row.id));
+ const allowed=new Map(scoped.map(row=>[row.id,row]));
  const results:{
   applicationId:string;status:TpoLegacyBulkStatus;success:boolean;error:string|null;
+  pendingRoundApply:boolean;unchanged:boolean;
  }[]=[];
  for(const item of items){
   try{
-   if(!allowed.has(item.applicationId))
+   const applicant=allowed.get(item.applicationId);
+   if(!applicant)
     throw new RangeError("Applicant not found in this drive.");
+   if(applicant.status!=="SUBMITTED"||applicant.jobStatus!=="PUBLISHED")
+    throw new RangeError("Only active submitted applications in a published drive may change status.");
    if(item.assessmentUrl)
     throw new RangeError("Save the assessment URL on the test round before moving applicants.");
-   if(item.status==="SHORTLISTED"||item.status==="REJECTED"){
+   if(item.status==="APPLIED"){
+    // APPLIED is the already-persisted submission, never a downgrade from
+    // shortlist, a completed round, or an issued/accepted offer.
+    if(applicant.screeningStatus!=="PENDING"&&applicant.screeningStatus!==null)
+     throw new RangeError("This applicant has progressed beyond Applied.");
+    const [advanced]=await getDb().select({id:placementOffers.id}).from(placementOffers)
+     .where(and(eq(placementOffers.applicationId,item.applicationId),
+      inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(1);
+    if(advanced)throw new RangeError("Resolve active offers before returning to Applied.");
+   }else if(item.status==="SHORTLISTED"||item.status==="REJECTED"){
     await decidePlacementScreening(ctx,item.applicationId,{
      decision:item.status,
      candidateMessage:item.status==="REJECTED"?item.rejectionReason!.trim():null,
      internalReason:null,
     },item.expectedScreeningUpdatedAt);
+   }else if(item.status==="WAITLISTED"){
+    // Legacy WAITLISTED is a confirmed HOLD outcome on a concrete round.
+    // Never fabricate a waitlist at the application-status string layer.
+    if(applicant.screeningStatus!=="SHORTLISTED")
+     throw new RangeError("Shortlist the applicant before recording a waitlist result.");
+    const [round]=await getDb().select({id:placementJobRounds.id})
+     .from(placementJobRounds).where(and(
+      eq(placementJobRounds.id,item.roundId!),
+      eq(placementJobRounds.jobId,jobId),
+      inArray(placementJobRounds.status,["SCHEDULED","COMPLETED"]),
+     )).limit(1);
+    if(!round)throw new RangeError("Select an active round in this drive.");
+    await confirmTpoRoundResult(ctx,round.id,{
+     confirmed:true,expectedCurrentResultId:item.expectedCurrentResultId,
+     result:{applicationId:item.applicationId,outcome:"HOLD",
+      waitlistRank:item.waitlistRank},
+    });
    }else if(item.status==="ASSESSMENT"||item.status==="INTERVIEW"){
     if(!item.expectedStageVersion)
      throw new RangeError("Refresh the applicant list before moving to a round.");
@@ -265,7 +310,8 @@ export async function applyTpoLegacyBulkStatuses(
    }else{
     throw new RangeError("Issue or verify the offer and joining outcome in Offers first.");
    }
-   results.push({applicationId:item.applicationId,status:item.status,success:true,error:null});
+   results.push({applicationId:item.applicationId,status:item.status,success:true,error:null,
+    pendingRoundApply:item.status==="WAITLISTED",unchanged:item.status==="APPLIED"});
   }catch(error){
    // Authorization and database failures stop the operation. Validation,
    // version, and state failures remain visible beside the affected row.
@@ -277,13 +323,18 @@ export async function applyTpoLegacyBulkStatuses(
     error instanceof PlacementsServiceError&&error.code==="PLACEMENT_SCREENING_STALE"
      ?"Applicant status changed. Refresh and try again.":
     "The applicant cannot move to this status. Check screening and round requirements.";
-   results.push({applicationId:item.applicationId,status:item.status,success:false,error:message});
+   results.push({applicationId:item.applicationId,status:item.status,success:false,error:message,
+    pendingRoundApply:false,unchanged:false});
   }
  }
  const succeeded=results.filter(row=>row.success).length,failed=results.length-succeeded;
- return {requested:items.length,succeeded,failed,
-  summary:failed?"Bulk status update completed with "+failed+" failure(s)"
-   :"Bulk status update completed",results};
+ const stagedWaitlist=results.filter(row=>row.pendingRoundApply).length;
+ const unchangedApplied=results.filter(row=>row.unchanged).length;
+ return {requested:items.length,succeeded,failed,stagedWaitlist,unchangedApplied,
+  summary:(failed?"Bulk status update completed with "+failed+" failure(s)"
+   :"Bulk status update completed")+
+   (stagedWaitlist?". "+stagedWaitlist+" waitlist result(s) staged; apply the completed round to publish the outcome.":""),
+  results};
 }
 
 /** Legacy chronological status history projection. Screening decisions have a
