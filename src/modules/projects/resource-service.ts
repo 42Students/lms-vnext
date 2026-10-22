@@ -538,7 +538,17 @@ export async function reorderProjectResources(
       subjectType:"project",subjectId:scope.project.id,
       subjectLabel:"Project resources",
       summary:"Project resource order changed",
-      metadata:{projectId:scope.project.id,previousOrder:old,nextOrder:orderIds},
+      metadata:{projectId:scope.project.id,previousOrder:old,nextOrder:orderIds,
+        // Every displaced item is recoverable from the append-only event.
+        // Archived items never move, so their history is unaffected.
+        moves:orderIds.flatMap((resourceId,toIndex)=>{
+          const fromIndex=old.indexOf(resourceId);
+          if(fromIndex===toIndex)return [];
+          return [{resourceId,fromIndex,toIndex,
+            previousSequence:active[fromIndex]?.sequence??null,
+            nextSequence:active[toIndex]?.sequence??null}];
+        }),
+      },
       groupKey:"project:"+scope.project.id+":resources",
     });
     return {changed:true,count:active.length};

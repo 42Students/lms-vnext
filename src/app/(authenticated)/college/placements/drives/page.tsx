@@ -123,7 +123,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
         </CollegeDriveCreateDialog>:null}
         <Link href="/college/placements/new"
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)]">
-          Full-page editor
+          Create Job
         </Link>
         <Link href="/college/placements"
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
