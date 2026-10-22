@@ -249,7 +249,13 @@ export function CourseActions({
       "Archived course “" + course.name + "”.",
       () => setArchiveOpen(false),
       (error) => setArchiveFailure(
-        academicSetupErrorMessage(error,"Course could not be archived. Refresh and retry."),
+        error instanceof FriendlyFetchError && error.code === "COURSE_HAS_LESSONS"
+          ? "Cannot delete course: it has lessons"
+          : error instanceof FriendlyFetchError && error.code === "COURSE_HAS_LESSON_CONTENT"
+            ? "Cannot delete course: it has lesson content"
+            : error instanceof FriendlyFetchError && error.code === "COURSE_HAS_ACTIVE_OFFERINGS"
+              ? "Cannot archive course: it has active course offerings"
+              : academicSetupErrorMessage(error,"Course could not be archived. Refresh and retry."),
       ),
       "Course was not deleted",
     );
