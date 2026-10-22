@@ -32,8 +32,8 @@ export const adminCompaniesQuerySchema = z.strictObject({
 export function parseAdminCompanyDirectoryParams(
   params: Record<string, string | string[] | undefined>,
 ) {
-  const validView = params.view === undefined || params.view === "GLOBAL" ||
-    params.view === "COLLEGE";
+  const validView = params["view"] === undefined || params["view"] === "GLOBAL" ||
+    params["view"] === "COLLEGE";
   // Compatibility for old company-list bookmarks. Public page numbers in
   // vNext remain one-based; the explicit legacyPage alias is zero-based.
   const filters = Object.fromEntries(
@@ -41,23 +41,23 @@ export function parseAdminCompanyDirectoryParams(
       key !== "view" && key !== "legacyPage" && key !== "unverified"),
   );
   if (filters.collegeId === "") delete filters.collegeId;
-  const legacyPage=params.legacyPage;
+  const legacyPage=params["legacyPage"];
   if (legacyPage !== undefined){
     if(typeof legacyPage!=="string" || !/^(0|[1-9][0-9]*)$/.test(legacyPage)
-       || params.page !== undefined || Number(legacyPage)>9999){
+       || params["page"] !== undefined || Number(legacyPage)>9999){
       return adminCompaniesQuerySchema.safeParse({...filters,legacyPage});
     }
     filters.page=String(Number(legacyPage)+1);
   }
-  const unverified=params.unverified;
+  const unverified=params["unverified"];
   if(unverified!==undefined){
-    if((unverified!=="true"&&unverified!=="false")||params.verified!==undefined)
+    if((unverified!=="true"&&unverified!=="false")||params["verified"]!==undefined)
       return adminCompaniesQuerySchema.safeParse({...filters,unverified});
     // Legacy unverified=false means no verified-state restriction.
     if(unverified==="true")filters.verified="NOT_VERIFIED";
   }
   return adminCompaniesQuerySchema.safeParse(
-    validView ? filters : { ...filters, view: params.view },
+    validView ? filters : { ...filters, view: params["view"] },
   );
 }
 
