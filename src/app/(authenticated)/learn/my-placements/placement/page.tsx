@@ -8,6 +8,7 @@ import { LearnerPlacementRequests } from "@/components/placements/learner-placem
 import {LearnerGeneralRequests} from "@/components/placements/learner-general-requests";
 import { LearnerPlacementRegistration } from "@/components/placements/learner-placement-registration";
 import { getOwnLearnerRegistration } from "@/modules/placements/learner-registration-read-service";
+import { getOwnLearnerDebarmentNotice } from "@/modules/placements/learner-own-debarment-service";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
@@ -24,12 +25,13 @@ export default async function LearnerPlacementCellPage({
   const prefillAbsence=query.request==="absence-dispute";
   const prefillAcceptance=query.request==="acceptance-dispute";
   const context = await getCurrentRequestContext();
-  const [offerRows, requestRead, alertRead, registration, rulesRead] = await Promise.all([
+  const [offerRows, requestRead, alertRead, registration, rulesRead, restrictionRead] = await Promise.all([
     listOwnPlacementOffers(context),
     readOptionalLearnerPlacementSource(()=>getLearnerPlacementRequestWorkspace(context)),
     readOptionalLearnerAlertSource(()=>getOwnLearnerPlacementAlerts(context)),
     getOwnLearnerRegistration(context),
     readOptionalLearnerPlacementSource(() => getOwnLearnerPlacementRulesView(context, {from:"cell"})),
+    readOptionalLearnerPlacementSource(() => getOwnLearnerDebarmentNotice(context)),
   ]);
   const requestWorkspace=requestRead.value;
   return (
@@ -40,7 +42,7 @@ export default async function LearnerPlacementCellPage({
           <a key={href} href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{label}</a>)}
       </nav>
 
-      {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
+      {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} restriction={restrictionRead.value} /> : (
         <Alert tone="warning" role="alert">
           Personal placement alerts are temporarily unavailable. Your official offers and requests remain accessible.
           <Link href="/learn/my-placements/placement" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
@@ -48,6 +50,7 @@ export default async function LearnerPlacementCellPage({
           </Link>
         </Alert>
       )}
+      {!restrictionRead.available?<Alert tone="warning" role="alert">Placement restriction details are temporarily unavailable. Contact your placement cell to confirm your eligibility.</Alert>:null}
       <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 pt-4 pb-0 md:px-6 md:pt-6">
         <LearnerPlacementRegistration registration={registration}/>
       </div>
