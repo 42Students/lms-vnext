@@ -43,8 +43,20 @@ export default async function TrackerLogsPage({
   // unscoped Super Admin session is required; never recreate the old shared
   // password endpoint that silently granted a full Super Admin session.
   const context = await getCurrentRequestContext();
-  if (!isSuperAdmin(context) || context.adminScope?.collegeId ||
-      context.adminScope?.organizationId) {
+  if (context.user.platformStatus !== "ACTIVE" || !isSuperAdmin(context) ||
+      context.adminScope?.collegeId || context.adminScope?.organizationId) {
+    // Preserve the legacy denied-attempt audit with a named actor rather than
+    // its unauthenticated source IP. Never store query terms or sensitive logs.
+    // This route is already inside the authenticated workspace boundary.
+    await getDb().insert(activityEvents).values({
+      actorUserId: context.user.id,
+      module: "PLATFORM",
+      eventType: "platform.tracker.logs_access_denied",
+      subjectType: "tracker_logs",
+      subjectId: "live-explorer",
+      summary: "Tracker log explorer access denied",
+      metadata: { access: "named_account", outcome: "denied" },
+    });
     // The retired password-only gate must never become a privilege escalation.
     // Retain its recognizable entry point and direct staff to named SSO.
     return <section className="mx-auto max-w-[480px] space-y-4 rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-6 text-center">

@@ -4,6 +4,16 @@ export const HIRING_STAGES=[
  {key:"assessment",label:"Assessment"}, {key:"interview",label:"Interview"},
  {key:"offered",label:"Offered"}, {key:"hired",label:"Hired"},
 ] as const;
+/** A later persisted stage implies every earlier hiring milestone was reached,
+ * even if older imports lack an explicit event for each transition. */
+export const HIRING_PERSISTED_STAGE_REACH_ORDER=[
+ "SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED","HIRED",
+] as const;
+export type HiringPersistedStage=typeof HIRING_PERSISTED_STAGE_REACH_ORDER[number];
+export function hiringStagesAtOrAfter(stage:HiringPersistedStage):readonly HiringPersistedStage[]{
+ const index=HIRING_PERSISTED_STAGE_REACH_ORDER.indexOf(stage);
+ return HIRING_PERSISTED_STAGE_REACH_ORDER.slice(index);
+}
 export function hiringMetricLabel(key:string):string {
  return key==="totalApplications"?"Total Applications":key.replace(/([A-Z])/g," $1").replace(/^./,x=>x.toUpperCase());
 }
