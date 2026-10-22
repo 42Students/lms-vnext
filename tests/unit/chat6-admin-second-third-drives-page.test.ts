@@ -10,6 +10,9 @@ vi.mock("@/components/placements/super-admin-bulk-drive-actions",()=>({
   SuperAdminBulkDriveActions:({drives}:{drives:readonly unknown[]})=>`Bulk actions for ${drives.length} drives`,
   SuperAdminDriveRowStatusAction:()=>null,
 }));
+vi.mock("@/components/placements/super-admin-drive-archive",()=>({SuperAdminDriveArchive:()=>null}));
+vi.mock("@/components/placements/super-admin-drive-duplicate",()=>({SuperAdminDriveDuplicate:()=>null}));
+vi.mock("@/components/placements/super-admin-drive-deadline",()=>({SuperAdminDriveDeadline:()=>null}));
 vi.mock("@/components/ui/data-table",()=>({
   DataTable:({rows}:{rows:readonly unknown[]})=>`Visible drive rows: ${rows.length}`,
 }));
@@ -22,7 +25,6 @@ const admin={
   adminScope:{collegeId,organizationId:"org-a"},
 };
 const ops={
-  total:1,totalPages:1,page:1,pageSize:20,
   items:[{
     job:{
       id:"22222222-2222-4222-8222-222222222222",
@@ -34,8 +36,9 @@ const ops={
       company:{id:"33333333-3333-4333-8333-333333333333",name:"Example Technology"},
     },
     company:{id:"33333333-3333-4333-8333-333333333333",name:"Example Technology"},
-    metrics:{submittedApplications:5,applicants:5},
+    metrics:{applicants:5},
   }],
+  total:1,page:1,pageSize:20,totalPages:1,
 };
 beforeEach(()=>{
   vi.resetAllMocks();
@@ -76,7 +79,8 @@ describe("Super Admin drives: page-level behavior, denial and friendly recovery"
     const html=renderToStaticMarkup(await DrivesPage({
       searchParams:Promise.resolve({status:"ACTIVE",pageSize:"20"}),
     }));
-    expect(fakes.operations).toHaveBeenCalledWith(admin,collegeId,expect.objectContaining({status:"ACTIVE",pageSize:20}));
+    expect(fakes.operations).toHaveBeenCalledWith(admin,collegeId,
+      expect.objectContaining({status:"ACTIVE",pageSize:20}));
     expect(html).toContain("1–1 of 1 drives");
     expect(html).toContain("Visible drive rows: 1");
     expect(html).toContain("Bulk actions for 1 drives");
