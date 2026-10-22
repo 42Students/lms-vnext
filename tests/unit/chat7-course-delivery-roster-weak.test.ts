@@ -34,7 +34,7 @@ describe("COURSES-WEAK-DELIVERY-ROSTER-01 exact College, Section and Elective en
   state.elective=[{groupId:"group-1",offeringStatus:"ACTIVE",offeringDeletedAt:null,slotStatus:"ACTIVE",slotDeletedAt:null,groupStatus:"ACTIVE",groupDeletedAt:null}];
   state.learners=[{...result,membershipId:"elective-member"}];
   expect(await listActiveDeliveryLearners(scope)).toEqual(state.learners);
-  expect(state.select).toHaveBeenCalledTimes(3);
+  expect(state.select).toHaveBeenCalledTimes(2);
  });
  it("COURSES-WEAK-DELIVERY-ROSTER-01 does not expose the Section when its elective was disabled",async()=>{
   state.elective=[{groupId:"group-1",offeringStatus:"INACTIVE",offeringDeletedAt:null,slotStatus:"ACTIVE",slotDeletedAt:null,groupStatus:"ACTIVE",groupDeletedAt:null}];
