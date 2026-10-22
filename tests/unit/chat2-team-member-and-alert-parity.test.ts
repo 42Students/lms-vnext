@@ -12,7 +12,9 @@ describe("chat-2 Team membership, context and event notifications",()=>{
   const reply=source("src/modules/placements/tpo-team-internal-reply-service.ts");
   expect(access).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
   expect(page).toContain("hasPlacementTeamMembership(context)");
+  expect(page).toContain('if (tab === "people" || tab === "members" || tab === "roster")');
   expect(page).toContain('redirect("/tpo/settings/team")');
+  expect(page).toContain('redirect("/tpo/messages?" + target.toString())');
   expect(access).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
   expect(create).toContain('assertPersistedPlatformPermission(tx,context,"placements.manage"');
   expect(create).toContain('eq(collegeMemberships.collegeId,college.id)');
@@ -55,7 +57,9 @@ describe("chat-2 Team membership, context and event notifications",()=>{
  it("TPO-inbox-team-34 retains Away until and back-now updates on Team People",()=>{
   const page=source("src/app/(authenticated)/tpo/team/page.tsx");
   const model=source("src/components/tpo/tpo-team-away-form.tsx");
+  expect(page).toContain('if (tab === "people" || tab === "members" || tab === "roster")');
   expect(page).toContain('redirect("/tpo/settings/team")');
+  expect(page).toContain('redirect("/tpo/messages?" + target.toString())');
   expect(model).toContain("Away until");
   expect(model).toContain("Back now");
  });
