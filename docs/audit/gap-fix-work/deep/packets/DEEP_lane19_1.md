@@ -12,7 +12,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-5-005-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [x] G2-5-006-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [x] G2-5-006-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-007-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-007-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [x] G2-5-009-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [x] G2-5-009-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [ ] G2-5-019-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
@@ -29,3 +29,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-5-005-020: OK — `src/app/(authenticated)/hr/calendar/page.tsx:186-214,302-306` folds interview slots by job and round into a single event with `N interview slot(s)`; a same-day round owns its grouped slot count and orphan slots appear once per round, matching `docs/legacy-source/frontend/src/pages/recruiter/calendar.js:95-118` (the legacy `foldWeek` presentation contract).
 
 - G2-5-006-024: OK — `src/app/(authenticated)/admin/attendance/page.tsx:64-81` distinguishes class-course lookup failure (`AdminAttendanceOptionsLookupError.kind === "class_courses"`) from general options failure, surfaces distinct user-visible warnings and appropriate Retry links without treating errors as empty lists; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:487-495`.
+
+- G2-5-007-042: OK — `src/modules/placements/college-interview-directory-service.ts:151-203` loads booked active interview appointments from the full college, across jobs and beyond the selected filtered/paginated rows, excludes cancelled/completed/no-show records, and checks candidate or interviewer overlap before annotating the visible rows. Matches `docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:224-230` (unfiltered active conflict basis).
