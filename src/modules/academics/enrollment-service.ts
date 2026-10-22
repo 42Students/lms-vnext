@@ -248,6 +248,10 @@ export async function createLearnerProgramEnrollment(
         })
         .returning();
 
+      if (!created) {
+        throw new AcademicsServiceError("LEARNER_ENROLLMENT_NOT_ACTIVE");
+      }
+
       await recordActivityEventInTransaction(
         tx,
         context,
