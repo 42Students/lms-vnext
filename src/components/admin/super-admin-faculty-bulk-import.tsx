@@ -156,22 +156,18 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
   </div>
   {previewVersion===fileVersion.current&&count>0&&rowIssues.length===0?
    <div className="max-h-60 min-w-0 overflow-auto rounded-md border border-border" role="region" aria-label="Faculty CSV row preview" tabIndex={0}>
-    <table className="w-full min-w-[540px] border-collapse text-left text-xs">
-     <thead><tr className="border-b border-border bg-surface-subtle">
-      <th scope="col" className="px-3 py-2">First Name</th>
-      <th scope="col" className="px-3 py-2">Last Name</th>
-      <th scope="col" className="px-3 py-2">Mobile Number</th>
-      <th scope="col" className="px-3 py-2">Email</th>
-      <th scope="col" className="px-3 py-2">Faculty Type</th>
-     </tr></thead>
-     <tbody>{parsedRows.slice(0,10).map((row,index)=><tr key={index} className="border-b border-border">
-      <td className="px-3 py-2">{row.firstName}</td>
-      <td className="px-3 py-2">{row.lastName}</td>
-      <td className="px-3 py-2">{row.phoneE164}</td>
-      <td className="px-3 py-2">{row.email??"—"}</td>
-      <td className="px-3 py-2">{row.facultyType}</td>
-     </tr>)}</tbody>
-    </table>
+    <DataTable caption="Faculty CSV row preview" mobileMode="scroll"
+     rows={parsedRows.slice(0,10).map((row,index)=>({row,index}))}
+     getRowKey={entry=>String(entry.index)}
+     empty={<p className="p-3 text-sm">No rows to preview.</p>}
+     columns={[
+      {key:"firstName",header:"First Name",mobilePriority:"primary",cell:entry=>entry.row.firstName},
+      {key:"lastName",header:"Last Name",mobilePriority:"secondary",cell:entry=>entry.row.lastName},
+      {key:"mobile",header:"Mobile Number",mobilePriority:"secondary",cell:entry=>entry.row.phoneE164},
+      {key:"email",header:"Email",mobilePriority:"secondary",cell:entry=>entry.row.email??"—"},
+      {key:"facultyType",header:"Faculty Type",mobilePriority:"secondary",cell:entry=>entry.row.facultyType},
+     ]}/>
+
     {count>10?<p className="px-3 py-2 text-xs text-muted-foreground">Showing first 10 of {count} rows.</p>:null}
    </div>:null}
   {previewVersion===fileVersion.current&&count>0&&rowIssues.length===0?(

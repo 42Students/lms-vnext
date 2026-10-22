@@ -9,6 +9,9 @@ import {registrableCompanyHost} from "./public-suffix-policy";
  */
 export function normalizeTpoTrustedDomainInput(input:string):string{
  const value=input.trim().toLowerCase();
+ // A port is not part of a company domain. URL() normalizes :443 away.
+ if(!/^https?:\/\//.test(value) && value.includes(":"))return "";
+ if(/^https?:\/\//.test(value) && /:[0-9]+$/.test(value.match(/^https?:\/\/([^/?#]*)/)?.[1]??""))return "";
  let host:string;
  try{
   if(/^https?:\/\//.test(value)){

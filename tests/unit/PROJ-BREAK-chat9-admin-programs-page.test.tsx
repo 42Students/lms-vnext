@@ -5,7 +5,7 @@ import SuperAdminProgramsPage from "@/app/(authenticated)/admin/programs/page";
 const state=vi.hoisted(()=>({
   role:"ADMIN" as "ADMIN"|"COLLEGE"|"DISABLED",selected:true,
   failure:"" as ""|"programs"|"departments"|"contents",
-  programs:0,departments:0,contents:0,
+  programs:0,departments:0,contents:0,global:0,
 }));
 vi.mock("@/auth/request-context",()=>({
   getCurrentRequestContext:async()=>({
@@ -17,6 +17,10 @@ vi.mock("@/auth/request-context",()=>({
   }),
 }));
 vi.mock("@/modules/academics/program-service",()=>({
+  listGlobalProgramsForSuperAdmin:async()=>{
+    state.global++;
+    return {items:[],total:0,page:1,totalPages:1};
+  },
   listPrograms:async()=>{
     state.programs++;
     if(state.failure==="programs")throw Error("PRIVATE_PROGRAM_SQL_TOKEN");
@@ -57,7 +61,7 @@ const componentProps=(node:unknown):Record<string,unknown>|undefined=>{
 };
 beforeEach(()=>{
   state.role="ADMIN";state.selected=true;state.failure="";
-  state.programs=0;state.departments=0;state.contents=0;
+  state.programs=0;state.departments=0;state.contents=0;state.global=0;
 });
 describe("Super Admin last-third Programs: cross-role, partial outage and scoped directory",()=>{
   it("UX-admin-programs-36 disabled and College Admin actors never read private program membership",async()=>{
@@ -74,17 +78,28 @@ describe("Super Admin last-third Programs: cross-role, partial outage and scoped
   it("UX-admin-programs-37 missing selected college never performs cross-tenant fallback",async()=>{
     state.selected=false;
     const content=readable(await SuperAdminProgramsPage({searchParams:Promise.resolve({})})).join(" ");
-    expect(content).toContain("Select a college to continue");
+    expect(content).toContain("Read-only platform catalogue");
+    expect(content).toContain("Changes require an explicitly selected college.");
+    expect(state.global).toBe(1);
     expect(state.programs).toBe(0);
+    expect(state.departments).toBe(0);
   });
   it("UX-admin-programs-38 any essential directory outage displays an honest retry, never a false zero-program list",async()=>{
     for(const fail of ["programs","departments","contents"] as const){
       state.failure=fail;
       const content=readable(await SuperAdminProgramsPage({searchParams:Promise.resolve({})})).join(" ");
-      expect(content).toContain("Programs unavailable");
-      expect(content).toContain("Retry loading programs");
+      if(fail==="programs"){
+        expect(content).toContain("We could not load this page");
+        expect(content).toContain("Retry loading programs");
+        expect(content).not.toContain("Computer Science");
+      }else{
+        expect(content).toContain("Couldn't refresh all program details.");
+        expect(content).toContain("Retry loading details");
+        expect(content).toContain("Edits are paused");
+        // A verified program list remains readable, but edits remain blocked.
+        expect(content).toContain("Computer Science");
+      }
       expect(content).not.toContain("PRIVATE_");
-      expect(content).not.toContain("Computer Science");
       expect(content).not.toContain("Manage programs within");
     }
   });
