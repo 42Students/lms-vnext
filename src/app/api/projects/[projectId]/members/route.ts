@@ -67,7 +67,7 @@ export async function POST(
     const member = await addProjectMember(
       context,
       projectId,
-      addProjectMemberInputSchema.parse(body),
+      addProjectMemberInputSchema.parse(body) as Parameters<typeof addProjectMember>[2],
     );
 
     return NextResponse.json(
