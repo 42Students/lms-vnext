@@ -29,7 +29,7 @@ function deadlineRelative(deadline:Date|null,now:Date):string{
  * pending-review state before any exact count is exposed here. */
 function recruiterDriveNextStep(status:string,requests:number,shared:number,deadline:Date|null,now:Date){
  if(requests>0)return "The placement cell asked for a change. Answer the open request.";
- if(status==="CLOSED")return "Hire again with a new request.";
+ if(["CLOSED","REJECTED","CANCELLED"].includes(status))return "Hire again with a new request.";
  if(shared===0)return "Wait for the placement cell to share the applicant list.";
  if(deadline&&deadline<now)return "Review shared applicants and hiring rounds after the deadline.";
  return "Review shared applicants and prepare the next hiring step.";
