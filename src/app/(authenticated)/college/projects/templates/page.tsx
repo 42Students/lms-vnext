@@ -37,9 +37,15 @@ export default async function CollegeProjectTemplatesPage({
  if(!collegeId)return <ProjectAdminMissingCollege variant="templates"/>;
  const params=await searchParams;
  const legacySearch=one(params.search);
- if(!one(params.q)&&legacySearch){
-  const canonical=legacySearch.trim().slice(0,120);
-  redirect(pageHref(canonical,1,null));
+ if(legacySearch!==undefined){
+  // Canonicalize the old ?search= deep link without discarding the page
+  // number or the project-list return context from a shared bookmark.
+  const canonical=(one(params.q)??legacySearch).trim().slice(0,120);
+  const legacyFrom=one(params.from);
+  const retainedFrom=legacyFrom&&/^(workspaces|create|at-risk)$/.test(legacyFrom)?legacyFrom:null;
+  const legacyPage=one(params.page)??"1";
+  const retainedPage=/^[1-9]\d{0,5}$/.test(legacyPage)?Number(legacyPage):1;
+  redirect(pageHref(canonical,retainedPage,retainedFrom));
  }
  const q=(one(params.q)??"").trim().slice(0,120);
  const from=one(params.from);

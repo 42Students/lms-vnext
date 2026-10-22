@@ -50,8 +50,15 @@ export function projectLegacyAuditLink(params:ProjectAdminAuditSearchParams,now:
  delete translated.page;
  if(validEntity&&!translated.subjectId)translated.subjectId=entityId.trim();
  if(validRange&&range!=="all"&&Number.isFinite(now.getTime())){
-  const start=new Date(now);
-  start.setUTCHours(0,0,0,0);
+  // Date-only project audit filters are interpreted in the college's IST
+  // calendar, not the UTC date (which is still yesterday before 05:30 IST).
+  const indiaParts=new Intl.DateTimeFormat("en-US",{
+   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  }).formatToParts(now);
+  const indiaDate=(part:string)=>indiaParts.find(item=>item.type===part)?.value??"";
+  const start=new Date(Date.UTC(
+   Number(indiaDate("year")),Number(indiaDate("month"))-1,Number(indiaDate("day")),
+  ));
   if(range!=="today")start.setUTCDate(start.getUTCDate()-(range==="7d"?7:30));
   if(!translated.from)translated.from=start.toISOString().slice(0,10);
  }
