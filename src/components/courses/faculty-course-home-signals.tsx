@@ -193,7 +193,7 @@ export function FacultyCourseHomeSignals({
                 <Disclosure title={`${learner.severity>=3?"Critical":"Moderate"} · View snapshot`} className="min-w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs">
                   <div className="mt-2 space-y-2 text-xs text-muted-foreground">
                     <p>Attendance: {learner.attendancePercent===null?"Not enough marked sessions":learner.attendancePercent+"%"}</p>
-                    {learner.attendancePercent!==null?<MetricBar role="img" className={styles["track"] ?? ""}
+                    {learner.attendancePercent!==null?<MetricBar role="img" className={styles.track}
                       label={"Attendance "+learner.attendancePercent+" percent"}
                       value={learner.attendancePercent} maximum={100} unit="percent" />:null}
                     <p>Submissions missing: {learner.missingSubmissionCount}</p>
@@ -253,11 +253,11 @@ export function FacultyCourseHomeSignals({
               <Disclosure
                 key={bucket.label}
                 className="rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [&>summary]:px-0"
-                title={<span className={styles["distribution"]+" w-full"}>
-                  <span className={styles["distribution"]Label}>{bucket.label}</span>
-                  <MetricBar className={styles["gradeTrack"] ?? ""} label={bucket.label+" grade distribution"}
+                title={<span className={styles.distribution+" w-full"}>
+                  <span className={styles.distributionLabel}>{bucket.label}</span>
+                  <MetricBar className={styles.gradeTrack} label={bucket.label+" grade distribution"}
                     value={width} maximum={100} unit="percent" />
-                  <strong className={styles["distribution"]Count}>{bucket.count}</strong>
+                  <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}
               >
                 {bucket.count>0?<ul className="mt-2 space-y-1 border-t border-border pt-2">
