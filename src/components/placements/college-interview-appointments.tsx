@@ -138,6 +138,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  },[show,applicationId,start,validFiveMinuteSlot,roundId,duration,
    interviewer,mode,venue,meetingUrl,editing?.id,jobId,previewKey]);
  const currentScopedPreview=scopedPreview?.key===previewKey?scopedPreview:null;
+ const scopedResult=currentScopedPreview?.result;
  const [showConflictsOnly,setShowConflictsOnly]=useState(false);
  const visibleAppointments=showConflictsOnly?appointments.filter(hasConflict):appointments;
  const [feedbackBusy,setFeedbackBusy]=useState(false);
@@ -550,13 +551,12 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      {fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]?<span role="alert" className="text-xs text-error">{fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]}</span>:null}
      </label>
     <p className="text-xs text-muted-foreground">Times shown in Asia/Kolkata (IST). The server checks other drives and interviewer conflicts before accepting a slot.</p>
-    {currentScopedPreview?.result?.incomplete?<Banner tone="warning" role="alert">
+    {scopedResult?.incomplete?<Banner tone="warning" role="alert">
       More than 500 overlapping appointments were found in this college. The preview is incomplete; review the calendar before booking. Server-side scheduling checks remain authoritative.
     </Banner>:null}
-    {currentScopedPreview?.result?.total!==null&&
-      (currentScopedPreview?.result?.total??0)>0?<Banner tone="warning" role="alert">
-      Possible scheduling conflict with {currentScopedPreview!.result!.total} interview(s) across this college (15-minute buffer).
-      Candidate: {currentScopedPreview!.result!.candidate}; same-company interviewer: {currentScopedPreview!.result!.interviewer}; room: {currentScopedPreview!.result!.room}.
+    {scopedResult&&scopedResult.total!==null&&scopedResult.total>0?<Banner tone="warning" role="alert">
+      Possible scheduling conflict with {scopedResult.total} interview(s) across this college (15-minute buffer).
+      Candidate: {scopedResult.candidate}; same-company interviewer: {scopedResult.interviewer}; room: {scopedResult.room}.
       Review the other bookings before saving; the server rechecks conflicts.
     </Banner>:null}
     {currentScopedPreview?.error?<Banner tone="warning" role="alert">
