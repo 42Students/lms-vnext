@@ -238,9 +238,13 @@ export async function getRecruiterCompanyReports(
               collegeMemberships.collegeId,
               collegeId,
             ),
+            eq(collegeMemberships.status,"ACTIVE"),
           ),
         )
-        .innerJoin(users,eq(users.id,collegeMemberships.userId))
+        .innerJoin(users,and(
+          eq(users.id,collegeMemberships.userId),
+          eq(users.platformStatus,"ACTIVE"),
+        ))
         .leftJoin(
           placementOffers,
           eq(placementOffers.applicationId,placementApplications.id),
