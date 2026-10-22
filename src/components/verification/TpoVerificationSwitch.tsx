@@ -26,7 +26,7 @@ export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled
  return <section aria-label="Placement-cell verification setting" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <div className="min-w-0 space-y-1">
-    <h3 className="font-semibold">The placement cell can verify profiles</h3>
+    <h2 className="font-semibold">The placement cell can verify profiles</h2>
     <p className="text-xs text-muted-foreground">Placement cell admins get this same page. Every decision is recorded with the name of who made it.</p>
    </div>
    <div className="flex items-center gap-2">
