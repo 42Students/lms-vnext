@@ -84,8 +84,9 @@ export function mapLegacyCollegeLeadership(input:{
   const member=input.membershipMapping.filter(m=>m.legacyFacultyId===id&&
    m.collegeId===input.resolvedCollegeId&&m.active&&m.isFaculty&&
    uuid.test(m.membershipId));
-  if(member.length!==1)throw new Error("College leadership role needs reviewed faculty mapping");
-  return member[0].membershipId;
+  const matchingMember=member[0];
+  if(member.length!==1||!matchingMember)throw new Error("College leadership role needs reviewed faculty mapping");
+  return matchingMember.membershipId;
  };
  const chairMembershipId=resolved(input.chairLegacyId);
  const viceChairMembershipId=resolved(input.viceChairLegacyId);

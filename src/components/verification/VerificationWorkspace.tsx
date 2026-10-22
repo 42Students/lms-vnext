@@ -88,7 +88,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
    items={(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>({
     value:t,
     label:t==="SENT_BACK"?"Sent back":t==="WAITING"?"Waiting":"Verified",
-    count:showTabCounts?counts[t]:undefined,
+    ...(showTabCounts?{count:counts[t]}:{}),
    }))}
   />
   <div className="flex flex-wrap gap-2">

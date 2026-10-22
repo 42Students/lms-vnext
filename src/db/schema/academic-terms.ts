@@ -72,6 +72,7 @@ export function legacyProgramTermDate(raw: string | null | undefined): {
   if (!value) return { date: null, source: value, needsReview: false };
   if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(value)) return { date: null, source: value, needsReview: true };
   const [year, month, day] = value.split("-").map(Number);
+  if (year === undefined || month === undefined || day === undefined) return { date: null, source: value, needsReview: true };
   const checked = new Date(Date.UTC(year, month - 1, day));
   const valid = checked.getUTCFullYear() === year &&
     checked.getUTCMonth() + 1 === month && checked.getUTCDate() === day;
