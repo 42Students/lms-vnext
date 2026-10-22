@@ -22,6 +22,7 @@ import {CollegeDriveEditDialog} from "@/components/placements/college-drive-edit
 import {PlacementJobCreateWorkspace} from "@/components/placements/placement-job-create-workspace";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {CollegeDrivesCapture,CollegeDrivesStaleFallback} from "@/components/placements/college-drives-last-good";
 
 export default async function CollegeDrivesPage({ searchParams }: {
@@ -34,6 +35,13 @@ export default async function CollegeDrivesPage({ searchParams }: {
       description="Contact your administrator to assign a college before managing placement jobs."
       action={<Link href="/dashboard"
         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>} />
+  </div>;
+  const moduleAccess = await resolveOptionalModuleAccess(context);
+  if (!moduleAccess.placements.enabled) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Jobs"/>
+    <ErrorState title="Placements unavailable"
+      description="Placements is turned off for this college. Ask a Super Admin to enable Placements in Module Access before managing placement jobs."
+      action={<Link href="/college/module-access" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View college module access</Link>} />
   </div>;
   const params = await searchParams;
   const query = driveQueryFromSearch({
