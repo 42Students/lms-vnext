@@ -9,7 +9,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {useEffect,useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useToast} from "@/components/ui/toast";
 import {COLLEGE_APPLICATION_STAGES,COLLEGE_APPLICATION_TRANSITIONS} from "@/modules/placements/college-stage-action-model";
@@ -55,11 +55,14 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  const [dialog,setDialog]=useState(false);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
+ const [staleConflict,setStaleConflict]=useState(false);
  type MoveOutcome={applicationId:string;status:string;reason?:string;
   undoEventId?:string;undoUntil?:string;stageVersion?:number};
  const [outcome,setOutcome]=useState<{moved:number;skipped:number;
   results:MoveOutcome[]}|null>(null);
  const [undoBusyId,setUndoBusyId]=useState<string|null>(null);
+ // A stale write must wait for the next authorized server snapshot.
+ useEffect(()=>{setStaleConflict(false);},[rows]);
  useEffect(()=>{
   scopeEpoch.current+=1;
   setSelected([]);setAllMatching(false);setDetailId(null);setDetailPayload(null);
@@ -123,6 +126,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     setError("Must be a valid URL starting with http:// or https://");return;
    }
   }
+  if(staleConflict){router.refresh();return;}
   const epoch=scopeEpoch.current;
   setBusy(true);setError("");setOutcome(null);
   try{
@@ -149,7 +153,10 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    router.refresh();
   }catch(e){
    if(scopeEpoch.current!==epoch)return;
-   setError(e instanceof Error?e.message:friendlyApiError({}));
+   if(e instanceof FriendlyFetchError&&e.status===409){
+    setStaleConflict(true);
+    setError("Application status has changed since this page loaded. Refresh the current stages before retrying.");
+   }else setError(e instanceof Error?e.message:friendlyApiError({}));
   }finally{
    if(scopeEpoch.current===epoch)setBusy(false);
   }
@@ -338,7 +345,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title={dialogTitle} dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
     <Button type="button" disabled={busy} variant="secondary" onClick={()=>{setDialog(false);setError("");setOutcome(null);}}>Close</Button>
     <Button type="button" variant={target==="REJECTED"?"danger":"primary"}
-      disabled={busy||(action==="CORRECT"&&reason.trim().length<10)||!selectedCount}
+      disabled={busy||staleConflict||(action==="CORRECT"&&reason.trim().length<10)||!selectedCount}
       onClick={()=>void save()}>{busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":
        target==="REJECTED"?"Reject "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</Button>
    </div>}>
@@ -386,6 +393,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       never silently sends unapproved email.</span>
     </label>
     {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
+    {staleConflict?<Button type="button" variant="secondary" disabled={busy}
+      onClick={()=>router.refresh()}>Refresh current stages before retrying</Button>:null}
     {outcome&&outcome.results.length>5?<p id="pipeline-outcome-scroll-cue" className="text-xs text-muted-foreground leading-5">More outcomes below ↓</p>:null}
     {outcome?<div role="status" tabIndex={0} aria-label="Bulk application outcomes" aria-describedby={outcome.results.length>5?"pipeline-outcome-scroll-cue":undefined}
      className="max-h-36 overflow-y-auto overscroll-contain rounded border border-border p-3 pb-5 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">
