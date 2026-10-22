@@ -50,7 +50,7 @@ export function getPrivateR2Config(
   const keyPrefix = env.R2_PRIVATE_PREFIX?.trim() ?? "";
   if (keyPrefix && (!keyPrefix.endsWith("/") || keyPrefix.startsWith("/") ||
       keyPrefix.includes("..") || keyPrefix.includes("\\") ||
-      keyPrefix.includes("//") || /[\\x00-\\x1f]/.test(keyPrefix))) {
+      keyPrefix.includes("//") || /[\x00-\x1f]/.test(keyPrefix))) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_BUCKET_UNSAFE");
   }
   // Check all known legacy public bucket names. There is no public-URL

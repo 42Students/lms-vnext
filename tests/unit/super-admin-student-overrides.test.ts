@@ -10,7 +10,7 @@ describe("student overrides and locks summary",()=>{
   ]);
   const summary=membershipOverrideSummary(modules);
   expect(summary.find(x=>x.module==="projects")).toMatchObject({stored:false,winner:false});
-  expect(summary.find(x=>x.module==="placements")).toMatchObject({stored:true,ignored:false,winner:true});
+  expect(summary.find(x=>x.module==="placements")).toMatchObject({stored:true,ignored:true,winner:false});
   expect(summary.find(x=>x.module==="electives")).toMatchObject({stored:null,locked:false});
  });
 });

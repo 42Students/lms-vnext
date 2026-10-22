@@ -34,9 +34,9 @@ describe("SA-academics-people-27 lecture hall directory", () => {
     expect(parseSuperAdminLectureHallFilters({ page: ["1", "2"] })).toBeNull();
     expect(parseSuperAdminLectureHallFilters({ collegeId: "other" })).toBeNull();
     const page = readFileSync("src/app/(authenticated)/admin/lecture-halls/page.tsx", "utf8");
-    expect(page).toContain('<form action="/admin/lecture-halls" method="get">');
+    expect(page).toContain('<form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls"');
     expect(page).toContain("Object.entries(query)");
-    expect(page).toContain("Export CSV");
+    expect(page).toContain("Export all matching CSV");
     expect(superAdminLectureHallHref(params!)).toBe("/admin/lecture-halls?q=Lab&page=2&pageSize=50");
     expect(superAdminLectureHallPages(101, 50)).toBe(3);
   });
