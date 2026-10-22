@@ -3,6 +3,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {privateR2SetupState} from "@/modules/storage/r2-config";
 import {devAttestationAllowed} from "@/modules/storage/file-lifecycle";
+import {productionScannerCallbackReady} from "@/modules/storage/production-scan-verdict-service";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -20,9 +21,13 @@ export async function GET(){
   // never present "storage ready" for production while the external
   // privileged malware scanner/attestation workflow is not operational.
   const developmentAttestation=devAttestationAllowed();
+  const scannerVerified=productionScannerCallbackReady();
   const scanReadiness=developmentAttestation
    ?{mode:"DEVELOPMENT_ATTESTATION",operational:true,
      message:"Development-only content verification is available. This is not malware scanning."}
+   :scannerVerified
+   ?{mode:"PRODUCTION_SCANNER_CALLBACK",operational:true,
+     message:"Private malware-scanner callback is configured. Verify live scanning of all permitted file and video types before public release."}
    :{mode:"PRODUCTION_SCANNER_REQUIRED",operational:false,
      message:"Production malware scanning is not connected. Uploaded files remain Checking file and cannot be opened."};
   const operational=readiness.configured&&scanReadiness.operational;
