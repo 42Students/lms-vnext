@@ -23,7 +23,7 @@ import { bindGlobalEmailSuppressionHashToOutbox, deriveGlobalEmailSuppressionHas
 type OutboundWriter = Pick<ReturnType<typeof getDb>, "execute">;
 
 export function outboundQueueRuntimeEnabled() {
-  return process.env.DB10_OUTBOUND_READY === "DB10_VERIFIED";
+  return process.env["DB10_OUTBOUND_READY"] === "DB10_VERIFIED";
 }
 
 export type OutboundQueueResult =
@@ -77,13 +77,13 @@ export async function queueOutboundDeliveryInTransaction(
     throw new OutboundDeliveryError("OUTBOUND_SCOPE_INVALID");
   }
 
-  const encryptionKey = process.env.DB10_OUTBOUND_ENCRYPTION_KEY_BASE64 ?? "";
+  const encryptionKey = process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"] ?? "";
   const envelope = sealOutboundDelivery(intent, encryptionKey);
   // Global email recipient HMAC is intentionally different from the
   // organization-scoped recipientHash. Null for SMS and WhatsApp.
   const globalEmailSuppressionHash = deriveGlobalEmailSuppressionHash(
     intent,
-    process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 ?? "",
+    process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"] ?? "",
   );
   // A unique per-message commitment lets the dispatcher prove its global
   // EMAIL opt-out HMAC matches the queued recipient without storing that
@@ -190,7 +190,7 @@ export async function queueOutboundDelivery(
  */
 export function outboundDispatchRuntimeEnabled() {
   return outboundQueueRuntimeEnabled() &&
-    process.env.DB10_OUTBOUND_DISPATCH_READY === "DB10_VERIFIED";
+    process.env["DB10_OUTBOUND_DISPATCH_READY"] === "DB10_VERIFIED";
 }
 
 export class OutboundDispatchNotReadyError extends Error {

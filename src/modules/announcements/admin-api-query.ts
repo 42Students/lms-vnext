@@ -7,15 +7,15 @@ export function parseAnnouncementAdminApiQuery(params:URLSearchParams){
   values[key]=value;
  }
  const raw={
-  includeDeleted:values.includeDeleted||undefined,
-  q:values.q?.trim()||undefined,
-  receiverType:values.receiverType||undefined,
-  visibility:values.visibility||undefined,
-  pinned:values.pinned||undefined,
-  senderType:values.senderType||undefined,
-  beforeCreatedAt:values.beforeCreatedAt||undefined,
-  beforeId:values.beforeId||undefined,
-  limit:values.limit||undefined,
+  includeDeleted:values["includeDeleted"]||undefined,
+  q:values["q"]?.trim()||undefined,
+  receiverType:values["receiverType"]||undefined,
+  visibility:values["visibility"]||undefined,
+  pinned:values["pinned"]||undefined,
+  senderType:values["senderType"]||undefined,
+  beforeCreatedAt:values["beforeCreatedAt"]||undefined,
+  beforeId:values["beforeId"]||undefined,
+  limit:values["limit"]||undefined,
  };
  return announcementAdminListSchema.safeParse(raw).success?raw:null;
 }

@@ -27,7 +27,7 @@ function indiaDayWindow(now:Date){
  * identity is used solely for the existing eligibility evaluator.
  */
 async function jobEligibilityActor(){
- const identityUid=process.env.TPO_REMINDER_SYSTEM_IDENTITY_UID?.trim()??"";
+ const identityUid=process.env["TPO_REMINDER_SYSTEM_IDENTITY_UID"]?.trim()??"";
  if(identityUid.length<16)throw new Error("TPO_REMINDER_ACTOR_NOT_CONFIGURED");
  const actor=await resolveRequestContext({identityUid});
  if(!isSuperAdmin(actor))throw new Error("TPO_REMINDER_ACTOR_NOT_AUTHORIZED");

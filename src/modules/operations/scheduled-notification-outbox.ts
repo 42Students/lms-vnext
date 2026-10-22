@@ -23,7 +23,7 @@ export async function queueScheduledRecipientNotification(input: {
   body: string;
   actionHref?: string | null;
 }): Promise<"QUEUED" | "ALREADY_QUEUED"> {
-  if (process.env.DB10_NOTIFICATION_OUTBOX_READY !== "DB10_VERIFIED") {
+  if (process.env["DB10_NOTIFICATION_OUTBOX_READY"] !== "DB10_VERIFIED") {
     throw new Error("SCHEDULED_NOTIFICATION_OUTBOX_NOT_READY");
   }
   if (!(input.scheduledAt instanceof Date) ||
@@ -38,7 +38,7 @@ export async function queueScheduledRecipientNotification(input: {
     throw new Error("INVALID_SCHEDULED_NOTIFICATION_CONTENT");
   }
   const dedupeKey = scheduledRecipientIdempotencyKey(input,
-    process.env.DB10_NOTIFICATION_DEDUPE_KEY_BASE64 ?? "");
+    process.env["DB10_NOTIFICATION_DEDUPE_KEY_BASE64"] ?? "");
   // This store never accepts request-selected recipients. Both the authored
   // event's tenant and an active recipient membership must be persisted.
   // Never mark an outbox row SENT here, or claim delivery from a queue write.

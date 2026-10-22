@@ -404,7 +404,7 @@ const scheduledInstanceSalt=randomUUID().slice(0,16);
 export function scheduledJobWorkerIdentity(hostname?:string):{
   holderId:string;hostPresent:boolean;
 }{
-  const host=hostname??process.env.HOSTNAME??"";
+  const host=hostname??process.env["HOSTNAME"]??"";
   const normalized=host.trim();
   const valid=/^[a-zA-Z0-9][a-zA-Z0-9.-]{0,59}$/.test(normalized);
   return{
