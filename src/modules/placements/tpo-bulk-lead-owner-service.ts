@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, exists, inArray, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   activityEvents,
@@ -10,6 +10,7 @@ import {
   placementTpoLeads,
   users,
 } from "@/db/schema";
+import {placementTpoTeamMembers} from "@/db/schema/tpo-collaboration";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
@@ -35,9 +36,19 @@ async function requireTpoOwnerScope(context: RequestContext) {
   return college.id;
 }
 
-const placementStaffRoles: Array<"TPO" | "COLLEGE_ADMIN" | "FACULTY"> = [
-  "TPO", "COLLEGE_ADMIN", "FACULTY",
-];
+/** TPOs and college admins are eligible by role; faculty must be explicitly
+ * assigned to this college\'s placement team, not merely teach there. */
+const eligibleOwnerRole = (collegeId: string) => or(
+  inArray(membershipRoles.role, ["TPO", "COLLEGE_ADMIN"]),
+  and(eq(membershipRoles.role, "FACULTY"), exists(
+    getDb().select({id:placementTpoTeamMembers.membershipId})
+      .from(placementTpoTeamMembers)
+      .where(and(
+        eq(placementTpoTeamMembers.collegeId, collegeId),
+        eq(placementTpoTeamMembers.membershipId, collegeMemberships.id),
+      )),
+  )),
+);
 
 /** Only explicitly active placement staff in the signed-in college are selectable. */
 export async function listTpoLeadOwners(context: RequestContext) {
@@ -53,7 +64,7 @@ export async function listTpoLeadOwners(context: RequestContext) {
       eq(collegeMemberships.collegeId, collegeId),
       eq(collegeMemberships.status, "ACTIVE"),
       eq(users.platformStatus, "ACTIVE"),
-      inArray(membershipRoles.role, placementStaffRoles),
+      eligibleOwnerRole(collegeId),
     ))
     .orderBy(asc(users.displayName), asc(collegeMemberships.id))
     .limit(500);
@@ -86,7 +97,7 @@ export async function bulkAssignTpoLeadOwner(
         eq(collegeMemberships.collegeId, collegeId),
         eq(collegeMemberships.status, "ACTIVE"),
         eq(users.platformStatus, "ACTIVE"),
-        inArray(membershipRoles.role, placementStaffRoles),
+        eligibleOwnerRole(collegeId),
       ))
       .limit(1);
     if (!target) throw new AuthorizationError("placements.manage");
