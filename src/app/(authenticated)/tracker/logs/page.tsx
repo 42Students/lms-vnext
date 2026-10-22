@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Tabs } from "@/components/ui/tabs";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { getDb } from "@/db/client";
+import { activityEvents } from "@/db/schema/activity";
 import { KnownErrorsWorkspace } from "@/components/tracker/known-errors-workspace";
 import { TrackerLiveLogsExplorer } from "@/components/tracker/tracker-live-logs-explorer";
 import { TrackerTelegramManualPanel } from "@/components/tracker/tracker-telegram-manual-panel";
@@ -56,6 +58,19 @@ export default async function TrackerLogsPage({
     </section>;
   }
 
+  // Unlike the old password-only IP log, every successful log explorer read
+  // has a durable named actor. Never include raw log queries, IPs, headers,
+  // tokens, credentials or private log contents in this audit payload.
+  // Fail closed if this write fails rather than exposing unaudited logs.
+  await getDb().insert(activityEvents).values({
+    actorUserId: context.user.id,
+    module: "PLATFORM",
+    eventType: "platform.tracker.logs_viewed",
+    subjectType: "tracker_logs",
+    subjectId: "live-explorer",
+    summary: "Tracker log explorer accessed",
+    metadata: { access: "named_super_admin" },
+  });
   const search = await searchParams;
   const environment = search.environment ?? "PRODUCTION";
   const legacyReference = typeof search.insertId === "string" ? search.insertId :
