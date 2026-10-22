@@ -17,13 +17,14 @@ export function MentorSprintDetailsEdit({
   projectId,sprintId,title:originalTitle,
   description:originalDescription,updatedAt,goal:originalGoal,definitionOfDone:originalDone,
   startDate:originalStart,endDate:originalEnd,dueDate:originalDue,status,estimationUnit,
-  dueLabel:originalDueLabel=null,sprintKey=null,releaseTitle=null,
+  dueLabel:originalDueLabel=null,sprintKey=null,releaseTitle=null,expectedPlanToken,
 }:{
   projectId:string;sprintId:string;title:string;
   description:string|null;updatedAt:string;
   goal:string|null;definitionOfDone:string|null;startDate:string|null;endDate:string|null;
   dueDate:string|null;status:string;estimationUnit?:string|null;
   dueLabel?:string|null;sprintKey?:string|null;releaseTitle?:string|null;
+  expectedPlanToken?:string;
 }) {
   const router=useRouter();
   const {showToast}=useToast();
@@ -37,6 +38,7 @@ export function MentorSprintDetailsEdit({
     [due,setDue]=useState(originalDue??"");
   const [pending,setPending]=useState(false);
   const [lastLoadedVersion,setLastLoadedVersion]=useState(updatedAt);
+  const [lastLoadedPlanToken,setLastLoadedPlanToken]=useState(expectedPlanToken);
   const [error,setError]=useState<string|null>(null);
   const changed=title.trim()!==originalTitle||
     (dueLabel.trim()||null)!==(originalDueLabel??null)||
@@ -63,10 +65,12 @@ export function MentorSprintDetailsEdit({
     setGoal(originalGoal??"");setDone(originalDone??"");
     setStart(originalStart??"");setEnd(originalEnd??"");setDue(originalDue??"");
     setError(null);setLastLoadedVersion(updatedAt);
-  },[updatedAt,lastLoadedVersion,open,confirmOpen,
+    setLastLoadedPlanToken(expectedPlanToken);
+  },[updatedAt,lastLoadedVersion,expectedPlanToken,open,confirmOpen,
     originalTitle,originalDueLabel,originalDescription,originalGoal,originalDone,
     originalStart,originalEnd,originalDue]);
   function begin() {
+    setLastLoadedPlanToken(expectedPlanToken);
     setTitle(originalTitle);setDueLabel(originalDueLabel??"");
     setDescription(originalDescription??"");
     setGoal(originalGoal??"");setDone(originalDone??"");
@@ -76,7 +80,7 @@ export function MentorSprintDetailsEdit({
   }
   function review(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(lastLoadedVersion!==updatedAt){
+    if(lastLoadedVersion!==updatedAt||lastLoadedPlanToken!==expectedPlanToken){
       setError("This sprint changed since editing began. Close the editor and review the latest version.");
       return;
     }
@@ -105,7 +109,7 @@ export function MentorSprintDetailsEdit({
           description:description.trim()||null,
           goal:goal.trim()||null,definitionOfDone:done.trim()||null,
           startDate:start||null,endDate:end||null,dueDate:due||null,
-          expectedUpdatedAt:updatedAt,
+          expectedUpdatedAt:updatedAt,expectedPlanToken,
         },
       );
       setConfirmOpen(false);

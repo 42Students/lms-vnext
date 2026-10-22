@@ -29,6 +29,7 @@ import { MetricBar } from "@/components/ui/metric-bar";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { effectiveProjectSubmissionReady } from "@/modules/projects/readiness-override-model";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
+import {mentorSprintPlanRevisionToken} from "@/modules/projects/mentor-sprint-details-model";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
 import { ProjectResourceAuditList } from "./project-resource-audit-list";
@@ -1527,6 +1528,9 @@ export function ProjectWorkspace({
                                 title={sprint.title}
                                 description={sprint.description}
                                 updatedAt={sprint.updatedAt.toISOString()}
+                                expectedPlanToken={mentorSprintPlanRevisionToken(
+                                  workspace.sprints.filter(row=>row.releaseId===sprint.releaseId)
+                                )}
                               estimationUnit={workspace.project.estimationUnit}
                                 goal={sprint.goal}
                                 definitionOfDone={sprint.definitionOfDone}

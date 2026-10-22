@@ -1,7 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, asc } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -13,7 +13,7 @@ import { requireProjectLifecycleAccess } from "./access";
 import { assertPersistedProjectMutationActor } from "./persisted-mentor-mutation";
 import { ProjectsServiceError } from "./errors";
 import { mentorSprintDetailsParamsSchema, mentorSprintDetailsSchema,
-  sprintDetailsChanged } from "./mentor-sprint-details-model";
+  sprintDetailsChanged,mentorSprintPlanRevisionToken } from "./mentor-sprint-details-model";
 
 /** Edit registered 0123 sprint plan fields; lock sprint dates once ACTIVE. */
 export async function updateMentorSprintDetails(
@@ -63,6 +63,18 @@ export async function updateMentorSprintDetails(
       .limit(1);
     if (!release || release.status==="SHIPPED") {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+    }
+    if(input.expectedPlanToken){
+      const siblings=await tx.select({
+        id:projectSprints.id,sequence:projectSprints.sequence,
+        status:projectSprints.status,updatedAt:projectSprints.updatedAt,
+      }).from(projectSprints)
+        .where(and(eq(projectSprints.projectId,scope.project.id),
+          eq(projectSprints.releaseId,sprint.releaseId),
+          isNull(projectSprints.deletedAt)))
+        .orderBy(asc(projectSprints.sequence),asc(projectSprints.id));
+      if(mentorSprintPlanRevisionToken(siblings)!==input.expectedPlanToken)
+        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
     if (sprint.updatedAt.getTime()!==expected.getTime()) {
       // The locked row is newer than the client's edit. With both numeric

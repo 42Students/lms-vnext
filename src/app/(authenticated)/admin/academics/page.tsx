@@ -38,7 +38,7 @@ export default async function SuperAdminAcademicsPage() {
 
   // The unscoped platform landing is the global tenant directory, not a
   // blocked college academic workspace. College-scoped setup remains here.
-  if (!collegeId) redirect("/admin/tenants");
+  if (!collegeId) redirect("/superadmin/dashboard");
 
   const workspace = await getAcademicsWorkspace(context, collegeId);
 
