@@ -192,7 +192,7 @@ export async function refreshGroupRule(context:RequestContext,groupIdInput:strin
         continue;
       }
       const available=group.capacity===null || active<group.capacity;
-      if(!available && group.configJson.allowWaitlist!==true) {
+      if(!available && group.configJson["allowWaitlist"]!==true) {
         skippedCapacity++; continue;
       }
       const state:"ACTIVE"|"WAITLISTED"=available?"ACTIVE":"WAITLISTED";

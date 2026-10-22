@@ -15,7 +15,7 @@ export function parseLegacyLocalIstTimestamp(source: string): Date | null {
 export function normalizeLegacySoftDelete(value: boolean|null|undefined): {archived:boolean} {
   return {archived:value===true};
 }
-export function sameCreatedAtOnUpdate<T extends {createdAt:Date}>(original:T, patch:Partial<T>): Partial<T> {
+export function sameCreatedAtOnUpdate<T extends {createdAt:Date}>(_original:T, patch:Partial<T>): Partial<T> {
   const {createdAt: _ignored,...rest}=patch;
   return rest as Partial<T>;
 }

@@ -49,7 +49,8 @@ export function normalizeSlotYear(year: string | null): string | null {
   if (!match) throw new Error("ELECTIVE_YEAR_INVALID");
   const start = Number(match[1]);
   const target = start + 1;
-  if (Number(match[2]) !== (match[2].length === 2 ? target % 100 : target)) {
+  const endYear = match[2];
+  if (endYear === undefined || Number(endYear) !== (endYear.length === 2 ? target % 100 : target)) {
     throw new Error("ELECTIVE_YEAR_INVALID");
   }
   return String(start) + "-" + String(target % 100).padStart(2, "0");
