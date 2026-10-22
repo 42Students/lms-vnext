@@ -48,9 +48,9 @@ describe("chat-9 route coverage and native DataTable closure",()=>{
  it("UX-admin-projects-templates-template-id-overview-04 /admin/projects/templates/[templateId]/overview validates before redirect",()=>{
   const source=page("/admin/projects/templates/[templateId]/overview");
   expect(source).toContain('requirePermission(context,"project-template.read")');
-  expect(source).toContain("projectTemplateIdSchema.safeParse");
-  expect(source).toContain("if(!result.success)notFound()");
-  expect(source).toContain('redirect(templateSubviewHref(result.data,"overview"))');
+  expect(source).toContain('if(!id||id.length>100||!(/^[a-z0-9_-]+$/i.test(id)))notFound()');
+  expect(source).toContain('requirePermission(context,"project-template.read")');
+  expect(source).toContain('redirect("/admin/projects/templates/"+encodeURIComponent(id)');
  });
  it("UX-admin-recruiters-04 /admin/recruiters retains the scoped Super Admin HR editor without a duplicate permission surface",()=>{
   const source=page("/admin/recruiters");
