@@ -153,6 +153,7 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
   const [comment]=await tx.insert(projectTaskComments).values({
    projectId:scope.project.id,taskId,authorMembershipId,body:input.body,
    commentKind:input.commentKind,
+   progressValue:input.progressValue??null,
    taskStatusSnapshot:task.status,
   }).returning();
   if(!comment)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
@@ -163,7 +164,8 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
     collegeId:scope.collegeId,organizationId:scope.organizationId,
     subjectType:"project_task",subjectId:taskId,subjectLabel:task.title,
     summary:"Project task comment added",metadata:{projectId:scope.project.id,taskId,commentId:comment.id,
-      commentKind:comment.commentKind,taskStatusAtComment:task.status,
+      commentKind:comment.commentKind,progressValue:comment.progressValue,
+      taskStatusAtComment:task.status,
       authorMembershipId,authorDisplayName:author?.displayName??null,
       authorRole:scope.member?.role??"ADMIN",
       taskUpdatedAtAtComment:task.updatedAt.toISOString()},

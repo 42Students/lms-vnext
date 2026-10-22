@@ -13,7 +13,14 @@ export const projectTaskCommentInputSchema=z.object({
     kind==="NEEDS_HELP"?"FLAG_FOR_MENTOR":kind,
    z.enum(["NOTE","PROGRESS_UPDATE","FLAG_FOR_MENTOR"]).default("NOTE")),
   expectedTaskUpdatedAt:z.iso.datetime({offset:true}),
-}).strict();
+  // Legacy human progress updates may carry a percentage, but never a
+  // self-declared task status or a spoofed system event kind.
+  progressValue:z.number().int().min(0).max(100).nullable().optional(),
+}).strict().superRefine((value,ctx)=>{
+  if(value.progressValue != null && value.commentKind!=="PROGRESS_UPDATE")
+    ctx.addIssue({code:"custom",path:["progressValue"],
+      message:"Progress percentage requires a progress update"});
+});
 /** System-only payload for status/progress snapshots; the human comment
  * endpoint intentionally continues to reject these privileged fields.
  */

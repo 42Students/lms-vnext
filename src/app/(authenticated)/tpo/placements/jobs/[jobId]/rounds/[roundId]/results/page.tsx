@@ -107,6 +107,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-primary-foreground sm:w-auto md:min-h-9">Filter</Button>
   </form>
   <p role="status" className="text-sm text-body leading-[1.6]">{visibleRows.length} of {data.rows.length} applications on this page match these filters. {data.counts.eligible} eligible applications across all pages.</p>
+  <p id="round-result-roster-scroll-hint" className="text-xs text-muted-foreground">The eligible roster displays up to 500 applicants per page in a scrollable list. Use Tab to focus the list and the arrow keys to scroll; move between pages below to stage the remaining eligible applications.</p>
   <nav aria-label="Eligible applicant pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
     <span>Page {data.page} of {data.totalPages}</span>
     <div className="flex gap-4">
@@ -117,7 +118,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   {visibleRows.length===0?<EmptyState title={data.counts.eligible===0?"No students are in this round yet.":"No students match these round result filters."}
    description={data.counts.eligible===0?"Eligible shortlisted students will appear here when applications are ready.":"Clear the search, role and outcome filters to see other applicants."}
    action={data.counts.eligible===0?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"} className="font-semibold text-link underline">Back to rounds</Link>:<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="font-semibold text-link underline">Clear filters</Link>}/>:
-   <section className="min-w-0 divide-y divide-border border-y border-border" aria-label="Round result entries">
+   <section className="min-w-0 max-h-[420px] divide-y divide-border overflow-y-auto overscroll-contain border-y border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]" role="region" aria-label="Round result entries, scrollable roster" aria-describedby="round-result-roster-scroll-hint" tabIndex={0}>
     {visibleRows.map(row=><article key={row.applicationId} className="min-w-0 py-[var(--lms-space-4)]">
      <div className="mb-3">
       <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.student??"Name unavailable"}</h2>
