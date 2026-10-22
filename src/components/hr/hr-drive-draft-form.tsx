@@ -243,14 +243,17 @@ export function HrDriveDraftForm({
   async function viewUploadedJobDescription() {
     if (!draft.jdObjectKey) return;
     setJdUploadMessage("");
+    const popup = window.open("about:blank", "_blank");
+    if (popup) popup.opener = null;
     try {
       const response = await apiFetch("/api/placements/recruiter/drives/jd-upload?" +
         new URLSearchParams({ collegeId, objectKey: draft.jdObjectKey }),
         { method: "GET", credentials: "same-origin", cache: "no-store" }) as { readUrl: string };
       const parsed = new URL(response.readUrl);
       if (parsed.protocol !== "https:") throw new Error("Invalid signed read link");
-      window.open(parsed.toString(), "_blank", "noopener,noreferrer");
-    } catch { setJdUploadMessage("Could not open the file. Try again after verification."); }
+      if (popup && !popup.closed) popup.location.replace(parsed.toString());
+      else window.location.assign(parsed.toString());
+    } catch { popup?.close(); setJdUploadMessage("Could not open the file. Try again after verification."); }
   }
 
   async function copyPreview() {

@@ -11,6 +11,8 @@ export function LearnerJobDescriptionLink({ jobId }: { jobId: string }) {
     if (pending) return;
     setPending(true);
     setError("");
+    const popup = window.open("about:blank", "_blank");
+    if (popup) popup.opener = null;
     try {
       const response = await fetch(
         "/api/placements/learner/jobs/" + encodeURIComponent(jobId) + "/job-description",
@@ -26,8 +28,10 @@ export function LearnerJobDescriptionLink({ jobId }: { jobId: string }) {
       if (url.protocol !== "https:" || url.username || url.password ||
           Date.parse(payload.expiresAt) <= Date.now())
         throw new Error("Expired permission");
-      window.open(url.href, "_blank", "noopener,noreferrer");
+      if (popup && !popup.closed) popup.location.replace(url.href);
+      else window.location.assign(url.href);
     } catch {
+      popup?.close();
       setError("The job description could not be opened. Try again.");
     } finally { setPending(false); }
   }
