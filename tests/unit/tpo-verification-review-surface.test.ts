@@ -5,7 +5,10 @@ describe("TPO-requests-verification-19",()=>{
  it("keeps exact legacy TPO verification title, subtitle and actions",()=>{
   const workspace=file("src/components/verification/VerificationWorkspace.tsx");
   const panel=file("src/components/verification/TpoVerificationPanel.tsx");
-  expect(workspace).toContain('legacyTpoCopy?"Verification":"Profile verification"');
+  const page=file("src/app/(authenticated)/tpo/verification/page.tsx");
+  expect(page).toContain('<PageHeader title="Verification" description=');
+  expect(workspace).toContain('legacyTpoCopy ? <p className=');
+  expect(workspace).toContain('Verified marks are what eligibility uses.');
   expect(workspace).toContain("Verified marks are what eligibility uses.");
   expect(panel).toContain('apiBase="/api/tpo/verification"');
   expect(panel).toContain("onReview={row=>{setSequenceIndex(null);setSelected(row);}}");

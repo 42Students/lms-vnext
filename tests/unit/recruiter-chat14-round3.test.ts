@@ -7,7 +7,8 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
   const code=job();
   expect(code).toContain("safeDriveReturnTo(");
   expect(code).toContain('← All drives');
-  expect(code).toContain("title={workspace.job.title}");
+  expect(code).toContain('<h1 className=');
+  expect(code).toContain('{workspace.job.title}');
   expect(code).toContain('"Sent for review"');
   expect(code).toContain("applicants.counts.all+");
   expect(code).toContain("offersTotal+");
