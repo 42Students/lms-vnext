@@ -35,7 +35,7 @@ export function RecordedOutsideForm({collegeId,choices}:{
    Record outside-platform drive
   </Button>
   <p className="min-w-0 text-xs text-muted-foreground md:col-span-2 leading-5">
-   This is a historical staff record, not a published student job, application, offer, or invitation.
+   This is a historical staff record, not a published student job, application, offer, or invitation. No student is told when you record it.
   </p>
  </form>;
 }
