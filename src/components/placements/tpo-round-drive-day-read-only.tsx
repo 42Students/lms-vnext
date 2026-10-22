@@ -10,8 +10,8 @@ import {Dialog} from "@/components/ui/dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TpoRoundCheckIn } from "./tpo-round-check-in";
+import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
-import {Select} from "@/components/ui/select";
 
 import {
   PageHeader,
@@ -32,12 +32,6 @@ type RoundData = Awaited<
 >;
 
 type RoundRow=RoundData["rows"][number];
-type AttendanceFilter="ALL"|"CHECKED_IN"|"WAITING"|"PRESENT"|"IN_INTERVIEW"|"DONE"|"ABSENT";
-const attendanceLabel=(value:string)=>{
- const labels:Record<string,string>={WAITING:"Waiting",PRESENT:"Present",
-  IN_INTERVIEW:"In interview",DONE:"Done",ABSENT:"Absent"};
- return labels[value]??value.replaceAll("_"," ");
-};
 function resolveGateRoll(rows:readonly RoundRow[],input:string):
  {kind:"MATCH";student:RoundRow}|{kind:"AMBIGUOUS";students:RoundRow[]}|{kind:"NONE"} {
   const value=input.trim().toLocaleLowerCase("en-IN");
@@ -101,9 +95,6 @@ export function TpoRoundDriveDayReadOnly({
   const locked=["CANCELLED","COMPLETED"].includes(data.round.status);
   const [gateInput,setGateInput]=useState("");
   const [rosterSearch,setRosterSearch]=useState("");
-  const [statusFilter,setStatusFilter]=useState<AttendanceFilter>("ALL");
-  const [roomFilter,setRoomFilter]=useState("");
-  const [confirmPasteDiscard,setConfirmPasteDiscard]=useState(false);
   const [gateError,setGateError]=useState("");
   const [gateSuccess,setGateSuccess]=useState("");
   const [gateCandidates,setGateCandidates]=useState<RoundRow[]>([]);
@@ -136,21 +127,10 @@ export function TpoRoundDriveDayReadOnly({
   },[pasteOpen,router]);
   const shownRows=useMemo(()=>{
     const q=rosterSearch.trim().toLocaleLowerCase("en-IN");
-    return data.rows.filter(row=>{
-      const matchesText=!q||row.displayName.toLocaleLowerCase("en-IN").includes(q)||
-        (row.rollNumber??"").toLocaleLowerCase("en-IN").includes(q);
-      const matchesStatus=statusFilter==="ALL"||(statusFilter==="CHECKED_IN"
-        ?["PRESENT","IN_INTERVIEW","DONE"].includes(row.attendance)
-        :row.attendance===statusFilter);
-      const matchesRoom=!roomFilter||(row.assignedRoom?.trim()||"Unassigned")===roomFilter;
-      return matchesText&&matchesStatus&&matchesRoom;
-    });
-  },[data.rows,rosterSearch,statusFilter,roomFilter]);
-  const checkedIn=data.counts.present+data.counts.inInterview+data.counts.done;
-  const attendanceRate=data.counts.total?Math.round(checkedIn*100/data.counts.total):0;
-  const completionRate=data.counts.total?Math.round(data.counts.done*100/data.counts.total):0;
-  const rooms=[...new Set(data.rows.map(row=>row.assignedRoom?.trim()||"Unassigned"))].sort();
-  const stripFilters:AttendanceFilter[]=["ALL","CHECKED_IN","WAITING","IN_INTERVIEW","DONE","ABSENT"];
+    return q?data.rows.filter(row=>
+      row.displayName.toLocaleLowerCase("en-IN").includes(q)||
+      (row.rollNumber??"").toLocaleLowerCase("en-IN").includes(q)):data.rows;
+  },[data.rows,rosterSearch]);
   const roomQueues=useMemo(()=>{
     const rooms=new Map<string,RoundRow[]>();
     for(const student of data.rows){
@@ -238,8 +218,7 @@ export function TpoRoundDriveDayReadOnly({
     }finally{setGateBusy(false);inFlight.current=false;}
   }
   const pastePreview=useMemo(()=>{
-    const pasteTokens=[...new Set(pasteText.split(/[\s,;]+/)
-      .map(value=>value.trim().replace(/^\d{1,3}[).]$/,"").toUpperCase()).filter(Boolean))];
+    const pasteTokens=pasteText.split(/[\n,;]+/).map(value=>value.trim()).filter(Boolean);
     const matched:RoundRow[]=[];
     const unresolved:string[]=[];
     const unmatched:string[]=[];
@@ -247,10 +226,7 @@ export function TpoRoundDriveDayReadOnly({
     let duplicates=0;
     const used=new Set<string>();
     for(const token of pasteTokens.slice(0,50)){
-      const exact=data.rows.filter(row=>(row.rollNumber??"").trim().toUpperCase()===token);
-      const outcome=exact.length===1?{kind:"MATCH" as const,student:exact[0]!}:
-        exact.length>1?{kind:"AMBIGUOUS" as const,students:exact}:
-          {kind:"NONE" as const};
+      const outcome=resolveGateRoll(data.rows,token);
       if(outcome.kind==="MATCH"){
         if(used.has(outcome.student.applicationId)){duplicates++;continue;}
         matched.push(outcome.student);used.add(outcome.student.applicationId);
@@ -300,43 +276,39 @@ export function TpoRoundDriveDayReadOnly({
     }finally{inFlight.current=false;setPasteBusy(false);}
   }
   const summary = [
-    ["on the roster",data.counts.total],
-    ["checked in",checkedIn],
-    ["not here yet",data.counts.waiting],
-    ["in interview",data.counts.inInterview],
-    ["done",data.counts.done],
-    ["absent",data.counts.absent],
+    ["On roster", data.counts.total],
+    ["Waiting", data.counts.waiting],
+    ["Present", data.counts.present],
+    ["In interview", data.counts.inInterview],
+    ["Done", data.counts.done],
+    ["Absent", data.counts.absent],
+    ["Results staged", data.counts.stagedResults],
+    ["Results applied", data.counts.appliedResults],
   ] as const;
 
-    return (
+  return (
     <div className="space-y-6">
       <PageHeader
-        
-        title={data.companyName?data.companyName+" · "+data.round.name:"Drive day"}
+        eyebrow="TPO · Drive Day"
+        title={data.companyName + " · " + data.round.name}
         description={
           data.job.title +
-          " · "+data.rows.length+" student"+(data.rows.length===1?"":"s")+" on this roster"
+          " · Round-focused operational overview"
         }
         actions={
           <Link
             href={
-              "/tpo/drive-day"
+              "/tpo/placements/jobs/" +
+              encodeURIComponent(data.job.id)
             }
             className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-muted"
           >
-            Back
+            ← Back to job Drive Day
           </Link>
         }
       />
-      <div className="flex flex-wrap items-center gap-3">
-        <StatusBadge tone={data.round.status==="COMPLETED"?"success":
-          data.round.status==="CANCELLED"?"error":"info"}>
-          {data.round.status==="COMPLETED"?"Round done":
-           data.round.status==="CANCELLED"?"Round cancelled":"LIVE"}
-        </StatusBadge>
-        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(data.job.id)}
-          className="text-sm font-semibold text-link underline">View job Drive Day</Link>
-      </div>
+
+
       {staleSnapshot?<div role="status" className="flex flex-wrap items-center justify-between gap-3">
         <InlineNotice tone="info" message="The last successful roster snapshot is over a minute old. Check that attendance is current before editing."/>
         <Button type="button" variant="secondary" disabled={gateBusy||pasteBusy}
@@ -357,7 +329,7 @@ export function TpoRoundDriveDayReadOnly({
           onSubmit={event=>{event.preventDefault();prepareGate();}}>
           <label className="min-w-0 flex-1 text-sm font-semibold text-body">
             Roll number
-            <Input autoFocus aria-label="Roll number to mark present" type="search" autoComplete="off" value={gateInput}
+            <Input autoFocus type="search" autoComplete="off" value={gateInput}
               disabled={locked||gateBusy||pasteBusy} placeholder="Roll number, then Enter"
               onChange={event=>{setGateInput(event.target.value);setGateError("");setGateCandidates([]);}}
               className="mt-1" />
@@ -369,7 +341,7 @@ export function TpoRoundDriveDayReadOnly({
         {locked?<InlineNotice tone="info" message="This round is locked. Attendance changes are unavailable."/>:null}
         {gateError?<InlineNotice tone="error" message={gateError} onDismiss={()=>setGateError("")}/>:null}
         {gateCandidates.length>0?<ul className="text-xs text-body">
-          {gateCandidates.map(row=><li key={row.applicationId}>{row.rollNumber??"-"} · {row.displayName}</li>)}
+          {gateCandidates.map(row=><li key={row.applicationId}>{row.rollNumber??"—"} · {row.displayName}</li>)}
         </ul>:null}
         {gateSuccess?<InlineNotice tone="success" message={gateSuccess} onDismiss={()=>setGateSuccess("")}/>:null}
         {pasteFeedback?<InlineNotice tone="success" message={pasteFeedback} onDismiss={()=>setPasteFeedback("")}/>:null}
@@ -389,7 +361,7 @@ export function TpoRoundDriveDayReadOnly({
             <p className="truncate text-sm text-body">
               {queue.next?queue.next.displayName+" · "+(queue.next.rollNumber??"No roll number"):"No checked-in candidate waiting"}
             </p>
-            <Button type="button" size="sm" variant="secondary" aria-label={"Call next for "+queue.room}
+            <Button type="button" size="sm" variant="secondary"
               disabled={locked||gateBusy||pasteBusy||roomBusy!==null||!queue.next}
               onClick={()=>{if(queue.next)void callNext(queue.next,queue.room);}}>
               {roomBusy===queue.room?"Calling…":"Call next · "+queue.room}
@@ -406,13 +378,11 @@ export function TpoRoundDriveDayReadOnly({
           Applicant progress
         </h2>
 
-        <div className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4">
           {summary.slice(0,6).map(([label, count], index) => (
-            <button type="button"
-              onClick={()=>{setStatusFilter(stripFilters[index]!);if(index===0)setRoomFilter("");}}
-              aria-pressed={statusFilter===stripFilters[index]}
+            <div
               key={label}
-              className={"text-left transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary "+(statusFilter===stripFilters[index]?"bg-primary/10 ":"")+"min-w-0 p-3 sm:p-4 " +
+              className={"min-w-0 p-3 sm:p-4 " +
                 (index < 6 ? "border-b border-border " : "") +
                 (index % 2 === 0 ? "border-r border-border " : "") +
                 (index < 4 ? "lg:border-b " : "lg:border-b-0 ") +
@@ -424,12 +394,9 @@ export function TpoRoundDriveDayReadOnly({
               <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
                 {count}
               </p>
-            </button>
+            </div>
           ))}
         </div>
-        <p className="mt-2 text-xs text-muted-foreground" role="status">
-          Attendance {attendanceRate}% · Completion {completionRate}%
-        </p>
 
         <p className="mt-3 text-xs text-muted-foreground">
           Results staged: {data.counts.stagedResults} · Results applied: {data.counts.appliedResults}
@@ -478,11 +445,12 @@ export function TpoRoundDriveDayReadOnly({
 
           <StatusBadge
             tone={
-              data.round.status === "COMPLETED" ? "success":
-                data.round.status === "CANCELLED" ? "error":"info"
+              data.round.status === "COMPLETED"
+                ? "success"
+                : "neutral"
             }
           >
-            {data.round.status==="COMPLETED"?"Round done":data.round.status==="CANCELLED"?"Round cancelled":"LIVE"}
+            {data.round.status.replaceAll("_", " ")}
           </StatusBadge>
 
           <StatusBadge>
@@ -533,7 +501,7 @@ export function TpoRoundDriveDayReadOnly({
 
       <section
         aria-label="Round applicant roster"
-        className="border-t border-border"
+        className="overflow-hidden border-t border-border"
       >
         <div className="border-b border-border py-4">
           <h2 className="text-base font-semibold text-foreground">
@@ -547,69 +515,61 @@ export function TpoRoundDriveDayReadOnly({
           </p>
         </div>
 
-        <div className="sticky top-0 z-10 border-b border-border bg-surface py-2">
         <label className="mb-3 block max-w-xl text-sm font-semibold text-body">
           Search by student name or roll number
           <Input type="search" value={rosterSearch}
             onChange={event=>setRosterSearch(event.target.value)}
             placeholder="Search roster" className="mt-1"/>
         </label>
-        <label className="mb-3 block max-w-xs text-sm font-semibold text-body">
-          Room
-          <Select value={roomFilter} onChange={event=>setRoomFilter(event.target.value)} className="mt-1 w-full">
-            <option value="">All rooms</option>
-            {rooms.map(room=><option key={room} value={room}>{room}</option>)}
-          </Select>
-        </label>
-        <p role="status" className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-          {shownRows.length} student{shownRows.length===1?"":"s"} shown
-          {(statusFilter!=="ALL"||roomFilter)?<Button type="button" variant="secondary"
-            onClick={()=>{setStatusFilter("ALL");setRoomFilter("");}}>Clear filters</Button>:null}
+        <p role="status" className="mb-3 text-xs text-muted-foreground">
+          Showing {shownRows.length} of {data.rows.length} roster students.
         </p>
-        </div>
-        {shownRows.length===0?<EmptyState
-          title={data.rows.length===0?"No students are on this round's roster.":"No student matches your search."}
-          action={data.rows.length===0?<Link href={destinations.schedule}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline">Candidate schedule →</Link>:undefined}
-        />:<ul className="grid gap-3">
-          {shownRows.map(student=><li key={student.applicationId}
-            className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 sm:p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-3">
-                {student.avatarUrl?<img src={student.avatarUrl} alt=""
-                  className="h-[42px] w-[42px] shrink-0 rounded-full object-cover"/>:
-                  <span aria-hidden="true" className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground">
-                    {student.displayName.trim().charAt(0).toUpperCase()||"•"}
-                  </span>}
-                <div className="min-w-0">
-                  <p className="break-words text-sm font-semibold text-foreground">{student.displayName}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {student.rollNumber||"-"}{student.assignedRoom?" · "+student.assignedRoom:""}
-                  </p>
-                </div>
-              </div>
-              <StatusBadge tone={statusTone(student.attendance)}>{attendanceLabel(student.attendance)}</StatusBadge>
-            </div>
-            <div className="mt-3 border-t border-border pt-2" aria-label={"Attendance for "+student.displayName}>
-              <TpoRoundCheckIn roundId={data.round.id}
-                applicationId={student.applicationId} displayName={student.displayName}
-                attendance={student.attendance} roundStatus={data.round.status}
-                rollNumber={student.rollNumber}/>
-            </div>
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
-              <div className="text-xs text-muted-foreground">
-                <span className="font-semibold">Result: </span>
-                {student.resultStatus&&student.resultOutcome
-                  ?student.resultOutcome+" · "+student.resultStatus:"No result recorded"}
-              </div>
-              <div className="min-w-0">
-                <span className="block text-xs text-muted-foreground">Pass · Not cleared · Waitlist</span>
-                <TpoRoundResultRecorder roundId={data.round.id}
-                  round={{kind:data.round.kind,status:data.round.status}} row={student}/>
-              </div>
-            </div>
-          </li>)}
-        </ul>
+        <DataTable
+          caption="Applicants in this round"
+          rows={shownRows}
+          getRowKey={student=>student.applicationId}
+          empty={<EmptyState title="No eligible applicants currently appear in this round’s roster."
+            action={<Link href={destinations.schedule} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Candidate schedule →</Link>} />}
+          columns={[
+            {key:"student",header:"Student",mobilePriority:"primary" as const,
+              cell:(student:(typeof data.rows)[number])=>student.displayName},
+            {key:"roll",header:"Roll number",mobilePriority:"secondary" as const,
+              cell:(student:(typeof data.rows)[number])=>student.rollNumber??"—"},
+            {key:"application",header:"Application",mobilePriority:"secondary" as const,
+              cell:(student:(typeof data.rows)[number])=><StatusBadge>{student.applicationStatus}</StatusBadge>},
+            {key:"attendance",header:"Round attendance",mobilePriority:"action" as const,
+              cell:(student:(typeof data.rows)[number])=><div className="min-w-0 space-y-2">
+                <span className="block text-xs font-semibold text-body md:hidden">Round attendance</span>
+                <StatusBadge tone={statusTone(student.attendance)}>
+                  {student.attendance.replaceAll("_"," ")}
+                </StatusBadge>
+                <TpoRoundCheckIn
+                  roundId={data.round.id}
+                  applicationId={student.applicationId}
+                  displayName={student.displayName}
+                  attendance={student.attendance}
+                  roundStatus={data.round.status}
+                />
+              </div>},
+            {key:"result",header:"Latest result",mobilePriority:"action" as const,
+              cell:(student:(typeof data.rows)[number])=><div className="min-w-0 space-y-2">
+                <span className="block text-xs font-semibold text-body md:hidden">Latest result</span>
+                {student.resultStatus && student.resultOutcome ?
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusBadge tone={statusTone(student.resultStatus)}>
+                      {student.resultStatus}
+                    </StatusBadge>
+                    <span className="text-body">{student.resultOutcome}</span>
+                  </div>
+                 :<span className="text-muted-foreground">No result recorded</span>}
+                <TpoRoundResultRecorder
+                  roundId={data.round.id}
+                  round={{kind:data.round.kind,status:data.round.status}}
+                  row={student}
+                />
+              </div>},
+          ]}
+        />
       </section>
 
       <ConfirmDialog open={gateTarget!==null}
@@ -625,16 +585,12 @@ export function TpoRoundDriveDayReadOnly({
           });
         }}/>
       <Dialog open={pasteOpen} dismissible={!pasteBusy}
-        onOpenChange={next=>{
-          if(pasteBusy)return;
-          if(!next&&pasteText.trim()){setConfirmPasteDiscard(true);return;}
-          setPasteOpen(next);
-        }}
+        onOpenChange={next=>{if(!pasteBusy)setPasteOpen(next);}}
         title="Paste a list of roll numbers"
         description="Enter one roll number per line. Only unambiguous roster matches can be checked in."
         footer={<div className="flex w-full flex-wrap justify-end gap-2">
           <Button type="button" variant="secondary" disabled={pasteBusy}
-            onClick={()=>{if(pasteText.trim())setConfirmPasteDiscard(true);else setPasteOpen(false);}}>Cancel</Button>
+            onClick={()=>setPasteOpen(false)}>Cancel</Button>
           <Button type="button" disabled={locked||pasteBusy||pastePreview.tooMany||
             pastePreview.matched.filter(row=>row.attendance!=="PRESENT").length===0}
             loading={pasteBusy} onClick={()=>void markPasted()}>
@@ -659,10 +615,6 @@ export function TpoRoundDriveDayReadOnly({
           </p>:null}
         </div>
       </Dialog>
-      <ConfirmDialog open={confirmPasteDiscard} onOpenChange={setConfirmPasteDiscard}
-        title="Discard this pasted attendance list?" description="The pasted roll numbers have not been submitted."
-        confirmLabel="Discard list" cancelLabel="Keep editing" confirmVariant="danger"
-        onConfirm={()=>{setPasteText("");setPasteOpen(false);setConfirmPasteDiscard(false);}}/>
       <Disclosure title="Bulk stage round results" contentClassName="pt-3">
         <TpoBulkRoundResultRecorder
           roundId={data.round.id}
