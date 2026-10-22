@@ -2,7 +2,7 @@
 import Link from "next/link";
 import {useRef,useState} from "react";
 import {Input} from "@/components/ui/input";
-import {driveChangeCommandSchema} from "@/modules/placements/tpo-drive-change-request-model";
+import {driveChangeCommandSchema,LEGACY_DRIVE_CHANGE_FIELD_LABELS} from "@/modules/placements/tpo-drive-change-request-model";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Disclosure} from "@/components/ui/disclosure";
+import {Dialog} from "@/components/ui/dialog";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {useToast} from "@/components/ui/toast";
 type Party="TPO"|"COMPANY";
@@ -29,6 +30,25 @@ function istDateTimeToUtc(value:string):string {
  const date=new Date(value+":00+05:30");
  return Number.isFinite(date.getTime())?date.toISOString():value;
 }
+function readableValue(field:string,value:string|null|undefined):string{
+ if(!value)return "—";
+ const cleaned=field==="DESCRIPTION"?value.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim():value;
+ if(field==="DEADLINE"){
+  const date=new Date(value);
+  return Number.isFinite(date.getTime())?date.toLocaleString("en-IN",{
+   timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
+  })+" IST":value;
+ }
+ if(field==="CTC")return cleaned+" LPA";
+ if(field==="STIPEND")return "₹"+cleaned+" a month";
+ return cleaned;
+}
+function formatCreatedAt(value:string):string{
+ const date=new Date(value);
+ return Number.isFinite(date.getTime())?date.toLocaleString("en-IN",{
+  timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
+ })+" IST":"";
+}
 const fields=[["ROLE_TITLE","Role title"],["DESCRIPTION","Description"],["LOCATION","Location"],
  ["JOB_TYPE","Job type"],["WORK_MODE","Mode"],["DEADLINE","Application deadline"],
  ["CTC","CTC"],["STIPEND","Stipend"],["MIN_CGPA","Minimum CGPA"],
@@ -39,12 +59,14 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
  const {showToast}=useToast();
  const [fieldError,setFieldError]=useState("");
  const [mode,setMode]=useState<"SUGGEST"|"ASK">("SUGGEST");
- const [field,setField]=useState<(typeof fields)[number][0]>("DEADLINE");
+ const [field,setField]=useState<(typeof fields)[number][0]|"">("");
+ const [composerOpen,setComposerOpen]=useState(false);
+ const [discardComposer,setDiscardComposer]=useState(false);
  const [value,setValue]=useState("");const [reason,setReason]=useState("");
  const [notes,setNotes]=useState<Record<string,string>>({});
  const inFlightRef=useRef(false);
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");
- const [confirmation,setConfirmation]=useState<{action:"ACCEPT"|"DECLINE"|"WITHDRAW";requestId:string;expectedUpdatedAt:string;note:string}|null>(null);
+ const [confirmation,setConfirmation]=useState<{action:"ACCEPT"|"ANSWER"|"DECLINE"|"WITHDRAW";requestId:string;expectedUpdatedAt:string;note:string}|null>(null);
  async function send(body:Record<string,unknown>){
   if(inFlightRef.current||busy)return;
   const validation=driveChangeCommandSchema.safeParse(body);
@@ -69,7 +91,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     const safe=typeof reason?.message==="string"&&reason.message.length<=240&&
       !/[<>\\r\\n]/.test(reason.message)?reason.message:null;
     throw Error(safe??(response.status===409?"This change request has changed. Refresh and retry.":
-      response.status===403?"You do not have permission for this change.":"Could not save change request."));
+      response.status===401?"Sign in again before saving this change.":response.status===403?"You do not have permission for this change.":response.status===422||response.status===400?"Check the requested field and value.":"That didn't work. Please retry."));
    }
    const receipt=payload&&typeof payload==="object"&&!Array.isArray(payload)
      ?payload as Record<string,unknown>:null;
@@ -87,28 +109,39 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    setSuccess(message);
    showToast({tone:"success",title:message});
    setConfirmation(null);
-   if(body.action==="CREATE"){setValue("");setReason("");}
+   if(body.action==="CREATE"){setValue("");setReason("");setField("");setMode("SUGGEST");setComposerOpen(false);}
    if(typeof body.requestId==="string")setNotes(previous=>({...previous,[body.requestId as string]:""}));
    router.refresh();
-  }catch(cause){setError(cause instanceof Error?cause.message:"Could not save change request.");}finally{inFlightRef.current=false;setBusy(false);}
+  }catch(cause){setError(cause instanceof Error?cause.message:"That didn't work. The request was not saved.");}finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div className="min-w-0 space-y-5">
   {error?<InlineNotice tone="error" message={error}/>:null}
   {success?<InlineNotice tone="success" message={success}/>:null}
-  <Disclosure title={"Suggest a change or ask the "+(party==="TPO"?"company":"placement cell")} defaultOpen={requests.length===0} className="min-w-0 border-b border-border pb-3" contentClassName="min-w-0 space-y-3 pt-3">
+  <div className="flex flex-wrap items-center justify-between gap-3">
+   <h2 className="font-semibold text-[var(--lms-heading)]">Change requests</h2>
+   <Button type="button" disabled={busy} onClick={()=>{setError("");setComposerOpen(true);}}>Request a change</Button>
+  </div>
+  <Dialog open={composerOpen} title="Request a change" dismissible={!busy}
+   onOpenChange={open=>{
+    if(open){setComposerOpen(true);return;}
+    if(busy)return;
+    if(value.trim()||reason.trim()||field){setDiscardComposer(true);return;}
+    setComposerOpen(false);
+   }}>
+   <div className="min-w-0 space-y-3">
    <p className="text-sm text-body leading-[22px]">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
    <div className="grid gap-3 min-[768px]:grid-cols-2">
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request type
-     <Select value={field==="OTHER"?"ASK":mode} disabled={field==="OTHER"}
+    {field&&field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">How
+     <Select value={mode}
       onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
-      className="min-h-11 min-[768px]:min-h-9"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Field
+      className="min-h-11 min-[768px]:min-h-9"><option value="SUGGEST">Propose</option><option value="ASK">Ask</option></Select></label>:null}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What should change
      <Select value={field} onChange={e=>setField(e.target.value as typeof field)}
       className="min-h-11 min-[768px]:min-h-9">
-      {fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
+      <option value="">Choose a field</option>{fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
    </div>
-   {field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-    {mode==="ASK"?"What would you like to ask?":"Proposed new value"}
+   {field&&field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    {mode==="ASK"?"Your question":"New value"}
     {mode==="SUGGEST"&&field==="DEADLINE"?
       <Input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
        className="min-h-11 min-[768px]:min-h-9"/>:
@@ -135,27 +168,47 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      minLength={field==="OTHER"?3:undefined}
      maxLength={1000} rows={2} className="min-h-11 min-[768px]:min-h-9"/></label>
    {fieldError?<p role="alert" className="text-xs text-error">{fieldError}</p>:null}
-   <Button type="button" disabled={busy||(field==="OTHER"?reason.trim().length<3:value.trim().length<2)}
+   <Button type="button" disabled={busy||!field||(field==="OTHER"?reason.trim().length<3:value.trim().length<2)}
     onClick={()=>void send({action:"CREATE",field,mode:field==="OTHER"?"ASK":mode,
      proposedValue:field==="OTHER"?"":field==="DEADLINE"&&mode==="SUGGEST"&&value
       ?istDateTimeToUtc(value):value.trim(),reason:reason.trim()})}
     variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9">
-    {busy?"Saving…":"Send to "+(party==="TPO"?"company":"placement cell")}</Button>
-  </Disclosure>
-  <section className="space-y-3">
-   <div className="flex flex-wrap items-center justify-between gap-2">
-    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Change requests · {requests.length}</h2>
-    <Button type="button" variant="secondary" disabled={busy} onClick={()=>router.refresh()}>Retry / refresh requests</Button>
+    {busy?"Sending…":"Send"}</Button>
+   <Button type="button" variant="secondary" disabled={busy} onClick={()=>{
+    if(value.trim()||reason.trim()||field)setDiscardComposer(true);else setComposerOpen(false);
+   }}>Cancel</Button>
    </div>
-   {!requests.length?<EmptyState title="No change requests for this drive."/>:requests.map(item=>
+  </Dialog>
+  <ConfirmDialog open={discardComposer} onOpenChange={setDiscardComposer}
+    title="Discard this request?" confirmLabel="Discard" cancelLabel="Keep editing"
+    onConfirm={()=>{setDiscardComposer(false);setComposerOpen(false);setValue("");setReason("");setField("");setMode("SUGGEST");}}>
+    Your unsent request details will be lost.
+  </ConfirmDialog>
+  {(["COMPANY","TPO"] as const).map(proposer=><section key={proposer} className="space-y-3">
+   <div className="flex flex-wrap items-center justify-between gap-2">
+    <h3 className="text-base font-semibold text-[var(--lms-heading)]">
+      {proposer==="COMPANY"?"Company requests":"Institutional requests (yours)"}
+    </h3>
+    <span className="text-xs text-muted-foreground">{requests.filter(item=>item.proposerParty===proposer).length}</span>
+   </div>
+   {!requests.some(item=>item.proposerParty===proposer)?
+    <EmptyState title={proposer==="COMPANY"?
+     "No requests from the company. The drive stays where it is until you both agree to a change.":
+     "No institutional requests yet. Request a change and the company can reply here."}/>:
+    requests.filter(item=>item.proposerParty===proposer).map(item=>
     <article key={item.id} className="space-y-3 border-b border-border py-5">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <h3 className="font-semibold">{(item.legacyField??item.field).replaceAll("_"," ")} · {item.mode==="SUGGEST"?"propose":item.mode.toLowerCase()}</h3>
-      <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status.replaceAll("_"," ")}</StatusBadge>
+      <h3 className="font-semibold">{LEGACY_DRIVE_CHANGE_FIELD_LABELS[item.field as keyof typeof LEGACY_DRIVE_CHANGE_FIELD_LABELS]??(item.legacyField??item.field).replaceAll("_"," ")} · {item.mode==="SUGGEST"?"propose":item.mode.toLowerCase()}</h3>
+      <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status==="OPEN"?"Waiting":item.status==="DECLINED"||item.status==="REPLIED"?"Declined":item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
-     {item.currentValue?<p className="break-words text-xs text-body">Previously: {item.currentValue}</p>:null}
-     <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-[22px]">
-      {item.mode==="ASK"?"Question: ":"Proposed: "}{item.proposedValue}</p>
+     {item.mode==="SUGGEST"?<p className="whitespace-pre-wrap break-words text-sm leading-[22px]">
+       {readableValue(item.field,item.currentValue)} <span aria-hidden="true">→</span> {readableValue(item.field,item.proposedValue)}
+      </p>:<p className="whitespace-pre-wrap break-words text-sm leading-[22px]">
+       Question: {readableValue(item.field,item.proposedValue)}
+      </p>}
+     <p className="text-xs text-muted-foreground">
+       {item.createdByName??(item.proposerParty==="TPO"?"Placement cell":"Company")} · {formatCreatedAt(item.createdAt)}
+     </p>
      <p className="break-words [overflow-wrap:anywhere] text-sm text-body leading-[22px]">
      {item.reason==="No reason provided"?"Reason not provided":"Why: "+item.reason}
      {" · From "}{item.createdByName??(item.proposerParty==="TPO"?"placement cell":"company")}</p>
@@ -195,28 +248,30 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
         actionsFor(item).map(action=>
          <Button key={action} type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
           disabled={busy||(action!=="ACCEPT"&&(notes[item.id]??"").trim().length<1)}
-          onClick={()=>action==="ANSWER"?void send({action,requestId:item.id,
-            expectedUpdatedAt:item.updatedAt,
-            note:(item.legacyField??item.field)==="DEADLINE"
-              ?istDateTimeToUtc(notes[item.id]??""):(notes[item.id]??"").trim()}):
-           setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
+          onClick={()=>setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(item.legacyField??item.field)==="DEADLINE"&&action==="ANSWER"?istDateTimeToUtc(notes[item.id]??""):(notes[item.id]??"").trim()})}
           variant={action==="DECLINE"?"danger":"secondary"}>
           {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</Button>):null}
-       {item.status==="OPEN"&&item.proposerParty===party&&item.createdByUserId===userId?
+       {item.status==="OPEN"&&item.proposerParty===party?
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy}
          onClick={()=>setConfirmation({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
          variant="danger">Withdraw</Button>:null}
       </div>
      </Disclosure>
     </article>)}
-  </section>
+  </section>)}
   <ConfirmDialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!busy)setConfirmation(null);}}
-   title={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
-   confirmLabel={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
-   confirmVariant={confirmation?.action==="ACCEPT"?"primary":"danger"} pending={busy}
+   title={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="ANSWER"?"Answer":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
+   confirmLabel={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="ANSWER"?"Answer":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
+   confirmVariant={confirmation?.action==="ACCEPT"||confirmation?.action==="ANSWER"?"primary":"danger"} pending={busy}
    onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
      expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
    <p className="text-sm text-body leading-[22px]">{confirmation?.action==="ACCEPT"?"Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.":"This decision is recorded in the drive discussion. It does not apply a proposed drive change."}</p>
+   {confirmation?.action==="ANSWER"||confirmation?.action==="DECLINE"?
+    <label className="mt-3 grid gap-1 text-sm font-semibold">
+     {confirmation.action==="ANSWER"?"Answer":"Why decline?"}
+     <Textarea rows={3} maxLength={confirmation.action==="DECLINE"?1000:2000} value={confirmation.note}
+      onChange={e=>setConfirmation(previous=>previous?{...previous,note:e.target.value}:null)}/>
+    </label>:null}
    {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>
  </div>;
