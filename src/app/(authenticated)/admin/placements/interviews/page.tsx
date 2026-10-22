@@ -24,11 +24,11 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  const raw=await searchParams;
- const currentPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,4}$/.test(raw.page)
-  ?Number(raw.page):1;
- const requestedJob=typeof raw.jobId==="string"&&
-  /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw.jobId)
-  ?raw.jobId:undefined;
+ const currentPage=typeof raw["page"]==="string"&&/^[1-9][0-9]{0,4}$/.test(raw["page"])
+  ?Number(raw["page"]):1;
+ const requestedJob=typeof raw["jobId"]==="string"&&
+  /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw["jobId"])
+  ?raw["jobId"]:undefined;
  const calendarQuery=new URLSearchParams({view:"agenda"});
  for(const key of ["date","company","roundKind","job","jobId"] as const){
   const value=raw[key];
