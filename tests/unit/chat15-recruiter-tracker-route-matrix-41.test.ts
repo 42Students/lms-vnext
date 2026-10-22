@@ -79,7 +79,7 @@ describe("UX-CHAT15-ROUTES-41 HR, recruiter and tracker access and state matrix"
    ["round-results","recruiterResultTableQuerySchema.safeParse","Invalid round filters"],
    ["company/reports","recruiterCompanyReportsQuerySchema.safeParse","Invalid report filters"],
    ["conversations","hrConversationQuerySchema.safeParse","Invalid conversation filters"],
-   ["notifications","hrNotificationsQuerySchema.safeParse","Invalid inbox filter."],
+   ["notifications","hrNotificationsQuerySchema.safeParse","Invalid inbox filter"],
   ]){
    const source=code("hr/"+route+"/page.tsx");
    expect(source).toContain(validation);
