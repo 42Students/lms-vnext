@@ -35,7 +35,7 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
   </Button>
   <ConfirmDialog open={confirm} onOpenChange={open=>{if(!busy)setConfirm(open);}}
    title={verified?"Remove global company verification?":"Verify company globally?"}
-   description={(verified?"Unverify ":"Verify ")+name+" globally for 42? Canonical company verification is separate from email-domain verification and recruiter grants."}
+   description={(verified?"Unverify ":"Verify ")+name+" globally for 42? Verifying the company also attests its registered primary domain. Other domains stay unverified, and recruiter access is never granted by this action."}
    confirmLabel={verified?"Confirm unverify":"Confirm verify"} confirmVariant={verified?"danger":"primary"}
    pending={busy} onConfirm={()=>void save()}>
    <div className="min-w-0 space-y-3">
