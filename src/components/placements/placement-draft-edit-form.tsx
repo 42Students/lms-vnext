@@ -6,7 +6,7 @@ import {
   useRef,
   type FormEvent,
 } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -70,6 +70,7 @@ export type PlacementDraftEditValue = {
     legacyPostingDetails:{
       responsibilities?:string;assessmentUrl?:string|null;
       assessmentDeadline?:string|null;importantDates?:Array<{label:string;at:string}>;
+       customEligibilityRules?:Array<{label:string;value:string}>;
       candidatePreferences?:{preferredDegree:string;specialization:string;
        graduationYear:number|null;minGpa:number|null;city:string};
     }|null;
@@ -103,6 +104,14 @@ function splitList(value: string) {
     .filter(Boolean);
 }
 
+function civilDay(iso:string):string{
+ const d=new Date(iso);
+ return Number.isNaN(d.getTime())?"":new Intl.DateTimeFormat("sv-SE",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
+ }).format(d);
+}
+type DateRow={id:number;label:string;date:string};
+type RuleRow={id:number;label:string;value:string};
 function nullableDecimal(value: string) {
   if (!value.trim()) return null;
   const parsed = Number(value);
@@ -147,6 +156,8 @@ export function PlacementDraftEditForm({
   jobTypes?:readonly {label:string}[];
 }) {
   const router = useRouter();
+  const pathname=usePathname();
+  const detailBase=(pathname.startsWith("/admin/")?"/admin":"/college")+"/placements/jobs/"+encodeURIComponent(value.job.id);
   const availableJobTypes=jobTypes?.length?jobTypes:TPO_BUILTIN_JOB_TYPES;
   const { showToast } = useToast();
   const { dirty, markDirty, clearDirty, guardDialog } = useUnsavedDriveGuard();
@@ -156,6 +167,18 @@ export function PlacementDraftEditForm({
   const [selectedDepartment,setSelectedDepartment]=useState("");
   const [programFilter,setProgramFilter]=useState("");
   const [cohortFilter,setCohortFilter]=useState("");
+  const [programSearch,setProgramSearch]=useState("");
+  const [cohortSearch,setCohortSearch]=useState("");
+  const [sectionSearch,setSectionSearch]=useState("");
+  const nextRowId=useRef(1000);
+  const makeDates=():DateRow[]=>(value.job.legacyPostingDetails?.importantDates??[]).length?
+   (value.job.legacyPostingDetails?.importantDates??[]).map((row,i)=>({id:i,label:row.label,date:civilDay(row.at)})):
+   [{id:0,label:"",date:""}];
+  const makeRules=():RuleRow[]=>(value.job.legacyPostingDetails?.customEligibilityRules??[]).length?
+   (value.job.legacyPostingDetails?.customEligibilityRules??[]).map((row,i)=>({id:i,label:row.label,value:row.value})):
+   [{id:0,label:"",value:""}];
+  const [dateRows,setDateRows]=useState<DateRow[]>(makeDates);
+  const [ruleRows,setRuleRows]=useState<RuleRow[]>(makeRules);
   const {pending,run}=useGuardedAction();
   const [staleConflict,setStaleConflict]=useState(false);
   const [
@@ -181,14 +204,17 @@ export function PlacementDraftEditForm({
   );
   const departments=[...new Set(academicOptions.programs.map(p=>p.departmentName))].sort();
   const visiblePrograms=academicOptions.programs.filter(p=>
-    !selectedDepartment||p.departmentName===selectedDepartment);
+    (!selectedDepartment||p.departmentName===selectedDepartment)&&
+    (!programSearch||[p.name,p.code,p.departmentName].some(s=>s.toLowerCase().includes(programSearch.toLowerCase()))));
   const visibleCohorts=academicOptions.cohorts.filter(c=>
     (!selectedDepartment||visiblePrograms.some(p=>p.id===c.programId))&&
-    (!programFilter||c.programId===programFilter));
+    (!programFilter||c.programId===programFilter)&&
+    (!cohortSearch||[c.name,c.code,c.programName].some(s=>s.toLowerCase().includes(cohortSearch.toLowerCase()))));
   const visibleSections=academicOptions.sections.filter(s=>
     (!selectedDepartment||visiblePrograms.some(p=>p.id===s.programId))&&
     (!programFilter||s.programId===programFilter)&&
-    (!cohortFilter||s.cohortId===cohortFilter));
+    (!cohortFilter||s.cohortId===cohortFilter)&&
+    (!sectionSearch||[s.name,s.code,s.cohortName].some(v=>v.toLowerCase().includes(sectionSearch.toLowerCase()))));
 
   function toggleId(
     value: string,
@@ -216,6 +242,8 @@ export function PlacementDraftEditForm({
     setSelectedCohortIds([...value.policy.allowedCohortIds]);
     setSelectedSectionIds([...value.policy.allowedSectionIds]);
     setSelectedDepartment("");setProgramFilter("");setCohortFilter("");
+    setProgramSearch("");setCohortSearch("");setSectionSearch("");
+    setDateRows(makeDates());setRuleRows(makeRules());
     setFormError("");
     clearDirty();
     const disclosure=form?.closest("details");
@@ -229,6 +257,8 @@ export function PlacementDraftEditForm({
   ) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const title=String(data.get("title")??"").trim();
+    if(!title){setFormError("Please enter Job Title.");formRef.current?.querySelector<HTMLInputElement>('[name="title"]')?.focus();return;}
     const description=String(data.get("description")??"").trim();
     if(!description.replace(/<[^>]*>/g,"").trim()){
       setFormError("Please enter job description.");
@@ -253,6 +283,9 @@ export function PlacementDraftEditForm({
       setFormError(problem instanceof Error?problem.message:"Enter valid dates in IST.");
       return;
     }
+    if(applicationDeadline&&applicationDeadline!==value.job.applicationDeadline&&Date.parse(applicationDeadline)<Date.now()-60000){
+      setFormError("Application deadline cannot be in the past");return;
+    }
     if(assessmentDeadline){
       if(assessmentDeadline!==originalLegacy?.assessmentDeadline&&
          Date.parse(assessmentDeadline)<=Date.now()){
@@ -275,30 +308,25 @@ export function PlacementDraftEditForm({
     if(minGpa!==null&&(!Number.isFinite(minGpa)||minGpa<0||minGpa>10)){
       setFormError("GPA must be between 0 and 10.");return;
     }
-    const dateLines=String(data.get("importantDates")??"").split(/\r?\n/);
     const importantDates:Array<{label:string;at:string}>=[];
-    for(const line of dateLines){
-      if(!line.trim())continue;
-      const divider=line.indexOf("|");
-      const label=divider<0?line.trim():line.slice(0,divider).trim();
-      const dateValue=divider<0?"":line.slice(divider+1).trim();
-      if(!label){setFormError("Label required when date is set.");return;}
-      if(!dateValue){setFormError("Date required when label is set.");return;}
+    for(const item of dateRows){
+      const label=item.label.trim(),date=item.date.trim();
+      if(!label&&!date)continue;
+      if(!label){setFormError("Label required when date is set");return;}
+      if(!date){setFormError("Date required when label is set");return;}
       if(label.toLowerCase()==="application deadline"){
-        setFormError("Application deadline is reserved and cannot be an important date label.");return;
+        setFormError("This label is reserved — use the Application deadline field above");return;
       }
-      let parsed:string;
-      try{parsed=dateValue.length===16?driveDeadlineIstToIso(dateValue):dateValue;}
-      catch{setFormError("Enter each date as Label | YYYY-MM-DDTHH:MM.");return;}
-      if(!Number.isFinite(Date.parse(parsed))){
-        setFormError("Enter each date as Label | YYYY-MM-DDTHH:MM.");return;
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||civilDay(date+"T00:00:00+05:30")!==date){
+        setFormError("Choose a valid calendar date.");return;
       }
-      importantDates.push({label,at:parsed});
+      importantDates.push({label,at:date+"T00:00:00+05:30"});
     }
     if(importantDates.length>20){setFormError("A maximum of 20 important dates is allowed.");return;}
     if(new Set(importantDates.map(d=>d.label.toLowerCase())).size!==importantDates.length){
       setFormError("Important date labels must be unique.");return;
     }
+    const customEligibilityRules=ruleRows.filter(row=>row.label.trim()&&row.value.trim()).map(row=>({label:row.label.trim(),value:row.value.trim()}));
     // Audience visibility remains bound to authorized college memberships;
     // applicationMode only decides which application channel is used.
     const legacyPostingDetails={
@@ -306,7 +334,7 @@ export function PlacementDraftEditForm({
       responsibilities:String(data.get("responsibilities")??"").trim(),
       assessmentUrl:assessmentUrl||null,
       assessmentDeadline,
-      importantDates,
+      importantDates,customEligibilityRules,
       candidatePreferences:{
         preferredDegree:String(data.get("preferredDegree")??"").trim(),
         specialization:String(data.get("specialization")??"").trim(),
@@ -320,9 +348,7 @@ export function PlacementDraftEditForm({
         `/api/placements/jobs/${value.job.id}`,
         "PATCH",
         {
-          title: String(
-            data.get("title") ?? "",
-          ).trim(),
+          title,
           description,
           jobTypeLabel: String(data.get("jobTypeLabel")??"Full-time"),
           employmentType: (()=>{
@@ -467,7 +493,7 @@ export function PlacementDraftEditForm({
         description:"Job saved as draft",
       });
       clearDirty();setFormError("");
-      router.refresh();
+      if(pathname.endsWith("/settings"))router.push(detailBase+"/overview");else router.refresh();
     } catch (error) {
       if(error instanceof FriendlyFetchError &&
         (error.status===409||error.code==="PLACEMENT_JOB_STALE")){
@@ -496,19 +522,21 @@ export function PlacementDraftEditForm({
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Job title
+              Job Title
             </span>
             <Input
               className={inputClass}
               name="title"
               required
-              maxLength={200}
+              maxLength={100}
+              autoFocus
+              placeholder="e.g., Software Engineer"
               defaultValue={value.job.title}
             />
           </label>
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Description
+              Job Description
             </span>
             <Textarea
               className={textareaClass}
@@ -561,6 +589,8 @@ export function PlacementDraftEditForm({
             <Input
               className={inputClass}
               name="locations"
+              maxLength={200}
+              placeholder="e.g., Bangalore, Remote"
               defaultValue={
                 value.job.locations.join(", ")
               }
@@ -662,6 +692,25 @@ export function PlacementDraftEditForm({
             />
           </label>
         </div>
+        <section aria-labelledby="draft-important-dates" className="min-w-0 space-y-3 border-t border-border pt-4">
+          <h3 id="draft-important-dates" className="text-sm font-semibold">Important dates</h3>
+          <p className="text-xs text-muted-foreground">Other milestones (e.g. Screening round, Technical round) — optional. These appear on the Interview Calendar (admin) and Career Calendar (learners).</p>
+          {dateRows.map(row=><div key={row.id} className="grid min-w-0 gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+            <label className="text-[13px] font-semibold">Label
+              <Input className={inputClass} maxLength={100} value={row.label} placeholder="e.g. Screening round, Technical round"
+               onChange={e=>{setDateRows(items=>items.map(item=>item.id===row.id?{...item,label:e.target.value}:item));markDirty();}}/>
+            </label>
+            <label className="text-[13px] font-semibold">Date
+              <Input className={inputClass} type="date" value={row.date}
+               onChange={e=>{setDateRows(items=>items.map(item=>item.id===row.id?{...item,date:e.target.value}:item));markDirty();}}/>
+            </label>
+            <Button type="button" variant="ghost" disabled={dateRows.length<=1}
+              title={dateRows.length<=1?"At least one row required":"Remove date"}
+              onClick={()=>{setDateRows(items=>items.filter(item=>item.id!==row.id));markDirty();}}>Remove</Button>
+          </div>)}
+          <Button type="button" variant="secondary" disabled={dateRows.length>=20}
+            onClick={()=>{setDateRows(items=>[...items,{id:nextRowId.current++,label:"",date:""}]);markDirty();}}>Add date{dateRows.length>=20?" (max 20)":""}</Button>
+        </section>
         <details className="min-w-0 border-t border-border pt-3">
           <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">
             Additional posting details and assessment
@@ -682,11 +731,7 @@ export function PlacementDraftEditForm({
              className={inputClass}/>
            </label>
            <p className="sm:col-span-2 text-xs text-muted-foreground">The assessment link and deadline are separate from the employer application URL. Assessment must follow the application deadline; existing expired dates may remain unchanged when editing unrelated terms.</p>
-           <label className="sm:col-span-2 text-[13px] font-semibold">Important dates (one Label | YYYY-MM-DDTHH:MM per line, IST)
-            <Textarea name="importantDates" rows={3} className={textareaClass}
-             defaultValue={(value.job.legacyPostingDetails?.importantDates??[]).map(date=>
-              date.label+" | "+toLocalInput(date.at)).join("\n")}/>
-           </label>
+           
           </div>
         </details>
         <details className="min-w-0 border-t border-border pt-3">
@@ -709,6 +754,25 @@ export function PlacementDraftEditForm({
             defaultValue={value.job.legacyPostingDetails?.candidatePreferences?.minGpa??""}
             className={inputClass}/>
           </label>
+          <div className="sm:col-span-2 space-y-2 border-t border-border pt-3">
+            <h4 className="text-sm font-semibold">Custom eligibility rules</h4>
+            <p className="text-xs text-muted-foreground">Add display-only rules (e.g. Work permit, Experience). These do not gate applications. Max 20.</p>
+            {ruleRows.map(row=><div key={row.id} className="grid min-w-0 gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+              <label className="text-[13px] font-semibold">Label
+                <Input className={inputClass} maxLength={160} value={row.label} placeholder="Label (e.g. Work permit)"
+                 onChange={e=>{setRuleRows(items=>items.map(item=>item.id===row.id?{...item,label:e.target.value}:item));markDirty();}}/>
+              </label>
+              <label className="text-[13px] font-semibold">Value
+                <Input className={inputClass} maxLength={500} value={row.value} placeholder="Value (e.g. Required)"
+                 onChange={e=>{setRuleRows(items=>items.map(item=>item.id===row.id?{...item,value:e.target.value}:item));markDirty();}}/>
+              </label>
+              <Button type="button" variant="ghost" disabled={ruleRows.length<=1}
+               title={ruleRows.length<=1?"At least one row required":"Remove rule"}
+               onClick={()=>{setRuleRows(items=>items.filter(item=>item.id!==row.id));markDirty();}}>Remove</Button>
+            </div>)}
+            <Button type="button" variant="secondary" disabled={ruleRows.length>=20}
+             onClick={()=>{setRuleRows(items=>[...items,{id:nextRowId.current++,label:"",value:""}]);markDirty();}}>Add custom rule</Button>
+          </div>
          </div>
         </details>
 
@@ -754,6 +818,17 @@ export function PlacementDraftEditForm({
              {visibleCohorts.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
             </Select>
            </label>
+          </div>
+          <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-3">
+            <label className="text-[13px] font-semibold">Find programs
+             <Input className={inputClass} type="search" value={programSearch} placeholder="Search programs" onChange={e=>setProgramSearch(e.target.value)}/>
+            </label>
+            <label className="text-[13px] font-semibold">Find batches
+             <Input className={inputClass} type="search" value={cohortSearch} placeholder="Search batches" onChange={e=>setCohortSearch(e.target.value)}/>
+            </label>
+            <label className="text-[13px] font-semibold">Find classes
+             <Input className={inputClass} type="search" value={sectionSearch} placeholder="Search classes" onChange={e=>setSectionSearch(e.target.value)}/>
+            </label>
           </div>
           <div className="mt-4 grid min-w-0 gap-4 sm:grid-cols-2">
             <fieldset className="min-w-0 border-t border-border py-3">
@@ -928,12 +1003,12 @@ export function PlacementDraftEditForm({
           >
             {pending
               ? "Saving…"
-              : "Save draft changes"}
+              : "Update Job"}
           </Button>
           <Button type="button" variant="secondary" size="sm"
             className="mt-2 min-h-11 w-full sm:ml-2 sm:mt-0 sm:w-auto md:min-h-9"
             disabled={pending}
-            onClick={()=>{if(dirty)setCancelConfirm(true);else discardDraftChanges();}}>
+            onClick={()=>{if(dirty)setCancelConfirm(true);else{discardDraftChanges();router.push(detailBase+"/overview");}}}>
             Cancel
           </Button>
           <a href="#drive-lifecycle-publish"
@@ -956,10 +1031,10 @@ export function PlacementDraftEditForm({
     </Disclosure>
     {guardDialog}
     <ConfirmDialog open={cancelConfirm} onOpenChange={setCancelConfirm}
-      title="Discard unsaved draft changes?"
-      description="Your unsaved changes to this draft will be discarded."
-      confirmLabel="Discard changes" cancelLabel="Keep editing" confirmVariant="danger"
-      onConfirm={()=>{setCancelConfirm(false);discardDraftChanges();}}/>
+      title="Discard unsaved changes?"
+      description="Discard unsaved changes?"
+      confirmLabel="Discard" cancelLabel="Keep editing" confirmVariant="danger"
+      onConfirm={()=>{setCancelConfirm(false);discardDraftChanges();router.push(detailBase+"/overview");}}/>
     </>
   );
 }
