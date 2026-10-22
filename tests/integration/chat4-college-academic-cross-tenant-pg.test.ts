@@ -20,6 +20,18 @@ import {
 const enabled=Boolean(process.env.TEST_DATABASE_URL)&&process.env.DB03_ISOLATED_TEST_DATABASE==="1";
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}):null;
+// DB02 and newer migration guards can reject a forged cross-college relation
+// at INSERT time. If an older disposable schema accepts it, the authorized
+// readers must still reject the persisted row; neither outcome is success.
+async function insertForgery(sql:string,params:readonly unknown[]):Promise<boolean>{
+ if(!pool)throw new Error("Disposable DB03 required");
+ try {await pool.query(sql,[...params]);return true;}
+ catch(error){
+  expect(error).toMatchObject({code:expect.stringMatching(/^235(03|14)$/)});
+  return false;
+ }
+}
+let foreignProgramPlacementInserted=false;
 const uid=()=>randomUUID();
 const ids={
  periodA:uid(),periodB:uid(),programA:uid(),programB:uid(),
@@ -68,13 +80,18 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
   for(const [section,cohort,period,suffix] of [
    [ids.sectionA,ids.cohortA,ids.periodA,"a"],
    [ids.sectionB,ids.cohortB,ids.periodB,"b"],
-   [ids.wrongPeriodSection,ids.cohortA,ids.periodB,"invalid"],
   ]){
    await pool.query(
     "insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4::text,$4::text,'ACTIVE')",
     [section,cohort,period,tag+"-"+suffix],
    );
   }
+  // A forged section must fail at the database boundary, not merely disappear
+  // from a service query after creation.
+  expect(await insertForgery(
+   "insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4::text,$4::text,'ACTIVE')",
+   [ids.wrongPeriodSection,ids.cohortA,ids.periodB,tag+"-invalid"],
+  )).toBe(false);
   for(const [member,user,college,suffix] of [
    [ids.membershipA,ids.userA,SEED_IDS.collegeA,"a"],
    [ids.membershipB,ids.userB,SEED_IDS.collegeB,"b"],
@@ -99,33 +116,36 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
   // This extra learner has *only* a forged foreign cohort for a college-A
   // program. Independent FKs accept it, but it cannot count as an active
   // same-college program enrollment or authorize a College Contacts filter.
-  await pool.query(
+  await insertForgery(
    "insert into learner_program_enrollments(id,membership_id,program_id,cohort_id) values($1,$2,$3,$4)",
    [ids.wrongProgramEnrollment,ids.membershipC,ids.programA,ids.cohortB],
   );
   // The cohort matches a College A section but the declared program is
   // College B's. This may pass a cohort-only placement check.
-  await pool.query(
+  foreignProgramPlacementInserted=await insertForgery(
    "insert into learner_program_enrollments(id,membership_id,program_id,cohort_id) values($1,$2,$3,$4)",
    [ids.wrongPlacementEnrollment,ids.membershipD,ids.programB,ids.cohortA],
   );
-  for(const [placement,enrollment,section,period] of [
+  await pool.query(
+   "insert into section_enrollments(id,learner_enrollment_id,section_id,academic_period_id) values($1,$2,$3,$4)",
    [ids.good,ids.enrollmentA,ids.sectionA,ids.periodA],
+  );
+  for(const [placement,enrollment,section,period] of [
    [ids.foreignSection,ids.enrollmentA,ids.sectionB,ids.periodB],
    [ids.foreignLearner,ids.enrollmentB,ids.sectionA,ids.periodA],
   ]){
-   await pool.query(
+   await insertForgery(
     "insert into section_enrollments(id,learner_enrollment_id,section_id,academic_period_id) values($1,$2,$3,$4)",
     [placement,enrollment,section,period],
    );
   }
-  await pool.query(
+  await insertForgery(
    "insert into section_faculty_assignments(id,section_id,membership_id,role) values($1,$2,$3,'ADVISOR')",
    [ids.facultyAssignment,ids.sectionA,SEED_IDS.facultyCollegeBMembership],
   );
-  await pool.query(
+  await insertForgery(
    "insert into section_schedule_events(id,section_id,faculty_membership_id,title,starts_at,ends_at,status) values($1,$2,$3,$4,$5,$6,'SCHEDULED')",
-   [ids.event,ids.wrongPeriodSection,SEED_IDS.facultyCollegeAMembership,
+   [ids.event,ids.sectionB,SEED_IDS.facultyCollegeAMembership,
     tag,new Date("2099-10-18T10:00:00Z"),new Date("2099-10-18T11:00:00Z")],
   );
  });
@@ -198,8 +218,14 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
  });
 
  it("COL-student-import-placement-tenant-PG-01 foreign declared program never becomes a local section enrollment",async()=>{
-  await expect(placeImportedLearnerInSection(actor,ids.wrongPlacementEnrollment,ids.sectionA))
-   .rejects.toMatchObject({code:"CLASS_BATCH_MISMATCH"});
+  if(foreignProgramPlacementInserted){
+   await expect(placeImportedLearnerInSection(actor,ids.wrongPlacementEnrollment,ids.sectionA))
+    .rejects.toMatchObject({code:"CLASS_BATCH_MISMATCH"});
+  }else{
+   const rejected=await pool!.query(
+    "select id from learner_program_enrollments where id=$1",[ids.wrongPlacementEnrollment]);
+   expect(rejected.rows).toEqual([]);
+  }
   const rows=await pool!.query(
    "select id from section_enrollments where learner_enrollment_id=$1",
    [ids.wrongPlacementEnrollment],
