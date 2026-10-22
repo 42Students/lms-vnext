@@ -669,7 +669,8 @@ export async function PlacementCalendarWorkspace({
 
   const bookedInterviews=bookings?.events??[];
   const bookedTimes=audience==="SUPER_ADMIN"?bookedInterviews.map(event=>({
-   event,start:Date.parse(event.startsAt),end:Date.parse(event.endsAt),
+   event,start:Date.parse(event.startsAt),
+    end:event.endsAt?Date.parse(event.endsAt):Number.NaN,
    room:(event.venue??event.meetingUrl??"").trim().toLowerCase(),
    interviewer:(event.interviewer??"").trim().toLowerCase(),
   })):[];
