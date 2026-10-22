@@ -55,7 +55,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
 
   async function submit(action: "PREVIEW" | "IMPORT") {
     setError(null);setSummary(null);
-    const local=parseStudentCsv(csv,{programId,cohortId,sectionId:sectionId||undefined});
+    const local=parseStudentCsv(csv,{programId,cohortId,...(sectionId ? {sectionId} : {})});
     if(local.structuralErrors.length){
       setReport(null);
       throw Error("CSV could not be parsed: "+local.structuralErrors.join("; ")+". Fix the file and validate again.");
@@ -69,7 +69,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     }
     const payload=await apiFetch<{report:Report}>("/api/people/student-import",{
       method:"POST",headers:{"content-type":"application/json"},
-      body:JSON.stringify({action,csv,programId,cohortId,sectionId:sectionId||undefined,
+      body:JSON.stringify({action,csv,programId,cohortId,...(sectionId ? {sectionId} : {}),
         confirm:action==="IMPORT"?confirm:false}),
     });
     if(!payload?.report || !Array.isArray(payload.report.results) ||
@@ -175,7 +175,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               if(file.size>1_000_000)throw Error("File exceeds 1 MB");
               const text=await file.text();
               if(revision!==fileRevision.current)return;
-              const parsed=parseStudentCsv(text,{programId,cohortId,sectionId:sectionId||undefined});
+              const parsed=parseStudentCsv(text,{programId,cohortId,...(sectionId ? {sectionId} : {})});
               if(parsed.structuralErrors.length)
                 throw Error("CSV could not be parsed: "+parsed.structuralErrors.join(", "));
               setCsv(text);
