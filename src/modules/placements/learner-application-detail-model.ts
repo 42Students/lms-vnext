@@ -130,3 +130,44 @@ export function legacyApplicationDisplayStatus(input:{
  };
  return labels[input.currentStatus]??"Application status updated";
 }
+
+
+/** One canonical timeline from the independent vNext application, college
+ * stage, interview round, offer, and joining histories. A numeric source
+ * key must be crosswalked before entry; every row is from the same authorized
+ * application and college. Stable (instant, source priority, UUID) order
+ * prevents duplicate views while preserving immutable evidence. */
+export type PlacementApplicationTimelineSource=
+  "APPLICATION"|"COLLEGE_STAGE"|"ROUND"|"OFFER"|"JOINING";
+export type PlacementApplicationTimelineEvent={
+ id:string;applicationId:string;collegeId:string;
+ source:PlacementApplicationTimelineSource;
+ label:string;status:string;occurredAt:Date;
+ originalEventKey?:string|null;
+};
+export function unifiedLegacyApplicationTimeline(input:{
+ applicationId:string;collegeId:string;
+ events:readonly PlacementApplicationTimelineEvent[];
+}){
+ const priority:Record<PlacementApplicationTimelineSource,number>={
+  APPLICATION:0,COLLEGE_STAGE:1,ROUND:2,OFFER:3,JOINING:4,
+ };
+ const eventKeys=new Set<string>();
+ const all=input.events.map(event=>{
+  if(event.applicationId!==input.applicationId||
+    event.collegeId!==input.collegeId||
+    !Number.isFinite(event.occurredAt.getTime()))
+   throw new Error("Imported pipeline event has invalid application scope");
+  const key=event.source+":"+(event.originalEventKey??event.id);
+  if(eventKeys.has(key))throw new Error("Duplicate imported pipeline event");
+  eventKeys.add(key);
+  return {...event,label:event.status==="REJECTED"
+    ?learnerApplicationRejectionLabel(
+       input.events.filter(row=>row.source==="COLLEGE_STAGE"&&
+        row.occurredAt<event.occurredAt)
+        .sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime())[0]?.status??null)
+    :event.label};
+ });
+ return all.sort((a,b)=>a.occurredAt.getTime()-b.occurredAt.getTime()||
+  priority[a.source]-priority[b.source]||a.id.localeCompare(b.id));
+}
