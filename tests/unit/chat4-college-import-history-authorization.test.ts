@@ -14,7 +14,7 @@ const active:RequestContext={
 describe("College Admin student import history tenant and expiry controls",()=>{
  it("COL-people-history-ACTOR-01 reads only 20 per page in a transaction locked to persisted admin rights",()=>{
   const s=src();
-  expect(s).toContain('z.coerce.number().int().min(1).max(500).parse(raw??1)');
+  expect(s).toContain('z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(500))');
   const tx=s.indexOf("getDb().transaction(async tx=>");
   const actor=s.indexOf('assertPersistedPlatformPermission(tx,ctx,"people.manage"');
   const select=s.indexOf("return tx.select({");

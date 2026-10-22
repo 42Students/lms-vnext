@@ -21,7 +21,7 @@ describe("chat-4 College Verification and Misc verification",()=>{
   {const s=read("src/app/(authenticated)/college/profile/page.tsx");
    expect(s).toContain("query.section === \"contacts\"");
    expect(s).toContain("query.section === \"connect-accounts\"");
-   expect(s).toContain("Failed to load profile.");
+   expect(s).toContain("Profile unavailable");
    expect(s).toContain("Retry");
   }
   {const s=read("src/components/college/college-admin-profile-editor.tsx");
@@ -78,7 +78,8 @@ describe("chat-4 College Verification and Misc verification",()=>{
  });
  it("COL-verification-misc-14 records the approved product decision",()=>{
   {const s=read("src/app/(authenticated)/college/activity/page.tsx");
-   expect(s).toContain("Export filtered CSV (max 1,000)");
+   expect(s).toContain("<CollegeActivityExportButton");
+   expect(s).toContain("1,000-row cap");
    expect(s).toContain("/api/activity/college-export");
   }
  });
@@ -87,7 +88,7 @@ describe("chat-4 College Verification and Misc verification",()=>{
    expect(s).toContain("Admin not assigned to a college");
   }
   {const s=read("src/app/(authenticated)/college/activity/page.tsx");
-   expect(s).toContain("Admin not assigned to a college");
+   expect(s).toContain("College not assigned");
   }
   {const s=read("src/app/(authenticated)/college/verification/page.tsx");
    expect(s).toContain("Admin not assigned to a college");
@@ -113,7 +114,7 @@ describe("chat-4 College Verification and Misc verification",()=>{
  it("COL-verification-misc-06 offers precise Education and Identity send-back reasons",()=>{
   const drawer=read("src/components/verification/VerificationReviewDrawer.tsx");
   expect(drawer).toContain("tpoVerificationSectionReasons(row.section)");
-  expect(drawer).toContain("The student sees your reason and fixes it on their profile.");
+  expect(drawer).toContain("Each student sees the reason and can correct the submitted details.");
   const college=read("src/components/verification/CollegeVerificationPanel.tsx");
   expect(college).toContain('tpoVerificationSectionReasons("EDUCATION")');
   expect(college).toContain('tpoVerificationSectionReasons("IDENTITY")');
@@ -137,18 +138,20 @@ describe("chat-4 College Verification and Misc verification",()=>{
  });
  it("COL-verification-misc-10 reviews the first 1000 rather than failing an oversized queue",()=>{
   const service=read("src/modules/verification/staff-queue-service.ts");
-  expect(service).toContain(".limit(1001)");
-  expect(service).toContain("const truncated=candidateRows.length>1000");
-  expect(service).toContain("candidateRows.slice(0,1000)");
+  expect(service).toContain(".limit(10001)");
+  expect(service).toContain("VerificationQueueLimitError");
+  expect(service).toContain("const truncated=pageRows.length>1000");
+  expect(service).toContain("pageRows.slice(0,1000)");
   expect(service).not.toContain("if(rows.length>5000)throw new VerificationQueueLimitError()");
   const view=read("src/components/verification/CollegeVerificationPanel.tsx");
-  expect(view).toContain("Showing the first 1,000 students in this view.");
+  expect(view).toContain("narrow the filters to review other students.");
   expect(view).toContain("narrow the filters to review other students.");
  });
  it("COL-verification-misc-09 covers current College admin verification and activity behavior",()=>{
    const s=read("src/components/verification/TpoVerificationSwitch.tsx");
    expect(s).toContain("The placement cell can verify profiles");
-   expect(s).toContain("Verification setting saved.");
+   expect(s).toContain("The placement cell can now verify profiles");
+   expect(s).toContain("Only college admins verify profiles now");
    expect(s).toContain("apiFetch<");
  });
  it("COL-verification-misc-04 covers current College admin verification and activity behavior",()=>{

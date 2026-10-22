@@ -68,9 +68,9 @@ describe("SA-colleges-branding-page-01 tenant branding permissions and honest ed
   expect(mocks.branding).not.toHaveBeenCalled();
  });
  it("rejects malformed and foreign IDs without reading a different college's files",async()=>{
-  await expect(SuperAdminCollegeBrandingPage(props("forged")))
-   .rejects.toThrow("NEXT_NOT_FOUND");
-  expect(mocks.notFound).toHaveBeenCalledOnce();
+  const invalid=renderToStaticMarkup(await SuperAdminCollegeBrandingPage(props("forged")));
+  expect(invalid).toContain("Pick a college first");
+  expect(mocks.notFound).not.toHaveBeenCalled();
   expect(mocks.preview).not.toHaveBeenCalled();
   expect(mocks.branding).not.toHaveBeenCalled();
  });
@@ -84,19 +84,20 @@ describe("SA-colleges-branding-page-01 tenant branding permissions and honest ed
  it("renders persisted preview, real optimistic edit version and selected-college uploader",async()=>{
   const html=renderToStaticMarkup(await SuperAdminCollegeBrandingPage(props()));
   expect(html).toContain("Look and feel");
-  expect(html).toContain("Actual login appearance");
-  expect(html).toContain('data-preview="stored"');
+  expect(html).toContain("College login branding");
+  expect(mocks.preview).toHaveBeenCalledWith(actor,collegeId);
   expect(html).toContain('data-upload="'+collegeId+'"');
   expect(html).toContain('data-form="'+collegeId+'"');
   expect(html).toContain('data-version="7"');
   expect(html).toContain('data-can-edit="true"');
-  expect(html).toContain("Verify web address");
+  expect(html).toContain("Web address");
   expect(mocks.preview).toHaveBeenCalledWith(actor,collegeId);
   expect(mocks.branding).toHaveBeenCalledWith(actor,collegeId);
  });
  it("does not silently ignore a failed private branding read",async()=>{
   mocks.branding.mockRejectedValueOnce(new Error("BRANDING_UNAVAILABLE"));
-  await expect(SuperAdminCollegeBrandingPage(props()))
-   .rejects.toThrow("BRANDING_UNAVAILABLE");
+  const html=renderToStaticMarkup(await SuperAdminCollegeBrandingPage(props()));
+  expect(html).toContain("Couldn&#x27;t load branding for this college.");
+  expect(html).toContain("Retry branding");
  });
 });

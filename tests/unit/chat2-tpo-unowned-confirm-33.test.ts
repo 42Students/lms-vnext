@@ -6,12 +6,12 @@ describe("TPO Team unowned handover confirmation",()=>{
  it("TPO-inbox-team-33 shows an explicit confirm modal before assigning unowned work",()=>{
   const ui=source("src/components/tpo/tpo-team-assign-unowned.tsx");
   expect(ui).toContain("Nobody owns {drives} drives and {companies} companies");
-  expect(ui).toContain('onClick={()=>setConfirmOpen(true)}');
-  expect(ui).toContain("<ConfirmActionDialog open={confirmOpen&&!busy}");
+  expect(ui).toContain('onClick={() => setConfirmOpen(true)}');
+  expect(ui).toContain("<ConfirmDialog");
   expect(ui).toContain('title="Assign unowned placement work?"');
-  expect(ui).toContain("onCancel={()=>setConfirmOpen(false)}");
-  expect(ui).toContain("onConfirm={()=>{setConfirmOpen(false);void assign();}}");
-  expect(ui).toContain("if(pending.current||!assignee)return");
+  expect(ui).toContain("onOpenChange={open => { if (!open && !busy) setConfirmOpen(false); }}");
+  expect(ui).toContain("onConfirm={() => { void assign(); }}");
+  expect(ui).toContain("disabled={busy || !teammate}");
   expect(ui).toContain("Nothing has been assumed saved");
  });
  it("TPO-inbox-team-33 assigns only unowned active college work and records a recipient bell",()=>{
