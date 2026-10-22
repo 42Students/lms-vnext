@@ -230,6 +230,13 @@ export const projectTemplateCollegeAssignments =
  *   from versioned projectTemplateVersions and current authoredBrief.
  *   legacyRecoverableContent records the old recoverability flag independently
  *   of the current archived/deleted lifecycle. Neither grants restore access.
+ *   Archive sets status=ARCHIVED and archivedAt without deleting resources,
+ *   tasks, releases or sprints. Historical legacyRecoverableContent=false is
+ *   not a restore permission: deletedAt means excluded from live views and
+ *   cannot be automatically resurrected. A future explicit restore operation
+ *   must revalidate college/role scope and reconcile each child row's own
+ *   deletedAt/deletedByWorkspace state; it must never indiscriminately clear
+ *   child tombstones or expose previously private resources.
  */
 export const projectInstances = pgTable(
   "project_instances",
