@@ -25,6 +25,8 @@ describe("TPO recruiter leads visible legacy parity",()=>{
   expect(page).toContain("← Recruiter leads");
   expect(page).toContain('onClick={()=>setNotNowOpen(true)}>Not now</Button>');
   expect(page).toContain('title="Not now"');
-  expect(page).toContain("Log activity");
+  expect(page).toContain("Add follow-up");
+  expect(page).toContain("onClick={()=>setFollowOpen(true)}");
+  expect(page).toContain("<Dialog open={followOpen}");
  });
 });
