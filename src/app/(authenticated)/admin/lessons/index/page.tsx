@@ -16,8 +16,8 @@ export default async function GlobalLessonIndexPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  const raw=await searchParams;
- const q=raw.q;
- const page=raw.page;
+ const q=raw["q"];
+ const page=raw["page"];
  const invalid=Object.keys(raw).some(k=>k!=="q"&&k!=="page")||
   (q!==undefined&&(typeof q!=="string"||q.length>80))||
   (page!==undefined&&(typeof page!=="string"||!/^[1-9][0-9]{0,2}$/.test(page)));
