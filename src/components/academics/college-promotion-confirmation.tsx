@@ -93,7 +93,7 @@ export function CollegePromotionConfirmation({
         const headline = `Batch promoted to Semester ${targetTerm}.`;
         setSuccess(incomplete ? headline + " Faculty setup is still incomplete." : headline);
         showToast({ tone: "success", title: headline,
-          description: incomplete ? "Faculty setup is still incomplete." : undefined });
+          ...(incomplete ? { description: "Faculty setup is still incomplete." } : {}) });
         setOpen(false);
         router.refresh();
       } catch (cause) {
