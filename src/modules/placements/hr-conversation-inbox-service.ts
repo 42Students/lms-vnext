@@ -35,6 +35,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
   ?await getDb().selectDistinct({threadId:placementTpoMessages.threadId})
     .from(placementTpoMessages)
     .where(and(inArray(placementTpoMessages.threadId,accessibleIds),
+      eq(placementTpoMessages.kind,"MESSAGE"),
       ilike(placementTpoMessages.body,"%"+query.q.trim().replaceAll("\\","\\\\").replaceAll("%","\\%").replaceAll("_","\\_")+"%")))
     .limit(recruiterMessageSearchLimit(accessibleIds))
   :[];
