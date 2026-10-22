@@ -49,7 +49,7 @@ export function superAdminReadPages(total:number,pageSize=SUPER_ADMIN_READ_PAGE_
  const size=Number.isSafeInteger(pageSize)&&pageSize>0?pageSize:SUPER_ADMIN_READ_PAGE_SIZE;
  return Math.max(1,Math.ceil(rows/size));
 }
-export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
+export function superAdminReadHref(path:string,query:Omit<SuperAdminReadQuery,"sortBy"|"sortOrder"> & Partial<Pick<SuperAdminReadQuery,"sortBy"|"sortOrder">>) {
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
  if(query.sortBy!=="name")params.set("sortBy",query.sortBy);
