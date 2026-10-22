@@ -1,0 +1,37 @@
+# Deep verification packet (round 2, Claude agent 5)
+
+Rows still unchecked after the first deep pass. Each row ends OK (vNext file:line + docs/legacy-source file) or FIXED. DEFERRED is not allowed.
+
+- [ ] G2-19-025-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-001-065  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-006-069  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-007-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-009-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-011-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-016-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-017-007  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-017-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-017-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-017-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-017-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-017-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-018-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-018-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-018-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-019-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-5-019-011  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [ ] G2-11-024-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-19-028-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-8-018-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-8-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-8-018-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-8-020-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-8-020-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-8-020-076  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-8-020-078  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-8-027-007  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [ ] G2-8-027-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+
+## Results
+
