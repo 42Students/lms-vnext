@@ -58,7 +58,7 @@ describe("confirmed TPO round results", () => {
     expect(canEditTpoRoundResult(
       { kind: "TALK", status: "SCHEDULED" }, { resultStatus: null },
     )).toBe(false);
-    expect(TPO_RESULT_LABELS.PASS).toContain("Shortlisted");
+    expect(TPO_RESULT_LABELS.PASS).toBe("Pass");
     expect(Object.keys(TPO_RESULT_LABELS)).not.toContain("SELECTED");
   });
 });

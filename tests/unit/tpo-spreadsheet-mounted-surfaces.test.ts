@@ -14,7 +14,13 @@ describe("TPO spreadsheet mounted on authorized Students and Applications",()=>{
   }
   for(const path of ["src/components/tpo/tpo-students-spreadsheet.tsx","src/components/tpo/tpo-applications-spreadsheet.tsx"]){
    expect(read(path)).toContain("<TpoSpreadsheetGrid");
-   expect(read(path)).toContain("<TpoGridFilterPanel");
+   expect(read(path)).toContain("<GridWorkspace");
+   expect(read(path)).toContain("filters={filters}");
+  }
+  const workspace=read("src/components/tpo/grid/grid-workspace.tsx");
+  expect(workspace).toContain("<TpoGridFilterPanel fields={filters} title={filterTitle}");
+  for(const path of ["src/components/tpo/tpo-students-spreadsheet.tsx","src/components/tpo/tpo-applications-spreadsheet.tsx"]){
+   expect(read(path)).toContain("integratedWorkspace");
   }
  });
  it("never selects export-only or forged columns",()=>{
