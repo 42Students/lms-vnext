@@ -48,7 +48,6 @@ export default async function FacultyNotificationsPage({
   const scopeTab=legacyTab.tab;
   const { view, cursor, invalid } = parseFacultyInboxQuery(query);
   const announcementsEnabled = announcementsRuntimeEnabled();
-  const noAnnouncements: Awaited<ReturnType<typeof listVisibleAnnouncementsForMembership>> = [];
   const [notificationRead, unreadCount, announcementRead] = await Promise.all([
     (invalid
       ? Promise.resolve({ items: [], nextCursor: null })
