@@ -381,9 +381,9 @@ export default async function ActivityPage({
         {selectedPreset==="important"?<p className="text-xs text-muted-foreground">Deletions and restores, promotions, suspensions, impersonation, module access and feature changes, and identity views.</p>:null}
         <div role="group" aria-label="Activity display" className="flex flex-wrap gap-3 text-sm">
           <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"grouped"}).toString()}
-            aria-current={!rawMode?"page":undefined} className="min-h-9 font-semibold text-link underline">Activity feed</Link>
+            aria-current={!rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Activity feed</Link>
           <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"raw"}).toString()}
-            aria-current={rawMode?"page":undefined} className="min-h-9 font-semibold text-link underline">Raw Audit Logs</Link>
+            aria-current={rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Raw Audit Logs</Link>
         </div>
       </nav>:null}
       <details className="min-w-0 border-b border-border pb-3" open={explicitFilter||Boolean(one(params.collegeId))||rawMode}>
