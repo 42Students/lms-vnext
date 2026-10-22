@@ -201,8 +201,19 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
   .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
   .where(inArray(placementOffers.applicationId,ids))
   .orderBy(desc(placementOffers.createdAt),desc(placementOffers.id)):[];
+ // The newest row is not necessarily the authoritative offer: a later
+ // withdrawn/revoked letter must not hide a previously accepted and joined
+ // placement. Within equal lifecycle priority the latest created offer wins.
+ const offerPriority=(row:typeof offers[number]):number=>
+  row.joining==="JOINED"?6:row.status==="ACCEPTED"?5:
+  row.status==="ISSUED"?4:row.status==="DECLINED"?3:
+  row.status==="EXPIRED"?2:row.status==="REVOKED"?1:0;
  const latestOffers=new Map<string,typeof offers[number]>();
- for(const row of offers)if(!latestOffers.has(row.applicationId))latestOffers.set(row.applicationId,row);
+ for(const row of offers){
+  const current=latestOffers.get(row.applicationId);
+  if(!current||offerPriority(row)>offerPriority(current))
+   latestOffers.set(row.applicationId,row);
+ }
  const interviews=ids.length?await db.select({
   applicationId:placementRoundCandidateSlots.applicationId,
   roundName:placementJobRounds.name,startsAt:placementRoundCandidateSlots.startsAt,
