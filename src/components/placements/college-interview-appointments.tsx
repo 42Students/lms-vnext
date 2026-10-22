@@ -17,6 +17,7 @@ import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
+import {visibleInterviewConflictKinds,visibleInterviewConflictLabel} from "@/modules/placements/interview-visual-conflict-model";
 type Round={id:string;name:string;status:string;kind:string};
 type Candidate={applicationId:string;name:string|null;screening:string;departmentName?:string|null;rollNumber?:string|null};
 type Appointment={id:string;roundId:string;applicationId:string;status:string;scheduledAt:string;
@@ -66,14 +67,19 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   encodeURIComponent(collegeInterviewIcs({id:row.id,title:eventTitle(row),
    date:row.scheduledAt,durationMinutes:row.durationMinutes,
    location:row.venue??row.meetingUrl}));
- const hasConflict=(row:Appointment)=>{
-  const began=Date.parse(row.scheduledAt),ended=began+row.durationMinutes*60_000;
-  return appointments.some(other=>other.id!==row.id&&other.status==="SCHEDULED"&&
-   Date.parse(other.scheduledAt)<ended+15*60_000&&
-   Date.parse(other.scheduledAt)+other.durationMinutes*60_000>began-15*60_000&&
-   (other.applicationId===row.applicationId||
-    (Boolean(row.venue??row.meetingUrl)&&(other.venue??other.meetingUrl)===(row.venue??row.meetingUrl))||
-    (Boolean(row.interviewer)&&other.interviewer===row.interviewer)));
+ const conflictKinds=(row:Appointment)=>visibleInterviewConflictKinds(row,appointments);
+ const hasConflict=(row:Appointment)=>conflictKinds(row).length>0;
+ const conflictBadge=(row:Appointment)=>{
+  const kinds=conflictKinds(row);
+  return kinds.length?<StatusBadge tone="error">
+   <span className="inline-flex items-center gap-1">
+    <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5m0 3h.01"/>
+    </svg>
+    {visibleInterviewConflictLabel(kinds)}
+   </span>
+  </StatusBadge>:null;
  };
  const savingLock=useRef(false);
  const [editing,setEditing]=useState<Appointment|null>(null);
@@ -356,7 +362,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       </div>
       <div className="flex flex-wrap gap-1">
        <StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status.replaceAll("_"," ")}</StatusBadge>
-       {hasConflict(row)?<StatusBadge tone="error">Conflict</StatusBadge>:null}
+       {conflictBadge(row)}
       </div>
      </div>
      <p className="mt-3 text-sm font-semibold">{row.interviewType?.replaceAll("_"," ")??"Interview"} · {round?.name??"Interview round"}</p>
@@ -417,7 +423,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",
         cell:row=>row.interviewer??"Not recorded"},
       {key:"clash",header:"Conflicts",mobilePriority:"secondary",
-        cell:row=>hasConflict(row)?<StatusBadge tone="error">Conflict</StatusBadge>:"—"},
+        cell:row=>conflictBadge(row)??"—"},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status}</StatusBadge>},
       {key:"actions",header:"Actions",mobilePriority:"action",
         cell:row=><Disclosure title="Actions" className="min-w-0 md:min-w-40">
