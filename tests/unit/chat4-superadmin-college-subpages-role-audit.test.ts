@@ -25,7 +25,7 @@ describe("Super Admin college and tenant subpage threat and state audit", () => 
     const branding = read("branding/page.tsx");
     const guard = branding.indexOf('requirePermission(context,"admin-scope.select")');
     const id = branding.indexOf("collegeIdSchema.safeParse(collegeId)");
-    const readPreview = branding.indexOf("getSuperAdminCollegeBrandingPreview(context, collegeId)");
+    const readPreview = branding.indexOf("getSuperAdminCollegeBrandingPreview(context,collegeId)");
     expect(guard).toBeGreaterThan(-1);
     expect(id).toBeGreaterThan(guard);
     expect(readPreview).toBeGreaterThan(id);
@@ -63,7 +63,8 @@ describe("Super Admin college and tenant subpage threat and state audit", () => 
       .toBeLessThan(verification.indexOf("listCollegeVerificationQueue(context,parsed.data,college.id)"));
     expect(verification).toContain("verificationQueueFilters.safeParse");
     expect(verification).toContain("Object.values(raw).some(Array.isArray)");
-    expect(verification).toContain("Invalid verification filters.");
+    expect(verification).toContain('title="Invalid verification filters"');
+    expect(verification).toContain("Choose a valid set of verification filters.");
     expect(verification).toContain("Verification storage is not yet available.");
     expect(verification).toContain("The verification queue exceeds its safe scan cap.");
     expect(verification).toContain("eq(profileVerificationSettings.collegeId,college.id)");
