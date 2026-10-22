@@ -160,7 +160,10 @@ export function parseCollegeRoleDirectorySearchParams(raw: Record<string, string
     if (value !== undefined && value !== "") entries.push([key,value]);
   }
   const filter=collegeRoleDirectoryQuerySchema.parse(Object.fromEntries(entries));
-  if (!roleDirectoryDateWindowValid(filter)) throw new Error("INVALID_ROLE_DIRECTORY_DATE_WINDOW");
+  if (!roleDirectoryDateWindowValid({
+    ...(filter.joinedFrom !== undefined ? {joinedFrom:filter.joinedFrom} : {}),
+    ...(filter.joinedThrough !== undefined ? {joinedThrough:filter.joinedThrough} : {}),
+  })) throw new Error("INVALID_ROLE_DIRECTORY_DATE_WINDOW");
   return filter;
 }
 
