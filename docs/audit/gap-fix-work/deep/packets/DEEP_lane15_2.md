@@ -11,8 +11,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-11-010-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [ ] G2-12-003-055  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [ ] G2-12-003-084  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
-- [ ] G2-12-020-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
-- [ ] G2-12-020-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
+- [x] G2-12-020-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
+- [x] G2-12-020-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [ ] G2-12-020-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [ ] G2-12-020-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [ ] G2-12-020-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
@@ -20,3 +20,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
+- G2-12-020-005: OK — `src/db/schema/placement-company-identities.ts:7-14` persists independent domain-level `verifiedBy42`, `verifiedAt` and verifier separate from `placementCompanies`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CompanyDomain.java:24-35`.
+- G2-12-020-009: OK — `src/db/schema/placement-company-identities.ts:11-14` implements non-null `verified_by_42` with `.default(false)` plus `verified_at`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CompanyDomain.java:34-35`.
