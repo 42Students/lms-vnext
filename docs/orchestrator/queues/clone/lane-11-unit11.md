@@ -144,9 +144,4 @@ AssertionError: expected -1 to be greater than 6784
 ```
 
 
-## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
-
-Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
-
-- [ ] G2-2-013-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-4-025-075  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+Deep-row static verification: [chat-11] ba8b1474, results in DEEP_agent2_4.md; migration replay and runtime tests not claimed.
