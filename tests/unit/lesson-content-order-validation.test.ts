@@ -19,8 +19,13 @@ describe("W02 DB05 delivery lesson-content order", () => {
         lessonId,
         deliveryId,
         orderedContentIds: [c2, c1],
+        expectedOrderedContentIds:[c1,c2],
       }).orderedContentIds,
     ).toEqual([c2, c1]);
+  });
+
+  it("requires the original ordering snapshot for concurrent editor protection",()=>{
+    expect(deliveryContentOrderInputSchema.safeParse({lessonId,deliveryId,orderedContentIds:[c2,c1]}).success).toBe(false);
   });
 
   it("rejects duplicate IDs because a full order cannot contain two positions for one content", () => {
@@ -29,6 +34,7 @@ describe("W02 DB05 delivery lesson-content order", () => {
         lessonId,
         deliveryId,
         orderedContentIds: [c1, c1],
+        expectedOrderedContentIds:[c1,c2],
       });
     expect(parsed.success).toBe(false);
   });
@@ -39,6 +45,7 @@ describe("W02 DB05 delivery lesson-content order", () => {
         lessonId,
         deliveryId,
         orderedContentIds: [],
+        expectedOrderedContentIds:[c1,c2],
       }).success,
     ).toBe(false);
     expect(
@@ -46,6 +53,7 @@ describe("W02 DB05 delivery lesson-content order", () => {
         lessonId,
         deliveryId,
         orderedContentIds: ["not-a-uuid"],
+        expectedOrderedContentIds:[c1,c2],
       }).success,
     ).toBe(false);
   });

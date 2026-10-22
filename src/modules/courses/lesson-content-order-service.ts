@@ -187,6 +187,22 @@ export async function updateDeliveryLessonContentOrder(
         asc(lessonContents.id),
       );
 
+    // Compare the exact order snapshot while holding the delivery lock.
+    // Identical item sets can still have been reordered by another editor.
+    const overrides = visible.length ? await tx.select({
+      id:lessonContentDeliverySequences.lessonContentId,
+      sequence:lessonContentDeliverySequences.sequence,
+    }).from(lessonContentDeliverySequences).where(and(
+      eq(lessonContentDeliverySequences.deliveryId,input.deliveryId),
+      inArray(lessonContentDeliverySequences.lessonContentId,visible.map(row=>row.id)),
+    )) : [];
+    const currentOrder = overrides.length===visible.length
+      ? [...overrides].sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id)).map(row=>row.id)
+      : visible.map(row=>row.id);
+    if(currentOrder.length!==input.expectedOrderedContentIds.length||
+      currentOrder.some((id,index)=>id!==input.expectedOrderedContentIds[index]))
+      throw new CoursesServiceError("CONTENT_ORDER_CONFLICT");
+
     const expected = new Set(
       visible.map((row) => row.id),
     );

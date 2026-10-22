@@ -558,7 +558,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     onConfirm={()=>{if(pendingPublish)void transition(pendingPublish,"PUBLISH",true);}}/>
   <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
    title={kind==="RESOURCE"?"Discard the changes to this resource?":"Discard lesson-content edits?"}
-   description="Unsaved changes will be lost." confirmLabel="Discard changes"
+   description={kind==="RESOURCE"?"Unsaved changes will be lost.":"Your unsaved changes or replacement file will be lost."}
+   confirmLabel={kind==="RESOURCE"?"Discard changes":"Discard edits"}
+   cancelLabel={kind==="RESOURCE"?"Keep editing":"Keep editing"}
    onConfirm={()=>{setDiscardOpen(false);setOpen(false);}}/>
   <Link href="/college/content-order" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
    Arrange Section syllabus across all content types →

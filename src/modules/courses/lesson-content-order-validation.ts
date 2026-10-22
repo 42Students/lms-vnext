@@ -15,6 +15,10 @@ export const deliveryContentOrderInputSchema =
         .array(lessonContentIdSchema)
         .min(1)
         .max(1000),
+      expectedOrderedContentIds: z
+        .array(lessonContentIdSchema)
+        .min(1)
+        .max(1000),
     })
     .superRefine((value, ctx) => {
       if (

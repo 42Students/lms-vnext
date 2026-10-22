@@ -12,6 +12,7 @@ export function SuperAdminSectionSyllabusOrder({
  lessonId:string;lessonName:string;deliveryId:string;items:readonly SyllabusItem[];editable:boolean;
 }){
  const [ordered,setOrdered]=useState<string[]>(()=>items.map(item=>item.id));
+ const expectedOrder=useRef<string[]>(items.map(item=>item.id));
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [success,setSuccess]=useState(false);
@@ -22,7 +23,7 @@ export function SuperAdminSectionSyllabusOrder({
  const beforeKeyboard=useRef<string[]|null>(null);
  const router=useRouter();
  const byId=new Map(items.map(item=>[item.id,item]));
- const changed=ordered.some((id,index)=>id!==items[index]?.id);
+ const changed=ordered.some((id,index)=>id!==expectedOrder.current[index]);
  function move(index:number,amount:number){
   const target=index+amount;
   if(target<0||target>=ordered.length||busy||!editable)return;
@@ -98,9 +99,11 @@ export function SuperAdminSectionSyllabusOrder({
    const response=await fetch("/api/courses/lesson-contents/order",{
     method:"PUT",credentials:"same-origin",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({lessonId,deliveryId,orderedContentIds:ordered}),
+    body:JSON.stringify({lessonId,deliveryId,orderedContentIds:ordered,
+      expectedOrderedContentIds:expectedOrder.current}),
    });
    if(!response.ok)throw new Error("The order has changed or ordering is unavailable. Refresh before trying again.");
+   expectedOrder.current=[...ordered];
    setSuccess(true);
    router.refresh();
   }catch(cause){

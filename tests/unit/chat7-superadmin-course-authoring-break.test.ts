@@ -46,7 +46,7 @@ describe("SA-academics-people-58 GR-COURSES-TENANT-02 authoring, stale tabs and 
   expect(updateCourseDisplayContentSchema.safeParse({...base,takeaways:Array(31).fill("x")}).success).toBe(false);
  });
  it("reorder requires scoped delivery and lesson IDs; refuses empty, repeated or oversized content lists",()=>{
-  const command={lessonId:a,deliveryId:b,orderedContentIds:[c]};
+  const command={lessonId:a,deliveryId:b,orderedContentIds:[c],expectedOrderedContentIds:[c]};
   expect(deliveryContentOrderInputSchema.safeParse(command).success).toBe(true);
   for(const wrong of [
    {...command,orderedContentIds:[]},{...command,orderedContentIds:[c,c]},
