@@ -12,6 +12,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
+import {tpoNoticeDeliveryVerified} from "./tpo-notice-delivery-readiness";
 
 export const tpoNoticeCreateSchema=z.object({
  title:z.string().trim().min(1,"Give the announcement a title").max(200),
@@ -48,6 +49,10 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
  const membership=context.membership;
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
+ // The authoring form has no draft state: "Send" and "Schedule" both
+ // promise user notices. Fail closed until a durable leased delivery worker
+ // has been deployed and its recipient delivery verified by operations.
+ if(!tpoNoticeDeliveryVerified())throw new Error("TPO_NOTICE_DELIVERY_UNVERIFIED");
  if(!await placementTableExists("announcements"))throw new Error("ANNOUNCEMENTS_NOT_REGISTERED");
  // Every notice, including a college-wide broadcast, needs a persisted
  // audience record for the due-delivery worker. A source-only event without
