@@ -8,7 +8,8 @@ const decimalSelection = z.union([
 ]);
 export const adminDriveDirectoryQuerySchema=z.object({
  q:z.string().trim().max(100).default(""),
- status:z.enum(["ALL","DRAFT","ACTIVE","CLOSED"]).default("ALL"),
+ status:z.preprocess(value=>typeof value==="string"?value.toUpperCase():value,
+  z.enum(["ALL","DRAFT","ACTIVE","CLOSED"])).default("ALL"),
  page:decimalSelection.refine(n=>n>=1&&n<=100000).default(1),
  pageSize:decimalSelection.refine(n=>[10,20,50,100].includes(n)).optional(),
  // Legacy Ant pagination used `size`; keep it as a validated alias.
@@ -22,6 +23,16 @@ export const adminDriveDirectoryQuerySchema=z.object({
 export const LEGACY_ADMIN_DRIVE_STATUS = {
  ACTIVE:"PUBLISHED",DRAFT:"DRAFT",CLOSED:"CLOSED",
 } as const;
+/** Legacy isDraft/isActive are projections of one persisted status. */
+export function projectLegacyAdminDriveFlags(status:string){
+ return {isDraft:status==="DRAFT",isActive:status==="PUBLISHED",
+  isClosed:status==="CLOSED"||status==="CANCELLED"};
+}
+/** Clearing URL search/status preserves the chosen page size. */
+export function adminDriveDirectoryClearFiltersHref(
+ query:z.infer<typeof adminDriveDirectoryQuerySchema>){
+ return adminDriveDirectoryHref({...query,q:"",status:"ALL",page:1});
+}
 type Drive={job:{id:string;title:string;status:string;applicationDeadline:Date|null;
  publishedAt?:Date|null;createdAt?:Date|null;legacyPostedAt?:Date|null;
  legacyPostingDetails?:{importantDates?:readonly {label:string;at:string}[]}|null};
@@ -51,7 +62,7 @@ export function adminDriveDirectoryHref(query:z.infer<typeof adminDriveDirectory
  if(query.q)url.set("q",query.q);
  if(query.status!=="ALL")url.set("status",query.status);
  if(query.page>1)url.set("page",String(query.page));
- if(query.pageSize!==20)url.set("pageSize",String(query.pageSize));
+ if(query.pageSize!==20)url.set("size",String(query.pageSize));
  const encoded=url.toString();
  return "/admin/placements/drives"+(encoded?"?"+encoded:"");
 }
@@ -69,6 +80,16 @@ export function adminDriveIstLocalToInstant(value:string):Date|null{
   check.getUTCMinutes()===minute&&check.getUTCSeconds()===second?instant:null;
 }
 
+/** Explicit former AdminService field crosswalk. Unknown applicant counts
+ * remain null, rather than fabricating an apparent zero. */
+export const LEGACY_ADMIN_DRIVE_FIELD_CROSSWALK={
+ id:"job.id",jobTitle:"job.title",companyName:"company.name",
+ postedDate:"job.publishedAt ?? job.legacyPostedAt ?? job.createdAt",
+ applicationCount:"metrics.applicants (nullable)",
+ applicationDeadline:"job.applicationDeadline ?? legacyPostingDetails.importantDates",
+ jobType:"job.jobTypeLabel ?? job.employmentType",
+ isDraft:"job.status === DRAFT",isActive:"job.status === PUBLISHED",
+} as const;
 /** Imported importantDates is a display fallback only; the canonical stored
  * applicationDeadline wins whenever available. */
 export function adminDriveEffectiveDeadline(job:Drive["job"]):Date|null{
@@ -93,8 +114,8 @@ export function parseLegacyAdminDriveDirectoryQuery(raw:Record<string,unknown>){
  const page=numberOrDefault(raw.page,1);
  return adminDriveDirectoryQuerySchema.parse({
   q:typeof raw.q==="string"?raw.q.slice(0,100):"",
-  status:["ALL","DRAFT","ACTIVE","CLOSED"].includes(String(raw.status))
-   ?raw.status:"ALL",
+  status:["ALL","DRAFT","ACTIVE","CLOSED"].includes(String(raw.status).toUpperCase())
+   ?String(raw.status).toUpperCase():"ALL",
   page:Math.max(1,Math.min(100000,page)),
   pageSize:[10,20,50,100].includes(size)?size:20,
  });
@@ -106,7 +127,7 @@ export function adminDriveIsExpired(deadline:Date|null|undefined,now=new Date())
   Math.floor(deadline.getTime()/60_000)<Math.floor(now.getTime()/60_000));
 }
 export function adminDriveStatus(job:Drive["job"],now=new Date()){
- if(job.status==="PUBLISHED")return adminDriveIsExpired(adminDriveEffectiveDeadline(job),now)?"Open · Expired":"Open";
+ if(job.status==="PUBLISHED")return adminDriveIsExpired(adminDriveEffectiveDeadline(job),now)?"Expired":"Open";
  return job.status==="DRAFT"?"Draft":job.status==="CLOSED"?"Closed":job.status;
 }
 
