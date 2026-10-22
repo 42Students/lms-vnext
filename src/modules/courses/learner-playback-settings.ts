@@ -3,7 +3,7 @@ import {getDb} from "@/db/client";
 import {platformSettingOverrides} from "@/db/schema";
 import {writeStructuredLog} from "@/observability/logger";
 
-/** Defaults preserve the current deployed behavior if no override exists. */
+/** Defaults preserve the legacy 15-second poll/save cadence and 90% watched threshold when no global override exists. */
 export const LEARNER_PLAYBACK_DEFAULTS={
  chatPollIntervalMs:15000,
  progressSaveIntervalMs:15000,
