@@ -19,7 +19,7 @@ import { listColleges } from "@/modules/colleges/service";
 import { formatCollegeHeaderDate } from "@/modules/admin-ui/college-dashboard-cards-model";
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
 
-export default async function CollegeOverviewPage() {
+/** The old /college-admin route 302-redirected to /college-admin/dashboard.\n * In vNext, /college is already the canonical college dashboard after role-based\n * workspace selection, so this component renders that destination directly. */\nexport default async function CollegeOverviewPage() {
   const context = await getCurrentRequestContext();
   const membership = context.membership;
 
