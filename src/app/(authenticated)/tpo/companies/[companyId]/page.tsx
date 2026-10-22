@@ -115,6 +115,15 @@ export default async function TpoCompanyDetailPage({
         }
       />
 
+      <nav aria-label="Company sections" className="flex flex-wrap gap-1 border-b border-border pb-3 text-sm">
+        <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+          Company Memory · People, Drives, Documents, Team, Timeline
+        </Link>
+        <a href="#company-students-placed" className="inline-flex min-h-11 items-center px-3 font-semibold text-link underline md:min-h-9">Students placed, by year</a>
+        <a href="#company-canonical-timeline" className="inline-flex min-h-11 items-center px-3 font-semibold text-link underline md:min-h-9">Company history</a>
+      </nav>
+
       <section aria-label="College company relationship" className="border-b border-[var(--lms-canvas-border)] py-4">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">College relationship and trust</h2>
         <p className="mt-2 text-sm text-body leading-[22px]">
@@ -129,6 +138,7 @@ export default async function TpoCompanyDetailPage({
             Updated {relationship?.updatedAt ? dateLabel(new Date(relationship.updatedAt)) + " IST" : "not recorded"}
           </span>
         </div>
+        {lifecycle?.status==="ACTIVE"?<h3 className="mt-4 text-sm font-semibold text-foreground">Trusted company</h3>:null}
         {lifecycle?.status==="ACTIVE"?
          <TpoCompanyTrustSwitch companyId={route.companyId}
            initialTrusted={lifecycle.isTrusted} updatedAt={lifecycle.updatedAt}/>:null}
@@ -226,7 +236,7 @@ export default async function TpoCompanyDetailPage({
           ))}
         </dl>
         <div className="mt-5 border-t border-border pt-4">
-          <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Students placed, by year</h3>
+          <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]" id="company-students-placed">Students placed, by year</h3>
           <p className="mt-1 text-xs text-muted-foreground leading-5">
             Distinct confirmed JOINED learners by recorded joining year (IST), not offers issued.
             {hiringPulse.yearsHiring>=2
@@ -408,14 +418,15 @@ export default async function TpoCompanyDetailPage({
       </section>
 
       <Disclosure title="Company timeline" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
-      <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
+      <section id="company-canonical-timeline" className="min-w-0 border-y border-[var(--lms-canvas-border)]">
         <div className="border-b border-[var(--lms-canvas-border)] py-4">
           <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
             Company timeline
           </h2>
           <p className="mt-1 text-sm text-body leading-[22px]">
-            Most recent 100 recorded contact, drive,
-            offer and joining events.
+            Most recent 100 canonical contact, drive, offer and joining events.
+            For recruiter-lead activity history (up to 200), open
+            <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)} className="ml-1 font-semibold text-link underline">Company Memory</Link>.
           </p>
         </div>
 

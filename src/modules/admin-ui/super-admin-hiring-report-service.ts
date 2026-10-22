@@ -148,7 +148,7 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
     pattern?or(ilike(placementJobs.title,pattern),ilike(placementCompanies.name,pattern)):undefined,
   ))
   .groupBy(placementJobs.id,placementJobs.title,placementCompanies.id,placementCompanies.name)
-  .orderBy(asc(placementCompanies.name),asc(placementJobs.title),asc(placementJobs.id))
+  .orderBy(asc(placementCompanies.name),asc(placementJobs.id))
   .limit(SUPER_ADMIN_HIRING_EXPORT_CAP+1);
  const bounded=result.slice(0,SUPER_ADMIN_HIRING_EXPORT_CAP);
  return {
@@ -176,6 +176,11 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
    hiredEvidence:"ACCEPTED_OFFER_AND_JOINED_OUTCOME" as const,
    firstShortlistLatency:"FIRST_VALID_SHORTLIST_TRANSITION" as const,
    sharedJobs:"SELECTED_COLLEGE_ONLY" as const,
+   companyReportJobFilter:"EXPLICIT_JOB_SCOPE_EXTENSION" as const,
+   // Snapshot stages count only submitted applications. Withdrawn rows
+   // remain in totalApplications and in a distinct withdrawn bucket;
+   // stages are not assumed to sum to total after screening changes.
+   totalReconciliation:"TOTAL_INCLUDES_WITHDRAWN_AND_OTHER_STATES" as const,
   },
  };
 }
