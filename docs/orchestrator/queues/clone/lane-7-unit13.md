@@ -4,7 +4,7 @@ CI run 39849936419 on main (3c24c0c0), the LATEST run failed these unit tests. T
 
 - [x] `tests/unit/PROJ-BREAK-chat9-admin-view-filter-boundary.test.ts` (1 failing)
 - [x] `tests/unit/chat6-cross-page-verification-round4.test.ts` (2 failing)
-- [ ] `tests/unit/tpo-team-person-context-chat2.test.ts` (1 failing)
+- [x] `tests/unit/tpo-team-person-context-chat2.test.ts` (1 failing)
 
 ## Failures (from CI log)
 
