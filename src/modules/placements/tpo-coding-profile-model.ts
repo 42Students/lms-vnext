@@ -30,7 +30,7 @@ export function validateCodingProfile(platform:CodingProfilePlatform,raw:string)
   try{link=new URL(/^[a-z][a-z\d+.-]*:\/\//i.test(value)?value:"https://"+value);}
   catch{return {url:null,error:option.label+": that link is not a "+option.label+" profile. Type your username instead."};}
   const hostname=link.hostname.toLowerCase().replace(/^www\./,"");
-  if(!["http:","https:"].includes(link.protocol)||link.username||link.password||link.port||
+  if(link.protocol!=="https:"||link.username||link.password||link.port||
     hostname!==option.host.replace(/^www\./,"")||!link.pathname.startsWith(option.pathPrefix)){
    return {url:null,error:option.label+": that link is not a "+option.label+" profile. Type your username instead."};
   }
