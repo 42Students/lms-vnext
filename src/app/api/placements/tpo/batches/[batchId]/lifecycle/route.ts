@@ -14,7 +14,7 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
    return NextResponse.json({error:"INVALID_INPUT"},{status:400});
   const item=body as Record<string,unknown>;
   const result=await changeTpoBatchLifecycle(await getCurrentRequestContext(),{
-   batchId,action:item.action,expectedVersion:item.expectedVersion,
+   batchId,action:item["action"],expectedVersion:item["expectedVersion"],
   });
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
