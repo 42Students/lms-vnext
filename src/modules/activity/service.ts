@@ -514,8 +514,12 @@ async function resolveReadScope(
  * broad module would pull unrelated course, identity and project chatter into
  * the legacy quick-filter totals. Important also includes vNext severity. */
 function legacyCategoryCondition(category:"important"|"setup"|"people"|"teaching"|"projects"):SQL{
- const subject=sql`lower(${activityEvents.subjectType})`;
- const event=sql`upper(${activityEvents.eventType})`;
+ // An imported AdminAuditLog row has its own immutable actionKey/entityType.
+ // Native eventType/subjectType may be mapped to broader new terminology.
+ // Use source keys for category membership when present so historical audit
+ // totals match the old college Activity Log before pagination.
+ const subject=sql`lower(coalesce(${activityEvents.legacyEntityType},${activityEvents.subjectType}))`;
+ const event=sql`upper(coalesce(${activityEvents.legacyActionKey},${activityEvents.eventType}))`;
  if(category==="important")return or(
   inArray(activityEvents.importance,["HIGH","CRITICAL"]),
   sql`${event} ~ '(DELETE|RESTORE|PROMOTE|BATCH[._]SEMESTER[._]UPDATE|SUSPEND|REACTIVAT|IMPERSONAT|MODULE[._]ACCESS|FEATURE[._]TOGGLE|IDENTITY[._]READ|BULK[._]STATUS)'`,
