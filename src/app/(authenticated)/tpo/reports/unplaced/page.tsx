@@ -49,11 +49,13 @@ export default async function TpoUnplacedReportPage({
     redirect("/dashboard");
   }
 
+  const collegeId=context.membership.collegeId;
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/unplaced"/>;
-  try {
+  const report = await (async () => {
+    try {
   const workspace = await getPlacementReportDetails(context, {
-    collegeId: context.membership.collegeId,
+    collegeId: collegeId,
     seasonId: first(query.seasonId) || undefined,
     jobId: first(query.jobId) || undefined,
   });
@@ -65,18 +67,18 @@ export default async function TpoUnplacedReportPage({
   const batchId=first(query.batchId)||undefined,branchId=first(query.branchId)||undefined;
   const permittedBatch=!batchId||Boolean(batches?.batches.some(batch=>batch.id===batchId));
   const intelligence=permittedBatch?await getTpoStudentsIntelligence(context,{
-    collegeId:context.membership.collegeId,...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
+    collegeId:collegeId,...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
     page:1,pageSize:100,
   },{includeExportRows:true}):null;
   const permittedBranch=!branchId||(intelligence?.branches??[]).some(item=>item.branchId===branchId);
   const lastApplications=permittedBatch&&permittedBranch?
    await getTpoUnplacedLastApplications(context,{
-    collegeId:context.membership.collegeId,seasonId:workspace.selectedSeasonId,
+    collegeId:collegeId,seasonId:workspace.selectedSeasonId,
     jobId:workspace.selectedJobId,
    }):new Map<string,{lastSubmittedAt:Date|null;applications:number;stillInDrive:boolean}>();
   const rowsById=new Map(permittedBranch?intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]:[]);
   const unplaced=workspace.details.unplaced.filter(learner=>rowsById.has(learner.membershipId));
-  const academic=await getTpoUnplacedAcademicEvidence(context,context.membership.collegeId,unplaced.map(item=>item.membershipId));
+  const academic=await getTpoUnplacedAcademicEvidence(context,collegeId,unplaced.map(item=>item.membershipId));
   // Legacy Ready/Unplaced requires all facts together: a registration in
   // Placements, a resume, a recorded CGPA, 10th percentage, and no accepted
   // placement offer. Unknown evidence never becomes a synthetic pass.
@@ -95,6 +97,23 @@ export default async function TpoUnplacedReportPage({
    ...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
   });
   const filteredExportHref="/api/placements/tpo/reports/unplaced?"+exportParams.toString();
+  return {workspace,batches,batchesUnavailable,batchId,branchId,permittedBatch,permittedBranch,
+    branches,unplaced,readyUnplaced,academic,lastApplications,rowsById,filteredExportHref};
+    } catch {
+      return null;
+    }
+  })();
+  if (!report) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Unplaced students" description="Students looking for a job with no offer that counts as placed"/>
+    <Link href="/tpo/reports" className="text-sm font-semibold text-link underline">All reports</Link>
+    <Alert tone="error">
+     <strong>Could not load the report</strong>
+     <p className="mt-2 text-sm">The previous report data has not been replaced with a false zero or an empty result.</p>
+     <Link href="/tpo/reports/unplaced" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>
+    </Alert>
+   </div>;
+  const {workspace,batches,batchesUnavailable,batchId,branchId,permittedBatch,permittedBranch,
+    branches,unplaced,readyUnplaced,academic,lastApplications,rowsById,filteredExportHref}=report;
   return (
     <div data-tpo-presentation-report className="min-w-0 space-y-6">
       <PageHeader
@@ -173,15 +192,4 @@ export default async function TpoUnplacedReportPage({
       <ReportNavigation workspace={workspace} compactNavigation />
     </div>
   );
-  }catch{
-   return <div className="min-w-0 space-y-4">
-    <PageHeader title="Unplaced students" description="Students looking for a job with no offer that counts as placed"/>
-    <Link href="/tpo/reports" className="text-sm font-semibold text-link underline">All reports</Link>
-    <Alert tone="error">
-     <strong>Could not load the report</strong>
-     <p className="mt-2 text-sm">The previous report data has not been replaced with a false zero or an empty result.</p>
-     <Link href="/tpo/reports/unplaced" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>
-    </Alert>
-   </div>;
-  }
 }

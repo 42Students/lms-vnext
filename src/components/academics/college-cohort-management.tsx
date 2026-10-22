@@ -214,11 +214,6 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
             className="min-h-11 min-w-0 md:min-h-9" />
           {fieldErrors.code ? <span role="alert" className="text-xs text-error">{fieldErrors.code}</span> : null}
         </label>
-        <div className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          <label htmlFor={"batch-program-locked-" + row.id}>Program</label>
-          <Input id={"batch-program-locked-" + row.id} value="Program is fixed after batch creation"
-            readOnly disabled aria-label="Program cannot change after creation" />
-        </div>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period (optional)
           <Select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 md:min-h-9 ">

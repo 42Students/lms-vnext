@@ -1,19 +1,19 @@
-/** Calendar queries use the same Asia/Kolkata 42-day month grid as the
- * learner UI. The to instant is exclusive; the final visible Sunday is
- * included by advancing to the following Monday midnight IST. */
+/** Calendar queries use the same Sunday-first, 42-day IST month grid
+ * as istMonthGridKeys and the visible learner CalendarGrid. The to instant
+ * excludes midnight after the final Saturday. */
 export function learnerCalendarVisibleWindow(month:string|undefined,now:Date):{from:Date;to:Date}{
  const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"}).formatToParts(now);
  const year=month?Number(month.slice(0,4)):Number(parts.find(p=>p.type==="year")?.value);
  const monthNumber=month?Number(month.slice(5,7)):Number(parts.find(p=>p.type==="month")?.value);
- if(month && !/^\\d{4}-(0[1-9]|1[0-2])$/.test(month))
+ if(month && !/^\d{4}-(0[1-9]|1[0-2])$/.test(month))
    throw new Error("INVALID_CALENDAR_MONTH");
  if(!Number.isInteger(year)||year<2000||year>2199||!Number.isInteger(monthNumber)||monthNumber<1||monthNumber>12)
    throw new Error("INVALID_CALENDAR_MONTH");
  const dayMs=86_400_000, istOffsetMs=330*60_000;
  const firstDayUtc=Date.UTC(year,monthNumber-1,1);
- const daysSinceMonday=(new Date(firstDayUtc).getUTCDay()+6)%7;
- // Always display exactly six Monday-first weeks to preserve stable rows.
- const start=firstDayUtc-daysSinceMonday*dayMs;
+ const daysSinceSunday=new Date(firstDayUtc).getUTCDay();
+ // Exactly the same six Sunday-first weeks as the displayed day cells.
+ const start=firstDayUtc-daysSinceSunday*dayMs;
  return {from:new Date(start-istOffsetMs),to:new Date(start+42*dayMs-istOffsetMs)};
 }
 
