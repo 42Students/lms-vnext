@@ -120,7 +120,7 @@ export async function deliverDueTpoNotices(now=new Date(),onlyAnnouncementId?:st
    // recorded a trusted college-wide audience in its same-transaction event.
    // Recover those earlier notices only when the event explicitly says COLLEGE;
    // for every targeted/unknown audience, fail closed rather than widening.
-   const audienceKind=target?.kind??(event.metadata?.audience==="COLLEGE"?"COLLEGE":null);
+   const audienceKind=target?.kind??(event.metadata?.["audience"]==="COLLEGE"?"COLLEGE":null);
    if(!audienceKind)return -1;
    const learners=exists(tx.select({id:membershipRoles.id})
      .from(membershipRoles).where(and(
