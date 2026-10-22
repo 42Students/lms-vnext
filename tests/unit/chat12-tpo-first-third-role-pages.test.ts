@@ -30,7 +30,7 @@ describe("UX-tpo first-third role and failure-state contracts", () => {
     expect(source).toContain("tpoBatchPageSchema.safeParse");
     expect(source).toContain("deadlineParsed.success");
     expect(source).toContain("programParsed.success");
-    expect(source).toContain('role="alert"');
+    expect(source).toContain('<Alert tone="error"');
     expect(source).toContain('href="/tpo/batches"');
     expect(source).toContain("Eligibility counts could not load");
   });
@@ -47,7 +47,7 @@ describe("UX-tpo first-third role and failure-state contracts", () => {
     expect(source).toContain('hasMembershipRole(context,"TPO")');
     expect(source).toContain('redirect("/dashboard")');
     expect(source).toContain("tpoAnnouncementTabSchema.safeParse");
-    expect(source).toContain('role="alert"');
+    expect(source).toContain('<Alert tone="error"');
     expect(source).toContain('href="/tpo/announcements"');
   });
 
@@ -65,7 +65,7 @@ describe("UX-tpo first-third role and failure-state contracts", () => {
     expect(source).toContain('can(context,"placements.manage"');
     expect(source).toContain('redirect("/dashboard")');
     expect(source).toContain("tpoCompaniesQuerySchema.safeParse");
-    expect(source).toContain("<DataTable");
+    expect(source).toContain("<TpoCompaniesSpreadsheet");
     expect(source).toContain("No companies match these filters.");
     expect(source).toContain('aria-label="Companies pagination"');
   });
