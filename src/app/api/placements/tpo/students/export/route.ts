@@ -1,4 +1,5 @@
 import { legacyGridExportFilename } from "@/modules/placements/grid-export-filename";
+import {tpoStudentExportViewName} from "@/modules/placements/tpo-students-url-guard";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -37,6 +38,13 @@ export async function GET(request: Request) {
 
     const url = new URL(request.url);
 
+    // A saved view changes only the downloadable name, never the tenant or row scope.
+    if(url.searchParams.getAll("view").length>1)
+      return Response.json({error:"Repeated view names are not allowed"},{status:400});
+    const raw=Object.fromEntries(url.searchParams.entries());
+    const viewName=raw.view===undefined?"students":tpoStudentExportViewName(raw.view);
+    if(!viewName)return Response.json({error:"Invalid saved view name"},{status:400});
+    delete raw.view;
     // Export has no caller-controlled page, page size or collegeId.
     const filters = tpoStudentsQueryObjectSchema
       .omit({
@@ -46,7 +54,7 @@ export async function GET(request: Request) {
       })
       .superRefine(tpoStudentsRangeRefinement)
       .parse(
-        Object.fromEntries(url.searchParams.entries()),
+        raw,
       );
 
     const result = await getTpoStudentsIntelligence(
@@ -67,7 +75,7 @@ export async function GET(request: Request) {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition":
-          'attachment; filename="' + legacyGridExportFilename("students", "csv") + '"',
+          'attachment; filename="' + legacyGridExportFilename(viewName, "csv") + '"',
         "Cache-Control": "private, no-store, max-age=0",
         "X-Content-Type-Options": "nosniff",
         "X-Placement-Registration-Data":
