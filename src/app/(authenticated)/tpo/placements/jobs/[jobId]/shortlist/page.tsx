@@ -2,6 +2,7 @@ import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -27,6 +28,12 @@ export default async function TpoDriveShortlistPage({
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const [{ jobId }, query] = await Promise.all([params, searchParams]);
+  if(Array.isArray(query.page))return <section className="min-w-0 space-y-3">
+    <PageHeader title="Current shortlist"/>
+    <Alert tone="error">Only one shortlist page number can be selected.</Alert>
+    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/shortlist"}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+  </section>;
   const validated = tpoShortlistQuerySchema.safeParse({
     jobId,
     ...(first(query.page) ? { page: first(query.page) } : {}),

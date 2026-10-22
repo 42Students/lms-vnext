@@ -34,6 +34,12 @@ export default async function TpoShortlistSharePreviewPage({
     redirect("/dashboard");
   }
   const [{ jobId }, search] = await Promise.all([params, searchParams]);
+  if(Object.values(search).some(Array.isArray))return <div className="min-w-0 space-y-3">
+    <PageHeader title="Recruiter-visible shortlist preview"/>
+    <Alert tone="error">Duplicate share-preview filters were received. Clear filters before previewing or creating a company share.</Alert>
+    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+  </div>;
   const parsed = tpoShareableShortlistQuerySchema.safeParse({
     jobId, ...(first(search.page) ? { page: first(search.page) } : {}),
     q:first(search.q)??"",

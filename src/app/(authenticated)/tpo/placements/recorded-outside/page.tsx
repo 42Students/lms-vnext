@@ -6,6 +6,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {Banner} from "@/components/ui/banner";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Alert} from "@/components/ui/alert";
 import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form";
 import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
 import {listTpoOutsideDriveRecords} from "@/modules/placements/recorded-outside-participation-service";
@@ -21,11 +22,15 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
  const result=await recordedOutsideChoices(context,collegeId);
  const recorded=await listTpoOutsideDriveRecords(context);
  const savedId=(await searchParams).saved;
- const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
+ const invalidConfirmation=typeof savedId==="string"&&
+  !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(savedId);
+ const saved=typeof savedId==="string"&&!invalidConfirmation?
+  await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Record an outside-platform drive"
    description="Document a drive that already happened outside LMS without publishing any job or learners."
    actions={<PageBackLink href="/tpo/placements/new" label="Back to platform drive creation"/>}/>
+  {invalidConfirmation?<Alert tone="warning">The saved-record identifier is invalid. No save confirmation was inferred.</Alert>:null}
   {saved?<Banner tone="success">
    External drive record saved. It was not published as a job.
   </Banner>:null}
