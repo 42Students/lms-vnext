@@ -430,7 +430,12 @@ export async function createProjectInstance(
                 resource.description ?? null,
               url: resource.url ?? null,
               required: resource.required,
-              ...templateResourceMaterializationFields(resource),
+              ...templateResourceMaterializationFields({
+            ...(resource.type !== undefined ? { type: resource.type } : {}),
+            ...(resource.status !== undefined ? { status: resource.status } : {}),
+            ...(resource.pinned !== undefined ? { pinned: resource.pinned } : {}),
+            ...(resource.accessNotes !== undefined ? { accessNotes: resource.accessNotes } : {}),
+          }),
               sequence: resource.sequence,
             })),
         );
