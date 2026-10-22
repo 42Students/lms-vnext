@@ -185,7 +185,7 @@ export function PublicRecruiterJoinForm({
   }
 
   return (
-    <main className={`${authStyles.page} !bg-[#f5f7f9] mx-auto flex w-full min-w-0 items-center justify-center px-4 py-4`} style={{minHeight:"100dvh"}}>
+    <main className={`${authStyles["page"]} !bg-[#f5f7f9] mx-auto flex w-full min-w-0 items-center justify-center px-4 py-4`} style={{minHeight:"100dvh"}}>
       <Card as="section" className="w-full max-w-[440px] rounded-[8px] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-sm sm:p-5">
         {preview.kind !== "READY" ? (
           <>
