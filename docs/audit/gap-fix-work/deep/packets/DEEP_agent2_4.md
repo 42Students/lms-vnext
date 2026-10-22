@@ -26,7 +26,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-4-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-018-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-018-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-025-075  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-025-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -35,6 +35,8 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-13-031-098  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 
 ## Results
+
+- **G2-4-018-072 — FIXED (mapping contract):** `docs/audit/gap-fix/legacy-project-delivery-crosswalk-chat9.md:1-40` now defines source-to-target mapping, UUID/actor crosswalks, status and IST conversions, optimistic-version separation, quarantine criteria, and verification invariants against `src/db/schema/projects.ts:1009-1160`. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java:18-129`. Import not executed; contract does not claim migrated data.
 
 - **G2-2-006-062 — OK (source verification):** `src/components/courses/college-assignment-create.tsx:11-12,108-124` opens the editor after creation, `src/components/courses/faculty-assignment-resources-editor.tsx:47-56,71-88,117-171` handles instructions, links, private PDF/file uploads and scanner checks, and `src/db/schema/course-assignment-materials.ts:7-46` retains file metadata. Legacy: `docs/legacy-source/frontend/src/components/admin/AdminAssignmentBuilderModal.jsx:149-161`. Source review only; CI not executed.
 
