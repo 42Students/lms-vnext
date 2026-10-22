@@ -1,9 +1,9 @@
 import "server-only";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { messagingSmsDeliveryAttempts } from "@/db/schema/messaging-receipts";
-import { requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {
   OutboundDeliveryError,
   parseOutboundIntent,
@@ -457,16 +457,18 @@ export async function readSmsDeliveryAttemptsForSupport(
     size?: number;
   },
 ) {
-  if (!isSuperAdmin(context)) {
-    requirePermission(context, "system-role.manage");
-  }
-  const organizationId = query.organizationId ?? context.adminScope?.organizationId ?? null;
-  const collegeId = query.collegeId ?? context.adminScope?.collegeId ?? null;
+  // An apparently privileged tenant role must not enumerate platform SMS
+  // attempts. Only a current, unscoped Super Admin can search this ledger.
+  if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE" ||
+      context.adminScope?.collegeId || context.adminScope?.organizationId)
+    throw new AuthorizationError("admin-scope.select");
+  requirePermission(context, "admin-scope.select");
+  const organizationId = query.organizationId ?? null;
+  const collegeId = query.collegeId ?? null;
   if ((organizationId && !/^[0-9a-f-]{36}$/i.test(organizationId)) ||
       (collegeId && !/^[0-9a-f-]{36}$/i.test(collegeId))) {
     throw new OutboundDispatchNotReadyError();
   }
-  requirePermission(context, "organization.read", { organizationId, collegeId });
   const suffix = query.recipientSuffix?.trim() || null;
   const purpose = query.purpose?.trim() || null;
   const page = query.page ?? 0;
@@ -474,7 +476,7 @@ export async function readSmsDeliveryAttemptsForSupport(
   if ((suffix && !/^[0-9]{2,4}$/.test(suffix)) ||
       (purpose && (!/^[a-zA-Z0-9._-]{1,64}$/.test(purpose))) ||
       !Number.isSafeInteger(page) || page < 0 || page > 10_000 ||
-      !Number.isSafeInteger(size) || size < 1 || size > 100) {
+      !Number.isSafeInteger(size) || size < 1 || size > 200) {
     throw new OutboundDispatchNotReadyError();
   }
   const constraints = [
@@ -483,13 +485,18 @@ export async function readSmsDeliveryAttemptsForSupport(
     ...(suffix ? [eq(messagingSmsDeliveryAttempts.recipientSuffix, suffix)] : []),
     ...(purpose ? [eq(messagingSmsDeliveryAttempts.purpose, purpose)] : []),
   ];
-  const rows = await getDb().select({
+  const db = getDb();
+  const [countRow] = await db.select({ total: count() })
+    .from(messagingSmsDeliveryAttempts).where(and(...constraints));
+  const rows = await db.select({
     id: messagingSmsDeliveryAttempts.id,
     attemptedAt: messagingSmsDeliveryAttempts.attemptedAt,
     recipientSuffix: messagingSmsDeliveryAttempts.recipientSuffix,
     purpose: messagingSmsDeliveryAttempts.purpose,
     outcome: messagingSmsDeliveryAttempts.outcome,
     providerStatus: messagingSmsDeliveryAttempts.providerStatus,
+    providerMessageId: messagingSmsDeliveryAttempts.providerMessageId,
+    errorCode: messagingSmsDeliveryAttempts.errorCode,
     safeFailureSummary: messagingSmsDeliveryAttempts.safeFailureSummary,
   }).from(messagingSmsDeliveryAttempts)
     .where(and(...constraints))
@@ -499,6 +506,8 @@ export async function readSmsDeliveryAttemptsForSupport(
   return {
     attempts: rows,
     page, size,
+    totalElements: countRow?.total ?? 0,
+    totalPages: Math.ceil((countRow?.total ?? 0) / size),
     providerAcceptanceIsDelivery: false as const,
   };
 }
