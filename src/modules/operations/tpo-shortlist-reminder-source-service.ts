@@ -1,7 +1,7 @@
 import "server-only";
 import { and, eq, gte, lt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { colleges, placementJobs, placementTpoShareEvents, placementTpoShareLinks } from "@/db/schema";
+import { colleges, placementJobs, placementCompanies, placementCompanyRelationships, placementTpoShareEvents, placementTpoShareLinks } from "@/db/schema";
 import { tomorrowInIndiaUtcWindow } from "./scheduled-job-runner";
 import { generateShortlistTomorrowEvents } from "./tpo-reminder-source-events";
 
@@ -22,12 +22,17 @@ export async function readDueShortlistReminderSources(now: Date = new Date()) {
     jobTitle: placementJobs.title,
     shortlistBy: placementTpoShareLinks.shortlistBy,
     revokedAt: placementTpoShareLinks.revokedAt,
-    collegeName: colleges.name,
+    companyName: placementCompanies.name,
   }).from(placementTpoShareLinks)
     .innerJoin(placementJobs, and(
       eq(placementJobs.id, placementTpoShareLinks.jobId),
       eq(placementJobs.collegeId, placementTpoShareLinks.collegeId),
     ))
+    .innerJoin(placementCompanyRelationships, and(
+      eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId),
+      eq(placementCompanyRelationships.collegeId, placementTpoShareLinks.collegeId),
+    ))
+    .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .innerJoin(colleges, and(
       eq(colleges.id, placementTpoShareLinks.collegeId),
       eq(colleges.status, "ACTIVE"),
@@ -54,7 +59,7 @@ export async function readDueShortlistReminderSources(now: Date = new Date()) {
     collegeId: row.collegeId,
     recipientEmail: row.recipientEmail,
     jobTitle: row.jobTitle,
-    companyName: row.collegeName,
+    companyName: row.companyName,
     shortlistBy: row.shortlistBy,
     revoked: row.revokedAt !== null,
     alreadyRemindedOnIstDate: false,
