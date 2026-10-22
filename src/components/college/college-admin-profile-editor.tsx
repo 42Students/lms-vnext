@@ -39,6 +39,17 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   const [discardOpen,setDiscardOpen]=useState(false);
   const [editableSection,setEditableSection]=useState<ProfileSection|null>(null);
   const dirty=JSON.stringify(profile)!==JSON.stringify(savedSnapshot.current);
+  // A successful background refresh updates the baseline only while this
+  // editor is clean. Never overwrite unsaved edits or trust a failed read.
+  useEffect(()=>{
+    if(readOnly||dirty)return;
+    if(JSON.stringify(initial)===JSON.stringify(savedSnapshot.current))return;
+    savedSnapshot.current=initial;
+    setProfile(initial);
+    setEditableSection(null);
+    setError("");
+    setSaved(false);
+  },[initial,readOnly,dirty]);
   useEffect(()=>{
     if(!dirty||readOnly)return;
     const onBeforeUnload=(event:BeforeUnloadEvent)=>{
