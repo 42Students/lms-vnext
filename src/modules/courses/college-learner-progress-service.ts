@@ -141,6 +141,12 @@ export async function getCollegeLearnerProgressReport(
     eq(courseLessons.status,"ACTIVE"),
     eq(courseLessons.visibleToStudents,true),
     eq(courseQuizzes.status,"PUBLISHED"),
+    // Native quizzes rely on status and visibility. Imported legacy rows
+    // additionally carry independent active/enabled/soft-delete flags; a
+    // hidden or deleted imported quiz cannot inflate a learner's denominator.
+    isNull(courseQuizzes.legacyDeletedAt),
+    or(isNull(courseQuizzes.legacyActive),eq(courseQuizzes.legacyActive,true)),
+    or(isNull(courseQuizzes.legacyEnabled),eq(courseQuizzes.legacyEnabled,true)),
     or(isNull(courseQuizzes.deliveryId),eq(courseQuizzes.deliveryId,deliveryId)))),
  ]);
  const members=visible.map(item=>item.membershipId);

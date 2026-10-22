@@ -102,22 +102,37 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
     .where(eq(placementRecruiterProfiles.userId,user.id)).for("update").limit(1);
   if(!profile||profile.companyId!==relationship.companyId||
     profile.status!=="ACTIVE")throw invalid();
-  const [existing]=await tx.select({id:placementRecruiterCollegeGrants.id})
-   .from(placementRecruiterCollegeGrants).where(and(
+  const [existing]=await tx.select({
+    id:placementRecruiterCollegeGrants.id,
+    status:placementRecruiterCollegeGrants.status,
+   }).from(placementRecruiterCollegeGrants).where(and(
     eq(placementRecruiterCollegeGrants.recruiterUserId,user.id),
     eq(placementRecruiterCollegeGrants.companyRelationshipId,lead.companyRelationshipId),
-    eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
-   )).limit(1);
-  if(existing)throw invalid();
-  const [grant]=await tx.insert(placementRecruiterCollegeGrants).values({
-   recruiterUserId:user.id,companyRelationshipId:lead.companyRelationshipId,
-   grantedByUserId:user.id,
-   pendingRecruiterLeadId:pendingConsent?lead.id:null,
-   validUntil:pendingConsent?null:recruiterGrantValidUntil(now,months),
-   status:pendingConsent?"PENDING_RECRUITER":"ACTIVE",
-   capabilities:["DRIVES","MESSAGES"],
-   verificationStatus:pendingConsent?"PENDING":"VERIFIED",
-  }).onConflictDoNothing().returning({id:placementRecruiterCollegeGrants.id});
+    inArray(placementRecruiterCollegeGrants.status,["ACTIVE","PENDING_RECRUITER"]),
+   )).for("update").limit(1);
+  if(existing?.status==="ACTIVE")throw invalid();
+  // Another valid invite for this existing account must refresh its PENDING
+  // college grant, not attempt a second row forbidden by the active/pending
+  // uniqueness index. Existing identities still require signed-in consent:
+  // an OTP alone never promotes an already-associated account to ACTIVE.
+  const [grant]=existing
+   ?await tx.update(placementRecruiterCollegeGrants).set({
+      pendingRecruiterLeadId:lead.id,
+      grantedByUserId:user.id,validUntil:null,
+      status:"PENDING_RECRUITER",capabilities:["DRIVES","MESSAGES"],
+      verificationStatus:"PENDING",updatedAt:now,
+      version:sql`${placementRecruiterCollegeGrants.version}+1`,
+     }).where(and(eq(placementRecruiterCollegeGrants.id,existing.id),
+      eq(placementRecruiterCollegeGrants.status,"PENDING_RECRUITER")))
+      .returning({id:placementRecruiterCollegeGrants.id})
+   :await tx.insert(placementRecruiterCollegeGrants).values({
+      recruiterUserId:user.id,companyRelationshipId:lead.companyRelationshipId,
+      grantedByUserId:user.id,pendingRecruiterLeadId:pendingConsent?lead.id:null,
+      validUntil:pendingConsent?null:recruiterGrantValidUntil(now,months),
+      status:pendingConsent?"PENDING_RECRUITER":"ACTIVE",
+      capabilities:["DRIVES","MESSAGES"],
+      verificationStatus:pendingConsent?"PENDING":"VERIFIED",
+     }).onConflictDoNothing().returning({id:placementRecruiterCollegeGrants.id});
   if(!grant)throw invalid();
   const [consumed]=await tx.update(recruiterInviteCodes).set({consumedAt:now})
    .where(and(eq(recruiterInviteCodes.id,challenge.id),

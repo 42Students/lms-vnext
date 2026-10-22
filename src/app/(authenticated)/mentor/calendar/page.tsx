@@ -119,7 +119,7 @@ export default async function MentorCalendarPage({searchParams}:{
       <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={parsed.data.status}
           className="min-h-11 md:min-h-9">
-          {(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"] as const).map(status=>
+          {(["ALL","DRAFT","REQUESTED","SCHEDULED","RESCHEDULED","COMPLETED","CANCELLED"] as const).map(status=>
             <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
         </Select>
       </label>

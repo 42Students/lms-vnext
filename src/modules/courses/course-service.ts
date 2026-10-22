@@ -15,6 +15,7 @@ import {
   courseOfferings,
   courseLearningPaths,
   courseLessons,
+  lessonContents,
   courses,
   departments,
   organizations,
@@ -496,13 +497,12 @@ export async function updateCourse(
       .update(courses)
       .set({
         ...changes,
+        // Enabled and allowed-for-display are independent legacy switches.
+        // A PATCH that only edits enabled must not silently overwrite the
+        // display flag; omitted values preserve the existing DB column.
         ...(visibleToStudents!==undefined
           ?{legacyAllowedForDisplay:visibleToStudents?1:0}
-          :input.enabled===undefined?{}:{
-            // Retain legacy PATCH enabled compatibility for older callers;
-            // the dedicated student-visibility action uses only the flag above.
-            legacyAllowedForDisplay:input.enabled?1:0,
-          }),
+          :{}),
         version: sql<number>`${courses.version} + 1`,
         // The persisted token MUST advance even for two edits within one
         // millisecond (or across app/DB clocks). The browser sends this exact
@@ -590,17 +590,29 @@ export async function archiveCourse(
       throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS");
     }
 
-    // Legacy deletion was blocked by linked lesson content. Include closed
-    // historical offerings: archiving a catalogue course must not obscure
-    // a syllabus that still contains lessons.
-    const [linkedLesson] = await tx
+    // Legacy deletion distinguishes an active lesson from content under an
+    // inactive lesson. Scan historical offerings too: archived lesson content
+    // must not be orphaned by a catalogue course deletion.
+    const [activeLesson] = await tx
       .select({ id: courseLessons.id })
       .from(courseLessons)
       .innerJoin(courseLearningPaths, eq(courseLessons.learningPathId, courseLearningPaths.id))
       .innerJoin(courseOfferings, eq(courseLearningPaths.offeringId, courseOfferings.id))
+      .where(and(eq(courseOfferings.courseId, courseId),
+        eq(courseLessons.status, "ACTIVE")))
+      .limit(1);
+    if (activeLesson) {
+      throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS");
+    }
+    const [linkedContent] = await tx
+      .select({ id: lessonContents.id })
+      .from(lessonContents)
+      .innerJoin(courseLessons, eq(lessonContents.lessonId, courseLessons.id))
+      .innerJoin(courseLearningPaths, eq(courseLessons.learningPathId, courseLearningPaths.id))
+      .innerJoin(courseOfferings, eq(courseLearningPaths.offeringId, courseOfferings.id))
       .where(eq(courseOfferings.courseId, courseId))
       .limit(1);
-    if (linkedLesson) {
+    if (linkedContent) {
       throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS");
     }
 
