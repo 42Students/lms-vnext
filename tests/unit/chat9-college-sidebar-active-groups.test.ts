@@ -16,7 +16,8 @@ describe("College Admin legacy grouped sidebar highlight",()=>{
  });
  it("the shared sidebar renders the active owner of nested College routes",()=>{
   const text=readFileSync(join(process.cwd(),"src/components/shell/sidebar-nav.tsx"),"utf8");
-  expect(text).toContain("collegeLegacyGroupForPath(pathname)");
+  expect(text).toContain("const route=canonicalShellPath(pathname)");
+  expect(text).toContain("collegeLegacyGroupForPath(route)");
   for(const group of COLLEGE_LEGACY_GROUPS){
    const owner=collegeAdminItems.find(i=>i.label===group.title)!;
    const other=collegeAdminItems.find(i=>i.label!==group.title&&i.href!==owner.href)!;
