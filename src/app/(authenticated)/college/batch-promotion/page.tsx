@@ -45,7 +45,7 @@ export default async function CollegeBatchPromotionPage({
   const batchPageRaw=first(incoming["batchPage"])??"1";
   const showInactive=first(incoming["showInactive"])==="1";
   const batchSearch=(first(incoming["search"])??"").trim().slice(0,120);
-  const batchSizeRaw=first(incoming["batchPage"]Size)??"10";
+  const batchSizeRaw=first(incoming["batchPageSize"])??"10";
   const batchPage=/^[1-9][0-9]{0,3}$/.test(batchPageRaw)?Number(batchPageRaw):null;
   const batchSize=["10","20","50"].includes(batchSizeRaw)?Number(batchSizeRaw):null;
   const raw = {
