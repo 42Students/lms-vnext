@@ -8,7 +8,9 @@ export const TPO_JOB_TIME_ZONE = "Asia/Kolkata";
 
 export const TPO_SCHEDULED_JOBS = {
   "tpo.deadlineToday": {
-    schedule: "0 8 * * *", leaseMs: 30 * 60_000, wired: false,
+    // The authenticated deadline-today route is bound; release remains gated
+    // by DB10_NOTIFICATION_SCHEDULER_READY and TPO_DEADLINE_TODAY_READY.
+    schedule: "0 8 * * *", leaseMs: 30 * 60_000, wired: true,
     description: "Application deadlines today",
   },
   "tpo.offersExpiringSoon": {
