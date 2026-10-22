@@ -8,12 +8,22 @@ import {getTpoOutsideDriveParticipants} from "@/modules/placements/recorded-outs
 import {TpoOutsideParticipantsEditor} from "@/components/placements/tpo-outside-participants-editor";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
 export default async function TpoOutsideDriveDetail({params,searchParams}:{
- params:Promise<{recordId:string}>;searchParams:Promise<{q?:string}>;
+ params:Promise<{recordId:string}>;searchParams:Promise<{q?:string|string[]}>;
 }){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
- const {recordId}=await params,q=(await searchParams).q??"";
+ const {recordId}=await params;
+ const search=await searchParams;
+ const raw=search.q;
+ if(Array.isArray(raw)||typeof raw==="string"&&raw.length>80)return <div className="min-w-0 space-y-3">
+  <PageHeader title="Recorded outside drive"/>
+  <Alert tone="error">Use one learner search query with at most 80 characters.</Alert>
+  <Link href={"/tpo/placements/recorded-outside/"+encodeURIComponent(recordId)}
+   className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear search</Link>
+ </div>;
+ const q=raw??"";
  let data:Awaited<ReturnType<typeof getTpoOutsideDriveParticipants>>;
  try{data=await getTpoOutsideDriveParticipants(context,recordId,q);}
  catch(error){if(error instanceof PlacementsServiceError)notFound();throw error;}

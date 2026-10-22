@@ -65,7 +65,9 @@ function errorText(payload: {
     case "HALL_NAME_TAKEN":
       return "Another active hall in this college already has that name.";
     case "HALL_IN_USE":
-      return `It has ${payload.upcomingClasses ?? "some"} upcoming class(es). Reassign or cancel those scheduled classes before archiving.`;
+      return "Cannot delete lecture hall: it has scheduled classes. Remove or reassign those schedules first."+
+        (typeof payload.upcomingClasses==="number"?
+         " "+payload.upcomingClasses+" upcoming class(es) remain; archiving preserves their history.":"");
     case "HALL_CAPACITY_CONFLICT":
       return "The new capacity is below the configured capacity of an upcoming scheduled class.";
     case "DEPARTMENT_NOT_FOUND":

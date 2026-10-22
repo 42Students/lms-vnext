@@ -21,8 +21,13 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const {jobId}=await params;
  const search=await searchParams;
- const rawKind=Array.isArray(search.kind)?search.kind[0]:search.kind;
- const rawPage=Array.isArray(search.page)?search.page[0]:search.page;
+ if(Object.values(search).some(Array.isArray))return <div className="min-w-0 space-y-3">
+  <PageHeader title="Invalid share-audit filters"/>
+  <Alert tone="error">Only one event kind and page number can be selected at a time.</Alert>
+  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"}
+   className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+ </div>;
+ const rawKind=search.kind,rawPage=search.page;
  const parsed=parseCompanyShareAuditQuery({kind:rawKind,page:rawPage});
  const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
  if(!parsed.success)return <div className="min-w-0 space-y-3">
