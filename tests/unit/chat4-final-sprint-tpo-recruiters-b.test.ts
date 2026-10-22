@@ -60,7 +60,9 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
   expect(detail).toContain("Discard unsaved recruiter changes?");
   expect(detail).toContain("Discard your Not now reason and revisit date?");
   const dialog=source("src/components/ui/dialog.tsx");
-  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("useOverlayExit(ref, opener, open, 180)");
+  const overlayExit=source("src/components/ui/use-overlay-exit.ts");
+  expect(overlayExit).toContain("dialog.showModal()");
   expect(dialog).toContain("onCancel={event => {");
   expect(dialog).toContain("opener.current?.focus()");
   expect(dialog).toContain('aria-labelledby={titleId}');
@@ -95,7 +97,9 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
   expect(detail).toContain('<Dialog open={editing && confirmation===null}');
   expect(detail).toContain('<Dialog open={notNowOpen && confirmation===null}');
   const dialog=source("src/components/ui/dialog.tsx");
-  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("useOverlayExit(ref, opener, open, 180)");
+  const overlayExit=source("src/components/ui/use-overlay-exit.ts");
+  expect(overlayExit).toContain("dialog.showModal()");
   expect(dialog).toContain("onCancel={event => {");
   expect(dialog).toContain("opener.current?.focus()");
   expect(dialog).toContain('aria-labelledby={titleId}');
