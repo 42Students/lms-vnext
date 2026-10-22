@@ -14,7 +14,7 @@ export const collegeStructureQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   programId: z.string().uuid().optional(),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
-  page: urlDecimalInt(1,100000).default(1),
+  page: urlDecimalInt(1,1000).default(1),
   pageSize: urlDecimalInt(10,100).refine(n => [10,20,25,50,100].includes(n)).default(COLLEGE_STRUCTURE_PAGE_SIZE),
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
