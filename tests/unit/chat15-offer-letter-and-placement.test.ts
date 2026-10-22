@@ -19,7 +19,8 @@ describe("chat-15 learner offers and internship truth",()=>{
   const page=source("src/app/(authenticated)/learn/my-placements/offers/page.tsx");
   expect(page).toContain("safeLearnerOfferLetterHref(row.offer.offerLetterUrl)");
   const card=source("src/components/placements/learner-placement-offers.tsx");
-  expect(card).toContain('<a href={item.letterHref} target="_blank" rel="noopener noreferrer"');
+  expect(card).toContain('<a href={item.letterHref} rel="noopener noreferrer"');
+  expect(card).not.toContain('target="_blank"');
   expect(card).toContain("View offer letter</a>");
  });
  it("LEARNER-placements-45 reflects internship and LOI cascade exceptions",()=>{
