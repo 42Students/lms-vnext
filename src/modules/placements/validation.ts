@@ -1629,3 +1629,23 @@ export function legacyInterviewRecommendationTransition(raw:unknown){
  return {recommendAction:action,
   next:LEGACY_INTERVIEW_RECOMMENDATION_TRANSITION[action]};
 }
+
+/** Only historical import/compatibility adapters may accept visibilityType.
+ * The canonical create/write DTO remains applicationMode + validated audience
+ * and does not silently grant public company links to an old INTERNAL_ONLY job.
+ */
+export const legacyPlacementVisibilityTypeSchema=z.enum([
+ "INTERNAL_ONLY","HYBRID","EXTERNAL_ONLY",
+]);
+export function legacyPlacementVisibilityApplicationMode(raw:unknown):
+ "INTERNAL"|"HYBRID"|"EXTERNAL_ONLY"|null{
+ const parsed=legacyPlacementVisibilityTypeSchema.safeParse(raw);
+ if(!parsed.success)return null;
+ return parsed.data==="INTERNAL_ONLY"?"INTERNAL":parsed.data;
+}
+export function legacyPlacementVisibilityFromMode(raw:unknown):
+ "INTERNAL_ONLY"|"HYBRID"|"EXTERNAL_ONLY"|null{
+ if(raw==="INTERNAL")return "INTERNAL_ONLY";
+ if(raw==="HYBRID"||raw==="EXTERNAL_ONLY")return raw;
+ return null;
+}

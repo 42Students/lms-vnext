@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq,sql,inArray,or} from "drizzle-orm";
+import {and,asc,eq,sql,inArray,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobRoleOptions,placementJobs,placementSeasons,placementCompanyRelationships,placementCompanies,placementJobEligibilityPolicies,placementApplications,placementRecruiterDriveRequests,collegeMemberships,users,inAppNotifications,activityEvents,cohorts,programs,departments,learnerProgramEnrollments,membershipRoles} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -85,20 +85,6 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
    or(eq(cohorts.status,"ACTIVE"),
     allowedCohortIds.length?inArray(cohorts.id,allowedCohortIds):undefined)))
   .orderBy(asc(programs.name),asc(cohorts.name),asc(cohorts.id));
- const companyHistory=await getDb().select({
-  id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
-  updatedAt:placementJobs.updatedAt,
- }).from(placementJobs).where(and(
-  eq(placementJobs.collegeId,collegeId),
-  eq(placementJobs.companyRelationshipId,job.companyRelationshipId),
- )).orderBy(desc(placementJobs.updatedAt),desc(placementJobs.id)).limit(6);
- const [lastSavedEvent]=await getDb().select({
-  name:users.displayName,at:activityEvents.occurredAt,
- }).from(activityEvents).innerJoin(users,eq(users.id,activityEvents.actorUserId))
-  .where(and(eq(activityEvents.collegeId,collegeId),
-   eq(activityEvents.subjectType,"placement_job"),eq(activityEvents.subjectId,jobId),
-   eq(activityEvents.eventType,"PLACEMENTS_TPO_DRIVE_EDITED")))
-  .orderBy(desc(activityEvents.occurredAt)).limit(1);
  const roleOptions=await getDb().select({
   id:placementJobRoleOptions.id,title:placementJobRoleOptions.title,
   employmentType:placementJobRoleOptions.employmentType,
@@ -131,9 +117,6 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
   allowedPassingYears:policy?.allowedPassingYears??[],
   allowedProgramIds,availablePrograms,
   roleOptions,
-  wantedSkills:job.legacyPostingDetails?.skillsWanted??[],
-  companyHistory:companyHistory.map(row=>({...row,updatedAt:row.updatedAt.toISOString()})),
-  lastSavedBy:lastSavedEvent?.name??null,lastSavedAt:lastSavedEvent?.at.toISOString()??null,
   allowedCohortIds,availableBatches,applicantCount:Number(counter?.total??0),
   editable:["DRAFT","PUBLISHED"].includes(job.status)&&companyReady,
   editingBlockedReason:!companyReady?"Add the company. The linked employer is unavailable.":
@@ -175,35 +158,19 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    .where(and(eq(placementJobRoleOptions.jobId,jobId),eq(placementJobRoleOptions.isPrimary,false),
     eq(placementJobRoleOptions.status,"ACTIVE"),eq(placementJobRoleOptions.title,input.title))).limit(1);
   if(duplicate)throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_DUPLICATE");
-  // Existing historical portal data cannot be invented for a native
-  // imported record. Reject a portal edit when its storage shape is absent.
   if(input.portal!==undefined&&!job.legacyPostingDetails)
    throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
-  const policyChanged=input.minCgpaHundredths!==undefined||
-   input.allowedCohortIds!==undefined||input.allowedProgramIds!==undefined||
-   input.allowedPassingYears!==undefined||input.verifiedMarksOnly!==undefined||
-   input.minTenthPctBasisPoints!==undefined||input.minTwelfthPctBasisPoints!==undefined||
-   input.minDiplomaPctBasisPoints!==undefined||
-   input.minUndergraduatePctBasisPoints!==undefined||
-   input.minPostgraduatePctBasisPoints!==undefined;
-  // Legacy supplementary backlog/gap rules are not active policy. On explicit
-  // eligibility edits remove the obsolete display-only custom rules.
-  const base=job.legacyPostingDetails??(input.wantedSkills!==undefined?{
-   responsibilities:job.description,assessmentUrl:null,assessmentDeadline:null,
-   importantDates:[],customEligibilityRules:[],
-   candidatePreferences:{preferredDegree:"",specialization:"",
-    graduationYear:null,minGpa:null,city:""},
-  }:null);
-  const updatedDetails=base?{
-   ...base,
-   ...(input.portal!==undefined?{portal:input.portal}:{}),
-   ...(input.wantedSkills!==undefined?{skillsWanted:input.wantedSkills}:{}),
-   ...(policyChanged?{customEligibilityRules:[]}:{}),
-   importantDates:input.applicationDeadline!==undefined?[
-    ...base.importantDates.filter(date=>date.label.trim().toLowerCase()!=="application deadline"),
+  const nextImportantDates=input.applicationDeadline===undefined?
+   job.legacyPostingDetails?.importantDates??[]:[
+    ...(job.legacyPostingDetails?.importantDates??[]).filter(date=>
+     date.label.trim().toLowerCase()!=="application deadline"),
     ...(input.applicationDeadline?[{label:"Application deadline",at:input.applicationDeadline}]:[]),
-   ]:base.importantDates,
-  }:null;
+   ];
+  const nextPostingDetails=job.legacyPostingDetails?{
+   ...job.legacyPostingDetails,
+   ...(input.portal!==undefined?{portal:input.portal}:{}),
+   importantDates:nextImportantDates,
+  }:job.legacyPostingDetails;
   const [updated]=await tx.update(placementJobs).set({
    title:input.title,description:input.description,locations:input.locations,openings:input.openings,
    ...(input.jobTypeLabel!==undefined?{jobTypeLabel:input.jobTypeLabel}:{}),
@@ -213,11 +180,10 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    ...(input.applicationDeadline!==undefined?{
     applicationDeadline:input.applicationDeadline?new Date(input.applicationDeadline):null,
    }:{}),
-   ...(input.applicationDeadline!==undefined||input.portal!==undefined||
-     input.wantedSkills!==undefined||policyChanged?
-    {legacyPostingDetails:updatedDetails}:{}),
-   minimumAnnualCtcInr:input.minimumAnnualCtcInr,
-   maximumAnnualCtcInr:input.maximumAnnualCtcInr,
+   ...(input.applicationDeadline!==undefined||input.portal!==undefined?{
+    legacyPostingDetails:nextPostingDetails,
+   }:{}),
+   minimumAnnualCtcInr:input.minimumAnnualCtcInr,maximumAnnualCtcInr:input.maximumAnnualCtcInr,
    fixedCtcLpa:input.fixedCtcLpa===null?null:input.fixedCtcLpa.toFixed(2),
    variableCtcLpa:input.variableCtcLpa===null?null:input.variableCtcLpa.toFixed(2),
    stipendPerMonthInr:input.stipendPerMonthInr,isDream:input.isDream,
@@ -315,8 +281,6 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
     ...(input.verifiedMarksOnly!==undefined?["verifiedMarksOnly"]:[]),
     ...(input.applicationDeadline!==undefined?["applicationDeadline","importantDates"]:[]),
     ...(input.allowedPassingYears!==undefined?["allowedPassingYears"]:[]),
-    ...(input.wantedSkills!==undefined?["wantedSkills"]:[]),
-    ...(policyChanged?["obsoleteLegacyEligibilityRulesCleared"]:[]),
     ...(input.allowedProgramIds!==undefined?["allowedProgramIds"]:[]),
     ...(input.portal!==undefined?["portal"]:[])],
   });
@@ -346,10 +310,7 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
     notified=recipients.length;
    }
   }
-  const [editor]=await tx.select({name:users.displayName}).from(users)
-   .where(eq(users.id,context.user.id)).limit(1);
-  return {id:updated.id,status:updated.status,updatedAt:updated.updatedAt.toISOString(),notified,
-   lastSavedBy:editor?.name??null,eligibilityRevision:updated.updatedAt.toISOString()};
+  return {id:updated.id,status:updated.status,updatedAt:updated.updatedAt.toISOString(),notified};
  });
 }
 
