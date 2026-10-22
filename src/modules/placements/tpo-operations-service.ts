@@ -31,6 +31,27 @@ import { requirePlacementManageScope } from "./scope";
 import { createPlacementJobInputSchema } from "./validation";
 import { adminDriveDirectoryQuerySchema } from "./admin-drive-directory-model";
 
+/** Status crosswalk for the old TPO / Super Admin drive dashboards.
+ * "Active" used two distinct legacy predicates:
+ * - old active college count included isActive drafts;
+ * - published college-or-organization jobs explicitly excluded drafts.
+ * In vNext, PUBLISHED is a persisted state, not a deadline test. Expiry is
+ * displayed at read time; the separately guarded candidate read in
+ * tpo-drive-deadline-service deliberately does NOT mutate lifecycle status.
+ * No global organization count can be inferred from a college-scoped query.
+ */
+export const TPO_OPERATIONS_COUNT_DEFINITIONS={
+ total:"Non-archived drives at the selected college (all statuses)",
+ draft:"Non-archived DRAFT drives at the selected college",
+ published:"Non-archived PUBLISHED drives at the selected college, including expired deadlines",
+ publishedAccepting:"PUBLISHED drives at the selected college with no elapsed application deadline",
+ expiredPublished:"PUBLISHED drives past the deadline; still published, not automatically closed",
+ legacyActiveIncludingDraft:"Imported isActive=true college drives, including drafts, excluding deleted imports",
+ legacyActivePublished:"Imported isActive=true and isDraft=false college drives, excluding deleted imports",
+ cancelled:"CANCELLED drives are neither active nor completed",
+ archived:"Archived drives are excluded from dashboard counts",
+} as const;
+
 type QueuePriority = "HIGH" | "MEDIUM" | "LOW";
 
 const priorityRank: Record<QueuePriority, number> = {
@@ -340,6 +361,15 @@ db
         published: sql<number>`count(*) filter (where ${placementJobs.status} = 'PUBLISHED')::int`,
         closed: sql<number>`count(*) filter (where ${placementJobs.status} = 'CLOSED')::int`,
         cancelled: sql<number>`count(*) filter (where ${placementJobs.status} = 'CANCELLED')::int`,
+        publishedAccepting: sql<number>`count(*) filter (where ${placementJobs.status} = 'PUBLISHED'
+          and (${placementJobs.applicationDeadline} is null or ${placementJobs.applicationDeadline} >= ${now}))::int`,
+        expiredPublished: sql<number>`count(*) filter (where ${placementJobs.status} = 'PUBLISHED'
+          and ${placementJobs.applicationDeadline} < ${now})::int`,
+        legacyActiveIncludingDraft: sql<number>`count(*) filter (where ${placementJobs.legacyIsActive} is true
+          and ${placementJobs.legacyWasDeleted} is distinct from true)::int`,
+        legacyActivePublished: sql<number>`count(*) filter (where ${placementJobs.legacyIsActive} is true
+          and ${placementJobs.legacyIsDraft} is false
+          and ${placementJobs.legacyWasDeleted} is distinct from true)::int`,
       }).from(placementJobs).where(and(
         eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt),
       )),
@@ -768,12 +798,24 @@ db
           ),
       },
     },
+    countDefinitions:TPO_OPERATIONS_COUNT_DEFINITIONS,
+    // No scheduled auto-close writer is installed: the authoritative SQL
+    // candidate list is read-only and any future writer must recheck
+    // PUBLISHED, exact deadline and selected college under a row lock/CAS.
+    expiryPolicy:"DERIVED_DEADLINE_NO_AUTOMATIC_STATUS_WRITE" as const,
+    legacyJobCounts:{
+      activeIncludingDraft:Number(jobTotals?.legacyActiveIncludingDraft??0),
+      activePublished:Number(jobTotals?.legacyActivePublished??0),
+      scope:"SELECTED_COLLEGE_NOT_ORGANIZATION" as const,
+    },
     summary: {
       totalJobs: Number(jobTotals?.total ?? 0),
       draftJobs: Number(jobTotals?.draft ?? 0),
       publishedJobs: Number(jobTotals?.published ?? 0),
       closedJobs: Number(jobTotals?.closed ?? 0),
       cancelledJobs: Number(jobTotals?.cancelled ?? 0),
+      publishedAcceptingApplications:Number(jobTotals?.publishedAccepting??0),
+      publishedWithExpiredDeadline:Number(jobTotals?.expiredPublished??0),
       // Dashboard samples contain up to 60 newest published jobs and 20
       // other jobs, but these totals include every non-archived college job.
       // Active=PUBLISHED, draft=DRAFT, closed=CLOSED; CANCELLED is separate.
