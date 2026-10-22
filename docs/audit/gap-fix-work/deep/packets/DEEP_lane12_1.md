@@ -10,8 +10,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-2-012-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-2-014-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-2-019-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
-- [ ] G2-20-004-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
-- [ ] G2-20-008-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
+- [x] G2-20-004-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
+- [x] G2-20-008-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-20-028-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-3-021-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-3-021-044  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
@@ -20,3 +20,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
+- G2-20-004-049: OK — `src/app/request-demo/page.tsx:6-18,111-115` retains exact demo subject and structured `mailto:` body from `docs/legacy-source/frontend/src/components/marketing/data.js:10-18` and the CTA of `docs/legacy-source/frontend/src/pages/request-demo.js:73-82`.
+- G2-20-008-040: OK — `src/app/request-demo/page.tsx:13-18,111-115` uses the five legacy fields (Name, Organization, Role, Phone, What you're looking to solve) and exact subject from `docs/legacy-source/frontend/src/components/marketing/data.js:10-18`.
