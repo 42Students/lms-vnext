@@ -106,7 +106,7 @@ describe("chat-16 direct public sign-in page render and tenant/OTP journeys", ()
     vi.mocked(getPublicCollegeBranding).mockResolvedValue({
       collegeName: "IIT Dharwad",
     } as never);
-    expect(await generateMetadata(params())).toMatchObject({ title: "Sign in · IIT Dharwad" });
+    expect(await generateMetadata(params())).toMatchObject({ title: { absolute: "Sign in · IIT Dharwad" } });
     expect(await html()).toContain('data-college="IIT Dharwad"');
   });
 });
