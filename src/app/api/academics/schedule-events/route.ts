@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
     if(typeof body==="object"&&body!==null&&!Array.isArray(body)){
       const record=body as Record<string,unknown>;
-      if(record.sectionId===undefined&&typeof record.classId==="string"){
+      if(record["sectionId"]===undefined&&typeof record["classId"]==="string"){
         const {classId,...rest}=record;
         body={...rest,sectionId:classId};
       }
