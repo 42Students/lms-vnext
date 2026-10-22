@@ -27,8 +27,7 @@ export default async function TpoTeamLegacyRedirect({
 
   const params = await searchParams;
   const tab = first(params.tab)?.toLowerCase();
-  // Legacy routing prioritizes tab=people/members, dropping every other
-  // query parameter even if a conversation filter also happens to be set.
+  // Roster bookmarks take precedence over conversation filters, as in the legacy UI.
   if (tab === "people" || tab === "members" || tab === "roster") {
     redirect("/tpo/settings/team");
   }
