@@ -39,12 +39,11 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
  const allVisible=visibleIds.length>0&&visibleIds.every(id=>selected.includes(id));
  function toggleVisible(checked:boolean){
   const visible=new Set(visibleIds);
-  setSelected(curr=>{
-   if(!checked)return curr.filter(id=>!visible.has(id));
-   const next=[...new Set([...curr,...visibleIds])];
-   if(next.length>maxSelection){setError("Select at most 1,000 students.");return curr;}
-   return next;
-  });
+  if(checked&&new Set([...selected,...visibleIds]).size>maxSelection){
+   setError("Select at most 1,000 students.");return;
+  }
+  setSelected(curr=>checked?[...new Set([...curr,...visibleIds])].slice(0,maxSelection):
+   curr.filter(id=>!visible.has(id)));
  }
  async function submit(){
   if(pendingRef.current||busy||selected.length===0)return;
@@ -156,22 +155,21 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
        const start=Math.min(lastClickedIndex.current,index),end=Math.max(lastClickedIndex.current,index);
        const range=capped.slice(start,end+1).map(row=>row.id);
        shiftHandled.current=true;
-       setSelected(curr=>{
-        const next=[...new Set([...curr,...range])];
-        if(next.length>maxSelection){setError("Select at most 1,000 students.");return curr;}
-        return next;
-       });
+       if(new Set([...selected,...range]).size>maxSelection){
+        setError("Select at most 1,000 students.");
+       }else{
+        setSelected(curr=>[...new Set([...curr,...range])].slice(0,maxSelection));
+       }
       }
       lastClickedIndex.current=index;
      }}
      onChange={event=>{
       if(shiftHandled.current){shiftHandled.current=false;return;}
-      setSelected(curr=>{
-       if(!event.target.checked)return curr.filter(id=>id!==learner.id);
-       if(curr.includes(learner.id))return curr;
-       if(curr.length>=maxSelection){setError("Select at most 1,000 students.");return curr;}
-       return [...curr,learner.id];
-      });
+      if(event.target.checked&&!selected.includes(learner.id)&&selected.length>=maxSelection){
+       setError("Select at most 1,000 students.");return;
+      }
+      setSelected(curr=>event.target.checked?[...new Set([...curr,learner.id])].slice(0,maxSelection):
+       curr.filter(id=>id!==learner.id));
      }}/>
     <span className="min-w-0 break-words">{learner.name}</span>
    </label>)}
