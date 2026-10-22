@@ -23,7 +23,7 @@ export function CollegeTermStaffingReport({termId}:{termId:string}){
   if(!termId)return;
   const controller=new AbortController();
   void apiFetch<StaffingResponse>(
-   "/api/academics/semester-course-mappings/"+encodeURIComponent(termId)+"/staffing",
+   "/api/academics/semesters/"+encodeURIComponent(termId)+"/staffing",
    {cache:"no-store",signal:controller.signal},
   ).then(result=>{
    if(!controller.signal.aborted)setState({termId,status:"ready",result});

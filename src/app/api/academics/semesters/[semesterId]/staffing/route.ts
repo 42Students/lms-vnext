@@ -10,9 +10,9 @@ export const dynamic="force-dynamic";
  * authenticated acting-college UUID term rather than trusting numeric IDs.
  * This is a read-only report: mapping writes use separate authorized routes.
  */
-export async function GET(_request:Request,{params}:{params:Promise<{termId:string}>}){
+export async function GET(_request:Request,{params}:{params:Promise<{semesterId:string}>}){
  try{
-  const {termId}=await params;
+  const {semesterId:termId}=await params;
   const result=await getCollegeTermStaffingReport(await getCurrentRequestContext(),termId);
   return NextResponse.json({status:"OK",message:"OK",data:result.courses,
    term:result.term,totalClasses:result.totalClasses,
