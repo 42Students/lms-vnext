@@ -32,7 +32,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("SA-tenants-modules-27 academic 
   })).resolves.toBeNull();
   await expect(writeDescendantRule({...admin,user:{...admin.user,systemRoles:[]}},
    SEED_IDS.collegeA,{
-    scopeType:"DEPARTMENT",scopeId:SEED_IDS.departmentA,module:"placements",
+    scopeType:"DEPARTMENT",scopeId:SEED_IDS.departmentA,module:"projects",
     action:"SET",enabled:true,locked:false,expected:null,
    })).rejects.toBeInstanceOf(AuthorizationError);
  });
