@@ -17,7 +17,7 @@ export default async function AfterCollegeSettings(){
  <PageHeader title="After college" description="See the outcomes students or the placement cell can select after college." />
  <TpoSettingsNav active="after-college" compact/>
  <div className="min-w-0 space-y-[var(--lms-space-4)]">
-  {settings.ready?<TpoOutcomeLabelsEditor initial={settings.labels} version={settings.version}/>:
+  {settings.ready?<TpoOutcomeLabelsEditor initial={settings.labels.map(({id,...label})=>({...label,...(id!==undefined?{id}:{})}))} version={settings.version}/>:
    <Alert tone="warning">Outcome-label storage is not available yet.</Alert>}
   <Disclosure title="Available outcomes" className="min-w-0" contentClassName="min-w-0 pt-[var(--lms-space-2)]">
    <ol className="grid min-w-0 gap-x-[var(--lms-space-6)] border-t border-border min-[768px]:grid-cols-2">{choices.map(choice=><li className="min-w-0 border-b border-border py-[var(--lms-space-3)]" key={choice.value}><strong>{choice.label}</strong><p className="text-xs text-muted-foreground">{choice.value==="DEBARRED"?"Automatic":choice.value.startsWith("PLACED_")?"Updated by placement results":"Set by you or the student"}</p></li>)}</ol>
