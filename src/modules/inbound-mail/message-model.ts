@@ -19,15 +19,20 @@ export function normalizeInboundMailSender(raw:string){
  return {display:cleaned,address:/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?email:null};
 }
 export const inboundMailListQuerySchema = z.strictObject({
- // Historical OPEN is a valid alias for NEW; unknown values must fail
- // validation before an invalid filter can broaden a private inbox read.
- status: z.enum(["OPEN","NEW","TRIAGED","RESOLVED","ALL"]).optional().transform(value=>
-  value==="OPEN"?"NEW" as const:value??"ALL" as const),
+ // OPEN is a historic NEW alias. DELETED is a retired filter: show ALL,
+ // but never widen the persisted actor/tenant scope of the inbox query.
+ status: z.enum(["OPEN","NEW","TRIAGED","RESOLVED","ALL","DELETED"]).optional().transform(value=>
+  value==="OPEN"?"NEW" as const:value==="DELETED"?"ALL" as const:value??"ALL" as const),
  kind:z.enum(["REPLY","OTHER"]).optional(),
  routingStatus:z.enum(inboundMailRoutingStatuses).optional(),
  q: z.string().trim().max(120,{message:"Search must contain at most 120 characters"}).default(""),
  recipient: z.string().trim().toLowerCase().pipe(z.email().max(320)).optional(),
- page: z.coerce.number().int().min(1).max(10000).default(1),
+ // Refuse coercion of booleans, arrays, empty strings and invalid pages.
+ page: z.union([
+  z.number().int().min(1).max(10000),
+  z.string().regex(/^[1-9][0-9]{0,4}$/).transform(Number)
+   .pipe(z.number().int().min(1).max(10000)),
+ ]).default(1),
 });
 export const inboundMailMetadataSchema = z.strictObject({
  id: z.uuid(), receivedAt: z.iso.datetime({ offset: true }),
