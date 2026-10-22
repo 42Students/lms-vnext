@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
+  useEffect,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -136,6 +137,20 @@ export function CourseActions({
   const [coverUrl,setCoverUrl]=useState(course.thumbnailUrl??"");
   const [coverPreviewBroken,setCoverPreviewBroken]=useState(false);
   const [coverUrlError,setCoverUrlError]=useState("");
+  const [imageOpen,setImageOpen]=useState(false);
+  const [imageFile,setImageFile]=useState<File|null>(null);
+  const [imagePreview,setImagePreview]=useState("");
+  const [imageBusy,setImageBusy]=useState(false);
+  const [imageError,setImageError]=useState("");
+  const [imageReceipt,setImageReceipt]=useState<string|null>(null);
+  const [imageVerification,setImageVerification]=useState("");
+  const imageRoute="/api/courses/"+encodeURIComponent(course.id)+"/image";
+  useEffect(()=>{
+    if(!imageFile){setImagePreview("");return;}
+    const url=URL.createObjectURL(imageFile);
+    setImagePreview(url);
+    return ()=>URL.revokeObjectURL(url);
+  },[imageFile]);
   const [takeaways,setTakeaways]=useState(course.takeaways??"");
   const { pending, run } =
     useCourseMutation();
@@ -176,6 +191,56 @@ export function CourseActions({
       :academicSetupErrorMessage(error,"Review your changes and retry."));
   }
 
+  async function completeImage(receiptId:string){
+    const result=await apiFetch<{image:{status:"READY"|"VERIFYING";imageUrl:string|null}}>(
+      imageRoute+"/complete",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({receiptId})});
+    if(result.image.status==="READY"){
+      setImageReceipt(null);setImageFile(null);setImageVerification("Course image updated");
+      setImageOpen(false);router.refresh();
+    }else{
+      setImageReceipt(receiptId);
+      setImageVerification("Verification in progress. The previous image remains visible until the replacement is approved.");
+    }
+  }
+  async function uploadImage(){
+    if(!imageFile||imageBusy||pending)return;
+    setImageBusy(true);setImageError("");
+    try{
+      if(!["image/jpeg","image/png","image/webp"].includes(imageFile.type)||
+        imageFile.size<1||imageFile.size>5*1024*1024)
+        throw new Error("Choose a JPEG, PNG or WebP image no larger than 5 MiB.");
+      const result=await apiFetch<{grant:{
+        receiptId:string;method:"PUT";uploadUrl:string;expiresAt:string;
+        requiredHeaders:Record<string,string>;
+      }}>(imageRoute,{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({originalName:imageFile.name,
+          contentType:imageFile.type,sizeBytes:imageFile.size})});
+      setImageReceipt(result.grant.receiptId);
+      const sent=await fetch(result.grant.uploadUrl,{method:"PUT",body:imageFile,
+        headers:result.grant.requiredHeaders,credentials:"omit",cache:"no-store"});
+      if(!sent.ok)throw new Error("Image upload failed. Your previous image is unchanged.");
+      await completeImage(result.grant.receiptId);
+    }catch(cause){setImageError(cause instanceof Error?cause.message:"Could not upload image.");}
+    finally{setImageBusy(false);}
+  }
+  async function checkImage(){
+    if(!imageReceipt||imageBusy)return;
+    setImageBusy(true);setImageError("");
+    try{await completeImage(imageReceipt);}
+    catch(cause){setImageError(cause instanceof Error?cause.message:"Image verification failed.");}
+    finally{setImageBusy(false);}
+  }
+  async function removeImage(){
+    if(imageBusy||pending)return;
+    setImageBusy(true);setImageError("");
+    try{
+      await apiFetch(imageRoute,{method:"DELETE"});
+      setImageReceipt(null);setImageFile(null);setImageOpen(false);router.refresh();
+    }catch(cause){setImageError(cause instanceof Error?cause.message:"Could not remove image.");}
+    finally{setImageBusy(false);}
+  }
+
   function archive() {
     setArchiveFailure("");
     run(
@@ -198,6 +263,9 @@ export function CourseActions({
           onClick={openEdit}>
           <CourseActionIcon kind="edit"/> Edit
         </Button>
+        <Button size="sm" variant="secondary" disabled={pending||imageBusy}
+          onClick={()=>{setImageError("");setImageVerification("");setImageOpen(true);}}
+          aria-label={"Change course image for "+course.name}>Image</Button>
         {duplicateHref?<Link href={duplicateHref} aria-label={"Duplicate course "+course.name}
           title={"Duplicate "+course.name}
           className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
@@ -210,6 +278,42 @@ export function CourseActions({
           <CourseActionIcon kind="archive"/> Archive
         </Button>
       </div>
+
+      <Dialog open={imageOpen} onOpenChange={open=>{if(!imageBusy)setImageOpen(open);}}
+        title={"Course image — "+course.name}
+        description="Upload a verified private image. Failed replacements retain the current image; old objects are removed only after the replacement is saved."
+        dismissible={!imageBusy} className="max-w-[600px]"
+        footer={<Button type="button" variant="secondary" disabled={imageBusy}
+          onClick={()=>setImageOpen(false)}>Close</Button>}>
+        <div className="grid gap-3">
+          {course.thumbnailUrl? <div className="grid gap-2">
+            <p className="text-xs font-semibold">Current image</p>
+            <Image src={course.thumbnailUrl} width={180} height={100} unoptimized
+              alt={"Current course image for "+course.name}
+              className="h-[100px] w-[180px] rounded-[var(--lms-control-radius)] border border-border object-cover"/>
+          </div>:<p className="text-xs text-muted-foreground">This course has no image.</p>}
+          <label className="grid gap-2 text-sm font-semibold">Change / Upload image
+            <input type="file" accept="image/jpeg,image/png,image/webp"
+              className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
+              disabled={imageBusy} onChange={event=>{
+                setImageFile(event.currentTarget.files?.[0]??null);setImageError("");
+              }}/>
+          </label>
+          {imagePreview?<Image src={imagePreview} width={180} height={100} unoptimized
+            alt="Selected replacement image preview" className="h-[100px] w-[180px] rounded border border-border object-cover"/>:null}
+          <p className="text-xs text-muted-foreground">JPEG, PNG or WebP, up to 5 MiB. Upload uses a short-lived signed grant; scanner-pending files never replace the published image.</p>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" size="sm" disabled={!imageFile||imageBusy} loading={imageBusy}
+              onClick={()=>void uploadImage()}>Upload image</Button>
+            {imageReceipt?<Button type="button" variant="secondary" size="sm"
+              disabled={imageBusy} onClick={()=>void checkImage()}>Check verification</Button>:null}
+            {course.thumbnailUrl?<Button type="button" size="sm" variant="secondary"
+              disabled={imageBusy} onClick={()=>void removeImage()}>Remove image</Button>:null}
+          </div>
+          {imageVerification?<p role="status" className="text-xs text-muted-foreground">{imageVerification}</p>:null}
+          {imageError?<Alert tone="error">{imageError}</Alert>:null}
+        </div>
+      </Dialog>
 
       <Dialog
         open={editOpen}

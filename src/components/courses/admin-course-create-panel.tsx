@@ -136,6 +136,18 @@ export function AdminCourseCreatePanel({
   const [cardColor,setCardColor]=useState(duplicated?.cardColor??"");
   const [coverUrl,setCoverUrl]=useState(duplicated?.thumbnailUrl??"");
   const [coverPreviewBroken,setCoverPreviewBroken]=useState(false);
+  const [imageFile,setImageFile]=useState<File|null>(null);
+  const [imagePreviewUrl,setImagePreviewUrl]=useState("");
+  const [imageBusy,setImageBusy]=useState(false);
+  const [imageError,setImageError]=useState("");
+  const [imageReceipt,setImageReceipt]=useState<string|null>(null);
+  const [createdImageCourseId,setCreatedImageCourseId]=useState<string|null>(null);
+  useEffect(()=>{
+    if(!imageFile){setImagePreviewUrl("");return;}
+    const preview=URL.createObjectURL(imageFile);
+    setImagePreviewUrl(preview);
+    return ()=>URL.revokeObjectURL(preview);
+  },[imageFile]);
   const [takeaways,setTakeaways]=useState(duplicated?.takeaways??"");
   const takeawayItems=takeaways.split(/\r?\n/).filter(item=>item.trim().length>0);
   function updateTakeaway(index:number,value:string){
@@ -237,8 +249,60 @@ export function AdminCourseCreatePanel({
     });
   }
 
+  async function finishCourseImage(courseId:string,receiptId:string) {
+    const completed=await apiFetch<{image:{status:"READY"|"VERIFYING";imageUrl:string|null}}>(
+      "/api/courses/"+encodeURIComponent(courseId)+"/image/complete",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({receiptId}),
+      });
+    if(completed.image.status==="READY"){
+      setImageReceipt(null);setCreatedImageCourseId(null);setImageFile(null);setImageError("");
+      showToast({tone:"success",title:"Course image verified",
+        description:"The uploaded image is now available on the course."});
+      router.refresh();
+    }else{
+      setImageReceipt(receiptId);
+      setImageError("Course saved. Its image is being checked. Use Check verification below; unverified images stay private.");
+    }
+  }
+
+  async function uploadCourseImage(courseId:string,file:File) {
+    if(imageBusy)return;
+    setImageBusy(true);setImageError("");
+    try{
+      if(!["image/jpeg","image/png","image/webp"].includes(file.type)||
+        file.size<1||file.size>5*1024*1024)
+        throw new Error("Choose a JPEG, PNG or WebP image no larger than 5 MiB.");
+      const result=await apiFetch<{grant:{
+        receiptId:string;method:"PUT";uploadUrl:string;expiresAt:string;
+        requiredHeaders:Record<string,string>;
+      }}>(
+        "/api/courses/"+encodeURIComponent(courseId)+"/image",{
+          method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({originalName:file.name,contentType:file.type,sizeBytes:file.size}),
+        });
+      setImageReceipt(result.grant.receiptId);
+      const sent=await fetch(result.grant.uploadUrl,{
+        method:"PUT",body:file,headers:result.grant.requiredHeaders,
+        credentials:"omit",cache:"no-store",
+      });
+      if(!sent.ok)throw new Error("Upload failed. Your course was saved; retry its image below.");
+      await finishCourseImage(courseId,result.grant.receiptId);
+    }catch(cause){
+      setImageError(cause instanceof Error?cause.message:"Image upload failed. Retry after saving the course.");
+    }finally{setImageBusy(false);}
+  }
+
   function createCourse(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(createdImageCourseId){
+      setImageError("This course was created. Finish or retry its image instead of creating a duplicate.");
+      return;
+    }
+    if(imageFile&&(!["image/jpeg","image/png","image/webp"].includes(imageFile.type)||
+       imageFile.size<1||imageFile.size>5*1024*1024)){
+      setImageError("Choose a JPEG, PNG or WebP image no larger than 5 MiB.");return;
+    }
     const issues: Partial<Record<"department"|"name"|"shortTitle"|"code"|"heading"|"description"|"cardColor",string>> = {};
     if (!courseDepartmentId) issues.department = "Select a department";
     if (!courseName.trim()) issues.name = "Enter a course name";
@@ -284,7 +348,9 @@ export function AdminCourseCreatePanel({
       }),
       `Created course “${courseName.trim()}”.`,
       (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
-        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");setIntroductionHeading("In this Course");setCoverUrl("");setCoverPreviewBroken(false);setVisibleToStudents(true);setCreateErrors({});if(copy)router.replace(courseBasePath); },
+        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");setIntroductionHeading("In this Course");setCoverUrl("");setCoverPreviewBroken(false);setVisibleToStudents(true);setCreateErrors({});
+        if(id&&imageFile){setCreatedImageCourseId(id);void uploadCourseImage(id,imageFile);}
+        if(copy)router.replace(courseBasePath); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
@@ -469,6 +535,32 @@ export function AdminCourseCreatePanel({
               </div>:null}
             {coverPreviewBroken?<p role="alert" className="mt-2 text-xs text-warning">Could not preview this image. Check the URL before saving.</p>:null}
             {createErrors.coverUrl?<p role="alert" className="mt-1 text-xs text-danger">{createErrors.coverUrl}</p>:null}
+            <label htmlFor="course-image-file" className="mt-3 block text-[13px] font-semibold text-body">
+              Upload course image
+            </label>
+            <input id="course-image-file" type="file" accept="image/jpeg,image/png,image/webp"
+              disabled={pending||imageBusy||Boolean(createdImageCourseId)}
+              className="mt-2 block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
+              onChange={event=>{setImageFile(event.currentTarget.files?.[0]??null);setImageError("");}}/>
+            <p className="mt-1 text-xs text-muted-foreground">JPEG, PNG or WebP, up to 5 MiB. After creating the Course, the image uploads through a short-lived signed grant. Only verified images are shown to students.</p>
+            {imagePreviewUrl?<div className="mt-3 flex flex-wrap items-center gap-3">
+              <Image src={imagePreviewUrl} width={180} height={100} unoptimized
+                alt="Selected course image preview" className="h-[100px] w-[180px] rounded-[var(--lms-control-radius)] border border-border object-cover"/>
+              {!createdImageCourseId?<Button type="button" size="sm" variant="secondary"
+                disabled={pending||imageBusy} onClick={()=>setImageFile(null)}>Remove selected image</Button>:null}
+            </div>:null}
+            {imageBusy?<p role="status" className="mt-2 text-xs text-muted-foreground">Uploading or verifying the course image…</p>:null}
+            {imageError?<p role="alert" className="mt-2 text-xs text-error">{imageError}</p>:null}
+            {createdImageCourseId&&imageFile?<div className="mt-2 flex flex-wrap gap-2">
+              <Button type="button" size="sm" variant="secondary" loading={imageBusy} disabled={imageBusy}
+                onClick={()=>void uploadCourseImage(createdImageCourseId,imageFile)}>Retry image upload</Button>
+              {imageReceipt?<Button type="button" size="sm" variant="secondary" disabled={imageBusy}
+                onClick={()=>{setImageBusy(true);void finishCourseImage(createdImageCourseId,imageReceipt)
+                  .catch(cause=>setImageError(cause instanceof Error?cause.message:"Verification failed."))
+                  .finally(()=>setImageBusy(false));}}>Check verification</Button>:null}
+              <Link href={courseBasePath+"/"+createdImageCourseId}
+                className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open saved course</Link>
+            </div>:null}
           </div>
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-introduction-heading">In this Course – Heading</FieldLabel>
