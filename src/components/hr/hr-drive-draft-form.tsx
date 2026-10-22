@@ -75,6 +75,8 @@ export function HrDriveDraftForm({
   const [savedRequestId,setSavedRequestId]=useState<string|null>(null);
   const [approvedJobId,setApprovedJobId]=useState<string|null>(null);
   const [submitting,setSubmitting] = useState(false);
+  const [jdUploading,setJdUploading] = useState(false);
+  const [jdUploadMessage,setJdUploadMessage] = useState("");
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
   const submittedRef=useRef(false);
   const submittingRef=useRef(false);
@@ -186,6 +188,56 @@ export function HrDriveDraftForm({
       setNotice("Restored local draft. It has not been submitted or sent.");}
     catch{setNotice("Unable to access saved drafts in this browser.");}
   }
+  async function uploadJobDescription(file: File | undefined) {
+    if (!file || jdUploading || submitting) return;
+    const extension = file.name.toLowerCase().split(".").pop();
+    const types: Record<string, string> = {
+      pdf: "application/pdf", doc: "application/msword",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    };
+    const contentType = extension ? types[extension] : undefined;
+    if (!contentType) { setJdUploadMessage("A job description must be a PDF or a Word file"); return; }
+    if (file.size === 0) { setJdUploadMessage("The file is empty"); return; }
+    if (file.size > 5 * 1024 * 1024) {
+      setJdUploadMessage("The file is too large. The limit is 5 MB"); return;
+    }
+    setJdUploading(true);
+    setJdUploadMessage("Uploading job description...");
+    try {
+      const grant = await apiFetch("/api/placements/recruiter/drives/jd-upload", {
+        method: "POST", credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "INITIATE", collegeId, originalName: file.name,
+          contentType, sizeBytes: file.size }),
+      }) as { objectKey: string; uploadUrl: string; requiredHeaders: Record<string, string> };
+      const uploaded = await fetch(grant.uploadUrl, { method: "PUT", body: file,
+        headers: grant.requiredHeaders, credentials: "omit", redirect: "error" });
+      if (!uploaded.ok) throw new Error("Upload was rejected");
+      await apiFetch("/api/placements/recruiter/drives/jd-upload", {
+        method: "POST", credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "CONFIRM", collegeId, objectKey: grant.objectKey }),
+      });
+      setDraft(current => ({ ...current, jdObjectKey: grant.objectKey }));
+      setJdUploadMessage("Job description uploaded");
+    } catch {
+      setJdUploadMessage("Could not upload the file. Try again. If the file is being scanned, retry after verification.");
+    } finally { setJdUploading(false); }
+  }
+
+  async function viewUploadedJobDescription() {
+    if (!draft.jdObjectKey) return;
+    setJdUploadMessage("");
+    try {
+      const response = await apiFetch("/api/placements/recruiter/drives/jd-upload?" +
+        new URLSearchParams({ collegeId, objectKey: draft.jdObjectKey }),
+        { method: "GET", credentials: "same-origin", cache: "no-store" }) as { readUrl: string };
+      const parsed = new URL(response.readUrl);
+      if (parsed.protocol !== "https:") throw new Error("Invalid signed read link");
+      window.open(parsed.toString(), "_blank", "noopener,noreferrer");
+    } catch { setJdUploadMessage("Could not open the file. Try again after verification."); }
+  }
+
   async function copyPreview() {
     if (!result.success) {
       setNotice("Complete the highlighted requirements before copying a draft.");
@@ -200,7 +252,7 @@ export function HrDriveDraftForm({
   }
 
   async function sendFormalDriveRequest(){
-    if(submitting||submittingRef.current||submittedRef.current)return;
+    if(submitting||jdUploading||submittingRef.current||submittedRef.current)return;
     const valid=hrDriveDraftSchema.safeParse(draft);
     if(!valid.success){
       const fields: Record<string, string> = {};
@@ -403,9 +455,21 @@ export function HrDriveDraftForm({
             {fieldErrors.jdUrl}
           </span>:null}
           <span id="hr-jd-url-help" className="text-xs font-normal text-muted-foreground">
-            Use an HTTPS link that applicants can open. Private PDF/Word uploads
-            require a verified signed-storage grant and are not enabled here.
+            Use a public HTTPS link, or upload a private PDF/Word file below. Private files require a verified scan and a short-lived authorized link.
           </span>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <label htmlFor="hr-jd-upload" className="text-sm font-semibold">Upload a PDF or Word file (optional, up to 5 MB)</label>
+            <input id="hr-jd-upload" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              disabled={submitting || jdUploading} className="max-w-full text-sm"
+              onChange={event => { const file = event.currentTarget.files?.[0];
+                void uploadJobDescription(file); event.currentTarget.value = ""; }} />
+            {draft.jdObjectKey ? <>
+              <Button type="button" variant="secondary" onClick={() => void viewUploadedJobDescription()}>View the uploaded file</Button>
+              <Button type="button" variant="secondary" disabled={jdUploading || submitting}
+                onClick={() => { setDraft(current => ({ ...current, jdObjectKey: undefined })); setJdUploadMessage(""); }}>Remove</Button>
+            </> : null}
+          </div>
+          {jdUploadMessage ? <span role="status" className="text-xs text-muted-foreground">{jdUploadMessage}</span> : null}
         </div>
       </section>
 
@@ -603,7 +667,7 @@ export function HrDriveDraftForm({
                 rememberFieldErrors(fields);
               } else setFieldErrors({});
             }}>Preview and validate</Button>
-          <Button type="button" disabled={!result.success||submitting}
+          <Button type="button" disabled={!result.success||submitting||jdUploading}
             loading={submitting} aria-busy={submitting}
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
@@ -641,7 +705,8 @@ export function HrDriveDraftForm({
           <div className="mt-4 min-w-0 space-y-2 break-words border-y border-border bg-transparent py-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
-            {result.success && result.data.jdUrl ?
+            {draft.jdObjectKey ? <p>Private job description attached. Students receive an authorized link after publication.</p> : null}
+             {result.success && result.data.jdUrl ?
               <p>Job description: <a href={result.data.jdUrl} target="_blank"
                 rel="noopener noreferrer" referrerPolicy="no-referrer"
                 className="font-semibold text-primary-text underline underline-offset-2">
@@ -690,13 +755,13 @@ export function HrDriveDraftForm({
            tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"}
            message={notice} /> : null}
         <p className="mt-3 text-xs text-muted-foreground">
-          Formal requests are persisted for placement-cell review. Linked job descriptions are shown in the review; private file uploads and automatic publication are not available here.
+          Formal requests and verified private job descriptions are saved for placement-cell review. Files require a malware scan and are never published automatically.
         </p>
       </section>
       </aside>
       </div>
       <div className="flex justify-stretch border-t border-border pt-4 lg:hidden">
-        <Button type="button" className="w-full" disabled={!result.success || submitting}
+        <Button type="button" className="w-full" disabled={!result.success || submitting || jdUploading}
           loading={submitting} aria-busy={submitting}
           onClick={() => void sendFormalDriveRequest()}>
           {fixRequestId ? editMode === "EDIT" ? "Save changes" : "Fix and Resend" : "Send for review"}
