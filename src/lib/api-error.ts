@@ -126,7 +126,8 @@ export function apiErrorResponse(error: unknown) {
         : 404;
 
     return respond(
-      { error: error.code },
+      { error: error.code, ...(error.code==="ORGANIZATION_HAS_COLLEGES"&&error.blockers?
+        {blockers:error.blockers}:{}) },
       { status },
     );
   }

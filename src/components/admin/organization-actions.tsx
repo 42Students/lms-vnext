@@ -86,10 +86,15 @@ export function OrganizationActions({
       const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
+        const blockers=payload?.blockers as {active?:unknown;archived?:unknown}|undefined;
+        const counts=blockers&&typeof blockers.active==="number"&&
+          Number.isSafeInteger(blockers.active)&&typeof blockers.archived==="number"&&
+          Number.isSafeInteger(blockers.archived)
+          ?blockers.active+" active and "+blockers.archived+" archived college(s)":"active or archived colleges";
         showToast({
           tone: "error",
           title: "Failed to archive organization: "+(payload?.error === "ORGANIZATION_HAS_COLLEGES"
-            ? "Cannot archive organization: colleges exist under this organization"
+            ? "Cannot archive organization: "+counts+" still belong to it. Resolve every linked college before retrying."
             : "The organization could not be archived."),
         });
         return;
@@ -181,7 +186,7 @@ export function OrganizationActions({
         open={archiveOpen}
         onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
         title={"Delete “"+name+"”? (Archive)"}
-        description="This action archives rather than permanently deletes the organization. Colleges must be removed or archived first."
+        description="This action archives rather than permanently deletes the organization. Every linked college, including an archived one hidden from active counts, blocks this action. Review those dependencies first."
         confirmLabel="Archive organization" confirmVariant="danger"
         pending={pending}
         onConfirm={archive}
