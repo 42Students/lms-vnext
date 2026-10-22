@@ -9,7 +9,7 @@ import {PlacementsServiceError} from "./errors";
 import {getLatestPlacementOfferForApplication,listPlacementJobOffers} from "./offer-service";
 import {enrichTpoOfferFacts} from "./tpo-offer-academic-enrichment";
 import {requirePlacementManageScope} from "./scope";
-import {offerRegisterQuery,projectOfferRegister,tpoDriveOfferRegisterCsv} from "./tpo-drive-offer-register-model";
+import {offerRegisterQuery,offerRegisterCsvQuery,projectOfferRegister,tpoDriveOfferRegisterCsv} from "./tpo-drive-offer-register-model";
 export async function getTpoDriveOfferRegister(context:RequestContext,raw:unknown){
  const member=context.membership;
  if(!member||!hasMembershipRole(context,"TPO")||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
@@ -28,7 +28,7 @@ export async function getTpoDriveOfferRegister(context:RequestContext,raw:unknow
 
 /** Read-only, scoped export. Does not mark a letter delivered or contact a learner. */
 export async function getTpoDriveOfferRegisterCsv(context:RequestContext,raw:unknown){
- const input=offerRegisterQuery.omit({page:true}).parse(raw);
+ const input=offerRegisterCsvQuery.parse(raw);
  const scoped=await getTpoDriveOfferRegister(context,{...input,page:1});
  const facts=await listPlacementJobOffers(context,scoped.job.id);
  const enriched=await enrichTpoOfferFacts(facts,context.membership!.collegeId);
