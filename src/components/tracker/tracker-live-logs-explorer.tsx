@@ -169,9 +169,9 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
   }
   periodicReload.current=()=>load(false);
   useEffect(()=>{
-    if(!autoRefresh||rateLimited)return;
+    if(!autoRefresh||rateLimited||detailEntry!==null)return;
     const refresh=()=>{
-      if(document.hidden||reportOpen||muteTarget!==null||pending)return;
+      if(document.hidden||reportOpen||detailEntry!==null||muteTarget!==null||pending)return;
       void periodicReload.current();
     };
     const timer=window.setInterval(refresh,30_000);
@@ -180,7 +180,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange",refresh);
     };
-  },[autoRefresh,rateLimited,reportOpen,muteTarget,pending]);
+  },[autoRefresh,rateLimited,reportOpen,detailEntry,muteTarget,pending]);
   useEffect(()=>{
     const abort=new AbortController();
     const initial=async()=>{
