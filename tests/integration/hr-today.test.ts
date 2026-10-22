@@ -5,6 +5,8 @@ import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementRound} from "@/modules/placements/round-service";
+import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
 import {buildRecruiterToday} from "@/modules/placements/recruiter-today-model";
 import {SEED_IDS} from "../../scripts/db-seed-data";
@@ -21,6 +23,8 @@ describe.skipIf(!enabled)("HR Today PG scope",()=>{
   const foreign=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Other "+nonce,primaryDomain:"other-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:company.relationship.id,
     title:"Today QA "+nonce,description:"Test job",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
+  await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Panel"});
+  await upsertJobEligibilityPolicy(tpo,job.id,{});
   await publishPlacementJob(tpo,job.id);
   const userId=randomUUID();
   const ctx=(companyId:string,rel:string,collegeId:string):RequestContext=>({

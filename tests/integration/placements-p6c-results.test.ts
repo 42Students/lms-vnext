@@ -1,4 +1,5 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
+import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {
   afterAll,
   beforeEach,
@@ -175,6 +176,7 @@ async function createDrive(roundKinds: Array<
     );
   }
 
+  await upsertJobEligibilityPolicy(tpo,job.id,{});
   await publishPlacementJob(tpo, job.id);
   const application = await applyToPlacementJob(
     learner,
