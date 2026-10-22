@@ -54,7 +54,8 @@ export default async function SuperAdminProjectSectionRoute({
     value.length<=120&&/^[a-zA-Z0-9 _-]*$/.test(value)?value:undefined;
   return <div className="min-w-0 max-w-full space-y-3">
     <AdminProjectSectionPage projectId={canonicalId} section={section}
-      basePath="/admin/projects" from={one(query.from)}
-      reason={one(query.reason)} polishAdminSection/>
+      basePath="/admin/projects"
+      {...(one(query["from"]) !== undefined ? {from:one(query["from"])} : {})}
+      {...(one(query["reason"]) !== undefined ? {reason:one(query["reason"])} : {})} polishAdminSection/>
   </div>;
 }
