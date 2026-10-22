@@ -133,9 +133,8 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     <section className="grid min-w-0 grid-cols-2 gap-3 pt-3 md:grid-cols-3 min-[992px]:grid-cols-5">
    {[[ "Total Applications",data.totalApplications] as const,...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
     .map(([name,value])=><StatTile key={name} label={name} value={value} />)}
-   <StatTile label="Avg. time to shortlist"
-    value={data.averageHoursToShortlist==null?"No recorded transitions":
-      Math.round(data.averageHoursToShortlist)+" hrs"} />
+   {data.averageHoursToShortlist!=null ? <StatTile label="Avg. time to shortlist"
+    value={Math.round(data.averageHoursToShortlist)+" hrs"} /> : null}
     </section>
     {data.totalApplications===0?<p role="status" className="text-sm text-body">
        {filtered?"No data for the selected filters":"No placement applications have been recorded yet"}
@@ -155,7 +154,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
           {stage==="APPLIED"?"100% of applied":comparisonStage[stage]&&
            (cumulative[comparisonStage[stage]!]??0)>0
             ?Math.round(100*(cumulative[stage]??0)/(cumulative[comparisonStage[stage]!]??1))+
-              "% vs observed "+label(comparisonStage[stage]!)
+              "% of "+label(comparisonStage[stage]!)
             :Math.round(100*(cumulative[stage]??0)/total)+"% of applications"}
         </span>
       </div>
