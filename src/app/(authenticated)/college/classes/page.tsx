@@ -20,7 +20,7 @@ export default async function CollegeClassesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) return <div className="space-y-4">
+  if (!context.membership) return <div className="min-w-0 overflow-x-clip space-y-4">
     <PageHeader title="Classes & Sections" description="Create teaching sections within a batch, manage capacity and schedule recurring sessions from the same roster." />
     <div role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
       Admin not assigned to a college. Contact your administrator to be assigned to a college.{" "}
@@ -29,7 +29,7 @@ export default async function CollegeClassesPage({
   </div>;
   const raw = readCollegeStructureParams(await searchParams);
   const parsed = collegeClassQuerySchema.safeParse(raw);
-  if (!parsed.success) return <div className="space-y-4">
+  if (!parsed.success) return <div className="min-w-0 overflow-x-clip space-y-4">
     <PageHeader title="Classes & Sections" />
     <ErrorState title="Invalid class filters"
       description={collegeDirectoryValidationMessage(parsed.error)}

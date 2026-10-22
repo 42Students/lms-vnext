@@ -28,7 +28,7 @@ const context={user:{id:"recruiter"},recruiter:{
 
 const builder=(rows:unknown[])=>({
  from(){return this;},innerJoin(){return this;},where(){return this;},
- orderBy(){return this;},having(){return this;},groupBy(){return Promise.resolve(rows);},
+ orderBy(){return this;},having(){return this;},groupBy(){return this;},
  limit(){return Promise.resolve(rows);},
  then(ok:(x:unknown[])=>unknown,fail?:(error:unknown)=>unknown){
   return Promise.resolve(rows).then(ok,fail);

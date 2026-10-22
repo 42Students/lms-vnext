@@ -20,7 +20,7 @@ export default async function CollegeHiringDashboardPage({
 }: { searchParams: Promise<Record<string,string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "COLLEGE_ADMIN")) {
-    return <div className="min-w-0 space-y-4">
+    return <div className="min-w-0 overflow-x-clip space-y-4">
       <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}/>
       <ErrorState title="Admin not assigned to a college"
         description="Contact your administrator for a College Admin membership before viewing hiring reports."
@@ -29,7 +29,7 @@ export default async function CollegeHiringDashboardPage({
   }
   const query = collegeHiringAnalyticsQuery(await searchParams);
   if (!query.success) {
-    return <div className="min-w-0 space-y-4">
+    return <div className="min-w-0 overflow-x-clip space-y-4">
       <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}
       actions={<Link href="/college/placements/readiness-by-department"
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -61,7 +61,7 @@ export default async function CollegeHiringDashboardPage({
     throw funnelResult.reason;
   const workspace=workspaceResult.status==="fulfilled"?workspaceResult.value:null;
   const funnel=funnelResult.status==="fulfilled"?funnelResult.value:null;
-  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
     <nav aria-label="Placements" className="flex min-w-0 flex-wrap border-b border-[var(--lms-canvas-border)] text-sm font-semibold">
       {([{label:"Drives",href:"/college/placements/drives"},
         {label:"Companies",href:"/college/placements/companies"},

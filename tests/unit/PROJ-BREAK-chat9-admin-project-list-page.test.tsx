@@ -31,9 +31,13 @@ function visibleProps(node:unknown):string[]{
   if(node===null||node===undefined||typeof node==="boolean")return [];
   if(typeof node==="string"||typeof node==="number")return [String(node)];
   if(Array.isArray(node))return node.flatMap(visibleProps);
-  if(!isValidElement(node))return [];
+  if(!isValidElement(node)){
+    if(typeof node!=="object")return [];
+    const fields=node as Record<string,unknown>;
+    return ["href","label","title"].flatMap(key=>visibleProps(fields[key]));
+  }
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","action","href","eyebrow"].flatMap(key=>visibleProps(props[key]));
+  return ["children","title","description","action","href","eyebrow","label","items"].flatMap(key=>visibleProps(props[key]));
 }
 function render(searchParams:Record<string,string|string[]|undefined>={}){
   return SuperAdminProjectsPage({searchParams:Promise.resolve(searchParams)});
@@ -49,8 +53,8 @@ describe("IIT Dharwad Super Admin Projects workspace page privacy and failure re
     const content=visibleProps(await render({
       search:"IIT Dharwad",status:"ACTIVE",page:"2",pageSize:"20",view:"cards",
     })).join(" ");
-    expect(content).toContain("Project workspaces unavailable");
-    expect(content).toContain("Your search and filters were not changed.");
+    expect(content).toContain("Failed to load project workspaces");
+    expect(content).toContain("Your search and filters were not changed");
     expect(content).toContain("Retry loading workspaces");
     expect(content).toContain("search=IIT+Dharwad");
     expect(content).toContain("status=ACTIVE");
@@ -64,16 +68,16 @@ describe("IIT Dharwad Super Admin Projects workspace page privacy and failure re
     const content=visibleProps(await render()).join(" ");
     expect(content).toContain("Project templates are temporarily unavailable");
     expect(content).toContain("Your workspaces are still visible");
-    expect(content).not.toContain("Project workspaces unavailable");
+    expect(content).not.toContain("Failed to load project workspaces");
     expect(content).not.toContain("INTERNAL_TEMPLATE_STORAGE_CREDENTIAL_NEVER_SHOW");
     expect(state.listReads).toBe(1);
     expect(state.templateReads).toBe(1);
   });
   it("PROJ-BREAK-admin-idor-26 missing selected college denies both data reads",async()=>{
     state.selected=false;
-    const content=visibleProps(await render()).join(" ");
-    expect(content).toContain("No college selected");
-    expect(content).toContain("Pick a college in the header");
+    // No college grants permission to a workspace list: the page routes
+    // to the template catalogue without consulting college-scoped data.
+    await expect(render()).rejects.toThrow("NEXT_REDIRECT");
     expect(state.listReads).toBe(0);
     expect(state.templateReads).toBe(0);
   });

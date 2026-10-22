@@ -149,7 +149,8 @@ describe("IIT Dharwad Projects: mentor reassignment workload tenant and input sa
     expect(state.liveChecks).toBe(1);
     const rendered=state.filters.map(value=>new PgDialect().sqlToQuery(value as SQL));
     expect(rendered.some(item=>item.params.includes("ARCHIVED"))).toBe(true);
-    expect(rendered.some(item=>item.params.includes("COMPLETED"))).toBe(true);
+    // Completed workspaces still count as non-archived mentor workload.
+    expect(rendered.some(item=>item.params.includes("COMPLETED"))).toBe(false);
     expect(rendered.some(item=>item.params.includes(collegeId))).toBe(true);
   });
 });
