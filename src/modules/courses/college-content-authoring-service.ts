@@ -130,9 +130,9 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  .where(and(...where))
  .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title),asc(lessonContents.id))
  .limit(pageSize+1).offset((page-1)*pageSize),[]);
- const positions=lessons.length?await db.select({lessonId:lessonContents.lessonId,highest:max(lessonContents.sequence)})
+ const positions=lessons.length?await readDependency("Content sequence",db.select({lessonId:lessonContents.lessonId,highest:max(lessonContents.sequence)})
   .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
-  .groupBy(lessonContents.lessonId):[];
+  .groupBy(lessonContents.lessonId),[]):[];
  const nextByLesson=new Map(positions.map(row=>[row.lessonId,(row.highest??-1)+1]));
  return {dependencyErrors,deliveries,faculty,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existingTruncated:existing.length>pageSize,existingPage:page,
   existingPageSize:pageSize,
