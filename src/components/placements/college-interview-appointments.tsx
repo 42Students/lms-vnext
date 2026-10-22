@@ -338,7 +338,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       onClick={()=>setShowConflictsOnly(value=>!value)} className="min-h-11 md:min-h-9">
       {showConflictsOnly?"Show all interviews":"Conflicts only ("+appointments.filter(hasConflict).length+")"}
     </Button>
-    <a download="drive-interviews.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(appointmentsCsv)}
+    <a download="interviews.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent("\uFEFF"+appointmentsCsv+"\r\n")}
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
      Export CSV
     </a>
