@@ -4,14 +4,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Banner } from "@/components/ui/banner";
 import { EmptyState } from "@/components/ui/empty-state";
-import {useEffect,useRef,useState} from "react";
+import {useEffect,useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {PopoverPanel} from "@/components/ui/popover";
 
-type College={id:string;name:string;assigned:boolean;canAssign:boolean};
+type College={
+ id:string;name:string;code?:string;location?:string|null;
+ assigned:boolean;canAssign:boolean;
+};
 type BulkOperation="assign"|"remove";
 
 export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
@@ -43,6 +46,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    savedSelection.filter(row=>selected.includes(row.id))
   ));}catch{/* optional */}
  },[selectionKey,selectionLoaded,selected,savedSelection]);
+ const [filter,setFilter]=useState("");
  const [operation,setOperation]=useState<BulkOperation|null>(null);
  const [pending,setPending]=useState(false);
  const [progress,setProgress]=useState<{done:number;total:number}|null>(null);
@@ -50,7 +54,12 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
  const [notice,setNotice]=useState("");
  const [noticeTone,setNoticeTone]=useState<"success"|"warning">("success");
 
- const allowed=colleges.filter(row=>row.canAssign);
+ const shown=useMemo(()=>colleges.filter(row=>{
+   const query=filter.trim().toLocaleLowerCase("en-IN");
+   return !query||[row.name,row.code??"",row.location??""].some(value=>
+     value.toLocaleLowerCase("en-IN").includes(query));
+ }),[colleges,filter]);
+ const allowed=shown.filter(row=>row.canAssign);
  const targets=selected.map(id=>colleges.find(row=>row.id===id)??{
    id,name:"Selected college "+id.slice(0,8),assigned:false,canAssign:true,
  }).filter(row=>operation==="assign"?!row.assigned:row.assigned||!colleges.some(college=>college.id===row.id));
@@ -107,7 +116,8 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   <Disclosure
    title="College availability"
    ariaLabel="Template college bulk assignment"
-   className="min-w-0 border-b border-border pb-[var(--lms-space-4)]"
+   defaultOpen
+   className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4"
    contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-3)]"
   >
    <p className="m-0 max-w-prose text-[13px] leading-5 text-muted-foreground">
@@ -117,6 +127,21 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    {!published ? (
     <Banner tone="info">Publish this template before assigning it to colleges.</Banner>
    ) : null}
+   <div className="flex min-w-0 flex-wrap items-end gap-2">
+    <label className="w-full text-[13px] font-semibold text-body sm:w-[240px]">
+      Search college
+      <input type="search" value={filter}
+       placeholder="Search colleges..."
+       aria-label="Search colleges"
+       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm md:min-h-9"
+       onChange={event=>setFilter(event.target.value)}/>
+    </label>
+    {filter?<Button type="button" size="sm" variant="secondary"
+      onClick={()=>setFilter("")}>Clear search</Button>:null}
+    <span role="status" className="text-xs text-body">
+      {shown.length} of {colleges.length} colleges on this page
+    </span>
+   </div>
    {colleges.length===0 ? (
     <EmptyState
      title="No colleges available"
@@ -150,14 +175,22 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
        </Button>
       </div>
      </div>
-     <ul className="grid min-w-0 grid-cols-1 gap-x-[var(--lms-space-4)] lg:grid-cols-2">
-      {colleges.map(college=>(
-       <li key={college.id} className="min-w-0">
-        <label className={"flex min-h-11 min-w-0 items-start gap-[var(--lms-space-3)] border-b border-border px-2 py-[var(--lms-space-3)] text-sm leading-5 text-body transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary md:min-h-9 "+(college.canAssign?"cursor-pointer hover:bg-primary-subtle":"cursor-not-allowed opacity-60")} aria-disabled={!college.canAssign}>
-         <Checkbox
+     <div className="min-w-0 overflow-x-auto">
+      <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+       <caption className="sr-only">Select colleges for template availability</caption>
+       <thead><tr className="border-b border-border bg-muted/20">
+        <th scope="col" className="w-12 px-3 py-2">Select</th>
+        <th scope="col" className="px-3 py-2">College</th>
+        <th scope="col" className="px-3 py-2">Availability</th>
+       </tr></thead>
+       <tbody>
+      {shown.map(college=>(
+       <tr key={college.id} className="border-b border-border">
+        <td className="px-3 py-2 align-middle">
+         <Checkbox aria-label={"Select "+college.name}
+
           checked={selected.includes(college.id)}
           disabled={pending||!college.canAssign}
-          className="mt-0.5"
           onChange={event=>{
            setSelected(current=>event.target.checked?
             (current.includes(college.id)?current:[...current,college.id]):
@@ -167,18 +200,25 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
             current.filter(row=>row.id!==college.id));
           }}
          />
-         <span className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-          <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">
-           {college.name}
-          </span>
-          <StatusBadge tone={college.assigned?"success":"neutral"} className="self-start sm:shrink-0">
+        </td>
+        <th scope="row" className="min-w-0 px-3 py-2 font-semibold">
+         <span className="block break-words">{college.name}</span>
+         <span className="block text-xs font-normal text-muted-foreground">
+           {[college.code,college.location].filter(Boolean).join(" · ")||"—"}
+         </span>
+        </th>
+        <td className="px-3 py-2">
+          <StatusBadge tone={college.assigned?"success":"neutral"}>
            {college.assigned?"Assigned":"Not assigned"}
           </StatusBadge>
-         </span>
-        </label>
-       </li>
+        </td>
+       </tr>
       ))}
-     </ul>
+       </tbody>
+      </table>
+     </div>
+     {!shown.length?<EmptyState title="No matching colleges"
+       description="No colleges match this search on the current page. Clear the search or browse another page."/>:null}
      <div className="flex min-w-0 flex-col gap-2 border-t border-border pt-[var(--lms-space-4)] sm:flex-row sm:items-center">
       <Button type="button" variant="primary"
        className="w-full sm:w-auto"
