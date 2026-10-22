@@ -91,7 +91,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_lesson-video-service.ts.md` (edit src/modules/courses/lesson-video-service.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_learner-assignment-due-notice-model.ts.md` (edit src/modules/courses/learner-assignment-due-notice-model.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_faculty-assessment-lifecycle.tsx.md` (edit src/components/courses/faculty-assessment-lifecycle.tsx; 3 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_faculty-report-pdf.ts.md` (edit src/modules/courses/faculty-report-pdf.ts; 3 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_faculty-report-pdf.ts.md` (edit src/modules/courses/faculty-report-pdf.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_internal_placements_recruiter-message-inbound_route.ts.md` (edit src/app/api/internal/placements/recruiter-message-inbound/route.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_faculty-contacts-service.ts.md` (edit src/modules/courses/faculty-contacts-service.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_platform-settings_legacy-setting-specs.ts.md` (edit src/modules/platform-settings/legacy-setting-specs.ts; 2 findings; best P2)

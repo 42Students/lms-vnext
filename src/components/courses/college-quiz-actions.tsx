@@ -28,6 +28,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  const [expectedUpdatedAt,setExpectedUpdatedAt]=useState("");
  const [metadataOnly,setMetadataOnly]=useState(false);
  const [confirmDelete,setConfirmDelete]=useState(false);
+ const [editPreflight,setEditPreflight]=useState<{attemptCount:number|null;warning:string}|null>(null);
  async function beginEdit(){
   if(busy||loading||inFlight.current)return;
   if(editing){setEditing(false);return;}
@@ -45,7 +46,10 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    setExpectedUpdatedAt(current.updatedAt);
    setMetadataOnly(payload.editPolicy?.metadataOnly!==false);
    if(payload.editPolicy?.warning)setNotice(payload.editPolicy.warning);
-   setEditing(true);
+   if(payload.editPolicy?.metadataOnly){
+    setEditPreflight({attemptCount:payload.editPolicy.attemptCount??null,
+     warning:payload.editPolicy.warning??"Only the title and description can be changed."});
+   }else setEditing(true);
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load Quiz metadata.");}
   finally{inFlight.current=false;setLoading(false);}
  }
@@ -117,6 +121,21 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     </Button>
    </>}>
    <p className="text-sm leading-6 text-body">This removes the quiz from learner access. Its existing history is retained for audit. Quizzes with learner attempts cannot be archived.</p>
+  </Dialog>
+  <Dialog open={editPreflight!==null} onOpenChange={open=>{if(!open)setEditPreflight(null);}}
+   role="alertdialog" title="This quiz already has learner submissions"
+   description={editPreflight?.attemptCount===null
+    ?"Unable to verify the current submission count."
+    :editPreflight?.attemptCount===0
+     ?"This quiz is no longer in its editable draft state."
+     :editPreflight?.attemptCount+" learner submission(s) have been recorded."}
+   footer={<>
+    <Button type="button" variant="secondary" onClick={()=>setEditPreflight(null)}>Cancel</Button>
+    <Button type="button" variant="primary" onClick={()=>{setEditPreflight(null);setEditing(true);}}>
+     Edit metadata only
+    </Button>
+   </>}>
+   <p className="text-sm leading-6 text-body">{editPreflight?.warning} Only title and description can be edited. Questions, due date, attempt limit and shuffle settings remain locked.</p>
   </Dialog>
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
   {editing?<div className="grid gap-2 border-y border-border py-3">
