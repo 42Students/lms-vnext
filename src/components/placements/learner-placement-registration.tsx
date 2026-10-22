@@ -38,7 +38,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
   async function submit() {
     if (registration.stage !== "OPEN" || busy || !choice || choice===registration.choice) return;
     if (choice === "PLACEMENTS" && !consent) {
-      setError(errors.DB08_REGISTRATION_CONSENT_REQUIRED); return;
+      setError(errors["DB08_REGISTRATION_CONSENT_REQUIRED"] ?? LEARNER_REGISTRATION_COPY.failure); return;
     }
     setBusy(true); setError(""); setMessage("");
     try {
