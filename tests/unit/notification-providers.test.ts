@@ -22,6 +22,7 @@ function jsonResponse(body: unknown, status = 200) {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.unstubAllEnvs();
 });
 
 describe("Exotel SMS provider", () => {
@@ -65,7 +66,7 @@ describe("Exotel SMS provider", () => {
       exotel,
       fetchMock as unknown as typeof fetch,
     );
-    expect(await provider.sendOtp("9100060001", "123456")).toBe(false);
+    expect(await provider.sendOtp("5100060001", "123456")).toBe(false);
     expect(await provider.sendOtp("+919100060001", "12ab56")).toBe(false);
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -123,6 +124,8 @@ describe("ZeptoMail provider", () => {
   const zepto = readZeptoMailConfig({ ZEPTOMAIL_TOKEN: '"Zoho-enczapikey abc"' });
 
   it("sends the OTP template with the legacy merge fields", async () => {
+    vi.stubEnv("APP_ENV", "development");
+    vi.stubEnv("DEV_MAIL_ALLOW", "learner@example.test");
     const fetchMock = vi.fn(async () => jsonResponse({ data: [] }));
     const accepted = await createZeptoMailEmailProvider(
       zepto,

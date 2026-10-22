@@ -29,7 +29,8 @@ describe("Phase 2 exact old-LMS Projects headings and empty states",()=>{
     expect(mentor).not.toContain("sectionBaseHref=");
     expect(learner).toContain("<LearnerProjectTabs");
     expect(learner).not.toContain("sectionBaseHref=");
-    expect(college).toContain('if (basePath === "/college/projects" || basePath === "/admin/projects") return null;');
+    expect(college).toContain('if (basePath === "/college/projects") return null;');
+    expect(college).toContain("PROJECT_ADMIN_SECTIONS.map");
     for(const label of ["Workspaces","At Risk","Readiness","Submissions","Templates","Audit"]){
       expect(legacyA).toContain('label: "'+label+'"');
       expect(legacyB).toContain('label: "'+label+'"');

@@ -1080,7 +1080,7 @@ export function ProjectWorkspace({
       {show("team") ? <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">Team</h2>
+            <h2 className="m-0 text-lg font-semibold text-foreground">Project people</h2>
             <p className="mt-1 text-sm text-body">Manage mentor ownership, student membership and workload across this workspace.</p>
           </div>
           {mode==="ADMIN"&&!readOnly

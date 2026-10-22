@@ -13,10 +13,11 @@ describe("LEARNER-learning-misc-26 learner-question and option shuffle",()=>{
    rows.flatMap(q=>q.options.map(o=>o.id)).sort());
   expect(a.map(q=>q.id).sort()).toEqual(rows.map(q=>q.id).sort());
  });
- it("does not shuffle when both flags are off and leaves scoring identity unchanged",()=>{
+ it("does not shuffle when both flags are off and still strips authored answer keys",()=>{
   const unchanged=shuffleQuizForLearner(rows,"quiz","student-A",false,false);
-  expect(unchanged).toEqual(rows);
-  expect(unchanged[0]?.options[0]?.correct).toBe(true);
+  expect(unchanged).toEqual(rows.map(row=>({...row,
+   options:row.options.map(({id,text,sequence})=>({id,text,sequence}))})));
+  expect(unchanged[0]?.options[0]).not.toHaveProperty("correct");
  });
  it("permutes per learner when flags enabled",()=>{
   const a=shuffleQuizForLearner(rows,"quiz","student-A",true,true);
