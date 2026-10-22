@@ -11,7 +11,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-3-010-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-3-010-027  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-3-010-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
-- [ ] G2-3-010-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-3-010-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-3-010-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-3-017-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-3-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
@@ -20,3 +20,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
+- G2-3-010-029: OK — production private-bucket separation is enforced at `src/modules/storage/r2-config.ts:55-71`; unscanned objects cannot pass attestation at `src/modules/storage/private-object-storage.ts:211-217`; legacy reference `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:19-32` documents the unsafe interim public-bucket fallback that vNext intentionally rejects. This confirms fail-closed behavior, not legacy public-bucket compatibility.
