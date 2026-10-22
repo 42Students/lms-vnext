@@ -42,13 +42,8 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
  return <section aria-label="Edit company visibility" className="space-y-3 border-t border-border pt-5">
   <h3 className="font-semibold">What companies see</h3>
   <p className="text-xs text-muted-foreground">Your choices are saved in the college&apos;s sharing policy. Individual recruiter rights, consent and export permissions remain separate safeguards.</p>
-  <Disclosure title="How sharing works" className="min-w-0 border-t border-border pt-3" contentClassName="pt-2 text-sm"><ul className="list-disc space-y-1 pl-5">
-  <li>The college selects which verified academic fields and project links can be shown to an authorized recruiter.</li>
-  <li>When exact undergraduate percentage sharing is off, eligible views may show a percentage band instead.</li>
-  <li>Phone numbers and other private contact data are not controlled by these switches. Access still requires a separate need-to-know permission.</li>
-  <li>These switches do not grant a recruiter access to a student, drive or download.</li>
-  <li>Retention and deletion schedules, including any 90-day requirement, must be enforced by the separate data-retention service; this form does not promise automatic deletion.</li>
- </ul></Disclosure>
+
+  <div role="group" aria-label="Company sharing switches" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-3 sm:px-4">
   {Object.entries(labels).slice(0,3).map(([key,label])=><label key={key} className="flex min-h-11 min-w-0 items-center justify-between gap-3 border-b border-border py-2 text-sm">
    <span className="min-w-0 flex-1 break-words">{label}</span>
    <span className="relative inline-flex h-6 w-11 shrink-0 items-center">
@@ -60,6 +55,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
     <span aria-hidden="true" className="pointer-events-none absolute left-0.5 top-0.5 size-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"/>
    </span>
   </label>)}
+  </div>
   <Disclosure title="Additional sharing options" className="border-t border-border pt-3">
     {Object.entries(labels).slice(3).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
       <span className="min-w-0 flex-1 break-words">{label}</span>
@@ -73,6 +69,13 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
    </span>
     </label>)}
   </Disclosure>
+  <Disclosure title="How sharing works" className="min-w-0 border-t border-border pt-3" contentClassName="pt-2 text-sm"><ul className="list-disc space-y-1 pl-5">
+  <li>The college selects which verified academic fields and project links can be shown to an authorized recruiter.</li>
+  <li>When exact undergraduate percentage sharing is off, eligible views may show a percentage band instead.</li>
+  <li>Phone numbers and other private contact data are not controlled by these switches. Access still requires a separate need-to-know permission.</li>
+  <li>These switches do not grant a recruiter access to a student, drive or download.</li>
+  <li>Retention and deletion schedules, including any 90-day requirement, must be enforced by the separate data-retention service; this form does not promise automatic deletion.</li>
+ </ul></Disclosure>
   <Button type="button" disabled={busy||!dirty} onClick={()=>void save()}
    className="min-h-11 w-full md:w-auto md:min-h-9">{busy?"Saving…":"Save changes"}</Button>
   {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message} onDismiss={()=>setMessage("")}/>:null}

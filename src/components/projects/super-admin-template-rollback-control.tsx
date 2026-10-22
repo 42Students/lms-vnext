@@ -52,12 +52,13 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   finally{setBusy(false);}
  }
  return <div className={"min-w-0 space-y-3 border-b border-border pb-4 text-body "+styles.legacy}>
-  <h2 className="text-sm font-semibold text-foreground">Restore this snapshot</h2>
+  <h2 className="text-sm font-semibold text-foreground">Roll back to this version</h2>
   <p className="text-xs text-body">Review the compared changes above. Rollback creates a new editable version;
    assigned colleges and existing workspaces keep their current pinned versions.
    Unlike the old LMS snapshot rollback, this does not restore published,
    archived or deleted state. Publish the new revision separately.</p>
-  <dl className="grid gap-2 border-y border-border py-3 text-sm sm:grid-cols-2">
+  <p className="text-xs font-semibold text-body">Review impact before rollback: {impact.pinnedWorkspaceCount} pinned workspaces keep their versions; {impact.existingWorkspacesRewritten} are changed by this rollback.</p>
+  <dl aria-label="Workspace impact preview" tabIndex={0} className="grid gap-2 border-y border-border py-3 text-sm sm:grid-cols-2 focus-visible:outline-2 focus-visible:outline-primary">
     {([
       ["Assigned colleges",impact.assignedCollegeCount],
       ["Workspaces pinned to a version",impact.pinnedWorkspaceCount],
@@ -87,12 +88,12 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
     If the template version, assigned colleges, or pinned workspace count changes,
     this reviewed impact preview is stale. Refresh and review before retrying.
   </p>
-  <Button variant="secondary" type="button" disabled={!enabled||busy||!reviewed} onClick={()=>void rollback()}
+  <Button variant="secondary" type="button" title={selectedVersion.version===currentVersion?"This is the current version; rollback is unavailable.":status==="ARCHIVED"?"Archived templates cannot be rolled back.":!reviewed?"Review these changes before rolling back.":"Roll back to this version"} disabled={!enabled||busy||!reviewed} onClick={()=>void rollback()}
    className="min-h-11 w-full sm:min-h-9 sm:w-auto">
    {busy?"Rolling back…":"Roll back"}
   </Button>
   {status==="ARCHIVED"?<Banner tone="warning">Archived templates cannot be rolled back.</Banner>:null}
-  {selectedVersion.version===currentVersion?<p className="text-xs text-muted-foreground">This is already the current version.</p>:null}
+  {selectedVersion.version===currentVersion?<p role="status" className="text-xs font-semibold text-muted-foreground">Current · This version is already active; Roll back is disabled.</p>:null}
   {error?<Banner tone="error">{error}</Banner>:null}
   {notice?<Banner tone="success">{notice}</Banner>:null}
    {dialog}
