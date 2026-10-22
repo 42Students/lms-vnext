@@ -34,13 +34,14 @@ export function parseCollegeImportCsv(raw:string,selectedOrganizationId?:string)
  }
  if(inside)throw Error("Unclosed CSV quote");
  fields.push(value.trim());if(fields.some(Boolean))records.push(fields);
- if(!records.length)throw Error("Paste at least one college.");
- const header=records[0].map(x=>x.toLowerCase().replace(/\s+/g,""));
+ const firstRecord=records[0];
+ if(!firstRecord)throw Error("Paste at least one college.");
+ const header=firstRecord.map(x=>x.toLowerCase().replace(/\s+/g,""));
  const codeHeader=header.includes("code")?"code":"uniqueid";
  const withHeader=header.includes("name")&&header.includes(codeHeader);
  const organizationColumn=header.indexOf("organizationid")>=0?header.indexOf("organizationid"):header.indexOf("orgid");
- const legacyPositional=!withHeader&&records[0].length>=3&&
-   (/^\d+$/.test(records[0][0]??"")||z.uuid().safeParse(records[0][0]).success);
+ const legacyPositional=!withHeader&&firstRecord.length>=3&&
+   (/^\d+$/.test(firstRecord[0]??"")||z.uuid().safeParse(firstRecord[0]).success);
  const keys=["name",codeHeader,"city","state","country"];
  const positions=withHeader?keys.map(k=>header.indexOf(k)):
    legacyPositional?[1,2,3,4,-1]:[0,1,2,3,4];
@@ -50,7 +51,7 @@ export function parseCollegeImportCsv(raw:string,selectedOrganizationId?:string)
  if(data.length>MAX_COLLEGE_IMPORT_ROWS)throw Error("Bulk Import accepts at most 200 colleges.");
  const codes=new Map<string,number>();
  return data.map((row,index)=>{
-  const v=(i:number)=>positions[i]<0?"":(row[positions[i]]??"").trim();
+  const v=(i:number)=>{const position=positions[i];return position===undefined||position<0?"":(row[position]??"").trim();};
   if(legacyPositional&&/^\d+$/.test(row[0]??""))throw Error("Legacy numeric organization IDs cannot establish a vNext tenant. Convert orgId to its verified organization UUID and import each organization separately using organizationId,name,uniqueId,city,state.");
   const sourceOrg=withHeader&&organizationColumn>=0?(row[organizationColumn]??"").trim():legacyPositional?(row[0]??"").trim():"";
   if(sourceOrg){

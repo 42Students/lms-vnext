@@ -140,6 +140,8 @@ export async function getSuperAdminCollegeReadiness(
     collegeId: college.id,
   });
 
+  const scopedCollegeId = college.id;
+
   function roleCount(
     role: MembershipRole,
   ) {
@@ -169,7 +171,7 @@ export async function getSuperAdminCollegeReadiness(
           and(
             eq(
               collegeMemberships.collegeId,
-              college.id,
+              scopedCollegeId,
             ),
             eq(
               collegeMemberships.status,
