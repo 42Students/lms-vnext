@@ -10,8 +10,8 @@ const org=()=>source("src/components/admin/organization-create-form.tsx");
 describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
  it("SA-tenants-modules-03 scoped setup retains tenant navigation and administration controls",()=>{
   expect(source("src/app/(authenticated)/admin/tenants/setup/page.tsx")).toContain("superAdminTenantSetupSteps");
-  expect(source("src/app/(authenticated)/admin/tenants/page.tsx")).toContain('caption="Tenant directory"');
-  expect(source("src/app/(authenticated)/admin/tenants/page.tsx")).toContain('href="/admin/tenants/setup"');
+  expect(source("src/app/(authenticated)/admin/tenants/directory/page.tsx")).toContain('caption="Tenant directory"');
+  expect(source("src/app/(authenticated)/admin/tenants/directory/page.tsx")).toContain('href="/admin/tenants/setup"');
  });
  it("SA-tenants-modules-05 tenant scope list does not default to a foreign college",()=>{
   expect(source("src/app/(authenticated)/admin/tenants/setup/page.tsx"))
@@ -55,7 +55,7 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(create()).toContain("is already used by another college");
  });
  it("SA-tenants-modules-13 tenant directory searches college and organization before paging",()=>{
-  const page=source("src/app/(authenticated)/admin/tenants/page.tsx");
+  const page=source("src/app/(authenticated)/admin/tenants/directory/page.tsx");
   expect(page).toContain('type="search"');
   expect(page).toContain('name="q"');
   expect(page).toContain("matching colleges");
