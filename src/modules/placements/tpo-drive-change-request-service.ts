@@ -11,7 +11,7 @@ import {PlacementsServiceError} from "./errors";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
 import {placementJobIdSchema} from "./validation";
-import {driveChangeCommandSchema} from "./tpo-drive-change-request-model";
+import {parseLegacyDriveChangeCommand} from "./tpo-drive-change-request-model";
 
 type Party="TPO"|"COMPANY";
 async function scoped(context:RequestContext,rawJobId:unknown){
@@ -289,7 +289,7 @@ export async function getDriveChangeRequestMessages(
 
 export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:unknown,raw:unknown){
  const {job,party}=await scoped(context,rawJobId);
- const input=driveChangeCommandSchema.parse(raw);
+ const input=parseLegacyDriveChangeCommand(raw);
  return getDb().transaction(async tx=>{
   // A job-first exclusive lock serializes create/dedupe and decision transitions.
   // Withdrawing remains legal even after an otherwise read-only drive has ended.
