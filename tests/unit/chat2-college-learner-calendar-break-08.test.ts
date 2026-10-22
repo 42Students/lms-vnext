@@ -13,9 +13,11 @@ const begin="2026-10-20T04:00:00.000Z";
 describe("TPO-BREAK-calendar-08 query access, ICS injection, scheduled dates and private learner data",()=>{
  it("college interview filter rejects array ambiguity, invalid UUIDs and page overflow",()=>{
   expect(DRIVE_INTERVIEW_PAGE_SIZE).toBe(20);
-  expect(driveInterviewsParams({})).toEqual({kind:"ALL",status:"ALL",page:1});
+  expect(driveInterviewsParams({})).toMatchObject({kind:"ALL",status:"ALL",page:1,
+   appointmentPage:1,appointmentPageSize:20,appointmentSort:"DATE_ASC",
+   candidatePage:1,candidatePageSize:1000});
   expect(driveInterviewsParams({kind:"INTERVIEW",status:"SCHEDULED",page:"3",applicationId:a}))
-   .toEqual({kind:"INTERVIEW",status:"SCHEDULED",page:3,applicationId:a});
+   .toMatchObject({kind:"INTERVIEW",status:"SCHEDULED",page:3,applicationId:a});
   expect(driveInterviewsParams({status:["ALL","CANCELLED"]})).toBeNull();
   expect(driveInterviewsParams({page:"0"})).toBeNull();
   expect(driveInterviewsParams({applicationId:"other-tenant"})).toBeNull();

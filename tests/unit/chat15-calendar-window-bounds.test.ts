@@ -8,8 +8,9 @@ describe("chat-15 bounded calendar retrieval",()=>{
   // May 2099 is supported; malformed months still fail before schedule reads.
   expect(()=>learnerCalendarVisibleWindow("2099-13",new Date("2099-05-15T00:00:00Z"))).toThrow("INVALID_CALENDAR_MONTH");
   const window=learnerCalendarVisibleWindow("2099-05",new Date("2099-05-15T00:00:00Z"));
-  expect(window.from.toISOString()).toBe("2099-03-31T18:30:00.000Z");
-  expect(window.to.toISOString()).toBe("2099-06-30T18:30:00.000Z");
+  expect(window.from.toISOString()).toBe("2099-04-25T18:30:00.000Z");
+  expect(window.to.toISOString()).toBe("2099-06-06T18:30:00.000Z");
+  expect(window.to.getTime()-window.from.getTime()).toBe(42*86_400_000);
   const src=readFileSync(join(process.cwd(),"src/modules/academics/learner-schedule-service.ts"),"utf8");
   expect(src).toContain("lt(sectionScheduleEvents.startsAt,visibleWindow.to)");
   expect(src).toContain("gte(sectionScheduleEvents.endsAt,visibleWindow.from)");
