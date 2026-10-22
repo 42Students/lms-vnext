@@ -2207,11 +2207,14 @@ export function ProjectWorkspace({
                           Meeting zone: {meeting.timeZone}
                         </p>
                       </div>
-                      <StatusBadge
-                        tone={tone(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
-                      >
-                        {label(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
-                      </StatusBadge>
+                      <div className="grid justify-items-end gap-1">
+                        <span className="text-xs text-muted-foreground">Meeting status</span>
+                        <StatusBadge
+                          tone={tone(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
+                        >
+                          {label(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
+                        </StatusBadge>
+                      </div>
                     </div>
                     {meeting.status==="REQUESTED"? (
                       <p className="mt-2 text-xs font-semibold text-warning-text">
@@ -2224,10 +2227,28 @@ export function ProjectWorkspace({
                         {workspace.members.find(member=>member.membershipId===meeting.requestedByMembershipId)?.displayName??"Project member"}
                       </p>
                     ) : null}
-                    {meeting.agenda ? (
-                      <p className="mt-2 text-sm leading-6 text-body">
-                        {meeting.agenda}
+                    {meeting.linkedSprintId ? (
+                      <p className="mt-2 text-xs text-body">
+                        <strong>Linked sprint: </strong>
+                        {workspace.sprints.find(item=>item.id===meeting.linkedSprintId)?.title
+                          ??"Linked sprint unavailable"}
                       </p>
+                    ) : null}
+                    {meeting.linkedTaskId ? (
+                      <p className="mt-1 text-xs text-body">
+                        <strong>Linked task: </strong>
+                        {workspace.tasks.find(item=>item.id===meeting.linkedTaskId)?.title
+                          ??"Linked task unavailable"}
+                      </p>
+                    ) : null}
+                    {meeting.agenda ? (
+                      <section aria-label="Meeting agenda"
+                        className="mt-2 min-w-0 border-b border-[var(--lms-canvas-border)] pb-2">
+                        <h4 className="text-sm font-semibold">Agenda</h4>
+                        <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+                          {meeting.agenda}
+                        </p>
+                      </section>
                     ) : null}
                     {meeting.outcome ? (
                       <p className="mt-2 border-l-2 border-[var(--lms-canvas-border)] pl-3 text-sm leading-6 text-body">
