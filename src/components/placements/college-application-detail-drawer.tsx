@@ -10,7 +10,7 @@ import {useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {CollegeInterviewAppointments} from "./college-interview-appointments";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
-type Event={from:string|null;to:string;reason:string|null;when:string};
+type Event={from:string|null;to:string;reason:string|null;when:string;actorName?:string|null};
 type CandidateInterviews={
  rounds:Array<{id:string;name:string;status:string;kind:string}>;
  candidates:Array<{applicationId:string;name:string|null;screening:string}>;
@@ -551,6 +551,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
             <li key={index} className="min-w-0 break-words py-3">
              {event.from??"New"} → {event.to} · {when(event.when)}
              {event.reason?<p className="mt-1 whitespace-pre-wrap text-xs text-body">{event.reason}</p>:null}
+             {event.actorName?<p className="mt-1 text-xs text-muted-foreground">Recorded by {event.actorName}</p>:null}
             </li>)}</ol>:<p className="mt-2 text-sm text-body">No recorded events.</p>}
           {section.hasMore?<p className="mt-2 text-xs text-muted-foreground">
             More than 100 events are recorded; older events are available through the full audit history.

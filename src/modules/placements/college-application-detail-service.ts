@@ -137,8 +137,10 @@ export async function getCollegeApplicationDetail(
     .where(eq(placementApplicationScreenings.applicationId,application.id)).limit(1),
   db.select({id:placementApplicationStatusHistory.id,from:placementApplicationStatusHistory.fromStatus,
     to:placementApplicationStatusHistory.toStatus,reason:placementApplicationStatusHistory.reason,
-    when:placementApplicationStatusHistory.createdAt})
+    when:placementApplicationStatusHistory.createdAt,
+    actorName:users.displayName})
     .from(placementApplicationStatusHistory)
+    .leftJoin(users,eq(users.id,placementApplicationStatusHistory.actorUserId))
     .where(eq(placementApplicationStatusHistory.applicationId,application.id))
     .orderBy(asc(placementApplicationStatusHistory.createdAt),
       asc(placementApplicationStatusHistory.id))
