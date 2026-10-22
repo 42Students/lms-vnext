@@ -643,6 +643,7 @@ export async function issuePlacementOffer(
         issuedAt: now,
       })
       .returning();
+    if (!offer) throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
 
     await tx
       .insert(
@@ -1286,6 +1287,7 @@ export async function actOnPlacementOffer(
         ),
       )
       .returning();
+    if (!updated) throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
 
     await tx
       .insert(
