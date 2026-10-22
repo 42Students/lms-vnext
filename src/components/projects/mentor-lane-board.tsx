@@ -197,21 +197,21 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
   {matching.length>0?<><p className="text-xs text-muted-foreground md:hidden">Swipe sideways to see board lanes.</p>
     <p id="mentor-board-keyboard-help" className="sr-only">Use the Move task selection to change a task lane without dragging.</p><div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
-    className={styles.scrollRegion}><div className={styles.track}>
+    className={styles["scrollRegion"]}><div className={styles["track"]}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
-    className={[styles.lane, lane.id==="BACKLOG"?styles.backlogLane:"", lanes.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
+    className={[styles["lane"], lane.id==="BACKLOG"?styles["backlogLane"]:"", lanes.length===1?styles["singleLane"]:""].filter(Boolean).join(" ")}
     data-can-drop={!readOnly&&!busy&&editable.includes(lane.id as typeof editable[number])}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
-    <h3 className={styles.header}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h3>
-    <ul className={styles.body}>{lane.tasks.map(task=>{
+    <h3 className={styles["header"]}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h3>
+    <ul className={styles["body"]}>{lane.tasks.map(task=>{
      const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
        editable.includes(task.status as typeof editable[number]);
      return <li key={task.id} draggable={canMove} aria-describedby={canMove?"mentor-board-keyboard-help":undefined}
       onDragStart={e=>{e.dataTransfer.setData("text/plain",task.id);setDragging(true);}}
        onDragEnd={()=>setDragging(false)}
-      className={"space-y-2 border p-3 text-sm "+styles.card}>
+      className={"space-y-2 border p-3 text-sm "+styles["card"]}>
       <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
         className="min-h-11 w-full !justify-start !text-left">{task.title}</Button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
