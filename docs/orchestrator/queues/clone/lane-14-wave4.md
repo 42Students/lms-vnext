@@ -34,4 +34,4 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_app_authenticated_admin_projects_page.tsx.md` (edit src/app/(authenticated)/admin/projects/page.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_public-unsubscribe-preview-service.ts.md` (edit src/modules/placements/public-unsubscribe-preview-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_college-dashboard-cards-service.ts.md` (edit src/modules/admin-ui/college-dashboard-cards-service.ts; 2 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_components_hr_hr-drive-draft-form.tsx.md` (edit src/components/hr/hr-drive-draft-form.tsx; 4 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_components_hr_hr-drive-draft-form.tsx.md` (edit src/components/hr/hr-drive-draft-form.tsx; 4 findings; best P0)
