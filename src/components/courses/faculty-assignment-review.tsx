@@ -60,7 +60,7 @@ const AVATAR_PALETTE=[
 ] as const;
 function studentAvatarHue(value:string){
  let sum=0;for(const ch of value)sum=(sum*33+ch.charCodeAt(0))%AVATAR_PALETTE.length;
- return AVATAR_PALETTE[sum];
+ return AVATAR_PALETTE[sum] ?? AVATAR_PALETTE[0];
 }
 /** Render visible legacy HTML as inert text with line breaks, not unsanitized HTML. */
 function legacySubmissionText(text:string){
@@ -179,7 +179,7 @@ function SubmissionGradeCard({
       if (!response.ok) {
         setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
         setError(
-          (await courseApiError(response)) ?? "Could not update this grade.",
+          ((await courseApiError(response)) ?? "Could not update the submission.") ?? "Could not update this grade.",
         );
         return;
       }
@@ -236,7 +236,7 @@ function SubmissionGradeCard({
         });
       if(!changed.ok){
         setNeedsRefresh(facultyManualGradeNeedsRefresh(changed.status));
-        setError((await courseApiError(changed)) ?? "Could not save this grade.");return;
+        setError(((await courseApiError(changed)) ?? "Could not update the submission.") ?? "Could not save this grade.");return;
       }
       const saved=facultyManualGradeReceipt(await changed.json(),submission,"GRADE",maxPoints,{
         points:parsed,feedback:feedback.trim()||null,
@@ -299,7 +299,7 @@ function SubmissionGradeCard({
       if (!response.ok) {
         setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
         setError(
-          (await courseApiError(response)) ?? "Could not update this grade.",
+          ((await courseApiError(response)) ?? "Could not update the submission.") ?? "Could not update this grade.",
         );
         return;
       }
@@ -344,7 +344,7 @@ function SubmissionGradeCard({
         });
       if(!response.ok){
         setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
-        setError((await courseApiError(response)) ?? "Could not update grade visibility.");return;
+        setError(((await courseApiError(response)) ?? "Could not update the submission.") ?? "Could not update grade visibility.");return;
       }
       const saved=facultyManualGradeReceipt(
         await response.json(),submission,"GRADE",maxPoints,{
@@ -663,7 +663,7 @@ export function FacultyAssignmentReview({
         facultyUrl.replace("/api/courses/faculty/assignments/",
           "/api/courses/college/assignments/"):facultyUrl;
       const response=await fetch(reviewUrl,{cache:"no-store"});
-      if (!response.ok) throw new Error(facultySubmissionReviewFailure(response.status) ?? await courseApiError(response));
+      if (!response.ok) throw new Error(facultySubmissionReviewFailure(response.status) ?? (await courseApiError(response)) ?? "Could not update the submission.");
       const parsed = facultySubmissionReviewResponseSchema.safeParse(await response.json());
       if (!parsed.success) throw new Error("The submission list could not be read. Refresh and try again.");
       const payload = parsed.data;
