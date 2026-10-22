@@ -599,7 +599,7 @@ export function HrDriveDraftForm({
                     min={field==="name"?undefined:0}
                     step={field==="ctcLpa"?HR_DRIVE_CTC_STEP:
                       field==="stipendMonthlyInr"?1:HR_DRIVE_PACKAGE_MONEY_STEP}
-                    value={item[field]??""} onChange={event=>setDraft(current=>({
+                    value={typeof item[field]==="string"||typeof item[field]==="number"?item[field]:""} onChange={event=>setDraft(current=>({
                       ...current,payPackages:(current.payPackages??[]).map((row,i)=>
                         i===index?{...row,[field]:event.target.value}:row),
                     }))}/>

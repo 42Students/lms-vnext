@@ -96,7 +96,7 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
             <circle cx={12} cy={12} r={9} strokeOpacity={0.2}/>
             <path d="M12 3a9 9 0 0 1 9 9"/>
           </svg>
-        ) : <Search aria-hidden="true" size={16} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />}
+        ) : <Search aria-hidden={true} size={16} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />}
         <Input id={listId + "-input"} name="q" role="combobox"
           type="search" autoComplete="off" maxLength={150} disabled={!collegeId}
           value={text} aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={show} aria-busy={searching}
@@ -119,7 +119,7 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
         {text ? <Button type="button" variant="ghost" size="sm"
           aria-label="Clear student search" onClick={clear}
           className="absolute right-1 top-1/2 -translate-y-1/2 !min-h-8 !w-8 !p-1">
-          <X size={14} aria-hidden="true" />
+          <X size={14} aria-hidden={true} />
         </Button> : null}
       </div>
       <Button type="submit" variant="secondary" disabled={!collegeId || value.length < 2 || value.length > 150}
