@@ -6,7 +6,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Preview={job:{title:string;status:string};canArchive:boolean;applications:number;
- rounds:number;offers:Record<string,number>;note:string};
+ rounds:number;interviews:number;offers:Record<string,number>;note:string};
 export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
  const router=useRouter();
  const [preview,setPreview]=useState<Preview|null>(null);
@@ -48,7 +48,7 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
     {busy?"Loading…":"Review archive impact"}</Button>:
    <div className="space-y-2" role="group" aria-label="Archive drive impact">
     <p className="text-sm font-semibold">{preview.job.title} · {preview.job.status}</p>
-    <p role="alert" className="text-sm font-medium text-[var(--lms-error)]">{preview.applications} applicants with applications, {preview.rounds} rounds,
+    <p role="alert" className="text-sm font-medium text-[var(--lms-error)]">{preview.applications} applicants with applications, {preview.rounds} rounds, {preview.interviews} interview appointments,
      {Object.values(preview.offers).reduce((sum,n)=>sum+n,0)} offers will remain in history.</p>
     <p className="text-sm">{preview.note}</p>
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] md:flex-row md:flex-wrap">
@@ -66,7 +66,7 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
   <ConfirmDialog open={awaitingConfirmation}
     onOpenChange={next=>{if(!busy)setAwaitingConfirmation(next);}}
     title="Archive this drive?"
-    description={preview? `Archive "${preview.job.title}"? ${preview.applications} applicant applications, ${preview.rounds} rounds and offer history remain available for audit. The drive will no longer be active.` :
+    description={preview? `Archive "${preview.job.title}"? ${preview.applications} applicant applications, ${preview.rounds} rounds, ${preview.interviews} interview appointments and offer history remain available for audit. The drive will no longer be active.` :
       "The drive will no longer be active. Historical records are retained."}
     confirmLabel="Yes, archive drive" confirmVariant="danger" pending={busy}
     onConfirm={()=>void archive()}/>
