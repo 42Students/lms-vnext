@@ -23,7 +23,9 @@ const SHARED_EMAIL_DOMAINS=new Set([
 export function registrableWorkDomain(email: string):string|null{
  const parsed=publicRecruiterWorkEmailSchema.safeParse(email);
  if(!parsed.success)return null;
- const labels=parsed.data.split("@")[1].split(".");
+ const emailDomain=parsed.data.split("@")[1];
+ if(!emailDomain)return null;
+ const labels=emailDomain.split(".");
  if(labels.length<2)return null;
  const suffix=labels.slice(-2).join(".");
  const lastThree=labels.slice(-3).join(".");
@@ -63,7 +65,9 @@ export function normalizeCompanyDomainInput(raw:string):string|null{
  }else if(source.includes("@")){
   const pieces=source.split("@");
   if(pieces.length!==2||!pieces[0])return null;
-  source=pieces[1]!;
+  const domain=pieces[1];
+  if(!domain)return null;
+  source=domain;
  }
  if(source.endsWith("."))source=source.slice(0,-1);
  if(source.length>253||source.length<4||!source.includes(".")||
@@ -83,5 +87,5 @@ export function matchesCompanyDomain(workEmail:string,companyDomain:string){
  // exactly match the reviewed domain or a dot-delimited subdomain.
  if(!parsed.success||!domain)return false;
  const host=parsed.data.split("@")[1];
- return host===domain||host.endsWith("."+domain);
+ return host!==undefined&&(host===domain||host.endsWith("."+domain));
 }
