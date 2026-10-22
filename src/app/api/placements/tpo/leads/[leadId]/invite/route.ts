@@ -30,7 +30,15 @@ export async function POST(request: Request, { params }: RouteContext) {
       collegeId,
       leadId,
       new Date(),
-      { sendEmail: body.sendEmail===true, deliver: deliverTpoRecruiterInviteEmail },
+      { sendEmail: body.sendEmail===true, deliver: async (inviteCollegeId, inviteLeadId, token) => {
+          const result: unknown = await deliverTpoRecruiterInviteEmail(inviteCollegeId, inviteLeadId, token);
+          // Provider acknowledgements may be boolean or structured; only an
+          // explicit acceptance can mark a recruiter invitation as emailed.
+          return result === true || (
+            typeof result === "object" && result !== null &&
+            "accepted" in result && result.accepted === true
+          );
+        } },
     );
     if(body.sendEmail===true){
       if(!invite.emailed)

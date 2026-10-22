@@ -131,7 +131,13 @@ export function LearnerNotificationsInbox({
           body: item.message,
           module: "ANNOUNCEMENTS",
           importance: "NORMAL",
-          createdAt: item.createdAt.toISOString(),
+          createdAt: Array.isArray(item.createdAt)
+             ? new Date(Date.UTC(
+                 item.createdAt[0], item.createdAt[1] - 1, item.createdAt[2],
+               ) - 330 * 60_000).toISOString()
+             : item.createdAt instanceof Date
+               ? item.createdAt.toISOString()
+               : String(item.createdAt),
           actionHref: null,
           externalCta:(item.buttonLabel && item.buttonUrl && (()=>{try{
             const parsed=new URL(item.buttonUrl);
