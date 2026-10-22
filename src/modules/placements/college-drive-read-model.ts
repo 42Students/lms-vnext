@@ -29,11 +29,11 @@ export function driveQueryFromSearch(input: Record<string, string | string[] | u
   }
   // Legacy unknown status and sort recover to the baseline list rather than
   // failing the entire page; unsafe tenant/resource identifiers still validate.
-  if(raw.status && !["ALL","DRAFT","PUBLISHED","CLOSED","ARCHIVED"].includes(raw.status))delete raw.status;
-  if(raw.sort && !["TITLE","DEADLINE","NEWEST","APPLICANTS"].includes(raw.sort))delete raw.sort;
-  if(raw.q && raw.q.length>100)raw.q=raw.q.slice(0,100);
-  if(raw.page && (!/^\d{1,4}$/.test(raw.page)||Number(raw.page)<1||Number(raw.page)>1000))delete raw.page;
-  if(raw.pageSize && !["10","20","50","100"].includes(raw.pageSize))delete raw.pageSize;
+  if(raw["status"] && !["ALL","DRAFT","PUBLISHED","CLOSED","ARCHIVED"].includes(raw["status"]))delete raw["status"];
+  if(raw["sort"] && !["TITLE","DEADLINE","NEWEST","APPLICANTS"].includes(raw["sort"]))delete raw["sort"];
+  if(raw["q"] && raw["q"].length>100)raw["q"]=raw["q"].slice(0,100);
+  if(raw["page"] && (!/^\d{1,4}$/.test(raw["page"])||Number(raw["page"])<1||Number(raw["page"])>1000))delete raw["page"];
+  if(raw["page"]Size && !["10","20","50","100"].includes(raw["page"]Size))delete raw["page"]Size;
   const parsed = collegeDriveListQuerySchema.safeParse(raw);
   return parsed.success ? parsed.data : null;
 }
