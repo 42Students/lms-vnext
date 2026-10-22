@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
+import { useCallback, useEffect, useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -118,19 +118,19 @@ export function AdminProgramDirectory({
   const [page, setPage] = useState(1);
   const storedPageSize = useSyncExternalStore(listenSize, storedSize, () => 20);
   const pageSize=serverPage?.pageSize??storedPageSize;
-  const hrefFor=(nextPage:number,nextSize=pageSize,nextQuery=serverPage?.q??search)=>{
+  const hrefFor=useCallback((nextPage:number,nextSize=pageSize,nextQuery=serverPage?.q??search)=>{
    const params=new URLSearchParams();
    if(nextQuery.trim())params.set("q",nextQuery.trim());
    if(nextPage>1)params.set("page",String(nextPage));
    if(nextSize!==20)params.set("pageSize",String(nextSize));
    return pathname+(params.size?"?"+params.toString():"");
-  };
+  },[pathname,pageSize,serverPage?.q,search]);
   useEffect(()=>{if(serverPage)setSearch(serverPage.q);},[serverPage?.q]);
   useEffect(()=>{
    if(!serverPage||search.trim()===serverPage.q)return;
    const handle=window.setTimeout(()=>router.replace(hrefFor(1,pageSize,search)),300);
    return ()=>window.clearTimeout(handle);
-  },[search,serverPage?.q,serverPage?.pageSize,pathname,router]);
+  },[search,serverPage?.q,pageSize,router,hrefFor]);
   const filtered = serverPage ? [...programs] : filterAdminPrograms(programs, debouncedSearch);
   const result = serverPage
    ? {items:filtered,total:serverPage.total,page:serverPage.page,
