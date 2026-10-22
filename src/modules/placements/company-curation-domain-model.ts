@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {publicWorkEmailIssue} from "./public-work-email-policy";
+import {publicWorkEmailIssue,publicWorkEmailIssueCopy} from "./public-work-email-policy";
 import {validTpoTrustedHost} from "./tpo-trusted-domain-validation";
 import {registrableCompanyHost} from "./public-suffix-policy";
 
@@ -29,11 +29,13 @@ export const companyDomainSchema=z.string().trim().max(2048)
    return;
   }
   if(!validTpoTrustedHost(domain)){
-   ctx.addIssue({code:"custom",message:"Enter a valid company domain"});
+   ctx.addIssue({code:"custom",message:publicWorkEmailIssueCopy("INVALID")});
    return;
   }
-  if(publicWorkEmailIssue("owner@"+domain)!==null){
-   ctx.addIssue({code:"custom",message:"Use a company domain, not a personal, temporary or academic domain"});
+  // Same per-outcome wording as the legacy CompanyDomainService.Check.message().
+  const issue=publicWorkEmailIssue("owner@"+domain);
+  if(issue!==null){
+   ctx.addIssue({code:"custom",message:publicWorkEmailIssueCopy(issue)});
   }
  });
 export const curateCompanyDomainSchema=z.strictObject({companyId:z.uuid(),domain:companyDomainSchema,expectedVersion:z.number().int().nonnegative()});
