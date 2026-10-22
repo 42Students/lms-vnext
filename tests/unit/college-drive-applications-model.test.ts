@@ -4,7 +4,7 @@ import { placementReportCsvCell } from "@/modules/placements/report-model";
 
 describe("College drive applicant filters and CSV protection", () => {
   it("validates bounded status filters and forbids caller college", () => {
-    expect(driveApplicationsQuerySchema.parse({})).toEqual({q:"",status:"ALL",screening:"ALL",source:"ALL",stage:"ALL",skills:"",attention:"ALL",sort:"AGE_ASC",page:1,size:20});
+    expect(driveApplicationsQuerySchema.parse({})).toEqual({q:"",status:"ALL",screening:"ALL",source:"ALL",stage:"ALL",skills:"",attention:"ALL",sort:"SCORE_DESC",page:1,size:20});
     for(const input of [{collegeId:"bad"},{page:0},{page:1001},{status:"UNKNOWN"},{screening:"SCORED"}]) {
       expect(driveApplicationsQuerySchema.safeParse(input).success).toBe(false);
     }
@@ -15,6 +15,7 @@ describe("College drive applicant filters and CSV protection", () => {
     const q=driveApplicationsQuerySchema.parse({q:"a & b",status:"SUBMITTED",screening:"ALL",page:3});
     expect(driveApplicationsHref(jobId,q,true)).not.toContain("page=");
     expect(new URL(driveApplicationsHref(jobId,q),"https://example.test").searchParams.get("q")).toBe("a & b");
+    expect(new URL(driveApplicationsHref(jobId,{...q,sort:"AGE_ASC"}),"https://example.test").searchParams.get("sort")).toBe("AGE_ASC");
   });
   it("exports the exact shortlist filters without widening invalid or duplicate inputs",()=>{
     const url=new URLSearchParams({
