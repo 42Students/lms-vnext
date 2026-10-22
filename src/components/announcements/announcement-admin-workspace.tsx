@@ -42,7 +42,7 @@ export type AnnouncementAdminItem = {
   deliveryOutboxId?: string | null;
   deliveryCollegeId?: string | null;
   deliveryStatus?: "FAILED" | "SCHEDULED" | "SENT" | "PROCESSING" | null;
-  visibilityState: "DELETED" | "SCHEDULED" | "EXPIRED" | "LIVE";
+  visibilityState: "DELETED" | "SCHEDULED" | "EXPIRED" | "LIVE" | "CANCELLED";
 };
 
 function localInputValue(value: string | null) {
