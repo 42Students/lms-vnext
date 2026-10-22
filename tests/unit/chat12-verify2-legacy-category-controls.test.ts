@@ -23,7 +23,7 @@ describe("chat-12 verification round 2: legacy filter and accessible controls", 
   it("preserves the college-scoped hierarchy with the legacy unselected-college warning", () => {
     const page = source("src/app/(authenticated)/admin/module-access/page.tsx");
     expect(page).toContain('if (!collegeId)');
-    expect(page).toContain("Select a college to continue.");
+    expect(page).toContain(">Select a college to continue</strong>");
     expect(page).toContain("without mixing tenants.");
     expect(page).toContain('role="status"');
     expect(page).toContain("<SuperAdminCollegeModuleAccessPage");
