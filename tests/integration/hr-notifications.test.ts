@@ -3,10 +3,11 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {eq,and} from "drizzle-orm";
 import {getDb,closeDatabaseConnection} from "@/db/client";
-import {users,activityEvents,inAppNotifications} from "@/db/schema";
+import {users,activityEvents,inAppNotifications,placementRecruiterCollegeGrants} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob} from "@/modules/placements/job-service";
 import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
+import {linkRecruiterOwnedJob} from "../support/persisted-job-recruiter-fixture";
 import {grantPlacementRecruiter} from "@/modules/placements/recruiter-service";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 import {hrTodayUnreadAction} from "@/modules/placements/hr-today-unread-model";
@@ -25,9 +26,20 @@ describe.skipIf(!enabled)("HR in-app notification scopes",()=>{
   const a=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Notif Own "+n,primaryDomain:"notifown-"+n+".example"});
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Notif Other "+n,primaryDomain:"notifother-"+n+".example"});
   const grant=await grantPlacementRecruiter(tpo,{companyRelationshipId:a.relationship.id,email,title:"HR"});
+  // Recruiter inbox access requires an independently verified persisted DRIVES grant.
+  await getDb().update(placementRecruiterCollegeGrants)
+   .set({verificationStatus:"VERIFIED",validUntil:new Date("2099-01-01T00:00:00.000Z")})
+   .where(eq(placementRecruiterCollegeGrants.id,grant.grant.id));
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
    title:"Notif Job "+n,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
   await publishPreparedPlacementJob(tpo,job.id);
+  // The job was created by TPO: make its recruiter ownership explicit rather
+  // than weakening the production employer-portfolio scope to all company jobs.
+  await linkRecruiterOwnedJob({
+   recruiterUserId:person.id,collegeId:SEED_IDS.collegeA,
+   companyRelationshipId:a.relationship.id,jobId:job.id,
+   decidedByUserId:tpo.user.id,
+  });
   const [event]=await getDb().select({id:activityEvents.id}).from(activityEvents)
    .where(and(eq(activityEvents.subjectId,job.id),eq(activityEvents.eventType,"placements.job.published"))).limit(1);
   expect(event).toBeDefined();
