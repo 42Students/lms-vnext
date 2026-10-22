@@ -145,7 +145,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
       {fieldErrors.name?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.name}</span>:null}
     </label>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Website (HTTPS, optional)
-      <Input type="url" pattern="https://.*" value={websiteUrl} aria-invalid={Boolean(fieldErrors.websiteUrl)}
+      <Input type="url" pattern="https://.*" maxLength={500} value={websiteUrl} aria-invalid={Boolean(fieldErrors.websiteUrl)}
         onChange={e=>{setWebsiteUrl(e.target.value);setFieldErrors(current=>({...current,websiteUrl:undefined}));}}
         placeholder="https://example.com" className={field}/>
       {fieldErrors.websiteUrl?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.websiteUrl}</span>:null}
