@@ -280,7 +280,7 @@ const legacySubmissionSchema=z.strictObject({
  * independently enforced using the authenticated route ID. */
 export const submitAssignmentInputSchema=z.union([
   singleSubmissionInputSchema,partsInputSchema,legacySubmissionSchema,
-]).pipe(singleSubmissionInputSchema);
+]).pipe(z.preprocess(value=>value,singleSubmissionInputSchema));
 
 export const assignmentSubmissionTypeSchema =
   z.enum(ASSIGNMENT_SUBMISSION_TYPES);

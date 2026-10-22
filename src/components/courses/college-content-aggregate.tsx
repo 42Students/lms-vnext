@@ -239,6 +239,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
           {data.total===0?"No content found":"No records on this page. Choose an earlier page."}
         </p>:<DataTable
           caption={videos?"Existing Content":"Resources"}
+          empty={<p role="status" className="py-6 text-center text-sm text-muted-foreground">No content found for the selected filters.</p>}
           rows={data.items}
           getRowKey={item=>item.id}
           columns={videos?[

@@ -272,7 +272,9 @@ export function LearnerCourseList({
                 onPaste={event=>{
                  const pasted=event.clipboardData.getData("text");
                  const target=event.currentTarget;
-                 if(target.value.length-(target.selectionEnd-target.selectionStart)+pasted.length>MAX_COURSE_SEARCH_CHARS)
+                 const start=target.selectionStart??target.value.length;
+                 const end=target.selectionEnd??start;
+                 if(target.value.length-Math.max(0,end-start)+pasted.length>MAX_COURSE_SEARCH_CHARS)
                    setSearchWasTruncated(true);
                 }}
                 placeholder="Search courses by name or code…"
