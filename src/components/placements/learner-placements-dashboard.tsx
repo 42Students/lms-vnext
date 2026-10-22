@@ -14,6 +14,24 @@ import {learnerPlacementHeroPriority} from "@/modules/placements/learner-dashboa
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
 const formatWhen=learnerDashboardDateLabel;
+function legacyWaitingAction(key:string,href:string):string{
+ if(key.startsWith("offers"))return "Reply";
+ if(key.startsWith("register"))return "Register";
+ if(key.startsWith("confirm:"))return "Confirm";
+ if(key.startsWith("profile:"))return "Fix profile";
+ if(key.startsWith("apply"))return "View drive";
+ if(key.startsWith("interview")||key.startsWith("assessment"))return "See details";
+ return href.includes("offers")?"Reply":"See details";
+}
+function legacyHeroEyebrow(label:string):string{
+ if(label==="Offer decision due soon")return "You have an offer";
+ if(label==="Registration needed")return "First step";
+ if(label==="Placed")return "Congratulations";
+ if(label==="Start here"||label==="Stay ready")return "Open to you";
+ if(label==="Participation paused")return "Your choice";
+ if(label==="Next scheduled event"||label==="Assessment coming up"||label==="Interview coming up")return "Coming up";
+ return label;
+}
 
 /** Old LMS home hero CTA vocabulary, keyed by recorded priority instead
  * of a generic first-run shortcut. Never infer attendance confirmation. */
@@ -77,19 +95,37 @@ export function LearnerPlacementsDashboard({
     eligibleToApply:display.eligibleJobs,
     applications:display.applications,
   });
+  const completeFailure=Object.values(availability).every(ready=>!ready);
+  const offerHero=next?.label==="You have an offer"||next?.label==="Offer decision due soon";
+  const eventHero=next?.label==="Next scheduled event"||
+    next?.label==="Assessment coming up"||next?.label==="Interview coming up";
+  const quietHero=next?.label==="All caught up"&&waitingOnYou.length===0&&!display.partial;
+  const heroStyle=offerHero?"border-amber-400 bg-amber-50 dark:bg-amber-950/20":
+    eventHero?"border-sky-400 bg-sky-50 dark:bg-sky-950/20":
+    quietHero?"border-neutral-300 bg-surface-subtle":
+    "border-primary bg-primary-subtle";
   return (
     <section className="min-w-0 space-y-4" aria-label="Placement dashboard">
-      {next ? <div className="min-w-0 border-l-2 border-primary bg-primary-subtle px-4 py-4 md:py-5">
+      {completeFailure?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning/5 p-4 text-sm">
+        <p className="font-semibold text-foreground">We could not load your placements</p>
+        <p className="mt-1 text-body">Your data is safe. Check your connection and try again.</p>
+        <a href="/learn/my-placements?retry=1" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</a>
+      </div>:null}
+      {next ? <section aria-labelledby="sp-next-title"
+        className={"min-w-0 border-l-4 px-4 py-5 md:px-6 md:py-6 "+heroStyle}>
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="max-w-3xl">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
               {greeting}
             </p>
-            <h2 className="mt-2 text-xl font-semibold text-foreground md:text-2xl">
-              {next.title}
+            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {legacyHeroEyebrow(next.label)}
+            </p>
+            <h2 id="sp-next-title" className="mt-2 text-xl font-semibold text-foreground md:text-2xl">
+              {quietHero?"Nothing needs you right now":next.title}
             </h2>
             <p className="mt-2 text-sm leading-6 text-body">
-              {next.detail}
+              {quietHero?"New drives open to you will show up here. Keep your profile and resume up to date so you are ready.":next.detail}
               {next.when ? ` · ${formatWhen(next.when)}` : ""}
             </p>
             {display.firstRun ? (
@@ -100,12 +136,12 @@ export function LearnerPlacementsDashboard({
           </div>
           <Link
             href={next.href}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+            className="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-6 text-base font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto"
           >
-            {legacyCta} →
+            {quietHero?"Update profile":legacyCta} →
           </Link>
         </div>
-      </div> : (
+      </section> : (
         <p role="status" className="min-w-0 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm text-body">
           Next placement action is temporarily unavailable while key sources reload.
           Your current applications or schedule have not been treated as empty.
@@ -116,10 +152,10 @@ export function LearnerPlacementsDashboard({
         </p>
       )}
 
-      <section aria-labelledby="learner-dashboard-waiting-heading" className="border-b border-border pb-5">
+      <section aria-labelledby="learner-dashboard-waiting-heading" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 id="learner-dashboard-waiting-heading" className="text-lg font-semibold text-foreground">Waiting on you</h3>
-          <span className="text-xs font-semibold text-muted-foreground">{waitingOnYou.length} to-do item{waitingOnYou.length===1?"":"s"}</span>
+
         </div>
         {waitingOnYou.length?<ul className="mt-3 divide-y divide-border border-y border-border">{waitingOnYou.map(item=><li key={item.key}
           className="flex flex-wrap items-center justify-between gap-3 py-3">
@@ -128,7 +164,9 @@ export function LearnerPlacementsDashboard({
             <p className="font-semibold text-foreground">{item.label}</p>
             <p className="text-xs text-body">{item.detail}</p>
           </div>
-          <Link href={item.href} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Review now</Link>
+          <Link href={item.href} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
+            {legacyWaitingAction(item.key,item.href)} →
+          </Link>
         </li>)}</ul>:<p role="status" className="mt-2 text-sm text-muted-foreground">
           {next&&(next.label==="You have an offer"||next.label==="First step"||next.label==="Next scheduled event")
             ?"Nothing else is waiting on you."
@@ -153,7 +191,7 @@ export function LearnerPlacementsDashboard({
 
       <section aria-labelledby="learner-dashboard-stages-heading" className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 id="learner-dashboard-stages-heading" className="text-base font-semibold text-foreground">Application stages</h3>
+          <h3 id="learner-dashboard-stages-heading" className="text-base font-semibold text-foreground">Where your applications stand</h3>
           <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>
         </div>
         {display.applications===0 ? <p role="status" className="mt-2 text-sm text-body">
