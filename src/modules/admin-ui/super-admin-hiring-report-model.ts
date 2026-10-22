@@ -50,3 +50,46 @@ export function hiringCompanyRollups(rows:readonly SuperAdminHiringRow[]){
 export function legacyHiringJobSearchLabel(jobId:string|undefined){
  return jobId?"Filtering by selected job":"All jobs";
 }
+
+/** Legacy company totals appear directly before that company's job rows,
+ * not as a detached list after all paginated rows. Calculate full-company
+ * totals over the bounded report, then interleave a summary only for
+ * companies with more than one matching job on the current page. */
+export function hiringCompanyPageRows(
+  allRows: readonly SuperAdminHiringRow[],
+  pageRows: readonly SuperAdminHiringRow[],
+): SuperAdminHiringRow[] {
+  const keyFor = (row: SuperAdminHiringRow) =>
+    row.companyId.trim() || "legacy:" + row.companyName.trim().toLocaleLowerCase("en-IN").replace(/\s+/g, " ");
+  const metrics = ["totalApplications", "applied", "shortlisted", "assessment",
+    "interview", "offered", "hired", "rejected", "withdrawn", "waitlisted"] as const;
+  const totals = new Map<string, { count: number; row: SuperAdminHiringRow }>();
+  for (const row of allRows) {
+    const key = keyFor(row);
+    let group = totals.get(key);
+    if (!group) {
+      group = { count: 0, row: {
+        companyId: row.companyId, companyName: row.companyName,
+        jobId: "total:" + key, jobTitle: "Company total",
+        totalApplications: 0, applied: 0, shortlisted: 0, assessment: 0,
+        interview: 0, offered: 0, hired: 0, rejected: 0,
+        withdrawn: 0, waitlisted: 0,
+      } };
+      totals.set(key, group);
+    }
+    group.count++;
+    for (const metric of metrics) group.row[metric] += row[metric];
+  }
+  const seen = new Set<string>();
+  const result: SuperAdminHiringRow[] = [];
+  for (const row of pageRows) {
+    const key = keyFor(row);
+    const group = totals.get(key);
+    if (group && group.count > 1 && !seen.has(key)) {
+      result.push(group.row);
+      seen.add(key);
+    }
+    result.push(row);
+  }
+  return result;
+}
