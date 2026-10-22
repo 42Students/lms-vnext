@@ -15,8 +15,8 @@ function state(value:unknown):string{
 export function safeCollegeRuleHistory(rows:readonly AuditRow[]){
  return rows.map(row=>({
   id:row.id,at:row.occurredAt,actorName:row.actorName||"Unknown actor",
-  module:["projects","placements","electives"].includes(String(row.metadata.module))?String(row.metadata.module):"Optional module",
-  change:state(row.metadata.before)+" → "+state(row.metadata.after),
+  module:["projects","placements","electives"].includes(String(row.metadata["module"]))?String(row.metadata["module"]):"Optional module",
+  change:state(row.metadata["before"])+" → "+state(row.metadata["after"]),
  }));
 }
 export function collegePolicyHistoryHref(collegeId:string,cursor:{beforeOccurredAt:Date;beforeId:string}|null=null){
@@ -32,16 +32,16 @@ export function safeFullModuleHistory(rows:readonly (AuditRow & {
  eventType:string;subjectType:string;subjectId:string;
 })[]){
  return rows.map(row=>{
-  const moduleName=["projects","placements","electives"].includes(String(row.metadata.module))?
-   String(row.metadata.module):"Optional module";
+  const moduleName=["projects","placements","electives"].includes(String(row.metadata["module"]))?
+   String(row.metadata["module"]):"Optional module";
   const category=row.eventType==="MODULE_ACCESS_BULK_SET"?"Student bulk access":
    row.eventType==="COLLEGE_FEATURE_TOGGLE"?"College feature toggle":"Access changed";
   const scopeLabel=["GLOBAL","ORGANIZATION","COLLEGE","DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"]
    .includes(row.subjectType)?row.subjectType.toLowerCase():"scope";
-  const size=typeof row.metadata.studentCount==="number"&&
-   Number.isSafeInteger(row.metadata.studentCount)?row.metadata.studentCount:null;
+  const size=typeof row.metadata["studentCount"]==="number"&&
+   Number.isSafeInteger(row.metadata["studentCount"])?row.metadata["studentCount"]:null;
   return {id:row.id,at:row.occurredAt,actorName:row.actorName||"Unknown actor",
-   module:moduleName,change:state(row.metadata.before)+" → "+state(row.metadata.after),
+   module:moduleName,change:state(row.metadata["before"])+" → "+state(row.metadata["after"]),
    category,scope:scopeLabel+" · "+row.subjectId,
    ...(size===null?{}:{studentCount:size})};
  });
