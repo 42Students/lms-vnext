@@ -72,7 +72,7 @@ export default async function TpoDriveDiscussion({params,searchParams}:{
     <div className="w-full sm:basis-full">
       <details className="border-t border-border pt-2">
         <summary className="cursor-pointer text-sm font-semibold text-link">Reply in this drive discussion</summary>
-        <TpoRecruiterMessageReply threadId={thread.id} actorUserId={context.user.id} unread={thread.unread>0} quote={quote}/>
+        <TpoRecruiterMessageReply threadId={thread.id} actorUserId={context.user.id} unread={thread.unread>0} {...(quote===undefined?{}:{quote})}/>
         <p className="mt-1 text-xs text-muted-foreground">Showing the latest three messages here. Open the full conversation to review earlier messages and quote context.</p>
       </details>
     </div>
