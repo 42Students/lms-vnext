@@ -13,10 +13,11 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-11-019-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-11-019-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-11-019-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
-- [ ] G2-11-019-077  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
+- [x] G2-11-019-077  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-11-019-079  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-11-022-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-19-001-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 
 ## Results
 
+- FIXED G2-11-019-077 — `e378f15dce821a4ac0861dd3b62ce7bbb014a602` — `src/components/tpo/recruiter-lead-detail-workspace.tsx:487-491`; matched `docs/legacy-source/frontend/src/pages/tpo/recruiters/[recruiterLeadId].js:206-207` (company-only Team talk URL).
