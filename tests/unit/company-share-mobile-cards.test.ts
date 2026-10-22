@@ -50,3 +50,42 @@ it("discloses only the selected fields on either viewport", () => {
   expect(JSON.stringify(row!.cells)).not.toContain("private@example.com");
   expect(JSON.stringify(row!.cells)).not.toContain("+919999999999");
 });
+
+it("opens authorized external applicant links in a protected new tab with an accessible target", () => {
+  const page = read("src/app/company-share/[token]/page.tsx");
+  expect(page).toContain('if(url.protocol==="https:"&&!url.username&&!url.password)');
+  expect(page).toContain('target="_blank" rel="noopener noreferrer"');
+  expect(page).toContain('aria-label={"Open "+COMPANY_SHARE_COLUMNS[key]+" for "+(row.displayName??row.applicationId)+" in a new tab"}');
+  expect(page).toContain('className="inline-flex min-h-11 items-center');
+  expect(page).toContain("focus-visible:outline-2");
+});
+
+it("discloses resumes only through an unexpired short-lived HTTPS grant", () => {
+  const applicant = {
+    applicationId: "application-1",
+    displayName: "Learner",
+    email: null,
+    phone: null,
+    rollNumber: null,
+    profileDocument: null,
+    branch: null,
+    stage: null,
+  };
+  const url = "https://storage.example.test/download?grant=short-lived";
+  const validExpiry = new Date(Date.now() + 60_000).toISOString();
+  const valid = projectCompanyShareRows([{
+    ...applicant, resumeSignedUrl: url, resumeExpiresAt: validExpiry,
+  }], ["RESUME"])[0];
+  expect(valid?.cells.RESUME).toBe(url);
+
+  const expired = projectCompanyShareRows([{
+    ...applicant, resumeSignedUrl: url,
+    resumeExpiresAt: new Date(Date.now() - 1000).toISOString(),
+  }], ["RESUME"])[0];
+  expect(expired?.cells.RESUME).toBe("Link not shown");
+
+  const unsafe = projectCompanyShareRows([{
+    ...applicant, resumeSignedUrl: "javascript:alert(1)", resumeExpiresAt: validExpiry,
+  }], ["RESUME"])[0];
+  expect(unsafe?.cells.RESUME).toBe("Link not shown");
+});
