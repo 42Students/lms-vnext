@@ -15,7 +15,7 @@ describe("chat-15 final sprint: faculty audit decisions grounded in current code
  });
  it("FAC-assessments-25 WRONG: course, section, lesson, due-state and hidden draft are present",()=>{
   const ui=src("src/components/courses/faculty-assessment-overview.tsx");
-  for(const phrase of ["Course: {item.courseName}","Lesson: {item.lessonName}","Needs due date",
+  for(const phrase of ["{item.courseName} · {item.sectionName} · {item.lessonName}","Needs due date",
    "Draft · hidden from students","item.sectionName","item.dueAt"])
    expect(ui).toContain(phrase);
  });

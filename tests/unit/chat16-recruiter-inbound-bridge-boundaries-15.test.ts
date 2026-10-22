@@ -47,7 +47,10 @@ describe("chat-16 recruiter inbound email gateway must reject hostile or stale m
     expect(getDb).not.toHaveBeenCalled();
   });
 
-  it("REC-INBOUND-03 rejects replay-looking malformed payloads and forged reply domains", async () => {
+  it("REC-INBOUND-03 quarantines signed unknown or hostile mail behind durable storage readiness", async () => {
+    const execute=vi.fn(async()=>({rows:[{ok:false}]}));
+    const transaction=vi.fn();
+    vi.mocked(getDb).mockReturnValue({execute,transaction} as never);
     for (const payload of [
       body({ to: "r-" + "a".repeat(32) + "@evil.example.org" }),
       body({ from: "recruiter@@example.org" }),
@@ -56,16 +59,19 @@ describe("chat-16 recruiter inbound email gateway must reject hostile or stale m
       body({ secret: "injected" }),
       "not-json",
     ]) {
-      expect(await accepted(payload)).toEqual({ accepted: false, replayed: false });
+      const result=await accepted(payload);
+      expect(result.accepted).toBe(false);
+      expect(result.replayed).toBe(false);
     }
-    expect(getDb).not.toHaveBeenCalled();
+    expect(transaction).not.toHaveBeenCalled();
+    expect(execute).toHaveBeenCalled();
   });
 
   it("REC-INBOUND-04 refuses provider ingestion while DB migrations are missing", async () => {
     const execute = vi.fn(async () => ({ rows: [{ ok: false }] }));
     const transaction = vi.fn();
     vi.mocked(getDb).mockReturnValue({ execute, transaction } as never);
-    expect(await accepted(body())).toEqual({ accepted: false, replayed: false });
+    expect(await accepted(body())).toEqual({ accepted: false, replayed: false, retryable:true });
     expect(execute).toHaveBeenCalledTimes(1);
     expect(transaction).not.toHaveBeenCalled();
   });

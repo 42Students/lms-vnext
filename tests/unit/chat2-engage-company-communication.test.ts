@@ -14,7 +14,7 @@ describe("Engage company communication legacy view",()=>{
   expect(src).toContain("deriveLegacyCompanyCommunication(company.drivesRan");
   expect(src).toContain("setCompanyCommunicationFilter");
   expect(src).toContain("changeCompanyCommunication(company.key");
-  expect(src).toContain("Export companies CSV");
+  expect(src).toContain('exportName="companies" onExportCsv={()=>exportCompanies()}');
   expect(src).toContain("Add a contact");
   expect(src).toContain("other spellings");
   expect(src).toContain('view === "companies"');

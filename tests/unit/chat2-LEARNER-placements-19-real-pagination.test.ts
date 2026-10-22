@@ -29,9 +29,11 @@ describe("LEARNER-placements-19 — reviewer correction: no 20-item pagination g
  it("LEARNER-placements-19 binds the 20-item limit to the live filter and page controls",()=>{
   const ui=read(UI);
   expect(ui).toContain("const PAGE_SIZE = 20;");
-  expect(ui).toContain("const visible = filterLearnerPlacementJobs(matchingItems, filters, Date.parse(snapshotNowIso));");
-  expect(ui).toContain("learnerDrivePageState(visible.length,parsedPage,PAGE_SIZE)");
-  expect(ui).toContain("const paged=visible.slice(pagination.startIndex,pagination.endIndex)");
+  expect(ui).toContain("filterLearnerPlacementJobs(matchingItems,filters,Date.parse(snapshotNowIso))");
+  // The currently rendered availability subset, not an inaccessible drive,
+  // determines the page count.
+  expect(ui).toContain("learnerDrivePageState(primary.length,parsedPage,PAGE_SIZE)");
+  expect(ui).toContain("const paged=primary.slice(pagination.startIndex,pagination.endIndex)");
   expect(ui).toContain('aria-label="Drive results pages"');
   expect(ui).toContain("Showing page {page} instead.");
   expect(ui).toContain('totalPages > 1');

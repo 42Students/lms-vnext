@@ -23,10 +23,10 @@ describe("Super Admin colleges bulk CSV adversarial parser",()=>{
  it("SA-colleges-bulk-input-03 enforces 200 rows, no case-variant duplicate codes, required names and correct lengths",()=>{
   expect(MAX_COLLEGE_IMPORT_ROWS).toBe(200);
   expect(parseCollegeImportCsv(
-   "name,code\n"+Array.from({length:200},(_,i)=>"College "+i+",C"+i).join("\n")
+   "name,code\n"+Array.from({length:200},(_,i)=>"College "+i+",C"+String(i).padStart(2,"0")).join("\n")
   )).toHaveLength(200);
   expect(()=>parseCollegeImportCsv(
-   "name,code\n"+Array.from({length:201},(_,i)=>"College "+i+",C"+i).join("\n")
+   "name,code\n"+Array.from({length:201},(_,i)=>"College "+i+",C"+String(i).padStart(2,"0")).join("\n")
   )).toThrow("at most 200");
   expect(()=>parseCollegeImportCsv("name,code\nFirst,ABC\nSecond,abc"))
    .toThrow("Duplicate college code");

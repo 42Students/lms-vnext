@@ -8,7 +8,7 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
   const text=src("src/components/shell/admin-scope-switcher.tsx");
   expect(text).toContain("Search colleges");
   expect(text).toContain("Showing all colleges — data may be large.");
-  expect(text).toContain('search.trim() && visibleColleges.length===0');
+  expect(text).toContain('search.trim()&&!filteredColleges.length');
  });
  it("SA-tenants-modules-08 organizations have search, refresh and bounded persistent page size",()=>{
   const text=src("src/app/(authenticated)/admin/organizations/page.tsx");
@@ -17,7 +17,7 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
  });
  it("SA-tenants-modules-13 college directory supports search by organization, count and pages",()=>{
   const text=src("src/app/(authenticated)/admin/colleges/page.tsx");
-  for(const token of ["Search college, code, city or organization","Clear search","Refresh",'name="pageSize"',"Math.ceil(matches.length/pageSize)"])
+  for(const token of ["Search colleges","Clear search","Refresh directory",'name="pageSize"',"Math.ceil(matches.length/pageSize)"])
     expect(text).toContain(token);
  });
  it("SA-tenants-modules-16 college editor persists the additional bounded address details",()=>{
@@ -38,7 +38,7 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
  });
  it("SA-tenants-modules-06 has two scoped URL-persisted tenant setup steps",()=>{
   const page=src("src/app/(authenticated)/admin/tenants/setup/page.tsx");
-  for(const value of ["tenantSetupTab(query.tab,id!==null)","1. Tenant structure",
+  for(const value of ["selectedSuperAdminTenantSetupTab","1. Tenant structure",
     "2. Launch setup","Current step","College setup","Web address","Look and feel"])
     expect(page).toContain(value);
   expect(page).toContain('requirePermission(context,"admin-scope.select")');
@@ -46,7 +46,7 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
  it("SA-tenants-modules-17 has a college-scoped administrator creation and lifecycle workspace",()=>{
   const page=src("src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx");
   for(const token of ['forcedRole="COLLEGE_ADMIN"','forcedRole="TPO"','listCollegeAdminSessionTargets',
-    "CollegeAdminLifecycleAction","View active devices","View history"])
+    "CollegeAdminLifecycleAction","View active devices","View administrator history"])
     expect(page).toContain(token);
   const service=src("src/modules/colleges/admin-session-service.ts");
   expect(service).toContain('requirePermission(ctx,"college.manage"');
@@ -54,7 +54,7 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
  });
  it("SA-tenants-modules-19 retains college-scoped activity read and authorized CSV without a duplicate GET write",()=>{
   const page=src("src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx");
-  expect(page).toContain('href={`/activity?collegeId=${encodeURIComponent(item.id)}`}');
+  expect(page).toContain('href={"/activity?collegeId="+encodeURIComponent(item.id)}');
   expect(page).toContain('href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}');
   expect(src("src/app/(authenticated)/activity/page.tsx")).toContain("collegeId: one(params.collegeId)");
   expect(src("src/app/api/activity/admin-export/route.ts")).toContain("exportSuperAdminActivity");

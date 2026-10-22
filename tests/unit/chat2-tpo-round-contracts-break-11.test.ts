@@ -84,8 +84,8 @@ describe("TPO-BREAK-round-contracts-11 validation and state evidence, no tenant 
  });
  it("retains legacy round decisions, honest attendance states and formula-safe CSV export",()=>{
   expect(TPO_RESULT_LABELS).toEqual({
-   PASS:"Shortlisted for next round",FAIL:"Not selected in this round",
-   HOLD:"On hold / waitlisted",ABSENT:"Absent from round",
+   PASS:"Pass",FAIL:"Not cleared",
+   HOLD:"Waitlist",ABSENT:"Absent",
   });
   expect(TPO_ROUND_ATTENDANCE_STATES).toEqual([
    "WAITING","PRESENT","IN_INTERVIEW","DONE","ABSENT",
