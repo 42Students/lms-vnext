@@ -58,7 +58,7 @@ export async function recruiterCollegeCardDetail(context:RequestContext,collegeI
   branches:d?.byBranch.map(row=>row.branch)??null,
   branchCounts:d?.byBranch??null,verifiedCgpaBands:d?.verifiedCgpaBands??null,
   allDriveCount:j?.[0]?.all??null,liveDriveCount:j?.[0]?.live??null,
-  tpoContact:c?.[0]?{name:c[0].name,email:c[0].email}:null,
+  tpoContact:c?.[0]?{name:c[0].name?.trim()||"TPO contact",email:c[0].email}:null,
   logoUrl:logo?.[0]?.logoUrl??null,
   memberKey:grant.id,errors,
  };
