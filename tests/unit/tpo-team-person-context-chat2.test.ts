@@ -15,7 +15,7 @@ describe("TPO team conversation and person context",()=>{
   const page=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
   expect(page).toContain("const actorMembershipId = context.membership.id");
   expect(page).toContain("isSelf={member.membershipId===actorMembershipId}");
-  expect(src("src/app/(authenticated)/tpo/team/page.tsx")).toContain('redirect("/tpo/settings/team")');
+  expect(src("src/app/(authenticated)/tpo/team/page.tsx")).toContain('redirect("/tpo/settings?tab=team")');
  });
  it("TPO-inbox-team-42 and TPO-inbox-team-R07 offer a keyboard-native All conversations back link",()=>{
   const page=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
