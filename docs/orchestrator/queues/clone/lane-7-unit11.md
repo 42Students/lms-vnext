@@ -2,7 +2,7 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-7-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/PROJ-BREAK-chat14-mentor-calendar-resources.test.ts` (1 failing)
+- [x] `tests/unit/PROJ-BREAK-chat14-mentor-calendar-resources.test.ts` (1 failing)
 - [ ] `tests/unit/chat12-drive-visibility-overrides.test.ts` (1 failing)
 - [x] `tests/unit/chat2-UX-tpo-overlay-coverage.test.ts` (1 failing)
 - [ ] `tests/unit/chat6-application-score-precision.test.ts` (1 failing)
@@ -11,6 +11,8 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [ ] `tests/unit/ux-admin-chat9-batch-04.test.ts` (1 failing)
 
 ## Repair results
+
+- `tests/unit/PROJ-BREAK-chat14-mentor-calendar-resources.test.ts`: FIXED `9a64f10f6dc574957dcea5516cfa2d46519cd251`. The legacy mentor calendar shows an HTTPS join link whenever a meeting is not cancelled, including requested and past meetings (`docs/legacy-source/frontend/src/pages/mentor/calendar.js`); the outdated test now retains URL safety assertions and explicitly checks cancellation. Not executed locally.
 
 - `tests/unit/chat2-UX-tpo-overlay-coverage.test.ts`: FIXED in `40cab002ae7191aaf83d5756086054886299b3dc`; the mobile More footer is an accessible same-tab `Link` to `/tpo/more`, not an overlay. The case now asserts its navigation role, active-page cue, destination and no new-tab behavior. Shared overlay checks remain intact. Not executed locally.
 
