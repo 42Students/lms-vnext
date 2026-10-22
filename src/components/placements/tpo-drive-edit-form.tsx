@@ -20,6 +20,7 @@ import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-erro
 type Draft={id:string;title:string;description:string;updatedAt:string;status:string;
  recruiterOwned:boolean;recruiterOwnershipSource:string;
  applicantCount:number;applicationDeadline:string|null;minCgpaHundredths:number|null;
+ jobDescriptionObjectPath:string|null;
  locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean;
  allowedCohortIds:string[];availableBatches:Array<{id:string;name:string;code:string;status:string;program:string}>;
@@ -47,7 +48,70 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [proposal,setProposal]=useState<Record<string,unknown>|null>(null);
  const [reviewTitle,setReviewTitle]=useState(job.title);
+
  const [reviewDeadline,setReviewDeadline]=useState(job.applicationDeadline??"");
+ const [jdBusy,setJdBusy]=useState(false);
+ const [jdError,setJdError]=useState<string|null>(null);
+ const [jdHasFile,setJdHasFile]=useState(Boolean(job.jobDescriptionObjectPath));
+ const [jdUnconfirmedKey,setJdUnconfirmedKey]=useState<string|null>(null);
+ const [jdRemoveOpen,setJdRemoveOpen]=useState(false);
+ const [jdReason,setJdReason]=useState("Updated the job description document");
+ const jdUrl="/api/placements/tpo/jobs/"+encodeURIComponent(job.id)+"/jd-upload";
+ type JdMutation={updatedAt:string;hasDocument:boolean};
+ async function saveJd(action:"CONFIRM"|"REMOVE",objectKey?:string){
+  const result=await apiFetch<JdMutation>(jdUrl,{
+   method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",
+   body:JSON.stringify({action,expectedUpdatedAt:version,reason:jdReason.trim(),
+    ...(objectKey?{objectKey}:{})}),
+  });
+  setVersion(result.updatedAt);setJdHasFile(result.hasDocument);
+  setJdUnconfirmedKey(null);
+  setJdRemoveOpen(false);
+  showToast({tone:"success",title:action==="REMOVE"?"Job description removed":"Job description attached",
+   description:"Document access follows the selected-college private storage policy."});
+  router.refresh();
+ }
+ async function uploadJd(file:File){
+  if(jdBusy||pending)return;
+  const types:Record<string,string>={pdf:"application/pdf",doc:"application/msword",
+   docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
+  const ext=file.name.split(".").pop()?.toLowerCase();
+  if(!ext||types[ext]!==file.type||file.size<1||file.size>5*1024*1024){
+   setJdError("Choose a PDF, DOC or DOCX file up to 5 MB.");return;
+  }
+  if(jdReason.trim().length<10){
+   setJdError("Explain the attachment change in at least 10 characters.");return;
+  }
+  setJdBusy(true);setJdError(null);setJdUnconfirmedKey(null);
+  try{
+   const grant=await apiFetch<{uploadUrl:string;objectKey:string;requiredHeaders:Record<string,string>}>(jdUrl,{
+    method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",
+    body:JSON.stringify({action:"INITIATE",originalName:file.name,
+     contentType:file.type,sizeBytes:file.size}),
+   });
+   const uploaded=await fetch(grant.uploadUrl,{method:"PUT",body:file,
+    headers:grant.requiredHeaders});
+   if(!uploaded.ok)throw new Error("Secure file upload failed. Select the file again.");
+   setJdUnconfirmedKey(grant.objectKey);
+   await saveJd("CONFIRM",grant.objectKey);
+  }catch(cause){
+   setJdError(cause instanceof Error?cause.message:"Unable to attach this document.");
+  }finally{setJdBusy(false);}
+ }
+ async function retryJdConfirmation(){
+  if(!jdUnconfirmedKey||jdBusy||pending)return;
+  setJdBusy(true);setJdError(null);
+  try{await saveJd("CONFIRM",jdUnconfirmedKey);}
+  catch(error){setJdError(error instanceof Error?error.message:"Verification failed.");}
+  finally{setJdBusy(false);}
+ }
+ async function removeJd(){
+  if(jdBusy||pending)return;
+  setJdBusy(true);setJdError(null);
+  try{await saveJd("REMOVE");}
+  catch(error){setJdError(error instanceof Error?error.message:"Could not remove document.");}
+  finally{setJdBusy(false);}
+ }
  const completeChecklist=Number(reviewTitle.trim().length>=3)
   +Number(job.roleOptions.length>0)
   +Number(Boolean(reviewDeadline));
@@ -220,6 +284,35 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    </Link>
   </section>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
+  <section aria-label="Job description attachment" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   <h3 className="text-sm font-semibold text-foreground">Job description (PDF or Word)</h3>
+   <p className="text-xs leading-5 text-body">Optional PDF, DOC or DOCX, up to 5 MB.
+    A clean private object is required before learners can open a short-lived download.</p>
+   <p role="status" className="text-xs text-body">
+    {jdHasFile?"Verified job description attached.":"No job description attached."}
+   </p>
+   <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Reason for attachment change
+    <Input value={jdReason} maxLength={1000} disabled={jdBusy||pending}
+     onChange={event=>setJdReason(event.target.value)}/>
+   </label>
+   <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Attach job description
+    <Input type="file" accept=".pdf,.doc,.docx" disabled={jdBusy||pending||jdReason.trim().length<10}
+     onChange={event=>{const file=event.target.files?.[0];event.target.value="";
+      if(file)void uploadJd(file);}}/>
+   </label>
+   {jdUnconfirmedKey?<div className="space-y-2">
+    <p role="status" className="text-xs text-warning">
+     File uploaded but not yet verified. Retry confirmation without uploading it again.
+    </p>
+    <Button type="button" variant="secondary" disabled={jdBusy||pending}
+     onClick={()=>void retryJdConfirmation()}>Retry document verification</Button>
+   </div>:null}
+   {jdBusy?<p role="status" className="text-xs text-body">Uploading or verifying…</p>:null}
+   {jdError?<InlineNotice tone="error" message={jdError}/>:null}
+   {jdHasFile?<Button type="button" variant="secondary"
+    disabled={jdBusy||pending||jdReason.trim().length<10}
+    onClick={()=>setJdRemoveOpen(true)}>Remove attached document</Button>:null}
+  </section>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Location (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
   <section aria-label="Drive job details" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
    <h2 className="mb-3 font-semibold text-foreground">The drive</h2>
@@ -457,6 +550,11 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    title="Save changes to this draft drive?"
    description="These changes are audited and will update this saved draft. Confirm only after checking the employer details."
    confirmVariant="primary" confirmLabel="Save changes" pending={pending} onConfirm={()=>void save(false)}/>}
+ <ConfirmDialog open={jdRemoveOpen} onOpenChange={setJdRemoveOpen}
+   title="Remove attached job description?"
+   description="Learners will no longer be able to download this JD. Job terms and existing applications remain unchanged."
+   confirmVariant="danger" confirmLabel="Remove document" pending={jdBusy}
+   onConfirm={()=>void removeJd()}/>
  {guardDialog}
  </>;
 }
