@@ -129,5 +129,10 @@ export async function listOwnPlacementSavedJobs(context: RequestContext) {
       publishedJobIds.slice(i,i+100));
     for(const entry of scoped)visibleIds.add(entry.job.id);
   }
-  return rows.filter(row=>row.jobStatus!=="PUBLISHED" || visibleIds.has(row.jobId));
+  // A historical bookmark may remain visible after closure, but an
+  // unpublished draft (which might never have been accessible) is never a
+  // permitted history record merely because a saved row exists.
+  const historicalJobStatuses=new Set(["CLOSED","CANCELLED","ARCHIVED","EXPIRED"]);
+  return rows.filter(row=>row.jobStatus==="PUBLISHED"
+    ?visibleIds.has(row.jobId):historicalJobStatuses.has(row.jobStatus));
 }

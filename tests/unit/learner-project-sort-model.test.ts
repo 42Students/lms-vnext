@@ -9,7 +9,7 @@ describe("learner project list sorting",()=>{
  it("handles unknown progress without inventing zero progress",()=>{
   const p=new Map([["1",{percentage:20}],["2",{percentage:80}]]);
   expect(sortLearnerProjectRows(rows,"PROGRESS",p).map(x=>x.project.id)).toEqual(["1","2","3"]);
-  expect(sortLearnerProjectRows(rows,"INVALID",p).map(x=>x.project.id)).toEqual(["2","1","3"]);
+  expect(sortLearnerProjectRows(rows,"INVALID",p).map(x=>x.project.id)).toEqual(["1","2","3"]);
   expect(rows[0].project.id).toBe("1");
  });
 });

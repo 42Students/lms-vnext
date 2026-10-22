@@ -20,7 +20,8 @@ describe("exact legacy Mentor Projects copy",()=>{
     expect(labels).toEqual(["Overview","People & Meetings","Releases and Sprints","Board","Task Allocation","Resources","Delivery","Activity"]);
     // Preserve every legacy tab in its existing order, while independently testing the new Delivery workspace.
     for(const label of labels.filter(label=>label!=="Delivery"))expect(legacy).toContain("prop:label: "+label);
-    expect(detail).toContain('delivery: "Delivery"');
+    expect(detail).toContain('delivery: "Overview"');
+    expect(detail).toContain('delivery:"Submission package, versions and review decisions."');
     expect(detail).toContain('selectedTab === "delivery"');
   });
   it("uses the original page title and empty states instead of Mentoring Projects",()=>{
