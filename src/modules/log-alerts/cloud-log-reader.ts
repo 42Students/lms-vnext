@@ -155,9 +155,10 @@ export async function cloudLoggingAccessToken(transport: Transport = fetch): Pro
   );
   if (!response.ok) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
   const result = asObject(response.payload);
-  if (typeof result["access_token"] !== "string" || !result["access_token"] ||
-      result["access_token"].length > 4096) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
-  return result["access_token"];
+  const accessToken = result["access_token"];
+  if (typeof accessToken !== "string" || accessToken.length === 0 ||
+      accessToken.length > 4096) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
+  return accessToken;
 }
 
 export async function readCloudLogErrorPage(input: {
