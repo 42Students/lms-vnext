@@ -6,7 +6,7 @@ import {getDb} from "@/db/client";
 import {placementRecruiterInboundEmailEvents,placementRecruiterMessageMailState} from "@/db/schema";
 import {inboundMailMessages} from "@/db/schema/inbound-mail";
 import {notifyTpoOfRecruiterMessage} from "./recruiter-message-tpo-notification-service";
-import {verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply} from "./recruiter-message-email-model";
+import {verifyRecruiterMailBridgeWithRotation,extractRecruiterEmailReply} from "./recruiter-message-email-model";
 
 const inboundSchema=z.strictObject({
  from:z.email().max(320).transform(x=>x.trim().toLowerCase()),
@@ -105,7 +105,11 @@ export async function acceptAuthenticatedRecruiterEmailReply(
   return {accepted:false,replayed:false,outcome:"FAILED"};
  const secret=env.RECRUITER_MESSAGE_INBOUND_HMAC_SECRET??"";
  if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true"||
-    !verifyRecruiterMailBridgeSignature(secret,rawBody,signature))
+    !verifyRecruiterMailBridgeWithRotation({
+     body:rawBody,signature,currentSecret:secret,
+     previousSecret:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET,
+     previousExpiresAt:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL,
+    }))
   return {accepted:false,replayed:false};
  let json:unknown;
  try{json=JSON.parse(rawBody);}catch{return {accepted:false,replayed:false};}
