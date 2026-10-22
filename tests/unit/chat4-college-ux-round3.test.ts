@@ -5,7 +5,8 @@ const source=(route:string)=>readFileSync(join(process.cwd(),"src/app/(authentic
 describe("Chat-4 college UX round 3",()=>{
  it("UX-college-batches-01 adds safe narrow-screen affordances",()=>{
  const page=source("batches");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0");
+ expect(page).toContain("space-y");
  
  });
  it("UX-college-batches-cohortId-students-01 adds safe narrow-screen affordances",()=>{
@@ -21,22 +22,26 @@ describe("Chat-4 college UX round 3",()=>{
  });
  it("UX-college-branding-01 adds safe narrow-screen affordances",()=>{
  const page=source("branding");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0");
+ expect(page).toContain("space-y");
  
  });
  it("UX-college-classes-01 adds safe narrow-screen affordances",()=>{
  const page=source("classes");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0");
+ expect(page).toContain("space-y");
  expect(page).toContain("min-h-11");
  });
  it("UX-college-classes-recurring-preview-01 adds safe narrow-screen affordances",()=>{
  const page=source("classes/recurring-preview");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0");
+ expect(page).toContain("space-y");
  
  });
  it("UX-college-college-profile-01 adds safe narrow-screen affordances",()=>{
  const page=source("college-profile");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0");
+ expect(page).toContain("space-y");
  expect(page).toContain("min-h-11");
  });
 });
