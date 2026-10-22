@@ -196,6 +196,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename} visibleFacultyRows={title==="Registered Faculty"?data.items:undefined}/>:null}
   {headingMode==="section"?refreshAction:null}
   <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3 print:hidden">
+    {directoryKind==="LEARNER"?<><input type="hidden" name="sortBy" value={data.query.sortBy}/><input type="hidden" name="sortOrder" value={data.query.sortOrder}/></>:null}
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}
@@ -310,7 +311,15 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     </div>
    :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" students":directoryKind==="FACULTY"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}
   {compactReadLayout?<>
-  {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
+  {directoryKind==="LEARNER"?<nav aria-label="Sort students" className="flex flex-wrap gap-3 print:hidden">
+    {(["name","roll"] as const).map(key=><Link key={key}
+      href={superAdminReadHref(path,{...data.query,sortBy:key,sortOrder:data.query.sortBy===key&&data.query.sortOrder==="asc"?"desc":"asc",page:1})}
+      aria-current={data.query.sortBy===key?"true":undefined}
+      className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-link underline underline-offset-4 md:min-h-9">
+      {key==="name"?"Name":"Roll No."} {data.query.sortBy===key?(data.query.sortOrder==="asc"?"↑":"↓"):"↕"}
+    </Link>)}
+   </nav>:null}
+   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 py-4">
     <div className="grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-6">
       <div className="min-w-0">
