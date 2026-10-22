@@ -13,7 +13,10 @@ vi.mock("@/db/client",()=>({
     from(){return chain;},
     innerJoin(){return chain;},
     leftJoin(){return chain;},
-    where(){return Promise.resolve(data);},
+    where(){return chain;},
+    orderBy(){return chain;},
+    limit(){return chain;},
+    offset(){return Promise.resolve(data);},
    };
    return chain;
   },
@@ -47,7 +50,7 @@ beforeEach(()=>{
 });
 describe("COURSES7-06 learner assessment results are released only after official publication",()=>{
  it("no authorized delivery IDs means no database reads and no results",async()=>{
-  expect(await listOwnLearnerAssessmentRows([],deliveryId,now)).toEqual({assignments:[],quizzes:[]});
+  expect(await listOwnLearnerAssessmentRows([],deliveryId,now)).toEqual({assignments:[],quizzes:[],totals:{assignments:0,quizzes:0}});
   expect(state.reads).toBe(0);
  });
  it("keeps graded but unreleased assignment points and feedback private",async()=>{

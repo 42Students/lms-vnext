@@ -21,12 +21,15 @@ describe("TPO calendar adaptive and draft safety",()=>{
   const page=source("src/components/placements/tpo-week-hour-calendar.tsx");
   expect(page).toContain('window.addEventListener("beforeunload",prevent)');
   expect(page).toContain("Discard this unfinished follow-up?");
-  expect(page).toContain("onClick={cancelDraft}");
+  expect(page).toContain("onClick={()=>cancelDraft()}");
+  expect(page).toContain('onOpenChange={next=>{if(!next&&!saving)cancelDraft();}}');
  });
  it("TPO-calendar-reports-25 supports keyboard day-hour creation and escape to dismiss the modal",()=>{
   const page=source("src/components/placements/tpo-week-hour-calendar.tsx");
   expect(page).toContain('aria-label={"Add follow-up on "');
-  expect(page).toContain('role="dialog"');
-  expect(page).toContain('event.key==="Escape"');
+  expect(page).toContain('<Dialog open={Boolean(slot)}');
+  const dialog=source("src/components/ui/dialog.tsx");
+  expect(dialog).toContain('role={role}');
+  expect(dialog).toContain('onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}');
  });
 });

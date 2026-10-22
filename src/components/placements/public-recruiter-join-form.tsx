@@ -109,7 +109,7 @@ export function PublicRecruiterJoinForm({
   const college = preview.kind === "READY" ? preview.collegeName : "";
   const company = preview.kind === "READY" ? preview.companyDomain ?? "" : "";
   const companyLabel = preview.kind === "READY"
-    ? preview.companyName?.trim() || "your company" : "your company";
+    ? preview.companyName?.trim() || preview.companyDomain || "your company" : "your company";
 
   async function sendCode() {
     if(submittingRef.current)return;
