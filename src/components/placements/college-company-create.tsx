@@ -197,8 +197,8 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
    </form>
   </Dialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
-   title="Discard unsaved changes?" description="Your company details have not been saved."
-   cancelLabel="Keep editing" confirmLabel="Discard changes" confirmVariant="danger"
+   title="Discard unsaved changes?" description="You have unsaved changes in this form. Closing now will discard them."
+   cancelLabel="Keep editing" confirmLabel="Discard" confirmVariant="danger"
    onConfirm={()=>{setConfirmDiscard(false);setOpen(false);setError("");setName("");setWebsiteUrl("");setPrimaryDomain("");setContactPersonName("");setContactEmail("");setContactPhone("");setInternalNotes("");setFieldErrors({});}} />
  </section>;
 }
