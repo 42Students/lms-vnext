@@ -62,6 +62,24 @@ describe("Lane 13 verification: learner contact, preferences and signed resume",
   expect(workspace).toContain("Use the Default resume section below to upload a private scanned PDF");
   expect(workspace).not.toContain("Upload/import/remove remains explicitly blocked");
  });
+ it("loads a scoped education catalog and maintains editable free-text institution and exam values",()=>{
+  const catalog=read("src/modules/people/learner-profile-education-catalog-service.ts");
+  const route=read("src/app/api/profile/me/education-config/route.ts");
+  const editor=read("src/components/profile/learner-profile-workspace.tsx");
+  expect(catalog).toContain("requireOwnLearnerProfileAccess(context)");
+  expect(catalog).toContain('eq(colleges.organizationId,membership.organizationId)');
+  expect(catalog).toContain('eq(colleges.status,"ACTIVE")');
+  expect(catalog).toContain(".limit(25)");
+  expect(route).toContain("getOwnLearnerEducationCatalog(");
+  expect(route).toContain('"Cache-Control":"private, no-store"');
+  expect(editor).toContain("/api/profile/me/education-config?q=");
+  expect(editor).toContain("choices.educationTypes");
+  expect(editor).toContain("choices.programs");
+  expect(editor).toContain("choices.gradingTypes");
+  expect(editor).toContain("choices.exams");
+  expect(editor).toContain("institutionSuggestions");
+  expect(editor).toContain("You can still type the institution, program and exam names");
+ });
  it("does not conflate unknown alert blast radius with zero and preserves evidence provenance",()=>{
   const admin=read("src/modules/log-alerts/admin-service.ts");
   const academic=read("src/app/(authenticated)/learn/profile/academic-record/page.tsx");
