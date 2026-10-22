@@ -392,11 +392,12 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
           </div>
         </form>
       </section></FilterBar>
-      <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full border-b border-[var(--lms-canvas-border)]">
+      <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full overflow-x-auto border-b border-[var(--lms-canvas-border)]">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)]">
           <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching {classes ? "classes" : "elective slots"}</p>
           <span className="text-xs text-muted-foreground">Showing {data.items.length} on this page</span>
         </div>
+        <p className="px-4 py-2 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all class or elective columns.</p>
         {data.items.length === 0 ? (
           <div role="status" className="space-y-2 p-6 text-sm text-body">
            <p>

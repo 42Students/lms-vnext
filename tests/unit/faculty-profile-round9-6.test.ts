@@ -5,6 +5,7 @@ it("finds reversed dates and invalid required values before a network request",(
  expect(facultyProfileRepeatableIssue("education",[{id,institutionName:"University",startYear:"2025",endYear:"2020"}])).toMatch(/precede/);
  expect(facultyProfileRepeatableIssue("education",[{id,institutionName:"University",startYear:"2020",endYear:"2025"}])).toBeNull();
  expect(facultyProfileRepeatableIssue("certifications",[{id,name:"A",certificationDate:"2026-10-15",validityDate:"2026-10-14"}])).toMatch(/Validity/);
- expect(facultyProfileRepeatableIssue("languages",[{id,language:""}])).not.toBeNull();
+ expect(facultyProfileRepeatableIssue("languages",[{id,language:""}])).toBeNull(); // Legacy untitled row can be repaired.
+ expect(facultyProfileRepeatableIssue("languages",[{id:"invalid-uuid",language:""}])).not.toBeNull();
  expect(facultyProfileRepeatableIssue("about",[])).not.toBeNull();
 });

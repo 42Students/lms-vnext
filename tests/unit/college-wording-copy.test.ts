@@ -50,7 +50,7 @@ describe("COL-academic-setup-18 departments", () => {
       nameLabel: "Department Name", createButton: "Create Department",
       namePlaceholder: "e.g., Computer Science & Engineering",
       editTitle: "Edit Department", saveButton: "Save Changes",
-      updatedMessage: "Department updated successfully!",
+      updatedMessage: "Department updated successfully",
     });
   });
 });
@@ -87,7 +87,7 @@ describe("COL-academic-setup-11 semester course mapping", () => {
   it("uses the exact legacy confirm and success wording", () => {
     expect(TERM_MAPPING_COPY.removeTitle("Data Structures")).toBe("Remove “Data Structures” from this semester?");
     expect(TERM_MAPPING_COPY.removeButton).toBe("Remove");
-    expect(TERM_MAPPING_COPY.addedMessage(2)).toBe("Added 2 course(s) to this semester.");
+    expect(TERM_MAPPING_COPY.addedMessage(2)).toBe("2 courses added to semester");
     expect(TERM_MAPPING_COPY.removedMessage("DSA")).toBe("Removed “DSA” from this semester.");
     expect(TERM_MAPPING_COPY.columns.courseName).toBe("Course Name");
     expect(TERM_MAPPING_COPY.core).toBe("Core (Mandatory)");

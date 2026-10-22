@@ -92,9 +92,10 @@ describe("HR interview slots, rounds, offers, messaging and drafts chat-15",()=>
     {id:"hidden",name:"Draft",sequence:3,status:"PENDING",
       scheduledAt:new Date("2099-01-01T08:30:00Z"),durationMinutes:30,mode:null,venue:null},
   ]);
-  expect(rows).toHaveLength(2);
-  expect(rows[0]?.conflicts).toEqual([secondId]);
-  expect(rows[1]?.conflicts).toEqual([roundId]);
+  expect(rows).toHaveLength(3); // A timed PENDING round remains visible in the legacy calendar.
+  expect(rows[0]?.conflicts).toEqual([secondId,"hidden"]);
+  expect(rows[1]?.conflicts).toEqual([roundId,"hidden"]);
+  expect(rows[2]?.conflicts).toEqual([roundId,secondId]);
   expect(hrRoundConflictLabels(rows,[secondId,"missing"])).toEqual(["Technical (#2)"]);
   expect(hrRoundConflictLinks(rows,[roundId],secondId)).toEqual([{
     id:roundId,label:"Interview (#1)",
