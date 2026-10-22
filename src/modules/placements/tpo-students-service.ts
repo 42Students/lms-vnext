@@ -175,8 +175,11 @@ export const tpoStudentRequestsQuerySchema = z
     sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST","DECIDED_NEWEST","DECIDED_OLDEST"]).optional(),
     requestedBefore:z.date().optional(),
     requestedAfter:z.date().optional(),
-    // All decided requests or only recent decisions, as in old requestsQueue.
-    decidedDays:z.union([z.literal("ALL"),z.coerce.number().int().min(1).max(365)]).optional(),
+    // Legacy requestsQueue defaults to pending only; decisions are included
+    // only after the operator selects a decided window. "ALL" represents
+    // the legacy decidedDays=0 query, without an unbounded implicit default.
+    includeDecided:z.boolean().default(false),
+    decidedDays:z.union([z.literal("ALL"),z.coerce.number().int().min(1).max(365)]).default(30),
     urgentOnly:z.boolean().default(false),
     jobId:uuid.optional(),
   proof:z.enum(["ALL","ATTACHED","MISSING"]).default("ALL"),
@@ -1318,12 +1321,13 @@ export async function listTpoStudentRequests(
           collegeMemberships.collegeId,
           college.id,
         ),
-        // Filter before joining/aggregating an unbounded decision history.
-        // Undecided requests are never hidden by the decided-days limit.
-        decidedSince?or(
-          eq(placementLearnerRequests.status,"PENDING"),
-          gte(placementLearnerRequests.decidedAt,decidedSince),
-        ):undefined,
+        // Default: outstanding requests only. Explicitly enabling decided
+        // history includes them for 30 days or all history when "ALL" chosen.
+        !input.includeDecided?eq(placementLearnerRequests.status,"PENDING"):
+          decidedSince?or(
+            eq(placementLearnerRequests.status,"PENDING"),
+            gte(placementLearnerRequests.decidedAt,decidedSince),
+          ):undefined,
       ),
     )
     .orderBy(
