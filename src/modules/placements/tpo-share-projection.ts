@@ -148,7 +148,7 @@ export function projectTpoShareApplicant(input: {
 
   if (!retained) {
     if (allowed.has("email")) projected["email"] = applicant.email;
-    if (allowed.has("phone") && position >= SHARE_STAGE_POSITIONS.get("SHORTLISTED")!) {
+    if (allowed.has("phone") && position >= TPO_SHARE_STAGES.indexOf("SHORTLISTED")) {
       projected["phone"] = applicant.phone;
     }
     if (allowed.has("resume")) projected["resume"] = applicant.resumeUrl;
