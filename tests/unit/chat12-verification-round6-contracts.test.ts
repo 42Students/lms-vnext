@@ -32,7 +32,8 @@ describe("TPO verification round6 source regressions",()=>{
  it("TPO-requests-verification-25 current behavior covered",()=>{
   const s=src("components/verification/TpoVerificationPanel.tsx");
   expect(s).toContain("Stopped at ");
-  expect(s).toContain("Review one by one");
+  expect(s).toContain("setSequenceRows(");
+  expect(s).toContain("Stopped at ");
  });
  it("TPO-requests-verification-26 current behavior covered",()=>{
   const s=src("components/tpo/tpo-roster-verification-bulk.tsx");
@@ -42,7 +43,7 @@ describe("TPO verification round6 source regressions",()=>{
  it("TPO-requests-verification-27 current behavior covered",()=>{
   const s=src("components/verification/VerificationReviewDrawer.tsx");
   expect(s).toContain("tpoVerificationSectionReasons");
-  expect(s).toContain("The student sees your reason");
+  expect(s).toContain("Each student sees the reason");
  });
  it("TPO-requests-verification-28 current behavior covered",()=>{
   const s=src("components/verification/TpoVerificationPanel.tsx");
@@ -51,7 +52,7 @@ describe("TPO verification round6 source regressions",()=>{
  });
  it("TPO-requests-verification-29 current behavior covered",()=>{
   const s=src("components/verification/VerificationReviewDrawer.tsx");
-  expect(s).toContain("Private supporting documents");
+  expect(s).toContain("private signed link");
   expect(s).toContain("Submitted versus previously verified");
   expect(s).toContain("Education");
  });
