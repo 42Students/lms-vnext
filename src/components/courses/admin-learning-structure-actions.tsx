@@ -24,12 +24,7 @@ async function requestJson(
 ) {
   const response = await fetch(path, {
     method,
-    headers: body
-      ? { "Content-Type": "application/json" }
-      : undefined,
-    body: body
-      ? JSON.stringify(body)
-      : undefined,
+    ...(body ? { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}),
   });
 
   if (!response.ok) {
