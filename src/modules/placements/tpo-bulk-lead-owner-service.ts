@@ -153,12 +153,14 @@ export async function bulkAssignTpoLeadOwner(
       if (!row) throw new Error("TPO_OWNER_RESULT_MISSING");
       return row;
     });
+    const firstResult=results[0];
+    if(!firstResult)throw new Error("TPO_OWNER_RESULT_MISSING");
     const counts=summarizeTpoBulkLeadOwners(results);
     const [runAudit]=await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId,
       actorUserId:context.user.id,actorMembershipId:context.membership!.id,
       module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_BULK_OWNER",
-      subjectType:"placement_tpo_lead",subjectId:results[0].leadId,
+      subjectType:"placement_tpo_lead",subjectId:firstResult.leadId,
       summary:"Bulk recruiter lead ownership update",
       metadata:{ownerMembershipId:target.id,leadIds:results.map(r=>r.leadId),counts,undoVersion:1,changed},
     }).returning({id:activityEvents.id});
