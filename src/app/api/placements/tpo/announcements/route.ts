@@ -98,6 +98,8 @@ export async function POST(request:Request){
     field==="buttonUrl"?"BUTTON_URL_INVALID":"INVALID_BODY",400);
   }
   if(error instanceof Error&&error.message==="TPO_NOTICE_INVALID_TIME")return noticePostError(request,"INVALID_TIME",400);
+  if(error instanceof Error&&error.message==="TPO_NOTICE_DELIVERY_UNVERIFIED")
+   return noticePostError(request,"TPO_NOTICE_DELIVERY_UNVERIFIED",503);
   if(error instanceof Error && (error.message==="TARGETED_NOTICES_NOT_REGISTERED" ||
     error.message==="TPO_NOTICE_NO_RECIPIENTS"))
     return noticePostError(request,error.message,error.message==="TARGETED_NOTICES_NOT_REGISTERED"?503:409);
