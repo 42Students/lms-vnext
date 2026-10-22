@@ -124,6 +124,7 @@ export async function createCollegeSemester(context: RequestContext, rawInput: u
         isActive:input.isActive??true,
         totalCredits: input.totalCredits ?? null,
       }).returning();
+      if (!created) throw new Error("Semester insertion returned no row");
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_SEMESTER_CREATED,
         collegeId: member.collegeId,
