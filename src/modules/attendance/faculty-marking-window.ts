@@ -32,3 +32,31 @@ export function facultyAttendanceMarkingWindow(input: {
   if (current > endOfCorrection) return "WINDOW_EXPIRED";
   return "OPEN";
 }
+
+/** One explicitly supported vNext policy for both server and Faculty UI.
+ * Legacy's pre-class/historical writes could change records without the
+ * college's correction authority; they are deliberately replaced with a
+ * bounded Faculty correction period and administrator-only historical fixes.
+ * This is not a permission decision: the writer additionally validates a
+ * persisted Faculty teaching assignment and ACTIVE college membership. */
+export const FACULTY_ATTENDANCE_TIMING_POLICY = {
+ facultyMayMarkBeforeClass: false,
+ facultyMayCorrectHistoricalMarksOutsideWindow: false,
+ expiredCorrectionRoute: "COLLEGE_ADMIN_ATTENDANCE_CORRECTION",
+ statusSource: "COLLEGE_ATTENDANCE_POLICY",
+} as const;
+
+export function facultyAttendanceMarkingGuidance(
+ status:FacultyAttendanceMarkingWindow,wasMarked:boolean,
+):{canEdit:boolean;message:string;nextAction:"EDIT"|"WAIT_FOR_CLASS"|"REQUEST_ADMIN_CORRECTION"}{
+ if(status==="OPEN")return {canEdit:true,message:wasMarked?
+  "Update a previously marked attendance record within the college correction window.":
+  "Mark this class's attendance.",nextAction:"EDIT"};
+ if(status==="NOT_STARTED")return {canEdit:false,
+  message:"Attendance cannot be marked before the class starts.",
+  nextAction:"WAIT_FOR_CLASS"};
+ return {canEdit:false,message:wasMarked?
+  "The correction window has ended. Ask your College Admin to correct historical marks.":
+  "This class is outside the Faculty marking window. Ask your College Admin for a reviewed correction.",
+  nextAction:"REQUEST_ADMIN_CORRECTION"};
+}
