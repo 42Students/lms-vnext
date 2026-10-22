@@ -75,7 +75,8 @@ describe("public sign-in verified gap closure",()=>{
  it("PUB-auth-public-13 restores an unexpired one-time-code attempt after refresh",()=>{
   const s=login();expect(s).toContain("window.sessionStorage.setItem(");
   expect(s).toContain("loadLoginAttempt(tenantKey)");
-  expect(s).toContain("stored.expiresAt");
+  expect(s).toContain("record.expiresAt");
+  expect(s).toContain("record.expiresAt <= Date.now()");
   expect(s).toContain("setAttempt(stored.attempt)");
   expect(s).toContain("nextResendAt");
  });
