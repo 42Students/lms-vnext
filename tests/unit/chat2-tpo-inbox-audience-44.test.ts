@@ -16,7 +16,7 @@ describe("TPO notice audience choice parity",()=>{
   const ui=source("src/components/tpo/tpo-notice-audience-picker.tsx");
   const service=source("src/modules/announcements/tpo-notice-target-options-service.ts");
   expect(ui).toContain('name="targetIds"');
-  expect(ui).toContain('multiple value={targets}');
+  expect(ui).toContain('multiple required value={targets}');
   expect(ui).toContain("No batch is in placements");
   expect(ui).toContain("No student in placements has a branch yet");
   expect(service).toContain("assertPersistedPlatformPermission(tx,context");

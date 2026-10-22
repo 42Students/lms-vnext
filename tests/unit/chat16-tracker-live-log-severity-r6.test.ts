@@ -7,8 +7,8 @@ describe("chat-16 live log severity and privacy",()=>{
   const route=readFileSync("src/app/api/tracker/live-logs/route.ts","utf8");
   const model=readFileSync("src/modules/bug-tracker/tracker-cloud-logs.ts","utf8");
   const ui=readFileSync("src/components/tracker/tracker-live-logs-explorer.tsx","utf8");
-  expect(route).toContain('const keys=["windowMinutes","pageToken","query","minimumSeverity"]');
-  expect(route).toContain("keys.some(key=>url.searchParams.getAll(key).length>1)");
+  expect(route).toContain('const filters=["windowMinutes","pageToken","query","minimumSeverity"');
+  expect(route).toContain("if(Object.keys(raw).some(key=>!filters.includes(key as typeof filters[number])))return null");
   expect(model).toContain('z.enum(["WARNING","ERROR"]).default("ERROR")');
   expect(ui).toContain('value={minimumSeverity}');
   expect(ui).toContain('minimumSeverity,query:query.trim()');
