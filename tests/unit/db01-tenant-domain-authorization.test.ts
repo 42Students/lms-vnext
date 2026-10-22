@@ -196,18 +196,20 @@ describe("DB01 tenant-domain authorization and identity-state regression", () =>
 
   it("allows an unscoped active superadmin to delete another college domain", async () => {
     const s = store();
-    await deleteTenantDomain(actor({
+    const superadmin=actor({
       noMembership: true, systemRoles: ["SUPER_ADMIN"],
-    }), DOMAIN_B, s.repository);
+    });
+    await deleteTenantDomain(superadmin, DOMAIN_B, s.repository);
     expect(s.remove).toHaveBeenCalledTimes(1);
-    expect(s.remove).toHaveBeenCalledWith(DOMAIN_B, undefined);
+    expect(s.remove).toHaveBeenCalledWith(DOMAIN_B, undefined, superadmin);
   });
 
   it("allows an active authorized superadmin to select a verified primary in their own college", async () => {
     const s = store();
-    await setPrimaryTenantDomain(actor({ noMembership: true, systemRoles: ["SUPER_ADMIN"] }), DOMAIN_A, s.repository);
+    const superadmin=actor({ noMembership: true, systemRoles: ["SUPER_ADMIN"] });
+    await setPrimaryTenantDomain(superadmin, DOMAIN_A, s.repository);
     expect(s.primary).toHaveBeenCalledTimes(1);
-    expect(s.primary).toHaveBeenCalledWith(DOMAIN_A);
+    expect(s.primary).toHaveBeenCalledWith(DOMAIN_A, superadmin);
   });
 
   it("prevents an ended membership from listing active tenant domains", async () => {

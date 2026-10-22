@@ -7,7 +7,7 @@ it("filters foreign-company and foreign-college drives before constructing revie
  {collegeId:"college-a",companyId:"company-a",job},
  {collegeId:"college-b",companyId:"company-a",job},
  {collegeId:"college-a",companyId:"company-b",job}],collegeId:"college-a",companyId:"company-a",unread:1});
- expect(rows).toHaveLength(2);
+ expect(rows).toHaveLength(1);
  expect(rows[0]?.href).toContain("/recruiter/messages");
- expect(rows[1]?.href).toContain("review=1");
+ expect(rows.every(row=>!row.href?.includes("review=1"))).toBe(true);
 });

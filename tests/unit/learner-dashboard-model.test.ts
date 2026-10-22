@@ -16,21 +16,22 @@ describe("Learner placement dashboard summary and priority", () => {
   it("renders a real first-run browse action with zero counts", () => {
     const state = learnerPlacementDashboard(empty, now);
     expect(state.firstRun).toBe(true);
-    expect(state.nextAction.href).toBe("/learn/my-placements/jobs");
+    expect(state.nextAction.href).toBe("/learn/my-placements");
     expect(state.openJobCount).toBe(0);
     expect(state.weekEvents).toEqual([]);
   });
 
-  it("prioritizes a soon assessment over an earlier interview", () => {
+  it("prioritizes an earlier interview while separately retaining assessment urgency", () => {
     const state = learnerPlacementDashboard({
       ...empty, rounds: [
         round("interview", "INTERVIEW", "2026-10-14T10:00:00Z"),
         round("test", "VENDOR_TEST", "2026-10-15T10:00:00Z"),
       ],
     }, now);
-    expect(state.nextAction.title).toBe("test");
+    expect(state.nextAction.title).toBe("interview");
     expect(state.nextAction.href).toBe(
-      "/learn/my-placements/assessments?applicationId=app-1&roundId=test");
+      "/learn/my-placements/interviews?applicationId=app-1&roundId=interview");
+    expect(state.urgentAssessment?.roundId).toBe("test");
     expect(state.weekEvents.map((event) => event.roundId)).toEqual(["interview", "test"]);
   });
 
@@ -69,7 +70,7 @@ describe("Learner placement dashboard summary and priority", () => {
       round("earlier","GD","2026-10-14T08:00:00Z"),
       round("later","TEST","2026-10-15T08:00:00Z"),
     ]},now);
-    expect(result.nextAction.title).toBe("later");
+    expect(result.nextAction.title).toBe("earlier");
     expect(result.nextScheduledEvent?.roundId).toBe("earlier");
     expect(result.nextScheduledEvent?.href).toContain("/interviews?");
   });
@@ -180,7 +181,7 @@ describe("L11-014 needs-attention ordering",()=>{
    "early-interview","middle-test","later-test"
   ]);
   expect(result.fullAttentionCount).toBe(4);
-  expect(result.nextAction.title).toBe("middle-test");
+  expect(result.nextAction.title).toBe("early-interview");
  });
  it("applies an approved reschedule before sorting its attention time",()=>{
   const result=learnerPlacementDashboard({...empty,rounds:[

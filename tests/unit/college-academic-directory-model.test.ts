@@ -14,11 +14,11 @@ const batch = (query: Record<string, unknown>) => collegeBatchDirectorySchema.pa
 describe("College Admin semester and batch read models", () => {
   it("accepts only bounded, college-independent semester queries", () => {
     expect(collegeSemesterDirectorySchema.parse({})).toEqual({
-      q: "", status: "ALL", page: 1, pageSize: 10,
+      q: "", status: "ALL", page: 1, pageSize: 25,
     });
     expect(collegeSemesterDirectorySchema.parse({
       q: "  Data Science  ", status: "INACTIVE", page: "2",
-    })).toEqual({ q: "Data Science", status: "INACTIVE", page: 2, pageSize: 10 });
+    })).toEqual({ q: "Data Science", status: "INACTIVE", page: 2, pageSize: 25 });
     for (const invalid of [
       { collegeId: "not-allowed" },
       { status: "CLOSED" },
@@ -39,11 +39,11 @@ describe("College Admin semester and batch read models", () => {
 
   it("accepts only defined cohort lifecycles", () => {
     expect(collegeBatchDirectorySchema.parse({})).toEqual({
-      q: "", status: "ALL", progression: "ALL", page: 1, pageSize: 10,
+      q: "", status: "ALL", progression: "ALL", page: 1, pageSize: 25,
     });
     expect(collegeBatchDirectorySchema.parse({
       status: "COMPLETED", page: "3",
-    })).toEqual({ q: "", status: "COMPLETED", progression:"ALL", page: 3, pageSize: 10 });
+    })).toEqual({ q: "", status: "COMPLETED", progression:"ALL", page: 3, pageSize: 25 });
     expect(collegeBatchDirectorySchema.safeParse({ status: "INACTIVE" }).success).toBe(true);
     expect(collegeBatchDirectorySchema.safeParse({ status: "PAUSED" }).success).toBe(false);
     expect(collegeBatchDirectorySchema.safeParse({progression:"UNKNOWN"}).success).toBe(false);
