@@ -166,17 +166,19 @@ describe("chat-19 college UX cross-audit", () => {
 
   it("COL-XA-11 uses mobile cards with labelled elective allocation checkboxes", () => {
     const page = read("src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx");
-    expect(page).toContain("<DataTable");
-    expect(page).toContain('caption="Eligible students for allocation"');
-    expect(page).toContain('mobilePriority: "action"');
-    expect(page).toContain('mobilePriority: "primary"');
-    expect(page).toContain('mobilePriority: "secondary"');
-    expect(page).toContain('name="membershipId"');
-    expect(page).toContain('empty={<EmptyState title="No eligible learners"');
-    expect(page).not.toContain("<table");
-    expect(page).toContain('<ScrollCue axis="y"');
-    expect(page).toContain('viewportClassName="max-h-[26rem]"');
-    expect(page).toContain('aria-label={"Select "');
+    expect(page).toContain("<ElectiveEligibleSelection");
+    const selection=read("src/components/academics/elective-eligible-selection.tsx");
+    expect(selection).toContain("<DataTable");
+    expect(selection).toContain('caption="Eligible students for allocation"');
+    expect(selection).toMatch(/mobilePriority:\\s*"action"/);
+    expect(selection).toMatch(/mobilePriority:\\s*"primary"/);
+    expect(selection).toMatch(/mobilePriority:\\s*"secondary"/);
+    expect(selection).toContain('name="membershipId"');
+    expect(selection).toContain('empty={<EmptyState title="No eligible learners"');
+    expect(selection).not.toContain("<table");
+    expect(selection).toContain('<ScrollCue axis="y"');
+    expect(selection).toContain('viewportClassName="max-h-[26rem]"');
+    expect(selection).toContain('aria-label={"Select "');
   });
 
   it("COL-XA-12 validates slot and offering before database mutation", () => {
