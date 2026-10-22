@@ -73,6 +73,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   const todayIst=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const dateIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
   const interviewToday=scheduled.filter(item=>dateIst(item.scheduledAt)===todayIst).length;
+  const conflictIds=collegeInterviewConflictIds(appointments.interviews);
   const conflicts=conflictIds.size;
   const visibleAppointments=conflictOnly?appointmentRows.filter(item=>conflictIds.has(item.id)):appointmentRows;
   const baseConflictHref=driveInterviewsHref(jobId,query);
