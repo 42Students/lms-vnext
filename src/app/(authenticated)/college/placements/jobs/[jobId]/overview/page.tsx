@@ -97,6 +97,10 @@ export default async function CollegeDriveOverviewPage({ params }: {
            <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 5h18M3 12h18M3 19h18"/><path d="m16 8 4 4-4 4"/></svg>
            View applications
           </Link>
+          <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications?stage=HIRED`}
+           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-heading)] hover:bg-surface-subtle focus-visible:outline-2 md:min-h-9">
+           View hired candidates
+          </Link>
         </div>
       </div>
       {drive.description?.trim()?<details className="group mt-3 max-w-[90ch] text-sm leading-[22px] text-body">
