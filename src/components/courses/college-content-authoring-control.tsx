@@ -66,7 +66,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
   return JSON.stringify({lessonId:lessons[0]?.id??"",title:"",url:"",notes:"",duration:"",
    start:times.start,end:times.end,deliveryId:"",timeZone:"Asia/Kolkata",
-   removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false});
+   removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false,resourceFiles:[]});
  });
  const [pendingArchive,setPendingArchive]=useState<Existing|null>(null);
  const [pendingPublish,setPendingPublish]=useState<Existing|null>(null);
@@ -162,20 +162,20 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   setEditing(item.id);setOpen(true);if(kind==="YOUTUBE")setVideoMode("YOUTUBE");setLessonId(item.lessonId);setTitle(item.title);
   setUrl("");setNotes(item.notes??"");setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
   setTimeZone("Asia/Kolkata");setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setRemoveLink(false);
-  setVisibleToStudents(item.visibleToStudents);setAddFileAfterCreate(false);setResourceLinks([]);setMaterialDraft({title:"",externalUrl:"",notes:""});setDiscardOpen(false);setError("");setMessage("");
+  setVisibleToStudents(item.visibleToStudents);setResourceFiles([]);setResourceUploadStatus("");setResourceProgress(0);setAddFileAfterCreate(false);setResourceLinks([]);setMaterialDraft({title:"",externalUrl:"",notes:""});setDiscardOpen(false);setError("");setMessage("");
   setInitialDraft(JSON.stringify({lessonId:item.lessonId,title:item.title,url:"",notes:item.notes??"",
    duration:item.durationSeconds===null?"":String(item.durationSeconds),
    start:dateInput(item.startsAt),end:dateInput(item.endsAt),deliveryId:item.deliveryId??"",
-   timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:item.visibleToStudents,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false}));
+   timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:item.visibleToStudents,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false,resourceFiles:[]}));
  }
  function fresh(){
   const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
   setEditing(null);setOpen(true);setNewResourceId(null);if(kind==="YOUTUBE")setVideoMode("YOUTUBE");setTitle("");setUrl("");setNotes("");setDuration("");
   setStart(times.start);setEnd(times.end);setTimeZone("Asia/Kolkata");setDeliveryId("");
-  setError("");setMessage("");setRemoveLink(false);setVisibleToStudents(true);setAddFileAfterCreate(false);setResourceLinks([]);setMaterialDraft({title:"",externalUrl:"",notes:""});
+  setError("");setMessage("");setRemoveLink(false);setVisibleToStudents(true);setResourceFiles([]);setResourceUploadStatus("");setResourceProgress(0);setAddFileAfterCreate(false);setResourceLinks([]);setMaterialDraft({title:"",externalUrl:"",notes:""});
   setDiscardOpen(false);
   setInitialDraft(JSON.stringify({lessonId,title:"",url:"",notes:"",duration:"",start:times.start,end:times.end,
-   deliveryId:"",timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false}));
+   deliveryId:"",timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false,resourceFiles:[]}));
  }
  async function uploadResourceFiles(id:string,audience:string|null){
   const root="/api/courses/lesson-contents/"+encodeURIComponent(id)+"/materials/files";
@@ -242,6 +242,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   if(kind==="RESOURCE"&&!editing&&!url.trim()&&!notes.trim()&&!resourceLinks.length&&!addFileAfterCreate&&!resourceFiles.length){
    setError("Add a file, HTTPS link, or notes before saving.");return;
   }
+  if(kind==="RESOURCE"&&!editing&&resourceLinks.length+resourceFiles.length>20){setError("Resources support no more than 20 files and links.");return;}
   if(kind==="RESOURCE"&&editing&&removeLink&&!notes.trim()){setError("Add resource notes before removing the last link.");return;}
   setBusy(true);setError("");setMessage("");
   try{
@@ -578,6 +579,8 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <p className="text-sm font-semibold">Add materials to your new Resource</p>
     <Button type="button" variant="secondary" size="sm" onClick={()=>setNewResourceId(null)}>Done adding materials</Button>
    </div>
+   {resourceUploadStatus?<p role="status" className="text-xs text-muted-foreground">{resourceUploadStatus}</p>:null}
+   {resourceUploadStatus&&error?<p role="alert" className="text-xs text-error">{error}</p>:null}
    <LessonResourceMaterialsControl contentId={newResourceId} deliveryId={deliveryId||null} editable/>
   </section>:null}
   {(listRows.length>0||listPage>1||listMore||Boolean(existingFilters?.search))&&<details className="group min-w-0 border-b border-border pb-4"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Existing Content</summary><div className="min-w-0 space-y-3 pt-3">
