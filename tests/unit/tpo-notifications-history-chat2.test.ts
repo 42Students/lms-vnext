@@ -7,7 +7,7 @@ describe("TPO Notifications history and refresh legacy fidelity",()=>{
  it("TPO-inbox-team-65 restores All (n), Latest n and legacy empty-state labels",()=>{
   const page=src("src/app/(authenticated)/tpo/notifications/page.tsx");
   const toolbar=src("src/components/activity/notification-toolbar.tsx");
-  expect(page).toContain('allLabel={nextHref?"Latest "+items.length:"All ("+items.length+")"}');
+  expect(page).toContain('allLabel={firstPage?(inbox.page.nextCursor?"Latest "+items.length:"All ("+items.length+")"):"Older ("+items.length+")"}');
   expect(page).toContain('"No unread notifications" : "Nothing yet"');
   expect(toolbar).toContain("{allLabel}");
  });
@@ -15,8 +15,8 @@ describe("TPO Notifications history and refresh legacy fidelity",()=>{
   const now=new Date("2099-12-31T12:00:00.000Z");
   const cutoff=tpoUnreadCutoff(now);
   expect(now.getTime()-cutoff.getTime()).toBe(30*86400000);
-  expect(tpoEffectiveReadAt(null,new Date("2099-01-01T00:00:00.000Z"),cutoff))
-   .toBeInstanceOf(Date);
+  // Older messages must not silently acquire fabricated read receipts.
+  expect(tpoEffectiveReadAt(null,new Date("2099-01-01T00:00:00.000Z"),cutoff)).toBeNull();
   expect(tpoEffectiveReadAt(null,new Date("2099-12-30T00:00:00.000Z"),cutoff)).toBeNull();
   const page=src("src/app/(authenticated)/tpo/notifications/page.tsx");
   expect(page).toContain("olderUnread>0");

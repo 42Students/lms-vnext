@@ -2,6 +2,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
 import {TpoTeamAssignUnowned} from "@/components/tpo/tpo-team-assign-unowned";
+import {TpoTeamHandover} from "@/components/tpo/tpo-team-handover";
 import {readTpoUnownedWork} from "@/modules/placements/tpo-team-unowned-service";
 import { TpoSettingsTeamManage, TpoSettingsTeamRemove } from "@/components/tpo/tpo-settings-team-manage";
 import { listTpoTeamAssignableStaff } from "@/modules/placements/tpo-settings-team-actions-service";
@@ -74,6 +75,8 @@ export default async function TpoPlacementTeamPage({searchParams}: {
     overdueAsks:workloadByMember.get(member.membershipId)?.overdueAsks??0,
   })),sort);
   const actorMembershipId = context.membership.id;
+  const handoverCandidates=members.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
+    .map(member=>({membershipId:member.membershipId,displayName:member.displayName}));
   const candidates = sources.teamAssignmentsAvailable
     ? await listTpoTeamAssignableStaff(context)
     : [];
@@ -221,11 +224,17 @@ export default async function TpoPlacementTeamPage({searchParams}: {
               {key:"workload",header:"Open asks",mobilePriority:"secondary",cell:member=>
                 workload.ready?<span>{member.openAsks} open · {member.overdueAsks} overdue</span>:
                   <span className="text-muted-foreground">Unavailable</span>},
-              {key:"manage",header:"Team access",cell:member=><TpoSettingsTeamRemove
-                membershipId={member.membershipId} displayName={member.displayName}
-                removable={sources.teamAssignmentsAvailable && (member.roles.includes("TPO_ADMIN") || member.roles.includes("FACULTY_COORDINATOR"))}
-                isSelf={member.membershipId===actorMembershipId}
-                permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}/>},
+              {key:"manage",header:"Team access",cell:member=><div className="min-w-0 space-y-2">
+                <TpoSettingsTeamRemove
+                  membershipId={member.membershipId} displayName={member.displayName}
+                  removable={sources.teamAssignmentsAvailable && (member.roles.includes("TPO_ADMIN") || member.roles.includes("FACULTY_COORDINATOR"))}
+                  isSelf={member.membershipId===actorMembershipId}
+                  permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}/>
+                {(member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))&&
+                  member.membershipId!==actorMembershipId&&handoverCandidates.length>1?
+                  <TpoTeamHandover sourceMembershipId={member.membershipId}
+                    sourceName={member.displayName} members={handoverCandidates}/>:null}
+              </div>},
               {key:"duties",header:"Student duties",mobilePriority:"secondary",cell:member=>
                 member.studentDuties.length===0?<span className="text-muted-foreground">—</span>:
                 <div className="min-w-0 space-y-2">
