@@ -1,17 +1,18 @@
 import {deflateRawSync} from "node:zlib";
 import type {TpoStudentRow} from "./tpo-students-model";
+import {tpoStudentDisplayLabel} from "./tpo-student-display-label";
 /** SpreadsheetML workbook with native inline strings and a minimal RFC 1951 ZIP container.
  * No dynamic formula elements, external links, macros or untrusted ZIP entry names. */
 export const TPO_STUDENT_EXCEL_COLUMNS={
  student:["Student",(row:TpoStudentRow)=>row.displayName],number:["Roll no.",(row:TpoStudentRow)=>row.rollNumber??row.registrationNumber],
- batch:["Batch",(row:TpoStudentRow)=>row.cohortName],branch:["Branch",(row:TpoStudentRow)=>row.branchName],
- stage:["Stage",(row:TpoStudentRow)=>row.journeyState],profile:["Profile",(row:TpoStudentRow)=>row.verification.status],
+ batch:["Batch",(row:TpoStudentRow)=>[row.programName,row.cohortName].filter(Boolean).join(" · ")],branch:["Branch",(row:TpoStudentRow)=>row.branchName],
+ stage:["Stage",(row:TpoStudentRow)=>tpoStudentDisplayLabel(row.journeyState)],profile:["Profile",(row:TpoStudentRow)=>row.verification.status],
  cgpa:["CGPA",(row:TpoStudentRow)=>row.cgpa],tenth:["10th %",(row:TpoStudentRow)=>row.tenthPct],
  twelfth:["12th %",(row:TpoStudentRow)=>row.twelfthPct],diploma:["Diploma %",(row:TpoStudentRow)=>row.diplomaPct],
  ug:["UG %",(row:TpoStudentRow)=>row.ugPct],pg:["PG % (profile entry)",(row:TpoStudentRow)=>row.profileFacts?.pgPercentage],
  backlogs:["Active backlogs",(row:TpoStudentRow)=>row.activeBacklogs],
  offers:["Offers",(row:TpoStudentRow)=>row.offerCount],applications:["Applications",(row:TpoStudentRow)=>row.applicationCount],
- best:["Best so far",(row:TpoStudentRow)=>row.bestSoFar],
+ best:["Best so far",(row:TpoStudentRow)=>tpoStudentDisplayLabel(row.bestSoFar)],
  afterCollege:["After college",(row:TpoStudentRow)=>row.registrationChoice],
  gender:["Gender",(row:TpoStudentRow)=>row.profileFacts?.gender],
  skills:["Skills",(row:TpoStudentRow)=>row.profileFacts?.skills],
@@ -19,7 +20,7 @@ export const TPO_STUDENT_EXCEL_COLUMNS={
  certification:["Certifications",(row:TpoStudentRow)=>row.profileFacts?.certifications],
  experience:["Experience entries",(row:TpoStudentRow)=>row.profileFacts?.experiences],
  resume:["Resume",(row:TpoStudentRow)=>row.profileFacts?.resume?"Provided":"Not provided"],
- marksVerified:["Marks verified",(row:TpoStudentRow)=>row.marksVerified?"Verified":"Not verified"],
+ marksVerified:["Marks verified",(row:TpoStudentRow)=>row.marksVerified==null?"":row.marksVerified?"Yes":"No"],
  passingYear:["Passing year",(row:TpoStudentRow)=>row.passingYear],
  email:["Email (export only)",(row:TpoStudentRow)=>row.email],
  eligibilityReason:["Eligibility reason (staff only)",(row:TpoStudentRow)=>row.participationReason],
