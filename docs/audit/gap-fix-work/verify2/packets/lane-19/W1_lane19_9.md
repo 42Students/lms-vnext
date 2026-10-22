@@ -126,3 +126,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/projects/project-admin-audit-page.tsx
 - Legacy: audit/index.js:110-115 fetches200 for short ranges and25 for All
 - Expected fix: Paginate or count all actions in range, disclose truncation
+
+### Lane-5 fast verification triage (2026-10-22)
+- **G2-7-012-064 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-013-016 — DEFERRED**: New-feature or migration contract must be traced; no OK claim.
+- **G2-7-014-019 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-014-036 — DEFERRED**: New-feature or migration contract must be traced; no OK claim.
+- **G2-7-015-044 — DEFERRED**: New-feature or migration contract must be traced; no OK claim.
+- **G2-7-015-084 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-016-042 — DEFERRED**: New-feature or migration contract must be traced; no OK claim.
+- **G2-7-017-034 — DEFERRED**: New-feature or migration contract must be traced; no OK claim.
+- **G2-7-018-029 — DEFERRED**: New-feature or migration contract must be traced; no OK claim.
+- **G2-7-021-018 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-021-056 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-027-017 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-027-057 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-028-004 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-028-026 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-028-086 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-029-004 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-029-086 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-030-020 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-030-027 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-030-036 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-030-042 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-030-048 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-030-051 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
+- **G2-7-030-070 — DEFERRED**: Source located; functional parity is not established from presence alone; no OK claim.
