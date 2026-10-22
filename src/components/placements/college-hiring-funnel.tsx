@@ -158,7 +158,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
             :Math.round(100*(cumulative[stage]??0)/total)+"% of applications"}
         </span>
       </div>
-      <MetricBar label={label(stage)} size="default" className={reportStyles["track"]}
+      <MetricBar label={label(stage)} size="default" {...(reportStyles["track"] !== undefined ? { className: reportStyles["track"] } : {})}
        value={cumulative[stage]??0} maximum={total} unit="applications" />
       <span className={reportStyles["value"]+" tabular-nums"}>{cumulative[stage]??0}</span>
     </div>)}
