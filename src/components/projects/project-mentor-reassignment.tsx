@@ -53,6 +53,7 @@ export function ProjectMentorReassignment({
   const [roleLabel, setRoleLabel] =
     useState("Project Mentor");
   const [search, setSearch] = useState("");
+  const [mentorPage,setMentorPage]=useState(0);
   const [workspacePage,setWorkspacePage]=useState(1);
   const [targetAttempted,setTargetAttempted]=useState(false);
   const [pending, setPending] =
@@ -97,7 +98,8 @@ export function ProjectMentorReassignment({
       return()=>{controller.abort();};
     }
     setMentorLoading(true);setMentorError("");
-    const params=new URLSearchParams({collegeId,q:query,limit:"100"});
+    const params=new URLSearchParams({collegeId,q:query,limit:"100",
+      offset:String(mentorPage*100)});
     const timer=window.setTimeout(()=>{void fetch("/api/projects/mentor-candidates?"+params.toString(),{
       credentials:"same-origin",cache:"no-store",signal:controller.signal,
     }).then(async response=>{
@@ -114,7 +116,7 @@ export function ProjectMentorReassignment({
       if(sequence===mentorRequest.current&&!controller.signal.aborted)setMentorLoading(false);
     });},250);
     return()=>{window.clearTimeout(timer);controller.abort();};
-  },[collegeId,search]);
+  },[collegeId,search,mentorPage]);
   const visibleMentors=useMemo(()=>{
     const pool=search.trim()?remoteMentors:mentors;
     const selectedItem=[...remoteMentors,...mentors]
@@ -327,9 +329,10 @@ export function ProjectMentorReassignment({
               disabled={pending}
               maxLength={100}
               value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setMentorPage(0);
+              }}
               placeholder="Search by mentor name"
               className="w-full"
             />
@@ -359,6 +362,16 @@ export function ProjectMentorReassignment({
               ))}
             </Select>
           </label>
+          <nav aria-label="Mentor search results pages"
+            className="flex flex-wrap items-center gap-2 text-xs text-body md:col-span-2">
+            <Button type="button" variant="secondary" size="sm"
+              disabled={pending||mentorLoading||mentorPage===0}
+              onClick={()=>setMentorPage(page=>Math.max(0,page-1))}>Previous mentors</Button>
+            <span>Page {mentorPage+1}</span>
+            <Button type="button" variant="secondary" size="sm"
+              disabled={pending||mentorLoading||remoteMentors.length<100||mentorPage>=999}
+              onClick={()=>setMentorPage(page=>Math.min(999,page+1))}>Next mentors</Button>
+          </nav>
           {targetAttempted&&!mentorMembershipId?<p role="alert"
             className="text-sm text-error md:col-span-2">Select a mentor</p>:null}
           {mentorLoading?<p role="status" className="text-xs text-body md:col-span-2">
