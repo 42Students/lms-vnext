@@ -17,7 +17,11 @@ import {projectMutation} from "@/components/projects/project-api";
 
 function move<T>(list:readonly T[],index:number,step:-1|1):T[]{
  const dest=index+step;if(dest<0||dest>=list.length)return [...list];
- const rows=[...list];[rows[index],rows[dest]]=[rows[dest]!,rows[index]!];
+ const rows=[...list];
+ const current=rows[index],target=rows[dest];
+ if(current===undefined||target===undefined)return rows;
+ rows[index]=target;
+ rows[dest]=current;
  return rows;
 }
 function nextKey(items:readonly {key:string}[],prefix:string){
