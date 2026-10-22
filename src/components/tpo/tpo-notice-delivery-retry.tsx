@@ -50,6 +50,8 @@ export function TpoNoticeDeliveryRetry({ noticeId }: { noticeId: string }) {
     } catch {
       setMessage("Couldn't retry delivery. Check your connection and try again.");
     }
+    }).catch(() => {
+      setMessage("Couldn\'t retry delivery. Check your connection and try again.");
     });
   }
 
