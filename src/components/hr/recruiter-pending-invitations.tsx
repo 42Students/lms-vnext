@@ -10,7 +10,7 @@ type PendingInvitation={
  collegeName:string;
  company:string;
  invitedContact:string|null;
- invitedAt:Date|string;
+ invitedAt?:Date|string;
 };
 type Decision={collegeId:string;collegeName:string;action:"accept"|"decline"};
 
