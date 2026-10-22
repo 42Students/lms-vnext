@@ -241,15 +241,23 @@ export async function GET(request: Request) {
     // Do not hide authentication/authorization failures behind a legacy 500.
     const mapped = apiErrorResponse(error);
     if (mapped.status !== 500) return mapped;
-    if (compat === "v1" && (
-      requestedMode === "search" ||
-      requestedMode === "popular" ||
-      requestedMode === "categories" ||
-      requestedMode === "category"
-    )) {
+    const searchFailureMode =
+      requestedMode === "search" || requestedMode === "popular" ||
+      requestedMode === "categories" || requestedMode === "category"
+        ? requestedMode : null;
+    if (searchFailureMode) {
+      const message = legacyErrorMessage(searchFailureMode);
+      if (compat === "v1") {
+        return NextResponse.json(
+          { status: "error", message, data: null },
+          { status: 500, headers: mapped.headers },
+        );
+      }
+      // Native search and category callers need the same actionable retry
+      // guidance; do not expose a database exception or hide authorization.
       return NextResponse.json(
-        { status: "error", message: legacyErrorMessage(requestedMode), data: null },
-        { status: 500, headers: { "Cache-Control": "private, no-store" } },
+        { error: "SKILLS_SEARCH_UNAVAILABLE", message, retryable: true },
+        { status: 500, headers: mapped.headers },
       );
     }
     return mapped;
