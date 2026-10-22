@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     // Legacy exports use activity-{category}-{YYYY-MM-DD}.csv.
     // Category is parsed by the scoped export service; sanitize to prevent
     // arbitrary header/path content in a download filename.
-    const category=(params?.category??"all").toLowerCase().replace(/[^a-z0-9_-]/g,"").slice(0,32)||"all";
+    const category=(params?.["category"]??"all").toLowerCase().replace(/[^a-z0-9_-]/g,"").slice(0,32)||"all";
     const today=new Intl.DateTimeFormat("en-CA",{
       timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
     }).format(new Date());
