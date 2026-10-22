@@ -49,7 +49,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  const [reason,setReason]=useState("");
  const [assessmentUrl,setAssessmentUrl]=useState("");
  const [saveAssessmentUrlToJob,setSaveAssessmentUrlToJob]=useState(true);
- const [action,setAction]=useState<"MOVE"|"REINSTATE">("MOVE");
+ const [action,setAction]=useState<"MOVE"|"REINSTATE"|"CORRECT">("MOVE");
+ const [notifyLearnerInApp,setNotifyLearnerInApp]=useState(true);
  const [dialog,setDialog]=useState(false);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
@@ -98,7 +99,9 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   }
  }
  function selectRow(row:Row,next:string){
-  setAllMatching(false);setSelected([row.id]);setTarget(next);setAction(next==="REINSTATE"?"REINSTATE":"MOVE");
+  const correction=next==="CORRECT_APPLIED";
+  setAllMatching(false);setSelected([row.id]);setTarget(correction?"APPLIED":next);
+  setAction(correction?"CORRECT":next==="REINSTATE"?"REINSTATE":"MOVE");
   setReason("");setOutcome(null);setError("");setAssessmentUrl("");
   setSaveAssessmentUrlToJob(true);setDialog(true);
  }
@@ -108,7 +111,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   setOutcome(null);setError("");setDialog(true);
  }
  async function save(){
-  if(!selectedCount||reason.trim().length<3||busy)return;
+  if(!selectedCount||reason.trim().length<(action==="CORRECT"?10:3)||busy)return;
   const assessment=assessmentUrl.trim();
   if(action==="MOVE"&&target==="ASSESSMENT"&&assessment){
    try{
@@ -125,8 +128,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    const payload=await apiFetch<{moved?:number;skipped?:number;results?:MoveOutcome[]}>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,applicationIds:allMatching?[]:selected,
-      matchingFilter:allMatching?query:undefined,stage:action==="MOVE"?target:undefined,
-      reason:reason.trim(),notifyByEmail:false,confirmed:true,
+      matchingFilter:allMatching?query:undefined,stage:action!=="REINSTATE"?target:undefined,
+      reason:reason.trim(),notifyByEmail:false,notifyLearnerInApp,confirmed:true,
       ...(action==="MOVE"&&target==="ASSESSMENT"&&assessment?{
        assessmentUrl:assessment,saveAssessmentUrlToJob,
       }:{}),
@@ -141,7 +144,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    showToast({tone:skipped?"info":"success",
     title:skipped?moved+" updated, "+skipped+" skipped":"Application status updated",
     description:held?held+" learner notifications are held for 30 seconds for safe undo. Other updates are notified in-app.":
-     skipped?"Review skipped applicants and retry after refreshing.":"Candidates were notified in-app."});
+     skipped?"Review skipped applicants and retry after refreshing.":notifyLearnerInApp?"Candidates were notified in-app.":"No learner notification was requested."});
    router.refresh();
   }catch(e){
    if(scopeEpoch.current!==epoch)return;
@@ -262,6 +265,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
         stage!=="REJECTED"&&!(legacyShortlisted&&row.stage==="ASSESSMENT"&&stage==="INTERVIEW"))
        .map(stage=><option key={stage} value={stage}>{stageLabel(stage)}</option>)}
      </Select>}
+    {row.status==="SUBMITTED"&&row.stage==="SHORTLISTED"?
+      <Button type="button" variant="secondary" disabled={busy}
+       aria-label={"Correct "+(row.name||"learner")+" to Applied"}
+       onClick={()=>selectRow(row,"CORRECT_APPLIED")}
+       className="min-h-11 text-xs md:min-h-9">Correct to Applied…</Button>:null}
     {row.status==="SUBMITTED"&&(row.allowedNextStages??transitions[row.stage]??[]).includes("REJECTED")?
      <Button type="button" variant="danger" disabled={busy}
       aria-label={"Reject "+(row.name||"learner")}
@@ -312,20 +320,20 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title={dialogTitle} dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
     <Button type="button" disabled={busy} variant="secondary" onClick={()=>{setDialog(false);setError("");setOutcome(null);}}>Close</Button>
     <Button type="button" variant={target==="REJECTED"?"danger":"primary"}
-      disabled={busy||reason.trim().length<3||!selectedCount}
+      disabled={busy||reason.trim().length<(action==="CORRECT"?10:3)||!selectedCount}
       onClick={()=>void save()}>{busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":
        target==="REJECTED"?"Reject "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</Button>
    </div>}>
     <p className="text-base font-semibold">{dialogTitle}</p>
     <p className="text-sm text-body leading-[22px]">{selectedCount} application(s) chosen. {action==="REINSTATE"?"Reinstate restores the previous stage while preserving recorded rejection history.":target==="REJECTED"?"Reject requires a recorded reason and is reversible only through Reinstate.":"Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change."}
-      Students are notified in-app of successful actions. Changes that violate screening rules are reported as skipped.</p>
+      Learner in-app notification is optional. Every change is audited, and changes that violate screening rules are reported as skipped.</p>
     {selected.length>5?<p id="pipeline-selected-scroll-cue" className="text-xs text-muted-foreground leading-5">More selected learners below ↓</p>:null}
    <ul tabIndex={0} role="region" aria-label="Selected applications" aria-describedby={selected.length>5?"pipeline-selected-scroll-cue":undefined}
     className="max-h-28 overflow-y-auto overscroll-contain pb-4 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">{selected.slice(0,8).map(id=>
       <li key={id}>{rowMap.get(id)?.name??id}</li>)}
      {selected.length>8?<li>and {selected.length-8} more</li>:null}</ul>
     <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Reason
-     <Textarea rows={3} required minLength={3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
+     <Textarea rows={3} required minLength={action==="CORRECT"?10:3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
       className="w-full text-base sm:text-sm"/></label>
     {action==="MOVE"&&target==="ASSESSMENT"?<div className="space-y-2">
       <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
@@ -343,10 +351,15 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      </div>:null}
     {target==="INTERVIEW"?<p className="text-sm text-body">Moving a candidate to Interview does not schedule an appointment. Use Schedule Interview in the applicant row after the update.</p>:null}
     {target==="OFFERED"||target==="HIRED"?<p className="text-sm text-body">An existing issued offer is required for Offered, and accepted offer plus confirmed joining are required for Hired. This action does not create an offer or joining outcome.</p>:null}
+    <label className="flex min-h-11 items-start gap-2 text-sm text-body">
+     <Checkbox checked={notifyLearnerInApp} disabled={busy}
+      onChange={event=>setNotifyLearnerInApp(event.target.checked)}/>
+     Notify learners in-app after applying the stage change
+    </label>
     <label className="flex min-h-11 items-start gap-2 text-xs text-muted-foreground">
      <Checkbox checked={false} disabled aria-label="Notify candidates by email (unavailable)"/>
      <span><strong className="block text-foreground">Notify candidates by email (not available)</strong>
-      In-app notifications remain enabled. Email requires an approved placement-stage template,
+      In-app notifications use the independent choice above. Email requires an approved placement-stage template,
       recipient preference and suppression checks, and a durable audited outbox. The stage move
       never silently sends unapproved email.</span>
     </label>
