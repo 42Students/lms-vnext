@@ -9,8 +9,10 @@ describe("Shared Faculty Courses controls",()=>{
   expect(page).toContain('import { Select } from "@/components/ui/select"');
   expect(page).toContain('import { Button } from "@/components/ui/button"');
   expect(page).toContain('<Input name="q" type="search"');
-  for(const key of ["period","section","role"])expect(page).toContain('<Select name="'+key+'"');
-  expect(page).toContain('<Button type="submit" variant="primary">Apply filters</Button>');
+  for(const key of ["period","role"])expect(page).toContain('<Select name="'+key+'"');
+  expect(page).toContain('<Select aria-label="Filter by section" name="section"');
+  expect(page).toContain('<noscript><Button type="submit" variant="primary"');
+  expect(page).toContain("Apply filters</Button></noscript>");
   expect(page).not.toContain('<select name=');
   expect(page).not.toContain('text-on-primary');
  });
