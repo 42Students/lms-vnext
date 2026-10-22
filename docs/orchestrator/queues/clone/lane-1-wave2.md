@@ -49,7 +49,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_submission-service.ts.md` (edit src/modules/projects/submission-service.ts; 17 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_workspace-brief-editor.tsx.md` (edit src/components/projects/workspace-brief-editor.tsx; 13 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-5_u004-mentor-calendar.md.md` (new; 12 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-workspace-page-export.tsx.md` (edit src/components/projects/project-workspace-page-export.tsx; 9 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-workspace-page-export.tsx.md` (edit src/components/projects/project-workspace-page-export.tsx; 9 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-6_l12-u026-project-workspace-controller.md.md` (new; 9 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-7_l17-u031-projects-end-to-end.md.md` (new; 9 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_mentor-attention.ts.md` (edit src/modules/projects/mentor-attention.ts; 9 findings; best P2)

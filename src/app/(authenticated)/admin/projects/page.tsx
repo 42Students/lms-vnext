@@ -200,6 +200,7 @@ export default async function SuperAdminProjectsPage({
           id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,
           riskReasons:item.riskReasons,
           memberCount:item.memberCount,progressPercent:item.progressPercent,updatedAt:item.updatedAt,
+          templateId:item.templateId,
         }))}/>} />
       <ProjectAdminWorkspaceList
         compactAdmin
