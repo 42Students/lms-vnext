@@ -45,6 +45,8 @@ function hasMutationGuard(source: string): boolean {
   if (source.includes("useGuardedAction(")) return true;
   // Playback autosave and learner submission have synchronous in-flight
   // guards: these cannot be double-submitted by a second click.
+  if (/(?:savingRef|inFlightRef|pendingRef)\s*=\s*useRef\(/.test(source) &&
+      /(?:savingRef|inFlightRef|pendingRef)\.current/.test(source)) return true;
   const guardNames=[...source.matchAll(/\b([A-Za-z]\w*Ref)\s*=\s*useRef\(false\)/g)].map(match=>match[1]!);
   // Merely declaring a ref is not protection: a synchronous click lock must
   // check, reserve, and release that same ref around an interactive mutation.
