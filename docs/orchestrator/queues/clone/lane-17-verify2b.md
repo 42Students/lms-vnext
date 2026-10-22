@@ -8,6 +8,6 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_20.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_13.md` (15 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_9.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_6.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_12.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_9.md` (25 rows)
+
+
+(3 packets moved to lanes 8/15 by the orchestrator on 22 Oct 19:16 to balance load.)

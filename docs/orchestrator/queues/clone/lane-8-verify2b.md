@@ -12,3 +12,12 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_17.md` (14 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_23.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-20/W1_lane20_4.md` (25 rows)
+
+## More packets (moved from lanes 13/14/17/19 to balance load)
+
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_8.md` (5 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-16/W1_lane16_4.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_9.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_6.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_9.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_14.md` (25 rows)
