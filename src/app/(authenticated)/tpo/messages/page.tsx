@@ -81,7 +81,7 @@ export default async function TpoMessagesPage({
       {companySearch?<p role="status" className="text-sm text-body">Team conversations about {companySearch} · <Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Clear topic</Link></p>:null}
       <section id="tpo-messages-panel-team" role="tabpanel" aria-labelledby="tpo-messages-tab-team">
         <TpoTeamMessagesDirectory context={context} query={companySearch||(first(raw.q)??"")}
-          selectedId={first(raw.c)} messageId={first(raw.m)} askId={first(raw.ask)} filter={first(raw.filter)}
+          {...(first(raw.c) !== undefined ? { selectedId: first(raw.c) } : {})} {...(first(raw.m) !== undefined ? { messageId: first(raw.m) } : {})} {...(first(raw.ask) !== undefined ? { askId: first(raw.ask) } : {})} {...(first(raw.filter) !== undefined ? { filter: first(raw.filter) } : {})}
           page={/^[1-9]\d{0,3}$/.test(first(raw.page)??"")?Number(first(raw.page)):1}/>
       </section>
     </section>
@@ -192,8 +192,8 @@ export default async function TpoMessagesPage({
 
   const commonFilters = {
     status: query.status,
-    from: query.from,
-    to: query.to,
+    ...(query.from !== undefined ? { from: query.from } : {}),
+    ...(query.to !== undefined ? { to: query.to } : {}),
     q: query.q,
     pageSize,
   };
@@ -309,7 +309,7 @@ export default async function TpoMessagesPage({
               <div role="log" aria-live="polite" aria-label="Conversation messages" className="max-h-[480px] space-y-3 overflow-y-auto py-4">
                 {detail.messages.length===0?<EmptyState title="No messages yet."/>:
                   detail.messages.map(item=><article key={item.id}
-                    className={bubbleStyles.bubble+" "+(item.senderType==="TPO"?bubbleStyles.mine:"")}>
+                    className={bubbleStyles["bubble"]+" "+(item.senderType==="TPO"?bubbleStyles["mine"]:"")}>
                     <p className="text-xs font-semibold text-muted-foreground">
                       {item.senderType==="RECRUITER"?"Recruiter":"You"} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.createdAt)} IST
                     </p>
