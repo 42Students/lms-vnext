@@ -16,7 +16,7 @@ import {
 } from "./file-policy";
 import {type StorageFileErrorCode} from "./file-errors";
 
-const LEGACY_RESOURCE_MIME = new Set([
+const LEGACY_RESOURCE_MIME: ReadonlySet<string> = new Set<string>([
  "application/pdf","application/msword",
  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
  "application/vnd.ms-powerpoint",
