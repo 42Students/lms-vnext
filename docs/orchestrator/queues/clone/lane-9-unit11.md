@@ -7,7 +7,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing) — FIXED stale redirect expectation to canonical /tpo/settings?tab=team and verified people/members/roster aliases (chat-3 commit 4a249d8).
 - [ ] `tests/unit/chat6-super-admin-people-contact-redaction.test.tsx` (2 failing)
 - [x] `tests/unit/chat9-super-admin-orphan-routes.test.ts` (1 failing) — OK on current main: authenticated admin/tenants/page.tsx contains same-tab <Link href="/admin/domains"> after scoped role/permission gate. Earlier CI predates that link. Source inspection only.
-- [ ] `tests/unit/learner-placements-chat7-schedule-surface.test.ts` (1 failing)
+- [x] `tests/unit/learner-placements-chat7-schedule-surface.test.ts` (1 failing) — FIXED stale new-tab assertion; now verifies validated HTTPS same-tab anchor, noreferrer, and copy fallback (chat-3 commit f42d83e).
 - [ ] `tests/unit/ux-admin-loading-recovery.test.ts` (1 failing)
 
 ## Failures (from CI log)
