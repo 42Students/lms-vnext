@@ -131,7 +131,7 @@ describe("chat-19 college UX cross-audit", () => {
     const page = read("src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx");
     expect(page).toContain("<DataTable");
     expect(page).toContain('caption="Students in this batch"');
-    expect(page).toContain('empty={<p className="text-sm text-muted-foreground">No matching students.</p>}');
+    expect(page).toContain('empty={<EmptyState title="No matching students"');
     for (const column of ["Name", "Roll Number", "Email", "Current class", "Action"]) {
       expect(page).toContain(`header: "${column}"`);
     }
@@ -159,10 +159,10 @@ describe("chat-19 college UX cross-audit", () => {
     expect(page).toContain('mobilePriority: "primary"');
     expect(page).toContain('mobilePriority: "secondary"');
     expect(page).toContain('name="membershipId"');
-    expect(page).toContain('empty={<p');
+    expect(page).toContain('empty={<EmptyState title="No eligible learners"');
     expect(page).not.toContain("<table");
     expect(page).toContain('<ScrollCue axis="y"');
-    expect(page).toContain('viewportClassName="max-h-80"');
+    expect(page).toContain('viewportClassName="max-h-[26rem]"');
     expect(page).toContain('aria-label={"Select "');
   });
 
@@ -181,7 +181,7 @@ describe("chat-19 college UX cross-audit", () => {
     const source = read("src/app/(authenticated)/college/faculty-assignment/page.tsx");
     expect(source).toContain('caption="Teaching assignment roster"');
     expect(source).toContain("<DataTable");
-    for (const key of ["faculty", "course", "class", "period", "role", "active", "actions"]) {
+    for (const key of ["faculty", "course", "class", "semester", "year", "role", "active", "actions"]) {
       expect(source).toContain(`key: "${key}"`);
     }
     expect(source).toContain('<CollegeFacultyAssignmentEnd');
@@ -209,8 +209,10 @@ describe("chat-19 college UX cross-audit", () => {
       expect(source).toContain(`key: "${key}"`);
     }
     expect(source).toContain('name="confirm"');
-    expect(source).toContain('required /> Confirm removal');
-    expect(source).toContain('disabled={faculty.length === 0}');
+    expect(source).toContain('required aria-label={"Confirm removal of "');
+    expect(source).toContain('Confirm removal');
+    expect(source).toContain('Archived offerings are read-only.');
+    expect(source).toContain('aria-label={"Confirm removal of "');
     expect(source).toContain('Archived offerings are read-only.');
     expect(source).not.toContain("<table");
   });
@@ -224,7 +226,9 @@ describe("chat-19 college UX cross-audit", () => {
     const tryPosition = source.indexOf("    try {", source.indexOf("async function mutate("));
     expect(parseMembership).toBeGreaterThan(tryPosition);
     expect(source).toContain("Could not update this student. Check eligibility and capacity, then try again.");
-    expect(source).toContain('eq(electiveSlots.collegeId, context.membership.collegeId)');
+    expect(source).toContain('eq(colleges.id, electiveSlots.collegeId)');
+    expect(source).toContain('requirePermission(context, "academics.manage"');
+    expect(source).toContain('collegeId: row.slot.collegeId');
   });
 
   it("UX-college-scroll-motion-01 responsive rosters offer an actual shared scroll cue instead of a hidden scrollbar", () => {
@@ -242,7 +246,7 @@ describe("chat-19 college UX cross-audit", () => {
     }
     const allocation = read(tables[4]);
     expect(allocation).toContain('<ScrollCue axis="y"');
-    expect(allocation).toContain('viewportClassName="max-h-80"');
+    expect(allocation).toContain('viewportClassName="max-h-[26rem]"');
     const shared = read("src/components/ui/data-table.tsx");
     expect(shared).toContain('<ScrollCue axis="x"');
   });
