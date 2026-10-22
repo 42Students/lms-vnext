@@ -1,7 +1,6 @@
 import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { CollegeContentAggregate } from "@/components/courses/college-content-aggregate";
 import {CollegeContentAuthoringControl} from "@/components/courses/college-content-authoring-control";
 import {getCollegeContentAuthoringOptions,collegeExistingContentFiltersFromSearch} from "@/modules/courses/college-content-authoring-service";
 import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
