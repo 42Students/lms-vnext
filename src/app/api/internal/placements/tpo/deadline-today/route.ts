@@ -21,7 +21,7 @@ export async function POST(request:Request){
   // Scheduled/service callbacks have no browser Origin. Reject a foreign Origin when one is supplied.
   if (request.headers.has("origin") && !isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const secret=process.env.TPO_REMINDER_SCHEDULER_SECRET??"";
+ const secret=process.env["TPO_REMINDER_SCHEDULER_SECRET"]??"";
  const incoming=request.headers.get("x-tpo-reminder-key")??"";
  if(Buffer.byteLength(secret,"utf8")<32)
   return NextResponse.json({error:"SCHEDULER_NOT_CONFIGURED"},
@@ -30,8 +30,8 @@ export async function POST(request:Request){
  const supplied=Buffer.from(incoming,"utf8");
  if(expected.length!==supplied.length||!timingSafeEqual(expected,supplied))
   return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
- if(process.env.DB10_NOTIFICATION_SCHEDULER_READY!=="DB10_VERIFIED"||
-    process.env.TPO_DEADLINE_TODAY_READY!=="VERIFIED")
+ if(process.env["DB10_NOTIFICATION_SCHEDULER_READY"]!=="DB10_VERIFIED"||
+    process.env["TPO_DEADLINE_TODAY_READY"]!=="VERIFIED")
   return NextResponse.json({error:"SCHEDULER_NOT_READY"},{status:503,headers:noStore});
  try{
   const result=await executeScheduledJobWithLease(
