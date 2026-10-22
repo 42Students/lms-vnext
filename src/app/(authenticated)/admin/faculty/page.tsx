@@ -67,7 +67,7 @@ export default async function SuperAdminFacultyPage({searchParams}:{
        </Link>
       </div>
     </section>:null}
-    peopleFilters={peopleFilters?{...peopleFilters,kind:"FACULTY"}:undefined} title="Registered Faculty" path="/admin/faculty" statuses={statuses}
+    {...(peopleFilters ? { peopleFilters: { ...peopleFilters, kind: "FACULTY" as const } } : {})} title="Registered Faculty" path="/admin/faculty" statuses={statuses}
   exportPath="/api/admin/faculty/export" exportFilename="faculty.csv"
   description="Registered faculty in the selected college. Contact fields are shown only to authorized administrators."
   searchParams={searchParams} renderRowActions={row=><div className="flex min-w-0 flex-wrap items-start gap-3">
