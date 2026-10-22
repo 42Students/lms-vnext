@@ -1061,6 +1061,33 @@ export async function listMyLearnerProjectPage(
  return {rows,total,assignedCount:Number(assignedCount?.count??0),page,pageSize,totalPages};
 }
 
+/** Read-only legacy GET /api/v1/projects/me/page bridge.
+ * Page and size are bounded before the database query. The same current
+ * membership / role / tenant predicates as the native learner directory
+ * apply to records and totalRecords; zero-based paging is a wire alias only.
+ */
+export async function listMyProjectInstancesLegacyPage(
+ context:RequestContext,query:{
+  page0?:number;size?:10|25|50;search?:string;status?:string;attention?:string;
+ }){
+ const page0=query.page0??0;
+ const size=query.size??25;
+ if(!Number.isSafeInteger(page0)||page0<0||page0>99999||
+    ![10,25,50].includes(size)||query.search&&query.search.length>100)
+   throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+ const page=await listMyLearnerProjectPage(context,{
+  search:query.search,status:query.status,attention:query.attention,
+  page:page0+1,pageSize:size,
+ });
+ return {
+  records:page.rows,
+  totalRecords:page.total,
+  totalPages:page.totalPages,
+  page0:page.page-1,
+  size:page.pageSize,
+ };
+}
+
 export async function listMyProjectInstances(
   context: RequestContext,
 ) {
