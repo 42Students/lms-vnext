@@ -8,7 +8,8 @@ describe("TPO Notifications history and refresh legacy fidelity",()=>{
   const page=src("src/app/(authenticated)/tpo/notifications/page.tsx");
   const toolbar=src("src/components/activity/notification-toolbar.tsx");
   expect(page).toContain('allLabel={firstPage?(inbox.page.nextCursor?"Latest "+items.length:"All ("+items.length+")"):"Older ("+items.length+")"}');
-  expect(page).toContain('"No unread notifications" : "Nothing yet"');
+  expect(page).toContain('firstPage?"No unread notifications":"No unread notifications on this page.');
+  expect(page).toContain(': "Nothing yet"');
   expect(toolbar).toContain("{allLabel}");
  });
  it("TPO-inbox-team-67 treats notifications over thirty days as read and keeps older-unread hints",()=>{

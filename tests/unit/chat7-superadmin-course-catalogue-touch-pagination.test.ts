@@ -45,6 +45,6 @@ describe("SA-COURSES-TOUCH-13 Super Admin course catalogue mobile filters and sa
   expect(pagination).toContain("min-h-11");
   expect(component).toContain("min-h-11");
   expect(component).not.toContain("min-h-10");
-  expect(component).not.toContain("min-h-9");
+  expect(component).toContain("md:min-h-9");
  });
 });

@@ -86,7 +86,10 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
   const page=src("src/app/request-demo/page.tsx");
   expect(page).toContain("See 42 LMS in action");
   expect(page).toContain("Email us to book a demo");
-  expect(page).toContain("mailto:hello@42lms.com");
+  expect(page).toContain('const DEMO_EMAIL = "hello@42lms.com"');
+  expect(page).toContain('const DEMO_MAILTO = "mailto:" + DEMO_EMAIL');
+  expect(page).toContain("<a href={DEMO_MAILTO}");
+  expect(page).not.toContain("<form");
  });
  it("PUB-auth-public-67 mobile privacy URL serves the historical policy with contact and effective date",()=>{
   expect(src("src/app/privacy-policy/page.tsx")).toContain("/assets/static/privacy-policy-view.html");
