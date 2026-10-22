@@ -174,7 +174,7 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
        <iframe ref={previewFrame} title="PDF Viewer" onError={()=>setPreviewFailed(true)}
          referrerPolicy="no-referrer" className="h-[min(65dvh,720px)] w-full border border-border bg-surface"/>
        <p className="text-sm text-muted-foreground">Unable to display the document inline?</p>
-       <a ref={fallbackLink} href={undefined} target="_blank" rel="noopener noreferrer"
+       <a ref={fallbackLink} href={undefined} rel="noopener noreferrer"
          referrerPolicy="no-referrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">
         Open / Download
        </a>
