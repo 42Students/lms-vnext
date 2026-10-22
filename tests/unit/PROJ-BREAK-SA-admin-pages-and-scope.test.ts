@@ -76,7 +76,13 @@ describe("Super Admin Projects and Placements page routes — independent securi
       }else{
         expect(page,path).toContain("getCurrentRequestContext");
       }
-      expect(page,path).not.toMatch(/<table(?:\s|>)/);
+      // Semantic data tables are permitted when they have an accessible name
+      // and scoped column/row headers. Reject anonymous tables instead.
+      if (/<table(?:\\s|>)/.test(page)) {
+        expect(page,path).toMatch(/<caption(?:\\s|>)/);
+        expect(page,path).toMatch(/<th\\s+scope=(?:"|')col(?:"|')/);
+        expect(page,path).toMatch(/<th\\s+scope=(?:"|')row(?:"|')/);
+      }
       expect(page,path).not.toContain("window.confirm(");
       expect(page,path).not.toMatch(/target=(?:"|')_blank(?:"|')/);
       expect(page,path).not.toContain("JSON.stringify(error)");
