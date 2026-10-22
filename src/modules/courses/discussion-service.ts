@@ -404,7 +404,7 @@ export async function createCourseDiscussionMessage(
         eq(collegeMemberships.collegeId,membership.collegeId),
         eq(collegeMemberships.status,"ACTIVE")))
       .limit(1);
-    if(!sender)throw new CoursesServiceError("DISCUSSION_ACCESS_DENIED");
+    if(!sender)throw new CoursesServiceError("DISCUSSION_POST_ACCESS_DENIED");
     const senderName=sender.name?.trim().slice(0,160)||null;
     const [created] = await tx.insert(courseDiscussionMessages).values({
       deliveryId,
