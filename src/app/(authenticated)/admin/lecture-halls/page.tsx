@@ -27,7 +27,7 @@ export default async function SuperAdminLectureHallsPage({
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
   if (!collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader title="Lecture Halls" description={halls.collegeName ? "Lecture halls · "+halls.collegeName : "Lecture halls in the selected college"} />
+    <PageHeader title="Lecture Halls" description="Lecture halls in the selected college" />
     <Tabs ariaLabel="Academic Setup" renderPanel={false} value="/admin/lecture-halls" items={[
       {value:"/admin/academics",label:"Academic Setup",href:"/admin/academics"},
       {value:"/admin/programs",label:"Programs",href:"/admin/programs"},
