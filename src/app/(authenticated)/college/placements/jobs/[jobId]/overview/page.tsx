@@ -112,7 +112,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
     </section>
     <section aria-label="Drive pipeline" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Pipeline</h2>
-      {!overview||!funnel?<Alert tone="warning">Pipeline totals are unavailable. The drive record is intact.
+      {!overview||!funnel?<Alert tone="warning">Could not load pipeline metrics. The drive header remains available, but application and funnel counts could not be verified. Missing counts have not been treated as zero.
         <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/overview`} className="ml-2 font-semibold text-link underline">Retry</Link>
       </Alert>:null}
       <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] sm:grid-cols-3 xl:grid-cols-6">
