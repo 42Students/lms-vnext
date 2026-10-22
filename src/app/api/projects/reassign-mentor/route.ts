@@ -30,8 +30,8 @@ export async function POST(request: Request) {
       // that gives them a more permissive mentor candidate.
       if("mentorMembershipId" in raw)
         return NextResponse.json({error:"AMBIGUOUS_MENTOR_ID"},{status:400});
-      const college=z.string().uuid().safeParse(raw.collegeId);
-      const legacy=raw.mentorId;
+      const college=z.string().uuid().safeParse(raw["collegeId"]);
+      const legacy=raw["mentorId"];
       const value=typeof legacy==="number"&&Number.isSafeInteger(legacy)?
         String(legacy):typeof legacy==="string"?legacy:"";
       if(!college.success||!/^[1-9][0-9]{0,14}$/.test(value)||
