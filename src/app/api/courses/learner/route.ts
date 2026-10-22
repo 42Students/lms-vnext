@@ -31,7 +31,7 @@ export async function GET(request:Request) {
     const rawLegacySemester=url.searchParams.get("semesterId");
     const legacySemesterId=rawLegacySemester===null?null:Number(rawLegacySemester);
     if(rawLegacySemester!==null&&(!/^[1-9][0-9]{0,9}$/.test(rawLegacySemester)||
-       !Number.isSafeInteger(legacySemesterId)||legacySemesterId!>2147483647)){
+       !Number.isSafeInteger(legacySemesterId)||Number(legacySemesterId)>2147483647)){
       return NextResponse.json({error:"INVALID_LEGACY_SEMESTER_ID"},
         {status:400,headers});
     }
