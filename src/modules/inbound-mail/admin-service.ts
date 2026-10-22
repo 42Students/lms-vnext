@@ -70,7 +70,7 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
    id:t.id,receivedAt:t.receivedAt,fromAddress:t.fromAddress,toAddress:t.toAddress,
    // List rows have a bounded preview. Fetch the entire body ONLY through
    // getInboundMailDetailForAdmin after global Super Admin authorization.
-   subject:t.subject,bodyPlain:sql<string>`left(${t.bodyPlain}, 512)`,
+   subject:t.subject,bodyPlain:sql<string>`left(${t.bodyPlain}, 180)`,
    status:t.status,version:t.version,
    kind:t.kind,routingStatus:t.routingStatus,handledAt:t.handledAt,
   }).from(t).where(conditions.length?and(...conditions):undefined)
