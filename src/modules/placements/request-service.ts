@@ -503,6 +503,7 @@ export async function createPlacementRequest(
     const [request] = await tx
       .insert(placementLearnerRequests)
       .values({
+        learnerMembershipId: membership.id,
         applicationId: current.application.id,
         requestType: input.requestType,
         roundId:

@@ -101,7 +101,8 @@ const actor = (): RequestContext => ({
   membership: null,
   adminScope: null,
 });
-const valid = () => ({ versionId, expectedTemplateVersion: 3, confirmed: true });
+const valid = () => ({ versionId, expectedTemplateVersion: 3, confirmed: true,
+  expectedAssignedCollegeCount: 0, expectedPinnedWorkspaceCount: 0 });
 
 beforeEach(() => {
   state.currentVersion = 3;
@@ -137,6 +138,9 @@ describe("Super Admin Projects template rollback permission and version transiti
     })).rejects.toThrow("PROJECT_TEMPLATE_STALE_VERSION");
     await expect(rollbackProjectTemplate(actor(), templateId, {
       ...valid(), confirmed: false,
+    })).rejects.toThrow();
+    await expect(rollbackProjectTemplate(actor(), templateId, {
+      versionId, expectedTemplateVersion: 3, confirmed: true,
     })).rejects.toThrow();
     expect(state.updates).toBe(0);
     expect(state.inserts).toBe(0);

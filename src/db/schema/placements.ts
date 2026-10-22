@@ -2224,6 +2224,8 @@ export const placementLearnerRequests = pgTable(
   "placement_learner_requests",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    // Registered migration 0133 makes the owning learner membership mandatory.
+    learnerMembershipId: uuid("learner_membership_id").notNull(),
     applicationId: uuid("application_id")
       .notNull()
       .references(() => placementApplications.id, {
