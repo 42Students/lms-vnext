@@ -7,6 +7,7 @@ describe("Faculty UX route /teacher/courses",()=>{
  const source=readFileSync(join(process.cwd(),pathname),"utf8");
  expect(source).toContain("getCurrentRequestContext");
  expect(source).toContain("PageHeader title=\"My Courses\"");
- expect(source).toContain("role=\"alert\"");
+ expect(source).toContain('<Alert tone="error"');
+ expect(source).toContain('<ErrorState title="Failed to load courses. Please try again."');
  });
 });

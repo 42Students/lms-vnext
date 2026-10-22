@@ -173,7 +173,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       {row.platform?.trim()?<p>Platform: {row.platform.trim()}</p>:null}
       <p className="whitespace-pre-wrap break-words">{row.whatToBring?.trim()?"What to bring: "+row.whatToBring:"What to bring: No instructions recorded."}</p>
       <div className="flex flex-wrap gap-3">
-        {join&&/^https:\/\//i.test(join)?<ThirdPartyLink href={join} label="Join link" />:null}
+        {join&&/^https:\/\//i.test(join)?<ThirdPartyLink href={join} label="Join online round" />:null}
         {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<ThirdPartyLink href={row.testUrl} label="Open test" ariaLabel="Open test · Take online assessment" />:null}
         {row.testUrl&&row.assessmentDueAt&&(row.roundKind==="TEST"||row.roundKind==="VENDOR_TEST")?<span className="font-semibold text-body">Take it by {fmt(row.assessmentDueAt)}</span>:null}
       </div>
