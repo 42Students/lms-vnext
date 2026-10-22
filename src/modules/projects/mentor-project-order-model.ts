@@ -7,7 +7,7 @@ const titleCollator = new Intl.Collator("en-IN", { sensitivity: "base" });
 function compareTeamTitles(a:string,b:string):number|null{
   const teamPattern=/^(.*?)\s*(?:[-–:]\s*)?team\s+(\d+)\s*$/i;
   const left=teamPattern.exec(a.trim()),right=teamPattern.exec(b.trim());
-  if(!left||!right)return null;
+  if(!left||!right||left[1]===undefined||right[1]===undefined)return null;
   if(titleCollator.compare(left[1].trim(),right[1].trim())!==0)return null;
   const n1=Number(left[2]),n2=Number(right[2]);
   return n1===n2?0:n1<n2?-1:1;
