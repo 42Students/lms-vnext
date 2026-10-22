@@ -11,9 +11,9 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_project-workspace.tsx.md` (edit src/components/projects/project-workspace.tsx; 13 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_super-admin-template-plan-editor.tsx.md` (edit src/components/projects/super-admin-template-plan-editor.tsx; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_project-admin-audit-page.tsx.md` (edit src/components/projects/project-admin-audit-page.tsx; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_project-archive-control.tsx.md` (edit src/components/projects/project-archive-control.tsx; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_admin-project-section-page.tsx.md` (edit src/components/projects/admin-project-section-page.tsx; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_class-team-workspace-creator.tsx.md` (edit src/components/projects/class-team-workspace-creator.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_project-workspace.tsx.md` (edit src/components/projects/project-workspace.tsx; 13 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_super-admin-template-plan-editor.tsx.md` (edit src/components/projects/super-admin-template-plan-editor.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_project-admin-audit-page.tsx.md` (edit src/components/projects/project-admin-audit-page.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_project-archive-control.tsx.md` (edit src/components/projects/project-archive-control.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_admin-project-section-page.tsx.md` (edit src/components/projects/admin-project-section-page.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_class-team-workspace-creator.tsx.md` (edit src/components/projects/class-team-workspace-creator.tsx; 1 findings; best P1)
