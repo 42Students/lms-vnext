@@ -31,7 +31,11 @@ export async function POST(request: Request) {
 
     const facultyProfileSchema=z.strictObject({
       kind:z.literal("FACULTY"),primaryDepartmentId:z.string().uuid(),
-      employmentType:z.string().trim().min(1).max(128),
+      // Administrative role grants must use membership roles, never a
+      // string designation that appears to confer protected authorization.
+      employmentType:z.string().trim().min(1).max(128).refine(
+        value=>!["ADMIN","TPO","COLLEGE_ADMIN"].includes(value.toUpperCase()),
+        "Select a faculty designation, not an account authorization role"),
       academicTitle:z.string().trim().max(128).default(""),
       gender:z.enum(["","Male","Female","Other","Prefer not to say"]).default(""),
       dateOfBirth:z.union([z.iso.date(),z.literal("")]).default(""),
