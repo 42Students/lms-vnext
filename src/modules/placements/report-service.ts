@@ -52,6 +52,7 @@ import {
   type PlacementReportBranch,
   type PlacementReportFacts,
   type PlacementReportJob,
+  verifiedJobCountsAsPlaced,
   type PlacementReportOffer,
   type PlacementReportRegistration,
   type PlacementReportSelection,
@@ -245,11 +246,12 @@ export async function getPlacementReportWorkspace(
       placementJobs.title,
       placementJobs.id,
     );
-  // Nullable placed answers are unverified legacy values; the pure model
-  // exposes undefined to retain the documented conservative fallback.
+  // A NULL drive flag is unaudited. Do not infer placement from employment
+  // type: a FULL_TIME offer can still explicitly be a non-placing internship
+  // conversion or other college-specific exception. Never promote NULL to yes.
   const jobRows = jobRowsRaw.map((row) => ({
     ...row,
-    countsAsPlaced: row.countsAsPlaced ?? undefined,
+    countsAsPlaced: verifiedJobCountsAsPlaced(row.countsAsPlaced),
   }));
 
   if (
@@ -928,7 +930,7 @@ export async function getPlacementReportDetails(
       companyId: row.companyId,
       companyName: row.companyName,
       employmentType: row.employmentType,
-      countsAsPlaced: row.countsAsPlaced ?? undefined,
+      countsAsPlaced: verifiedJobCountsAsPlaced(row.countsAsPlaced),
       status: row.status,
       kind: row.kind,
       annualCtcInr: row.annualCtcInr,
@@ -944,7 +946,7 @@ export async function getPlacementReportDetails(
         membershipId: row.membershipId,
         status: row.status,
         employmentType: row.employmentType,
-        countsAsPlaced: row.countsAsPlaced,
+        countsAsPlaced: verifiedJobCountsAsPlaced(row.countsAsPlaced),
       }));
 
   return {
