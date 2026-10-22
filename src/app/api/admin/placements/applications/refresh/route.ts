@@ -21,8 +21,8 @@ export async function POST(request:Request){
   if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE")
    throw new AuthorizationError("placements.read");
   requirePermission(context,"placements.read",{
-   collegeId:context.adminScope?.collegeId,
-   organizationId:context.adminScope?.organizationId,
+   ...(context.adminScope?.collegeId != null ? {collegeId:context.adminScope.collegeId} : {}),
+   ...(context.adminScope?.organizationId != null ? {organizationId:context.adminScope.organizationId} : {}),
   });
   return NextResponse.json({
    message:"Applications are read live; no cache refresh is required",
