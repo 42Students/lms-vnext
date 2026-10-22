@@ -10,7 +10,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-6-018-041  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-6-019-039  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-6-031-038  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
-- [ ] G2-11-019-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
+- [x] G2-11-019-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-11-019-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-11-019-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-11-019-077  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
@@ -20,5 +20,6 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
+- OK G2-11-019-029 — `src/components/tpo/recruiter-lead-detail-workspace.tsx:380-405,574-576` and `src/app/api/placements/tpo/leads/[leadId]/invite/route.ts:22-50` implement confirmed email dispatch with provider acceptance and explicit unavailable error; matches invite dispatch from `docs/legacy-source/frontend/src/pages/tpo/recruiters/[recruiterLeadId].js:204-205` (email sending is conditioned on verified delivery configuration).
 - OK G2-11-022-020 — `src/app/(authenticated)/tpo/reports/page.tsx:232-233,280` and `src/modules/placements/report-service.ts:82-98` preserve distinct student counts and placed-minus-accepted gap; matches `docs/legacy-source/frontend/src/pages/tpo/reports/index.js:63-72`.
 - FIXED G2-11-019-077 — `e378f15dce821a4ac0861dd3b62ce7bbb014a602` — `src/components/tpo/recruiter-lead-detail-workspace.tsx:487-491`; matched `docs/legacy-source/frontend/src/pages/tpo/recruiters/[recruiterLeadId].js:206-207` (company-only Team talk URL).
