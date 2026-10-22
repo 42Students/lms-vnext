@@ -88,6 +88,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —."
       actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-[650] text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Semester–Course Mapping</Link>} />
     <AcademicSetupSteps step={3} showRefresh={false} />
+    <div className="grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6" aria-label="Semesters">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
@@ -162,6 +163,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       />
     </div>
     </section>
+    </div>
     <Pagination label="Semester pages" page={data.query.page} pageCount={data.totalPages}
       hrefForPage={page=>pageHref({...data.query,page})} />
     </div>
