@@ -2,7 +2,7 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-5-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/PROJ-BREAK-SA-admin-pages-and-scope.test.ts` (1 failing)
+- [x] `tests/unit/PROJ-BREAK-SA-admin-pages-and-scope.test.ts` (1 failing)
 - [x] `tests/unit/chat10-campaign-unsubscribe-legacy-path.test.ts` (1 failing)
 - [ ] `tests/unit/chat19-tpo-mobile-footer.test.ts` (3 failing)
 - [x] `tests/unit/chat5-final-faculty-courses-a.test.ts` (1 failing)
@@ -203,3 +203,5 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 
 - Faculty roster contract test: metrics implementation moved to `faculty-roster-display-model.ts`; retained assertions for contact count, missing-roll copy, roster sorting and authorized photo fallback (`edc029d5ea421c1fab58fe700397974c213dba19`).
 - Coding profile link security test: legacy HTTP input canonicalizes to HTTPS; malicious/unknown hosts remain rejected (`10ff2e49943d91856e8291829284ca209ffd4b35`).
+
+- Super Admin organization applications: replaced the raw table with labelled responsive records preserving all columns, links and scoped query (`35430384dd3ff512de3044ee754c43548131263f`).
