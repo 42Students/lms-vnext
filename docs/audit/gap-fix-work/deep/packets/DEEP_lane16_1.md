@@ -13,8 +13,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-3-010-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-3-010-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-3-010-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
-- [ ] G2-3-017-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
-- [ ] G2-3-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-3-017-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-3-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-3-017-027  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-3-017-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 
@@ -25,3 +25,6 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-3-010-029: OK — production private-bucket separation is enforced at `src/modules/storage/r2-config.ts:55-71`; unscanned objects cannot pass attestation at `src/modules/storage/private-object-storage.ts:239-250`; legacy reference `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:19-32` documents the unsafe interim public-bucket fallback that vNext intentionally rejects. This confirms fail-closed behavior, not legacy public-bucket compatibility.
 
 - G2-3-010-028: FIXED — commit `a1ee179994a4b34daa6a84247bf08a13c0a12df0`, `src/modules/storage/r2-config.ts`: supports an explicit `R2_PRIVATE_ACCESS_KEY`/`R2_PRIVATE_SECRET_KEY` pair (rejects partial pair), preserving the legacy optional private credentials with global fallback (`docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:36-47,73-85`). Least-privilege key provisioning remains a deployment responsibility.
+
+- G2-3-017-016: FIXED — commit `23163a9681411ebcb4c4d4b4009e997f8658408a`, `src/modules/people/profile-validation.ts:355-365` enforces exactly one primary education for nonempty application qualification sets; `src/components/profile/learner-profile-workspace.tsx:1140-1141` exposes the recent checkbox and `src/modules/people/profile-validation.ts:317` persists the flag. Legacy contract: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Qualification.java:53-54` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/QualificationValidator.java:41-69`.
+- G2-3-017-017: FIXED — commit `23163a9681411ebcb4c4d4b4009e997f8658408a`, `src/modules/people/profile-validation.ts:355-365` differentiates optional profile education (zero recent allowed, multiple rejected at :356-367) from nonempty application qualifications (exactly one), matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/QualificationValidator.java:27-69` without rejecting empty optional profile drafts.
