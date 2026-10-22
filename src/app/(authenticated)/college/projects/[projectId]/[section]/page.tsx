@@ -9,12 +9,12 @@ export default async function CollegeProjectSectionRoute({
 }) {
   const {projectId,section}=await params;
   const query=await searchParams;
-  const from=typeof query.from==="string"&&["at-risk","submissions","workspaces"].includes(query.from)
-    ?query.from:undefined;
-  const reason=typeof query.reason==="string"&&query.reason.length<=240&&
-    !/[<>\x00-\x1f]/.test(query.reason)?query.reason:undefined;
+  const from=typeof query["from"]==="string"&&["at-risk","submissions","workspaces"].includes(query["from"])
+    ?query["from"]:undefined;
+  const reason=typeof query["reason"]==="string"&&query["reason"].length<=240&&
+    !/[<>\x00-\x1f]/.test(query["reason"])?query["reason"]:undefined;
   if(section==="delivery")return <CollegeProjectDeliveryOverview projectId={projectId}/>;
   return <AdminProjectSectionPage
     projectId={projectId} section={section} basePath="/college/projects"
-    from={from} reason={reason}/>;
+    {...(from!==undefined?{from}:{})} {...(reason!==undefined?{reason}:{})}/>;
 }
