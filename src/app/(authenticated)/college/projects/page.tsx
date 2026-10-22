@@ -13,6 +13,7 @@ import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-w
 import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-admin-workspace-page-export";
 import { PageHeader } from "@/components/ui/page-header";
 import { ListToolbar } from "@/components/ui/list-toolbar";
+import { Tabs } from "@/components/ui/tabs";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
@@ -55,6 +56,15 @@ export default async function CollegeProjectsPage({
     </div>;
   }
   const query: ProjectAdminCollectionQuery = parsed.data;
+  const viewHref = (targetView: "table" | "cards") => {
+    const params = new URLSearchParams();
+    params.set("view", targetView);
+    if (query.q) params.set("q", query.q);
+    if (query.status) params.set("status", query.status);
+    if (query.page > 1) params.set("page", String(query.page));
+    if (query.pageSize !== 20) params.set("pageSize", String(query.pageSize));
+    return "/college/projects?" + params.toString();
+  };
   // The strict service schema accepts database filters only, not the
   // presentational view toggle. Keep cards/table navigation in the UI.
   const serviceQuery = {
@@ -125,7 +135,12 @@ export default async function CollegeProjectsPage({
         <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Project workspaces</h2>
         <div className="flex min-w-0 items-center gap-3 text-sm">
          <Link href="/college/projects/at-risk" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Needs attention</Link>
-         {query.view==="cards"?<Link href="/college/projects?view=table" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View list</Link>:null}
+         <Tabs ariaLabel="Workspace display mode" renderPanel={false}
+           value={query.view??"table"}
+           items={[
+             {value:"table",label:"Table",href:viewHref("table"),count:result.total},
+             {value:"cards",label:"Cards",href:viewHref("cards"),count:result.total},
+           ]}/>
         </div>
        </div>
        <ListToolbar label="College project workspaces" viewCount={result.total}
