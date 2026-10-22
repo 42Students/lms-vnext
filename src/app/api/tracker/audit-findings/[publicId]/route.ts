@@ -33,7 +33,8 @@ export async function PATCH(request:Request,{params}:Params){
   const result=await mutateIndependentAuditFinding(await getCurrentRequestContext(),publicId,await request.json());
   if(!result.ok)return NextResponse.json({
    error:result.reason,
-   message:result.reason==="INVALID_STATUS_TRANSITION"?"This status change is not allowed. Check the finding history and choose a valid next step.":
+   message:result.reason==="STATUS_UNCHANGED"?"It is already this status":
+    result.reason==="INVALID_STATUS_TRANSITION"?"This status change is not allowed. Check the finding history and choose a valid next step.":
     result.reason==="SEVERITY_UNCHANGED"?"It is already this severity":
     result.reason==="ASSIGNEE_UNCHANGED"?"The assignee has not changed":
     result.reason==="INVALID_DUPLICATE"?"Choose the finding this repeats":
