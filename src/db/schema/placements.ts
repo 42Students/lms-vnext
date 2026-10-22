@@ -918,6 +918,26 @@ export const placementJobRoleOptions = pgTable(
   ],
 );
 
+/** Legacy CandidateAcademicSummary migration crosswalk. The 13 source
+ * academic fields are not reclassified as college-verified merely because
+ * the learner imported them. Verification requires a persisted authorized
+ * actor, timestamp and source provenance. Decimal marks become integer
+ * basis points only after finite 0–100 range checks; missing is NULL. */
+export const LEGACY_CANDIDATE_ACADEMIC_FIELD_MAP={
+ tenthPercentage:"tenthPctBasisPoints",
+ twelfthPercentage:"twelfthPctBasisPoints",
+ diplomaPercentage:"diplomaPctBasisPoints",
+ undergraduatePercentage:"undergraduatePctBasisPoints",
+ postgraduatePercentage:"postgraduatePctBasisPoints",
+ cgpa:"cgpaHundredths",
+ activeBacklogs:"activeBacklogs",
+ pastBacklogs:"pastBacklogs",
+ gapYears:"gapYears",
+ passingYear:"passingYear",
+ lateralEntry:"isLateralEntry",
+ postgraduateQualified:"hasPostgraduateQualification",
+ verificationStatus:"source/verifiedAt/verifiedByUserId",
+} as const;
 export const placementCandidateAcademicEvidence = pgTable(
   "placement_candidate_academic_evidence",
   {

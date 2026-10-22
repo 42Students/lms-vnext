@@ -34,6 +34,7 @@ export default async function LearnerAcademicRecordPage(){
   {label:"12th percentage",value:evidence.twelfthPercentage,suffix:"%"},
   {label:"Diploma percentage",value:evidence.diplomaPercentage,suffix:"%"},
   {label:"Undergraduate percentage",value:evidence.undergraduatePercentage,suffix:"%"},
+  {label:"Postgraduate percentage",value:evidence.postgraduatePercentage,suffix:"%"},
   {label:"Active backlogs",value:evidence.activeBacklogs,suffix:""},
   {label:"Past backlogs",value:evidence.pastBacklogs,suffix:""},
   {label:"Gap years",value:evidence.gapYears,suffix:""},
@@ -89,6 +90,11 @@ export default async function LearnerAcademicRecordPage(){
       <dd className="mt-1 text-sm font-semibold tabular-nums text-foreground">{scoreLabel(row.value,row.suffix)}</dd>
       {row.value!==null ? <dd className="mt-1 text-xs text-muted-foreground">{provenance}</dd> : null}
      </div>)}
+     <div className="border-b border-border pb-3">
+      <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Postgraduate qualification</dt>
+      <dd className="mt-1 text-sm font-semibold text-foreground">{evidence.hasPostgraduateQualification===null?"Not recorded":evidence.hasPostgraduateQualification?"Yes":"No"}</dd>
+      <dd className="mt-1 text-xs text-muted-foreground">{provenanceDetail}</dd>
+     </div>
      <div className="border-b border-border pb-3">
       <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lateral entry</dt>
       <dd className="mt-1 text-sm font-semibold text-foreground">{evidence.isLateralEntry?"Yes":"No"}</dd>
