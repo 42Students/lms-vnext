@@ -18,7 +18,7 @@ describe("NORTH-STAR-SIDEBAR-03: measured original icons and mobile group parity
   expect(css).toContain("scrollbar-width:none");
   expect(css).toContain("width:96px");
   expect(css).toContain("width:256px");
-  expect(css).toContain("box-shadow:inset 3px 0 #26bac7");
+  expect(css).toContain("box-shadow:inset 3px 0 var(--lms-primary)");
  });
  it("matches measured 9px mobile headings and preserves the mobile drawer",()=>{
   const css=read("src/components/shell/sidebar-legacy.css");
@@ -44,13 +44,13 @@ describe("NORTH-STAR-SIDEBAR-03: measured original icons and mobile group parity
 describe("NORTH-STAR-HR-03: secondary recruiter surfaces inherit page canvas",()=>{
  it("avoids nesting a separate full-panel card around the outside drive form",()=>{
   const form=read("src/components/placements/recorded-outside-form.tsx");
-  expect(form).toContain('className="grid gap-4 sm:grid-cols-2"');
+  expect(form).toContain('className="grid min-w-0 gap-4 md:grid-cols-2"');
   expect(form).not.toContain("grid gap-4 rounded-xl border");
   expect(form).toContain("name=\"collegeId\"");
  });
  it("retains the incoming 36px recruiter bell while enforcing legacy focus and radius",()=>{
   const bell=read("src/components/hr/recruiter-notification-bell.tsx");
-  expect(bell).toContain("min-h-9 min-w-9");
+  expect(bell).toContain("min-h-11 min-w-11 !p-0 md:min-h-9 md:min-w-9");
   expect(bell).not.toContain("rounded-[9px]");
   expect(bell).not.toContain("focus-visible:outline-primary");
   expect(bell).toContain("rounded-[var(--lms-control-radius)]");
@@ -71,6 +71,6 @@ describe("NORTH-STAR-HR-03: secondary recruiter surfaces inherit page canvas",()
    expect(source,path).not.toContain("focus-visible:outline-primary-text");
   }
   const replies=read("src/app/(authenticated)/hr/conversations/page.tsx");
-  expect(replies).toContain('if(!parsed.success)return <div role="alert" className="space-y-3">');
+  expect(replies).toContain('if(!parsed.success)return <div className="min-w-0 space-y-3">');
  });
 });
