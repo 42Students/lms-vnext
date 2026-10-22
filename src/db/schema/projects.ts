@@ -210,6 +210,27 @@ export const projectTemplateCollegeAssignments =
     ],
   );
 
+/**
+ * Legacy ProjectWorkspace import crosswalk (not a runtime authorization
+ * shortcut):
+ * - Global legacy slug <=80 and title <=160 must be normalized and checked
+ *   against the case-folded (collegeId,slug) index. An identical old slug in
+ *   different colleges is deliberately allowed, never auto-crosslinked.
+ *   Conflicting slugs within one college must be reconciled before insert;
+ *   the previous URL alias must be retained by the importer.
+ * - Source orgId/collegeId/classId/teamGroupId/templateId and mentor userId
+ *   are numeric *identities*. Resolve each via verified college-specific
+ *   crosswalks to organization/college/section/group/template and a currently
+ *   scoped faculty membership; do not cast integers into UUIDs.
+ * - Old IN_PROGRESS becomes ACTIVE with legacyStatus='IN_PROGRESS' and
+ *   progressPercent preserves the historical integer (0..100). New workspaces
+ *   default to PLANNED; derived progress metrics cannot overwrite imported
+ *   historic progress without reconciliation.
+ * - legacyTemplateSnapshot is an immutable source JSON snapshot, separate
+ *   from versioned projectTemplateVersions and current authoredBrief.
+ *   legacyRecoverableContent records the old recoverability flag independently
+ *   of the current archived/deleted lifecycle. Neither grants restore access.
+ */
 export const projectInstances = pgTable(
   "project_instances",
   {
