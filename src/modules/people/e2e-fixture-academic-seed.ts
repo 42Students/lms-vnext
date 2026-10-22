@@ -7,10 +7,12 @@ import {
   organizations, colleges, departments, academicPeriods, programs, cohorts,
   sections, users, collegeMemberships, membershipRoles, courses, courseOfferings,
   courseSectionDeliveries, courseLearningPaths, courseLessons, lessonContents,
-  courseAssignments, lectureHalls,
+  courseAssignments, lectureHalls, learnerProgramEnrollments,
+  sectionEnrollments, sectionScheduleEvents, attendanceRecords,
+  sectionScheduleEventCourses,
 } from "@/db/schema";
 import {
-  buildE2EFixtureManifest, deterministicE2EFixtureId,
+  buildE2EFixtureManifest,
 } from "./e2e-fixture-manifest";
 
 /**
@@ -332,6 +334,82 @@ export async function persistIsolatedE2EAcademicGraph(input: {
     if (hall?.collegeId !== ids.collegeA) throw new Error("E2E_HALL_COLLISION");
     if (hallInsert.length) created++; else reused++;
 
+
+    // Materialize the learner's actual college-scoped roster, not just a
+    // membership with an unrelated section label.
+    for (const [key, programId, cohortId, sectionId, periodId] of [
+      ["learnerA", ids.programA, ids.batchA, ids.classA, periodA],
+      ["learnerB", ids.programB, ids.batchB, ids.classB, periodB],
+    ] as const) {
+      const learnerEnrollmentId = derivedUuid(manifest.namespace, "learner-enrollment-" + key);
+      const enrolled = await tx.insert(learnerProgramEnrollments).values({
+        id: learnerEnrollmentId, membershipId: ids[key], programId, cohortId,
+      }).onConflictDoNothing().returning({ id: learnerProgramEnrollments.id });
+      const [row] = await tx.select({
+        membershipId: learnerProgramEnrollments.membershipId,
+        cohortId: learnerProgramEnrollments.cohortId,
+      }).from(learnerProgramEnrollments)
+        .where(eq(learnerProgramEnrollments.id, learnerEnrollmentId)).limit(1);
+      if (!row || row.membershipId !== ids[key] || row.cohortId !== cohortId)
+        throw new Error("E2E_LEARNER_ENROLLMENT_COLLISION");
+      if (enrolled.length) created++; else reused++;
+
+      const rosterId = derivedUuid(manifest.namespace, "section-enrollment-" + key);
+      const roster = await tx.insert(sectionEnrollments).values({
+        id: rosterId, learnerEnrollmentId, sectionId, academicPeriodId: periodId,
+      }).onConflictDoNothing().returning({ id: sectionEnrollments.id });
+      const [active] = await tx.select({
+        learnerEnrollmentId: sectionEnrollments.learnerEnrollmentId,
+        sectionId: sectionEnrollments.sectionId,
+      }).from(sectionEnrollments).where(eq(sectionEnrollments.id, rosterId)).limit(1);
+      if (!active || active.learnerEnrollmentId !== learnerEnrollmentId ||
+          active.sectionId !== sectionId) throw new Error("E2E_ROSTER_COLLISION");
+      if (roster.length) created++; else reused++;
+    }
+
+    const event = await tx.insert(sectionScheduleEvents).values({
+      id: ids.classScheduleA, sectionId: ids.classA,
+      facultyMembershipId: ids.facultyA, lectureHallId: ids.hallA,
+      title: "E2E Attendance session A",
+      startsAt: new Date("2026-10-15T04:30:00.000Z"),
+      endsAt: new Date("2026-10-15T05:30:00.000Z"),
+      status: "COMPLETED",
+    }).onConflictDoNothing().returning({ id: sectionScheduleEvents.id });
+    const [scheduled] = await tx.select({
+      sectionId: sectionScheduleEvents.sectionId,
+      facultyMembershipId: sectionScheduleEvents.facultyMembershipId,
+    }).from(sectionScheduleEvents)
+      .where(eq(sectionScheduleEvents.id, ids.classScheduleA)).limit(1);
+    if (!scheduled || scheduled.sectionId !== ids.classA ||
+        scheduled.facultyMembershipId !== ids.facultyA)
+      throw new Error("E2E_SCHEDULE_COLLISION");
+    if (event.length) created++; else reused++;
+
+    const eventCourse = await tx.insert(sectionScheduleEventCourses).values({
+      scheduleEventId: ids.classScheduleA, deliveryId: deliveryA,
+    }).onConflictDoNothing().returning({ scheduleEventId: sectionScheduleEventCourses.scheduleEventId });
+    const [linkedCourse] = await tx.select({
+      deliveryId: sectionScheduleEventCourses.deliveryId,
+    }).from(sectionScheduleEventCourses)
+      .where(eq(sectionScheduleEventCourses.scheduleEventId, ids.classScheduleA)).limit(1);
+    if (linkedCourse?.deliveryId !== deliveryA)
+      throw new Error("E2E_SCHEDULE_COURSE_COLLISION");
+    if (eventCourse.length) created++; else reused++;
+
+    const attendance = await tx.insert(attendanceRecords).values({
+      id: ids.attendanceA, scheduleEventId: ids.classScheduleA,
+      membershipId: ids.learnerA, status: "ABSENT",
+      note: "E2E sample absence", markedByUserId: accountIds.facultyA,
+    }).onConflictDoNothing().returning({ id: attendanceRecords.id });
+    const [marked] = await tx.select({
+      scheduleEventId: attendanceRecords.scheduleEventId,
+      membershipId: attendanceRecords.membershipId,
+    }).from(attendanceRecords).where(eq(attendanceRecords.id, ids.attendanceA)).limit(1);
+    if (!marked || marked.scheduleEventId !== ids.classScheduleA ||
+        marked.membershipId !== ids.learnerA)
+      throw new Error("E2E_ATTENDANCE_COLLISION");
+    if (attendance.length) created++; else reused++;
+
     return {
       namespace: manifest.namespace, schemaVersion: manifest.schemaVersion,
       ids: {
@@ -342,7 +420,7 @@ export async function persistIsolatedE2EAcademicGraph(input: {
       // A full cross-module fixture is NOT considered ready until the
       // dedicated media, attendance, placement and project writers succeed.
       completeGraph: false as const,
-      pendingModuleWriters: ["MEDIA", "ATTENDANCE", "PLACEMENTS", "PROJECTS"] as const,
+      pendingModuleWriters: ["MEDIA", "PLACEMENTS", "PROJECTS", "MESSAGING"] as const,
     };
   });
 }
