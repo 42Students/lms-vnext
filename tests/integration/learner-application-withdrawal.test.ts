@@ -35,9 +35,14 @@ afterEach(async () => {
   // The mutation's audit event is a real actor-linked FK row; remove it
   // before deleting the test-owned application and membership.
   try {
-    await pool.query("DELETE FROM activity_events WHERE dedupe_key=$1", [
-      "placement-application:" + current.ids.application + ":withdrawn",
-    ]);
+    const withdrawalKey = "placement-application:" + current.ids.application + ":withdrawn";
+    // Withdrawals generate in-app notifications linked to their audit event.
+    // Delete only this fixture's notification before the referenced event.
+    await pool.query(
+      "DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE dedupe_key=$1)",
+      [withdrawalKey],
+    );
+    await pool.query("DELETE FROM activity_events WHERE dedupe_key=$1", [withdrawalKey]);
     await cleanupLearnerPositiveFixture(pool, current);
   } finally {
     // No shared users, organizations or seeded parent program are deleted.
