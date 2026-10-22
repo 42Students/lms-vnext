@@ -53,7 +53,7 @@ export default async function CollegeVideosPage({
         <h2 className="text-[16px] font-semibold text-[var(--lms-heading)]">Add a video</h2>
         {authoring?<CollegeContentAuthoringControl kind="YOUTUBE" lessons={authoring.lessons} deliveries={authoring.deliveries}
           existing={authoring.existing} existingTruncated={authoring.existingTruncated} existingPage={authoring.existingPage}
-          existingFilters={authoring.existingFilters} />:
+          existingFilters={authoring.existingFilters} dependencyErrors={authoring.dependencyErrors} />:
           <ErrorState title="Could not load courses or lessons"
             description="Courses, Faculty, Lessons or Sections are unavailable for video authoring. Existing videos can still be browsed."
             action={<Link href="/college/videos" className="font-semibold text-link underline">Retry</Link>}/>}
