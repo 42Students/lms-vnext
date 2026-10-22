@@ -152,18 +152,18 @@ function newItem(section: CollectionKey) {
   const item: Record<string, unknown> = { id: crypto.randomUUID() };
   for (const field of fields[section]) item[field.key] = field.key === "skills" ? [] : "";
   if (section === "experiences") {
-    item.experienceType = "Full-time";
-    item.currentlyWorking = false;
+    item["experienceType"] = "Full-time";
+    item["currentlyWorking"] = false;
   }
-  if (section === "languages") item.proficiency = "Intermediate";
-  if (section === "education") {item.examDetails = {};item.isCurrentlyPursuing = false;item.isRecentEducation = false;}
-  if (section === "metadata") item.type = "text";
+  if (section === "languages") item["proficiency"] = "Intermediate";
+  if (section === "education") {item["examDetails"] = {};item["isCurrentlyPursuing"] = false;item["isRecentEducation"] = false;}
+  if (section === "metadata") item["type"] = "text";
   return item;
 }
 
 function itemTitle(section: CollectionKey, item: Record<string, unknown>) {
-  const primary = item.name || item.title || item.organization || item.institution || item.language || item.activity || item.key || collectionLabels[section];
-  const secondary = item.designation || item.program || item.issuingAuthority || item.proficiency || item.year || "";
+  const primary = item["name"] || item["title"] || item["organization"] || item["institution"] || item["language"] || item["activity"] || item["key"] || collectionLabels[section];
+  const secondary = item["designation"] || item["program"] || item["issuingAuthority"] || item["proficiency"] || item["year"] || "";
   return { primary: String(primary), secondary: String(secondary) };
 }
 
@@ -216,8 +216,8 @@ export function LearnerProfileWorkspace(props: {
   const [rolePrefsInput,setRolePrefsInput]=useState(props.initialDocument.jobPreferences.rolePreferences.join("\n"));
   const {pending,run:guardedRun}=useGuardedAction();
 
-  const institutionSearch=typeof itemDraft.institution==="string"?
-    itemDraft.institution.trim():"";
+  const institutionSearch=typeof itemDraft["institution"]==="string"?
+    itemDraft["institution"].trim():"";
   useEffect(()=>{
     if(collection!=="education")return;
     const controller=new AbortController();
@@ -432,9 +432,9 @@ export function LearnerProfileWorkspace(props: {
     if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
     const initial = item ? {...item} : newItem(section);
     setCollection(section);
-    setEditingId(item ? String(item.id) : null);
+    setEditingId(item ? String(item["id"]) : null);
     if (section === "education" && !item && document.education.length === 0) {
-      initial.isRecentEducation = true;
+      initial["isRecentEducation"] = true;
     }
     setEducationError(null);
     setItemDraft(initial);
@@ -476,7 +476,7 @@ export function LearnerProfileWorkspace(props: {
     });
     if(record.value.length>5000){setShowcaseError("Please shorten this entry.");return;}
     const next=id
-      ?document.metadata.map(item=>item.id===id?record:item)
+      ?document.metadata.map(item=>item["id"]===id?record:item)
       :[...document.metadata,record];
     saveDocument({...document,metadata:next},()=>{setShowcaseDraft(null);setShowcaseError(null);},
       document,id?"Updated successfully":"Added successfully");
@@ -484,7 +484,7 @@ export function LearnerProfileWorkspace(props: {
 
   async function deleteShowcase(kind:LearnerShowcaseKind,id:string) {
     if(pending||!(await askConfirm(kind==="award"?"Delete this award?":"Delete this publication?")))return;
-    const next=document.metadata.filter(item=>item.id!==id);
+    const next=document.metadata.filter(item=>item["id"]!==id);
     saveDocument({...document,metadata:next},undefined,document,"Deleted successfully");
   }
 
@@ -518,36 +518,36 @@ export function LearnerProfileWorkspace(props: {
   function saveCollection() {
     if (!collection) return;
     if(collection==="education"){
-      if (Boolean(itemDraft.isRecentEducation) && document.education.some(entry =>
-        entry.id !== editingId && entry.isRecentEducation)) {
+      if (Boolean(itemDraft["isRecentEducation"]) && document.education.some(entry =>
+        entry["id"] !== editingId && entry["isRecentEducation"])) {
         setEducationError("Select only one recent education");
         return;
       }
       const issue=learnerEducationValidationProblem({
-        educationType:String(itemDraft.educationType??""),
-        institution:String(itemDraft.institution??""),
-        gradingType:String(itemDraft.gradingType??""),
-        gradeObtained:String(itemDraft.gradeObtained??""),
-        maxGrade:String(itemDraft.maxGrade??""),
-        startYear:String(itemDraft.startYear??""),
-        endYear:String(itemDraft.endYear??""),
-        isCurrentlyPursuing:Boolean(itemDraft.isCurrentlyPursuing),
-        examDetails:(itemDraft.examDetails && typeof itemDraft.examDetails==="object" && !Array.isArray(itemDraft.examDetails))
-          ?itemDraft.examDetails as Record<string,string|number|boolean>:undefined,
+        educationType:String(itemDraft["educationType"]??""),
+        institution:String(itemDraft["institution"]??""),
+        gradingType:String(itemDraft["gradingType"]??""),
+        gradeObtained:String(itemDraft["gradeObtained"]??""),
+        maxGrade:String(itemDraft["maxGrade"]??""),
+        startYear:String(itemDraft["startYear"]??""),
+        endYear:String(itemDraft["endYear"]??""),
+        isCurrentlyPursuing:Boolean(itemDraft["isCurrentlyPursuing"]),
+        ...(itemDraft["examDetails"] && typeof itemDraft["examDetails"]==="object" && !Array.isArray(itemDraft["examDetails"])
+          ? {examDetails:itemDraft["examDetails"] as Record<string,string|number|boolean>} : {}),
       });
       if(issue){setEducationError(issue.message);return;}
       setEducationError(null);
     }
     const normalized = {
       ...itemDraft,
-      ...(collection === "education" && Boolean(itemDraft.isCurrentlyPursuing) ? {endYear:""} : {}),
+      ...(collection === "education" && Boolean(itemDraft["isCurrentlyPursuing"]) ? {endYear:""} : {}),
       ...(collection === "projects"
-        ? { skills: Array.isArray(itemDraft.skills) ? itemDraft.skills : String(itemDraft.skills || "").split(",").map((value) => value.trim()).filter(Boolean) }
+        ? { skills: Array.isArray(itemDraft["skills"]) ? itemDraft["skills"] : String(itemDraft["skills"] || "").split(",").map((value) => value.trim()).filter(Boolean) }
         : {}),
     };
     const current = document[collection] as Array<Record<string, unknown>>;
     const nextItems = editingId
-      ? current.map((item) => String(item.id) === editingId ? normalized : item)
+      ? current.map((item) => String(item["id"]) === editingId ? normalized : item)
       : [...current, normalized];
 
     const finished = () => { setCollection(null); setEditingId(null); setItemDraft({}); };
@@ -564,9 +564,9 @@ export function LearnerProfileWorkspace(props: {
     if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
     const current = document[section] as Array<Record<string, unknown>>;
     const confirmation=learnerProfileDeletePrompt(section,
-      current.some(item=>String(item.id)===id));
+      current.some(item=>String(item["id"])===id));
     if(!confirmation || !(await askConfirm(confirmation)))return;
-    const items = current.filter((item) => String(item.id) !== id);
+    const items = current.filter((item) => String(item["id"]) !== id);
     if (section === "education" || section === "skills" || section === "projects") {
       saveOwnedSection(section, items as LearnerProfileDocument[typeof section], undefined, "Deleted successfully");
     } else {
@@ -792,10 +792,10 @@ export function LearnerProfileWorkspace(props: {
               Learner-entered information, not independently verified by the college.
             </p>
             {entries.length?<ul className="space-y-2">
-              {entries.map(entry=><li key={entry.id}
+              {entries.map(entry=><li key={entry["id"]}
                 className="min-w-0 border-t border-border pt-3">
-                <p className="break-words text-sm font-semibold text-foreground">{entry.title}</p>
-                {entry.organization?<p className="mt-1 text-xs text-body">{entry.organization}</p>:null}
+                <p className="break-words text-sm font-semibold text-foreground">{entry["title"]}</p>
+                {entry["organization"]?<p className="mt-1 text-xs text-body">{entry["organization"]}</p>:null}
                 {entry.date?<p className="mt-1 text-xs text-body">{entry.date}</p>:null}
                 {entry.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{entry.description}</p>:null}
                 {entry.url?<div className="mt-2"><ThirdPartyLink href={entry.url} label="View link" /></div>:null}
@@ -803,7 +803,7 @@ export function LearnerProfileWorkspace(props: {
                   <Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={pending||contactPending}
                     onClick={()=>openShowcase(kind,entry)}>Edit</Button>
                   <Button className="min-h-11 md:min-h-9" size="sm" variant="danger" disabled={pending||contactPending}
-                    onClick={()=>deleteShowcase(kind,entry.id)}>Delete</Button>
+                    onClick={()=>deleteShowcase(kind,entry["id"])}>Delete</Button>
                 </div>
               </li>)}
             </ul>:<p className="text-sm text-muted-foreground">
@@ -815,12 +815,12 @@ export function LearnerProfileWorkspace(props: {
 
       {(Object.keys(collectionLabels) as CollectionKey[]).map((section) => {
         const items = (section === "metadata"
-          ? document.metadata.filter(item=>!isLearnerShowcaseKey(item.key))
+          ? document.metadata.filter(item=>!isLearnerShowcaseKey(item["key"]))
           : document[section]) as Array<Record<string, unknown>>;
         const displayItems = section === "education" ? [...items].sort((left,right) =>
-          Number(Boolean(right.isRecentEducation)) - Number(Boolean(left.isRecentEducation)) ||
-          (Number(right.startYear) || 0) - (Number(left.startYear) || 0) ||
-          (Number(right.endYear) || 0) - (Number(left.endYear) || 0)) : items;
+          Number(Boolean(right["isRecentEducation"])) - Number(Boolean(left["isRecentEducation"])) ||
+          (Number(right["startYear"]) || 0) - (Number(left["startYear"]) || 0) ||
+          (Number(right["endYear"]) || 0) - (Number(left["endYear"]) || 0)) : items;
         return (
           <Card key={section} id={section} title={collectionLabels[section]} action={<Button className="min-h-11 md:min-h-9" size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
             onClick={() => openCollection(section)}>Add</Button>}>
@@ -829,7 +829,7 @@ export function LearnerProfileWorkspace(props: {
                 {displayItems.map((item) => {
                   const summary = itemTitle(section, item);
                   return (
-                    <div key={String(item.id)} className="flex min-w-0 flex-col items-start gap-2 border-t border-border py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                    <div key={String(item["id"])} className="flex min-w-0 flex-col items-start gap-2 border-t border-border py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                       <div className="min-w-0 flex-1">
                         <p className="m-0 break-words text-sm font-semibold text-foreground">{summary.primary}</p>
                         {summary.secondary ? <p className="mt-1 text-xs text-muted-foreground">{summary.secondary}</p> : null}
@@ -838,7 +838,7 @@ export function LearnerProfileWorkspace(props: {
                         <Button size="sm" variant="secondary" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
                           className="min-h-11 flex-1 md:flex-none" onClick={() => openCollection(section, item)}>Edit</Button>
                         <Button size="sm" variant="danger" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                          className="min-h-11 flex-1 md:flex-none" onClick={() => removeItem(section, String(item.id))}>Delete</Button>
+                          className="min-h-11 flex-1 md:flex-none" onClick={() => removeItem(section, String(item["id"]))}>Delete</Button>
                       </div>
                     </div>
                   );
@@ -1075,17 +1075,17 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={(open) => {if(!open)closeCollection();}}
         title={collection ? (editingId ? "Edit " : "Add ") + collectionLabels[collection] : "Edit profile entry"}
         footer={<><Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || (collection==="education" &&
-              (!String(itemDraft.educationType??"").trim() || !String(itemDraft.institution??"").trim()))}
+              (!String(itemDraft["educationType"]??"").trim() || !String(itemDraft["institution"]??"").trim()))}
               onClick={saveCollection}>{pending ? "Saving…" : editingId ? "Save" : "Add"}</Button></>}
       >
         {collection ? (
           <div className="grid gap-4 md:grid-cols-2">
             {fields[collection].map((field) => {
-              if(collection==="education"&&field.key==="endYear"&&itemDraft.isCurrentlyPursuing)return null;
+              if(collection==="education"&&field.key==="endYear"&&itemDraft["isCurrentlyPursuing"])return null;
               const raw = itemDraft[field.key];
               const value = field.key === "skills" && Array.isArray(raw) ? raw.join(", ") : String(raw || "");
               const choices=learnerEducationChoices(educationCatalog,
-                String(itemDraft.educationType??""),String(itemDraft.program??""));
+                String(itemDraft["educationType"]??""),String(itemDraft["program"]??""));
               if(collection==="skills"&&field.key==="name")
                 return <LearnerSkillCatalogInput key={field.key} value={value}
                   onChange={name=>setItemDraft(current=>({...current,name}))}/>;
@@ -1106,8 +1106,8 @@ export function LearnerProfileWorkspace(props: {
                     value={value} maxLength={200} list="learner-program-suggestions"
                     onChange={event=>setItemDraft(current=>({...current,program:event.target.value,specialization:""}))}/>
                   <datalist id="learner-program-suggestions">
-                    {[...new Set([...choices.programs,...document.education.filter(item=>item.educationType===itemDraft.educationType)
-                      .map(item=>item.program).filter(Boolean)])].map(option=><option key={option} value={option}/>)}
+                    {[...new Set([...choices.programs,...document.education.filter(item=>item["educationType"]===itemDraft["educationType"])
+                      .map(item=>item["program"]).filter(Boolean)])].map(option=><option key={option} value={option}/>)}
                   </datalist>
                 </label>;
               if(collection==="education"&&field.key==="institution")
@@ -1116,7 +1116,7 @@ export function LearnerProfileWorkspace(props: {
                     list="learner-institution-suggestions" value={value} maxLength={300}
                     onChange={event=>{setEducationError(null);setItemDraft(current=>({...current,institution:event.target.value}));}}/>
                   <datalist id="learner-institution-suggestions">
-                    {[...new Set([...institutionSuggestions,...document.education.map(item=>item.institution).filter(Boolean)])]
+                    {[...new Set([...institutionSuggestions,...document.education.map(item=>item["institution"]).filter(Boolean)])]
                       .map(option=><option key={option} value={option}/>)}
                   </datalist>
                   <span className="mt-1 block text-xs font-normal text-muted-foreground">Start typing to reuse a saved institution, or enter another institution.</span>
@@ -1143,7 +1143,7 @@ export function LearnerProfileWorkspace(props: {
               return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Input className="mt-[6px] min-h-11 md:min-h-9" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} maxLength={LEARNER_PROFILE_FIELD_LIMITS[field.key]} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
             {collection==="education"?<label className="flex items-center gap-2 text-sm text-body md:col-span-2">
-              <Checkbox checked={Boolean(itemDraft.isCurrentlyPursuing)}
+              <Checkbox checked={Boolean(itemDraft["isCurrentlyPursuing"])}
                 onChange={event=>setItemDraft(current=>({
                   ...current,isCurrentlyPursuing:event.target.checked,
                   ...(event.target.checked?{endYear:""}:{}),
@@ -1151,20 +1151,20 @@ export function LearnerProfileWorkspace(props: {
               Currently Pursuing
             </label>:null}
             {collection==="education"?<label className="flex items-center gap-2 text-sm text-body md:col-span-2">
-              <Checkbox checked={Boolean(itemDraft.isRecentEducation)}
+              <Checkbox checked={Boolean(itemDraft["isRecentEducation"])}
                 onChange={event=>{setEducationError(null);setItemDraft(current=>({...current,isRecentEducation:event.target.checked}));}}/>
               Recent / primary education
             </label>:null}
-            {collection==="education"&&String(itemDraft.qualifyingExam??"").trim()?
+            {collection==="education"&&String(itemDraft["qualifyingExam"]??"").trim()?
               <fieldset className="grid gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3 md:col-span-2 md:grid-cols-2">
                 <legend className="text-sm font-semibold text-foreground">Qualifying exam details (optional)</legend>
                 <p className="text-xs text-body md:col-span-2">
                   Record details from your exam result. These fields are learner-entered and are not an official verification.
                 </p>
                 {LEARNER_QUALIFYING_EXAM_DETAILS.map(field=>{
-                  const details=(itemDraft.examDetails && typeof itemDraft.examDetails==="object" &&
-                    !Array.isArray(itemDraft.examDetails))?
-                    itemDraft.examDetails as Record<string,string|number|boolean>:{};
+                  const details=(itemDraft["examDetails"] && typeof itemDraft["examDetails"]==="object" &&
+                    !Array.isArray(itemDraft["examDetails"]))?
+                    itemDraft["examDetails"] as Record<string,string|number|boolean>:{};
                   const value=String(details[field.key]??"");
                   return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
                     {field.label}
@@ -1174,8 +1174,8 @@ export function LearnerProfileWorkspace(props: {
                       value={value}
                       onChange={event=>setItemDraft(current=>({
                         ...current,examDetails:{
-                          ...((current.examDetails && typeof current.examDetails==="object" &&
-                            !Array.isArray(current.examDetails))?current.examDetails as Record<string,unknown>:{}),
+                          ...((current["examDetails"] && typeof current["examDetails"]==="object" &&
+                            !Array.isArray(current["examDetails"]))?current["examDetails"] as Record<string,unknown>:{}),
                           [field.key]:event.target.value,
                         },
                       }))}/>
@@ -1184,7 +1184,7 @@ export function LearnerProfileWorkspace(props: {
               </fieldset>:null}
             {collection==="education"&&catalogUnavailable?<p role="status" className="md:col-span-2 text-xs text-muted-foreground">College and exam suggestions are temporarily unavailable. You can still type the institution, program and exam names.</p>:null}
             {collection==="education"&&educationError?<p role="alert" className="md:col-span-2 text-sm text-error">{educationError}</p>:null}
-            {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body md:col-span-2"><Checkbox checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
+            {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body md:col-span-2"><Checkbox checked={Boolean(itemDraft["currentlyWorking"])} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
           </div>
         ) : null}
       </Dialog>

@@ -235,7 +235,7 @@ export function NotificationList({
     </div>
     <Dialog open={selected!==null} onOpenChange={next=>{if(!next)setSelected(null);}}
       title={selected?.title||"Notification"}
-      description={selected?notificationCategory(selected)+" · "+formatWhen(selected.createdAt):undefined}
+      {...(selected ? { description: notificationCategory(selected)+" · "+formatWhen(selected.createdAt) } : {})}
       className="!max-w-[min(520px,calc(100vw-32px))]"
       footer={<>
         {selected&&safeInternalAction(selected.actionHref)?<Link href={safeInternalAction(selected.actionHref)!}
