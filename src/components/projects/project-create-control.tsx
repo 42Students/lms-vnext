@@ -70,6 +70,7 @@ export function CreateProjectControl({
   const [rosterSearch,setRosterSearch]=useState("");
   const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
   const [displayStatus,setDisplayStatus]=useState<"PLANNED"|"ACTIVE"|"IN_PROGRESS"|"READY"|"BLOCKED">("PLANNED");
+  const titleRef = useRef<HTMLInputElement|null>(null);
   const submitLock = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -185,6 +186,7 @@ export function CreateProjectControl({
       return;
     }
     if (!title.trim()) {
+      titleRef.current?.focus();
       setError("Title is required");
       return;
     }
@@ -260,7 +262,7 @@ export function CreateProjectControl({
         title: standalone ? "Workspace created" : "Project created successfully",
       });
       setOpen(false);
-      router.push(`${basePath}/${encodeURIComponent(createdId)}`);
+      router.push(`${basePath}/${encodeURIComponent(createdId)}/summary`);
       router.refresh();
     } catch (caught) {
       setError(
@@ -299,13 +301,13 @@ export function CreateProjectControl({
 
 
   const form = (
-        <form noValidate onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-4 md:grid-cols-2">
+        <form noValidate onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-4">
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Assigned template
+              Template
             </span>
             <Input type="search" className="mb-2" maxLength={120}
-              aria-label="Find assigned template" placeholder="Search assigned templates"
+              aria-label="Find assigned template" placeholder="Search by template title"
               value={templateQuery} onChange={event=>setTemplateQuery(event.target.value)}/>
             <Select
               aria-invalid={attempted&&!templateId}
@@ -332,9 +334,10 @@ export function CreateProjectControl({
           </label>
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Project title
+              Workspace title
             </span>
             <Input
+              ref={titleRef}
               required
               maxLength={160}
               aria-invalid={attempted&&!title.trim()}
@@ -377,12 +380,13 @@ export function CreateProjectControl({
               Summary
             </span>
             <Textarea
+              rows={3}
               maxLength={2000}
               value={summary}
               onChange={(event) =>
                 setSummary(event.target.value)
               }
-              placeholder="Optional context specific to this Project instance."
+              placeholder="Short live workspace summary"
             />
           </label>
           <div className="grid min-w-0 gap-4 md:col-span-2 sm:grid-cols-2">
@@ -422,7 +426,7 @@ export function CreateProjectControl({
               Primary mentor
             </span>
             <Input className="mb-2" type="search" value={mentorQuery}
-              placeholder="Search mentors by name or email" aria-label="Search mentors"
+              placeholder={initialStatus==="ACTIVE"?"Required — search by faculty name":"Search by faculty name"} aria-label="Search mentors"
               disabled={pending} maxLength={120}
               onChange={event => setMentorQuery(event.target.value)} />
             <Select
@@ -442,7 +446,7 @@ export function CreateProjectControl({
                   key={mentor.membershipId}
                   value={mentor.membershipId}
                 >
-                  {mentor.displayName} · {mentor.email}
+                  {mentor.displayName} · {mentor.membershipId}
                 </option>
               ))}
             </Select>
@@ -509,7 +513,9 @@ export function CreateProjectControl({
             {!rosterError&&loadedRosterSectionId!==sectionId?<p role="status" className="text-sm text-body">Loading class roster…</p>:null}
             <div className="flex flex-wrap gap-3 text-xs">
               <Button variant="ghost" type="button" disabled={loadedRosterSectionId!==sectionId} className="text-primary-text underline"
-                onClick={()=>setLearnerMembershipIds(roster.map(x=>x.membershipId))}>Whole class</Button>
+                onClick={()=>setLearnerMembershipIds(old=>Array.from(new Set([
+                  ...old,...roster.map(row=>row.membershipId),
+                ])).slice(0,500))}>Add a whole class</Button>
               <Button variant="ghost" type="button" className="text-primary-text underline"
                 onClick={()=>setLearnerMembershipIds([])}>Clear</Button>
             </div>
@@ -523,7 +529,7 @@ export function CreateProjectControl({
                 <Checkbox checked={learnerMembershipIds.includes(student.membershipId)}
                   onChange={e=>setLearnerMembershipIds(old=>e.target.checked?
                     [...old,student.membershipId]:old.filter(id=>id!==student.membershipId))}/>
-                <span className="min-w-0 break-words">{student.displayName} · {student.rollNumber}</span>
+                <span className="min-w-0 break-words">{student.displayName} · {student.rollNumber || student.membershipId}</span>
               </label>)}
               {loadedRosterSectionId===sectionId&&!roster.length?<p className="text-xs text-muted-foreground">No learners available.</p>:null}
             </div>
@@ -561,7 +567,7 @@ export function CreateProjectControl({
                 (Boolean(sectionId) && loadedRosterSectionId!==sectionId)
               }
             >
-              {pending ? "Creating…" : "Create Project"}
+              {pending ? "Creating…" : basePath.startsWith("/admin/") ? "Create Project" : "Create workspace"}
             </Button>
           </div>
         </form>
@@ -569,7 +575,9 @@ export function CreateProjectControl({
   return (
     <>
       {!standalone ? (
-        <Button size="sm" onClick={openDialog}>Create workspace</Button>
+        <Button size="sm" onClick={openDialog}>
+          {basePath.startsWith("/admin/")?"Create Project":"Create workspace"}
+        </Button>
       ) : null}
       {standalone ? (
         <section aria-label="Create workspace" className="min-w-0 max-w-3xl space-y-5">
@@ -583,7 +591,8 @@ export function CreateProjectControl({
             if(next)setOpen(true);else discard.requestClose();
           }}
           dismissible={!pending}
-          title="Create workspace"
+          className="max-w-[760px]"
+          title={basePath.startsWith("/admin/")?"Create Project":"Create workspace"}
           description="Create an independent Project workspace from the exact published template version assigned to this college."
         >
           {form}
