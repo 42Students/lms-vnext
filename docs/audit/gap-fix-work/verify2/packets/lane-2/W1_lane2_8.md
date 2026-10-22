@@ -127,7 +127,29 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: LFE/components/admin/projects/RepeatingItemEditor.jsx:250-276: max500 rows exact error, missing title `Item N: Title required`
 - Expected fix: Expose equivalent row limit/errors with new per-row semantics
 
-## Lane-2 verification evidence (partial)
-- OK G2-6-011-024, G2-6-011-042: `saveTpoJobTypes` retains original label mappings and updates linked placement jobs in one transaction; `setTpoJobTypeCountsAsPlaced` updates linked drives under college-row locking.
-- OK G2-11-017-029: `TPO_MORE_GROUPS` exposes eleven destinations, including team and settings; each rendered as a same-tab Next.js Link by `TpoMoreNavigation`.
-- Remaining rows: not verified; packet intentionally remains unticked pending source-by-source review.
+## Fast verification disposition
+- DEFERRED G2-5-022-009: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-5-022-044: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-5-022-048: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-5-030-028: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-6-020-022: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-6-027-059: Requires deeper source-to-source verification; not asserted as implemented.
+- OK G2-11-017-029: Verified existing transaction/route implementation.
+- DEFERRED G2-11-026-001: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-11-029-034: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-14-029-027: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-6-016-027: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-6-030-067: Requires deeper source-to-source verification; not asserted as implemented.
+- OK G2-6-011-024: Verified existing transaction/route implementation.
+- OK G2-6-011-042: Verified existing transaction/route implementation.
+- DEFERRED G2-6-022-057: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-13-023-010: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-14-030-036: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-17-031-002: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-19-027-062: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-7-002-002: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-7-004-019: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-7-006-002: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-7-009-001: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-7-011-028: Requires deeper source-to-source verification; not asserted as implemented.
+- DEFERRED G2-7-013-030: Requires deeper source-to-source verification; not asserted as implemented.

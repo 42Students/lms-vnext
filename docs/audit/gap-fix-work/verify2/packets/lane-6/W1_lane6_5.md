@@ -126,3 +126,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/application-service.ts
 - Legacy: Old @PrePersist publicRef on both self and staff applications `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/JobApplication.java:177-188`
 - Expected fix: Generate company-facing publicRef for every creation path.
+
+## Fast verification disposition
+- DEFERRED G2-11-011-064: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-011-069: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-011-078: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-011-089: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-011-101: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-011-107: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-011-110: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-011-112: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-011-117: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-009: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-017: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-018: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-019: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-029: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-030: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-044: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-045: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-076: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-086: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-088: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-090: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-11-013-091: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-12-019-015: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-12-019-026: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-12-019-035: Requires deeper source comparison and/or feature work; not certified as matching.

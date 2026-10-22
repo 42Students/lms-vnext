@@ -126,3 +126,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/college/page.tsx
 - Legacy: `docs/legacy-source/frontend/src/pages/college-admin/index.js:1-5` — getServerSideProps writes 302 and Location, calls response.end()
 - Expected fix: Implement HTTP redirect via Next redirect API on alias route
+
+## Fast verification disposition
+- DEFERRED G2-7-014-054: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-7-015-054: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-7-016-068: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-7-017-051: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-7-018-042: Requires deeper source comparison and/or feature work; not certified as matching.
+- OK G2-7-031-002: Existing grouped first-tab destination and legacy routing inspected.
+- OK G2-7-031-018: Existing grouped first-tab destination and legacy routing inspected.
+- DEFERRED G2-7-033-002: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-021-012: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-020-021: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-020-022: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-020-026: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-020-028: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-020-036: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-020-061: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-027-049: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-12-021-012: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-12-021-017: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-15-026-006: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-017-080: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-024-007: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-023-038: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-8-022-039: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-9-007-021: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-9-009-014: Requires deeper source comparison and/or feature work; not certified as matching.

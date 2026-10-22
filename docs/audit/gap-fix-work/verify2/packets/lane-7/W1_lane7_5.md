@@ -126,3 +126,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: (none, new feature)
 - Legacy: Multi-session cell number attended/marked ratio (docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:185-207)
 - Expected fix: Use per-student per-day ratio backed by marks.
+
+## Fast verification disposition
+- DEFERRED G2-4-005-009: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-12-024-021: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-4-017-029: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-4-017-031: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-4-017-065: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-4-029-011: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-4-029-016: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-4-022-001: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-021-001: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-021-016: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-021-018: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-021-021: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-021-022: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-021-025: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-021-026: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-021-048: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-021-052: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-031-017: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-031-065: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-031-068: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-13-031-085: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-14-028-034: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-5-004-026: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-5-007-012: Requires deeper source comparison and/or feature work; not certified as matching.
+- DEFERRED G2-5-009-016: Requires deeper source comparison and/or feature work; not certified as matching.
