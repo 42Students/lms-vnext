@@ -554,9 +554,9 @@ describe("courses C4A assignments against PostgreSQL", () => {
         {
           deliveryId:
             structure.deliveryA.id,
-          submissionType: "LINK",
-          submissionUrl:
-            "https://example.com/answer",
+          submissionType: "TEXT",
+          textContent:
+            "Duplicate submission must be rejected",
         },
       ),
     ).rejects.toMatchObject({
@@ -681,6 +681,13 @@ describe("courses C4A assignments against PostgreSQL", () => {
       assignment.id,
       {...await facultyAssessmentFixtureToken(pool,"ASSIGNMENT",assignment.id),  action: "PUBLISH" },
     );
+
+    // A written-response-only assignment must reject a link before a valid submission exists.
+    await expect(submitCourseAssignment(learner, assignment.id, {
+      deliveryId: structure.deliveryA.id,
+      submissionType: "LINK",
+      submissionUrl: "https://example.com/submission",
+    })).rejects.toMatchObject({code:"ASSIGNMENT_METHOD_NOT_ALLOWED"});
 
     const submitted =
       await submitCourseAssignment(
@@ -926,11 +933,12 @@ describe("courses C4A assignments against PostgreSQL", () => {
       code: "23514",
     });
 
+    // The database permits zero-point legacy tasks; negative points are invalid.
     await expect(
       pool.query(
         `insert into course_assignments
           (lesson_id, title, max_points, sequence, created_by_user_id)
-         values ($1, 'C4A Bad Points', 0, 5, $2)`,
+         values ($1, 'C4A Bad Points', -1, 5, $2)`,
         [
           structure.lesson.id,
           SEED_IDS.collegeAdminUser,
