@@ -6,7 +6,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
   ProjectAdminPagination,
-  type ProjectAdminCollectionQuery,
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
@@ -55,7 +54,7 @@ export default async function CollegeProjectsPage({
       />
     </div>;
   }
-  const query: ProjectAdminCollectionQuery = parsed.data;
+  const query = parsed.data;
   const viewHref = (targetView: "table" | "cards") => {
     const params = new URLSearchParams();
     params.set("view", targetView);
@@ -68,7 +67,7 @@ export default async function CollegeProjectsPage({
   // The strict service schema accepts database filters only, not the
   // presentational view toggle. Keep cards/table navigation in the UI.
   const serviceQuery = {
-    q: query.q, status: query.status, page: query.page, pageSize: query.pageSize,
+    q: query.q, status: query.status, view: query.view, page: query.page, pageSize: query.pageSize,
   };
   // Optional labels may fail independently, but an essential workspace read
   // must show a true retry state rather than throw or display a false empty list.
