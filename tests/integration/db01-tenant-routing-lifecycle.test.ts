@@ -4,13 +4,11 @@ import { Pool } from "pg";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { closeDatabaseConnection } from "@/db/client";
-import { SEED_IDS } from "../../scripts/db-seed-data";
 import { drizzleTenantDomainRepository } from "@/modules/tenant-domains/repository";
 import {
   deleteTenantDomain,
   resolveTenantFromHost,
 } from "@/modules/tenant-domains/service";
-import { SEED_IDS } from "../../scripts/db-seed-data";
 
 /**
  * DB-004 Chat 2: real repository/host resolution against a registered
