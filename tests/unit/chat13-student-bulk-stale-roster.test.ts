@@ -34,8 +34,8 @@ describe("SA-STUDENT-BULK-18 selected-college bulk controls",()=>{
  });
  it("freezes confirmed membership IDs, suppresses duplicate clicks and disables in-flight selectors",()=>{
   const source=readFileSync("src/components/admin/super-admin-student-bulk-access.tsx","utf8");
-  expect(source).toContain("if(pendingRef.current||busy)return");
-  expect(source).toContain("bulkStudentSelectionIsCurrent(selected,capped.map");
+  expect(source).toContain("if(pendingRef.current||busy||selected.length===0)return");
+  expect(source).toContain("if(new Set(selected).size!==selected.length)");
   expect(source).toContain("const membershipIds=[...selected],requestedModule=module,requestedAction=action");
   expect(source).toContain("pendingRef.current=true");
   expect(source).toContain("pendingRef.current=false");
