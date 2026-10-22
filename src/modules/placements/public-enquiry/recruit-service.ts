@@ -111,7 +111,8 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
   if(recipients.length)await tx.insert(inAppNotifications).values(
    recipients.map(r=>({userId:r.userId,eventId:event.id,
     title:name+" wants to recruit from you",
-    body:"A company contacted your placement cell through the public page.",
+    body:(company||"A recruiter")+" · "+name+" ("+email+") contacted your placement cell through the public page"+
+      (hiringFor?". Hiring for: "+hiringFor.slice(0,320):"")+"." ,
     actionHref:"/tpo/recruiters/"+encodeURIComponent(lead.id)}))).onConflictDoNothing();
   return "DONE";
  });
