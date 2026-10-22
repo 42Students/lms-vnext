@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     if (!body || typeof body !== "object" || Array.isArray(body)) {
       return Response.json({ error: "INVALID_BODY" }, { status: 400 });
     }
-    const id = (body as Record<string, unknown>).membershipId;
+    const id = (body as Record<string, unknown>)["membershipId"];
     if (typeof id !== "string") {
       return Response.json({ error: "INVALID_MEMBERSHIP" }, { status: 400 });
     }
