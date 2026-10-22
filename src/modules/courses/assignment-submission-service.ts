@@ -14,6 +14,8 @@ import { assignmentSubmissionLinks } from "@/db/schema/assignment-submission-lin
 import {facultyAssignmentGradingAllowed,facultyAssignmentGradePublicationAllowed} from "./faculty-assignment-grading-policy";
 import {facultyRegradeFeedbackAllowed} from "./faculty-regrade-feedback-model";
 import {facultyGradeHasChanges} from "./faculty-grade-noop-model";
+import {legacyPriorGraderEligible} from "./faculty-prior-grader-policy";
+import {descriptiveAssignmentPointsSchema,addDescriptivePoints} from "./assignment-descriptive-points-model";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -185,6 +187,12 @@ async function requireAssignmentGradeAccess(
     return;
   }
 
+  if(legacyPriorGraderEligible({
+    userId:context.user.id,
+    gradedByUserId:submission.gradedByUserId,
+    membership:context.membership,
+    collegeId:submission.collegeId,
+  }))return;
   await requireDeliveryContentMutation(
     context,
     submission.deliveryId,
@@ -816,11 +824,37 @@ async function assertPersistedFacultyGrader(
   deliveryId: string,
   collegeId: string,
   organizationId: string,
+  priorGraderUserId: string | null,
 ) {
   if (can(context, "courses.manage", {collegeId, organizationId})) return;
   const membership = context.membership;
   if (!membership || membership.collegeId !== collegeId)
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  // The old LMS permits a former assigned faculty member to regrade their
+  // own prior grade. Their membership and FACULTY role must still be active,
+  // even after the teaching assignment has ended.
+  if(legacyPriorGraderEligible({
+    userId:context.user.id,gradedByUserId:priorGraderUserId,
+    membership,collegeId,
+  })){
+    const [prior]=await tx.select({id:collegeMemberships.id})
+      .from(collegeMemberships)
+      .innerJoin(users,and(
+        eq(users.id,collegeMemberships.userId),
+        eq(users.platformStatus,"ACTIVE"),
+      ))
+      .innerJoin(membershipRoles,and(
+        eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"FACULTY"),
+      ))
+      .where(and(
+        eq(collegeMemberships.id,membership.id),
+        eq(collegeMemberships.userId,context.user.id),
+        eq(collegeMemberships.collegeId,collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),
+      )).for("share").limit(1);
+    if(prior)return;
+  }
   const [found] = await tx.select({id:courseTeachingAssignments.id})
     .from(courseTeachingAssignments)
     .innerJoin(collegeMemberships, and(
@@ -843,6 +877,30 @@ async function assertPersistedFacultyGrader(
       isNull(courseTeachingAssignments.endedAt),
     )).for("share").limit(1);
   if (!found) throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+}
+
+/** The legacy "Add descriptive points" operation is only available before
+ * the first grade. It is not an implicit regrade or a second grade, and the
+ * caller must present the exact current optimistic version. The existing
+ * grading service rechecks the active teacher and tenant inside its write. */
+export async function addDescriptiveAssignmentPoints(
+ context:RequestContext,submissionIdRaw:unknown,rawInput:unknown,
+){
+ const submissionId=assignmentSubmissionIdSchema.parse(submissionIdRaw);
+ const input=descriptiveAssignmentPointsSchema.parse(rawInput);
+ const current=await loadAssignmentSubmissionScope(submissionId);
+ await requireAssignmentGradeAccess(context,current);
+ if(current.gradingStatus==="GRADED"||current.gradePublished)
+   throw new CoursesServiceError("ASSIGNMENT_ALREADY_GRADED");
+ if(current.version!==input.expectedVersion)
+   throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
+ const pointsAwarded=addDescriptivePoints(
+   current.pointsAwarded??0,input.pointsToAdd,
+   current.maxPointsAtSubmission??current.maxPoints,
+ );
+ return gradeAssignmentSubmission(context,submissionId,{
+   pointsAwarded,feedback:input.feedback??null,expectedVersion:input.expectedVersion,
+ });
 }
 
 export async function gradeAssignmentSubmission(
@@ -889,7 +947,7 @@ export async function gradeAssignmentSubmission(
 
   const now = new Date();
   return getDb().transaction(async (tx) => {
-    await assertPersistedFacultyGrader(tx,context,current.deliveryId,current.collegeId,current.organizationId);
+    await assertPersistedFacultyGrader(tx,context,current.deliveryId,current.collegeId,current.organizationId,current.gradedByUserId);
     // Shared row lock serializes against ARCHIVE, preserving the published
     // assessment boundary throughout the grade and immutable audit write.
     const [locked]=await tx.select({status:courseAssignments.status,maxPoints:courseAssignments.maxPoints})
@@ -996,7 +1054,7 @@ export async function publishAssignmentGrade(
   }
 
   return getDb().transaction(async (tx) => {
-    await assertPersistedFacultyGrader(tx,context,current.deliveryId,current.collegeId,current.organizationId);
+    await assertPersistedFacultyGrader(tx,context,current.deliveryId,current.collegeId,current.organizationId,current.gradedByUserId);
     const [locked]=await tx.select({status:courseAssignments.status})
       .from(courseAssignments).where(eq(courseAssignments.id,current.assignmentId))
       .for("share").limit(1);
