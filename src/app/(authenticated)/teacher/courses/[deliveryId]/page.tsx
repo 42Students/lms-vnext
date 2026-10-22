@@ -51,9 +51,10 @@ export default async function FacultyCourseDefaultPage({
   // class, lesson or filter hint on the default-route redirect.
   const preserved=new URLSearchParams();
   for(const [key,raw] of Object.entries(query)){
-    if(key.length>100)continue;
     for(const value of Array.isArray(raw)?raw:[raw]){
-      if(typeof value==="string"&&value.length<=2048)preserved.append(key,value);
+      // Next has already parsed these query values. Do not silently truncate
+      // long legacy bookmarks or discard unknown keys during the redirect.
+      if(typeof value==="string")preserved.append(key,value);
     }
   }
   const href=facultyCourseTabHref(canonical,"home");
