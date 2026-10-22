@@ -64,7 +64,12 @@ export default async function FacultyNotificationsPage({
     countOwnUnreadNotifications(context, { collegeId: membership.collegeId }),
     announcementsEnabled
       ? listVisibleAnnouncementsForMembership(context)
-      : Promise.resolve([]),
+          .then(items => ({ available: true as const, items }))
+          .catch(error => {
+            if (error instanceof AuthorizationError) throw error;
+            return { available: false as const, items: [] };
+          })
+      : Promise.resolve({ available: true as const, items: [] }),
   ]);
   const page=notificationRead.value;
   const announcements = announcementRead.items.filter(item =>
