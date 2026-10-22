@@ -276,10 +276,13 @@ export async function verifyTenantDomain(
     repository,
   );
 
-  // A verified binding is idempotent: re-verification must not issue
-  // a new challenge or contact DNS. Token repair is an explicit operation.
+  // A verified binding is already valid: repeat verification is idempotent.
+  // Do not perform another DNS lookup or rewrite verification diagnostics.
+  // Reverification after a host edit remains possible because editing clears
+  // the verified flag and rotates its challenge.
   if (domain.isVerified) return domain;
-  if (!domain.verificationToken) {
+  const checkedDomain = domain;
+  if (!checkedDomain.verificationToken) {
     throw new TenantDomainServiceError("DOMAIN_NOT_VERIFIED");
   }
 
