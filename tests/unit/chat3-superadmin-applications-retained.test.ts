@@ -20,7 +20,11 @@ describe("Super Admin scoped applications stale refresh",()=>{
     expect(page.indexOf('requireSuperAdminSelectedCollege(context,"placements.manage")'))
       .toBeLessThan(page.indexOf("getCollegeApplicationPipeline(context,jobId,query)"));
     expect(page).toContain('const snapshotKey=[context.user.id,context.adminScope.collegeId,jobId,retryHref].join(":")');
-    expect(page).toContain("key={snapshotKey} failed retryHref={retryHref}");
-    expect(page).toContain("key={snapshotKey} retryHref={retryHref}");
+    expect(page).toContain("<LastKnownGoodApplications key={snapshotKey} valid={false} retryHref={retryHref}>");
+    expect(page).toContain("<LastKnownGoodApplications key={snapshotKey} valid retryHref={retryHref}>");
+    const fallback=readFileSync("src/components/placements/last-known-good-applications.tsx","utf8");
+    expect(fallback).toContain("<div inert");
+    expect(fallback).toContain('role="alert"');
+    expect(fallback).toContain("Retry applications");
   });
 });
