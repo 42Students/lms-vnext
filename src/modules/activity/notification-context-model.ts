@@ -18,7 +18,7 @@ export function notificationContextPresentation(row:Context){
  const actionHref=safeNotificationActionHref(row.actionHref);
  const actionLabel=assessment?"Take Assessment":interview?"View Interview":
   placement?"View in My Applications":course?"View Course":"View";
- const rawExternal=metadata.assessmentUrl??metadata.externalAssessmentUrl;
+ const rawExternal=metadata["assessmentUrl"]??metadata["externalAssessmentUrl"];
  const external=typeof rawExternal==="string"?safeExternalAssessmentUrl(rawExternal):null;
  return {contextLine,actionHref,actionLabel,
   externalCta:external?.startsWith("https:")?{label:"Take Assessment",href:external}:null};
