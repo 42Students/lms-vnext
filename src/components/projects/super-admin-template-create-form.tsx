@@ -1,138 +1,442 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Banner } from "@/components/ui/banner";
-import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import {useState,type FormEvent} from "react";
+
+import {useRef,useState,type FormEvent} from "react";
+import {ZodError} from "zod";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {initialSuperAdminTemplateDraft} from "@/modules/projects/super-admin-template-create-model";
 import {projectMutation} from "@/components/projects/project-api";
 
 export function SuperAdminTemplateCreateForm(){
- const router=useRouter();
- const [values,setValues]=useState({slug:"",title:"",summary:"",summaryOverrideReason:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM",acceptanceCriteria:"",releaseDescription:"",sprintDescription:"",taskDescription:"",overviewDescription:"",resourceTitle:"",resourceUrl:"",deliverables:"",definitionOfDone:"",personas:"",courseLabel:"",phase:"",submissionType:"LINK",submissionInstructions:""});
- const [saving,setSaving]=useState(false);
- const [error,setError]=useState("");
- const edit=(key:keyof typeof values,value:string)=>setValues(old=>({...old,[key]:value}));
- async function submit(event:FormEvent<HTMLFormElement>){
-  event.preventDefault();if(saving)return;
-  setError("");setSaving(true);
-  try{
-   const payload=initialSuperAdminTemplateDraft(values);
-   const result=await projectMutation("/api/projects/templates","POST",payload) as {template:{id:string}};
-   router.push("/admin/projects/templates/"+encodeURIComponent(result.template.id));
-   router.refresh();
-  }catch(caught){
-   setError(caught instanceof Error?caught.message:"Template creation failed.");
-  }finally{setSaving(false);}
- }
- const fields=[
-  {key:"title",label:"Template title",limit:160,required:true},
-  {key:"slug",label:"Slug",limit:80,required:true},
-  {key:"release",label:"First release",limit:200,required:true},
-  {key:"sprint",label:"First sprint",limit:200,required:true},
-  {key:"task",label:"First task",limit:200,required:true},
- ] as const;
- return <form onSubmit={event=>void submit(event)} className="grid min-w-0 gap-4">
-  <p className="m-0 text-sm text-body">The draft starts with one release, one sprint and one task. Review and publish after creation.</p>
-  <div className="grid min-w-0 gap-4 md:grid-cols-2">
-   {fields.map(field=><label key={field.key} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-    {field.label}<Input required={field.required} maxLength={field.limit} disabled={saving}
-     value={values[field.key]} onChange={event=>edit(field.key,field.key==="slug"?event.target.value.toLowerCase():event.target.value)}
-     pattern={field.key==="slug"?"[a-z0-9]+(?:-[a-z0-9]+)*":undefined}
-     aria-describedby={field.key==="slug"?"template-slug-hint":field.key==="title"?"template-title-hint":undefined}
-     className="w-full"/>
-    {field.key==="slug"?<span id="template-slug-hint" className="text-xs text-muted-foreground">80 characters maximum; lowercase letters, numbers and hyphens only.</span>:
-     field.key==="title"?<span id="template-title-hint" className="text-xs text-muted-foreground">160 characters maximum.</span>:null}
-   </label>)}
-  </div>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Custom summary (optional)
-   <Textarea maxLength={160} disabled={saving} value={values.summary} onChange={event=>edit("summary",event.target.value)}
-    className="w-full"/>
-   <span className="text-xs font-normal text-muted-foreground">Defaults to the first Goal line or title (160 characters).</span>
-  </label>
-  {values.summary.trim()?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for custom summary
-   <Input maxLength={300} disabled={saving} value={values.summaryOverrideReason}
-    onChange={event=>edit("summaryOverrideReason",event.target.value)}
-    placeholder="Why does this need a different summary?"/>
-  </label>:null}
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Goal (optional)
-   <Textarea maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
-    className="w-full"/>
-  </label>
-  <details className="min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Overview and submission</summary>
-   <fieldset className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
-    <legend className="sr-only">Overview and submission</legend>
-    {([{key:"courseLabel",label:"Course label"},{key:"phase",label:"Phase"}] as const)
-      .map(item=><label key={item.key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{item.label}
-       <Input maxLength={160} disabled={saving} value={values[item.key]}
-        onChange={e=>edit(item.key,e.target.value)}
-        className="w-full"/></label>)}
-    {([{key:"deliverables",label:"Deliverables (one per line)"},
-       {key:"definitionOfDone",label:"Definition of done (one per line)"},
-       {key:"personas",label:"Personas (one per line)"},
-       {key:"submissionInstructions",label:"Submission instructions"}] as const).map(item=>
-      <label key={item.key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
-       {item.label}
-       <Textarea value={values[item.key]} onChange={e=>edit(item.key,e.target.value)}
-        maxLength={4000} disabled={saving}
-        className="w-full"/>
-      </label>)}
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission type
-      <Select disabled={saving} value={values.submissionType}
-       onChange={e=>edit("submissionType",e.target.value)}
-       className="w-full">
-       <option value="LINK">Link</option><option value="FILE">File upload</option>
-       <option value="TEXT">Text</option>
-      </Select>
+  const router=useRouter(),{showToast}=useToast();
+  const savingRef=useRef(false);
+  const [values,setValues]=useState(empty);
+  const [releases,setReleases]=useState<TemplateCreateRelease[]>(firstReleases);
+  const [sprints,setSprints]=useState<TemplateCreateSprint[]>(firstSprints);
+  const [tasks,setTasks]=useState<TemplateCreateTask[]>(firstTasks);
+  const [resources,setResources]=useState<TemplateCreateResource[]>([]);
+  const [saving,setSaving]=useState(false);
+  const [saved,setSaved]=useState(false);
+  const [error,setError]=useState("");
+  const [errorSection,setErrorSection]=useState<string|null>(null);
+  const dirty=JSON.stringify([values,releases,sprints,tasks,resources])!==
+    JSON.stringify([empty,firstReleases,firstSprints,firstTasks,[]]);
+  const guard=useProjectEditorDiscardGuard(!saved,dirty,saving,
+    ()=>router.push("/admin/projects/templates"));
+  function edit(key:keyof typeof empty,value:string){
+    setValues(previous=>({...previous,[key]:value}));
+  }
+  function changeRelease(index:number,patch:Partial<TemplateCreateRelease>){
+    setReleases(previous=>previous.map((row,i)=>i===index?{...row,...patch}:row));
+  }
+  function changeSprint(index:number,patch:Partial<TemplateCreateSprint>){
+    setSprints(previous=>previous.map((row,i)=>i===index?{...row,...patch}:row));
+  }
+  function changeTask(index:number,patch:Partial<TemplateCreateTask>){
+    setTasks(previous=>previous.map((row,i)=>i===index?{...row,...patch}:row));
+  }
+  function changeResource(index:number,patch:Partial<TemplateCreateResource>){
+    setResources(previous=>previous.map((row,i)=>i===index?{...row,...patch}:row));
+  }
+  function changeReleaseKey(index:number,key:string){
+    const oldKey=releases[index]!.key;
+    changeRelease(index,{key});
+    setSprints(previous=>previous.map(row=>row.releaseKey===oldKey?
+      {...row,releaseKey:key}:row));
+  }
+  function changeSprintKey(index:number,key:string){
+    const oldKey=sprints[index]!.key;
+    changeSprint(index,{key});
+    setTasks(previous=>previous.map(row=>row.sprintKey===oldKey?
+      {...row,sprintKey:key}:row));
+  }
+  function removeRelease(index:number){
+    const row=releases[index]!;
+    if(sprints.some(sprint=>sprint.releaseKey===row.key)){
+      setError("Move or remove linked sprints before removing this release.");return;
+    }
+    setReleases(previous=>previous.filter((_,i)=>i!==index));setError("");
+  }
+  function removeSprint(index:number){
+    const row=sprints[index]!;
+    if(tasks.some(task=>task.sprintKey===row.key)){
+      setError("Move or remove linked tasks before removing this sprint.");return;
+    }
+    setSprints(previous=>previous.filter((_,i)=>i!==index));setError("");
+  }
+  async function submit(event:FormEvent<HTMLFormElement>){
+    event.preventDefault();
+    if(savingRef.current)return;
+    setError("");setErrorSection(null);
+    if(!values.title.trim()){setError("Template title is required.");return;}
+    if(values.title.trim().length>160){
+      setError("Template title must be 160 characters or fewer.");return;
+    }
+    if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)||values.slug.length>80){
+      setError("Use a slug of at most 80 lowercase letters, numbers and hyphens.");return;
+    }
+    const overviewGroups=[
+      {name:"Deliverables",value:values.deliverables},
+      {name:"Definition of done",value:values.definitionOfDone},
+      {name:"Personas",value:values.personas},
+    ];
+    if(!lines(values.deliverables).length){
+      setError("Add at least one deliverable (one per line).");
+      setErrorSection("overview");return;
+    }
+    for(const group of overviewGroups){
+      const rows=lines(group.value);
+      if(rows.length>50||rows.some(row=>row.length>500)){
+        setError(group.name+" supports up to 50 rows and 500 characters per row.");
+        setErrorSection("overview");return;
+      }
+    }
+    if(!releases.length||!sprints.length||!tasks.length){
+      setError("Add at least one release, sprint and task.");return;
+    }
+    for(const group of [
+      {name:"releases",rows:releases},
+      {name:"sprints",rows:sprints},
+      {name:"tasks",rows:tasks},
+      {name:"resources",rows:resources},
+    ]){
+      const invalid=group.rows.findIndex(row=>!row.title.trim());
+      if(invalid>=0){
+        setError(group.name+" · item "+(invalid+1)+": Title required.");
+        setErrorSection(group.name);return;
+      }
+      const keys=new Set<string>();
+      for(let i=0;i<group.rows.length;i++){
+        const key=group.rows[i]!.key.trim();
+        if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(key)||key.length>64){
+          setError(group.name+" · item "+(i+1)+": Use a valid key (up to 64 characters).");
+          setErrorSection(group.name);return;
+        }
+        if(keys.has(key)){
+          setError(group.name+" · item "+(i+1)+": Key already exists.");
+          setErrorSection(group.name);return;
+        }
+        keys.add(key);
+      }
+    }
+    savingRef.current=true;setSaving(true);
+    try{
+      const payload=initialSuperAdminTemplateDraft({
+        ...values,releases,sprints,tasks,resources,
+      });
+      const result=await projectMutation("/api/projects/templates","POST",payload)
+        as {template:{id:string}};
+      setSaved(true);
+      showToast({tone:"success",title:"Template created",
+        description:"Review the draft and publish it when ready."});
+      router.push("/admin/projects/templates/"+
+        encodeURIComponent(result.template.id));
+      router.refresh();
+    }catch(caught){
+      const issue=caught instanceof ZodError?caught.issues[0]:undefined;
+      const detail=issue?
+        (issue.path.length?issue.path.join(" · ")+": ":"")+issue.message:
+        caught instanceof Error?caught.message:"Template creation failed.";
+      setErrorSection(issue?.path[0]?.toString()??null);
+      setError(detail);
+      showToast({tone:"error",title:"Template creation failed",description:detail});
+    }finally{
+      savingRef.current=false;setSaving(false);
+    }
+  }
+  return <form onSubmit={event=>void submit(event)}
+    className="grid min-w-0 gap-5" noValidate>
+    <p className="text-sm text-body">
+      Build a versioned template with releases, sprints, tasks and resources.
+      Saving creates a draft; publication is a separate reviewed action.
+    </p>
+    <div className="grid gap-3 md:grid-cols-2">
+      <label className={label}>Template title
+        <Input className={input} required maxLength={160} disabled={saving}
+          value={values.title} onChange={event=>edit("title",event.target.value)}/>
+      </label>
+      <label className={label}>Slug
+        <Input className={input} required maxLength={80} disabled={saving}
+          pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={values.slug}
+          onChange={event=>edit("slug",event.target.value.toLowerCase())}/>
+        <span className="block text-xs font-normal text-body">
+          Lowercase letters, numbers and hyphens; at most 80 characters.
+        </span>
+      </label>
+      <label className={label}>Template lifecycle
+        <Select className={input} disabled value="DRAFT"
+          onChange={()=>{}}><option value="DRAFT">Draft</option>
+          <option value="PUBLISHED">Published (review first)</option>
+          <option value="ARCHIVED">Archived (not available at creation)</option>
+        </Select>
+      </label>
+      <label className={label}>Initial workspace status
+        <Input className={input} disabled value="Choose Active or Planned when assigning"/>
+        <span className="block text-xs font-normal text-body">
+          Workspace lifecycle is set when the published template is assigned.
+        </span>
+      </label>
+    </div>
+    <label className={label}>Goal
+      <Textarea className={input} rows={3} maxLength={2000}
+        disabled={saving} value={values.goal}
+        onChange={event=>edit("goal",event.target.value)}/>
     </label>
-   </fieldset>
-  </details>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task priority
-   <Select disabled={saving} value={values.priority} onChange={event=>edit("priority",event.target.value)} className="w-full">
-    <option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option>
-   </Select>
-  </label>
-  <details className="min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Additional descriptions</summary>
-   <div className="mt-3 grid min-w-0 gap-4">
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task acceptance criteria (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="w-full"/>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First release description (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.releaseDescription} onChange={event=>edit("releaseDescription",event.target.value)} className="w-full"/>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First sprint description (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.sprintDescription} onChange={event=>edit("sprintDescription",event.target.value)} className="w-full"/>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task description (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.taskDescription} onChange={event=>edit("taskDescription",event.target.value)} className="w-full"/>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Overview description (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="w-full"/>
-  </label>
-   </div>
-  </details>
-  <details className="min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Starting resource link (optional)</summary>
-   <fieldset className="mt-3 min-w-0 space-y-3">
-   <legend className="sr-only">Starting resource link (optional)</legend>
-   <p className="text-xs text-muted-foreground">Add a public HTTP(S) resource. Both title and URL are required when adding one.</p>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title
-    <Input maxLength={200} disabled={saving} value={values.resourceTitle} onChange={event=>edit("resourceTitle",event.target.value)} className="w-full"/>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource URL
-    <Input type="url" maxLength={2048} disabled={saving} value={values.resourceUrl} onChange={event=>edit("resourceUrl",event.target.value)} className="w-full"/>
-   </label>
-   </fieldset>
-  </details>
-  {error?<Banner tone="error">{error}</Banner>:null}
-  <div className="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
-   <Link href="/admin/projects/templates" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] sm:min-h-9 sm:w-auto border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Cancel</Link>
-   <Button className="min-h-11 w-full sm:min-h-9 sm:w-auto" type="submit" disabled={saving} >{saving?"Creating…":"Create draft template"}</Button>
-  </div>
- </form>;
+    <label className={label}>Custom summary (optional)
+      <Textarea className={input} maxLength={160} disabled={saving}
+        value={values.summary} onChange={event=>edit("summary",event.target.value)}/>
+      <span className="block text-xs font-normal text-body">
+        Defaults to the first goal line or title, up to 160 characters.
+      </span>
+    </label>
+    {values.summary.trim()?<label className={label}>Reason for custom summary
+      <Input className={input} maxLength={300} disabled={saving}
+        value={values.summaryOverrideReason}
+        onChange={event=>edit("summaryOverrideReason",event.target.value)}
+        placeholder="Explain why the summary differs (10 characters minimum)"/>
+    </label>:null}
+    <section className="grid gap-3 border-t border-border pt-4" aria-label="Overview">
+      <h2 className="text-base font-semibold">Overview and submission</h2>
+      {([
+        ["deliverables","Deliverables (required, one per line)"],
+        ["definitionOfDone","Definition of done (one per line)"],
+        ["personas","Personas (one per line)"],
+      ] as const).map(([key,title])=><label key={key} className={label}>
+        {title}<Textarea className={input} rows={3} disabled={saving}
+          maxLength={4000} value={values[key]}
+          onChange={event=>edit(key,event.target.value)}/>
+      </label>)}
+      <div className="grid gap-3 md:grid-cols-2">
+        <label className={label}>Course label
+          <Input className={input} maxLength={160} value={values.courseLabel}
+            disabled={saving} onChange={event=>edit("courseLabel",event.target.value)}/>
+        </label>
+        <label className={label}>Phase
+          <Input className={input} maxLength={120} value={values.phase}
+            disabled={saving} onChange={event=>edit("phase",event.target.value)}/>
+        </label>
+      </div>
+      <label className={label}>Overview description
+        <Textarea className={input} maxLength={4000} disabled={saving}
+          value={values.overviewDescription}
+          onChange={event=>edit("overviewDescription",event.target.value)}/>
+      </label>
+      <label className={label}>Submission instructions
+        <Textarea className={input} maxLength={4000} disabled={saving}
+          value={values.submissionInstructions}
+          onChange={event=>edit("submissionInstructions",event.target.value)}/>
+      </label>
+      <label className={label}>Submission type
+        <Select className={input} value={values.submissionType} disabled={saving}
+          onChange={event=>edit("submissionType",event.target.value)}>
+          <option value="LINK">Link</option><option value="FILE">File upload</option>
+          <option value="TEXT">Text</option>
+        </Select>
+      </label>
+    </section>
+    <section className="space-y-4 border-t border-border pt-4" aria-label="Releases">
+      <h2 className="text-base font-semibold">Releases</h2>
+      {!releases.length?<p className="text-sm text-body">No releases yet.</p>:null}
+      {releases.map((row,index)=><fieldset key={index}
+        className="space-y-3 border-b border-border pb-4">
+        <legend className="font-semibold">Release {index+1}</legend>
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className={label}>Key
+            <Input className={input} maxLength={64} disabled={saving}
+              value={row.key} onChange={event=>changeReleaseKey(index,event.target.value.toLowerCase())}/>
+          </label>
+          <label className={label}>Title
+            <Input className={input} maxLength={200} disabled={saving}
+              value={row.title} onChange={event=>changeRelease(index,{title:event.target.value})}/>
+          </label>
+        </div>
+        <label className={label}>Description
+          <Textarea className={input} maxLength={4000} disabled={saving}
+            value={row.description} onChange={event=>changeRelease(index,{description:event.target.value})}/>
+        </label>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" size="sm" variant="secondary" disabled={saving||index===0}
+            onClick={()=>setReleases(previous=>move(previous,index,-1))}>Move up</Button>
+          <Button type="button" size="sm" variant="secondary" disabled={saving||index===releases.length-1}
+            onClick={()=>setReleases(previous=>move(previous,index,1))}>Move down</Button>
+          <Button type="button" size="sm" variant="ghost" disabled={saving}
+            onClick={()=>removeRelease(index)}>Remove</Button>
+        </div>
+      </fieldset>)}
+      <Button type="button" size="sm" variant="secondary"
+        disabled={saving||releases.length>=50}
+        onClick={()=>setReleases(previous=>[...previous,{
+          key:uniqueKey(previous,"release"),title:"",description:""}])}>
+        Add release
+      </Button>
+    </section>
+    <section className="space-y-4 border-t border-border pt-4" aria-label="Sprints">
+      <h2 className="text-base font-semibold">Sprints</h2>
+      {!sprints.length?<p className="text-sm text-body">No sprints yet.</p>:null}
+      {sprints.map((row,index)=><fieldset key={index}
+        className="space-y-3 border-b border-border pb-4">
+        <legend className="font-semibold">Sprint {index+1}</legend>
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className={label}>Key
+            <Input className={input} maxLength={64} disabled={saving}
+              value={row.key} onChange={event=>changeSprintKey(index,event.target.value.toLowerCase())}/>
+          </label>
+          <label className={label}>Release
+            <Select className={input} value={row.releaseKey} disabled={saving}
+              onChange={event=>changeSprint(index,{releaseKey:event.target.value})}>
+              {!releases.some(item=>item.key===row.releaseKey)?
+                <option value={row.releaseKey}>Unavailable release</option>:null}
+              {releases.map(item=><option key={item.key} value={item.key}>
+                {item.title||item.key}</option>)}
+            </Select>
+          </label>
+          <label className={label}>Title
+            <Input className={input} maxLength={200} disabled={saving}
+              value={row.title} onChange={event=>changeSprint(index,{title:event.target.value})}/>
+          </label>
+          <label className={label}>Due label
+            <Input className={input} maxLength={120} disabled={saving}
+              value={row.dueLabel} onChange={event=>changeSprint(index,{dueLabel:event.target.value})}/>
+          </label>
+        </div>
+        <label className={label}>Goal
+          <Textarea className={input} maxLength={1000} disabled={saving}
+            value={row.goal} onChange={event=>changeSprint(index,{goal:event.target.value})}/>
+        </label>
+        <label className={label}>Description
+          <Textarea className={input} maxLength={4000} disabled={saving}
+            value={row.description} onChange={event=>changeSprint(index,{description:event.target.value})}/>
+        </label>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" size="sm" variant="secondary" disabled={saving||index===0}
+            onClick={()=>setSprints(previous=>move(previous,index,-1))}>Move up</Button>
+          <Button type="button" size="sm" variant="secondary" disabled={saving||index===sprints.length-1}
+            onClick={()=>setSprints(previous=>move(previous,index,1))}>Move down</Button>
+          <Button type="button" size="sm" variant="ghost" disabled={saving}
+            onClick={()=>removeSprint(index)}>Remove</Button>
+        </div>
+      </fieldset>)}
+      <Button type="button" size="sm" variant="secondary"
+        disabled={saving||sprints.length>=200||!releases.length}
+        onClick={()=>setSprints(previous=>[...previous,{
+          key:uniqueKey(previous,"sprint"),releaseKey:releases[0]!.key,
+          title:"",description:"",goal:"",dueLabel:""}])}>Add sprint</Button>
+    </section>
+    <section className="space-y-4 border-t border-border pt-4" aria-label="Tasks">
+      <h2 className="text-base font-semibold">Tasks</h2>
+      {!tasks.length?<p className="text-sm text-body">No tasks yet.</p>:null}
+      {tasks.map((row,index)=><fieldset key={index}
+        className="space-y-3 border-b border-border pb-4">
+        <legend className="font-semibold">Task {index+1}</legend>
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className={label}>Key
+            <Input className={input} maxLength={64} disabled={saving}
+              value={row.key} onChange={event=>changeTask(index,{key:event.target.value.toLowerCase()})}/>
+          </label>
+          <label className={label}>Sprint
+            <Select className={input} value={row.sprintKey} disabled={saving}
+              onChange={event=>changeTask(index,{sprintKey:event.target.value})}>
+              {!sprints.some(item=>item.key===row.sprintKey)?
+                <option value={row.sprintKey}>Unavailable sprint</option>:null}
+              {sprints.map(item=><option key={item.key} value={item.key}>
+                {item.title||item.key}</option>)}
+            </Select>
+          </label>
+          <label className={label}>Title
+            <Input className={input} maxLength={200} disabled={saving}
+              value={row.title} onChange={event=>changeTask(index,{title:event.target.value})}/>
+          </label>
+          <label className={label}>Priority
+            <Select className={input} value={row.priority} disabled={saving}
+              onChange={event=>changeTask(index,{
+                priority:event.target.value as TemplateCreateTask["priority"]})}>
+              <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
+            </Select>
+          </label>
+        </div>
+        <label className={label}>Description
+          <Textarea className={input} maxLength={4000} disabled={saving}
+            value={row.description} onChange={event=>changeTask(index,{description:event.target.value})}/>
+        </label>
+        <label className={label}>Acceptance criteria
+          <Textarea className={input} maxLength={4000} disabled={saving}
+            value={row.acceptanceCriteria}
+            onChange={event=>changeTask(index,{acceptanceCriteria:event.target.value})}/>
+        </label>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" size="sm" variant="secondary" disabled={saving||index===0}
+            onClick={()=>setTasks(previous=>move(previous,index,-1))}>Move up</Button>
+          <Button type="button" size="sm" variant="secondary" disabled={saving||index===tasks.length-1}
+            onClick={()=>setTasks(previous=>move(previous,index,1))}>Move down</Button>
+          <Button type="button" size="sm" variant="ghost" disabled={saving}
+            onClick={()=>setTasks(previous=>previous.filter((_,i)=>i!==index))}>Remove</Button>
+        </div>
+      </fieldset>)}
+      <Button type="button" size="sm" variant="secondary"
+        disabled={saving||tasks.length>=500||!sprints.length}
+        onClick={()=>setTasks(previous=>[...previous,{
+          key:uniqueKey(previous,"task"),sprintKey:sprints[0]!.key,
+          title:"",description:"",acceptanceCriteria:"",priority:"MEDIUM"}])}>
+        Add task
+      </Button>
+    </section>
+    <section className="space-y-4 border-t border-border pt-4" aria-label="Resources">
+      <h2 className="text-base font-semibold">Resources</h2>
+      {!resources.length?<p className="text-sm text-body">No resources yet.</p>:null}
+      {resources.map((row,index)=><fieldset key={index}
+        className="space-y-3 border-b border-border pb-4">
+        <legend className="font-semibold">Resource {index+1}</legend>
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className={label}>Key
+            <Input className={input} maxLength={64} disabled={saving}
+              value={row.key} onChange={event=>changeResource(index,{
+                key:event.target.value.toLowerCase()})}/>
+          </label>
+          <label className={label}>Title
+            <Input className={input} maxLength={200} disabled={saving}
+              value={row.title} onChange={event=>changeResource(index,{title:event.target.value})}/>
+          </label>
+        </div>
+        <label className={label}>URL
+          <Input className={input} type="url" maxLength={2048} disabled={saving}
+            value={row.url} onChange={event=>changeResource(index,{url:event.target.value})}/>
+        </label>
+        <label className={label}>Description
+          <Textarea className={input} maxLength={4000} disabled={saving}
+            value={row.description} onChange={event=>changeResource(index,{description:event.target.value})}/>
+        </label>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" size="sm" variant="secondary" disabled={saving||index===0}
+            onClick={()=>setResources(previous=>move(previous,index,-1))}>Move up</Button>
+          <Button type="button" size="sm" variant="secondary" disabled={saving||index===resources.length-1}
+            onClick={()=>setResources(previous=>move(previous,index,1))}>Move down</Button>
+          <Button type="button" size="sm" variant="ghost" disabled={saving}
+            onClick={()=>setResources(previous=>previous.filter((_,i)=>i!==index))}>Remove</Button>
+        </div>
+      </fieldset>)}
+      <Button type="button" size="sm" variant="secondary"
+        disabled={saving||resources.length>=500}
+        onClick={()=>setResources(previous=>[...previous,{
+          key:uniqueKey(previous,"resource"),title:"",url:"",description:""}])}>
+        Add resource
+      </Button>
+    </section>
+    {error?<Banner tone="error">
+      {errorSection?errorSection[0]!.toUpperCase()+errorSection.slice(1)+": ":""}{error}
+    </Banner>:null}
+    <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border pt-4">
+      <Button type="button" variant="secondary" disabled={saving}
+        onClick={guard.requestClose}>Cancel</Button>
+      <Button type="submit" loading={saving} disabled={saving}>
+        {saving?"Creating…":"Create draft template"}
+      </Button>
+    </div>
+    <ConfirmDialog open={guard.discardOpen}
+      onOpenChange={guard.setDiscardOpen}
+      title="Discard unsaved changes?"
+      description="You have unsaved changes. Leave without saving them?"
+      confirmLabel="Discard changes" pending={saving}
+      onConfirm={guard.confirmDiscard}/>
+  </form>;
 }
