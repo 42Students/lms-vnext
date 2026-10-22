@@ -20,6 +20,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Restore separate exact warnings and form focus.
 
 ## G2-4-012-048 [P1] GAP facet F10
+- [x] Verified: faculty authoring POST sends scoped lesson/delivery, ISO due date, points, submission methods, and validated resources through the faculty assignment command; the service persists these under delivery authorization.
 - Files: src/components/courses/faculty-lesson-authoring.tsx
 - Legacy: Legacy create POST createLessonContent with lesson/content type, canonical deadline, points, resources/methods. (`docs/legacy-source/frontend/src/components/Global/Offcanvas/Assignment/newAssignment.js:456-491`; `docs/legacy-source/frontend/src/api/Services/courseServices.js:292-302`)
 - Expected fix: Map missing scope/resources/methods and preserve wire validation.
