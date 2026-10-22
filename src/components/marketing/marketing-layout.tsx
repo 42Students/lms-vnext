@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { PageHeader } from "@/components/ui/page-header";
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
@@ -80,8 +81,7 @@ export function MarketingLayout({children,path,pageTitle,pageDescription}:{
    <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-10 px-5 py-14 text-sm sm:grid-cols-2 min-[992px]:grid-cols-[2fr_1fr_1fr] min-[992px]:py-20">
     <div className="space-y-4">
      <Link href="/" className="inline-flex min-h-11 items-center" aria-label="42 LMS home">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/assets/images/legacy-42lms-logo.svg" width={151} height={37} alt="42 LMS" className="h-[37px] w-[151px]"/>
+      <Image src="/assets/images/legacy-42lms-logo.svg" width={151} height={37} alt="42 LMS" className="h-[37px] w-[151px]"/>
      </Link>
      <p className="max-w-xs leading-6 text-[var(--lms-body-text)]">Connected learning, projects and placements for universities and enterprises.</p>
      <div className="flex flex-wrap gap-3">
