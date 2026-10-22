@@ -16,8 +16,9 @@ import {
  courseLessons,lessonContents,courseAssignments,courseQuizzes,
  learnerContentProgress,courseDiscussionMessages,lessonVideoAssets,
 } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
+import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {
+  AuthorizationError,
   can,
   requirePermission,
 } from "@/modules/permissions/policy";
@@ -133,6 +134,10 @@ export async function createCourseLesson(
     input.learningPathId,
   );
 
+  // Shared syllabus structure is a college-admin operation. Faculty
+  // may author their assigned Section's content, not add shared lessons.
+  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+    throw new AuthorizationError("courses.manage");
   requirePermission(context, "courses.manage", {
     organizationId: path.organizationId,
     collegeId: path.collegeId,
@@ -206,6 +211,10 @@ export async function updateCourseLesson(
       path.organizationId !== current.organizationId) {
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   }
+  // Shared syllabus structure is a college-admin operation. Faculty
+  // may author their assigned Section's content, not add shared lessons.
+  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+    throw new AuthorizationError("courses.manage");
   requirePermission(context, "courses.manage", {
     organizationId: path.organizationId,
     collegeId: path.collegeId,
