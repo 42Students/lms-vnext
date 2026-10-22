@@ -415,7 +415,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
         value={assessmentUrl} onChange={event=>setAssessmentUrl(event.target.value)}
         disabled={busy} className="w-full text-base sm:text-sm"/>
       </label>
-      <label className="flex min-h-10 items-center gap-2 text-sm text-body">
+      <label className="flex min-h-11 items-center gap-2 text-sm text-body">
        <Checkbox checked={saveAssessmentUrlToJob} disabled={busy||!assessmentUrl.trim()}
         onChange={event=>setSaveAssessmentUrlToJob(event.target.checked)}/>
        Save link to job

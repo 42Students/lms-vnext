@@ -16,6 +16,9 @@ import { topbarInitials } from "./portal-config";
 import { ChevronIcon } from "./icons";
 import style from "./topbar.module.css";
 
+const avatarTriggerClass = `${style.avatar} max-[767px]:!min-h-11 max-[767px]:!min-w-11`;
+const accountMenuClass = `${style.menu} !min-h-0`;
+
 export function TopbarAccountMenu({
   identityUid, roleLabel, organizationName, variant,
   memberships, activeMembershipId, activeRole, adminScopeChoices, scope,
@@ -110,13 +113,13 @@ export function TopbarAccountMenu({
       const next = event.relatedTarget;
       if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
     }}>
-    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={`${style.avatar} max-[767px]:!min-h-11 max-[767px]:!min-w-11`}
+    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={avatarTriggerClass}
       aria-label={open?"Close account menu":"Open account menu"} aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </Button>
-    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={`${style.menu} !min-h-0`}
+    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={accountMenuClass}
       tabIndex={-1} onDismiss={() => { setOpen(false); trigger.current?.focus(); }}>
       <div className="min-w-0 px-2 pb-[var(--lms-space-2)] text-left">
         <p className={style.accountHeading}>{roleLabel}</p>
