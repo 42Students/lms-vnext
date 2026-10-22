@@ -12,14 +12,15 @@ describe("chat-12 TPO export failure protection",()=>{
  });
  it("GR-90 / GR-91 offers announced inline export failures and keyboard retry",()=>{
   const s=read("src/components/tpo/tpo-safe-csv-download.tsx");
-  expect(s).toContain('role="alert"');
+  expect(s).toContain('<InlineNotice tone="error" message={error}/>');
+  expect(s).toContain('setError(');
   expect(s).toContain('focus-visible:ring-2');
   expect(s).toContain("if(inFlight.current)return");
   expect(s).toContain("disabled={pending}");
  });
  it("TPO-students-36 uses the safeguarded filtered student CSV download",()=>{
   const s=read("src/app/(authenticated)/tpo/students/page.tsx");
-  expect(s).toContain('<TpoSafeCsvDownload href={exportHref} filename="tpo-students.csv"');
+  expect(s).toContain('<TpoSafeCsvDownload href={exportHref} filename="students.csv"');
   expect(read("src/app/api/placements/tpo/students/export/route.ts")).toContain("exportTpoStudentsCsv");
  });
  it("TPO-requests-verification-15 uses the guarded CSV control for complete filtered request export",()=>{

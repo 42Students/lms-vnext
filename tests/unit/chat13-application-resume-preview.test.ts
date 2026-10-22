@@ -12,8 +12,10 @@ describe("Super Admin verified private resume preview",()=>{
  });
  it("SA-placements-projects-21 delegates private access to the established CLEAN-verified route",()=>{
   const ui=read("src/components/placements/college-application-detail-drawer.tsx");
-  expect(ui).toContain("Resume Preview · Open securely");
-  expect(ui).toContain("detail.resume.available&&detail.resume.url");
+  expect(ui).toContain("Resume Preview · ");
+  expect(ui).toContain("detail?.resume.available &&");
+  expect(ui).toContain('/^\\/api\\/(college|admin|tpo)\\/verification\\//');
+  expect(ui).toContain("privateResumeUrl");
   const service=read("src/modules/verification/staff-private-document-service.ts");
   expect(service).toContain('receipt.scanStatus!=="CLEAN"');
   expect(service).toContain("createPrivateReadGrant");

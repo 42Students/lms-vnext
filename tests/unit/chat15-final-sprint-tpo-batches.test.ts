@@ -30,7 +30,7 @@ describe("chat-15 final sprint: TPO batch workflow parity and adversarial bounda
   expect(forged.success).toBe(false);
   const panel=text("src/components/tpo/tpo-batch-facet-filters.tsx");
   for(const label of ["Filters · State, Department, Program, Final year",
-   "type=\"checkbox\"","matching batches","Clear all","Show {count}"])
+   "<Checkbox name=","matching batches","Clear all","Show {count}"])
    expect(panel).toContain(label);
   expect(text("src/app/(authenticated)/tpo/batches/page.tsx")).toContain("<TpoBatchFacetFilters");
  });
@@ -45,7 +45,7 @@ describe("chat-15 final sprint: TPO batch workflow parity and adversarial bounda
    {...message,admin:true},
   ])expect(tpoStudentNudgeInputSchema.safeParse(bad).success).toBe(false);
   expect(Object.values(tpoStudentNudgeLabels)).toEqual([
-   "Register for placements","Upload resume","Complete profile",
+   "Register","Upload resume","Complete profile",
    "Apply to drives","Answer your offer","Write a message",
   ]);
   const nudge=text("src/components/tpo/tpo-student-nudge-panel.tsx");

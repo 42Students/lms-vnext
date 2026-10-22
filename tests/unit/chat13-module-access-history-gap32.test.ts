@@ -14,8 +14,9 @@ describe("SA-tenants-modules-32 complete module access history",()=>{
   const service=read("src/modules/module-access/admin-college-rule-history-service.ts");
   expect(service).toContain("lt(activityEvents.id,cursor.beforeId)");
   expect(service).toContain("desc(activityEvents.occurredAt),desc(activityEvents.id)");
-  expect(service).toContain(".limit(51)");
-  expect(service).toContain("rows.slice(0,50)");
+  expect(service).toContain(".limit(requestedPageSize+1)");
+  expect(service).toContain("requestedPageSize:15|50=50");
+  expect(service).toContain("rows.slice(0,requestedPageSize)");
  });
  it("SA-tenants-modules-32 renders what changed, actor, scope and student count",()=>{
   const model=read("src/modules/module-access/admin-college-rule-history-model.ts");
@@ -29,9 +30,9 @@ describe("SA-tenants-modules-32 complete module access history",()=>{
 describe("SA-tenants-modules-32 bulk history producer",()=>{
  it("SA-tenants-modules-32 records the actual applied student count and explicitly discloses a summary-audit failure",()=>{
   const src=read("src/modules/module-access/super-admin-student-bulk-rule-service.ts");
-  expect(src).toContain('eventType:"MODULE_ACCESS_BULK_SET"');
-  expect(src).toContain('studentCount:applied.length');
-  expect(src).toContain('requestedCount:input.membershipIds.length');
+  expect(src).toContain('eventType: "MODULE_ACCESS_BULK_SET"');
+  expect(src).toContain("studentCount: auditRows.length");
+  expect(src).toContain("requestedCount: input.membershipIds.length");
   expect(src).toContain("auditRecorded");
   expect(src).toContain("Review learner history.");
  });

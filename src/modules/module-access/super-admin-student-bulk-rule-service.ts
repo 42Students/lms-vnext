@@ -264,12 +264,12 @@ export async function updateSuperAdminStudentRulesInBulk(
         metadata: {
           module: input.module,
           action: input.action,
-          studentCount: prepared.length,
-          requestedCount: prepared.length,
+          studentCount: auditRows.length,
+          requestedCount: input.membershipIds.length,
           failedCount: 0,
         },
       });
-      return prepared.length;
+      return auditRows.length;
     });
     return {
       requested: input.membershipIds.length,

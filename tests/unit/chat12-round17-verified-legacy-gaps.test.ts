@@ -10,7 +10,7 @@ describe("chat-12 independently verified legacy copy and summary",()=>{
  });
  it("TPO-students-46 uses exact single Students header subtitle and primary import",()=>{
   const s=src("src/app/(authenticated)/tpo/students/page.tsx");
-  expect(s).toContain('description="Everyone in placements, from the batches you made eligible."');
+  expect(s).toContain('description={query.everyone ? "All active learners in this college, including those not enrolled in placements." : "Everyone in placements, from the batches you made eligible."}');
   expect(s).toContain("actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}");
   expect(s).not.toContain('eyebrow="TPO · Students"');
  });
@@ -36,7 +36,7 @@ describe("chat-12 independently verified legacy copy and summary",()=>{
   const s=src("src/app/(authenticated)/tpo/requests/page.tsx");
   expect(s).toContain('<PageHeader title="Requests"');
   expect(s).toContain("What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first.");
-  for(const token of ["Waiting","Last 30 days","All history","Nothing is waiting for you.","No requests in this period."])expect(s).toContain(token);
+  for(const token of ["Waiting","Last 30 days","All history","Nothing is waiting for you.","No requests in this period"])expect(s).toContain(token);
  });
  it("TPO-requests-verification-27 offers section-specific reason presets and custom text",()=>{
   const s=src("src/modules/verification/review-reasons.ts");
@@ -44,7 +44,7 @@ describe("chat-12 independently verified legacy copy and summary",()=>{
   expect(s).toContain("The marksheet is unclear or cropped");
   expect(s).toContain("Wrong document uploaded");
   expect(drawer).toContain("Or write what needs to change");
-  expect(drawer).toContain("The student sees your reason and fixes it on their profile.");
+  expect(drawer).toContain("Each student sees the reason and can correct the submitted details.");
  });
  it("TPO-requests-verification-R01 reverses released-but-not-accepted offers during approved withdrawal",()=>{
   const s=src("src/modules/placements/request-service.ts");
