@@ -11,12 +11,15 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-12-027-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-14-030-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-15-025-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
-- [ ] G2-5-024-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
+- [x] G2-5-024-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-5-024-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
-- [ ] G2-5-024-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
+- [x] G2-5-024-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-5-024-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-5-024-036  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
-- [ ] G2-5-024-038  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
+- [x] G2-5-024-038  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 
 ## Results
 
+- OK G2-5-024-017 — `src/app/api/tenant-domains/[domainId]/route.ts:24-54`, `src/modules/tenant-domains/service.ts:318-342`, `src/modules/tenant-domains/repository.ts:255-297`; matches host-change verification reset, collision and audit in `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java:462-505`.
+- OK G2-5-024-031 — `src/components/admin/tenant-domain-manager.tsx:190`, `src/app/api/tenant-domains/[domainId]/route.ts:24-54`, `src/modules/tenant-domains/repository.ts:284-297`; custom host edit resets DNS proof, corresponding to `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java:470-483`.
+- OK G2-5-024-038 — `src/modules/tenant-domains/service.ts:383-395` requires unscoped Super Admin and `admin-scope.select`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java:273-282` global-only resolver preview.
