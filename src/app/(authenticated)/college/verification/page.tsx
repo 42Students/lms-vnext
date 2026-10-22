@@ -38,7 +38,7 @@ export default async function CollegeVerificationPage({searchParams}:{
    <PageHeader title="Profile verification"/>
    <ErrorState title="Could not check your verification access"
     description="The access check could not be completed. This does not mean your access was revoked."
-    action={<Link href="/college/verification" prefetch={false} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Retry access check</Link>}/>
+    retryHref="/college/verification" retryLabel="Retry access check"/>
   </div>;
  }
  const raw=await searchParams;
@@ -46,7 +46,7 @@ export default async function CollegeVerificationPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader title="Profile verification"/>
   <ErrorState title="Profile verification" description={collegeVerificationFilterError(raw)}
-    action={<Link href="/college/verification" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
+    retryHref="/college/verification" retryLabel="Clear filters"/>
  </div>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>|undefined;
  let loadFailure:"UNAVAILABLE"|"LIMIT"|"READ_FAILED"|null=null;
@@ -66,11 +66,9 @@ export default async function CollegeVerificationPage({searchParams}:{
     :"Could not load verification requests from the database. The list was not assumed empty.";
   return <div className="min-w-0 max-w-full space-y-6">
    <PageHeader title="Profile verification"/>
-   <Alert tone="error" title={loadFailure==="READ_FAILED"?"Could not load verification requests":"Verification queue unavailable"}>
-    {description} The current filters are retained. No prior college's queue is shown as a fallback.
-   </Alert>
-   <ErrorState title={loadFailure==="READ_FAILED"?"Could not load verification requests":"Profile verification"} description={description}
-     action={<Link href={verificationPageUrl(parsed.data,parsed.data.page)} prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>}/>
+   <ErrorState title={loadFailure==="READ_FAILED"?"Could not load verification requests":"Verification queue unavailable"}
+     description={description+" The current filters are retained. No prior college's queue is shown as a fallback."}
+     retryHref={verificationPageUrl(parsed.data,parsed.data.page)} retryLabel="Retry"/>
   </div>;
  }
  if(!data)throw new Error("VERIFICATION_QUEUE_UNAVAILABLE");
