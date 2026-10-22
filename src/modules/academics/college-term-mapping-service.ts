@@ -271,9 +271,10 @@ export async function reorderCollegeTermMappings(
 }
 
 export async function addCollegeTermMapping(context: RequestContext, raw: unknown) {
-  // Current program-term-course contract requires explicit CORE/ELECTIVE and
-  // credits 1..10. Legacy accepted isMandatory and 0..30, but it would be
-  // unsafe to infer historical type or silently coerce old credit values.
+  // A new mapping requires an explicit visible CORE/ELECTIVE selection.
+  // Credits accept the full source-backed 0..30 range; imported nullable
+  // mandatory/source-order fields remain independent provenance on existing
+  // mappings rather than being inferred from a new CORE/ELECTIVE default.
   const input = collegeTermCourseAddSchema.parse(raw);
   const membership = await ownCollege(context);
   try {

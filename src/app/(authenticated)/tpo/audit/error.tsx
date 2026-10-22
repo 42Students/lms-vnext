@@ -17,7 +17,7 @@ export default function TpoAuditError({
         eyebrow="TPO · Oversight"
         title="Audit Log"
       />
-      <Banner tone="warning">This refresh failed. Showing the last successful load if it remains available in the current view. Retry to refresh the audit log.</Banner>
+      <Banner tone="warning">The audit log refresh failed. Previous rows cannot be safely revalidated in this error view; use Retry to check the college-scoped source again. No changes were made.</Banner>
       <ErrorState
         title="Could not load the audit log"
         description="The audit log could not be loaded. No missing records or zero-event conclusion is inferred from this error."
