@@ -17,6 +17,7 @@ import {indianCalendarDate} from "@/modules/placements/tpo-batch-notification-mo
 import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
+import { Banner } from "@/components/ui/banner";
 import {projectTpoBatchNextStep} from "@/modules/placements/tpo-batch-next-step-state-model";
 import {getTpoBatchOwnDecisionSummary} from "@/modules/placements/tpo-batch-own-decision-service";
 export const dynamic="force-dynamic";
@@ -47,6 +48,29 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    invited:Boolean(lifecycle?.invitedAt),deadline:lifecycle?.registrationDeadline??null,
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
  return <div className="min-w-0 space-y-4">
+  {!ready?<Banner tone="warning" role="alert">
+    Batch details may be stale. The current batch state could not be verified.
+    <Link href={"/tpo/batches/"+encodeURIComponent(batchId)}
+      className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+      Retry batch details
+    </Link>
+  </Banner>:null}
+  {!summary.complete?<Banner tone="warning" role="alert">
+    Batch roster may be incomplete. The eligibility snapshot covers only {eligibility.limit} learners;
+    do not use the displayed counts as the whole-batch decision totals.
+    <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"}
+      className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+      Retry roster
+    </Link>
+  </Banner>:null}
+  {!registrations.available?<Banner tone="warning" role="alert">
+    Learner registration profiles are incomplete or unavailable. No missing registration is assumed
+    to be a student opting out.
+    <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations"}
+      className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+      Retry profiles
+    </Link>
+  </Banner>:null}
   <Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center gap-2 justify-start text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" className="size-4"><path d="M13 8H3m5-5L3 8l5 5" strokeLinecap="round" strokeLinejoin="round"/></svg>
    Placement eligibility

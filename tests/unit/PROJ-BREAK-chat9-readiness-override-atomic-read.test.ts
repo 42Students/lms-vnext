@@ -11,7 +11,7 @@ const state=vi.hoisted(()=>({
     by:"College Admin",at:new Date("2026-10-17T20:00:00.000Z")}] as {
       projectId:string;metadata:{state:string;note?:string};by:string|null;at:Date;
     }[],
-  projectRows:[{id:projectId,title:"Dharwad team"}] as {id:string;title:string}[],
+  projectRows:[{id:projectId,title:"Dharwad team",status:"ACTIVE"}] as {id:string;title:string;status:string}[],
 }));
 vi.mock("@/modules/projects/scope",()=>({
   loadProjectCollegeScope:async(id:string)=>{
@@ -65,7 +65,7 @@ beforeEach(()=>{
   state.lock="";state.revoked=false;
   state.rows=[{projectId,metadata:{state:"FORCE_UNLOCK",note:"Approved exception"},
     by:"College Admin",at:new Date("2026-10-17T20:00:00.000Z")}];
-  state.projectRows=[{id:projectId,title:"Dharwad team"}];
+  state.projectRows=[{id:projectId,title:"Dharwad team",status:"ACTIVE"}];
 });
 describe("IIT Dharwad readiness override: tenant and concurrent archive protection",()=>{
   it("PROJ-BREAK-readiness-74 wrong college is rejected before discovering tenant existence",async()=>{
@@ -81,7 +81,7 @@ describe("IIT Dharwad readiness override: tenant and concurrent archive protecti
     expect(state.liveChecks).toBe(1);
     expect(state.reads).toBe(0);
   });
-  it("PROJ-BREAK-readiness-76 current overrides are emitted only from locked, non-archived workspace rows",async()=>{
+  it("PROJ-BREAK-readiness-76 current overrides are emitted only from locked college workspace rows",async()=>{
     const results=await listCollegeActiveReadinessOverrides(admin(),collegeId);
     expect(results).toMatchObject([{
       projectId,workspace:"Dharwad team",direction:"Ready",
@@ -92,7 +92,14 @@ describe("IIT Dharwad readiness override: tenant and concurrent archive protecti
     expect(state.reads).toBe(2);
     expect(state.lock).toBe("share");
   });
-  it("PROJ-BREAK-readiness-77 archived or removed projects cannot retain a stale readiness indicator",async()=>{
+  it("G2-7-004-019 retains archived college workspaces with active override events",async()=>{
+    state.projectRows=[{id:projectId,title:"Archived team",status:"ARCHIVED"}];
+    const rows=await listCollegeActiveReadinessOverrides(admin(),collegeId);
+    expect(rows).toMatchObject([{projectId,workspace:"Archived team",archived:true,
+      overrideValue:true,direction:"Ready"}]);
+    expect(state.lock).toBe("share");
+  });
+  it("PROJ-BREAK-readiness-77 removed projects cannot retain a stale readiness indicator",async()=>{
     state.projectRows=[];
     expect(await listCollegeActiveReadinessOverrides(admin(),collegeId)).toEqual([]);
     expect(state.lock).toBe("share");

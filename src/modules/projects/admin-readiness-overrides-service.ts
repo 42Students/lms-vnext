@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, ne, isNull } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { activityEvents, projectInstances, users } from "@/db/schema";
@@ -31,9 +31,9 @@ export async function listCollegeActiveReadinessOverrides(context: RequestContex
   requirePermission(context,"projects.manage",{
     organizationId:college.organizationId,collegeId:college.id,
   });
-  // Hold persisted actor authorization through both reads. A committed
-  // archive also requires a conflicting lock on the project row; any
-  // readiness override emitted here is tied to a still-active workspace.
+  // Hold persisted actor authorization through both reads. Archived workspaces
+  // remain in the legacy Active overrides table when their last override is
+  // active; only soft-deleted or other-college projects are excluded.
   return getDb().transaction(async tx=>{
     await assertPersistedPlatformPermission(tx,context,"projects.manage",{
       collegeId:college.id,organizationId:college.organizationId,
@@ -53,8 +53,7 @@ export async function listCollegeActiveReadinessOverrides(context: RequestContex
     const projects=await tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
       .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),
         inArray(projectInstances.id,live.map(row=>row.projectId)),
-        isNull(projectInstances.deletedAt),
-        ne(projectInstances.status, "ARCHIVED")))
+        isNull(projectInstances.deletedAt)))
       .for("share");
     const titles=new Map(projects.map(row=>[row.id,row]));
     return live.filter(row=>titles.has(row.projectId)).map(row=>({

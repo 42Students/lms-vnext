@@ -1381,6 +1381,12 @@ export async function getLearnerPlacementRequestWorkspace(
               placementApplicationScreenings.status,
               "SHORTLISTED",
             ),
+            // Only published drives may expose a live candidate schedule.
+            // Closed/cancelled drives retain audit history, not actionable rounds.
+            eq(
+              placementJobs.status,
+              "PUBLISHED",
+            ),
             eq(
               placementJobRounds.status,
               "SCHEDULED",
