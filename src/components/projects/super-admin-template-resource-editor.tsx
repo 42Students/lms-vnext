@@ -39,8 +39,10 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   Boolean(rowErrors[index]?.length)||rows.length<=12||!search.trim()||[row.title,row.key,row.description,row.url,row.accessNotes].some(
    value=>String(value??"").toLowerCase().includes(search.trim().toLowerCase())));
  function remove(index:number){
+  const row=rows[index];
+  if(row===undefined)return;
   setRowErrors({});
-  setRemoved({row:rows[index]!,index});
+  setRemoved({row,index});
   setRows(old=>old.filter((_,at)=>at!==index));
  }
  function undo(){
