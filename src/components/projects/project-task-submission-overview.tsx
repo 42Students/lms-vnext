@@ -61,9 +61,9 @@ export function ProjectTaskSubmissionOverview({rows,metrics}:{
              item.status==="CHANGES_REQUESTED"?"warning":"info"}>
            {item.status.toLowerCase().replaceAll("_"," ")}</StatusBadge></span></td>
        <td className="px-2 py-3">{item.submissionUrl?
-        <a href={item.submissionUrl} target="_blank" rel="noopener noreferrer"
+        <a href={item.submissionUrl} rel="noopener noreferrer"
          className="inline-flex min-h-9 items-center font-semibold text-link underline">
-         Open submission <span className="sr-only">(opens in new tab)</span></a>:
+         Open submission</a>:
         <span className="text-body" title="This submission link is absent or is not a safe HTTP(S) address">Unavailable link</span>}</td>
        <td className="px-2 py-3">{item.submitter||"—"}</td>
        <td className="px-2 py-3 tabular-nums">{format(item.submittedAt)}</td>
