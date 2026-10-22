@@ -271,14 +271,17 @@ export async function queueFencedInterviewReminders(
   const to = phase === "TOMORROW" ? tomorrow.to : tomorrow.from;
   const kind = phase === "TOMORROW" ? "INTERVIEW_REMINDER_TOMORROW" : "INTERVIEW_REMINDER_TODAY";
   const title = phase === "TOMORROW" ? "Interview tomorrow" : "Interview today";
-  const body = phase === "TOMORROW"
-    ? "You have an interview tomorrow. Open My Placements to confirm the latest schedule."
-    : "You have an interview today. Open My Placements to confirm the latest schedule.";
+  // The channel-aware legacy template has IN_APP, EMAIL and SMS routes.
+  // This fenced producer delivers IN_APP only. External provider channels
+  // need their separate audited encrypted outbox and DLT/template gates;
+  // neither an in-app SENT status nor a provider acknowledgment proves them.
+  const channelPolicy = "INTERVIEW_REMINDER";
   return guardedBatch(fence, async (tx) => {
     const result = await tx.execute<{processed:number;has_more:boolean}>(sql`
       with eligible as materialized (
         select s.id as slot_id, s.version as slot_version,
           s.starts_at, j.id as job_id, r.id as round_id,
+          j.title as job_title, r.name as round_name,
           m.user_id, c.id as college_id, c.organization_id,
           ('scheduler:interview:' || ${phase} || ':' || s.id::text || ':'
             || s.version::text || ':' || m.user_id::text) as dedupe
@@ -320,7 +323,9 @@ export async function queueFencedInterviewReminders(
         select l.organization_id, l.college_id, 'PLACEMENTS', ${kind}, 'NORMAL',
           'placement_round_candidate_slot', l.slot_id::text, ${title},
           jsonb_build_object('slotId',l.slot_id,'jobId',l.job_id,
-            'roundId',l.round_id,'startsAt',l.starts_at,'phase',${phase}),
+            'roundId',l.round_id,'startsAt',l.starts_at,'phase',${phase},
+            'template',${channelPolicy},'channel','IN_APP',
+            'externalDelivery','UNPROVISIONED'),
           l.dedupe
         from limited l
         on conflict (dedupe_key) where dedupe_key is not null do nothing
@@ -329,7 +334,11 @@ export async function queueFencedInterviewReminders(
         insert into in_app_notifications (
           user_id, event_id, title, body, action_href, delivery_status, delivered_at
         )
-        select l.user_id, e.id, ${title}, ${body},
+        select l.user_id, e.id, ${title},
+          left('Your ' || left(l.round_name,120) || ' interview for ' ||
+            left(l.job_title,180) || ' is scheduled ' ||
+            to_char(l.starts_at at time zone 'Asia/Kolkata','DD Mon YYYY HH12:MI AM') ||
+            ' IST. Open My Placements for details.', 1900),
           '/learn/my-placements/schedule', 'SENT', clock_timestamp()
         from limited l join created_events e on e.dedupe_key = l.dedupe
         on conflict (user_id, event_id) do nothing returning id
@@ -464,7 +473,8 @@ export async function queueFencedCourseDueReminders(
           'COURSE_' || l.kind || '_DUE_REMINDER', 'NORMAL',
           lower(l.kind), l.content_id::text, l.kind || ' due soon',
           jsonb_build_object('contentId',l.content_id,
-            'deliveryId',l.delivery_id,'dueAt',l.due_at,'kind',l.kind),
+            'deliveryId',l.delivery_id,'dueAt',l.due_at,'kind',l.kind,
+            'template','COURSE_ASSIGNMENT_DUE','channel','IN_APP'),
           l.dedupe
         from limited l
         on conflict (dedupe_key) where dedupe_key is not null do nothing
