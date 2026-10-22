@@ -14,12 +14,13 @@ describe("chat-11 faculty attendance confirmation and mobile marking", () => {
     expect(source).toContain('confirmVariant="primary"');
     expect(source).toContain("requestAttendanceConfirmation");
     expect(source).not.toContain("window.confirm(attendanceConfirmation)");
-    expect(source).toContain("Attendance marked successfully.");
+    expect(source).toContain("Attendance recorded for ${workspace.roster.length} learner(s).");
+    expect(source).toContain("Unable to confirm attendance save.");
   });
   it("FAC-attendance-grades-20 keeps a narrow-screen sticky submission bar and responsive roster", () => {
-    expect(source).toContain('className="sticky bottom-0');
-    expect(source).toContain("sm:static");
-    expect(source).toContain("flex flex-wrap items-center justify-between");
+    expect(source).toContain("take-attendance-panel__submit sticky bottom-0");
+    expect(source).toContain("md:static");
+    expect(source).toContain("flex min-w-0 flex-col items-stretch");
     expect(source).toContain('aria-label="Attendance roster"');
     expect(source).toContain("Mark all present");
     expect(source).toContain("Mark all absent");

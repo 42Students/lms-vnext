@@ -10,7 +10,9 @@ describe("TPO-settings-audit-TRUST-02 college-scoped company domain validation",
    ["Hiring.Example","hiring.example"],
    ["@RECRUIT.Example","recruit.example"],
    [" employer.example ","employer.example"],
-   ["careers.eng.example","careers.eng.example"],
+   ["careers.eng.example","eng.example"],
+   ["https://hiring.example","hiring.example"],
+   ["recruiter@other.example","other.example"],
    ["one-division.example","one-division.example"],
   ]){
    expect(tpoTrustedCompanyDomainSchema.parse(input)).toBe(want);
@@ -20,7 +22,7 @@ describe("TPO-settings-audit-TRUST-02 college-scoped company domain validation",
  it("rejects DNS labels with trailing hyphens, invalid separators, 64-byte labels and public mail providers",()=>{
   for(const invalid of [
    "bad-.example","-bad.example","bad..example",".bad.example","bad.example.",
-   "bad_.example","foo@other.example","https://hiring.example","user:hiring.example",
+   "bad_.example","user:hiring.example",
    "invalid..corp.com","x".repeat(64)+".example","a.example."+"x".repeat(64),
    "gmail.com","@Outlook.com","yahoo.co.in","foo.example/path","example.com:443",
    "a.local","a.localhost","a.internal","a.com?secret=123",

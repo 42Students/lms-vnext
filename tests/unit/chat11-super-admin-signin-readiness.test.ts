@@ -39,7 +39,8 @@ describe("SA-tenants-modules-LOGIN-01: per-college sign-in policy safety",()=>{
   const route=source("src/app/api/admin/colleges/[collegeId]/signin/route.ts");
   const service=source("src/modules/colleges/admin-signin-policy-service.ts");
   expect(route).toContain("isSameOriginRequest(request)");
-  expect(route).toContain('!("collegeId" in body)||body.collegeId!==collegeId');
+  expect(route).toContain('!("collegeId" in payload)||payload.collegeId!==collegeId');
+  expect(route).toContain('const payload=legacy!==undefined');
   expect(route.indexOf("getCurrentRequestContext()"))
    .toBeLessThan(route.indexOf("readAdminSignInRequestBody(request)"));
   expect(route).toContain("Array.isArray(body)");
@@ -81,10 +82,10 @@ describe("SA-tenants-modules-READY-01: persisted readiness does not imply launch
   expect(summarizeTenantSetupReadiness({...all,counts:{...all.counts,total:9}}).label).toBe("Unknown");
   expect(summarizeTenantSetupReadiness({...all,overall:"INCOMPLETE"}).label).toBe("Incomplete evidence");
  });
- it("all seven setup links are established routes and percent-encode the selected college",()=>{
+ it("all eight setup links are established routes and percent-encode the selected college",()=>{
   const steps=superAdminTenantSetupSteps(collegeId);
-  expect(steps).toHaveLength(7);
-  expect(new Set(steps.map(step=>step.id)).size).toBe(7);
+  expect(steps).toHaveLength(8);
+  expect(new Set(steps.map(step=>step.id)).size).toBe(8);
   for(const step of steps)expect(step.href.startsWith("/admin/")).toBe(true);
   expect(steps.find(step=>step.id==="brand")?.href).toBe("/admin/colleges/"+collegeId+"/branding");
   expect(steps.find(step=>step.id==="readiness")?.href).toBe("/admin/colleges/"+collegeId+"/readiness");
@@ -96,6 +97,6 @@ describe("SA-tenants-modules-READY-01: persisted readiness does not imply launch
   expect(branding).toContain("getSuperAdminTenantLifecycleDetail(context,collegeId)");
   expect(branding).toContain('can(context,"college.manage",{collegeId,organizationId:tenant.organizationId})');
   expect(modules).toContain('requirePermission(context,"admin-scope.select")');
-  expect(modules).toContain("getModuleAccessOverviewMetrics(context,result.items.map(item=>item.id))");
+  expect(modules).toContain("getModuleAccessOverviewMetrics(context, [collegeId])");
  });
 });
