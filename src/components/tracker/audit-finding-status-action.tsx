@@ -13,6 +13,7 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
  const [review,setReview]=useState(false);
  const inFlight=useRef(false);
  const [feedback,setFeedback]=useState("");
+ const [stale,setStale]=useState(false);
  async function submit(){
   if(inFlight.current||!canChangeAuditFindingStatus(current,status,pending))return;
   inFlight.current=true;
@@ -23,6 +24,7 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
     body:JSON.stringify(auditFindingStatusPayload(version,status)),
    });
    if(!response.ok){
+    if(response.status===409)setStale(true);
     setFeedback(response.status===409?"The finding changed elsewhere. Reload before changing its status.":"Status change was not saved.");
     return;
    }
@@ -39,16 +41,20 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
  }
  return <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Triage status
-    <Select value={status} disabled={pending} className="min-h-11 w-full md:min-h-9" onChange={e=>{setStatus(e.target.value as BugStatus);setFeedback("");}}
+    <Select value={status} disabled={pending||stale} className="min-h-11 w-full md:min-h-9" onChange={e=>{setStatus(e.target.value as BugStatus);setFeedback("");setReview(false);}}
     >
       {BUG_STATUSES.map(item=><option key={item} value={item}>{item}</option>)}
     </Select>
    </label>
-   <Button size="sm" variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!canChangeAuditFindingStatus(current,status,pending)} onClick={()=>setReview(true)}>Review status</Button>
+   <Button size="sm" variant="primary" aria-haspopup="dialog" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={stale||!canChangeAuditFindingStatus(current,status,pending)} onClick={()=>setReview(true)}>Review status</Button>
    <p className="min-w-0 text-xs text-muted-foreground sm:col-span-2">Current: {current} · Selected: {status}</p>
-   {feedback?<p role="status" className="min-w-0 text-sm text-body sm:col-span-2">{feedback}</p>:null}
+   {feedback?<div className="flex min-w-0 flex-wrap items-center gap-2 sm:col-span-2">
+     <p role={stale?"alert":"status"} className="min-w-0 flex-1 text-sm text-body">{feedback}</p>
+     {stale?<Button type="button" variant="secondary" onClick={()=>router.refresh()}
+       className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh finding</Button>:null}
+   </div>:null}
    <ConfirmDialog open={review} onOpenChange={next=>{if(!pending)setReview(next);}} pending={pending} confirmLabel="Apply audited status" confirmVariant="primary"
-    confirmDisabled={!canChangeAuditFindingStatus(current,status,pending)}
+    confirmDisabled={stale||!canChangeAuditFindingStatus(current,status,pending)}
     title="Confirm tracker finding status"
     description={"Change "+publicId+" from "+current+" to "+status+"? The server checks the current version and records the transition."}
     onConfirm={()=>{void submit();}}>

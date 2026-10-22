@@ -75,7 +75,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
   }
   return <section aria-label="Bulk issue status" className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
-      <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>{setSelecting(v=>!v);setSelected([]);setFailed([]);setNotice("");}}
+      <Button variant="secondary" type="button" disabled={busy} aria-expanded={selecting} className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>{setSelecting(v=>!v);setSelected([]);setFailed([]);setNotice("");}}
        >
         {selecting?"Cancel selection":"Select issues"}
       </Button>
@@ -105,14 +105,13 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
             {BUG_STATUSES.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
-        <Button variant="primary" type="button" disabled={busy||selected.length===0} loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto md:justify-self-start" onClick={()=>void apply()}
+        <Button variant="primary" type="button" aria-haspopup="dialog" disabled={busy||selected.length===0} loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto md:justify-self-start" onClick={()=>void apply()}
          >
           {busy?"Updating…":"Apply"}
         </Button>
       </div>
     </div>:null}
     {notice?<InlineNotice tone={failed.length?"error":"success"} message={notice}/>:null}
-    {failed.length?<InlineNotice tone="error" message={"Failed IDs: "+failed.join(", ")+". "+success+" other issues were processed."}/>:null}
     <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
       title={"Apply to "+selected.length+" selected"}
       description={"Set status to… "+status.replaceAll("_"," ")}
