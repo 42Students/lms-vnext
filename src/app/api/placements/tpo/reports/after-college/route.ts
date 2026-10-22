@@ -18,7 +18,7 @@ export async function GET(request:Request){
   const q=new URL(request.url).searchParams;
   if(tpoReportHasRepeatedSearchParams(q)||[...q.keys()].some(key=>key!=="batchId"&&key!=="branchId"))
    return NextResponse.json({error:"INVALID_QUERY"},{status:400,headers:{"Cache-Control":"private, no-store"}});
-  const parsed=params.parse({batchId:q.get("batchId")||undefined,branchId:q.get("branchId")||undefined});
+  const parsed=params.parse({...(q.get("batchId")?{batchId:q.get("batchId")}:{}),...(q.get("branchId")?{branchId:q.get("branchId")}:{})});
   const ctx=await getCurrentRequestContext();
   if(!ctx.membership)return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
   if(parsed.batchId){
