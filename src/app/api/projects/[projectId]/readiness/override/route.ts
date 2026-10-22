@@ -4,6 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {z} from "zod";
 import {overrideProjectReadiness} from "@/modules/projects/readiness-override-service";
+import {legacyBooleanProjectReadinessState} from "@/modules/projects/readiness-override-model";
 import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
@@ -25,9 +26,8 @@ export async function POST(request:Request,{params}:RouteContext){
     // Old collegeId is only a deprecated hint: the project access service
     // derives the authorized college from the persisted project and membership.
     const payload=legacy.success
-      ?legacy.data.override===null?{state:"CLEAR" as const}
-       :{state:legacy.data.override?"FORCE_UNLOCK" as const:"FORCE_BLOCK" as const,
-          note:legacy.data.note}
+      ?legacy.data.override===null?{state:legacyBooleanProjectReadinessState(null)}
+       :{state:legacyBooleanProjectReadinessState(legacy.data.override),note:legacy.data.note}
       :raw;
     const override=await overrideProjectReadiness(context,projectId,payload);
     return NextResponse.json({override,message:"Readiness updated"},

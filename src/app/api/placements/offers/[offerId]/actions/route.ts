@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import {z} from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -7,6 +8,12 @@ import { actOnPlacementOffer } from "@/modules/placements/offer-service";
 import { placementOfferActionSchema } from "@/modules/placements/validation";
 
 export const runtime = "nodejs";
+// The old offer response API requires a literal JSON boolean. Do not
+// coerce "true", 1 or null; an extra action must not override this decision.
+const legacyOfferResponseSchema=z.strictObject({
+  accept:z.boolean(),
+  reason:z.string().trim().min(1).max(2000).nullable().optional(),
+});
 
 type RouteContext = {
   params: Promise<{ offerId: string }>;
@@ -31,12 +38,14 @@ export async function POST(
     let actionInput:unknown=raw;
     if(typeof raw==="object"&&raw!==null&&!Array.isArray(raw)){
       const source=raw as Record<string,unknown>;
-      if(typeof source.accept==="boolean"&&source.action===undefined){
-        // Old learner offer response {accept:boolean}. We deliberately retain
-        // the typed server permission, offer UUID and issued-state CAS checks.
-        const {accept,reason,...rest}=source;
-        actionInput={...rest,action:accept?"ACCEPT":"DECLINE",
-          ...(!accept&&typeof reason==="string"?{reason}:{})};
+      if("accept" in source){
+        // One canonical strict schema for both legacy and vNext callers:
+        // malformed or contradictory decision payloads receive HTTP 400.
+        const legacy=legacyOfferResponseSchema.parse(source);
+        actionInput={
+          action:legacy.accept?"ACCEPT":"DECLINE",
+          ...(!legacy.accept&&legacy.reason!==undefined?{reason:legacy.reason}:{}),
+        };
       }
     }
     const offer =

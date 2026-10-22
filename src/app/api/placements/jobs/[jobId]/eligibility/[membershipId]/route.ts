@@ -73,9 +73,36 @@ async function updateOverride(request:Request,{params}:RouteContext){
   // in the route, rather than resolving untrusted foreign numeric user IDs.
   if(record.learnerId!==undefined&&record.learnerId!==membershipId)
    return NextResponse.json({error:"INVALID_LEARNER",message:"Learner selection has changed. Refresh the drive."},{status:400});
+  // The historical editor sends a nullable Boolean override + note.
+  // true/false map to INCLUDE/EXCLUDE, while null explicitly clears the
+  // currently selected override. A mixed legacy/canonical decision is not
+  // allowed to mask a conflicting choice.
+  const hasLegacyOverride=Object.prototype.hasOwnProperty.call(record,"override");
+  if(hasLegacyOverride&&(record.decision!==undefined||record.type!==undefined))
+   return NextResponse.json({error:"INVALID_ELIGIBILITY_OVERRIDE",
+    message:"Choose one eligibility decision format."},{status:400});
+  if(hasLegacyOverride&&record.override!==null&&typeof record.override!=="boolean")
+   return NextResponse.json({error:"INVALID_ELIGIBILITY_OVERRIDE",
+    message:"Override must be true, false or null."},{status:400});
+  if(hasLegacyOverride&&record.override===null){
+   const clear=z.strictObject({
+     expectedOverrideId:z.string().uuid().optional(),
+     reason:z.string().trim().min(3).max(500).optional(),
+   }).safeParse({
+     ...(record.expectedOverrideId!==undefined?{expectedOverrideId:record.expectedOverrideId}:{}),
+     ...(record.note!==undefined||record.reason!==undefined?
+       {reason:record.reason??record.note}:{}),
+   });
+   if(!clear.success)return NextResponse.json({error:"INVALID_ELIGIBILITY_OVERRIDE",
+     message:"The override could not be cleared."},{status:400});
+   const override=await revokeEligibilityOverride(context,jobId,membershipId,clear.data);
+   return NextResponse.json({override,ok:true,message:"Eligibility override cleared."},
+     {headers:{"Cache-Control":"private, no-store"}});
+  }
   const candidate={
-   decision:record.decision??record.type,
-   reason:record.reason,
+   decision:hasLegacyOverride?(record.override?"INCLUDE":"EXCLUDE"):
+     record.decision??record.type,
+   reason:record.reason??record.note,
    expectedOverrideId:record.expectedOverrideId??null,
   };
   if(typeof candidate.reason!=="string"||candidate.reason.trim().length<3)

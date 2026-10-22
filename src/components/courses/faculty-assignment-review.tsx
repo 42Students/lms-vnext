@@ -648,6 +648,7 @@ export function FacultyAssignmentReview({
   </div>;
 
   async function load(next: {filter:FacultySubmissionFilter;page:number} = {filter,page}) {
+    if(mutationInFlight.current||bulkBusy)return;
     const sequence = ++loadSequence.current;
     setOpen(true);setError(null);setLoading(true);
     // Preserve the last successful page when an in-place refresh fails.
@@ -691,7 +692,7 @@ export function FacultyAssignmentReview({
         className="max-w-[780px]"
         open={open}
         onOpenChange={(nextOpen)=>{
-          if(!nextOpen&&mutationInFlight.current)return;
+          if(!nextOpen&&(mutationInFlight.current||bulkBusy))return;
           if(!nextOpen){loadSequence.current+=1;setLoading(false);}
           setOpen(nextOpen);
         }}
@@ -756,7 +757,7 @@ export function FacultyAssignmentReview({
             <Select className="min-h-11 text-[var(--lms-font-base)] md:hidden"
               value={selectedSubmissionId??submissions[0].id}
               disabled={mutationBusy||bulkBusy}
-              onChange={event=>{if(!mutationInFlight.current)setSelectedSubmissionId(event.target.value);}}>
+              onChange={event=>{if(!mutationInFlight.current&&!bulkBusy)setSelectedSubmissionId(event.target.value);}}>
               {submissions.map(item=><option key={item.id} value={item.id}>
                 {learnerLabel(item)} · {isSubmissionGraded(item)?"Graded":"Pending"}
               </option>)}
@@ -764,7 +765,7 @@ export function FacultyAssignmentReview({
           </label>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
-            onClick={()=>setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id)}>
+            onClick={()=>{if(!mutationInFlight.current&&!bulkBusy)setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id);}}>
             <span className="sr-only">Previous student in selected submission page</span>
             <span aria-hidden="true">Previous</span>
           </Button>
@@ -773,7 +774,7 @@ export function FacultyAssignmentReview({
           </span>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
-            onClick={()=>setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id)}>
+            onClick={()=>{if(!mutationInFlight.current&&!bulkBusy)setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id);}}>
             <span className="sr-only">Next student in selected submission page</span>
             <span aria-hidden="true">Next</span>
           </Button>
