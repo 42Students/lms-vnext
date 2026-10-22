@@ -49,7 +49,7 @@ describe("COL-UX-TERM-MAPPINGS-04 keyboard/mobile curriculum mapping",()=>{
   expect(source).toContain('caption="Semester course mappings"');
   expect(source).toContain('mobilePriority:"primary"');
   expect(source).toContain('mobilePriority:"action"');
-  expect(source).toContain('draggable={!pending && editableTerm}');
+  expect(source).toContain('draggable={!pending && editableTerm && !readOnly}');
   expect(source).toContain('onDrop={event => {');
   expect(source).toContain("if (draggedId && draggedId !== row.id) event.preventDefault()");
   expect(source).toContain('aria-label={"Move "+row.courseName+" up"}');
