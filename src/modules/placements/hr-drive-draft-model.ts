@@ -211,7 +211,13 @@ export function hrDraftFromAuthorizedJob(job: {
     branches:(job.eligibleBranches??[]).map(value=>value.trim()).filter(Boolean).slice(0,30),
     passingYear:job.eligiblePassingYear?.toString()??"",
     passingYears:job.eligiblePassingYears?.filter(year=>Number.isInteger(year) && year>=2000 && year<=2100),
-    ctcLpa:job.ctcLpa??"",fixedLpa:job.fixedCtcLpa??"",
+    // Existing jobs may predate the standalone legacy LPA field; carry the
+    // authorized advertised salary into the required CTC control for Hire Again.
+    ctcLpa:job.ctcLpa || (job.maximumAnnualCtcInr && job.maximumAnnualCtcInr>0
+      ?String(Number((job.maximumAnnualCtcInr/100000).toFixed(2)))
+      :job.minimumAnnualCtcInr && job.minimumAnnualCtcInr>0
+       ?String(Number((job.minimumAnnualCtcInr/100000).toFixed(2))):""),
+    fixedLpa:job.fixedCtcLpa??"",
     variableLpa:job.variableCtcLpa??"",
     stipendMonthlyInr:job.stipendPerMonthInr?.toString()??"",
     minimumAnnualCtcInr: job.minimumAnnualCtcInr?.toString() ?? "",

@@ -18,11 +18,13 @@ describe("College course mutation strict boundaries", () => {
       .toBe(false);
   });
   it("refuses unknown edit fields and empty changes", () => {
-    expect(updateCourseInputSchema.safeParse({ name: "Edited" }).success).toBe(true);
-    expect(updateCourseInputSchema.safeParse({}).success).toBe(false);
-    expect(updateCourseInputSchema.safeParse({ collegeId: input.departmentId }).success)
+    const expectedUpdatedAt = "2026-10-20T10:00:00Z";
+    expect(updateCourseInputSchema.safeParse({ name: "Edited", expectedUpdatedAt }).success).toBe(true);
+    expect(updateCourseInputSchema.safeParse({ name: "Edited" }).success).toBe(false);
+    expect(updateCourseInputSchema.safeParse({ expectedUpdatedAt }).success).toBe(false);
+    expect(updateCourseInputSchema.safeParse({ collegeId: input.departmentId, expectedUpdatedAt }).success)
       .toBe(false);
-    expect(updateCourseInputSchema.safeParse({ status: "ARCHIVED" }).success)
+    expect(updateCourseInputSchema.safeParse({ status: "ARCHIVED", expectedUpdatedAt }).success)
       .toBe(false);
   });
 });

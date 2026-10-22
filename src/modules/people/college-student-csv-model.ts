@@ -109,7 +109,8 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
   try { rows = tokenizeStudentCsv(raw.replace(/^\uFEFF/, "")); }
   catch (error) {
     const reason = error instanceof Error ? error.message : "";
-    return { entries: [], structuralErrors: [reason.startsWith("INVALID_CSV_AFTER_QUOTE:") ? reason : "INVALID_CSV_FORMAT"] };
+    return { entries: [], structuralErrors: reason.startsWith("INVALID_CSV_AFTER_QUOTE:")
+      ? ["INVALID_CSV_FORMAT", reason] : ["INVALID_CSV_FORMAT"] };
   }
   const header = rows[0]?.map(value => value.trim()) ?? [];
   const legacy = header.join(",") === LEGACY_STUDENT_CSV_COLUMNS.join(",");
