@@ -28,7 +28,9 @@ describe("TPO Students phone presentation and scoped selection summary",()=>{
   expect(filters).toContain('onOpenChange={next=>{setSheetOpen(next);if(!next&&autoOpenMobile)onAutoClose?.();}} title={title}');
   expect(sheet).toContain('className="fixed inset-x-0 bottom-[var(--lms-visual-bottom)]');
   expect(sheet).toContain("modal.showModal()");
-  expect(sheet).toContain("onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}");
+  expect(sheet).toContain("if (open && !dismissible && modal?.isConnected) { modal.showModal(); return; }");
+  expect(sheet).toContain("if (open) onOpenChange(false);");
+  expect(sheet).toContain("if (opener.current?.isConnected) opener.current.focus();");
  });
  it("TPO-students-R03 screen readers can distinguish mobile checkboxes by student",()=>{
   const grid=src("src/components/tpo/tpo-spreadsheet-grid.tsx");
