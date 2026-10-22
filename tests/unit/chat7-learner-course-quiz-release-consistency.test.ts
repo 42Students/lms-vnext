@@ -3,12 +3,12 @@ import {readFileSync} from "node:fs";
 import {learnerQuizResultsReleased} from "@/modules/courses/learner-quiz-result-release-policy";
 const now=Date.parse("2099-01-01T12:00:00.000Z");
 describe("LEARNER-QUIZ-WORKSPACE-EMBARGO-01 consistent quiz result release across learner views",()=>{
- it("never announces quiz correctness before deadline, closure and explicit results publication",()=>{
+ it("never announces correctness before deadline or publication, including still-open published quizzes",()=>{
   const dueAt=new Date(now);
   for(const status of ["DRAFT","PUBLISHED","ARCHIVED","CLOSED"]){
    for(const resultsPublished of [true,false]){
     for(const seenAt of [now-1,now,now+1]){
-     const expected=status==="CLOSED"&&resultsPublished&&seenAt>=now;
+     const expected=(status==="CLOSED"||status==="PUBLISHED")&&resultsPublished&&seenAt>=now;
      expect(learnerQuizResultsReleased({status,resultsPublished,dueAt},seenAt)).toBe(expected);
     }
    }

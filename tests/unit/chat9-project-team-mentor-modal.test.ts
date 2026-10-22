@@ -7,7 +7,7 @@ describe("College Admin workspace Team actions",()=>{
   const dialog=source("src/components/projects/college-project-mentor-dialog.tsx");
   const workspace=source("src/components/projects/project-workspace.tsx");
   expect(workspace).toContain("<CollegeProjectMentorDialog");
-  for(const token of ["Reassign mentor","Search mentors","New primary mentor","Role label (optional)","Mentor assigned","Confirm reassignment"])
+  for(const token of ["Reassign mentor","Search mentors","Select a mentor","Role label (optional)","Mentor assigned","Confirm reassignment"])
    expect(dialog).toContain(token);
   expect(dialog).toContain('"/api/projects/reassign-mentor"');
   expect(dialog).toContain("projectIds:[projectId]");
