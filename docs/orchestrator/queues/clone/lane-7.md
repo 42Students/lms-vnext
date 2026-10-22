@@ -56,7 +56,7 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [ ] `src/app/(authenticated)/learn/my-placements/applications/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/assessments/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
