@@ -26,6 +26,6 @@ export function DgipucSignIn(props:Props){
     </Button>)}
   </div>
   <p className="text-xs leading-5 text-muted-foreground">Changing roles clears the form. Choose a verified college membership after sign-in.</p>
-  <LoginForm key={role} {...props}/>
+  <LoginForm key={role} skipStoredAttempt {...props}/>
  </div>;
 }

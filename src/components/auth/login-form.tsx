@@ -180,11 +180,13 @@ export function LoginForm({
   defaultChannel = "EMAIL",
   allowedChannels = ["EMAIL", "PHONE"],
   legacySuperAdmin = false,
+  skipStoredAttempt = false,
 }: {
   collegeName?: string | null;
   defaultChannel?: Channel;
   allowedChannels?: readonly Channel[];
   legacySuperAdmin?: boolean;
+  skipStoredAttempt?: boolean;
 }) {
   const [channel, setChannel] = useState<Channel>(defaultChannel);
   const [recruiterEntry, setRecruiterEntry] = useState(false);
@@ -225,6 +227,7 @@ export function LoginForm({
     let live = true;
     void Promise.resolve().then(() => {
       if (!live) return;
+      if (skipStoredAttempt) { saveLoginAttempt(null); return; }
       const stored = loadLoginAttempt();
       if (!stored) return;
       setAttempt(stored.attempt);
@@ -233,7 +236,7 @@ export function LoginForm({
       setNotice("You have a code from an interrupted sign-in. Use the code already sent, or request another when the resend timer ends.");
     });
     return () => { live = false; };
-  }, []);
+  }, [skipStoredAttempt]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
