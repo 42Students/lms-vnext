@@ -13,7 +13,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-6-001-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-6-015-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [x] G2-6-019-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-15-001-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [x] G2-15-001-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-15-004-069  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-15-006-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-15-009-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
@@ -26,3 +26,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-6-019-051: FIXED — `f7340943e8c031ecaa7829725476f0f5f80bdc0b`, `src/components/profile/learner-profile-workspace.tsx` now exposes persisted `papInterest` in both display and edit controls; `src/modules/people/profile-validation.ts:592-599` retains both `examSlotPreference` and `papInterest`. Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/JobPreferences.java:34-39`.
 - G2-6-001-047: OK — `src/modules/people/faculty-bulk-import-model.ts:11,28,76-91` accepts and validates the Faculty Type CSV field as only LECTURER or MENTOR; `src/modules/people/faculty-bulk-import-service.ts:75-82` preserves the lecturer/mentor distinction during import. Matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Faculty.js:600,666-668,718`.
 
+- G2-15-001-018: FIXED — `c01687f12a2c3e3b37c31b558e36c7f460054de4`, `9d52a62eb422defe8ab16c5f778ea652000f7f07` (`src/components/courses/learner-course-list.tsx`, `src/app/(authenticated)/learn/courses/page.tsx`): restored legacy `class_id` first / batch, academic-year, section fallback grouping headers on learner cards. Legacy `docs/legacy-source/frontend/src/utils/courseListingUtils.js:33-36`.
