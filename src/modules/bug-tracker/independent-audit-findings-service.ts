@@ -99,6 +99,45 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
  return {total:total[0]?.n??0,items,page:query.page,statusCounts,severityOpenCounts,criticalOpen,
   pages:Math.max(1,Math.ceil((total[0]?.n??0)/pageSize))};
 }
+/** Legacy duplicate dialog: compare same-area findings only. Return at most
+ * five candidates, sorted by shared surface overlap then recency; never
+ * accept a client-provided duplicate FK as an authorization grant. */
+export async function suggestIndependentFindingDuplicates(
+ context:RequestContext,externalId:string,
+){
+ requireIndependentFindingAccess(context);
+ if(!await independentAuditFindingsStorageReady())
+  throw new Error("Audit findings storage is not verified.");
+ if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/.test(externalId))return [];
+ const [current]=await getDb().select({
+  id:db10AuditFindings.id,area:db10AuditFindings.area,
+  paths:db10AuditFindings.paths,pages:db10AuditFindings.pages,
+  endpoints:db10AuditFindings.endpoints,title:db10AuditFindings.title,
+ }).from(db10AuditFindings)
+  .where(eq(db10AuditFindings.externalId,externalId)).limit(1);
+ if(!current)return [];
+ const overlap=sql<number>`(
+  case when lower(${db10AuditFindings.title})=lower(${current.title}) then 4 else 0 end+
+  case when exists(select 1 from jsonb_array_elements_text(${db10AuditFindings.paths}) x
+      where ${JSON.stringify(current.paths)}::jsonb ? x.value) then 3 else 0 end+
+  case when exists(select 1 from jsonb_array_elements_text(${db10AuditFindings.pages}) x
+      where ${JSON.stringify(current.pages)}::jsonb ? x.value) then 2 else 0 end+
+  case when exists(select 1 from jsonb_array_elements_text(${db10AuditFindings.endpoints}) x
+      where ${JSON.stringify(current.endpoints)}::jsonb ? x.value) then 2 else 0 end
+ )`;
+ const rows=await getDb().select({
+  externalId:db10AuditFindings.externalId,title:db10AuditFindings.title,
+  status:db10AuditFindings.status,severity:db10AuditFindings.severity,
+  area:db10AuditFindings.area,score:overlap,
+ }).from(db10AuditFindings).where(and(
+  eq(db10AuditFindings.area,current.area),
+  sql`${db10AuditFindings.id} <> ${current.id}`,
+  sql`${db10AuditFindings.status} <> 'DUPLICATE'`,
+  sql`${overlap} > 0`,
+ )).orderBy(desc(overlap),desc(db10AuditFindings.foundAt),
+   asc(db10AuditFindings.externalId)).limit(5);
+ return rows;
+}
 export async function getIndependentAuditFinding(context:RequestContext,rawId:string){
  requireIndependentFindingAccess(context);
  if(!await independentAuditFindingsStorageReady())return null;
@@ -189,7 +228,11 @@ export async function readIndependentFindingSyncState(context:RequestContext){
  requireIndependentFindingAccess(context);
  if(!await independentAuditFindingsStorageReady())return null;
  const [row]=await getDb().select({
-  source:db10AuditFindingSyncs.source,lastSyncedAt:db10AuditFindingSyncs.lastSyncedAt,
+  source:db10AuditFindingSyncs.source,
+  repo:db10AuditFindingSyncs.repo,
+  lastCommit:db10AuditFindingSyncs.lastCommit,
+  lastSuccessAt:db10AuditFindingSyncs.lastSuccessAt,
+  lastSyncedAt:db10AuditFindingSyncs.lastSyncedAt,
   lastResult:db10AuditFindingSyncs.lastResult,importedCount:db10AuditFindingSyncs.importedCount,
   refusedFiles:db10AuditFindingSyncs.refusedFiles,lastError:db10AuditFindingSyncs.lastError,
  }).from(db10AuditFindingSyncs)
@@ -218,6 +261,8 @@ export async function readIndependentFindingSyncState(context:RequestContext){
     "Importer refused this source file",result:item.result,checkedAt:item.checkedAt,
   });
  }
- return {source:row.source,lastSyncedAt:row.lastSyncedAt,lastResult:row.lastResult,lastError:row.lastError,
+ return {source:row.source,repo:row.repo,lastCommit:row.lastCommit,
+  lastSuccessAt:row.lastSuccessAt,
+  lastSyncedAt:row.lastSyncedAt,lastResult:row.lastResult,lastError:row.lastError,
   importedCount:row.importedCount,refusedCount:Math.max(row.refusedFiles.length,refusedFiles.length),refusedFiles};
 }

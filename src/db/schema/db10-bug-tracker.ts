@@ -171,3 +171,25 @@ export const db10BugReportAttachments = pgTable("bug_report_attachments", {
   check("db10_bug_report_attachments_size_ck",
     sql.raw('"size_bytes" between 1 and 8388608')),
 ]);
+
+/** A viewer-scoped thumbnail may be signed only after the route has checked
+ * a live tracker access/session and looked up the attachment via its report
+ * FK. A stored object key is not a public URL and can never be returned to
+ * a caller in the raw attachment DTO. */
+export function bugTrackerImageAccessPolicy(input:{
+ reporterAccessId:string;viewerAccessId:string;
+ canManage:boolean;objectKey:string;contentType:string;sizeBytes:number;
+ scanStatus:"PENDING"|"CLEAN"|"REJECTED";expirySeconds:number;
+}){
+ if(input.reporterAccessId!==input.viewerAccessId&&!input.canManage)
+  return {allowed:false,reason:"NOT_AUTHORIZED"} as const;
+ if(input.scanStatus!=="CLEAN"||
+   !/^(image\/png|image\/jpeg|image\/webp)$/.test(input.contentType)||
+   !Number.isSafeInteger(input.sizeBytes)||input.sizeBytes<1||
+   input.sizeBytes>8*1024*1024||
+   !/^private\/[a-zA-Z0-9/_-]+$/.test(input.objectKey)||
+   !Number.isSafeInteger(input.expirySeconds)||input.expirySeconds<1||
+   input.expirySeconds>900)
+  return {allowed:false,reason:"NOT_SAFE_TO_SIGN"} as const;
+ return {allowed:true,maxAgeSeconds:input.expirySeconds} as const;
+}
