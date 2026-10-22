@@ -153,7 +153,7 @@ export function LearnerCourseAttendance({
   // Search-parameter navigation must update the visible month when the
   // server sends fresh props; state initializers run only on first mount.
   const month = useMemo(() => {
-    const [year, selectedMonth] = defaultMonth.split("-").map(Number);
+    const [year = NaN, selectedMonth = NaN] = defaultMonth.split("-").map(Number);
     return new Date(year, selectedMonth - 1, 1);
   }, [defaultMonth]);
 
@@ -341,7 +341,7 @@ export function LearnerCourseAttendance({
             {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),currentMonth) ? (
               <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
                 onClick={() => {
-                  const [year,nextMonth]=currentMonth.split("-").map(Number);
+                  const [year = NaN,nextMonth = NaN]=currentMonth.split("-").map(Number);
                   navigateMonth(new Date(year,nextMonth-1,1));
                 }}>
                 This month

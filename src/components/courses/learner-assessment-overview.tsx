@@ -297,33 +297,33 @@ export function LearnerAssessmentOverview({
             ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
           </Disclosure>
         </section>
-      ) : (<Disclosure title="Assessment totals" className="border-b border-border" contentClassName="pb-4"><div role="group" className={styles.metricGrid} aria-label="Assessment totals">
-        <StatTile className={styles.tile}
+      ) : (<Disclosure title="Assessment totals" className="border-b border-border" contentClassName="pb-4"><div role="group" className={styles["metricGrid"]} aria-label="Assessment totals">
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
           label={
             kind === "ASSIGNMENT"
               ? "Assignments"
               : "Quizzes"
           }
           value={scopedAttentionItems.length}
-        ><span className={styles.icon}><AssessmentMetricGlyph kind="assignment" /></span></StatTile>
-        <StatTile className={styles.tile}
+        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="assignment" /></span></StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
           label="Courses"
           value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
-        ><span className={styles.icon}><AssessmentMetricGlyph kind="courses" /></span></StatTile>
-        <StatTile className={styles.tile} label="Needs action" value={actionCounts.pending}>
-          <span className={styles.icon}><AssessmentMetricGlyph kind="pending" /></span>
+        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="courses" /></span></StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})} label="Needs action" value={actionCounts.pending}>
+          <span className={styles["icon"]}><AssessmentMetricGlyph kind="pending" /></span>
         </StatTile>
-        <StatTile className={styles.tile} label="Overdue / missed" value={actionCounts.overdue}>
-          <span className={styles.icon}><AssessmentMetricGlyph kind="overdue" /></span>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})} label="Overdue / missed" value={actionCounts.overdue}>
+          <span className={styles["icon"]}><AssessmentMetricGlyph kind="overdue" /></span>
         </StatTile>
-        <StatTile className={styles.tile}
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
           label={
             kind === "ASSIGNMENT"
               ? "Submitted"
               : "Attempted"
           }
           value={completed}
-        ><span className={styles.icon}><AssessmentMetricGlyph kind="submitted" /></span></StatTile>
+        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="submitted" /></span></StatTile>
       </div></Disclosure>
       )}
 
@@ -596,13 +596,8 @@ export function LearnerAssessmentOverview({
           }
         }}
         title={selectedAssignment?.title ?? "Assignment"}
-        description={
-          selectedAssignment
-            ? `${selectedAssignment.courseName} · ${selectedAssignment.lessonName}`
-            : undefined
-        }
-        footer={
-          selectedAssignment ? (
+        {...(selectedAssignment ? {description:`${selectedAssignment.courseName} · ${selectedAssignment.lessonName}`} : {})}
+        {...(selectedAssignment ? {footer: (
             <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
@@ -615,8 +610,7 @@ export function LearnerAssessmentOverview({
               Full assignment details
             </Link>
             </div>
-          ) : undefined
-        }
+          )} : {})}
       >
         {selectedAssignment ? (
           <div className="min-w-0 space-y-4 md:space-y-6">
