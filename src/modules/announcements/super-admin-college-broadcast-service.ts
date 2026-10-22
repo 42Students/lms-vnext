@@ -7,7 +7,7 @@ import {collegeMemberships,membershipRoles} from "@/db/schema/memberships";
 import {users} from "@/db/schema/users";
 import {deliverInAppNotificationInTransaction} from "@/modules/activity/notification-service";
 import {organizations} from "@/db/schema/organizations";
-import {db10Announcements} from "@/db/schema/db10-announcements";
+import {db10Announcements,announcementBroadcastGroups,announcementBroadcastColleges} from "@/db/schema/db10-announcements";
 import {activityEvents} from "@/db/schema/activity";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -87,8 +87,23 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
  }
  const resolvedAt=new Date();
  const created=await db.transaction(async tx=>{
+  // Persist the immutable global broadcast group before recipient copies.
+  // The home organization is the first authorized target; all other target
+  // organizations remain explicit in both the college map and each notice.
+  // Group edits verify permission for EVERY actual college, not only home.
+  await tx.insert(announcementBroadcastGroups).values({
+   id:broadcastGroupId,organizationId:targets[0]!.organizationId,
+   authorUserId:context.user.id,audience:"COLLEGE",
+   audienceKind:input.audienceMode,recipientCount:targets.length,
+   audienceJson:{collegeIds:targets.map(target=>target.id)},
+   sentAt:resolvedAt,showUntil:input.expiresAt?new Date(input.expiresAt):null,
+  });
+  await tx.insert(announcementBroadcastColleges).values(
+   targets.map(target=>({broadcastGroupId,collegeId:target.id})),
+  );
   const rows=targets.map(target=>({
    organizationId:target.organizationId,collegeId:target.id,
+   broadcastGroupId,
    receiverType:"COLLEGE",receiverId:target.id,
    title:input.title,message:input.message,
    buttonLabel:input.buttonUrl?(input.buttonLabel||"Open"):null,buttonUrl:input.buttonUrl||null,

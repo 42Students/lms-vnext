@@ -38,10 +38,9 @@ export function learnerEducationValidationProblem(input:{
  if(educationType.length>120)
   return {field:"educationType",message:"Education type must be 120 characters or fewer"};
  if(!input.institution?.trim())return {field:"institution",message:"Institution name is required"};
- if(!input.gradingType?.trim())return {field:"gradingType",message:"Grading type is required"};
- if(!input.gradeObtained?.trim())return {field:"gradeObtained",message:"Grade obtained is required"};
- if(input.gradingType!=="Grade"&&!input.maxGrade?.trim())
-  return {field:"maxGrade",message:"Max grade is required for job screening"};
+ // Historical EducationDTO permits an ungraded qualification. Preserve a
+ // partially completed draft; grading becomes validated only when supplied.
+ // Screening-specific completeness belongs to the placement eligibility flow.
  const examYear=String(input.examDetails?.passingYear??"").trim();
  if(examYear && (!/^\d{4}$/.test(examYear)||Number(examYear)<1900||Number(examYear)>2200))
   return {field:"examDetails.passingYear",message:"Enter a valid four-digit exam year (1900–2200)"};
@@ -60,14 +59,32 @@ export function learnerEducationValidationProblem(input:{
  if(input.gradingType!=="CGPA"&&input.gradingType!=="Percentage")return null;
  const num=Number(grade);
  const max=input.gradingType==="CGPA"?10:100;
- if(!Number.isFinite(num)||num<0||num>max)
-  return {field:"gradeObtained",message:"Enter a "+input.gradingType+" between 0 and "+max};
+ if(!Number.isFinite(num)||num<0||
+    (input.gradingType==="Percentage"&&num>100))
+  return {field:"gradeObtained",message:"Enter a "+input.gradingType+
+    (input.gradingType==="Percentage"?" between 0 and 100":" as a nonnegative number")};
  if(input.maxGrade?.trim()){
   const top=Number(input.maxGrade);
-  if(!Number.isFinite(top)||top<=0||top>max||num>top)
-   return {field:"maxGrade",message:"Maximum grade must include the obtained grade and be at most "+max};
+  if(!Number.isFinite(top)||top<=0||
+     (input.gradingType==="Percentage"&&(top>100||num>top)))
+   return {field:"maxGrade",message:"Maximum grade must be positive and include the obtained percentage"};
  }
  return null;
+}
+
+/** Non-blocking legacy qualification warnings: older institutions recorded
+ * CGPA on non-ten-point scales. Preserve the original source value for a
+ * reviewer rather than silently dividing it by 10 or deleting the record. */
+export function learnerEducationLegacyWarnings(input:{
+ gradingType?:string;gradeObtained?:string;maxGrade?:string;
+}):string[]{
+ if(input.gradingType!=="CGPA"||!input.gradeObtained?.trim())return [];
+ const score=Number(input.gradeObtained.trim());
+ if(!Number.isFinite(score))return ["Review this CGPA value: it is not numeric."];
+ if(score>10)return ["CGPA exceeds 10. Verify the institution's grading scale before using this for eligibility."];
+ if(input.maxGrade?.trim()&&Number(input.maxGrade)>10)
+  return ["Institutional CGPA maximum exceeds 10. Verify the grading scale."];
+ return [];
 }
 
 /** Pure, versioned projection of college-configured EducationConfig,

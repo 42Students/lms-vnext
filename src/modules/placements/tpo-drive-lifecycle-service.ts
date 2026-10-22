@@ -35,6 +35,26 @@ import {
 type Db = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
 
+/** VNext keeps one authoritative status instead of legacy independent flags.
+ * Recruiter REQUEST/SENT_BACK/REJECTED belong to the drive-request ledger;
+ * a request approval creates a DRAFT job, never a published job. Cancellation
+ * is terminal and does not silently turn into the old generic CLOSED state. */
+export function legacyDriveStatusProjection(status:string){
+ return {
+  label:status==="PUBLISHED"?"Live":status==="CANCELLED"?"Cancelled":
+    status==="CLOSED"?"Closed":status==="DRAFT"?"Draft":status,
+  isDraft:status==="DRAFT"||status==="REQUEST"||
+    status==="SENT_BACK"||status==="REJECTED",
+  isActive:status==="PUBLISHED",
+ };
+}
+function desiredLifecycleStatus(action:"PUBLISH"|"CLOSE"|"REOPEN"){
+ return action==="CLOSE"?"CLOSED":"PUBLISHED";
+}
+function requiredLifecycleSource(action:"PUBLISH"|"CLOSE"|"REOPEN"){
+ return action==="PUBLISH"?"DRAFT":action==="CLOSE"?"PUBLISHED":"CLOSED";
+}
+
 function requireTpo(context: RequestContext): string {
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     throw new AuthorizationError("placements.manage");
@@ -140,8 +160,8 @@ export async function getTpoDriveLifecycleReadiness(
     status: job.status,
     // Legacy isDraft/isActive are projections of the single lifecycle enum,
     // never independently writable flags that can contradict the status.
-    isDraft: job.status === "DRAFT",
-    isActive: job.status === "PUBLISHED",
+    isDraft: legacyDriveStatusProjection(job.status).isDraft,
+    isActive: legacyDriveStatusProjection(job.status).isActive,
     facts,
     reach:{eligible:reach.eligible,excluded:reach.excluded,
       considered:reach.candidateCount},
@@ -181,6 +201,23 @@ export async function changeTpoDriveLifecycle(
       eq(placementJobs.collegeId, collegeId),
     )).for("update").limit(1);
     if (!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+    // Guard malformed expected-state requests before replay detection: callers
+    // must claim the correct source state for the operation, not choose an
+    // arbitrary same-status target and evade readiness checks.
+    if (input.expectedStatus!==requiredLifecycleSource(input.action)) {
+      throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+    }
+    // A timed-out publish/close may have committed. Return the already
+    // completed transition without rewriting timestamps, sending second
+    // notifications, or repeating event/debarment side effects. Reopen is
+    // terminally blocked and must not be interpreted as a successful retry.
+    if (job.status===desiredLifecycleStatus(input.action)&&input.action!=="REOPEN") {
+      return {id:job.id,status:job.status,
+        isDraft:legacyDriveStatusProjection(job.status).isDraft,
+        isActive:legacyDriveStatusProjection(job.status).isActive,
+        blockers:[] as string[],notifiedCount:0,debarmentCounted:0,
+        emailSent:false,alreadyCompleted:true as const};
+    }
     if (job.status !== input.expectedStatus) {
       throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
     }
@@ -190,7 +227,7 @@ export async function changeTpoDriveLifecycle(
       throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
     }
     const now = new Date();
-    const toStatus = input.action === "CLOSE" ? "CLOSED" : "PUBLISHED";
+    const toStatus = desiredLifecycleStatus(input.action);
     const [updated] = await tx.update(placementJobs).set({
       status: toStatus,
       ...(input.action === "PUBLISH" ? { publishedAt: now } : {}),
@@ -234,8 +271,8 @@ export async function changeTpoDriveLifecycle(
     return {
       id: updated.id,
       status: updated.status,
-      isDraft: updated.status === "DRAFT",
-      isActive: updated.status === "PUBLISHED",
+      isDraft: legacyDriveStatusProjection(updated.status).isDraft,
+      isActive: legacyDriveStatusProjection(updated.status).isActive,
       blockers: [] as string[],
       notifiedCount,debarmentCounted,emailSent:false,
     };

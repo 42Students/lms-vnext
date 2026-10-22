@@ -15,14 +15,19 @@ import { Alert } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
 import {tpoApplicationFilterError} from "@/modules/placements/tpo-applications-url-guard";
-type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
+type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];query?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 import {parseTpoApplicantPipelineLink,tpoApplicantPipelineResetHref} from "@/modules/placements/tpo-applicant-pipeline-model";
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO")) redirect("/dashboard");
- const {jobId}=await params;const query=await searchParams;
- const urlError=tpoApplicationFilterError(query,jobId);
+ const {jobId}=await params;
+ const {query:legacyQuery,...modernQuery}=await searchParams;
+ // Historical search-controller URLs used ?query=. Search is still scoped
+ // to the current drive and college; duplicated aliases fail closed.
+ const query={...modernQuery,search:modernQuery.search??legacyQuery};
+ const urlError=modernQuery.search!==undefined&&legacyQuery!==undefined?
+  "Use only one applicant search parameter.":tpoApplicationFilterError(query,jobId);
  if(urlError)return <div className="min-w-0 space-y-4">
   <PageHeader title="Invalid applicant filters"
    description="No private application records were loaded."/>

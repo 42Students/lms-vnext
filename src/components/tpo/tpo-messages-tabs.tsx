@@ -13,11 +13,12 @@ export function TpoMessagesTabs({selected}:{selected:MessagesTab}){
   return <nav role="tablist" aria-label="Messages"
     className="flex gap-2 border-b border-border pb-2"
     onKeyDown={event=>{
-      if(!["ArrowLeft","ArrowRight","Home","End"].includes(event.key))return;
+      if(!["ArrowLeft","ArrowRight","Home","End"," "].includes(event.key))return;
       const target=event.target;
       if(!(target instanceof HTMLElement))return;
       const current=target.closest<HTMLAnchorElement>('a[role="tab"]');
       if(!current)return;
+      if(event.key===" "){event.preventDefault();current.click();return;}
       const tabs=Array.from(event.currentTarget.querySelectorAll<HTMLAnchorElement>('a[role="tab"]'));
       const index=tabs.indexOf(current);
       if(index<0||tabs.length===0)return;

@@ -153,6 +153,15 @@ export async function updateCourseDisplayContent(
       .for("update")
       .limit(1);
 
+    // A local course-image URL may only be retained if it already points
+    // to this course's attested private image. Arbitrary /api or other-course
+    // references can never be smuggled through the display metadata writer.
+    if (normalized.thumbnailUrl?.startsWith("/api/") &&
+        (normalized.thumbnailUrl !== "/api/courses/" + courseId + "/image" ||
+         current?.thumbnailUrl !== normalized.thumbnailUrl)) {
+      throw new CoursesServiceError("COURSE_DISPLAY_CONFLICT");
+    }
+
     if (current) {
       if (
         input.expectedVersion !==

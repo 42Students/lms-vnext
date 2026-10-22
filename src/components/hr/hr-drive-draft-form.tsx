@@ -248,9 +248,12 @@ export function HrDriveDraftForm({
     try {
       const response = await apiFetch("/api/placements/recruiter/drives/jd-upload?" +
         new URLSearchParams({ collegeId, objectKey: draft.jdObjectKey }),
-        { method: "GET", credentials: "same-origin", cache: "no-store" }) as { readUrl: string };
+        { method: "GET", credentials: "same-origin", cache: "no-store" }) as { readUrl: string; expiresAt: string };
       const parsed = new URL(response.readUrl);
-      if (parsed.protocol !== "https:") throw new Error("Invalid signed read link");
+      if (parsed.protocol !== "https:" || parsed.username || parsed.password ||
+          !Number.isFinite(Date.parse(response.expiresAt)) ||
+          Date.parse(response.expiresAt) <= Date.now())
+        throw new Error("Invalid signed read link");
       if (popup && !popup.closed) popup.location.replace(parsed.toString());
       else window.location.assign(parsed.toString());
     } catch { popup?.close(); setJdUploadMessage("Could not open the file. Try again after verification."); }

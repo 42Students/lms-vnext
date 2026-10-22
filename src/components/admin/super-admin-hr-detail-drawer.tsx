@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Drawer } from "@/components/ui/drawer";
@@ -275,7 +276,8 @@ export function SuperAdminHrDetailDrawer({
                  <td className="max-w-[230px] break-words px-3 py-3 font-semibold">{grant.collegeName}</td>
                  <td className="px-3 py-3"><StatusBadge tone={status==="Active"?"success":status==="Unverified"?"warning":"neutral"}>{status}</StatusBadge></td>
                  <td className="px-3 py-3 text-xs text-body">
-                  {grant.validUntil?<span className="rounded-md border border-border px-2 py-1">{grant.validUntil.slice(0,10)}</span>:"No recorded expiry"}
+                  {grant.validUntil?<span className="rounded-md border border-border px-2 py-1">{grant.validUntil.slice(0,10)} (through 11:59 PM IST)</span>:
+                    <span title="A legacy no-expiry grant. Existing grants need an explicit admin policy review.">Legacy: no recorded expiry</span>}
                  </td>
                  <td className="px-3 py-3">
                   {current&&grant.status==="ACTIVE"?<Button type="button" variant="secondary" size="sm"
@@ -368,10 +370,16 @@ export function SuperAdminHrDetailDrawer({
                 {!optionsLoading &&
                 !optionsError &&
                 eligibleRelationships.length === 0 ? (
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    No additional eligible college
-                    relationships are available.
-                  </p>
+                  <div role="status" className="mt-3 space-y-2 rounded border border-border bg-surface-subtle p-3 text-xs text-body">
+                    <p>No additional eligible college relationships are available for this company.
+                       Only active, verified company relationships within the selected administration scope can receive grants.</p>
+                    <p>Connect the company to a college first in the{" "}
+                      <Link href="/admin/companies" className="font-semibold text-link underline">
+                        Companies directory
+                      </Link>, then reload the options.</p>
+                    <Button type="button" size="sm" variant="secondary" disabled={pending}
+                      onClick={onReloadOptions}>Reload company relationships</Button>
+                  </div>
                 ) : null}
 
                 <Button
@@ -430,7 +438,7 @@ export function SuperAdminHrDetailDrawer({
               Removing a recruiter suspends the recruiter profile and signs out active sessions.
               The canonical user, audit history and college grants are retained; this is not
               a permanent deletion of a shared identity. An archived account can be restored here.
-              Re-entering the same mobile on the new-account form does not automatically restore it.
+              Re-entering the same mobile on the new-account form does not automatically restore it. Revoked college access stays in the audit history; an authorized new grant is a separately recorded access decision.
             </p>
             {account.status==="ACTIVE"?<Button type="button" variant="danger"
               disabled={pending||lifecyclePending||!account.accountManageable}

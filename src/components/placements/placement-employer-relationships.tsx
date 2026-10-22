@@ -107,6 +107,11 @@ export function PlacementEmployerRelationships({
   const { showToast } = useToast();
   const [pendingId, setPendingId] =
     useState<string | null>(null);
+  const [driveSort,setDriveSort]=useState<"none"|"asc"|"desc">("none");
+  const sortedRelationships=driveSort==="none"?relationships:
+    [...relationships].sort((a,b)=>(driveSort==="desc"?
+      (b.drives??-1)-(a.drives??-1):(a.drives??-1)-(b.drives??-1))||
+      a.name.localeCompare(b.name)||a.relationshipId.localeCompare(b.relationshipId));
   const [restoreConfirmId,setRestoreConfirmId]=useState<string|null>(null);
   const [archiveConfirmId, setArchiveConfirmId] =
     useState<string | null>(null);
@@ -346,9 +351,13 @@ export function PlacementEmployerRelationships({
       </div>
 
       {relationships.length === 0 ? (
-        <p className="m-0 py-6 text-sm text-muted-foreground leading-[22px]">
-          No companies yet.
-        </p>
+        <div role="status" className="space-y-2 py-6 text-sm text-body">
+          <p>No companies yet. Add a company with a work email domain or public website
+             before creating placement drives or inviting recruiters.</p>
+          <Link href="/college/placements/companies" className="font-semibold text-link underline">
+            Open Companies
+          </Link>
+        </div>
       ) : (
         <div className="min-w-0 overflow-x-auto">
           <div role="table" aria-label="College company relationships" className="min-w-[1120px] divide-y divide-border">
@@ -356,11 +365,16 @@ export function PlacementEmployerRelationships({
               <span role="columnheader">Company</span>
               <span role="columnheader">Contact</span>
               <span role="columnheader">Website</span>
-              <span role="columnheader">Drives</span>
+              <span role="columnheader" aria-sort={driveSort==="none"?"none":driveSort==="desc"?"descending":"ascending"}>
+               <button type="button" className="inline-flex min-h-11 items-center gap-1 font-semibold text-link underline md:min-h-9"
+                 onClick={()=>setDriveSort(current=>current==="desc"?"asc":"desc")}>
+                Drives <span aria-hidden="true">{driveSort==="asc"?"↑":driveSort==="desc"?"↓":"↕"}</span>
+               </button>
+              </span>
               <span role="columnheader">Last active</span>
               <span role="columnheader">Actions</span>
             </div>
-          {relationships.map((item) => {
+          {sortedRelationships.map((item) => {
             const draft =
               drafts[item.relationshipId] ?? {
                 isTrusted: item.isTrusted,
@@ -376,10 +390,15 @@ export function PlacementEmployerRelationships({
               <div
                 key={item.relationshipId}
                 role="row"
-                className="grid grid-cols-[1.5fr_1.1fr_1.1fr_0.7fr_1fr_2fr] min-w-0 items-start gap-3 py-4"
+                className={"grid grid-cols-[1.5fr_1.1fr_1.1fr_0.7fr_1fr_2fr] min-w-0 items-start gap-3 py-3 "+(item.relationshipStatus==="ARCHIVED"||item.companyStatus==="ARCHIVED"?"opacity-60":"")}
               >
                 <div role="cell" className="min-w-0">
-                  <p className="m-0 break-words font-semibold text-foreground">{item.name}</p>
+                  <div className="flex min-w-0 items-center gap-2">
+                   <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-primary-subtle text-xs font-bold text-primary-text">
+                    {item.name.trim().slice(0,2).toUpperCase()||"CO"}
+                   </span>
+                   <p className="m-0 min-w-0 break-words font-semibold text-foreground">{item.name}</p>
+                  </div>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {item.verifiedAt ? <StatusBadge tone="success">Verified by 42</StatusBadge> : null}
                     {item.companyStatus==="ARCHIVED"||item.relationshipStatus==="ARCHIVED" ?
@@ -388,9 +407,9 @@ export function PlacementEmployerRelationships({
                       {draft.isTrusted?"Trusted":"Unverified"}
                     </StatusBadge>
                   </div>
-                  <p className="mt-1 break-words text-xs text-body">
-                    {item.primaryDomain??(item.websiteUrl?employerWebsiteHost(item.websiteUrl):"No domain registered")}
-                    {item.industry?" · "+item.industry:""}
+                  <p className="mt-1 break-words text-xs text-body">{item.industry||"Industry not specified"}</p>
+                  <p className="mt-1 break-words text-xs text-muted-foreground">
+                   {item.primaryDomain??(item.websiteUrl?employerWebsiteHost(item.websiteUrl):"No domain registered")}
                   </p>
                 </div>
                 <div role="cell" className="min-w-0 break-words text-sm text-body">
@@ -401,7 +420,13 @@ export function PlacementEmployerRelationships({
                   {item.websiteUrl ?
                     <a href={item.websiteUrl} rel="noopener noreferrer"
                       className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-                      {employerWebsiteHost(item.websiteUrl)??"Employer website"}
+                      <span className="inline-flex items-center gap-1">
+                       <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"
+                        fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                        <circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 4 3 14 0 18M12 3c-3 4-3 14 0 18"/>
+                       </svg>
+                       Visit <span className="sr-only">{item.name} website</span>
+                      </span>
                     </a> : <span className="text-muted-foreground">—</span>}
                 </div>
                 <div role="cell" className="text-sm text-body">{item.drives??"—"}</div>
@@ -415,6 +440,7 @@ export function PlacementEmployerRelationships({
                   size="sm"
                   variant="secondary"
                   className="min-h-11 w-full sm:w-auto md:min-h-9"
+                  aria-label={"View drive history for "+item.name}
                   onClick={() => void openHistory(item.relationshipId)}
                 >
                   History
@@ -499,6 +525,7 @@ export function PlacementEmployerRelationships({
                     </span>
                   ) : item.relationshipStatus==="ARCHIVED" ? (
                     <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={busy}
+                      aria-label={"Restore "+item.name+" in this college"}
                       onClick={()=>setRestoreConfirmId(item.relationshipId)}>Restore</Button>
                   ) : (<>
                   <Button
@@ -523,7 +550,8 @@ export function PlacementEmployerRelationships({
                     title={item.drives==null
                       ?"Drive usage is unavailable. Refresh before archiving."
                       :item.drives>0?"Used by drives: switch it off instead":undefined}
-                    onClick={()=>setArchiveConfirmId(item.relationshipId)}>Archive</Button>
+                    aria-label={"Archive "+item.name+" from this college"}
+                    onClick={()=>setArchiveConfirmId(item.relationshipId)}>Delete</Button>
                   </>)}
                 </div>
                 </div>

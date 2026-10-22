@@ -51,8 +51,28 @@ export function PublicRecruiterJoinForm({
   useEffect(()=>{
     if(preview.kind!=="READY"||hasRecordedOpen.current)return;
     hasRecordedOpen.current=true;
-    void fetch("/api/public/join-link/open",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({token,scope})}).catch(()=>undefined);
+    // Count one preview open per invitation and browser session, rather than
+    // once per React mount. Never store the bearer token itself in storage.
+    // The server still owns the authoritative atomic joins/opens counters.
+    void (async()=>{
+      let key:string|null=null;
+      try {
+        const digest=await crypto.subtle.digest("SHA-256",
+          new TextEncoder().encode(scope+":"+token));
+        key="placement-join-open:"+
+          Array.from(new Uint8Array(digest)).map(v=>v.toString(16).padStart(2,"0")).join("");
+        if(sessionStorage.getItem(key)==="1")return;
+      }catch{key=null;}
+      try {
+        const response=await fetch("/api/public/join-link/open",{
+          method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({token,scope}),
+        });
+        if(response.ok&&key){
+          try{sessionStorage.setItem(key,"1");}catch{/* Private browsing. */}
+        }
+      }catch{/* A lost analytics event cannot block registration. */}
+    })();
   },[token,scope,preview.kind]);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");

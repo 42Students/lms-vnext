@@ -1,5 +1,12 @@
 import { z } from "zod";
 export const SUPER_ADMIN_READ_PAGE_SIZE = 25;
+export const SUPER_ADMIN_READ_PAGE_SIZE_OPTIONS = [25,50,100,200] as const;
+export const SUPER_ADMIN_FACULTY_ASSIGNMENT_PAGE_SIZE_OPTIONS = [10,25,50,100] as const;
+export const SUPER_ADMIN_AUTOCOMPLETE_LIMIT = 15;
+export const SUPER_ADMIN_POPULAR_LIMIT = 10;
+/** Legacy faculty-assignment preference; client reads it in the owning
+ * faculty assignments table, not in server-side directory requests. */
+export const SUPER_ADMIN_FACULTY_PAGE_SIZE_STORAGE_KEY = "faculty-assignment-page-size";
 // Directory handlers are called from URLs and trusted internal code. Admit
 // ordinary integers/decimal strings, never hex, exponent, blank or arrays.
 const strictDecimal=(min:number,max:number,fallback:number)=>z.union([
