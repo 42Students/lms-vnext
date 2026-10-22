@@ -60,8 +60,11 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       method:"POST",credentials:"same-origin",keepalive:true,
       headers:{"content-type":"application/json"},
       body:JSON.stringify({deliveryId:id}),
-    }).catch(()=>{/* Private recent selections remain available. */})
-      .finally(()=>{selectionWriteRef.current = false;});
+    }).then(response=>{
+      if (!response.ok) setCourseError("Course selection could not be recorded. Retry by selecting the course again.");
+    }).catch(()=>{
+      setCourseError("Course selection could not be recorded. Retry by selecting the course again.");
+    }).finally(()=>{selectionWriteRef.current = false;});
   }
   // Preserve the old learner header's authorized course lookup when moving
   // its search box into the common command bar.
@@ -88,7 +91,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         void apiFetch<{counts:Record<string,number>}>(
           "/api/courses/search/selection",{cache:"no-store"})
           .then(value=>{if(!cancelled)setPopularity(value.counts??{});})
-          .catch(()=>{/* Private recent history remains a fallback. */});
+          .catch(()=>{
+            if (!cancelled) setCourseError("Popular course suggestions are unavailable. Retry to refresh.");
+          });
       })
       .catch(error => {
         if (!cancelled) {
