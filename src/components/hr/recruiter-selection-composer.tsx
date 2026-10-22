@@ -52,7 +52,7 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
   const submissionId=nonce.current??crypto.randomUUID();
   nonce.current=submissionId;
   try{
-   await apiFetch<{id:string;status:string}>(
+   const receipt=await apiFetch<{id:string;status:string;submitted:boolean}>(
     "/api/placements/recruiter/drives/"+encodeURIComponent(jobId)+"/selections",{
     method:"POST",credentials:"same-origin",
     headers:{"Content-Type":"application/json"},
@@ -64,7 +64,9 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
    });
    setConfirming(false);setSelected([]);setPackageDescription("");
    setCtcLpa("");nonce.current=null;
-   setSuccess("Selection list sent for placement-cell verification. No offer was issued.");
+   setSuccess(receipt.submitted
+    ?chosen.length+" sent. The placement cell verifies each before students see an offer."
+    :chosen.length+" already sent. The placement cell verifies each before students see an offer.");
    setOpen(false);router.refresh();
   }catch{
    setError("Could not send the selection list. Nothing was issued. Check that the placement service is available and try again.");
