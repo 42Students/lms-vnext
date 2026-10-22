@@ -9,7 +9,7 @@ import {escapeRoleDirectoryCsvCell} from "./college-role-directory-export";
 import {collegeRoleDirectoryQuerySchema,type CollegeDirectoryKind} from "./college-role-directory-model";
 
 function gender(document:Record<string,unknown>|null){
- const detail=document?.personalDetails;
+ const detail=document?.["personalDetails"];
  return detail && typeof detail==="object" && "gender" in detail &&
   typeof detail.gender==="string"?detail.gender:"";
 }
