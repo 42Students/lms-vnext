@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   E2E_FIXTURE_INSERT_ORDER,
+  type E2EFixtureKey,
   E2E_LEGACY_FIXTURE_KEYS,
   buildE2EFixtureManifest,
   buildE2EFixtureSeedLedger,
@@ -51,12 +52,12 @@ describe("isolated cross-module E2E fixture contract", () => {
   });
 
   it("reuses only matching IDs, not an unrelated tenant's row", () => {
-    const stored = new Map([["collegeA" as const, manifest.ids.collegeA]]);
+    const stored = new Map<E2EFixtureKey,string>([["collegeA", manifest.ids.collegeA]]);
     const resolution = reconcileE2EFixtureManifest(manifest, stored);
     expect(resolution.reused).toBe(1);
     expect(resolution.missing).toBe(manifest.nodes.length - 1);
     expect(() => reconcileE2EFixtureManifest(
-      manifest, new Map([["collegeA" as const, buildE2EFixtureManifest("qa_lane13_other").ids.collegeA]]),
+      manifest, new Map<E2EFixtureKey,string>([["collegeA", buildE2EFixtureManifest("qa_lane13_other").ids.collegeA]]),
     )).toThrow("collides");
   });
 
