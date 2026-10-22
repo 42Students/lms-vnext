@@ -22,7 +22,8 @@ export const runtime="nodejs";
  * adapter must rewrite it after verifying the provider signature.
  */
 const noStore={"Cache-Control":"no-store"};
-function reply(body:{error:string}|{accepted:true;replayed:boolean},status=200){
+function reply(body:{error:string;outcome?:string;action?:string;retryable?:boolean}|
+  {accepted:true;replayed:boolean;outcome:"POSTED"|"STORED"|"DUPLICATE"|"NOT_OURS"},status=200){
  return NextResponse.json(body,{status,headers:noStore});
 }
 export async function POST(request:Request){
@@ -33,8 +34,11 @@ export async function POST(request:Request){
  try{
   const raw=await readBoundedRecruiterInboundBody(request);
   if(raw.kind==="TOO_LARGE"){
-   console.warn("[recruiter-mail-inbound] payload too large");
-   return reply({error:"INVALID_BODY"},413);
+   // The provider worker must retain these oversize messages in its D1
+   // dead-letter inbox and notify operators rather than retrying or ACKing.
+   console.warn("[recruiter-mail-inbound] QUARANTINE_OVERSIZE: manual follow-up required");
+   return reply({error:"INVALID_BODY",outcome:"STORED",
+    action:"QUARANTINE_AND_NOTIFY_OPERATIONS",retryable:false},413);
   }
   if(raw.kind==="INVALID_UTF8"){
    console.warn("[recruiter-mail-inbound] invalid utf8");
@@ -54,7 +58,9 @@ export async function POST(request:Request){
   // Keep it out of the HTTP response, but make it observable to operators.
   console.info("[recruiter-mail-inbound] outcome",result.outcome??"STORED",
    result.replayed?"replayed":"new");
-  return reply({accepted:true,replayed:result.replayed});
+  const outcome=result.replayed?"DUPLICATE":result.outcome==="POSTED"?"POSTED":
+   result.outcome==="STORED"?"STORED":"NOT_OURS";
+  return reply({accepted:true,replayed:result.replayed,outcome});
  }catch{
   console.error("[recruiter-mail-inbound] intake unavailable");
   return reply({error:"SERVICE_UNAVAILABLE"},503);
