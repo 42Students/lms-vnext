@@ -23,6 +23,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
  const lock=useRef(false);
  const [error,setError]=useState<string|null>(null);
  const [notice,setNotice]=useState("");
+ const [createdLessonId,setCreatedLessonId]=useState<string|null>(null);
  const [fieldErrors,setFieldErrors]=useState<{path?:string;name?:string}>({});
  async function submit(event:React.FormEvent<HTMLFormElement>){
   event.preventDefault();
@@ -33,24 +34,29 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
   else if(name.trim().length>255)errors.name="Maximum 255 characters";
   setFieldErrors(errors);
   if(Object.keys(errors).length)return;
-  lock.current=true;setPending(true);setError(null);setNotice("");
+  lock.current=true;setPending(true);setError(null);setNotice("");setCreatedLessonId(null);
   const selected=paths.find(item=>item.id===pathId);
   try{
    // Legacy sequence=0 means atomically append under the path lock; do
    // not race a client GET(max sequence) against another author's create.
-   await apiFetch("/api/courses/lessons",{method:"POST",timeoutMs:12000,
+   const created=await apiFetch<{lesson:{id:string}}>("/api/courses/lessons",{method:"POST",timeoutMs:12000,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({learningPathId:pathId,name:name.trim(),
      description:description.trim()||null,sequence:0,
      active:true,enabled:visibleToStudents,visibleToStudents}),
    });
+   if(!created?.lesson||!/^[0-9a-f-]{36}$/i.test(created.lesson.id))
+    throw new Error("The lesson was submitted but its saved identifier was not returned. Refresh Lessons before trying again.");
+   setCreatedLessonId(created.lesson.id);
    setNotice("Created lesson “"+name.trim()+"” in "+(selected?.courseName??"the selected Course")+".");
    setName("");setDescription("");setVisibleToStudents(true);router.refresh();
   }catch(e){
    const message=e instanceof Error?e.message:"Check your entries and try again.";
-   setError("Lesson was not created. "+(
-    /LESSON_NAME_CONFLICT|duplicate/i.test(message)
-     ?"A lesson with this name already exists in the course":message));
+   setError(/submitted but its saved identifier/i.test(message)
+    ? "The lesson may already have been saved. Refresh Lessons before trying again; another submission could create a duplicate."
+    : "Lesson could not be confirmed. "+(
+       /LESSON_NAME_CONFLICT|duplicate/i.test(message)
+        ?"A lesson with this name already exists in the course":message));
   }finally{lock.current=false;setPending(false);}
  }
  if(!paths.length)return <section aria-label="Create New Lesson" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
@@ -90,7 +96,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
     onChange={event=>setDescription(event.target.value)}
     className="min-h-11 w-full md:min-h-9"/>
   </label>
-  <p className="text-xs text-muted-foreground">A new lesson is appended to its course. You can reorder lessons after saving.</p>
+  <p className="text-xs text-muted-foreground">A new lesson is appended to its course. You can reorder lessons after saving. Content is a separate, individually validated step; creating the lesson does not create or publish any resource, assignment or quiz.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm font-semibold">
    <Checkbox disabled={pending} checked={visibleToStudents}
     onChange={event=>setVisibleToStudents(event.target.checked)}/>
@@ -100,7 +106,12 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
   {error?<Alert tone="error" title="Lesson was not created">{error}
    <Button type="button" size="sm" variant="ghost" onClick={()=>setError(null)}>Dismiss</Button>
   </Alert>:null}
-  {notice?<Alert tone="success" role="status">{notice}</Alert>:null}
+  {notice?<Alert tone="success" role="status">{notice}
+    {createdLessonId?<p className="mt-2 text-sm">Content is saved separately. Add resources,
+     assignments, videos or quizzes to the new lesson using the course content directory.
+     <Link href="/admin/resources" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Add lesson content →</Link>
+    </p>:null}
+   </Alert>:null}
   <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!pathId||!name.trim()}>
     <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" className="mr-2 inline-block">
      <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
