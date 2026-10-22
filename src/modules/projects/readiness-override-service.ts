@@ -32,9 +32,9 @@ export async function readProjectReadinessOverride(db:ReadableDb,projectId:strin
       eq(activityEvents.subjectId,projectId),eq(activityEvents.collegeId,collegeId),
       eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN)))
     .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(1);
-  const value=row?.metadata?.state;
+  const value=row?.metadata?.["state"];
   const state:ReadinessOverrideState|null=value==="FORCE_UNLOCK"||value==="FORCE_BLOCK"||value==="CLEAR"?value:null;
-  return {state, note:state&&state!=="CLEAR"&&typeof row?.metadata?.note==="string"?row.metadata.note:null,
+  return {state, note:state&&state!=="CLEAR"&&typeof row?.metadata?.["note"]==="string"?row.metadata["note"]:null,
     occurredAt:row?.occurredAt??null,overriddenBy:row?.overriddenBy??null};
 }
 
