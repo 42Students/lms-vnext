@@ -39,7 +39,7 @@ export async function GET(_request:Request,{params}:{
   const head=await headObject(getPrivateR2Config(),row.key);
   const trusted=head?.metadata["malware-scan-status"]==="CLEAN"&&(
     head?.metadata["scan-attested-by"]==="lms-vnext-privileged-scanner"||
-    (process.env.APP_ENV==="development"&&
+    (process.env["APP_ENV"]==="development"&&
      head?.metadata["scan-attested-by"]==="lms-vnext-dev-format-check"));
   if(!head||!trusted||head.contentType!==row.type)
    return NextResponse.json({error:"SCREENSHOT_NOT_AVAILABLE"},{status:404});
