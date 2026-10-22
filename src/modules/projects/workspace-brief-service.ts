@@ -54,9 +54,9 @@ export async function updateProjectWorkspaceBrief(context:RequestContext,project
   // snapshots; the strict request schema prevents clients from changing them.
   const legacy=translateLegacyWorkspaceOverview(project.legacyOverview);
   const existing=translateLegacyWorkspaceOverview(original);
-  const historicalDefinition=original.definitionOfDone ??
+  const historicalDefinition=original["definitionOfDone"] ??
     (project.legacyOverview&&typeof project.legacyOverview==="object"?
-      (project.legacyOverview as Record<string,unknown>).definitionOfDone:undefined);
+      (project.legacyOverview as Record<string,unknown>)["definitionOfDone"]:undefined);
   const mergedBrief={
     ...legacy.opaqueFacts,...existing.opaqueFacts,
     ...original,...input.brief,
