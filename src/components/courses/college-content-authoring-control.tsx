@@ -18,9 +18,10 @@ type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;cou
 type Kind="YOUTUBE"|"LIVE_CLASS"|"RESOURCE";
 type Delivery={deliveryId:string;offeringId:string;sectionName:string;sectionCode:string};
 type MeetingZone=string;
-const MEETING_ZONES=["Asia/Kolkata","UTC","America/New_York","America/Chicago",
- "America/Los_Angeles","Europe/London","Europe/Paris","Asia/Dubai",
- "Asia/Singapore","Asia/Tokyo","Australia/Sydney","Pacific/Auckland"] as const;
+const MEETING_ZONES = Array.from(new Set([
+ "Asia/Kolkata", "UTC",
+ ...Intl.supportedValuesOf("timeZone"),
+])).sort((left, right) => left.localeCompare(right));
 const dateInput=(iso:string|null,zone:MeetingZone="Asia/Kolkata")=>iso?new Intl.DateTimeFormat("sv-SE",{
  timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",
  hour:"2-digit",minute:"2-digit",hourCycle:"h23",

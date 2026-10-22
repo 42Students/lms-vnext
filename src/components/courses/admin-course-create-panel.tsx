@@ -148,6 +148,8 @@ export function AdminCourseCreatePanel({
   const priorTenantSignature=useRef(tenantSignature);
   useEffect(()=>{
     if(priorTenantSignature.current!==tenantSignature){
+      uploadRef.current?.abort();
+      uploadRef.current=null;
       priorTenantSignature.current=tenantSignature;
       setImageBusy(false);setImageFile(null);setImageReceipt(null);
       setCreatedImageCourseId(null);setImageError("");
