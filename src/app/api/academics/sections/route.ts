@@ -58,7 +58,7 @@ export async function GET(request: Request) {
         message:"Confirm the class selection with an authenticated POST."},{status:405});
       const rows=mode==="popular"?
         await listPopularClasses(context,programId,limit):
-        await searchSections(context,{q,programId,limit});
+        await searchSections(context,{q,...(programId !== undefined ? {programId} : {}),limit});
       const items=rows.map(row=>({id:row.id,name:row.name,code:row.code,
         className:row.name,batchId:row.cohortId,batchName:row.cohortName,
         programId:row.programId,programName:row.programName,
