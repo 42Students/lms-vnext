@@ -31,7 +31,7 @@ export async function getAdminScopedSearchSuggestions(
  }):null;
  const unique=(items:readonly string[])=>[...new Set(items.map(x=>x.trim()).filter(Boolean))].slice(0,15);
  return {
-  recent:unique(recent.map(row=>row.name)),
+  recent:unique(recent.map(row=>row.name).filter((name):name is string=>name!==null)),
   popular:[] as string[],
   results:unique(results?.items.map(row=>row.title)??[]).slice(0,15),
  };
