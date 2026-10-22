@@ -54,7 +54,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const availableLessons=useMemo(()=>lessons.filter(lesson=>lesson.offeringId===offeringId),
   [lessons,offeringId]);
  const chosen=availableLessons.find(x=>x.id===lessonId);
- const pointsValid=points.trim().length>0&&Number.isInteger(Number(points))&&Number(points)>=0&&Number(points)<=10000;
+ const pointsValid=points.trim().length>0&&Number.isInteger(Number(points))&&Number(points)>=0&&Number(points)<=1000;
  const sections=useMemo(()=>deliveries.filter(d=>d.offeringId===chosen?.offeringId),
    [deliveries,chosen?.offeringId]);
  function discardDraft(){
@@ -88,7 +88,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   if(!chosen){setError("Select a lesson");return;}
   const maxPoints=Number(points);
   if(!title.trim()||title.trim().length>255||!pointsValid||!Number.isInteger(maxPoints)){
-   setError("Enter an assignment title (1–255 characters) and points from 0 to 10000.");return;
+   setError("Enter an assignment title (1–255 characters) and points from 0 to 1000.");return;
   }
   if(description.length>10000){setError("Instructions must be at most 10,000 characters.");return;}
   if(allowedMethods.length===0){setError("Select at least one allowed submission method.");return;}
@@ -194,7 +194,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <Input required maxLength={255} placeholder="e.g., Module 1 Project" value={title} disabled={pending} aria-invalid={Boolean(fieldErrors.title)} onChange={e=>{setTitle(e.target.value);setFieldErrors(old=>({...old,title:undefined}));}}
      className="min-h-11 w-full md:min-h-9"/></label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Points
-    <Input type="number" min={0} max={10000} placeholder="Enter points" value={points} disabled={pending} aria-invalid={Boolean(fieldErrors.points)}
+    <Input type="number" min={0} max={1000} placeholder="Enter points" value={points} disabled={pending} aria-invalid={Boolean(fieldErrors.points)}
      onChange={e=>{setPoints(e.target.value);setFieldErrors(old=>({...old,points:undefined}));}}
      className="min-h-11 w-full md:min-h-9"/></label>
    <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
