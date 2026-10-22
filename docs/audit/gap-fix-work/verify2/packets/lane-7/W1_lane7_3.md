@@ -114,6 +114,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Reconcile environment variables and test nonprod deny-by-default across all sender paths.
 
 ## G2-18-004-014 [P1] GAP facet F03
+- [ ] Partial: unsafe external assessment URLs remain filtered and same-tab navigation is enforced with updated tests; legacy job/interview/course CTA target mapping needs separate confirmation.
 - Files: src/modules/activity/learner-notification-inbox-model.ts, src/components/activity/learner-notifications-inbox.tsx
 - Legacy: Legacy detail modal CTA `Take Assessment`, `Interview Schedule`, `View Application`, `View Course` based on type. `docs/legacy-source/frontend/src/components/Notifications/NotificationsContent.jsx:65-110`, `docs/legacy-source/frontend/src/components/Notifications/NotificationsContent.jsx:712-735`
 - Expected fix: Map legacy job/interview/course/assessment targets to safe new route and explicit external consent.
