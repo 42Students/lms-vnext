@@ -27,8 +27,8 @@ import {recruiterInviteAcceptanceBodySchema} from "./recruiter-invite-otp-accept
 export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode:unknown,rawDetails:unknown={}):
  Promise<{accepted:true;ok:true;outcome:"JOINED"|"PENDING_CONSENT";status:"JOINED"|"PENDING_HR";collegeName:string;signInEmail:string}> {
  const invalid=()=>new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
- const secret=process.env.TPO_RECRUITER_OTP_HMAC_SECRET??"";
- if(process.env.TPO_RECRUITER_OTP_READY!=="VERIFIED"||
+ const secret=process.env["TPO_RECRUITER_OTP_HMAC_SECRET"]??"";
+ if(process.env["TPO_RECRUITER_OTP_READY"]!=="VERIFIED"||
   Buffer.byteLength(secret,"utf8")<32||
   typeof rawToken!=="string"||!isRecruiterInviteTokenShape(rawToken)||
   !recruiterInviteOtpSchema.safeParse(rawCode).success)throw invalid();
@@ -325,6 +325,7 @@ export async function resolveSignedInRecruiterPendingInvite(
      eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,"TPO")));
    const notice=publicRecruiterJoinedNotification({
     name:record.company.name,companyName:record.company.name,scope:"COLLEGE"});
+   if(!event)throw invalid();
    if(team.length)await tx.insert(inAppNotifications).values(team.map(member=>({
     eventId:event.id,userId:member.userId,...notice,
    }))).onConflictDoNothing();
