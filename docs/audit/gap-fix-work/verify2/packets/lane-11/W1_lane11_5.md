@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/colleges/admin-tenant-setup-journey.ts, src/modules/tenant-domains/service.ts
 - Legacy: Global-only `GET /onboarding/resolve-preview?host` returns tenant, canonical host and redirect preview. `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java:273-313`
 - Expected fix: Implement read-only global-admin resolve preview without DNS fetch.
+
+## Fast verification triage (2026-10-22)
+
+- G2-3-028-084: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-3-014-001: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-3-014-018: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-3-014-025: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-3-014-029: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-3-014-055: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-11-022-019: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-19-023-026: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-19-023-058: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-4-014-022: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-4-031-067: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-4-031-071: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-13-030-002: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-13-030-025: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-13-030-026: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-13-030-036: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-13-030-044: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-4-028-007: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-13-031-090: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-5-005-005: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-5-006-044: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-5-007-028: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-5-009-037: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-5-011-030: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
+- G2-5-024-002: DEFERRED — requires scoped implementation and integration evidence; no parity claim made.
