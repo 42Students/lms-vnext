@@ -50,8 +50,8 @@ export type ScheduledEvent = {
 export function expandIstSessions(input: RecurringPreviewInput): Omit<RecurringSlot, "conflicts">[] {
   const selected = new Set(input.weekdays);
   const result: Omit<RecurringSlot, "conflicts">[] = [];
-  const [sh, sm] = input.startTime.split(":").map(Number);
-  const [eh, em] = input.endTime.split(":").map(Number);
+  const [sh = 0, sm = 0] = input.startTime.split(":").map(Number);
+  const [eh = 0, em = 0] = input.endTime.split(":").map(Number);
   for (let ms = Date.parse(input.from + "T00:00:00Z");
     ms <= Date.parse(input.to + "T00:00:00Z"); ms += 86400000) {
     const day = new Date(ms);
