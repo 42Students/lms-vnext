@@ -39,6 +39,14 @@ describe("College classes safe CSV export", () => {
     expect(csv).toContain('"50"');
     expect(csv.split("\r\n")).toHaveLength(3);
     expect(csv).not.toContain("EXPORT TRUNCATED");
+    // Imported/older class records can omit optional values. Preserve the
+    // exact CSV column count and encode missing values as blank cells.
+    const sparseCsv=renderCollegeClassesCsv([{
+      ...row,linkedProgramId:null,periodStart:null,periodEnd:null,
+      minSize:null,capacity:null,
+    }],false);
+    expect(sparseCsv.split("\r\n")).toHaveLength(2);
+    expect(sparseCsv).toContain(',"",""');
   });
  it("cohortStatus is applied to classes CSV",()=>{
   expect(collegeClassesExportSchema.safeParse({cohortStatus:"INVALID"}).success).toBe(false);
