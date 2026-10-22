@@ -34,7 +34,7 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
   membershipId:collegeMemberships.id,offerId:placementOffers.id,name:users.displayName,
   rollNumber:learnerProfiles.rollNumber,programme:programs.name,branch:departments.name,
   batch:cohorts.name,company:placementCompanies.name,companyRelationshipId:placementCompanyRelationships.id,
-  status:placementOffers.status,kind:placementOffers.kind,
+  status:placementOffers.status,kind:placementOffers.kind,releasedAt:placementOffers.releasedAt,
   countsAsPlaced:placementJobs.countsAsPlaced,
   annualCtcInr:placementOffers.annualCtcInr,joining:placementJoiningOutcomes.status,
  }).from(placementOffers)
