@@ -15,6 +15,9 @@ type ResourceEvent = {
   summary: string;
   subjectLabel: string | null;
   actorDisplayName: string | null;
+  actorType?: string | null;
+  actorUserId?: string | null;
+  resourceKey?: string | null;
   occurredAt: string;
 };
 type ResourceAction = "CREATE" | "UPDATE" | "UPSERT" | "DELETE" | "UNKNOWN";
@@ -30,7 +33,7 @@ const toneByAction = {
 } as const;
 
 function resourceLabel(event: ResourceEvent) {
-  const original = event.subjectLabel || event.summary || "—";
+  const original = event.resourceKey || event.subjectLabel || event.summary || "—";
   return original.startsWith("resource-")
     ? original.slice("resource-".length).replaceAll("-", " ").replace(/^./, char => char.toUpperCase())
     : original;
@@ -66,7 +69,8 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
     if (actionFilter !== "ALL" && row.action !== actionFilter) return false;
     if (!query) return true;
     return [row.label, row.event.summary, row.event.actorDisplayName,
-      labelByAction[row.action],row.event.eventType].join(" ").toLocaleLowerCase("en").includes(query);
+      row.event.actorUserId, row.event.actorType, labelByAction[row.action],
+      row.event.eventType].join(" ").toLocaleLowerCase("en").includes(query);
   });
   const pageCount = Math.max(1, Math.ceil(filtered.length / 10));
   const currentPage = Math.min(page, pageCount);
@@ -81,9 +85,14 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
         {row.action==="UNKNOWN"?row.event.eventType:labelByAction[row.action]}
       </StatusBadge> },
     { key: "actor", header: "Actor", mobilePriority: "secondary",
-      cell: row => row.event.actorDisplayName || "System" },
+      cell: row => <span><span className="block">{row.event.actorDisplayName || "System"}</span>
+        {row.event.actorType?<span className="block text-xs text-muted-foreground">{row.event.actorType}</span>:null}
+      </span> },
     { key: "when", header: "When", mobilePriority: "secondary",
-      cell: row => formatWhen(row.event.occurredAt) },
+      cell: row => <time dateTime={row.event.occurredAt}
+        title={new Date(row.event.occurredAt).toLocaleString("en-IN",{
+          dateStyle:"full",timeStyle:"long",timeZone:"Asia/Kolkata",
+        })}>{formatWhen(row.event.occurredAt)}</time> },
   ];
   return <section aria-label="Resource activity" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
     <div>
@@ -122,7 +131,7 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
         </Select>
       </label>
     </div>
-    <DataTable columns={columns} rows={visible}
+    <DataTable columns={columns} rows={visible} mobileMode="scroll"
       getRowKey={row => row.event.id} caption="Resource activity"
       empty={<EmptyState title={rows.length === 0
         ? "No resource changes yet" : "No resource changes match these filters"}
