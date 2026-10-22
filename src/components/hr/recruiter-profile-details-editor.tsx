@@ -123,7 +123,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
       }
     }
     if(code==="INVALID_MOBILE")
-      errors.phone="Enter a valid 10-digit mobile number, or leave it blank";
+      errors.phone="Check the mobile number.";
     setFieldErrors(errors);
     if(Object.keys(errors).length){
      const first=(["firstName","lastName","title","phone"] as const).find(key=>errors[key]);
