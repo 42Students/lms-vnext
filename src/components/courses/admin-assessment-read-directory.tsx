@@ -90,6 +90,8 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
               </td>
               <td className="sticky right-0 z-10 border-l border-border bg-surface px-3 py-3 shadow-[-4px_0_6px_-5px_rgba(0,0,0,0.2)]">
                 <div className="flex min-w-[200px] flex-col items-start gap-2">
+                  <Link href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open offering →</Link>
                   <SuperAdminAssignmentSubmissionsDialog title={item.title} count={item.submittedLearners}>
                     <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
                       specificDeliveryId={item.deliveryId} maxPoints={item.points}
@@ -127,6 +129,8 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
             <td className="whitespace-nowrap px-3 py-3">{formatDue(item.dueAt)}</td>
             <td className="sticky right-0 z-10 border-l border-border bg-surface px-3 py-3 shadow-[-4px_0_6px_-5px_rgba(0,0,0,0.2)] group-hover:bg-muted">
               <div className="flex min-w-[215px] flex-col items-start gap-2">
+                <Link href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                  className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open offering →</Link>
                 <CollegeQuizActions quiz={{id:item.id,title:item.title,status:item.status,dueAt:item.dueAt}}/>
                 <div className="flex flex-wrap items-center gap-2">
                   <FacultyItemActions

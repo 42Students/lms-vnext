@@ -58,10 +58,13 @@ describe("SA-academics-people-101 multi-course faculty assignment",()=>{
   expect(form).toContain('apiFetch("/api/admin/faculty-assignment/batch"');
   expect(form).toContain("body:JSON.stringify({deliveryIds,membershipId,role})");
   expect(form).toContain("useGuardedAction");
-  expect(form).toContain('setNotice(deliveryIds.length===1?"Teaching assignment created."');
-  expect(form).toContain("teaching assignments for this class.");
+  expect(form).toContain("const success=deliveryIds.length===1");
+  expect(form).toContain("setNotice(success)");
+  expect(form).toContain("assignments created");
   expect(form).toContain('setOtherDeliveryIds([])');
-  expect(form).toContain("Could not assign this faculty member.");
-  expect(form.indexOf("setOtherDeliveryIds([]);setMembershipId")).toBeGreaterThan(form.indexOf("await apiFetch("));
+  expect(form).toContain("Failed to create assignment. Please check the supplied details.");
+  // A successful batch clears courses but preserves the chosen faculty and scope.
+  expect(form.indexOf('setDeliveryId("");setOtherDeliveryIds([]);setCourseQuery("")')).toBeGreaterThan(form.indexOf("await apiFetch("));
+  expect(form).not.toContain('setOtherDeliveryIds([]);setMembershipId');
  });
 });

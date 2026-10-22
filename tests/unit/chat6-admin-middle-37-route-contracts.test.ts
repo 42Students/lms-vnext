@@ -18,7 +18,15 @@ describe("SA-admin-middle-route-01: exact second third entrypoint authorization 
     expect(page).toMatch(/export default (async )?function|export \{ default \}/);
     const hasLocalContext=page.includes("getCurrentRequestContext()");
     const delegated=page.includes("SuperAdminContentDirectoryPage");
-    expect(hasLocalContext||delegated,route+" lacks authenticated context").toBe(true);
+    // Hiring is a compatibility URL; its canonical analytics target owns the scoped read.
+    const canonicalHiringRedirect=route==="/admin/placements/hiring" &&
+      page.includes('redirect("/admin/placements/analytics"');
+    if(canonicalHiringRedirect){
+      const analytics=src("src/app/(authenticated)/admin/placements/analytics/page.tsx");
+      expect(analytics).toContain("getCurrentRequestContext()");
+      expect(analytics).toContain("requireSuperAdminSelectedCollege");
+    }
+    expect(hasLocalContext||delegated||canonicalHiringRedirect,route+" lacks authenticated context").toBe(true);
     if(delegated){
       const shared=src("src/components/courses/super-admin-content-directory-page.tsx");
       expect(shared).toContain("getCurrentRequestContext()");
@@ -52,7 +60,7 @@ describe("SA-admin-middle-route-01: exact second third entrypoint authorization 
   const page=src("src/app/(authenticated)/admin/inbound-mail/page.tsx");
   expect(page).toContain('requirePermission(context,"admin-scope.select")');
   expect(page).toContain("listInboundMailForAdmin(context,parsed.data)");
-  expect(page).toContain("Private incoming messages.");
+  expect(page).toContain("Private platform-wide inbox.");
   expect(page).not.toContain("sendEmail(");
  });
  it("SA-admin-middle-route-04 deep-linked class move uses audited same-period capacity checks",()=>{

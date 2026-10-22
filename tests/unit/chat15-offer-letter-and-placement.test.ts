@@ -20,7 +20,7 @@ describe("chat-15 learner offers and internship truth",()=>{
   expect(page).toContain("safeLearnerOfferLetterHref(row.offer.offerLetterUrl)");
   const card=source("src/components/placements/learner-placement-offers.tsx");
   expect(card).toContain('<a href={item.letterHref} target="_blank" rel="noopener noreferrer"');
-  expect(card).toContain("Offer letter</a>");
+  expect(card).toContain("View offer letter</a>");
  });
  it("LEARNER-placements-45 reflects internship and LOI cascade exceptions",()=>{
   expect(learnerOfferCountsAsPlaced({kind:"OFFER",jobEmploymentType:"FULL_TIME",roleEmploymentType:"FULL_TIME"})).toBe(true);

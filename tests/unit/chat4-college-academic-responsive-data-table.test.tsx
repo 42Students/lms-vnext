@@ -41,7 +41,7 @@ describe("COL-UX-ACADEMIC-TABLE-01 responsive Semester and Batch directories",()
   const html=renderToStaticMarkup(<CollegeAcademicDirectory data={data}/>);
   expect(html).toContain("Semester directory");
   expect(html).toContain("Semester 4");
-  expect(html).toContain("Mapped courses");
+  expect(html).toContain("Courses");
   expect(html).toContain("22");
   expect(html).toContain('data-semester="semester-1"');
   expect(html).toContain('data-slot="data-table"');
@@ -63,7 +63,9 @@ describe("COL-UX-ACADEMIC-TABLE-01 responsive Semester and Batch directories",()
   expect(html).toContain("Batch directory");
   expect(html).toContain("Batch 2099");
   expect(html).toContain("2099-00");
-  expect(html).toContain("3 classes / 120 learners");
+  expect(html).toContain("Classes");
+  expect(html).toContain(">3<");
+  expect(html).toContain(">120<");
   expect(html).toContain("Students");
   expect(html).toContain("Manage batch");
   expect(html).toContain('data-slot="data-table"');
@@ -72,7 +74,7 @@ describe("COL-UX-ACADEMIC-TABLE-01 responsive Semester and Batch directories",()
  it("keeps a truthful no-results recovery state rather than an inaccessible empty table",()=>{
   const data={...base,kind:"SEMESTERS",query,items:[],total:0,totalPages:1} as unknown as Data;
   const html=renderToStaticMarkup(<CollegeAcademicDirectory data={data}/>);
-  expect(html).toContain("Clear filters");
+  expect(html).toContain("Go to Programs");
   expect(html).not.toContain("<table");
   expect(html).toContain("No");
  });

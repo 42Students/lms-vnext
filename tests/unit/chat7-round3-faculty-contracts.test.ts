@@ -25,6 +25,11 @@ describe("chat-7 round 3 faculty course contracts",()=>{
  });
  it("FAC-courses-34 keeps faculty tab navigation horizontally reachable by keyboard on small screens",()=>{
   const src=read("src/components/courses/faculty-course-tab-navigation.tsx");
-  expect(src).toContain("overflow-x-auto");expect(src).toContain("aria-current={active ?");expect(src).toContain("tabIndex={0}");
+  expect(src).toContain('<Tabs ariaLabel="Faculty course tabs"');
+  expect(src).toContain("renderPanel={false}");
+  const tabs=read("src/components/ui/tabs.tsx");
+  expect(tabs).toContain('<ScrollCue axis="x"');
+  expect(tabs).toContain('aria-current={item.value === value ? "page"');
+  expect(tabs).toContain("min-h-11");
  });
 });
