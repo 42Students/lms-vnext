@@ -7,6 +7,7 @@ import {createPlacementJob} from "@/modules/placements/job-service";
 import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
 import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {createPlacementRound} from "@/modules/placements/round-service";
+import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {projectRecruiterRoundResults} from "@/modules/placements/recruiter-round-results-read-model";
 import type {RequestContext} from "@/modules/identity/context";
