@@ -73,7 +73,24 @@ export default async function ActivityPage({
     redirect("/dashboard");
   }
 
-  const params = await searchParams;
+  const rawParams = await searchParams;
+  // Migration crosswalk for the legacy raw audit query parameters
+  // (SuperAdminAuditService.searchAuditLogs): actionKey -> eventType,
+  // entityType/type -> subjectType, entityId -> subjectId, since/until -> from/to.
+  // Current names always win; legacy names only fill gaps. Legacy datetimes
+  // (YYYY-MM-DDTHH:mm:ss) are reduced to the date part used by the date filters.
+  const legacyAlias: Record<string, string> = {
+    actionKey: "eventType", entityType: "subjectType", type: "subjectType",
+    entityId: "subjectId", since: "from", until: "to",
+  };
+  const params: Record<string, string | string[] | undefined> = { ...rawParams };
+  for (const [legacyName, currentName] of Object.entries(legacyAlias)) {
+    const legacyValue = one(rawParams[legacyName]);
+    if (legacyValue && !one(params[currentName])) {
+      params[currentName] = currentName === "from" || currentName === "to"
+        ? legacyValue.slice(0, 10) : legacyValue;
+    }
+  }
   const moduleValue = one(
     params.module,
   );
