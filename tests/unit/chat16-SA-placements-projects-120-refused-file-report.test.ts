@@ -24,7 +24,7 @@ describe("SA-placements-projects-120 authenticated import refusal reporting",()=
   expect(page).toContain('key:"reason",header:"Why"');
   expect(page).toContain("Sync isn't set up on this server.");
   expect(page).toContain("The last sync failed.");
-  expect(page).toContain("No sync was performed by opening this page.");
+  expect(page).toContain("No sync was started here.");
   expect(page).toContain("Showing the first ");
   expect(page).not.toContain("Sync completed successfully");
  });
