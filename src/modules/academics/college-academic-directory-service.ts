@@ -495,11 +495,17 @@ export async function listCollegeContentClassAudience(context: RequestContext) {
     db.select({
       id: sections.id, name: sections.name,
       academicPeriodId: sections.academicPeriodId,
+      startsOn:sections.startsOn,endsOn:sections.endsOn,
+      periodStartsOn:academicPeriods.startDate,
+      periodEndsOn:academicPeriods.endDate,
     }).from(sections)
       .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
       .innerJoin(programs, eq(programs.id, cohorts.programId))
       .innerJoin(departments, and(eq(departments.id, programs.departmentId),
         eq(departments.collegeId, collegeId)))
+      .innerJoin(academicPeriods,and(
+        eq(academicPeriods.id,sections.academicPeriodId),
+        eq(academicPeriods.collegeId,collegeId)))
       .where(eq(sections.status, "ACTIVE")),
     db.select({
       id: groupBackedClassOfferings.id, name: groupBackedClassOfferings.name,
@@ -507,6 +513,8 @@ export async function listCollegeContentClassAudience(context: RequestContext) {
       rosterGroupId: groupBackedClassOfferings.rosterGroupId,
       startsOn: groupBackedClassOfferings.startsOn,
       endsOn: groupBackedClassOfferings.endsOn,
+      periodStartsOn:academicPeriods.startDate,
+      periodEndsOn:academicPeriods.endDate,
     }).from(groupBackedClassOfferings)
       .innerJoin(lmsGroups, and(eq(lmsGroups.id, groupBackedClassOfferings.rosterGroupId),
         eq(lmsGroups.collegeId, collegeId)))
@@ -518,9 +526,16 @@ export async function listCollegeContentClassAudience(context: RequestContext) {
         isNull(lmsGroups.deletedAt))),
   ]);
   return [
-    ...registered.map(row => ({...row, kind: "SECTION" as const,
-      rosterGroupId:null,startsOn:null,endsOn:null})),
-    ...grouped.map(row => ({...row, kind: "GROUP_BACKED" as const})),
+    ...registered.map(({periodStartsOn,periodEndsOn,...row})=>({
+      ...row,kind:"SECTION" as const,rosterGroupId:null,
+      startsOn:row.startsOn??periodStartsOn,
+      endsOn:row.endsOn??periodEndsOn,
+    })),
+    ...grouped.map(({periodStartsOn,periodEndsOn,...row})=>({
+      ...row,kind:"GROUP_BACKED" as const,
+      startsOn:row.startsOn??periodStartsOn,
+      endsOn:row.endsOn??periodEndsOn,
+    })),
   ];
 }
 
