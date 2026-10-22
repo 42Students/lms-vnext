@@ -298,6 +298,7 @@ async function addOne(
        jobId:job.id,membershipId,decision:"INCLUDE",
        reason:includeIneligibleReason,createdByUserId:context.user.id,
       }).returning({id:placementEligibilityOverrides.id});
+      if(!included)throw new UnsafeForceInclude();
       finalEligibility=await evaluatePlacementEligibility(context,job.id,membershipId,tx);
       forcedInclude=true;
       if(!["ELIGIBLE","ELIGIBLE_WITH_MISSING_EVIDENCE"].includes(finalEligibility.status)){

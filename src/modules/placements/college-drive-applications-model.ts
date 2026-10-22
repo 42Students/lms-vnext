@@ -55,9 +55,11 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
     sort:["AGE_ASC","AGE_DESC","SCORE_ASC","SCORE_DESC","SUBMITTED_DESC"],
   };
   for (const key of ["status","stage","source","screening","attention","sort"] as const) {
-    if (input[key] && !allowed[key].includes(input[key])) delete input[key];
+    const selected = input[key];
+    const choices = allowed[key];
+    if (selected && choices && !choices.includes(selected)) delete input[key];
   }
-  if (input.page && !/^[1-9]\d{0,3}$/.test(input.page)) delete input.page;
+  if (input["page"] && !/^[1-9]\d{0,3}$/.test(input["page"])) delete input["page"];
   // Old table deep links used ?pageSize and some API clients used ?limit.
   // Conflicting or repeated choices are invalid instead of silently widening
   // a filtered export or changing how many learners are selected in bulk.
@@ -65,8 +67,8 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
     const supplied=raw[alias];
     if(Array.isArray(supplied))return null;
     if(typeof supplied==="string"&&supplied!==""){
-      if(input.size&&input.size!==supplied)return null;
-      input.size=supplied;
+      if(input["size"]&&input["size"]!==supplied)return null;
+      input["size"]=supplied;
     }
   }
   // Legacy callers use appliedAfter/appliedBefore. Resolve their aliases to
@@ -114,7 +116,7 @@ export function driveApplicationsExportParams(search: URLSearchParams):
     if(raw[key]!==undefined&&raw[key]!==query[key])
       return {ok:false,status:400,message:"Invalid export filters"};
   }
-  if(raw.page!==undefined&&String(query.page)!==raw.page)
+  if(raw["page"]!==undefined&&String(query.page)!==raw["page"])
     return {ok:false,status:400,message:"Invalid export filters"};
   return {ok:true,query};
 }
