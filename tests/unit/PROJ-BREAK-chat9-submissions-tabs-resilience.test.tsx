@@ -3,6 +3,7 @@ import {isValidElement} from "react";
 import {ProjectAdminPagination} from "@/components/projects/project-admin-collection-controls";
 import {readFileSync} from "node:fs";
 import {ProjectAdminSubmissionsPage} from "@/components/projects/project-admin-submissions-page";
+import {projectAdminUnsubmittedHref} from "@/modules/projects/admin-submissions-query-model";
 
 const state=vi.hoisted(()=>({
   queue:0,summary:0,unsubmitted:0,
@@ -69,9 +70,12 @@ describe("IIT Dharwad Projects: adversarial tab outage and pagination journeys",
     const source=readFileSync("src/components/projects/project-admin-submissions-page.tsx","utf8");
     expect(source).toContain('<Pagination page={unsubmitted.page} pageCount={unsubmitted.totalPages}');
     expect(source).toContain('hrefForPage={page=>projectAdminUnsubmittedHref(queuePath,query,page)}');
-    expect(page).toContain("q=IIT");
-    expect(page).toContain("status=ACTIVE");
-    expect(page).toContain("pageSize=50");
+    const nextPageHref=projectAdminUnsubmittedHref("/college/projects/submissions",
+      {q:"IIT",status:"ACTIVE",pageSize:50},2);
+    expect(nextPageHref).toContain("q=IIT");
+    expect(nextPageHref).toContain("status=ACTIVE");
+    expect(nextPageHref).toContain("pageSize=50");
+    expect(nextPageHref).toContain("page=2");
     expect(page).not.toContain("Submission totals are temporarily unavailable.");
   });
   it("PROJ-BREAK-submissions-44 optional aggregate outage cannot hide otherwise authorized submissions",async()=>{

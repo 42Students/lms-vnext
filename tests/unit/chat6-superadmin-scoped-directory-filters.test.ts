@@ -25,7 +25,7 @@ describe("Super Admin selected-college directory filters",()=>{
   for(const [name,parser,kind] of [["assignments","parseSuperAdminAssignmentQuery","ASSIGNMENT"],["quizzes","parseSuperAdminQuizQuery","QUIZ"]] as const){
     const code=source("src/app/(authenticated)/admin/"+name+"/page.tsx");
     expect(code).toContain(parser+"(raw)");
-    expect(code).toContain('listCollegeAssessmentAggregate(context,'+(kind==="QUIZ"?" ":"")+'"'+kind+'",query.data)');
+    expect(code.replace(/\s+/g,"")).toContain('listCollegeAssessmentAggregate(context,"'+kind+'",query.data)');
   }
   const ui=source("src/components/courses/admin-assessment-read-directory.tsx");
   for(const key of ['name="courseCode"','name="scope"','name="results"'])expect(ui).toContain(key);
