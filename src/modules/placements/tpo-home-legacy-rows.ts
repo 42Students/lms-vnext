@@ -32,12 +32,15 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
   ? `${batch.name} · ${batch.registered} of ${batch.eligible} registered${batch.placed===null?"":`, ${batch.placed} placed`}${d.moreBatches?` · +${d.moreBatches} more`:""}`
   :batch.name):"No batch in placements yet";
  const urgent=["DRIVE_REQUESTS","RESULTS_AWAITING_APPLY","RESULTS_READY",
-  "SELECTIONS_TO_VERIFY","DEADLINE_TODAY","SHARE_APPLICANTS","SCREENING_PENDING",
+  "SELECTIONS_TO_VERIFY","DEADLINE_TODAY","NO_DEADLINE","CLOSING_SOON",
+  "SLOTS_TO_CONFIRM","SHARE_APPLICANTS","SCREENING_PENDING",
   "OFFERS_AWAITING_RESPONSE","JOINING_OUTCOME_PENDING","DRIVE_NOT_SCHEDULED"];
  const names:Record<string,string>={
   DRIVE_REQUESTS:"drive requests",RESULTS_AWAITING_APPLY:"results waiting",
   RESULTS_READY:"results ready",SELECTIONS_TO_VERIFY:"selections to verify",
-  DEADLINE_TODAY:"deadline today",SHARE_APPLICANTS:"applicants to share",
+  DEADLINE_TODAY:"deadline today",NO_DEADLINE:"have no deadline",
+  CLOSING_SOON:"closing soon",SLOTS_TO_CONFIRM:"slots to confirm",
+  SHARE_APPLICANTS:"applicants to share",
   SCREENING_PENDING:"applications to review",OFFERS_AWAITING_RESPONSE:"offers waiting",
   JOINING_OUTCOME_PENDING:"joining outcomes waiting",DRIVE_NOT_SCHEDULED:"rounds to schedule",
  };
@@ -45,7 +48,13 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
   (urgent.includes(a.code)?urgent.indexOf(a.code):999)-
   (urgent.includes(b.code)?urgent.indexOf(b.code):999));
  const first=actionable[0];
- const detail=first?first.count+" "+(names[first.code]??first.title??"actions requiring attention"):d.driveDetail;
+ const detail=first
+  ? first.code==="NO_DEADLINE"
+    ? `${first.count} ${first.count===1?"has":"have"} no deadline`
+    : first.code==="SLOTS_TO_CONFIRM"
+      ? `${first.count} ${first.count===1?"slot":"slots"} to confirm`
+      : first.count+" "+(names[first.code]??first.title??"actions requiring attention")
+  : d.driveDetail;
  const drives=(d.liveDrives?d.liveDrives+" live":"No live drives")+
   (detail?" · "+detail:"");
  const requests=d.pendingRequests,messages=d.messages;

@@ -24,7 +24,7 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
   }
   const params=await searchParams;
   const section=Array.isArray(params.section)?params.section[0]:params.section;
-  if(section==="connect-accounts")redirect("/teacher/profile#social-profiles");
+  if(section==="connect-accounts")redirect("/teacher/profile#faculty-socialProfiles");
   if(section&&section!=="about"&&section!=="contacts")redirect("/teacher/profile#faculty-about");
   if(section==="contacts")redirect("/teacher/profile#faculty-contact");
   // Refresh errors must not be misreported as an empty profile, nor should a
