@@ -194,6 +194,7 @@ describe("Learner placement journey", () => {
       );
     expect(held[0]?.screening).toEqual({
       status: "UNDER_REVIEW",
+      statusLabel: "Under review",
       candidateMessage: null,
       decidedAt: null,
     });
