@@ -10,7 +10,10 @@ import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 export async function getSuperAdminCourseDependencyCounts(context:RequestContext,visibleCourseIds:readonly string[]){
  const courseIds=z.array(z.uuid()).max(100).parse(visibleCourseIds);
  const selected=requireSuperAdminSelectedCollege(context,"courses.read");
- if(courseIds.length===0)return {} as Record<string,number>;
+ if(courseIds.length===0){
+  const emptyCounts:Record<string,number>={};
+  return emptyCounts;
+ }
  const rows=await getDb().select({
   courseId:courses.id,
   lessonCount:countDistinct(courseLessons.id),
