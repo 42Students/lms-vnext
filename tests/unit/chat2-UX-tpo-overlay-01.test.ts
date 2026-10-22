@@ -23,13 +23,15 @@ describe("UX-tpo-overlay: focus-safe mobile and desktop workflows", () => {
     expect(source).toContain("New announcement");
     expect(source).not.toContain("<dialog ref=");
   });
-  it("UX-tpo-overlay-03 mobile More menu traps focus and dismisses by Escape/backdrop", () => {
+  it("UX-tpo-overlay-03 mobile More links to the canonical, keyboard-accessible workspace page", () => {
     const source = file("tpo-mobile-footer");
-    expect(source).toContain('<BottomSheet open={moreOpen} onOpenChange={setMoreOpen} title="More TPO workspaces"');
-    expect(source).toContain("aria-expanded={moreOpen}");
-    expect(source).toContain("onClick={()=>setMoreOpen(false)}");
-    expect(source).toContain("min-h-11");
+    expect(source).toContain('href:"/tpo/more"');
+    expect(source).toContain('<nav aria-label="TPO mobile footer"');
+    expect(source).toContain('aria-current={active ? "page" : undefined}');
+    expect(source).toContain('focus-visible:outline-2');
+    expect(source).toContain('min-h-16');
     expect(source).not.toContain('role="dialog"');
+    expect(source).not.toContain("window.open");
   });
   it("UX-tpo-overlay-04 company creation preserves required fields, explicit review and safe errors", () => {
     const source = file("tpo-company-create-form");
