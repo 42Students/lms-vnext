@@ -29,7 +29,8 @@ export async function deleteMentorProjectSprint(context:RequestContext,rawPath:u
       sprint.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   const [release]=await tx.select({status:projectReleases.status}).from(projectReleases)
-    .where(and(eq(projectReleases.id,sprint.releaseId),eq(projectReleases.projectId,scope.project.id)))
+    .where(and(eq(projectReleases.id,sprint.releaseId),eq(projectReleases.projectId,scope.project.id),
+       isNull(projectReleases.deletedAt)))
     .limit(1);
   if(!release||release.status==="SHIPPED")throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   const [meeting]=await tx.select({id:projectMeetings.id}).from(projectMeetings)

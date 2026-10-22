@@ -15,7 +15,9 @@ export const runtime = "nodejs";
  * old GET semester/{id}/courses => GET /api/academics/semesters/:semesterId
  * old POST single/multiple => POST /api/academics/semester-course-mappings
  * old PUT credits/is_mandatory/course_order => PATCH .../:mappingId
- * (credits and position supported; source mandatory is preserved read-only);
+ * (credits, one-based position, CORE/ELECTIVE and nullable legacy isMandatory
+ * are readable and updatable with a scoped transaction; mandatory edits
+ * persist both original mandatory flag and type, never silently reset it);
  * old DELETE semesterId/courseId => DELETE .../:mappingId {confirm:true}
  * old reorderCourses => PUT /api/academics/semester-course-mappings
  * with {programTermId,mappingIds:[full ordered mapping UUID set]}. Reordering

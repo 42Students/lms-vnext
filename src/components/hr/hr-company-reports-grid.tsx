@@ -104,8 +104,8 @@ export function HrCompanyReportsGrid({rows,scopeKey}:{
     onClick={openFromRow} aria-label="Company hiring report">
     <TpoGrid rows={rows} rowKey={row=>row.id} columns={columns}
     storageKey={"hr-company-report:"+scopeKey}
-    defaultVisibleKeys={["drive","status","published","applied","offered","accepted"]}
-    mobilePrimaryKeys={["drive","status","published","applied","offered","accepted"]}
+    defaultVisibleKeys={["drive","applied","offered","accepted","declined","joined"]}
+    mobilePrimaryKeys={["drive","applied","offered","accepted","declined","joined"]}
     rowActions={row=><div className="flex flex-wrap items-center gap-2">
       <Link href={driveHref(row)}
         className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
