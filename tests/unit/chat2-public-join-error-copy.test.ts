@@ -5,7 +5,7 @@ describe("TPO-campaigns-public-R02 explicit join failure copy",()=>{
   expect(joinErrorMessage("WRONG_CODE")).toBe("That code isn't right. Check the latest email from us.");
   expect(joinErrorMessage("CODE_EXPIRED")).toBe("That code has expired. Send a new one.");
   expect(joinErrorMessage("CODE_LOCKED")).toBe("Too many wrong codes. Send a new one.");
-  expect(joinErrorMessage("ACCESS_REMOVED")).toContain("removed your access");
+  expect(joinErrorMessage("ACCESS_REMOVED")).toContain("Your access was removed by the placement cell.");
  });
  it("shows explicit service gate, never a generic success",()=>{
   expect(joinErrorMessage("SERVICE_NOT_READY")).toContain("temporarily unavailable");
