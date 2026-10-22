@@ -77,20 +77,14 @@ export default async function AdminPlacementsPage({ searchParams }: {
             drives across your organization; choose a college to manage or change a drive.
           </p>
           {organizationJobs.data.rows.length?<div className="min-w-0 overflow-x-auto">
-            <table className="w-full min-w-[560px] border-collapse text-left text-sm">
-              <caption className="sr-only">Organization drives and application counts</caption>
-              <thead><tr className="border-b border-[var(--lms-canvas-border)]">
-                <th scope="col" className="px-3 py-3 font-semibold">Job title</th>
-                <th scope="col" className="px-3 py-3 font-semibold">Company</th>
-                <th scope="col" className="px-3 py-3 text-right font-semibold">Applications</th>
-              </tr></thead>
-              <tbody>{organizationJobs.data.rows.slice(0,25).map(job=>
-                <tr key={job.jobId} className="border-b border-border">
-                  <th scope="row" className="px-3 py-3 font-semibold">{job.jobTitle}</th>
-                  <td className="px-3 py-3">{job.companyName}</td>
-                  <td className="px-3 py-3 text-right tabular-nums">{job.totalApplications}</td>
-                </tr>)}</tbody>
-            </table>
+            <div role="list" aria-label="Organization drives and application counts" className="divide-y divide-border">
+              {organizationJobs.data.rows.slice(0,25).map(job=>
+                <div role="listitem" key={job.jobId} className="grid gap-2 px-3 py-3 text-sm sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]">
+                  <span className="font-semibold">{job.jobTitle}</span>
+                  <span>{job.companyName}</span>
+                  <span className="tabular-nums sm:text-right" aria-label={`${job.totalApplications} applications`}>{job.totalApplications} applications</span>
+                </div>)}
+            </div>
             {organizationJobs.data.matchingJobCount>25?<p className="mt-2 text-xs text-muted-foreground">
               Showing the first 25 jobs. Choose a college for the full filtered jobs table.
             </p>:null}
