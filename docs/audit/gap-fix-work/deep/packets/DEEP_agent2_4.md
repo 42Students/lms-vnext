@@ -2,7 +2,7 @@
 
 Rows still unchecked after the first deep pass. Each row ends OK (vNext file:line + docs/legacy-source file) or FIXED. DEFERRED is not allowed.
 
-- [ ] G2-16-005-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [x] G2-16-005-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-16-027-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-17-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
@@ -38,3 +38,4 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 
 - OK G2-16-005-045 — `src/app/(authenticated)/tracker/logs/page.tsx:29-71` checks named active Super Admin request context before rendering the Cloud Logging explorer and logs denied/accepted access; the legacy `docs/legacy-source/frontend/src/pages/tracker/logs.js:770-815` used a browser-side session hint plus token refresh. The old password/session-hint bypass is intentionally not preserved: access now requires the authenticated server-side role, which is stricter than legacy.
 
+- **OK G2-16-005-045:** `src/app/(authenticated)/tracker/logs/page.tsx:45-85` requires an active, unscoped named Super Admin and explicitly retires password-only access; `src/app/api/tracker/live-logs/route.ts` guards GET/POST (POST also same-origin), `src/app/api/tracker/live-logs/export/route.ts` guards the export, and `src/app/api/tracker/issues/[publicId]/nearby-logs/route.ts` guards contextual reads. Legacy source `docs/legacy-source/frontend/src/pages/tracker/logs.js` uses `TrackerLogsAccessGate` and token refresh. Policy difference is intentional: password/session hints never independently grant Cloud Logging access. Static review only; tests not run.
