@@ -12,7 +12,10 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "type": "text",
     "label": "Base domain",
     "group": "Platform & auth",
-    "dangerous": true
+    "dangerous": true,
+    "placeholder": "42lms.com",
+    "help": "Root domain tenant subdomains hang off, e.g. 42lms.com. Read by tenant bootstrap and the host allowlist. Getting this wrong breaks tenant resolution for everyone.",
+    "activation": "DEPLOYMENT_REQUIRED"
   },
   {
     "key": "globalHost",
@@ -20,7 +23,10 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "type": "text",
     "label": "Global host",
     "group": "Platform & auth",
-    "dangerous": true
+    "dangerous": true,
+    "placeholder": "42lms.com",
+    "help": "The non-tenant entrypoint. A request to this exact host is treated as GLOBAL rather than resolved to a college. Defaults to the base domain when unset.",
+    "activation": "DEPLOYMENT_REQUIRED"
   },
   {
     "key": "cookieDomain",
@@ -28,7 +34,10 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "type": "text",
     "label": "Auth cookie domain",
     "group": "Platform & auth",
-    "dangerous": true
+    "dangerous": true,
+    "placeholder": ".42lms.com",
+    "help": "Domain scope for auth cookies. Set this wrong and every signed-in user is silently logged out on tenant subdomains.",
+    "activation": "DEPLOYMENT_REQUIRED"
   },
   {
     "key": "cookieSameSite",
@@ -36,7 +45,10 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "type": "text",
     "label": "Auth cookie SameSite",
     "group": "Platform & auth",
-    "dangerous": true
+    "dangerous": true,
+    "placeholder": "Lax",
+    "help": "Lax is correct for normal same-site use. Only set None for genuine cross-site cookie use — browsers then also require Secure.",
+    "activation": "DEPLOYMENT_REQUIRED"
   },
   {
     "key": "policy.superadmin.ipAllowlist",
@@ -44,7 +56,10 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "type": "text",
     "label": "Super-admin IP allowlist",
     "group": "Platform & auth",
-    "dangerous": true
+    "dangerous": true,
+    "placeholder": "203.0.113.4/32,198.51.100.0/24",
+    "help": "Comma-separated IPs or CIDR ranges permitted to reach super-admin endpoints, e.g. 203.0.113.4/32,198.51.100.0/24. Leave blank to allow any address — the filter only enforces when a value is set, which is why an unset allowlist is not a failure. Set it wrong and you lock yourself out of the console.",
+    "activation": "DEPLOYMENT_REQUIRED"
   },
   {
     "key": "otp.maxAttempts",
