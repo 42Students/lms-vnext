@@ -48,7 +48,7 @@ const corporateWebsiteSchema=z.string().trim()
 export const createPlacementCompanyInputObjectSchema = z
   .object({
     collegeId: z.string().uuid(),
-    name: z.string().trim().min(2,"Company name must be between 2 and 100 characters").max(100,"Company name must be between 2 and 100 characters"),
+    name: z.string().trim().min(2,"Company name must be between 2 and 150 characters").max(150,"Company name must be between 2 and 150 characters"),
     websiteUrl: corporateWebsiteSchema.optional(),
     primaryDomain: placementCompanyDomainSchema.optional(),
     industry: z.string().trim().max(100).optional(),
@@ -1678,11 +1678,14 @@ export const legacyInterviewRecommendationSchema=z.enum([
 export const legacyInterviewFeedbackInputSchema=z.strictObject({
  rating:z.number().int().min(1).max(5),
  recommendAction:legacyInterviewRecommendationSchema,
- comments:z.string().trim().max(4000).nullable().optional(),
+ comments:z.string().trim().max(2000).nullable().optional(),
 }).superRefine((input,ctx)=>{
  if(input.recommendAction==="REJECT"&&!input.comments?.trim())
   ctx.addIssue({code:"custom",path:["comments"],
-   message:"Add feedback explaining the rejection — this will be shared with the candidate."});
+   message:"Add a rejection reason. Only the generic decision is shared with the candidate."});
+  if(input.recommendAction==="REJECT" && (input.comments?.length??0)>500)
+   ctx.addIssue({code:"custom",path:["comments"],
+    message:"Rejection feedback must not exceed 500 characters."});
 });
 export const LEGACY_INTERVIEW_RECOMMENDATION_TRANSITION={
  PROCEED_NEXT_ROUND:"ROUND_ADVANCE_REVIEW_REQUIRED",
