@@ -44,8 +44,8 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),
    });
    await load();setNotice("Saved batch views updated.");
-   if(payload.action==="CREATE"){setName("");setPinned(false);}
-   if(payload.action==="DELETE"){setSelected("");setName("");}
+   if(payload["action"]==="CREATE"){setName("");setPinned(false);}
+   if(payload["action"]==="DELETE"){setSelected("");setName("");}
    router.refresh();
    return response;
   }catch{setError("Could not save the batch view. Check the name and filters, then try again.");return null;}
@@ -110,7 +110,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
   <ConfirmDialog open={deleteTarget!==null}
    onOpenChange={open=>{if(!open&&!busy&&!guarded)setDeleteTarget(null);}}
    title="Delete this saved batch view?"
-   description={deleteTarget?.name}
+   {...(deleteTarget ? {description:deleteTarget.name} : {})}
    confirmLabel="Delete" confirmVariant="danger" pending={busy||guarded}
    onConfirm={()=>{if(!deleteTarget||busy||guarded)return;
     const id=deleteTarget.id;
