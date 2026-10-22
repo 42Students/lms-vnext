@@ -10,6 +10,11 @@ describe("LEARNER-placements-R05 withdrawal mode and validation",()=>{
   expect(learnerWithdrawalMode({applicationStatus:"SUBMITTED",scheduledRoundCount:1,screeningStatus:"SHORTLISTED"})).toBe("REQUEST");
   expect(learnerWithdrawalMode({applicationStatus:"WITHDRAWN",scheduledRoundCount:0,screeningStatus:"SHORTLISTED"})).toBe("UNAVAILABLE");
  });
+ it("LEARNER-placements-R05 requires placement cell review after screening even without a booked slot",()=>{
+  expect(learnerWithdrawalMode({applicationStatus:"SUBMITTED",scheduledRoundCount:0,screeningStatus:"SHORTLISTED"})).toBe("REQUEST");
+  expect(learnerWithdrawalMode({applicationStatus:"SUBMITTED",scheduledRoundCount:0,screeningStatus:"REJECTED"})).toBe("UNAVAILABLE");
+  expect(learnerWithdrawalMode({applicationStatus:"SUBMITTED",scheduledRoundCount:0,screeningStatus:"PENDING"})).toBe("SELF");
+ });
  it("LEARNER-placements-R05 enforces legacy 3 to 900 character reason and explicit confirmation",()=>{
   const base={action:"WITHDRAW",confirmed:true};
   expect(learnerApplicationWithdrawalSchema.safeParse({...base,reason:"Why"}).success).toBe(true);

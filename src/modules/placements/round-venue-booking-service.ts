@@ -6,7 +6,7 @@ import type {TpoJobTx} from "./tpo-job-write-base";
 import {overlappingInterviewVenue} from "./tpo-interview-reschedule-model";
 /** All round scheduling writers share this transaction-scoped venue lock. */
 export async function requireAvailableRoundVenue(tx:TpoJobTx,input:{
- collegeId:string;roundId:string;venue:string;start:Date;durationMinutes:number|null;
+ collegeId:string;roundId?:string;venue:string;start:Date;durationMinutes:number|null;
 }){
  const venue=input.venue.trim().toLowerCase();
  if(!venue||!Number.isSafeInteger(input.durationMinutes)||input.durationMinutes===null||
@@ -17,7 +17,8 @@ export async function requireAvailableRoundVenue(tx:TpoJobTx,input:{
   durationMinutes:placementJobRounds.durationMinutes})
   .from(placementJobRounds).innerJoin(placementJobs,eq(placementJobs.id,placementJobRounds.jobId))
   .where(and(eq(placementJobs.collegeId,input.collegeId),eq(placementJobs.status,"PUBLISHED"),
-   ne(placementJobRounds.id,input.roundId),eq(placementJobRounds.status,"SCHEDULED"),
+   input.roundId?ne(placementJobRounds.id,input.roundId):undefined,
+   eq(placementJobRounds.status,"SCHEDULED"),
    eq(placementJobRounds.mode,"ON_CAMPUS"),sql`lower(btrim(${placementJobRounds.venue})) = ${venue}`))
   .limit(1001);
  if(competitors.length>1000||competitors.some(row=>row.scheduledAt===null)||

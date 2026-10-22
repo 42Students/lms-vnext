@@ -1468,11 +1468,12 @@ export async function withdrawPlacementApplication(
 
       // LEARNER-placements-29 / R05: a booking is candidate-specific.
       // A scheduled round elsewhere in the drive is not evidence this
-      // learner was booked. Never infer a booking from a screening label.
+      // learner was booked. A shortlist decision independently advances
+      // the application beyond the self-withdrawal stage.
       const [liveScreening]=await tx.select({status:placementApplicationScreenings.status})
         .from(placementApplicationScreenings)
         .where(eq(placementApplicationScreenings.applicationId,applicationId))
-        .limit(1);
+        .for("share").limit(1);
       const scheduled=await tx.select({id:placementRoundCandidateSlots.id})
         .from(placementRoundCandidateSlots)
         .where(and(
@@ -1493,10 +1494,10 @@ export async function withdrawPlacementApplication(
           eq(placementJobRounds.status,"SCHEDULED"),
         )).limit(1);
       if(learnerWithdrawalMode({
-        applicationStatus:row.application.status,
+        applicationStatus:liveApplication.status,
         screeningStatus:liveScreening?.status??"UNDER_REVIEW",
         scheduledRoundCount:scheduled.length+scheduleExceptions.length,
-      })==="REQUEST")
+      })!=="SELF")
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
 
       // P-S2-11: a live official offer belongs to the TPO response flow;
