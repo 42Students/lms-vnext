@@ -83,12 +83,13 @@ export default async function LearnerPlacementJobsPage() {
           {value:"/learn/my-placements/announcements",label:"Announcements",href:"/learn/my-placements/announcements"},
           {value:"/learn/my-placements/rules",label:"Placements",href:"/learn/my-placements/rules"},
         ]}/>
-      <PageHeader title="Drives" actions={(
+      <div className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-3 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-[18px] font-semibold leading-6 text-[var(--lms-heading)]">Drives</h2>
         <Link href="/learn/my-placements/rules?from=drives"
-        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
-        Review placement rules and preparation →
-      </Link>
-      )} />
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
+          Review placement rules and preparation →
+        </Link>
+      </div>
 
       
       {!savedRead.available ? (

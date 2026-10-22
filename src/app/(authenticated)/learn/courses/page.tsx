@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {learnerLegacyRouteQuery,resolveLearnerLegacyCourseDelivery} from "@/modules/courses/learner-course-legacy-route-model";
@@ -33,6 +34,7 @@ export default async function LearnerCoursesPage({
   let directoryError:string|null=null;
   const courses=await listLearnerCourseDeliveries(context,{includeHistorical:true})
    .catch(error=>{
+    if(error instanceof AuthorizationError)throw error;
     directoryError=error instanceof Error&&/ACCESS_DENIED|PERMISSION|AUTH|403/i.test(error.message)
      ?"You do not have permission to view these courses."
      :"Failed to load courses. Please try again.";
@@ -67,7 +69,8 @@ export default async function LearnerCoursesPage({
   try{
     displays=await loadAuthorizedCourseDisplayContentsIfReady(courses
       .map(course=>course.courseId).filter(id=>typeof id==="string"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id)));
-  }catch{
+  }catch(error){
+    if(error instanceof AuthorizationError)throw error;
     // Optional display metadata must not hide authenticated course cards.
     displayLoadFailed=true;
     displays=new Map();
@@ -179,7 +182,8 @@ export default async function LearnerCoursesPage({
               }
             : null,
         };
-      } catch {
+      } catch(error) {
+        if(error instanceof AuthorizationError)throw error;
         // Never show internal access, database or content-fetch errors to learners.
         return unavailable("Course temporarily unavailable");
       }

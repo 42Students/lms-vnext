@@ -21,6 +21,7 @@ import {learnerOfferExpirySchema,filterOwnOffersByExpiry} from "@/modules/placem
 import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { getOwnLearnerPlacementRulesView } from "@/modules/placements/learner-placement-rules-service";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import {learnerOfferCountsAsPlaced,safeLearnerOfferLetterHref} from "@/modules/placements/learner-offer-letter-model";
@@ -74,11 +75,17 @@ export default async function LearnerOffersPage({
   const conflictingDeadlines=expiry!=="all"&&query.due==="1";
   const context = await getCurrentRequestContext();
   const [offers,requestRead,rulesRead] = await Promise.all([
-    getOwnLearnerOfferBrowse(context,view).catch(() => null),
+    getOwnLearnerOfferBrowse(context,view).catch((error:unknown) => {
+      if (error instanceof AuthorizationError) throw error;
+      return null;
+    }),
     readOptionalLearnerAlertSource(()=>listOwnPlacementRequests(context)),
     getOwnLearnerPlacementRulesView(context,{from:"offers"})
       .then(value=>({available:true as const,value}))
-      .catch(()=>({available:false as const,value:null})),
+      .catch((error:unknown)=>{
+        if(error instanceof AuthorizationError)throw error;
+        return {available:false as const,value:null};
+      }),
   ]);
   if(offers===null){
     // A scoped read failed: do not turn a failed request into an empty inbox.
@@ -192,7 +199,10 @@ export default async function LearnerOffersPage({
         ← Applications
       </Link>
 
-      <PageHeader title="My offers" description="Your official placement offers and recorded joining outcomes." />
+      <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
+        <h2 className="text-[18px] font-semibold leading-6 text-[var(--lms-heading)]">My offers</h2>
+        <p className="mt-1 text-sm text-body">Your official placement offers and recorded joining outcomes.</p>
+      </div>
 
       {conflictingDeadlines ? <Banner tone="warning">
         The due-soon and historical expiry filters cannot be combined. Showing the selected expiry state instead.
