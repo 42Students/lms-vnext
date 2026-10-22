@@ -235,6 +235,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
         <Select name="appointmentSort" defaultValue={query.appointmentSort} className="min-h-11 md:min-h-9">
           <option value="DATE_ASC">Date (earliest first)</option>
           <option value="DATE_DESC">Date (latest first)</option>
+          <option value="JOB">Job title</option><option value="STATUS">Status</option>
         </Select>
       </label>
       <label className="grid gap-2 text-sm font-semibold text-muted-foreground">Rows per page
