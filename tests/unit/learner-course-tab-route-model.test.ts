@@ -5,8 +5,9 @@ describe("learner course tab routes",()=>{
  it("allows one existing tab",()=>{
   expect(learnerCourseTabPath(["roadmap"],tabs)).toBe("roadmap");
  });
- it("rejects nested, unknown, and empty tab paths",()=>{
-  expect(learnerCourseTabPath(["home","unexpected"],tabs)).toBeNull();
+ it("canonicalizes known nested tabs and rejects unknown or empty tab paths",()=>{
+  expect(learnerCourseTabPath(["home","unexpected"],tabs)).toBe("home");
+  expect(learnerCourseTabPath(["invalid","roadmap"],tabs)).toBeNull();
   expect(learnerCourseTabPath(["invalid"],tabs)).toBeNull();
   expect(learnerCourseTabPath([],tabs)).toBeNull();
  });

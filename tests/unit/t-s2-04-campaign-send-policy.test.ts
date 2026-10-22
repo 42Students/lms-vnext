@@ -19,9 +19,12 @@ describe("T-S2-04 campaign send policy",()=>{
   });
   expect(planTpoCampaignRecipients(candidates).eligibleCount).toBe(1);
   expect(JSON.stringify(planTpoCampaignRecipients(candidates))).not.toContain("example.org");
-  expect(planTpoCampaignRecipients(Array.from({length:501},(_,i)=>({
-    ...recipient,id:String(i),unsubscribedAt:i<500?new Date():null,
-   }))).recipientIds).toEqual(["500"]);
+  expect(planTpoCampaignRecipients(Array.from({length:500},(_,i)=>({
+    ...recipient,id:String(i),unsubscribedAt:i<499?new Date():null,
+   }))).recipientIds).toEqual(["499"]);
+  expect(()=>planTpoCampaignRecipients(Array.from({length:501},(_,i)=>({
+    ...recipient,id:String(i),unsubscribedAt:new Date(),
+   })))).toThrow("TPO_CAMPAIGN_RECIPIENT_LIMIT");
    expect(()=>planTpoCampaignRecipients(Array.from({length:501},(_,i)=>({
     ...recipient,id:String(i),emailNorm:`user${i}@example.org`,
    })))).toThrow("TPO_CAMPAIGN_RECIPIENT_LIMIT");
