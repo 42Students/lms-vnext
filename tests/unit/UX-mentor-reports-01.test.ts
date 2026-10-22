@@ -7,7 +7,7 @@ describe("Mentor UX cross-audit /mentor/reports",()=>{
   expect(src).toMatch(/getMentorReports\s*\(/);
  });
  it("UX-mentor-reports-02 preserves exact legacy labels and navigable pagination",()=>{
-  expect(src).toContain("title=\"Assigned Project reports\"");
+  expect(src).toContain("title=\"Assigned project reports\"");
   expect(src).toContain("mentorReportsHref");
  });
 });

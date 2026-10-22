@@ -146,7 +146,7 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
       {id:"denied",title:"Restricted workspace",canView:false,secret:"DO_NOT_RENDER_PRIVATE"},
     ];
     const html=render(<DataTable rows={rows} columns={columns}
-      getRowKey={row=>row.id} empty={<p>No projects</p>}/>);
+      getRowKey={row=>row.id} empty={<p>No projects</p>} mobileMode="cards"/>);
     expect(html).toContain("Allowed workspace");
     expect(html).toContain("Restricted workspace");
     expect(html).toContain("Visible review");
@@ -158,7 +158,7 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect((html.match(/· View details/g)??[])).toHaveLength(1);
 
     const deniedOnly=render(<DataTable rows={[rows[1]!]} columns={columns}
-      getRowKey={row=>row.id} empty="Empty"/>);
+      getRowKey={row=>row.id} empty="Empty" mobileMode="cards"/>);
     expect(deniedOnly).not.toContain("DO_NOT_RENDER_PRIVATE");
     expect(deniedOnly).not.toContain("Fields on detail page");
     expect(deniedOnly).not.toContain("More details");
@@ -207,7 +207,7 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     ];
     const html=render(<DataTable columns={columns}
       rows={[{id:"p1",name:"Project",secret:"PRIVATE_DESKTOP_VALUE",other:"Milestone"}]}
-      getRowKey={row=>row.id} empty="No projects"/>);
+      getRowKey={row=>row.id} empty="No projects" mobileMode="cards"/>);
     // The desktop-only cell is still rendered, once. It must NOT be copied
     // into the mobile disclosure, even when other secondary fields collapse.
     expect((html.match(/PRIVATE_DESKTOP_VALUE/g)??[])).toHaveLength(1);
@@ -280,7 +280,8 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     }
     const valid=render(<ThirdPartyLink href="https://example.test/proof%20one" label="Evidence" />);
     expect(valid).toContain('href="https://example.test/proof%20one"');
-    expect(valid).not.toContain('target="_blank"');
+    expect(valid).toContain('target="_blank"');
+    expect(valid).toContain('rel="noopener noreferrer"');
   });
 
   it("UX-kit-HARDEN-35 breadcrumbs and table share the same hardened internal path rule",()=>{

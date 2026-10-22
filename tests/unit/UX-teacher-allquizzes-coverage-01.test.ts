@@ -6,6 +6,6 @@ describe("Faculty UX route /teacher/allQuizzes",()=>{
  it("UX-teacher-allquizzes-01: retains routing, access and learner-facing states",()=>{
  const source=readFileSync(join(process.cwd(),pathname),"utf8");
  expect(source).toContain("getCurrentRequestContext");
- expect(source).toContain("aria-label=\"Quiz report shortcuts\"");
+ expect(source).toContain("aria-label=\"Quiz totals\"");
  });
 });
