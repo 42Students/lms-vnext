@@ -18,7 +18,9 @@ describe("college semester CSV",()=>{
  it("exports bounded saved batch progression and neutralizes spreadsheet formulas",()=>{
   expect(batchCsvSchema.safeParse({page:2}).success).toBe(false);
   expect(batchCsvSchema.safeParse({collegeId:"foreign"}).success).toBe(false);
-  const csv=renderBatchCsv([{name:"=batch",code:"+code",status:"ACTIVE",programName:"P",programCode:"P",
+  const csv=renderBatchCsv([{id:"11111111-1111-4111-8111-111111111111",programId:"22222222-2222-4222-8222-222222222222",
+   name:"=batch",code:"+code",status:"ACTIVE",programName:"P",programCode:"P",
+   academicYear:null,startDate:null,endDate:null,
    currentTermNumber:null,currentAcademicYearStart:null,activeSections:0,activeEnrolledLearners:0}],true);
   expect(csv).toContain("\"'=batch\"");
   expect(csv).toContain("EXPORT TRUNCATED");

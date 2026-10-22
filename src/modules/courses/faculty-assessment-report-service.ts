@@ -38,13 +38,13 @@ export function buildScoreDistribution(
   ];
   for (const percent of percentages) {
     if (!Number.isFinite(percent) || percent < 0 || percent > 100) continue;
-    // The legacy bucket ranges compare the raw percent against inclusive
-    // integer boundaries. 89.5 sits in the original gap between 89 and 90;
-    // it must not round into the 90–100 bucket. Assignment reports feed this
-    // function their own already-rounded learner percentages.
+    // Legacy labels are integer bands. A fractional score must still
+    // belong to exactly one band without prematurely rounding it upward.
+    // For example, 89.9 belongs in 80–89%, not the 90–100% band.
+    const wholeBand = Math.floor(percent);
     const bucket = buckets.find(
       (candidate) =>
-        percent >= candidate.min && percent <= candidate.max,
+        wholeBand >= candidate.min && wholeBand <= candidate.max,
     );
     if (bucket) bucket.count += 1;
   }
@@ -129,6 +129,7 @@ export function assignmentScoreSummary(
 ) {
   const percentages = rows.flatMap((row) => {
     if (
+      row.gradingStatus !== "GRADED" ||
       row.pointsAwarded === null ||
       !Number.isFinite(row.pointsAwarded) ||
       !Number.isFinite(maxPoints) ||
@@ -138,7 +139,7 @@ export function assignmentScoreSummary(
     ) {
       return [];
     }
-    return [Math.round(Math.min(100, (row.pointsAwarded / maxPoints) * 100))];
+    return [Math.min(100, (row.pointsAwarded / maxPoints) * 100)];
   });
   return {
     averagePercent:
