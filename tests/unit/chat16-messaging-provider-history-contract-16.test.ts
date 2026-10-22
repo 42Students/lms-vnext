@@ -64,7 +64,8 @@ describe("chat-16 campaign provider and aggregate history export boundaries", ()
       { SMSMessage: { Sid: "SM-123", Status: "queued-but-invalid" } },
       { SMSMessage: { Sid: " ", Status: "queued" } },
     ]) expect(isExotelAcceptedResponse(response)).toBe(false);
-    expect(isExotelAcceptedResponse({SMSMessage:{Sid:"SM/unsafe",Status:"queued"}})).toBe(true);
+    expect(isExotelAcceptedResponse({SMSMessage:{Sid:"SM/unsafe",Status:"queued"}})).toBe(false);
+    expect(isExotelAcceptedResponse({SMSMessage:{Sid:"SM:123",Status:"queued"}})).toBe(true);
   });
 
   it("MESSAGING-HISTORY-PROJECTION-16 distinguishes provider acceptance from confirmed delivery and filters invalid queries", () => {
