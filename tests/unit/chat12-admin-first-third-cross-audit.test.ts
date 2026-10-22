@@ -19,13 +19,13 @@ describe("UX-admin-first-third-chat12 independent source cross-audit",()=>{
  it("UX-admin-academics-01 requires explicit selected-college safety scope",()=>{
   const src=page("/academics");
   expect(src).toContain("context.adminScope?.collegeId ?? null");
-  expect(src).toContain('title="Select a college scope"');
+  expect(src).toContain('if (!collegeId) redirect("/superadmin/dashboard")');
   expect(src).toContain('sectionBasePath="/admin/academics/sections"');
   expect(src.indexOf("if (!collegeId)")).toBeLessThan(src.indexOf("await getAcademicsWorkspace("));
  });
  it("UX-admin-colleges-01 validates filters before source queries and retains mobile actions",()=>{
   const src=page("/colleges");
-  expect(src).toContain("parseAdminDirectorySearchParams(await searchParams)");
+  expect(src).toContain("parseAdminDirectorySearchParams({pageSize:"10",...rawDirectory})");
   expect(src.indexOf("if (!filters)")).toBeLessThan(src.indexOf("listColleges(context)"));
   expect(src).toContain('title="Invalid college directory filters"');
   expect(src).toContain("canManageCollegeDirectoryRow(context,college)");
@@ -34,11 +34,11 @@ describe("UX-admin-first-third-chat12 independent source cross-audit",()=>{
  });
  it("UX-admin-companies-01 errors on malformed filters before directory lookup and labels safety scope",()=>{
   const src=page("/companies");
-  expect(src).toContain("adminCompaniesQuerySchema.safeParse");
-  expect(src.indexOf("if (!parsed.success)")).toBeLessThan(src.indexOf("listSuperAdminCompanyDirectory(context, parsed.data)"));
+  expect(src).toContain("parseAdminCompanyDirectoryParams(params)");
+  expect(src.indexOf("if (!parsed.success)")).toBeLessThan(src.indexOf("listSuperAdminCompanyDirectory(context,parsed.data)"));
   expect(src).toContain('title="Invalid company search"');
   expect(src).toContain("context.adminScope?.collegeId");
-  expect(src).toContain("results below remain restricted to that college");
+  expect(src).toContain("This Global tab never shows a college-only list under a global heading.");
  });
  it("UX-admin-features-collegeId-01 refuses malformed tenant ID and duplicate scope filters",()=>{
   const src=page("/features/[collegeId]");
