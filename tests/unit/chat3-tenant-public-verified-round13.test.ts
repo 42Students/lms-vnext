@@ -41,7 +41,7 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
   for(const value of ["selectedSuperAdminTenantSetupTab","1. Tenant structure",
     "2. Launch setup","Current step","College setup","Web address","Look and feel"])
     expect(page).toContain(value);
-  expect(page).toContain('requirePermission(context,"admin-scope.select")');
+  expect(page).toContain('!isSuperAdmin(context)||!can(context,"admin-scope.select")');
  });
  it("SA-tenants-modules-17 has a college-scoped administrator creation and lifecycle workspace",()=>{
   const page=src("src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx");
@@ -56,7 +56,7 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
   const page=src("src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx");
   expect(page).toContain('href={"/activity?collegeId="+encodeURIComponent(item.id)}');
   expect(page).toContain('href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}');
-  expect(src("src/app/(authenticated)/activity/page.tsx")).toContain("collegeId: one(params.collegeId)");
+  expect(src("src/app/(authenticated)/activity/page.tsx")).toContain("collegeId: selectedCollegeId??one(params.collegeId)");
   expect(src("src/app/api/activity/admin-export/route.ts")).toContain("exportSuperAdminActivity");
  });
  it("PUB-auth-public-61 does not accept guessed legacy slugs in place of scoped course delivery identities",()=>{
