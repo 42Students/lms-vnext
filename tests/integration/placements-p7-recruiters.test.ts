@@ -115,8 +115,11 @@ async function cleanup() {
   await pool.query(
     "delete from placement_application_status_history",
   );
-  // The college-stage projection references application IDs after the
-  // round/result ledger rows are deleted; remove that child first.
+  // College stage history holds the same FK even after its current state was
+  // cleared. Delete historical children before the current stage projection.
+  await pool.query(
+    "delete from placement_college_application_stage_history",
+  );
   await pool.query(
     "delete from placement_college_application_stages",
   );
@@ -437,9 +440,7 @@ describe("Placement P7 recruiter identity and grants", () => {
       round.id,
       {
         action: "SCHEDULE",
-        scheduledAt: new Date(
-          "2026-10-24T04:30:00.000Z",
-        ),
+        scheduledAt: new Date(Date.now()+12*86_400_000),
         timezone: "Asia/Kolkata",
         mode: "VIRTUAL",
         meetingUrl:

@@ -420,9 +420,14 @@ describe("core platform pre-browser acceptance flow", () => {
         drizzlePeopleRepository,
       ),
     ).rejects.toThrow(AuthorizationError);
+    // The platform role issuer must act in the exact college for a
+    // membership-scoped privileged grant; a global role alone is not a
+    // selected tenant context.
+    const selectedIssuer:RequestContext={...superAdmin,
+      adminScope:{organizationId:organization.id,collegeId:college.id}};
     await expect(
       addMembershipRole(
-        superAdmin,
+        selectedIssuer,
         faculty.membership.id,
         { role: "TPO" },
         drizzlePeopleRepository,
