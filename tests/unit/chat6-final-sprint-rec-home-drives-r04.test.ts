@@ -9,8 +9,8 @@ describe("Final sprint recruiter closed drive access",()=>{
   expect(buildHrDriveOverview({...base,job:{status:"PUBLISHED",applicationDeadline:null}},now).readOnly).toBe(false);
   const page=readFileSync("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx","utf8");
   expect(page).toContain("This drive is finished, so slots and results can no longer be sent.");
-  expect(page).toContain("This drive is finished, so a selection list can no longer be sent.");
-  expect(page).toContain("Historical hiring rounds and applied outcomes remain readable.");
+  expect(page).toContain("This drive is finished. Results can no longer be sent.");
+  expect(page).toContain("Historical hiring rounds and applied outcomes remain readable. New results and interview slots are disabled.");
   expect(page).toContain("driveOverview.readOnly");
   expect(page).toContain("Add, change or remove rounds");
   expect(page).toContain("Interview slots");

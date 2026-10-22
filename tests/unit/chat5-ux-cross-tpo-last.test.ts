@@ -12,7 +12,7 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
   const id="UX-tpo-"+slug(route)+"-09";
   it(id+" preserves legacy page wording while enforcing authenticated shell and contrast invariants",()=>{
    const page=source(pagePath(route)),note=source(notePath(route));
-   expect(page).not.toContain("text-[#26bac7]");
+   expect(page).not.toContain("text-[#");
    expect(page).not.toMatch(/<main(?=[\s>])/);
    expect(page).not.toContain("window.alert(");
    expect(page).not.toContain("window.prompt(");
@@ -22,16 +22,17 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
  }
  for(const [route,columns] of [
   ["/tpo/settings/notifications",["Subject","Module","Read status","Received"]],
-  ["/tpo/settings/recruiters",["Recruiter","Company","Grant status","Granted","Valid through (IST)","Access & verification","Revoked"]],
+  ["/tpo/settings/recruiters",["Recruiter","Company","Joined through","Access","Actions","Granted","Valid through (IST)","Verification","Revoked"]],
   ["/tpo/settings/team",["Member","Role / assignment","Membership status","Student duties"]],
   ["/tpo/settings/trusted",["Company","Trust status","Company primary domain"]],
  ] as const){
   it("UX-tpo-"+slug(route)+"-10 exposes all list data and actions via mobile DataTable with explicit empty copy",()=>{
    const page=source(pagePath(route));
    expect(page).toContain("<DataTable");
-   expect(page).toContain("empty={<p>");
+   expect(page).toMatch(/empty={<(?:p|EmptyState)\b/);
    expect(page).toContain('mobilePriority:"primary"');
-   expect((page.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(columns.length-1);
+   expect((page.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(columns.length-(route.endsWith("/recruiters")?2:1));
+   if(route.endsWith("/recruiters"))expect(page).toContain('mobilePriority:"action"');
    for(const title of columns) expect(page).toContain('header:"'+title+'"');
    expect(page).not.toMatch(/<table\b/);
   });
@@ -79,7 +80,8 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
   expect(component).not.toContain("window.confirm");
   expect(component).toContain("<ConfirmDialog");
   expect(component).toContain("Only verified recruiters are eligible.");
-  expect(component).toContain('role="alert" className="text-sm text-foreground"');
+  expect(component).toContain('role={statusTone==="error"?"alert":"status"}');
+  expect(component).toContain('<Alert tone={statusTone}>{status}</Alert>');
   expect(component).toContain('action:"REMOVE"');
   expect(component).toContain('action:"TRUST"');
  });

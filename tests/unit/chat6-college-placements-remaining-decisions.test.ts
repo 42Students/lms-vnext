@@ -12,7 +12,7 @@ describe("College Placements additional UNCONFIRMED decisions",()=>{
   const service=file("src/modules/placements/company-service.ts");
   const directory=file("src/modules/placements/college-company-directory-service.ts");
   expect(service).toContain("archivePlacementCompanyRelationship");
-  expect(service).toContain('status: "ARCHIVED"');
+  expect(service).toContain('status:"ARCHIVED"');
   expect(directory).toContain('eq(placementCompanyRelationships.status,"ACTIVE")');
   expect(service).toContain("restorePlacementCompanyRelationship");
   expect(service).toContain('current.company.status!=="ACTIVE"');
