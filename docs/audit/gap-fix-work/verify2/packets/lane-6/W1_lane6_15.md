@@ -126,3 +126,14 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/tpo-drive-change-request-service.ts, src/modules/placements/tpo-drive-change-request-model.ts
 - Legacy: Legacy exact errors `This one asks for a detail: answer it instead`, `Type the answer`, `Type a reason`, and settled/over checks. `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/DriveChangeRequestService.java:156-158,175-178,199-204`
 - Expected fix: Validate action against ASK/PROPOSE and preserve distinct error feedback.
+
+## Lane-12 verification notes (partial; packet remains open)
+
+- G2-5-007-044 — OK: `listSuperAdminInterviews` includes SCHEDULED, CONFIRMED and RESCHEDULE_REQUESTED in ACTIVE filtering.
+- G2-5-007-069 — OK for read projection: persisted `legacyInterviewStatus` is preferred and NO_SHOW is projected; mutation paths still require separate review.
+- G2-5-013-028 — OK: job-service computes applicant, offer, interview and round counts for deletion-impact preview.
+- G2-5-013-037 — OK for archive path: `archivePlacementJob` performs a transactional soft archive with status and archivedAt; separate delete semantics remain to verify.
+- G2-5-023-014 — OK: `getDriveChangeRequests` uses a timestamp/id cursor, returns total and hasMore/nextCursor beyond the page cap.
+- G2-4-023-018 — DEFERRED: company identity mismatch still throws a generic conflict; same-company confirmation flow needs product/API design.
+- G2-4-023-025 — DEFERRED: distinct-company choice and alias policy not established by the canonical domain create flow.
+- Remaining rows are not yet verified; do not treat this packet as completed.
