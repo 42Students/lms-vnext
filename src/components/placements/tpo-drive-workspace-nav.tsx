@@ -40,7 +40,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
         }))}/>
       <Dropdown className="shrink-0" align="end" label="More drive sections"
         trigger="More sections ▾"
-        triggerClassName={moreActive ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-[var(--lms-primary-text)]" : undefined}>
+        {...(moreActive ? {triggerClassName:"!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-[var(--lms-primary-text)]"} : {})}>
         <div className="grid min-w-52 gap-1">
           {moreTabs.map(tab=>(
             <Link key={tab.href} href={tab.href}
