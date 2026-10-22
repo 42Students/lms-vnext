@@ -64,7 +64,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     appointmentStatus:query.appointmentStatus,mode:query.appointmentMode,
     search:query.appointmentSearch,
   });
-  const scheduled=appointments.interviews.filter(item=>item.status==="SCHEDULED");
+  const scheduled=appointments.interviews.filter(item=>
+    ["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"].includes(item.status));
   const todayIst=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const dateIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
   const interviewToday=scheduled.filter(item=>dateIst(item.scheduledAt)===todayIst).length;
