@@ -691,6 +691,9 @@ export async function getLearnerCourseWorkspace(
         ),
         eq(courseLessons.status, "ACTIVE"),
         eq(courseLessons.visibleToStudents, true),
+        // A soft-deleted lesson is no longer part of the learner syllabus.
+        // Active/visible flags are independent from the deletion tombstone.
+        isNull(courseLessons.deletedAt),
       ),
     )
     .orderBy(
