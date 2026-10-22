@@ -20,13 +20,15 @@ export async function POST(request:Request){
  try{
   const {body,...threadInput}=parsed.data;
   const thread=await openTpoMessageThread(context,{
-   collegeId:membership.collegeId,...threadInput,
+   collegeId:membership.collegeId,recruiterUserId:threadInput.recruiterUserId,
+   ...(threadInput.jobId !== undefined ? {jobId:threadInput.jobId} : {}),
   });
   // Opening a conversation alone never sends or notifies. When an explicit
   // message is provided, reuse the audited, persisted send service; it owns
   // the notification. Do not claim it was sent before the write succeeds.
   if(body){
    const message=await sendThreadMessage(context,thread.id,body);
+   if(!message)return NextResponse.json({error:"MESSAGE_NOT_CREATED"},{status:500});
    return NextResponse.json({
     threadId:thread.id,messageId:message.id,messageSent:true,action:"MESSAGE_SENT",
    },{status:201,headers:{"Cache-Control":"private, no-store"}});
