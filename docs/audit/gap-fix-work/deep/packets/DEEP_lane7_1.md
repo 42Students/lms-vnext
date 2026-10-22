@@ -15,7 +15,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-5-009-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-5-011-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-5-024-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-11-020-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
+- [x] G2-11-020-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [x] G2-11-026-027  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 
 ## Results
@@ -30,3 +30,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-5-006-044: OK — `src/components/admin/super-admin-attendance-settings-editor.tsx:20-27,31-40,189-215` distinguishes effective defaults from saved college overrides, labels matching-default saved values separately, and provides whole-override reset with explicit warning; matches default/custom badges in `docs/legacy-source/frontend/src/components/admin/PolicySettingField.js:128-169`. Inheritance beyond college/default is explicitly not claimed.
 
 - G2-11-026-027: FIXED — commit `1bd6d7dc925f501129c942a0430dd66b171d0db8`, `src/lib/bug-tracker-api-error.ts`: maps unavailable private screenshot configuration to 503 with exact legacy `Screenshot storage is unavailable` and `Retry-After: 60`; the existing `src/components/tracker/tracker-report-form.tsx:118-122,275-286` retains the created issue and retries failed screenshots independently. Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/BugTrackerAttachmentService.java:183-190`.
+
+- G2-11-020-050: FIXED — commit `d1b43d12a5f1983ddc74b1df35324d430cd1ff98`, `src/modules/placements/tpo-bulk-lead-owner-service.ts`: both owner directory and assignment validation now admit faculty only with explicit college placement-team membership, alongside authorized TPO/college admins; `src/components/tpo/recruiter-inline-owner.tsx` and `recruiter-bulk-owner-controls.tsx` both consume this scoped directory. Matches `docs/legacy-source/frontend/src/pages/tpo/recruiters/index.js:221-236`.
