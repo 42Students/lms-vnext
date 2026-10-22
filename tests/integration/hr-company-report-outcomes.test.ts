@@ -21,7 +21,7 @@ describe.skipIf(!enabled)("HR report result privacy",()=>{
   const noGrantUserId=randomUUID();
   const noGrant:RequestContext={user:{id:noGrantUserId,identityUid:"no-grant-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},
    membership:null,recruiter:{userId:noGrantUserId,companyId:randomUUID(),companyName:"Fixture",status:"ACTIVE",title:null,grants:[]}};
-  expect((await getRecruiterCompanyReports(noGrant,{})).status).toBe("NO_ACCESS");
+  await expect(getRecruiterCompanyReports(noGrant,{})).rejects.toBeInstanceOf(AuthorizationError);
   const forged={...noGrant,recruiter:{...noGrant.recruiter!,userId:randomUUID()}};
   await expect(getRecruiterCompanyReports(forged,{})).rejects.toBeInstanceOf(AuthorizationError);
   await expect(getRecruiterCompanyReports(tpo,{})).rejects.toBeDefined();
