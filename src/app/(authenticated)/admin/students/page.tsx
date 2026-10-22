@@ -56,7 +56,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    const count=(value:unknown)=>typeof value==="number"&&Number.isSafeInteger(value)&&value>=0?value:0;
    return {
      when:formatSuperAdminImportWhen(run.occurredAt),
-     students:count(meta.count),created:count(meta.created),failed:count(meta.failed),
+     students:count(meta["count"]),created:count(meta["created"]),failed:count(meta["failed"]),
    };
  });
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
@@ -101,7 +101,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       </details>
      </section>
     </div>
-   </details>:null} peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
+   </details>:null} {...(peopleFilters ? {peopleFilters:{...peopleFilters,kind:"LEARNER" as const}} : {})} title="Registered Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="students.csv"
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
