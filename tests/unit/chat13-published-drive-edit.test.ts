@@ -5,6 +5,10 @@ import {superAdminPublishedDriveEditFeedback} from "@/modules/placements/super-a
 const read=(p:string)=>readFileSync(p,"utf8");
 const input={confirmed:true,expectedUpdatedAt:"2099-01-01T00:00:00.000Z",reason:"Update posting terms",
  title:"Example role",description:"Work details",locations:["Hyderabad"],
+ companyRelationshipId:"11111111-1111-4111-8111-111111111111",
+ assessmentUrl:"",assessmentDeadline:null,importantDates:[],customEligibilityRules:[],
+ candidatePreferences:{preferredDegree:"",specialization:"",graduationYear:null,minGpa:null,city:""},
+ jobTypeLabel:"Full-time",employmentType:"FULL_TIME",workMode:"ONSITE",responsibilities:"",
  applicationDeadline:"2099-12-31T00:00:00.000Z",openings:3,
  minimumAnnualCtcInr:500000,maximumAnnualCtcInr:900000};
 describe("Super Admin published drive editing",()=>{
@@ -21,7 +25,7 @@ describe("Super Admin published drive editing",()=>{
   const service=read("src/modules/placements/super-admin-published-drive-edit-service.ts");
   expect(service).toContain("resolveActingCollege(context");
   expect(service).toContain("assertPersistedPlatformPermission(tx,context");
-  expect(service).toContain('job.status!=="PUBLISHED"');
+  expect(service).toContain('!["PUBLISHED","CLOSED","CANCELLED","ARCHIVED"].includes(job.status)');
   expect(service).toContain("date_trunc('milliseconds'");
   expect(service).toContain("recordActivityEventInTransaction(tx,context");
  });
@@ -53,6 +57,6 @@ describe("Super Admin published drive editing",()=>{
   const component=read("src/components/placements/super-admin-published-drive-edit.tsx");
   expect(component).toContain("useGuardedAction");
   expect(component).toContain("driveDeadlineIstToIso");
-  expect(component).toContain("Existing applications and offer decisions remain unchanged.");
+  expect(component).toContain("Existing applicant and offer decisions will not be rewritten.");
  });
 });
