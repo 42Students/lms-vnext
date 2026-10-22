@@ -155,3 +155,29 @@ export function legacyIdentitySuspensionDisposition(input:{
   reason:input.reason?.trim().slice(0,500)??null,
  } as const;
 }
+
+
+/** Historic students could derive their college directly, from a home class,
+ * or from elective enrollment. Elective classes do NOT grant an additional
+ * membership by themselves: a verified primary college is required before
+ * role provisioning. Every ambiguity is routed for explicit review. */
+export function legacyLearnerCollegeScopeCandidate(input:{
+ directCollegeId:string|null;homeClassCollegeId:string|null;
+ electiveCollegeIds:readonly string[];selectedCollegeId:string|null;
+}):{collegeId:string;origin:"DIRECT"|"HOME_CLASS";needsRoleVerification:true}{
+ const idPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ const direct=input.directCollegeId;
+ const home=input.homeClassCollegeId;
+ if(direct&&!idPattern.test(direct)||home&&!idPattern.test(home))
+  throw new Error("Legacy college scope requires verified UUID mappings");
+ if(direct&&home&&direct!==home)
+  throw new Error("Legacy home class and direct learner college disagree");
+ const collegeId=direct??home;
+ if(!collegeId||input.selectedCollegeId&&input.selectedCollegeId!==collegeId)
+  throw new Error("Ambiguous historical learner college membership");
+ for(const elective of input.electiveCollegeIds){
+  if(!idPattern.test(elective))
+   throw new Error("Unmapped elective class college");
+ }
+ return {collegeId,origin:direct?"DIRECT":"HOME_CLASS",needsRoleVerification:true};
+}
