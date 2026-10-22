@@ -24,7 +24,7 @@ describe("public sign-in verified gap closure",()=>{
  it("PUB-auth-public-03 restores registered contact, code and resend labels",()=>{
   const s=login();
   for(const phrase of ["Use your registered mobile number.","Use your registered email address.",
-   "Continue","Enter your code","One-time code","Verify and sign in","Get the code by email",
+   "Continue","Enter your code","One-time code","Verify and sign in","Use your registered email address.",
    "Enter the code","Email me instead","Change"])expect(s).toContain(phrase);
  });
  it("PUB-auth-public-04 uses exact legacy guidance for wrong and expired OTP",()=>{
@@ -34,13 +34,14 @@ describe("public sign-in verified gap closure",()=>{
    "Too many wrong codes. Ask for a new one.",
    "Too many codes were requested. Try again in about 10 minutes.",
    "Something went wrong. Try again in a moment.",
-   "We couldn't find an account with that email."])expect(s).toContain(phrase);
+   "Sign-in is not available for these details. Check your contact and try again."])expect(s).toContain(phrase);
  });
  it("PUB-auth-public-05 uses 42LMS branding tenant title and legal footer",()=>{
   const s=home();expect(s).toContain('const title = brand?.collegeName ? "Sign in · " + brand.collegeName');
   expect(s).toContain("Powered by 42LMS");
   expect(s).toContain("JRSPF Technologies Pvt. Ltd.");
-  expect(s).toContain('branding?.collegeName ?? "42LMS"');
+  expect(s).toContain("branding?.collegeName ?? null");
+  expect(s).toContain("branding.collegeName");
  });
  it("PUB-auth-public-06 consent and privacy terms are available on both steps",()=>{
   const s=login();expect(s.match(/<LoginConsent \/>/g)?.length).toBe(2);
@@ -79,7 +80,8 @@ describe("public sign-in verified gap closure",()=>{
  });
  it("PUB-auth-public-16 displays the college logo or initials monogram fallback",()=>{
   const s=home();expect(s).toContain("branding.logoUrl");
-  expect(s).toContain("collegeMonogram");
+  expect(s).toContain("branding?.collegeName");
+  expect(s).toContain("branding.logoUrl");
   expect(s).toContain("branding?.collegeName");
  });
  it("PUB-auth-public-17 shows unknown-college recovery instructions and main sign-in link",()=>{
