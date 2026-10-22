@@ -32,8 +32,7 @@ export function TrackerScreenshotGallery({publicId,screenshots}:{
   </div>
   <Dialog open={selected!==null} onOpenChange={value=>{if(!value)setSelected(null);}}
    title={selected===null?"Screenshot":screenshots[selected]?.originalFilename??"Screenshot"}
-   description={selected===null?undefined:
-    "Image "+(selected+1)+" of "+screenshots.length+" · private report evidence"}
+   {...(selected===null?{}:{description:"Image "+(selected+1)+" of "+screenshots.length+" · private report evidence"})}
    className="!max-w-[min(960px,calc(100vw-24px))]"
    footer={<div className="flex flex-wrap justify-end gap-2">
     <Button type="button" variant="secondary" disabled={selected===null||selected===0}
