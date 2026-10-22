@@ -27,6 +27,29 @@ type Mentor = {
   email: string | null;
 };
 
+/** Never surface raw internal API error codes or confidential tenant details.
+ * A failed row remains selected for idempotent retry after the operator
+ * resolves permissions, lifecycle or overlapping project mutations.
+ */
+function reassignmentFailureReason(code:string):string{
+  switch(code){
+    case "PROJECT_ACCESS_DENIED":
+    case "PROJECT_LIFECYCLE_ACCESS_DENIED":
+      return "Permission changed. Check your selected college and account access.";
+    case "PROJECT_INVALID_STATE":
+    case "PROJECT_REASSIGNMENT_INVALID_STATE":
+      return "The workspace state changed. Refresh and select it again.";
+    case "PROJECT_MEMBER_NOT_FOUND":
+    case "PROJECT_MENTOR_NOT_FOUND":
+      return "The mentor membership is no longer eligible. Choose another mentor.";
+    case "PROJECT_REASSIGNMENT_CONFLICT":
+    case "PROJECT_MEMBER_CONFLICT":
+      return "Another editor changed this workspace. Refresh before retrying.";
+    default:
+      return "The reassignment could not be confirmed. Refresh and retry only this workspace.";
+  }
+}
+
 export function ProjectMentorReassignment({
   collegeId,
   workspaces,
@@ -445,8 +468,7 @@ export function ProjectMentorReassignment({
                       failure.projectId,
                   )?.title ??
                     failure.projectId}
-                  : {failure.code.replace(/^PROJECT_/,"").replaceAll("_"," ").toLowerCase()}.
-                  Check this workspace's permissions or state, then retry.
+                  : {reassignmentFailureReason(failure.code)}
                 </li>
               ))}
             </ul>
@@ -466,8 +488,7 @@ export function ProjectMentorReassignment({
           <ul className="max-h-64 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] pl-[var(--lms-space-5)] text-sm text-body [&_li]:py-[var(--lms-space-2)]">
             {result?.failures.map(failure=><li key={failure.projectId}>
               {workspaces.find(row=>row.id===failure.projectId)?.title ?? failure.projectId}
-              {" — "}{failure.code.replaceAll("_"," ").toLowerCase()}.
-              Review access or refresh before retrying.
+              {" — "}{reassignmentFailureReason(failure.code)}
             </li>)}
           </ul>
           <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
