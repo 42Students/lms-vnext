@@ -15,8 +15,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-11-009-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [x] G2-11-009-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [x] G2-11-009-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
-- [ ] G2-11-009-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
-- [ ] G2-11-010-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
+- [x] G2-11-009-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
+- [x] G2-11-010-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 
 ## Results
 
@@ -28,3 +28,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-11-009-047 — OK: `src/app/(authenticated)/tpo/drive-day/page.tsx:38-47` resolves the TPO branch before the learner branch when an actor has both roles; `src/modules/placements/tpo-live-drive-day-service.ts:18-28` independently requires active TPO plus placement permissions. Legacy comparison: `docs/legacy-source/frontend/src/pages/tpo/drive-day/index.js:15-30` selects the TPO view.
 - G2-11-009-049 — OK: `src/modules/placements/tpo-live-drive-day-service.ts:11-57` selects all same-IST-day published on-campus rounds, with no current-start-time filter; `src/modules/placements/tpo-live-drive-day-model.ts:31-49` uses the IST day interval. Legacy comparison: `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java:346` includes future same-day entries.
 - G2-11-009-050 — OK: `src/modules/placements/tpo-live-drive-day-service.ts:48-57` includes earlier-in-day rounds without an end-time filter (excluding cancelled rounds), so completed earlier sessions remain in the day list. Legacy comparison: `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java:346` retrieves all of today's on-campus schedule.
+- G2-11-009-051 — OK: `src/modules/placements/tpo-live-drive-day-service.ts:30-57` projects duration but does not require it for today's list; only the optional instant-activity model (`src/modules/placements/tpo-live-drive-day-model.ts:6-13`) requires duration. Legacy comparison: `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoScheduleService.java:346` includes unsized same-day rounds.
+- G2-11-010-002 — OK: `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx:44-59` maps `tab=overview` to `about`, preserves other valid tabs and defaults draft/request drives to About versus published/closed drives to Applicants. Legacy comparison: `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId].js:49-62` uses lifecycle-dependent default and Overview alias.
