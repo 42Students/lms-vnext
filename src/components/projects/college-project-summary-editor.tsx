@@ -7,7 +7,6 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
-import {collegeProjectStatusChangeAllowed} from "@/modules/projects/college-project-summary-model";
 type Project={id:string;title:string;summary:string|null;status:string};
 export function CollegeProjectSummaryEditor({project}:{project:Project}){
  const router=useRouter(),[open,setOpen]=useState(false),[busy,setBusy]=useState(false);
