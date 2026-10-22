@@ -34,8 +34,8 @@ describe("COURSES7-11 Learner discussion access and response isolation",()=>{
  it("COURSES7-11 enforces the same finite message length used for all persisted writers",()=>{
   expect(LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH).toBe(4000);
   expect(learnerDiscussionDraftValid(" x ")).toBe(true);
-  expect(learnerDiscussionDraftValid("x".repeat(3900))).toBe(true);
-  expect(learnerDiscussionDraftValid("x".repeat(3901))).toBe(false);
+  expect(learnerDiscussionDraftValid("x".repeat(4000))).toBe(true);
+  expect(learnerDiscussionDraftValid("x".repeat(4001))).toBe(false);
   expect(learnerDiscussionDraftValid("   ")).toBe(false);
  });
  it("COURSES7-11 concurrent stale list refresh cannot replace a newer authorized message snapshot",()=>{
