@@ -26,7 +26,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
 }) {
   const { hallId } = await params;
   const raw = await searchParams;
-  const from = raw.from, to = raw.to;
+  const from = raw["from"], to = raw["to"];
   const hasRange = from !== undefined || to !== undefined;
   const parsed = collegeHallAvailabilitySchema.safeParse({hallId, from, to});
   let result: Awaited<ReturnType<typeof getCollegeHallAvailability>> | null = null;

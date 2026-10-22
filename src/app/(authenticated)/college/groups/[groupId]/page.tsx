@@ -55,7 +55,7 @@ export default async function CollegeGroupDetailPage({
   const { groupId } = await params;
   // Legacy student-group bookmarks never loaded a group. Preserve the
   // history-replacing People redirect instead of treating numeric IDs as UUIDs.
-  if (process.env.COLLEGE_STUDY_GROUPS_RELEASED !== "true") redirect("/college/people");
+  if (process.env["COLLEGE_STUDY_GROUPS_RELEASED"] !== "true") redirect("/college/people");
   // The old student-groups detail route redirected EVERY identifier (even
   // malformed, removed, or nonnumeric bookmarks) to People. Only a canonical
   // vNext UUID is eligible to reach the college-scoped group detail lookup.
