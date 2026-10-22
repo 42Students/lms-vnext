@@ -756,7 +756,7 @@ export function FacultyAssignmentReview({
           <label className="col-span-2 grid min-w-0 flex-1 gap-[var(--lms-space-1)] text-[13px] font-semibold leading-4 md:min-w-48 text-[var(--lms-neutral-400)]">
             Students ({submissions.filter(isSubmissionGraded).length}/{submissions.length} graded on this page · {pagination?.total??submissions.length} total)
             <Select className="min-h-11 text-[var(--lms-font-base)] md:hidden"
-              value={selectedSubmissionId??submissions[0].id}
+              value={selectedSubmissionId??submissions[0]?.id??""}
               disabled={mutationBusy||bulkBusy}
               onChange={event=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(event.target.value);}}>
               {submissions.map(item=><option key={item.id} value={item.id}>
@@ -766,7 +766,7 @@ export function FacultyAssignmentReview({
           </label>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
-            onClick={()=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id);}}>
+            onClick={()=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)]?.id??current);}}>
             <span className="sr-only">Previous student in selected submission page</span>
             <span aria-hidden="true">Previous</span>
           </Button>
@@ -775,7 +775,7 @@ export function FacultyAssignmentReview({
           </span>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
-            onClick={()=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id);}}>
+            onClick={()=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)]?.id??current);}}>
             <span className="sr-only">Next student in selected submission page</span>
             <span aria-hidden="true">Next</span>
           </Button>
