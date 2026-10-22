@@ -21,6 +21,7 @@ describe("FAC-assessments-R04 faculty assessment listing cost and ownership",()=
     expect(source).not.toContain("getFacultyCourseWorkspace");
     expect(source).toContain("Promise.all([");
     expect(source).toContain("if (courses.length === 0) return empty");
-    expect(source).toContain('ne(courseAssignments.status, "ARCHIVED")');
+    expect(source).toContain('ne(courseLearningPaths.status, "ARCHIVED")');
+    expect(source).toContain('ne(lessonContents.status,"ARCHIVED")');
   });
 });

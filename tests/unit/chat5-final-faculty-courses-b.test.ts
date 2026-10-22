@@ -8,7 +8,7 @@ describe("chat-5 final sprint: teaching surface and discussion parity",()=>{
   for(const phrase of [
    "Write a message...","Enter to send · Shift+Enter for a new line",
    "Post a welcome message","Share this week","Delete this message?",
-   "Students can post questions here anytime."
+   "Students can post questions here anytime —"
   ])expect(discussion).toContain(phrase);
   expect(discussion).not.toContain('window.confirm((current.pinned?"Unpin":"Pin")+" this Section message?")');
   expect(discussion).toContain("countNewDiscussionMessages(");
@@ -30,15 +30,15 @@ describe("chat-5 final sprint: teaching surface and discussion parity",()=>{
     expect(page).toContain("listFacultyCourseDeliveries(context)");
     expect(page).toContain("item.courseId===current.courseId");
     expect(page).toContain("item.sectionId===");
-    expect(page).toContain("if(!target)notFound()");
+    expect(page).toContain("if(!target)redirect(");
     expect(page).toContain('"/teacher/courses/"+encodeURIComponent(target.deliveryId)');
   }
  });
  it("FAC-courses-35 groups lesson authoring in accessible details and describes a keyboard-operable summary",()=>{
   const blueprint=src("src/components/courses/faculty-course-workspace.tsx");
   expect(blueprint).toContain("<details");
-  expect(blueprint).toContain("<summary aria-label=");
-  expect(blueprint).toContain("Expand or collapse lesson");
+  expect(blueprint).toContain('<summary className="min-h-11 cursor-pointer');
+  expect(blueprint).toContain("+ Add content");
   expect(blueprint).toContain("<h2");
  });
  it("FAC-courses-R03 shows assigned Credits and Instructor in the course overview even when descriptive text is empty",()=>{
@@ -49,6 +49,6 @@ describe("chat-5 final sprint: teaching surface and discussion parity",()=>{
   const intro=workspace.indexOf('aria-label="In this Course"');
   const display=workspace.indexOf("<CourseDisplayReadOnly");
   expect(intro).toBeGreaterThan(0);
-  expect(display).toBeGreaterThan(intro);
+  expect(intro).toBeGreaterThan(display);
  });
 });
