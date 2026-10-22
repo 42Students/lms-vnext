@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [x] G2-15-009-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-15-009-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
-- [ ] G2-15-009-054  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [x] G2-15-009-054  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-15-009-061  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-15-009-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-15-009-085  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
@@ -27,3 +27,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-15-009-051: OK — `src/modules/attendance/admin-service.ts:83-129,276-315` authorizes college-admin and scoped Super Admin attendance through `requireAttendanceCollege`/`requirePermission` and a separate admin delivery path without requiring a Faculty teaching assignment; `src/app/api/attendance/admin/sessions/[scheduleEventId]/route.ts:5,30` uses the admin correction service. Faculty-specific assignment checks remain isolated in `src/modules/attendance/faculty-service.ts:183-225`. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AttendanceBulkController.java:180-205`.
 
 - G2-15-009-049: OK — `src/modules/attendance/faculty-schedule-mutation-service.ts:33-45,51-68,91-106,114-155` resolves the selected course delivery to its authorized section and faculty membership, validates college-scoped lecture halls, serializes competing section/faculty/hall bookings using college/section advisory locks, checks overlapping active sessions, and persists a course-to-session relation in the same transaction. This is the vNext scoped-ID crosswalk for legacy numeric class/faculty/course/hall references. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java:321-379`.
+
+- G2-15-009-054: FIXED — commit `40dc4bdb49bf4c18dd7af4f9f169164eaa49b1c6`, `src/components/attendance/faculty-attendance-workspace.tsx` now explicitly explains the legacy past-date-picker versus persisted server booking restriction and configurable five-minute grace; `src/modules/attendance/faculty-schedule-mutation-service.ts:20-26,45-46,61-62` enforces that grace both before and inside the scheduling transaction. Legacy frontend: `docs/legacy-source/frontend/src/components/Global/Offcanvas/Attendance/SheduleClassDrawer.js:126-144` (permits past dates); legacy backend: `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java:309-314` (rejects starts beyond the grace). The backend restriction is retained rather than falsely promising historical bookings.
