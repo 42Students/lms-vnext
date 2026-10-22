@@ -1,10 +1,10 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
-import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
 import { listCollegeElectiveSlotOptions } from "@/modules/electives/college-slot-mutation-service";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -64,12 +64,10 @@ export default async function CollegeElectivesPage({
     <Alert tone="error">Could not load elective slots. No empty results have been inferred.</Alert>
     <Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry slots</Link>
   </section>;
-  if(optionsRead.status==="rejected")return <section className="min-w-0 space-y-4">
-    <PageHeader title="Electives"/>
-    <Alert tone="warning">Slot editing options could not be verified. Retry to access the scoped editor.</Alert>
-    <Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry options</Link>
-  </section>;
-  const data=directoryRead.value,options=optionsRead.value;
+  // An option-read failure must not hide the already-authorized directory.
+  // Keep its rows visible and retry the editor options independently.
+  const data=directoryRead.value;
+  const options=optionsRead.status==="fulfilled"?optionsRead.value:undefined;
   return <div className="min-w-0 space-y-4">
    <Tabs ariaLabel="Academic Setup" renderPanel={false} value="/college/electives"
      items={[
@@ -81,12 +79,10 @@ export default async function CollegeElectivesPage({
      ]}/>
    <CollegeStructureDirectory data={data} electiveOptions={options}
     prepend={<div className="min-w-0 space-y-[var(--lms-space-3)]">
-      {optionResult.error ? <div role="alert" className="border border-amber-300 bg-amber-50 p-3 text-sm">Could not load elective options. <Link href="/college/electives" className="font-semibold underline">Retry options</Link></div> : null}
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-center">
-        {options?<CollegeSlotManager options={options} />:
-          <ErrorState title="Couldn't load elective slot options"
-            description="Program and period choices could not be refreshed. Existing slots are still available below."
-            action={<Link href="/college/electives" className="font-semibold text-link underline">Retry slots</Link>}/>}
+        {!options?<ErrorState title="Couldn't load elective slot options"
+          description="Program and period choices could not be refreshed. Existing slots are still available below."
+          action={<Link href="/college/electives" className="font-semibold text-link underline">Retry options</Link>}/>:null}
         <Link prefetch={false} download href={electiveCsvHref(data.query)}
           className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Export filtered electives CSV
