@@ -27,8 +27,8 @@ export type CollegeBrandingView = CollegeBrandingInput & {
  * are projected by effectivePublicCollegeSignInPolicy after the host is
  * verified, while OTP route authorization continues to use that policy.
  * Existing colleges require no historical ID or R2 object-key migration.
- * An absent field in this vNext editor is intentional NULL/clear, not a
- * legacy partial-update; expectedVersion protects concurrent form saves. */
+ * An absent field retains its previous value, while explicit null clears it;
+ * expectedVersion protects concurrent form saves. */
 export const EMPTY_BRANDING: CollegeBrandingInput = {
   logoUrl: null,
   faviconUrl: null,
@@ -183,21 +183,22 @@ export async function saveCollegeBranding(
    const [stored]=await tx.select().from(collegeBranding)
     .where(eq(collegeBranding.collegeId,college.id)).for("update").limit(1);
    const previous=toView(stored??null);
+   const merged: CollegeBrandingInput = { ...EMPTY_BRANDING, ...previous, ...input };
    // Keep stale references for an authorized post-commit storage worker.
    // Never delete old objects inside the transaction, nor delete arbitrary
    // external HTTPS URLs: they can be shared with other tenants.
    const changedAssetFields=(["logoUrl","faviconUrl","loginBackgroundUrl","loginBackgroundUrlMobile"] as const)
-    .filter(key=>previous[key]!==input[key]);
+    .filter(key=>previous[key]!==merged[key]);
    // An already-applied retry is safe. Do not advance version or emit a
    // duplicate activity event merely because the response was lost.
-   if(sameCollegeBranding(previous,input))
+   if(sameCollegeBranding(previous,merged))
     return {collegeName:college.name,...previous};
    if(previous.version!==expectedVersion)throw new CollegeBrandingVersionError();
    const [row]=stored
     ?await tx.update(collegeBranding).set({
-      ...input,version:sql`${collegeBranding.version} + 1`,updatedAt:new Date(),
+      ...merged,version:sql`${collegeBranding.version} + 1`,updatedAt:new Date(),
      }).where(eq(collegeBranding.collegeId,college.id)).returning()
-    :await tx.insert(collegeBranding).values({collegeId:college.id,...input}).returning();
+    :await tx.insert(collegeBranding).values({collegeId:college.id,...merged}).returning();
 
    if (!row) throw new Error("BRANDING_SAVE_FAILED");
    await recordActivityEventInTransaction(tx, context, {
