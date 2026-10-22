@@ -105,6 +105,39 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [feedbackExisting,setFeedbackExisting]=useState<{
   rating:number;recommendation:string;comments:string;createdAt:string
  }|null>(null);
+ type ScopedPreview={candidate:number;interviewer:number;room:number;
+  total:number|null;incomplete:boolean};
+ const [scopedPreview,setScopedPreview]=useState<{
+  key:string;result:ScopedPreview|null;error:boolean;
+ }|null>(null);
+ // Bind asynchronous preview results to the exact currently edited fields.
+ // An older request must not display a false clean result for a new candidate.
+ const previewKey=[show,applicationId,start,duration,interviewer,mode,venue,
+  meetingUrl,editing?.id??""].join("|");
+ useEffect(()=>{
+  if(!show||!start||!validFiveMinuteSlot||!applicationId||!roundId)return;
+  let cancelled=false;
+  const timeout=setTimeout(()=>{
+   let scheduledAt:string;
+   try{scheduledAt=driveDeadlineIstToIso(start);}
+   catch{return;}
+   void apiFetch<ScopedPreview>(
+    "/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/interviews/preview",{
+     method:"POST",headers:{"content-type":"application/json"},
+     body:JSON.stringify({applicationId,scheduledAt,durationMinutes:duration,
+      interviewer:interviewer.trim()||null,
+      room:(mode==="VIRTUAL"?meetingUrl:venue).trim()||null,
+      ...(editing?.id?{excludingInterviewId:editing.id}:{})}),
+    }).then(result=>{
+     if(!cancelled)setScopedPreview({key:previewKey,result,error:false});
+    }).catch(()=>{
+     if(!cancelled)setScopedPreview({key:previewKey,result:null,error:true});
+    });
+  },300);
+  return()=>{cancelled=true;clearTimeout(timeout);};
+ },[show,applicationId,start,validFiveMinuteSlot,roundId,duration,
+   interviewer,mode,venue,meetingUrl,editing?.id,jobId,previewKey]);
+ const currentScopedPreview=scopedPreview?.key===previewKey?scopedPreview:null;
  const [showConflictsOnly,setShowConflictsOnly]=useState(false);
  const visibleAppointments=showConflictsOnly?appointments.filter(hasConflict):appointments;
  const [feedbackBusy,setFeedbackBusy]=useState(false);
@@ -517,9 +550,23 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      {fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]?<span role="alert" className="text-xs text-error">{fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]}</span>:null}
      </label>
     <p className="text-xs text-muted-foreground">Times shown in Asia/Kolkata (IST). The server checks other drives and interviewer conflicts before accepting a slot.</p>
-    {previewConflicts.length>0?<Banner tone="warning" role="alert">
-      Possible scheduling conflict with {previewConflicts.length} interview{previewConflicts.length===1?"":"s"} in this drive, including a 15-minute buffer. Check the candidate, room and interviewer. The server also checks other drives before saving.
+    {currentScopedPreview?.result?.incomplete?<Banner tone="warning" role="alert">
+      More than 500 overlapping appointments were found in this college. The preview is incomplete; review the calendar before booking. Server-side scheduling checks remain authoritative.
     </Banner>:null}
+    {currentScopedPreview?.result?.total!==null&&
+      (currentScopedPreview?.result?.total??0)>0?<Banner tone="warning" role="alert">
+      Possible scheduling conflict with {currentScopedPreview!.result!.total} interview(s) across this college (15-minute buffer).
+      Candidate: {currentScopedPreview!.result!.candidate}; same-company interviewer: {currentScopedPreview!.result!.interviewer}; room: {currentScopedPreview!.result!.room}.
+      Review the other bookings before saving; the server rechecks conflicts.
+    </Banner>:null}
+    {currentScopedPreview?.error?<Banner tone="warning" role="alert">
+      The college-wide scheduling preview could not be loaded. Review the interview calendar and retry; saving will still perform server-side overlap checks.
+    </Banner>:null}
+    {!currentScopedPreview?.result&&previewConflicts.length>0?<Banner tone="warning" role="alert">
+      Possible scheduling conflict with {previewConflicts.length} interview{previewConflicts.length===1?"":"s"} in this drive, including a 15-minute buffer. The college-wide preview is checked separately.
+    </Banner>:null}
+    {!currentScopedPreview&&!previewConflicts.length&&show&&start&&applicationId&&validFiveMinuteSlot?
+      <p role="status" className="text-xs text-muted-foreground">Checking other interviews in this college…</p>:null}
     {editing?<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Reason for change<Textarea rows={2} value={reason} disabled={busy}
      onChange={e=>{setReason(e.target.value);setDirty(true);}} className="w-full"/></label>:null}
     {error?<Banner tone="error" action={<Button type="button" size="sm"
