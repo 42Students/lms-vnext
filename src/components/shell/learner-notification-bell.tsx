@@ -134,15 +134,15 @@ export function LearnerNotificationBell(){
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-topbar-unread)] px-1 text-[10px] font-bold leading-none text-white">
      {count>99?"99+":count}</span>:null}
   </Button>
-  {open ? mobile ? <Drawer id="lms-learner-mobile-notifications" open={open} onOpenChange={setOpen} title="Notifications" className={style["learnerNotificationDrawer"]} bodyClassName={style["learnerNotificationDrawer"]Body} footer={panelFooter}>{panelBody}</Drawer> : <PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style["learnerNotificationPopover"]}
+  {open ? mobile ? <Drawer id="lms-learner-mobile-notifications" open={open} onOpenChange={setOpen} title="Notifications" className={style.learnerNotificationDrawer} bodyClassName={style.learnerNotificationDrawerBody} footer={panelFooter}>{panelBody}</Drawer> : <PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}
   onDismiss={()=>{setOpen(false);trigger.current?.focus();}}>
    <div className="flex items-center justify-between">
     <h2 id="learner-notification-title" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Notifications</h2>
     <Button variant="ghost" type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
       className="min-h-11 px-2 text-sm text-primary-text">Close</Button>
    </div>
-   <div className={style["learnerNotificationBody"]}>{panelBody}</div>
-   <footer className={style["learnerNotificationFooter"]}>{panelFooter}</footer>
+   <div className={style.learnerNotificationBody}>{panelBody}</div>
+   <footer className={style.learnerNotificationFooter}>{panelFooter}</footer>
   </PopoverPanel> : null}
  </div>;
 }

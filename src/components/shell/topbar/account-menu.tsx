@@ -16,8 +16,8 @@ import { topbarInitials } from "./portal-config";
 import { ChevronIcon } from "./icons";
 import style from "./topbar.module.css";
 
-const avatarTriggerClass = `${style["avatar"]} max-[767px]:!min-h-11 max-[767px]:!min-w-11`;
-const accountMenuClass = `${style["menu"]} !min-h-0`;
+const avatarTriggerClass = `${style.avatar} max-[767px]:!min-h-11 max-[767px]:!min-w-11`;
+const accountMenuClass = `${style.menu} !min-h-0`;
 
 export function TopbarAccountMenu({
   identityUid, roleLabel, organizationName, variant,
@@ -117,25 +117,25 @@ export function TopbarAccountMenu({
       aria-label={open?"Close account menu":"Open account menu"} aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
-      <span className={style["avatar"]Inner}>{topbarInitials(identityUid, roleLabel)}</span>
+      <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </Button>
     {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={accountMenuClass}
       tabIndex={-1} onDismiss={() => { setOpen(false); trigger.current?.focus(); }}>
       <div className="min-w-0 px-2 pb-[var(--lms-space-2)] text-left">
-        <p className={style["accountHeading"]}>{roleLabel}</p>
-        <p className={style["accountSubheading"]}>{organizationName}</p>
+        <p className={style.accountHeading}>{roleLabel}</p>
+        <p className={style.accountSubheading}>{organizationName}</p>
       </div>
       {copy.accountHref ? <Link href={copy.accountHref}
-        onClick={() => setOpen(false)} className={style["menu"]Item}>{copy.accountLabel}</Link> : null}
+        onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel}</Link> : null}
       {adminScopeChoices || workspaceChoices(memberships).length > 1 ? <>
-        <hr className={style["menu"]Divider}/>
-        <p className={style["accountSectionHeading"]}>Switch workspace</p>
+        <hr className={style.menuDivider}/>
+        <p className={style.accountSectionHeading}>Switch workspace</p>
         {adminScopeChoices ? <AdminScopeSwitcher choices={adminScopeChoices} scope={scope} /> :
-          <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId} {...(activeRole !== undefined ? {activeRole} : {})}/>}
+          <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId} activeRole={activeRole}/>}
       </> : null}
-      <hr className={style["menu"]Divider}/>
+      <hr className={style.menuDivider}/>
       <Button variant="ghost" type="button" disabled={pending} loading={pending} aria-busy={pending}
-        className={style["menu"]Item} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
+        className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
         <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
       </Button>
       {error ? <p role="alert" className="min-w-0 break-words px-2 pt-[var(--lms-space-2)] text-xs text-error leading-[20px]">{error}</p> : null}
