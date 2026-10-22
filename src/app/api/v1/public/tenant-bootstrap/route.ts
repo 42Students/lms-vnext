@@ -25,7 +25,7 @@ const headers = {
 export async function GET(request: Request) {
   const hostHeader = request.headers.get("host");
   const tenant = await resolveRequestTenant(hostHeader);
-  const localHost = (hostHeader ?? "").trim().toLowerCase().replace(/:\\d+$/, "");
+  const localHost = (hostHeader ?? "").trim().toLowerCase().replace(/:\d+$/, "");
   const localDevelopment =
     process.env.NODE_ENV === "development" &&
     (localHost === "localhost" || localHost === "127.0.0.1" || localHost === "[::1]");
