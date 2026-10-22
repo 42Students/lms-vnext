@@ -92,7 +92,7 @@ export async function createBugTrackerIssueForAdmin(
           reporterAccess: "ACCOUNT_ONLY" as const };
       }
     }
-    const reporterName=actor.displayName.trim();
+    const reporterName=actor.displayName?.trim()??"";
     // Names can collide. The immutable user ID is the sole identity key,
     // and only the signed-in user may submit their own selected reporter name.
     if(!reporterName||input.reporterName.trim().toLocaleLowerCase("en-IN")!==reporterName.toLocaleLowerCase("en-IN"))
