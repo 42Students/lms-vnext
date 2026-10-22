@@ -42,8 +42,20 @@ const appointment=z.object({
  else if(x.mode==="VIRTUAL"&&!isSafeInterviewMeetingUrl(x.meetingUrl))
   c.addIssue({code:"custom",path:["meetingUrl"],message:"Meeting link must be a valid https:// URL with a public hostname"});
 });
+/** New schedules require the legacy interview type and meaningful description.
+ * Editing imported appointments is compatible with missing historic fields.
+ */
+const newAppointment=appointment.superRefine((value,ctx)=>{
+ if(!value.interviewType)ctx.addIssue({
+  code:"custom",path:["interviewType"],message:"Please select interview type",
+ });
+ if(!value.roundDescription)ctx.addIssue({
+  code:"custom",path:["roundDescription"],
+  message:"Please add at least a short description (min 10 characters)",
+ });
+});
 export const collegeInterviewActionSchema=z.discriminatedUnion("action",[
- z.object({action:z.literal("SCHEDULE"),confirmed:z.literal(true),appointment}).strict(),
+ z.object({action:z.literal("SCHEDULE"),confirmed:z.literal(true),appointment:newAppointment}).strict(),
  z.object({action:z.literal("EDIT"),confirmed:z.literal(true),interviewId:id,expectedVersion:z.number().int().positive(),
   appointment,reason:z.string().trim().min(3).max(500),
   notes:z.string().trim().max(1000).optional()}).strict(),

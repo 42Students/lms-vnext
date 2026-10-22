@@ -50,7 +50,7 @@ export default async function HrProfilePage({ searchParams }: {
   ]);
   if(profileResult.status==="rejected"||overviewResult.status==="rejected")
    return <div className="min-w-0 space-y-4"><PageHeader title="Your Profile"/>
-    <ErrorState title="We couldn't load your recruiter account"
+    <ErrorState title="We couldn't load your profile"
       description="Your recruiter profile or college access could not be verified. No other account details have been substituted."
       action={<Link href="/hr/profile" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
    </div>;
