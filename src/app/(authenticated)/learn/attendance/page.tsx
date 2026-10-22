@@ -70,7 +70,7 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
         <span className="inline-flex min-h-9 items-center rounded-lg border border-border px-3 text-sm font-semibold">
           {workspace.records.length} {workspace.records.length===1?"Session":"Sessions"}
         </span>
-        <Link href="/learn/attendance/calendar"
+        <Link href={"/learn/attendance/calendar?"+new URLSearchParams({month:selected,...(deliveryId?{deliveryId}:{})}).toString()}
           className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Monthly attendance calendar →
         </Link></div>
