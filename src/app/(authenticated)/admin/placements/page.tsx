@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listPlatformPlacementPolicy } from "@/modules/placements/platform-placement-policy-service";
+import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-hiring-report-service";
 import { SuperAdminPlatformPlacementPolicy } from "@/components/placements/super-admin-platform-placement-policy";
 import { SuperAdminPlacementOversightNav } from "@/components/admin/super-admin-placement-oversight-nav";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -27,6 +28,13 @@ export default async function AdminPlacementsPage({ searchParams }: {
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
   const policy = await listPlatformPlacementPolicy(context);
+  // Organization-only Super Admin scope may read an aggregate directory
+  // across its verified colleges. Mutations still require selecting one college.
+  const organizationJobs = !collegeId&&context.adminScope?.organizationId
+    ?await getSuperAdminCompanyHiringReport(context,{})
+      .then(data=>({ok:true as const,data}))
+      .catch(()=>({ok:false as const}))
+    :null;
 
   const directoryActions = (
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
@@ -56,6 +64,39 @@ export default async function AdminPlacementsPage({ searchParams }: {
         />
         <SuperAdminPlacementOversightNav />
         <SuperAdminPlatformPlacementPolicy initial={policy} />
+        {organizationJobs?.ok?<section aria-label="Organization placement jobs" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Organization drives · read-only</h2>
+            <span className="text-sm text-muted-foreground">{organizationJobs.data.matchingJobCount} jobs · {organizationJobs.data.fullTotals.totalApplications} applications</span>
+          </div>
+          <p className="text-sm text-body">
+            Verified organization-wide hiring summary. You can inspect these
+            drives across your organization; choose a college to manage or change a drive.
+          </p>
+          {organizationJobs.data.rows.length?<div className="min-w-0 overflow-x-auto">
+            <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+              <caption className="sr-only">Organization drives and application counts</caption>
+              <thead><tr className="border-b border-[var(--lms-canvas-border)]">
+                <th scope="col" className="px-3 py-3 font-semibold">Job title</th>
+                <th scope="col" className="px-3 py-3 font-semibold">Company</th>
+                <th scope="col" className="px-3 py-3 text-right font-semibold">Applications</th>
+              </tr></thead>
+              <tbody>{organizationJobs.data.rows.slice(0,25).map(job=>
+                <tr key={job.jobId} className="border-b border-border">
+                  <th scope="row" className="px-3 py-3 font-semibold">{job.jobTitle}</th>
+                  <td className="px-3 py-3">{job.companyName}</td>
+                  <td className="px-3 py-3 text-right tabular-nums">{job.totalApplications}</td>
+                </tr>)}</tbody>
+            </table>
+            {organizationJobs.data.matchingJobCount>25?<p className="mt-2 text-xs text-muted-foreground">
+              Showing the first 25 jobs. Choose a college for the full filtered jobs table.
+            </p>:null}
+          </div>:<EmptyState title="No organization drives" description="No placement drives have been created in your authorized organization colleges."/>}
+        </section>:null}
+        {organizationJobs&&!organizationJobs.ok?<Alert tone="warning" title="Organization jobs unavailable">
+          The organization-wide drive summary could not be loaded. No unverified rows are shown.
+          Select a college to continue with its authorized workspace.
+        </Alert>:null}
         <Alert tone="warning" title="Select a college to continue">
           Choose a college in the header to manage its drives. Platform-wide policy is shown above.
           <Link href="/admin/colleges" className="ml-2 font-semibold text-link underline">
