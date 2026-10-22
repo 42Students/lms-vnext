@@ -4,10 +4,10 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [ ] `tests/unit/UX-college-roster-data-tables-01.test.ts` (1 failing)
 - [ ] `tests/unit/chat15-learner-playback-settings.test.ts` (1 failing)
-- [ ] `tests/unit/chat3-course-visibility-independent.test.ts` (1 failing)
+- [x] `tests/unit/chat3-course-visibility-independent.test.ts` (FIXED on chat-16 branch: independent display flag) (1 failing)
 - [ ] `tests/unit/chat7-application-rate-limit-verify2b.test.ts` (1 failing)
 - [ ] `tests/unit/college-courses-content-gap-closure.test.ts` (1 failing)
-- [ ] `tests/unit/recruiter-chat14-message-email-bridge-contract.test.ts` (1 failing)
+- [x] `tests/unit/recruiter-chat14-message-email-bridge-contract.test.ts` (FIXED on chat-16 branch: HMAC rotation contract) (1 failing)
 
 ## Failures (from CI log)
 
