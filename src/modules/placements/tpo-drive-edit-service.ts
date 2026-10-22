@@ -13,6 +13,7 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
   id:placementJobs.id,title:placementJobs.title,description:placementJobs.description,
   status:placementJobs.status,seasonId:placementJobs.seasonId,updatedAt:placementJobs.updatedAt,
   applicationDeadline:placementJobs.applicationDeadline,
+  jobDescriptionObjectPath:placementJobs.jobDescriptionObjectPath,
   jobTypeLabel:placementJobs.jobTypeLabel,employmentType:placementJobs.employmentType,
   workMode:placementJobs.workMode,recruiterDriveMode:placementJobs.recruiterDriveMode,
   companyRelationshipId:placementJobs.companyRelationshipId,
