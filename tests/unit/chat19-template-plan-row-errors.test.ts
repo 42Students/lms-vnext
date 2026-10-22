@@ -12,7 +12,7 @@ describe("chat-19 template sprint/task per-row errors",()=>{
  });
  it("preserves secondary schema issues on the same row",()=>{
   const source=readFileSync("src/components/projects/super-admin-template-plan-editor.tsx","utf8");
-  expect(source).toContain('rowIssues[key]+=" · "+issue.message');
+  expect(source).toContain('rowIssues[key]=prior+" · "+issue.message');
   expect(source).toContain('rowErrors["tasks:"+index]');
   expect(source).toContain('rowErrors["sprints:"+index]');
  });

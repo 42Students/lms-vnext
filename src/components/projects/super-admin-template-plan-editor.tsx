@@ -167,9 +167,10 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           const key=section+":"+index;
           // Keep distinct validation messages for each row; do not mask
           // secondary key, sequence or parent-reference errors.
-          if(!rowIssues[key])rowIssues[key]=issue.message;
-          else if(!rowIssues[key].split(" · ").includes(issue.message))
-            rowIssues[key]+=" · "+issue.message;
+          const prior=rowIssues[key];
+          if(!prior)rowIssues[key]=issue.message;
+          else if(!prior.split(" · ").includes(issue.message))
+            rowIssues[key]=prior+" · "+issue.message;
         }
       }
       setRowErrors(rowIssues);
