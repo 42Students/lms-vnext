@@ -115,7 +115,8 @@ export async function listSupportSmsDeliveryHistory(
   const content=result.content.map(row=>({
    id:row.id,purpose:row.purpose,
    recipientSuffix:row.recipientSuffix,
-   status:row.outcome==="PROVIDER_ACCEPTED"?"SENT" as const:"FAILED" as const,
+   status:row.outcome==="PROVIDER_ACCEPTED"?"ACCEPTED" as const:
+     row.outcome==="FAILED"?"FAILED" as const:"UNKNOWN" as const,
    providerMessageId:row.providerMessageId,
    errorSummary:row.failureSummary,
    collegeId:row.collegeId,
