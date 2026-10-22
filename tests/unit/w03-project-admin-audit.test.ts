@@ -31,7 +31,9 @@ const accessModel = readFileSync(
 
 describe("W03 project admin audit parity contract", () => {
   it("keeps both legacy account audit routes behind the Projects nav", () => {
-    expect(nav).toContain('["/audit", "Audit"]');
+    expect(nav).toContain('PROJECT_ADMIN_SECTIONS.map');
+    const sections = readFileSync(join(root, "src/modules/projects/project-admin-navigation-model.ts"),"utf8");
+    expect(sections).toContain('suffix:"/audit",label:"Audit"');
     expect(superRoute).toContain('basePath="/admin/projects"');
     expect(collegeRoute).toContain('basePath="/college/projects"');
   });
@@ -39,7 +41,7 @@ describe("W03 project admin audit parity contract", () => {
   it("reads only PROJECTS activity and preserves legacy-style audit filters", () => {
     expect(audit).toContain('module: "PROJECTS"');
     // The component delegates parsing to a shared validated query model.
-    expect(audit).toContain("parseProjectAdminAuditQuery(searchParams)");
+    expect(audit).toContain("parseProjectAdminAuditQuery(legacyLink.params)");
     // Action/status/eventType are aliases, but conflicting aliases must fail closed.
     expect(queryModel).toContain("actionAliases");
     const action = "projects.task.created";
@@ -62,7 +64,7 @@ describe("W03 project admin audit parity contract", () => {
   it("requires college scope except for explicitly authorized global Super Admin template audit", () => {
     expect(superRoute).toContain("getProjectAdminCollegeId(context)");
     expect(superRoute).toContain("if (!collegeId && !mayReadGlobalProjectAudit(context))");
-    expect(superRoute).toContain("Select a college scope");
+    expect(superRoute).toContain("Select a college to continue");
     expect(audit).toContain("mayReadGlobalProjectAudit(context)");
     // Clearing the scope is not sufficient on its own: global activity still
     // requires an active Super Admin and an explicit activity.read permission.

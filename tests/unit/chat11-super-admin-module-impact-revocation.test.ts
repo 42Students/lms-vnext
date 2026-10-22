@@ -21,13 +21,13 @@ describe("SA-tenants-modules-MOD-IMPACT-06 module disabling cannot leak or fabri
   expect(summary).toContain("Existing data is retained");
  });
  it("fails closed on missing, negative, fractional, nonfinite or unsafe counts",()=>{
-  for(const module of ["projects","placements"] as const){
+  for(const moduleKey of ["projects","placements"] as const){
    for(const value of [-2,0.75,Number.NaN,Number.NEGATIVE_INFINITY,Number.POSITIVE_INFINITY,
     Number.MAX_SAFE_INTEGER+1]){
-    const values=module==="projects"?[value]:[1,value,3,4];
-    expect(moduleDisableImpactSummary(module,values)).toBe(unavailable[module]);
+    const values=moduleKey==="projects"?[value]:[1,value,3,4];
+    expect(moduleDisableImpactSummary(moduleKey,values)).toBe(unavailable[moduleKey]);
    }
-   expect(moduleDisableImpactSummary(module,[])).toBe(unavailable[module]);
+   expect(moduleDisableImpactSummary(moduleKey,[])).toBe(unavailable[moduleKey]);
   }
   expect(moduleDisableImpactSummary("placements",[1,2])).toBe(unavailable.placements);
  });

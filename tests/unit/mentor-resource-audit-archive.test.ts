@@ -10,6 +10,7 @@ it("keeps archive resource audit inside the project transaction with safe metada
   metadata:{projectId:"project-a",resourceId:"resource-a"},
   subjectType:"project_resource",subjectId:"resource-a"});
  expect(input.dedupeKey).toContain("resource-a:archived");
- expect(JSON.stringify(input.metadata)).not.toContain("Reference");
+ expect(input.metadata).toMatchObject({resourceKey:"resource-a",actionType:"DELETE"});
+ expect(JSON.stringify(input.metadata)).not.toContain("=unsafe");
  expect(JSON.stringify(input.metadata)).not.toContain("url");
 });

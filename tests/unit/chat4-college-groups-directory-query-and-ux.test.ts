@@ -71,13 +71,13 @@ describe("College Admin Student groups directory query and role journey", () => 
     expect(code).toContain("Clear filters");
     expect(code).toContain("No groups found");
     expect(code).toContain("Managed elsewhere");
-    expect(code).toContain("Showing {offset + 1}");
+    expect(code).toContain('Showing {(offset+1).toLocaleString("en-IN")}');
     expect(code).toContain("collegeGroupsDirectoryHref");
   });
 
   it("UX-COL-GROUPS-ONE-CANVAS-01 uses an unboxed filter area and existing responsive table actions", () => {
     const code = page();
-    expect(code).toContain('className="flex flex-wrap items-end gap-3 border-t border-border pt-4"');
+    expect(code).toContain('items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4');
     expect(code).not.toContain("flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4");
     expect(code).toContain("min-h-11");
     expect(code).toContain("<DataTable");

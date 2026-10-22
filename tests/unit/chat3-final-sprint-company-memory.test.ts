@@ -12,9 +12,9 @@ describe("chat-3 final sprint TPO Companies company memory",()=>{
  it("TPO-companies-08 preserves the persisted legacy company memory contract",()=>{
   expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("setDriveSearch");
   expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("driveSearch");
-  expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain('key:"year",header:"Year"');
-  expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain('key:"applied",header:"Applied"');
-  expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("companyDriveCsv(visibleDrives)");
+  expect(file("src/components/tpo/tpo-company-memory-drive-grid.tsx")).toContain('key:"year",label:"Year"');
+  expect(file("src/components/tpo/tpo-company-memory-drive-grid.tsx")).toContain('key:"applied",label:"Applied"');
+  expect(file("src/components/tpo/tpo-company-memory-drive-grid.tsx")).toContain("exportTpoGridCsv(exportColumns,shown)");
  });
  it("TPO-companies-10 preserves the persisted legacy company memory contract",()=>{
   expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain('href={"/tpo/placements/jobs/"+encodeURIComponent(');

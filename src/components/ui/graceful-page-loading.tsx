@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function GracefulPageLoading({ label = "Loading your page...", shape = "card" }: { label?: string; shape?: "card" | "directory" | "faculty-course" } = {}) {
+export function GracefulPageLoading({ label = "Loading your page...", shape = "card", children }: { label?: string; shape?: "card" | "directory" | "faculty-course"; children?: ReactNode } = {}) {
   const [slow, setSlow] = useState(false);
   useEffect(() => {
     setSlow(false);
@@ -13,7 +13,7 @@ export function GracefulPageLoading({ label = "Loading your page...", shape = "c
   }, [label, shape]);
   return <section data-slot="graceful-page-loading" aria-busy={true} className="min-w-0 space-y-[var(--lms-space-4)] bg-transparent py-[var(--lms-space-2)]">
     <span role="status" className="sr-only">{label}</span>
-    {shape === "faculty-course" ? <div aria-hidden="true" className="min-w-0 space-y-4">
+    {children ? <div aria-hidden="true">{children}</div> : shape === "faculty-course" ? <div aria-hidden="true" className="min-w-0 space-y-4">
       <div className="space-y-3 border-b border-border pb-4">
         <div className="h-5 w-[30%] max-w-48 animate-pulse rounded bg-muted"/>
         <div className="h-8 w-[92%] max-w-3xl animate-pulse rounded bg-muted"/>

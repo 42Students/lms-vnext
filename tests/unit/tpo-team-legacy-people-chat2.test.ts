@@ -12,7 +12,9 @@ describe("TPO People roster legacy copy",()=>{
   expect(page).toContain("String(summary.total)");
  });
  it("TPO-inbox-team-32 keeps the number of displayed team members consistent with the filtered roster",()=>{
-  const page=src("src/app/(authenticated)/tpo/team/page.tsx");
+  const page=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
+  const legacy=src("src/app/(authenticated)/tpo/team/page.tsx");
+  expect(legacy).toContain('redirect("/tpo/settings/team")');
   expect(page).toContain("rows={members}");
   expect(page).toContain("getRowKey={member=>member.membershipId}");
   expect(page).toContain("String(summary.total)");

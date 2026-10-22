@@ -29,7 +29,8 @@ describe("TPO unowned work assignment safety",()=>{
  });
  it("TPO-inbox-team-33 exposes a guarded, accessible assigner only when the schema is ready",()=>{
   const component=src("src/components/tpo/tpo-team-assign-unowned.tsx");
-  const page=src("src/app/(authenticated)/tpo/team/page.tsx");
+  const page=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
+  const legacy=src("src/app/(authenticated)/tpo/team/page.tsx");
   const schema=src("src/db/schema/placements.ts");
   const registeredProposal=src("docs/proposed-migrations/registered-0135/tpo-team-drive-owner.sql");
   expect(component).toContain("Nobody owns {drives} drives and {companies} companies");
@@ -37,8 +38,10 @@ describe("TPO unowned work assignment safety",()=>{
   expect(component).toContain('<InlineNotice tone="error" message={error}');
   expect(src("src/components/ui/inline-notice.tsx")).toContain('tone === "error" ? "alert" : "status"');
   expect(component).toContain("pending.current");
-  expect(page).toContain("unowned?.ready?");
+  expect(page).toContain("unowned.ready?");
   expect(page).toContain("TpoTeamAssignUnowned");
+  expect(page).toContain("readTpoUnownedWork(context)");
+  expect(legacy).toContain('redirect("/tpo/settings/team")');
   expect(schema).toContain('ownerMembershipId: uuid("owner_membership_id")');
   expect(registeredProposal).toContain("placement_jobs_owner_college_fk");
   expect(registeredProposal).toContain("REFERENCES college_memberships(id,college_id)");

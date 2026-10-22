@@ -47,14 +47,14 @@ describe("Faculty PDF reports", () => {
     });
     const streams = [...pdf.matchAll(/stream\n([\s\S]*?)endstream/g)].map(match => match[1]);
     expect(streams.length).toBe(2);
-    expect(streams[0]).not.toContain("(LEARNER RESULTS)");
-    expect(streams[1]).toContain("(LEARNER RESULTS)");
+    expect(streams[0]).not.toContain("(Learner results)");
+    expect(streams[1]).toContain("(Learner results)");
     expect(streams[1]).toContain("(Student A: 9/10)");
   });
 
   it("normalizes non-ASCII text to PDF-safe printable content", () => {
     const pdf = buildFacultyReportPdf({ ...base, title: "École – Report" });
-    expect(pdf).toContain("(Ecole ? Report)");
+    expect(pdf).toContain("(\\311cole \\226 Report)");
     expect([...pdf].every((character) => character.charCodeAt(0) <= 127)).toBe(true);
   });
 });

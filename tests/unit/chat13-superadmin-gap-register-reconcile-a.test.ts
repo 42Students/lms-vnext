@@ -76,7 +76,7 @@ describe("SA-placements-projects-30 deliberate global/college boundary",()=>{
   expect(edit).toContain('requirePermission(context,"admin-scope.select")');
   expect(edit).toContain('assertPersistedPlatformPermission(tx,context,"admin-scope.select")');
   const college=source("src/components/admin/super-admin-college-company-actions.tsx");
-  for(const copy of ["Create company","Delete company","Restore company"])
+  for(const copy of ["Add company","Delete company","Restore company"])
    expect(college).toContain(copy);
   const directory=source("src/app/(authenticated)/admin/companies/page.tsx");
   expect(directory).toContain("Sensitive CRM contacts and sharing defaults are not displayed.");

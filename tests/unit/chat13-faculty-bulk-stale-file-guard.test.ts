@@ -30,7 +30,9 @@ describe("SA-FACULTY-CSV-17 prevent stale bulk onboarding after replacement file
    expect(view).toContain("loadedCsv.current={version,text}");
    expect(view).toContain("inputCsv===csv");
    expect(view).toContain('setCsv("");setResults([]);setError("");setPreviewVersion(-1);setFilename(file?.name??"")');
-   expect(view).toContain("if(version===fileVersion.current)setCsv(text)");
+   expect(view).toContain("if(version===fileVersion.current){");
+   expect(view).toContain("loadedCsv.current={version,text};");
+   expect(view).toContain("setCsv(text);");
    expect(view).toContain('if(version===fileVersion.current)setError("Could not read the CSV file.")');
    expect(view).toContain("if(submissionInProgress.current)return");
    expect(view).toContain("submissionInProgress.current=true");

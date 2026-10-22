@@ -28,11 +28,17 @@ async function act(request:Request,{params}:Route,action:"COMPLETE"|"REMOVE"|"ED
  }catch(error){return apiErrorResponse(error);}
 }
 export async function POST(request:Request,context:Route){
+ if(!isSameOriginRequest(request))
+  return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  return act(request,context,"COMPLETE");
 }
 export async function DELETE(request:Request,context:Route){
+ if(!isSameOriginRequest(request))
+  return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  return act(request,context,"REMOVE");
 }
 export async function PATCH(request:Request,context:Route){
+ if(!isSameOriginRequest(request))
+  return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  return act(request,context,"EDIT");
 }

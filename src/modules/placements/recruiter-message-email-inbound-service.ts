@@ -16,7 +16,7 @@ const inboundSchema=z.strictObject({
  subject:z.string().max(512).optional(),
  headerFrom:z.string().max(320).optional(),
  auth:z.string().max(2000).optional(),
- providerMessageId:z.string().trim().max(255).optional(),
+ providerMessageId:z.string().trim().min(3).max(255).optional(),
  attachments:z.array(z.strictObject({filename:z.string().max(255).optional(),
   contentType:z.string().max(128).optional()})).max(40).optional(),
 });
@@ -113,6 +113,7 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  if(!parsed.success)return {accepted:false,replayed:false};
  const input=parsed.data,domain=(env.RECRUITER_MESSAGE_REPLY_DOMAIN??"").toLowerCase();
  const fullText=plainMailText(input.text,input.html).slice(0,200000);
+  if(!fullText)return {accepted:false,replayed:false};
  // Legacy stores up to 200k in the restricted inbox but only a 4k reply in
  // a conversation; slice by JS UTF-16 code units to match imported records.
  // An all-quoted reply is a valid authenticated receipt for human triage.
@@ -120,6 +121,9 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  const replyBody=extractRecruiterEmailReply(fullText)??"";
  const match=/^r-([a-f0-9]{32})@(.+)$/.exec(input.to);
  const isReply=Boolean(match&&match[2]===domain);
+  // This receiver is exclusively for the reply alias. General verified mail
+  // is ingested through /api/internal/inbound-mail, never by guessing a thread.
+  if(!isReply)return {accepted:false,replayed:false};
  const tokenHash=isReply&&match?createHash("sha256").update(match[1]).digest("hex"):null;
  // Inbox and reply posting are one atomic intake: no mail is acknowledged without
  // durable storage, including unknown mail, expired replies, and failed auth.

@@ -10,7 +10,8 @@ describe("COL-placements-12 College Admin drive create field mapping",()=>{
   expect(form).toContain("importantDateRows.map(row=>");
   expect(form).toContain('aria-label="Important date label"');
   expect(form).toContain('importantDates,customEligibilityRules');
-  expect(form).toContain('assessmentUrl:String(data.get("assessmentUrl")??"").trim()||null');
+  expect(form).toContain('const assessmentUrl=String(data.get("assessmentUrl")??"").trim()');
+  expect(form).toContain('assessmentUrl:assessmentUrl||null');
   expect(form).toContain('assessmentDeadline,importantDates,customEligibilityRules');
   expect(form).toContain("Assessment deadline must be after application deadline.");
  });

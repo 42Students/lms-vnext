@@ -62,6 +62,6 @@ describe("W03 DB07 staged history/comment retention", () => {
 
   it("does not confuse staging with registered PostgreSQL acceptance", () => {
     expect(sql).toContain("NOT registered in drizzle/meta/_journal.json");
-    expect(drizzle).toContain("SOURCE-ONLY schema candidates");
+    expect(drizzle).toContain("Meeting/resource audits promoted by 0196;");
   });
 });

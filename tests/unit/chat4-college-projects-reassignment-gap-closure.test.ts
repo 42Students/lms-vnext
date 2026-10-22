@@ -8,7 +8,8 @@ describe("chat-4 college project mentorship bulk reassignment",()=>{
   const service=source("src/modules/projects/mentor-reassignment-workload-service.ts");
   const ui=source("src/components/projects/project-mentor-reassignment.tsx");
   expect(page).toContain('name="mentorSearch"');
-  expect(page).toContain("{ q: mentorSearch, limit: 100 }");
+  expect(page).toContain("listProjectMentorCandidates(context,collegeId,{q:mentorSearch,limit:100,");
+  expect(page).toContain("offset:(mentorPage-1)*100");
   expect(page).toContain("Search eligible mentors by name or email");
   expect(service).toContain("mentorName:users.displayName");
   expect(page).toContain("Mentor workload");

@@ -19,7 +19,8 @@ describe("Safety justified deviations from legacy TPO UI",()=>{
   expect(inbox).toContain('redirect("/tpo/messages?" + target.toString())');
   expect(inbox).toContain("hasPlacementTeamMembership(context)");
   expect(thread).toContain("All conversations");
-  expect(thread).toContain("max-w-[88%]");
+  expect(thread).toContain("max-w-[94%]");
+  expect(thread).toContain("min-[768px]:max-w-[82%]");
   expect(thread).toContain("TpoTeamThreadDetails");
  });
  it("TPO-inbox-team-R02 requires explicit TPO permissions for recruiter messages and announcements rather than extending college-admin private-access by guess",()=>{

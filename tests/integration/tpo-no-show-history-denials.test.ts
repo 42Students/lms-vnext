@@ -3,7 +3,6 @@ import { afterAll, describe, expect, it } from "vitest";
 import { closeDatabaseConnection } from "@/db/client";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   getTpoStudentPlacementHistory,
 } from "@/modules/placements/tpo-student-history-service";

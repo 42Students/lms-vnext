@@ -5,14 +5,19 @@ const src=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("College Projects risk and activity acceptance",()=>{
  it("COL-projects-18 enables admin resource change/search without overriding mentor Activity feed",()=>{
   const a=src("src/components/projects/project-activity-filtered-list.tsx");
-  for(const s of ["mentorActivityRelativeTime","Search activity","Resource change","All resource changes","projectResourceAuditMatches"])expect(a).toContain(s);
+  for(const s of ["mentorActivityRelativeTime","Search activity","Resource change","projectResourceAuditMatches"])expect(a).toContain(s);
+  const resourceAudit=src("src/components/projects/project-resource-audit-list.tsx");
+  expect(resourceAudit).toContain('aria-label="Resource activity"');
+  expect(resourceAudit).toContain('aria-label="Search resource audit"');
   expect(src("src/components/projects/project-workspace.tsx")).toContain('resourceAudit={mode==="ADMIN"}');
  });
  it("COL-projects-23 ensures ten-tab workspace navigation is keyboard-scrollable at narrow widths",()=>{
   const s=src("src/components/projects/project-workspace.tsx");
-  expect(s).toContain('aria-label="Project workspace sections"');
-  expect(s).toContain("flex max-w-full gap-2 overflow-x-auto");
-  expect(s).toContain("tabIndex={0}");
+  expect(s).toContain('ariaLabel="Project workspace sections"');
+  const tabs=src("src/components/ui/tabs.tsx");
+  expect(tabs).toContain('<ScrollCue axis="x"');
+  expect(tabs).toContain('aria-label={ariaLabel}');
+  expect(tabs).toContain('tabIndex={interactive && index === activeIndex ? 0 : -1}');
   const list=src("src/components/projects/project-admin-workspace-list.tsx");
   expect(list).toContain('<DataTable');
   expect(list).toContain('caption="Project workspace table"');

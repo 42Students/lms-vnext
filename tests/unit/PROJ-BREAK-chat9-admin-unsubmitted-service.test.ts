@@ -148,7 +148,8 @@ describe("IIT Dharwad Projects Admin unsubmitted workspaces service permissions 
     }
     expect(state.limitValues).toContain(10);
     expect(state.offsetValues).toContain(10);
-    expect(adminUnsubmittedQuerySchema.safeParse({status:"ARCHIVED"}).success).toBe(true);
+    // Archived projects remain excluded from the unsubmitted active-workspace directory.
+    expect(adminUnsubmittedQuerySchema.safeParse({status:"ARCHIVED"}).success).toBe(false);
     expect(adminUnsubmittedQuerySchema.safeParse({status:"OTHER_TENANT"}).success).toBe(false);
     expect(state.readOnly).toBe(true);
   });

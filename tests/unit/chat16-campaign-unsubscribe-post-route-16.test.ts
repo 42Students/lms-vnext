@@ -84,7 +84,7 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   vi.mocked(getDb).mockReturnValue({execute} as unknown as ReturnType<typeof getDb>);
   const response=await POST(request("signed.global-token"));
   expect(response.status).toBe(503);
-  expect(await response.json()).toEqual({error:"SUPPRESSIONS_NOT_READY"});
+  expect(await response.json()).toEqual({error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again."});
   expect(execute).toHaveBeenCalledTimes(1);
   expect(unsubscribeTpoCampaignRecipient).not.toHaveBeenCalled();
  });

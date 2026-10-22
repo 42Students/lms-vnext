@@ -22,7 +22,12 @@ describe("TPO-inbox-team-19 Team search implementation",()=>{
   expect(view).toContain("},250)");
   expect(view).toContain('router.replace("/tpo/messages?"');
   expect(view).toContain('params.set("tab","team")');
-  expect(page).toContain("<TpoTeamSearch value={search}/>");
-  expect(page).toContain("row.searchSnippet??row.lastPreview");
+  // Legacy /tpo/team redirects into the single canonical Team Messages workspace.
+  expect(page).toContain('redirect("/tpo/messages?" + target.toString())');
+  const messages=read("src/app/(authenticated)/tpo/messages/page.tsx");
+  expect(messages).toContain("<TpoTeamMessagesDirectory");
+  const directory=read("src/components/tpo/tpo-team-messages-directory.tsx");
+  expect(directory).toContain("<TpoTeamSearch value={safeQuery}/>");
+  expect(directory).toContain("item.searchSnippet??item.lastPreview");
  });
 });

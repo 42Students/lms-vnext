@@ -27,8 +27,9 @@ function text(node:ReactNode):string{
 function hrefs(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(hrefs);
  if(!isValidElement(node))return [];
- const props=node.props as {href?:string;children?:ReactNode};
- return [...(typeof props.href==="string"?[props.href]:[]),...hrefs(props.children)];
+ const props=node.props as {href?:string;children?:ReactNode;action?:ReactNode;actions?:ReactNode;empty?:ReactNode};
+ return [...(typeof props.href==="string"?[props.href]:[]),...hrefs(props.children),
+  ...hrefs(props.action),...hrefs(props.actions),...hrefs(props.empty)];
 }
 
 const report={publicId:"LMS-1234",issueType:"BUG",status:"OPEN",

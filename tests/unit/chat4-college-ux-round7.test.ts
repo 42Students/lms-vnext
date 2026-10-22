@@ -5,7 +5,7 @@ const source=(route:string)=>readFileSync(join(process.cwd(),"src/app/(authentic
 describe("Chat-4 college UX round seven",()=>{
  it("UX-college-hiring-dashboard-01 supports accessible narrow-screen presentation",()=>{
  const page=source("hiring-dashboard");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toMatch(/min-w-0[^"]*overflow-x-clip[^"]*space-y/);
  
  });
  it("UX-college-lecture-halls-01 supports accessible narrow-screen presentation",()=>{

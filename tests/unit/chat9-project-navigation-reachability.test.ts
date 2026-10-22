@@ -22,7 +22,8 @@ describe("College Projects navigation has a real route and one tab strip",()=>{
     const list=readFileSync(join(root,"college/projects/page.tsx"),"utf8");
     expect(list).toContain('basePath="/college/projects"');
     const nav=readFileSync(join(process.cwd(),"src/components/projects/project-admin-nav.tsx"),"utf8");
-    expect(nav).toContain('if (basePath === "/college/projects" || basePath === "/admin/projects") return null;');
+    expect(nav).toContain('if (basePath === "/college/projects") return null;');
+    expect(nav).toContain("Super Admin must keep it here");
   });
   it("has exactly one active project group tab even on nested paths",()=>{
     const tabs=COLLEGE_LEGACY_GROUPS.find(x=>x.title==="Projects")!.tabs;

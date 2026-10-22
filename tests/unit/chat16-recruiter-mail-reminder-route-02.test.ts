@@ -1,9 +1,18 @@
 import {afterEach,beforeEach,describe,expect,it,vi} from "vitest";
 import {isSameOriginRequest} from "@/auth/origin";
 import {dispatchRecruiterUnreadMessageDigests} from "@/modules/placements/recruiter-message-email-dispatch-service";
+import {executeScheduledJobWithLease} from "@/modules/operations/scheduled-job-runner";
 import {POST} from "@/app/api/internal/placements/recruiter-message-reminders/route";
 
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
+// Exercise the route and its worker once without requiring the real PostgreSQL
+// lease store in this unit test. Integration tests verify lease fencing.
+vi.mock("@/modules/operations/scheduled-job-runner",()=>({
+ executeScheduledJobWithLease:vi.fn(async (_store:unknown,_input:unknown,
+  work:(guard:{assertCurrent:()=>Promise<void>})=>Promise<unknown>)=>({
+   ran:true,result:await work({assertCurrent:async()=>{}}),
+  })),
+}));
 vi.mock("@/modules/placements/recruiter-message-email-dispatch-service",()=>({
  dispatchRecruiterUnreadMessageDigests:vi.fn(),
 }));
@@ -54,6 +63,7 @@ describe("chat-16 authenticated recruiter email digest worker POST",()=>{
   expect(response.headers.get("cache-control")).toBe("no-store");
   expect(await response.json()).toEqual({examined:2,sent:1,enabled:true});
   expect(dispatchRecruiterUnreadMessageDigests).toHaveBeenCalledTimes(1);
+  expect(executeScheduledJobWithLease).toHaveBeenCalledTimes(1);
  });
  it("HR-MAIL-REMINDERS-05 maps worker outages to a generic 503 without private details",async()=>{
   vi.mocked(dispatchRecruiterUnreadMessageDigests).mockRejectedValue(new Error("secrets/db connection"));

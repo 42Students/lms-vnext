@@ -13,7 +13,21 @@ export default defineConfig([
       "react-hooks/purity": "off",
       "react-hooks/refs": "off",
       "react-hooks/set-state-in-effect": "off",
+      // React Compiler-only diagnostics; the app does not use the compiler, and async server
+      // components legitimately reassign locals and build JSX after try/catch data loads.
+      "react-hooks/immutability": "off",
+      "react-hooks/error-boundaries": "off",
+      "react-hooks/preserve-manual-memoization": "off",
     },
+  },
+  {
+    // CommonJS codemods and audit scripts are Node tooling, not app code.
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
+  {
+    files: ["scripts/audit/**"],
+    rules: { "@typescript-eslint/no-explicit-any": "off" },
   },
   globalIgnores([
     ".next/**",

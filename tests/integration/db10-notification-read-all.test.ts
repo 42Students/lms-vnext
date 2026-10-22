@@ -115,25 +115,39 @@ describe("W06 mark-all notification isolation", () => {
   it("acknowledges the entire inbox, including rows past the 100-item page", async () => {
     await seedNotifications(105);
     expect(await listOwnNotifications(learner, { limit: 100 })).toHaveLength(100);
-    expect(await countOwnUnreadNotifications(learner)).toBe(105);
-    expect(await markAllOwnNotificationsRead(learner)).toBe(105);
+    const learnerUnread=await countOwnUnreadNotifications(learner);
+    const otherUnread=await countOwnUnreadNotifications(other);
+    const {rows:fixtureRows}=await pool.query<{total:number}>(
+      "select count(*)::int as total from in_app_notifications n "+
+      "join activity_events e on e.id=n.event_id "+
+      "where n.user_id=$1 and e.subject_type=$2",
+      [learner.user.id,fixtureType],
+    );
+    expect(fixtureRows[0]?.total).toBe(105);
+    // The activity pipeline can deliver unrelated receipts concurrently.
+    // Mark-all must acknowledge the actual inbox, not only fixture events.
+    expect(learnerUnread).toBeGreaterThanOrEqual(105);
+    expect(await markAllOwnNotificationsRead(learner)).toBe(learnerUnread);
     expect(await countOwnUnreadNotifications(learner)).toBe(0);
     expect(await markAllOwnNotificationsRead(learner)).toBe(0);
 
     // Same event reaches another user; their inbox must not be touched.
-    expect(await countOwnUnreadNotifications(other)).toBe(105);
+    expect(await countOwnUnreadNotifications(other)).toBe(otherUnread);
     expect(await listOwnNotifications(other, { unreadOnly: true, limit: 100 }))
       .toHaveLength(100);
   });
 
   it("multiple simultaneous mark-all calls cannot mutate other users", async () => {
     await seedNotifications(6);
+    const learnerUnread=await countOwnUnreadNotifications(learner);
+    const otherUnread=await countOwnUnreadNotifications(other);
+    expect(learnerUnread).toBeGreaterThanOrEqual(6);
     const [a, b] = await Promise.all([
       markAllOwnNotificationsRead(learner),
       markAllOwnNotificationsRead(learner),
     ]);
-    expect(a + b).toBe(6);
+    expect(a + b).toBe(learnerUnread);
     expect(await countOwnUnreadNotifications(learner)).toBe(0);
-    expect(await countOwnUnreadNotifications(other)).toBe(6);
+    expect(await countOwnUnreadNotifications(other)).toBe(otherUnread);
   });
 });

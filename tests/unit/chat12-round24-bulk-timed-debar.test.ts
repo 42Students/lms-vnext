@@ -13,7 +13,9 @@ describe("TPO timed debarment bulk guard",()=>{
   const ui=src("src/components/tpo/tpo-students-bulk-debar.tsx");
   expect(ui).toContain("useTpoStudentsSelection()");
   expect(ui).toContain('endpoint(learner.id)');
-  expect(ui).toContain('action:"LIFT",debarmentId:active[0].id');
+  expect(ui).toContain('if(active.length>1)');
+  expect(ui).toContain('const current=active[0]');
+  expect(ui).toContain('debarmentId:current.id');
   expect(ui).toContain('method:"POST"');
   expect(src("src/app/(authenticated)/tpo/students/page.tsx")).toContain("<TpoStudentsBulkDebar learners=");
  });

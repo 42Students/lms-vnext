@@ -439,7 +439,7 @@ describe("Projects P4 team and mentor membership", () => {
     await expect(
       listProjectMemberCandidates(collegeAdmin, project.id, {
         role: "LEARNER",
-        q: "Outsider",
+        q: "P4 Outsider",
       }),
     ).resolves.toEqual([
       expect.objectContaining({
@@ -468,7 +468,7 @@ describe("Projects P4 team and mentor membership", () => {
     await expect(
       listProjectMemberCandidates(collegeAdmin, project.id, {
         role: "LEARNER",
-        q: "Outsider",
+        q: "P4 Outsider",
       }),
     ).resolves.toEqual([]);
   });

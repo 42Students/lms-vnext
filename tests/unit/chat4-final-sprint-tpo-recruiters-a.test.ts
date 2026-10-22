@@ -86,7 +86,7 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
   expect(roster).toContain('const contacts=[...new Set([form.email.trim(),form.phone.trim()].filter(Boolean))]');
   expect(roster).toContain("This contact is already a recruiter. Open the existing recruiter instead.");
   expect(roster).toContain('href={"/tpo/recruiters/" + duplicate.id}');
-  expect(roster).toContain('<Dialog open={adding}');
+  expect(roster).toContain('<Dialog open={adding && confirmation?.kind!=="DISCARD"}');
   expect(roster).toContain('dismissible={!saving} title="Add recruiter lead"');
   expect(roster).toContain('<ConfirmDialog open={confirmation!==null}');
   const dialog=source("src/components/ui/dialog.tsx");

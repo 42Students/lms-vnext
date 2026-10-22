@@ -14,7 +14,8 @@ describe("chat-7 mentor projects round-six legacy parity",()=>{
  it("MEN-projects-meetings-15 shows archived workspace consequences without leaking mutating controls",()=>{const s=read("src/components/projects/project-workspace.tsx");expect(s).toContain("Archived workspace");expect(s).toContain("You can review historical tasks, resources, meetings and submissions, but cannot change them.");expect(s).toContain('role="status"');});
  it("MEN-projects-meetings-23 restores the About this project overview heading",()=>{const s=read("src/components/projects/project-workspace.tsx");expect(s).toContain('mode==="ADMIN"?"Overview":"About this project"');expect(s).toContain("Review submission");});
  it("MEN-projects-meetings-24 shows the project team heading and roster count for mentors",()=>{const s=read("src/components/projects/project-workspace.tsx");expect(s).toContain('mode==="MENTOR"?<section aria-label="Final submission"');
-expect(s).toContain('workspace.members.length + " member"');expect(s).toContain("See who is assigned, what role they play");expect(s).toContain("workspace.members.length");});
+expect(s).toContain('workspace.members.length + " member"');expect(s).toContain("Current recorded roster:");
+expect(s).toContain("facts.learners");expect(s).toContain("facts.mentors");expect(s).toContain("workspace.members.length");});
  it("MEN-projects-meetings-38 renames the mentor release section and hides admin engineering copy",()=>{const s=read("src/components/projects/project-workspace.tsx");expect(s).toContain('activeSection==="sprints"?');
 expect(s).toContain('"Sprint plan":"Execution"');
 expect(s).toContain('):"Releases and Sprints"');

@@ -37,9 +37,9 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(page).toContain('aria-label={item.participantName+" — "+item.subject}');
   expect(page).toContain('aria-current={active?.id===item.id?"page":undefined}');
   expect(page).toContain("lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)]");
-  expect(table).toContain('className="block w-full');
-  expect(table).toContain('className="hidden sm:table-header-group');
-  expect(table).toContain('className="block space-y-3 sm:table-row-group');
+  expect(table).toContain('horizontal?"table min-w-[860px] border-collapse":"block"');
+  expect(table).toContain('horizontal?"table-header-group bg-surface":"hidden"');
+  expect(table).toContain('horizontal?"table-row-group":"block space-y-[var(--lms-space-3)]"');
   expect(src("src/app/(authenticated)/tpo/messages/[threadId]/page.tsx")).toContain("All conversations");
  });
  it("TPO-inbox-team-14 redirects the duplicate read-state screen to the canonical notifications history",()=>{
@@ -56,7 +56,7 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(tpoTeamFormErrorMessage("RECIPIENT_NOT_FOUND","CREATE")).toMatch(/no longer available/);
   expect(tpoTeamFormErrorMessage("INVALID_BODY","REPLY")).toMatch(/Write a message/);
   const forms=src("src/components/tpo/tpo-team-forms.tsx");
-  expect(forms).toContain('<InlineNotice tone="error" message={error}');
+  expect(forms).toContain('<InlineNotice tone="error" role="alert" message={error}');
   expect(forms).toContain("setError(tpoTeamFormErrorMessage");
   expect(forms).toContain("value={body}");
   expect(forms).toContain("router.refresh()");
@@ -180,15 +180,15 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
  });
  it("TPO-inbox-team-30 accepts legacy ?c= and ?m= links and members tab without changing user scope",()=>{
   const page=team();
-  expect(page).toContain("z.string().uuid().safeParse(threadId)");
-  expect(page).toContain('redirect("/tpo/team/"+encodeURIComponent(threadId)+target)');
-  expect(page).toContain('tabInput==="members"?"people":tabInput');
+  expect(page).toContain('/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(thread)');
+  expect(page).toContain('redirect("/tpo/messages?" + target.toString())');
+  expect(page).toContain('tab === "members"');
  });
 
  it("TPO-inbox-team-R07 gives native keyboard links, log landmarks, busy state and search hint",()=>{
   const message=src("src/app/(authenticated)/tpo/messages/[threadId]/page.tsx");
   const teamMessage=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
-  expect(message).toContain('role="log" aria-live="polite" aria-busy={false}');
+  expect(message).toContain('role="log" aria-live="polite" aria-relevant="additions text" aria-busy={false}');
   expect(message).toContain("All conversations");
   expect(teamMessage).toContain('role="log" aria-live="polite" aria-busy={false}');
   expect(src("src/components/tpo/tpo-team-search.tsx")).toContain("Search (press /)");
