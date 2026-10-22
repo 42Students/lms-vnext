@@ -708,9 +708,8 @@ export async function getProjectInstanceWorkspace(
       db
         .select()
         .from(projectReleases)
-        .where(
-          eq(projectReleases.projectId, projectId),
-        )
+        .where(and(eq(projectReleases.projectId, projectId),
+           isNull(projectReleases.deletedAt)))
         .orderBy(asc(projectReleases.sequence))
         .then(rows => ({ rows, failed: false }))
         .catch(() => ({ rows: [] as (typeof projectReleases.$inferSelect)[], failed: true })),

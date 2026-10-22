@@ -646,7 +646,7 @@ export async function getTpoAuditLog(
           record.kind as kind,
           record.event_type as "eventType",
           record.title as title,
-          record.detail as detail,
+          left(record.detail, 1000) as detail,
           record.occurred_at as "occurredAt",
           record.job_id::text as "jobId",
           record.subject_type as "subjectType",
@@ -679,7 +679,7 @@ export async function getTpoAuditLog(
       kind: row.kind,
       eventType: row.eventType,
       title: row.title,
-      detail: row.detail,
+      detail: row.detail.replace(/\b1 students\b/gi,"1 student").slice(0,1000),
       occurredAt:
         row.occurredAt instanceof Date
           ? row.occurredAt.toISOString()
