@@ -134,7 +134,8 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
       await expect(createPlacementCandidateFixture(db,drive,siblingLearner,admin))
         .rejects.toThrow(/different colleges|share a college/);
       await expect(createPlacementFixture(db,own,siblingAdmin)).rejects.toThrow(/wrong college/);
-      expect(await db.query("select id from project_task_submissions")).toHaveLength(0);
+      expect(await db.query("select id from project_task_submissions where project_id=$1",
+        [project.projectId])).toHaveLength(0);
       expect(await db.query("select id from placement_applications where job_id=$1",
         [drive.jobId])).toHaveLength(0);
       expect(await db.query<{id:string}>(
@@ -255,16 +256,17 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     await withProjectPg(pool,async db=>{
       const tenant=await createTenant(db,"Placement actor");
       const learner=await createPrincipal(db,tenant,["LEARNER"]);
-      const before=await db.query<{n:number}>(
-        "select count(*)::int as n from placement_companies");
       await expect(createPlacementFixture(db,tenant,learner))
         .rejects.toThrow(/actor role/);
       const tpo=await createPrincipal(db,tenant,["TPO"]);
       await db.query("update college_memberships set status='SUSPENDED' where id=$1",[tpo.membershipId]);
       await expect(createPlacementFixture(db,tenant,tpo))
         .rejects.toThrow(/not an active member/);
+      // The two rejected initiators must not have authored a partial company.
+      // Other integration fixtures may create unrelated companies concurrently.
       expect(await db.query<{n:number}>(
-        "select count(*)::int as n from placement_companies")).toEqual(before);
+        "select count(*)::int as n from placement_companies where created_by_user_id in ($1,$2)",
+        [learner.userId,tpo.userId])).toEqual([{n:0}]);
     });
   });
 
