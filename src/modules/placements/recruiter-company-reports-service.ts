@@ -294,8 +294,8 @@ export async function getRecruiterCompanyReports(
       select a.id,a.status from placement_applications a
       join jobs j on j.id=a.job_id
       join college_memberships m on m.id=a.membership_id
-        and m.college_id=${collegeId}::uuid
-      join users u on u.id=m.user_id
+        and m.college_id=${collegeId}::uuid and m.status='ACTIVE'
+      join users u on u.id=m.user_id and u.platform_status='ACTIVE'
     )
     select
       (select count(*)::int from applicants) as applied,
