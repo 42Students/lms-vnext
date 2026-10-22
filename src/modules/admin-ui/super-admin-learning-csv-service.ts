@@ -20,15 +20,15 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
   if([...searchParams.keys()].some(key=>searchParams.getAll(key).length!==1))
     return Response.json({error:"INVALID_FILTERS"},{status:400});
   const query=Object.fromEntries(searchParams);
-  const pageOnly=(kind==="ASSIGNMENT"||kind==="QUIZ")&&query.exportMode==="PAGE";
-  if(query.exportMode!==undefined&&!pageOnly)
+  const pageOnly=(kind==="ASSIGNMENT"||kind==="QUIZ")&&query["exportMode"]==="PAGE";
+  if(query["exportMode"]!==undefined&&!pageOnly)
     return Response.json({error:"INVALID_FILTERS"},{status:400});
-  if(pageOnly)delete query.exportMode;
+  if(pageOnly)delete query["exportMode"];
   const assessment=kind==="ASSIGNMENT"||kind==="QUIZ";
   const params=(assessment?adminAssessmentQuerySchema:adminLearningQuerySchema).safeParse(query);
   if(!params.success ||
-     (kind==="ASSIGNMENT"&&(query.status==="CLOSED"||
-       (query.results!==undefined&&query.results!=="ALL"))))
+     (kind==="ASSIGNMENT"&&(query["status"]==="CLOSED"||
+       (query["results"]!==undefined&&query["results"]!=="ALL"))))
     return Response.json({error:"INVALID_FILTERS"},{status:400});
   const headers:string[]=pageOnly?
     (kind==="QUIZ"?["Title","Course","Status","Points","Due"]:

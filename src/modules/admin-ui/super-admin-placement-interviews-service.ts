@@ -124,9 +124,10 @@ export async function listSuperAdminInterviews(
    return {
     id:row.id,jobId:row.jobId,title:row.jobTitle,subtitle:candidate+" · "+row.companyName,
     status:row.status,revision:String(row.version),href,
-    secondaryHref:row.applicationId?
-     "/admin/placements/applications?applicationId="+encodeURIComponent(row.applicationId):undefined,
-    secondaryLabel:row.applicationId?"View application":undefined,
+    ...(row.applicationId?{
+     secondaryHref:"/admin/placements/applications?applicationId="+encodeURIComponent(row.applicationId),
+     secondaryLabel:"View application",
+    }:{}),
     details:[
      "Job: "+row.jobTitle,
      "Round: "+row.roundName,

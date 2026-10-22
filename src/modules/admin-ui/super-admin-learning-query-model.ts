@@ -10,12 +10,12 @@ export function parseSuperAdminLearningQuery(
  const allowed=new Set(["q","status","page","courseCode","cohortCode"]);
  if(Object.keys(raw).some(key=>!allowed.has(key)) ||
     Object.values(raw).some(Array.isArray) ||
-    (raw.page!==undefined &&
-      (typeof raw.page!=="string" || !/^[0-9]+$/.test(raw.page))))
+    (raw["page"]!==undefined &&
+      (typeof raw["page"]!=="string" || !/^[0-9]+$/.test(raw["page"]))))
   return adminLearningQuerySchema.safeParse(null);
  return adminLearningQuerySchema.safeParse({
-  q:raw.q,status:raw.status,page:raw.page,
-  courseCode:raw.courseCode||undefined,
-  cohortCode:raw.cohortCode||undefined,
+  q:raw["q"],status:raw["status"],page:raw["page"],
+  courseCode:raw["courseCode"]||undefined,
+  cohortCode:raw["cohortCode"]||undefined,
  });
 }
