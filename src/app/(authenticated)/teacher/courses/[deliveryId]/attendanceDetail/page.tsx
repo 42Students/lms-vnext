@@ -66,8 +66,8 @@ async function FacultyCourseAttendanceContent({
   }catch(error){
     if(error instanceof AuthorizationError||error instanceof CoursesServiceError)throw error;
     return <div className="min-w-0 space-y-4">
-      <ErrorState title="Could not load the attendance roster"
-        description="Failed to load students or attendance. Your existing marks have not been changed."
+      <ErrorState title="Class schedules unavailable"
+        description="Could not load class schedules or the student roster. Your existing marks have not been changed."
         action={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail"}
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
       <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/home"}
