@@ -22,11 +22,12 @@ export default async function LearnerPlacementNotificationPreferencesPage(){
     </div>;
   }
   return <div className="min-w-0 space-y-5">
+    <PageHeader title="Placement notifications"
+      description="Manage the two registered placement notification preferences for your active Learner membership." />
     <Link href="/learn/my-placements" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline">
       ← Back to My Placements
     </Link>
-    <PageHeader title="Placement notifications"
-      description="Manage the two registered placement notification preferences for your active Learner membership." />
+
     <LearnerPlacementNotificationSettings key={preferences.updatedAt?.toISOString()??"defaults"}
       initial={{
         notifyMatchingJobs:preferences.notifyMatchingJobs,
