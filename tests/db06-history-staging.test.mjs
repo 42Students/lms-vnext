@@ -22,9 +22,9 @@ const journal = JSON.parse(
   fs.readFileSync("drizzle/meta/_journal.json", "utf8"),
 );
 
-test("DB035 history models remain source-only and unregistered", () => {
+test("DB035 history model is explicitly exported without independently registering staged SQL", () => {
   assert.match(schema, /DB-035 \/ DB06 SOURCE-ONLY staging/);
-  assert.doesNotMatch(barrel, /db06-history-staged/);
+  assert.match(barrel, /export \{assignmentGradeEventsStaged\} from "\.\/db06-history-staged"/);
   assert.equal(
     journal.entries.some((entry) =>
       /db06.*history|grade.*attendance.*history/i.test(entry.tag),
