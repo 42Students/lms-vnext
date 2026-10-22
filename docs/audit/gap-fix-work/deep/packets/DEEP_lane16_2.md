@@ -16,7 +16,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-12-017-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 - [x] G2-12-017-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 - [x] G2-13-013-054  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
-- [ ] G2-13-014-061  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
+- [x] G2-13-014-061  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 
 ## Results
 
@@ -33,3 +33,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-13-013-054: OK (vNext schema crosswalk, no executed legacy import) — `src/db/schema/courses.ts:391-443` maps lesson UUID identity via its scoped learning path to course ancestry, retaining sequence, active status, independent student visibility, deletion timestamp and optimistic version. `src/db/schema/courses.ts:448-495` retains lesson-content ordering, soft deletion and version. Source fields: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Lesson.java:13-38`. No historic integer IDs are passed directly as UUIDs.
 
 - G2-12-002-076: OK — `src/modules/academics/college-term-mapping-service.ts:474-520` hard-deletes an unused scoped mapping in a transaction, rejects active-offering dependencies and records an immutable removal audit; `src/db/schema/academic-terms.ts:49-52` retains original source deletion provenance for approved imports. Legacy repository hard-delete/soft-hidden read patterns are `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/SemesterCourseRepository.java:16-20,37-39`. The vNext restriction against removing an active batch offering is an intentional integrity safeguard; removal does not delete historical learner/offerings data.
+
+- G2-13-014-061: OK (explicit replacement, no stale cache) — `src/modules/admin-ui/super-admin-placement-applications-service.ts:136-210` implements legacy-shaped organization-authorized live search plus organization stats, and returns `cache:"LIVE_DATABASE",refreshed:false` to make legacy cache refresh unnecessary; the scoped TPO pipeline queries persisted records in `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx:20-58,128-134`. Legacy three operations and organization scope are in `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/applications/JobApplicationSearchController.java:57-114`. There is no in-memory search cache requiring refresh or serving stale cross-college results.
