@@ -33,16 +33,19 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Add legacy resource picker (PDF/file/HTTPS link) and Google Drive import in assignment builder.
 
 ## G2-4-010-030 [P1] GAP facet F06
+- Verification: OK — create form defaults to zero points, SHARED audience and WRITTEN_RESPONSE; title uses 255-character bound and exact placeholder; zero-point input accepted.
 - Files: src/components/courses/college-assignment-create.tsx
 - Legacy: Builder modal create defaults points 0, audience ALL, submit method WRITTEN_RESPONSE. (`docs/legacy-source/frontend/src/components/admin/AdminAssignmentBuilderModal.jsx:80-135`)
 - Expected fix: Use legacy initial points=0 and written-response-only method unless changed by owner.
 
 ## G2-4-010-031 [P1] GAP facet F06
+- Verification: OK — create form defaults to zero points, SHARED audience and WRITTEN_RESPONSE; title uses 255-character bound and exact placeholder; zero-point input accepted.
 - Files: src/components/courses/college-assignment-create.tsx, src/components/courses/college-assignment-actions.tsx
 - Legacy: Title field max 255 characters, input placeholder `e.g., Module 1 Project`. (`docs/legacy-source/frontend/src/components/admin/AdminAssignmentBuilderModal.jsx:355-357`)
 - Expected fix: Allow 255-character title as in legacy and reproduce placeholder.
 
 ## G2-4-010-032 [P1] GAP facet F06
+- Verification: OK — create form defaults to zero points, SHARED audience and WRITTEN_RESPONSE; title uses 255-character bound and exact placeholder; zero-point input accepted.
 - Files: src/components/courses/college-assignment-create.tsx
 - Legacy: Points InputNumber min 0 (zero allowed) with `Enter points` required validation. (`docs/legacy-source/frontend/src/components/admin/AdminAssignmentBuilderModal.jsx:361-363`)
 - Expected fix: Decide zero-point assignment support; restore 0 lower bound and backend check if parity required.
