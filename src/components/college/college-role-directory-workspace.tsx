@@ -124,6 +124,11 @@ export async function CollegeRoleDirectoryWorkspace({
     {kind==="LEARNER" && item.membershipStatus==="ACTIVE"&&
       item.userStatus==="ACTIVE"&&item.cohort!==null
       ? <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/> : null}
+    <Link href="/college/otp-lockout"
+      className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9"
+      aria-label={"Open authorized OTP recovery for "+item.name}>
+      Clear OTP lockout
+    </Link>
     <Link href={(kind==="LEARNER"?"/college/students/":"/college/faculty/")+item.membershipId}
       className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9"
       aria-label={"Open full "+(kind==="LEARNER"?"student":"faculty")+" profile for "+item.name}>
@@ -248,11 +253,12 @@ export async function CollegeRoleDirectoryWorkspace({
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Faculty Assignment →</Link>
       </div> : null}
       <p className="text-xs leading-5 text-muted-foreground" role="note">
-        Permanent deletion and direct OTP lockout clearing from the old LMS are not
-        offered to college roster administrators. Suspending a membership preserves
-        shared user identity, academic work, placement history and audit events.
-        Authentication recovery remains an identity-support workflow, never a roster
-        action. Active faculty can reassign class schedules before suspension.
+        Legacy permanent deletion is replaced by reversible, college-scoped membership
+        suspension, preserving shared identity, academic work, placement history and
+        audit events. The Clear OTP lockout link opens an authorized support form
+        which independently verifies the person and records a reason; it does not
+        bypass anti-abuse restrictions. Active faculty can reassign class schedules
+        before suspension.
       </p>
       {kind === "FACULTY" ? <nav aria-label="Faculty directory tools" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <Link href="/college/faculty/import" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Import faculty CSV</Link>
