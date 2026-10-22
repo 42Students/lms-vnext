@@ -71,7 +71,13 @@ async function cleanup(){
   "select 1 from activity_events where actor_user_id=$1::uuid or actor_membership_id=$2::uuid limit 1",
   [f.learnerUserId,f.learnerMembershipId],
  );
- if(!audit.rowCount){
+ // Notification receipts are durable FK references, just like the audit log.
+ // Do not delete a fixture principal while any delivered notice refers to it.
+ const notices=await pool.query(
+  "select 1 from in_app_notifications where user_id=$1::uuid limit 1",
+  [f.learnerUserId],
+ );
+ if(!audit.rowCount&&!notices.rowCount){
   await pool.query("delete from membership_roles where membership_id=$1",[f.learnerMembershipId]);
   await pool.query("delete from college_memberships where id=$1",[f.learnerMembershipId]);
   await pool.query("delete from users where id=$1",[f.learnerUserId]);
@@ -300,8 +306,13 @@ describe("Faculty registered report/history positive and scope denials",()=>{
   }finally{
    await pool.query("delete from faculty_profiles where membership_id=$1",[membershipId]);
    await pool.query("delete from membership_roles where membership_id=$1",[membershipId]);
-   await pool.query("delete from college_memberships where id=$1",[membershipId]);
-   await pool.query("delete from users where id=$1",[userId]);
+   const notifications=await pool.query(
+    "select 1 from in_app_notifications where user_id=$1::uuid limit 1",[userId],
+   );
+   if(!notifications.rowCount){
+    await pool.query("delete from college_memberships where id=$1",[membershipId]);
+    await pool.query("delete from users where id=$1",[userId]);
+   }
   }
  });
 });

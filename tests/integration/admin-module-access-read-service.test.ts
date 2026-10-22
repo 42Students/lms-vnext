@@ -14,7 +14,7 @@ if (!process.env.TEST_DATABASE_URL) {
 
 const superAdmin: RequestContext = {
   user: {
-    id: SEED_IDS.collegeAdminUser,
+    id: SEED_IDS.superAdminUser,
     identityUid: "seed-super",
     platformStatus: "ACTIVE",
     systemRoles: ["SUPER_ADMIN"],

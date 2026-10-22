@@ -1,13 +1,14 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection} from "@/db/client";
+import {closeDatabaseConnection,getDb} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {createPlacementRound} from "@/modules/placements/round-service";
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
+import {placementJobEligibilityPolicies} from "@/db/schema";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=Boolean(process.env.TEST_DATABASE_URL)&&process.env.DB03_ISOLATED_TEST_DATABASE==="1";
 if(enabled) assertDb018DisposableTarget(process.env,{serviceBound:true});
@@ -22,6 +23,8 @@ describe.skipIf(!enabled)("HR round contact disclosure isolation (isolated PG)",
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:company.relationship.id,
     title:"HR Contact "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Panel"});
+  // A published drive requires a persisted scoped eligibility policy.
+  await getDb().insert(placementJobEligibilityPolicies).values({jobId:job.id,updatedByUserId:tpo.user.id});
   await publishPlacementJob(tpo,job.id);
   const userId=randomUUID();
   const hr=(companyId:string,relationshipId:string,collegeId:string):RequestContext=>({
