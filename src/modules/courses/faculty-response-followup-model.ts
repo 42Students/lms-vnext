@@ -85,7 +85,7 @@ export function parseFacultyFollowUpSearchParams(raw:Record<string,string|string
  return facultyResponseFollowUpQuerySchema.safeParse({
   kind:raw["kind"]||undefined,search:raw["search"]??undefined,page:raw["page"],
   deliveryId:raw["deliveryId"]||undefined,sort:raw["sort"]||undefined,
-  pageSize:raw["page"]Size,
+  pageSize:raw["pageSize"],
  });
 }
 
