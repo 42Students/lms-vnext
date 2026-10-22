@@ -303,7 +303,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     <>
       <PageHeader title={invite.collegeName+" would like you to hire from their students"} />
       {invite.reviewDrive?<p className="mt-3 text-sm font-semibold text-body">
-        Please review {invite.reviewDrive} for the students at {invite.collegeName}.
+        They posted a drive, {invite.reviewDrive}, and would like you to review it.
       </p>:null}
       <p className="mt-3 text-sm text-muted-foreground leading-[22px]">
 

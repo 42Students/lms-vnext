@@ -23,13 +23,26 @@ export async function extendCollegeDriveDeadline(ctx:RequestContext,rawId:unknow
    collegeId,organizationId:acting.organizationId,
   });
   const [job]=await tx.select({id:placementJobs.id,title:placementJobs.title,
-   status:placementJobs.status,deadline:placementJobs.applicationDeadline})
+   status:placementJobs.status,deadline:placementJobs.applicationDeadline,
+   legacyPostingDetails:placementJobs.legacyPostingDetails})
    .from(placementJobs).where(and(eq(placementJobs.id,id),
     eq(placementJobs.collegeId,collegeId))).for("update").limit(1);
   if(!job||job.status!=="PUBLISHED")throw Error("Only active drives can extend their deadlines.");
+  if(deadline<=new Date())throw Error("Choose a future deadline.");
   if(job.deadline&&deadline<=job.deadline)throw Error("The new deadline must be later than the existing deadline.");
+  // The legacy job edit updates both the canonical application deadline and
+  // its matching Important Dates entry; never leave conflicting student copy.
+  const previousDates=job.legacyPostingDetails?.importantDates??[];
+  const syncedDates=job.legacyPostingDetails?[
+   ...previousDates.filter(date=>date.label.trim().toLowerCase()!=="application deadline"),
+   {label:"Application deadline",at:deadline.toISOString()},
+  ]:null;
   const [saved]=await tx.update(placementJobs).set({
-   applicationDeadline:deadline,updatedAt:new Date(),
+   applicationDeadline:deadline,
+   ...(job.legacyPostingDetails&&syncedDates?{legacyPostingDetails:{
+    ...job.legacyPostingDetails,importantDates:syncedDates,
+   }}:{}),
+   updatedAt:new Date(),
   }).where(and(eq(placementJobs.id,id),eq(placementJobs.status,"PUBLISHED")))
   .returning({id:placementJobs.id,deadline:placementJobs.applicationDeadline});
   if(!saved)throw Error("Drive changed; refresh and retry.");
