@@ -99,6 +99,8 @@ export default async function TpoCandidateSchedulePage({
             {key:"when",header:"Shared start (IST)",cell:item=>item.roundStartIso
               ?dateFormat.format(new Date(item.roundStartIso))+" IST":"Not scheduled",mobilePriority:"secondary"},
             {key:"venue",header:"Round venue",cell:item=>item.roundVenue??"Not recorded",mobilePriority:"secondary"},
+            {key:"slot",header:"Candidate slot",cell:item=>item.candidateSlot??"Not recorded in this round view",mobilePriority:"secondary"},
+            {key:"panel",header:"Panel",cell:item=>item.panelAssignment??"Not recorded in this round view",mobilePriority:"secondary"},
           ]}
         />
       </>}
