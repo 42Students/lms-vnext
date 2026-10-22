@@ -2066,6 +2066,13 @@
       "when": 1792359011266,
       "tag": "0312_chat12_notification_delivery_cancelled",
       "breakpoints": true
+    },
+    {
+      "idx": 295,
+      "version": "7",
+      "when": 1792359071266,
+      "tag": "0313_chat14_template_less_legacy_projects",
+      "breakpoints": true
     }
   ]
 }
