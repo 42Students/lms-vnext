@@ -147,7 +147,29 @@ const socialProfilesSchema = z
     researchGateUrl: "",
   });
 
-const addressSchema = z
+/** Import both generations of legacy learner address fields without losing an
+ * explicitly entered current location. The old learner persisted shared
+ * city/state/pincode alongside current_* and permanent_* variants. */
+export function normalizeLegacyLearnerAddress(value: unknown): unknown {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return value;
+  const fields = value as Record<string, unknown>;
+  const text = (key: string): string | undefined =>
+    typeof fields[key] === "string" ? fields[key] as string : undefined;
+  const prefer = (current: string, legacy: string): string | undefined =>
+    text(current) ?? text(legacy);
+  return {
+    currentAddress: prefer("currentAddress", "address") ?? "",
+    city: prefer("currentCity", "city") ?? "",
+    state: prefer("currentState", "state") ?? "",
+    pincode: prefer("currentPincode", "pincode") ?? "",
+    permanentAddress: text("permanentAddress") ?? "",
+    permanentCity: text("permanentCity") ?? "",
+    permanentState: text("permanentState") ?? "",
+    permanentPincode: text("permanentPincode") ?? "",
+  };
+}
+
+const addressSchema = z.preprocess(normalizeLegacyLearnerAddress, z
   .object({
     currentAddress: textValue(1000),
     city: textValue(160),
@@ -186,7 +208,7 @@ const addressSchema = z
     permanentCity: "",
     permanentState: "",
     permanentPincode: "",
-  });
+  }));
 
 const personalDetailsSchema = z
   .object({
