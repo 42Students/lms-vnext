@@ -38,5 +38,5 @@ export async function requireVerificationTables() {
   to_regclass('public.profile_verification_settings')::text as settings,
   to_regclass('public.profile_private_document_receipts')::text as receipts`);
  const row=result.rows[0];
- if(!row?.records||!row.settings||!row.receipts)throw new VerificationUnavailableError();
+ if(!row?.["records"]||!row["settings"]||!row["receipts"])throw new VerificationUnavailableError();
 }
