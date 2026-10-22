@@ -67,7 +67,7 @@ describe("learner class schedule parity surface", () => {
     );
     expect(facultyPage).toContain('courseBasePath="/teacher/courses"');
     expect(component).toContain(
-      'aria-label="Next upcoming classes"',
+      'aria-label="Next classes"',
     );
     expect(component).toContain(
       '"mt-5 space-y-4 md:hidden"',
