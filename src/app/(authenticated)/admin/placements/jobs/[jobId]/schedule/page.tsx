@@ -38,11 +38,9 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   // Validate the platform actor and selected tenant before reading private rounds.
   requireSuperAdminSelectedCollege(context,"placements.manage");
   const {jobId}=await params;
-  const rawQuery=await searchParams;
-  const query=driveInterviewsParams(rawQuery);
-  // A server-only URL filter cannot reference an undeclared client variable.
-  // Keep conflict-only export/rows derived from this verified request.
-  const conflictsOnly=rawQuery.conflictsOnly==="1";
+  const rawSearchParams=await searchParams;
+  const conflictsOnly=rawSearchParams.conflictsOnly==="1";
+  const query=driveInterviewsParams(rawSearchParams);
   if(!query) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Interviews" description="Schedule candidate interviews and review interview rounds."/>
     <ErrorState title="Invalid interview filters"
@@ -135,7 +133,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   const completedCount=candidateRows.filter(row=>row.status==="COMPLETED").length;
   const cancelledCount=candidateRows.filter(row=>
     row.status==="CANCELLED"||row.status==="NO_SHOW").length;
-  const activeCandidateFilters=Boolean(query.appointmentSearch||
+  const activeCandidateFilters=Boolean(conflictsOnly||query.appointmentSearch||
     (query.appointmentMode&&query.appointmentMode!=="ALL")||
     (query.appointmentStatus&&query.appointmentStatus!=="ALL"));
   const navItems=[
@@ -198,6 +196,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <form method="get" aria-label="Filter interviews"
       className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <input type="hidden" name="appointmentPage" value="1"/>
+      {conflictsOnly?<input type="hidden" name="conflictsOnly" value="1"/>:null}
       <input type="hidden" name="page" value="1"/>
       <label className="grid min-w-0 gap-2 text-sm font-semibold text-muted-foreground">
         Search
@@ -256,10 +255,19 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
         Clear filters
       </Link>
-      <Link href={refreshHref}
+      <Link href={addConflictParam(refreshHref)}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
         Refresh interviews
       </Link>
+      <Link href={conflictHref}
+        aria-current={conflictsOnly?"page":undefined}
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+        {conflictsOnly?"Show all appointments":"Show possible overlaps (this page)"}
+      </Link>
+      <a href={exportHref} download="drive-interviews.csv"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+        Export visible appointments (CSV)
+      </a>
     </div>
     <section aria-label="Candidate interviews" className="min-w-0 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -283,7 +291,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
             className="inline-flex min-h-11 items-center font-semibold text-link underline">Next candidates</Link>:null}
         </nav>
         <p role="status" className="text-sm text-body">{appointments.appointmentTotal} matching candidate appointments · page {appointments.appointmentPage} of {appointments.appointmentPages}
-          · {appointments.appointmentPageSize} per page</p>
+          · {appointments.appointmentPageSize} per page{conflictsOnly?" · "+visibleCandidateRows.length+" possible overlaps on this page":""}</p>
         {query.applicationId&&appointments.candidateConflicts.length>0?
           <Banner tone="warning">
             <strong>This learner already has scheduled interviews in this college.</strong>
@@ -298,7 +306,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           </Banner>:null}
         <CollegeInterviewAppointments jobId={jobId}
           rounds={appointments.rounds} candidates={appointments.candidates}
-          appointments={appointments.interviews} preferredApplicationId={query.applicationId}/>
+          appointments={visibleCandidateRows} preferredApplicationId={query.applicationId}/>
         <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
           {appointments.appointmentPage>1?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}
