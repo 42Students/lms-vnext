@@ -70,7 +70,7 @@ export default async function CompanySharePage({
    if(key==="RESUME"||key==="GITHUB"||key==="PORTFOLIO"){
     try{
      const url=new URL(value);
-     if(url.protocol==="https:"&&!url.username&&!url.password)return <a href={url.href} rel="noopener noreferrer" className="font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-link-text)]">Open</a>;
+     if(url.protocol==="https:"&&!url.username&&!url.password)return <a href={url.href} target="_blank" rel="noopener noreferrer" aria-label={"Open "+COMPANY_SHARE_COLUMNS[key]+" for "+(row.displayName??row.applicationId)+" in a new tab"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open</a>;
     }catch{}
     return value==="Link not shown"?value:"-";
    }
