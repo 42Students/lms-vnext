@@ -38,7 +38,7 @@ function normalizeContentCreatePayload(body:Record<string,unknown>){
  }
  // Old Java relied on positive integer Faculty IDs. Membership tenancy now
  // identifies the author, so even a valid legacy filter cannot impersonate it.
- delete next.facultyId;delete next.faculty_id;
+ delete next["facultyId"];delete next["faculty_id"];
  return next;
 }
 function optionalLegacyFacultyFilter(value:string|null){
