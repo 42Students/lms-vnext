@@ -56,7 +56,7 @@ const cases = [
     "route": "/mentor/courses",
     "file": "src/app/(authenticated)/mentor/courses/page.tsx",
     "expected": [
-      "redirect(\"/mentor\")"
+      "redirect(\"/mentor/projects\")"
     ]
   },
   {
@@ -183,6 +183,12 @@ describe("UX-coverage-closure-leftovers-chat17 — legacy boundaries and private
     const page=readFileSync(join(process.cwd(),file),"utf8");
     for(const contract of expected)expect(page).toContain(contract);
     expect(page).not.toMatch(/window\.(?:alert|confirm|prompt|open)\s*\(/);
-    expect(page).not.toMatch(/target\s*=\s*["']_blank["']/);
+    if(file.endsWith("/tracker/mine/[publicId]/page.tsx")){
+      // Authorized HTTPS evidence opens separately, with no opener access.
+      expect(page).toContain('evidenceLink?.startsWith("https://")');
+      expect(page).toContain('rel="noopener noreferrer"');
+    }else{
+      expect(page).not.toMatch(/target\s*=\s*["']_blank["']/);
+    }
   });
 });

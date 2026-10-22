@@ -6,5 +6,11 @@ const s=readFileSync(join(process.cwd(),"src/app/(authenticated)/teacher/courses
 expect(s).toContain("redirect(\"/teacher/courses/\"+encodeURIComponent(target.deliveryId)+\"/students\")");
 expect(s).toContain("notFound()");
 expect(s).toContain("getCurrentRequestContext");
-expect(s).toContain("<PageHeader\n        eyebrow=\"Faculty · Course\"\n        title=\"Students\"");
+expect(s).toContain("FacultyCourseRoster");
+const roster=readFileSync(join(process.cwd(),
+ "src/components/courses/faculty-course-roster.tsx"),"utf8");
+expect(s).toContain('className="sr-only">Students');
+expect(roster).toContain('title="No students yet"');
+expect(roster).toContain("<DataTable");
+expect(roster).toContain('aria-label="Students in this class"');
 });

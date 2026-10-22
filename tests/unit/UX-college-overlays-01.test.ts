@@ -4,6 +4,7 @@ import {join} from "node:path";
 const root="src/components/college/";
 const source=(name:string)=>readFileSync(join(process.cwd(),root+name+".tsx"),"utf8");
 const sharedDialog=readFileSync(join(process.cwd(),"src/components/ui/dialog.tsx"),"utf8");
+const overlayExit=readFileSync(join(process.cwd(),"src/components/ui/use-overlay-exit.ts"),"utf8");
 describe("UX-college-overlays-01 college dialog behavior",()=>{
   for(const name of [
     "college-faculty-reassign-action","college-faculty-schedule-reassign",
@@ -19,7 +20,9 @@ describe("UX-college-overlays-01 college dialog behavior",()=>{
       expect(component).toContain("title=");
       expect(component).toContain("min-h-11");
       expect(sharedDialog).toContain('aria-labelledby={titleId}');
-      expect(sharedDialog).toContain("modal.showModal()");
+      expect(sharedDialog).toContain("useOverlayExit(ref, opener, open, 180)");
+      expect(overlayExit).toContain("dialog.showModal()");
+      expect(overlayExit).toContain("if (opener?.isConnected) opener.focus()");
       expect(sharedDialog).toContain("opener.current?.focus()");
       expect(sharedDialog).toContain("onCancel={event");
       expect(sharedDialog).toContain("event.target === ref.current");
