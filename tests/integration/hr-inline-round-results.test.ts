@@ -24,6 +24,7 @@ describe.skipIf(!enabled)("HR inline result read auth (isolated PG)",()=>{
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,title:"Inline "+nonce,
     description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
   const round=await createPlacementRound(tpo,job.id,{kind:"TEST",name:"Screen"});
+  await upsertJobEligibilityPolicy(tpo,job.id,{});
   await publishPlacementJob(tpo,job.id);
   const id=randomUUID();
   const hr=(companyId:string,relationshipId:string,collegeId:string):RequestContext=>({
