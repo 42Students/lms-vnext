@@ -104,5 +104,5 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_courses_route.ts.md` (edit src/app/api/courses/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_courses_courseId_route.ts.md` (edit src/app/api/courses/[courseId]/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_admin-course-workspace.ts.md` (edit src/modules/courses/admin-course-workspace.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_faculty-notification-link-model.ts.md` (edit src/modules/courses/faculty-notification-link-model.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_learner-course-file-reference-service.ts.md` (edit src/modules/courses/learner-course-file-reference-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_faculty-notification-link-model.ts.md` (edit src/modules/courses/faculty-notification-link-model.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_learner-course-file-reference-service.ts.md` (edit src/modules/courses/learner-course-file-reference-service.ts; 1 findings; best P2)
