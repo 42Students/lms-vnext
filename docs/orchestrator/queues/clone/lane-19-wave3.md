@@ -11,7 +11,7 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_NEW_docs_audit_gap2_lane-7_l19-u027-course-controller.md.md` (new; 5 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_NEW_docs_audit_gap2_lane-7_l19-u027-course-controller.md.md` (new; 5 findings; best P1) — restored course/parent/slug/deleted flows; signed image grant, receipt, clean completion, scoped preview/remove
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_src_app_authenticated_admin_students_page.tsx.md` (edit src/app/(authenticated)/admin/students/page.tsx; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_NEW_docs_audit_gap2_lane-5_u010-classes-shared-component.md.md` (new; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_src_app_authenticated_admin_colleges_page.tsx.md` (edit src/app/(authenticated)/admin/colleges/page.tsx; 2 findings; best P1)
