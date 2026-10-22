@@ -22,12 +22,14 @@ function filterQuery(params:URLSearchParams):Selection{
  }
  return view;
 }
-function hrefFor(query:Selection){
+function hrefFor(query:Selection,viewName:string){
  const p=new URLSearchParams();
  for(const key of ["journeyState","branchId","batchId","search","columns"] as const){
   if(query[key])p.set(key,query[key]!);
  }
  if(query.pageSize!==25)p.set("pageSize",String(query.pageSize));
+ // Keep the saved-view label with the filters so export names remain recognizable.
+ p.set("view",viewName);
  return "/tpo/students"+(p.size?"?"+p.toString():"");
 }
 export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
@@ -67,7 +69,7 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
   (b.lastUsedAt??"").localeCompare(a.lastUsedAt??"")).slice(0,3);
  async function use(view:View){
   const receipt=await send({action:"OPEN",id:view.id});
-  if(receipt)router.push(hrefFor(view.query));
+  if(receipt)router.push(hrefFor(view.query,view.name));
  }
  return <section className="min-w-0 space-y-3">
   {!embedded?<Button variant="secondary" type="button" aria-expanded={open} aria-controls={open?viewsPanelId:undefined} onClick={()=>{

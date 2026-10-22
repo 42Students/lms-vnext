@@ -1,4 +1,5 @@
 import { legacyGridExportFilename } from "@/modules/placements/grid-export-filename";
+import {tpoStudentExportViewName} from "@/modules/placements/tpo-students-url-guard";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -13,7 +14,10 @@ export async function GET(request:Request){
   const url=new URL(request.url);
   const raw=Object.fromEntries(url.searchParams.entries());
   const ids=raw.ids;
-  const viewName=raw.view??"Filtered placement students";
+  if(url.searchParams.getAll("view").length>1)return Response.json({error:"Repeated view names are not allowed"},{status:400});
+  const viewName=raw.view===undefined?"Filtered placement students":tpoStudentExportViewName(raw.view);
+  if(!viewName)return Response.json({error:"Invalid saved view name"},{status:400});
+  const downloadName=raw.view===undefined?"students":viewName;
   const cols=raw.columns?.split(",")??[];
   delete raw.ids;delete raw.columns;delete raw.selected;delete raw.view;
   delete raw.student;delete raw.page;delete raw.pageSize;
@@ -28,7 +32,7 @@ export async function GET(request:Request){
   const bytes=exportTpoStudentsXlsx(subset,cols,viewName);
   return new Response(new Uint8Array(bytes),{headers:{
    "Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-   "Content-Disposition":'attachment; filename="' + legacyGridExportFilename("students", "xlsx") + '"',
+   "Content-Disposition":'attachment; filename="' + legacyGridExportFilename(downloadName, "xlsx") + '"',
    "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Vary":"Cookie",
   }});
  }catch(error){return apiErrorResponse(error);}
