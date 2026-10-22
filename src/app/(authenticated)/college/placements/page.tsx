@@ -172,7 +172,7 @@ export default async function CollegePlacementsPage({searchParams}:{
       <CollegeRetentionInlinePreview/>
       <p className="border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
         <Link href="/college/students" className="font-semibold text-link underline">Student directory</Link>
-        <span className="ml-2 text-xs text-muted-foreground">Student placement history lookup is not yet available; no outcome is inferred.</span>
+        <Link href="/college/placements/student-lookup" className="ml-4 font-semibold text-link underline">Student placement lookup</Link>
       </p>
       <PlacementOperationsWorkspace
         context={context}
