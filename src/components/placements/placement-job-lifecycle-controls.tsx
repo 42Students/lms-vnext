@@ -29,15 +29,7 @@ async function mutate(
 ) {
   const response = await fetch(url, {
     method,
-    headers: body
-      ? {
-          "content-type":
-            "application/json",
-        }
-      : undefined,
-    body: body
-      ? JSON.stringify(body)
-      : undefined,
+    ...(body ? {headers: {"content-type": "application/json"}, body: JSON.stringify(body)} : {}),
   });
   const payload = (await response
     .json()
