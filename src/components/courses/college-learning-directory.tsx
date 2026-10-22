@@ -632,9 +632,9 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                           destinations={lessonDestinations}
                         />
                         <p className="text-xs leading-5 text-muted-foreground">
-                          Only destinations currently visible in this directory page are offered.
-                          Change filters to include another course. The server blocks moves that
-                          would strand delivered learner content or cross a college boundary.
+                          Destinations are from the current filtered page. The server
+                          refuses cross-college moves and moves of lessons with
+                          existing learner-bound progress or content.
                         </p>
                       </div>},
               ]}
