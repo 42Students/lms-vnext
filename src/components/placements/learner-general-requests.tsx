@@ -117,7 +117,7 @@ export function LearnerGeneralRequests({
   </Select></label>
   {kind==="REGISTRATION_CHANGE"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Change to
    <Select className={box} value={target||"HIGHER_STUDIES"} onChange={e=>setTarget(e.target.value)}>
-    {(["PLACEMENTS","Placements"] as const,["HIGHER_STUDIES","Higher studies"] as const,["NOT_INTERESTED","Not interested"] as const).map(([key,label])=>
+    {([["PLACEMENTS","Placements"],["HIGHER_STUDIES","Higher studies"],["NOT_INTERESTED","Not interested"]] as const).map(([key,label])=>
      <option key={key} value={key}>{label}</option>)}
    </Select>
   </label>:
