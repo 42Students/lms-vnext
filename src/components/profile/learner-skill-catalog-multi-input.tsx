@@ -31,6 +31,7 @@ export function LearnerSkillCatalogMultiInput({
   const [recent, setRecent] = useState<CatalogSkillSelection[]>([]);
   const [feedback, setFeedback] = useState("");
   const justSelected = useRef<string | null>(null);
+  const selectionWriteRef = useRef(false);
 
   useEffect(() => {
     if (!showRecent) return;
@@ -84,6 +85,8 @@ export function LearnerSkillCatalogMultiInput({
     if (!skill || disabled) return;
     add({ skill });
     if (skill.length > 200) return;
+    if(selectionWriteRef.current)return;
+    selectionWriteRef.current = true;
     void fetch("/api/skills/selection", {
       method: "POST",
       credentials: "same-origin",
@@ -91,7 +94,8 @@ export function LearnerSkillCatalogMultiInput({
       body: JSON.stringify({ requestId: crypto.randomUUID(), freeTextSkills: [skill] }),
     }).then(response => {
       if (!response.ok && response.status !== 503) setFeedback("Couldn't record skill selection");
-    }).catch(() => setFeedback("Couldn't record skill selection"));
+    }).catch(() => setFeedback("Couldn't record skill selection"))
+    .finally(() => { selectionWriteRef.current = false; });
   }
 
   return <div className="min-w-0 space-y-3" role="group" aria-label="Selected skills">

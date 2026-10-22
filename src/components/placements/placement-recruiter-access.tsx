@@ -51,14 +51,14 @@ export function PlacementRecruiterAccess({
     );
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
-  const inFlight = useRef(false);
+  const inFlightRef = useRef(false);
   const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
   const [pending, setPending] = useState<
     string | null
   >(null);
 
   async function grantAccess() {
-    if (inFlight.current) return;
+    if (inFlightRef.current) return;
     if (!relationshipId || !email.trim()) {
       showToast({
         tone: "error",
@@ -69,7 +69,7 @@ export function PlacementRecruiterAccess({
       return;
     }
 
-    inFlight.current = true;
+    inFlightRef.current = true;
     setPending("grant");
     try {
       const response = await fetch(
@@ -119,7 +119,7 @@ export function PlacementRecruiterAccess({
             : "Please try again.",
       });
     } finally {
-      inFlight.current = false;
+      inFlightRef.current = false;
       setPending(null);
     }
   }
@@ -127,8 +127,8 @@ export function PlacementRecruiterAccess({
   async function revokeAccess(
     grantId: string,
   ) {
-    if (inFlight.current) return;
-    inFlight.current = true;
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
     setPending(grantId);
     try {
       const response = await fetch(
@@ -165,7 +165,7 @@ export function PlacementRecruiterAccess({
             : "Please try again.",
       });
     } finally {
-      inFlight.current = false;
+      inFlightRef.current = false;
       setPending(null);
       setRevokeTarget(null);
     }
