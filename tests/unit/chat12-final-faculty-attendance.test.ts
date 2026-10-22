@@ -4,8 +4,8 @@ const read=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),"u
 describe("chat-12 final sprint faculty audit",()=>{
  it("FAC-attendance-grades-18 keeps bounded present and absent lists with duplicate checks",()=>{
   const source=read("src/modules/attendance/faculty-service.ts");
-  expect(source).toContain("absentMembershipIds: z.array(uuid).max(1000)");
-  expect(source).toContain("presentMembershipIds: z.array(uuid).max(1000)");
+  expect(source).toContain("absentMembershipIds: z.array(uuid).max(500)");
+  expect(source).toContain("presentMembershipIds: z.array(uuid).max(500)");
   expect(source).toContain("A learner cannot be both present and absent");
   expect(source).toContain("present.size !== value.presentMembershipIds.length");
   expect(source).toContain("absent.size !== value.absentMembershipIds.length");

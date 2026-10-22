@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import type {ReactNode} from "react";
 import type {RequestContext} from "@/modules/identity/context";
 const mock=vi.hoisted(()=>({context:vi.fn(),read:vi.fn(),redirect:vi.fn(),notFound:vi.fn()}));
 vi.mock("next/navigation",()=>({
@@ -16,7 +17,7 @@ vi.mock("@/modules/placements/tpo-company-team-service",()=>({
   constructor(readonly code:string){super(code);}
  },
 }));
-vi.mock("@/components/ui/page-header",()=>({PageHeader:({title}:{title:string})=><h1>{title}</h1>}));
+vi.mock("@/components/ui/page-header",()=>({PageHeader:({title,actions}:{title:string;actions?:ReactNode})=><header><h1>{title}</h1>{actions}</header>}));
 vi.mock("@/components/tpo/tpo-company-team-composer",()=>({
  TpoCompanyTeamComposer:()=> <p>Composer available</p>,
 }));

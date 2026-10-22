@@ -15,7 +15,7 @@ describe("Super Admin platform company verification",()=>{
   const service=source("src/modules/placements/super-admin-company-verification-service.ts");
   expect(service).toContain("assertPersistedPlatformPermission(tx,context");
   expect(service).toContain("recordActivityEventInTransaction(tx,context");
-  expect(service).toContain("Boolean(company.verifiedAt)===input.verified");
+  expect(service).toContain("const companyChanged=Boolean(company.verifiedAt)!==input.verified");
   expect(service).toContain("PLACEMENTS_COMPANY_UNVERIFIED");
  });
  it("SA-placements-projects-24 presents Verified by 42 tag, Only not verified filter and confirmation",()=>{
