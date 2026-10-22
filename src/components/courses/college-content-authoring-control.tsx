@@ -66,7 +66,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
   return JSON.stringify({lessonId:lessons[0]?.id??"",title:"",url:"",notes:"",duration:"",
    start:times.start,end:times.end,deliveryId:"",timeZone:"Asia/Kolkata",
-   removeLink:false,visibleToStudents:true,resourceLinks:[]});
+   removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""}});
  });
  const [pendingArchive,setPendingArchive]=useState<Existing|null>(null);
  const [pendingPublish,setPendingPublish]=useState<Existing|null>(null);
@@ -146,7 +146,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   router.replace(window.location.pathname+(params.size?"?"+params.toString():""),{scroll:false});
  }
  const text=kind==="YOUTUBE"?"Add a video":kind==="RESOURCE"?"Add Resource":"Schedule a live class";
- const draft=JSON.stringify({lessonId,title,url,notes,duration,start,end,deliveryId,timeZone,removeLink,visibleToStudents,resourceLinks});
+ const draft=JSON.stringify({lessonId,title,url,notes,duration,start,end,deliveryId,timeZone,removeLink,visibleToStudents,resourceLinks,materialDraft});
  function closeEditor(){
   if(busy)return;
   if(draft!==initialDraft){setDiscardOpen(true);return;}
@@ -160,16 +160,16 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   setInitialDraft(JSON.stringify({lessonId:item.lessonId,title:item.title,url:"",notes:item.notes??"",
    duration:item.durationSeconds===null?"":String(item.durationSeconds),
    start:dateInput(item.startsAt),end:dateInput(item.endsAt),deliveryId:item.deliveryId??"",
-   timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:item.visibleToStudents,resourceLinks:[]}));
+   timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:item.visibleToStudents,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""}}));
  }
  function fresh(){
   const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
-  setEditing(null);setOpen(true);if(kind==="YOUTUBE")setVideoMode("YOUTUBE");setTitle("");setUrl("");setNotes("");setDuration("");
+  setEditing(null);setOpen(true);setNewResourceId(null);if(kind==="YOUTUBE")setVideoMode("YOUTUBE");setTitle("");setUrl("");setNotes("");setDuration("");
   setStart(times.start);setEnd(times.end);setTimeZone("Asia/Kolkata");setDeliveryId("");
   setError("");setMessage("");setRemoveLink(false);setVisibleToStudents(true);setResourceLinks([]);setMaterialDraft({title:"",externalUrl:"",notes:""});
   setDiscardOpen(false);
   setInitialDraft(JSON.stringify({lessonId,title:"",url:"",notes:"",duration:"",start:times.start,end:times.end,
-   deliveryId:"",timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:true,resourceLinks:[]}));
+   deliveryId:"",timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""}}));
  }
  async function save(confirmed=false){
   if(busy)return;
