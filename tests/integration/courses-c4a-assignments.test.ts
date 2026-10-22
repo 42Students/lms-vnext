@@ -547,6 +547,13 @@ describe("courses C4A assignments against PostgreSQL", () => {
       pointsAwarded: null,
     });
 
+    // A previously accepted submission must remain one-shot even if a
+    // migrated assignment's allowed methods are later narrowed in SQL.
+    await pool.query(
+      "update course_assignments set allowed_submission_methods = $1::jsonb where id = $2",
+      [JSON.stringify(["PDF_UPLOAD"]), assignment.id],
+    );
+
     await expect(
       submitCourseAssignment(
         learner,
