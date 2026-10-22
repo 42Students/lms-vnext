@@ -123,7 +123,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     </details>:null}
   <ol aria-label="Employer and placement cell messages" className="min-w-0 max-w-3xl divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {messages.map(message=><li key={message.id}
-    className="min-w-0 py-4 transition-colors duration-200 hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
+    className="min-w-0 py-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
     <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {dateTime(message.createdAt)} IST</p>
     {message.proposal?<div className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-xs text-body">
       <p className="font-semibold text-foreground">Drive proposal · sent as discussion message</p>
