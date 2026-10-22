@@ -6,6 +6,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { z } from "zod";
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -80,15 +81,8 @@ export default async function AdminPlacementDrivePage({
       <Link href={backHref} className="font-semibold text-primary-text hover:underline">Drives</Link>
       <span aria-hidden="true">›</span><span className="truncate">{job.title}</span>
     </nav>
-    <nav aria-label="Drive workspace" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-2">
-      {navItems.map(item=><Link key={item.label} href={item.href}
-        aria-current={item.label==="Overview"?"page":undefined}
-        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold md:min-h-9 "+
-          (item.label==="Overview"?"border-b-2 border-[var(--lms-primary)] bg-primary-subtle text-primary-text":
-           "text-body hover:bg-primary-subtle hover:text-primary-text")}>
-        {item.label}
-      </Link>)}
-    </nav>
+    <Tabs ariaLabel="Drive workspace" value="Overview" renderPanel={false}
+      items={navItems.map(item=>({value:item.label,label:item.label,href:item.href}))}/>
     <PlacementDriveWorkspace
       context={context}
       jobId={jobId}

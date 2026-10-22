@@ -9,10 +9,10 @@ Fix every listed deviation using the shared components in src/components/ui and 
 ## Section 2: page routes, full fidelity pass (20)
 For each page: page head via PageHeader (title, subtitle, actions exactly as the old LMS), canvas card (white, radius 12, border #e5e9f0, padding 24), tabs, filter row, tables/grids/cards, chips and badges, banners and inline notices, every modal and drawer the page opens, buttons and forms, empty/loading/error states, toasts, spacing and typography values, and responsive at 1280, 768 and 375 widths. Read the page and the components it renders, fix every deviation you find, not only the listed ones.
 
-- [ ] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/new/page.tsx`
 - [x] `src/app/(authenticated)/admin/recruiters/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/page.tsx`
 - [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
@@ -26,6 +26,6 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/recruiter/calendar/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx`
