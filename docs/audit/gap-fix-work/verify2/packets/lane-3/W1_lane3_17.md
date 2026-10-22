@@ -14,6 +14,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Match empty/default/validation behavior.
 
 ## G2-4-012-037 [P1] MISSING facet F07
+- [x] Verified: empty title, missing assignment resources, and unselected submission methods have distinct validation messages and focus targets in FacultyLessonAuthoring.
 - Files: src/components/courses/faculty-lesson-authoring.tsx
 - Legacy: Missing resource or title and no submission methods each show unique warning. (`docs/legacy-source/frontend/src/components/Global/Offcanvas/Assignment/newAssignment.js:355-375`; `docs/legacy-source/frontend/src/components/Global/Offcanvas/Assignment/newAssignment.js:412-420`)
 - Expected fix: Restore separate exact warnings and form focus.
