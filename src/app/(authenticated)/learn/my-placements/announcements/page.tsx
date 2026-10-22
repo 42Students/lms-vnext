@@ -27,8 +27,6 @@ import {filterLearnerRecentNotices} from "@/modules/placements/learner-notices-r
 import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerNoticeFilterHref,learnerNoticePageHref} from "@/modules/placements/learner-notices-navigation-model";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
-import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
-import {getOwnLearnerDebarmentNotice} from "@/modules/placements/learner-own-debarment-service";
 import {sortLearnerNotices} from "@/modules/placements/learner-notices-sort-model";
 import {learnerNoticePageWasClamped} from "@/modules/placements/learner-notice-page-recovery-model";
 import {filterLearnerNoticesBySource} from "@/modules/placements/learner-notice-source-filter-model";
@@ -104,7 +102,6 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   });
   const personalAlerts = await readOptionalLearnerAlertSource(
     ()=>getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20}));
-  const restrictionRead=await readOptionalLearnerPlacementSource(()=>getOwnLearnerDebarmentNotice(context));
   const searchedAlerts=searchLearnerAlertPreview(personalAlerts.items,alertQ);
   const unreadCount=await readOptionalLearnerAlertSource(async()=>[await getUnreadOwnLearnerPlacementAlertCount(context)]);
   return (
@@ -318,7 +315,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </div>
       ) : null}
       {personalAlerts.available ?
-        <LearnerPlacementAlerts alerts={searchedAlerts} filtered={Boolean(alertQ)} unreadOnly={unreadOnly} restriction={restrictionRead.value} /> :
+        <LearnerPlacementAlerts alerts={searchedAlerts} filtered={Boolean(alertQ)} unreadOnly={unreadOnly} /> :
         <Banner tone="warning" role="alert">
           Personal placement alerts are temporarily unavailable; the college notice results above remain accessible.
           <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}

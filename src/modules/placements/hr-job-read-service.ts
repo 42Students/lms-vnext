@@ -272,7 +272,6 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const selectionJoin=()=>db.select({
    id:placementDriveSelections.id,
    applicationId:placementDriveSelections.applicationId,
-   roleOptionId:placementApplications.roleOptionId,
    name:users.displayName,
    role:placementDriveSelections.roleTitle,
    status:placementDriveSelections.status,
@@ -380,13 +379,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   }), filters.stage);
   const selectedTotal = stageCounts[filters.stage];
   return {
-    workspace, filters, roundSlotCounts,
-    selectionRows:selectionRows.map(row=>({...row,
-      // Match the legacy selection DTO without turning decimal LPA into an
-      // integer or losing the UUID role option selected for this application.
-      ctcLpa:row.annualCtcInr==null?null:(Number(row.annualCtcInr)/100000).toFixed(2),
-    })),
-    selectionPage, selectionTotal, stageCounts,
+    workspace, filters, roundSlotCounts, selectionRows, selectionPage, selectionTotal, stageCounts,
     offersUnavailable,selectionsUnavailable,roundSlotsUnavailable:slotResult.unavailable,
     offersLoaded:loadOfferRows,legacyActionContract:HR_DRIVE_ACTIONS,
     selectedCandidateIds:selectionRows.map(row=>row.applicationId),

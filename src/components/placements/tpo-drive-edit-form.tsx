@@ -312,11 +312,9 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  <div className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
  <form onSubmit={submit} onChange={event=>{
   markDirty();setSaved(null);
-  const field=event.target;
-  if(field instanceof HTMLInputElement){
-   if(field.name==="title")setReviewTitle(field.value);
-   if(field.name==="applicationDeadline")setReviewDeadline(field.value);
-  }
+  const field=event.target as HTMLInputElement;
+  if(field.name==="title")setReviewTitle(field.value);
+  if(field.name==="applicationDeadline")setReviewDeadline(field.value);
  }} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
   <section aria-label="Employer relationship" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3">

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import {createPlacementApplicationInputSchema,placementJobIdSchema} from "@/modules/placements/validation";
+import {placementJobIdSchema} from "@/modules/placements/validation";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {
   applyToPlacementJob,
@@ -68,7 +68,7 @@ export async function POST(
     const application = await applyToPlacementJob(
       context,
       jobId,
-      createPlacementApplicationInputSchema.parse(input),
+      input,
     );
     return NextResponse.json(
       { application,

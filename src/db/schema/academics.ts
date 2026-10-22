@@ -709,32 +709,3 @@ export function legacyNewProgramImport(input:{
   code,status:input.legacyWasDeleted?"ARCHIVED" as const:"ACTIVE" as const,
   legacyWasDeleted:input.legacyWasDeleted};
 }
-
-/** Mapping old semester_number/academic_year into the new period + program
- * term model. An academic year is a named civil interval and cannot be
- * derived by dividing an ordinal without an approved program curriculum. */
-export function legacyProgramSemesterImport(input:{
- sourceSemesterId:number;semesterNumber:number;sourceAcademicYear:string;
- programId:string;collegeId:string;academicPeriodId:string;
- active:boolean;totalCredits:number|null;title:string|null;
- approvedTermNumbers:ReadonlyMap<number,number>;
-}){
- const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
- if(!Number.isSafeInteger(input.sourceSemesterId)||input.sourceSemesterId<1||
-  !Number.isSafeInteger(input.semesterNumber)||input.semesterNumber<1||
-  !uuid.test(input.programId)||!uuid.test(input.collegeId)||
-  !uuid.test(input.academicPeriodId)||input.sourceAcademicYear.length>32||
-  input.totalCredits!==null&&(!Number.isFinite(input.totalCredits)||input.totalCredits<0))
-  throw new Error("Unverified legacy semester mapping");
- const termNumber=input.approvedTermNumbers.get(input.semesterNumber);
- if(!termNumber||!Number.isSafeInteger(termNumber)||termNumber<1)
-  throw new Error("Semester requires program-specific approved term mapping");
- return {legacySemesterId:input.sourceSemesterId,
-  programId:input.programId,collegeId:input.collegeId,
-  academicPeriodId:input.academicPeriodId,termNumber,
-  semesterNumber:input.semesterNumber,
-  academicYearName:input.sourceAcademicYear.trim(),
-  name:input.title?.trim()||"Semester "+input.semesterNumber,
-  credits:input.totalCredits,status:input.active?"ACTIVE" as const:"PLANNED" as const,
-  autoActivate:false as const};
-}

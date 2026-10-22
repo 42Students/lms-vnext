@@ -326,7 +326,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   </div>:null}
   {legacyShortlisted?<label className="flex min-h-11 flex-wrap items-center gap-2 text-sm text-body">
    <Checkbox checked={showLegacyExtraColumns} disabled={busy}
-     onChange={event=>setShowLegacyExtraColumns(event.currentTarget.checked)} aria-label="Show Roll, Role and Screening columns"/>
+     onChange={setShowLegacyExtraColumns} aria-label="Show Roll, Role and Screening columns"/>
    Show additional Roll, Role and Screening columns
   </label>:null}
   <DataTable columns={legacyShortlisted?

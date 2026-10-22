@@ -11,14 +11,6 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {CollegeInterviewAppointments} from "./college-interview-appointments";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 type Event={from:string|null;to:string;reason:string|null;when:string};
-function when(value:string|null|undefined){
- if(!value)return "—";
- const date=new Date(value);
- if(!Number.isFinite(date.getTime()))return "—";
- return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
- }).format(date);
-}
 type CandidateInterviews={
  rounds:Array<{id:string;name:string;status:string;kind:string}>;
  candidates:Array<{applicationId:string;name:string|null;screening:string}>;

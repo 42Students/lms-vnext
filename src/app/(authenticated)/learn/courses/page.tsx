@@ -31,16 +31,18 @@ export default async function LearnerCoursesPage({
   const legacyRequested=Object.keys(params).some(key=>
    ["legacyCourseId","legacyClassId","legacySemesterCourseId"].includes(key));
   const rawAlias=legacyRequested?learnerLegacyRouteQuery.safeParse(params):null;
-  // Preserve the error alongside the resolved data without render-time mutation.
-  const {courses,directoryError}=await listLearnerCourseDeliveries(context,{includeHistorical:true})
-   .then(courses=>({courses,directoryError:null as string|null}))
-   .catch((error:unknown)=>({
-    courses:[] as Awaited<ReturnType<typeof listLearnerCourseDeliveries>>,
-    directoryError:error instanceof AuthorizationError||
-      (error instanceof Error&&/ACCESS_DENIED|PERMISSION|AUTH|403/i.test(error.message))
-       ?"You do not have permission to view these courses."
-       :"Failed to load courses. Please try again.",
-   }));
+  let directoryError:string|null=null;
+  const courses=await listLearnerCourseDeliveries(context,{includeHistorical:true})
+   .catch(error=>{
+    if(error instanceof AuthorizationError){
+      directoryError="You do not have permission to view these courses.";
+      return [];
+    }
+    directoryError=error instanceof Error&&/ACCESS_DENIED|PERMISSION|AUTH|403/i.test(error.message)
+     ?"You do not have permission to view these courses."
+     :"Failed to load courses. Please try again.";
+    return [];
+   });
 
   if(legacyRequested){
     if(!rawAlias?.success||directoryError){
