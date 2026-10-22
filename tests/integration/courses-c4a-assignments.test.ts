@@ -511,7 +511,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
         {
           lessonId: structure.lesson.id,
           title: "C4A Submission Task",
-          allowedMethods: ["WRITTEN_RESPONSE","EXTERNAL_LINK"],
+          allowedMethods: ["WRITTEN_RESPONSE","REPOSITORY_LINK","EXTERNAL_LINK"],
           dueAt:
             "2027-12-01T12:00:00.000Z",
           maxPoints: 10,
