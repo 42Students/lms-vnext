@@ -35,11 +35,11 @@ export const TPO_SCHEDULED_JOBS = {
     description: "Recruiter invitation reminders",
   },
   "tpo.interviewReminders": {
-    schedule: "0 19 * * *", leaseMs: 30 * 60_000, wired: false,
-    description: "Tomorrow's interviews: in-app and email",
+    schedule: "0 19 * * *", leaseMs: 30 * 60_000, wired: true,
+    description: "Tomorrow's interviews: scoped in-app reminder (email requires provider outbox)",
   },
   "tpo.interviewMorningReminders": {
-    schedule: "0 8 * * *", leaseMs: 30 * 60_000, wired: false,
+    schedule: "0 8 * * *", leaseMs: 30 * 60_000, wired: true,
     description: "Today's interviews: in-app only",
   },
   "tpo.recruiterMessageEmails": {

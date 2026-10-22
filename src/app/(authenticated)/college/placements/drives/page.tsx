@@ -21,6 +21,7 @@ import {CollegeDriveCreateDialog} from "@/components/placements/college-drive-cr
 import {PlacementJobCreateWorkspace} from "@/components/placements/placement-job-create-workspace";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {CollegeDrivesCapture,CollegeDrivesStaleFallback} from "@/components/placements/college-drives-last-good";
 
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -50,15 +51,11 @@ export default async function CollegeDrivesPage({ searchParams }: {
     if (error instanceof AuthorizationError) throw error;
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Jobs" actions={<CollegeDrivesRefreshButton/>}/>
-      <p role="status" className="border-l-2 border-[var(--lms-warning)] bg-[var(--lms-warning-subtle)] p-3 text-sm text-body">Couldn't refresh drives. Search and filters are preserved; no stale rows are shown from an unverified college or filter scope.</p>
+      <CollegeDrivesStaleFallback retryHref={driveListHref(query)}/>
       <form method="get" role="search" aria-label="Drive filters" className="flex min-w-0 flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
        <CollegeDrivesQuickFilters q={query.q} status={query.status}/>
        <Button type="submit">Filter</Button>
       </form>
-      <ErrorState title="Failed to load jobs. Please try again."
-        description="The drive list could not be loaded. No changes were made."
-        action={<Link href={driveListHref(query)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Try Again</Link>}/>
     </div>;
   }
   // A closed/expired deadline is distinct from an administrator closing a job.
@@ -112,7 +109,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
     </div>},
   ];
 
-  return <div className="space-y-6">
+  return <CollegeDrivesCapture><div className="space-y-6">
     <PageHeader title="Jobs"
       description="College-owned placement jobs. Filter, review applications or edit a job without leaving the college's placements workspace."
       actions={<div className="flex flex-wrap items-center gap-3">
@@ -235,5 +232,5 @@ export default async function CollegeDrivesPage({ searchParams }: {
         {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
       </div>
     </nav>
-  </div>;
+  </div></CollegeDrivesCapture>;
 }
