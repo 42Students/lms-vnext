@@ -34,13 +34,13 @@ export async function PATCH(
     if(body && typeof body==="object" && !Array.isArray(body)){
       const fields={...(body as Record<string,unknown>)};
       if("environment" in fields){
-        const env=z.enum(["PRODUCTION","UAT","DEVELOPMENT"]).safeParse(fields.environment);
+        const env=z.enum(["PRODUCTION","UAT","DEVELOPMENT"]).safeParse(fields["environment"]);
         if(!env.success)return NextResponse.json({error:"INVALID_REQUEST",field:"environment",message:"environment is required"},{status:400});
         if(env.data!==alertEnvironment())return NextResponse.json({error:"INVALID_REQUEST",message:"Environment is not available in this workspace."},{status:400});
-        delete fields.environment;
+        delete fields["environment"];
         body=fields;
       }
-      if(fields.action==="STATUS" && (typeof fields.status!=="string" || !fields.status.trim()))
+      if(fields["action"]==="STATUS" && (typeof fields["status"]!=="string" || !fields["status"].trim()))
         return NextResponse.json({error:"INVALID_REQUEST",field:"status",message:"status is required"},{status:400});
     }
     const item = await mutateKnownErrorForAdmin(context, signatureId, body);
