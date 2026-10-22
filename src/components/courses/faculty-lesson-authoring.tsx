@@ -1002,7 +1002,7 @@ export function FacultyLessonAuthoring({
               <h3 className="font-semibold">Review assignment before saving</h3>
               <p>Submission methods: {allowedAssignmentMethods.join(", ") || "None selected"}</p>
               <ul className="mt-2 list-disc pl-5">
-                {assignmentResources.map(resource=><li key={resource.id}>{resource.title || resource.kind}</li>)}
+                {assignmentResources.map((resource,index)=><li key={index}>{resource.title || resource.kind}</li>)}
               </ul>
             </div>:null}
             {mode==="ASSIGNMENT"?<h3 className="mt-4 font-semibold">Assignment Resources</h3>:null}
