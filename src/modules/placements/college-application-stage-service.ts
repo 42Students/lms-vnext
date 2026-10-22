@@ -1,4 +1,5 @@
 import "server-only";
+import {createHash} from "node:crypto";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {and,eq,gt,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -63,7 +64,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
   applicationIds=matching.items.map(row=>row.id);
   if(applicationIds.length===0)throw Error("No matching applications to update.");
  }
- const results:Array<{applicationId:string;status:"moved"|"skipped";reason?:string;stage?:string}>=[];
+ const results:Array<{applicationId:string;status:"moved"|"skipped";reason?:string;stage?:string;
+  undoEventId?:string;undoUntil?:string;stageVersion?:number}>=[];
  // A bounded read is followed by per-row transactions; each failure is explicit.
  for(const applicationId of applicationIds){
   try{
@@ -289,18 +291,59 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       assessmentLinkAttached:next==="ASSESSMENT"&&Boolean(input.assessmentUrl),
       assessmentLinkSavedToJob:next==="ASSESSMENT"&&Boolean(input.saveAssessmentUrlToJob)},
     }).returning({id:activityEvents.id});
-    await tx.insert(inAppNotifications).values({
-     userId:application.userId,eventId:audit.id,
-     title:"Your placement application was updated",
-     body:next==="REJECTED"?
-      "Your application was not selected. See My applications for the latest status.":
-      "Your placement stage is now "+readableStage+"."+
-       (cancelledInterviewCount>0?" Your future interview appointment was cancelled.":""),
-     actionHref:"/learn/my-placements/applications",
-    }).onConflictDoNothing();
-    return next;
+    const title="Your placement application was updated";
+    const body=next==="REJECTED"?
+     "Your application was not selected. See My applications for the latest status.":
+     "Your placement stage is now "+readableStage+"."+
+      (cancelledInterviewCount>0?" Your future interview appointment was cancelled.":"");
+    // Undo is offered ONLY if the registered, separately fenced scheduler
+    // can delay delivery and the status change has no other persisted
+    // screening, job URL, offer or interview side effects.
+    const reversible=process.env.DB10_NOTIFICATION_OUTBOX_READY==="DB10_VERIFIED"&&
+     input.action==="MOVE"&&
+     ([["SHORTLISTED","ASSESSMENT"],["ASSESSMENT","INTERVIEW"],
+       ["INTERVIEW","WAITLISTED"],["WAITLISTED","ASSESSMENT"],
+       ["WAITLISTED","INTERVIEW"]] as readonly (readonly string[])[]).some(
+      ([previous,target])=>from===previous&&next===target)&&
+     screeningStatus===screening.status&&cancelledInterviewCount===0&&
+     !input.assessmentUrl&&!input.saveAssessmentUrlToJob;
+    const undoUntil=reversible?new Date(Date.now()+30_000):null;
+    if(undoUntil){
+     const selection=JSON.stringify({
+      type:"EXPLICIT_USER",userId:application.userId,title,body,
+      actionHref:"/learn/my-placements/applications",
+     });
+     const dedupe=createHash("sha256")
+      .update("college-stage:"+audit.id+":"+application.userId).digest("hex");
+     const queued=await tx.execute<{id:string}>(sql`
+      insert into notification_delivery_outbox(
+       event_id,college_id,organization_id,authored_by_user_id,
+       recipient_selection,scheduled_at,dedupe_key
+      )
+      select ${audit.id}::uuid,${collegeId}::uuid,${acting.organizationId}::uuid,
+       ${context.user.id}::uuid,${selection}::jsonb,${undoUntil},${dedupe}
+      where exists(
+       select 1 from college_memberships m
+       join users u on u.id=m.user_id
+       where m.user_id=${application.userId}::uuid
+        and m.college_id=${collegeId}::uuid and m.status='ACTIVE'
+        and u.platform_status='ACTIVE'
+      )
+      returning id
+     `);
+     if(!queued.rows[0])throw new Error("Learner notification could not be scheduled.");
+    }else{
+     await tx.insert(inAppNotifications).values({
+      userId:application.userId,eventId:audit.id,title,body,
+      actionHref:"/learn/my-placements/applications",
+     }).onConflictDoNothing();
+    }
+    return {stage:next,...(undoUntil?{
+     undoEventId:audit.id,undoUntil:undoUntil.toISOString(),
+     stageVersion:old?old.version+1:1,
+    }:{})};
    });
-   results.push({applicationId,status:"moved",stage});
+   results.push({applicationId,status:"moved",...stage});
   }catch(e){results.push({applicationId,status:"skipped",reason:e instanceof Error?e.message:"Move rejected"});}
  }
  return {moved:results.filter(r=>r.status==="moved").length,
