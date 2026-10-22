@@ -20,7 +20,7 @@ function initials(name:string){
 function tint(seed:string){
  let hash=0;
  for(const char of seed)hash=(hash*31+char.charCodeAt(0))>>>0;
- return avatarTints[hash%avatarTints.length]??avatarTints[0];
+ return avatarTints[hash%avatarTints.length]??{bg:"#e0f2f1",fg:"#0f766e"};
 }
 function submittedText(value:string|null){
  if(!value)return "—";
