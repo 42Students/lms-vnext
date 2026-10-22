@@ -8,6 +8,16 @@ export const superAdminPublishedDriveEditSchema=z.strictObject({
  companyRelationshipId:z.uuid(),
  assessmentUrl:z.union([z.url().refine(v=>/^https?:\/\//i.test(v),"Use a valid HTTP(S) URL"),z.literal("")]),
  assessmentDeadline:z.iso.datetime({offset:true}).nullable(),
+ importantDates:z.array(z.strictObject({
+  label:z.string().trim().min(1).max(120),
+  at:z.iso.datetime({offset:true}),
+  type:z.string().trim().max(80).optional(),
+  dateType:z.string().trim().max(80).optional(),
+ })).max(20),
+ customEligibilityRules:z.array(z.strictObject({
+  label:z.string().trim().min(1).max(160),
+  value:z.string().trim().min(1).max(200),
+ })).max(20),
  candidatePreferences:z.strictObject({
   preferredDegree:z.string().trim().max(160),
   specialization:z.string().trim().max(160),
@@ -30,6 +40,9 @@ export const superAdminPublishedDriveEditSchema=z.strictObject({
  if(v.maximumAnnualCtcInr!=null&&v.minimumAnnualCtcInr!=null&&
   v.maximumAnnualCtcInr<v.minimumAnnualCtcInr)
   ctx.addIssue({code:"custom",path:["maximumAnnualCtcInr"],message:"Maximum CTC must be at least the minimum."});
+ if(new Set(v.importantDates.map(d=>d.label.toLowerCase())).size!==v.importantDates.length||
+    v.importantDates.some(d=>d.label.toLowerCase()==="application deadline"))
+  ctx.addIssue({code:"custom",path:["importantDates"],message:"Important date labels must be unique and cannot be Application deadline."});
  if(new Set(v.locations.map(s=>s.toLowerCase())).size!==v.locations.length)
   ctx.addIssue({code:"custom",path:["locations"],message:"Locations must be unique."});
 });

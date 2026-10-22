@@ -18,6 +18,9 @@ type Job={id:string;title:string;description:string;locations:string[];
  candidatePreferences:{preferredDegree:string;specialization:string;graduationYear:number|null;minGpa:number|null;city:string};
  jobTypeLabel:string;employmentType:"FULL_TIME"|"INTERNSHIP"|"CONTRACT";
  workMode:"ONSITE"|"HYBRID"|"REMOTE";responsibilities:string;
+ importantDates:Array<{label:string;at:string;type?:string;dateType?:string}>;
+ customEligibilityRules:Array<{label:string;value:string}>;
+ status:string;
  targeting:{programs:number;cohorts:number;sections:number}|null};
 function istLocal(value:string|null){
  if(!value)return "";
@@ -42,6 +45,35 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
  const {pending,run}=useGuardedAction();
  const formRef=useRef<HTMLFormElement>(null);
  const [confirmSave,setConfirmSave]=useState(false);
+ const [importantDates,setImportantDates]=useState(job.importantDates);
+ const [customRules,setCustomRules]=useState(job.customEligibilityRules);
+ function updateImportantDate(index:number,key:"label"|"at",value:string){
+  setImportantDates(rows=>rows.map((row,i)=>i===index?{...row,[key]:value}:row));
+  setDirty(true);
+ }
+ function updateCustomRule(index:number,key:"label"|"value",value:string){
+  setCustomRules(rows=>rows.map((row,i)=>i===index?{...row,[key]:value}:row));
+  setDirty(true);
+ }
+ function validateSupplementalRows(){
+  if(importantDates.length>20||customRules.length>20)return "A maximum of 20 entries is allowed.";
+  const dateLabels=new Set<string>();
+  for(const row of importantDates){
+   const label=row.label.trim(),date=row.at.trim();
+   if(!label||!date)return "Important date label and date are required.";
+   if(label.length>120)return "Important date label must be within 120 characters.";
+   if(label.toLowerCase()==="application deadline"||dateLabels.has(label.toLowerCase()))
+    return "Important date labels must be unique and cannot be Application deadline.";
+   if(!Number.isFinite(Date.parse(date)))return "Enter a valid important date.";
+   dateLabels.add(label.toLowerCase());
+  }
+  for(const row of customRules){
+   if(!row.label.trim()||!row.value.trim())return "Custom rule label and value are required.";
+   if(row.label.trim().length>160||row.value.trim().length>200)
+    return "Custom rule label must be within 160 characters and value within 200 characters.";
+  }
+  return "";
+ }
  useEffect(()=>{
   if(!open||!dirty)return;
   const beforeUnload=(event:BeforeUnloadEvent)=>{
@@ -100,6 +132,8 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
   if((changedAssessment||changedDeadline)&&assessmentAt&&(!deadlineAt||assessmentAt<=deadlineAt)){
    setError("Assessment deadline must follow application deadline.");return;
   }
+  const additionalError=validateSupplementalRows();
+  if(additionalError){setError(additionalError);return;}
   const min=nullableNumber(data.get("minimumAnnualCtcInr"));
   const max=nullableNumber(data.get("maximumAnnualCtcInr"));
   if(min!==null&&max!==null&&max<min){
@@ -136,6 +170,8 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
        ?job.assessmentDeadline
        :String(data.get("assessmentDeadline")??"")
          ?driveDeadlineIstToIso(String(data.get("assessmentDeadline"))):null,
+      importantDates,
+      customEligibilityRules:customRules,
       candidatePreferences:{
        preferredDegree:String(data.get("preferredDegree")??"").trim(),
        specialization:String(data.get("specialization")??"").trim(),
@@ -170,11 +206,13 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
  }
  const cls="min-h-11 w-full min-[768px]:min-h-9";
  return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
-  <h2 className="font-semibold">Edit published drive</h2>
-  <p className="text-xs text-body">Edits apply to future applicants. Existing applications and offer decisions remain unchanged.</p>
+  <h2 className="font-semibold">Edit drive</h2>
+  <p className="text-xs text-body">Changes to job terms are audited. Historic applications, offers, eligibility and decisions are not rewritten.</p>
   {!sourceReady?<p role="alert" className="text-sm text-error">Saved job options or eligibility details could not be loaded. Reload settings before editing; no partial changes can be saved.</p>:null}
-  {!open?<Button type="button" variant="secondary" disabled={!sourceReady} onClick={()=>{setDirty(false);setOpen(true);}}>
-   Edit published drive</Button>:
+  {!open?<Button type="button" variant="secondary" disabled={!sourceReady}
+    onClick={()=>{setDirty(false);setImportantDates(job.importantDates);
+      setCustomRules(job.customEligibilityRules);setOpen(true);}}>
+   {"Edit "+job.status.toLowerCase()+" drive"}</Button>:
    <form ref={formRef} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2" onChange={()=>setDirty(true)} onSubmit={reviewSave}>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title<Input name="title" required minLength={3} maxLength={100}
      defaultValue={job.title} className={cls}/></label>
@@ -239,6 +277,50 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
       <label className="grid gap-1 text-xs font-semibold">City
         <Input name="preferredCity" maxLength={160} defaultValue={job.candidatePreferences.city}/></label>
       <p className="self-end text-xs text-muted-foreground">Saved as legacy display preferences, not admission eligibility gates.</p>
+    </fieldset>
+
+    <fieldset className="min-w-0 space-y-3 border-t border-border pt-3 sm:col-span-2">
+     <legend className="text-sm font-semibold text-[var(--lms-heading)]">Important dates</legend>
+     <p className="text-xs text-muted-foreground">Add up to 20 labelled dates. Times use IST.</p>
+     {importantDates.map((row,index)=><div key={index} className="grid min-w-0 gap-2 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+      <label className="grid min-w-0 gap-1 text-xs font-semibold">Label
+       <Input required maxLength={120} value={row.label} className={cls}
+        onChange={e=>updateImportantDate(index,"label",e.target.value)}/>
+      </label>
+      <label className="grid min-w-0 gap-1 text-xs font-semibold">Date and time (IST)
+       <Input type="datetime-local" required value={istLocal(row.at)} className={cls}
+        onChange={e=>{
+         try{updateImportantDate(index,"at",e.target.value?driveDeadlineIstToIso(e.target.value):"");}
+         catch{setError("Enter a valid important date in IST.");}
+        }}/>
+      </label>
+      <Button type="button" variant="secondary" disabled={pending} onClick={()=>{
+       setImportantDates(rows=>rows.filter((_,i)=>i!==index));setDirty(true);
+      }}>Remove</Button>
+     </div>)}
+     <Button type="button" variant="secondary" disabled={pending||importantDates.length>=20}
+      onClick={()=>{setImportantDates(rows=>[...rows,{label:"",at:""}]);setDirty(true);}}>+ Add important date</Button>
+     {importantDates.length>=20?<p className="text-xs text-muted-foreground">Maximum 20 important dates reached.</p>:null}
+    </fieldset>
+    <fieldset className="min-w-0 space-y-3 border-t border-border pt-3 sm:col-span-2">
+     <legend className="text-sm font-semibold text-[var(--lms-heading)]">Custom eligibility rules (informational)</legend>
+     <p className="text-xs text-muted-foreground">Custom rules appear in the job description. Enforceable eligibility remains in the saved college policy.</p>
+     {customRules.map((row,index)=><div key={index} className="grid min-w-0 gap-2 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+      <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule label
+       <Input required maxLength={160} value={row.label} className={cls}
+        onChange={e=>updateCustomRule(index,"label",e.target.value)}/>
+      </label>
+      <label className="grid min-w-0 gap-1 text-xs font-semibold">Value
+       <Input required maxLength={200} value={row.value} className={cls}
+        onChange={e=>updateCustomRule(index,"value",e.target.value)}/>
+      </label>
+      <Button type="button" variant="secondary" disabled={pending} onClick={()=>{
+       setCustomRules(rows=>rows.filter((_,i)=>i!==index));setDirty(true);
+      }}>Remove</Button>
+     </div>)}
+     <Button type="button" variant="secondary" disabled={pending||customRules.length>=20}
+      onClick={()=>{setCustomRules(rows=>[...rows,{label:"",value:""}]);setDirty(true);}}>+ Add custom rule</Button>
+     {customRules.length>=20?<p className="text-xs text-muted-foreground">Maximum 20 custom rules reached.</p>:null}
     </fieldset>
     <div className="sm:col-span-2 border-y border-border py-3 text-sm">
      <p className="font-semibold">Target Audience · Department / Program / Batch / Class</p>
