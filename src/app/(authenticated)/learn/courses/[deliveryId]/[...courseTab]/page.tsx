@@ -100,7 +100,13 @@ export default async function LearnerCourseTabPage({
   if(workspaceResult.status==="rejected"){
     const reason:unknown=workspaceResult.reason;
     if(reason instanceof AuthorizationError)throw reason;
-    if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
+    if(reason instanceof ZodError ||
+      (reason instanceof CoursesServiceError && [
+        "SECTION_DELIVERY_NOT_FOUND", "COURSE_NOT_FOUND",
+        "LEARNER_PROGRESS_ACCESS_DENIED", "LEARNER_ENROLLMENT_SCOPE_REQUIRED",
+      ].includes(reason.code)))notFound();
+    // A failed lesson/content read must be retryable, not treated as a
+    // missing course or an empty completed lesson list.
   }
   if(deliveriesResult.status==="rejected"){
     const reason:unknown=deliveriesResult.reason;
@@ -114,10 +120,12 @@ export default async function LearnerCourseTabPage({
   }
   if(workspaceResult.status!=="fulfilled" || deliveriesResult.status!=="fulfilled" ||
       instructorsResult.status!=="fulfilled"){
+    const lessonReadFailed=activeTab==="roadmap"&&workspaceResult.status==="rejected";
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Could not load course" />
+      <PageHeader title={lessonReadFailed?"Could not load course lessons":"Could not load course"} />
       <Banner tone="warning" role="alert">
-        Could not load course. Content and completion counts may be incomplete.
+        {lessonReadFailed?"Could not load course lessons. Retry to restore your lessons and progress.":
+          "Could not load course. Content and completion counts may be incomplete."}
         <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/"+(activeTab??"home")}
           className="ml-2 font-semibold text-primary-text underline">Retry</Link>
       </Banner>
