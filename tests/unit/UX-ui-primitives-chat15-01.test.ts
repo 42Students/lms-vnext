@@ -6,7 +6,10 @@ const ui = (name: string) => readFileSync(join(process.cwd(), "src/components/ui
 describe("UX-ui-primitives-chat15-01 direct contracts", () => {
   it("UX-ui-bottom-sheet-01 traps background interaction, returns focus and cues overflow", () => {
     const s = ui("bottom-sheet.tsx");
-    for(const term of ["modal.showModal()", "modal.close()", "opener.current?.focus()",
+    const overlay=ui("use-overlay-exit.ts");
+    for(const term of ["dialog.showModal()", "dialog.close()", "opener.focus()"])
+      expect(overlay).toContain(term);
+    for(const term of ["useOverlayExit(ref, opener, open, 180)",
       "aria-labelledby={titleId}", "event.target === ref.current && dismissible",
       "onCancel={event", 'axis="y"', "sheet content", "safe-area-inset-bottom"]) {
       expect(s).toContain(term);
@@ -22,12 +25,13 @@ describe("UX-ui-primitives-chat15-01 direct contracts", () => {
   });
   it("UX-ui-selection-controls-01 uses labelled native controls, 44px targets and reduced motion", () => {
     const s=ui("selection-controls.tsx");
-    expect(s).toContain('<input type={type}');
-    expect(s).toContain('type="checkbox" role="switch"');
+    expect(s).toContain('<NativeCheckbox {...props}');
+    expect(s).toContain('<NativeRadio {...props}');
+    expect(s).toContain('role="switch"');
     expect(s).toContain('"radio"');
     expect(s).toContain("min-h-11");
     expect(s).toContain("focus-visible:outline-2");
-    expect(s).toContain("peer-disabled:opacity-50");
+    expect(s).toContain("has-[:disabled]:text-[var(--lms-neutral-400)]");
     expect(s).toContain("motion-reduce:transition-none");
     expect(s).toContain("duration-[var(--lms-motion-fast)]");
   });
