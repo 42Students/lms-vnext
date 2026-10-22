@@ -9,6 +9,7 @@ import { PlacementCalendarWorkspace } from "@/components/placements/placement-ca
 import { hasMembershipRole } from "@/modules/identity/context";
 import {initialTpoCalendarView,parseTpoCalendarUrl} from "@/modules/placements/tpo-calendar-url-model";
 import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
+import { TpoCalendarViewportDefault } from "./tpo-calendar-viewport-default";
 
 type SearchParams = {
   date?: string | string[];
@@ -40,6 +41,14 @@ export default async function TpoCalendarPage({
   const parsed=parseTpoCalendarUrl({
     date:first(raw.date),view:first(raw.view)??initialTpoCalendarView(agent),company:first(raw.company),kind:first(raw.kind),
   });
+  // SSR cannot see a narrow desktop viewport. When no explicit ?view was
+  // bookmarked, correct the initial week/agenda default after hydration.
+  const clientParams=new URLSearchParams();
+  for(const key of ["date","company","kind","kinds"] as const){
+    const value=first(raw[key]);
+    if(value!==undefined)clientParams.set(key,value);
+  }
+  const clientHref="/tpo/calendar"+(clientParams.size?"?"+clientParams.toString():"");
   if(!parsed.success)return <div className="space-y-4">
     <PageHeader title="Invalid calendar filters" />
     <Alert tone="error">
@@ -49,6 +58,8 @@ export default async function TpoCalendarPage({
   </div>;
   return (
     <div className="min-w-0 space-y-4">
+      {raw.view===undefined?<TpoCalendarViewportDefault
+        initialView={parsed.data.view??"week"} baseHref={clientHref}/>:null}
       <PlacementCalendarWorkspace
         context={context}
         collegeId={context.membership.collegeId}
