@@ -73,7 +73,7 @@ describe("chat-16 real public sign-in page security and tenant rendering",()=>{
  it("UX-chat16-auth-unknown-03 fails closed for unrecognized domains with a recovery link",async()=>{
   vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"unknown",host:"unknown.example.edu"});
   const page=await HomePage(params({auth:"expired"}));
-  expect(textOf(page)).toContain("This address isn");
+  expect(textOf(page)).toContain("Ask your administrator to add this college's address");
   expect(textOf(page)).toContain("Your session expired. Please log in again.");
   expect(elements(page).some(el=>el.type===LoginForm)).toBe(false);
  });
@@ -89,7 +89,7 @@ describe("chat-16 real public sign-in page security and tenant rendering",()=>{
   vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"unavailable",host:"college.example.edu"});
   const page=await HomePage(params());
   expect(textOf(page)).toContain("This address may be correct");
-  expect(textOf(page)).toContain("We couldn");
+  expect(textOf(page)).toContain("its settings didn't load");
   expect(elements(page).some(el=>el.type===LoginForm)).toBe(false);
   const links=elements(page).filter(el=>el.type==="a");
   expect(links.some(el=>(el.props as {href?:string}).href==="https://42lms.com/login")).toBe(true);
@@ -118,7 +118,9 @@ describe("chat-16 real public sign-in page security and tenant rendering",()=>{
   expect(login?.props).toMatchObject({defaultChannel:"PHONE",allowedChannels:["PHONE"]});
  });
  it("UX-chat16-auth-metadata-05 reads verified tenant rather than forwarded-host headers",async()=>{
-  await expect(generateMetadata()).resolves.toMatchObject({title:"Sign in · 42LMS"});
+  await expect(generateMetadata({searchParams:Promise.resolve({})})).resolves.toMatchObject({
+   title:{absolute:"42 LMS"},
+  });
   expect(resolveRequestTenant).toHaveBeenCalledWith("42lms.com");
  });
 });

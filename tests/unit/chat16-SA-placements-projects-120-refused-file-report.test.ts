@@ -8,8 +8,8 @@ describe("SA-placements-projects-120 authenticated import refusal reporting",()=
   expect(service).toContain("readIndependentFindingSyncState(context:RequestContext)");
   expect(service).toContain("requireIndependentFindingAccess(context)");
   expect(service).toContain('eq(db10AuditFindingSyncs.source,"42Students/lms-findings")');
-  expect(service).toContain("refusedCount:row.refusedFiles.length,refusedFiles");
-  expect(service).toContain("row.refusedFiles.slice(0,50)");
+  expect(service).toContain("refusedCount:Math.max(row.refusedFiles.length,refusedFiles.length),refusedFiles");
+  expect(service).toContain("row.refusedFiles.slice(0,200)");
   expect(service).toContain(".slice(0,240)");
   expect(service).toContain(".slice(0,400)");
  });
@@ -21,7 +21,7 @@ describe("SA-placements-projects-120 authenticated import refusal reporting",()=
   expect(page).toContain("rows={sync.refusedFiles}");
   expect(page).toContain("getRowKey={item=>item.path+");
   expect(page).toContain("caption=\"Files the importer refused or flagged\"");
-  expect(page).toContain("Refusal reason");
+  expect(page).toContain('key:"reason",header:"Why"');
   expect(page).toContain("Sync isn't set up on this server.");
   expect(page).toContain("The last sync failed.");
   expect(page).toContain("No sync was performed by opening this page.");
