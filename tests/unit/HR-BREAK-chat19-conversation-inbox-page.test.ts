@@ -35,14 +35,14 @@ function content(node:ReactNode):string {
  if(Array.isArray(node))return node.map(content).join(" ");
  if(typeof node==="number"||typeof node==="string")return String(node);
  if(!isValidElement(node))return "";
- const p=node.props as {children?:ReactNode,title?:string,description?:string};
- return [p.title??"",p.description??"",content(p.children)].join(" ");
+ const p=node.props as {children?:ReactNode,title?:string,description?:string,actions?:ReactNode,action?:ReactNode};
+ return [p.title??"",p.description??"",content(p.children),content(p.actions),content(p.action)].join(" ");
 }
 function hrefs(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(hrefs);
  if(!isValidElement(node))return [];
- const p=node.props as {children?:ReactNode;href?:unknown};
- return [...(typeof p.href==="string"?[p.href]:[]),...hrefs(p.children)];
+ const p=node.props as {children?:ReactNode;href?:unknown;actions?:ReactNode;action?:ReactNode};
+ return [...(typeof p.href==="string"?[p.href]:[]),...hrefs(p.children),...hrefs(p.actions),...hrefs(p.action)];
 }
 describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure containment",()=>{
  beforeEach(()=>{
@@ -70,7 +70,7 @@ describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure 
   {collegeId:[college,"22222222-2222-4222-8222-222222222222"]},
   {page:["1","100"]},{q:["first","second"]}])(
   "invalid %j rejects without reading private message bodies",async bad=>{
-   expect(content(await page(bad))).toContain("Invalid conversation filters.");
+   expect(content(await page(bad))).toContain("Invalid conversation filters");
    expect(m.inbox).not.toHaveBeenCalled();
   });
  it("when a second live grant check fails, never display an older cached preview or inline reply",async()=>{

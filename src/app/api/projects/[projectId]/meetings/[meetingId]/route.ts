@@ -32,7 +32,7 @@ export async function PATCH(
     const context = await getCurrentRequestContext();
     const { projectId, meetingId } =
       await params;
-    const body = readMentorProjectCommandBody(request);
+    const body = await readMentorProjectCommandBody(request);
     const meeting = await scheduleProjectMeeting(
       context,
       projectId,
