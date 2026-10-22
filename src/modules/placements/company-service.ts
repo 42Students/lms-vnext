@@ -343,10 +343,15 @@ export async function createPlacementCompany(
     const [domainOwner]=await tx.select({companyId:placementCompanyDomains.companyId})
       .from(placementCompanyDomains)
       .where(ilike(placementCompanyDomains.domain,domain)).limit(1);
+    // A verified/registered secondary domain may be owned by a company whose
+    // primary domain differs. Resolve that identity rather than treating the
+    // legitimate domain alias as a new global employer.
     const [canonical] = await tx.select().from(placementCompanies)
-      .where(ilike(placementCompanies.primaryDomain,domain))
+      .where(domainOwner
+        ? eq(placementCompanies.id, domainOwner.companyId)
+        : ilike(placementCompanies.primaryDomain, domain))
       .for("update").limit(1);
-    if(domainOwner&&(!canonical||domainOwner.companyId!==canonical.id))
+    if(domainOwner&&!canonical)
       throw new PlacementsServiceError("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
     if (canonical && (canonical.status !== "ACTIVE" ||
         canonical.name.trim().toLocaleLowerCase("en-US") !==
