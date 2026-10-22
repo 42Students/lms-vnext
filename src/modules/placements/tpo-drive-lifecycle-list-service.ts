@@ -11,6 +11,19 @@ import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-m
 import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
 
+// A short-lived, bounded, per-college fallback for the three independently
+// loaded badge totals. Never share a count across colleges or filtered seasons.
+// The dashboard always prefers freshly queried DB totals when they are ready.
+type VerifiedLifecycleCounts = {
+  verifiedAt: number;
+  attention: {noApplicants:number;noDeadline:number;dueSoon:number;overdue:number};
+  requests: number;
+  statuses: {all:number;drafts:number;live:number;closed:number};
+};
+const verifiedLifecycleCounts = new Map<string,VerifiedLifecycleCounts>();
+const VERIFIED_COUNT_TTL_MS = 15 * 60_000;
+const MAX_VERIFIED_COUNT_SCOPES = 100;
+
 /** Tenant comes only from the authenticated TPO membership. Requests need their own persisted workflow. */
 export async function getTpoDriveLifecycleList(context: RequestContext, raw: unknown, now = new Date()) {
   const member = context.membership;
@@ -57,6 +70,11 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .orderBy(placementCompanies.name);
 
   if (filters.seasonId && !season) throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_FOUND");
+  const snapshotKey=collegeId+":"+(season?.id??"ALL");
+  const remembered=verifiedLifecycleCounts.get(snapshotKey);
+  const previousCounts=remembered && Date.now()-remembered.verifiedAt<VERIFIED_COUNT_TTL_MS
+    ? remembered : undefined;
+  if(remembered&&!previousCounts)verifiedLifecycleCounts.delete(snapshotKey);
   const attentionBoundary=new Date(now.getTime()+7*86400000);
   const [attention]=await db.select({
     noApplicants:sql<number>`count(*) filter(where ${placementJobs.status}='PUBLISHED'
@@ -74,7 +92,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .catch(()=>{countsAvailable=false;
       lookupWarnings.push("Could not load applicant and pipeline counts");return [];
     });
-  const attentionCounts=attention??{noApplicants:0,noDeadline:0,dueSoon:0,overdue:0};
+  const attentionCounts=attention??previousCounts?.attention??
+    {noApplicants:0,noDeadline:0,dueSoon:0,overdue:0};
 
   // TPO-drives-04: persistent college-scoped counts power tab badges.
   const [pendingRequestCount]=await db.select({total:count()})
@@ -85,7 +104,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .where(and(eq(placementRecruiterDriveRequests.collegeId,collegeId),
       inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK"])))
     .catch(()=>{countsAvailable=false;lookupWarnings.push("Could not load request counts");return [];});
-  const needsReviewCount=pendingRequestCount?.total??0;
+  const needsReviewCount=pendingRequestCount?.total??previousCounts?.requests??0;
   const [aggregate]=await db.select({
     all:sql<number>`count(*)::int`,
     drafts:sql<number>`count(*) filter(where ${placementJobs.status}='DRAFT')::int`,
@@ -95,7 +114,21 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   }).from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
     isNull(placementJobs.archivedAt),season?eq(placementJobs.seasonId,season.id):undefined))
     .catch(()=>{countsAvailable=false;lookupWarnings.push("Could not load applicant and pipeline counts");return [];});
-  const statusCounts=aggregate??{all:0,drafts:0,live:0,closed:0};
+  const statusCounts=aggregate??previousCounts?.statuses??
+    {all:0,drafts:0,live:0,closed:0};
+  const countsStale=!attention||!pendingRequestCount||!aggregate;
+  if(!countsStale){
+    if(verifiedLifecycleCounts.size>=MAX_VERIFIED_COUNT_SCOPES)
+      verifiedLifecycleCounts.delete(verifiedLifecycleCounts.keys().next().value??"");
+    verifiedLifecycleCounts.set(snapshotKey,{
+      verifiedAt:Date.now(),attention:attentionCounts,
+      requests:needsReviewCount,statuses:statusCounts,
+    });
+  }else if(previousCounts){
+    lookupWarnings.push("Showing last verified counts while refreshed badges are unavailable.");
+  }
+  const countsAsOf=countsStale&&previousCounts?
+    new Date(previousCounts.verifiedAt).toISOString():now.toISOString();
   const selectedView=defaultTpoDriveView(needsReviewCount,
     typeof raw==="object"&&raw!==null&&"view" in raw?filters.view:undefined);
   if (selectedView === "REQUESTS") {
@@ -106,7 +139,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       employmentType:filters.employmentType,jobTypeLabel:filters.jobTypeLabel,sort:filters.sort,display:filters.display,
       minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
       attentionCounts,needsReviewCount,statusCounts,asOf:now.toISOString(),
-      countsAvailable,lookupWarnings};
+      countsAvailable,countsStale,countsAsOf,lookupWarnings};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
       eq(placementRecruiterDriveRequests.collegeId,collegeId),
@@ -334,7 +367,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     companyId:filters.companyId, view: selectedView,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,recruiterDriveMode:filters.recruiterDriveMode,employmentType:filters.employmentType,jobTypeLabel:filters.jobTypeLabel,sort:filters.sort,display:filters.display,
     minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
     attentionCounts,needsReviewCount,statusCounts,asOf: now.toISOString(),
-    countsAvailable,lookupWarnings,
+    countsAvailable,countsStale,countsAsOf,lookupWarnings,
     requestsAvailable: false as const,
     requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null;
       recruiterEmail:string|null;recruiterPhone:string|null;recruiterUserId:string;
