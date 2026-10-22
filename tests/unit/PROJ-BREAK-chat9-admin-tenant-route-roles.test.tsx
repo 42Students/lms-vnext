@@ -1,6 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement} from "react";
-import TenantDirectory from "@/app/(authenticated)/admin/tenants/page";
+import TenantDirectory from "@/app/(authenticated)/admin/tenants/directory/page";
 import SuperAdminTenantCreateStage from "@/app/(authenticated)/admin/tenants/create/page";
 
 const state=vi.hoisted(()=>({
