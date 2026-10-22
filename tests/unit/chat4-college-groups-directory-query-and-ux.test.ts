@@ -77,7 +77,7 @@ describe("College Admin Student groups directory query and role journey", () => 
 
   it("UX-COL-GROUPS-ONE-CANVAS-01 uses an unboxed filter area and existing responsive table actions", () => {
     const code = page();
-    expect(code).toContain('className="flex flex-wrap items-end gap-3 border-t border-border pt-4"');
+    expect(code).toContain('items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4');
     expect(code).not.toContain("flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4");
     expect(code).toContain("min-h-11");
     expect(code).toContain("<DataTable");
