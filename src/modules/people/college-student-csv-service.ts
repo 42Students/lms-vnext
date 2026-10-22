@@ -319,10 +319,14 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     reversible:false, recoveryRequired:results.some(item=>item.status==="PARTIAL") };
 }
 
-/** SA-academics-people-95: history reads use the same selected active college as imports. */
-export async function listSuperAdminStudentCsvImportHistory(context: RequestContext) {
-  if (!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
-  const selected = await resolveActingCollege(context, "people.manage");
+/** Both administrator history views are strictly scoped to their authorized college. */
+export async function listCollegeStudentCsvImportHistory(context: RequestContext) {
+  const selected = isSuperAdmin(context)
+    ? await resolveActingCollege(context, "people.manage")
+    : requireCollegeStudentImporter(context);
+  requirePermission(context, "people.manage", {
+    collegeId: selected.collegeId, organizationId: selected.organizationId,
+  });
   return getDb().select({
     runId:activityEvents.subjectId,
     occurredAt:activityEvents.occurredAt,
@@ -333,4 +337,10 @@ export async function listSuperAdminStudentCsvImportHistory(context: RequestCont
     eq(activityEvents.organizationId,selected.organizationId),
     eq(activityEvents.eventType,"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT"),
   )).orderBy(desc(activityEvents.occurredAt)).limit(50);
+}
+
+/** Preserve the existing Super Admin history entry point without widening access. */
+export async function listSuperAdminStudentCsvImportHistory(context: RequestContext) {
+  if (!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
+  return listCollegeStudentCsvImportHistory(context);
 }
