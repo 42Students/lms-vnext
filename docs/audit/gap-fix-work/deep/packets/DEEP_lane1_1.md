@@ -15,7 +15,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-4-016-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-4-016-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-4-026-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
-- [ ] G2-4-028-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-4-028-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-5-004-069  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 
 ## Results
@@ -33,3 +33,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - FIXED G2-5-004-069 — commits 66b5855, e713a0a, ffa45f5; src/modules/projects/mentor-calendar-view.ts now admits validated REQUESTED and COMPLETED join URLs (except CANCELLED), and src/components/projects/mentor-meetings-calendar.tsx opens join links in the same tab; legacy docs/legacy-source/frontend/src/pages/mentor/calendar.js:85-86,120-125.
 
 - OK G2-4-016-002 — shared appendSmsDeliveryAttempt in src/modules/notifications/exotel-sms.ts:116-159 is called for OTP at :160-166, for guardian attendance in src/modules/attendance/parent-sms-provider.ts:17-29, for job.update/notification in src/modules/notifications/legacy-sms-notice-provider.ts:39-58 and src/modules/messaging/providers.ts:264-273; matches sender purposes in docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ExotelSmsServiceImpl.java:80-133,220-233.
+
+- FIXED G2-4-028-004 — commit 8b23366, src/app/(authenticated)/tpo/team/page.tsx:28-45 now prioritizes people/members route (dropping all other query parameters), then forwards conversation parameters to the messages destination, matching docs/legacy-source/frontend/src/pages/tpo/team.js:8-9.
