@@ -30,7 +30,7 @@ export const TPO_SEASON_CREATE_REVIEW_COPY={
  fields:["Season name","Season code","Start date","End date"] as const,
  notice:"Creating a placement season does not open learner registration. Registration must be opened for eligible academic cohorts separately.",
  confirm:"I understand that students cannot register merely because a season is active.",
- unavailable:"Registration opening and deadline are managed separately from season dates.",
+ unavailable:"Season registration can be opened separately after the season is created. Learners still need an eligible cohort invitation.",
 } as const;
 /** Season opening is independent of ACTIVE status and cohort invitations. */
 export const tpoSeasonRegistrationActionSchema = z.discriminatedUnion("action", [

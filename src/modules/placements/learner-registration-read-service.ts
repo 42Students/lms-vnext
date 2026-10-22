@@ -1,13 +1,14 @@
 import "server-only";
 import { and, desc, eq, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { cohorts, learnerProgramEnrollments } from "@/db/schema";
+import { cohorts, learnerProgramEnrollments, placementSeasons } from "@/db/schema";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { resolveLearnerRegistrationDisplay } from "./learner-registration-view-model";
 import { PlacementRegistrationError } from "./batch-registration-service";
+import { resolveSeasonRegistrationWindow } from "./batch-registration-policy";
 
 export async function getOwnLearnerRegistration(context: RequestContext) {
   const membership = await requireLearnerPlacementAccess(context);
@@ -22,7 +23,7 @@ export async function getOwnLearnerRegistration(context: RequestContext) {
   if (enrollments.length !== 1)
     throw new PlacementRegistrationError("DB08_REGISTRATION_ENROLLMENT_INVALID");
   const cohortId = enrollments[0].cohortId;
-  const [batch, registration] = await Promise.all([
+  const [batch, registration, season] = await Promise.all([
     db.select({
       invitedAt: placementBatchLifecycles.invitedAt,
       finishedAt: placementBatchLifecycles.finishedAt,
@@ -36,6 +37,14 @@ export async function getOwnLearnerRegistration(context: RequestContext) {
         eq(placementBatchRegistrations.cohortId, cohortId),
         eq(placementBatchRegistrations.membershipId, membership.id)))
       .limit(1).then(rows => rows[0] ?? null),
+    db.select({
+      registrationControlled:placementSeasons.registrationControlled,
+      isRegistrationOpen:placementSeasons.isRegistrationOpen,
+      registrationDeadline:placementSeasons.registrationDeadline,
+    }).from(placementSeasons).where(and(
+      eq(placementSeasons.collegeId,membership.collegeId),
+      eq(placementSeasons.status,"ACTIVE"),
+    )).limit(1).then(rows=>rows[0]??null),
   ]);
   // A new academic cohort is a new placement cycle. Never silently treat an
   // old season/cohort's choice or consent as current-cycle registration.
@@ -48,8 +57,18 @@ export async function getOwnLearnerRegistration(context: RequestContext) {
     eq(placementBatchRegistrations.collegeId, membership.collegeId),
     ne(placementBatchRegistrations.cohortId, cohortId),
   )).orderBy(desc(placementBatchRegistrations.updatedAt)).limit(1);
+  const now=new Date();
+  const cohortState=resolveLearnerRegistrationDisplay(batch,registration?.choice??null,now);
+  const seasonWindow=resolveSeasonRegistrationWindow(season,now);
   return {
-    ...resolveLearnerRegistrationDisplay(batch, registration?.choice ?? null, new Date()),
+    ...cohortState,
+    // A TPO-managed season is an additional gate. The cohort must still be
+    // invited and eligible; an unconfigured legacy season never blocks DB08.
+    stage:cohortState.stage==="OPEN"&&!seasonWindow.open?"CLOSED":cohortState.stage,
+    seasonRegistration:{
+      managed:seasonWindow.managed,open:seasonWindow.open,
+      deadline:seasonWindow.deadline?.toISOString()??null,
+    },
     cohortId,
     batchName:enrollments[0].batchName,
     // False is the semantic equivalent of legacy GET mine's empty 204 case.

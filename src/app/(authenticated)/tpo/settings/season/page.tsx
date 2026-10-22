@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { TpoSeasonControls } from "@/components/placements/tpo-season-controls";
+import { TpoSeasonRegistrationControls } from "@/components/placements/tpo-season-registration-controls";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -41,6 +42,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
       </section>
 
       <TpoSeasonControls seasons={seasons} />
+      <TpoSeasonRegistrationControls seasons={seasons} />
       <Disclosure title="Season totals" className="min-w-0" contentClassName="pt-3">
       <div
         aria-label="Season summary"
@@ -122,6 +124,17 @@ export default async function TpoPlacementSeasonSettingsPage() {
                 </div>
                 <div>
                   <dt className="text-xs font-semibold text-muted-foreground">
+                    Registration window
+                  </dt>
+                  <dd className="mt-1 text-sm text-body">
+                    {!season.registrationControlled?"Managed per invited cohort":
+                      season.isRegistrationOpen && (!season.registrationDeadline || new Date(season.registrationDeadline).getTime()>Date.now())
+                        ?"Open"+(season.registrationDeadline?" until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(season.registrationDeadline))+" IST":""):
+                        "Closed"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-semibold text-muted-foreground">
                     Lifecycle status
                   </dt>
                   <dd className="mt-1 text-sm text-body">
@@ -137,11 +150,11 @@ export default async function TpoPlacementSeasonSettingsPage() {
       <Disclosure title="Season data and registration notes" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         Source: persisted placement_seasons records.
-        No registration deadline, blocked academic dates,
-        or open-registration state is inferred from the
-        season dates. Creating and editing the active season now require
-        confirmation. Closing uses the existing season lifecycle; registration-opening
-        remains unavailable until the registration lifecycle is verified.
+        Registration is controlled independently of season dates and
+        requires an explicit versioned, audited TPO action. A season marked
+        Active does not automatically invite a cohort: learner eligibility
+        and batch registration deadlines are enforced separately.
+        Closing the season also closes season registration.
       </p>
       </Disclosure>
     </div>
