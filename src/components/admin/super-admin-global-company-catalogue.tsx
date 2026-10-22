@@ -65,6 +65,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
   </div>},
   {key:"domains",header:"Domains",mobilePriority:"secondary",cell:row=><span className="break-all">{row.domains.length?row.domains.join(", "):"None"}</span>},
   {key:"added",header:"Added by",cell:row=><span>{row.addedByLabel??"-"}</span>},
+  {key:"colleges",header:"Colleges",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.companyCollegeCount}</span>},
   {key:"drives",header:"Drives",cell:row=><span className="tabular-nums">{row.driveCount}</span>},
   {key:"last",header:"Last active",cell:row=><span>{formatLast(row.lastActiveAt)}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
@@ -80,9 +81,9 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
     <span className="text-xs text-muted-foreground">Select a college to review History or Merge</span>
    </div>},
  ];
- const csv=["Company,Website,Domains,Other names,Verified,Drives,Last active",
+ const csv=["Company,Website,Domains,Other names,Verified,Added by,Colleges,Drives,Last active",
   ...data.rows.map(row=>[row.name,row.website??"",row.domains.join("; "),row.aliases.join("; "),
-   row.verifiedAt?"Verified by 42":"Not verified",row.driveCount,formatLast(row.lastActiveAt)]
+   row.verifiedAt?"Verified by 42":"Not verified",row.addedByLabel??"-",row.companyCollegeCount,row.driveCount,formatLast(row.lastActiveAt)]
    .map(csvValue).join(","))].join("\r\n");
  const pageUrl=(page:number)=>"/admin/companies?"+new URLSearchParams({
   view:"GLOBAL",q:data.query.q,page:String(page),status:data.query.status,
@@ -107,7 +108,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
    {data.query.page>1?<Link href={pageUrl(data.query.page-1)} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Previous</Link>:null}
    {data.query.page<data.totalPages?<Link href={pageUrl(data.query.page+1)} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Next</Link>:null}
   </nav>
-  <p className="text-xs text-muted-foreground">Only this page of up to 50 authorized global companies is exported. Select a college scope before reviewing a merge; private college CRM details are not included.</p>
+  <p className="text-xs text-muted-foreground">Only this page of up to 10 authorized global companies is exported. Select a college scope before reviewing a merge; private college CRM details are not included.</p>
   <Link href="/admin/placements" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">← Placement operations</Link>
  </div>;
 }
