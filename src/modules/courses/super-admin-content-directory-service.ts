@@ -11,6 +11,7 @@ import { lessonContentOrderRuntimeEnabled } from "./lesson-content-order-readine
 import {
  academicPeriods,cohorts,courseLearningPaths,courseLessons,courseOfferings,courses,
  departments,lessonContents,programs,courseSectionDeliveries,sections,
+ facultyCourseAssociations,courseTeachingAssignments,collegeMemberships,users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -58,6 +59,8 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   offeringStatus:aliased(courseOfferings.status,"admin_offering_status"),
   courseName:aliased(courses.name,"admin_course_name"),
   courseCode:courses.code,
+  courseId:courses.id,
+  sectionName:sections.name,
   cohortName:aliased(cohorts.name,"admin_cohort_name"),
   periodName:aliased(academicPeriods.name,"admin_period_name"),
  }).from(lessonContents)
@@ -86,6 +89,8 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
    // its section. A dangling/foreign section never appears in the UI.
    sql`${lessonContents.deliveryId} is null or ${sections.id} is not null`,
    inArray(lessonContents.contentType,[...contentTypesForKind(kind)]),
+   // Do not show every college resource until a course, lesson or class is selected.
+   kind==="RESOURCES"&&!query.offeringId&&!query.lessonId&&!query.deliveryId?sql`false`:undefined,
    query.status==="ALL"?undefined:eq(lessonContents.status,query.status),
    query.offeringId?eq(courseOfferings.id,query.offeringId):undefined,
    query.lessonId?eq(courseLessons.id,query.lessonId):undefined,
@@ -111,6 +116,37 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
  }).from(lessonContentMaterials)
   .where(inArray(lessonContentMaterials.lessonContentId,resourceIds))
   .orderBy(asc(lessonContentMaterials.sequence),asc(lessonContentMaterials.id)):[];
+ // Preserve faculty association and section audience in Super Admin staff review.
+ // Membership and course scope are validated before selecting display names.
+ const courseIds=[...new Set(items.map(item=>item.courseId))];
+ const deliveryIds=[...new Set(items.map(item=>item.deliveryId).filter((id):id is string=>id!==null))];
+ const [courseStaff,sectionStaff]=await Promise.all([
+  courseIds.length?db.select({courseId:facultyCourseAssociations.courseId,name:users.displayName})
+   .from(facultyCourseAssociations)
+   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,facultyCourseAssociations.membershipId),
+    eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE")))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(and(inArray(facultyCourseAssociations.courseId,courseIds),isNull(facultyCourseAssociations.endedAt))):Promise.resolve([]),
+  deliveryIds.length?db.select({deliveryId:courseTeachingAssignments.deliveryId,name:users.displayName})
+   .from(courseTeachingAssignments)
+   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,courseTeachingAssignments.membershipId),
+    eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE")))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(and(inArray(courseTeachingAssignments.deliveryId,deliveryIds),
+    isNull(courseTeachingAssignments.endedAt),isNull(courseTeachingAssignments.deletedAt))):Promise.resolve([]),
+ ]);
+ const facultyNamesByCourse=new Map<string,string[]>();
+ for(const row of courseStaff){if(!row.name)continue;
+  const names=facultyNamesByCourse.get(row.courseId)??[];
+  if(!names.includes(row.name))names.push(row.name);
+  facultyNamesByCourse.set(row.courseId,names);
+ }
+ const facultyNamesByDelivery=new Map<string,string[]>();
+ for(const row of sectionStaff){if(!row.name)continue;
+  const names=facultyNamesByDelivery.get(row.deliveryId)??[];
+  if(!names.includes(row.name))names.push(row.name);
+  facultyNamesByDelivery.set(row.deliveryId,names);
+ }
  const byContent=new Map<string,typeof materialRows>();
  for(const material of materialRows){
   const existing=byContent.get(material.lessonContentId)??[];
@@ -119,6 +155,8 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
  return {kind,query,total,totalPages:adminContentPages(total,pageSize),items:items.map(item=>({
   ...item,materialCount:byContent.get(item.id)?.length??0,
   materials:byContent.get(item.id)??[],
+  facultyNames:facultyNamesByCourse.get(item.courseId)??[],
+  sectionFacultyNames:item.deliveryId?facultyNamesByDelivery.get(item.deliveryId)??[]:[],
  }))};
 }
 
@@ -211,7 +249,10 @@ export async function listSuperAdminSectionSyllabus(
  const items:(typeof visible)= [];
  for(const [,part] of byLesson)items.push(...await applyDeliveryContentOrderIfReady(part,deliveryId));
  return {
-  offeringId,deliveryId,items,truncated,
+  offeringId,deliveryId,items:items.map(item=>({...item,
+   // The mixed syllabus shows other kinds, but editing/deleting belongs to its tab.
+   ownTab:item.contentType==="RESOURCE"?"RESOURCES":item.contentType==="LIVE_CLASS"?"LIVE_CLASSES":"VIDEOS",
+  })),truncated,
   totalShown:items.length,
   // Atomic full-order writes use updateDeliveryLessonContentOrder,
   // which verifies every visible ID and requires an active order migration.
