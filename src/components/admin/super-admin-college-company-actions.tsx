@@ -37,8 +37,8 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
   if(pending)return;
   const companyName=name.trim(),domain=primaryDomain.trim(),website=websiteUrl.trim();
   const email=contactEmail.trim(),phone=contactPhone.trim();
-  if(companyName.length<2||companyName.length>150){
-   setError("Company name must be between 2 and 150 characters");return;
+  if(companyName.length<2||companyName.length>100){
+   setError("Company name must be between 2 and 100 characters");return;
   }
   if(!domain&&!website){setError("Add the company's website or a company email domain");return;}
   if(website){try{
@@ -57,37 +57,27 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
   }
   void run(async()=>{
    setError("");setNotice("");
-   let relationshipId:string|null=null;
    try{
+    // One transaction creates the shared identity and this college's private details.
     const created=await apiFetch<{relationship:{id:string};existed:boolean}>("/api/placements/companies",{
      method:"POST",headers:{"content-type":"application/json"},
      body:JSON.stringify({collegeId,name:companyName,primaryDomain:domain||undefined,
       websiteUrl:website||undefined,industry:industry.trim()||undefined,
-      about:about.trim()||undefined}),
+      about:about.trim()||undefined,
+      ...(contactName.trim()?{contactPersonName:contactName.trim()}:{}),
+      ...(email?{contactEmail:email}:{}),
+      ...(phone?{contactPhone:phone}:{}),
+      ...(notes.trim()?{internalNotes:notes.trim()}:{}),
+     }),
     });
-    relationshipId=created.relationship.id;
-    const details={
-     contactPersonName:contactName.trim()||null,contactEmail:email||null,
-     contactPhone:phone||null,internalNotes:notes.trim()||null,
-    };
-    if(Object.values(details).some(v=>v!==null)){
-     await apiFetch("/api/placements/companies/"+encodeURIComponent(relationshipId)+"/history",{
-      method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify(details),
-     });
-    }
     showToast({tone:"success",title:"Company added",
      description:created.existed?"Existing verified company linked to this college.":"Company linked to the selected college."});
     setNotice(created.existed&&Boolean(industry.trim()||about.trim())?
      "Existing global company linked. Its industry and description were preserved; these fields were not overwritten.":
      "Company created for this college.");
    }catch(reason){
-    if(relationshipId){
-     setNotice("Company linked, but college-only contact details could not be saved. Open History to finish editing them.");
-     showToast({tone:"info",title:"Company added",description:"Contact details need to be updated in History."});
-    }else{
-     setError(reason instanceof Error?reason.message:"Company could not be created. Retry.");
-     return;
-    }
+    setError(reason instanceof Error?reason.message:"Company could not be created. Retry.");
+    return;
    }
    clear();setOpen(false);router.refresh();
   });
@@ -111,7 +101,7 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
     <fieldset className="min-w-0 space-y-3" disabled={pending}>
      <legend className="font-semibold text-[var(--lms-heading)]">Identity</legend>
      <label className={labelClass}>Company name
-      <Input required minLength={2} maxLength={150} value={name} onChange={e=>setName(e.target.value)}
+      <Input required minLength={2} maxLength={100} value={name} onChange={e=>setName(e.target.value)}
        placeholder="Company name" className={fieldClass}/>
      </label>
      <label className={labelClass}>Industry
@@ -135,7 +125,7 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
     </fieldset>
     <fieldset className="min-w-0 space-y-3 border-t border-border pt-3" disabled={pending}>
      <legend className="font-semibold text-[var(--lms-heading)]">Contact</legend>
-     <label className={labelClass}>Contact person
+     <label className={labelClass}>Recruiter contact name
       <Input maxLength={150} value={contactName} onChange={e=>setContactName(e.target.value)} className={fieldClass}/>
      </label>
      <label className={labelClass}>Contact email

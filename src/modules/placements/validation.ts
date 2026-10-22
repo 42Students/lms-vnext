@@ -52,6 +52,11 @@ export const createPlacementCompanyInputSchema = z
     primaryDomain: placementCompanyDomainSchema.optional(),
     industry: z.string().trim().max(100).optional(),
     about: z.string().trim().max(2000).optional(),
+    // College-private CRM fields are committed atomically with the link.
+    contactPersonName: z.string().trim().max(150).nullable().optional(),
+    contactEmail: z.string().trim().max(150).email().nullable().optional(),
+    contactPhone: z.string().trim().max(30).regex(/^[+()\d][\d\s().-]{6,29}$/).nullable().optional(),
+    internalNotes: z.string().trim().max(2000).nullable().optional(),
     isTrusted: z.boolean().optional().default(false),
   })
   .strict()

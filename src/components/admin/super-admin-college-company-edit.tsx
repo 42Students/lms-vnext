@@ -101,7 +101,7 @@ export function SuperAdminCollegeCompanyEdit({relationshipId,name}:{
      <Button type="button" variant="secondary" onClick={()=>void showEditor()}>Retry</Button>
     </div>:<form onSubmit={submit} className="space-y-4">
      <fieldset disabled={pending} className="space-y-3">
-      <label className={label}>Contact person
+      <label className={label}>Recruiter contact name
        <Input maxLength={150} className={cls} value={details.contactName??""}
         onChange={event=>setField("contactName",event.target.value)}/>
       </label>
