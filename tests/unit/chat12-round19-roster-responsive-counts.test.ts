@@ -18,9 +18,10 @@ describe("TPO Students phone presentation and scoped selection summary",()=>{
   expect(grid).toContain("mobilePrimaryKeys.includes(column.key)");
   expect(grid).toContain(": display.slice(0,5)");
   expect(grid).toContain("More student details");
-  expect(grid).toContain("mobileActionsCollapsible&&mobileExtra.length>0?<details");
-  expect(grid).toContain("group-open:block");
-  expect(grid).toContain('<summary className="min-h-11 cursor-pointer font-semibold md:hidden">Actions</summary>');
+  expect(grid).toContain("rowActions ? mobileActionsCollapsible ?");
+  expect(grid).toContain('<Dropdown mobileSheet align="end"');
+  expect(grid).toContain('trigger="Actions"');
+  expect(grid).toContain('aria-label={"Row actions for "+');
   const filters=src("src/components/tpo/tpo-grid-filter-panel.tsx");
   const sheet=src("src/components/ui/bottom-sheet.tsx");
   expect(filters).toContain('<BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title="Filter students">');
