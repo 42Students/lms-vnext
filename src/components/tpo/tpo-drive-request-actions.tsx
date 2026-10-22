@@ -51,7 +51,7 @@ export function TpoDriveRequestActions({requestId,status}:{
           setAction("APPROVE_LATER");setError("");setMessage("");
           setReason("Approved for later");
         }}>
-        {actions[0].label}
+        {TPO_DRIVE_REQUEST_DECISION_COPY.approve}
       </Button>
       <Dropdown mobileSheet align="end" label="Other request decisions" trigger="More ···">
         <div className="flex min-w-48 flex-col gap-1">
