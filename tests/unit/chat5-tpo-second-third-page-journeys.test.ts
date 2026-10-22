@@ -13,7 +13,7 @@ describe("chat-5 second-third TPO page journeys",()=>{
  it("UX-TPO-DRIVE-STOP-37 provides 44px return actions and explicit blocked-state messages on both previews",()=>{
   for(const screen of ["close-preview","cancel-preview"]){
    const source=page(screen);
-   expect(source).toContain('hasMembershipRole(context,"TPO")');
+   expect(source).toMatch(/hasMembershipRole\(context,\s*"TPO"\)/);
    expect(source).toContain("notFound()");
    expect(source).toContain('<Alert tone="warning">');
    expect(source).toMatch(/actions=\{<Link[^>]*className="[^"]*inline-flex min-h-11[^\"]*items-center[^\"]*w-full[^\"]*focus-visible:outline-2/);

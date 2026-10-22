@@ -245,7 +245,7 @@ describe("chat-3 Drives round 4",()=>{
   expect(page).toContain("job.editingBlockedReason");
   expect(page).toContain('href="/tpo/placements/new"');
   expect(boundary).toContain("Some drive setup data could not be loaded");
-  expect(boundary).toContain("<Button onClick={reset}>Retry</Button>");
+  expect(boundary).toContain("<Button onClick={reset}>Retry setup data</Button>");
   expect(loading).toContain('<GracefulPageLoading label="Loading drive edit"/>');
   const loadingUi=source("src/components/ui/graceful-page-loading.tsx");
   expect(loadingUi).toContain('role="status"');
