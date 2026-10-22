@@ -21,7 +21,7 @@ describe("Learner syllabus soft-delete and audience isolation", () => {
       source.lastIndexOf("const rows = await getDb()", source.indexOf("type ContentItem")),
       source.indexOf("type ContentItem"),
     );
-    expect(lessonQuery).toContain('eq(lessonContents.status,');
+    expect(lessonQuery).toMatch(/eq\(\s*lessonContents\.status,\s*"PUBLISHED",?\s*\)/);
     expect(lessonQuery).toContain('"PUBLISHED"');
     expect(lessonQuery).toContain("eq(lessonContents.visibleToStudents,true)");
     expect(lessonQuery).toContain("isNull(lessonContents.deletedAt)");
