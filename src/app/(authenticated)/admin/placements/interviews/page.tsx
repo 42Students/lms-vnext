@@ -127,7 +127,8 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
    actions={returnLink}/>
   {!departmentsRead.ok?<Alert tone="warning" role="status">
    Candidate appointments were loaded but their department mapping is unavailable.
-   Retry to restore academic departments; no other college's details are shown.
+   No other college's details are shown.{" "}
+   <Link href={pageHref(report.query.page)} className="font-semibold text-primary-text underline underline-offset-2">Retry department mapping</Link>
   </Alert>:null}
   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
    <p className="text-sm text-body">{report.total} appointments · page {report.query.page} of {report.totalPages}</p>
