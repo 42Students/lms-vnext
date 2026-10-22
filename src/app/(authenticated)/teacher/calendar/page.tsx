@@ -27,15 +27,15 @@ export default async function FacultyCalendarPage({
   const accepted=Object.keys(raw).every(key=>key==="month"||key==="deliveryId")&&
     Object.values(raw).every(value=>!Array.isArray(value));
   const input=facultyMonthQuerySchema.safeParse(accepted?{
-    month:raw.month??currentIstMonth(new Date()),
-    deliveryId:raw.deliveryId||undefined,
+    month:raw["month"]??currentIstMonth(new Date()),
+    deliveryId:raw["deliveryId"]||undefined,
   }:{invalid:true});
   if(!input.success){
     const badKey=["startDate","endDate"].find(key=>key in raw);
     const invalidDate=badKey?"Invalid date '"+badKey+"': "+
       String(raw[badKey]??"").slice(0,100):"Invalid month or Section filter";
-    const reversed=typeof raw.startDate==="string"&&typeof raw.endDate==="string"&&
-      raw.startDate>raw.endDate;
+    const reversed=typeof raw["startDate"]==="string"&&typeof raw["endDate"]==="string"&&
+      raw["startDate"]>raw["endDate"];
     return <section role="alert" className="space-y-3">
     <PageHeader title={reversed?"startDate must be before or equal to endDate":invalidDate} />
     <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
@@ -104,17 +104,17 @@ export default async function FacultyCalendarPage({
     <Disclosure title="Month view" className="min-w-0 border-t border-border pt-4" contentClassName="pt-4">
     <section className="min-w-0">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className={monthStyles.period}>
+        <h2 className={monthStyles["period"]}>
           {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",month:"long",year:"numeric"})
             .format(new Date(grid.query.month+"-01T12:00:00.000Z"))} · IST
         </h2>
-        <div className={monthStyles.nav}>
+        <div className={monthStyles["nav"]}>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
-            className={monthStyles.navLink} aria-label="Previous month">←</Link>
+            className={monthStyles["nav"]Link} aria-label="Previous month">←</Link>
           <Link href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
-            className={monthStyles.navLink} aria-label="Today">Today</Link>
+            className={monthStyles["nav"]Link} aria-label="Today">Today</Link>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
-            className={monthStyles.navLink} aria-label="Next month">→</Link>
+            className={monthStyles["nav"]Link} aria-label="Next month">→</Link>
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_auto] lg:items-end">
@@ -140,17 +140,17 @@ export default async function FacultyCalendarPage({
       </Alert>:grid.days.every(day=>day.events.length===0)?<Alert tone="info" className="mt-4">
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </Alert>:null}
-      <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className={monthStyles.scroll}>
-        <CalendarGrid variant="hairline" className={monthStyles.grid+" max-[767px]:!min-w-[770px]"}>
-          {names.map((name,index)=><div key={name} className={monthStyles.weekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{name}</div>)}
+      <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" {...(monthStyles["scroll"] !== undefined ? {className:monthStyles["scroll"]} : {})}>
+        <CalendarGrid variant="hairline" className={monthStyles["grid"]+" max-[767px]:!min-w-[770px]"}>
+          {names.map((name,index)=><div key={name} className={monthStyles["weekday"]+" "+(index===0?calendarStyles["calendarSunday"]:"")}>{name}</div>)}
           {grid.days.map(day=><section key={day.key}
-            aria-label={day.key+" IST"} data-outside={!day.inMonth} data-today={day.key===todayIst} className={monthStyles.day}>
-            <time dateTime={day.key} className={monthStyles.dayNumber+" "+(new Date(day.key+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>
+            aria-label={day.key+" IST"} data-outside={!day.inMonth} data-today={day.key===todayIst} className={monthStyles["day"]}>
+            <time dateTime={day.key} className={monthStyles["day"]Number+" "+(new Date(day.key+"T12:00:00Z").getUTCDay()===0?calendarStyles["calendarSunday"]:"")}>
               {Number(day.key.slice(8))}
             </time>
             <div className="mt-2 space-y-2">
               {day.events.map(event=><article key={event.id}
-                className={monthStyles.dayEvent+" border-l-4 border-l-primary"}>
+                className={monthStyles["day"]Event+" border-l-4 border-l-primary"}>
                 <p className="text-xs font-semibold text-foreground leading-5">{event.title?.trim()||"Scheduled Class"}{event.courseName&&event.courseName!==event.title?" · "+event.courseName:""} ({event.sectionName||"Class"})</p>
                 <p className="text-xs text-body leading-5">
                   {new Intl.DateTimeFormat("en-IN",{
