@@ -28,7 +28,10 @@ describe("chat-9 last-third admin UX rollout, batch 04",()=>{
   for(const component of ["<Input","<Select","<Button","<Pagination"])expect(directory).toContain(component);
   expect(page).toContain("./directory/page");
   expect(page).toContain("./setup/page");
-  expect(page).toMatch(/PageHeader|SuperAdminContentDirectoryPage|redirect\(|export\s*\{\s*default\s*\}/);
+  expect(page).toContain("<TenantDirectory");
+  expect(page).toContain("<SuperAdminTenantSetup");
+  expect(page).toContain("can(context,\"admin-scope.select\")");
+  expect(page).toContain('<nav aria-label="Tenant management related pages">');
  });
  it("UX-admin-tenants-create-01 preserves shared UX and scoped route behavior",()=>{
   const page=source("src/app/(authenticated)/admin/tenants/create/page.tsx");
