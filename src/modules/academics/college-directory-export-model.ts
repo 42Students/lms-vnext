@@ -2,9 +2,10 @@ import { escapeActivityCsvCell } from "@/modules/activity/college-activity-expor
 /** Keep spreadsheet formula controls inert even with leading Unicode format marks.
  * The common CSV serializer handles ordinary formulas; this guard also covers
  * invisible prefixes that some spreadsheet engines silently strip. */
-function safeCollegeCsvCell(value:string):string {
- const visible=value.replace(/^[\s\p{Cf}\p{Mn}]*/u,"");
- return escapeActivityCsvCell(/^[-=+@]/u.test(visible)?"'"+value:value);
+function safeCollegeCsvCell(value:string|null|undefined):string {
+ const cell=value??"";
+ const visible=cell.replace(/^[\s\p{Cf}\p{Mn}]*/u,"");
+ return escapeActivityCsvCell(/^[-=+@]/u.test(visible)?"'"+cell:cell);
 }
 
 export function exportParams(params:URLSearchParams):Record<string,string>|null {
