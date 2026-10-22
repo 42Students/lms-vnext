@@ -118,8 +118,9 @@ export { db10Skills, db10SkillSynonyms, db10SkillUsage } from "./db10-skills-cat
 
 export { db10AuditFindingFiles } from "./db10-audit-findings.draft";
 
-// DB06 grade audit is recorded atomically by the assignment writers.
-export {assignmentGradeEventsStaged} from "./db06-history-staged";
+// DB06 grade history remains an isolated source-only schema proposal.
+// Writers that deliberately use its candidate model import it directly;
+// do not include this proposal in the registered schema barrel.
 
 // DB10 log-alert tables exist in registered migration 0133; no poller,
 // digest sender or automatically trusted legacy-account marker is enabled.

@@ -123,5 +123,6 @@ export function learnerUnifiedPersonalRequestPage(
  const page=Math.min(q.page,totalPages);
  return {items:filtered.slice((page-1)*q.pageSize,page*q.pageSize),
   page,pageSize:q.pageSize,total,totalPages,
-  olderPage:page<totalPages?page+1:null,hasPrevious:page>1};
+  olderPage:page<totalPages?page+1:null,hasPrevious:page>1,
+  hasMore:page<totalPages};
 }

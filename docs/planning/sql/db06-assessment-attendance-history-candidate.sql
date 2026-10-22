@@ -57,6 +57,11 @@ CREATE UNIQUE INDEX section_schedule_event_courses_event_delivery_uq
 
 CREATE TABLE assignment_grade_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  legacy_grade_audit_id bigint,
+  legacy_action varchar(40),
+  source_action varchar(120),
+  legacy_occurred_at_local varchar(40),
+  actor_name_snapshot varchar(150),
   assignment_submission_id uuid NOT NULL,
   assignment_id uuid NOT NULL,
   delivery_id uuid NOT NULL,
