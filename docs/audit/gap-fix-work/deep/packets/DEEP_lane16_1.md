@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-3-010-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
-- [ ] G2-3-010-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-3-010-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-3-010-027  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-3-010-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-3-010-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
@@ -30,3 +30,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-3-017-017: FIXED — commit `23163a9681411ebcb4c4d4b4009e997f8658408a`, `src/modules/people/profile-validation.ts:355-365` differentiates optional profile education (zero recent allowed, multiple rejected at :356-367) from nonempty application qualifications (exactly one), matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/QualificationValidator.java:27-69` without rejecting empty optional profile drafts.
 
 - G2-3-010-016: OK — `src/modules/verification/staff-private-document-service.ts:13-26` requires role/college verification scope, an authorized verification-detail receipt, the exact owning membership and a CLEAN nonrevoked, nonexpired receipt before `createPrivateReadGrant`; `src/modules/storage/private-object-storage.ts:312-334` also requires tenant and owner key scope plus scan attestation. Matches the legacy signed-access boundary documented in `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:19-31`; the vNext caller, rather than the generic signer, performs resource permission checks.
+
+- G2-3-010-019: OK (secure lifecycle; production availability NOT claimed) — `src/modules/storage/private-object-storage.ts:209-251,312-335` refuses unsigned/unscanned reads unless trusted CLEAN scanner metadata, SHA-256, generation and membership/tenant ownership all match; `src/modules/storage/production-scan-verdict-service.ts:18-38,74-80` accepts only explicitly provisioned production scanner callbacks. `docs/operations/private-storage-scanner.md:5-21` explicitly marks the independent scanning worker as a deployment prerequisite: without it files remain unavailable, not silently exposed. Legacy read path is `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:101-108`; vNext deliberately adds fail-closed scanning rather than bypassing it. This certifies source-level access safety only, not deployment readiness.
