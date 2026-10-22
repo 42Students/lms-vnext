@@ -40,9 +40,9 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
   const selected=typeof requested==="string"&&templates.some(t=>t.templateId===requested)?requested:null;
   const unrecognizedTemplate=requested!==undefined&&!selected;
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
-    {templates.length === 0 ? <PageBackLink href="/admin/projects" label="Back to workspaces" /> : null}
     <PageHeader title="Create project workspace"
-      description="Every workspace starts from a template — pick one below." />
+      description="Every workspace starts from a template — pick one below."
+      actions={<PageBackLink href="/admin/projects" label="Back to workspaces" />} />
     {unrecognizedTemplate?<Banner tone="warning">
       The linked template is not assigned to the selected college or is an old template identifier.
       Choose an available template below; no workspace has been created.

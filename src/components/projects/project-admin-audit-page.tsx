@@ -129,11 +129,14 @@ function auditDetailValue(value:unknown,depth=0):ReactNode{
 export async function ProjectAdminAuditPage({
   basePath,
   searchParams,
+  scopeNotice,
 }: {
   basePath:
     | "/admin/projects"
     | "/college/projects";
   searchParams: SearchParams;
+  /** Scope feedback belongs below the page heading, never above it. */
+  scopeNotice?: ReactNode;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -172,6 +175,7 @@ export async function ProjectAdminAuditPage({
       description="Who changed what, and when — check daily for anything unexpected."
       actions={<PageBackLink href={basePath} label="Project workspaces" />} />
     <ProjectAdminNav basePath={basePath} active="audit" />
+    {scopeNotice}
     <ErrorState title="Audit log could not be loaded"
       description="Failed to load audit log. Your filters have not changed."
       action={<Link href={basePath+"/audit"} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry audit</Link>} />
@@ -269,6 +273,7 @@ export async function ProjectAdminAuditPage({
           </div>}/>
       </div>
       <ProjectAdminNav basePath={basePath} active="audit" />
+      {scopeNotice}
       {globalTemplateAudit?<p className="text-xs text-body">Platform-wide Projects activity includes global template changes.</p>:null}
 
       {legacyLink.needsCursorReplay?<Banner tone="warning" role="status">
