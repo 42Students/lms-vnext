@@ -155,6 +155,9 @@ export async function sendRecruiterMessageDigest(
     reply_to:[{address:digest.replyTo,name:replyToName}],
     merge_info:{name:safeRecruiterEmailMergeText(displayGreeting,160),
       college:safeRecruiterEmailMergeText(digest.collegeName,160),
+      // The legacy ZeptoMail template used collegeName/workspaceLink rather
+      // than the digest template's newer college/workspaceUrl aliases.
+      collegeName:safeRecruiterEmailMergeText(digest.collegeName,160),
       company:safeRecruiterEmailMergeText(digest.companyName,160),
       fromName:safeRecruiterEmailMergeText(senderName,80),
       senderName:safeRecruiterEmailMergeText(digest.messages.at(-1)?.senderName?.trim()||
@@ -170,7 +173,11 @@ export async function sendRecruiterMessageDigest(
       message3When:safeRecruiterMessageDate(recent[2]?.createdAt),
       workspaceCta:workspaceUrl?"Open recruiter messages":
        "Sign in to your recruiter workspace to review messages",
-      ...(workspaceUrl?{workspaceUrl}:{}),
+      // Never render a blank or unverified URL as an email link. The template
+      // must render workspaceCta as plain text when workspaceLink is omitted.
+      ...(workspaceUrl?{workspaceUrl,workspaceLink:workspaceUrl}:{
+        workspaceLinkUnavailable:"The recruiter link is unavailable. Sign in through your verified college portal.",
+      }),
     },
    }),
    timeoutMs:10_000,maxAttempts:1,fetchImpl,
