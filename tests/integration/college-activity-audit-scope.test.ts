@@ -55,14 +55,14 @@ describe.skipIf(!enabled)("College Admin Activity Log PG cursor and denial",()=>
     await closeDatabaseConnection();
   });
   it("paginates 27 own events and never reads another college",async()=>{
-    const page1=await list(admin,{subjectType:subject,actorUserId:SEED_IDS.collegeAdminUser});
+    const page1=await list(admin,{subjectType:subject,actorUserId:SEED_IDS.collegeAdminUser,pageSize:"25"});
     expect(page1.items).toHaveLength(25);
     expect(page1.nextCursor).not.toBeNull();
     expect(page1.items.every(x=>x.event.collegeId===SEED_IDS.collegeA)).toBe(true);
     const page2=await list(admin,{
       subjectType:subject,
       beforeOccurredAt:page1.nextCursor!.beforeOccurredAt.toISOString(),
-      beforeId:page1.nextCursor!.beforeId,
+      beforeId:page1.nextCursor!.beforeId,pageSize:"25",
     });
     expect(page2.items).toHaveLength(2);
     expect(page2.nextCursor).toBeNull();
@@ -112,7 +112,7 @@ describe.skipIf(!enabled)("College Admin Activity Log PG cursor and denial",()=>
   });
   it("filters persisted event module, importance and exact event type before cursor pagination",async()=>{
     const match=await list(admin,{subjectType:subject,module:"ACADEMICS",
-      importance:"NORMAL",eventType:"academics.program.updated"});
+      importance:"NORMAL",eventType:"academics.program.updated",pageSize:"25"});
     expect(match.items).toHaveLength(25);
     expect(match.nextCursor).not.toBeNull();
     const excluded=await list(admin,{subjectType:subject,importance:"CRITICAL"});

@@ -516,6 +516,9 @@ export async function createPlacementRequest(
         scopeKey,
         reason: input.reason,
         effectPayload,
+        // Explicit pending status also supports databases whose default was
+        // created before the latest schema snapshot.
+        status: "PENDING",
         requestedByUserId: context.user.id,
         requestedAt: now,
       })
