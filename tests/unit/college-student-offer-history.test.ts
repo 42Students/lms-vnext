@@ -14,6 +14,13 @@ describe("G2-15-002-057 college placement applications have one authoritative of
   expect(chosen.get("a")?.id).toBe("old");
   expect(chosen.get("b")?.id).toBe("b-new");
  });
+ it("ignores corrupt joined markers on revoked letters",()=>{
+  const chosen=relevantStudentApplicationOffers([
+   {applicationId:"x",status:"REVOKED",joining:"JOINED",id:"invalid"},
+   {applicationId:"x",status:"ACCEPTED",joining:null,id:"accepted"},
+  ]);
+  expect(chosen.get("x")?.id).toBe("accepted");
+ });
  it("uses latest issue-date order for equal-priority offers and never changes caller input",()=>{
   const offers=[
    {applicationId:"a",status:"ACCEPTED",joining:null,id:"new"},

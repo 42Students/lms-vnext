@@ -9,7 +9,9 @@ describe("G2-15-002-025/057 selected-student history scope",()=>{
   expect(begin).toBeGreaterThan(0);
   expect(end).toBeGreaterThan(begin);
   const countQuery=source.slice(begin,end);
-  expect(countQuery).toContain("eq(placementJobs.collegeId,collegeId)");
+  const scopeStart=source.indexOf("const appScope=",source.indexOf("export async function getCollegeStudentPlacementDetails"));
+  expect(scopeStart).toBeGreaterThan(0);
+  expect(source.slice(scopeStart,begin)).toContain("eq(placementJobs.collegeId,collegeId)");
   expect(countQuery).toContain("eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId)");
   expect(countQuery).toContain("eq(placementCompanyRelationships.collegeId,collegeId)");
   expect(countQuery).toContain(".where(appScope)");

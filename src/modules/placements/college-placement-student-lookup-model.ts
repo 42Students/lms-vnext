@@ -37,7 +37,7 @@ export function legacySelectedStudentMembershipId(
 export function relevantStudentApplicationOffers<T extends {
   applicationId:string;status:string;joining:string|null;
 }>(newestFirst:readonly T[]):Map<string,T>{
-  const priority=(offer:T)=>offer.joining==="JOINED"?6:
+  const priority=(offer:T)=>offer.status==="ACCEPTED"&&offer.joining==="JOINED"?6:
     offer.status==="ACCEPTED"?5:offer.status==="ISSUED"?4:
     offer.status==="DECLINED"?3:offer.status==="EXPIRED"?2:
     offer.status==="REVOKED"?1:0;
