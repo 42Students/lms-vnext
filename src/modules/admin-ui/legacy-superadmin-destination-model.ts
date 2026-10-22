@@ -1,3 +1,19 @@
+import {superAdminItems} from "@/components/shell/shell-model";
+import {SUPER_ADMIN_LEGACY_GROUPS} from "@/modules/people/super-admin-legacy-tabs-model";
+
+const projectsGroup=SUPER_ADMIN_LEGACY_GROUPS.find(group=>group.title==="Projects");
+const projectsSidebar=superAdminItems.find(item=>item.label==="Projects");
+/** The grouped tabs and the Super Admin sidebar provide one shared landing
+ * target; legacy bookmarks follow the first visible tab instead of a
+ * separately maintained projects/template URL. */
+export const superAdminProjectsDefaultPath=
+ projectsGroup?.tabs.find(tab=>tab.href===projectsSidebar?.href)?.href??
+ projectsGroup?.tabs[0]?.href??projectsSidebar?.href??"/admin/projects/templates";
+function projectTab(path:string):string|null{
+ const tab=projectsGroup?.tabs.find(item=>item.href===path);
+ return tab?.href??null;
+}
+
 /** Legacy Super Admin navigation links are bookmarks, not authorization grants.
  * Always redirect to the protected modern page rather than rendering legacy data.
  */
@@ -18,7 +34,7 @@ export const legacySuperAdminPaths:Readonly<Record<string,string>>={
  calendar:"/admin/placements/calendar",interviews:"/admin/placements/interviews",
  "hiring-dashboard":"/admin/placements/analytics",
  "placement-operations":"/admin/placements",placements:"/admin/placements",
- projects:"/admin/projects/templates","project-templates":"/admin/projects/templates",
+ projects:superAdminProjectsDefaultPath,"project-templates":superAdminProjectsDefaultPath,
 };
 /**
  * Static historical bookmarks can map without database access. A template or
@@ -33,14 +49,12 @@ export function legacySuperAdminDestination(
  const normalized=pathSegments.map(segment=>segment.toLowerCase());
  const slug=normalized[0]??"";
  if(slug==="projects"&&normalized.length===2){
-  switch(normalized[1]){
-   case "at-risk":return "/admin/projects/at-risk";
-   case "audit":return "/admin/projects/audit";
-   case "readiness":return "/admin/projects/readiness";
-   case "templates":return "/admin/projects/templates";
-   case "workspaces":return "/admin/projects";
-   default:return null;
-  }
+  const subpage=normalized[1];
+  // Workspaces has a shortened vNext canonical route but still comes from
+  // the same named group tab as the rendered Projects navigation strip.
+  const requested=subpage==="workspaces"?"/admin/projects":
+   "/admin/projects/"+subpage;
+  return projectTab(requested);
  }
  if(pathSegments.length!==1)return null;
  if(slug==="lesson-content"){
