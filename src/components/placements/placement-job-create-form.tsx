@@ -180,7 +180,7 @@ export function PlacementJobCreateForm({
     (company.memory?.existingRoles??[]).map(role=>({
       ...role,companyName:company.name,companyRelationshipId:company.relationshipId
     })));
-  const [roundRows,setRoundRows]=useState<Array<{id:number;kind:string;name:string}>>([]);
+  const [roundRows,setRoundRows]=useState<Array<{id:number;kind:string;name:string;mode?:"ON_CAMPUS"|"VIRTUAL"}>>([]);
   const [extraPackages,setExtraPackages]=useState<ExtraPackageRow[]>([]);
   const [jdFile,setJdFile]=useState<File|null>(null);
   const [jdFileError,setJdFileError]=useState<string|null>(null);
@@ -411,7 +411,7 @@ export function PlacementJobCreateForm({
           selectedProgramIds?:string[];selectedCohortIds?:string[];selectedSectionIds?:string[];
           departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset;
           importantDateRows?:ImportantDateRow[];customRuleRows?:CustomRuleRow[];
-          roundRows?:Array<{id:number;kind:string;name:string}>;extraPackages?:ExtraPackageRow[];wantedSkills?:string[];
+          roundRows?:Array<{id:number;kind:string;name:string;mode?:"ON_CAMPUS"|"VIRTUAL"}>;extraPackages?:ExtraPackageRow[];wantedSkills?:string[];
           partialDraft?:{jobId:string;relationshipId:string;fingerprint:string}};
         if(!saved||!saved.values||typeof saved.values!=="object")return;
         // TPO-drives-43: recover a saved partial draft before allowing another POST.
@@ -449,7 +449,9 @@ export function PlacementJobCreateForm({
         }
         if(Array.isArray(saved.roundRows)&&saved.roundRows.length<=20){
           setRoundRows(saved.roundRows.filter(row=>row&&typeof row.id==="number"&&
-            typeof row.kind==="string"&&typeof row.name==="string"));
+            typeof row.kind==="string"&&typeof row.name==="string").map(row=>({
+            ...row,mode:row.mode==="VIRTUAL"?"VIRTUAL" as const:"ON_CAMPUS" as const,
+          })));
         }
         if(Array.isArray(saved.extraPackages)&&saved.extraPackages.length<=10){
           setExtraPackages(saved.extraPackages.filter(row=>row&&typeof row.id==="number"&&
@@ -995,9 +997,13 @@ export function PlacementJobCreateForm({
       }
       // TPO-drives-39 / TPO-drives-43: read server rounds before retrying
       // individual creates; a lost POST response must not duplicate a round.
-      const planned=roundRows.length?roundRows.map((row,index)=>({
-        sequence:index+1,kind:row.kind,name:row.name.trim()
-      })):plannedTpoRoundRows(roundPreset);
+      const planned:Array<{sequence:number;kind:string;name:string;mode:"ON_CAMPUS"|"VIRTUAL"}>=
+        roundRows.length?roundRows.map((row,index)=>({
+          sequence:index+1,kind:row.kind,name:row.name.trim(),
+          mode:row.mode==="VIRTUAL"?"VIRTUAL" as const:"ON_CAMPUS" as const,
+        })):plannedTpoRoundRows(roundPreset).map(row=>({
+          sequence:row.sequence,kind:row.kind,name:row.name,mode:"ON_CAMPUS" as const,
+        }));
       if(planned.some(row=>!row.name||row.name.length>100))
         throw new Error("Each interview round requires a name of at most 100 characters.");
       if(planned.length){
@@ -1010,7 +1016,7 @@ export function PlacementJobCreateForm({
           throw new Error("Saved rounds have changed. Open the draft to review rounds before trying again.");
         for(const round of planned.slice(saved.rounds.length)){
           await requestJson(`/api/placements/jobs/${encodeURIComponent(jobId)}/rounds`,
-            "POST",{kind:round.kind,name:round.name});
+            "POST",{kind:round.kind,name:round.name,mode:round.mode});
         }
       }
       // Save the draft and its policy/roles/rounds first. The optional JD
@@ -2074,7 +2080,7 @@ export function PlacementJobCreateForm({
         </p>
         <div className="mt-2 space-y-2">
           {(roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}))).map((round,index)=>(
-            <div key={round.id} className="grid items-center gap-2 rounded-lg border border-border p-2 sm:grid-cols-[150px_minmax(0,1fr)_auto]">
+            <div key={round.id} className="grid items-center gap-2 rounded-lg border border-border p-2 sm:grid-cols-[150px_minmax(0,1fr)_140px_auto]">
               <Select aria-label={"Round "+(index+1)+" kind"} value={round.kind}
                 onChange={event=>{
                   const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
@@ -2087,6 +2093,16 @@ export function PlacementJobCreateForm({
                   const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
                   setRoundRows(rows.map(item=>item.id===round.id?{...item,name:event.target.value}:item));markDirty();
                 }}/>
+              <Select aria-label={"Round "+(index+1)+" mode"}
+                value={"mode" in round&&round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS"}
+                onChange={event=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
+                  setRoundRows(rows.map(item=>item.id===round.id?{...item,
+                    mode:event.target.value==="VIRTUAL"?"VIRTUAL" as const:"ON_CAMPUS" as const}:item));markDirty();
+                }}>
+                <option value="ON_CAMPUS">On campus</option>
+                <option value="VIRTUAL">Virtual</option>
+              </Select>
               <Button type="button" variant="secondary" aria-label="Remove this round" title="Remove this round"
                 onClick={()=>{
                   const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(item=>({...item,id:item.sequence}));
@@ -2099,7 +2115,7 @@ export function PlacementJobCreateForm({
           disabled={roundRows.length>=20}
           onClick={()=>{
             const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(item=>({...item,id:item.sequence}));
-            setRoundRows([...rows,{id:nextRowId.current++,kind:"INTERVIEW",name:""}]);markDirty();
+            setRoundRows([...rows,{id:nextRowId.current++,kind:"INTERVIEW",name:"",mode:"ON_CAMPUS" as const}]);markDirty();
           }}>Add round</Button>
         <p className="mt-2 text-xs text-muted-foreground">
           The selected round template creates pending rounds with the draft. Review each round's

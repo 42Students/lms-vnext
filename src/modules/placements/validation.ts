@@ -1011,8 +1011,10 @@ export const createPlacementRoundInputSchema = z.object({
   meetingUrl: optionalHttpUrlSchema,
   resultsDueAt: z.coerce.date().nullable().optional(),
 }).strict().superRefine((value,ctx) => {
+  // A bare delivery mode (On campus / Virtual) is a planning choice for a
+  // pending round, as in the legacy drive form; it does not schedule anything.
   const schedulingRequested = value.scheduledAt !== undefined ||
-    value.timezone !== undefined || value.mode !== undefined ||
+    value.timezone !== undefined ||
     value.venue !== undefined || value.meetingUrl !== undefined ||
     value.resultsDueAt !== undefined;
   if (!schedulingRequested) return;
