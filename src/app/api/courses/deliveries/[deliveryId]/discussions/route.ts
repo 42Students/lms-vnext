@@ -49,14 +49,14 @@ export async function GET(
     const url=new URL(request.url);
     const envelope=requestedEnvelope(url);
     const query=Object.fromEntries(url.searchParams.entries());
-    delete query.envelope;
+    delete query["envelope"];
     // Legacy classroom 'since' was a changed-row feed. Preserve its polling
     // semantics through the append-only/delta API; it must not be interpreted
     // as a beforeCreatedAt history cursor, which would miss tombstones.
-    const since=query.since;
+    const since=query["since"];
     if(since!==undefined){
       const changes=await listCourseDiscussionChanges(context,deliveryId,{
-        since,afterId:query.afterId,limit:query.limit,
+        since,afterId:query["afterId"],limit:query["limit"],
       });
       return NextResponse.json(envelope?legacyEnvelope(changes.changes):changes,{
         headers:noStore,
