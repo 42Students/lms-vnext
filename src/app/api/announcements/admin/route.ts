@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { announcementApiError } from "@/lib/announcement-api-error";
 import {
   createAnnouncement,
+  resendAnnouncementForAdmin,
   listAnnouncementsForAdmin,
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
@@ -55,7 +56,14 @@ export async function POST(request: Request) {
     let body: unknown;
     try { body = await request.json(); }
     catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
-    const announcement = await createAnnouncement(context, body);
+    const isResend=typeof body==="object"&&body!==null&&!Array.isArray(body)&&
+      (body as Record<string,unknown>).action==="RESEND";
+    const announcement=isResend
+      ? await resendAnnouncementForAdmin(context,(()=>{
+          const {action,...input}=body as Record<string,unknown>;
+          return input;
+        })())
+      : await createAnnouncement(context,body);
     // Preserve legacy HTTP 200/status OK while retaining the vNext document.
     return NextResponse.json({ status:"OK",announcement,
       data:{...announcement,announcementId:announcement.id}},
