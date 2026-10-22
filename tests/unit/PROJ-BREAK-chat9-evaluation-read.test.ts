@@ -23,7 +23,7 @@ vi.mock("@/db/client",()=>({
       const position=state.reads++;
       const rows=position===0
         ?state.hasEvaluation?[{id:evaluationId,projectId,submissionId,score:9}]:[]
-        :[{evaluationId,criterion:"Build",score:9,maxScore:10,sequence:0}];
+        :position===1?[{evaluationId,criterion:"Build",score:9,maxScore:10,sequence:0}]:[];
       const q={
         from:()=>q,
         where:(condition:unknown)=>{state.conditions.push(condition);return q;},
@@ -47,12 +47,17 @@ describe("IIT Dharwad rubric evaluation read privacy and project tenancy",()=>{
     const result=await getProjectEvaluation(actor,projectId,submissionId);
     expect(result?.evaluation.id).toBe(evaluationId);
     expect(result?.items).toHaveLength(1);
-    expect(state.reads).toBe(2);
+    expect(state.reads).toBe(5);
+    // The detail read also fetches scoped submission, review, and event provenance.
     const where=render(state.conditions[0]);
     expect(where.params).toContain(projectId);
     expect(where.params).toContain(submissionId);
     const itemWhere=render(state.conditions[1]);
     expect(itemWhere.params).toContain(evaluationId);
+    for(const evidenceWhere of state.conditions.slice(2)){
+      expect(render(evidenceWhere).params).toContain(projectId);
+      expect(render(evidenceWhere).params).toContain(submissionId);
+    }
   });
   it("PROJ-BREAK-grading-03 mentor can list project-scoped evaluations; no cross-project item exposure",async()=>{
     state.access="MENTOR";

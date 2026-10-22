@@ -11,7 +11,7 @@ describe("IIT Dharwad Projects: Super Admin URL and pagination resilience", () =
   it("PROJ-BREAK-ux-10 preserves authorized default list semantics and legacy search aliases", () => {
     expect(parseAdminProjectsQuery({})).toMatchObject({
       success: true,
-      data: { view: "table", page: 1, pageSize: 20 },
+      data: { view: "table", page: 1, pageSize: 10 },
     });
     expect(parseAdminProjectsQuery({
       search: "  IIT Dharwad  ", page: "2", pageSize: "50", status: "ACTIVE", view: "cards",

@@ -1195,7 +1195,7 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`} tabIndex={0}
-          className={"min-w-0 overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] "+(isTpo?calendarStyles.tpoMonthFrame:"")}
+          className={"min-w-0 overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1rem),transparent_100%)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] "+(isTpo?calendarStyles.tpoMonthFrame:"")}
         >
           <CalendarGrid variant="hairline" className={"min-w-[42rem] min-[992px]:min-w-[56rem] "+calendarStyles.calendarHairline}>
             {[

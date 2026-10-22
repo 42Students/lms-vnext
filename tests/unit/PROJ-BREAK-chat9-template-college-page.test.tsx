@@ -14,6 +14,10 @@ vi.mock("@/modules/permissions/policy",()=>({
   can:()=>state.authorized,
 }));
 vi.mock("@/modules/projects/template-college-availability-service",()=>({
+  resolveTemplateCollegeLegacyId:async(_context:unknown,id:string)=>id,
+  TemplateCollegeReadError:class TemplateCollegeReadError extends Error {
+    source:"TEMPLATE"|"COLLEGES"="COLLEGES";
+  },
   listSuperAdminTemplateCollegeAvailability:async()=>{
     state.calls+=1;
     if(state.fail)throw new Error("SECRET_DATABASE_INTERNAL");
@@ -48,7 +52,7 @@ describe("Super Admin Projects template colleges: resilient, scoped and bounded 
     state.fail=true;
     const tree=await render({status:"ASSIGNED",q:"IIT Dharwad",page:"2"});
     const txt=textTree(tree).join(" ");
-    expect(txt).toContain("College availability unavailable");
+    expect(txt).toContain("College assignments could not be loaded");
     expect(txt).toContain("Retry loading colleges");
     expect(txt).toContain("status=ASSIGNED");
     expect(txt).toContain("page=2");
