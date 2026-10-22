@@ -356,7 +356,7 @@ export function RecruiterLeadsWorkspace({
     try {
       const response = await fetch(
         "/api/placements/tpo/leads?collegeId=" + encodeURIComponent(collegeId),
-        { credentials: "same-origin", cache: "no-store", signal },
+        { credentials: "same-origin", cache: "no-store", ...(signal ? { signal } : {}) },
       );
       const data = await response.json() as { leads?: Lead[]; error?: string };
       if (!response.ok) {
@@ -393,7 +393,7 @@ export function RecruiterLeadsWorkspace({
       const response = await fetch(
         "/api/placements/tpo/companies?collegeId=" +
           encodeURIComponent(collegeId),
-        { credentials: "same-origin", cache: "no-store", signal },
+        { credentials: "same-origin", cache: "no-store", ...(signal ? { signal } : {}) },
       );
       const data = await response.json() as {
         companies?: CompanySummary[];
