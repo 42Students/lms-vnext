@@ -45,7 +45,7 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
    [ids.periodA,SEED_IDS.collegeA,"a"],[ids.periodB,SEED_IDS.collegeB,"b"],
   ]){
    await pool.query(
-    "insert into academic_periods(id,college_id,name,code,start_date,end_date,status) values($1,$2,$3,$3,'2099-07-01','2100-06-30','ACTIVE')",
+    "insert into academic_periods(id,college_id,name,code,start_date,end_date,status) values($1,$2,$3::text,$3::text,'2099-07-01','2100-06-30','ACTIVE')",
     [period,college,tag+"-"+suffix],
    );
   }
@@ -53,7 +53,7 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
    [ids.programA,SEED_IDS.departmentA,"a"],[ids.programB,SEED_IDS.departmentB,"b"],
   ]){
    await pool.query(
-    "insert into programs(id,department_id,name,code,duration_terms,status) values($1,$2,$3,$3,8,'ACTIVE')",
+    "insert into programs(id,department_id,name,code,duration_terms,status) values($1,$2,$3::text,$3::text,8,'ACTIVE')",
     [program,department,tag+"-"+suffix],
    );
   }
@@ -61,7 +61,7 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
    [ids.cohortA,ids.programA,ids.periodA,"a"],[ids.cohortB,ids.programB,ids.periodB,"b"],
   ]){
    await pool.query(
-    "insert into cohorts(id,program_id,name,code,start_period_id,status) values($1,$2,$3,$3,$4,'ACTIVE')",
+    "insert into cohorts(id,program_id,name,code,start_period_id,status) values($1,$2,$3::text,$3::text,$4,'ACTIVE')",
     [cohort,program,tag+"-"+suffix,period],
    );
   }
@@ -71,7 +71,7 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
    [ids.wrongPeriodSection,ids.cohortA,ids.periodB,"invalid"],
   ]){
    await pool.query(
-    "insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4,$4,'ACTIVE')",
+    "insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4::text,$4::text,'ACTIVE')",
     [section,cohort,period,tag+"-"+suffix],
    );
   }

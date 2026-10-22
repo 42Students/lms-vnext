@@ -87,6 +87,13 @@ async function fixture(){
   startDate:"2026-07-01",endDate:"2027-12-31"});
  const cohort=await createCohort(admin,{programId:program.id,
   name:"Chat4 Report Intake "+suffix,code:"C4RH-"+suffix+"-C",startPeriodId:period.id});
+ // Cohort INSERT owns its canonical progression row: no separate insert
+ // with an actor is permitted by the registered DB02 lifecycle guard.
+ const progression=await pool.query<{current_term_number:number;current_period_id:string}>(
+  "select current_term_number,current_period_id from cohort_progression_state where cohort_id=$1",
+  [cohort.id],
+ );
+ expect(progression.rows).toEqual([{current_term_number:1,current_period_id:period.id}]);
  const section=await createSection(admin,{cohortId:cohort.id,academicPeriodId:period.id,
   name:"Chat4 Section "+suffix,code:"C4RH-"+suffix+"-S"});
  const course=await createCourse(admin,{departmentId:SEED_IDS.departmentA,

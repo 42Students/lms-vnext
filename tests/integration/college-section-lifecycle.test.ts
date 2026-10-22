@@ -66,6 +66,6 @@ describe.skipIf(!enabled)("College class lifecycle disposable PostgreSQL",()=>{
     await pool!.query("INSERT INTO section_schedule_events(id,section_id,title,starts_at,ends_at) VALUES($1,$2,$3::text,'2026-10-15T03:30:00Z','2026-10-15T04:30:00Z')",
       [ids.event,ids.section,name]);
     await expect(changeCollegeSectionLifecycle(admin,ids.section,command("ARCHIVE")))
-      .rejects.toMatchObject({code:"CLASS_HAS_DEPENDENCIES"});
+      .rejects.toMatchObject({code:"CLASS_HAS_SCHEDULE"});
   });
 });
