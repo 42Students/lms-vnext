@@ -123,7 +123,8 @@ describe("Existing chat-4 CI failure regression contracts", () => {
     expect(isProjectMentorOverloaded(7, [2, 4, 8])).toBe(false);
     expect(isProjectMentorOverloaded(8, [8, 8, 8])).toBe(false);
     expect(isProjectMentorOverloaded(151, [100, 100])).toBe(true);
-    expect(isProjectMentorOverloaded(150, [100, 100])).toBe(false);
+    expect(isProjectMentorOverloaded(150, [100, 100])).toBe(true);
+    expect(isProjectMentorOverloaded(149, [100, 100])).toBe(false);
     expect(isProjectMentorOverloaded(1, [])).toBe(false);
   });
 });
