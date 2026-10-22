@@ -182,6 +182,8 @@ export function PlacementJobCreateForm({
     })));
   const [roundRows,setRoundRows]=useState<Array<{id:number;kind:string;name:string}>>([]);
   const [extraPackages,setExtraPackages]=useState<ExtraPackageRow[]>([]);
+  const [jdFile,setJdFile]=useState<File|null>(null);
+  const [jdFileError,setJdFileError]=useState<string|null>(null);
   const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
   const selectedEmployer=companies.find(company=>company.relationshipId===companyRelationshipId);
   // TPO-drives-25: recent-role highlights must not cap duplicate-drive checks.
@@ -977,6 +979,33 @@ export function PlacementJobCreateForm({
             "POST",{kind:round.kind,name:round.name});
         }
       }
+      // Save the draft and its policy/roles/rounds first. The optional JD
+      // is a separate scanner-attested private object, never a public URL.
+      if(jdFile){
+       const endpoint="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/jd-upload";
+       const status=await apiFetch<{updatedAt:string;hasDocument:boolean}>(endpoint,{
+        credentials:"same-origin",cache:"no-store",
+       });
+       if(!status.hasDocument){
+        const grant=await apiFetch<{uploadUrl:string;objectKey:string;
+         requiredHeaders:Record<string,string>}>(endpoint,{
+         method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+         body:JSON.stringify({action:"INITIATE",originalName:jdFile.name,
+          contentType:jdFile.type,sizeBytes:jdFile.size}),
+        });
+        const response=await fetch(grant.uploadUrl,{
+         method:"PUT",headers:grant.requiredHeaders,body:jdFile,
+        });
+        if(!response.ok)throw new Error(
+         "Drive draft saved, but the JD upload failed. Retry this draft or attach the JD in Edit drive.");
+        await apiFetch(endpoint,{
+         method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+         body:JSON.stringify({action:"CONFIRM",objectKey:grant.objectKey,
+          expectedUpdatedAt:status.updatedAt,
+          reason:"Attached job description during drive draft creation"}),
+        });
+       }
+      }
       setPublishMissing([]);
       showToast({
         tone: "success",
@@ -1305,6 +1334,26 @@ export function PlacementJobCreateForm({
               maxLength={15000}
               placeholder="Role, responsibilities, requirements and hiring context."
             />
+          </label>
+          <label className="sm:col-span-2 grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Optional JD file (PDF or Word · 5 MB maximum)
+            <Input type="file" accept=".pdf,.doc,.docx" className={inputClass}
+             onChange={event=>{
+              const file=event.target.files?.[0]??null;
+              if(!file){setJdFile(null);setJdFileError(null);return;}
+              const types:Record<string,string>={pdf:"application/pdf",doc:"application/msword",
+               docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
+              const ext=file.name.split(".").pop()?.toLowerCase()??"";
+              if(types[ext]!==file.type||file.size<1||file.size>5*1024*1024){
+               setJdFile(null);setJdFileError("Choose a PDF, DOC or DOCX file up to 5 MB.");
+              }else{setJdFile(file);setJdFileError(null);markDirty();}
+             }}/>
+            {jdFileError?<span role="alert" className="text-xs text-error">{jdFileError}</span>:null}
+            <span className="text-xs font-normal leading-5 text-muted-foreground">
+             {jdFile?jdFile.name+" will be scanned after saving the draft.":
+              "No file selected. You can attach it after saving in Edit drive."}
+             The attachment uses private signed storage and never creates a public document link.
+            </span>
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">

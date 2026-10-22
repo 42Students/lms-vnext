@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import {useState,type FormEvent} from "react";
+import {useEffect,useState,type FormEvent} from "react";
 import {useUnsavedDriveGuard} from "./use-unsaved-drive-guard";
 import {useToast} from "@/components/ui/toast";
 import Link from "next/link";
@@ -20,6 +20,7 @@ import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-erro
 type Draft={id:string;title:string;description:string;updatedAt:string;status:string;
  recruiterOwned:boolean;recruiterOwnershipSource:string;
  applicantCount:number;applicationDeadline:string|null;minCgpaHundredths:number|null;
+ jobDescriptionObjectPath:string|null;
  locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean;
  allowedCohortIds:string[];availableBatches:Array<{id:string;name:string;code:string;status:string;program:string}>;
@@ -47,7 +48,89 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [proposal,setProposal]=useState<Record<string,unknown>|null>(null);
  const [reviewTitle,setReviewTitle]=useState(job.title);
+
  const [reviewDeadline,setReviewDeadline]=useState(job.applicationDeadline??"");
+ type Reach={kind:"UNAVAILABLE";reason:string}|{kind:"READY";asOf:string;
+   savedRevision:string;evaluated:number;eligible:number;
+   eligibleWithMissingEvidence:number;needsData:number;ineligible:number;
+   branches:Array<{name:string;eligible:number;total:number}>;scopeNote:string};
+ const [reach,setReach]=useState<Reach|null>(null);
+ const [reachBusy,setReachBusy]=useState(false);
+ const [reachRequest,setReachRequest]=useState(0);
+ useEffect(()=>{
+  const controller=new AbortController();
+  setReachBusy(true);
+  void apiFetch<Reach>("/api/placements/tpo/jobs/"+encodeURIComponent(job.id)+"/reach-preview",{
+   credentials:"same-origin",cache:"no-store",signal:controller.signal,
+  }).then(data=>{if(!controller.signal.aborted)setReach(data);})
+   .catch(()=>{if(!controller.signal.aborted)setReach({
+    kind:"UNAVAILABLE",reason:"The eligibility preview could not be calculated. Retry to check the saved policy.",
+   });})
+   .finally(()=>{if(!controller.signal.aborted)setReachBusy(false);});
+  return ()=>controller.abort();
+ },[job.id,reachRequest]);
+ const [jdBusy,setJdBusy]=useState(false);
+ const [jdError,setJdError]=useState<string|null>(null);
+ const [jdHasFile,setJdHasFile]=useState(Boolean(job.jobDescriptionObjectPath));
+ const [jdUnconfirmedKey,setJdUnconfirmedKey]=useState<string|null>(null);
+ const [jdRemoveOpen,setJdRemoveOpen]=useState(false);
+ const [jdReason,setJdReason]=useState("Updated the job description document");
+ const jdUrl="/api/placements/tpo/jobs/"+encodeURIComponent(job.id)+"/jd-upload";
+ type JdMutation={updatedAt:string;hasDocument:boolean};
+ async function saveJd(action:"CONFIRM"|"REMOVE",objectKey?:string){
+  const result=await apiFetch<JdMutation>(jdUrl,{
+   method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",
+   body:JSON.stringify({action,expectedUpdatedAt:version,reason:jdReason.trim(),
+    ...(objectKey?{objectKey}:{})}),
+  });
+  setVersion(result.updatedAt);setJdHasFile(result.hasDocument);
+  setJdUnconfirmedKey(null);
+  setJdRemoveOpen(false);
+  showToast({tone:"success",title:action==="REMOVE"?"Job description removed":"Job description attached",
+   description:"Document access follows the selected-college private storage policy."});
+  router.refresh();
+ }
+ async function uploadJd(file:File){
+  if(jdBusy||pending)return;
+  const types:Record<string,string>={pdf:"application/pdf",doc:"application/msword",
+   docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
+  const ext=file.name.split(".").pop()?.toLowerCase();
+  if(!ext||types[ext]!==file.type||file.size<1||file.size>5*1024*1024){
+   setJdError("Choose a PDF, DOC or DOCX file up to 5 MB.");return;
+  }
+  if(jdReason.trim().length<10){
+   setJdError("Explain the attachment change in at least 10 characters.");return;
+  }
+  setJdBusy(true);setJdError(null);setJdUnconfirmedKey(null);
+  try{
+   const grant=await apiFetch<{uploadUrl:string;objectKey:string;requiredHeaders:Record<string,string>}>(jdUrl,{
+    method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",
+    body:JSON.stringify({action:"INITIATE",originalName:file.name,
+     contentType:file.type,sizeBytes:file.size}),
+   });
+   const uploaded=await fetch(grant.uploadUrl,{method:"PUT",body:file,
+    headers:grant.requiredHeaders});
+   if(!uploaded.ok)throw new Error("Secure file upload failed. Select the file again.");
+   setJdUnconfirmedKey(grant.objectKey);
+   await saveJd("CONFIRM",grant.objectKey);
+  }catch(cause){
+   setJdError(cause instanceof Error?cause.message:"Unable to attach this document.");
+  }finally{setJdBusy(false);}
+ }
+ async function retryJdConfirmation(){
+  if(!jdUnconfirmedKey||jdBusy||pending)return;
+  setJdBusy(true);setJdError(null);
+  try{await saveJd("CONFIRM",jdUnconfirmedKey);}
+  catch(error){setJdError(error instanceof Error?error.message:"Verification failed.");}
+  finally{setJdBusy(false);}
+ }
+ async function removeJd(){
+  if(jdBusy||pending)return;
+  setJdBusy(true);setJdError(null);
+  try{await saveJd("REMOVE");}
+  catch(error){setJdError(error instanceof Error?error.message:"Could not remove document.");}
+  finally{setJdBusy(false);}
+ }
  const completeChecklist=Number(reviewTitle.trim().length>=3)
   +Number(job.roleOptions.length>0)
   +Number(Boolean(reviewDeadline));
@@ -220,6 +303,35 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    </Link>
   </section>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
+  <section aria-label="Job description attachment" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   <h3 className="text-sm font-semibold text-foreground">Job description (PDF or Word)</h3>
+   <p className="text-xs leading-5 text-body">Optional PDF, DOC or DOCX, up to 5 MB.
+    A clean private object is required before learners can open a short-lived download.</p>
+   <p role="status" className="text-xs text-body">
+    {jdHasFile?"Verified job description attached.":"No job description attached."}
+   </p>
+   <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Reason for attachment change
+    <Input value={jdReason} maxLength={1000} disabled={jdBusy||pending}
+     onChange={event=>setJdReason(event.target.value)}/>
+   </label>
+   <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Attach job description
+    <Input type="file" accept=".pdf,.doc,.docx" disabled={jdBusy||pending||jdReason.trim().length<10}
+     onChange={event=>{const file=event.target.files?.[0];event.target.value="";
+      if(file)void uploadJd(file);}}/>
+   </label>
+   {jdUnconfirmedKey?<div className="space-y-2">
+    <p role="status" className="text-xs text-warning">
+     File uploaded but not yet verified. Retry confirmation without uploading it again.
+    </p>
+    <Button type="button" variant="secondary" disabled={jdBusy||pending}
+     onClick={()=>void retryJdConfirmation()}>Retry document verification</Button>
+   </div>:null}
+   {jdBusy?<p role="status" className="text-xs text-body">Uploading or verifying…</p>:null}
+   {jdError?<InlineNotice tone="error" message={jdError}/>:null}
+   {jdHasFile?<Button type="button" variant="secondary"
+    disabled={jdBusy||pending||jdReason.trim().length<10}
+    onClick={()=>setJdRemoveOpen(true)}>Remove attached document</Button>:null}
+  </section>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Location (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
   <section aria-label="Drive job details" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
    <h2 className="mb-3 font-semibold text-foreground">The drive</h2>
@@ -401,18 +513,47 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
    <h2 className="mb-2 font-semibold text-foreground">Who this reaches</h2>
    <p className="text-sm text-body"><strong className="tabular-nums">{job.applicantCount}</strong> existing applicants</p>
-    <p role="status" className="mt-2 text-sm text-warning">
-     Eligible learner reach and branch breakdown have not been verified for the edited rules.
-     The existing applicant count above is not an eligibility estimate.
-    </p>
-    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
-     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
-      className="inline-flex min-h-9 items-center font-semibold text-link underline">
-      Verify live audience before publishing
-     </Link>
-     <Button type="button" variant="secondary" className="min-h-9"
-      onClick={()=>router.refresh()} disabled={dirty||pending}>Retry saved reach data</Button>
-    </div>
+    {reachBusy?<p role="status" className="mt-2 text-sm text-body">Calculating the saved eligibility policy…</p>:null}
+    {reach?.kind==="READY"?<div className="mt-3 space-y-3">
+     <p role="status" className="text-sm font-semibold text-foreground">
+      {reach.eligible.toLocaleString("en-IN")} fully eligible of {reach.evaluated.toLocaleString("en-IN")} active enrolled learners
+     </p>
+     <dl className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+      {([
+       ["Eligible",reach.eligible],
+       ["Eligible with missing evidence",reach.eligibleWithMissingEvidence],
+       ["Needs data",reach.needsData],
+       ["Ineligible",reach.ineligible],
+      ] as const).map(([label,value])=><div key={label}
+       className="min-w-0 rounded border border-border px-2 py-2">
+       <dt className="text-muted-foreground">{label}</dt>
+       <dd className="mt-1 text-lg font-semibold tabular-nums text-foreground">{value.toLocaleString("en-IN")}</dd>
+      </div>)}
+     </dl>
+     <details>
+      <summary className="cursor-pointer text-sm font-semibold text-link">Branch breakdown</summary>
+      {reach.branches.length?<ul className="mt-2 max-h-44 space-y-1 overflow-y-auto text-xs">
+       {reach.branches.map(branch=><li key={branch.name} className="flex justify-between gap-3 border-b border-border py-1">
+        <span className="min-w-0 break-words">{branch.name}</span>
+        <span className="shrink-0 tabular-nums">{branch.eligible} fully eligible / {branch.total}</span>
+       </li>)}
+      </ul>:<p className="text-xs text-muted-foreground">No active enrolled learners.</p>}
+     </details>
+     <p className="text-xs leading-5 text-muted-foreground">{reach.scopeNote}</p>
+     <p className="text-xs text-muted-foreground">
+      Calculated {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(reach.asOf))} IST
+      {reach.savedRevision!==version?" · Refresh to check the latest saved revision":""}
+     </p>
+    </div>:reach?.kind==="UNAVAILABLE"?<p role="alert" className="mt-2 text-sm text-warning">
+     Eligibility preview unavailable: {reach.reason}
+    </p>:null}
+    {dirty?<p className="mt-2 text-xs text-warning">
+     This count uses saved rules, not unsaved changes in this form. Save the policy before relying on a new preview.
+    </p>:null}
+    <Button type="button" variant="secondary" className="mt-2 min-h-9"
+     disabled={reachBusy} onClick={()=>setReachRequest(n=>n+1)}>
+     {reachBusy?"Calculating…":"Refresh eligibility preview"}
+    </Button>
     <p className="mt-2 text-xs leading-5 text-muted-foreground">Changes are audited. Applicant notices are sent only after you choose to notify on save.</p>
   </section>
   <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
@@ -457,6 +598,11 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    title="Save changes to this draft drive?"
    description="These changes are audited and will update this saved draft. Confirm only after checking the employer details."
    confirmVariant="primary" confirmLabel="Save changes" pending={pending} onConfirm={()=>void save(false)}/>}
+ <ConfirmDialog open={jdRemoveOpen} onOpenChange={setJdRemoveOpen}
+   title="Remove attached job description?"
+   description="Learners will no longer be able to download this JD. Job terms and existing applications remain unchanged."
+   confirmVariant="danger" confirmLabel="Remove document" pending={jdBusy}
+   onConfirm={()=>void removeJd()}/>
  {guardDialog}
  </>;
 }

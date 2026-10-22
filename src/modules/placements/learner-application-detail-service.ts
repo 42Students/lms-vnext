@@ -221,7 +221,7 @@ export async function getOwnLearnerApplicationCompany(
   const currentlyShared=application.applicationStatus==="SUBMITTED" &&
     screening?.status==="SHORTLISTED" && activeShares.some(share=>{
       const limited=sharedIds.get(share.id)??[];
-      return limited.length===0||limited.includes(application.applicationId);
+      return limited.includes(application.applicationId);
     });
   return {
     applicationId: application.applicationId,
