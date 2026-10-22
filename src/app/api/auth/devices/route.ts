@@ -28,15 +28,15 @@ export async function GET() {
 
     return NextResponse.json({
       devices: rows.map((row) => ({
-        id: row.id,
-        deviceName: row.device_name ?? null,
-        userAgent: row.user_agent ?? null,
-        createdAt: row.created_at,
-        lastSeenAt: row.last_seen_at,
-        lastUsedAt: row.last_seen_at,
+        id: row["id"],
+        deviceName: row["device_name"] ?? null,
+        userAgent: row["user_agent"] ?? null,
+        createdAt: row["created_at"],
+        lastSeenAt: row["last_seen_at"],
+        lastUsedAt: row["last_seen_at"],
         ipAddress: null, // privacy-preserving: never disclose raw IP
-        expiresAt: row.expires_at,
-        current: row.id === session.sessionId,
+        expiresAt: row["expires_at"],
+        current: row["id"] === session.sessionId,
       })),
     }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
