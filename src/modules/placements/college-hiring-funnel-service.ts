@@ -7,7 +7,7 @@ import {collegeMemberships,cohorts,departments,learnerProgramEnrollments,
 import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
-import {collegeHiringAnalyticsSchema} from "./college-hiring-analytics-model";
+import {collegeHiringAcademicScope,collegeHiringAnalyticsSchema} from "./college-hiring-analytics-model";
 
 const stages=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED",
  "OFFERED","HIRED","REJECTED","WITHDRAWN"] as const;
@@ -58,10 +58,11 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
  };
  // Legacy picker uses the most specific selected academic scope.
  // A stale broader value must not silently exclude a selected cohort.
- const academicFilter=query.cohortId||query.programId||query.departmentId;
- const chosenCohortId=query.cohortId;
- const chosenProgramId=chosenCohortId?undefined:query.programId;
- const chosenDepartmentId=chosenCohortId||chosenProgramId?undefined:query.departmentId;
+ const scope=collegeHiringAcademicScope(query);
+ const academicFilter=scope.filtered;
+ const chosenCohortId=scope.cohortId;
+ const chosenProgramId=scope.programId;
+ const chosenDepartmentId=scope.departmentId;
  const base=db.select({
   applicationId:placementApplications.id,
   previousStage:placementCollegeApplicationStages.previousStage,
@@ -76,11 +77,20 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
   // Legacy TIMESTAMPDIFF(SECOND) truncated each row before averaging.
   // Preserve that precision so the public millisecond metric rounds exactly
   // like the historic MySQL report; the ISO instants are timezone-independent.
+  // Legacy MIN(SHORTLISTED history) minus applied time. Migrated applications
+  // carry their first SHORTLISTED decision in the screening history (the later
+  // pipeline moves are native stage history), so both sources are read and the
+  // earliest first-shortlist instant wins for every job, however it was tracked.
   shortlistSeconds:sql<number|null>`(select trunc(extract(epoch from
-    (min(h.moved_at)-${placementApplications.submittedAt})))
-    from placement_college_application_stage_history h
-    inner join placement_college_application_stages s on s.id=h.stage_id
-    where s.application_id=${placementApplications.id} and h.to_stage='SHORTLISTED')`
+    (min(t.at)-${placementApplications.submittedAt})))
+    from (
+     select h.moved_at as at from placement_college_application_stage_history h
+      inner join placement_college_application_stages s on s.id=h.stage_id
+      where s.application_id=${placementApplications.id} and h.to_stage='SHORTLISTED'
+     union all
+     select sh.created_at as at from placement_application_screening_history sh
+      where sh.application_id=${placementApplications.id} and sh.to_status='SHORTLISTED'
+    ) t)`
     .as("shortlist_seconds"),
  }).from(placementApplications)
  .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),

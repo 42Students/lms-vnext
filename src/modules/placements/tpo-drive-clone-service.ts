@@ -52,7 +52,9 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
  const cloneableRounds=sourceRounds.filter(round=>round.status!=="CANCELLED");
  await getDb().transaction(async tx=>{
   await tx.update(placementJobs).set({
-    isDream:source.isDream,stipendPerMonthInr:source.stipendPerMonthInr,
+    isDream:source.isDream,legacyJobCategory:source.legacyJobCategory,
+    legacyCategoryOverrideReason:source.legacyCategoryOverrideReason,
+    stipendPerMonthInr:source.stipendPerMonthInr,
     ctcLpa:source.ctcLpa,fixedCtcLpa:source.fixedCtcLpa,
     variableCtcLpa:source.variableCtcLpa,updatedAt:new Date(),
   }).where(and(eq(placementJobs.id,draft.id),eq(placementJobs.status,"DRAFT")));

@@ -123,8 +123,7 @@ export function HrRecruiterBell(){
     action={<Button type="button" variant="secondary" onClick={()=>void load()}>Retry</Button>}/> : null}
    {state?.status==="READY"&&state.hiddenUnread>0?
     <Alert tone="info" className="mt-2">
-      {state.hiddenUnread} older unread {state.hiddenUnread===1?"notification is":"notifications are"} not shown here.
-      See all notifications before marking everything as read.
+      {state.hiddenUnread} older unread {state.hiddenUnread===1?"notification isn't":"notifications aren't"} shown here; your drives have them.
     </Alert>:null}
    {!state&&!error?<Skeleton label="Loading recruiter notifications" variant="row" count={4} className="mt-3"/>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body leading-[22px]">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:

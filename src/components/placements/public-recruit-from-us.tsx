@@ -111,7 +111,7 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
       aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name?"public-recruit-name-error":undefined} value={name} onChange={e=>{setName(e.target.value);clearFieldError("name");}}/>
      {fieldErrors.name?<span role="alert" id="public-recruit-name-error" className="mt-1 block text-xs text-error">{fieldErrors.name}</span>:null}
     </label>
-    {sent ? <div className="grid min-w-0 grid-cols-1 gap-4">
+    <div className="grid min-w-0 grid-cols-1 gap-4">
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.company}
      <Input className={control+" mt-1"} maxLength={150} autoComplete="organization"
       value={company} onChange={e=>setCompany(e.target.value)}/>
@@ -124,7 +124,7 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
      <Textarea className={control+" mt-1 py-2"} maxLength={1000} rows={3}
       value={hiringFor} onChange={e=>setHiringFor(e.target.value)}/>
     </label>
-    </div> : null}
+    </div>
     {sent?<label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Code sent to {sent}
       <Input className={control+" mt-1"} inputMode="numeric" pattern="[0-9]{6}"
        required maxLength={6} autoComplete="one-time-code" aria-invalid={Boolean(fieldErrors.code)} aria-describedby={fieldErrors.code?"public-recruit-code-error":undefined} value={code}

@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DrivePayCategoryField, readDrivePayCategoryFields } from "./drive-pay-category-field";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -149,6 +150,7 @@ export function PlacementJobCreateForm({
   const [companySearch,setCompanySearch]=useState("");
   const [driveMode,setDriveMode]=useState<"ON_CAMPUS"|"POOL"|"OFF_CAMPUS">("ON_CAMPUS");
   const [applicationMode,setApplicationMode]=useState<"INTERNAL"|"HYBRID"|"EXTERNAL_ONLY">("INTERNAL");
+  const [maxLpaText,setMaxLpaText]=useState("");
   const [roundPreset,setRoundPreset]=useState<TpoRoundPresetKey>("NONE");
   const nextRowId=useRef(1000);
   const [importantDateRows,setImportantDateRows]=useState<ImportantDateRow[]>([{id:0,label:"",date:"",type:""}]);
@@ -313,6 +315,7 @@ export function PlacementJobCreateForm({
         if(field instanceof HTMLInputElement||field instanceof HTMLTextAreaElement||
           field instanceof HTMLSelectElement)field.value=value;
       }
+      setMaxLpaText(fields.maximumLpa);
       const dream=form.elements.namedItem("isDream");
       if(dream instanceof HTMLInputElement)dream.checked=Boolean(source.isDream);
       const copiedRules=source.legacyPostingDetails?.customEligibilityRules??[];
@@ -387,6 +390,7 @@ export function PlacementJobCreateForm({
       const values:Record<string,string>={};
       const checked:string[]=[];
       for(const field of Array.from(form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
+        if(field.dataset.skipBackup)continue;
         if(field instanceof HTMLInputElement&&field.type==="checkbox"){
           if(field.checked)checked.push(field.name);
         }else values[field.name]=field.value;
@@ -473,7 +477,9 @@ export function PlacementJobCreateForm({
         if(Array.isArray(saved.wantedSkills)){
           setWantedSkills(saved.wantedSkills.filter(skill=>typeof skill==="string"&&skill.length<=50).slice(0,30));
         }else setWantedSkills(splitList(String(saved.values.skillsWanted??"")).slice(0,30));
+        setMaxLpaText(String(saved.values.maximumLpa??""));
         for(const field of Array.from(formRef.current.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
+          if(field.dataset.skipBackup)continue;
           if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
           else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
         }
@@ -533,6 +539,8 @@ export function PlacementJobCreateForm({
       );
       const title = String(data.get("title") ?? "").trim();
       const description=String(data.get("description")??"").trim();
+      const payCategory=readDrivePayCategoryFields(data);
+      if(!payCategory.ok)throw new Error(payCategory.message);
       // Keep HTML-stripped validation at prepublish without interpreting
       // arbitrary rich markup or introducing an unsafe HTML renderer.
       const meaningfulDescription=description.replace(/<[^>]*>/g,"")
@@ -862,6 +870,10 @@ export function PlacementJobCreateForm({
           variableCtcLpa:nullableDecimal(String(data.get("variableLpa")??"")),
           stipendPerMonthInr:nullableInteger(String(data.get("stipendPerMonthInr")??"")),
           isDream:data.get("isDream")==="on",
+          ...(payCategory.legacyJobCategory?{
+            legacyJobCategory:payCategory.legacyJobCategory,
+            categoryOverrideReason:payCategory.categoryOverrideReason,
+          }:{}),
           applicationMode: submittedApplicationMode,
           externalApplicationUrl:
             submittedApplicationMode === "INTERNAL"
@@ -1073,6 +1085,13 @@ export function PlacementJobCreateForm({
     }
     });
   }
+
+  // Legacy category tier: worked out from the highest CTC across all packages.
+  const highestPackageLpa=(()=>{
+    const values=[maxLpaText,...extraPackages.map(row=>row.ctcLpa)]
+      .map(value=>Number(value)).filter(value=>Number.isFinite(value)&&value>0);
+    return values.length?Math.max(...values):null;
+  })();
 
   return (
     <form
@@ -1591,6 +1610,7 @@ export function PlacementJobCreateForm({
               min={0}
               max={1000}
               step="0.5"
+              onChange={event=>setMaxLpaText(event.target.value)}
             />
           </label>
           <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -1658,6 +1678,8 @@ export function PlacementJobCreateForm({
               Additional pay tracks are saved as separate role options. Every bonus and stipend duration is stored with its named package.
             </p>
           </div>
+          <DrivePayCategoryField inputClassName={inputClass} onChange={markDirty}
+            maxCtcLpa={highestPackageLpa}/>
           <label className="flex items-center gap-3 text-sm font-semibold text-body">
             <Checkbox name="isDream" className="h-4 w-4 accent-primary"/>
             Dream drive (college held-offer cap exception)

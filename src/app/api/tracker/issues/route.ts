@@ -45,7 +45,7 @@ export async function GET(request: Request) {
       // Only numeric pagination opts into legacy Spring Page; cursor callers
       // keep their existing contract without any silent change.
       if(params.has("page")||params.has("size")){
-        const allowed=new Set(["page","size","sort","status","severity","environment","q"]);
+        const allowed=new Set(["page","size","sort","status","severity","environment","q","search","reporter"]);
         for(const key of params.keys())
           if(!allowed.has(key)||params.getAll(key).length!==1)return invalid();
         const numeric=(key:"page"|"size",fallback:number)=>{
@@ -62,14 +62,18 @@ export async function GET(request: Request) {
         const status=params.get("status")||undefined;
         const severity=params.get("severity")||undefined;
         const environment=params.get("environment")||undefined;
-        const q=params.get("q")?.trim()||undefined;
+        // Legacy GET /api/v1/public/issues names the free-text filter `search`
+        // and also accepts `reporter` (case-insensitive exact reporter name).
+        const q=(params.get("q")??params.get("search"))?.trim()||undefined;
+        const reporter=params.get("reporter")?.trim()||undefined;
         if(status&&!(BUG_STATUSES as readonly string[]).includes(status))return invalid("status","Invalid status");
         if(severity&&!(BUG_SEVERITIES as readonly string[]).includes(severity))return invalid("severity","Invalid severity");
         if(environment&&!(BUG_ENVIRONMENTS as readonly string[]).includes(environment))return invalid("environment","Invalid environment");
         if(q&&q.length>200)return invalid("q","Invalid search");
+        if(reporter&&reporter.length>120)return invalid("reporter","Invalid reporter");
         const legacy=await listLegacyBugTrackerIssuesForAdmin(context,{
           page,size,sort:rawSort==="asc"||rawSort==="oldest"?"asc":"desc",
-          status,severity,environment,q,
+          status,severity,environment,q,reporter,
         });
         return NextResponse.json(legacy,{headers:{"cache-control":"private, no-store"}});
       }
@@ -81,7 +85,7 @@ export async function GET(request: Request) {
     if (context.user.platformStatus !== "ACTIVE") {
       return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
     }
-    const allowed = new Set(["page", "size", "status", "severity", "environment", "q"]);
+    const allowed = new Set(["page", "size", "status", "severity", "environment", "q", "search", "reporter"]);
     for (const key of params.keys()) {
       if (!allowed.has(key) || params.getAll(key).length !== 1) return invalid();
     }
@@ -97,16 +101,19 @@ export async function GET(request: Request) {
     if (page === null) return invalid("page", "Invalid page");
     if (size === null) return invalid("size", "Invalid size");
     const status = params.get("status"), severity = params.get("severity");
-    const environment = params.get("environment"), q = params.get("q")?.trim() ?? "";
+    const environment = params.get("environment"), q = (params.get("q") ?? params.get("search"))?.trim() ?? "";
+    const reporter = params.get("reporter")?.trim() ?? "";
     if (status && !(BUG_STATUSES as readonly string[]).includes(status)) return invalid("status", "Invalid status");
     if (severity && !(BUG_SEVERITIES as readonly string[]).includes(severity)) return invalid("severity", "Invalid severity");
     if (environment && !(BUG_ENVIRONMENTS as readonly string[]).includes(environment)) return invalid("environment", "Invalid environment");
     if (q.length > 200) return invalid("q", "Invalid search");
+    if (reporter.length > 120) return invalid("reporter", "Invalid reporter");
     const where = and(
       eq(db10BugReports.reporterUserId, context.user.id),
       status ? eq(db10BugReports.status, status) : undefined,
       severity ? eq(db10BugReports.severity, severity) : undefined,
       environment ? eq(db10BugReports.environment, environment) : undefined,
+      reporter ? sql`lower(${db10BugReports.reporterName}) = ${reporter.toLowerCase()}` : undefined,
       q ? sql`(position(${q.toLowerCase()}::text in lower(${db10BugReports.publicId})) > 0 or position(${q.toLowerCase()}::text in lower(${db10BugReports.description})) > 0)` : undefined,
     );
     const db = getDb();

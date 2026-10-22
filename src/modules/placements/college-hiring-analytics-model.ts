@@ -23,6 +23,19 @@ export const collegeHiringAnalyticsSchema = z.strictObject({
   if (v.from && v.to && v.from > v.to)
     ctx.addIssue({code:"custom",path:["to"],message:"End date must be on or after start date"});
 });
+/** Academic filter precedence (legacy: the narrower facet wins, program over
+ * department and batch over program). A stale broader value must never
+ * silently exclude a narrower selection. Enrolment is matched on the learner's
+ * current ACTIVE program enrolment, as in the report service. */
+export function collegeHiringAcademicScope(query:{
+  departmentId?:string;programId?:string;cohortId?:string;
+}):{cohortId?:string;programId?:string;departmentId?:string;filtered:boolean}{
+  const cohortId=query.cohortId;
+  const programId=cohortId?undefined:query.programId;
+  const departmentId=cohortId||programId?undefined:query.departmentId;
+  return {cohortId,programId,departmentId,
+    filtered:Boolean(query.cohortId||query.programId||query.departmentId)};
+}
 export function collegeHiringAnalyticsQuery(raw: Record<string,string|string[]|undefined>) {
   const input:Record<string,string>={};
   // Any other query parameter (for example a caller-supplied collegeId) is refused.

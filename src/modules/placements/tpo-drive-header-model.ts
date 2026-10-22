@@ -1,8 +1,9 @@
+import {DRIVE_PAY_CATEGORY_LABEL,isDrivePayCategory} from "./drive-pay-category-model";
 export type TpoDriveHeaderFacts={
  status:string;applicationMode:string;workMode:string;employmentType:string;
  minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  applicationDeadline:Date|string|null;
- isDream?:boolean;stipendPerMonthInr?:number|null;
+ isDream?:boolean;legacyJobCategory?:string|null;stipendPerMonthInr?:number|null;
  recordedOutside?:boolean;needsReview?:boolean;
 };
 const STATUS:Record<string,string>={
@@ -40,7 +41,7 @@ export function projectTpoDriveHeader(facts:TpoDriveHeaderFacts,asOf:Date=new Da
  return {
   status,applicationMode:parts[0],workMode:facts.workMode.replaceAll("_"," ").toLowerCase(),
   employmentType:facts.employmentType.replaceAll("_"," ").toLowerCase(),
-  ctc,deadline,category:facts.isDream?"Dream":"Regular",
+  ctc,deadline,category:isDrivePayCategory(facts.legacyJobCategory)?DRIVE_PAY_CATEGORY_LABEL[facts.legacyJobCategory]:facts.isDream?"Dream":"Regular",
    heroAccent,statusTone,legacyFacts:[
     {label:"Status",value:status},
     {label:"Job type",value:facts.employmentType.replaceAll("_"," ").toLowerCase()},

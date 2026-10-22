@@ -51,6 +51,18 @@ export async function getCollegeApplicationPipeline(context:RequestContext,rawJo
   };
  })};
 }
+/**
+ * Global row-lock order for application stage changes (legacy PlacementJobServiceImpl
+ * locks the job first, then the applications it touches in a fixed order):
+ *   1. placement_jobs row (share lock, update lock when the assessment link is saved to the job)
+ *   2. placement_applications row (one application per transaction, so ids never interleave)
+ *   3. college stage row, 4. screening row, 5. booked interview slots (limit 100)
+ * Offers and joining outcomes are only read here; they are written by the offer workflows,
+ * which lock the application before the offer. The TPO bulk path
+ * (tpo-bulk-application-stage-service.ts) takes the application and then its stage row and never
+ * locks the job, so neither path can wait on the other in the opposite order.
+ * tests/unit/application-stage-lock-order.test.ts keeps this order from drifting.
+ */
 export async function mutateCollegeApplicationStages(context:RequestContext,rawJobId:unknown,raw:unknown){
  const acting=await resolveActingCollege(context,"placements.manage");
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
@@ -75,8 +87,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     const [job]=await tx.select({id:placementJobs.id,status:placementJobs.status})
      .from(placementJobs).where(and(eq(placementJobs.id,jobId),
       eq(placementJobs.collegeId,collegeId))).for(input.saveAssessmentUrlToJob?"update":"share").limit(1);
-    if(!job||["CLOSED","ARCHIVED","CANCELLED"].includes(job.status))
-     throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+    if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
     const [application]=await tx.select({
      id:placementApplications.id,status:placementApplications.status,
      source:placementApplications.channel,userId:collegeMemberships.userId,
@@ -108,6 +119,10 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      throw Error("The previous stage cannot be restored. Review stage history.");
     const next=input.action==="REINSTATE"?(prior??"APPLIED"):input.stage!;
     if(next===from)throw Error("Application is already in the selected stage.");
+    // Legacy JP-03: a closed, cancelled or archived drive blocks advancing an
+    // application, but REJECTED stays allowed so stranded rows can be cleaned up.
+    if(["CLOSED","ARCHIVED","CANCELLED"].includes(job.status)&&next!=="REJECTED")
+     throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
     if(input.action==="MOVE" && !(COLLEGE_APPLICATION_TRANSITIONS[from]??[]).includes(next)){
      const allowed=COLLEGE_APPLICATION_TRANSITIONS[from]??[];
      throw Error("Cannot move from "+from+" to "+next+
@@ -272,6 +287,12 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
        updatedAt:new Date(),
       }).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId)));
      }
+    }else if(next==="ASSESSMENT"&&input.action==="MOVE"){
+     // Legacy: re-entering Assessment without a one-off link must not resurrect
+     // a stale application-specific link from an earlier assessment cycle.
+     await tx.update(placementApplicationPrivateArtifacts).set({
+      assessmentUrl:null,updatedByUserId:context.user.id,updatedAt:new Date(),
+     }).where(eq(placementApplicationPrivateArtifacts.applicationId,applicationId));
     }
     await tx.insert(placementCollegeApplicationStageHistory).values({
      stageId:saved.id,fromStage:from,toStage:next,reason:recordedReason,
