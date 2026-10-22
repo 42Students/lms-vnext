@@ -111,6 +111,7 @@ export default async function SuperAdminAttendancePage({
     showAllCourses: query.allCourses === "1",
     selectedDeliveryId: delivery?.deliveryId ?? null,
     month,
+    gridLookupFailed:Boolean(gridResult && !gridResult.ok),
     grid: grid
       ? {
           delivery: grid.delivery,

@@ -118,6 +118,7 @@ export default async function CollegeAttendancePage({
     showAllCourses: query.allCourses === "1",
     selectedDeliveryId: delivery?.deliveryId ?? null,
     month,
+    gridLookupFailed:gridFailed,
     grid: grid
       ? {
           delivery: grid.delivery,
