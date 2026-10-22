@@ -4,10 +4,10 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [ ] `tests/unit/PROJ-BREAK-SA-workspace-brief-isolation.test.ts` (1 failing)
 - [ ] `tests/unit/chat11-super-admin-tenant-route-guard.test.ts` (1 failing)
-- [ ] `tests/unit/chat2-UX-tpo-overlay-01.test.ts` (1 failing)
+- [x] `tests/unit/chat2-UX-tpo-overlay-01.test.ts` (branch already has corrected canonical More page assertion; verified footer wiring) (1 failing)
 - [ ] `tests/unit/chat5-program-server-directory-wiring.test.ts` (1 failing)
 - [ ] `tests/unit/chat8-verify2-audit-credits.test.ts` (1 failing)
-- [ ] `tests/unit/learner-coding-profile-privacy.test.ts` (1 failing)
+- [x] `tests/unit/learner-coding-profile-privacy.test.ts` (branch already expects valid HTTPS GitHub URL; rejects spoofed hosts and HTTP) (1 failing)
 - [ ] `tests/unit/tpo-team-workload-chat2.test.ts` (2 failing)
 
 ## Failures (from CI log)
@@ -166,3 +166,8 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 +   return Array.isArray(value) ? value[0] : value;
 ```
 
+
+## Branch repair verification (chat-6)
+
+- `chat2-UX-tpo-overlay-01.test.ts`: existing branch test asserts `/tpo/more` navigation, accessible landmark, keyboard focus and same-tab `Link`; verified in `src/components/tpo/tpo-mobile-footer.tsx:8-42`. The original main CI assertion required a BottomSheet even though the canonical More destination is an accessible page. Assertion was already corrected on this branch; no test weakening.
+- `learner-coding-profile-privacy.test.ts`: branch test correctly accepts an HTTPS `github.com` profile and still rejects unsafe schemes, userinfo, spoofed hosts and HTTP. `src/modules/placements/learner-coding-profile-link.ts:5-11` applies the safe profile normalization. The original CI assertion incorrectly required a valid profile URL to be null. Existing branch correction verified; no product mutation required.
