@@ -28,17 +28,17 @@ export function validateCodingProfile(platform:CodingProfilePlatform,raw:string)
  if(value.includes("/")||value.toLowerCase().includes(option.host.replace(/^www\./,""))){
   let link:URL;
   try{link=new URL(/^[a-z][a-z\d+.-]*:\/\//i.test(value)?value:"https://"+value);}
-  catch{return {url:null,error:option.label+": that link is not a "+option.label+" profile. Type your username instead."};}
+  catch{return {url:null,error:"That link is not a "+option.label+" profile. Type your username instead."};}
   const hostname=link.hostname.toLowerCase().replace(/^www\./,"");
   if(link.protocol!=="https:"||link.username||link.password||link.port||
     hostname!==option.host.replace(/^www\./,"")||!link.pathname.startsWith(option.pathPrefix)){
-   return {url:null,error:option.label+": that link is not a "+option.label+" profile. Type your username instead."};
+   return {url:null,error:"That link is not a "+option.label+" profile. Type your username instead."};
   }
   username=link.pathname.slice(option.pathPrefix.length).replace(/\/+$/,"");
-  if(username.includes("/"))return {url:null,error:option.label+": that link is not a "+option.label+" profile. Type your username instead."};
+  if(username.includes("/"))return {url:null,error:"That link is not a "+option.label+" profile. Type your username instead."};
  }
  if(!new RegExp("^"+option.pattern+"$").test(username))
-  return {url:null,error:option.label+" username does not look right ("+option.hint+")."};
+  return {url:null,error:option.label+" username should be "+option.hint+"."};
  return {url:"https://"+option.host+option.pathPrefix+username,error:null};
 }
 export function normalizeCodingProfile(platform:CodingProfilePlatform,raw:string){
