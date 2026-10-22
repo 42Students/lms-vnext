@@ -1,4 +1,5 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
+import { seedPublishableJobReadiness } from "../support/publishable-job-readiness";
 import {
   afterAll,
   beforeEach,
@@ -162,7 +163,8 @@ async function createPublishedJob(
       applicationMode: "INTERNAL",
     },
   );
-  return publishPreparedPlacementJob(context, draft.id);
+  await seedPublishableJobReadiness(draft.id,context.user.id);
+  return publishPlacementJob(context, draft.id);
 }
 
 beforeEach(async () => {
