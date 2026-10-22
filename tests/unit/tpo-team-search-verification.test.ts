@@ -19,8 +19,9 @@ describe("TPO-inbox-team-19 Team search implementation",()=>{
   const page=read("src/app/(authenticated)/tpo/team/page.tsx");
   expect(view).toContain('event.key!=="/"');
   expect(view).toContain("query.length>=2");
-  expect(view).toContain("},200)");
-  expect(view).toContain('router.replace("/tpo/team?"');
+  expect(view).toContain("},250)");
+  expect(view).toContain('router.replace("/tpo/messages?"');
+  expect(view).toContain('params.set("tab","team")');
   expect(page).toContain("<TpoTeamSearch value={search}/>");
   expect(page).toContain("row.searchSnippet??row.lastPreview");
  });
