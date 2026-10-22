@@ -111,7 +111,7 @@ describe("Final sprint recruiter conversations verification",()=>{
 
  it("REC-calendar-messages-profile-15 independent final-sprint acceptance regression",()=>{
   expect(src("src/components/hr/recruiter-conversation-reply-form.tsx")).toContain("\"Write a message first\"");
-  expect(src("src/components/hr/recruiter-conversation-reply-form.tsx")).toContain("setNotice(\"Could not send. \"+feedback)");
+  expect(src("src/components/hr/recruiter-conversation-reply-form.tsx")).toContain("setNotice(\"Message was not sent. Could not send. \"+feedback)");
   expect(src("src/components/hr/recruiter-conversation-reply-form.tsx")).toContain("Message sent, but the conversation could not refresh. Retry to load the latest messages.");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-15 |");
  });
