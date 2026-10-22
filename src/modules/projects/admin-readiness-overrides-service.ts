@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, ne, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { activityEvents, projectInstances, users } from "@/db/schema";
@@ -52,7 +52,9 @@ export async function listCollegeActiveReadinessOverrides(context: RequestContex
     if(!live.length)return [];
     const projects=await tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
       .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),
-        inArray(projectInstances.id,live.map(row=>row.projectId))))
+        inArray(projectInstances.id,live.map(row=>row.projectId)),
+        isNull(projectInstances.deletedAt),
+        ne(projectInstances.status, "ARCHIVED")))
       .for("share");
     const titles=new Map(projects.map(row=>[row.id,row]));
     return live.filter(row=>titles.has(row.projectId)).map(row=>({

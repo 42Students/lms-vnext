@@ -15,7 +15,7 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
  });
  it("SA-tenants-modules-05 tenant scope list does not default to a foreign college",()=>{
   expect(source("src/app/(authenticated)/admin/tenants/setup/page.tsx"))
-   .toContain("Pick a college first. Select a college in the Super Admin scope switcher");
+   .toContain("No college selected. Pick a college first in the Super Admin scope switcher");
  });
  it("SA-tenants-modules-08 organizations can search and show an actionable archive guard",()=>{
   const actions=source("src/components/admin/organization-actions.tsx");

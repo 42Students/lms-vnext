@@ -6,6 +6,6 @@ it("SA-tenants-modules-24 puts the branding event in the same mutation transacti
  expect(ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_BRANDING_UPDATED).toBe("platform.college.branding_updated");
  expect(source).toContain("getDb().transaction(async tx=>");
  expect(source).toMatch(/recordActivityEventInTransaction\(tx,\s*context/);
- expect(source).toMatch(/metadata:\s*\{\s*version:\s*row\.version\s*\}/);
+ expect(source).toMatch(/metadata:\s*\{\s*version:\s*row\.version,changedAssetFields,storageCleanup/);
  expect(source).not.toContain("metadata:{logoUrl:");
 });

@@ -248,7 +248,7 @@ describe("recruiter calendar projection", () => {
     );
   });
 
-  it("uses legacy Sunday-first week and rolling agenda windows", () => {
+  it("preserves the Sunday-first legacy TPO calendar and rolling agenda windows", () => {
     const week = placementCalendarWindow(
       "2026-10-14",
       "week",
