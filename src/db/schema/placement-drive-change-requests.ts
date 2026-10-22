@@ -104,9 +104,11 @@ export function prepareSafeDriveChangeJobPatch(
   // Native Date parsing may silently turn 30 February into March. Check
   // the source wall-clock date before applying its explicit zone offset.
   const [datePart,timePart]=value.split("T");
+  if(datePart===undefined||timePart===undefined)return null;
   const [year,month,day]=datePart.split("-").map(Number);
   const [hour,minute]=timePart.slice(0,5).split(":").map(Number);
   const second=timePart[5]===":"?Number(timePart.slice(6,8)):0;
+  if(year===undefined||month===undefined||day===undefined||hour===undefined||minute===undefined)return null;
   const wall=new Date(Date.UTC(year,month-1,day,hour,minute,second));
   const offset=/([+-])(\d{2}):(\d{2})$/.exec(value);
   if(year<100||wall.getUTCFullYear()!==year||
