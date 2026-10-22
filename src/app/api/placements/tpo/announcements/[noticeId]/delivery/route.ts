@@ -57,7 +57,7 @@ export async function GET(_request: Request, { params }: Params) {
     return NextResponse.json({
       noticeId: notice.id,
       status: failed ? "FAILED" : event ? "SENT" : "PENDING",
-      error: failed && event.metadata?.deliveryError === "AUDIENCE_UNAVAILABLE"
+      error: failed && event.metadata?.["deliveryError"] === "AUDIENCE_UNAVAILABLE"
         ? "Audience could not be resolved for this notice."
         : failed ? "The notice could not be delivered. Retry after checking the audience." : null,
       retryable: failed,
