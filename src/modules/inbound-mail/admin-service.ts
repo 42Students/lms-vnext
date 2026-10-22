@@ -132,6 +132,9 @@ export async function changeInboundMailStatusForAdmin(
      // An actual manual resolve sets handled_at; reopening must clear it.
      // Delivery routing status remains independent of human triage.
      handledAt:input.status==="RESOLVED"?new Date():null,
+     // The registered handled-pair constraint requires the actor and instant
+     // to be set and cleared together on resolve and reopen.
+     handledByUserId:input.status==="RESOLVED"?context.user.id:null,
      version:sql`${inboundMailMessagesStaged.version}+1`,
    })
    .where(and(eq(inboundMailMessagesStaged.id,input.id),
@@ -141,7 +144,7 @@ export async function changeInboundMailStatusForAdmin(
     version:inboundMailMessagesStaged.version});
   if(!updated)return {kind:"STALE" as const};
   // An immutable actor event survives triage/reopen even though the present
-  // inbox schema has no handled_at/by columns. The activity insert and status
+  // inbox history is independently auditable. The activity insert and status
   // change commit atomically, so neither can exist without the other.
   await tx.insert(activityEvents).values({
    actorUserId:context.user.id,module:"PLATFORM",

@@ -9,6 +9,7 @@ import {
 } from "@/modules/inbound-mail/admin-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const enabled = Boolean(process.env.TEST_DATABASE_URL) &&
   process.env.DB03_ISOLATED_TEST_DATABASE === "1" &&
@@ -21,7 +22,7 @@ const pool = enabled ? new Pool({
 }) : null;
 
 const globalAdmin: RequestContext = {
-  user: { id: randomUUID(), identityUid: "chat16-inbound-actor",
+  user: { id: SEED_IDS.superAdminUser, identityUid: "chat16-inbound-actor",
     platformStatus: "ACTIVE", systemRoles: ["SUPER_ADMIN"] },
   membership: null,
 };
