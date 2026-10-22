@@ -26,12 +26,12 @@ export function parseSuperAdminQuizQuery(raw:Record<string,string|string[]|undef
   const allowed=["q","status","courseCode","deliveryId","scope","results","page"];
   if(Object.keys(raw).some(key=>!allowed.includes(key)) ||
      Object.values(raw).some(Array.isArray) ||
-     (raw.page!==undefined && (typeof raw.page!=="string" || !/^[0-9]+$/.test(raw.page)))) {
+     (raw["page"]!==undefined && (typeof raw["page"]!=="string" || !/^[0-9]+$/.test(raw["page"])))) {
     return adminAssessmentQuerySchema.safeParse(null);
   }
   return adminAssessmentQuerySchema.safeParse({
-    q:raw.q,status:raw.status,courseCode:raw.courseCode,deliveryId:raw.deliveryId,
-    scope:raw.scope,results:raw.results,page:raw.page,
+    q:raw["q"],status:raw["status"],courseCode:raw["courseCode"],deliveryId:raw["deliveryId"],
+    scope:raw["scope"],results:raw["results"],page:raw["page"],
   });
 }
 
@@ -42,7 +42,7 @@ export function parseSuperAdminQuizQuery(raw:Record<string,string|string[]|undef
 export function parseSuperAdminAssignmentQuery(raw:Record<string,string|string[]|undefined>) {
   const parsed=parseSuperAdminQuizQuery(raw);
   if(!parsed.success)return parsed;
-  if(parsed.data.status==="CLOSED" || parsed.data.results!=="ALL")
+  if(parsed.data["status"]==="CLOSED" || parsed.data["results"]!=="ALL")
     return adminAssessmentQuerySchema.safeParse(null);
   return parsed;
 }
