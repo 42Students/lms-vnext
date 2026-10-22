@@ -166,8 +166,8 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
     {error?<InlineNotice tone="error" message={error}/>:null}
    </div>
   </Dialog>
-  {results.length>0?<div role="status" aria-live="polite" className="space-y-2 text-sm">
-   <p>{results.filter(row=>row.status==="saved").length} saved · {results.filter(row=>row.status==="failed").length} not saved.</p>
+  {results.length>0?<section aria-label="Drive visibility results" className="space-y-2 text-sm">
+   <p role="status" aria-live="polite">{results.filter(row=>row.status==="saved").length} saved · {results.filter(row=>row.status==="failed").length} not saved.</p>
    {results.some(row=>row.status==="saved"&&!row.undone&&(row.action==="CLEAR"?Boolean(row.previous):Boolean(row.overrideId)))
      ?<Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" loading={pending} disabled={pending} onClick={()=>void undoLast()}
        >
@@ -176,7 +176,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
    <ul className="max-h-48 min-w-0 divide-y divide-border overflow-y-auto">{results.map(item=><li key={item.id} className="min-w-0 break-words py-2">
     {item.name} — {item.undone?"Previous state restored.":item.undoError?"Undo unavailable: a later change may have occurred.":item.status==="saved"?"Saved.":"Not saved; open the learner eligibility record before retrying."}
    </li>)}</ul>
-  </div>:null}
+  </section>:null}
   {undoFeedback?<p role="status" aria-live="polite" className="text-sm text-body">{undoFeedback}</p>:null}
   {error&&!confirm?<InlineNotice tone="error" message={error}/>:null}
  </section>;

@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Disclosure} from "@/components/ui/disclosure";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import {useEffect,useState} from "react";
+import {useEffect,useId,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 type Selection={journeyState?:string;branchId?:string;batchId?:string;search?:string;
  pageSize:number;columns?:string};
@@ -32,6 +32,7 @@ function hrefFor(query:Selection){
 }
 export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
  const router=useRouter(),params=useSearchParams();
+ const viewsPanelId=useId();
  const [open,setOpen]=useState(embedded);
  const [rows,setRows]=useState<View[]>([]);
  const [name,setName]=useState("");
@@ -69,18 +70,18 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
   if(receipt)router.push(hrefFor(view.query));
  }
  return <section className="min-w-0 space-y-3">
-  {!embedded?<Button variant="secondary" type="button" aria-expanded={open} onClick={()=>{
+  {!embedded?<Button variant="secondary" type="button" aria-expanded={open} aria-controls={open?viewsPanelId:undefined} onClick={()=>{
    setOpen(v=>!v);if(!open)void load();
   }}>
    Saved student views</Button>:null}
-  {open?<div className="w-full min-w-0 max-w-4xl space-y-4 border-y border-border py-4">
+  {open?<div id={viewsPanelId} role="region" aria-label="Saved student views" className="w-full min-w-0 max-w-4xl space-y-4 border-y border-border py-4">
    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Saved views</h2>
    {busy&&!deleteTarget?<p role="status" className="text-sm text-body leading-[22px]">Loading saved views…</p>:null}
-   {pins.length?<div className="flex min-w-0 flex-wrap gap-2"><strong className="w-full text-sm">Pinned</strong>
+   {pins.length?<div role="group" aria-label="Pinned student views" className="flex min-w-0 flex-wrap gap-2"><strong className="w-full text-sm">Pinned</strong>
     {pins.map(view=><Button className="min-h-11 w-full break-words sm:w-auto md:min-h-9" variant="secondary" key={view.id} type="button" disabled={busy} onClick={()=>void use(view)}
      >{view.name}</Button>)}
    </div>:null}
-   {recent.length?<div className="flex min-w-0 flex-wrap gap-2"><strong className="w-full text-sm">Recent</strong>
+   {recent.length?<div role="group" aria-label="Recent student views" className="flex min-w-0 flex-wrap gap-2"><strong className="w-full text-sm">Recent</strong>
     {recent.map(view=><Button className="min-h-11 w-full break-words sm:w-auto md:min-h-9" variant="secondary" type="button" key={view.id} disabled={busy} onClick={()=>void use(view)}
      >{view.name}</Button>)}</div>:null}
    <Disclosure title="Save or update a view" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">

@@ -6,7 +6,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {apiFetch} from "@/lib/api-fetch";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
-import {useEffect,useRef,useState} from "react";
+import {useEffect,useId,useRef,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
@@ -25,6 +25,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  onNavigate:(membershipId:string)=>void;onClose:()=>void;recordedOutcome?:AfterCollegeOutcome|null;
 }){
  const [tab,setTab]=useState<Tab>("Profile");
+ const contactPanelId=useId();
  const [contactRevealed,setContactRevealed]=useState(false);
  const [contactNotice,setContactNotice]=useState("");
  // Tie cached data to its membership so a rapid Next/Previous never shows
@@ -94,7 +95,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     <Button variant="secondary" type="button" className="min-h-11 w-full sm:col-start-3 sm:row-start-1 md:min-h-9" disabled={index<0||index>=rows.length-1}
       onClick={()=>onNavigate(rows[index+1].membershipId)}>Next →</Button>
    </div>}>
-   <section className="min-w-0 border-b border-border pb-4">
+   <section aria-label="Student placement overview" className="min-w-0 border-b border-border pb-4">
     <p className="min-w-0 break-words text-sm text-body">{student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName}</p>
     <p className="mt-1 min-w-0 break-words text-xs text-muted-foreground">{student.cohortName} · {tpoStudentDisplayLabel(student.journeyState)}</p>
     <p className="mt-2 min-w-0 break-words text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
@@ -128,8 +129,8 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
         <h3 className="font-semibold">Contact details</h3>
         <p className="mt-1 text-xs text-muted-foreground">Contact stays masked until intentionally revealed by the placement officer. Phone is only available as last four digits here.</p>
-        {!contactRevealed?<Button type="button" variant="secondary" onClick={()=>setContactRevealed(true)} className="mt-2 min-h-11 md:min-h-9">Reveal email</Button>:
-          <div className="mt-2 flex flex-wrap items-center gap-2">
+        {!contactRevealed?<Button type="button" variant="secondary" aria-expanded={false} aria-controls={contactPanelId} onClick={()=>setContactRevealed(true)} className="mt-2 min-h-11 md:min-h-9">Reveal email</Button>:
+          <div id={contactPanelId} role="group" aria-label="Revealed student email" className="mt-2 flex flex-wrap items-center gap-2">
             <span className="break-all text-sm">{student.email??"No email on record"}</span>
             {student.email?<><Button variant="secondary" type="button" onClick={()=>{
               void navigator.clipboard.writeText(student.email??"").then(()=>setContactNotice("Email copied")).catch(()=>setContactNotice("Copy failed; select the email manually."));
