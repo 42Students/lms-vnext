@@ -260,7 +260,7 @@ describe("placement report aggregations", () => {
       applications: 0,
       offers: 0,
       studentsPlaced: 0,
-      placementRatePercent: 0,
+      placementRatePercent: null,
       averagePackageInr: null,
       highestPackageInr: null,
     });
