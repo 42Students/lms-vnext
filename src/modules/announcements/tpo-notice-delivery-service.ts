@@ -53,7 +53,9 @@ export async function deliverDueTpoNotices(now=new Date()){
   eq(db10Announcements.receiverType,"COLLEGE"),
   isNull(db10Announcements.deletedAt),
   lte(db10Announcements.createdAt,cutoff),
-  or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
+  // Undo lasts for 30 seconds after the actual scheduled release,
+  // not only 30 seconds after the author drafted the notice.
+  or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,cutoff)),
   or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
   sql`not exists(select 1 from in_app_notifications n
    join activity_events e on e.id=n.event_id
@@ -76,22 +78,25 @@ export async function deliverDueTpoNotices(now=new Date()){
     id:db10Announcements.id,scheduledAt:db10Announcements.scheduledAt,
     expiresAt:db10Announcements.expiresAt,deletedAt:db10Announcements.deletedAt,
    }).from(db10Announcements).where(eq(db10Announcements.id,notice.id)).for("update").limit(1);
-   if(!active||active.deletedAt||active.scheduledAt&&active.scheduledAt>now||
+   if(!active||active.deletedAt||active.scheduledAt&&active.scheduledAt>cutoff||
       active.expiresAt&&active.expiresAt<=now)return 0;
-   const [event]=await tx.select({id:activityEvents.id})
+   const [event]=await tx.select({id:activityEvents.id,metadata:activityEvents.metadata})
     .from(activityEvents).where(and(
      eq(activityEvents.collegeId,notice.collegeId),
      eq(activityEvents.subjectType,"announcement"),
      eq(activityEvents.subjectId,notice.id),
      eq(activityEvents.eventType,"placements.tpo_notice.created"),
     )).limit(1);
-   if(!event)return 0;
+   if(!event)return -1;
    const [target]=await tx.select({kind:placementTpoNoticeAudiences.kind})
     .from(placementTpoNoticeAudiences)
     .where(eq(placementTpoNoticeAudiences.announcementId,notice.id)).limit(1);
-   // A missing audience record is an incomplete migration, not permission
-   // to broadcast to all staff or all college members.
-   if(!target)return 0;
+   // Before explicit COLLEGE rows were inserted, the signed-in writer
+   // recorded a trusted college-wide audience in its same-transaction event.
+   // Recover those earlier notices only when the event explicitly says COLLEGE;
+   // for every targeted/unknown audience, fail closed rather than widening.
+   const audienceKind=target?.kind??(event.metadata?.audience==="COLLEGE"?"COLLEGE":null);
+   if(!audienceKind)return -1;
    const learners=exists(tx.select({id:membershipRoles.id})
      .from(membershipRoles).where(and(
        eq(membershipRoles.membershipId,collegeMemberships.id),
@@ -106,7 +111,7 @@ export async function deliverDueTpoNotices(now=new Date()){
      // staff. A person who is also Faculty needs a verified LEARNER role
      // to receive this notice; a generic COLLEGE row is not an all-users fanout.
      learners,
-     ...(target.kind!=="COLLEGE"?[inArray(collegeMemberships.id,
+     ...(audienceKind!=="COLLEGE"?[inArray(collegeMemberships.id,
       tx.select({id:placementTpoNoticeRecipients.membershipId})
        .from(placementTpoNoticeRecipients)
        .where(eq(placementTpoNoticeRecipients.announcementId,notice.id)))]:[]),
