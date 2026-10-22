@@ -46,9 +46,11 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const [semesterQuery, setSemesterQuery] = useState("");
   const [courseQuery, setCourseQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [mappingStale, setMappingStale] = useState(false);
   const [optimisticByTerm, setOptimisticByTerm] = useState<Record<string, string[]>>({});
   useEffect(() => {
     setRefreshing(false);
+    setMappingStale(false);
     setOptimisticByTerm({});
     setNotice(current => current === "Refreshing semester courses…" ? null : current);
   }, [data]);
@@ -128,6 +130,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             if (key==="credits")formErrors.credits=value;
           }
           if (cause.code==="TERM_NOT_FOUND")formErrors.term??="Select a semester";
+          if (["TERM_NOT_FOUND","COURSE_NOT_FOUND","TERM_COURSE_DUPLICATE","TERM_COURSE_POSITION_INVALID"].includes(cause.code??""))
+            setMappingStale(true);
           if (cause.code==="COURSE_NOT_FOUND")formErrors.courses??="Select at least one course.";
         }
         setFieldErrors(formErrors);
@@ -159,6 +163,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const filteredCourses = availableCourses.filter(course =>
     (course.name + " " + course.code).toLowerCase().includes(courseQuery.toLowerCase()));
   function toggleCourse(courseId: string, checked: boolean) {
+    if (mappingStale || refreshing || inFlight.current) return;
     setFieldErrors(current => ({ ...current, courses: undefined }));
     setError(null);
     setDraftByTerm(current => ({
@@ -176,7 +181,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         term: !termId ? "Select a semester" : undefined });
       return;
     }
-    if (!editableTerm || error) {
+    if (!editableTerm || error || mappingStale || refreshing) {
       setError("Load the selected semester before adding courses.");
       return;
     }
@@ -324,12 +329,12 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <Input id="mapping-course-search" type="search" autoComplete="off"
           placeholder="Select courses to add" aria-label="Search courses by name or code"
           value={courseQuery} onChange={event => setCourseQuery(event.target.value)}
-          disabled={pending} />
+          disabled={pending || refreshing || mappingStale || draggedId !== null} />
         {selectedIds.length > 0 ? <div className="flex flex-wrap gap-1" aria-live="polite">
           {selectedIds.slice(0, 3).map(id => {
             const course = data.courses.find(item => item.id === id);
             return <Button key={id} type="button" size="sm" variant="secondary"
-              disabled={pending} aria-label={"Remove " + (course?.name ?? id) + " from selection"}
+              disabled={pending || refreshing || mappingStale || draggedId !== null} aria-label={"Remove " + (course?.name ?? id) + " from selection"}
               onClick={() => toggleCourse(id, false)} className="!min-h-7 rounded-full px-2 py-0 text-xs">
               {course?.name ?? id} <span aria-hidden="true">×</span>
             </Button>;
@@ -342,7 +347,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           {filteredCourses.length ? filteredCourses.map(course =>
             <label key={course.id} className="flex min-h-9 cursor-pointer items-center gap-2 rounded px-2 py-1 font-normal text-foreground hover:bg-muted">
               <input type="checkbox" className="h-4 w-4 accent-[var(--lms-primary)]"
-                disabled={pending} checked={selectedIds.includes(course.id)}
+                disabled={pending || refreshing || mappingStale || draggedId !== null} checked={selectedIds.includes(course.id)}
                 onChange={event => toggleCourse(course.id, event.target.checked)} />
               <span>{course.name} ({course.code || "—"})</span>
             </label>) : <p className="p-2 text-sm font-normal text-muted-foreground">No matching courses.</p>}
@@ -353,16 +358,18 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         {fieldErrors.courses ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.courses}</span> : null}
       </div>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Course Type
-        <Select value={courseType} onChange={event => setCourseType(event.target.value as "CORE" | "ELECTIVE")}
+        <Select value={courseType} disabled={pending || refreshing || mappingStale || draggedId !== null}
+          onChange={event => setCourseType(event.target.value as "CORE" | "ELECTIVE")}
           className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground md:min-h-[var(--lms-control-height)]">
           <option value="CORE">{TERM_MAPPING_COPY.core}</option>
           <option value="ELECTIVE">{TERM_MAPPING_COPY.elective}</option>
         </Select>
       </label>
+      {mappingStale?<Alert tone="warning" role="alert">The semester course list changed. Refresh semester courses before adding or editing selections.</Alert>:null}
       {availableCourses.length===0?<p className="text-sm text-muted-foreground">No unmapped courses available for this semester.</p>:null}
       <div className="flex items-end sm:justify-end">
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit"
-          disabled={pending || refreshing || !!error || draggedId !== null || !editableTerm || !termId}>
+          disabled={pending || refreshing || mappingStale || !!error || draggedId !== null || !editableTerm || !termId}>
           <span aria-hidden="true">＋</span> {TERM_MAPPING_COPY.addButton}
         </Button>
       </div>
