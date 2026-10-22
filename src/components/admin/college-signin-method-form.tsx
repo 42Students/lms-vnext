@@ -135,7 +135,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
       const reason=error instanceof FriendlyFetchError&&error.status===409
         ?"Settings changed elsewhere. Refresh before retrying."
         :error instanceof FriendlyFetchError?error.message:"Please try again.";
-      const feedback="Couldn\u0027t save sign-in settings: "+(reason==="INVALID_POLICY_RESPONSE"?"Please refresh and try again.":reason);
+      const feedback="Couldn't save sign-in settings: "+(reason==="INVALID_POLICY_RESPONSE"?"Please refresh and try again.":reason);
       setMessageTone("error");setMessage(feedback);
       showToast({tone:"error",title:feedback});
     }
