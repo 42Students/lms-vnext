@@ -17,7 +17,7 @@ describe("Super Admin project gap final-sprint acceptance",()=>{
   const workspace=source("src/components/projects/project-workspace.tsx");
   const review=source("src/components/projects/project-admin-submission-review.tsx");
   expect(workspace).toContain("readOnly");
-  expect(review).toContain("canAdminSettleDelivery(status,locked,projectStatus,action)");
+  expect(review).toContain("canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,action)");
   expect(review).toContain('method:"POST"');
   expect(review).toContain("feedback.trim()");
  });

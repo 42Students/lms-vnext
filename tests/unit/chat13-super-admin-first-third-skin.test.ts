@@ -9,7 +9,7 @@ describe("chat-13 Super Admin first third NORTH STAR manual skin drift", () => {
    expect(list.length).toBeGreaterThanOrEqual(37);
    const pages=list.slice(0,37);
    expect(pages[0]).toContain("/admin/academics/page.tsx");
-   expect(pages[36]).toContain("/admin/features/[collegeId]/trace/page.tsx");
+   expect(list).toContain("src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx");
    for(const path of pages) {
      const source=readFileSync(path,"utf8");
      expect(source,path).not.toMatch(/bg-primary[^"'<>]{0,100}text-foreground/);

@@ -15,7 +15,7 @@ describe("Super Admin placement operational attention",()=>{
  });
  it("GR-38 attention thresholds are bounded positive days",()=>{
   const code=r("src/modules/placements/tpo-operations-service.ts");
-  expect(code).toContain("Math.max(1,Math.min(90,staleApplicationDays))");
+  expect(code).toMatch(/Math\.max\(1,\s*Math\.min\(90,\s*staleApplicationDays\)\)/);
  });
  it("GR-71 attention queue has a descriptive empty state",()=>{
   expect(r("src/components/placements/placement-operations-overview.tsx")).toContain("No placement work is blocked");
