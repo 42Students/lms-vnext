@@ -24,7 +24,7 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
 
   async function leave(grant: Grant) {
     if(leavingRef.current)return;
-    leavingRef.current=true;
+    leavingRef.current = true;
     setLeaving(grant.id);
     setError("");
     try {
@@ -44,7 +44,7 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
     } catch {
       setError("Could not confirm that your college access was removed. Refresh and try again.");
     } finally {
-      leavingRef.current=false;
+      leavingRef.current = false;
       setLeaving(null);
     }
   }

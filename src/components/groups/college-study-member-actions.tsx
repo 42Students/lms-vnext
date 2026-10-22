@@ -2,7 +2,7 @@
 
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -27,6 +27,7 @@ export function CollegeStudyMemberActions({
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const mutationRef=useRef(false);
   const [selection, setSelection] = useState("");
   const [manualId, setManualId] = useState("");
   const [action, setAction] = useState<CollegeStudyMemberAction | null>(null);
@@ -47,10 +48,13 @@ export function CollegeStudyMemberActions({
     router.refresh();
   }
   function confirm() {
+    if(mutationRef.current)return;
     if (!action) return;
+    mutationRef.current = true;
     start(async () => {
       try { await send(action); }
       catch (err) { setError(err instanceof Error ? err.message : "Membership change failed"); }
+      finally { mutationRef.current = false; }
     });
   }
   return <div className="space-y-4">

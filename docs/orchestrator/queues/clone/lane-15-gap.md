@@ -69,4 +69,4 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/sprints.js`
 - [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/semesters.js`
 - [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/HiringDashboard.js`
-- [ ] U031 (Cross-cutting area) `cross/15: Learning flow: courses, lessons, quizzes, assignments, attendance, grading, certificates`
+- [x] U031 (Cross-cutting area) `cross/15: Learning flow: courses, lessons, quizzes, assignments, attendance, grading, certificates`
