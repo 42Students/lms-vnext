@@ -15,7 +15,7 @@ describe("UX-learn-attendance-month-01 /learn/attendance course-month history",(
   expect(source).toContain("summary.markedSessions");
   expect(source).toContain("summary.unmarkedSessions");
   expect(source).toContain("No classes in this period");
-  expect(source).toContain("Try selecting a different month.");
+  expect(source).toContain("No classes held yet this month.");
   expect(source).toContain("Attendance threshold");
  });
 });

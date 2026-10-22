@@ -69,7 +69,7 @@ describe("UX-projects-mentor-overlays-01 dialog interaction and unsaved changes"
     const s=source("mentor-meeting-reschedule");
     expect(s).toContain('title="Reschedule meeting"');
     expect(s).toContain("guard.requestClose()");
-    expect(s).toContain("if(!next&&!pending)setOpen(true)");
+    expect(s).toContain("if(pending)return;setConfirm(next);if(!next)setOpen(true)");
     expect(s).toContain("guard.discardOpen");
   });
   it("project-meeting-controls protect all three mentor meeting dialogs with discard guards",()=>{
