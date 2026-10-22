@@ -26,11 +26,11 @@ export async function presignTrackerAttachment(
 ){
  const issue=await getBugTrackerIssueForAdmin(context,publicId);
  const input=uploadSchema.parse(raw);
- const [{total}]=await getDb().select({total:count()})
+ const [attachmentCount]=await getDb().select({total:count()})
   .from(db10BugReportAttachments)
   .where(eq(db10BugReportAttachments.bugReportId,issue.report.id));
  const {originalFilename,contentType,extension}=validateBugScreenshotUpload({
-  ...input,currentCount:total,
+  ...input,currentCount:attachmentCount?.total??0,
  });
  const key="bug-tracker/"+issue.report.publicId+"/"+randomUUID()+"."+extension;
  const expiresAt=new Date(Date.now()+10*60*1000);
@@ -54,7 +54,7 @@ export async function confirmTrackerAttachment(
  const head=await headObject(getPrivateR2Config(),input.storageKey);
  if(!head||head.metadata["malware-scan-status"]!=="CLEAN"||
    head.metadata["scan-attested-by"]!=="lms-vnext-privileged-scanner"||
-   !/^[a-f0-9]{64}$/.test(head.metadata.sha256??""))
+   !/^[a-f0-9]{64}$/.test(head.metadata["sha256"]??""))
   throw new Error("TRACKER_ATTACHMENT_NOT_ATTESTED");
  const db=getDb();
  return db.transaction(async tx=>{
@@ -65,7 +65,7 @@ export async function confirmTrackerAttachment(
      eq(db10BugReportAttachments.bugReportId,locked.id),
      eq(db10BugReportAttachments.storageKey,input.storageKey))).limit(1);
    if(existing)return {attachment:existing,replayed:true};
-   const [{total}]=await tx.select({total:count()}).from(db10BugReportAttachments)
+   const [attachmentCount]=await tx.select({total:count()}).from(db10BugReportAttachments)
      .where(eq(db10BugReportAttachments.bugReportId,locked.id));
    const valid=validateBugScreenshotConfirmation({
       publicId:issue.report.publicId,storageKey:input.storageKey,
