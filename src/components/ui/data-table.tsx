@@ -135,7 +135,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className={cx("md:table-header-group md:bg-[var(--lms-white)]",horizontal?"table-header-group bg-surface":"hidden")}>
           <tr>
-            {selection ? <th scope="col" className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)]">
+            {selection ? <th scope="col" className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-0 md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)]">
               <TableSelectAll fieldName={selection.fieldName??"selected"} />
             </th> : null}
             {columns.map(col=><th key={col.key} scope="col" aria-sort={col.sortDirection}
@@ -152,11 +152,13 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
           {prepared.map(item=><tr key={item.key} data-slot="data-table-row"
             className={cx("min-w-0 bg-surface md:table-row md:overflow-visible md:rounded-none md:border-0 md:p-0 md:transition-colors md:duration-[var(--lms-motion-fast)] md:hover:bg-[var(--lms-white)] focus-within:border-[var(--lms-primary)] md:focus-within:border-[var(--lms-canvas-border)] md:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none",
               horizontal?"table-row border-0 p-0":"block overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] p-[var(--lms-space-4)]")}>
-            {selection ? <td className={cx("py-1 md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)]",horizontal?"table-cell px-3":"block")}>
-              <input type="checkbox" data-table-selection="row" name={selection.fieldName??"selected"} value={item.key}
-                form={selection.formId} disabled={!item.selectable}
-                aria-label={"Select record "+item.key}
-                className="size-4 accent-[var(--lms-primary)] disabled:opacity-50"/>
+            {selection ? <td className={cx("py-0 md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)]",horizontal?"table-cell px-3":"block")}>
+              <label className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center has-[:disabled]:cursor-not-allowed">
+                <input type="checkbox" data-table-selection="row" name={selection.fieldName??"selected"} value={item.key}
+                  form={selection.formId} disabled={!item.selectable}
+                  aria-label={"Select record "+item.key}
+                  className="size-4 accent-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] disabled:opacity-50"/>
+              </label>
             </td> : null}
             {columns.map(col=>{
               const phoneVisible=visibleOnPhone.has(col.key);

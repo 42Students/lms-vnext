@@ -26,8 +26,9 @@ export function TableSelectAll({ fieldName }: { fieldName: string }) {
     return () => root.removeEventListener("change", onChange);
   }, [fieldName]);
 
-  return <input ref={ref} type="checkbox" aria-label="Select all records on this page"
-    className="size-4 accent-[var(--lms-primary)] disabled:opacity-50"
+  return <label className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center has-[:disabled]:cursor-not-allowed">
+    <input ref={ref} type="checkbox" aria-label="Select all records on this page"
+    className="size-4 accent-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] disabled:opacity-50"
     onChange={() => {
       const root = ref.current?.closest('[data-slot="data-table"]');
       if (!root) return;
@@ -36,5 +37,6 @@ export function TableSelectAll({ fieldName }: { fieldName: string }) {
         if (input.name === fieldName && !input.disabled) input.checked = checked;
       });
       if (ref.current) ref.current.indeterminate = false;
-    }} />;
+    }} />
+  </label>;
 }
