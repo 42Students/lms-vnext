@@ -249,11 +249,9 @@ export function TenantDomainManager({
               : action === "edit"
                 ? "Domain changed · verify DNS"
                 : "Domain deleted",
-        description:
-          action === "verify" &&
-          !payload?.domain?.isVerified
-            ? "The latest DNS check was recorded. Confirm the TXT record and try again."
-            : undefined,
+        ...(action === "verify" && !payload?.domain?.isVerified
+          ? { description: "The latest DNS check was recorded. Confirm the TXT record and try again." }
+          : {}),
       });
 
       router.refresh();
@@ -478,10 +476,10 @@ export function TenantDomainManager({
         open={Boolean(primaryTarget)}
         onOpenChange={(open) => { if (!open && !pendingAction) { setPrimaryTarget(null); setModalError(""); } }}
         title={primaryTarget ? `Make ${primaryTarget.host} the primary address?` : "Change primary address?"}
-        description={primaryTarget ? describePrimaryDomainSwitch(
+        {...(primaryTarget ? { description: describePrimaryDomainSwitch(
           domains.find(domain => domain.isPrimary)?.host ?? null,
           primaryTarget.host,
-        ) : undefined}
+        ) } : {})}
         confirmLabel="Confirm primary address"
         confirmVariant="primary"
         pending={Boolean(pendingAction)}
