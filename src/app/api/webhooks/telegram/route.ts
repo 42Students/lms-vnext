@@ -7,7 +7,7 @@ const MAX_WEBHOOK_BYTES = 8192;
 
 /** Telegram is a third-party webhook: secret-token verification replaces browser Origin. */
 export async function POST(request: Request) {
-  if (process.env.APP_ENV !== "production") {
+  if (process.env["APP_ENV"] !== "production") {
     logInfo("telegram.webhook.unavailable_outside_production");
     return NextResponse.json({ message: "Not available." }, { status: 404 });
   }
