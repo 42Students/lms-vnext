@@ -107,7 +107,7 @@ export function LectureHallManager({
   const [search,setSearch]=useState("");
   const normalizedSearch=search.trim().toLocaleLowerCase("en");
   const visibleHalls=normalizedSearch?halls.filter(hall=>
-    [hall.name,hall.roomType,ROOM_TYPE_LABELS[hall.roomType],hall.departmentName??"",hall.description??""]
+    [hall.name,hall.roomType,ROOM_TYPE_LABELS[hall.roomType]??"",hall.departmentName??"",hall.description??""]
       .some(value=>value.toLocaleLowerCase("en").includes(normalizedSearch))):halls;
   function exportCsv(){
     const escape=(value:string|number|null|undefined)=>{
