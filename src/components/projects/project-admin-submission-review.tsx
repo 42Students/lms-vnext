@@ -11,8 +11,8 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {adminDeliveryToast,canAdminSettleDelivery,type AdminDeliveryAction} from "@/modules/projects/admin-submission-review-model";
 
-export function ProjectAdminSubmissionReview({projectId,submissionId,status,locked,projectStatus,workspaceTitle,allowLock}:{
- projectId:string;submissionId:string;status:string;locked:boolean;projectStatus:string;workspaceTitle?:string;allowLock:boolean;
+export function ProjectAdminSubmissionReview({projectId,submissionId,status,locked,projectStatus,workspaceTitle,allowLock,historical=false}:{
+ projectId:string;submissionId:string;status:string;locked:boolean;projectStatus:string;workspaceTitle?:string;allowLock:boolean;historical?:boolean;
 }){
  const router=useRouter();
  const [open,setOpen]=useState(false);
@@ -25,7 +25,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  const [loadingCurrent,setLoadingCurrent]=useState(false);
  const [currentStatus,setCurrentStatus]=useState(status);
  const [currentLocked,setCurrentLocked]=useState(locked);
- const [isLatest,setIsLatest]=useState(true);
+ const [isLatest,setIsLatest]=useState(!historical);
  const [reviewSnapshot,setReviewSnapshot]=useState<{
    decision:string;feedback:string|null;reviewedAt:string
  }|null>(null);
@@ -40,6 +40,8 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    projectStatus==="ACTIVE";
 
  async function refreshTarget(){
+  // A failed GET must not leave an earlier eligible action enabled.
+  setIsLatest(false);setReviewVersion(null);setReviewUpdatedAt(null);
   setLoadingCurrent(true);
   try{
    const data=await apiFetch<{
@@ -59,7 +61,10 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
      setCurrentLocked(Boolean(target.lockedAt));
      setReviewVersion(target.version);
      setReviewUpdatedAt(target.updatedAt);
-     setReviewSnapshot(data.reviews.find(row=>row.submissionId===submissionId)??null);
+     setReviewSnapshot(data.reviews.filter(row=>row.submissionId===submissionId)
+       .sort((a,b)=>b.reviewedAt.localeCompare(a.reviewedAt))[0]??null);
+   }else{
+     setReviewSnapshot(null);
    }
    return Boolean(target&&latest?.id===target.id);
   }catch(e){
@@ -105,7 +110,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  }
  return <section aria-label="Review final submission" className="mt-[var(--lms-space-3)] min-w-0">
   <Button type="button" variant="secondary" onClick={()=>{void openReview();}}>
-   {status==="UNDER_REVIEW"||locked||!["SUBMITTED","APPROVED"].includes(status)?
+   {historical||status==="UNDER_REVIEW"||locked||!["SUBMITTED","APPROVED"].includes(status)?
       "View review status":"Review"}
   </Button>
   {message?<Banner tone="success">{message}</Banner>:null}

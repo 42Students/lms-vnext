@@ -157,9 +157,10 @@ export async function ProjectAdminSubmissionsPage({
       {unsubmitted?<section className="min-w-0 space-y-3 border-b border-border pb-4">
         <FilterBar title="Filters"><ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/></FilterBar>
         <ListToolbar label="Unsubmitted workspaces" viewCount={unsubmitted.total}
-          exportAction={<ProjectSubmissionsPageExport view="NOT_SUBMITTED" rows={unsubmitted.items.map(item=>({
-            workspace:item.title,version:0,status:item.status,submissionType:"",pendingDays:item.progressPercent,
-            submittedAt:null,revisions:0,reviewedBy:null,sourceUrl:null,demoUrl:null,
+          exportAction={<ProjectUnsubmittedPageExport rows={unsubmitted.items.map(item=>({
+            title:item.title,mentorName:item.mentorName,status:item.status,
+            progressPercent:item.progressPercent,
+            inactiveDays:projectAdminElapsedDays(item.updatedAt,renderedAt),
           }))}/>} />
         <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Not submitted · {unsubmitted.total} workspaces</h2>
         <DataTable
@@ -319,7 +320,8 @@ export async function ProjectAdminSubmissionsPage({
             {key:"actions",header:"Actions",mobilePriority:"action",
               className:"md:sticky md:right-0 md:z-10 md:bg-surface",
               cell:row=><div className="flex min-w-0 flex-col gap-1">
-                {row.isCurrentVersion?<ProjectAdminSubmissionReview
+                {row.submittedAt?<ProjectAdminSubmissionReview
+                  historical={!row.isCurrentVersion}
                   projectId={row.projectId} submissionId={row.id}
                   workspaceTitle={row.projectTitle} status={row.status}
                   locked={!!row.lockedAt} projectStatus={row.projectStatus}
