@@ -8,8 +8,10 @@ describe("Team inbox activity and participant notices",()=>{
   expect(read).toContain("lastActivityAt:lastActivity");
   expect(read).toContain(".orderBy(desc(lastActivity),desc(tpoInternalThreads.id))");
   expect(read).toContain("m.college_id=");
-  expect(page).toContain("Last activity ·");
-  expect(page).toContain("row.lastActivityAt");
+  const directory=src("src/components/tpo/tpo-team-messages-directory.tsx");
+  expect(page).toContain('redirect("/tpo/messages?" + target.toString())');
+  expect(directory).toContain("item.lastActivityAt.toISOString()");
+  expect(directory).toContain("threadTime(item.lastActivityAt,today)");
  });
  it("TPO-inbox-team-29 sends a person-named bell and safe preview with a message deep link",()=>{
   const reply=src("src/modules/placements/tpo-team-internal-reply-service.ts");

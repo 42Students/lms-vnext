@@ -10,7 +10,7 @@ describe("Drive action resilience and accessibility",()=>{
   expect(cancel).toContain("if (pending || !reviewed) return");
   expect(cancel).toContain("disabled={pending || !reviewed}");
   expect(lifecycle).toContain("|| !acknowledged");
-  expect(cancel).toContain('type="checkbox"');
+  expect(cancel).toContain("<Checkbox checked={reviewed}");
   expect(lifecycle).toContain('type="checkbox"');
  });
  it("GR-31 ignores repeated submits while the previous drive mutation is active",()=>{
@@ -24,7 +24,8 @@ describe("Drive action resilience and accessibility",()=>{
  it("GR-90 and GR-91 expose persistent alert copy and a keyboard confirmation control",()=>{
   const cancel=source("src/components/placements/tpo-drive-cancel-form.tsx");
   const lifecycle=source("src/components/placements/tpo-drive-lifecycle-controls.tsx");
-  expect(cancel).toContain('role="alert"');
+  expect(cancel).toContain('<InlineNotice tone="error" message={error}');
+  expect(lifecycle).toContain('<InlineNotice tone="error" message={error}');
   expect(lifecycle).toContain('role="alert"');
   expect(cancel).toContain("checked={reviewed}");
   expect(lifecycle).toContain("checked={acknowledged}");
