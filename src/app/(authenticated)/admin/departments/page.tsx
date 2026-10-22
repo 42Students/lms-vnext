@@ -60,6 +60,7 @@ export default async function SuperAdminDepartmentsPage({
           description="Department administration requires a college safety scope."
         />
         <AcademicSetupSteps step={1}/>
+        <Link href="/admin/departments/all" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View departments across colleges</Link>
         {recoveryChooser}
         <Alert tone="warning">
           <div className="flex items-start gap-3">
