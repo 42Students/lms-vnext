@@ -19,20 +19,25 @@ export function TpoLifecycleStaleSnapshot({
   failed: boolean;
 }) {
   const [lastGood, setLastGood] = useState<ReactNode>(failed ? null : children);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    if (!failed) setLastGood(children);
+    if (!failed) {
+      setLastGood(children);
+      setDismissed(false);
+    }
   }, [children, failed]);
 
   return (
     <>
-      {failed && lastGood ? (
-        <Alert tone="warning">
-          Drive refresh failed. Showing the last successfully loaded drives for this
-          college and filter selection. Counts and statuses may be out of date.
-          <span className="ml-2 inline-flex">
+      {failed && lastGood && !dismissed ? (
+        <Alert tone="error" title="This refresh failed. Drives below are from the last successful load.">
+          <span>Counts and statuses may be out of date until the next successful refresh.</span>
+          <div className="mt-2 flex flex-wrap gap-2">
             <TpoLifecycleRefreshAction label="Retry" />
-          </span>
+            <Button type="button" size="sm" variant="secondary" onClick={() => setDismissed(true)}
+              aria-label="Dismiss stale drives warning">Dismiss</Button>
+          </div>
         </Alert>
       ) : null}
       {failed ? lastGood ?? children : children}
