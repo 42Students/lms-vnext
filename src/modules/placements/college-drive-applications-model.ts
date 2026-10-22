@@ -41,10 +41,9 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
     const value = raw[key];
     // The legacy page tolerates malformed optional filters, but identifiers
     // must fail closed rather than silently broadening an academic scope.
-    if (Array.isArray(value)) {
-      if (key === "departmentId" || key === "programId" || key === "cohortId" || key === "page") return null;
-      continue;
-    }
+    // Repeated selectors are ambiguous even for optional facets: dropping
+    // one would broaden an export or return the wrong candidates.
+    if (Array.isArray(value)) return null;
     if (typeof value === "string" && value !== "") input[key] = value;
   }
   const allowed: Record<string,readonly string[]> = {
