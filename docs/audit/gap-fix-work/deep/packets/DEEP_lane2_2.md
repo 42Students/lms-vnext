@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [ ] G2-5-027-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-032-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-6-001-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-6-001-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-6-001-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-6-015-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-6-019-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
@@ -19,4 +19,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-15-009-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 
 ## Results
+- G2-6-001-047: OK — `src/modules/people/faculty-bulk-import-model.ts:11,28,76-91` accepts and validates the Faculty Type CSV field as only LECTURER or MENTOR; `src/modules/people/faculty-bulk-import-service.ts:75-82` preserves the lecturer/mentor distinction during import. Matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Faculty.js:600,666-668,718`.
 
