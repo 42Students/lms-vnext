@@ -61,6 +61,7 @@ export async function listCollegeCourseCatalogue(
  const items=await db.select({
   id:courses.id,name:courses.name,code:courses.code,
   shortTitle:courses.shortTitle,officialCode:courses.officialCode,cardColor:courses.cardColor,takeaways:courses.takeaways,
+  introductionHeading:courses.introductionHeading,
   description:courses.description,status:courses.status,
   enabled:courses.enabled,legacyAllowedForDisplay:courses.legacyAllowedForDisplay,
   thumbnailUrl:courses.thumbnailUrl,imageUrl:courses.imageUrl,
