@@ -20,7 +20,7 @@ export default async function SuperAdminOfferingLearningPage({
 
   const { offeringId } = await params;
   if (!(await resolveSuperAdminOfferingDetail(context, offeringId))) notFound();
-  const requestedDeliveryId = (await searchParams).deliveryId;
+  const requestedDeliveryId = (await searchParams)["deliveryId"];
   const deliveryId = typeof requestedDeliveryId === "string" && z.uuid().safeParse(requestedDeliveryId).success
     ? requestedDeliveryId : null;
 
