@@ -161,9 +161,7 @@ AssertionError: expected 9 to be 8 // Object.is equality
 ```
 
 
-## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+## Deep verification follow-up (23 Oct 2026)
 
-Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
-
-- [ ] G2-16-005-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
-- [ ] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-16-005-045 — OK: named Super Admin Cloud Logging page, live logs, export and nearby-logs authorization verified against legacy access policy; see `docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md`.
+- [ ] G2-4-017-017 — manual template-less historical project support not yet established; do not mark complete without the schema/service fix.
