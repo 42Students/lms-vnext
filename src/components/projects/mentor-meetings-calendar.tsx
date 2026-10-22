@@ -60,7 +60,7 @@ function MeetingRow({
       ) : null}
       <div className={styles.actions}>
         {safeProjectExternalHref(href) ? <a className={styles.action} href={safeProjectExternalHref(href)!}
-          target="_blank" rel="noopener noreferrer">Join link</a> : null}
+          >Join link</a> : null}
         <Link className={styles.action}
           href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) + "?tab=team"}>
           Open project
