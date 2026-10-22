@@ -422,6 +422,7 @@ export async function submitCourseQuiz(
             maxScore: lockedQuiz.totalPoints,
           })
           .returning();
+        if (!attempt) throw new CoursesServiceError("QUIZ_ATTEMPT_CONFLICT");
 
         await tx.insert(quizAttemptAnswers).values(
           answerRows.map((answer) => ({

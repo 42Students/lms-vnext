@@ -576,6 +576,7 @@ export async function saveLearnerContentProgress(
           firstCompletedAt: completedAt,
         })
         .returning();
+      if (!inserted) throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
 
       return buildLearnerProgressView(
         content,
