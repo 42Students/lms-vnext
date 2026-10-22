@@ -270,7 +270,8 @@ export async function listLearnerPlacementJobs(
   }).from(placementCollegeRules)
     .where(eq(placementCollegeRules.collegeId, membership.collegeId)).limit(1);
   // Apply the same validated batch rules as the own Rules page.
-  const [activeBatch]=await getDb().select({rulesOverride:placementBatchLifecycles.rulesOverride})
+  const [activeBatch]=await getDb().select({rulesOverride:placementBatchLifecycles.rulesOverride,
+    finishedAt:placementBatchLifecycles.finishedAt})
     .from(placementBatchLifecycles).where(and(
       eq(placementBatchLifecycles.collegeId,membership.collegeId),
       eq(placementBatchLifecycles.cohortId,enrollments[0]!.cohortId),
@@ -355,7 +356,11 @@ export async function listLearnerPlacementJobs(
         deadlinePassed,
         canApply: canShowLearnerSelfApply(applyContext),
         applicationBlockers: learnerJobApplyBlockers(applyContext),
-        applicationGate: learnerJobApplyGate({...applyContext,published:row.job.status==="PUBLISHED"}),
+        applicationGate: learnerJobApplyGate({...applyContext,
+          published:row.job.status==="PUBLISHED",
+          inPlacements:participation.showPlacements,
+          batchFinished:Boolean(activeBatch?.finishedAt),
+        }),
       };
     }),
   );

@@ -55,7 +55,7 @@ export function learnerJobApplyGate(input:Parameters<typeof learnerJobApplyBlock
  if(input.eligibilityStatus!=="ELIGIBLE"&&input.eligibilityStatus!=="ELIGIBLE_WITH_MISSING_EVIDENCE")
   return denied("RULES",input.eligibilityStatus==="NEEDS_DATA"?
    "Required academic evidence is missing. Review your learner profile.":
-   "You don't meet this drive's rules.");
+   "You don't meet this drive's rules.","RULES");
  if(!input.heldOfferEligible)return denied("HELD_OFFER",
   "Your college's held-offer limit or upgrade rule does not allow this application.","RULES");
  return {code:"OPEN",reason:null,action:null,href:null,canApply:true};
@@ -66,6 +66,8 @@ export function learnerJobApplyGate(input:Parameters<typeof learnerJobApplyBlock
 export function learnerApplyRegistrationCta(code:LearnerJobApplyCode):{
  label:string;href:string|null
 }{
+ if(code==="RULES"||code==="HELD_OFFER")
+  return {label:"Review placement rules",href:"/learn/my-placements/rules"};
  if(code==="REGISTER_FIRST"||code==="CHOSE_OTHER")
   return {label:code==="REGISTER_FIRST"?"Register for placements":"Change placement choice",
    href:"/learn/my-placements#registration"};
