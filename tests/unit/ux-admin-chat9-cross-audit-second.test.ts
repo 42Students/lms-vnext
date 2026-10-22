@@ -146,7 +146,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   const tabs=source("src/components/placements/super-admin-drive-tabs.tsx");
   expect(tabs).toContain("min-h-11");
   expect(tabs).not.toContain("min-h-10");
-  expect(tabs).not.toContain("text-[#26bac7]");
+  expect(tabs).not.toContain("text-[#");
   expect(tabs).toContain('ariaLabel="Drive tabs"');
   expect(tabs).toContain("items={tabs.map");
   expect(source("src/components/ui/tabs.tsx")).toContain("min-h-11");
