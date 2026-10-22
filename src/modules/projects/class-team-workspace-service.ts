@@ -176,7 +176,12 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         if(blueprint.resources.length)await tx.insert(projectResources).values(blueprint.resources.map(r=>({
           projectId:project.id,templateKey:r.key,title:r.title,description:r.description??null,
           url:r.url??null,required:r.required,
-          ...templateResourceMaterializationFields(r),sequence:r.sequence,
+          ...templateResourceMaterializationFields({
+            ...(r.type !== undefined ? { type: r.type } : {}),
+            ...(r.status !== undefined ? { status: r.status } : {}),
+            ...(r.pinned !== undefined ? { pinned: r.pinned } : {}),
+            ...(r.accessNotes !== undefined ? { accessNotes: r.accessNotes } : {}),
+          }),sequence:r.sequence,
         })));
         await recordActivityEventInTransaction(tx,context,{
           eventType:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_CREATED,
