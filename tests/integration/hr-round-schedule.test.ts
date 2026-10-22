@@ -1,7 +1,8 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection} from "@/db/client";
+import {closeDatabaseConnection,getDb} from "@/db/client";
+import {placementJobEligibilityPolicies} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {createPlacementRound,actOnPlacementRound} from "@/modules/placements/round-service";
@@ -25,6 +26,10 @@ describe.skipIf(!enabled)("HR round schedule scoped PG",()=>{
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Panel",durationMinutes:60});
   await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt:new Date("2026-10-20T10:00:00Z"),
    timezone:"Asia/Kolkata",mode:"VIRTUAL",meetingUrl:"https://example.test/meet"});
+  // Publishing requires an explicit persisted audience/eligibility policy.
+  await getDb().insert(placementJobEligibilityPolicies).values({
+   jobId:job.id,updatedByUserId:tpo.user.id,
+  });
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,rel:string):RequestContext=>({
