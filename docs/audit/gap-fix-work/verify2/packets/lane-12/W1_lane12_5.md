@@ -126,3 +126,10 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/teacher/calendar/page.tsx
 - Legacy: Clicking calendar event client-pushes course path with encoded slug/ref (`docs/legacy-source/frontend/src/components/CalendarComp/ClassScheduleContent.jsx:64-80`)
 - Expected fix: Preserve correct user navigation for course-level sessions and handle general sessions explicitly.
+
+## Lane-16 FAST verification triage (2026-10-22)
+
+- OK G2-4-028-010 — `tpo/messages/page.tsx` renders `TpoMessagesTabs` for recruiter and team panels; team panel is selected with `selected="team"` and recruiter panel uses `selected="recruiters"`. Tab component behavior still merits regression coverage.
+- OK G2-13-031-041 — `hiringFunnel` returns `percentPrevious: null` when preceding stage is zero, avoiding an invalid conversion rate.
+- OK G2-5-011-038 — teacher calendar links course deliveries to encoded `/teacher/courses/{deliveryId}/home` and renders section-wide sessions without inventing course navigation.
+- DEFERRED — remaining 22 rows require deeper server-side authorization, persistence, migration, query reconciliation, or UI-flow validation; no implementation parity claimed.
