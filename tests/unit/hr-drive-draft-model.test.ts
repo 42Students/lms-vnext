@@ -24,6 +24,21 @@ describe("HR recruiter Request Drive draft preview", () => {
     expect(hrDriveDraftSchema.safeParse(draft).success).toBe(true);
   });
 
+  it("keeps existing zero-round drives optional and preserves all authorized process rows",()=>{
+    const job={
+      title:"Graduate Engineer",description:"Legacy employer round mapping.",
+      locations:["Hyderabad"],employmentType:"FULL_TIME",workMode:"HYBRID",
+      minimumAnnualCtcInr:500000,maximumAnnualCtcInr:750000,
+    };
+    const empty=hrDraftFromAuthorizedJob(job,[]);
+    expect(empty.rounds).toEqual([]);
+    expect(hrDriveDraftSchema.safeParse({...empty,ctcLpa:"10"}).success).toBe(true);
+    const source=Array.from({length:13},(_,index)=>({kind:"INTERVIEW",name:"Round "+(index+1)}));
+    const repeated=hrDraftFromAuthorizedJob(job,source);
+    expect(repeated.rounds).toHaveLength(13);
+    expect(repeated.rounds[12]?.name).toBe("Round 13");
+  });
+
   it("requires valid input and rejects inverted CTC", () => {
     const draft = emptyHrDriveDraft();
     expect(hrDriveDraftSchema.safeParse(draft).success).toBe(false);

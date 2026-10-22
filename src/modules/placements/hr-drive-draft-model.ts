@@ -216,7 +216,10 @@ export function hrDraftFromAuthorizedJob(job: {
     stipendMonthlyInr:job.stipendPerMonthInr?.toString()??"",
     minimumAnnualCtcInr: job.minimumAnnualCtcInr?.toString() ?? "",
     maximumAnnualCtcInr: job.maximumAnnualCtcInr?.toString() ?? "",
-    rounds: validRounds.length ? validRounds.slice(0, 12) : base.rounds,
+    // An authorized job with no process rounds stays round-free. Do not
+    // invent an Interview round when cloning an existing legacy drive.
+    // A NEW draft still offers one editable Interview row by default.
+    rounds: validRounds.slice(0, HR_DRIVE_ROUND_LIMIT),
   };
 }
 
