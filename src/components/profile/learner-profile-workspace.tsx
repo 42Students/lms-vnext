@@ -380,9 +380,9 @@ export function LearnerProfileWorkspace(props: {
 
   async function saveContacts() {
     if (contactPending) return;
-    const alternate=contactDraft.alternatePhone.replace(/\D/g,"");
+    const alternate=contactDraft.alternatePhone.trim();
     const primary=(props.primaryPhone??"").replace(/\D/g,"").slice(-10);
-    if(alternate&&(alternate.length<10||alternate.length>15)){
+    if(alternate&&!/^\d{10,15}$/.test(alternate)){
       setContactError("Alternate phone number must be 10 to 15 digits");
       return;
     }
