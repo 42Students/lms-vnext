@@ -39,7 +39,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       {showHeader ? <PageHeader
         title={title}
-        description={lessons ? undefined : COLLEGE_COURSE_TAB_COPY.progressDescription}
+        {...(!lessons ? {description:COLLEGE_COURSE_TAB_COPY.progressDescription} : {})}
         actions={
           <Link href="/college/courses"
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
