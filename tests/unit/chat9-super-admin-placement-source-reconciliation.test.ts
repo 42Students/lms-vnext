@@ -8,6 +8,13 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
   for(const word of ['title="Placement Drives"',"Run active hiring drives from one operational view","Select a college to continue","Choose a college in the header to manage its drives."])
    expect(s).toContain(word);
  });
+ it("SA-placements-projects-04 keeps placement directory actions readable on teal hover and active",()=>{
+  const page=source("src/app/(authenticated)/admin/placements/page.tsx");
+  expect(page).toContain("hover:bg-[var(--lms-primary)] hover:text-[var(--lms-on-primary)]");
+  expect(page).toContain("active:bg-[var(--lms-primary-hover)] active:text-[var(--lms-on-primary)]");
+  expect(page).not.toContain("hover:text-white");
+  expect(page).not.toContain("active:text-white");
+ });
  it("SA-placements-projects-15 guards unsaved changes on create and edit while preserving draft text",()=>{
   const create=source("src/components/placements/placement-job-create-form.tsx");
   const edit=source("src/components/placements/placement-draft-edit-form.tsx");
