@@ -1,7 +1,8 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection} from "@/db/client";
+import {closeDatabaseConnection,getDb} from "@/db/client";
+import {placementJobEligibilityPolicies} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {createPlacementRound} from "@/modules/placements/round-service";
@@ -23,6 +24,9 @@ describe.skipIf(!enabled)("HR round table non-enumeration PG",()=>{
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,
    title:"Round Review "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
   const round=await createPlacementRound(tpo,job.id,{kind:"TEST",name:"Aptitude"});
+  await getDb().insert(placementJobEligibilityPolicies).values({
+   jobId:job.id,updatedByUserId:tpo.user.id,
+  });
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,relation:string,collegeId:string):RequestContext=>({
