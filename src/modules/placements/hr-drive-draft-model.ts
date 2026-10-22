@@ -269,7 +269,7 @@ export function normalizedLegacyHrPackagePay(input:{
  let ctcInr:number|null=null;
  if(ctc){
   const [whole,fraction=""]=ctc.split(".");
-  const units=BigInt(whole)*10_000n+BigInt(fraction.padEnd(4,"0"));
+  const units=BigInt(whole ?? "")*10_000n+BigInt(fraction.padEnd(4,"0"));
   const rupees=(units*100000n+5000n)/10000n;
   if(rupees>2147483647n)throw new Error("CTC exceeds storage capacity");
   ctcInr=Number(rupees);
