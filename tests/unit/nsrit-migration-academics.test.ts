@@ -371,12 +371,16 @@ describe("buildAcademicsPlan on a synthetic snapshot", () => {
   it("loads quiz attempts as SUBMITTED history with prompt and option snapshots", () => {
     expect(plan.attempts).toHaveLength(1);
     expect(rejected(plan, "quiz_attempt")).toEqual({ LEARNER_NOT_IN_SECTION: 1, LEARNER_NOT_ACTIVE: 1, UNKNOWN_ENUM: 1 });
-    expect(plan.answers).toHaveLength(2);
-    const multi = plan.answers.find((a) => a.legacyId === "701")!.data;
-    expect(multi.questionType).toBe("MULTIPLE_CHOICE");
-    expect(multi.selectedOptionIds).toHaveLength(2); // option 9999 does not exist and is dropped, counted
-    expect(multi.optionsSnapshot.map((o) => o.text)).toEqual(["C", "D", "E"]);
-    expect(multi.promptSnapshot).toBe("Pick two");
+    expect(plan.answers).toHaveLength(1);
+    const answer = plan.answers[0].data;
+    expect(answer.questionType).toBe("SINGLE_CHOICE");
+    expect(answer.selectedOptionIds).toHaveLength(1);
+    expect(answer.optionsSnapshot.map((o) => o.text)).toEqual(["A", "B"]);
+    expect(answer.promptSnapshot).toBe("Pick one");
+    // A dangling selected option must quarantine the whole multiple-choice
+    // answer, rather than silently rewrite history as a partial response.
+    expect(plan.answers.some((a) => a.legacyId === "701")).toBe(false);
+    expect(rejected(plan, "quiz_answer")).toEqual({PARENT_REJECTED:1});
     expect(plan.notes.answerOptionIdsUnresolved).toBe(1);
   });
 
