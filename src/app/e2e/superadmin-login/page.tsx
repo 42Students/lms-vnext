@@ -16,9 +16,9 @@ export default async function LegacySuperAdminE2ELoginPage({
   const raw = await searchParams;
   // Retain the bookmark for legacy test harnesses without allowing a phone
   // query parameter to authorize or construct a session.
-  const providedPhone = typeof raw.phone === "string" && raw.phone.trim().length > 0;
+  const providedPhone = typeof raw["phone"] === "string" && raw["phone"].trim().length > 0;
   let devVerifiedSuperAdmin = false;
-  if (process.env.NODE_ENV === "development" && process.env.E2E_AUTH_ENABLED === "true") {
+  if (process.env.NODE_ENV === "development" && process.env["E2E_AUTH_ENABLED"] === "true") {
     try {
       devVerifiedSuperAdmin = isSuperAdmin(await getCurrentRequestContext());
     } catch {
