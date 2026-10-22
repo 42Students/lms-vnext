@@ -67,7 +67,7 @@ describe("College Admin program write contracts", () => {
     })).toBe(true);
     expect(hasUnsavedCollegeProgramEdit(saved, {
       name: "B.Tech CSE ", code: "CSE", durationTerms: "8",
-    })).toBe(true);
+    })).toBe(false); // Normalized whitespace is not an unsaved semantic change.
   });
 
   it("prohibits reducing duration below real referenced curriculum/progression", () => {
