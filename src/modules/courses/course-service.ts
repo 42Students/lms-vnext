@@ -489,14 +489,20 @@ export async function updateCourse(
         input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 64),
         courseId,
       );
-      const { expectedUpdatedAt, ...changes } = input;
+      // The old LMS has independent enabled and allowedForDisplay values.
+      // A student-visibility toggle cannot silently disable or archive content.
+      const { expectedUpdatedAt, visibleToStudents, ...changes } = input;
       const [updated] = await tx
       .update(courses)
       .set({
         ...changes,
-        ...(input.enabled===undefined?{}:{
-          legacyAllowedForDisplay:input.enabled?1:0,
-        }),
+        ...(visibleToStudents!==undefined
+          ?{legacyAllowedForDisplay:visibleToStudents?1:0}
+          :input.enabled===undefined?{}:{
+            // Retain legacy PATCH enabled compatibility for older callers;
+            // the dedicated student-visibility action uses only the flag above.
+            legacyAllowedForDisplay:input.enabled?1:0,
+          }),
         version: sql<number>`${courses.version} + 1`,
         // The persisted token MUST advance even for two edits within one
         // millisecond (or across app/DB clocks). The browser sends this exact
