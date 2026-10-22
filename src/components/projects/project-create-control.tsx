@@ -605,7 +605,7 @@ export function CreateProjectControl({
   return (
     <>
       {!standalone ? (
-        <Button size="sm" onClick={openDialog}>
+        <Button size="sm" aria-haspopup="dialog" aria-expanded={open} onClick={openDialog}>
           {basePath.startsWith("/admin/")?"Create Project":"Create workspace"}
         </Button>
       ) : null}
