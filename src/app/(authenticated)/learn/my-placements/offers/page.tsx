@@ -82,7 +82,10 @@ export default async function LearnerOffersPage({
     readOptionalLearnerAlertSource(()=>listOwnPlacementRequests(context)),
     getOwnLearnerPlacementRulesView(context,{from:"offers"})
       .then(value=>({available:true as const,value}))
-      .catch(()=>({available:false as const,value:null})),
+      .catch((error:unknown)=>{
+        if(error instanceof AuthorizationError)throw error;
+        return {available:false as const,value:null};
+      }),
   ]);
   if(offers===null){
     // A scoped read failed: do not turn a failed request into an empty inbox.
