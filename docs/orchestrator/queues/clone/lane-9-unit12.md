@@ -4,7 +4,7 @@ CI run 39840114517 on main (06b36804), the LATEST run failed these unit tests. T
 
 - [x] `tests/unit/UX-teacher-shared-surfaces.test.ts` (1 failing) — branch commit b3ed411: checks semantic summary's inline 44px minimum and focus styling, not obsolete Tailwind class.
 - [x] `tests/unit/chat5-tpo-second-third-remaining-workflows.test.ts` (1 failing) — branch commit 075b644: checks canonical published-to-closed transition table and service guard.
-- [ ] `tests/unit/tpo-recruiters-13-invite-readiness.test.ts` (1 failing) — the branch currently contains both guards before credential rotation; main removed company guard, so reconciliation onto main is still needed.
+- [x] `tests/unit/tpo-recruiters-13-invite-readiness.test.ts` (1 failing) — branch `src/modules/placements/tpo-recruiter-invite-service.ts` already requires both normalized work email and linked company before credential rotation; verified against the failing assertion. Main must retain this guard when merged.
 
 ## Failures (from CI log)
 
@@ -70,4 +70,4 @@ AssertionError: expected -1 to be greater than -1
 
 Record each result under ## Results in the deep packet named next to the row: OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
 
-- [ ] G2-2-006-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md; record in: docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md)
+- [x] G2-2-006-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md; record in: docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md)
