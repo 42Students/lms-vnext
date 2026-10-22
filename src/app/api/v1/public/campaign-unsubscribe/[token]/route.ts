@@ -16,6 +16,10 @@ export async function POST(request:Request,{params}:Ctx){
    // Legacy public links are idempotent: a revoked recipient is
    // indistinguishable from an already completed opt-out.
    // Storage/provider failures still propagate: never claim a write then.
+   if(error instanceof Error&&error.message==="TPO_CAMPAIGNS_NOT_REGISTERED")
+    return NextResponse.json({error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again."},{
+     status:503,headers:{"Cache-Control":"no-store"},
+    });
    if(!(error instanceof CampaignUnsubscribeInvalid))throw error;
   }
  }
