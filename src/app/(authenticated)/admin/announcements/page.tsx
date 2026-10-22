@@ -251,6 +251,12 @@ export default async function AnnouncementsPage({
           This feed shows one authorized page at a time. Continue to Older announcements below to see earlier placement-cell broadcasts.
         </p> : null}
       </section>
+      <div className="flex flex-wrap items-center gap-3">
+        <Link href="/admin/announcements/delivery" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">
+          Notification delivery history
+        </Link>
+        <p className="text-xs text-muted-foreground">Review persisted delivery status for the selected college. Delivery controls are available only when the delivery workflow is enabled.</p>
+      </div>
       <section aria-label="Announcement management" className="min-w-0 space-y-4 border-t border-border pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div><h2 className="m-0 text-lg font-semibold text-foreground">Announcement management</h2>
