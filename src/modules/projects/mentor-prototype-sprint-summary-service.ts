@@ -1,5 +1,5 @@
 import "server-only";
-import {and,count,eq,inArray,isNull,sql} from "drizzle-orm";
+import {and,count,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectSprints} from "@/db/schema/projects";
 import type {RequestContext} from "@/modules/identity/context";
