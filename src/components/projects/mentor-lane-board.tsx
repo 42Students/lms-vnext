@@ -24,7 +24,7 @@ import {BoardColumn} from "@/components/ui/board-column";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
-type Sprint={id:string;title:string;status:string;releaseId:string;updatedAt:Date};
+type Sprint={id:string;title:string;status:string;releaseId:string;updatedAt:Date;sequence:number};
 type Release={id:string;title:string;status:string};
 type Person={membershipId:string;displayName:string|null;role:string};
 type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;updatedAt:Date;submittedByMembershipId?:string|null};
@@ -101,6 +101,14 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    ? [...taskSubmissions].filter(row=>row.taskId===focused.id&&row.status==="SUBMITTED")
      .sort((a,b)=>b.version-a.version)[0]??null
    : null;
+ const sprintListGroups=[
+   ...[...sprints].sort((a,b)=>a.sequence-b.sequence).map(row=>({
+     id:row.id,title:"Sprint "+row.sequence+" · "+row.title,
+     status:row.status,tasks:visible.filter(task=>task.sprintId===row.id),
+   })),
+   {id:"BACKLOG",title:"Product backlog · not in a sprint",
+     status:"BACKLOG",tasks:visible.filter(task=>task.sprintId===null)},
+ ].filter(group=>group.tasks.length>0);
  const lanes=groupLearnerBoardLanes(visible,sprints);
  const activeFilterCount=[release,sprint,priority,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
  async function move(id:string,status:string,isUndo=false){
@@ -327,7 +335,13 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     <div className="prototype-mentor-board-list-heading" aria-hidden="true">
       <span>Task</span><span>Assignee</span><span>Sprint</span><span>State</span><span>Points</span>
     </div>
-    {visible.map(task=>{
+    {sprintListGroups.map(group=><details key={group.id}
+      className="prototype-mentor-board-sprint-group" open={group.status==="ACTIVE"}>
+      <summary>
+        <strong>{group.title}</strong>
+        <span>{group.tasks.length} tasks · {group.status.replaceAll("_"," ")}</span>
+      </summary>
+      {group.tasks.map(task=>{
       const rowSprint=task.sprintId?bySprint.get(task.sprintId):null;
       const canMove=!readOnly&&!busy&&rowSprint?.status==="ACTIVE"&&
         editable.includes(task.status as typeof editable[number]);
@@ -343,6 +357,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <span>{task.estimatePoints??"—"}</span>
       </div>;
     })}
+    </details>)}
   </div>:null}
   <aside className="prototype-mentor-board-detail" aria-label="Selected task details">
     {focused?<>
