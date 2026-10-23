@@ -35,7 +35,7 @@ export function MentorPrototypeSprintPlan({workspace}:{workspace:Workspace}){
               key={sprint.id} className="prototype-mentor-sprint-bar"
               aria-label={"Sprint "+sprint.sequence+": "+completed+" of "+planned+" points done"}>
               <span className="prototype-mentor-bar-columns">
-                <span style={{height:Math.max(5,Math.round(100*planned/maxPts))+"%"}} className="prototype-mentor-bar-planned" />
+                <span style={{height:(planned?Math.max(5,Math.round(100*planned/maxPts)):0)+"%"}} className="prototype-mentor-bar-planned" />
                 <span style={{height:Math.max(0,Math.round(100*completed/maxPts))+"%"}} className="prototype-mentor-bar-done" />
               </span>
               <small>{sprint.sequence}</small>
@@ -144,9 +144,13 @@ export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}
   const now=new Date();
   const weekStart=now.getTime()-7*86400000;
   const recent=workspace.activity.filter(event=>event.occurredAt.getTime()>=weekStart);
-  const taskEvents=recent.filter(event=>/TASK/i.test(event.eventType)).length;
-  const resourceEvents=recent.filter(event=>/RESOURCE|FILE|LINK/i.test(event.eventType)).length;
-  const meetingEvents=recent.filter(event=>/MEETING/i.test(event.eventType)).length;
+  const classify=(type:string):"task"|"resource"|"meeting"|"other"=>
+    /TASK/i.test(type)?"task":/RESOURCE|FILE|LINK/i.test(type)?"resource":
+      /MEETING/i.test(type)?"meeting":"other";
+  const taskEvents=recent.filter(event=>classify(event.eventType)==="task").length;
+  const resourceEvents=recent.filter(event=>classify(event.eventType)==="resource").length;
+  const meetingEvents=recent.filter(event=>classify(event.eventType)==="meeting").length;
+  const otherEvents=recent.filter(event=>classify(event.eventType)==="other").length;
   return <section className="prototype-mentor-activity-summary" aria-label="Recorded activity this week">
     <div className="prototype-mentor-card-title">
       <h2>Project activity · last seven days</h2>
@@ -156,7 +160,7 @@ export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}
       <div><strong>{taskEvents}</strong><span>Task events</span></div>
       <div><strong>{meetingEvents}</strong><span>Meeting events</span></div>
       <div><strong>{resourceEvents}</strong><span>Resource events</span></div>
-      <div><strong>{recent.length-taskEvents-meetingEvents-resourceEvents<0?"—":recent.length-taskEvents-meetingEvents-resourceEvents}</strong><span>Other events</span></div>
+      <div><strong>{otherEvents}</strong><span>Other events</span></div>
     </div>
     <p>Use the activity filters below to browse the complete recorded history. Event counts are based on stored project activity types, not inferred actions.</p>
   </section>;
