@@ -1701,3 +1701,51 @@
     grid-template-columns:minmax(0,1fr);
   }
 }
+
+
+/* Mentor #53 final-submission evidence and review-history reference panels. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-artifacts,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-history{
+  border-top:1px solid #e7ecf2;padding:16px 18px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] :is(.prototype-mentor-delivery-artifacts,.prototype-mentor-delivery-history)>h3{
+  margin:0 0 12px;color:#5b6b82;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-artifacts>div{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-artifacts article{
+  display:flex;align-items:center;gap:10px;min-width:0;padding:12px;
+  border:1px solid #e7ecf2;border-radius:8px;background:#fbfcfd;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-artifacts article>span{
+  font-size:22px;color:#0a7c88;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-artifacts article>div{
+  display:flex;flex:1;min-width:0;flex-direction:column;gap:3px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-artifacts article strong{
+  color:#172033;font-size:12px;overflow-wrap:anywhere;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-artifacts article small{
+  color:#5b6b82;font-size:11px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-artifacts article a{
+  color:#0a7c88;font-size:11px;font-weight:700;white-space:nowrap;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-history ol{
+  display:flex;flex-direction:column;gap:0;margin:0;padding:0;list-style:none;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-history li{
+  display:flex;flex-wrap:wrap;gap:7px 16px;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid #f1f4f8;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-history li strong{
+  font-size:13px;color:#172033;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-history li span{
+  color:#5b6b82;font-size:12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-history li p{
+  flex-basis:100%;margin:0;color:#3b4a60;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;
+}
