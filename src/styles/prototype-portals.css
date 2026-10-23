@@ -1063,3 +1063,36 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-project-body :where(button,select,input,textarea) {
   font-family: Lato, Arial, sans-serif;
 }
+
+
+/* Mentor #45–56: desktop prototypes place search, bell and profile controls
+ * in the upper-right, without a separate 68px navigation bar taking space.
+ * Keep the actual authenticated widgets mounted and usable. On compact
+ * viewports retain the normal responsive topbar rather than overlapping.
+ */
+@media (min-width: 1200px) {
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-shell-page {
+    position: relative;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] {
+    position: absolute;
+    top: 12px;
+    right: 24px;
+    width: auto;
+    max-width: min(460px,calc(100% - 440px));
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    gap: 8px;
+    z-index: 30;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] > div {
+    min-width: 0;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] input {
+    font-family: Lato, Arial, sans-serif;
+  }
+}
