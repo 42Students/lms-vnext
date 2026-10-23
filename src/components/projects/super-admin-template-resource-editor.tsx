@@ -175,13 +175,13 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title *<Input value={row.title} required maxLength={200} aria-invalid={Boolean(rowErrors[i]?.length)} placeholder="e.g. Project brief"
       onChange={e=>changeTitle(i,e.target.value)} className={cls}/></label>
     <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Type<Select value={row.type??"LINK"}
-      onChange={e=>change(i,{type:e.target.value as Resource["type"]})} className={cls}>
+      onChange={e=>change(i,{type:e.target.value as NonNullable<Resource["type"]>})} className={cls}>
       {(["LINK","PDF","DOCUMENT","SLIDES","VIDEO","FILE"] as const).map(v=><option key={v} value={v}>
        {({LINK:"Link",PDF:"PDF",DOCUMENT:"Document",SLIDES:"Slides",VIDEO:"Video",FILE:"File"} as const)[v]}
       </option>)}
     </Select></label>
     <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select value={row.status??"ACTIVE"}
-      onChange={e=>change(i,{status:e.target.value as Resource["status"]})} className={cls}>
+      onChange={e=>change(i,{status:e.target.value as NonNullable<Resource["status"]>})} className={cls}>
       {["ACTIVE","DRAFT","ARCHIVED"].map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
     <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">URL (for a Link)<Input value={row.url??""}

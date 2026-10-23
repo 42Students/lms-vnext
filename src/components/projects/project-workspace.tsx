@@ -652,7 +652,8 @@ export function ProjectWorkspace({
       {polishAdminSection && mode==="ADMIN"?<PageBackLink href={backHref} label={backLabel} />:null}
 
       {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} section={activeSection}
-          backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
+          {...(mode==="ADMIN"&&!polishAdminSection&&backHref!==undefined?{backHref}:{})}
+          {...(backLabel!==undefined?{backLabel}:{})} /> : null}
       {mode === "ADMIN" ? (
         <Breadcrumbs items={[
           { label: "Projects", ...(sectionBaseHref ? { href: sectionBaseHref.replace(/\/[^/]+$/, "") } : backHref ? { href: backHref } : {}) },
@@ -1090,7 +1091,10 @@ export function ProjectWorkspace({
           {mode==="ADMIN"&&!readOnly
             ?<CollegeProjectMentorDialog projectId={workspace.project.id}
               collegeId={workspace.project.collegeId}
-              {...(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName === undefined ? {} : {currentMentorName:workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName})}/>
+              {...(() => {
+                const mentorName=workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName;
+                return mentorName===undefined?{}:{currentMentorName:mentorName};
+              })()}/>
             :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Reassign mentor…</Button>:null}
           {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId
             ?<CollegeProjectStudentRosterDialog projectId={workspace.project.id}
