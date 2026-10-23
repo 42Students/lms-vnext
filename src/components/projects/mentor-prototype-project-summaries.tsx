@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
+import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
 type ProjectTask=Workspace["tasks"][number];
@@ -171,6 +172,8 @@ export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}
 export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace}){
   const latest=workspace.finalDelivery.submissions.at(-1);
   const review=workspace.finalDelivery.reviews.at(-1);
+  const source=latest?.sourceUrl?safeProjectExternalHref(latest.sourceUrl):null;
+  const demo=latest?.demoUrl?safeProjectExternalHref(latest.demoUrl):null;
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
   return <section className="prototype-mentor-delivery-evidence" aria-label="Final submission evidence">
     <div className="prototype-mentor-card-title">
@@ -184,8 +187,8 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         {latest.notes?<p className="prototype-mentor-delivery-notes">{latest.notes}</p>:null}
       </div>
       <div className="prototype-mentor-delivery-links">
-        {latest.sourceUrl?<a href={latest.sourceUrl} rel="noopener noreferrer" target="_blank">Source repository ↗</a>:null}
-        {latest.demoUrl?<a href={latest.demoUrl} rel="noopener noreferrer" target="_blank">Demo ↗</a>:null}
+        {source?<a href={source} rel="noopener noreferrer" target="_blank">Source repository ↗</a>:null}
+        {demo?<a href={demo} rel="noopener noreferrer" target="_blank">Demo ↗</a>:null}
         <Link href={base+"?tab=delivery"}>Review on this page ↓</Link>
       </div>
     </div>:<p className="prototype-mentor-summary-empty">No final submission has been recorded for this project yet.</p>}
