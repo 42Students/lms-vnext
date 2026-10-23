@@ -1603,3 +1603,23 @@
     grid-template-columns:minmax(0,1fr);
   }
 }
+
+
+/* Mentor #55: real server-filtered category tabs from prototype. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notification-pills{
+  display:flex;align-items:center;flex-wrap:wrap;gap:6px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notification-pills>a{
+  display:inline-flex;min-height:34px;align-items:center;justify-content:center;
+  border:1px solid #d6e1ee;border-radius:999px;padding:4px 13px;background:#fff;
+  color:#5b6b82;font:700 12px Lato,Arial,sans-serif;text-decoration:none;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notification-pills>a:hover{
+  border-color:#0a7c88;background:#eff8fa;color:#086670;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notification-pills>a[aria-current="page"]{
+  border-color:#0a7c88;background:#eff8fa;color:#0a7c88;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-unread-note{
+  margin:0;font-size:12px;color:#5b6b82;line-height:1.5;
+}
