@@ -201,3 +201,59 @@ test("Mentor Notifications pills filter real source categories and unread pagina
   assert.match(page,/<AnnouncementFeed enabled=\{announcementsEnabled\}/);
   assert.match(css,/prototype-mentor-notification-pills>a\[aria-current="page"\]/);
 });
+
+
+test("Mentor Board reviews latest submitted task with server CAS and guarded A/S shortcuts",()=>{
+  const board=source("src/components/projects/mentor-lane-board.tsx");
+  const actions=source("src/components/projects/project-lifecycle-actions.tsx");
+  assert.match(board,/task\.status==="IN_REVIEW"/);
+  assert.match(board,/row\.status==="SUBMITTED"/);
+  assert.match(board,/submittedReview\.updatedAt/);
+  assert.match(board,/initialDecision="APPROVED" triggerLabel="Approve A" shortcut="a"/);
+  assert.match(board,/initialDecision="CHANGES_REQUESTED" triggerLabel="Send back S" shortcut="s"/);
+  assert.match(board,/event\.key\.toLowerCase\(\)/);
+  assert.match(actions,/initialDecision\?:"APPROVED"\|"CHANGES_REQUESTED"/);
+  assert.match(actions,/document\.querySelector\('\[role="dialog"\]'\)/);
+  assert.match(actions,/expectedUpdatedAt,confirmed:true/);
+});
+
+test("Mentor posted Activity updates are persisted in scoped project events and Overview",()=>{
+  const taxonomy=source("src/modules/activity/taxonomy.ts");
+  const service=source("src/modules/projects/mentor-project-update-service.ts");
+  const route=source("src/app/api/projects/[projectId]/mentor-updates/route.ts");
+  const composer=source("src/components/projects/mentor-project-update-composer.tsx");
+  const detail=source("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
+  const overview=source("src/components/projects/mentor-prototype-project-summaries.tsx");
+  assert.match(taxonomy,/PROJECTS_MENTOR_UPDATE_POSTED/);
+  assert.match(service,/requireProjectLifecycleMutationAccess/);
+  assert.match(service,/access\.access!=="MENTOR"\|\|access\.project\.status!=="ACTIVE"/);
+  assert.match(service,/eventType:ACTIVITY_EVENT_TYPES\.PROJECTS_MENTOR_UPDATE_POSTED/);
+  assert.match(route,/export async function POST/);
+  assert.match(route,/raw\.length>4096/);
+  assert.match(route,/postMentorProjectUpdate\(/);
+  assert.match(composer,/projectMutation\("\/api\/projects\/"/);
+  assert.match(detail,/<MentorProjectUpdateComposer/);
+  assert.match(overview,/event\.eventType==="projects\.mentor_update\.posted"/);
+});
+
+test("Mentor sprint release controls and learner-facing brief derive from existing schema",()=>{
+  const detail=source("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
+  const summaries=source("src/components/projects/mentor-prototype-project-summaries.tsx");
+  assert.match(detail,/<MentorPrototypeProjectBrief workspace=\{workspace\}/);
+  assert.match(detail,/<MentorPrototypeSprintPlan workspace=\{workspace\} readOnly=/);
+  assert.match(summaries,/workspace\.project\.authoredBrief/);
+  assert.match(summaries,/completionConditions/);
+  assert.match(summaries,/<SprintLifecycleActions/);
+  assert.match(summaries,/<ReleaseLifecycleActions/);
+  assert.match(summaries,/workspace\.finalDelivery\.history/);
+  assert.match(summaries,/safeProjectExternalHref\(url\)/);
+});
+
+test("Mentor Meetings display existing meeting notes and request workflows",()=>{
+  const calendar=source("src/components/projects/mentor-meetings-calendar.tsx");
+  assert.match(calendar,/meeting\.status==="COMPLETED"/);
+  assert.match(calendar,/\/meetings\/".+encodeURIComponent\(meeting\.id\)\+"\/notes"/);
+  assert.match(calendar,/meeting\.status==="REQUESTED"/);
+  assert.match(calendar,/\/team-meetings/);
+  assert.match(calendar,/downloadMeetingCalendar\(meeting\)/);
+});
