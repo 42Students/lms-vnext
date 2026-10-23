@@ -1077,7 +1077,9 @@ export async function listMyProjectInstancesLegacyPage(
     ![10,25,50].includes(size)||query.search&&query.search.length>100)
    throw new ProjectsServiceError("PROJECT_INVALID_STATE");
  const page=await listMyLearnerProjectPage(context,{
-  search:query.search,status:query.status,attention:query.attention,
+  ...(query.search !== undefined ? {search:query.search} : {}),
+   ...(query.status !== undefined ? {status:query.status} : {}),
+   ...(query.attention !== undefined ? {attention:query.attention} : {}),
   page:page0+1,pageSize:size,
  });
  return {

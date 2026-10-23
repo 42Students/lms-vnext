@@ -65,8 +65,9 @@ export async function preflightLegacyProjectCreateIds(
      inArray(legacyIdMap.newEntityType,[...destinationTypes[entry.kind]]),
      eq(legacyIdMap.legacyId,String(entry.id)),
     )).limit(3);
-   if(rows.length!==1)throw new ProjectsServiceError("PROJECT_INVALID_STATE");
-   byKey.set(entry.kind+":"+entry.id,rows[0].id);
+   const [mapping]=rows;
+   if(rows.length!==1||!mapping)throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+   byKey.set(entry.kind+":"+entry.id,mapping.id);
   }
   const mapped=(kind:Kind,id:number)=>byKey.get(kind+":"+id)!;
   const templateId=mapped("template",raw.templateId);

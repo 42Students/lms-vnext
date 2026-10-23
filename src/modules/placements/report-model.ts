@@ -431,10 +431,10 @@ export function summarizePlacementReports(
   const countsAt = input.countsAsPlacedAt ?? "OFFER_ACCEPTED";
   const offerCounts = (offer: PlacementReportOffer) => countsAsPlacedByCollegeRule({
     employmentType: jobsById.get(offer.jobId)?.employmentType ?? "",
-    countsAsPlaced: jobsById.get(offer.jobId)?.countsAsPlaced,
+    ...(jobsById.get(offer.jobId)?.countsAsPlaced !== undefined ? {countsAsPlaced: jobsById.get(offer.jobId)?.countsAsPlaced} : {}),
     offerStatus: offer.status,
-    offerKind: offer.kind,
-    releasedAt: offer.releasedAt,
+    ...(offer.kind !== undefined ? {offerKind: offer.kind} : {}),
+    ...(offer.releasedAt !== undefined ? {releasedAt: offer.releasedAt} : {}),
     countsAsPlacedAt: countsAt,
   });
   const studentsPlaced = distinct(countsAt === "SELECTED"
@@ -594,7 +594,7 @@ export function summarizePlacementReports(
       title: job.title,
       companyName: job.companyName,
       employmentType: job.employmentType,
-      jobTypeLabel:job.jobTypeLabel,
+      ...(job.jobTypeLabel !== undefined ? {jobTypeLabel:job.jobTypeLabel} : {}),
       applicants: distinct(
         jobApplications.map((application) => application.membershipId),
       ).length,
@@ -927,10 +927,10 @@ export function summarizePlacementReportDetails(input: {
       : offers
           .filter((offer) => countsAsPlacedByCollegeRule({
             employmentType: offer.employmentType,
-            countsAsPlaced: offer.countsAsPlaced,
+            ...(offer.countsAsPlaced !== undefined ? {countsAsPlaced: offer.countsAsPlaced} : {}),
             offerStatus: offer.status,
-            offerKind: offer.kind,
-            releasedAt: offer.releasedAt,
+            ...(offer.kind !== undefined ? {offerKind: offer.kind} : {}),
+            ...(offer.releasedAt !== undefined ? {releasedAt: offer.releasedAt} : {}),
             countsAsPlacedAt: input.countsAsPlacedAt ?? "OFFER_ACCEPTED",
           }))
           .map((offer) => offer.membershipId),

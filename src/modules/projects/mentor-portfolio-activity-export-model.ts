@@ -2,7 +2,8 @@ import {csvSafeCell} from "./mentor-board-review-model";
 import {mentorPortfolioHref,type MentorActivityQuery} from "./mentor-portfolio-model";
 
 export function mentorPortfolioActivityExportHref(query:MentorActivityQuery) {
- const pageHref=mentorPortfolioHref("activity",{...query,page:1,pageSize:20});
+ const {projectId,...filters}=query;
+ const pageHref=mentorPortfolioHref("activity",{...filters,...(projectId !== undefined ? {projectId} : {}),page:1,pageSize:20});
  const suffix=pageHref.includes("?")?pageHref.slice(pageHref.indexOf("?")):"";
  return "/api/mentor/activity/export"+suffix;
 }
