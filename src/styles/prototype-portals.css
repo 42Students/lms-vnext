@@ -1387,3 +1387,104 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-review-reasons button[aria-pressed="true"] {
   border-color:#b42318;background:#fef3f2;
 }
+
+
+/* Mentor #47: the uploaded 47-mentor-template.html uses six lanes,
+ * repeat(6,minmax(132px,1fr)), gap 10px, compact grey 12px-radius columns
+ * and flat white 8px-radius cards. This overrides legacy production
+ * 320px-wide gradient columns ONLY inside the mentor board workspace. */
+@media (min-width: 768px) {
+  .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board
+  [aria-label="Project task board; scroll sideways to see more status columns"] > div {
+    display: grid !important;
+    grid-template-columns: repeat(6,minmax(132px,1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-width: 830px !important;
+    align-items: start;
+  }
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-lane,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-lane:hover {
+  flex: 1 1 132px !important;
+  min-width: 132px !important;
+  width: auto !important;
+  max-width: none !important;
+  min-height: 200px;
+  display: flex !important;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px !important;
+  background: #eef2f6 !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-lane:first-child {
+  background: #fff !important;
+  border: 1px dashed #d6e1ee !important;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-lane:nth-child(4) {
+  background: #fff4dd !important;
+  outline: 2px solid #f4d9a8;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-lane-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 0;
+  padding: 2px 4px !important;
+  border: 0 !important;
+  color: #3b4a60;
+  font-size: 12px !important;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-lane ul {
+  margin: 0;
+  padding: 0 !important;
+  max-height: min(70vh,780px);
+  overflow-y: auto;
+  gap: 6px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-task,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-task:hover {
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 8px 10px !important;
+  background: #fff !important;
+  border: 1px solid #e7ecf2 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+  color: #172033;
+  font: 13px/1.45 Lato,Arial,sans-serif;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-task:hover {
+  border-color: #0a7c88 !important;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-task :where(button,p,label,select) {
+  font-size: 12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-task > button:first-child {
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  justify-content: flex-start;
+  color: #172033;
+  font-size: 13px;
+  font-weight: 700;
+}
+@media (max-width: 767px) {
+  .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-lane {
+    flex: 0 0 82% !important;
+    width: 82% !important;
+    min-width: 0 !important;
+    scroll-snap-align: start;
+  }
+}
