@@ -647,8 +647,8 @@ export function ProjectWorkspace({
   );
 
   return (
-    <div className={polishAdminSection && mode==="ADMIN" ? "min-w-0 space-y-4" : "min-w-0 space-y-4 md:space-y-6"}>
-      {mode!=="ADMIN"?<PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />:null}
+    <div className={mode==="MENTOR" ? "prototype-mentor-project-body min-w-0 space-y-4" : polishAdminSection && mode==="ADMIN" ? "min-w-0 space-y-4" : "min-w-0 space-y-4 md:space-y-6"}>
+      {mode!=="ADMIN" && !(mode==="MENTOR" && hidePageHeader)?<PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />:null}
       {polishAdminSection && mode==="ADMIN"?<PageBackLink href={backHref} label={backLabel} />:null}
 
       {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} section={activeSection}
