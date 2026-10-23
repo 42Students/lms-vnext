@@ -101,3 +101,41 @@ test("Mentor table milestones come from scoped nondeleted sprint and task record
   assert.match(list,/sprintSeries\.slice\(0,32\)/);
   assert.match(list,/taskSummary/);
 });
+
+
+test("Mentor Board provides real keyboard-accessible Board/List controls and task details",()=>{
+  const src=source("src/components/projects/mentor-lane-board.tsx");
+  assert.match(src,/view,setView/);
+  assert.match(src,/aria-label="Task presentation"/);
+  assert.match(src,/aria-pressed=\{view==="board"\}/);
+  assert.match(src,/aria-pressed=\{view==="list"\}/);
+  assert.match(src,/visible\.map\(task=>/);
+  assert.match(src,/setSelected\(task\.id\)/);
+  assert.match(src,/MentorBoardTaskDetailDialog/);
+  assert.match(src,/projectMutation/);
+});
+
+test("Mentor detail route integrates substantive Overview, Sprints, Team, Performance, Activity and Delivery sections",()=>{
+  const detail=source("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
+  const summaries=source("src/components/projects/mentor-prototype-project-summaries.tsx");
+  for(const name of ["MentorPrototypeProjectOverview","MentorPrototypeSprintPlan",
+    "MentorPrototypeTeamOverview","MentorPrototypePerformance",
+    "MentorPrototypeActivitySummary","MentorPrototypeDeliveryEvidence"]){
+    assert.match(detail,new RegExp("<"+name+" workspace="));
+    assert.match(summaries,new RegExp("export function "+name+"\\("));
+  }
+  assert.match(summaries,/safeProjectExternalHref\(latest\.sourceUrl\)/);
+  assert.match(summaries,/safeProjectExternalHref\(latest\.demoUrl\)/);
+  assert.match(summaries,/sprints\.filter\(sprint=>sprint\.status==="COMPLETED"\)/);
+  assert.match(summaries,/countTasks\(owned,"IN_REVIEW"\)/);
+});
+
+test("Mentor resource earlier-sprint grouping preserves manager filters",()=>{
+  const resources=source("src/components/projects/project-resource-list.tsx");
+  const workspace=source("src/components/projects/project-workspace.tsx");
+  assert.match(resources,/mode==="MENTOR"&&earlierCount>0/);
+  assert.match(resources,/earlierSprintIds/);
+  assert.match(resources,/showEarlier,setShowEarlier/);
+  assert.match(workspace,/label:item\.title,status:item\.status/);
+  assert.match(resources,/status==="ACTIVE"/);
+});
