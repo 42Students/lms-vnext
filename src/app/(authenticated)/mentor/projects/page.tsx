@@ -15,6 +15,7 @@ import {
   ProjectParticipantListControls,
   ProjectParticipantPagination,
 } from "@/components/projects/project-participant-list-controls";
+import { MentorPrototypeHome } from "@/components/projects/mentor-prototype-home";
 import { ProjectList } from "@/components/projects/project-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { LoadingState } from "@/components/ui/loading-state";
@@ -268,9 +269,11 @@ export async function MentorProjectsContent({
 
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
-      <PageHeader
-        title="Projects"
-        description="Choose a project to open its workspace."
+      <MentorPrototypeHome
+        scope={context.user.id}
+        attention={attentionRows}
+        teamCount={allRows.filter(row=>row.memberRole==="MENTOR").length}
+        membershipCount={Array.from(teamSizes.values()).reduce((sum,count)=>sum+count,0)}
       />
 
       <ProjectParticipantListControls
