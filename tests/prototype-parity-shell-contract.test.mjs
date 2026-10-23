@@ -144,3 +144,39 @@ test("Mentor resource earlier-sprint grouping preserves manager filters",()=>{
   assert.match(workspace,/label:item\.title,status:item\.status/);
   assert.match(resources,/status==="ACTIVE"/);
 });
+
+
+test("Mentor Board prototype selected-task pane remains separate from the full dialog",()=>{
+  const board=source("src/components/projects/mentor-lane-board.tsx");
+  const styles=source("src/styles/prototype-portals.css");
+  assert.match(board,/prototype-mentor-board-with-pane/);
+  assert.match(board,/prototype-mentor-board-detail/);
+  assert.match(board,/focusedId,setFocusedId/);
+  assert.match(board,/onClick=\{\(\)=>setFocusedId\(task\.id\)\}/);
+  assert.match(board,/onClick=\{\(\)=>setSelected\(focused\.id\)\}/);
+  assert.match(board,/Find a task by title, type, description or assignee/);
+  assert.match(board,/ProjectTaskComments key=\{focused\.id\}/);
+  assert.match(styles,/grid-template-columns:minmax\(0,1fr\) minmax\(270px,312px\)/);
+});
+
+test("Mentor review uses actual decision field and editable reason shortcuts",()=>{
+  const summaries=source("src/components/projects/mentor-prototype-project-summaries.tsx");
+  const review=source("src/components/projects/project-final-delivery-controls.tsx");
+  assert.match(summaries,/review\.decision\.replaceAll/);
+  assert.doesNotMatch(summaries,/review\.status\.replaceAll/);
+  assert.match(review,/prototype-mentor-review-reasons/);
+  assert.match(review,/lines\.filter\(line=>line!==reason\)/);
+  assert.match(review,/expectedUpdatedAt/);
+});
+
+test("collapsed earlier sprint resources cannot be reordered invisibly",()=>{
+  const resources=source("src/components/projects/project-resource-list.tsx");
+  assert.match(resources,/mode==="MENTOR"&&!showEarlier&&sprints\.some/);
+  assert.match(resources,/setShowEarlier\(value=>!value\)/);
+});
+
+test("CI enforces prototype contracts alongside global source contracts",()=>{
+  const workflow=source(".github/workflows/ci.yml");
+  assert.match(workflow,/Prototype portal source contracts/);
+  assert.match(workflow,/node --test tests\/prototype-parity-shell-contract\.test\.mjs/);
+});
