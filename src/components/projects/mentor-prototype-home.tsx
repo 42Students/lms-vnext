@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
+import type {MentorStudentWatchItem} from "@/modules/projects/mentor-student-watch-service";
 
 type FocusItem = MentorProjectAttention;
 const MAX_SNOOZED = 100;
@@ -45,12 +46,13 @@ function readLater(key:string):string[] {
  * the item reappears automatically when the event timestamp changes.
  */
 export function MentorPrototypeHome({
-  scope, attention, teamCount, membershipCount,
+  scope, attention, teamCount, membershipCount,studentWatch,
 }:{
   scope:string;
   attention:readonly FocusItem[];
   teamCount:number;
   membershipCount:number;
+  studentWatch:readonly MentorStudentWatchItem[];
 }) {
   const [snoozed,setSnoozed]=useState<readonly string[]>([]);
   const [hydrated,setHydrated]=useState(false);
@@ -68,7 +70,7 @@ export function MentorPrototypeHome({
     : attention;
   const focus=active.slice(0,5);
   const meetings=attention.filter(item=>item.kind==="MEETING_SOON").slice(0,4);
-  const watch=attention.filter(item=>item.kind==="STALLED").slice(0,3);
+
   const later=(item:FocusItem)=>{
     const eventKey=item.key+"@"+item.occurredAt;
     const next=[...new Set([...snoozed,eventKey])].slice(-MAX_SNOOZED);
@@ -115,11 +117,23 @@ export function MentorPrototypeHome({
           </Link>):<p className="prototype-mentor-small-empty">No meetings in the next 48 hours. <Link href="/mentor/calendar">Open calendar</Link></p>}
         </section>
         <section className="prototype-mentor-small-card">
-          <div className="prototype-mentor-small-title"><strong>Projects to watch</strong></div>
-          {watch.length?watch.map(item=><Link href={item.href} className="prototype-mentor-small-row" key={item.key}>
-            <span>Needs a check-in</span><strong>{item.title}</strong>
-          </Link>):<p className="prototype-mentor-small-empty">No stalled projects in the current portfolio.</p>}
-          <p className="prototype-mentor-watch-note">Student-level risk signals are not yet available in this summary; open each project’s Performance tab for individual work.</p>
+          <div className="prototype-mentor-small-title"><strong>Students to watch</strong>
+            <Link href="/mentor/projects">Your teams ›</Link>
+          </div>
+          {studentWatch.length?studentWatch.slice(0,5).map(item=><Link
+            href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=performance"}
+            className="prototype-mentor-student-watch-row" key={item.projectId+item.id}>
+            <span className="prototype-mentor-student-avatar" aria-hidden="true">
+              {item.name.trim().split(/\s+/).slice(0,2).map(part=>part.charAt(0)).join("").toUpperCase()||"S"}
+            </span>
+            <span><strong>{item.name}</strong><small>{item.projectTitle}</small>
+              <small>{[
+                item.blocked?item.blocked+" blocked":null,
+                item.waiting?item.waiting+" awaiting review":null,
+              ].filter(Boolean).join(" · ")}</small>
+            </span>
+          </Link>):<p className="prototype-mentor-small-empty">No student has blocked or review-pending tasks in the visible teams.</p>}
+          <p className="prototype-mentor-watch-note">Based on recorded blocked and review-pending tasks, not a personal risk prediction.</p>
         </section>
       </aside>
     </div>
