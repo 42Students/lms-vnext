@@ -84,7 +84,6 @@ export function MentorPrototypeHome({
           ? active.length+" "+(active.length===1?"thing needs":"things need")+" you."
           : "You’re all caught up."}</h1>
       </div>
-      <Link href="/mentor/projects?attention=ALL" className="prototype-mentor-home-search">Find a team or project →</Link>
     </div>
     <div className="prototype-mentor-home-columns">
       <section className="prototype-mentor-focus" aria-label="Needs you, oldest first">
