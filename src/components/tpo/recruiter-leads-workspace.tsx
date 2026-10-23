@@ -413,7 +413,7 @@ export function RecruiterLeadsWorkspace({
       setCompanies(Array.isArray(data.companies) ? data.companies : []);
       try{
        const states=await fetch("/api/placements/tpo/companies/communication",{
-        cache:"no-store",credentials:"same-origin",signal,
+        cache:"no-store",credentials:"same-origin",...(signal ? {signal} : {}),
        });
        if(states.ok){
         const snapshot=await states.json() as {ready:boolean;items:{company_key:string;status:string}[]};
