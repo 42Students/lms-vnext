@@ -11,7 +11,7 @@
 - Use `42Students/lms2-fe@lms-dev-2026` and matching old backend only for behavior/permissions the visual prototype does not specify. Preserve vNext tenant isolation and real API behavior.
 
 ## Implementation policy
-1. Work in dedicated branches and reviewed PRs, **not directly on `main`**.
+1. Owner override on 2026-10-24: commit implementation directly to **`main`**, with source regression checks and explicit acceptance evidence. Do not label work visually verified without actual browser comparison.
 2. Analyze every full HTML screen, including its embedded CSS, structure and visible modal/interaction states. The prototype's 1440px frame is the desktop layout oracle; no mobile designs are explicitly supplied.
 3. Match sidebar/topbar, active states, layout geometry, fonts, palette, spacing, density, labels, forms, chips, grids/tables, dialogs and navigation. Shared shell and primitives should be aligned first.
 4. Map prototype screen to actual vNext route/component; retain authorized live functionality. Any deliberate difference requires a documented reason.
@@ -65,18 +65,18 @@
 | 42 | Recruiter | Recruiter › Bell, search, your details, college picker | NOT STARTED |
 | 43 | Recruiter/Public | Public › Invitation, public link, sign in | NOT STARTED |
 | 44 | Recruiter/Public | Public › Shared applicant list (no account) | NOT STARTED |
-| 45 | Mentor | Mentor › Projects (home: what needs you, your teams) | IN PROGRESS — real attention queue, Later, team table |
-| 46 | Mentor | Mentor › Project › Overview | IN PROGRESS — shared project heading and sprint ribbon |
-| 47 | Mentor | Mentor › Project › Board (sprint picker, 6 lanes, list view, task detail) | IN PROGRESS — shared heading/nav; board still differs |
-| 48 | Mentor | Mentor › Project › Sprints & releases (16 sprints: sign off, carry over, ship) | IN PROGRESS — shared heading/nav; sprint content differs |
-| 49 | Mentor | Mentor › Project › Team & meetings | IN PROGRESS — shared heading/nav; meetings content differs |
-| 50 | Mentor | Mentor › Project › Performance (who did what, unassigned work) | IN PROGRESS — shared heading/nav; performance detail differs |
-| 51 | Mentor | Mentor › Project › Resources | IN PROGRESS — shared heading/nav; resource detail differs |
-| 52 | Mentor | Mentor › Project › Activity | IN PROGRESS — shared heading/nav; activity detail differs |
-| 53 | Mentor | Mentor › Review a final submission (accept, request changes, lock, reopen) | IN PROGRESS — Accept/Request changes actions |
-| 54 | Mentor | Mentor › Meetings (all teams: requests, coming up, notes) | IN PROGRESS — week strip and selectable split view |
-| 55 | Mentor | Mentor › Notifications | IN PROGRESS — feed and guidance split |
-| 56 | Mentor | Mentor › Everywhere: search, bell, your details | IN PROGRESS — scoped project/meeting search only |
+| 45 | Mentor | Mentor › Projects (home: what needs you, your teams) | IN PROGRESS — real focus queue, Later, task/sprint team table |
+| 46 | Mentor | Mentor › Project › Overview | IN PROGRESS — data-backed overview health and decisions |
+| 47 | Mentor | Mentor › Project › Board (sprint picker, 6 lanes, list view, task detail) | IN PROGRESS — six compact lanes, search, list and selected-task pane |
+| 48 | Mentor | Mentor › Project › Sprints & releases (16 sprints: sign off, carry over, ship) | IN PROGRESS — real sprint/release bars and existing lifecycle controls |
+| 49 | Mentor | Mentor › Project › Team & meetings | IN PROGRESS — student roster/workload plus meeting controls |
+| 50 | Mentor | Mentor › Project › Performance (who did what, unassigned work) | IN PROGRESS — per-student workload and existing allocation editor |
+| 51 | Mentor | Mentor › Project › Resources | IN PROGRESS — source-backed resource filters and earlier-sprint fold |
+| 52 | Mentor | Mentor › Project › Activity | IN PROGRESS — recent-event metrics plus filterable history |
+| 53 | Mentor | Mentor › Review a final submission (accept, request changes, lock, reopen) | IN PROGRESS — review evidence, reversible reason chips and guarded decisions |
+| 54 | Mentor | Mentor › Meetings (all teams: requests, coming up, notes) | IN PROGRESS — week/list/detail, .ics export and meeting actions |
+| 55 | Mentor | Mentor › Notifications | IN PROGRESS — six URL-backed category pills, feed and guidance |
+| 56 | Mentor | Mentor › Everywhere: search, bell, your details | IN PROGRESS — route-aware role shell, search, bell/account preserved |
 
 ## Implementation commits on main (2026-10-23)
 - `20ceda3`: role-scoped prototype shell switch and Recruiter action link.
@@ -97,6 +97,16 @@
 - 55: notification main feed and guidance aside; filters and action locations need comparison.
 - 56: shell search sends queries to authorized project and meeting filters; cross-team student/task/resource full-text search remains missing and is **not claimed**.
 - Full brutal audit: `docs/audit/mentor-prototype-brutal-pass-2.md`.
+
+## Mentor implementation continuation and source audit (2026-10-24)
+- Mentor Board #47: compact six-lane layout from `47-mentor-template.html`, working Board/List toggle, live title/type/description/assignee search, persistent selected-task pane, comments, retained full task dialog and mutation controls.
+- Mentor #46/48/49/50/52/53: dedicated source-backed overview, planning, roster, workload, recent activity and delivery evidence components; existing project editors and server permissions retained, but exact prototype dialogs/flow are **not yet signed off**.
+- Mentor Resources #51: earlier-completed-sprint disclosure; disabled reordering while hidden resource rows could otherwise be omitted. Real source status and sprint data; no synthetic statuses.
+- Mentor Meetings #54: selected meeting details, Join/Open links, authorized scheduler link, downloadable RFC 5545 .ics for recorded scheduled meetings only.
+- Mentor Notifications #55: six category-pill filters; unread requests query persisted unread records and pagination preserves the category.
+- Mentor shell #56: active-route presentation now also requires an actual Mentor/TPO/Recruiter permission grant; other routes retain their skin, including College Admin's TPO shortcut.
+- Regression source contracts now run in `.github/workflows/ci.yml`; these **are not** image parity tests. The latest main TypeScript / Playwright / rendered screenshot results remain unconfirmed.
+- **0/12 Mentor screens VERIFIED; 0/56 total screens CLOSED.** Next mandatory steps: actual CI results; browser visual diff; functional permissions, stale review, and full interaction states. Brutal audit pass 3: `docs/audit/mentor-prototype-brutal-pass-3.md`.
 
 ## First visual pilot
 Compare **#01 TPO Companies › Today**, **#31 Recruiter › Today**, and **#45 Mentor › Projects** to equivalent live vNext screens, identify shell-level fixes, then complete one workflow at a time. Treat unverified changes on `main` as needing re-review.
