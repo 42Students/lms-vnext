@@ -190,6 +190,19 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
   const source=latest?.sourceUrl?safeProjectExternalHref(latest.sourceUrl):null;
   const demo=latest?.demoUrl?safeProjectExternalHref(latest.demoUrl):null;
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
+  const artifacts=(latest?.attachments??[]).flatMap((entry,index)=>{
+    if(!entry||typeof entry!=="object"||Array.isArray(entry))return [];
+    const item=entry as Record<string,unknown>;
+    const name=safeBriefString(item["name"])||safeBriefString(item["fileName"])||
+      safeBriefString(item["title"])||"Evidence "+(index+1);
+    const url=safeBriefString(item["url"])||safeBriefString(item["href"])||
+      safeBriefString(item["downloadUrl"]);
+    const href=url?safeProjectExternalHref(url):null;
+    const type=safeBriefString(item["type"])||safeBriefString(item["mimeType"])||"Attachment";
+    return [{name,href,type,index}];
+  }).slice(0,30);
+  const events=[...workspace.finalDelivery.history]
+    .sort((a,b)=>b.occurredAt.localeCompare(a.occurredAt)).slice(0,15);
   return <section className="prototype-mentor-delivery-evidence" aria-label="Final submission evidence">
     <div className="prototype-mentor-card-title">
       <h2>Final submission · evidence</h2>
@@ -207,6 +220,28 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         <Link href={base+"?tab=delivery"}>Review on this page ↓</Link>
       </div>
     </div>:<p className="prototype-mentor-summary-empty">No final submission has been recorded for this project yet.</p>}
+    {artifacts.length>0?<div className="prototype-mentor-delivery-artifacts">
+      <h3>What they sent · {artifacts.length} files and links</h3>
+      <div>
+        {artifacts.map(artifact=><article key={artifact.index}>
+          <span aria-hidden="true">▣</span>
+          <div><strong>{artifact.name}</strong><small>{artifact.type}</small></div>
+          {artifact.href?<a target="_blank" rel="noopener noreferrer" href={artifact.href}>
+            Open full size ↗</a>:<small>Preview unavailable</small>}
+        </article>)}
+      </div>
+    </div>:null}
+    <div className="prototype-mentor-delivery-history">
+      <h3>History · {workspace.finalDelivery.history.length} events</h3>
+      {events.length?<ol>{events.map(event=><li key={event.id}>
+        <strong>{event.kind.replaceAll("_"," ")}</strong>
+        <span>{event.actorName||"Project team"} · {new Intl.DateTimeFormat("en-IN",{
+          day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+        }).format(new Date(event.occurredAt))}</span>
+        {event.feedback?<p>{event.feedback}</p>:null}
+      </li>)}</ol>:<p className="prototype-mentor-summary-empty">
+        No submission history recorded.</p>}
+    </div>
   </section>;
 }
 
