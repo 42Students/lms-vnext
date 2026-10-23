@@ -274,3 +274,23 @@ test("Mentor student watch uses active scoped learner roles and real blocked/rev
   assert.match(home,/studentWatch\.slice\(0,5\)\.map/);
   assert.match(home,/Students to watch/);
 });
+
+
+test("Mentor global search covers projects tasks active students and resources without guessed tenant IDs",()=>{
+  const search=source("src/modules/projects/mentor-unified-search-service.ts");
+  const page=source("src/app/(authenticated)/mentor/search/page.tsx");
+  const config=source("src/components/shell/topbar/portal-config.ts");
+  assert.match(search,/hasMembershipRole\(context,"MENTOR"\)/);
+  assert.match(search,/listMyProjectInstances\(context\)/);
+  assert.match(search,/byId=new Map\(projects\.map/);
+  assert.match(search,/inArray\(projectTasks\.projectId,ids\)/);
+  assert.match(search,/inArray\(projectResources\.projectId,ids\)/);
+  assert.match(search,/inArray\(projectMembers\.projectId,ids\)/);
+  assert.match(search,/eq\(collegeMemberships\.collegeId,membership\.collegeId\)/);
+  assert.match(search,/eq\(projectMembers\.role,"LEARNER"\)/);
+  assert.match(search,/isNull\(projectTasks\.deletedAt\)/);
+  assert.match(search,/\.limit\(15\)/);
+  assert.match(page,/searchMentorWorkspace\(/);
+  assert.match(page,/mentor-unified-search/);
+  assert.match(config,/\/mentor\/search\?q=/);
+});
