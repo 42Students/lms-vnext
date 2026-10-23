@@ -126,7 +126,7 @@ test("Mentor detail route integrates substantive Overview, Sprints, Team, Perfor
   }
   assert.match(summaries,/safeProjectExternalHref\(latest\.sourceUrl\)/);
   assert.match(summaries,/safeProjectExternalHref\(latest\.demoUrl\)/);
-  assert.match(summaries,/sprints\.filter\(sprint=>sprint\.status==="COMPLETED"\)/);
+  assert.match(summaries,/sprints\.filter\(s=>s\.status==="COMPLETED"\)/);
   assert.match(summaries,/countTasks\(owned,"IN_REVIEW"\)/);
 });
 
