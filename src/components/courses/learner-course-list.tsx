@@ -372,8 +372,13 @@ export function LearnerCourseList({
                 ) : null}
               </div>
             ) : null}
-            <div className="w-full min-w-48 md:w-56">
-              <Input aria-label="Search courses" placeholder="Search courses…" maxLength={MAX_COURSE_SEARCH_CHARS}
+            <div className="relative w-full min-w-48 md:w-56">
+              <span className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-muted-foreground" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                </svg>
+              </span>
+              <Input className="pl-9 pr-9" aria-label="Search courses" placeholder="Search courses…" maxLength={MAX_COURSE_SEARCH_CHARS}
                 value={query} onChange={event => {setQuery(event.target.value);setSearchWasTruncated(false);setVisibleLimit(PAGE_SIZE);}}
                 onPaste={event => {
                   const pasted=event.clipboardData.getData("text");
@@ -384,6 +389,11 @@ export function LearnerCourseList({
                     setSearchWasTruncated(true);
                 }}
               />
+              {query ? (
+                <button type="button" aria-label="Clear course search"
+                  onClick={() => {setQuery("");setSearchWasTruncated(false);setVisibleLimit(PAGE_SIZE);}}
+                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">×</button>
+              ) : null}
             </div>
           </div>
         </div>
