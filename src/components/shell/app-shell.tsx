@@ -52,6 +52,12 @@ export async function AppShell({
   const tpoVerificationEnabled=hasMembershipRole(context,"TPO")
     ?await getTpoShellVerificationAccess(context):false;
   const navigation=getShellNavigation(context,learnerAccess,tpoVerificationEnabled);
+  // The prototype shell applies only to these single-workspace portals.
+  // Mixed-role and College Admin navigation retain the existing shell.
+  const prototypePortal =
+    navigation[0]?.href === "/tpo/home" ? "tpo" :
+    navigation[0]?.href === "/hr/home" ? "recruiter" :
+    navigation[0]?.href === "/mentor/projects" ? "mentor" : null;
   const homeHref=navigation[0]?.href??"/dashboard";
   const currentMembership = context.membership
     ? memberships.find(
@@ -73,12 +79,13 @@ export async function AppShell({
   return (
     <ToastProvider>
       <PageTitle superAdmin={superAdmin} />
-      <div className="lms-shell-frame min-h-dvh bg-background text-foreground">
+      <div data-prototype-portal={prototypePortal ?? undefined} className="lms-shell-frame min-h-dvh bg-background text-foreground">
         <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-link focus:outline-2 focus:outline-[var(--lms-primary)]">Skip to content</a>
       <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar relative z-20 hidden h-screen shrink-0 flex-col md:flex">
         <div className="lms-sidebar-logo-row flex h-20 shrink-0 items-center justify-center border-b border-[var(--lms-sidebar-border)] px-2">
           <Link href={homeHref} aria-label="42Students LMS home"
             className="lms-sidebar-brand-link inline-flex h-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            <span className="lms-prototype-wordmark" aria-hidden="true">42LMS</span>
             <span className="lms-sidebar-brand-mark"><ShellLogoMark /></span>
              <span className="lms-sidebar-brand-wordmark"><ShellLogoWordmark /></span>
           </Link>
@@ -86,6 +93,9 @@ export async function AppShell({
         <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4">
           <ShellWidgetBoundary name="Sidebar navigation" fallbackHref={homeHref}><SidebarNav items={navigation} /></ShellWidgetBoundary>
         </div>
+        {prototypePortal === "recruiter" ? (
+          <Link href="/hr/drives/new" className="lms-prototype-recruiter-action">+ Request a drive</Link>
+        ) : null}
         <div className="lms-sidebar-role-details min-w-0 border-t border-[var(--lms-sidebar-border)]">
           <p className="m-0 min-w-0 truncate text-xs font-semibold text-muted-foreground">
             {getShellRoleLabel(context)}
