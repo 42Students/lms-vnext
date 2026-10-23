@@ -140,8 +140,8 @@ export function collegePlatformSetting(input: {
 
   return {
     label: input.label,
-    value: persisted
-      ? input.persistedValue!
+    value: input.collegeSelected && input.persistedValue !== null
+      ? input.persistedValue
       : input.defaultValue,
     ...(input.unit !== undefined ? { unit: input.unit } : {}),
     source: persisted
