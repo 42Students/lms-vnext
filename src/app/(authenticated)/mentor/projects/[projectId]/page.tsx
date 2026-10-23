@@ -10,6 +10,7 @@ import {MentorLaneBoard} from "@/components/projects/mentor-lane-board";
 import {MentorProductBacklog} from "@/components/projects/mentor-product-backlog";
 import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import {MentorProjectSectionCache} from "@/components/projects/mentor-project-section-cache";
+import {MentorProjectUpdateComposer} from "@/components/projects/mentor-project-update-composer";
 import {MentorPrototypeSprintPlan,MentorPrototypeTeamOverview,MentorPrototypePerformance,MentorPrototypeActivitySummary,MentorPrototypeDeliveryEvidence,MentorPrototypeProjectOverview} from "@/components/projects/mentor-prototype-project-summaries";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
@@ -145,7 +146,11 @@ export default async function MentorProjectPage({
       {selectedTab==="sprints" ? <MentorPrototypeSprintPlan workspace={workspace} /> : null}
       {selectedTab==="team" ? <MentorPrototypeTeamOverview workspace={workspace} /> : null}
       {selectedTab==="performance" ? <MentorPrototypePerformance workspace={workspace} /> : null}
-      {selectedTab==="activity" ? <MentorPrototypeActivitySummary workspace={workspace} /> : null}
+      {selectedTab==="activity" ? <>
+        <MentorProjectUpdateComposer projectId={projectId}
+          readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"} />
+        <MentorPrototypeActivitySummary workspace={workspace} />
+      </> : null}
       {selectedTab==="delivery" ? <MentorPrototypeDeliveryEvidence workspace={workspace} /> : null}
       <MentorProjectSectionCache key={projectId} projectId={projectId}
         section={selectedTab??"overview"}>
