@@ -1830,3 +1830,24 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-search-note{
   margin:0;color:#5b6b82;font-size:12px;
 }
+
+
+/* Mentor #50: sprint-range workload filter and student labels. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-performance-filter-bar label {
+  display:flex;align-items:center;gap:8px;color:#5b6b82;font-size:12px;font-weight:700;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-performance-filter-bar select{
+  max-width:min(360px,60vw);min-height:34px;padding:6px 12px;
+  border:1px solid #d6e1ee;border-radius:8px;background:#fff;color:#172033;
+  font:13px Lato,Arial,sans-serif;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-performance-intro{
+  margin:0;padding:12px 18px;border-bottom:1px solid #e7ecf2;
+  color:#5b6b82;font-size:12px;line-height:1.45;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-performance-row strong{
+  display:flex;flex-direction:column;gap:4px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-performance-row small{
+  color:#5b6b82;font-size:11px;font-weight:400;
+}
