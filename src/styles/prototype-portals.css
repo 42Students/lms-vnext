@@ -1488,3 +1488,30 @@
     scroll-snap-align: start;
   }
 }
+
+
+/* The prototype keeps task cards compact until an individual task is opened.
+ * Preserve all existing mutation controls inside native keyboard-operable
+ * details rather than hiding them with display:none. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-meta {
+  display:flex;flex-direction:column;gap:3px;margin:0;
+  color:#5b6b82;font-size:11px;line-height:1.35;
+  overflow-wrap:anywhere;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-blocked{
+  margin:0;color:#b42318;font-size:11px;line-height:1.4;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-advanced{
+  margin-top:4px;border-top:1px solid #edf0f4;padding-top:5px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-advanced>summary{
+  display:inline-flex;align-items:center;cursor:pointer;min-height:28px;
+  color:#0a7c88;font-size:11px;font-weight:700;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-advanced[open]{
+  display:flex;flex-direction:column;gap:7px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-advanced :where(p,label,select){
+  overflow-wrap:anywhere;
+}
