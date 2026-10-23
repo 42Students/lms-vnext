@@ -206,7 +206,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     <p id="mentor-board-keyboard-help" className="sr-only">Use the Move task selection to change a task lane without dragging.</p><div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
     className={styles["scrollRegion"]} style={{display:view==="list"?"none":undefined}}><div className={styles["track"]}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
-    className={[styles["lane"], lane.id==="BACKLOG"?styles["backlogLane"]:"", lanes.length===1?styles["singleLane"]:""].filter(Boolean).join(" ")}
+    className={[styles["lane"], "prototype-mentor-board-lane", lane.id==="BACKLOG"?styles["backlogLane"]:"", lanes.length===1?styles["singleLane"]:""].filter(Boolean).join(" ")}
     data-can-drop={!readOnly&&!busy&&editable.includes(lane.id as typeof editable[number])}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
