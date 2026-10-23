@@ -1,7 +1,6 @@
 "use client";
 
 import { Alert } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FilterChip } from "@/components/ui/filter-chip";
 import { Select } from "@/components/ui/select";
@@ -380,7 +379,7 @@ export function LearnerCourseList({
                   const pasted=event.clipboardData.getData("text");
                   const target=event.currentTarget;
                   const start=target.selectionStart??target.value.length;
-                  const end=start+(target.selectionEnd??start)-start;
+                  const end=target.selectionEnd??start;
                   if(target.value.length-Math.max(0,end-start)+pasted.length>MAX_COURSE_SEARCH_CHARS)
                     setSearchWasTruncated(true);
                 }}
