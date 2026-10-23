@@ -8,13 +8,19 @@ import {usePathname} from "next/navigation";
  * including multi-role Faculty+Mentor / Admin+TPO accounts. A pathname is only
  * a presentation switch: every page still enforces its server-side RBAC.
  */
-export function PrototypePortalFrame({children,className}:{
+export function PrototypePortalFrame({
+  children,className,mentorEnabled,tpoEnabled,recruiterEnabled,
+}:{
   children:ReactNode;className:string;
+  mentorEnabled:boolean;tpoEnabled:boolean;recruiterEnabled:boolean;
 }){
   const pathname=usePathname();
-  const portal=pathname==="/mentor"||pathname.startsWith("/mentor/")?"mentor":
-    pathname==="/tpo"||pathname.startsWith("/tpo/")?"tpo":
-    pathname==="/hr"||pathname.startsWith("/hr/")?"recruiter":null;
+  // A College Admin's /tpo/home shortcut is NOT a TPO membership. Likewise
+  // another role's route must not activate its prototype without a role grant.
+  const portal=mentorEnabled&&(pathname==="/mentor"||pathname.startsWith("/mentor/"))?"mentor":
+    tpoEnabled&&(pathname==="/tpo"||pathname.startsWith("/tpo/"))?"tpo":
+    recruiterEnabled&&(pathname==="/hr"||pathname.startsWith("/hr/")||
+      pathname==="/recruiter"||pathname.startsWith("/recruiter/"))?"recruiter":null;
   return <div data-prototype-portal={portal??undefined} className={className}>
     {children}
   </div>;
