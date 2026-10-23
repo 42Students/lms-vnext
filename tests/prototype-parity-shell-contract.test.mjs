@@ -15,7 +15,13 @@ test("prototype parity remains limited to the three opted-in single-workspace po
   assert.match(shell,/navigation\[0\]\?\.href === "\/hr\/home" \? "recruiter"/);
   assert.match(shell,/navigation\[0\]\?\.href === "\/mentor\/projects" \? "mentor"/);
   const routeFrame=source("src/components/shell/prototype-portal-frame.tsx");
-  assert.match(shell,/<PrototypePortalFrame className=/);
+  assert.match(shell,/<PrototypePortalFrame\s/);
+  assert.match(shell,/mentorEnabled=\{hasMembershipRole\(context,"MENTOR"\)\}/);
+  assert.match(shell,/tpoEnabled=\{hasMembershipRole\(context,"TPO"\)\}/);
+  assert.match(shell,/recruiterEnabled=\{/);
+  assert.match(routeFrame,/mentorEnabled&&/);
+  assert.match(routeFrame,/tpoEnabled&&/);
+  assert.match(routeFrame,/recruiterEnabled&&/);
   assert.match(routeFrame,/data-prototype-portal=\{portal\?\?undefined\}/);
   assert.match(routeFrame,/pathname\.startsWith\("\/mentor\/"\)/);
   assert.match(routeFrame,/pathname\.startsWith\("\/tpo\/"\)/);
