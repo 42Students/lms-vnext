@@ -1851,3 +1851,24 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-performance-row small{
   color:#5b6b82;font-size:11px;font-weight:400;
 }
+
+
+/* Mentor #47: expandable per-sprint List view and backlog headings. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-sprint-group{
+  border-bottom:1px solid #e7ecf2;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-sprint-group:last-child{border-bottom:0}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-sprint-group>summary{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  min-height:40px;padding:8px 16px;background:#f8fafc;cursor:pointer;
+  color:#172033;font-size:12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-sprint-group>summary strong{
+  font-size:12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-sprint-group>summary span{
+  font-size:11px;color:#5b6b82;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-sprint-group[open]>summary{
+  background:#eff8fa;color:#0a7c88;
+}
