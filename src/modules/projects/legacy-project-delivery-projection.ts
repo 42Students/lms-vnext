@@ -34,19 +34,19 @@ export function legacyProjectDeliveryProjection(input:{
     const mapped=(Array.isArray(attachments)?attachments:[]).map((value,index)=>{
       if(!value||typeof value!=="object"||Array.isArray(value))return null;
       const entry=value as Record<string,unknown>;
-      const rawKind=typeof entry.kind==="string"?entry.kind.toUpperCase():"LINK";
+      const rawKind=typeof entry["kind"]==="string"?entry["kind"].toUpperCase():"LINK";
       const kind=rawKind==="FILE"?"FILE":"LINK";
-      const url=typeof entry.url==="string"&&/^https?:\/\//i.test(entry.url)
-        ?entry.url:null;
+      const url=typeof entry["url"]==="string"&&/^https?:\/\//i.test(entry["url"])
+        ?entry["url"]:null;
       return {
         index,kind,
-        label:typeof entry.label==="string"?entry.label:
-          typeof entry.name==="string"?entry.name:"Evidence "+(index+1),
-        fileName:typeof entry.fileName==="string"?entry.fileName:
-          typeof entry.name==="string"?entry.name:null,
-        fileId:kind==="FILE"&&typeof entry.fileId==="string"?entry.fileId:null,
+        label:typeof entry["label"]==="string"?entry["label"]:
+          typeof entry["name"]==="string"?entry["name"]:"Evidence "+(index+1),
+        fileName:typeof entry["fileName"]==="string"?entry["fileName"]:
+          typeof entry["name"]==="string"?entry["name"]:null,
+        fileId:kind==="FILE"&&typeof entry["fileId"]==="string"?entry["fileId"]:null,
         url,
-        available:Boolean(url)||(kind==="FILE"&&typeof entry.fileId==="string"),
+        available:Boolean(url)||(kind==="FILE"&&typeof entry["fileId"]==="string"),
       };
     }).filter((row):row is NonNullable<typeof row>=>row!==null);
     if(!mapped.length&&submission.legacyPrimaryAttachmentUrl&&
