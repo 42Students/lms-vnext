@@ -7,6 +7,8 @@
 /* CHAT-20 MICRO-DETAILS — pointer/focus/pressed, menu/table states and motion.
  * Imported exactly once after the chat-17 skin, without changing component CSS. */
 @import "../styles/micro-details.css";
+/* Exact 42LMS prototype shell, enabled only for TPO / Recruiter / Mentor. */
+@import "../styles/prototype-portals.css";
 
 /*
  * LMS vNext color source of truth.
