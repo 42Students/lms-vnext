@@ -24,6 +24,7 @@ export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
 type Params = {
   view?: string | string[];
+  pill?: string | string[];
   kind?: string | string[];
   projectId?: string | string[];
   attentionOrder?: string | string[];
@@ -57,6 +58,11 @@ async function MentorNotificationsContent({
   searchParams,
 }: { searchParams: Promise<Params> }) {
   const raw = await searchParams;
+  type MentorPill="all"|"unread"|"subs"|"meet"|"tasks"|"ann";
+  const pills:readonly MentorPill[]=["all","unread","subs","meet","tasks","ann"];
+  const pillValue=first(raw.pill)??"all";
+  const selectedPill:MentorPill=pills.includes(pillValue as MentorPill)
+    ? pillValue as MentorPill : "all";
   const parsed = mentorInboxQuerySchema.safeParse({
     view:first(raw.view) ?? undefined,
     beforeCreatedAt:first(raw.beforeCreatedAt) ?? undefined,
@@ -108,6 +114,11 @@ async function MentorNotificationsContent({
       return rank[a.kind]-rank[b.kind] ||
         b.occurredAt.localeCompare(a.occurredAt) || a.key.localeCompare(b.key);
     });
+  const shownAlerts=visibleAlerts.filter(alert=>
+    selectedPill==="all" ? true :
+    selectedPill==="subs" ? alert.kind==="REVIEW" :
+    selectedPill==="meet" ? alert.kind==="REQUESTED"||alert.kind==="MEETING_SOON" :
+    selectedPill==="tasks" ? alert.kind==="STALLED" : false);
   const attentionFiltered=Boolean(projectId.data)||kind.data!=="ALL"||attentionOrder.data!=="RECENT";
   const items:NotificationListItem[] = (inbox?.page.items ?? []).map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
@@ -116,6 +127,8 @@ async function MentorNotificationsContent({
     createdAt:notification.createdAt.toISOString(),
     module:event.module,importance:event.importance,
   }));
+  const shownInbox=selectedPill==="unread"
+    ? items.filter(item=>item.readAt===null):items;
   const nextHref = inbox?.page.nextCursor
     ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
   const allRelevantFailed=!inbox &&
@@ -132,6 +145,19 @@ async function MentorNotificationsContent({
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
+    <nav className="prototype-mentor-notification-pills" aria-label="Notification categories">
+      {([
+        ["all","All"],["unread","Unread · "+(inbox?.unreadCount??0)],
+        ["subs","Submissions"],["meet","Meetings"],
+        ["tasks","Tasks and teams"],["ann","From the college"],
+      ] as const).map(([value,label])=><Link key={value}
+        href={value==="all"?MENTOR_INBOX:MENTOR_INBOX+"?pill="+value}
+        aria-current={selectedPill===value?"page":undefined}
+        className={selectedPill===value?"is-active":undefined}>{label}</Link>)}
+    </nav>
+    {selectedPill==="unread"?<p className="prototype-mentor-unread-note">
+      Unread shows personal notifications with a recorded read state. Project alerts are available in their categories.
+    </p>:null}
     {failedSources.length ? <Alert tone={allRelevantFailed?"error":"warning"} role="alert">
       <h2 className="m-0 text-[var(--lms-font-md)] font-semibold leading-6 text-[var(--lms-heading)]">
         {allRelevantFailed?"We couldn't load your notifications.":"Some notification sources are unavailable"}
@@ -151,15 +177,15 @@ async function MentorNotificationsContent({
     </div>:null}
     <div className="prototype-mentor-notifications-columns">
       <div className="prototype-mentor-notifications-feed">
-    {!allSourcesEmpty&&!allRelevantFailed?<AnnouncementFeed enabled={announcementsEnabled}
+    {(selectedPill==="all"||selectedPill==="ann")&&!allSourcesEmpty&&!allRelevantFailed?<AnnouncementFeed enabled={announcementsEnabled}
       items={announcements.map(item=>({
         id:item.id,title:item.title,message:item.message,
         senderType:item.senderType,receiverType:item.receiverType,
         isPinned:item.isPinned,createdAt:item.createdAt,
       }))} />:null}
-    {!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
+    {(selectedPill==="all"||selectedPill==="subs"||selectedPill==="meet"||selectedPill==="tasks")&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
       <h2 id="mentor-attention" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
-        Project attention ({visibleAlerts.length} of {alerts.length})
+        Project attention ({shownAlerts.length} of {alerts.length})
       </h2>
       <form method="get" action={MENTOR_INBOX} role="search" aria-label="Mentor attention filters"
         className="grid min-w-0 items-end gap-3 border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto_auto]">
@@ -195,11 +221,11 @@ async function MentorNotificationsContent({
         ? <p role="status" className="border-b border-border pb-4 text-sm text-body leading-[22px]">
             Projects access is disabled; project attention is unavailable.
           </p>
-        : visibleAlerts.length === 0
+        : shownAlerts.length === 0
           ? <p className="border-b border-border pb-4 text-sm text-body leading-[22px]">
               {failedSources.length ? "No project alerts are visible, but some notification sources could not be checked." : "Nothing needs your attention right now."}
             </p>
-          : <div className="min-w-0 divide-y divide-border border-b border-border">{visibleAlerts.map(alert=>
+          : <div className="min-w-0 divide-y divide-border border-b border-border">{shownAlerts.map(alert=>
               <Link key={alert.key} href={alert.href}
                 className="block min-h-11 min-w-0 py-4 transition hover:border-primary focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -214,7 +240,7 @@ async function MentorNotificationsContent({
                 <p className="mt-2 text-sm text-body leading-[22px]">{alert.description}</p>
               </Link>)}</div>}
     </section>:null}
-    {!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
+    {(selectedPill==="all"||selectedPill==="unread")&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
       <h2 id="mentor-personal-notifications" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
         Personal notifications
       </h2>
@@ -230,7 +256,7 @@ async function MentorNotificationsContent({
             </Link>
           </Alert>
         : <>
-            <NotificationList items={items} readEndpoint="/api/mentor/notifications"
+            <NotificationList items={shownInbox} readEndpoint="/api/mentor/notifications"
               emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
             {nextHref ? <div className="flex justify-center">
               <Link href={nextHref}
