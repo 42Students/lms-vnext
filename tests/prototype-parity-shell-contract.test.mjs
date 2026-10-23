@@ -186,3 +186,18 @@ test("CI enforces prototype contracts alongside global source contracts",()=>{
   assert.match(workflow,/Prototype portal source contracts/);
   assert.match(workflow,/node --test tests\/prototype-parity-shell-contract\.test\.mjs/);
 });
+
+
+test("Mentor Notifications pills filter real source categories and unread pagination",()=>{
+  const page=source("src/app/(authenticated)/mentor/notifications/page.tsx");
+  const css=source("src/styles/prototype-portals.css");
+  assert.match(page,/prototype-mentor-notification-pills/);
+  for(const key of ['"all"','"unread"','"subs"','"meet"','"tasks"','"ann"'])
+    assert.ok(page.includes(key),"Missing notification pill "+key);
+  assert.match(page,/selectedPill==="unread" \? "unread"/);
+  assert.match(page,/mentorInboxPageHref\(inbox\.query\.view,inbox\.page\.nextCursor\)/);
+  assert.match(page,/selectedPill==="meet" \? alert\.kind==="REQUESTED"\|\|alert\.kind==="MEETING_SOON"/);
+  assert.match(page,/<NotificationList items=\{shownInbox\}/);
+  assert.match(page,/<AnnouncementFeed enabled=\{announcementsEnabled\}/);
+  assert.match(css,/prototype-mentor-notification-pills>a\[aria-current="page"\]/);
+});
