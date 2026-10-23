@@ -7,13 +7,6 @@ type ProjectTask=Workspace["tasks"][number];
 const countTasks=(tasks:readonly ProjectTask[],status:string)=>tasks.filter(task=>task.status===status).length;
 const points=(tasks:readonly ProjectTask[])=>tasks.reduce((total,task)=>
   total+(typeof task.estimatePoints==="number"?task.estimatePoints:0),0);
-const dateLabel=(value:Date|string|null|undefined)=>{
-  if(!value)return "Date not set";
-  const d=new Date(value);
-  return Number.isFinite(d.getTime())?
-    new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",timeZone:"Asia/Kolkata"}).format(d):
-    "Date not set";
-};
 const statusTone=(status:string)=>status==="COMPLETED"||status==="SHIPPED"?"done":
   status==="ACTIVE"?"active":"planned";
 
