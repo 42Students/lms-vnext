@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-team-size-service";
+import {getMentorPrototypeSprintSummaries} from "@/modules/projects/mentor-prototype-sprint-summary-service";
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
@@ -93,12 +94,13 @@ export async function MentorProjectsContent({
     const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
     const allRows=paged?.items??await listMyProjectInstances(context);
     if(!Array.isArray(allRows))throw new Error("INVALID_PROJECT_RECORDS");
-    const [attentionRows,workCounts,teamSizes]=await Promise.all([
+    const [attentionRows,workCounts,teamSizes,sprintSummaries]=await Promise.all([
       listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
       getMentorProjectWorkCounts(context,paged?allRows:undefined),
       getMentorProjectTeamSizes(context,paged?allRows:undefined),
+      getMentorPrototypeSprintSummaries(context,paged?allRows:undefined),
     ]);
-    return {paged,allRows,attentionRows,workCounts,teamSizes};
+    return {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries};
   })().catch(error=>({
     failure:error instanceof Error&&error.message==="INVALID_PROJECT_RECORDS"
       ?"The projects page did not return a valid records array."
@@ -113,7 +115,7 @@ export async function MentorProjectsContent({
           typeof item[1]==="string"&&item[1].length<=120)
       ).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
   </div>;
-  const {paged,allRows,attentionRows,workCounts,teamSizes}=loaded;
+  const {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries}=loaded;
   const alerts = new Map<
     string,
     Set<string>
@@ -322,6 +324,15 @@ export async function MentorProjectsContent({
             updatedAt:
               row.project.updatedAt,
             memberCount: teamSizes.get(row.project.id) ?? 0,
+            ...(workCounts.has(row.project.id) ? {
+              taskTotal:workCounts.get(row.project.id)!.total,
+              taskDone:Math.max(0,workCounts.get(row.project.id)!.total-workCounts.get(row.project.id)!.open),
+            } : {}),
+            ...(sprintSummaries.has(row.project.id) ? {
+              sprintTotal:sprintSummaries.get(row.project.id)!.total,
+              sprintCompleted:sprintSummaries.get(row.project.id)!.completed,
+              sprintActiveSequence:sprintSummaries.get(row.project.id)!.activeSequence,
+            } : {}),
             ...(progress?.percent !== undefined ? { progressPercent: progress.percent } : {}),
             ...(progress?.label !== undefined ? { progressDetail: progress.label } : {}),
             readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
