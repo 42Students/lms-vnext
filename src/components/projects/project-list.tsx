@@ -73,7 +73,79 @@ export function ProjectList({
     );
   }
 
-  if (basePath==="/learn/projects"||basePath==="/mentor/projects") {
+  if (basePath === "/mentor/projects") {
+    // 42LMS screen 45, Mentor › Projects: use a true list/table instead of
+    // learner's progress cards. Display only data actually authorized and
+    // present in ProjectListItem; never invent sprint or student counts.
+    return (
+      <section className="prototype-mentor-team-table" aria-label="Your teams">
+        <div className="prototype-mentor-table-top">
+          <h2>Your teams</h2>
+          <span>{items.length} {items.length === 1 ? "team" : "teams"}</span>
+        </div>
+        <div className="prototype-mentor-table-head" aria-hidden="true">
+          <span>Team and project</span>
+          <span>Students</span>
+          <span>Sprints</span>
+          <span>Tasks done</span>
+          <span>Last activity</span>
+          <span>How it’s going</span>
+        </div>
+        <div className="prototype-mentor-table-body">
+          {items.map(item => {
+            const completion = Number.isFinite(item.progressPercent)
+              ? Math.min(100, Math.max(0, Math.round(item.progressPercent ?? 0)))
+              : null;
+            const issue = item.attention?.find(label => /blocked|stalled|risk|review|sign.off/i.test(label));
+            const state = issue ?? statusLabel(item.status);
+            const stateTone = /blocked|stalled/i.test(state) ? "bad"
+              : /risk|review|sign.off/i.test(state) ? "warn"
+              : item.status === "COMPLETED" ? "ok" : "info";
+            const updated = new Intl.DateTimeFormat("en-IN", {
+              day: "numeric", month: "short", year: "numeric",
+              timeZone: "Asia/Kolkata",
+            }).format(item.updatedAt);
+            return (
+              <Link key={item.id}
+                href={item.href ?? basePath + "/" + encodeURIComponent(item.id)}
+                className="prototype-mentor-table-row"
+                aria-label={item.title + ". " + state + ". Open project."}
+              >
+                <span className="prototype-mentor-project-name">
+                  <strong>{item.title}</strong>
+                  <small>{item.courseLabel || item.summary || "Project"}</small>
+                </span>
+                <span className="prototype-mentor-table-numeric">
+                  {item.memberCount !== undefined ? item.memberCount : "—"}
+                </span>
+                <span className="prototype-mentor-table-detail">
+                  {item.phaseLabel || item.phase || "Not recorded"}
+                  {item.dueState ? <small>{item.dueState}</small> : null}
+                </span>
+                <span className="prototype-mentor-table-detail">
+                  {completion === null ? "Not tracked" : completion + "%"}
+                  {completion !== null ? (
+                    <span role="progressbar" aria-label={"Project progress for " + item.title}
+                      aria-valuemin={0} aria-valuemax={100} aria-valuenow={completion}
+                      className="prototype-mentor-progress-track">
+                      <span style={{width: completion + "%"}} />
+                    </span>
+                  ) : null}
+                </span>
+                <span className="prototype-mentor-table-detail">{updated}</span>
+                <span className={"prototype-mentor-state prototype-mentor-state-" + stateTone}>
+                  <span className="prototype-mentor-state-dot" aria-hidden="true" />
+                  {state}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
+
+  if (basePath === "/learn/projects") {
     return <div className="grid min-w-0 gap-4 sm:grid-cols-2" aria-label="Assigned project workspaces">
       {items.map(item=>{
         const archived=item.status==="ARCHIVED";
