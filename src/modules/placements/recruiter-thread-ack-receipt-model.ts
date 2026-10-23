@@ -6,7 +6,7 @@ export function isVerifiedRecruiterThreadAcknowledgement(
 ):boolean{
  if(!raw||typeof raw!=="object"||Array.isArray(raw))return false;
  const data=raw as Record<string,unknown>;
- return data.saved===true&&data.threadId===threadId&&
-  typeof data.acknowledged==="number"&&Number.isSafeInteger(data.acknowledged)&&
-  data.acknowledged>=0;
+ return data["saved"]===true&&data["threadId"]===threadId&&
+  typeof data["acknowledged"]==="number"&&Number.isSafeInteger(data["acknowledged"])&&
+  data["acknowledged"]>=0;
 }
