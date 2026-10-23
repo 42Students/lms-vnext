@@ -8,7 +8,6 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { mayCloseProjectSprint } from "./sprint-close-policy";
 import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -53,85 +52,6 @@ function mapLifecycleConstraint(error: unknown) {
 
 function projectAllowsExecution(status: string) {
   return status !== "ARCHIVED" && status !== "COMPLETED";
-}
-
-async function loadRelease(
-  projectId: string,
-  releaseIdInput: string,
-) {
-  const releaseId =
-    projectReleaseIdSchema.parse(releaseIdInput);
-  const [release] = await getDb()
-    .select()
-    .from(projectReleases)
-    .where(
-      and(
-        eq(projectReleases.id, releaseId),
-        eq(projectReleases.projectId, projectId),
-      ),
-    )
-    .limit(1);
-
-  if (!release) {
-    throw new ProjectsServiceError(
-      "PROJECT_RELEASE_NOT_FOUND",
-    );
-  }
-
-  return release;
-}
-
-async function loadSprint(
-  projectId: string,
-  sprintIdInput: string,
-) {
-  const sprintId =
-    projectSprintIdSchema.parse(sprintIdInput);
-  const [sprint] = await getDb()
-    .select()
-    .from(projectSprints)
-    .where(
-      and(
-        eq(projectSprints.id, sprintId),
-        eq(projectSprints.projectId, projectId),
-        isNull(projectSprints.deletedAt),
-      ),
-    )
-    .limit(1);
-
-  if (!sprint) {
-    throw new ProjectsServiceError(
-      "PROJECT_SPRINT_NOT_FOUND",
-    );
-  }
-
-  return sprint;
-}
-
-async function loadTask(
-  projectId: string,
-  taskIdInput: string,
-) {
-  const taskId =
-    projectTaskIdSchema.parse(taskIdInput);
-  const [task] = await getDb()
-    .select()
-    .from(projectTasks)
-    .where(
-      and(
-        eq(projectTasks.id, taskId),
-        eq(projectTasks.projectId, projectId),
-      ),
-    )
-    .limit(1);
-
-  if (!task) {
-    throw new ProjectsServiceError(
-      "PROJECT_TASK_NOT_FOUND",
-    );
-  }
-
-  return task;
 }
 
 export async function startProjectSprint(
