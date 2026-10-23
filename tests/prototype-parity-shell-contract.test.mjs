@@ -87,3 +87,17 @@ test("Mentor search is only routed to authorized implemented filters",()=>{
   assert.match(topbar,/\/mentor\/projects\?search=/);
   assert.match(topbar,/\/mentor\/calendar\?search=/);
 });
+
+test("Mentor table milestones come from scoped nondeleted sprint and task records",()=>{
+  const service=source("src/modules/projects/mentor-prototype-sprint-summary-service.ts");
+  const list=source("src/components/projects/project-list.tsx");
+  const page=source("src/app/(authenticated)/mentor/projects/page.tsx");
+  assert.match(service,/hasMembershipRole\(context,"MENTOR"\)/);
+  assert.match(service,/inArray\(projectSprints\.projectId,ids\)/);
+  assert.match(service,/isNull\(projectSprints\.deletedAt\)/);
+  assert.match(service,/segments\.push\(\{sequence:row\.sequence,status:row\.status\}\)/);
+  assert.match(page,/getMentorPrototypeSprintSummaries\(context/);
+  assert.match(page,/getMentorProjectWorkCounts\(context/);
+  assert.match(list,/sprintSeries\.slice\(0,32\)/);
+  assert.match(list,/taskSummary/);
+});
