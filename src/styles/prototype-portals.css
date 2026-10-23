@@ -964,3 +964,71 @@
     grid-template-columns: minmax(0,1fr);
   }
 }
+
+
+/* Mentor #55 Notifications: main feed + delivery-preferences reference card. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-columns {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(240px,300px);
+  align-items: start;
+  gap: 18px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-feed {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 16px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-feed > section {
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid #e7ecf2;
+  border-radius: 12px;
+  background: #fff;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-about {
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid #e7ecf2;
+  border-radius: 12px;
+  background: #fff;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-about h2 {
+  margin: 0 0 8px;
+  color: #5b6b82;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-about dl {
+  margin: 0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-about dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f4f8;
+  font-size: 13px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-about dt {
+  font-weight: 700;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-about dd {
+  margin: 0;
+  color: #5b6b82;
+  text-align: right;
+  font-size: 12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-about p {
+  margin: 12px 0 0;
+  color: #5b6b82;
+  font-size: 12px;
+  line-height: 1.5;
+}
+@media (max-width: 1024px) {
+  .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-notifications-columns {
+    grid-template-columns: minmax(0,1fr);
+  }
+}
