@@ -1090,7 +1090,10 @@ export function ProjectWorkspace({
           {mode==="ADMIN"&&!readOnly
             ?<CollegeProjectMentorDialog projectId={workspace.project.id}
               collegeId={workspace.project.collegeId}
-              {...(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName === undefined ? {} : {currentMentorName:workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName})}/>
+              {...(() => {
+                const mentorName=workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName;
+                return mentorName===undefined?{}:{currentMentorName:mentorName};
+              })()}/>
             :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Reassign mentor…</Button>:null}
           {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId
             ?<CollegeProjectStudentRosterDialog projectId={workspace.project.id}
