@@ -43,6 +43,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
  const [dragging,setDragging]=useState(false);
  const [taskQuery,setTaskQuery]=useState("");
+ const [focusedId,setFocusedId]=useState<string|null>(null);
  const [view,setView]=useState<"board"|"list">(params.get("view")==="list"?"list":"board");
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
@@ -76,6 +77,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      task.assigneeMembershipId===assignee))&&
    (!statusFilter||(statusFilter==="BACKLOG"?task.sprintId===null:task.status===statusFilter)));
  const visible=matching.slice(0,visibleLimit);
+ const focused=visible.find(task=>task.id===focusedId)??visible[0]??null;
  const lanes=groupLearnerBoardLanes(visible,sprints);
  const activeFilterCount=[release,sprint,priority,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
  async function move(id:string,status:string,isUndo=false){
@@ -218,7 +220,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </div>
    </div>
    {matching.length>0?<>{view==="board"?<p className="text-xs text-muted-foreground md:hidden">Swipe sideways to see board lanes.</p>:null}
-    <p id="mentor-board-keyboard-help" className="sr-only">Use the Move task selection to change a task lane without dragging.</p><div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
+    <p id="mentor-board-keyboard-help" className="sr-only">Use the Move task selection to change a task lane without dragging.</p><div className="prototype-mentor-board-with-pane"><div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
     className={styles["scrollRegion"]} style={{display:view==="list"?"none":undefined}}><div className={styles["track"]}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
     className={[styles["lane"], "prototype-mentor-board-lane", lane.id==="BACKLOG"?styles["backlogLane"]:"", lanes.length===1?styles["singleLane"]:""].filter(Boolean).join(" ")}
@@ -234,7 +236,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       onDragStart={e=>{e.dataTransfer.setData("text/plain",task.id);setDragging(true);}}
        onDragEnd={()=>setDragging(false)}
       className={"prototype-mentor-board-task space-y-2 border p-3 text-sm "+styles["card"]}>
-      <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
+      <Button variant="ghost" type="button" onClick={()=>setFocusedId(task.id)}
         className="min-h-11 w-full !justify-start !text-left">{task.title}</Button>
       <p className="prototype-mentor-board-meta">
         <span>{task.taskType??"Task"} · {task.estimatePoints??"—"} pts</span>
@@ -308,7 +310,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         editable.includes(task.status as typeof editable[number]);
       return <div key={task.id} className="prototype-mentor-board-list-row">
         <Button type="button" variant="ghost" size="sm" className="!justify-start !text-left"
-          onClick={()=>setSelected(task.id)}>{task.title}</Button>
+          onClick={()=>setFocusedId(task.id)}>{task.title}</Button>
         <span>{members.find(member=>member.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"}</span>
         <span>{rowSprint?.title??"Backlog"}</span>
         {canMove?<Select value={task.status} disabled={busy}
@@ -318,7 +320,44 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <span>{task.estimatePoints??"—"}</span>
       </div>;
     })}
-  </div>:null}</>:null}
+  </div>:null}
+  <aside className="prototype-mentor-board-detail" aria-label="Selected task details">
+    {focused?<>
+      <div className="prototype-mentor-board-detail-title">
+        <span>{focused.status.replaceAll("_"," ")}</span>
+        <button type="button" onClick={()=>setSelected(focused.id)}
+          aria-label={"Open complete task details for "+focused.title}>⋯</button>
+      </div>
+      <h3 aria-live="polite">{focused.title}</h3>
+      <div className="prototype-mentor-board-detail-tags">
+        <span>{focused.taskType??"Task"}</span>
+        <span>{focused.priority.toLocaleLowerCase("en-IN")} priority</span>
+        <span>{focused.estimatePoints??"—"} points</span>
+      </div>
+      <div className="prototype-mentor-board-detail-owner">
+        Assigned to <strong>{members.find(person=>person.membershipId===focused.assigneeMembershipId)?.displayName??"Unassigned"}</strong>
+      </div>
+      <p className="prototype-mentor-board-detail-description">{focused.description||"No task description recorded."}</p>
+      <div className="prototype-mentor-board-detail-block">
+        <h4>Acceptance criteria</h4>
+        <p>{focused.acceptanceCriteria||"No acceptance criteria recorded."}</p>
+      </div>
+      {focused.approach?<div className="prototype-mentor-board-detail-block">
+        <h4>Their approach</h4><p>{focused.approach}</p>
+      </div>:null}
+      {focused.blockerReason?<div className="prototype-mentor-board-detail-block is-blocked">
+        <h4>Blocked</h4><p>{focused.blockerReason}</p>
+      </div>:null}
+      <button type="button" className="prototype-mentor-board-detail-more"
+        onClick={()=>setSelected(focused.id)}>Open full task details →</button>
+      <div className="prototype-mentor-board-detail-block">
+        <h4>Comments and progress</h4>
+        <ProjectTaskComments key={focused.id} projectId={projectId} taskId={focused.id}
+          updatedAt={new Date(focused.updatedAt).toISOString()} canPost={!readOnly}/>
+      </div>
+    </>:<p>No task selected.</p>}
+  </aside>
+  </div></>:null}
   {matching.length>visible.length?<Button variant="secondary" type="button"
     className="min-h-11 px-4"
     onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</Button>:null}
