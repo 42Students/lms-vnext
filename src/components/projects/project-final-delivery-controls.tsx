@@ -589,10 +589,10 @@ export function FinalReviewControl({
   return (
     <>
       {mode==="MENTOR" ? (
-        <div className="flex flex-wrap gap-2">
-          <Button size="sm" variant="secondary" aria-haspopup="dialog" aria-expanded={open} onClick={() => {
+        <div className="prototype-mentor-review-actions flex flex-wrap gap-2">
+          <Button size="sm" variant="primary" aria-label="Accept submission" aria-haspopup="dialog" aria-expanded={open} onClick={() => {
             setDecision("APPROVED"); setStaleReview(false); setOpen(true);
-          }}>Accept submission</Button>
+          }}>Accept</Button>
           <Button size="sm" variant="secondary" aria-haspopup="dialog" aria-expanded={open} onClick={() => {
             setDecision("CHANGES_REQUESTED"); setStaleReview(false); setOpen(true);
           }}>Request changes</Button>
