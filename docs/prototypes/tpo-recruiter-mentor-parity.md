@@ -67,10 +67,10 @@
 | 44 | Recruiter/Public | Public › Shared applicant list (no account) | NOT STARTED |
 | 45 | Mentor | Mentor › Projects (home: what needs you, your teams) | IN PROGRESS — real student watch, attention queue, Later and six-column teams |
 | 46 | Mentor | Mentor › Project › Overview | IN PROGRESS — real project brief, health, team updates and next actions |
-| 47 | Mentor | Mentor › Project › Board (sprint picker, 6 lanes, list view, task detail) | IN PROGRESS — six lanes, task search/pane, comments, A/S reviews and J/K navigation |
+| 47 | Mentor | Mentor › Project › Board (sprint picker, 6 lanes, list view, task detail) | IN PROGRESS — six lanes, per-sprint grouped List, task pane, comments, A/S, J/K |
 | 48 | Mentor | Mentor › Project › Sprints & releases (16 sprints: sign off, carry over, ship) | IN PROGRESS — real sprint/release bars and lifecycle ship/sign-off controls |
 | 49 | Mentor | Mentor › Project › Team & meetings | IN PROGRESS — scoped roster, workload and linked meeting actions |
-| 50 | Mentor | Mentor › Project › Performance (who did what, unassigned work) | IN PROGRESS — per-student workload and authorized allocation editor |
+| 50 | Mentor | Mentor › Project › Performance (who did what, unassigned work) | IN PROGRESS — All/Current/Last-4/specific sprint workload and allocation editor |
 | 51 | Mentor | Mentor › Project › Resources | IN PROGRESS — resource filters, share controls and completed-sprint fold |
 | 52 | Mentor | Mentor › Project › Activity | IN PROGRESS — persisted Mentor-posted updates, activity feed and Overview |
 | 53 | Mentor | Mentor › Review a final submission (accept, request changes, lock, reopen) | IN PROGRESS — evidence files, review history, Accept/changes, lock/reopen flow |
@@ -120,6 +120,11 @@
 - #56: `/mentor/search` is a role/tenant-scoped bounded search across assigned project names, task titles, active learner names, active resource titles. Existing shell links to this route.
 - Source audit of newly edited files: 32/32 structural invariants passed by reading latest GitHub source. This is not an executed TypeScript/Vitest/browser check.
 - Independent brutal audit pass 4: `docs/audit/mentor-prototype-brutal-pass-4.md`.
+
+## Mentor implementation continuation — sprint-grouped Board and workload ranges
+- Screen #47 Board/List now groups the real list by sprint and backlog; active sprint is expanded and other sprint groups are individually expandable. The persistent task pane and guarded review controls remain intact.
+- Screen #50 Performance now supports All recorded, Current, Last four or an individual sprint. Student workload and unassigned task totals are recomputed from the matching persisted task records; the original authorized assignment editor remains.
+- Neither change is accepted as pixel-perfect before actual browser snapshots and UI interactions pass.
 
 ## First visual pilot
 Compare **#01 TPO Companies › Today**, **#31 Recruiter › Today**, and **#45 Mentor › Projects** to equivalent live vNext screens, identify shell-level fixes, then complete one workflow at a time. Treat unverified changes on `main` as needing re-review.
