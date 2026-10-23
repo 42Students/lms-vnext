@@ -9,6 +9,7 @@ import type { AdminScopeChoices } from "@/modules/admin-scope/service";
 import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
+import {PrototypePortalFrame} from "./prototype-portal-frame";
 import Link from "next/link";
 import {ShellLogoMark, ShellLogoWordmark} from "./shell-nav-icons";
 import { LegacyTopbar } from "./topbar/legacy-topbar";
@@ -79,7 +80,7 @@ export async function AppShell({
   return (
     <ToastProvider>
       <PageTitle superAdmin={superAdmin} />
-      <div data-prototype-portal={prototypePortal ?? undefined} className="lms-shell-frame min-h-dvh bg-background text-foreground">
+      <PrototypePortalFrame className="lms-shell-frame min-h-dvh bg-background text-foreground">
         <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-link focus:outline-2 focus:outline-[var(--lms-primary)]">Skip to content</a>
       <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar relative z-20 hidden h-screen shrink-0 flex-col md:flex">
         <div className="lms-sidebar-logo-row flex h-20 shrink-0 items-center justify-center border-b border-[var(--lms-sidebar-border)] px-2">
@@ -137,7 +138,7 @@ export async function AppShell({
         </main>
         <LearnerFacultyMobileFooter items={navigation} />
       </div>
-    </div>
+    </PrototypePortalFrame>
       <TrackerQuickReportLauncher />
     </ToastProvider>
   );
