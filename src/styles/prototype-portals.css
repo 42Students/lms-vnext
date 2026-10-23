@@ -1096,3 +1096,28 @@
     font-family: Lato, Arial, sans-serif;
   }
 }
+
+
+/* Screen #45 — per-project persisted sprint milestones, no synthetic 16. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-sprint-dots {
+  display: flex;
+  width: 100%;
+  max-width: 160px;
+  align-items: flex-end;
+  gap: 3px;
+  min-height: 12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-sprint-dots > span {
+  min-width: 5px;
+  height: 8px;
+  flex: 1;
+  border-radius: 2px;
+  background: #e7ecf2;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-sprint-dots > span.done {
+  background: #0a7c88;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-sprint-dots > span.current {
+  height: 12px;
+  background: #f79009;
+}
