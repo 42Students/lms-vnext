@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -212,13 +212,14 @@ export function ReleaseLifecycleActions({
 export function TaskReviewActions({
   projectId,
   taskId,
-  submissionId,mode,expectedUpdatedAt,initialDecision="APPROVED",triggerLabel="Review submission",
+  submissionId,mode,expectedUpdatedAt,initialDecision="APPROVED",triggerLabel="Review submission",shortcut,
 }: {
   projectId: string;
   taskId: string;
   submissionId: string;
   mode:"MENTOR"|"ADMIN"|"LEARNER";expectedUpdatedAt:string;
   initialDecision?:"APPROVED"|"CHANGES_REQUESTED";triggerLabel?:string;
+  shortcut?:"a"|"s";
 }) {
   const { pending, run } = useProjectAction();
   const [open, setOpen] = useState(false);
@@ -226,6 +227,22 @@ export function TaskReviewActions({
     "APPROVED" | "CHANGES_REQUESTED"
   >(initialDecision);
   const [feedback, setFeedback] = useState("");
+  useEffect(()=>{
+    if(mode!=="MENTOR"||!shortcut)return;
+    const onKey=(event:KeyboardEvent)=>{
+      if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
+          event.key.toLowerCase()!==shortcut||event.repeat||event.defaultPrevented)return;
+      const element=event.target;
+      if(element instanceof Element&&
+        element.closest("input,textarea,select,button,a,[contenteditable],[role=dialog]"))return;
+      if(document.querySelector('[role="dialog"]'))return;
+      event.preventDefault();
+      setDecision(initialDecision);
+      setOpen(true);
+    };
+    document.addEventListener("keydown",onKey);
+    return()=>document.removeEventListener("keydown",onKey);
+  },[initialDecision,mode,shortcut]);
 
   function review() {
     if (
