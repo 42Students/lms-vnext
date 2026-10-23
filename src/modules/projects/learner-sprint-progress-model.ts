@@ -1,6 +1,6 @@
 type Sprint={id:string;status:string;dueDate:string|null};
 type Task={sprintId:string|null;status:string};
-export function learnerSprintRollup(sprints:readonly Sprint[],tasks:readonly Task[],todayIst:string){
+export function learnerSprintRollup(sprints:readonly Sprint[],_tasks:readonly Task[],todayIst:string){
  const completed=sprints.filter(s=>s.status==="COMPLETED").length;
  const overdue=sprints.filter(s=>s.status!=="COMPLETED"&&
    s.dueDate!==null&&s.dueDate<todayIst).length;
