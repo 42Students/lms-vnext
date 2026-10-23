@@ -180,7 +180,7 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
     {latest?<div className="prototype-mentor-delivery-main">
       <div className="prototype-mentor-delivery-details">
         <strong>{latest.summary||"Final project submission"}</strong>
-        <p>Status: {latest.status.replaceAll("_"," ")}{review?" · Latest review: "+review.status.replaceAll("_"," "):""}</p>
+        <p>Status: {latest.status.replaceAll("_"," ")}{review?" · Latest review: "+review.decision.replaceAll("_"," "):""}</p>
         {latest.notes?<p className="prototype-mentor-delivery-notes">{latest.notes}</p>:null}
       </div>
       <div className="prototype-mentor-delivery-links">
