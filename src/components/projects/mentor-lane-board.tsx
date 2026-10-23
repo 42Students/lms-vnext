@@ -79,6 +79,24 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    (!statusFilter||(statusFilter==="BACKLOG"?task.sprintId===null:task.status===statusFilter)));
  const visible=matching.slice(0,visibleLimit);
  const focused=visible.find(task=>task.id===focusedId)??visible[0]??null;
+ useEffect(()=>{
+   const onKey=(event:KeyboardEvent)=>{
+     if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
+       event.repeat||event.defaultPrevented)return;
+     const key=event.key.toLowerCase();
+     if(key!=="j"&&key!=="k")return;
+     if(event.target instanceof Element&&event.target.closest(
+       "input,textarea,select,button,a,[contenteditable],[role=dialog]"))return;
+     if(document.querySelector('[role="dialog"]')||visible.length===0)return;
+     const index=visible.findIndex(task=>task.id===(focusedId??visible[0]?.id));
+     const next=Math.max(0,Math.min(visible.length-1,index+(key==="j"?1:-1)));
+     const task=visible[next];
+     if(!task)return;
+     event.preventDefault();setFocusedId(task.id);
+   };
+   document.addEventListener("keydown",onKey);
+   return()=>document.removeEventListener("keydown",onKey);
+ },[focusedId,visible]);
  const submittedReview=focused&&!readOnly&&focused.status==="IN_REVIEW"
    ? [...taskSubmissions].filter(row=>row.taskId===focused.id&&row.status==="SUBMITTED")
      .sort((a,b)=>b.version-a.version)[0]??null
