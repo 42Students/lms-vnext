@@ -21,6 +21,14 @@
 | 55 | Notifications | Scoped list and informational right panel, existing mark-read and source failure support retained | Prototype grouped timeline and five-chip filters, Mark all read header position, badge semantics not exact | P1 |
 | 56 | Everywhere controls | Existing shell retained for bell/profile; mentor shell command now actually queries authorized projects and meetings | Full cross-team student/task/resource search remains unsupported; old topbar geometry still differs from prototype header/search/profile placement | P0 |
 
+## Independent follow-up (latest main, 2026-10-24)
+- A fresh connector-source check of **25 implementation/authorization invariants passed 25/25**; those are structural inspections and **not** executable tests.
+- Mentor Projects now gets real `getMentorProjectWorkCounts` task totals and a new scoped `getMentorPrototypeSprintSummaries` query returning actual non-deleted sprint sequences/statuses; the six-column teams table renders these actual milestones instead of invented 16-sprint progress.
+- The top-right Mentor desktop command/notifications/account controls are repositioned without removing authenticated actions; still no captured browser evidence.
+- Attempted headless Chromium capture of the local `46-mentor.html` reference using both `file://` and localhost HTTP. Both were blocked by the environment with `net::ERR_BLOCKED_BY_ADMINISTRATOR`; **no screenshot was produced** in this pass. Previously available screenshot of #45 remains a genuine prototype reference only.
+- No CI status checks or PR workflow runs were surfaced for the new `main` commits. No TypeScript/React run can be claimed.
+- The remaining blocking defects below are still open. The verdict remains **0/12 VERIFIED, 0/12 CLOSED**.
+
 ## Issues found in the verification/source re-read
 
 - **MR-001 / P0:** No live vNext captures at 1440×1080, 1440×1120, 1440×1240, 1440×1060, or 1440×1000; therefore no acceptable pixel difference or interaction evidence.
