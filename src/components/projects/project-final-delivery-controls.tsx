@@ -635,6 +635,19 @@ export function FinalReviewControl({
               Refresh latest submission
             </Button>
           </div>:null}
+          {mode==="MENTOR"&&decision==="CHANGES_REQUESTED"?<div className="prototype-mentor-review-reasons"
+            role="group" aria-label="Reasons to request changes">
+            {(["Report is incomplete","Demo doesn’t match the app",
+              "Code isn’t in the repo","Trial evidence missing"] as const).map(reason=>
+              <Button key={reason} type="button" size="sm" variant="secondary"
+                aria-pressed={feedback.split("\\n").includes(reason)}
+                onClick={()=>setFeedback(previous=>previous.split("\\n").includes(reason)
+                  ? previous
+                  : [previous.trim(),reason].filter(Boolean).join("\\n"))}>
+                {reason}
+              </Button>
+            )}
+          </div>:null}
           <label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Feedback
