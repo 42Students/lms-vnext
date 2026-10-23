@@ -43,7 +43,7 @@ function LearnerCourseCardSurface({
   blockedReason: string | null;
   children: ReactNode;
 }) {
-  const baseClass = "group flex h-full flex-col overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface text-sm shadow-sm";
+  const baseClass = "group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--lms-canvas-border)] bg-surface text-sm transition-transform duration-150 hover:-translate-y-0.5";
   if (blockedReason) {
     return <div role="group" aria-disabled="true" aria-label={"Course unavailable: " + blockedReason}
       title={blockedReason} className={baseClass + " cursor-not-allowed"}>
@@ -242,185 +242,161 @@ export function LearnerCourseList({
         }}>Use current semester</Button>
       </Alert>:null}
       {isUpdating?<p role="status" className="text-xs text-muted-foreground">Updating courses for the selected semester…</p>:null}
-      <section aria-label="Course filters and semester" className="py-1">
-        <div className="grid gap-[16px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-          <div className="grid gap-[8px] md:grid-cols-2">
-            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-              Semester
-              <Select
-                value={selectedPeriodId}
-                onChange={(event) => {
-                  const reset = learnerCourseSemesterFilterReset();
-                  startSemesterChange(()=>setPeriodId(event.target.value));
-                  setRequestedSemesterId(null);
-                  setQuery(reset.search);
-                  setTypeFilter(reset.type);
-                  setContinueOnly(false);
-                  // Preserve explicitly selected advanced filters, unlike
-                  // obsolete course-type/search filters tied to the old term.
-                  setVisibleLimit(reset.visibleLimit);
-                }}
-                className="mt-1.5 min-h-[var(--lms-control-height)] max-md:min-h-11"
-                aria-label="Select semester"
-              >
-                {periods.map((period) => (
-                  <option key={period.id} value={period.id}>
-                    {period.name}
-                  </option>
+      <section aria-label="Courses overview and filters" className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            {periodRows[0]?.course.programName ? (
+              <span className="max-w-full truncate text-sm font-semibold text-[var(--lms-muted-text)]">
+                {periodRows[0].course.programName}
+              </span>
+            ) : null}
+            {selectedPeriod ? (
+              <LearnerMetricPopover title={selectedPeriod.name}>
+                <div className="space-y-1">
+                  <p>Program: {periodRows[0]?.course.programName ?? "Not recorded"}</p>
+                  <p>Batch: {periodRows[0]?.course.cohortName ?? "Not recorded"}</p>
+                  <p>Academic Year: {selectedPeriod.startDate.slice(0,4) || "Not recorded"}</p>
+                  <p>Semester: {selectedPeriod.name}</p>
+                </div>
+              </LearnerMetricPopover>
+            ) : null}
+            <LearnerMetricPopover title={`${periodRows.length} ${periodRows.length === 1 ? "Course" : "Courses"}`}>
+              <ul className="max-h-64 space-y-1 overflow-auto" aria-label="All courses" tabIndex={0}>
+                {periodRows.slice(0, 100).map(row => (
+                  <li key={row.course.deliveryId}>
+                    {learnerCourseUnavailableReason(row) ? (
+                      <span aria-disabled="true" className="text-muted-foreground">{row.course.courseName}</span>
+                    ) : (
+                      <Link className="text-link hover:underline"
+                        href={`/learn/courses/${encodeURIComponent(row.course.deliveryId)}/home`}>
+                        {row.course.courseName}
+                      </Link>
+                    )}
+                  </li>
                 ))}
-              </Select>
-            </label>
+              </ul>
+              {periodRows.length > 100 ? <p>Showing the first 100 courses; use search to narrow the list.</p> : null}
+            </LearnerMetricPopover>
+            {creditSummary.recordedCount > 0 ? (
+              <LearnerMetricPopover title={`${creditSummary.credits} Credits`}>
+                <ul className="max-h-64 space-y-1 overflow-auto" aria-label="Credits breakdown" tabIndex={0}>
+                  {periodRows.slice(0, 100).map(row => (
+                    <li key={row.course.deliveryId}>
+                      {row.course.courseName} · {row.course.credits === null || !Number.isFinite(row.course.credits) || row.course.credits < 0
+                        ? "Credits unavailable" : `${row.course.credits} Credits`}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2 font-semibold">Total {creditSummary.credits} Credits</p>
+              </LearnerMetricPopover>
+            ) : null}
+          </div>
 
-            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-              Search courses
-              <Input
-                value={query}
-                maxLength={MAX_COURSE_SEARCH_CHARS}
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setSearchWasTruncated(false);
+          <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:justify-end">
+            {electiveCount > 0 ? (
+              <SegmentedControl
+                label="Filter by course type"
+                value={effectiveTypeFilter}
+                onChange={value => {
+                  setTypeFilter(value as "all" | "core" | "elective");
                   setVisibleLimit(PAGE_SIZE);
                 }}
-                onPaste={event=>{
-                 const pasted=event.clipboardData.getData("text");
-                 const target=event.currentTarget;
-                 const start=target.selectionStart??target.value.length;
-                 const end=target.selectionEnd??start;
-                 if(target.value.length-Math.max(0,end-start)+pasted.length>MAX_COURSE_SEARCH_CHARS)
-                   setSearchWasTruncated(true);
-                }}
-                placeholder="Search courses by name or code…"
-                className="mt-1.5 min-h-[var(--lms-control-height)] max-md:min-h-11"
+                options={[
+                  {value: "all", label: `All ${periodRows.length}`},
+                  {value: "core", label: `Regular ${coreCount}`},
+                  {value: "elective", label: `Electives ${electiveCount}`},
+                ]}
               />
-            </label>
-            {searchWasTruncated?<p role="alert" className="text-xs text-warning">Search is limited to 200 characters. Shorten your text to search.</p>:null}
-            {query?<Button variant="secondary" type="button" className="min-h-11 w-fit md:min-h-9" onClick={()=>{setQuery("");setSearchWasTruncated(false);}}>Clear search</Button>:null}
+            ) : null}
+            {periods.length > 0 ? (
+              <div className="relative">
+                <Button type="button" variant="secondary" onClick={() => setFiltersOpen(value => !value)}
+                  aria-expanded={filtersOpen} aria-controls={filtersId}
+                  className="min-h-11 md:min-h-9">
+                  {selectedPeriod?.name ?? "Filters"} <span aria-hidden="true">⌄</span>
+                </Button>
+                {filtersOpen ? (
+                  <div id={filtersId} role="group" aria-label="Course filters"
+                    className="absolute right-0 top-full z-30 mt-2 w-[min(22rem,calc(100vw-3rem))] rounded-xl border border-border bg-surface p-4 shadow-lg">
+                    <label className="grid gap-2 text-sm font-semibold">
+                      Semester
+                      <Select value={selectedPeriodId}
+                        onChange={event => {
+                          const reset=learnerCourseSemesterFilterReset();
+                          startSemesterChange(() => setPeriodId(event.target.value));
+                          setRequestedSemesterId(null);
+                          setQuery(reset.search);
+                          setTypeFilter(reset.type);
+                          setContinueOnly(false);
+                          setVisibleLimit(reset.visibleLimit);
+                          setFiltersOpen(false);
+                        }} aria-label="Select semester">
+                        {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
+                      </Select>
+                    </label>
+                    <details className="mt-4 border-t border-border pt-3">
+                      <summary className="cursor-pointer text-sm font-semibold">More filters</summary>
+                      <div className="mt-3 grid gap-3">
+                        <label className="grid gap-1 text-sm">Term access
+                          <Select value={termState} onChange={event => {setTermState(event.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}>
+                            <option value="ALL">All term courses</option>
+                            <option value="CURRENT">Currently active</option>
+                            <option value="HISTORY">Past semester (read-only)</option>
+                          </Select>
+                        </label>
+                        <label className="grid gap-1 text-sm">Learning progress
+                          <Select value={progressFilter} onChange={event => {setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}>
+                            <option value="ALL">Any progress</option>
+                            <option value="NOT_STARTED">Not started</option>
+                            <option value="IN_PROGRESS">In progress</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="UNMEASURED">No tracked items</option>
+                          </Select>
+                        </label>
+                        <label className="grid gap-1 text-sm">Sort Courses
+                          <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setSortWasChosen(true);setVisibleLimit(PAGE_SIZE);}}>
+                            <option value="NAME">Course name</option>
+                            <option value="PROGRESS">Least progress first</option>
+                            <option value="DUE">Next assessment due</option>
+                            <option value="RECENT">Most recently active</option>
+                          </Select>
+                        </label>
+                        <FilterChip type="button" aria-pressed={continueOnly}
+                          onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}>
+                          Continue learning only
+                        </FilterChip>
+                      </div>
+                    </details>
+                    <Button type="button" variant="secondary" onClick={() => setFiltersOpen(false)}
+                      className="mt-4 min-h-11 md:min-h-9">Done</Button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+            <div className="w-full min-w-48 md:w-56">
+              <Input aria-label="Search courses" placeholder="Search courses…" maxLength={MAX_COURSE_SEARCH_CHARS}
+                value={query} onChange={event => {setQuery(event.target.value);setSearchWasTruncated(false);setVisibleLimit(PAGE_SIZE);}}
+                onPaste={event => {
+                  const pasted=event.clipboardData.getData("text");
+                  const target=event.currentTarget;
+                  const start=target.selectionStart??target.value.length;
+                  const end=start+(target.selectionEnd??start)-start;
+                  if(target.value.length-Math.max(0,end-start)+pasted.length>MAX_COURSE_SEARCH_CHARS)
+                    setSearchWasTruncated(true);
+                }}
+              />
+            </div>
           </div>
-
-          {electiveCount > 0 ? (
-            <SegmentedControl
-              label="Filter by course type"
-              value={effectiveTypeFilter}
-              onChange={(value) => {
-                setTypeFilter(value as "all" | "core" | "elective");
-                setVisibleLimit(PAGE_SIZE);
-              }}
-              options={[
-                { value: "all", label: `All ${periodRows.length}` },
-                { value: "core", label: `Regular ${coreCount}` },
-                { value: "elective", label: `Electives ${electiveCount}` },
-              ]}
-              className="w-full md:w-auto [&>label]:flex-1 md:[&>label]:flex-none [&>label>span]:min-h-11 md:[&>label>span]:min-h-9"
-            />
-          ) : null}
         </div>
-
-        <div className="relative mt-3">
-         <Button type="button" variant="secondary" aria-expanded={filtersOpen}
-          aria-controls={filtersId} onClick={()=>setFiltersOpen(value=>!value)}
-          className="min-h-11 md:min-h-9">☷ Filters</Button>
-         {filtersOpen?<div id={filtersId} className="absolute left-0 top-full z-20 mt-2 w-full max-w-[540px] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-md" role="group" aria-label="Course filters">
-          <div className="flex flex-wrap items-end gap-2">
-          <label className="grid min-w-0 w-full gap-[6px] font-semibold sm:w-44 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-            Term access
-            <Select value={termState} onChange={e=>{setTermState(e.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-[var(--lms-control-height)] max-md:min-h-11">
-              <option value="ALL">All term courses</option>
-              <option value="CURRENT">Currently active</option>
-              <option value="HISTORY">Past semester (read-only)</option>
-            </Select>
-          </label>
-          <label className="grid min-w-0 w-full gap-[6px] font-semibold sm:w-44 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-            Learning progress
-            <Select value={progressFilter} onChange={event=>{setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-[var(--lms-control-height)] max-md:min-h-11">
-              <option value="ALL">Any progress</option>
-              <option value="NOT_STARTED">Not started</option>
-              <option value="IN_PROGRESS">In progress</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="UNMEASURED">No tracked items</option>
-            </Select>
-          </label>
-          <label className="grid min-w-0 w-full gap-[6px] font-semibold sm:w-44 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-            Sort Courses
-            <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setSortWasChosen(true);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-[var(--lms-control-height)] max-md:min-h-11">
-              <option value="NAME">Course name</option><option value="PROGRESS">Least progress first</option>
-              <option value="DUE">Next assessment due</option>
-               <option value="RECENT">Most recently active</option>
-            </Select>
-          </label>
-          <FilterChip type="button" aria-pressed={continueOnly}
-            onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}
-            className="min-h-[var(--lms-control-height)] max-md:min-h-11">
-            Continue learning only
-          </FilterChip>
-          </div>
-         <Button type="button" variant="secondary" className="mt-4 min-h-11 md:min-h-9" onClick={()=>setFiltersOpen(false)}>Done</Button>
-         </div>:null}
-        </div>
+        {searchWasTruncated ? (
+          <p role="alert" className="text-xs text-warning">Search is limited to 200 characters. Shorten your text to search.</p>
+        ) : null}
         {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
-          <Button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setSortWasChosen(false);setVisibleLimit(PAGE_SIZE);}}
-            variant="secondary" className="mt-3 min-h-[var(--lms-control-height)] max-md:min-h-11">
+          <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
+            onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setSortWasChosen(false);setVisibleLimit(PAGE_SIZE);}}>
             Clear Course filters
           </Button>
         ) : null}
-        <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
-          {periodRows[0]?.course.programName ? (
-            <Badge tone="neutral">
-              {periodRows[0].course.programName}
-            </Badge>
-          ) : null}
-          {selectedPeriod ? (
-            <Badge tone="neutral">
-              {selectedPeriod.name}
-            </Badge>
-          ) : null}
-          <Badge tone="neutral">
-            {periodRows.length} {periodRows.length === 1 ? "Course" : "Courses"}
-          </Badge>
-          {creditSummary.recordedCount > 0 || (periodRows.length>0&&creditSummary.missingCount===0) ? (
-            <Badge tone="neutral">
-              {creditSummary.credits} {creditSummary.credits===1?"Credit":"Credits"}
-              {creditSummary.missingCount > 0
-                ? ` · ${creditSummary.missingCount} course credit values unavailable`
-                : ""}
-            </Badge>
-          ) : creditSummary.missingCount > 0 ? (
-            <Badge tone="warning">Credits not recorded or invalid</Badge>
-          ) : null}
-          {periodRows.some(row=>row.course.credits!==null&&
-             (!Number.isFinite(row.course.credits)||row.course.credits<0))?
-            <Badge tone="warning">Invalid Credits — excluded from total</Badge>:null}
-        </div>
-        <div role="group" aria-label="Semester summary details" className="relative mt-3 flex min-w-0 flex-wrap gap-2 border-t border-border pt-3 text-xs">
-          <LearnerMetricPopover title="Semester Details">
-            <div className="mt-2 space-y-1 text-body">
-              <div>Program: {periodRows[0]?.course.programName??"Not recorded"}</div>
-              <div>Batch: {periodRows[0]?.course.cohortName??"Not recorded"}</div>
-              <div>Academic Year: {selectedPeriod?.startDate?.slice(0,4)??"Not recorded"}</div>
-              <div>Semester: {selectedPeriod?.name??"Not recorded"}</div>
-            </div>
-          </LearnerMetricPopover>
-          <LearnerMetricPopover title="All Courses">
-            <ul role="region" aria-label="Scrollable course list" tabIndex={0}
-              className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{periodRows.slice(0,100).map((row,i)=>
-              <li key={row.course.deliveryId+"-"+i}>{row.course.courseName}</li>)}</ul>
-            {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for more courses.</p>:null}
-            {periodRows.length>100?<p>Showing first 100; search the full list below.</p>:null}
-          </LearnerMetricPopover>
-          {creditSummary.recordedCount>0?<LearnerMetricPopover title="Credits Breakdown">
-            <ul role="region" aria-label="Scrollable course list" tabIndex={0}
-              className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-              {periodRows.slice(0,100).map((row,i)=><li key={row.course.deliveryId+"-"+i}>
-                {row.course.courseName} · {row.course.credits===null?"Credits unavailable":!Number.isFinite(row.course.credits)||row.course.credits<0?"Invalid Credits":row.course.credits+" cr"}
-              </li>)}
-            </ul>
-            {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for the credits breakdown.</p>:null}
-            {periodRows.length>100?<p className="mt-1 text-warning">Showing first 100 courses; use search to narrow the rest.</p>:null}
-            <p className="mt-2 font-semibold">Total {creditSummary.credits} Credits</p>
-          </LearnerMetricPopover>:null}
-        </div>
       </section>
 
       {rows.some(row => row.unavailable) ? (
@@ -438,7 +414,7 @@ export function LearnerCourseList({
           description="Change the semester, course type or search to see other courses." />
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-8 [grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))]">
             {visibleRows.slice(0, visibleLimit).map((row, index, renderedRows) => {
               const elective =
                 String(row.course.offeringType).toUpperCase() === "ELECTIVE";
@@ -479,8 +455,8 @@ export function LearnerCourseList({
                           thumbnailUrl={row.thumbnailUrl}
                         />
                       </div>
-                      <div className="flex flex-1 flex-col gap-3 px-3 pb-3 pt-4">
-                        <h2 className="m-0 line-clamp-2 text-base font-semibold leading-6 text-[var(--lms-heading)]">
+                      <div className="flex flex-1 flex-col gap-2 p-6">
+                        <h2 className="m-0 line-clamp-2 text-base font-semibold leading-[1.4] text-[var(--lms-heading)]">
                           {row.course.courseName}
                         </h2>
                         {elective ? (
@@ -488,7 +464,7 @@ export function LearnerCourseList({
                             <StatusBadge tone="info">{row.course.electiveSlotName?.trim() || "Elective"}</StatusBadge>
                           </div>
                         ) : null}
-                        <p className="m-0 text-sm text-[var(--lms-muted-text)]">
+                        <p className="m-0 truncate text-sm text-[var(--lms-muted-text)]">
                           Instructor: {row.instructorNames.length > 0
                             ? row.instructorNames.join(", ")
                             : "Not assigned"}
