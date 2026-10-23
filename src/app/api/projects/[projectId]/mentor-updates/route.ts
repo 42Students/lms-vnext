@@ -12,7 +12,9 @@ export async function POST(request:Request,{params}:{
     // Bound request size before parsing; the validated message limit is 1000.
     const raw=await request.text();
     if(raw.length>4096)return NextResponse.json({error:"UPDATE_TOO_LONG"},{status:413});
-    const body:unknown=JSON.parse(raw);
+    let body:unknown;
+    try{body=JSON.parse(raw) as unknown;}
+    catch{return NextResponse.json({error:"INVALID_JSON"},{status:400});}
     const posted=await postMentorProjectUpdate(await getCurrentRequestContext(),projectId,body);
     return NextResponse.json({id:posted.id,message:"Project update posted"},{status:201,
       headers:{"Cache-Control":"private, no-store"}});
