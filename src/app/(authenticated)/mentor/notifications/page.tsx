@@ -149,6 +149,8 @@ async function MentorNotificationsContent({
       </svg>
       <p className="text-sm font-semibold text-body">Nothing needs your attention right now.</p>
     </div>:null}
+    <div className="prototype-mentor-notifications-columns">
+      <div className="prototype-mentor-notifications-feed">
     {!allSourcesEmpty&&!allRelevantFailed?<AnnouncementFeed enabled={announcementsEnabled}
       items={announcements.map(item=>({
         id:item.id,title:item.title,message:item.message,
@@ -238,7 +240,18 @@ async function MentorNotificationsContent({
             </div> : null}
           </>}
     </section>:null}
-
-
+      </div>
+      <aside className="prototype-mentor-notifications-about" aria-label="What you are notified about">
+        <h2>What you’re told about</h2>
+        <dl>
+          <div><dt>Final submissions</dt><dd>Here and by email</dd></div>
+          <div><dt>Meeting requests</dt><dd>Here and by email</dd></div>
+          <div><dt>Tasks waiting for you</dt><dd>Here</dd></div>
+          <div><dt>Blocked or quiet teams</dt><dd>Here</dd></div>
+          <div><dt>College announcements</dt><dd>Here</dd></div>
+        </dl>
+        <p>Email only for the two that can’t wait; everything else stays here.</p>
+      </aside>
+    </div>
   </div>;
 }
