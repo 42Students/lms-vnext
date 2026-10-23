@@ -144,3 +144,50 @@ export function MentorPrototypePerformance({workspace}:{workspace:Workspace}){
     </section>
   </div>;
 }
+
+
+export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}){
+  const now=new Date();
+  const weekStart=now.getTime()-7*86400000;
+  const recent=workspace.activity.filter(event=>event.occurredAt.getTime()>=weekStart);
+  const taskEvents=recent.filter(event=>/TASK/i.test(event.eventType)).length;
+  const resourceEvents=recent.filter(event=>/RESOURCE|FILE|LINK/i.test(event.eventType)).length;
+  const meetingEvents=recent.filter(event=>/MEETING/i.test(event.eventType)).length;
+  return <section className="prototype-mentor-activity-summary" aria-label="Recorded activity this week">
+    <div className="prototype-mentor-card-title">
+      <h2>Project activity · last seven days</h2>
+      <span>{recent.length} recorded {recent.length===1?"event":"events"}</span>
+    </div>
+    <div className="prototype-mentor-activity-stat-row">
+      <div><strong>{taskEvents}</strong><span>Task events</span></div>
+      <div><strong>{meetingEvents}</strong><span>Meeting events</span></div>
+      <div><strong>{resourceEvents}</strong><span>Resource events</span></div>
+      <div><strong>{recent.length-taskEvents-meetingEvents-resourceEvents<0?"—":recent.length-taskEvents-meetingEvents-resourceEvents}</strong><span>Other events</span></div>
+    </div>
+    <p>Use the activity filters below to browse the complete recorded history. Event counts are based on stored project activity types, not inferred actions.</p>
+  </section>;
+}
+
+export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace}){
+  const latest=workspace.finalDelivery.submissions.at(-1);
+  const review=workspace.finalDelivery.reviews.at(-1);
+  const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
+  return <section className="prototype-mentor-delivery-evidence" aria-label="Final submission evidence">
+    <div className="prototype-mentor-card-title">
+      <h2>Final submission · evidence</h2>
+      <span>{latest?"Version "+latest.version:"Not submitted"}</span>
+    </div>
+    {latest?<div className="prototype-mentor-delivery-main">
+      <div className="prototype-mentor-delivery-details">
+        <strong>{latest.summary||"Final project submission"}</strong>
+        <p>Status: {latest.status.replaceAll("_"," ")}{review?" · Latest review: "+review.status.replaceAll("_"," "):""}</p>
+        {latest.notes?<p className="prototype-mentor-delivery-notes">{latest.notes}</p>:null}
+      </div>
+      <div className="prototype-mentor-delivery-links">
+        {latest.sourceUrl?<a href={latest.sourceUrl} rel="noopener noreferrer" target="_blank">Source repository ↗</a>:null}
+        {latest.demoUrl?<a href={latest.demoUrl} rel="noopener noreferrer" target="_blank">Demo ↗</a>:null}
+        <Link href={base+"?tab=delivery"}>Review on this page ↓</Link>
+      </div>
+    </div>:<p className="prototype-mentor-summary-empty">No final submission has been recorded for this project yet.</p>}
+  </section>;
+}
