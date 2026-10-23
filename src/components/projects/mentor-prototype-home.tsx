@@ -45,12 +45,12 @@ function readLater(key:string):string[] {
  * the item reappears automatically when the event timestamp changes.
  */
 export function MentorPrototypeHome({
-  scope, attention, teamCount, studentCount,
+  scope, attention, teamCount, membershipCount,
 }:{
   scope:string;
   attention:readonly FocusItem[];
   teamCount:number;
-  studentCount:number;
+  membershipCount:number;
 }) {
   const [snoozed,setSnoozed]=useState<readonly string[]>([]);
   const [hydrated,setHydrated]=useState(false);
@@ -74,7 +74,7 @@ export function MentorPrototypeHome({
   return <div className="prototype-mentor-home">
     <div className="prototype-mentor-home-heading">
       <div>
-        <p>{teamCount} {teamCount===1?"team":"teams"} · {studentCount} {studentCount===1?"student":"students"} · project workspace</p>
+        <p>{teamCount} {teamCount===1?"team":"teams"} · {membershipCount} team {membershipCount===1?"membership":"memberships"} · project workspace</p>
         <h1>{active.length
           ? active.length+" "+(active.length===1?"thing needs":"things need")+" you."
           : "You’re all caught up."}</h1>
