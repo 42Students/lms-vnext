@@ -640,10 +640,10 @@ export function FinalReviewControl({
             {(["Report is incomplete","Demo doesn’t match the app",
               "Code isn’t in the repo","Trial evidence missing"] as const).map(reason=>
               <Button key={reason} type="button" size="sm" variant="secondary"
-                aria-pressed={feedback.split("\\n").includes(reason)}
-                onClick={()=>setFeedback(previous=>previous.split("\\n").includes(reason)
+                aria-pressed={feedback.split("\n").includes(reason)}
+                onClick={()=>setFeedback(previous=>previous.split("\n").includes(reason)
                   ? previous
-                  : [previous.trim(),reason].filter(Boolean).join("\\n"))}>
+                  : [previous.trim(),reason].filter(Boolean).join("\n"))}>
                 {reason}
               </Button>
             )}
