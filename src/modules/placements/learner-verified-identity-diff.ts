@@ -12,14 +12,14 @@ export function learnerVerifiedIdentityChanged(
   if (!verifiedSnapshot || typeof verifiedSnapshot !== "object" ||
       Array.isArray(verifiedSnapshot)) return null;
   const stored = verifiedSnapshot as Record<string, unknown>;
-  const salt = stored.identityHashSalt;
+  const salt = stored["identityHashSalt"];
   if (typeof salt !== "string" || !/^[0-9a-f]{64}$/.test(salt)) return null;
 
   const fields = [
     {name:"AADHAAR" as const, number:current.aadhaarNumber,
-     masked:stored.aadhaarNumber, hash:stored.aadhaarHash},
+     masked:stored["aadhaarNumber"], hash:stored["aadhaarHash"]},
     {name:"PAN" as const, number:current.panNumber,
-     masked:stored.panNumber, hash:stored.panHash},
+     masked:stored["panNumber"], hash:stored["panHash"]},
   ];
   for (const field of fields) {
     if (field.hash === undefined || field.hash === null) {
