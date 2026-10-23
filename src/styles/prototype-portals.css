@@ -1533,3 +1533,73 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-task-search input:focus-visible{
   outline:2px solid #0a7c88;outline-offset:2px;
 }
+
+
+/* Mentor #47: persistent task pane (prototype right-hand 312px panel). */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-with-pane{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,312px);
+  align-items:start;gap:16px;min-width:0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-with-pane>[role="region"],
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-with-pane>.prototype-mentor-board-list{
+  min-width:0;overflow-x:auto;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail{
+  min-width:0;display:flex;flex-direction:column;gap:12px;
+  padding:16px;border:1px solid #e7ecf2;border-radius:12px;background:#fff;
+  color:#172033;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-title{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-title span,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-block h4{
+  color:#5b6b82;font:700 11px Lato,Arial,sans-serif;letter-spacing:.05em;text-transform:uppercase;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-title button{
+  display:flex;align-items:center;justify-content:center;min-height:28px;min-width:32px;
+  border:1px solid #d6e1ee;border-radius:6px;background:#fff;color:#3b4a60;cursor:pointer;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail h3{
+  margin:0;font-size:18px;line-height:1.3;font-weight:700;overflow-wrap:anywhere;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-tags{
+  display:flex;flex-wrap:wrap;gap:5px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-tags span{
+  display:inline-flex;align-items:center;min-height:23px;padding:2px 7px;
+  border-radius:5px;background:#eff8fa;color:#086670;font-size:11px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-owner{
+  border-bottom:1px solid #e7ecf2;padding-bottom:12px;font-size:12px;color:#5b6b82;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-owner strong{
+  margin-left:5px;color:#172033;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-description,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-block p{
+  margin:0;font-size:13px;line-height:1.5;color:#3b4a60;white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-block{
+  display:flex;flex-direction:column;gap:7px;border-top:1px solid #e7ecf2;padding-top:12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-block h4{
+  margin:0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-block.is-blocked{
+  border:1px solid #fecdca;border-radius:9px;background:#fef3f2;padding:12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-block.is-blocked h4,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-block.is-blocked p{
+  color:#b42318;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-detail-more{
+  align-self:flex-start;min-height:36px;border:1px solid #0a7c88;border-radius:8px;
+  background:#0a7c88;color:#fff;padding:0 12px;font:700 12px Lato,Arial,sans-serif;
+  cursor:pointer;
+}
+@media(max-width:1150px){
+  .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-with-pane{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
