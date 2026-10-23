@@ -311,3 +311,52 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
     </section>
   </div>;
 }
+
+
+function safeBriefString(value:unknown):string|null{
+  return typeof value==="string"&&value.trim()?value.trim():null;
+}
+function safeBriefList(value:unknown):string[]{
+  return Array.isArray(value)?value.filter((item):item is string=>
+    typeof item==="string"&&Boolean(item.trim())).map(item=>item.trim()).slice(0,30):[];
+}
+
+/** #46 "About this project" reads the student's persisted authored brief;
+ * never substitutes canned example deliverables/acceptance conditions. */
+export function MentorPrototypeProjectBrief({workspace}:{workspace:Workspace}){
+  const brief=workspace.project.authoredBrief;
+  const record=typeof brief==="object"&&brief!==null&&!Array.isArray(brief)
+    ? brief as Record<string,unknown> : {};
+  const goal=safeBriefString(record["goal"]);
+  const description=safeBriefString(record["description"]);
+  const deliverables=safeBriefList(record["deliverables"]);
+  const done=safeBriefList(record["completionConditions"]);
+  const personas=safeBriefList(record["personas"]);
+  const dates=[workspace.project.startDate,workspace.project.endDate].filter(Boolean);
+  return <section className="prototype-mentor-project-brief" aria-label="About this project">
+    <div className="prototype-mentor-card-title">
+      <h2>About this project · what students see on their Overview</h2>
+    </div>
+    <div className="prototype-mentor-brief-body">
+      <div><h3>Goal</h3><p>{goal||description||"No project goal has been recorded."}</p></div>
+      {description&&description!==goal?<div><h3>Description</h3><p>{description}</p></div>:null}
+      <div><h3>Deliverables</h3>
+        {deliverables.length?<ol>{deliverables.map((item,index)=><li key={index}>{item}</li>)}</ol>
+          :<p>No deliverables recorded.</p>}
+      </div>
+      <div><h3>Done looks like</h3>
+        {done.length?<ul>{done.map((item,index)=><li key={index}>{item}</li>)}</ul>
+          :<p>No completion conditions recorded.</p>}
+      </div>
+      {personas.length?<div><h3>Who it’s for</h3>
+        <ul>{personas.map((item,index)=><li key={index}>{item}</li>)}</ul>
+      </div>:null}
+      <dl>
+        <div><dt>Dates</dt><dd>{dates.length?dates.join(" – "):"Not scheduled"}</dd></div>
+        <div><dt>Sprints</dt><dd>{workspace.sprints.length} recorded</dd></div>
+        <div><dt>Estimates</dt><dd>{workspace.project.estimationUnit||"Not specified"}</dd></div>
+        <div><dt>Next step</dt><dd>{workspace.project.nextAction||"Not set"}</dd></div>
+      </dl>
+    </div>
+  </section>;
+}
