@@ -257,3 +257,20 @@ test("Mentor Meetings display existing meeting notes and request workflows",()=>
   assert.match(calendar,/\/team-meetings/);
   assert.match(calendar,/downloadMeetingCalendar\(meeting\)/);
 });
+
+
+test("Mentor student watch uses active scoped learner roles and real blocked/review tasks",()=>{
+  const service=source("src/modules/projects/mentor-student-watch-service.ts");
+  const route=source("src/app/(authenticated)/mentor/projects/page.tsx");
+  const home=source("src/components/projects/mentor-prototype-home.tsx");
+  assert.match(service,/hasMembershipRole\(context,"MENTOR"\)/);
+  assert.match(service,/inArray\(projectTasks\.projectId,\[\.\.\.byId\.keys\(\)\]\)/);
+  assert.match(service,/eq\(projectMembers\.role,"LEARNER"\)/);
+  assert.match(service,/eq\(collegeMemberships\.status,"ACTIVE"\)/);
+  assert.match(service,/eq\(users\.platformStatus,"ACTIVE"\)/);
+  assert.match(service,/isNull\(projectTasks\.deletedAt\)/);
+  assert.match(service,/projectTasks\.status,\["BLOCKED","IN_REVIEW"\]/);
+  assert.match(route,/getMentorStudentWatch\(context/);
+  assert.match(home,/studentWatch\.slice\(0,5\)\.map/);
+  assert.match(home,/Students to watch/);
+});
