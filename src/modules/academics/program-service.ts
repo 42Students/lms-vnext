@@ -48,8 +48,8 @@ import {
 } from "./validation";
 
 export function normalizeProgramDurationTerms(input: {
-  durationTerms?: number;
-  durationYears?: number;
+  durationTerms?: number | undefined;
+  durationYears?: number | undefined;
 }) {
   if (input.durationYears !== undefined) {
     return input.durationYears * 2;
