@@ -54,7 +54,7 @@ test("Mentor detail uses seven prototype tabs without deleting the review deep l
   for(const label of titles)assert.ok(tabs.includes('label: "'+label+'"'),label);
   assert.equal((tabs.match(/key: "/g)??[]).length,7);
   assert.doesNotMatch(tabs,/key: "delivery"/);
-  assert.match(page,/selectedTab==="delivery"/);
+  assert.match(page,/selectedTab\s*===\s*"delivery"/);
   assert.match(page,/prototype-mentor-sprint-track/);
   assert.match(page,/timeline\.map\(sprint/);
 });
