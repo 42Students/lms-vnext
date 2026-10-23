@@ -55,8 +55,13 @@ export function MentorPrototypeHome({
   const [snoozed,setSnoozed]=useState<readonly string[]>([]);
   const [hydrated,setHydrated]=useState(false);
   useEffect(()=>{
-    setSnoozed(readLater(storageKey(scope)));
-    setHydrated(true);
+    // Defer storage hydration until the first animation frame so the initial
+    // server/client trees agree and React's effect-set-state rule is respected.
+    const frame=window.requestAnimationFrame(()=>{
+      setSnoozed(readLater(storageKey(scope)));
+      setHydrated(true);
+    });
+    return ()=>window.cancelAnimationFrame(frame);
   },[scope]);
   const active=hydrated
     ? attention.filter(item=>!snoozed.includes(item.key+"@"+item.occurredAt))
