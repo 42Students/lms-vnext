@@ -99,8 +99,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   const report=(index:number,message:string)=>{
    issues[index]=[...(issues[index]??[]),message];
   };
-  for(let index=0;index<ordered.length;index++){
-   const row=ordered[index]!;
+  for(const [index,row] of ordered.entries()){
    if(!row.title.trim())report(index,"Title required");
    if(row.url?.trim()){
     try{
