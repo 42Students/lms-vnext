@@ -50,8 +50,8 @@ export function topbarConfigForPath(pathname: string): TopbarConfig {
     messagesHref: null, notificationsHref: "/teacher/notifications",
   };
   if (pathname === "/mentor" || pathname.startsWith("/mentor/")) return {
-    portal: "mentor", placeholder: "Find a team, project or meeting",
-    searchHref: "/mentor/projects", newHref: null,
+    portal: "mentor", placeholder: "Find a team, project, student or task",
+    searchHref: "/mentor/search", newHref: null,
     messagesHref: null, notificationsHref: "/mentor/notifications",
   };
   return {
@@ -114,10 +114,8 @@ export function topbarSearchDestinations(pathname: string, text: string) {
       {label:"Search conversations",href:"/hr/conversations?q="+enc},
     ];
     case "mentor": return [
-      // These are real authenticated, tenant-scoped read filters. Student,
-      // task and resource full-text search needs a separate authorized index.
-      {label:"Search mentor projects",href:"/mentor/projects?search="+enc},
-      {label:"Search mentor meetings",href:"/mentor/calendar?search="+enc},
+      {label:"Search teams, tasks, students and resources",href:"/mentor/search?q="+enc},
+      {label:"Search meetings",href:"/mentor/calendar?search="+enc},
     ];
     case "college": return [
       {label:"Search students",href:"/college/students?q="+enc},
