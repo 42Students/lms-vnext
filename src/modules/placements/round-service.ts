@@ -218,6 +218,7 @@ export async function createPlacementRound(
         createdByUserId: context.user.id,
       })
       .returning();
+    if (!round) throw new Error("Created placement round was not returned.");
 
     await tx
       .insert(placementJobRoundEvents)
