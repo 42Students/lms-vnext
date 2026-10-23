@@ -2,6 +2,7 @@ import Link from "next/link";
 import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
+import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
 type ProjectTask=Workspace["tasks"][number];
@@ -123,38 +124,22 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
 }
 
 export function MentorPrototypePerformance({workspace}:{workspace:Workspace}){
-  const students=workspace.members.filter(member=>member.role==="LEARNER");
-  const tasks=workspace.tasks.filter(task=>!task.deletedAt);
-  const unassigned=tasks.filter(task=>task.assigneeMembershipId===null&&
-    !["DONE","IN_REVIEW"].includes(task.status));
-  return <div className="prototype-mentor-performance">
-    <section className="prototype-mentor-chart-card">
-      <div className="prototype-mentor-card-title"><h2>Who did what · all recorded sprints</h2>
-        <span>Done, waiting, open and carried work from real tasks</span></div>
-      <div className="prototype-mentor-performance-table">
-        <div className="prototype-mentor-performance-head" aria-hidden="true">
-          <span>Student</span><span>Done</span><span>Waiting</span><span>Open</span><span>Carried</span><span>Points done</span>
-        </div>
-        {students.map(member=>{
-          const owned=tasks.filter(task=>task.assigneeMembershipId===member.membershipId);
-          const done=owned.filter(task=>task.status==="DONE");
-          return <div key={member.membershipId} className="prototype-mentor-performance-row">
-            <strong>{member.displayName||"Student"}</strong>
-            <span>{done.length}</span><span>{countTasks(owned,"IN_REVIEW")}</span>
-            <span>{owned.filter(task=>!["DONE","IN_REVIEW"].includes(task.status)).length}</span>
-            <span>{owned.filter(task=>Boolean(task.carriedFromSprintId)).length}</span>
-            <span>{points(done)} pts</span>
-          </div>;
-        })}
-        {!students.length?<p className="prototype-mentor-summary-empty">No assigned students.</p>:null}
-      </div>
-    </section>
-    <section className="prototype-mentor-backlog-card">
-      <div className="prototype-mentor-card-title"><h2>Unassigned work · {unassigned.length} tasks</h2>
-        <span>{points(unassigned)} estimated points</span></div>
-      <p>Review the assignment controls below to allocate these eligible tasks. Auto-assign still requires confirmation.</p>
-    </section>
-  </div>;
+  return <MentorPrototypePerformanceTable
+    students={workspace.members.filter(member=>member.role==="LEARNER").map(member=>({
+      id:member.membershipId,
+      name:member.displayName||"Student",
+      label:member.roleLabel||"Student",
+    }))}
+    tasks={workspace.tasks.filter(task=>!task.deletedAt).map(task=>({
+      id:task.id,
+      assigneeMembershipId:task.assigneeMembershipId,
+      sprintId:task.sprintId,status:task.status,
+      estimatePoints:task.estimatePoints,
+      carriedFromSprintId:task.carriedFromSprintId??null,
+    }))}
+    sprints={workspace.sprints.map(sprint=>({
+      id:sprint.id,sequence:sprint.sequence,title:sprint.title,status:sprint.status,
+    }))} />;
 }
 
 
