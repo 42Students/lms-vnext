@@ -1313,3 +1313,13 @@
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
 }
+
+
+/* Mentor Resources #51: prototype's earlier-sprint fold. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-resource-earlier {
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+  padding:12px 16px;border:1px solid #e7ecf2;border-radius:10px;background:#fff;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-resource-earlier span {
+  color:#5b6b82;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+}
