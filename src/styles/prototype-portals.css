@@ -1374,3 +1374,16 @@
     grid-template-columns:minmax(0,1fr);
   }
 }
+
+
+/* Mentor #53 revision reasons: selectable labels in the existing guarded dialog. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-review-reasons {
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-review-reasons button {
+  min-height:32px;border-radius:999px;border:1px solid #f1b4ae;background:#fff;
+  padding:0 12px;color:#b42318;font:700 12px Lato,sans-serif;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-review-reasons button[aria-pressed="true"] {
+  border-color:#b42318;background:#fef3f2;
+}
