@@ -42,6 +42,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [visibleLimit,setVisibleLimit]=useState(150);
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
  const [dragging,setDragging]=useState(false);
+ const [taskQuery,setTaskQuery]=useState("");
  const [view,setView]=useState<"board"|"list">(params.get("view")==="list"?"list":"board");
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
@@ -61,7 +62,12 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  }
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
  const currentSprint=sprints.find(item=>item.status==="ACTIVE");
- const matching=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
+ const queryText=taskQuery.trim().toLocaleLowerCase("en-IN");
+ const matching=tasks.filter(task=>(!queryText||
+    [task.title,task.description??"",task.taskType??"",
+      members.find(member=>member.membershipId===task.assigneeMembershipId)?.displayName??""]
+      .some(value=>value.toLocaleLowerCase("en-IN").includes(queryText)))&&
+    (!sprint||task.sprintId===sprint)&&
    (!release||(task.sprintId?bySprint.get(task.sprintId)?.releaseId:null)===release)&&
    (Boolean(sprint||release)||scope==="all"||task.sprintId===null||
      (Boolean(currentSprint)&&task.sprintId===currentSprint?.id))&&
@@ -196,13 +202,22 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   {error?<Alert tone="error">{error}</Alert>:null}
   {undo?<Button variant="ghost" type="button" disabled={busy} 
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
-  {matching.length>0?<><div className="prototype-mentor-board-view-toggle" role="group" aria-label="Task presentation">
+  <div className="prototype-mentor-board-toolbar">
+    <label className="prototype-mentor-board-task-search">
+      <span className="sr-only">Search project tasks</span>
+      <input type="search" value={taskQuery}
+        onChange={event=>{setTaskQuery(event.target.value);setVisibleLimit(150);}}
+        placeholder={"Find a task in all "+sprints.length+" sprints"}
+        aria-label="Find a task by title, type, description or assignee" />
+    </label>
+    <div className="prototype-mentor-board-view-toggle" role="group" aria-label="Task presentation">
      <Button type="button" size="sm" variant={view==="board"?"primary":"secondary"}
        aria-pressed={view==="board"} onClick={()=>{setView("board");remember("view","board");}}>Board</Button>
      <Button type="button" size="sm" variant={view==="list"?"primary":"secondary"}
        aria-pressed={view==="list"} onClick={()=>{setView("list");remember("view","list");}}>List</Button>
+    </div>
    </div>
-   {view==="board"?<p className="text-xs text-muted-foreground md:hidden">Swipe sideways to see board lanes.</p>:null}
+   {matching.length>0?<>{view==="board"?<p className="text-xs text-muted-foreground md:hidden">Swipe sideways to see board lanes.</p>:null}
     <p id="mentor-board-keyboard-help" className="sr-only">Use the Move task selection to change a task lane without dragging.</p><div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
     className={styles["scrollRegion"]} style={{display:view==="list"?"none":undefined}}><div className={styles["track"]}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
