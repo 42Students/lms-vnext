@@ -99,6 +99,8 @@ jobs:
           npm run db04:promotion:verify
       - name: Database source parity
         run: npm run test:db:parity
+      - name: Prototype portal source contracts (TPO, Recruiter, Mentor)
+        run: node --test tests/prototype-parity-shell-contract.test.mjs
       - name: Nine-domain crosswalk regression
         run: node --test tests/db019-crosswalk-identity.test.mjs
       - name: Global source audit and crosswalk gate
