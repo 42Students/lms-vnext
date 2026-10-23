@@ -96,9 +96,18 @@ function MeetingRow({
         </Link>
         {safeProjectExternalHref(href) ? <a className={styles.action} href={safeProjectExternalHref(href)!}
           >Join link</a> : null}
+        {meeting.status==="COMPLETED"?<Link className={styles.action}
+          href={"/mentor/projects/"+encodeURIComponent(meeting.projectId)+
+            "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}>
+          Meeting notes and outcome
+        </Link>:null}
+        {meeting.status==="REQUESTED"?<Link className={styles.action}
+          href={"/mentor/projects/"+encodeURIComponent(meeting.projectId)+"/team-meetings"}>
+          Answer meeting request
+        </Link>:null}
         <Link className={styles.action}
-          href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) + "?tab=team"}>
-          Open project
+          href={"/mentor/projects/"+encodeURIComponent(meeting.projectId)+"/team-meetings"}>
+          Meeting history and actions
         </Link>
       </div>
     </article>
