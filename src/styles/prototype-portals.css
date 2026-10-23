@@ -262,3 +262,148 @@
     padding: 16px;
   }
 }
+
+/* Mentor screen 45: six-column "Your teams" table from the uploaded HTML.
+ * The prototype uses a 2.1/.9/1.6/1.1/.9/1.1 fractional grid, white card,
+ * 12px corners, 11px uppercase heading, 12px/18px rows and 6px teal bars.
+ */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-team-table {
+  min-width: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e7ecf2;
+  border-radius: 12px;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid #e7ecf2;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-top h2 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: #5b6b82;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-top span {
+  font-size: 12px;
+  color: #5b6b82;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-head,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-row {
+  display: grid;
+  grid-template-columns: minmax(0,2.1fr) minmax(0,.9fr) minmax(0,1.6fr) minmax(0,1.1fr) minmax(0,.9fr) minmax(0,1.1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-head {
+  padding: 10px 18px;
+  border-bottom: 1px solid #e7ecf2;
+  background: #fbfcfd;
+  color: #5b6b82;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-row {
+  min-height: 68px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #f1f4f8;
+  color: #172033;
+  font-size: 14px;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-row:last-child {
+  border-bottom: 0;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-row:hover {
+  background: #f8fbfc;
+  color: #172033;
+  text-decoration: none;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-project-name,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-detail {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-project-name strong {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-project-name small,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-detail small {
+  color: #5b6b82;
+  font-size: 12px;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-progress-track {
+  display: block;
+  width: 100%;
+  max-width: 100px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e7ecf2;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #0a7c88;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-state-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: #0a7c88;
+}
+
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-state-ok { color: #067647; }
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-state-ok .prototype-mentor-state-dot { background: #12b76a; }
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-state-warn { color: #b54708; }
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-state-warn .prototype-mentor-state-dot { background: #f79009; }
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-state-bad { color: #b42318; }
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-state-bad .prototype-mentor-state-dot { background: #d92d20; }
+
+@media (max-width: 1100px) {
+  .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-team-table {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-head,
+  .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-table-row {
+    min-width: 840px;
+  }
+}
