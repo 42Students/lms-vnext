@@ -357,11 +357,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <TaskReviewActions projectId={projectId} taskId={focused.id}
           submissionId={submittedReview.id} mode="MENTOR"
           expectedUpdatedAt={new Date(submittedReview.updatedAt).toISOString()}
-          initialDecision="APPROVED" triggerLabel="Approve A"/>
+          initialDecision="APPROVED" triggerLabel="Approve A" shortcut="a"/>
         <TaskReviewActions projectId={projectId} taskId={focused.id}
           submissionId={submittedReview.id} mode="MENTOR"
           expectedUpdatedAt={new Date(submittedReview.updatedAt).toISOString()}
-          initialDecision="CHANGES_REQUESTED" triggerLabel="Send back S"/>
+          initialDecision="CHANGES_REQUESTED" triggerLabel="Send back S" shortcut="s"/>
       </div>:null}
       <button type="button" className="prototype-mentor-board-detail-more"
         onClick={()=>setSelected(focused.id)}>Open full task details →</button>
