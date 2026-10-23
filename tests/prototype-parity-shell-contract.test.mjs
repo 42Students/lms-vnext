@@ -44,3 +44,46 @@ test("all 56 prototype screens remain tracked but not deceptively verified",()=>
   assert.equal(rows.length,56);
   assert.match(doc,/None of the 56 screens are closed or browser-verified/);
 });
+
+
+test("Mentor detail uses seven prototype tabs without deleting the review deep link",()=>{
+  const tabs=source("src/components/projects/mentor-project-tabs.tsx");
+  const page=source("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
+  const titles=["Overview","Board","Sprints & releases","Team & meetings",
+    "Performance","Resources","Activity"];
+  for(const label of titles)assert.ok(tabs.includes('label: "'+label+'"'),label);
+  assert.equal((tabs.match(/key: "/g)??[]).length,7);
+  assert.doesNotMatch(tabs,/key: "delivery"/);
+  assert.match(page,/selectedTab==="delivery"/);
+  assert.match(page,/prototype-mentor-sprint-track/);
+  assert.match(page,/timeline\.map\(sprint/);
+});
+
+test("Mentor home focus uses real scoped attention and event-keyed Later action",()=>{
+  const home=source("src/components/projects/mentor-prototype-home.tsx");
+  const route=source("src/app/(authenticated)/mentor/projects/page.tsx");
+  assert.match(route,/attention=\{attentionRows\}/);
+  assert.match(route,/scope=\{context\.user\.id\}/);
+  assert.match(home,/item\.key\+"@"\+item\.occurredAt/);
+  assert.match(home,/localStorage\.setItem\(storageKey\(scope\)/);
+  assert.match(home,/onClick=\{\(\)=>later\(item\)\}/);
+  assert.match(home,/href=\{item\.href\}/);
+});
+
+test("Mentor Meetings and Notifications expose prototype split panels",()=>{
+  const meetings=source("src/components/projects/mentor-meetings-calendar.tsx");
+  const inbox=source("src/app/(authenticated)/mentor/notifications/page.tsx");
+  assert.match(meetings,/prototype-mentor-week-strip/);
+  assert.match(meetings,/prototype-mentor-meeting-columns/);
+  assert.match(meetings,/onClick=\{\(\)=>setSelectedId\(item\.id\)\}/);
+  assert.match(meetings,/<MeetingRow key=\{selected\.id\}/);
+  assert.match(inbox,/prototype-mentor-notifications-columns/);
+  assert.match(inbox,/What you’re told about/);
+});
+
+test("Mentor search is only routed to authorized implemented filters",()=>{
+  const topbar=source("src/components/shell/topbar/portal-config.ts");
+  assert.match(topbar,/case "mentor": return \[/);
+  assert.match(topbar,/\/mentor\/projects\?search=/);
+  assert.match(topbar,/\/mentor\/calendar\?search=/);
+});
