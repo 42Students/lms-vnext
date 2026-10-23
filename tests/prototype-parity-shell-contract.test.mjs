@@ -298,3 +298,17 @@ test("Mentor global search covers projects tasks active students and resources w
   assert.match(page,/mentor-unified-search/);
   assert.match(config,/\/mentor\/search\?q=/);
 });
+
+
+test("Mentor Performance filters current, last four and selected sprint work, preserving editor",()=>{
+  const perf=source("src/components/projects/mentor-prototype-performance-table.tsx");
+  const summaries=source("src/components/projects/mentor-prototype-project-summaries.tsx");
+  const detail=source("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
+  assert.match(perf,/setRange\(event\.target\.value\)/);
+  assert.match(perf,/value="last4"/);
+  assert.match(perf,/value="current"/);
+  assert.match(perf,/task\.sprintId===range/);
+  assert.match(perf,/task\.assigneeMembershipId===student\.id/);
+  assert.match(summaries,/<MentorPrototypePerformanceTable/);
+  assert.match(detail,/<MentorTaskAllocation/);
+});
