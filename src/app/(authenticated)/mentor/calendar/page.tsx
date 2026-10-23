@@ -56,7 +56,7 @@ export default async function MentorCalendarPage({searchParams}:{
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Meetings"
       description="Every scheduled meeting across your assigned projects, in one place."/>
-    <section className="ln-module-card min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-5"
+    <section className="prototype-mentor-meetings-surface min-w-0"
       aria-label="Meeting dates and history">
       <MentorMeetingsCalendar meetings={displayed}
       // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
