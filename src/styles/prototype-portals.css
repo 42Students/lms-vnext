@@ -1515,3 +1515,21 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-advanced :where(p,label,select){
   overflow-wrap:anywhere;
 }
+
+
+/* Mentor Board #47: task search + Board/List control above the six lanes. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-toolbar {
+  display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:8px;
+  margin:12px 0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-task-search{
+  display:block;min-width:160px;flex:0 1 225px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-task-search input{
+  display:block;width:100%;min-height:36px;padding:6px 12px;
+  color:#172033;border:1px solid #d6e1ee;border-radius:8px;background:#fff;
+  font:13px Lato,Arial,sans-serif;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-task-search input:focus-visible{
+  outline:2px solid #0a7c88;outline-offset:2px;
+}
