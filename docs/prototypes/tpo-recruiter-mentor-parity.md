@@ -65,18 +65,18 @@
 | 42 | Recruiter | Recruiter › Bell, search, your details, college picker | NOT STARTED |
 | 43 | Recruiter/Public | Public › Invitation, public link, sign in | NOT STARTED |
 | 44 | Recruiter/Public | Public › Shared applicant list (no account) | NOT STARTED |
-| 45 | Mentor | Mentor › Projects (home: what needs you, your teams) | NOT STARTED |
-| 46 | Mentor | Mentor › Project › Overview | NOT STARTED |
-| 47 | Mentor | Mentor › Project › Board (sprint picker, 6 lanes, list view, task detail) | NOT STARTED |
-| 48 | Mentor | Mentor › Project › Sprints & releases (16 sprints: sign off, carry over, ship) | NOT STARTED |
-| 49 | Mentor | Mentor › Project › Team & meetings | NOT STARTED |
-| 50 | Mentor | Mentor › Project › Performance (who did what, unassigned work) | NOT STARTED |
-| 51 | Mentor | Mentor › Project › Resources | NOT STARTED |
-| 52 | Mentor | Mentor › Project › Activity | NOT STARTED |
-| 53 | Mentor | Mentor › Review a final submission (accept, request changes, lock, reopen) | NOT STARTED |
-| 54 | Mentor | Mentor › Meetings (all teams: requests, coming up, notes) | NOT STARTED |
-| 55 | Mentor | Mentor › Notifications | NOT STARTED |
-| 56 | Mentor | Mentor › Everywhere: search, bell, your details | NOT STARTED |
+| 45 | Mentor | Mentor › Projects (home: what needs you, your teams) | IN PROGRESS — real attention queue, Later, team table |
+| 46 | Mentor | Mentor › Project › Overview | IN PROGRESS — shared project heading and sprint ribbon |
+| 47 | Mentor | Mentor › Project › Board (sprint picker, 6 lanes, list view, task detail) | IN PROGRESS — shared heading/nav; board still differs |
+| 48 | Mentor | Mentor › Project › Sprints & releases (16 sprints: sign off, carry over, ship) | IN PROGRESS — shared heading/nav; sprint content differs |
+| 49 | Mentor | Mentor › Project › Team & meetings | IN PROGRESS — shared heading/nav; meetings content differs |
+| 50 | Mentor | Mentor › Project › Performance (who did what, unassigned work) | IN PROGRESS — shared heading/nav; performance detail differs |
+| 51 | Mentor | Mentor › Project › Resources | IN PROGRESS — shared heading/nav; resource detail differs |
+| 52 | Mentor | Mentor › Project › Activity | IN PROGRESS — shared heading/nav; activity detail differs |
+| 53 | Mentor | Mentor › Review a final submission (accept, request changes, lock, reopen) | IN PROGRESS — Accept/Request changes actions |
+| 54 | Mentor | Mentor › Meetings (all teams: requests, coming up, notes) | IN PROGRESS — week strip and selectable split view |
+| 55 | Mentor | Mentor › Notifications | IN PROGRESS — feed and guidance split |
+| 56 | Mentor | Mentor › Everywhere: search, bell, your details | IN PROGRESS — scoped project/meeting search only |
 
 ## Implementation commits on main (2026-10-23)
 - `20ceda3`: role-scoped prototype shell switch and Recruiter action link.
@@ -85,6 +85,18 @@
 - Scope: shared shell foundation for all 56 screens. **None of the 56 screens are closed or browser-verified.**
 - Known gaps: inner screen structure, TPO's eight-link navigation, original per-screen state/interaction contracts, first-party screenshots of running vNext, and mobile designs.
 - Current source audit: `src/components/shell/sidebar-legacy.css` still provides an older hover rail; role-scoped rules override it for prototype accounts. Topbar actions and other links deliberately remain functional pending prototype relocation.
+
+## Mentor implementation pass (2026-10-24)
+- Changes committed **directly to `main`**, per owner direction.
+- Prototype screens **45–56 (all 12)** now have at least a source-level implementation change touching their shared or dedicated UI. This is **not** 12 finished pages.
+- **0/12 verified, 0/12 closed.** The source has not been typechecked or visually compared against running vNext at the recorded 1440px viewports.
+- Screen 45: real scoped focus events, `Later` per user/event, sidebar panels, six-column table; still missing actual student watch list and 16-sprint segments per project.
+- 46–52: exact seven-tab order and labels, project heading and actual-sprint ribbon, scoped section card anatomy; each inner section remains short of the prototype's exact visual/interaction contract.
+- 53: Accept/Request changes aligned without removing review CAS and confirmation workflows. Review detail still differs structurally.
+- 54: weekly IST strip, selectable meeting list/detail, live Join/Open Project actions; actions for scheduling, attendance and notes need comparison.
+- 55: notification main feed and guidance aside; filters and action locations need comparison.
+- 56: shell search sends queries to authorized project and meeting filters; cross-team student/task/resource full-text search remains missing and is **not claimed**.
+- Full brutal audit: `docs/audit/mentor-prototype-brutal-pass-2.md`.
 
 ## First visual pilot
 Compare **#01 TPO Companies › Today**, **#31 Recruiter › Today**, and **#45 Mentor › Projects** to equivalent live vNext screens, identify shell-level fixes, then complete one workflow at a time. Treat unverified changes on `main` as needing re-review.
