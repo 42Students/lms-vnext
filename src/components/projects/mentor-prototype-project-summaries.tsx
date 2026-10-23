@@ -187,3 +187,90 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
     </div>:<p className="prototype-mentor-summary-empty">No final submission has been recorded for this project yet.</p>}
   </section>;
 }
+
+
+export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}){
+  const projectId=encodeURIComponent(workspace.project.id);
+  const base="/mentor/projects/"+projectId;
+  const live=workspace.tasks.filter(task=>!task.deletedAt);
+  const completed=live.filter(task=>task.status==="DONE");
+  const active=workspace.sprints.find(sprint=>sprint.status==="ACTIVE");
+  const inSprint=active?live.filter(task=>task.sprintId===active.id):[];
+  const awaiting=inSprint.filter(task=>task.status==="IN_REVIEW");
+  const blocked=inSprint.filter(task=>task.status==="BLOCKED");
+  const backlog=live.filter(task=>task.sprintId===null);
+  const now=Date.now();
+  const nextMeeting=workspace.meetings
+    .filter(meeting=>["SCHEDULED","RESCHEDULED"].includes(meeting.status)&&meeting.startsAt.getTime()>now)
+    .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())[0];
+  const submitted=workspace.finalDelivery.submissions.at(-1);
+  const progress=live.length?Math.round(100*completed.length/live.length):0;
+  const summary=[
+    ["To do",countTasks(inSprint,"TODO")],
+    ["In progress",countTasks(inSprint,"IN_PROGRESS")],
+    ["Waiting for you",awaiting.length],
+    ["Blocked",blocked.length],
+    ["Done",countTasks(inSprint,"DONE")],
+    ["Backlog",backlog.length],
+  ] as const;
+  return <div className="prototype-mentor-overview">
+    <section className="prototype-mentor-chart-card">
+      <div className="prototype-mentor-card-title"><h2>Where they are</h2>
+        <span>{completed.length} of {live.length} recorded tasks done</span></div>
+      <div className="prototype-mentor-health-summary">
+        <strong>{progress}% of recorded tasks complete</strong>
+        <span className="prototype-mentor-health-progress" role="progressbar"
+          aria-label="Project tasks completed" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
+          <span style={{width:progress+"%"}}/>
+        </span>
+        <p>{workspace.project.summary||"This project has not yet published a summary."}</p>
+      </div>
+    </section>
+    <section className="prototype-mentor-chart-card">
+      <div className="prototype-mentor-card-title">
+        <h2>{active?"Sprint "+active.sequence+" · "+active.title:"Current sprint"}</h2>
+        <Link href={base+"?tab=board"}>Board →</Link>
+      </div>
+      <div className="prototype-mentor-status-grid">
+        {summary.map(([label,value])=><Link key={label} href={base+"?tab=board&lane="+(
+          label==="To do"?"TODO":label==="In progress"?"IN_PROGRESS":
+          label==="Waiting for you"?"IN_REVIEW":label==="Blocked"?"BLOCKED":
+          label==="Done"?"DONE":"BACKLOG"
+        )}><strong>{value}</strong><span>{label}</span></Link>)}
+      </div>
+    </section>
+    <section className="prototype-mentor-chart-card">
+      <div className="prototype-mentor-card-title"><h2>Needs you on this project</h2></div>
+      <div className="prototype-mentor-overview-actions">
+        {awaiting.length?<Link href={base+"?tab=board&lane=IN_REVIEW"}>
+          Review {awaiting.length} {awaiting.length===1?"task":"tasks"} waiting for a decision →
+        </Link>:null}
+        {blocked.length?<Link href={base+"?tab=board&lane=BLOCKED"}>
+          Help unblock {blocked.length} {blocked.length===1?"task":"tasks"} →
+        </Link>:null}
+        {workspace.project.nextAction?<p>{workspace.project.nextAction}</p>:null}
+        {!awaiting.length&&!blocked.length&&!workspace.project.nextAction?
+          <p>No pending review or blocked sprint tasks recorded.</p>:null}
+      </div>
+    </section>
+    <section className="prototype-mentor-chart-card">
+      <div className="prototype-mentor-card-title"><h2>Next meeting</h2>
+        <Link href={base+"?tab=team"}>All meetings →</Link></div>
+      {nextMeeting?<div className="prototype-mentor-overview-actions">
+        <strong>{nextMeeting.title}</strong>
+        <p>{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",weekday:"short",
+          hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(nextMeeting.startsAt)} IST</p>
+        <Link href={base+"?tab=team"}>Open meeting →</Link>
+      </div>:<p className="prototype-mentor-summary-empty">No upcoming meeting recorded.</p>}
+    </section>
+    <section className="prototype-mentor-chart-card">
+      <div className="prototype-mentor-card-title"><h2>Final submission</h2>
+        <Link href={base+"?tab=delivery"}>Open review →</Link></div>
+      <div className="prototype-mentor-overview-actions">
+        <p>{submitted?"Version "+submitted.version+" · "+submitted.status.replaceAll("_"," "):
+          "No final submission has been recorded yet."}</p>
+        {workspace.project.endDate?<p>Project target: {workspace.project.endDate}</p>:null}
+      </div>
+    </section>
+  </div>;
+}
