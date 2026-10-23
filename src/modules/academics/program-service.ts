@@ -80,8 +80,8 @@ function withLegacyProgramDuration<
 async function assertProgramUnique(
   departmentId: string,
   input: {
-    name?: string;
-    code?: string;
+    name?: string | undefined;
+    code?: string | undefined;
   },
   excludeProgramId?: string,
 ) {
