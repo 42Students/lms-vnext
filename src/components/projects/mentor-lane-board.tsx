@@ -221,6 +221,14 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       className={"prototype-mentor-board-task space-y-2 border p-3 text-sm "+styles["card"]}>
       <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
         className="min-h-11 w-full !justify-start !text-left">{task.title}</Button>
+      <p className="prototype-mentor-board-meta">
+        <span>{task.taskType??"Task"} · {task.estimatePoints??"—"} pts</span>
+        <span>{members.find(member=>member.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"}</span>
+      </p>
+      {task.blockerReason?<p className="prototype-mentor-board-blocked" title={task.blockerReason}>
+        Blocked · {task.blockerReason}</p>:null}
+      <details className="prototype-mentor-board-advanced">
+        <summary>Task actions</summary>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
       <p className="text-xs text-body">Assignee: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"} ·
         {" "}Estimate: {task.estimatePoints??"Unsized"} · {task.taskType??"Task"}</p>
@@ -268,6 +276,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={new Date(task.updatedAt).toISOString()} canPost={!readOnly}/>
       </Disclosure>
+      </details>
      </li>;
     })}
     {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
