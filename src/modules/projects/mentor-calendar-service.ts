@@ -111,7 +111,7 @@ export async function listMyMentorCalendarMeetings(
     projectStatus: row.projectStatus,
     title: row.title,
     status: row.status as MentorMeetingCalendarItem["status"],
-    meetingType: row.meetingType as MentorMeetingCalendarItem["meetingType"],
+    ...(row.meetingType === null ? {} : { meetingType: row.meetingType }),
     startsAt: window.startsAt,
     endsAt: window.endsAt,
     timeZone: window.organizerZone,
