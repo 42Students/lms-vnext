@@ -4,14 +4,16 @@ import { useSearchParams } from "next/navigation";
 import { Tabs } from "@/components/ui/tabs";
 import styles from "./legacy-project-tabs.module.css";
 
+/** Exact seven visible tabs of mentor prototype screens 46–52. The
+ * existing delivery review remains available from its authorized URL and
+ * project review actions, not as a prototype-invented eighth tab. */
 const tabs = [
   { key: "overview", label: "Overview" },
-  { key: "team", label: "People & Meetings" },
-  { key: "sprints", label: "Releases and Sprints" },
   { key: "board", label: "Board" },
-  { key: "performance", label: "Task Allocation" },
+  { key: "sprints", label: "Sprints & releases" },
+  { key: "team", label: "Team & meetings" },
+  { key: "performance", label: "Performance" },
   { key: "resources", label: "Resources" },
-  { key: "delivery", label: "Delivery" },
   { key: "activity", label: "Activity" },
 ] as const;
 
