@@ -10,7 +10,7 @@ export function learnerOfferResponseTiming(raw:unknown,snapshotNowIso:string){
   const source:Record<string,unknown>=typeof raw==="object"&&raw!==null
     ? raw as Record<string,unknown> : {};
   const parsed=learnerOfferResponseTimingSchema.safeParse({
-    status:source.status,expiresAt:source.expiresAt,issuedAt:source.issuedAt,
+    status:source["status"],expiresAt:source["expiresAt"],issuedAt:source["issuedAt"],
   });
   if(!parsed.success)return {expired:true,canRespond:false,urgency:"INVALID" as const};
   const row=parsed.data;
@@ -28,13 +28,13 @@ export function learnerOfferResponseTiming(raw:unknown,snapshotNowIso:string){
 export function prioritizeLearnerOffers<T extends {status:"ISSUED"|"ACCEPTED"|"DECLINED"|"WITHDRAWN";expiresAt:string|null;issuedAt:string}>(items:readonly T[],snapshotNowIso:string):T[]{
   const rank=(item:T)=>{
     const t=learnerOfferResponseTiming(item,snapshotNowIso);
-    return t.canRespond?0:item.status==="ISSUED"?1:2;
+    return t.canRespond?0:item["status"]==="ISSUED"?1:2;
   };
   const time=(item:T)=>{
-    const parsed=item.expiresAt?Date.parse(item.expiresAt):Number.POSITIVE_INFINITY;
+    const parsed=item["expiresAt"]?Date.parse(item["expiresAt"]):Number.POSITIVE_INFINITY;
     return Number.isNaN(parsed)?Number.POSITIVE_INFINITY:parsed;
   };
-  const issued=(item:T)=>{const parsed=Date.parse(item.issuedAt);return Number.isFinite(parsed)?parsed:0;};
+  const issued=(item:T)=>{const parsed=Date.parse(item["issuedAt"]);return Number.isFinite(parsed)?parsed:0;};
   return [...items].sort((a,b)=>rank(a)-rank(b)||
     (rank(a)===0?time(a)-time(b):issued(b)-issued(a)));
 }
