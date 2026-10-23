@@ -167,6 +167,7 @@ export async function createPlacementSeason(
           context.user.id,
       })
       .returning();
+    if (!season) throw new Error("Created placement season was not returned.");
 
     await recordActivityEventInTransaction(
       tx,
