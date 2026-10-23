@@ -7,7 +7,8 @@ describe("Mentor UX cross-audit /mentor/projects/[projectId]",()=>{
   expect(src).toMatch(/requireProjectReadAccess\s*\(/);
  });
  it("UX-mentor-projects-projectId-02 preserves route copy and live recovery/workflow",()=>{
-  expect(src).toContain("ProjectWorkspaceHeader");
+  expect(src).toContain("prototype-mentor-project-heading");
+  expect(src).toContain("workspace.sprints");
   expect(src).toContain("MentorProjectTabs");
  });
 });
