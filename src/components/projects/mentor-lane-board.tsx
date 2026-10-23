@@ -42,6 +42,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [visibleLimit,setVisibleLimit]=useState(150);
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
  const [dragging,setDragging]=useState(false);
+ const [view,setView]=useState<"board"|"list">(params.get("view")==="list"?"list":"board");
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
   if(!undo)return;
@@ -103,7 +104,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    releases.some(release=>release.id===item.releaseId&&release.status!=="SHIPPED"));
  const creationDefault=creationSprints.find(item=>item.status==="ACTIVE")??
    creationSprints.find(item=>item.status==="PLANNED");
- return <section className="space-y-4">
+ return <section className="prototype-mentor-board space-y-4">
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-link underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Back to project</Link>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
@@ -195,9 +196,15 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   {error?<Alert tone="error">{error}</Alert>:null}
   {undo?<Button variant="ghost" type="button" disabled={busy} 
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
-  {matching.length>0?<><p className="text-xs text-muted-foreground md:hidden">Swipe sideways to see board lanes.</p>
+  {matching.length>0?<><div className="prototype-mentor-board-view-toggle" role="group" aria-label="Task presentation">
+     <Button type="button" size="sm" variant={view==="board"?"primary":"secondary"}
+       aria-pressed={view==="board"} onClick={()=>{setView("board");remember("view","board");}}>Board</Button>
+     <Button type="button" size="sm" variant={view==="list"?"primary":"secondary"}
+       aria-pressed={view==="list"} onClick={()=>{setView("list");remember("view","list");}}>List</Button>
+   </div>
+   {view==="board"?<p className="text-xs text-muted-foreground md:hidden">Swipe sideways to see board lanes.</p>:null}
     <p id="mentor-board-keyboard-help" className="sr-only">Use the Move task selection to change a task lane without dragging.</p><div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
-    className={styles["scrollRegion"]}><div className={styles["track"]}>
+    className={styles["scrollRegion"]} style={{display:view==="list"?"none":undefined}}><div className={styles["track"]}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
     className={[styles["lane"], lane.id==="BACKLOG"?styles["backlogLane"]:"", lanes.length===1?styles["singleLane"]:""].filter(Boolean).join(" ")}
     data-can-drop={!readOnly&&!busy&&editable.includes(lane.id as typeof editable[number])}
@@ -266,7 +273,28 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
     </ul>
    </BoardColumn>)}
-  </div></div></>:null}
+  </div></div>
+  {view==="list"?<div className="prototype-mentor-board-list" role="region" aria-label="Project tasks list" tabIndex={0}>
+    <div className="prototype-mentor-board-list-heading" aria-hidden="true">
+      <span>Task</span><span>Assignee</span><span>Sprint</span><span>State</span><span>Points</span>
+    </div>
+    {visible.map(task=>{
+      const rowSprint=task.sprintId?bySprint.get(task.sprintId):null;
+      const canMove=!readOnly&&!busy&&rowSprint?.status==="ACTIVE"&&
+        editable.includes(task.status as typeof editable[number]);
+      return <div key={task.id} className="prototype-mentor-board-list-row">
+        <Button type="button" variant="ghost" size="sm" className="!justify-start !text-left"
+          onClick={()=>setSelected(task.id)}>{task.title}</Button>
+        <span>{members.find(member=>member.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"}</span>
+        <span>{rowSprint?.title??"Backlog"}</span>
+        {canMove?<Select value={task.status} disabled={busy}
+          aria-label={"Move "+task.title+" to lane"} onChange={e=>void move(task.id,e.target.value)}>
+          {editable.map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
+        </Select>:<span>{task.status.replaceAll("_"," ")}</span>}
+        <span>{task.estimatePoints??"—"}</span>
+      </div>;
+    })}
+  </div>:null}</>:null}
   {matching.length>visible.length?<Button variant="secondary" type="button"
     className="min-h-11 px-4"
     onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</Button>:null}
