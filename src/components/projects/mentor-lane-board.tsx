@@ -210,7 +210,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     data-can-drop={!readOnly&&!busy&&editable.includes(lane.id as typeof editable[number])}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
-    <h3 className={styles["header"]}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h3>
+    <h3 className={"prototype-mentor-board-lane-heading "+styles["header"]}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h3>
     <ul className={styles["body"]}>{lane.tasks.map(task=>{
      const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
@@ -218,7 +218,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      return <li key={task.id} draggable={canMove} aria-describedby={canMove?"mentor-board-keyboard-help":undefined}
       onDragStart={e=>{e.dataTransfer.setData("text/plain",task.id);setDragging(true);}}
        onDragEnd={()=>setDragging(false)}
-      className={"space-y-2 border p-3 text-sm "+styles["card"]}>
+      className={"prototype-mentor-board-task space-y-2 border p-3 text-sm "+styles["card"]}>
       <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
         className="min-h-11 w-full !justify-start !text-left">{task.title}</Button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
