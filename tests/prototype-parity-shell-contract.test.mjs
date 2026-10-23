@@ -120,7 +120,8 @@ test("Mentor Board provides real keyboard-accessible Board/List controls and tas
   assert.match(src,/aria-label="Task presentation"/);
   assert.match(src,/aria-pressed=\{view==="board"\}/);
   assert.match(src,/aria-pressed=\{view==="list"\}/);
-  assert.match(src,/visible\.map\(task=>/);
+  assert.match(src,/group\.tasks\.map\(task=>/);
+  assert.match(src,/sprintListGroups/);
   assert.match(src,/setSelected\(task\.id\)/);
   assert.match(src,/MentorBoardTaskDetailDialog/);
   assert.match(src,/projectMutation/);
@@ -166,6 +167,7 @@ test("Mentor Board prototype selected-task pane remains separate from the full d
   assert.match(board,/onClick=\{\(\)=>setSelected\(focused\.id\)\}/);
   assert.match(board,/Find a task by title, type, description or assignee/);
   assert.match(board,/ProjectTaskComments key=\{focused\.id\}/);
+  assert.match(board,/prototype-mentor-board-sprint-group/);
   assert.match(styles,/grid-template-columns:minmax\(0,1fr\) minmax\(270px,312px\)/);
 });
 
