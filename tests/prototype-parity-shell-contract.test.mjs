@@ -138,7 +138,11 @@ test("Mentor detail route integrates substantive Overview, Sprints, Team, Perfor
   assert.match(summaries,/safeProjectExternalHref\(latest\.sourceUrl\)/);
   assert.match(summaries,/safeProjectExternalHref\(latest\.demoUrl\)/);
   assert.match(summaries,/sprints\.filter\(s=>s\.status==="COMPLETED"\)/);
-  assert.match(summaries,/countTasks\(owned,"IN_REVIEW"\)/);
+  const performance=source("src/components/projects/mentor-prototype-performance-table.tsx");
+  assert.match(summaries,/<MentorPrototypePerformanceTable/);
+  assert.match(performance,/row\.review\.length/);
+  assert.match(performance,/Last four sprints/);
+  assert.match(performance,/Current sprint/);
 });
 
 test("Mentor resource earlier-sprint grouping preserves manager filters",()=>{
