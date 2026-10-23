@@ -64,7 +64,7 @@ async function MentorNotificationsContent({
   const selectedPill:MentorPill=pills.includes(pillValue as MentorPill)
     ? pillValue as MentorPill : "all";
   const parsed = mentorInboxQuerySchema.safeParse({
-    view:first(raw.view) ?? undefined,
+    view:selectedPill==="unread" ? "unread" : first(raw.view) ?? undefined,
     beforeCreatedAt:first(raw.beforeCreatedAt) ?? undefined,
     beforeId:first(raw.beforeId) ?? undefined,
   });
@@ -130,7 +130,8 @@ async function MentorNotificationsContent({
   const shownInbox=selectedPill==="unread"
     ? items.filter(item=>item.readAt===null):items;
   const nextHref = inbox?.page.nextCursor
-    ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
+    ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor)+
+      (selectedPill==="unread"?"&pill=unread":"") : null;
   const allRelevantFailed=!inbox &&
     (!announcementsEnabled || announcementResult.status==="rejected") &&
     (!projectAccess?.projects.enabled || failedSources.includes("Project attention"));
@@ -151,7 +152,7 @@ async function MentorNotificationsContent({
         ["subs","Submissions"],["meet","Meetings"],
         ["tasks","Tasks and teams"],["ann","From the college"],
       ] as const).map(([value,label])=><Link key={value}
-        href={value==="all"?MENTOR_INBOX:MENTOR_INBOX+"?pill="+value}
+        href={value==="all"?MENTOR_INBOX:value==="unread"?MENTOR_INBOX+"?pill=unread&view=unread":MENTOR_INBOX+"?pill="+value}
         aria-current={selectedPill===value?"page":undefined}
         className={selectedPill===value?"is-active":undefined}>{label}</Link>)}
     </nav>
