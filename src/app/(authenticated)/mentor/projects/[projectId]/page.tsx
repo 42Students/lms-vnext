@@ -10,6 +10,7 @@ import {MentorLaneBoard} from "@/components/projects/mentor-lane-board";
 import {MentorProductBacklog} from "@/components/projects/mentor-product-backlog";
 import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import {MentorProjectSectionCache} from "@/components/projects/mentor-project-section-cache";
+import {MentorPrototypeSprintPlan,MentorPrototypeTeamOverview,MentorPrototypePerformance} from "@/components/projects/mentor-prototype-project-summaries";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 
@@ -138,6 +139,9 @@ export default async function MentorProjectPage({
             <h2>{breadcrumbTab[selectedTab??"overview"]??"Overview"}</h2>
             <p>{subtitles[selectedTab??"overview"]}</p>
           </section>}
+      {selectedTab==="sprints" ? <MentorPrototypeSprintPlan workspace={workspace} /> : null}
+      {selectedTab==="team" ? <MentorPrototypeTeamOverview workspace={workspace} /> : null}
+      {selectedTab==="performance" ? <MentorPrototypePerformance workspace={workspace} /> : null}
       <MentorProjectSectionCache key={projectId} projectId={projectId}
         section={selectedTab??"overview"}>
       {/* Keep previous project tabs mounted when navigating within this workspace. */}
