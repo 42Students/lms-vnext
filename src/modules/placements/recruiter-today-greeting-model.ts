@@ -4,7 +4,7 @@
  * any unverified display attribute an authorization value.
  */
 export function recruiterTodayGreeting(
- now:Date,displayName:string|null,companyName:string,actionCount:number,
+ now:Date,displayName:string|null,_companyName:string,actionCount:number,
  firstName?:string|null,
 ){
  const hour=Number(new Intl.DateTimeFormat("en-GB",{

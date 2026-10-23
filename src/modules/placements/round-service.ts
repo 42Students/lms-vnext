@@ -218,6 +218,7 @@ export async function createPlacementRound(
         createdByUserId: context.user.id,
       })
       .returning();
+    if (!round) throw new Error("Created placement round was not returned.");
 
     await tx
       .insert(placementJobRoundEvents)
@@ -381,6 +382,7 @@ export async function actOnPlacementRound(
         .where(eq(placementJobRounds.id, roundId)).for("update").limit(1);
       if (!roundActionSnapshotMatches(locked, current.round.status, expectedUpdatedAt))
         throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
+       if (!locked) throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
       if(input.mode==="ON_CAMPUS")await requireAvailableRoundVenue(tx,{
         collegeId:current.job.collegeId,roundId,venue:input.venue??"",
         start:input.scheduledAt!,durationMinutes:locked.durationMinutes,

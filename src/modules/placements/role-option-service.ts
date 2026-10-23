@@ -259,6 +259,7 @@ export async function updatePlacementRoleOption(
         ),
       )
       .returning();
+    if (!updated) throw new Error("Updated role option was not returned.");
 
     if (updated.isPrimary) {
       await tx

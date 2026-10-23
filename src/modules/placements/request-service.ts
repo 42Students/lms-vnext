@@ -82,10 +82,10 @@ export function legacyRescheduleRequestDisplay(
 ) {
   const fields = payload && typeof payload==="object" && !Array.isArray(payload)
     ? payload as Record<string,unknown> : {};
-  const preferred = typeof fields.preferredTimes==="string"
-    ? fields.preferredTimes : typeof fields.preferred_times==="string"
-    ? fields.preferred_times : null;
-  const previousReply = typeof fields.reply==="string" ? fields.reply : null;
+  const preferred = typeof fields["preferredTimes"]==="string"
+    ? fields["preferredTimes"] : typeof fields["preferred_times"]==="string"
+    ? fields["preferred_times"] : null;
+  const previousReply = typeof fields["reply"]==="string" ? fields["reply"] : null;
   const text = preferred?.trim().slice(0,500) || null;
   const reply = (decisionNote ?? previousReply)?.trim().slice(0,500) || null;
   const stateLabel = status==="PENDING" ? "Waiting for the placement cell"
