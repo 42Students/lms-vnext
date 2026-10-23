@@ -332,6 +332,7 @@ export async function MentorProjectsContent({
               sprintTotal:sprintSummaries.get(row.project.id)!.total,
               sprintCompleted:sprintSummaries.get(row.project.id)!.completed,
               sprintActiveSequence:sprintSummaries.get(row.project.id)!.activeSequence,
+              sprintSegments:sprintSummaries.get(row.project.id)!.segments,
             } : {}),
             ...(progress?.percent !== undefined ? { progressPercent: progress.percent } : {}),
             ...(progress?.label !== undefined ? { progressDetail: progress.label } : {}),
