@@ -641,9 +641,12 @@ export function FinalReviewControl({
               "Code isn’t in the repo","Trial evidence missing"] as const).map(reason=>
               <Button key={reason} type="button" size="sm" variant="secondary"
                 aria-pressed={feedback.split("\n").includes(reason)}
-                onClick={()=>setFeedback(previous=>previous.split("\n").includes(reason)
-                  ? previous
-                  : [previous.trim(),reason].filter(Boolean).join("\n"))}>
+                onClick={()=>setFeedback(previous=>{
+                  const lines=previous.split("\n").filter(Boolean);
+                  return (lines.includes(reason)
+                    ? lines.filter(line=>line!==reason)
+                    : [...lines,reason]).join("\n");
+                })}>
                 {reason}
               </Button>
             )}
