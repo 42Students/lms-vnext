@@ -212,18 +212,19 @@ export function ReleaseLifecycleActions({
 export function TaskReviewActions({
   projectId,
   taskId,
-  submissionId,mode,expectedUpdatedAt,
+  submissionId,mode,expectedUpdatedAt,initialDecision="APPROVED",triggerLabel="Review submission",
 }: {
   projectId: string;
   taskId: string;
   submissionId: string;
   mode:"MENTOR"|"ADMIN"|"LEARNER";expectedUpdatedAt:string;
+  initialDecision?:"APPROVED"|"CHANGES_REQUESTED";triggerLabel?:string;
 }) {
   const { pending, run } = useProjectAction();
   const [open, setOpen] = useState(false);
   const [decision, setDecision] = useState<
     "APPROVED" | "CHANGES_REQUESTED"
-  >("APPROVED");
+  >(initialDecision);
   const [feedback, setFeedback] = useState("");
 
   function review() {
@@ -262,7 +263,7 @@ export function TaskReviewActions({
         variant="secondary"
         onClick={() => setOpen(true)}
       >
-        Review submission
+        {triggerLabel}
       </Button>
       <Dialog
         open={open}
