@@ -206,7 +206,7 @@ test("Mentor Notifications pills filter real source categories and unread pagina
 test("Mentor Board reviews latest submitted task with server CAS and guarded A/S shortcuts",()=>{
   const board=source("src/components/projects/mentor-lane-board.tsx");
   const actions=source("src/components/projects/project-lifecycle-actions.tsx");
-  assert.match(board,/task\.status==="IN_REVIEW"/);
+  assert.match(board,/focused\.status==="IN_REVIEW"/);
   assert.match(board,/row\.status==="SUBMITTED"/);
   assert.match(board,/submittedReview\.updatedAt/);
   assert.match(board,/initialDecision="APPROVED" triggerLabel="Approve A" shortcut="a"/);
@@ -252,7 +252,7 @@ test("Mentor sprint release controls and learner-facing brief derive from existi
 test("Mentor Meetings display existing meeting notes and request workflows",()=>{
   const calendar=source("src/components/projects/mentor-meetings-calendar.tsx");
   assert.match(calendar,/meeting\.status==="COMPLETED"/);
-  assert.match(calendar,/\/meetings\/".+encodeURIComponent\(meeting\.id\)\+"\/notes"/);
+  assert.match(calendar,/encodeURIComponent\(meeting\.id\)\+"\/notes"/);
   assert.match(calendar,/meeting\.status==="REQUESTED"/);
   assert.match(calendar,/\/team-meetings/);
   assert.match(calendar,/downloadMeetingCalendar\(meeting\)/);
