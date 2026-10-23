@@ -89,37 +89,76 @@ export function MentorMeetingsCalendar({
   }, []);
   const instant = useMemo(() => new Date(now), [now]);
   const {upcoming, past} = useMemo(() => splitMentorMeetings(meetings, instant), [meetings, instant]);
+  const [selectedId,setSelectedId]=useState<string|null>(null);
+  const visiblePast=expanded?past:past.slice(0,PAST_PREVIEW);
+  const allVisible=[...upcoming,...visiblePast];
+  const selected=allVisible.find(item=>item.id===selectedId)??allVisible[0]??null;
+  const dayKey=(input:Date)=>new Intl.DateTimeFormat("en-CA",{
+    year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Asia/Kolkata",
+  }).format(input);
+  // Seven day strip is aligned to the IST week containing the server clock.
+  const istNow=new Date(instant.getTime()+330*60_000);
+  const mondayOffset=(istNow.getUTCDay()+6)%7;
+  const mondayUtc=Date.UTC(istNow.getUTCFullYear(),istNow.getUTCMonth(),
+    istNow.getUTCDate()-mondayOffset);
+  const week=Array.from({length:7},(_,offset)=>{
+    const display=new Date(mondayUtc+offset*86400000);
+    const key=dayKey(new Date(display.getTime()-330*60_000));
+    return {
+      key,label:new Intl.DateTimeFormat("en-IN",{
+        weekday:"short",day:"numeric",timeZone:"Asia/Kolkata",
+      }).format(new Date(display.getTime()-330*60_000)),
+      count:meetings.filter(item=>validTime(item.startsAt)&&
+        dayKey(new Date(item.startsAt))===key).length,
+      today:key===dayKey(instant),
+    };
+  });
 
-  return <div className={styles.calendar} aria-label="Mentor meetings calendar">
-    <section aria-labelledby="mentor-upcoming-meetings" className={styles.section}>
-      <h2 id="mentor-upcoming-meetings" className={styles.heading}>
-        Upcoming ({upcoming.length})
-      </h2>
-      {upcoming.length
-        ? upcoming.map(meeting => <MeetingRow key={meeting.id} meeting={meeting}
-            now={instant} />)
-        : <p className={styles.empty}>
-            No upcoming meetings.
-          </p>}
-    </section>
-    <section aria-labelledby="mentor-past-meetings" className={styles.section}>
-      <h2 id="mentor-past-meetings" className={styles.heading}>
-        Past &amp; Cancelled ({past.length})
-      </h2>
-      {past.length
-        ? (expanded ? past : past.slice(0, PAST_PREVIEW)).map(meeting =>
-            <MeetingRow key={meeting.id} meeting={meeting} now={instant}
-              />)
-        : <p className={styles.empty}>
-            No past meetings yet.
-          </p>}
-      {past.length > PAST_PREVIEW ? (
-        <Button variant="secondary" className={styles.expand} type="button" 
-          onClick={() => setExpanded(value => !value)}
-          aria-expanded={expanded}>
-          {expanded ? "Show fewer" : "Show all " + past.length + " past meetings"}
-        </Button>
-      ) : null}
-    </section>
+  return <div className="prototype-mentor-meetings" aria-label="Mentor meetings calendar">
+    <div className="prototype-mentor-week-strip" aria-label="Meetings this week">
+      {week.map(day=><div key={day.key} className={day.today?"prototype-mentor-weekday is-today":"prototype-mentor-weekday"}>
+        <strong>{day.label}{day.today?" · today":""}</strong>
+        <span>{day.count} {day.count===1?"meeting":"meetings"}</span>
+      </div>)}
+    </div>
+    <div className="prototype-mentor-meeting-columns">
+      <section aria-label="Meeting requests, upcoming and past" className="prototype-mentor-meeting-list">
+        <div className="prototype-mentor-meeting-pills">
+          <span>{upcoming.length} upcoming</span>
+          <span>{past.length} past or cancelled</span>
+        </div>
+        <h2>Upcoming</h2>
+        {upcoming.length ? upcoming.map(item=><button key={item.id}
+          type="button" className="prototype-mentor-meeting-option"
+          aria-pressed={selected?.id===item.id}
+          onClick={()=>setSelectedId(item.id)}>
+          <span>{dateLabel(item.startsAt)}<small>{clockLabel(item.startsAt)??"Time pending"}</small></span>
+          <span><strong>{item.projectTitle}</strong> · {item.title}
+            <small>{mentorMeetingDisplayStatus(item,instant)}</small>
+          </span>
+        </button>):<p className={styles.empty}>No upcoming meetings.</p>}
+        <h2>Past and cancelled</h2>
+        {visiblePast.length ? visiblePast.map(item=><button key={item.id}
+          type="button" className="prototype-mentor-meeting-option"
+          aria-pressed={selected?.id===item.id}
+          onClick={()=>setSelectedId(item.id)}>
+          <span>{dateLabel(item.startsAt)}</span>
+          <span><strong>{item.projectTitle}</strong> · {item.title}
+            <small>{mentorMeetingDisplayStatus(item,instant)}</small>
+          </span>
+        </button>):<p className={styles.empty}>No past meetings yet.</p>}
+        {past.length>PAST_PREVIEW?<Button variant="secondary" type="button"
+          onClick={()=>setExpanded(value=>!value)} aria-expanded={expanded}
+          className="m-3">
+          {expanded?"Show fewer":"Show all "+past.length+" past meetings"}
+        </Button>:null}
+      </section>
+      <section aria-label="Selected meeting details" className="prototype-mentor-meeting-detail">
+        {selected ? <>
+          <span className="prototype-mentor-meeting-detail-label">Meeting details</span>
+          <MeetingRow key={selected.id} meeting={selected} now={instant}/>
+        </> : <p className={styles.empty}>Select a meeting to see its details.</p>}
+      </section>
+    </div>
   </div>;
 }
