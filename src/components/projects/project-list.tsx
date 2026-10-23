@@ -12,6 +12,12 @@ export type ProjectListItem = {
   mentorName?: string | null;
   memberCount?: number;
   progressPercent?: number;
+  taskDone?: number;
+  taskTotal?: number;
+  sprintTotal?: number;
+  sprintCompleted?: number;
+  sprintActiveSequence?: number|null;
+  sprintSegments?: readonly {sequence:number;status:string}[];
   progressDetail?: string;
   readOnlyLabel?: string | null;
   attention?: readonly string[];
@@ -93,9 +99,17 @@ export function ProjectList({
         </div>
         <div className="prototype-mentor-table-body">
           {items.map(item => {
-            const completion = typeof item.progressPercent === "number" && Number.isFinite(item.progressPercent)
-              ? Math.min(100, Math.max(0, Math.round(item.progressPercent ?? 0)))
-              : null;
+            const completion = typeof item.taskDone==="number" &&
+              typeof item.taskTotal==="number" && Number.isFinite(item.taskDone) &&
+              Number.isFinite(item.taskTotal) && item.taskTotal>=0
+              ? (item.taskTotal===0?0:Math.round(100*item.taskDone/item.taskTotal))
+              : typeof item.progressPercent === "number" && Number.isFinite(item.progressPercent)
+                ? Math.min(100,Math.max(0,Math.round(item.progressPercent)))
+                : null;
+            const taskSummary = typeof item.taskDone==="number" &&
+              typeof item.taskTotal==="number" ? item.taskDone+" of "+item.taskTotal
+              : completion===null?"Not tracked":completion+"%";
+            const sprintSeries=item.sprintSegments??[];
             const issue = item.attention?.find(label => /blocked|stalled|risk|review|sign.off/i.test(label));
             const state = issue ?? statusLabel(item.status);
             const stateTone = /blocked|stalled/i.test(state) ? "bad"
@@ -119,11 +133,24 @@ export function ProjectList({
                   {item.memberCount !== undefined ? item.memberCount : "—"}
                 </span>
                 <span className="prototype-mentor-table-detail">
-                  {item.phaseLabel || item.phase || "Not recorded"}
-                  {item.dueState ? <small>{item.dueState}</small> : null}
+                  {sprintSeries.length > 0 ? (
+                    <>
+                      <span className="prototype-mentor-sprint-dots" aria-label={sprintSeries.length+" recorded sprints"}>
+                        {sprintSeries.slice(0,32).map((sprint,index)=>(
+                          <span key={sprint.sequence+"-"+index}
+                            title={"Sprint "+sprint.sequence+" · "+sprint.status}
+                            className={sprint.status==="COMPLETED"?"done":sprint.status==="ACTIVE"?"current":""} />
+                        ))}
+                      </span>
+                      <small>{item.sprintActiveSequence===null||item.sprintActiveSequence===undefined
+                        ? item.sprintCompleted+" of "+item.sprintTotal+" completed"
+                        : "Sprint "+item.sprintActiveSequence+" of "+item.sprintTotal}
+                      </small>
+                    </>
+                  ) : <span>{item.phaseLabel || item.phase || "No sprints"}</span>}
                 </span>
                 <span className="prototype-mentor-table-detail">
-                  {completion === null ? "Not tracked" : completion + "%"}
+                  {taskSummary}
                   {completion !== null ? (
                     <span role="progressbar" aria-label={"Project progress for " + item.title}
                       aria-valuemin={0} aria-valuemax={100} aria-valuenow={completion}
