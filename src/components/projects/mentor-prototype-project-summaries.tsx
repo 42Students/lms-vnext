@@ -208,6 +208,9 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
     .filter(meeting=>["SCHEDULED","RESCHEDULED"].includes(meeting.status)&&meeting.startsAt.getTime()>now)
     .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())[0];
   const submitted=workspace.finalDelivery.submissions.at(-1);
+  const mentorUpdates=workspace.activity.filter(event=>
+    event.eventType==="projects.mentor_update.posted")
+    .sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime()).slice(0,3);
   const progress=live.length?Math.round(100*completed.length/live.length):0;
   const summary=[
     ["To do",countTasks(inSprint,"TODO")],
@@ -266,6 +269,18 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
           hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(nextMeeting.startsAt)} IST</p>
         <Link href={base+"?tab=team"}>Open meeting →</Link>
       </div>:<p className="prototype-mentor-summary-empty">No upcoming meeting recorded.</p>}
+    </section>
+    <section className="prototype-mentor-chart-card">
+      <div className="prototype-mentor-card-title"><h2>Latest team updates</h2>
+        <Link href={base+"?tab=activity"}>All activity →</Link></div>
+      {mentorUpdates.length?mentorUpdates.map(update=>(
+        <div key={update.id} className="prototype-mentor-overview-actions">
+          <p>{update.summary}</p>
+          <span>{update.actorDisplayName||"Mentor"} · {new Intl.DateTimeFormat("en-IN",{
+            day:"numeric",month:"short",timeZone:"Asia/Kolkata",
+          }).format(update.occurredAt)}</span>
+        </div>
+      )):<p className="prototype-mentor-summary-empty">No team updates posted yet.</p>}
     </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title"><h2>Final submission</h2>
