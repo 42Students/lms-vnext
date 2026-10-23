@@ -97,7 +97,9 @@ export default async function MentorProjectPage({
             <p>{workspace.project.courseLabel || "Project"} · {studentCount} {studentCount===1?"student":"students"} · <strong>{projectStatus}</strong></p>
           </div>
           <div className="prototype-mentor-header-actions">
-            <Link href={mentorBase + "?tab=team"}>Schedule a meeting</Link>
+            {access.access === "MENTOR" && workspace.project.status === "ACTIVE"
+              ? <Link href={mentorBase + "?tab=team"}>Schedule a meeting</Link>
+              : null}
             {access.access === "MENTOR" && workspace.project.status !== "ARCHIVED" && workspace.project.status !== "COMPLETED" ? (
               <Link href={mentorBase + "?tab=board"}>+ Task</Link>
             ) : null}
