@@ -12,6 +12,7 @@ import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-mod
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
+import {TaskReviewActions} from "./project-lifecycle-actions";
 import {MentorBoardTaskDetailDialog} from "./mentor-board-task-detail-dialog";
 import {MentorTaskCreate} from "./mentor-task-create";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
@@ -78,6 +79,10 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    (!statusFilter||(statusFilter==="BACKLOG"?task.sprintId===null:task.status===statusFilter)));
  const visible=matching.slice(0,visibleLimit);
  const focused=visible.find(task=>task.id===focusedId)??visible[0]??null;
+ const submittedReview=focused&&!readOnly&&focused.status==="IN_REVIEW"
+   ? [...taskSubmissions].filter(row=>row.taskId===focused.id&&row.status==="SUBMITTED")
+     .sort((a,b)=>b.version-a.version)[0]??null
+   : null;
  const lanes=groupLearnerBoardLanes(visible,sprints);
  const activeFilterCount=[release,sprint,priority,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
  async function move(id:string,status:string,isUndo=false){
@@ -347,6 +352,16 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       </div>:null}
       {focused.blockerReason?<div className="prototype-mentor-board-detail-block is-blocked">
         <h4>Blocked</h4><p>{focused.blockerReason}</p>
+      </div>:null}
+      {submittedReview&&focused?<div className="prototype-mentor-board-review-actions" aria-label="Review task submission">
+        <TaskReviewActions projectId={projectId} taskId={focused.id}
+          submissionId={submittedReview.id} mode="MENTOR"
+          expectedUpdatedAt={new Date(submittedReview.updatedAt).toISOString()}
+          initialDecision="APPROVED" triggerLabel="Approve A"/>
+        <TaskReviewActions projectId={projectId} taskId={focused.id}
+          submissionId={submittedReview.id} mode="MENTOR"
+          expectedUpdatedAt={new Date(submittedReview.updatedAt).toISOString()}
+          initialDecision="CHANGES_REQUESTED" triggerLabel="Send back S"/>
       </div>:null}
       <button type="button" className="prototype-mentor-board-detail-more"
         onClick={()=>setSelected(focused.id)}>Open full task details →</button>
