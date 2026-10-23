@@ -52,7 +52,9 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const [reorderError,setReorderError]=useState("");
  const canReorder=mode!=="LEARNER"&&!readOnly&&!reordering&&!sourceChanged&&
     !search.trim()&&type==="ALL"&&visibility==="ALL"&&status==="ACTIVE"&&!pinned&&
-    !sprint&&!task&&activeRows.length<=250;
+    !sprint&&!task&&activeRows.length<=250&&
+    !(mode==="MENTOR"&&!showEarlier&&sprints.some(item=>item.status==="COMPLETED"&&
+      activeRows.some(row=>row.sprintId===item.id)));
  async function saveOrder(){
    if(!canReorder||!unsaved)return;
    if(sourceChanged){setReorderError("Resources changed. Discard edits and refresh before saving.");return;}
