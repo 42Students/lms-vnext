@@ -1,5 +1,5 @@
 import "server-only";
-import {and,count,inArray,isNull,sql} from "drizzle-orm";
+import {and,asc,inArray,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectSprints} from "@/db/schema/projects";
 import type {RequestContext} from "@/modules/identity/context";
@@ -13,6 +13,7 @@ export type MentorPrototypeSprintSummary={
   total:number;
   completed:number;
   activeSequence:number|null;
+  segments:readonly {sequence:number;status:string}[];
 };
 
 /** Counts only real, non-deleted project sprints in the mentor's authorized
@@ -36,20 +37,21 @@ export async function getMentorPrototypeSprintSummaries(
  if(!ids.length)return summaries;
  const rows=await getDb().select({
    projectId:projectSprints.projectId,
-   total:count(),
-   completed:sql<number>`count(*) filter (where ${projectSprints.status} = 'COMPLETED')::int`,
-   activeSequence:sql<number|null>`min(${projectSprints.sequence}) filter (where ${projectSprints.status} = 'ACTIVE')::int`,
+   sequence:projectSprints.sequence,
+   status:projectSprints.status,
  }).from(projectSprints).where(and(
    inArray(projectSprints.projectId,ids),isNull(projectSprints.deletedAt),
- )).groupBy(projectSprints.projectId);
+ )).orderBy(projectSprints.projectId,asc(projectSprints.sequence));
+ const byProject=new Map<string,Array<{sequence:number;status:string}>>();
  for(const row of rows){
-   const total=Number(row.total);
-   const completed=Number(row.completed);
-   summaries.set(row.projectId,{
-     total,
-     completed:Math.max(0,Math.min(total,completed)),
-     activeSequence:row.activeSequence===null?null:Number(row.activeSequence),
-   });
+   const segments=byProject.get(row.projectId)??[];
+   segments.push({sequence:row.sequence,status:row.status});
+   byProject.set(row.projectId,segments);
+ }
+ for(const [projectId,segments] of byProject){
+   const completed=segments.filter(segment=>segment.status==="COMPLETED").length;
+   const activeSequence=segments.find(segment=>segment.status==="ACTIVE")?.sequence??null;
+   summaries.set(projectId,{total:segments.length,completed,activeSequence,segments});
  }
  return summaries;
 }
