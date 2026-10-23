@@ -16,7 +16,7 @@ import { learnerVerificationStatus } from "./learner-verification-status-model";
 function educationSnapshotSummary(snapshot:unknown){
  const value=snapshot && typeof snapshot==="object" && !Array.isArray(snapshot)
   ? snapshot as Record<string,unknown> : {};
- const entries=Array.isArray(value.education)?value.education:[];
+ const entries=Array.isArray(value["education"])?value["education"]:[];
  return entries.filter((item):item is Record<string,unknown>=>Boolean(item)&&
   typeof item==="object"&&!Array.isArray(item)).map(item=>{
   const field=(...names:string[])=>{
@@ -35,7 +35,7 @@ function educationSnapshotSummary(snapshot:unknown){
    grading:field("grading","gradingType","gradeType"),
    grade:field("grade","gradeObtained"),
    maximum:field("maxGrade","maximumGrade"),
-   marksheetRecorded:typeof item.marksheetDocumentId==="string"&&Boolean(item.marksheetDocumentId),
+   marksheetRecorded:typeof item["marksheetDocumentId"]==="string"&&Boolean(item["marksheetDocumentId"]),
   };
  });
 }
