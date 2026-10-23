@@ -21,9 +21,10 @@ type ResourceRow={
 };
 export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tasks=[]}:{
  projectId:string;rows:readonly ResourceRow[];mode:"MENTOR"|"ADMIN"|"LEARNER";readOnly:boolean;
- sprints?:readonly {id:string;label:string}[];tasks?:readonly {id:string;label:string}[];
+ sprints?:readonly {id:string;label:string;status?:string}[];tasks?:readonly {id:string;label:string}[];
 }){
  const [search,setSearch]=useState("");
+ const [showEarlier,setShowEarlier]=useState(false);
  const [expanded,setExpanded]=useState<Record<string,boolean>>({});
  const [type,setType]=useState("ALL");
  const [visibility,setVisibility]=useState("ALL");
@@ -92,7 +93,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
    setOrderIds(next);
  }
 
- const filtered=rows.filter(row=>{
+ const matching=rows.filter(row=>{
   const link=Boolean(row.url&&safeProjectExternalHref(row.url));
   const kind=row.resourceType??(link?"LINK":"NOTE");
   return (!search.trim()||[row.title,row.description,row.url,row.accessNotes,row.resourceType,row.templateKey]
@@ -106,6 +107,12 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     &&(!sprint||row.sprintId===sprint)
     &&(!task||row.taskId===task);
  });
+ const earlierSprintIds=new Set(sprints.filter(item=>item.status==="COMPLETED").map(item=>item.id));
+ const collapseEarlier=mode==="MENTOR"&&!showEarlier&&!search.trim()&&type==="ALL"&&
+    visibility==="ALL"&&status==="ACTIVE"&&!pinned&&!sprint&&!task;
+ const earlierCount=matching.filter(row=>row.sprintId!==null&&row.sprintId!==undefined&&
+   earlierSprintIds.has(row.sprintId)).length;
+ const filtered=collapseEarlier?matching.filter(row=>!row.sprintId||!earlierSprintIds.has(row.sprintId)):matching;
  const files=rows.filter(row=>row.resourceType==="FILE").length;
  const links=rows.filter(row=>row.resourceType==="LINK"||
    (!row.resourceType&&Boolean(row.url&&safeProjectExternalHref(row.url)))).length;
@@ -179,6 +186,14 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
       className="min-h-11 text-sm font-[650] text-link underline md:min-h-9">Clear filters</Button>
   </div>
+  {mode==="MENTOR"&&earlierCount>0?<div className="prototype-mentor-resource-earlier"
+    role="group" aria-label="Earlier sprint resources">
+    <span>Earlier sprints · {earlierCount} {earlierCount===1?"resource":"resources"}</span>
+    <Button type="button" variant="secondary" size="sm"
+      onClick={()=>setShowEarlier(value=>!value)} aria-pressed={showEarlier}>
+      {showEarlier?"Hide earlier sprints":"Show earlier sprints"}
+    </Button>
+  </div>:null}
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
     {canReorder?"Drag resources to arrange a draft, then select Save order.":
       activeRows.length>250?"Reorder up to 500 resources in Edit resource library; the directory only reorders complete lists of 250 or fewer.":
