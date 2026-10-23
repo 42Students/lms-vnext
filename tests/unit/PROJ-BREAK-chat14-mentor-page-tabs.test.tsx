@@ -10,16 +10,16 @@ const projectId="11111111-1111-4111-8111-111111111111";
 const draw=()=>renderToStaticMarkup(<MentorProjectTabs projectId={projectId}/>);
 
 describe("PROJ-BREAK-mentor-page-01 rendered project workspace navigation",()=>{
- it("PROJ-BREAK-mentor-page-01 exposes all eight project tabs with readable headings and one current page",()=>{
-  state.query="tab=delivery";
+ it("PROJ-BREAK-mentor-page-01 exposes all seven prototype tabs with readable headings and one current page",()=>{
+  state.query="tab=overview";
   const html=draw();
   expect(html).toContain('aria-label="Project sections"');
   expect(html).toContain('data-axis="x"');
-  for(const title of ["Overview","People &amp; Meetings","Releases and Sprints","Board","Task Allocation","Resources","Delivery","Activity"])
+  for(const title of ["Overview","Board","Sprints &amp; releases","Team &amp; meetings","Performance","Resources","Activity"])
    expect(html).toContain(title);
-  expect((html.match(/href="\/mentor\/projects\//g)??[])).toHaveLength(8);
+  expect((html.match(/href="\/mentor\/projects\//g)??[])).toHaveLength(7);
   expect((html.match(/aria-current="page"/g)??[])).toHaveLength(1);
-  expect(html).toContain('href="/mentor/projects/'+projectId+'?tab=delivery"');
+  expect(html).toContain('href="/mentor/projects/'+projectId+'?tab=overview"');
  });
  it("PROJ-BREAK-mentor-page-02 restores legacy deep links without allowing fabricated tabs",()=>{
   for(const [query,expected] of [
