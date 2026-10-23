@@ -70,7 +70,7 @@ export function deriveMentorProjectAttention(
         key:"stalled:"+project.projectId,kind:"STALLED",
       title:project.projectTitle+" — no activity in 7+ days",
       description:"This project hasn't had any recorded activity recently.",
-      href:href+"?tab=audit",occurredAt:last.toISOString(),
+      href:href+"?tab=activity",occurredAt:last.toISOString(),
     });
     for (const meeting of project.meetings) {
       if (meeting.status==="REQUESTED") {
