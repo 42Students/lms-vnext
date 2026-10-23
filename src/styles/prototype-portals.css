@@ -1623,3 +1623,26 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-unread-note{
   margin:0;font-size:12px;color:#5b6b82;line-height:1.5;
 }
+
+
+/* Mentor #52: post updates to the persisted authorized project feed. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-update-composer {
+  display:flex;flex-direction:column;gap:12px;
+  padding:0 0 12px;border:1px solid #e7ecf2;border-radius:12px;background:#fff;
+  overflow:hidden;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-update-composer textarea {
+  display:block;min-height:88px;resize:vertical;margin:0 16px;width:calc(100% - 32px);
+  border:1px solid #d6e1ee;border-radius:8px;padding:12px;
+  font:13px/1.55 Lato,Arial,sans-serif;color:#172033;background:#fff;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-update-footer {
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:0 16px;
+  color:#5b6b82;font-size:12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-update-footer button {
+  margin-left:auto;min-height:34px;background:#0a7c88;color:white;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-overview-actions>span {
+  color:#5b6b82;font-size:11px;
+}
