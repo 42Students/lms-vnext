@@ -93,7 +93,7 @@ export function ProjectList({
         </div>
         <div className="prototype-mentor-table-body">
           {items.map(item => {
-            const completion = Number.isFinite(item.progressPercent)
+            const completion = typeof item.progressPercent === "number" && Number.isFinite(item.progressPercent)
               ? Math.min(100, Math.max(0, Math.round(item.progressPercent ?? 0)))
               : null;
             const issue = item.attention?.find(label => /blocked|stalled|risk|review|sign.off/i.test(label));
