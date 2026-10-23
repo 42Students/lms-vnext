@@ -2078,7 +2078,7 @@ export function ProjectWorkspace({
             resources={workspace.resources}/>:null}
           <ProjectResourceList projectId={workspace.project.id} rows={workspace.resources}
             mode={mode} readOnly={readOnly}
-            sprints={workspace.sprints.map(item=>({id:item.id,label:item.title}))}
+            sprints={workspace.sprints.map(item=>({id:item.id,label:item.title,status:item.status}))}
             tasks={workspace.tasks.map(item=>({id:item.id,label:item.title}))}/>
           {mode==="ADMIN"?<p className="text-xs text-body">
             Resources are shared with the workspace team.
