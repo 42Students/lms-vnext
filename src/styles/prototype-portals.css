@@ -1323,3 +1323,54 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-resource-earlier span {
   color:#5b6b82;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
 }
+
+
+/* Mentor #46 Overview: actual project health and action grid. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-overview {
+  display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:start;
+  gap:16px;min-width:0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-overview>.prototype-mentor-chart-card:first-child{
+  grid-column:1 / -1;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-health-summary{
+  display:flex;flex-direction:column;gap:9px;padding:18px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-health-summary>strong{
+  color:#172033;font-size:15px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-health-summary>p{
+  margin:0;max-width:70ch;color:#5b6b82;font-size:13px;line-height:1.6;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-health-progress {
+  width:100%;height:8px;overflow:hidden;border-radius:999px;background:#e7ecf2;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-health-progress>span{
+  display:block;height:100%;border-radius:inherit;background:#0a7c88;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-status-grid {
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-status-grid>a {
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 16px;
+  border-right:1px solid #f1f4f8;border-bottom:1px solid #f1f4f8;color:#172033;text-decoration:none;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-status-grid>a:hover{background:#eff8fa;color:#0a7c88}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-status-grid strong{font-size:20px}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-status-grid span{font-size:11px;color:#5b6b82}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-overview-actions{
+  display:flex;flex-direction:column;gap:10px;padding:16px 18px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-overview-actions>a{
+  padding:9px 12px;border:1px solid #d6e1ee;border-radius:8px;background:#fff;
+  color:#0a7c88;font-size:12px;font-weight:700;text-decoration:none;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-overview-actions>a:hover{border-color:#0a7c88;background:#eff8fa}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-overview-actions p{
+  margin:0;color:#5b6b82;font-size:12px;line-height:1.5;
+}
+@media(max-width:900px){
+  .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-overview{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
