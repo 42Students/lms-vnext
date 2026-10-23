@@ -70,7 +70,7 @@ export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
     title:item.title,context:byId.get(item.projectId)??"Project",
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board"});
   for(const item of students)result.push({key:"s:"+item.projectId+":"+item.id,
-    kind:"Student",title:item.title,
+    kind:"Student",title:item.title??"Student",
     context:byId.get(item.projectId)??"Project",
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=team"});
   for(const item of resources)result.push({key:"r:"+item.id,kind:"Resource",
