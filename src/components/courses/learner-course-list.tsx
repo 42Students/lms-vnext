@@ -1,7 +1,5 @@
 "use client";
 
-import { MetricBar } from "@/components/ui/metric-bar";
-import progressStyles from "./learner-course-progress.module.css";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,10 +12,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import Link from "next/link";
 import { LearnerCourseCardImage } from "./learner-course-card-image";
 import {learnerCourseImageResetKey} from "@/modules/courses/learner-course-image-reset-key-model";
-import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card-due-label-model";
 import { learnerCourseCreditSummary } from "@/modules/courses/learner-course-credit-summary-model";
-import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
-import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-date-model";
 import { learnerCourseUnavailableReason } from "@/modules/courses/learner-course-availability-model";
 import { Fragment, useMemo, useState, useEffect, useTransition } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -33,12 +28,10 @@ import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-car
 import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
 import {learnerSemesterOptions,type LearnerProgramSemester} from "@/modules/courses/learner-program-semester-options-model";
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
-import { learnerCourseNextItemHref } from "@/modules/courses/learner-course-next-action-model";
 import { learnerCourseMatchesProgress, type LearnerCourseProgressFilter } from "@/modules/courses/learner-course-progress-filter-model";
 import { learnerCourseMatchesTermState, type LearnerCourseTermState } from "@/modules/courses/learner-course-term-state-model";
 import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/courses/learner-course-sort-model";
 
-import {learnerCourseCardNextLabel} from "@/modules/courses/learner-course-card-next-label-model";
 
 const PAGE_SIZE = 48;
 const MAX_COURSE_SEARCH_CHARS = 200;
@@ -50,7 +43,7 @@ function LearnerCourseCardSurface({
   blockedReason: string | null;
   children: ReactNode;
 }) {
-  const baseClass = "group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface text-sm";
+  const baseClass = "group flex h-full flex-col overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface text-sm shadow-sm";
   if (blockedReason) {
     return <div role="group" aria-disabled="true" aria-label={"Course unavailable: " + blockedReason}
       title={blockedReason} className={baseClass + " cursor-not-allowed"}>
@@ -226,9 +219,6 @@ export function LearnerCourseList({
       />
     );
   }
-
-  const safeCardProgress = (row: LearnerCourseListRow) =>
-    learnerCourseCardProgress(row.summary.overallPercent,row.summary.itemsTotal);
 
   const selectedPeriod =
     periods.find((period) => period.id === selectedPeriodId) ?? periods[0];
@@ -448,19 +438,14 @@ export function LearnerCourseList({
           description="Change the semester, course type or search to see other courses." />
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {visibleRows.slice(0, visibleLimit).map((row, index, renderedRows) => {
               const elective =
                 String(row.course.offeringType).toUpperCase() === "ELECTIVE";
               const blockedReason = learnerCourseUnavailableReason(row);
-              const blocked = blockedReason !== null;
               const previousElective =
                 index > 0 &&
                 String(renderedRows[index - 1]?.course.offeringType).toUpperCase() === "ELECTIVE";
-              const sectionKey = (item: LearnerCourseListRow) => item.course.legacyClassId != null
-                ? "id:" + item.course.legacyClassId
-                : "legacy:" + item.course.cohortName + ":" + item.course.periodStartDate.slice(0,4) + ":" + (item.course.sectionName || "Unknown");
-              const startsSectionGroup = index === 0 || sectionKey(row) !== sectionKey(renderedRows[index - 1]!);
               const startsElectiveGroup =
                 effectiveTypeFilter === "all" &&
                 elective &&
@@ -478,130 +463,48 @@ export function LearnerCourseList({
               );
               return (
                 <Fragment key={row.course.deliveryId}>
-                  {startsSectionGroup ? <h2 className="col-span-full mt-2 text-sm font-semibold text-heading">Section: {row.course.sectionName || "Unknown"} · {row.course.cohortName || "Batch unavailable"}</h2> : null}
                   {startsElectiveGroup ? (
-                    <h2 className="col-span-full mb-1 mt-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+                    <h2 className="col-span-full mb-1 mt-2 text-lg font-semibold text-[var(--lms-heading)]">
                       Electives
                     </h2>
                   ) : null}
-                  <div className="min-w-0">
+                  <div className="min-w-0" data-testid="learner.courses.card.wrap">
                     <LearnerCourseCardSurface
                       href={`/learn/courses/${encodeURIComponent(row.course.deliveryId)}/home`}
                       blockedReason={blockedReason}
                     >
-                    <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
-                      <LearnerCourseCardImage key={learnerCourseImageResetKey(row.course.deliveryId,row.thumbnailUrl)} thumbnailUrl={row.thumbnailUrl} />
-                      <div className="flex w-full items-end justify-between gap-3">
-                        <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
-                          {row.course.courseCode}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          {blocked ? (
-                            <StatusBadge tone="neutral">
-                             {row.course.courseEnabled===false||row.course.courseAllowedForDisplay===0
-                              ?"Locked":row.course.courseStatus&&row.course.courseStatus!=="ACTIVE"
-                               ?"Inactive":"Past semester"}
-                            </StatusBadge>
-                          ) : null}
-                          {elective ? (
-                            <StatusBadge tone="info">{row.course.electiveSlotName?.trim()||"Elective"}</StatusBadge>
+                      <div className="relative h-[140px] w-full shrink-0 overflow-hidden bg-primary-subtle">
+                        <LearnerCourseCardImage
+                          key={learnerCourseImageResetKey(row.course.deliveryId,row.thumbnailUrl)}
+                          thumbnailUrl={row.thumbnailUrl}
+                        />
+                      </div>
+                      <div className="flex flex-1 flex-col gap-3 px-3 pb-3 pt-4">
+                        <h2 className="m-0 line-clamp-2 text-base font-semibold leading-6 text-[var(--lms-heading)]">
+                          {row.course.courseName}
+                        </h2>
+                        {elective ? (
+                          <div>
+                            <StatusBadge tone="info">{row.course.electiveSlotName?.trim() || "Elective"}</StatusBadge>
+                          </div>
+                        ) : null}
+                        <p className="m-0 text-sm text-[var(--lms-muted-text)]">
+                          Instructor: {row.instructorNames.length > 0
+                            ? row.instructorNames.join(", ")
+                            : "Not assigned"}
+                        </p>
+                        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2 text-xs font-semibold text-[var(--lms-muted-text)]">
+                          {row.course.credits !== null ? (
+                            <span>{Number.isFinite(row.course.credits) && row.course.credits >= 0
+                              ? `${row.course.credits} Credits`
+                              : "Credits unavailable"}</span>
                           ) : null}
                         </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-1 flex-col p-4">
-                      <h2 className="m-0 line-clamp-2 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
-                        {row.course.courseName}
-                      </h2>
-                      <p className="mt-2 line-clamp-2 break-words text-sm text-body leading-[22px]">
-                        {row.course.courseDescription ??
-                          "No course description provided."}
-                      </p>
-                      {blockedReason?<p role="status" className="mt-2 text-xs font-semibold text-warning">
-                       {blockedReason}
-                      </p>:null}
-                      <p className="mt-3 text-xs font-semibold text-muted-foreground leading-[20px]">
-                        Instructor: {row.instructorNames.length > 0
-                          ? row.instructorNames.join(", ")
-                          : "Not assigned"}
-                      </p>
-
-                      <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                        <Badge tone="neutral">
-                          {row.course.sectionName}
-                        </Badge>
-                        {row.course.cohortName ? <Badge tone="neutral">
-                          Batch: {row.course.cohortName}
-                        </Badge> : null}
-                        {row.course.credits!==null ? (
-                          Number.isFinite(row.course.credits)&&row.course.credits>=0?
-                          <Badge tone="neutral">{row.course.credits} {row.course.credits===1?"Credit":"Credits"}</Badge>:
-                          <Badge tone="warning">Invalid Credits</Badge>
+                        {blockedReason ? (
+                          <p role="status" className="m-0 text-xs text-warning">{blockedReason}</p>
                         ) : null}
                       </div>
-
-                      <div className="mt-auto pt-5">
-                        <div className="mb-2 flex items-center justify-between gap-3">
-                          <span className="text-xs font-semibold text-body">
-                            Progress
-                          </span>
-                          <span className="text-xs font-bold text-foreground">
-                            {safeCardProgress(row) === null ? "Not available" : safeCardProgress(row)+"%"}
-                          </span>
-                        </div>
-                        {safeCardProgress(row) !== null ?
-                          <MetricBar role="progressbar" label="Course progress" {...(progressStyles["track"] === undefined ? {} : {className: progressStyles["track"]})}
-                            value={safeCardProgress(row)!} maximum={100} unit="percent" />
-                          : <p className="text-xs text-muted-foreground leading-[20px]">No published learning items to measure.</p>}
-                        {!row.readOnly && row.overdueAssignments ? (
-                          <p className="mt-3 text-xs font-semibold text-warning leading-[20px]" role="note">
-                            {row.overdueAssignments} overdue {row.overdueAssignments === 1 ? "assignment" : "assignments"} · submission deadline passed
-                          </p>
-                        ) : null}
-                        <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
-                          <p className="m-0">
-                            Last recorded activity: {row.lastActivity
-                              ? learnerCourseCardDate(row.lastActivity) ?? "Unavailable"
-                              : "Not recorded"}
-                          </p>
-                          <p className="m-0">
-                            Next due: {learnerCourseCardDueLabel(row.readOnly,row.nextDue,learnerCourseCardDate)}
-                          </p>
-                        </div>
-                        <div className="mt-4 flex items-center justify-between gap-3">
-                          <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground leading-[22px]">
-                            {blocked?"Course unavailable":learnerCourseCardNextLabel(row)}
-                          </p>
-                          <span
-                            aria-hidden="true"
-                            className="text-lg text-primary-text transition-transform group-hover:translate-x-0.5"
-                          >
-                            →
-                          </span>
-                        </div>
-                      </div>
-                    </div>
                     </LearnerCourseCardSurface>
-                    {!blocked && row.firstOverdue && learnerCourseNextItemHref({
-                      readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
-                      nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
-                    }) ? (
-                      <Link
-                        href={learnerCourseNextItemHref({
-                          readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
-                          nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
-                        })!}
-                        className="mt-2 inline-flex min-h-11 w-full items-center justify-center break-words px-3 text-center text-sm font-semibold text-warning underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-                        Open overdue assignment: {row.firstOverdue.title}
-                      </Link>
-                    ) : null}
-                    {!blocked&&learnerCourseNextItemHref(row) ? (
-                      <Link href={learnerCourseNextItemHref(row)!}
-                        className="mt-2 flex min-h-11 w-full items-center justify-center break-words rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-center text-sm font-[650] text-primary-text transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-                        Continue at next learning item →
-                      </Link>
-                    ) : null}
                   </div>
                 </Fragment>
               );
