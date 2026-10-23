@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
+import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
 type ProjectTask=Workspace["tasks"][number];
@@ -10,7 +11,7 @@ const points=(tasks:readonly ProjectTask[])=>tasks.reduce((total,task)=>
 const statusTone=(status:string)=>status==="COMPLETED"||status==="SHIPPED"?"done":
   status==="ACTIVE"?"active":"planned";
 
-export function MentorPrototypeSprintPlan({workspace}:{workspace:Workspace}){
+export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Workspace;readOnly:boolean}){
   const liveTasks=workspace.tasks.filter(task=>!task.deletedAt);
   const backlog=liveTasks.filter(task=>task.sprintId===null);
   const sprints=[...workspace.sprints].sort((a,b)=>a.sequence-b.sequence);
@@ -53,6 +54,13 @@ export function MentorPrototypeSprintPlan({workspace}:{workspace:Workspace}){
         return <div key={release.id} className="prototype-mentor-release-row">
           <div><strong>{release.title}</strong><small>{complete} of {group.length} sprints signed off</small></div>
           <span className={"prototype-mentor-release-status "+statusTone(release.status)}>{release.status.replaceAll("_"," ")}</span>
+          {!readOnly&&workspace.project.status==="ACTIVE"?(
+            <div className="prototype-mentor-release-actions">
+              <ReleaseLifecycleActions projectId={workspace.project.id}
+                releaseId={release.id} status={release.status}
+                expectedUpdatedAt={release.updatedAt.toISOString()} />
+            </div>
+          ):null}
           <div className="prototype-mentor-release-sprints">
             {group.map(sprint=><Link key={sprint.id} href={base+"?tab=board&sprint="+encodeURIComponent(sprint.id)}
               title={"Sprint "+sprint.sequence+": "+sprint.status}
@@ -60,6 +68,16 @@ export function MentorPrototypeSprintPlan({workspace}:{workspace:Workspace}){
               {sprint.sequence}
             </Link>)}
           </div>
+          {!readOnly&&workspace.project.status==="ACTIVE"?(
+            <div className="prototype-mentor-sprint-action-list">
+              {group.map(sprint=><div key={sprint.id}>
+                <span>Sprint {sprint.sequence} · {sprint.title}</span>
+                <SprintLifecycleActions projectId={workspace.project.id}
+                  sprintId={sprint.id} status={sprint.status}
+                  releaseStatus={release.status} />
+              </div>)}
+            </div>
+          ):null}
         </div>;
       }):<p className="prototype-mentor-summary-empty">No releases have been recorded.</p>}
     </section>
