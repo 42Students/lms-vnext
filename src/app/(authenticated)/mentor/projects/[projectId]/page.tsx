@@ -4,7 +4,7 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { ProjectWorkspace, ProjectWorkspaceHeader } from "@/components/projects/project-workspace";
+import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import {MentorTaskAllocation} from "@/components/projects/mentor-task-allocation";
 import {MentorLaneBoard} from "@/components/projects/mentor-lane-board";
 import {MentorProductBacklog} from "@/components/projects/mentor-product-backlog";
@@ -12,7 +12,6 @@ import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import {MentorProjectSectionCache} from "@/components/projects/mentor-project-section-cache";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
-import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 
 export default async function MentorProjectPage({
@@ -39,8 +38,8 @@ export default async function MentorProjectPage({
     delivery:"Submission package, versions and review decisions.",
   };
   const breadcrumbTab: Record<string, string> = {
-    overview: "Overview", team: "People & Meetings", sprints: "Releases and Sprints",
-    board: "Board", performance: "Task Allocation", resources: "Resources", delivery: "Overview",
+    overview: "Overview", team: "Team & meetings", sprints: "Sprints & releases",
+    board: "Board", performance: "Performance", resources: "Resources", delivery: "Overview",
     activity: "Activity",
   };
   const activeSection =
@@ -72,11 +71,62 @@ export default async function MentorProjectPage({
       context,
       projectId,
     );
+  // The prototype's shared detail header is reused for Overview, Board,
+  // Sprints & releases, Team & meetings, Performance, Resources and Activity.
+  // Only actual persisted sprints become segments; 16 is NOT hard-coded.
+  const timeline = [...workspace.sprints].sort((a,b) => a.sequence - b.sequence);
+  const currentSprint = timeline.find(sprint => sprint.status === "ACTIVE");
+  const completedSprints = timeline.filter(sprint => sprint.status === "COMPLETED").length;
+  const studentCount = workspace.members.filter(member => member.role === "LEARNER").length;
+  const mentorBase = "/mentor/projects/" + encodeURIComponent(projectId);
+  const projectStatus = workspace.project.status === "ACTIVE" ? "In progress" :
+    workspace.project.status === "COMPLETED" ? "Completed" :
+    workspace.project.status === "ARCHIVED" ? "Archived" : "Planned";
 
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
-      <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
-      <ProjectWorkspaceHeader workspace={workspace} mode="MENTOR" />
+      <div className="prototype-mentor-project-heading">
+        <Link href="/mentor/projects" className="prototype-mentor-back">‹ Projects</Link>
+        <div className="prototype-mentor-title-line">
+          <span className="prototype-mentor-team-avatar" aria-hidden="true">
+            {workspace.project.title.trim().slice(0,2).toUpperCase() || "42"}
+          </span>
+          <div className="min-w-0">
+            <h1>{workspace.project.title}</h1>
+            <p>{workspace.project.courseLabel || "Project"} · {studentCount} {studentCount===1?"student":"students"} · <strong>{projectStatus}</strong></p>
+          </div>
+          <div className="prototype-mentor-header-actions">
+            <Link href={mentorBase + "?tab=team"}>Schedule a meeting</Link>
+            {access.access === "MENTOR" && workspace.project.status !== "ARCHIVED" && workspace.project.status !== "COMPLETED" ? (
+              <Link href={mentorBase + "?tab=board"}>+ Task</Link>
+            ) : null}
+          </div>
+        </div>
+        {timeline.length > 0 ? (
+          <section className="prototype-mentor-sprint-ribbon" aria-label="Project sprints">
+            <div className="prototype-mentor-sprint-facts">
+              <span><strong>{currentSprint ? "Sprint " + currentSprint.sequence : completedSprints + " completed sprints"}</strong> of {timeline.length} · {workspace.project.courseLabel || "Project"}</span>
+              <Link href={mentorBase + "?tab=sprints"}>{workspace.releases.length} {workspace.releases.length===1?"release":"releases"} · Open timeline</Link>
+            </div>
+            <div className="prototype-mentor-sprint-track">
+              {timeline.map(sprint => (
+                <Link key={sprint.id} href={mentorBase+"?tab=sprints"} title={"Sprint "+sprint.sequence+" · "+sprint.status}
+                  aria-label={"Sprint "+sprint.sequence+" · "+sprint.status}
+                  className={"prototype-mentor-sprint-segment prototype-mentor-sprint-"+(
+                    sprint.status === "COMPLETED" ? "done" :
+                    sprint.status === "ACTIVE" ? "current" : "planned"
+                  )} />
+              ))}
+            </div>
+            {currentSprint ? (
+              <div className="prototype-mentor-sprint-next">
+                <span><strong>Current sprint:</strong> Sprint {currentSprint.sequence} · {currentSprint.title}</span>
+                <Link href={mentorBase+"?tab=sprints"}>View sprint</Link>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+      </div>
       <MentorProjectTabs projectId={projectId}/>
       {tab && !(selectedTab in subtitles)
         ? <p role="status" className="border-b border-border py-3 text-sm text-muted-foreground">
@@ -84,11 +134,9 @@ export default async function MentorProjectPage({
             <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=overview"}
               className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Overview</Link>
           </p>
-        : <section aria-label="Current project section" className="min-w-0 space-y-1">
-            <h2 className="sr-only">{breadcrumbTab[selectedTab??"overview"]??"Overview"}</h2>
-            <p className="text-sm leading-[22px] text-muted-foreground">
-              {subtitles[selectedTab??"overview"]}
-            </p>
+        : <section aria-label="Current project section" className="sr-only">
+            <h2>{breadcrumbTab[selectedTab??"overview"]??"Overview"}</h2>
+            <p>{subtitles[selectedTab??"overview"]}</p>
           </section>}
       <MentorProjectSectionCache key={projectId} projectId={projectId}
         section={selectedTab??"overview"}>
