@@ -442,10 +442,7 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,sectio
   backLabel?: string;
   section?:ProjectWorkspaceSection;
 }) {
-  return (
-    <PageHeader
-            title={workspace.project.title?.trim()||"Workspace"}
-            description={mode==="MENTOR"
+  const headerDescription = mode==="MENTOR"
               ? [workspace.project.courseLabel?.trim()||null,
                  workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName??
                  workspace.members.find(member=>member.role==="MENTOR")?.displayName??null]
@@ -466,7 +463,11 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,sectio
                 "Understand submission readiness, proof coverage and any manual override at a glance.":
                 mode==="ADMIN"&&section==="summary"?
                   "Health, setup and operating details for this workspace.":
-                  workspace.project.summary??undefined}
+                  workspace.project.summary??undefined;
+  return (
+    <PageHeader
+            title={workspace.project.title?.trim()||"Workspace"}
+            {...(headerDescription !== undefined ? {description:headerDescription} : {})}
             actions={
               <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
                 {mode==="ADMIN"&&backHref?<PageBackLink href={backHref} label={backLabel??"Back to projects"}/>:null}
