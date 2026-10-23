@@ -1259,3 +1259,57 @@
   .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-kpi-card {grid-template-columns:repeat(2,minmax(0,1fr))}
   .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-kpi-card>div:nth-child(2){border-right:0}
 }
+
+
+/* Mentor Activity and Final Submission: actual event/evidence summaries. */
+.lms-shell-frame[data-prototype-portal="mentor"] :is(.prototype-mentor-activity-summary,.prototype-mentor-delivery-evidence) {
+  min-width:0;overflow:hidden;border:1px solid #e7ecf2;border-radius:12px;background:#fff;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-activity-stat-row {
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-activity-stat-row>div {
+  display:flex;flex-direction:column;gap:5px;padding:16px 18px;border-right:1px solid #e7ecf2;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-activity-stat-row>div:last-child{border:0}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-activity-stat-row strong {
+  color:#172033;font-size:22px;font-weight:700;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-activity-stat-row span {
+  color:#5b6b82;font-size:12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-activity-summary>p {
+  margin:0;padding:10px 18px;border-top:1px solid #e7ecf2;
+  font-size:12px;line-height:1.5;color:#5b6b82;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-main{
+  display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:16px 18px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-details{
+  display:flex;flex:1;flex-direction:column;min-width:0;gap:8px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-details strong{
+  font-size:15px;color:#172033;overflow-wrap:anywhere;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-details p{
+  margin:0;font-size:12px;color:#5b6b82;line-height:1.5;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-notes{
+  white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-links{
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-links a {
+  display:inline-flex;min-height:34px;align-items:center;border:1px solid #d6e1ee;
+  border-radius:8px;padding:0 12px;background:#fff;color:#0a7c88;
+  font-size:12px;font-weight:700;text-decoration:none;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-links a:hover{
+  border-color:#0a7c88;background:#eff8fa;
+}
+@media(max-width:700px){
+  .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-activity-stat-row{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
