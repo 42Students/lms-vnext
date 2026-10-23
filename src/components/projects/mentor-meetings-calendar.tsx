@@ -32,6 +32,30 @@ function meetingTimeLabel(meeting:MentorMeetingCalendarItem){
  const end=clockLabel(meeting.endsAt);
  return start+(end&&meeting.endsAt!==meeting.startsAt?" – "+end:"")+" (GMT+05:30)";
 }
+/** Export a real RFC 5545-compatible calendar invitation on explicit
+ * interaction. Never export a pending/invalid meeting as a confirmed event. */
+function downloadMeetingCalendar(meeting:MentorMeetingCalendarItem){
+  if(!["SCHEDULED","RESCHEDULED"].includes(meeting.status))return;
+  const starts=new Date(meeting.startsAt),ends=new Date(meeting.endsAt);
+  if(!Number.isFinite(starts.getTime())||!Number.isFinite(ends.getTime())||
+      ends.getTime()<=starts.getTime())return;
+  const escape=(text:string)=>text.replace(/\\/g,"\\\\").replace(/\n/g,"\\n")
+    .replace(/,/g,"\\,").replace(/;/g,"\\;");
+  const utc=(value:Date)=>value.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");
+  const calendar=[
+    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//42LMS//Mentor Meeting//EN","CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH","BEGIN:VEVENT",
+    "UID:"+escape(meeting.id+"@42lms"),
+    "DTSTAMP:"+utc(new Date()),"DTSTART:"+utc(starts),"DTEND:"+utc(ends),
+    "SUMMARY:"+escape(meeting.title),"DESCRIPTION:"+escape(meeting.projectTitle),
+    "STATUS:CONFIRMED","END:VEVENT","END:VCALENDAR","",
+  ].join("\r\n");
+  const url=URL.createObjectURL(new Blob([calendar],{type:"text/calendar;charset=utf-8"}));
+  const anchor=document.createElement("a");
+  anchor.href=url;anchor.download="42lms-mentor-meeting.ics";document.body.appendChild(anchor);
+  anchor.click();anchor.remove();
+  window.setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 function MeetingRow({
   meeting, now,
 }: {meeting: MentorMeetingCalendarItem; now: Date;}) {
@@ -59,6 +83,17 @@ function MeetingRow({
         <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Archived project · Read-only</p>
       ) : null}
       <div className={styles.actions}>
+        {(meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")&&
+         Number.isFinite(Date.parse(meeting.startsAt))&&
+         Number.isFinite(Date.parse(meeting.endsAt))&&
+         Date.parse(meeting.endsAt)>Date.parse(meeting.startsAt) ? (
+          <Button type="button" variant="secondary" size="sm"
+            onClick={()=>downloadMeetingCalendar(meeting)}>Add to my calendar (.ics)</Button>
+        ) : null}
+        <Link className={styles.action}
+          href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) + "?tab=team"}>
+          Schedule or manage meeting
+        </Link>
         {safeProjectExternalHref(href) ? <a className={styles.action} href={safeProjectExternalHref(href)!}
           >Join link</a> : null}
         <Link className={styles.action}
