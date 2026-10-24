@@ -29,6 +29,7 @@ import {
   publishProjectTemplate,
 } from "@/modules/projects/template-service";
 import { listMyMentorCalendarMeetings } from "@/modules/projects/mentor-calendar-service";
+import {respondToProjectMeeting,listProjectMeetingRsvpFacts} from "@/modules/projects/mentor-meeting-rsvp-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -353,6 +354,42 @@ describe("Projects P7B meetings", () => {
     }finally{
       await pool.query("UPDATE project_instances SET deleted_at=null WHERE id=$1",[project.id]);
     }
+  });
+
+  it("persists member RSVPs and displays real in-app response counts, not provider receipts",async()=>{
+    const project=await createProject();
+    const request=await requestProjectMeeting(learner,project.id,requestedWindow);
+    const scheduled=await scheduleProjectMeeting(mentor,project.id,request.id,{
+      ...requestedWindow,expectedUpdatedAt:request.updatedAt.toISOString(),
+      meetingUrl:"https://meet.example.com/project",
+    });
+    const input={response:"ACCEPTED" as const,
+      expectedUpdatedAt:scheduled.updatedAt.toISOString()};
+    await expect(respondToProjectMeeting(learner,project.id,request.id,input))
+      .resolves.toMatchObject({response:"ACCEPTED",changed:true});
+    await expect(respondToProjectMeeting(learner,project.id,request.id,input))
+      .resolves.toMatchObject({response:"ACCEPTED",changed:false});
+    await expect(respondToProjectMeeting(learner,project.id,request.id,{
+      ...input,response:"DECLINED",expectedUpdatedAt:"2000-01-01T00:00:00Z",
+    })).rejects.toMatchObject({code:"PROJECT_MEETING_STALE_VERSION"});
+    const facts=await listProjectMeetingRsvpFacts(mentor,project.id,[request.id]);
+    expect(facts).toHaveLength(1);
+    expect(facts[0]).toMatchObject({
+      meetingId:request.id,accepted:1,declined:0,tentative:0,notRecorded:1,
+      activeInvitees:2,myResponse:null,
+    });
+    const second=await respondToProjectMeeting(mentor,project.id,request.id,{
+      ...input,response:"TENTATIVE",
+    });
+    expect(second.changed).toBe(true);
+    const after=await listProjectMeetingRsvpFacts(learner,project.id,[request.id]);
+    expect(after[0]).toMatchObject({accepted:1,tentative:1,notRecorded:0,
+      myResponse:"ACCEPTED"});
+    const notices=await pool.query<{count:string}>(`
+      select count(*)::text as count from activity_events where
+      subject_id=$1 and event_type='projects.meeting.rsvp'
+      and actor_user_id=$2`,[request.id,SEED_IDS.learnerUser]);
+    expect(notices.rows[0]?.count).toBe("1");
   });
 
   it("lets a learner cancel only their own pending request", async () => {
