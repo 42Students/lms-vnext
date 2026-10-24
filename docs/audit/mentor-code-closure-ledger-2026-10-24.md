@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 44/132 `CODE_READY`, 81/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 45/132 `CODE_READY`, 80/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -47,7 +47,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 47-02 | CODE_READY | mentor-lane-board.tsx; mentor-board-lane-paging-model.ts |
 | 47-03 | CODE_READY | mentor-lane-board.tsx; mentor-backlog-service.ts |
 | 47-04 | CODE_READY | mentor-lane-board.tsx |
-| 47-05 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 47-05 | CODE_READY | mentor-lane-board.tsx; mentor-task-criteria-checklist.tsx; mentor-task-history.tsx; mentor-blocker-age-service.ts |
 | 47-06 | CODE_READY | mentor-lane-board.tsx; mentor-backlog-service.ts |
 | 47-07 | CODE_READY | mentor-lane-board.tsx; project-task-comments.tsx |
 | 47-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
