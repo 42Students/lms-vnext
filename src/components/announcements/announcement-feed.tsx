@@ -1,4 +1,5 @@
 import { StatusBadge } from "@/components/ui/status-badge";
+import {MentorSourceNotificationRead} from "@/components/projects/mentor-source-notification-read";
 function trustedAnnouncementAction(url:string|undefined|null,label:string|undefined|null){
  if(!url||!label)return null;
  try{
@@ -47,9 +48,11 @@ function announcementDateLabel(raw: AnnouncementFeedItem["createdAt"]): string {
 export function AnnouncementFeed({
   items,
   enabled,
+  mentorReadStates,
 }: {
   items: readonly AnnouncementFeedItem[];
   enabled: boolean;
+  mentorReadStates?:Readonly<Record<string,{key:string;read:boolean}>>;
 }) {
   if (!enabled) {
     return (
@@ -138,6 +141,11 @@ export function AnnouncementFeed({
                   {announcementDateLabel(item.createdAt)}
                 </time>
               </div>
+              {mentorReadStates?.[item.id] ? <div className="mt-2">
+                <MentorSourceNotificationRead
+                  receiptKey={mentorReadStates[item.id].key}
+                  read={mentorReadStates[item.id].read}/>
+              </div>:null}
               <p className="mt-3 whitespace-pre-wrap text-sm leading-[22px] text-body">
                 {item.message?.trim() || "An announcement was shared with you."}
               </p>
