@@ -9,9 +9,11 @@ import {can} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {ProjectsServiceError} from "./errors";
 import {listMyProjectInstances} from "./member-service";
-import {sortMentorSearchMatches} from "./mentor-search-ranking-model";
+import {sortMentorSearchMatches,mentorSearchRank} from "./mentor-search-ranking-model";
 
 export const mentorUnifiedSearchQuery=z.string().trim().min(1).max(100);
+export const mentorSearchPageSchema=z.coerce.number().int().min(0).max(100);
+const SEARCH_PAGE_SIZE=15;
 export type MentorSearchResult={key:string;kind:"Project"|"Task"|"Student"|"Resource";
   title:string;context:string;href:string};
 const escapeLike=(value:string)=>value.replaceAll("\\","\\\\")
@@ -20,9 +22,12 @@ const escapeLike=(value:string)=>value.replaceAll("\\","\\\\")
 /** Read-only search across the current Mentor's *verified* assigned projects.
  * Search never accepts a project ID or tenant supplied by the browser.
  * Each category is bounded to 15 rows to avoid leaking an entire directory. */
-export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
-  Promise<MentorSearchResult[]>{
+export async function searchMentorWorkspacePage(
+ context:RequestContext,raw:unknown,pageInput:unknown=0,
+):Promise<{results:MentorSearchResult[];hasMore:boolean;page:number}>{
   const term=mentorUnifiedSearchQuery.parse(raw);
+  const page=mentorSearchPageSchema.parse(pageInput);
+  const offset=page*SEARCH_PAGE_SIZE;
   const membership=context.membership;
   if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
     context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
@@ -33,7 +38,7 @@ export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
   const projects=(await listMyProjectInstances(context)).filter(row=>
     row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);
   const byId=new Map(projects.map(item=>[item.project.id,item.project.title]));
-  if(!byId.size)return [];
+  if(!byId.size)return {results:[],hasMore:false,page};
   const ids=[...byId.keys()];
   const like="%"+escapeLike(term)+"%";
   const prefix=escapeLike(term)+"%";
@@ -47,14 +52,16 @@ export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
         status:projectTasks.status})
       .from(projectTasks).where(and(inArray(projectTasks.projectId,ids),
         isNull(projectTasks.deletedAt),ilike(projectTasks.title,like)))
-      .orderBy(titleOrder(projectTasks.title),projectTasks.title,projectTasks.id).limit(15),
+      .orderBy(titleOrder(projectTasks.title),projectTasks.title,projectTasks.id)
+      .limit(SEARCH_PAGE_SIZE+1).offset(offset),
     getDb().select({id:projectResources.id,projectId:projectResources.projectId,
       title:projectResources.title})
       .from(projectResources).where(and(inArray(projectResources.projectId,ids),
         eq(projectResources.status,"ACTIVE"),ilike(projectResources.title,like)))
       .orderBy(sql`case when lower(${projectResources.title})=lower(${term})
         then 0 when lower(${projectResources.title}) like lower(${prefix})
-        then 1 else 2 end`,projectResources.title,projectResources.id).limit(15),
+        then 1 else 2 end`,projectResources.title,projectResources.id)
+      .limit(SEARCH_PAGE_SIZE+1).offset(offset),
     getDb().select({id:collegeMemberships.id,projectId:projectMembers.projectId,
       title:users.displayName})
       .from(projectMembers)
@@ -72,7 +79,8 @@ export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
         ilike(users.displayName,like)))
       .orderBy(sql`case when lower(${users.displayName})=lower(${term})
         then 0 when lower(${users.displayName}) like lower(${prefix})
-        then 1 else 2 end`,users.displayName,collegeMemberships.id).limit(15),
+        then 1 else 2 end`,users.displayName,collegeMemberships.id)
+      .limit(SEARCH_PAGE_SIZE+1).offset(offset),
   ]);
   const taskOwnerMembershipIds=[...new Set(tasks.map(task=>
     task.assigneeMembershipId).filter((id):id is string=>id!==null))];
@@ -95,24 +103,36 @@ export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
     owner.projectId+":"+owner.id,owner.name??"Student",
   ] as const));
   const result:MentorSearchResult[]=[];
-  for(const project of projects.filter(item=>
+  const matchingProjects=projects.filter(item=>
     [item.project.title,item.project.summary??""].some(value=>
-      value.toLocaleLowerCase("en-IN").includes(term.toLocaleLowerCase("en-IN")))).slice(0,15))
+      value.toLocaleLowerCase("en-IN").includes(term.toLocaleLowerCase("en-IN"))))
+    .sort((a,b)=>mentorSearchRank(a.project.title,term)-
+      mentorSearchRank(b.project.title,term)||
+      a.project.title.localeCompare(b.project.title,"en-IN")||
+      a.project.id.localeCompare(b.project.id))
+    .slice(offset,offset+SEARCH_PAGE_SIZE+1);
+  for(const project of matchingProjects.slice(0,SEARCH_PAGE_SIZE))
     result.push({key:"p:"+project.project.id,kind:"Project",
       title:project.project.title,context:project.project.courseLabel??"Mentor project",
       href:"/mentor/projects/"+encodeURIComponent(project.project.id)+"?tab=overview"});
-  for(const item of tasks)result.push({key:"t:"+item.id,kind:"Task",
+  for(const item of tasks.slice(0,SEARCH_PAGE_SIZE))result.push({key:"t:"+item.id,kind:"Task",
     title:item.title,context:(byId.get(item.projectId)??"Project")+
       " · "+(item.assigneeMembershipId?
         ownerByTaskScope.get(item.projectId+":"+item.assigneeMembershipId)??"Owner unavailable":
         "Unassigned")+" · "+item.status.replaceAll("_"," "),
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board&scope=all&task="+encodeURIComponent(item.id)});
-  for(const item of students)result.push({key:"s:"+item.projectId+":"+item.id,
+  for(const item of students.slice(0,SEARCH_PAGE_SIZE))result.push({key:"s:"+item.projectId+":"+item.id,
     kind:"Student",title:item.title??"Student",
     context:byId.get(item.projectId)??"Project",
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=performance#mentor-student-"+encodeURIComponent(item.id)});
-  for(const item of resources)result.push({key:"r:"+item.id,kind:"Resource",
+  for(const item of resources.slice(0,SEARCH_PAGE_SIZE))result.push({key:"r:"+item.id,kind:"Resource",
     title:item.title,context:byId.get(item.projectId)??"Project",
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=resources"});
-  return sortMentorSearchMatches(result,term);
+  return {results:sortMentorSearchMatches(result,term),page,
+    hasMore:[matchingProjects,tasks,students,resources]
+      .some(rows=>rows.length>SEARCH_PAGE_SIZE)};
+}
+export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
+ Promise<MentorSearchResult[]>{
+ return (await searchMentorWorkspacePage(context,raw,0)).results;
 }
