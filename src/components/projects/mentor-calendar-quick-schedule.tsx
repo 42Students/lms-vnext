@@ -10,7 +10,9 @@ import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
 
-type Choice={id:string;title:string;updatedAt:string};
+type Choice={id:string;title:string;updatedAt:string;
+  sprints:readonly {id:string;title:string;sequence:number;status:string}[]};
+type MeetingType="GENERAL"|"PLANNING"|"STANDUP"|"REVIEW"|"RETRO";
 const toInstant=(local:string)=>{
   if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))return null;
   const value=new Date(local+":00+05:30");
@@ -26,6 +28,8 @@ export function MentorCalendarQuickSchedule({projects}:{
   const [selected,setSelected]=useState(projects[0]?.id??"");
   const [title,setTitle]=useState("");
   const [agenda,setAgenda]=useState("");
+  const [meetingType,setMeetingType]=useState<MeetingType>("GENERAL");
+  const [linkedSprintId,setLinkedSprintId]=useState("");
   const [start,setStart]=useState("");
   const [end,setEnd]=useState("");
   const [meetingUrl,setMeetingUrl]=useState("");
@@ -41,6 +45,9 @@ export function MentorCalendarQuickSchedule({projects}:{
        Date.parse(from)<=Date.now()){
       setError("Choose a valid future start and end time in IST.");
       return;
+    }
+    if(linkedSprintId&&!project.sprints.some(item=>item.id===linkedSprintId)){
+      setError("Choose a sprint assigned to this project.");return;
     }
     const link=meetingUrl.trim();
     if(link){
@@ -58,10 +65,12 @@ export function MentorCalendarQuickSchedule({projects}:{
         title:title.trim(),
         ...(agenda.trim()?{agenda:agenda.trim()}:{}),
         startsAt:from,endsAt:until,timeZone:"Asia/Kolkata",
-        meetingType:"GENERAL",status:link?"SCHEDULED":"DRAFT",
+        meetingType,linkedSprintId:linkedSprintId||null,
+        status:link?"SCHEDULED":"DRAFT",
         meetingUrl:link||null,
       });
       setOpen(false);setTitle("");setAgenda("");setStart("");setEnd("");setMeetingUrl("");
+      setMeetingType("GENERAL");setLinkedSprintId("");
       showToast({tone:"success",title:link?"Meeting scheduled":"Meeting draft saved",
         description:link?"The meeting is recorded. Share the actual join link with attendees.":
           "Add a meeting link in the project's meeting editor to schedule the draft."});
@@ -80,9 +89,28 @@ export function MentorCalendarQuickSchedule({projects}:{
       description="Choose one of your assigned projects. Times are in IST. Add a real meeting link to schedule, or save a draft to finish later.">
       <form onSubmit={submit} className="prototype-mentor-calendar-quick-form">
         <label>Team or project
-          <select value={selected} onChange={event=>setSelected(event.target.value)}
+          <select value={selected} onChange={event=>{setSelected(event.target.value);setLinkedSprintId("");}}
             disabled={pending} required>
             {projects.map(row=><option key={row.id} value={row.id}>{row.title}</option>)}
+          </select>
+        </label>
+        <label>Meeting type
+          <select value={meetingType} disabled={pending}
+            onChange={event=>setMeetingType(event.target.value as MeetingType)}>
+            <option value="GENERAL">General</option>
+            <option value="PLANNING">Sprint planning</option>
+            <option value="STANDUP">Stand-up</option>
+            <option value="REVIEW">Sprint review</option>
+            <option value="RETRO">Retrospective</option>
+          </select>
+        </label>
+        <label>Linked sprint (optional)
+          <select value={linkedSprintId} disabled={pending}
+            onChange={event=>setLinkedSprintId(event.target.value)}>
+            <option value="">No linked sprint</option>
+            {project?.sprints.map(item=><option key={item.id} value={item.id}>
+              Sprint {item.sequence} · {item.title} ({item.status.toLowerCase()})
+            </option>)}
           </select>
         </label>
         <label>Meeting title
