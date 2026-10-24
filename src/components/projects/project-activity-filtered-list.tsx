@@ -4,7 +4,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
-import {useEffect,useState,useRef} from "react";
+import {Fragment,useEffect,useState,useRef} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {mentorActivityCategory, mentorActivityLabel, mentorActivityRelativeTime} from "@/modules/projects/mentor-activity-display-model";
 import {projectResourceAuditAction,projectResourceAuditMatches} from "@/modules/projects/project-resource-audit-model";
@@ -24,6 +24,13 @@ function actorTypeLabel(value:string|null|undefined):string {
 function resourceActionLabel(eventType:string):string {
   return projectResourceAuditAction(eventType)??mentorActivityLabel(eventType);
 }
+const eventIstDay=(value:string|Date)=>{
+ const stamp=new Date(value);
+ return Number.isFinite(stamp.getTime())
+   ?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+     weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(stamp)
+   :"Date unavailable";
+};
 type Cursor={time:string;id:string};
 type Page={events:Event[];hasMore:boolean;nextCursor:Cursor|null};
 
@@ -209,7 +216,14 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
       </table>
     </div>
     : <div role="feed" aria-label="Project activity" aria-busy={busy} className="space-y-2">
-      {filtered.map((event,index)=><article key={event.id} aria-posinset={index+1} aria-setsize={filtered.length} className="border-b border-border py-4">
+      {filtered.map((event,index)=><Fragment key={event.id}>
+        {mentorWeekSummary&&(index===0||
+          eventIstDay(filtered[index-1]!.occurredAt)!==eventIstDay(event.occurredAt))?
+          <h3 className="border-b border-border pt-4 text-sm font-semibold text-foreground">
+            {eventIstDay(event.occurredAt)}
+          </h3>:null}
+        <article aria-posinset={index+1} aria-setsize={filtered.length}
+         className="border-b border-border py-4">
        <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
          <p className="font-semibold">{event.summary}</p>
@@ -226,7 +240,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
          <StatusBadge tone="neutral">{mentorActivityCategory(event.eventType)}</StatusBadge>
         </div>
        </div>
-      </article>)}
+      </article></Fragment>)}
      </div>}
   {resourceAudit&&totalPages>1?<nav aria-label="Resource audit pages" className="flex items-center gap-2">
     <Button type="button" variant="secondary" disabled={activePage<=1} onClick={()=>setPage(value=>Math.max(1,value-1))}>Previous</Button>
