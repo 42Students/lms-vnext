@@ -4,6 +4,7 @@ import {describe,expect,it} from "vitest";
 import {compareNumberedTeamProjects} from "@/modules/projects/learner-project-sort-model";
 import {learnerProjectListEmptyState} from "@/modules/projects/learner-project-list-empty-model";
 import {learnerProjectGoalSummary} from "@/modules/projects/learner-project-goals-model";
+import {canUploadProjectFilePanel} from "@/modules/projects/mentor-file-panel-role-model";
 import {projectTemplateBlueprintSchema} from "@/modules/projects/validation";
 
 const read=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
@@ -37,13 +38,16 @@ describe("learner/projects verified gap closure",()=>{
   const service=read("src/modules/projects/resource-service.ts");
   expect(service).toContain('"LEARNER"');
   expect(service).toContain('input.visibility === "MENTOR_ONLY"');
-  expect(read("src/components/projects/project-resource-files-section.tsx")).toContain('mode==="LEARNER"&&status==="ACTIVE"');
+  expect(read("src/components/projects/project-resource-files-section.tsx"))
+   .toContain("canUploadProjectFilePanel(fileRole)");
+  expect(canUploadProjectFilePanel({mode:"LEARNER",status:"ACTIVE",
+    readOnly:false,hasMembership:true})).toBe(true);
   expect(read("src/components/projects/project-resource-controls.tsx")).toContain("Share a resource");
  });
  it("LEARNER-projects-36 has final-delivery upload and attachment validation",()=>{
   expect(form()).toContain("<ProjectDeliveryFileUploader");
   const service=read("src/modules/projects/submission-service.ts");
-  expect(service).toContain('file.status!=="READY"');
+  expect(service).toContain("projectFinalFileEvidenceIsVerified(file)");
   expect(service).toContain("projectResourceFiles.projectId");
  });
  it("LEARNER-projects-02 selects draft, review or blocker actions before generic navigation",()=>{
