@@ -97,6 +97,15 @@ export async function getProjectActivityPage(
         filters.eventType?eq(activityEvents.eventType,filters.eventType):undefined,
         filters.subjectId?eq(activityEvents.subjectId,filters.subjectId):undefined,
         filters.actorUserId?eq(activityEvents.actorUserId,filters.actorUserId):undefined,
+        // Match only sprint identifiers recorded within this authorized
+        // project's activity. Legacy sprint events use subjectId directly.
+        filters.sprintId?or(
+          sql`nullif(${activityEvents.metadata} ->> 'sprintId','') = ${filters.sprintId}`,
+          and(
+            eq(activityEvents.subjectType,"project_sprint"),
+            eq(activityEvents.subjectId,filters.sprintId),
+          ),
+        ):undefined,
         eq(
           activityEvents.module,
           "PROJECTS",
