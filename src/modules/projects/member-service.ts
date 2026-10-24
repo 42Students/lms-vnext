@@ -889,9 +889,43 @@ export async function endProjectMember(
         eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
       .returning();
     if(!ended)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+    // Keep completed task ownership as immutable history. Unfinished tasks
+    // must not remain assigned to a learner whose project membership ended.
+    // This update and its audit events share the project/member row locks and
+    // the same transaction as the membership change.
+    const unassigned=fresh.role==="LEARNER"?await tx.update(projectTasks).set({
+      assigneeMembershipId:null,
+      updatedAt:sql`greatest(${projectTasks.updatedAt} + interval '1 millisecond', now())`,
+    }).where(and(
+      eq(projectTasks.projectId,scope.project.id),
+      eq(projectTasks.assigneeMembershipId,fresh.membershipId),
+      isNull(projectTasks.deletedAt),
+      ne(projectTasks.status,"DONE"),
+    )).returning({id:projectTasks.id,title:projectTasks.title}):[];
     const event = await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("ENDED",{
       projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
     },ended));
+    for(const task of unassigned){
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+        subjectType:"project_task",subjectId:task.id,subjectLabel:task.title,
+        summary:"Unfinished task unassigned after project learner removal",
+        metadata:{projectId:scope.project.id,taskId:task.id,
+          previousAssigneeMembershipId:ended.membershipId,sourceTab:"board"},
+        groupKey:"project:"+scope.project.id+":tasks",
+        dedupeKey:"project-member-unassign:"+ended.id+":"+task.id,
+      });
+    }
+    if(unassigned.length)await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["MENTOR"],
+      title:"Tasks need reassignment",
+      body:unassigned.length+" unfinished project "+
+        (unassigned.length===1?"task is":"tasks are")+
+        " unassigned following a team membership change.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=board&scope=all&assignee=UNASSIGNED",
+    });
     await notifyProjectMemberships(tx,event.id,{
       projectId:scope.project.id,collegeId:scope.collegeId,
       membershipIds:[ended.membershipId],title:"Removed from project",
