@@ -8,6 +8,7 @@ import {
 } from "@/modules/projects/mentor-calendar-view";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
+import {mentorCalendarWeekWorkload} from "@/modules/projects/mentor-calendar-week-workload-model";
 import {Button} from "@/components/ui/button";
 import {MentorMeetingRequestActions} from "./mentor-meeting-request-actions";
 import styles from "./mentor-meetings-calendar.module.css";
@@ -206,6 +207,8 @@ export function MentorMeetingsCalendar({
   }, []);
   const instant = useMemo(() => new Date(now), [now]);
   const {upcoming, past} = useMemo(() => splitMentorMeetings(meetings, instant), [meetings, instant]);
+  const weekWorkload=useMemo(()=>mentorCalendarWeekWorkload(meetings,instant),
+    [meetings,instant]);
   const [selectedId,setSelectedId]=useState<string|null>(null);
   const visiblePast=expanded?past:past.slice(0,PAST_PREVIEW);
   const allVisible=[...upcoming,...visiblePast];
@@ -237,6 +240,12 @@ export function MentorMeetingsCalendar({
       <Button type="button" size="sm" variant="secondary"
         disabled={!meetings.some(meeting=>["SCHEDULED","RESCHEDULED"].includes(meeting.status))}
         onClick={()=>downloadAllMentorMeetings(meetings)}>Add to my calendar (.ics)</Button>
+    </div>
+    <div className="prototype-mentor-calendar-export" aria-label="This week meeting workload">
+      <strong>{weekWorkload.scheduled} scheduled meetings ·
+        {" "}{weekWorkload.hours} hours this week (IST)</strong>
+      <span>{weekWorkload.requests} requested · {weekWorkload.reviews} reviews ·
+        {" "}{weekWorkload.retros} retrospectives</span>
     </div>
     <div className="prototype-mentor-week-strip" aria-label="Meetings this week">
       {week.map(day=><div key={day.key} className={day.today?"prototype-mentor-weekday is-today":"prototype-mentor-weekday"}>
