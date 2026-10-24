@@ -9,11 +9,12 @@ import styles from "./recruiter-today-prototype.module.css";
 
 type WeekEvent={id:string;kind:string;title:string;jobTitle:string;href:string;when:string};
 type Waiting={id:string;title:string;detail:string;href?:string};
+type LiveDrive={title:string;href:string;deadline:string|null;sharedApplicants:number|null};
 export type RecruiterTodayPrototypeProps={
   greeting:string;dateLabel:string;collegeName:string;storageKey:string;
   hasDriveHistory:boolean|null;firstDriveHref:string;calendarHref:string;
   tasks:RecruiterTodayTask[];weekEvents:WeekEvent[];
-  waiting:Waiting[];waitingUnavailable:boolean;
+  waiting:Waiting[];waitingUnavailable:boolean;liveDrive?:LiveDrive|null;
 };
 const words=["","One thing needs","Two things need","Three things need","Four things need","Five things need","Six things need"];
 function cta(task:RecruiterTodayTask):string{
@@ -116,6 +117,15 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
               <span className={styles.small}>{item.description}</span>
             </div>)}
           </section>:null}
+        {props.liveDrive?<Link href={props.liveDrive.href} className={styles.card+" "+styles.live}
+          aria-label={"Open live drive "+props.liveDrive.title}>
+          <span className={styles.label}>LIVE DRIVE</span>
+          <strong>{props.liveDrive.title}</strong>
+          <span className={styles.small}>{props.liveDrive.sharedApplicants===null
+            ?"Shared applicant count unavailable":props.liveDrive.sharedApplicants+" applicants shared with you"}</span>
+          <span className={styles.small}>{props.liveDrive.deadline
+            ?"Applications close "+props.liveDrive.deadline:"No deadline recorded"}</span>
+        </Link>:null}
       </aside>
     </div>
   </div>;
