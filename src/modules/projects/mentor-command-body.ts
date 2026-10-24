@@ -19,7 +19,9 @@ export function mentorProjectCommandContentType(raw:string|null):boolean{
  return media==="application/json"||
   Boolean(media?.startsWith("application/")&&media.endsWith("+json"));
 }
-export async function readMentorProjectCommandBody(request:Request):Promise<unknown>{
+export async function readMentorProjectCommandBody(
+ request:Request,maxBytes:number=MENTOR_PROJECT_COMMAND_LIMIT_BYTES,
+):Promise<unknown>{
  if(!mentorProjectCommandContentType(request.headers.get("content-type")))
   throw new MentorProjectCommandBodyError("UNSUPPORTED_PROJECT_COMMAND_CONTENT_TYPE",415);
  const declared=request.headers.get("content-length");
@@ -27,7 +29,7 @@ export async function readMentorProjectCommandBody(request:Request):Promise<unkn
   const size=Number(declared);
   if(!Number.isSafeInteger(size)||size<0)
    throw new MentorProjectCommandBodyError("INVALID_PROJECT_COMMAND_BODY",400);
-  if(size>MENTOR_PROJECT_COMMAND_LIMIT_BYTES)
+  if(size>maxBytes)
    throw new MentorProjectCommandBodyError("PROJECT_COMMAND_BODY_TOO_LARGE",413);
  }
  if(!request.body)
@@ -40,7 +42,7 @@ export async function readMentorProjectCommandBody(request:Request):Promise<unkn
    const {value,done}=await reader.read();
    if(done)break;
    bytes+=value.byteLength;
-   if(bytes>MENTOR_PROJECT_COMMAND_LIMIT_BYTES)
+   if(bytes>maxBytes)
     throw new MentorProjectCommandBodyError("PROJECT_COMMAND_BODY_TOO_LARGE",413);
    text+=decoder.decode(value,{stream:true});
   }
