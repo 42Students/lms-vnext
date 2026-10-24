@@ -19,21 +19,23 @@ import {MentorTaskCreate} from "./mentor-task-create";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
+import {MentorTaskCriteriaChecklist} from "./mentor-task-criteria-checklist";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Alert} from "@/components/ui/alert";
 import {BoardColumn} from "@/components/ui/board-column";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
-type Sprint={id:string;title:string;status:string;releaseId:string;updatedAt:Date;sequence:number};
+type Sprint={id:string;title:string;status:string;releaseId:string;updatedAt:Date;sequence:number;startDate?:string|null;endDate?:string|null};
 type Release={id:string;title:string;status:string};
 type Person={membershipId:string;displayName:string|null;role:string};
 type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;updatedAt:Date;submittedByMembershipId?:string|null};
 type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType:string};
 const editable=["TODO","IN_PROGRESS","BLOCKED"] as const;
-export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members,taskSubmissions=[],taskActivity=[],readOnly=false}:{
+export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members,taskSubmissions=[],taskActivity=[],blockerAges={},readOnly=false}:{
  projectId:string;initialTasks:Task[];sprints:Sprint[];releases:Release[];members:Person[];
  taskSubmissions?:TaskSubmission[];taskActivity?:TaskEvent[];readOnly?:boolean;
+ blockerAges?:Readonly<Record<string,{sinceIso:string|null;days:number|null}>>;
 }){
  const router=useRouter(),params=useSearchParams();
  const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(params.get("release")??""),
@@ -101,6 +103,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    document.addEventListener("keydown",onKey);
    return()=>document.removeEventListener("keydown",onKey);
  },[focusedId,visible]);
+ const latestEvidence=focused?[...taskSubmissions]
+    .filter(row=>row.taskId===focused.id)
+    .sort((a,b)=>b.version-a.version||b.createdAt.getTime()-a.createdAt.getTime())[0]??null:null;
+ const focusedEvents=focused?[...taskActivity].filter(event=>event.subjectId===focused.id)
+    .sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime()):[];
  const submittedReview=focused&&!readOnly&&focused.status==="IN_REVIEW"
    ? [...taskSubmissions].filter(row=>row.taskId===focused.id&&row.status==="SUBMITTED")
      .sort((a,b)=>b.version-a.version)[0]??null
@@ -438,17 +445,32 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       </div>
       <div className="prototype-mentor-board-detail-owner">
         Assigned to <strong>{members.find(person=>person.membershipId===focused.assigneeMembershipId)?.displayName??"Unassigned"}</strong>
+        {!readOnly&&editable.includes(focused.status as typeof editable[number])?
+          <ProjectTaskAssigneeControl key={focused.id} projectId={projectId}
+            taskId={focused.id} taskTitle={focused.title}
+            assigneeMembershipId={focused.assigneeMembershipId}
+            updatedAt={new Date(focused.updatedAt).toISOString()}
+            learners={members.filter(person=>person.role==="LEARNER")}/>:null}
       </div>
+      <p>Recorded sprint: {sprints.find(item=>item.id===focused.sprintId)?.title??"Product backlog"}
+        {focused.dueDate?" · due "+focused.dueDate:" · no due date"}
+        {focused.carriedFromSprintId?" · carried from sprint "+
+           (sprints.find(item=>item.id===focused.carriedFromSprintId)?.sequence??"prior"):""}
+      </p>
       <p className="prototype-mentor-board-detail-description">{focused.description||"No task description recorded."}</p>
-      <div className="prototype-mentor-board-detail-block">
-        <h4>Acceptance criteria</h4>
-        <p>{focused.acceptanceCriteria||"No acceptance criteria recorded."}</p>
-      </div>
+      <MentorTaskCriteriaChecklist key={focused.id} projectId={projectId}
+        task={focused}
+        editable={!readOnly&&editable.includes(focused.status as typeof editable[number])}/>
       {focused.approach?<div className="prototype-mentor-board-detail-block">
         <h4>Their approach</h4><p>{focused.approach}</p>
       </div>:null}
       {focused.blockerReason?<div className="prototype-mentor-board-detail-block is-blocked">
         <h4>Blocked</h4><p>{focused.blockerReason}</p>
+        <p>{blockerAges[focused.id]?.days===null||
+          blockerAges[focused.id]?.days===undefined?
+          "Blocker start time was not recorded.":
+          "Blocked for "+blockerAges[focused.id]!.days+
+          " full days according to recorded status changes."}</p>
         {focused.status==="BLOCKED"&&!readOnly?<Button type="button"
           variant="secondary" disabled={busy}
           onClick={()=>void move(focused.id,"IN_PROGRESS")}>
@@ -468,6 +490,14 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
             </option>)}
           </Select>
         </label>:null}
+      {latestEvidence?<div className="prototype-mentor-board-detail-block">
+        <h4>Most recent task submission</h4>
+        <p>Version {latestEvidence.version} · {latestEvidence.status.replaceAll("_"," ")}</p>
+        {safeProjectExternalHref(latestEvidence.submissionUrl)?
+         <a href={safeProjectExternalHref(latestEvidence.submissionUrl)!}
+           target="_blank" rel="noopener noreferrer">Open submitted evidence ↗</a>:
+         <p>No safe evidence link recorded for this submission.</p>}
+      </div>:null}
       {submittedReview&&focused?<div className="prototype-mentor-board-review-actions" aria-label="Review task submission">
         <TaskReviewActions projectId={projectId} taskId={focused.id}
           submissionId={submittedReview.id} mode="MENTOR"
@@ -477,6 +507,16 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
           submissionId={submittedReview.id} mode="MENTOR"
           expectedUpdatedAt={new Date(submittedReview.updatedAt).toISOString()}
           initialDecision="CHANGES_REQUESTED" triggerLabel="Send back S" shortcut="s"/>
+      </div>:null}
+      {focusedEvents.length?<div className="prototype-mentor-board-detail-block">
+        <h4>Recent recorded task activity · {focusedEvents.length} loaded</h4>
+        <ul>{focusedEvents.slice(0,5).map(event=><li key={event.id}>
+          {event.summary} · {event.actorDisplayName??"Recorded actor"} ·
+          {" "}{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",
+            year:"numeric",timeZone:"Asia/Kolkata"}).format(event.occurredAt)}
+        </li>)}</ul>
+        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
+           "?tab=activity"}>Browse older project events →</Link>
       </div>:null}
       <button type="button" className="prototype-mentor-board-detail-more"
         onClick={()=>setSelected(focused.id)}>Open full task details →</button>
