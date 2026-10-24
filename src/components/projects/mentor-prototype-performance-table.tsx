@@ -1,5 +1,8 @@
 "use client";
 import {useMemo,useState} from "react";
+import {Checkbox} from "@/components/ui/checkbox";
+import {selectMentorPerformanceSprints} from
+  "@/modules/projects/mentor-performance-range-model";
 import type {MentorSprintMemberSnapshot,MentorSprintSignOffSnapshot}
   from "@/modules/projects/mentor-sprint-signoff-snapshot-model";
 import {recentMentorWorkedSprintIds} from
@@ -29,17 +32,16 @@ export function MentorPrototypePerformanceTable({
 }:{students:readonly Student[];tasks:readonly Task[];sprints:readonly Sprint[];
   releases:readonly Release[];snapshots:readonly MentorSprintSignOffSnapshot[]}){
   const [range,setRange]=useState("all");
+  const [pickedSprintIds,setPickedSprintIds]=useState<string[]>([]);
   const sorted=useMemo(()=>orderMentorSprints(sprints,releases),[sprints,releases]);
   const active=sorted.find(item=>item.status==="ACTIVE");
   const lastFour=new Set(recentMentorWorkedSprintIds(sorted,releases));
   const chosen=sorted.find(item=>item.id===range);
   const releaseId=range.startsWith("release:")?range.slice("release:".length):null;
-  const included=range==="whole"?sorted
-    :range==="last4"?sorted.filter(item=>lastFour.has(item.id))
-    :releaseId?sorted.filter(item=>item.releaseId===releaseId)
-    :chosen?[chosen]:range==="current"?sorted.filter(item=>item.id===active?.id):[];
-  const historyMode=range==="whole"||range==="last4"||Boolean(releaseId)||
-    chosen?.status==="COMPLETED";
+  const included=selectMentorPerformanceSprints(
+    sorted,range,lastFour,pickedSprintIds);
+  const historyMode=range==="whole"||range==="last4"||range==="picked"||
+    Boolean(releaseId)||chosen?.status==="COMPLETED";
   const historicalSprints=included.filter(item=>item.status==="COMPLETED");
   const liveSprintIds=new Set(included.filter(item=>item.status!=="COMPLETED")
     .map(item=>item.id));
@@ -54,8 +56,8 @@ export function MentorPrototypePerformanceTable({
     if(range==="whole")return task.sprintId===null||Boolean(
       task.sprintId&&liveSprintIds.has(task.sprintId));
     if(range==="current")return task.sprintId===active?.id;
-    if(range==="last4"||releaseId||chosen)return Boolean(task.sprintId&&
-      liveSprintIds.has(task.sprintId));
+    if(range==="last4"||range==="picked"||releaseId||chosen)return Boolean(
+      task.sprintId&&liveSprintIds.has(task.sprintId));
     return false;
   });
   const historicalRows=saved.flatMap(snapshot=>snapshot.memberRows);
@@ -100,6 +102,7 @@ export function MentorPrototypePerformanceTable({
             <option value="whole">Whole project (sign-off history + current)</option>
             <option value="current">Current sprint</option>
             <option value="last4">Last four worked sprints</option>
+            <option value="picked">Pick sprints…</option>
             {releases.map(release=><option key={release.id} value={"release:"+release.id}>
               {release.title}
             </option>)}
@@ -109,6 +112,31 @@ export function MentorPrototypePerformanceTable({
           </select>
         </label>
       </div>
+      {range==="picked"?<fieldset className="mb-4 rounded-lg border border-border p-3"
+        aria-label="Choose sprints for performance comparison">
+        <legend className="px-1 text-sm font-semibold">Sprints to compare</legend>
+        <p className="mb-3 text-xs text-muted-foreground">
+          Choose one or more sprints across releases. Completed sprints use their
+          recorded sign-off snapshots, not today's task ownership.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {sorted.map(sprint=>{
+            const release=releases.find(item=>item.id===sprint.releaseId);
+            const checked=pickedSprintIds.includes(sprint.id);
+            return <label key={sprint.id} className="flex min-h-9 items-center gap-2 text-sm">
+              <Checkbox checked={checked} onChange={event=>
+                setPickedSprintIds(previous=>event.target.checked
+                  ?previous.includes(sprint.id)?previous:[...previous,sprint.id]
+                  :previous.filter(id=>id!==sprint.id))}/>
+              <span>{release?.title??"Release"} · Sprint {sprint.sequence}
+                {" "}<small>({sprint.status.toLowerCase()})</small></span>
+            </label>;
+          })}
+        </div>
+        {pickedSprintIds.length===0?<p role="status" className="mt-2 text-sm">
+          Select sprints to compare their recorded workload.
+        </p>:null}
+      </fieldset>:null}
       <p className="prototype-mentor-performance-intro">
         {historyMode?"Completed sprint results use immutable sign-off records; current sprint results use live tasks.":
           "Live task state, ownership and recorded estimate points."}
