@@ -84,6 +84,27 @@ describe("Mentor historical sprint plan and carry facts",()=>{
   expect(result.nextTwo.map(row=>row.sprintId)).toEqual(["next","after"]);
   expect(result.nextTwoEstimatePoints).toBe(10);
  });
+ it("handles cross-release zero-estimate plans and no backlog without invented velocity",()=>{
+  const result=deriveMentorPlanFacts({
+   releases:[{id:"old-release",sequence:0},{id:"new-release",sequence:1}],
+   sprints:[
+     {id:"active",releaseId:"old-release",sequence:9,status:"ACTIVE"},
+     {id:"future",releaseId:"new-release",sequence:0,status:"PLANNED"},
+     {id:"later",releaseId:"new-release",sequence:1,status:"PLANNED"},
+   ],
+   starts:[],signOffs:[],
+   tasks:[
+     {sprintId:"future",status:"TODO",estimatePoints:null},
+     {sprintId:"later",status:"TODO",estimatePoints:0},
+     {sprintId:"later",status:"TODO",estimatePoints:100,deletedAt:new Date()},
+   ],
+  });
+  expect(result.nextTwo.map(item=>item.sprintId)).toEqual(["future","later"]);
+  expect(result.nextTwoEstimatePoints).toBe(0);
+  expect(result.plannedToDatePoints).toBe(0);
+  expect(result.plannedToDateReliable).toBe(false);
+  expect(result.carryRatioPct).toBeNull();
+ });
  it("handles no sprint without fabricating a forecast denominator",()=>{
   const result=deriveMentorPlanFacts({sprints:[],signOffs:[],starts:[],tasks:[]});
   expect(result).toMatchObject({

@@ -14,7 +14,8 @@ export type MentorAllocatableRelease={
 export function nextMentorAllocatableSprint<T extends MentorAllocatableSprint>(
   sprints:readonly T[],releases:readonly MentorAllocatableRelease[],
 ):T|null {
-  const available=new Set(releases.filter(release=>release.status!=="SHIPPED")
+  const available=new Set(releases.filter(release=>
+    ["PLANNED","IN_PROGRESS","ACTIVE"].includes(release.status??""))
     .map(release=>release.id));
   const orderedReleases=releases.map((release,index)=>({
     id:release.id,sequence:release.sequence??index,

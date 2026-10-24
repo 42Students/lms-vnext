@@ -37,6 +37,15 @@ describe("Mentor next-sprint assignment target",()=>{
       {id:"foreign",releaseId:"unknown",sequence:0,status:"PLANNED"},
     ],releases)?.id).toBe("valid");
   });
+  it("does not allocate into an unknown or retired release state",()=>{
+    const malformed=releases.map(item=>item.id==="r2"?{
+      ...item,status:"UNRECOGNIZED",
+    }:item);
+    expect(nextMentorAllocatableSprint(sprints,malformed)?.id).toBe("r3-s1");
+    expect(nextMentorAllocatableSprint(sprints,releases.map(item=>({
+      ...item,status:"UNKNOWN",
+    })))).toBeNull();
+  });
   it("does not skip the next release when the previous release had larger sprint numbers",()=>{
     const candidates=[
       {id:"future-r1",releaseId:"r1",sequence:99,status:"PLANNED"},
