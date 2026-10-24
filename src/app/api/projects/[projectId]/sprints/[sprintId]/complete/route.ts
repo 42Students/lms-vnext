@@ -43,6 +43,7 @@ export async function POST(
       decisions:z.array(z.strictObject({
         taskId:z.string().uuid(),
         destination:z.enum(["NEXT","BACKLOG","DROP"]),
+        expectedUpdatedAt:z.iso.datetime({offset:true}),
       })).max(250).optional(),
     }).strict().safeParse(input);
     if(!parsed.success)return NextResponse.json({error:"INVALID_SIGNOFF_NOTE"},{status:400});
