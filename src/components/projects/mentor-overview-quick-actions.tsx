@@ -37,6 +37,10 @@ export function MentorOverviewQuickActions({projectId,projectUpdatedAt,estimatio
   <MentorReleaseEditor projectId={projectId}
     existingReleaseCount={releases.length}/>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
+    "/learner-preview"} className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+    Preview student-visible project →
+  </Link>
+  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
     "?tab=resources"} className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
     Add resource →
   </Link>
