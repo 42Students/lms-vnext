@@ -223,7 +223,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <RecruiterTodayPrototype greeting={greeting.title} dateLabel={dateLabel}
       collegeName={collegeName}
       storageKey={"recruiter-today-later:"+context.user.id+":"+recruiter.companyId+":"+selectedId}
-      hasDriveHistory={requestsResult.ok?(collegeJobs.length>0||requests.length>0||recentJobCapReached):null}
+      hasDriveHistory={requestCount===null?null:(collegeJobs.length>0||requestCount>0||recentJobCapReached)}
       firstDriveHref={recruiterDriveDraftHref({collegeId:selectedId})}
       calendarHref={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)}
       tasks={tasks}
