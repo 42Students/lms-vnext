@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 60/132 `CODE_READY`, 65/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 61/132 `CODE_READY`, 64/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -136,7 +136,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 55-07 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 55-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 56-01 | CODE_READY | command-search.tsx; mentor-unified-search-service.ts |
-| 56-02 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 56-02 | CODE_READY | mentor-unified-search-service.ts; mentor-search-ranking-model.ts; mentor/search/page.tsx (4 scoped categories, owner context, ranking, term highlighting, bounded pagination) |
 | 56-03 | CODE_READY | mentor-notification-bell-preview.tsx; mentor/notifications/preview/route.ts; mentor-unified-notification-model.ts |
 | 56-04 | CODE_READY | mentor-account-overview-service.ts; mentor-account-summary-model.ts; mentor/account/page.tsx; account-menu.tsx |
 | 56-05 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
