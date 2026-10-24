@@ -220,7 +220,8 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         </Select>
       </label>
     </>:null}
-    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");setSharer("ALL");}}
+    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");setSharer("ALL");setGroupBySprint(mode==="MENTOR");
+         setShowEarlier(false);}}
       className="min-h-11 text-sm font-[650] text-link underline md:min-h-9">Clear filters</Button>
   </div>
   {mode==="MENTOR"&&earlierCount>0?<div className="prototype-mentor-resource-earlier"

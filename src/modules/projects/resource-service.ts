@@ -112,6 +112,10 @@ export async function createProjectResource(
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if(scope.access === "LEARNER" && (input.required || input.visibility === "MENTOR_ONLY" || input.pinned || input.accessNotes || input.sprintId || input.taskId || (input.status && input.status !== "ACTIVE")))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  // The internal file-placeholder schema is for Mentor/administrator drafts.
+  // A learner cannot publish a phantom "active file" without any content.
+  if(scope.access==="LEARNER"&&!input.url?.trim()&&!input.description?.trim())
+    throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
   const db = getDb();
 
   try {
@@ -225,7 +229,9 @@ export async function createProjectResource(
         title:"New project resource",body:"A resource was added to your project.",
         actionHref:"/mentor/projects/"+scope.project.id+"?tab=resources",
       });
-      if(resource.visibility==="TEAM") {
+      // Draft/archived items are not visible to students; never leak their
+      // existence to learner notification recipients before publication.
+      if(resource.visibility==="TEAM"&&resource.status==="ACTIVE") {
       await notifyActiveProjectMembers(tx,event.id,{
         projectId:scope.project.id,collegeId:scope.collegeId,
         roles:["LEARNER"],exceptUserId:context.user.id,
@@ -387,7 +393,7 @@ export async function updateProjectResource(
       title:"Project resource updated",body:"A project resource has changed.",
       actionHref:"/mentor/projects/"+scope.project.id+"?tab=resources",
     });
-    if(updated.visibility==="TEAM") {
+    if(updated.visibility==="TEAM"&&updated.status==="ACTIVE") {
     await notifyActiveProjectMembers(tx,event.id,{
       projectId:scope.project.id,collegeId:scope.collegeId,
       roles:["LEARNER"],exceptUserId:context.user.id,

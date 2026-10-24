@@ -337,6 +337,54 @@ afterAll(async () => {
 });
 
 describe("Projects P7A resources and readiness", () => {
+  it("keeps file drafts private until activation, and restores only with a fresh version", async () => {
+    const project=await createProject();
+    await pool.query("update project_instances set status='ACTIVE' where id=$1",[project.id]);
+    await expect(createProjectResource(learner,project.id,{
+      title:"Forged empty learner file",resourceType:"FILE",
+    })).rejects.toMatchObject({code:"PROJECT_RESOURCE_INVALID_STATE"});
+    const unread=async()=>{
+      const result=await pool.query<{total:string}>(`select count(*)::text as total
+        from in_app_notifications n
+        inner join activity_events e on e.id=n.event_id
+        where n.user_id=$1 and e.subject_type='project_resource'
+          and e.metadata->>'projectId'=$2`,[SEED_IDS.learnerUser,project.id]);
+      return Number(result.rows[0]?.total??0);
+    };
+    const before=await unread();
+    const draft=await createProjectResource(mentor,project.id,{
+      title:"Private draft placeholder",resourceType:"FILE",status:"DRAFT",
+      visibility:"TEAM",
+    });
+    expect(draft.status).toBe("DRAFT");
+    expect((await listProjectResources(learner,project.id)).some(item=>item.id===draft.id))
+      .toBe(false);
+    expect(await unread()).toBe(before);
+    const active=await updateProjectResource(mentor,project.id,draft.id,{
+      expectedUpdatedAt:draft.updatedAt.toISOString(),
+      url:"https://example.com/ready-reference.pdf",status:"ACTIVE",
+    });
+    expect(active.status).toBe("ACTIVE");
+    expect((await listProjectResources(learner,project.id)).some(item=>item.id===draft.id))
+      .toBe(true);
+    expect(await unread()).toBeGreaterThan(before);
+    const archived=await archiveProjectResource(mentor,project.id,draft.id,{
+      expectedUpdatedAt:active.updatedAt.toISOString(),
+    });
+    expect(archived.status).toBe("ARCHIVED");
+    expect((await listProjectResources(learner,project.id)).some(item=>item.id===draft.id))
+      .toBe(false);
+    await expect(updateProjectResource(mentor,project.id,draft.id,{
+      status:"ACTIVE",expectedUpdatedAt:active.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_RESOURCE_STALE_VERSION"});
+    const restored=await updateProjectResource(mentor,project.id,draft.id,{
+      status:"ACTIVE",expectedUpdatedAt:archived.updatedAt.toISOString(),
+    });
+    expect(restored.status).toBe("ACTIVE");
+    expect((await listProjectResources(learner,project.id)).some(item=>item.id===draft.id))
+      .toBe(true);
+  });
+
   it("keeps template provenance separate from mentor-added resources", async () => {
     const project = await createProject();
 
