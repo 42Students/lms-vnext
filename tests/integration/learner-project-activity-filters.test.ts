@@ -6,6 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { getProjectActivityPage, listProjectActivity } from "@/modules/projects/activity-service";
 import {getMentorWeekActivityTotals} from "@/modules/projects/mentor-week-activity-totals-service";
 import {getMentorTeamRecentActorActivity} from "@/modules/projects/mentor-team-recent-actor-service";
+import {searchMentorWorkspacePage} from "@/modules/projects/mentor-unified-search-service";
 import {getMentorLearnerAcademicFacts} from "@/modules/projects/mentor-learner-academic-facts-service";
 import {postMentorProjectUpdate} from "@/modules/projects/mentor-project-update-service";
 import {markAllMentorUnifiedNotificationsRead}
@@ -543,5 +544,35 @@ describe("Mentor unified personal and source mark-all",()=>{
       from in_app_notifications where user_id=$1 and event_id=$2`,
       [ids.mentor,newEvent.rows[0]!.id]);
     expect(latest.rows[0]?.read_at).toBeNull();
+  });
+});
+
+describe("Mentor global search workspace privacy",()=>{
+  it("includes only active assigned project students and revokes results on removal",async()=>{
+    const project=await searchMentorWorkspacePage(mentorContext,"Chat7 own project");
+    expect(project.results).toEqual(expect.arrayContaining([
+      expect.objectContaining({kind:"Project",href:expect.stringContaining(ids.project)}),
+    ]));
+    const student=await searchMentorWorkspacePage(mentorContext,"Own Learner");
+    expect(student.results).toEqual(expect.arrayContaining([
+      expect.objectContaining({kind:"Student",href:expect.stringContaining(ids.project)}),
+    ]));
+    await pool.query("update project_members set ended_at=now() where id=$1",
+      [ids.mentorProjectMember]);
+    try{
+      const gone=await searchMentorWorkspacePage(mentorContext,"Own Learner");
+      expect(gone.results).toEqual([]);
+      const noProjects=await searchMentorWorkspacePage(mentorContext,"Chat7 own project");
+      expect(noProjects.results).toEqual([]);
+    }finally{
+      await pool.query("update project_members set ended_at=null where id=$1",
+        [ids.mentorProjectMember]);
+    }
+    await expect(searchMentorWorkspacePage({
+      ...mentorContext,membership:{...mentorContext.membership!,
+        collegeId:SEED_IDS.collegeB},
+    },"Own Learner")).rejects.toBeDefined();
+    await expect(searchMentorWorkspacePage(context,"Own Learner"))
+      .rejects.toBeDefined();
   });
 });
