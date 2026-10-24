@@ -15,8 +15,8 @@ export default async function MentorLearnerVisibilityPreview({
 }:{params:Promise<{projectId:string}>}){
  const context=await getCurrentRequestContext();
  const {projectId}=await params;
- const module=await resolveOptionalModuleAccess(context);
- if(!module.projects.enabled)notFound();
+ const moduleAccess=await resolveOptionalModuleAccess(context);
+ if(!moduleAccess.projects.enabled)notFound();
  const access=await requireProjectReadAccess(context,projectId).catch(()=>notFound());
  if(access.access!=="MENTOR"&&
    !(access.access==="OBSERVER"&&access.member?.role==="MENTOR"))notFound();
