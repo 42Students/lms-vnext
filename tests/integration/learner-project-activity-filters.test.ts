@@ -377,6 +377,13 @@ describe("Legacy project Sprint audit without metadata",()=>{
     });
     expect(result.events.map(row=>row.id)).toContain(legacyId);
     expect(result.events.map(row=>row.id)).not.toContain(unrelatedId);
+    // History survives an archived/deleted Sprint without widening tenant access.
+    await pool.query("UPDATE project_sprints SET deleted_at=now() WHERE id=$1",
+      [ids.sprint]);
+    const historical=await getProjectActivityPage(context,ids.project,{
+      sprintId:ids.sprint,from:"2026-09-18",to:"2026-09-18",
+    });
+    expect(historical.events.map(row=>row.id)).toContain(legacyId);
     await expect(getProjectActivityPage({
       ...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB},
     },ids.project,{sprintId:ids.sprint})).rejects.toBeDefined();
