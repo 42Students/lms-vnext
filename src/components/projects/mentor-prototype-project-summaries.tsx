@@ -19,7 +19,19 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
   const liveTasks=workspace.tasks.filter(task=>!task.deletedAt);
   const backlog=liveTasks.filter(task=>task.sprintId===null);
   const sprints=[...workspace.sprints].sort((a,b)=>a.sequence-b.sequence);
-  const maxPts=Math.max(1,...sprints.map(sprint=>points(liveTasks.filter(task=>task.sprintId===sprint.id))));
+  const historical=new Map(workspace.mentorSprintSnapshots.map(snapshot=>
+    [snapshot.sprintId,snapshot] as const));
+  const chartPoints=(sprint:Workspace["sprints"][number])=>{
+    if(sprint.status==="COMPLETED"){
+      const snapshot=historical.get(sprint.id);
+      return snapshot?{planned:snapshot.plannedPoints,done:snapshot.donePoints,recorded:true}:
+        {planned:0,done:0,recorded:false};
+    }
+    const group=liveTasks.filter(task=>task.sprintId===sprint.id);
+    return {planned:points(group),done:points(group.filter(task=>task.status==="DONE")),
+      recorded:true};
+  };
+  const maxPts=Math.max(1,...sprints.map(sprint=>chartPoints(sprint).planned));
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
   return <div className="prototype-mentor-sprint-plan">
     <section className="prototype-mentor-kpi-card" aria-label="Sprint and release totals">
@@ -34,11 +46,12 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
       {sprints.length?
         <div className="prototype-mentor-sprint-bars">
           {sprints.map(sprint=>{
-            const group=liveTasks.filter(task=>task.sprintId===sprint.id);
-            const planned=points(group),completed=points(group.filter(task=>task.status==="DONE"));
+            const value=chartPoints(sprint);
+            const planned=value.planned,completed=value.done;
             return <Link href={base+"?tab=board&sprint="+encodeURIComponent(sprint.id)}
               key={sprint.id} className="prototype-mentor-sprint-bar"
-              aria-label={"Sprint "+sprint.sequence+": "+completed+" of "+planned+" points done"}>
+              aria-label={"Sprint "+sprint.sequence+": "+(value.recorded?
+                completed+" of "+planned+" points done":"historical points not recorded")}>
               <span className="prototype-mentor-bar-columns">
                 <span style={{height:(planned?Math.max(5,Math.round(100*planned/maxPts)):0)+"%"}} className="prototype-mentor-bar-planned" />
                 <span style={{height:Math.max(0,Math.round(100*completed/maxPts))+"%"}} className="prototype-mentor-bar-done" />
@@ -47,7 +60,10 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
             </Link>;
           })}
         </div>:<p className="prototype-mentor-summary-empty">No sprints have been planned yet.</p>}
-      <div className="prototype-mentor-chart-legend"><span>■ Planned</span><span>■ Done</span></div>
+      <div className="prototype-mentor-chart-legend"><span>■ Points at sign-off (completed)</span>
+        <span>■ Done</span></div>
+      <p>Completed sprint points are frozen at sign-off; earlier completed sprints
+        without a recorded snapshot are shown as unavailable, not zero.</p>
     </section>
     <section className="prototype-mentor-chart-card" aria-label="Release progress">
       <div className="prototype-mentor-card-title"><h2>Release plan</h2>
@@ -107,6 +123,11 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
   const mentors=workspace.members.filter(member=>member.role==="MENTOR");
   const active=workspace.sprints.find(sprint=>sprint.status==="ACTIVE");
   const recentIds=new Set(recentMentorWorkedSprintIds(workspace.sprints));
+  const completedRecent=workspace.sprints.filter(sprint=>
+    sprint.status==="COMPLETED"&&recentIds.has(sprint.id));
+  const recentSnapshots=workspace.mentorSprintSnapshots.filter(snapshot=>
+    completedRecent.some(sprint=>sprint.id===snapshot.sprintId));
+  const missingHistory=completedRecent.length>recentSnapshots.length;
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
   const lastTaskChange=(tasks:typeof workspace.tasks)=>{
     const latest=tasks.reduce<Date|null>((most,task)=>{
@@ -130,10 +151,17 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
       const assigned=workspace.tasks.filter(task=>!task.deletedAt&&
         task.assigneeMembershipId===member.membershipId);
       const sprintTasks=active?assigned.filter(task=>task.sprintId===active.id):[];
-      const lastTasks=assigned.filter(task=>Boolean(task.sprintId&&recentIds.has(task.sprintId)));
       const sprintDone=sprintTasks.filter(task=>task.status==="DONE");
-      const lastDone=lastTasks.filter(task=>task.status==="DONE");
-      const carried=lastTasks.filter(task=>Boolean(task.carriedFromSprintId));
+      const historyMembers=recentSnapshots.map(snapshot=>
+        snapshot.memberRows.find(row=>row.membershipId===member.membershipId));
+      const historyPoints=historyMembers.reduce((sum,row)=>sum+(row?.donePoints??0),0);
+      const historyDone=historyMembers.reduce((sum,row)=>sum+(row?.doneCount??0),0);
+      const historyCarried=historyMembers.reduce((sum,row)=>sum+(row?.carriedCount??0),0);
+      const activeInRecent=Boolean(active&&recentIds.has(active.id));
+      const activePoints=activeInRecent?points(sprintDone):0;
+      const activeDone=activeInRecent?sprintDone.length:0;
+      const activeCarried=activeInRecent?sprintTasks.filter(task=>
+        Boolean(task.carriedFromSprintId)).length:0;
       const initials=(member.displayName??"Team member").trim()
         .split(/\s+/).slice(0,2).map(part=>part[0]??"").join("").toUpperCase();
       return <div key={member.membershipId}
@@ -147,8 +175,9 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
         <span>{sprintDone.length} done · {countTasks(sprintTasks,"IN_REVIEW")} waiting
           {countTasks(sprintTasks,"BLOCKED")>0?" · "+countTasks(sprintTasks,"BLOCKED")+" blocked":""}
         </span>
-        <span>{points(lastDone)} pts · {lastDone.length} done
-          {carried.length>0?" · "+carried.length+" carried":""}
+        <span>{historyPoints+activePoints} pts · {historyDone+activeDone} done
+          {historyCarried+activeCarried>0?
+            " · "+(historyCarried+activeCarried)+" carried":""}
         </span>
         <span>{lastTaskChange(assigned)}</span>
       </div>;
@@ -157,6 +186,8 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
     <p className="prototype-mentor-roster-foot">
       Last task change is based on recorded task timestamps, not a user's sign-in or online status.
       Membership changes use the authorized team editor below.
+      {missingHistory?" Earlier sign-offs lack a historical workload snapshot;
+        their contribution to the last-four total is unavailable.":""}
     </p>
   </section>;
 }
