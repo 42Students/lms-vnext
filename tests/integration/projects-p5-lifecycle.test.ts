@@ -31,7 +31,7 @@ import {
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import {approveProjectTaskThroughReview,assignProjectTaskToLearner} from "./support/projects-review-fixture";
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
-import {listMentorSprintSignOffSnapshots} from "@/modules/projects/mentor-sprint-signoff-snapshot-service";
+import {listMentorSprintSignOffSnapshots,listMentorSprintCommitmentSnapshots} from "@/modules/projects/mentor-sprint-signoff-snapshot-service";
 import {updateMentorTaskDetails} from "@/modules/projects/mentor-task-details-service";
 import {moveMentorBacklogTask} from "@/modules/projects/mentor-backlog-service";
 import {createLearnerOwnTask,deleteLearnerOwnTask} from "@/modules/projects/learner-own-task-service";
@@ -460,6 +460,12 @@ describe("Projects P5 lifecycle", () => {
     const to=workspace.sprints[1]!;
     const task=workspace.tasks.find(item=>item.sprintId===from.id)!;
     await startProjectSprint(mentor,project.id,from.id);
+    const commitmentBefore=await listMentorSprintCommitmentSnapshots(
+      mentor,project.id,[from.id]);
+    expect(commitmentBefore).toHaveLength(1);
+    expect(commitmentBefore[0]).toMatchObject({
+      sprintId:from.id,version:1,taskCount:1,
+    });
     await expect(moveMentorBacklogTask(learner,project.id,{
       taskId:task.id,targetSprintId:to.id,
       expectedUpdatedAt:task.updatedAt.toISOString(),
@@ -479,6 +485,8 @@ describe("Projects P5 lifecycle", () => {
     });
     expect(back.task.sprintId).toBeNull();
     expect(back.task.carriedFromSprintId).toBe(to.id);
+    expect(await listMentorSprintCommitmentSnapshots(mentor,project.id,[from.id]))
+      .toEqual(commitmentBefore);
     const stored=await pool.query<{sprint_id:string|null;carried_from_sprint_id:string|null}>(
       "select sprint_id,carried_from_sprint_id from project_tasks where id=$1",[task.id]);
     expect(stored.rows[0]).toEqual({sprint_id:null,carried_from_sprint_id:to.id});
