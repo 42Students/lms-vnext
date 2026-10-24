@@ -47,9 +47,9 @@ async function loadCandidates(
 }
 
 export function AddProjectMemberControl({
-  projectId,
+  projectId,learnerOnly=false,
 }: {
-  projectId: string;
+  projectId: string;learnerOnly?:boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -165,13 +165,13 @@ export function AddProjectMemberControl({
         variant="secondary"
         onClick={openDialog}
       >
-        Add teammate
+        {learnerOnly?"Add student":"Add teammate"}
       </Button>
       <Dialog
         open={open}
         onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
-        title="Add Project teammate"
-        description="Only active memberships from this college with the selected Learner or Mentor role are eligible."
+        title={learnerOnly?"Add project student":"Add Project teammate"}
+        description={learnerOnly?"Only active Learner memberships from this college are eligible.":"Only active memberships from this college with the selected Learner or Mentor role are eligible."}
       >
         <form onSubmit={submit} className="grid min-w-0 gap-[var(--lms-space-4)]">
           <label>
@@ -192,7 +192,7 @@ export function AddProjectMemberControl({
               }}
             >
               <option value="LEARNER">Learner</option>
-              <option value="MENTOR">Mentor</option>
+              {!learnerOnly?<option value="MENTOR">Mentor</option>:null}
             </Select>
           </label>
           <div className="min-w-0">
