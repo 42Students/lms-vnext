@@ -348,7 +348,16 @@ test("Mentor sprint sign-off explicitly gates review tasks and persists note ato
   assert.match(page,/status!=="DONE"/);
   assert.match(signoff,/waiting=unfinished\.filter\(task=>task\.status==="IN_REVIEW"\)/);
   assert.match(signoff,/const canSign=waiting\.length===0&&!pending/);
-  assert.match(signoff,/Product backlog/);
+  assert.match(signoff,/destination:"BACKLOG" as const/);
+  assert.match(signoff,/destination:"DROP" as const/);
+  assert.match(signoff,/Drop it/);
+  assert.match(signoff,/dropConfirmed/);
+  assert.match(signoff,/expectedUpdatedAt:task.updatedAt/);
+  assert.match(route,/expectedUpdatedAt:z.iso.datetime/);
+  assert.match(service,/item.updatedAt.toISOString\(\)!==byTask.get\(item.id\)\?\.expectedUpdatedAt/);
+  assert.match(service,/carriedFromSprintId:sprint.id/);
+  assert.match(service,/deletedAt:now/);
+  assert.match(service,/destination==="NEXT"/);
   assert.match(signoff,/Sign off and start next sprint/);
   assert.match(signoff,/Sprint signed off; next sprint not started/);
   assert.match(route,/INVALID_SIGNOFF_NOTE/);
