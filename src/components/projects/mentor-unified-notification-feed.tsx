@@ -33,8 +33,35 @@ function MentorPersonalRead({id}:{id:string}){
   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
  </div>;
 }
-export function MentorUnifiedNotificationFeed({items}:{items:readonly MentorUnifiedNotification[]}){
- const groups=mentorUnifiedNotificationGroups(items);
+type NoticeCursor={beforePinned:string;beforeCreatedAt:string;beforeId:string};
+type NoticePage={items:MentorUnifiedNotification[];nextCursor:NoticeCursor|null};
+export function MentorUnifiedNotificationFeed({items,announcementNextCursor,unreadOnly=false}:{
+ items:readonly MentorUnifiedNotification[];
+ announcementNextCursor:NoticeCursor|null;
+ unreadOnly?:boolean;
+}){
+ const [olderNotices,setOlderNotices]=useState<MentorUnifiedNotification[]>([]);
+ const [nextNotices,setNextNotices]=useState(announcementNextCursor);
+ const [loadingMore,setLoadingMore]=useState(false);
+ const [olderError,setOlderError]=useState("");
+ const seen=new Set(items.map(item=>item.source+":"+item.id));
+ const combined=[...items,...olderNotices.filter(item=>
+   !seen.has(item.source+":"+item.id)&&(!unreadOnly||item.read===false))];
+ const groups=mentorUnifiedNotificationGroups(combined);
+ async function loadOlderNotices(){
+  if(loadingMore||!nextNotices)return;
+  setLoadingMore(true);setOlderError("");
+  try{
+   const query=new URLSearchParams(nextNotices);
+   const page=await apiFetch<NoticePage>(
+     "/api/mentor/notifications/announcements?"+query.toString(),
+     {cache:"no-store",credentials:"same-origin",timeoutMs:15000});
+   setOlderNotices(previous=>[...previous,...page.items]);
+   setNextNotices(page.nextCursor);
+  }catch(caught){setOlderError(caught instanceof Error?caught.message:
+     "Could not load older college announcements.");}
+  finally{setLoadingMore(false);}
+ }
  const router=useRouter();
  const [opening,setOpening]=useState<string|null>(null);
  const [openError,setOpenError]=useState("");
@@ -61,7 +88,7 @@ export function MentorUnifiedNotificationFeed({items}:{items:readonly MentorUnif
  }
  return <section className="min-w-0 space-y-3" aria-label="Mentor chronological notifications">
   <header className="flex flex-wrap items-center justify-between gap-3">
-    <h2 className="text-lg font-semibold">Your notifications · {items.length} loaded</h2>
+    <h2 className="text-lg font-semibold">Your notifications · {combined.length} loaded</h2>
     <p className="text-xs text-muted-foreground">
       Personal messages, verified project attention and visible college notices · IST
     </p>
@@ -113,6 +140,14 @@ export function MentorUnifiedNotificationFeed({items}:{items:readonly MentorUnif
   </div>):<p role="status" className="border-y border-border py-6">
     No notifications match this selection in the loaded sources.
   </p>}
+  {nextNotices?<div className="flex flex-col items-start gap-2">
+    <Button type="button" variant="secondary" size="sm"
+      loading={loadingMore} disabled={loadingMore}
+      onClick={()=>void loadOlderNotices()}>
+      {loadingMore?"Loading older college notices…":"Load older college notices"}
+    </Button>
+    {olderError?<p role="alert" className="text-xs text-error">{olderError}</p>:null}
+   </div>:null}
   <p className="text-xs text-muted-foreground">
     Older personal messages and college announcements may require additional
     pages. Read state is attached to your signed-in user, not this browser.
