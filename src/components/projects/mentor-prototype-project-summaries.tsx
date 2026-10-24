@@ -78,7 +78,8 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
                   <MentorSprintSignOff projectId={workspace.project.id}
                     sprintId={sprint.id} title={"Sprint "+sprint.sequence+" · "+sprint.title}
                     unfinished={liveTasks.filter(task=>task.sprintId===sprint.id&&task.status!=="DONE")
-                      .map(task=>({id:task.id,title:task.title,status:task.status}))}
+                      .map(task=>({id:task.id,title:task.title,status:task.status,
+                        updatedAt:task.updatedAt.toISOString()}))}
                     nextSprint={sprints.find(next=>next.sequence>sprint.sequence&&next.status==="PLANNED")??null}
                   />:
                   <SprintLifecycleActions projectId={workspace.project.id}
