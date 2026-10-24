@@ -27,7 +27,7 @@ export async function getMentorAccountOverview(context:RequestContext){
    eq(collegeMemberships.id,membership.id),
    eq(collegeMemberships.userId,context.user.id),
    eq(collegeMemberships.collegeId,membership.collegeId),
-   eq(collegeMemberships.organizationId,membership.organizationId),
+   eq(colleges.organizationId,membership.organizationId),
    eq(collegeMemberships.status,"ACTIVE"),
    eq(users.platformStatus,"ACTIVE"),
   )).limit(1);
