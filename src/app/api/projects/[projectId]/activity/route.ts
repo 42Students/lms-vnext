@@ -31,7 +31,6 @@ export async function GET(request:Request,{params}:{
     subjectId:url.searchParams.get("subjectId")??undefined,
     actorUserId:url.searchParams.get("actorUserId")??undefined,
     sprintId:url.searchParams.get("sprintId")??undefined,
-    sprintId:url.searchParams.get("sprintId")??undefined,
     page:url.searchParams.get("page")??undefined,
     size:url.searchParams.get("size")??undefined,
   });
