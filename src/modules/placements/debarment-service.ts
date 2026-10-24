@@ -61,7 +61,9 @@ export class PlacementDebarmentError extends Error {
     | "DB08_DEBARMENT_JOB_COLLEGE_MISMATCH"
     | "DB08_DEBARMENT_INACTIVE"
     | "DB08_DEBARMENT_INVALID_DURATION"
-    | "DB08_DEBARMENT_ALREADY_ACTIVE") {
+    | "DB08_DEBARMENT_ALREADY_ACTIVE"
+    | "DB08_DEBARMENT_INSERT_FAILED"
+    | "DB08_DEBARMENT_LIFT_FAILED") {
     super(code);
     this.name = "PlacementDebarmentError";
   }
