@@ -2,7 +2,7 @@ import { and, asc, eq, isNull, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, membershipRoles, projectInstances, projectMeetings,
-  projectMembers, projectSprints, projectReleases, users,
+  projectMembers, projectSprints, projectReleases, projectTasks, users,
 } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from
   "@/modules/identity/context";
@@ -76,6 +76,11 @@ export async function listMyMentorCalendarMeetings(
     timeZone: projectMeetings.timeZone,
     meetingUrl: projectMeetings.meetingUrl,
     linkedSprintTitle: projectSprints.title,
+    linkedTaskId:projectMeetings.linkedTaskId,
+    linkedTaskTitle:projectTasks.title,
+    requestedByMembershipId:projectMeetings.requestedByMembershipId,
+    legacyCalendarSyncStatus:projectMeetings.legacyCalendarSyncStatus,
+    calendarSyncError:projectMeetings.calendarSyncError,
     agenda:projectMeetings.agenda,
     outcome:projectMeetings.outcome,
     facilitation:projectMeetings.facilitation,
@@ -94,6 +99,10 @@ export async function listMyMentorCalendarMeetings(
       eq(projectSprints.id, projectMeetings.linkedSprintId),
       eq(projectSprints.projectId, projectInstances.id),
     ))
+    .leftJoin(projectTasks,and(
+      eq(projectTasks.id,projectMeetings.linkedTaskId),
+      eq(projectTasks.projectId,projectInstances.id),
+    ))
     .where(and(
       eq(projectMembers.membershipId, membership.id),
       eq(projectMembers.role, "MENTOR"),
@@ -108,6 +117,17 @@ export async function listMyMentorCalendarMeetings(
     ))
     .orderBy(asc(projectMeetings.startsAt), asc(projectMeetings.id));
 
+  const requesterIds=[...new Set(rows.map(row=>row.requestedByMembershipId)
+    .filter((id):id is string=>id!==null))];
+  const requesters=requesterIds.length?await getDb().select({
+    membershipId:collegeMemberships.id,name:users.displayName,
+  }).from(collegeMemberships)
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(and(
+      inArray(collegeMemberships.id,requesterIds),
+      eq(collegeMemberships.collegeId,membership.collegeId),
+    )):[];
+  const byRequester=new Map(requesters.map(row=>[row.membershipId,row.name]));
   return rows.map(row => {
     const window=mentorCalendarMeetingInstants(row.startsAt,row.endsAt,row.timeZone);
     return {
@@ -125,6 +145,12 @@ export async function listMyMentorCalendarMeetings(
     timeZone: window.organizerZone,
     meetingUrl: row.meetingUrl,
     linkedSprintTitle: row.linkedSprintTitle,
+    linkedTaskId:row.linkedTaskTitle?row.linkedTaskId:null,
+    linkedTaskTitle:row.linkedTaskTitle,
+    requestedByName:row.requestedByMembershipId?
+      byRequester.get(row.requestedByMembershipId)??null:null,
+    legacyCalendarSyncStatus:row.legacyCalendarSyncStatus,
+    calendarSyncError:row.calendarSyncError,
     agenda:row.agenda,
     outcome:row.outcome,
     facilitation:row.facilitation,
