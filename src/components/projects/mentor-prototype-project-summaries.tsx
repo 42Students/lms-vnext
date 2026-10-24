@@ -226,6 +226,8 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
 export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
   const students=workspace.members.filter(member=>member.role==="LEARNER");
   const mentors=workspace.members.filter(member=>member.role==="MENTOR");
+  const academicByMember=new Map(workspace.mentorLearnerAcademicFacts.map(row=>
+    [row.membershipId,row] as const));
   const active=workspace.sprints.find(sprint=>sprint.status==="ACTIVE");
   const recentIds=new Set(recentMentorWorkedSprintIds(workspace.sprints,workspace.releases));
   const completedRecent=workspace.sprints.filter(sprint=>
@@ -267,6 +269,7 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
       const activeDone=activeInRecent?sprintDone.length:0;
       const activeCarried=activeInRecent?sprintTasks.filter(task=>
         Boolean(task.carriedFromSprintId)).length:0;
+      const academics=academicByMember.get(member.membershipId);
       const initials=(member.displayName??"Team member").trim()
         .split(/\s+/).slice(0,2).map(part=>part[0]??"").join("").toUpperCase();
       return <div key={member.membershipId}
@@ -275,6 +278,15 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
           <span aria-hidden="true">{initials||"42"}</span>
           <div><strong>{member.displayName||"Team member"}</strong>
             <small>{member.isPrimary?"Primary mentor · ":""}{member.roleLabel||member.role.replaceAll("_"," ")}</small>
+            {member.role==="LEARNER"?<small>
+              {academics?.registrationNumber?
+                "Registration "+academics.registrationNumber+" · ":
+                academics?.rollNumber?"Roll "+academics.rollNumber+" · ":""}
+              {academics?.departmentName??
+                "Discipline not recorded"}
+              {academics?.programName?" · "+academics.programName:""}
+              {academics?.cohortName?" · "+academics.cohortName:""}
+            </small>:null}
           </div>
         </div>
         <span>{sprintDone.length} done · {countTasks(sprintTasks,"IN_REVIEW")} waiting
@@ -291,6 +303,8 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
     <p className="prototype-mentor-roster-foot">
       Last recorded action comes from persisted project events authored by this person; it is not sign-in time, online presence or attendance.
       Membership changes use the authorized team editor below.
+      Department and cohort refer to an active saved academic enrollment; no
+      student lead or academic year is inferred from a primary Mentor flag.
       {missingHistory?
         " Earlier sign-offs lack a historical workload snapshot; their contribution to the last-four total is unavailable.":""}
     </p>
