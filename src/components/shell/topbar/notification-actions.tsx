@@ -7,6 +7,7 @@ import { HrRecruiterBell } from "@/components/hr/hr-recruiter-bell";
 import { LearnerNotificationBell } from "../learner-notification-bell";
 import { shellUnreadBadge } from "../shell-counts-model";
 import { TpoNotificationCluster } from "./tpo-notification-cluster";
+import {MentorNotificationBellPreview} from "./mentor-notification-bell-preview";
 import type { TopbarConfig } from "./portal-config";
 import { BellIcon, MessageIcon } from "./icons";
 import style from "./topbar.module.css";
@@ -114,6 +115,12 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
   },[config.portal,update]);
 
   if (config.portal === "tpo") return <TpoNotificationCluster/>;
+  if (config.portal === "mentor") return <div
+    className={style["actions"]+" min-w-0 shrink-0"}
+    aria-label="Mentor notifications">
+    <MentorNotificationBellPreview unreadCount={general}
+      partial={generalPartial}/>
+  </div>;
   return <div className={style["actions"] + " min-w-0 shrink-0"} aria-label="Messages and notifications">
     {config.messagesHref ? <IconLink href={config.messagesHref} label="Messages"
       count={null} message /> : null}
