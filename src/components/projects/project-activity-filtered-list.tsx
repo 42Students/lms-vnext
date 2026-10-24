@@ -11,6 +11,8 @@ import {mentorActivityCategoryChoices,mentorActivityGroup,type MentorActivityCat
 import {projectResourceAuditAction,projectResourceAuditMatches} from "@/modules/projects/project-resource-audit-model";
 import {mentorLoadedWeekActivitySummary} from "@/modules/projects/mentor-week-activity-summary-model";
 import {mentorFewestRecordedContributors} from "@/modules/projects/mentor-week-contributor-model";
+import {mentorActivityMatchesDateFilters,mentorActivityIstDayKey}
+ from "@/modules/projects/mentor-activity-date-filter-model";
 
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
@@ -167,10 +169,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const scoped=Boolean(actor||sprint);
  const working=scoped?(actorFeed?.id===scopedKey?actorFeed.events:[]):items;
  const activeHasMore=scoped?(actorFeed?.id===scopedKey?actorFeed.hasMore:false):hasMore;
- const current=Date.parse(now);
  const filtered=working.filter(event=>{
-  const occurred=new Date(event.occurredAt);
-  const day=occurred.toISOString().slice(0,10);
   const term=search.trim().toLocaleLowerCase("en-IN");
   return (!mentorWeekSummary||mentorCategory==="ALL"||mentorActivityGroup(event.eventType)===mentorCategory)
     &&(!resourceAudit||projectResourceAuditAction(event.eventType)!==null)
@@ -178,9 +177,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     &&projectResourceAuditMatches(event.eventType,resourceAction)
     &&(!type||event.eventType===type)
     &&(!actor||event.actorUserId===actor)
-    &&(range==="ALL"||current-occurred.getTime()<Number(range)*86400000)
-    &&(!fromDate||day>=fromDate)
-    &&(!toDate||day<=toDate);
+    &&mentorActivityMatchesDateFilters(event.occurredAt,now,range,fromDate,toDate);
  });
  const week=mentorWeekSummary?
    (weekTotals??mentorLoadedWeekActivitySummary(items,new Date(now))):null;
@@ -278,12 +275,12 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     </Select>
    </label>
    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">From date
-    <Input type="date" value={fromDate} max={toDate||now.slice(0,10)}
+    <Input type="date" value={fromDate} max={toDate||mentorActivityIstDayKey(now)||undefined}
       onChange={event=>{setFromDate(event.target.value);setPage(1);}}
       className="w-full"/>
    </label>
    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">To date
-    <Input type="date" value={toDate} min={fromDate||undefined} max={now.slice(0,10)}
+    <Input type="date" value={toDate} min={fromDate||undefined} max={mentorActivityIstDayKey(now)||undefined}
       onChange={event=>{setToDate(event.target.value);setPage(1);}}
       className="w-full"/>
    </label>
