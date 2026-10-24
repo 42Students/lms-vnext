@@ -916,6 +916,7 @@ export async function listProjectMembers(
     .select({
       id: projectMembers.id,
       membershipId: projectMembers.membershipId,
+      userId:users.id,
       role: projectMembers.role,
       roleKind: projectMembers.roleKind,
       canMutate: projectMembers.canMutate,
