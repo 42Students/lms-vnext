@@ -27,7 +27,7 @@ export function MentorMeetingOutcomeQuickEdit({projectId,meetingId,recorded,
   try{
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
      "/meetings/"+encodeURIComponent(meetingId)+"/mentor-notes","PATCH",{
-       outcome:text.trim(),expectedUpdatedAt:updatedAt,
+       outcome:text.trim(),expectedUpdatedAt:updatedAt,confirmed:true,
      });
    setEditing(false);router.refresh();
   }catch(caught){
