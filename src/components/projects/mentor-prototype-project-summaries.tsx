@@ -253,8 +253,8 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
     <p className="prototype-mentor-roster-foot">
       Last task change is based on recorded task timestamps, not a user's sign-in or online status.
       Membership changes use the authorized team editor below.
-      {missingHistory?" Earlier sign-offs lack a historical workload snapshot;
-        their contribution to the last-four total is unavailable.":""}
+      {missingHistory?
+        " Earlier sign-offs lack a historical workload snapshot; their contribution to the last-four total is unavailable.":""}
     </p>
   </section>;
 }
