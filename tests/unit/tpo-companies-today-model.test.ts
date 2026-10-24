@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {istDateKey,nextTpoFollowupTomorrow,nextTpoTodayFollowupAt,rankTpoCompaniesToday} from
+import {istDateKey,nextTpoFollowupTomorrow,nextTpoTodayFollowupAt,tpoCompaniesTodayScope,rankTpoCompaniesToday} from
  "@/modules/placements/tpo-companies-today-model";
 const row=(id:string,dueAt:string)=>({id,leadId:id,leadName:id,
  companyName:"Employer",dueAt,note:null,phoneNorm:null,canContact:false,overdue:false});
@@ -29,5 +29,13 @@ describe("Companies Today source-backed focus order",()=>{
    "2026-10-27T24:00","2026-10-27","2026-10-25T10:00:00"]){
    expect(nextTpoTodayFollowupAt("CUSTOM",now,raw)).toBeNull();
   }
+ });
+
+ it("defaults to My Work and only accepts the explicit same-college Everyone scope",()=>{
+  expect(tpoCompaniesTodayScope(undefined)).toBe("MINE");
+  expect(tpoCompaniesTodayScope("MINE")).toBe("MINE");
+  expect(tpoCompaniesTodayScope("TEAM")).toBe("TEAM");
+  expect(tpoCompaniesTodayScope(["MINE","TEAM"])).toBeNull();
+  expect(tpoCompaniesTodayScope("GLOBAL")).toBeNull();
  });
 });
