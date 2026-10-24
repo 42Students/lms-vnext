@@ -6,7 +6,6 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type {NotificationListItem} from "@/components/activity/notification-list";
 
-import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -199,7 +198,8 @@ async function MentorNotificationsContent({
       description="Announcements, final submissions, task approvals, sprint sign-offs, blockers and meetings." />
     <nav className="prototype-mentor-notification-pills" aria-label="Notification categories">
       {([
-        ["all","All"],["unread","Unread · "+unifiedUnreadCount],
+        ["all","All"],["unread",announcementPage.nextCursor?
+          "Unread · "+unifiedUnreadCount+" loaded":"Unread · "+unifiedUnreadCount],
         ["subs","Submissions"],["meet","Meetings"],
         ["tasks","Tasks and teams"],["ann","From the college"],
       ] as const).map(([value,label])=><Link key={value}
@@ -233,10 +233,11 @@ async function MentorNotificationsContent({
       </svg>
       <p className="text-sm font-semibold text-body">Nothing needs your attention right now.</p>
     </div>:null}
-    {(selectedPill==="all"||selectedPill==="unread")&&!allRelevantFailed?
-      <MentorUnifiedNotificationFeed items={mergedShown}
+    {(selectedPill==="all"||selectedPill==="unread"||selectedPill==="ann")&&!allRelevantFailed?
+      <MentorUnifiedNotificationFeed
+        items={selectedPill==="ann"?unifiedRows.filter(row=>row.source==="ANNOUNCEMENT"):mergedShown}
         unreadOnly={selectedPill==="unread"}
-        personalNextCursor={inbox?.page.nextCursor?{
+        personalNextCursor={selectedPill==="ann"?null:inbox?.page.nextCursor?{
           beforeCreatedAt:inbox.page.nextCursor.beforeCreatedAt.toISOString(),
           beforeId:inbox.page.nextCursor.beforeId,
         }:null}
@@ -257,23 +258,13 @@ async function MentorNotificationsContent({
       </Link>:null}
     <div className="prototype-mentor-notifications-columns">
       <div className="prototype-mentor-notifications-feed">
-    {selectedPill==="ann"&&!allSourcesEmpty&&!allRelevantFailed?<AnnouncementFeed enabled={announcementsEnabled}
-      mentorReadStates={ownSourceReceipts?Object.fromEntries(
-        announcements.map(item=>{
-          const key=mentorAnnouncementReceiptKey(item);
-          return [item.id,{key,read:sourceRead(key)}] as const;
-        })):undefined}
-      items={announcements.map(item=>({
-        id:item.id,title:item.title,message:item.message,
-        senderType:item.senderType,receiverType:item.receiverType,
-        isPinned:item.isPinned,createdAt:item.createdAt,
-      }))} />:null}
     {(selectedPill==="subs"||selectedPill==="meet"||selectedPill==="tasks")&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
       <h2 id="mentor-attention" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
         Project attention ({shownAlerts.length} of {alerts.length})
       </h2>
       <form method="get" action={MENTOR_INBOX} role="search" aria-label="Mentor attention filters"
         className="grid min-w-0 items-end gap-3 border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto_auto]">
+        <input type="hidden" name="pill" value={selectedPill}/>
         <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}
             className="min-h-11 max-w-full min-[768px]:min-h-9">
@@ -304,7 +295,7 @@ async function MentorNotificationsContent({
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter attention
         </Button>
-        {attentionFiltered?<Link href={MENTOR_INBOX} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+        {attentionFiltered?<Link href={MENTOR_INBOX+"?pill="+selectedPill} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form>
       {!projectAccess?.projects.enabled
         ? <p role="status" className="border-b border-border pb-4 text-sm text-body leading-[22px]">

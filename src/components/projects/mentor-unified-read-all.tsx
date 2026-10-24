@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 
 type Outcome={markedPersonal:number;markedSources:number;
@@ -14,10 +15,10 @@ export function MentorUnifiedReadAll({loadedUnread,moreNoticesPossible=false}:{
 }){
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
+ const [confirmOpen,setConfirmOpen]=useState(false);
  const router=useRouter();
  async function markAll(){
   if(busy)return;
-  if(!window.confirm("Mark all current personal, project-attention and visible college notifications as read? New events and later task revisions will appear as unread."))return;
   setBusy(true);setError("");
   try{
    const result=await apiFetch<Outcome>(
@@ -25,6 +26,7 @@ export function MentorUnifiedReadAll({loadedUnread,moreNoticesPossible=false}:{
      {method:"POST",timeoutMs:25000});
    if(!result.completeForCurrentVisibleSources)
      throw Error("The server did not confirm all visible sources were acknowledged.");
+   setConfirmOpen(false);
    window.dispatchEvent(new Event("lms:notifications-updated"));
    router.refresh();
   }catch(caught){setError(caught instanceof Error?caught.message:
@@ -39,9 +41,14 @@ export function MentorUnifiedReadAll({loadedUnread,moreNoticesPossible=false}:{
    </span>
    <Button type="button" variant="secondary" size="sm"
       loading={busy} disabled={busy||(!loadedUnread&&!moreNoticesPossible)}
-      onClick={()=>void markAll()}>
+      onClick={()=>setConfirmOpen(true)}>
       Mark all read
    </Button>
+   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+     title="Mark all Mentor notifications read?"
+     description="This acknowledges your current personal, project-attention and visible college notifications. New events and revised tasks may appear unread again."
+     confirmLabel="Mark all read" confirmVariant="primary" pending={busy}
+     onConfirm={()=>void markAll()}/>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
  </div>;
 }

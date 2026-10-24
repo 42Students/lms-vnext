@@ -85,7 +85,14 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,pers
    const page=await apiFetch<NoticePage>(
      "/api/mentor/notifications/announcements?"+query.toString(),
      {cache:"no-store",credentials:"same-origin",timeoutMs:15000});
-   setOlderNotices(previous=>[...previous,...page.items]);
+   setOlderNotices(previous=>{
+     const known=new Set(previous.map(row=>row.source+":"+row.id));
+     return [...previous,...page.items.filter(item=>{
+       const key=item.source+":"+item.id;
+       if(item.source!=="ANNOUNCEMENT"||known.has(key))return false;
+       known.add(key);return true;
+     })];
+   });
    setNextNotices(page.nextCursor);
   }catch(caught){setOlderError(caught instanceof Error?caught.message:
      "Could not load older college announcements.");}

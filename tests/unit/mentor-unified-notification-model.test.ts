@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {mentorUnifiedNotificationGroups,sortMentorUnifiedNotifications,
-  mentorUnifiedOpenReadRequest} from
+  mentorUnifiedOpenReadRequest,mergeMentorUnifiedPages} from
   "@/modules/projects/mentor-unified-notification-model";
 
 const row=(id:string,source:"PERSONAL"|"ATTENTION"|"ANNOUNCEMENT",
@@ -57,4 +57,21 @@ describe("Mentor merged notification chronology",()=>{
   expect(mentorUnifiedOpenReadRequest({...college,receiptKey:null})).toBeNull();
   expect(mentorUnifiedOpenReadRequest({...personal,id:"not-a-uuid"})).toBeNull();
  });
+ it("merges 120 paginated college notifications without duplicate rows",()=>{
+  const date=(i:number)=>new Date(Date.UTC(2026,9,24,12)-i*60000).toISOString();
+  const first=Array.from({length:100},(_,i)=>row("ann-"+i,"ANNOUNCEMENT",date(i)));
+  const older=Array.from({length:20},(_,i)=>row("ann-"+(i+100),"ANNOUNCEMENT",date(i+100)));
+  const merged=mergeMentorUnifiedPages(first,[...older,older[0]!],[],false);
+  expect(merged).toHaveLength(120);
+  expect(merged[0]?.id).toBe("ann-0");
+  expect(merged.at(-1)?.id).toBe("ann-119");
+ });
+ it("hides read items from unread paginated views",()=>{
+  const first=[row("first","ANNOUNCEMENT","2026-10-24T12:00:00Z")];
+  const older=[row("read","ANNOUNCEMENT","2026-10-24T11:00:00Z",true),
+    row("older","ANNOUNCEMENT","2026-10-24T10:00:00Z")];
+  expect(mergeMentorUnifiedPages(first,older,[],true).map(item=>item.id))
+    .toEqual(["first","older"]);
+ });
+
 });
