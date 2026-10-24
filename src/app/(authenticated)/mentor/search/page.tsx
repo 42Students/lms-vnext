@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {mentorSearchHighlightParts} from "@/modules/projects/mentor-search-ranking-model";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {mentorUnifiedSearchQuery,searchMentorWorkspace} from
@@ -36,7 +37,11 @@ export default async function MentorSearchPage({searchParams}:{
         <h2>{kind==="Project"?"Teams and projects":kind==="Task"?"Tasks":
           kind==="Student"?"Students":"Resources"} · {matching.length}</h2>
         <ul>{matching.map(row=><li key={row.key}><Link href={row.href}>
-          <strong>{row.title}</strong><small>{row.context}</small><span>Open →</span>
+          <strong>{mentorSearchHighlightParts(row.title,parsed?.success?parsed.data:"")
+             .map((part,index)=>part.highlight?
+               <mark key={index} className="rounded bg-primary-subtle text-foreground">{part.text}</mark>:
+               <span key={index}>{part.text}</span>)}</strong>
+          <small>{row.context}</small><span>Open →</span>
         </Link></li>)}</ul>
       </section>;
     })}
