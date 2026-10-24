@@ -75,7 +75,7 @@ describe.skipIf(!enabled)("MEN-projects-meetings-R01 mentor approval locks then 
         and activity.event_type='projects.delivery.reviewed'`,[
       SEED_IDS.learnerUser,submission.id,
     ]);
-    expect(Number(learnerNotices.rows[0]?.count??0)).toBeLessThanOrEqual(1);
+    expect(learnerNotices.rows[0]?.count).toBe("1");
     const locks = await pool!.query("select event_type from project_delivery_events where submission_id=$1", [submission.id]);
     expect(locks.rows).toEqual([{ event_type: "LOCKED" }]);
     const reopened = await reopenApprovedProjectDelivery(mentor, project.id, submission.id, {
