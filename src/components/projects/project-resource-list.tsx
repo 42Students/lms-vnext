@@ -315,7 +315,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          aria-label={"Move down "+resource.title} className="text-xs"
          onClick={()=>moveRelative(resource.id,1)}>Move down</Button>
      </div>:null}
-     {mode!=="LEARNER"&&!readOnly&&resource.status!=="ARCHIVED"?<ProjectResourceActions
+     {mode!=="LEARNER"&&!readOnly?<ProjectResourceActions
         projectId={projectId} resource={{id:resource.id,title:resource.title,
          description:resource.description,url:resource.url,required:resource.required,
          visibility:resource.visibility==="MENTOR_ONLY"?"MENTOR_ONLY":"TEAM",

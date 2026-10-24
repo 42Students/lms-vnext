@@ -2,6 +2,7 @@ import {
   and,
   asc,
   eq,
+  inArray,
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -10,6 +11,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {projectResourceAuditInput} from "./mentor-resource-audit-model";
+import {isArchivableProjectResourceStatus,isArchivedResourceRestoreOnly} from "./mentor-resource-state-transition-model";
 import {randomUUID} from "node:crypto";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {z} from "zod";
@@ -290,7 +292,14 @@ export async function updateProjectResource(
         "PROJECT_RESOURCE_NOT_FOUND",
       );
     }
-    if(resource.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+    if(resource.status==="ARCHIVED"){
+      // An archived resource can be restored, but it cannot be modified while
+      // archived or revived with an old version token.
+      if(!input.expectedUpdatedAt)
+        throw new ProjectsServiceError("PROJECT_RESOURCE_STALE_VERSION");
+      if(!isArchivedResourceRestoreOnly(input))
+        throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+    }
     // MEN-projects-meetings-R07: a stale editor must not overwrite a
     // resource changed while its form was open.
     if ((scope.access==="MENTOR" && !input.expectedUpdatedAt) ||
@@ -424,13 +433,13 @@ export async function archiveProjectResource(
     await assertPersistedProjectMutationActor(tx,context,scope);
 
     const [resource] = await tx
-      .select({ id: projectResources.id, updatedAt:projectResources.updatedAt })
+      .select()
       .from(projectResources)
       .where(
         and(
           eq(projectResources.id, resourceId),
           eq(projectResources.projectId, scope.project.id),
-          eq(projectResources.status, "ACTIVE"),
+          inArray(projectResources.status, ["ACTIVE", "DRAFT"]),
         ),
       )
       .for("update")
@@ -441,6 +450,8 @@ export async function archiveProjectResource(
         "PROJECT_RESOURCE_NOT_FOUND",
       );
     }
+    if (!isArchivableProjectResourceStatus(resource.status))
+      throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
     if (input.expectedUpdatedAt && resource.updatedAt.getTime()!==
       new Date(input.expectedUpdatedAt).getTime())
       throw new ProjectsServiceError("PROJECT_RESOURCE_STALE_VERSION");
@@ -455,7 +466,7 @@ export async function archiveProjectResource(
         and(
           eq(projectResources.id, resource.id),
           eq(projectResources.projectId, scope.project.id),
-          eq(projectResources.status, "ACTIVE"),
+          eq(projectResources.status, resource.status),
         ),
       )
       .returning();

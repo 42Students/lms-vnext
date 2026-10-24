@@ -379,6 +379,7 @@ export function ProjectResourceActions({
   const [editDiscardOpen,setEditDiscardOpen]=useState(false);
   const [archiveOpen, setArchiveOpen] =
     useState(false);
+  const [restoreOpen,setRestoreOpen]=useState(false);
   const [title, setTitle] = useState(
     resource.title,
   );
@@ -491,9 +492,30 @@ export function ProjectResourceActions({
     }
   }
 
+  async function restore() {
+    if(resource.status!=="ARCHIVED"||pending)return;
+    setPending(true);
+    try {
+      await projectMutation(
+        `/api/projects/${projectId}/resources/${resource.id}`,
+        "PATCH",
+        {status:"ACTIVE",expectedUpdatedAt:new Date(resource.updatedAt).toISOString()},
+      );
+      setRestoreOpen(false);
+      showToast({tone:"success",title:"Project resource restored"});
+      router.refresh();
+    } catch(caught) {
+      showToast({tone:"error",title:"Could not restore resource",
+        ...(caught instanceof Error?{description:caught.message}:{})});
+    } finally {setPending(false);}
+  }
+
   return (
     <>
       <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap gap-[var(--lms-space-2)]">
+        {resource.status==="ARCHIVED"?<Button
+          size="sm" variant="secondary" disabled={pending}
+          onClick={()=>setRestoreOpen(true)}>Restore</Button>:<>
         <Button
           size="sm"
           variant="secondary"
@@ -523,6 +545,7 @@ export function ProjectResourceActions({
         >
           Archive
         </Button>
+        </>}
       </div>
 
       <Dialog
@@ -587,6 +610,13 @@ export function ProjectResourceActions({
         description="You have unsaved changes. Leave without saving them?"
         confirmLabel="Discard changes" pending={pending}
         onConfirm={()=>{setEditDiscardOpen(false);setEditOpen(false);}}/>
+      <ConfirmDialog open={restoreOpen} onOpenChange={setRestoreOpen}
+        title={"Restore " + resource.title + "?"}
+        description="Restore this historical resource to the active Project directory with its saved visibility. You can edit its details after restoring."
+        confirmLabel="Restore resource"
+        pending={pending}
+        onConfirm={restore}
+      />
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
