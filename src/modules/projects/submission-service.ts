@@ -115,13 +115,13 @@ export async function createProjectSubmissionDraft(
   try {
     return await db.transaction(async (tx) => {
       const [project] = await tx
-        .select({ status: projectInstances.status })
+        .select({ status: projectInstances.status, deletedAt:projectInstances.deletedAt })
         .from(projectInstances)
         .where(eq(projectInstances.id, scope.project.id))
         .for("update")
         .limit(1);
 
-      if (!project || (project.status === "ARCHIVED" || project.status === "COMPLETED")) {
+      if (!project || project.deletedAt || project.status === "ARCHIVED" || project.status === "COMPLETED") {
         throw new ProjectsServiceError(
           "PROJECT_SUBMISSION_INVALID_STATE",
         );
@@ -232,12 +232,12 @@ export async function updateProjectSubmissionDraft(
 
   return db.transaction(async (tx) => {
     const [project] = await tx
-      .select({ status: projectInstances.status })
+      .select({ status: projectInstances.status, deletedAt:projectInstances.deletedAt })
       .from(projectInstances)
       .where(eq(projectInstances.id, scope.project.id))
       .for("update")
       .limit(1);
-    if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
+    if (!project || project.deletedAt || project.status === "ARCHIVED" || project.status === "COMPLETED") {
       throw new ProjectsServiceError(
         "PROJECT_SUBMISSION_INVALID_STATE",
       );
@@ -380,13 +380,13 @@ export async function submitProjectSubmission(
 
   return db.transaction(async (tx) => {
     const [project] = await tx
-      .select({ status: projectInstances.status })
+      .select({ status: projectInstances.status, deletedAt:projectInstances.deletedAt })
       .from(projectInstances)
       .where(eq(projectInstances.id, scope.project.id))
       .for("update")
       .limit(1);
 
-    if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
+    if (!project || project.deletedAt || project.status === "ARCHIVED" || project.status === "COMPLETED") {
       throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
     }
     const [releases,sprints,tasks]=await Promise.all([
@@ -521,12 +521,12 @@ export async function reviewProjectSubmission(
   try {
     return await db.transaction(async (tx) => {
       const [project] = await tx
-        .select({ status: projectInstances.status })
+        .select({ status: projectInstances.status, deletedAt:projectInstances.deletedAt })
         .from(projectInstances)
         .where(eq(projectInstances.id, scope.project.id))
         .for("update")
         .limit(1);
-      if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
+      if (!project || project.deletedAt || project.status === "ARCHIVED" || project.status === "COMPLETED") {
         throw new ProjectsServiceError(
           "PROJECT_SUBMISSION_INVALID_STATE",
         );
