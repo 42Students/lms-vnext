@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
-import {isLaterMentorSprint,nextPlannedMentorSprint,orderMentorSprints}
+import {isLaterMentorSprint,nextPlannedMentorSprint,orderMentorSprints,
+  mentorSprintDefaultReleaseId}
   from "@/modules/projects/mentor-sprint-order-model";
 
 const releases=[
@@ -33,6 +34,17 @@ describe("Mentor sprint order across releases",()=>{
     expect(nextPlannedMentorSprint(sprints[1]!,sprints,releases)?.id).toBe("sprint-3");
     expect(nextPlannedMentorSprint(sprints[2]!,sprints,releases)?.id).toBe("sprint-4");
     expect(nextPlannedMentorSprint(sprints[3]!,sprints,releases)).toBeNull();
+  });
+  it("preselects the clicked active release even with several alternatives",()=>{
+    const choices=[
+      {id:"r1",status:"IN_PROGRESS"},
+      {id:"r2",status:"PLANNED"},
+      {id:"r3",status:"SHIPPED"},
+    ];
+    expect(mentorSprintDefaultReleaseId("r2",choices)).toBe("r2");
+    expect(mentorSprintDefaultReleaseId("r1",choices)).toBe("r1");
+    expect(mentorSprintDefaultReleaseId("r3",choices)).toBe("");
+    expect(mentorSprintDefaultReleaseId("foreign",choices)).toBe("");
   });
   it("does not return unrelated or earlier planned sprints",()=>{
     expect(nextPlannedMentorSprint(
