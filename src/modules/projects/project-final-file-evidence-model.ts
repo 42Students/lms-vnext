@@ -4,12 +4,15 @@
  * This check complements the PostgreSQL READY constraint and protects legacy
  * rows imported before that constraint was installed.
  */
-export function projectFinalFileEvidenceIsVerified(file:{
+export type ProjectFinalFileEvidence={
  status:string;scanStatus:string;objectGeneration:string|null;
  scanAttestedBy:string|null;scanAttestedAt:Date|null;
  verifiedContentType:string|null;verifiedSizeBytes:number|null;
  completedAt:Date|null;deletedAt:Date|null;
-} | null | undefined):boolean{
+};
+export function projectFinalFileEvidenceIsVerified<T extends ProjectFinalFileEvidence>(
+ file:T|null|undefined,
+):file is T{
  return Boolean(file && file.status==="READY" && file.scanStatus==="CLEAN" &&
    !file.deletedAt && file.scanAttestedBy?.trim() &&
    file.scanAttestedAt instanceof Date&&Number.isFinite(file.scanAttestedAt.getTime()) &&
