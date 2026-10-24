@@ -74,7 +74,8 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
    </details></section>
   <section className="mt-[var(--lms-space-5)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"><h3 className="font-semibold">Comments</h3>
    <ProjectTaskComments projectId={projectId} taskId={task.id}
-    updatedAt={new Date(task.updatedAt).toISOString()} canPost={!readOnly}/>
+    updatedAt={new Date(task.updatedAt).toISOString()} canPost={!readOnly}
+    blockerReply={task.status==="BLOCKED"}/>
   </section>
  </Dialog>;
 }
