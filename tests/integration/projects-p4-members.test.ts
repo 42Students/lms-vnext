@@ -513,12 +513,17 @@ describe("Projects P4 team and mentor membership", () => {
       role:"LEARNER",q:"",limit:20,
     });
     expect(candidateList.map(row=>row.membershipId)).toContain(outsider.membershipId);
-    await expect(listProjectMemberCandidates(mentor,project.id,{
+    const mentorCandidates=await listProjectMemberCandidates(mentor,project.id,{
       role:"MENTOR",q:"",limit:20,
-    })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    });
+    expect(mentorCandidates.map(row=>row.membershipId)).toContain(secondMentor.membershipId);
     await expect(addProjectMember(mentor,project.id,{
-      membershipId:secondMentor.membershipId,role:"MENTOR",
+      membershipId:secondMentor.membershipId,role:"MENTOR",isPrimary:true,
     })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    const coMentor=await addProjectMember(mentor,project.id,{
+      membershipId:secondMentor.membershipId,role:"MENTOR",
+    });
+    expect(coMentor.isPrimary).toBe(false);
     const second=await addProjectMember(mentor,project.id,{
       membershipId:outsider.membershipId,role:"LEARNER",
     });
