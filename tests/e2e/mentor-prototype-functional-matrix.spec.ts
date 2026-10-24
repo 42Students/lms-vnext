@@ -24,7 +24,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
  test("mentor portfolio and cross-team surfaces respond to the authenticated role",async({page,context})=>{
   await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
   for(const [path,heading] of [
-   ["/mentor/projects","Projects"],
+   ["/mentor/projects","Mentoring Projects"],
    ["/mentor/calendar","Meetings"],
    ["/mentor/notifications","Notifications"],
   ] as const){
@@ -55,7 +55,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
    await expect(page.getByRole("heading",{level:1}).first()).toBeVisible();
    await expect(page.getByRole("navigation",{name:"Project sections"})
     .getByRole("link",{name:label,exact:true})).toHaveAttribute("aria-current","page");
-   await expect(page.getByRole("status",{name:/No project content available/}))
+   await expect(page.getByText("No project content available for this section."))
     .toHaveCount(0);
   }
   await page.goto(base+"?tab=tasks");
