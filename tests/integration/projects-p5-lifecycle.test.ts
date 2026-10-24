@@ -518,6 +518,16 @@ describe("Projects P5 lifecycle", () => {
       expectedUpdatedAt:task.updatedAt.toISOString(),
     });
     expect(moved.task.sprintId).toBe(to.id);
+    // Direct Sprint A -> Sprint B must record the origin before any
+    // intermediate backlog move, or historical carry signals become false.
+    expect(moved.task.carriedFromSprintId).toBe(from.id);
+    expect(moved.task.carriedOverAt).toBeInstanceOf(Date);
+    const provenance=await pool.query<{carried_from_sprint_id:string|null;
+      carried_over_at:Date|null}>(`
+        select carried_from_sprint_id,carried_over_at
+        from project_tasks where id=$1`,[task.id]);
+    expect(provenance.rows[0]?.carried_from_sprint_id).toBe(from.id);
+    expect(provenance.rows[0]?.carried_over_at).not.toBeNull();
     await expect(moveMentorBacklogTask(mentor,project.id,{
       taskId:task.id,targetSprintId:null,
       expectedUpdatedAt:task.updatedAt.toISOString(),
