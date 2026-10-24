@@ -18,10 +18,14 @@
 - Meetings: previously added ICS and real notes/request/history links maintained.
 - Search: `/mentor/search`, bounded cross-project project/task/student/resource results, verifies assigned Mentor project IDs and active member/role; existing topbar keyboard flyout links to search.
 
+## Pass 6 correction — meeting facilitation exists in the database
+
+The prior claim that attendance and action-item storage were absent was **incorrect**. Current `project_meetings.facilitation` is typed by `mentorMeetingFacilitationSchema`, with stored attendees, actionItemRows, retroActions, notes, wentWell, retroDidntGoWell, improve, nextTime and followUp fields. `ScheduleProjectMeetingControl` already edits and saves them. The Mentor calendar now loads and displays agenda, outcome, attendees, structured action rows, retro notes, follow-up and a deep link to the real editor at `?tab=team#meeting-<id>`. This is source-verified, not browser-verified.
+
 ## Mandatory unresolved prototype requirements (implementation is not complete)
 1. **#47 Board:** exact task approval/send-back experience in persistent pane (current guarded decision confirmation modal), sprint-to-sprint drag in List view, exact modal/keyboard/focus design.
 2. **#48 Sprints:** prototype sign-off note, unfinished task carry-over flow and start-next-sprint checkboxes. Existing lifecycle endpoints alone do not reproduce these distinct states.
-3. **#49/#54 Meetings:** recurring Google Calendar/Meet integration, invite sync, attendance, retrospective sections, action items and task assignment persistence. Current meeting schema does not represent those independently.
+3. **#49/#54 Meetings:** structured attendance, retrospective notes, action rows, and follow-up fields already persist in `project_meetings.facilitation` and can be edited in the existing authorized meeting editor. The calendar selected-detail pane now renders these recorded values. Still missing: provider-backed recurring Google Calendar/Meet creation and invite sync, and the prototype's fully inline meeting editor.
 4. **#50 Performance:** prototype-specific student risk explanations and auto-assign result presentation; filters now implemented but not verified at runtime.
 5. **#51 Resources:** exact pinned group, share/upload modal states, private signed previews and earlier-sprint presentation.
 6. **#52 Activity:** “new since last looked” persisted watermark, complete pagination/time period grouping, source-backed comments count and delivery to student notifications.
@@ -40,5 +44,5 @@
 ## Recommended next execution order
 1. Obtain a running disposable vNext Mentor fixture and authoritative CI status.
 2. Fix any strict TypeScript/lint failures from latest `main` first.
-3. Finish persisted meeting attendance/action items/calendar integration and sprint carry-over/review state models.
+3. Verify existing persisted meeting facilitation actions from calendar selection, then complete provider-backed calendar sync and sprint carry-over/review state models.
 4. Verify #45–56 visually and functionally, correct screenshot diffs, then close individually.
