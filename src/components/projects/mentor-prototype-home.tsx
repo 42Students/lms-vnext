@@ -16,6 +16,10 @@ function attentionLabel(kind:FocusItem["kind"]):string {
     case "STALLED": return "Project gone quiet";
     case "REQUESTED": return "Meeting request";
     case "MEETING_SOON": return "Meeting coming up";
+    case "TASK_REVIEW": return "Task waiting for approval";
+    case "TASK_BLOCKED": return "Blocked task";
+    case "SPRINT_SIGN_OFF": return "Sprint ready for sign-off";
+    case "UNASSIGNED_NEXT": return "Next sprint needs assignment";
   }
 }
 function attentionAction(kind:FocusItem["kind"]):string {
@@ -24,6 +28,10 @@ function attentionAction(kind:FocusItem["kind"]):string {
     case "STALLED": return "Plan a check-in";
     case "REQUESTED": return "Answer";
     case "MEETING_SOON": return "See meeting";
+    case "TASK_REVIEW": return "Review task";
+    case "TASK_BLOCKED": return "Help unblock";
+    case "SPRINT_SIGN_OFF": return "Sign off sprint";
+    case "UNASSIGNED_NEXT": return "Assign tasks";
   }
 }
 function activityTime(value:string) {
@@ -96,7 +104,7 @@ export function MentorPrototypeHome({
     <div className="prototype-mentor-home-columns">
       <section className="prototype-mentor-focus" aria-label="Needs you, oldest first">
         <div className="prototype-mentor-box-heading">
-          <strong>Needs you · attention first</strong>
+          <strong>Needs you · oldest within priority</strong>
           <span>Later hides it until this event changes</span>
         </div>
         {focus.length ? focus.map(item=><article className="prototype-mentor-focus-item" key={item.key}>
@@ -109,7 +117,7 @@ export function MentorPrototypeHome({
             <Link href={item.href}>{attentionAction(item.kind)}</Link>
             <button type="button" onClick={()=>later(item)} aria-label={"Later: "+item.title}>Later</button>
           </div>
-        </article>):<p className="prototype-mentor-empty">No urgent reviews, meeting requests or stalled teams in your current projects.</p>}
+        </article>):<p className="prototype-mentor-empty">No pending sprint sign-offs, task reviews, blockers or meeting requests in your current projects.</p>}
         {active.length>5?<p className="prototype-mentor-focus-footer">{active.length-5} more items need attention. <Link href="/mentor/notifications">See notifications</Link></p>:null}
       </section>
       <aside className="prototype-mentor-home-right" aria-label="Team overview">
