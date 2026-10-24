@@ -42,9 +42,10 @@ export const TPO_PROTOTYPE_SECTIONS={
  ],
 } as const;
 
-export function tpoPrototypeSectionForPath(pathname:string):
+export function tpoPrototypeSectionForPath(pathname:string,tab?:string|null):
  "Home"|"Students"|"Drives"|"Companies"|"Calendar"|"Team"|"Reports"|"Settings"{
  if(pathname==="/tpo/home"||pathname==="/tpo")return "Home";
+ if(pathname.startsWith("/tpo/messages")&&tab==="team")return "Team";
  if(/^\/tpo\/(?:students|requests|verification|announcements|batches)(?:\/|$)/.test(pathname))
   return "Students";
  if(/^\/tpo\/(?:placements|drives|drive-day)(?:\/|$)/.test(pathname))
@@ -57,6 +58,6 @@ export function tpoPrototypeSectionForPath(pathname:string):
  if(pathname.startsWith("/tpo/reports"))return "Reports";
  return "Settings";
 }
-export function tpoPrototypeSidebarActive(pathname:string,item:Pick<ShellNavItem,"label"|"href">):boolean{
- return item.label===tpoPrototypeSectionForPath(pathname);
+export function tpoPrototypeSidebarActive(pathname:string,item:Pick<ShellNavItem,"label"|"href">,tab?:string|null):boolean{
+ return item.label===tpoPrototypeSectionForPath(pathname,tab);
 }
