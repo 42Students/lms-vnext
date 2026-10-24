@@ -21,7 +21,7 @@ describe("W03 mentor project detail legacy tab contract", () => {
     for (const [key, label] of [
       ["overview", "Overview"],
       ["team", "Team & meetings"],
-      ["sprints", "Releases and Sprints"],
+      ["sprints", "Sprints & releases"],
       ["board", "Board"],
       ["performance", "Task Allocation"],
       ["resources", "Resources"],
