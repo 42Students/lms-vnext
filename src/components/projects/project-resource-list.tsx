@@ -285,7 +285,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
              new Intl.DateTimeFormat("en-IN",{
                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
              }).format(new Date(sourceSharer.sharedAt))
-           } IST</>:
+           }</time> IST</>:
            "Team sharing time not recorded"}
        </p>:null}
        {(rows.length<=12||expanded[resource.id])&&resource.description?<p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{resource.description}</p>:null}
