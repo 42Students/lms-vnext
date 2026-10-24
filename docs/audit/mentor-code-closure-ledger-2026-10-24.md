@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 79/132 `CODE_READY`, 46/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 80/132 `CODE_READY`, 45/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -26,7 +26,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 45-01 | CODE_READY | mentor-attention.ts; mentor-prototype-home.tsx |
 | 45-02 | CODE_READY | mentor-attention.ts; mentor-prototype-home.tsx; mentor-attention-prototype-classes.test.ts |
 | 45-03 | CODE_READY | mentor-attention-later-service.ts; mentor-prototype-home.tsx; mentor/attention/later/route.ts |
-| 45-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 45-04 | CODE_READY | Mentor Projects now exposes Current / Need you / At risk or blocked / Final submission stage / Archived segments. mentor-portfolio-segment-model.ts maps persisted attention, blocker, submitted drafts/reviews, and genuine signed-off/shipped plan facts; the server filters **before** pagination, soft-deleted release/delivery records are excluded, and search/sort/pagination retain the segment. Unit coverage added in mentor-portfolio-segment-model.test.ts. DB and authenticated browser acceptance pending. |
 | 45-05 | CODE_READY | mentor-home-week-meetings-model.ts; mentor-prototype-home.tsx |
 | 45-06 | CODE_READY | mentor-student-task-signals-model.ts; mentor-consecutive-carry-service.ts; mentor-consecutive-carry-model.ts; mentor-student-watch-service.ts |
 | 45-07 | CODE_READY | mentor-project-team-size-service.ts now separately counts learner seats per project and distinct portfolio learners; mentor/projects/page.tsx uses learner seats for the Students column and full team sizes only for team sorting; faculty-mentor-positive-projects.test.ts covers both counts. PostgreSQL and browser acceptance pending. |
