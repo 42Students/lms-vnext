@@ -9,6 +9,7 @@ import {
 import { StatusBadge } from "@/components/ui/status-badge";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import {mentorCalendarWeekWorkload} from "@/modules/projects/mentor-calendar-week-workload-model";
+import {mentorMeetingListKinds,mentorMeetingListScopes,mentorMeetingListMatch,type MentorMeetingListKind,type MentorMeetingListScope} from "@/modules/projects/mentor-meeting-list-filter-model";
 import {buildMentorMeetingIcs} from "@/modules/projects/mentor-calendar-ics-model";
 import {Button} from "@/components/ui/button";
 import {MentorMeetingRequestActions} from "./mentor-meeting-request-actions";
@@ -185,6 +186,8 @@ export function MentorMeetingsCalendar({
 }: {meetings: readonly MentorMeetingCalendarItem[]; initialNow: string}) {
   const [now, setNow] = useState(initialNow);
   const [expanded, setExpanded] = useState(false);
+  const [listKind,setListKind]=useState<MentorMeetingListKind>("ALL");
+  const [listScope,setListScope]=useState<MentorMeetingListScope>("ALL");
   useEffect(() => {
     // Hydrate the viewer's timezone after the initial UTC-compatible render.
     // A queued callback avoids synchronous state updates in an effect.
@@ -198,7 +201,10 @@ export function MentorMeetingsCalendar({
     };
   }, []);
   const instant = useMemo(() => new Date(now), [now]);
-  const {upcoming, past} = useMemo(() => splitMentorMeetings(meetings, instant), [meetings, instant]);
+  const matchingMeetings=useMemo(()=>meetings.filter(item=>
+    mentorMeetingListMatch(item,listKind,listScope,instant)),
+    [meetings,listKind,listScope,instant]);
+  const {upcoming, past} = useMemo(() => splitMentorMeetings(matchingMeetings, instant), [matchingMeetings, instant]);
   const weekWorkload=useMemo(()=>mentorCalendarWeekWorkload(meetings,instant),
     [meetings,instant]);
   const [selectedId,setSelectedId]=useState<string|null>(null);
@@ -251,7 +257,30 @@ export function MentorMeetingsCalendar({
           <span>{upcoming.length} upcoming</span>
           <span>{past.length} past or cancelled</span>
         </div>
-        <h2>Upcoming</h2>
+        <div role="group" aria-label="Meeting ceremony types"
+          className="flex flex-wrap gap-2 p-3">
+          {mentorMeetingListKinds.map(kind=><Button type="button" key={kind.id}
+            size="sm" variant={listKind===kind.id?"primary":"secondary"}
+            aria-pressed={listKind===kind.id}
+            onClick={()=>{setListKind(kind.id);setSelectedId(null);setExpanded(false);}}>
+            {kind.label}
+          </Button>)}
+        </div>
+        <label className="block p-3 text-xs font-semibold">Show
+          <select aria-label="Meeting period and notes" value={listScope}
+            className="ml-2 rounded border border-border bg-surface px-2 py-2"
+            onChange={event=>{
+              setListScope(event.target.value as MentorMeetingListScope);
+              setSelectedId(null);setExpanded(false);
+            }}>
+            {mentorMeetingListScopes.map(option=>
+              <option value={option.id} key={option.id}>{option.label}</option>)}
+          </select>
+          <small className="ml-2 font-normal text-muted-foreground">
+            {matchingMeetings.length} of {meetings.length} loaded meetings
+          </small>
+        </label>
+        <h2>{listScope==="ASKED"?"Meeting requests":"Upcoming"}</h2>
         {upcoming.length ? upcoming.map(item=><button key={item.id}
           type="button" className="prototype-mentor-meeting-option"
           aria-pressed={selected?.id===item.id}
@@ -261,7 +290,7 @@ export function MentorMeetingsCalendar({
             <small>{mentorMeetingDisplayStatus(item,instant)}</small>
           </span>
         </button>):<p className={styles.empty}>No upcoming meetings.</p>}
-        <h2>Past and cancelled</h2>
+        <h2>{listScope==="NOTES_MISSING"?"Past · notes to finish":"Past and cancelled"}</h2>
         {visiblePast.length ? visiblePast.map(item=><button key={item.id}
           type="button" className="prototype-mentor-meeting-option"
           aria-pressed={selected?.id===item.id}
