@@ -107,6 +107,9 @@ export const db10BugReports = pgTable("bug_reports", {
   index("db10_bug_reports_reporter_user_idx").on(t.reporterUserId, t.createdAt),
   index("db10_bug_reports_college_time_idx").on(t.collegeId, t.createdAt),
   index("db10_bug_reports_environment_time_idx").on(t.environment, t.createdAt),
+  index("bug_reports_public_catalog_idx")
+    .on(t.publicCatalogApprovedAt.desc(),t.id.desc())
+    .where(sql`${t.publicCatalogApprovedAt} is not null and ${t.productionVerified} = true and ${t.status} = 'CLOSED'`),
   check("db10_bug_reports_status_ck",
     sql.raw('"status" in (\'NEW\',\'CHECKING\',\'FIXING\',\'READY_FOR_RETEST\',\'CLOSED\')')),
   check("db10_bug_reports_resolution_ck",

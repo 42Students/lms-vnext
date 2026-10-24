@@ -2064,14 +2064,28 @@
       "idx": 294,
       "version": "7",
       "when": 1792359011266,
-      "tag": "0312_chat12_notification_delivery_cancelled",
+      "tag": "0294_chat12_notification_delivery_cancelled",
       "breakpoints": true
     },
     {
       "idx": 295,
       "version": "7",
       "when": 1792359071266,
-      "tag": "0313_chat14_template_less_legacy_projects",
+      "tag": "0295_chat14_template_less_legacy_projects",
+      "breakpoints": true
+    },
+    {
+      "idx": 296,
+      "version": "7",
+      "when": 1792359131266,
+      "tag": "0296_chat7_public_issue_catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 297,
+      "version": "7",
+      "when": 1792359191266,
+      "tag": "0297_chat7_core_updated_at_guards",
       "breakpoints": true
     }
   ]
