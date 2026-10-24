@@ -89,6 +89,7 @@ export async function getMentorPersonalInbox(context: RequestContext, rawQuery: 
         eq(inAppNotifications.userId,context.user.id),
         eq(activityEvents.collegeId,membership.collegeId),
         isNull(inAppNotifications.readAt),
+        isNull(inAppNotifications.deletedAt),
       )),
   ]);
   return {query,cursor,page,unreadCount:Number(unread[0]?.total??0),
