@@ -178,7 +178,9 @@ export default async function MentorProjectPage({
         <MentorLaneBoard projectId={projectId}
           initialTasks={workspace.tasks} sprints={workspace.sprints} releases={workspace.releases}
           members={workspace.members} taskSubmissions={workspace.taskSubmissions}
-          taskActivity={workspace.activity} readOnly={access.access==="OBSERVER"||
+          taskActivity={workspace.activity}
+          blockerAges={workspace.mentorBlockedTaskAges}
+          readOnly={access.access==="OBSERVER"||
             workspace.project.status==="COMPLETED"||workspace.project.status==="ARCHIVED"}/>
       </div>:
       selectedTab==="performance"?<MentorTaskAllocation
