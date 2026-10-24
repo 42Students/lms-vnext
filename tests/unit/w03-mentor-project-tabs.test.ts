@@ -23,7 +23,7 @@ describe("W03 mentor project detail legacy tab contract", () => {
       ["team", "Team & meetings"],
       ["sprints", "Sprints & releases"],
       ["board", "Board"],
-      ["performance", "Task Allocation"],
+      ["performance", "Performance"],
       ["resources", "Resources"],
       ["activity", "Activity"],
     ]) {
