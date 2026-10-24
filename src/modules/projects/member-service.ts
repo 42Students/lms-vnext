@@ -157,8 +157,7 @@ export async function listProjectMemberCandidates(
   const mentorAction=scope.access==="MENTOR";
   if(!mentorAction&&scope.access!=="ADMIN")
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  if(mentorAction&&query.role!=="LEARNER")
-    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+
   const search = query.q
     ? or(
         ilike(users.displayName, containsLikePattern(query.q)),
@@ -167,8 +166,20 @@ export async function listProjectMemberCandidates(
     : undefined;
 
   return getDb().transaction(async tx=>{
-    if(mentorAction)await assertPersistedProjectMutationActor(tx,context,scope);
-    else await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+    if(mentorAction){
+      await assertPersistedProjectMutationActor(tx,context,scope);
+      if(query.role==="MENTOR"){
+      const [primaryMentor]=await tx.select({id:projectMembers.id})
+        .from(projectMembers).where(and(
+          eq(projectMembers.projectId,scope.project.id),
+          eq(projectMembers.membershipId,context.membership!.id),
+          eq(projectMembers.role,"MENTOR"),
+          eq(projectMembers.isPrimary,true),
+          isNull(projectMembers.endedAt),
+        )).for("share").limit(1);
+      if(!primaryMentor)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+      }
+    }else await assertPersistedPlatformPermission(tx,context,"projects.manage",{
       organizationId:scope.organizationId,collegeId:scope.collegeId,
     });
     // Serialize candidate reads with an archive; no invitation list may be
@@ -711,8 +722,10 @@ export async function addProjectMember(
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const input =
     addProjectMemberInputSchema.parse(rawInput);
-  if(mentorAction&&(input.role!=="LEARNER"||input.isPrimary||
-     (input.roleKind!==undefined&&input.roleKind!=="LEARNER")||
+  if(mentorAction&&(input.isPrimary||
+     (input.roleKind!==undefined&&
+       !(input.role==="LEARNER"?input.roleKind==="LEARNER":
+         ["MENTOR","CO_MENTOR"].includes(input.roleKind)))||
      input.canMutate===false))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
 
@@ -722,8 +735,20 @@ export async function addProjectMember(
       const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId,status:projectInstances.status,deletedAt:projectInstances.deletedAt })
         .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
       if(!project||project.deletedAt||["ARCHIVED","COMPLETED"].includes(project.status))throw new ProjectsServiceError("PROJECT_INVALID_STATE");
-      if(mentorAction)await assertPersistedProjectMutationActor(tx,context,scope);
-      else await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+      if(mentorAction){
+        await assertPersistedProjectMutationActor(tx,context,scope);
+        if(input.role==="MENTOR"){
+      const [primaryMentor]=await tx.select({id:projectMembers.id})
+        .from(projectMembers).where(and(
+          eq(projectMembers.projectId,scope.project.id),
+          eq(projectMembers.membershipId,context.membership!.id),
+          eq(projectMembers.role,"MENTOR"),
+          eq(projectMembers.isPrimary,true),
+          isNull(projectMembers.endedAt),
+        )).for("share").limit(1);
+      if(!primaryMentor)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+        }
+      }else await assertPersistedPlatformPermission(tx,context,"projects.manage",{
         collegeId:scope.collegeId,organizationId:scope.organizationId,
       });
       if (input.role === "LEARNER" && project.teamGroupId)
