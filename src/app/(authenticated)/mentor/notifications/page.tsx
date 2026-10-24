@@ -24,6 +24,7 @@ import {mentorAttentionReceiptKey,mentorAnnouncementReceiptKey}
   from "@/modules/projects/mentor-attention-read-model";
 import {MentorSourceNotificationRead} from
   "@/components/projects/mentor-source-notification-read";
+import {MentorSourceReadAll} from "@/components/projects/mentor-source-read-all";
 import {mentorAttentionKindSchema,mentorAttentionProjectSchema,mentorAttentionOrderSchema,selectMentorAttention,mentorAttentionProjectOptions} from "@/modules/projects/mentor-attention-kind-model";
 
 export const dynamic = "force-dynamic";
@@ -179,6 +180,8 @@ async function MentorNotificationsContent({
         aria-current={selectedPill===value?"page":undefined}
         className={selectedPill===value?"is-active":undefined}>{label}</Link>)}
     </nav>
+    {ownSourceReceipts&&(projectUnread+announcementUnread)>0?
+      <MentorSourceReadAll unread={projectUnread+announcementUnread}/>:null}
     {selectedPill==="unread"?<p className="prototype-mentor-unread-note">
       Unread shows the loaded personal, project-attention and college-announcement sources with a saved recipient read state. Older paginated sources may have additional items.
     </p>:null}
