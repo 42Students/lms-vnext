@@ -42,6 +42,7 @@ export const learnerProjectActivityFilterSchema = z.object({
   beforeId: z.string().uuid().optional(),
   sourceTab:z.string().trim().max(80).optional(),
   search:z.string().trim().max(100).optional(),
+  subjectId:z.string().uuid().optional(),
   // Old /activity/feed supported bounded page/size and exact event type.
   // New cursor clients continue to default to page 1 / 100 events.
   eventType:z.string().trim().max(120).regex(/^[a-z0-9_.-]+$/i).optional(),
@@ -62,7 +63,7 @@ export function parseLearnerProjectActivityFilters(input: {
   category?:unknown;from?:unknown;to?:unknown;fromDate?:unknown;toDate?:unknown;
   beforeTime?:unknown;beforeId?:unknown;
   eventType?:unknown;page?:unknown;size?:unknown;
-  sourceTab?:unknown;search?:unknown;
+  sourceTab?:unknown;search?:unknown;subjectId?:unknown;
 }) {
   const categoryText=typeof input.category==="string"?input.category.toUpperCase():input.category;
   const aliases:Record<string,LearnerProjectActivityCategory>={
@@ -78,6 +79,7 @@ export function parseLearnerProjectActivityFilters(input: {
     eventType:input.eventType||undefined,
     page:input.page==="0"||input.page===0?1:input.page||undefined,
     sourceTab:input.sourceTab||undefined,search:input.search||undefined,
+    subjectId:input.subjectId||undefined,
     size:input.size||undefined,
   });
 }
