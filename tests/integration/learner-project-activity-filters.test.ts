@@ -444,9 +444,13 @@ describe("Mentor project updates: atomic activity, recipients and posting limits
       await postMentorProjectUpdate(mentorContext,ids.project,{
         message:"Project week 1: office hours scheduled",
       });
-      await postMentorProjectUpdate(mentorContext,ids.project,{
+      const third=await postMentorProjectUpdate(mentorContext,ids.project,{
         message:"Project week 1: evidence checklist",
       });
+      const retryAfterQuota=await postMentorProjectUpdate(mentorContext,ids.project,{
+        message:"Project week 1: evidence checklist",
+      });
+      expect(retryAfterQuota.id).toBe(third.id);
       await expect(postMentorProjectUpdate(mentorContext,ids.project,{
         message:"Spam must not be published",
       })).rejects.toMatchObject({code:"PROJECT_UPDATE_RATE_LIMITED"});
