@@ -81,6 +81,34 @@ async function fixture(){
     ]);
   return {project,meetingId};
 }
+describe("Mentor meeting reschedule deletion boundaries",()=>{
+  it("rejects soft-deleted projects and archived meeting records without updates",async()=>{
+    const {project,meetingId}=await fixture();
+    const row=(await pool.query<{updated_at:Date;starts_at:Date}>(
+      "SELECT updated_at,starts_at FROM project_meetings WHERE id=$1",[meetingId])).rows[0]!;
+    const params={projectId:project.id,meetingId};
+    const input={startsAt:"2099-11-02T12:00:00+05:30",
+      endsAt:"2099-11-02T13:00:00+05:30",
+      expectedUpdatedAt:row.updated_at.toISOString(),confirmed:true as const};
+    await pool.query("UPDATE project_instances SET deleted_at=now() WHERE id=$1",[project.id]);
+    try{
+      await expect(rescheduleMentorMeeting(mentor,params,input)).rejects.toBeDefined();
+    }finally{
+      await pool.query("UPDATE project_instances SET deleted_at=null WHERE id=$1",[project.id]);
+    }
+    await pool.query("UPDATE project_meetings SET deleted_at=now() WHERE id=$1",[meetingId]);
+    await expect(rescheduleMentorMeeting(mentor,params,input)).rejects.toBeDefined();
+    const after=(await pool.query<{updated_at:Date;starts_at:Date}>(
+      "SELECT updated_at,starts_at FROM project_meetings WHERE id=$1",[meetingId])).rows[0]!;
+    expect(after.updated_at.getTime()).toBe(row.updated_at.getTime());
+    expect(after.starts_at.getTime()).toBe(row.starts_at.getTime());
+    const count=await pool.query<{count:string}>(
+      "SELECT count(*)::text AS count FROM activity_events WHERE event_type='projects.meeting.rescheduled' AND subject_id=$1",
+      [meetingId]);
+    expect(count.rows[0]?.count).toBe("0");
+  });
+});
+
 describe("Mentor meeting reschedule PostgreSQL audit and CAS",()=>{
   it("reschedules once, logs audit and denies stale/conflicting/wrong-scope writes",async()=>{
     const {project,meetingId}=await fixture();
