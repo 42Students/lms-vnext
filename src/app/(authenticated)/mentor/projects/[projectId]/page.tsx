@@ -13,6 +13,8 @@ import {MentorProjectSectionCache} from "@/components/projects/mentor-project-se
 import {MentorProjectUpdateComposer} from "@/components/projects/mentor-project-update-composer";
 import {MentorActivitySinceLastVisit} from "@/components/projects/mentor-activity-since-last-visit";
 import {getMentorProjectActivitySeenState} from "@/modules/projects/mentor-activity-seen-service";
+import {listMyMentorProjectAttention} from "@/modules/projects/mentor-attention-service";
+import {listOwnMentorAttentionLater} from "@/modules/projects/mentor-attention-later-service";
 import {MentorPrototypeSprintPlan,MentorPrototypeTeamOverview,MentorPrototypePerformance,MentorPrototypeActivitySummary,MentorPrototypeDeliveryEvidence,MentorPrototypeProjectOverview,MentorPrototypeProjectBrief} from "@/components/projects/mentor-prototype-project-summaries";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
@@ -77,6 +79,11 @@ export default async function MentorProjectPage({
     );
   const activitySeen=selectedTab==="activity"&&access.access==="MENTOR"?
     await getMentorProjectActivitySeenState(context,projectId):null;
+  const overviewAttention=selectedTab==="overview"&&access.access==="MENTOR"
+    ?(await listMyMentorProjectAttention(context))
+      .filter(item=>item.projectId===projectId):[];
+  const overviewLater=overviewAttention.length
+    ?await listOwnMentorAttentionLater(context,overviewAttention):[];
   // The prototype's shared detail header is reused for Overview, Board,
   // Sprints & releases, Team & meetings, Performance, Resources and Activity.
   // Only actual persisted sprints become segments; 16 is NOT hard-coded.
@@ -146,7 +153,8 @@ export default async function MentorProjectPage({
             <h2>{breadcrumbTab[selectedTab??"overview"]??"Overview"}</h2>
             <p>{subtitles[selectedTab??"overview"]}</p>
           </section>}
-      {selectedTab==="overview" ? <><MentorPrototypeProjectOverview workspace={workspace} /><MentorPrototypeProjectBrief workspace={workspace} /></> : null}
+      {selectedTab==="overview" ? <><MentorPrototypeProjectOverview workspace={workspace}
+         attentionItems={overviewAttention} initialLater={overviewLater}/><MentorPrototypeProjectBrief workspace={workspace} /></> : null}
       {selectedTab==="sprints" ? <MentorPrototypeSprintPlan workspace={workspace} readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"} /> : null}
       {selectedTab==="team" ? <MentorPrototypeTeamOverview workspace={workspace} /> : null}
       {selectedTab==="performance" ? <MentorPrototypePerformance workspace={workspace} /> : null}
