@@ -30,3 +30,11 @@ export function nextPlannedMentorSprint<T extends MentorOrderedSprint>(
   const start=ordered.findIndex(row=>row.id===current.id);
   return start<0?null:ordered.slice(start+1).find(row=>row.status==="PLANNED")??null;
 }
+
+/** Keep a contextual Add sprint action scoped to its unsent release choice. */
+export function mentorSprintDefaultReleaseId(
+  requestedId:string,releases:readonly {id:string;status:string}[],
+):string {
+  return releases.some(row=>row.id===requestedId&&row.status!=="SHIPPED")
+    ?requestedId:"";
+}
