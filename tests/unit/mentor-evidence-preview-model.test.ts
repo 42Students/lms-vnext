@@ -13,12 +13,31 @@ describe("Mentor final evidence inline preview classification",()=>{
     expect(mentorEvidenceDisplayKind("https://files.example/download","video/webm"))
       .toBe("VIDEO");
   });
-  it("requires external open for code, office files and opaque providers",()=>{
+  it("sandboxes common README, source-code and text evidence while keeping office files external",()=>{
+    for(const file of ["README.md","source.ts","source.tsx","query.sql",
+      "data.json","overview.txt","metrics.csv","config.yaml","script.py"]){
+      expect(mentorEvidenceDisplayKind("https://files.example/"+file+"?grant=short",""))
+        .toBe("TEXT");
+    }
+    expect(mentorEvidenceDisplayKind("https://files.example/download","text/plain"))
+      .toBe("TEXT");
+    expect(mentorEvidenceDisplayKind("https://files.example/download","application/json"))
+      .toBe("TEXT");
     expect(mentorEvidenceDisplayKind("https://files.example/trial.xlsx",""))
       .toBe("EXTERNAL");
-    expect(mentorEvidenceDisplayKind("https://files.example/source.ts","text/plain"))
+    expect(mentorEvidenceDisplayKind("https://files.example/results.ods",""))
       .toBe("EXTERNAL");
     expect(mentorEvidenceDisplayKind("https://files.example/download",""))
+      .toBe("EXTERNAL");
+  });
+  it("does not frame active HTML/SVG or unsupported executable script MIME types",()=>{
+    for(const file of ["payload.html","vector.svg","binary.exe","macro.xlsm"]){
+      expect(mentorEvidenceDisplayKind("https://files.example/"+file,""))
+        .toBe("EXTERNAL");
+    }
+    expect(mentorEvidenceDisplayKind("https://files.example/download","text/html"))
+      .toBe("EXTERNAL");
+    expect(mentorEvidenceDisplayKind("https://files.example/download","image/svg+xml"))
       .toBe("EXTERNAL");
   });
   it("never previews script, credential-bearing or absent URLs",()=>{
