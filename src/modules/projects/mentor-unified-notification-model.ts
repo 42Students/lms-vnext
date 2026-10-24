@@ -31,3 +31,21 @@ export function mentorUnifiedNotificationGroups(rows:readonly MentorUnifiedNotif
  }
  return groups;
 }
+
+/** A normal click on an unread, actionable item must acknowledge precisely
+ * that recipient-owned source before navigation. No browser-supplied tenant or
+ * project selector enters either write API.
+ */
+export function mentorUnifiedOpenReadRequest(
+ item:MentorUnifiedNotification,
+):{url:string;body?:string}|null{
+ if(item.read!==false)return null;
+ if(item.source==="PERSONAL"){
+  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.id))
+    return null;
+  return {url:"/api/mentor/notifications/"+encodeURIComponent(item.id)+"/read"};
+ }
+ if(!item.receiptKey)return null;
+ return {url:"/api/mentor/notifications/source-read",
+   body:JSON.stringify({key:item.receiptKey})};
+}
