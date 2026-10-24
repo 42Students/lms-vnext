@@ -13,13 +13,15 @@ import {useRouter,useSearchParams} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {Button} from "@/components/ui/button";
 import {planMentorNextSprintAssignments} from "@/modules/projects/mentor-next-sprint-assignment-model";
+import {nextMentorAllocatableSprint} from
+  "@/modules/projects/mentor-next-allocatable-sprint-model";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
  updatedAt:Date;status:string;priority:string;estimatePoints:number|null;
  sequence?:number;deletedAt?:Date|null};
 type Member={membershipId:string;displayName:string|null;role:string};
 type Sprint={id:string;title:string;releaseId:string;
  sequence?:number;status?:string;updatedAt?:Date};
-type Release={id:string;title:string;status?:string};
+type Release={id:string;title:string;status?:string;sequence?:number};
 export function MentorTaskAllocation({projectId,initialTasks,members,sprints,releases,readOnly=false}:{
  projectId:string;initialTasks:Task[];members:Member[];sprints:Sprint[];releases:Release[];readOnly?:boolean;
 }){
@@ -44,11 +46,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     (query.toString()?"?"+query.toString():""));
  }
  const learners=members.filter(member=>member.role==="LEARNER");
- const activeSprint=sprints.find(row=>row.status==="ACTIVE");
- const nextSprint=[...sprints].filter(row=>row.status==="PLANNED"&&
-   typeof row.sequence==="number"&&
-   (!activeSprint||row.sequence>(activeSprint.sequence??-1)))
-   .sort((a,b)=>(a.sequence??0)-(b.sequence??0)||a.id.localeCompare(b.id))[0];
+ const nextSprint=nextMentorAllocatableSprint(sprints,releases);
  const nextSprintRelease=nextSprint?
    releases.find(row=>row.id===nextSprint.releaseId):null;
  const nextSprintEligible=Boolean(nextSprint&&nextSprint.updatedAt&&
