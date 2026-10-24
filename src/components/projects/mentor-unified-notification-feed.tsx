@@ -6,7 +6,7 @@ import {useState,type MouseEvent} from "react";
 import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
 import {safeNotificationActionHref} from "@/modules/activity/notification-action";
-import {mentorUnifiedNotificationGroups,mentorUnifiedOpenReadRequest,type MentorUnifiedNotification} from
+import {mentorUnifiedNotificationGroups,mentorUnifiedOpenReadRequest,mergeMentorUnifiedPages,type MentorUnifiedNotification} from
   "@/modules/projects/mentor-unified-notification-model";
 import {MentorSourceNotificationRead} from "./mentor-source-notification-read";
 
@@ -52,10 +52,7 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,pers
  const [personalError,setPersonalError]=useState("");
  const [loadingMore,setLoadingMore]=useState(false);
  const [olderError,setOlderError]=useState("");
- const seen=new Set(items.map(item=>item.source+":"+item.id));
- const older=[...olderNotices,...olderPersonal].filter(item=>
-   !seen.has(item.source+":"+item.id)&&(!unreadOnly||item.read===false));
- const combined=[...items,...older];
+ const combined=mergeMentorUnifiedPages(items,olderNotices,olderPersonal,unreadOnly);
  async function loadOlderPersonal(){
   if(loadingPersonal||!nextPersonal)return;
   setLoadingPersonal(true);setPersonalError("");
