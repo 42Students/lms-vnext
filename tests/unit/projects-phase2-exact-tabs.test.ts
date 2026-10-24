@@ -22,7 +22,7 @@ describe("Phase2 exact legacy Projects labels + single tab strip",()=>{
   });
   it("keeps exact Mentor labels and drops obsolete unassigned-task warning",()=>{
     const labels=[...mentor.matchAll(/label: "([^"]+)"/g)].map(match=>match[1]);
-    expect(labels).toEqual(["Overview","People & Meetings","Releases and Sprints","Board","Task Allocation","Resources","Delivery","Activity"]);
+    expect(labels).toEqual(["Overview","Board","Sprints & releases","Team & meetings","Performance","Resources","Activity"]);
     expect(mentorPage).not.toContain("does not yet persist task assignee fields");
     expect(mentorPage).not.toContain("sectionBaseHref=");
   });
