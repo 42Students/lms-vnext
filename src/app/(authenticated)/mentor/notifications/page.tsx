@@ -4,9 +4,7 @@ import {Button} from "@/components/ui/button";
 import {listMyProjectInstances} from "@/modules/projects/member-service";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {
-  NotificationList, type NotificationListItem,
-} from "@/components/activity/notification-list";
+import type {NotificationListItem} from "@/components/activity/notification-list";
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
 import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
 import { PageHeader } from "@/components/ui/page-header";
@@ -155,8 +153,6 @@ async function MentorNotificationsContent({
     createdAt:notification.createdAt.toISOString(),
     module:event.module,importance:event.importance,
   }));
-  const shownInbox=selectedPill==="unread"
-    ? items.filter(item=>item.readAt===null):items;
   const unifiedRows:MentorUnifiedNotification[]=sortMentorUnifiedNotifications([
     ...items.map(item=>({
       id:item.id,source:"PERSONAL" as const,title:item.title,
@@ -231,6 +227,16 @@ async function MentorNotificationsContent({
     </div>:null}
     {(selectedPill==="all"||selectedPill==="unread")&&!allRelevantFailed?
       <MentorUnifiedNotificationFeed items={mergedShown}/>:null}
+    {(selectedPill==="all"||selectedPill==="unread")&&inbox?.cursor.invalid?
+      <Alert tone="error" role="alert">
+        Personal notification cursor is invalid.
+        <Link href={MENTOR_INBOX} className="ml-2 text-link underline">
+          Return to newest notifications</Link>
+      </Alert>:null}
+    {(selectedPill==="all"||selectedPill==="unread")&&nextHref?
+      <Link href={nextHref} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-link underline">
+        Older personal notifications →
+      </Link>:null}
     {(selectedPill==="all"||selectedPill==="unread")&&inbox&&inbox.unreadCount>0?
       <section aria-label="Personal inbox bulk read" className="space-y-2">
         <h2 className="font-semibold">Personal messages · {inbox.unreadCount} unread</h2>
@@ -325,32 +331,7 @@ async function MentorNotificationsContent({
                   read={sourceRead(mentorAttentionReceiptKey(alert))}/>:null}
               </article>)}</div>}
     </section>:null}
-    {false&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
-      <h2 id="mentor-personal-notifications" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
-        Personal notifications
-      </h2>
-      {inbox ? <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount}
-        baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
-        confirmMarkAll /> : null}
-      {inbox?.cursor.invalid
-        ? <Alert tone="error" role="alert">
-            The notification page link is invalid.{" "}
-            <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
-              Return to newest notifications
-            </Link>
-          </Alert>
-        : <>
-            <NotificationList items={shownInbox} readEndpoint="/api/mentor/notifications"
-              emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
-            {nextHref ? <div className="flex justify-center">
-              <Link href={nextHref}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:underline">
-                Older notifications
-              </Link>
-            </div> : null}
-          </>}
-    </section>:null}
+
       </div>
       <aside className="prototype-mentor-notifications-about" aria-label="What you are notified about">
         <h2>What you’re told about</h2>
@@ -361,9 +342,10 @@ async function MentorNotificationsContent({
           <div><dt>Blocked or quiet teams</dt><dd>Here</dd></div>
           <div><dt>College announcements</dt><dd>Here</dd></div>
         </dl>
-        <p>Notification read tracking currently applies to personal in-app messages.
-          Email provider delivery and read synchronization for the other sources
-          remain pending functional verification.</p>
+        <p>Personal, currently visible project-attention and college-announcement
+          notifications now have recipient-specific saved read states. The older
+          announcement window and any inaccessible sources are not falsely counted
+          as read. Provider email delivery is not yet verified.</p>
       </aside>
     </div>
   </div>;
