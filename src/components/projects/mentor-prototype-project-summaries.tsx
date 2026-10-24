@@ -491,8 +491,10 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
           {" "}{workspace.readiness.legacyReadiness.overrideValue?
             "Unlocked":"Blocked"}.
           {" "}This is a recorded permission decision, not a prototype fixture.</p>:null}
-      <p>Due-date and release-shipment facts are displayed for review; the
-        authoritative submit and accept permissions are enforced by the server.</p>
+      <p>Shipped releases, signed-off Sprints and completed tasks are required
+        by normal server-side submission readiness. An explicitly recorded admin
+        override can change readiness. The target date and proof-link coverage
+        remain advisory; the submit action always rechecks the saved state.</p>
     </section>
     {previous?<section className="prototype-mentor-delivery-history">
       <h3>Previous attempt · version {previous.version}</h3>
