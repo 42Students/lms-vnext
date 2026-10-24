@@ -1081,6 +1081,7 @@ export async function actOnPlacementRequest(
       await deliverRecordedLearnerPlacementEvent(tx,{
         eventId:decisionEvent.id,collegeId:current.job.collegeId,
         membershipId:current.application.membershipId,
+        jobId:current.job.id,applicationId:current.application.id,
         kind:request.requestType==="ROUND_RESCHEDULE"?"RESCHEDULE_DECIDED":"REQUEST_DECIDED",
         subject:(nextStatus==="APPROVED"?"Approved: ":"Rejected: ")+current.job.title,
         requestDecisionStatus:nextStatus,
