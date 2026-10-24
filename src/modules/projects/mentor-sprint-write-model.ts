@@ -15,6 +15,8 @@ export const mentorSprintCreateSchema = z.object({
 }).strict().superRefine((value,ctx)=>{
  if(value.startDate&&value.endDate&&value.endDate<value.startDate)
   ctx.addIssue({code:"custom",path:["endDate"],message:"End date must follow start date"});
+ if(value.startDate&&value.dueDate&&value.dueDate<value.startDate)
+  ctx.addIssue({code:"custom",path:["dueDate"],message:"Due date must not precede sprint start"});
 });
 
 export const mentorSprintTransitionParamsSchema = z.object({
