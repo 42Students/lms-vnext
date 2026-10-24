@@ -109,7 +109,7 @@ export async function MentorProjectsContent({
       listMyMentorCalendarMeetings(context)
         .then(rows=>({rows,failed:false as const}))
         .catch(()=>({rows:[] as MentorMeetingCalendarItem[],failed:true as const})),
-      getMentorPortfolioLearnerCounts(context,paged?allRows:undefined),
+      getMentorPortfolioLearnerCounts(context),
     ]);
     return {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead,learnerCounts};
   })().catch(error=>({
