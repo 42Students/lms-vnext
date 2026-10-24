@@ -372,7 +372,7 @@ test("Mentor calendar cross-team Schedule a meeting persists or drafts through g
   const page=source("src/app/(authenticated)/mentor/calendar/page.tsx");
   const form=source("src/components/projects/mentor-calendar-quick-schedule.tsx");
   const route=source("src/app/api/projects/[projectId]/meetings/route.ts");
-  assert.match(page,/getMentorCalendar/);
+  assert.match(page,/listMyMentorCalendarMeetings\(context\)/);
   assert.match(page,/listMyProjectInstances\(context\)/);
   assert.match(page,/row\.memberRole==="MENTOR"/);
   assert.match(page,/row\.project\.status==="ACTIVE"/);
