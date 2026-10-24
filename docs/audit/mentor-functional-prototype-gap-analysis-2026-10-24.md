@@ -233,3 +233,9 @@ Source `56-mentor-template.html`; current TopbarCommandSearch, role shell, mento
 ## Completion standard
 
 Do **not** interpret "implementation exists" as "behavior is complete." No screen is functionally closed in this analysis. Report each checked item with (1) code commit, (2) authorization/backend test, (3) browser interaction evidence, (4) expected vs actual result, and (5) fixture/tenant context. Items labelled GAP/PARTIAL need implementation; items labelled VERIFY need tests and may reveal further defects. **0/12 Mentor screens have sufficient end-to-end acceptance evidence.**
+
+## Continuation note — started-sprint selector source fix (2026-10-24)
+
+- **Source fix, tests unexecuted:** Shared src/modules/projects/mentor-recent-worked-sprints-model.ts now returns the most recent four ACTIVE/COMPLETED sprints, rather than including future PLANNED sprint sequences. Both src/components/projects/mentor-prototype-project-summaries.tsx (Team last-four totals) and src/components/projects/mentor-prototype-performance-table.tsx (Last four filter) consume it.
+- Added four cases in tests/unit/mentor-recent-worked-sprints-model.test.ts, including the 16-sprint prototype (11 completed, one active, four future planned), active/completed ordering, short/empty state and input immutability. **No Vitest/typecheck/CI/browser result has been observed.** The checkboxes above remain unchecked until those gates pass.
+- **Important distinction:** This selector corrects future-sprint inclusion but does **not** fix X-03 / 48-01 historical commitment points shifting after per-task carry-over; that still requires a verified immutable snapshot or event-reconstruction design.
