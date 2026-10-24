@@ -9,6 +9,7 @@ import {
 import { StatusBadge } from "@/components/ui/status-badge";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import {Button} from "@/components/ui/button";
+import {MentorMeetingRequestActions} from "./mentor-meeting-request-actions";
 import styles from "./mentor-meetings-calendar.module.css";
 
 const PAST_PREVIEW = 20;
@@ -79,6 +80,7 @@ function MeetingRow({
         {(meeting.linkedSprintTitle||meeting.legacySprintLabel)
           ? " · Sprint: " + (meeting.linkedSprintTitle||meeting.legacySprintLabel) : ""}
       </p>
+      <MentorMeetingRequestActions meeting={meeting}/>
       {meeting.agenda?.trim()?<section className="prototype-mentor-meeting-section">
         <h3>Agenda</h3><p>{meeting.agenda}</p>
       </section>:null}
