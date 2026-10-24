@@ -459,3 +459,23 @@ test("Mentor calendar global ICS includes only scheduled persisted event windows
   assert.match(calendar,/onClick=\{\(\)=>downloadAllMentorMeetings\(meetings\)\}/);
   assert.match(calendar,/Add to my calendar \(\.ics\)/);
 });
+
+test("Mentor Team roster uses actual active sprint, last four sprint tasks and task-change timestamps",()=>{
+  const summaries=source("src/components/projects/mentor-prototype-project-summaries.tsx");
+  assert.match(summaries,/export function MentorPrototypeTeamOverview/);
+  assert.match(summaries,/sprint\.status==="ACTIVE"/);
+  assert.match(summaries,/slice\(0,4\)\.map\(sprint=>sprint\.id\)/);
+  assert.match(summaries,/task\.assigneeMembershipId===member\.membershipId/);
+  assert.match(summaries,/task\.updatedAt/);
+  assert.match(summaries,/Last task change/);
+  assert.match(summaries,/not a user's sign-in or online status/);
+});
+
+test("Mentor Activity can filter by recorded actor, not a guessed team identity",()=>{
+  const activity=source("src/components/projects/project-activity-filtered-list.tsx");
+  assert.match(activity,/const \[actor,setActor\]=useState/);
+  assert.match(activity,/event\.actorUserId\?\?event\.actorDisplayName/);
+  assert.match(activity,/\(!actor\|\|/);
+  assert.match(activity,/By anyone/);
+  assert.match(activity,/setActor\(""\)/);
+});
