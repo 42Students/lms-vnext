@@ -1,5 +1,6 @@
 "use client";
 import {useMemo,useState} from "react";
+import {recentMentorWorkedSprintIds} from "@/modules/projects/mentor-recent-worked-sprints-model";
 
 type Student={id:string;name:string;label:string};
 type Task={id:string;assigneeMembershipId:string|null;sprintId:string|null;
@@ -13,7 +14,7 @@ export function MentorPrototypePerformanceTable({
   const [range,setRange]=useState("all");
   const sorted=useMemo(()=>[...sprints].sort((a,b)=>a.sequence-b.sequence),[sprints]);
   const active=sorted.find(item=>item.status==="ACTIVE");
-  const lastFour=new Set(sorted.slice(-4).map(item=>item.id));
+  const lastFour=new Set(recentMentorWorkedSprintIds(sorted));
   const visible=tasks.filter(task=>range==="all"||
     range==="current"?range==="all"||task.sprintId===active?.id:
     range==="last4"?Boolean(task.sprintId&&lastFour.has(task.sprintId)):
