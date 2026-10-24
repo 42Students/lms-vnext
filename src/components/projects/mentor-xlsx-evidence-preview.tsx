@@ -14,14 +14,18 @@ export function MentorXlsxEvidencePreview({href,name}:{
  const [summary,setSummary]=useState<MentorXlsxTrialSummary|null>(null);
  const [error,setError]=useState<string|null>(null);
  const [loading,setLoading]=useState(false);
- let sameOrigin=false;
- try {
-  const url=new URL(href,typeof window==="undefined"?"https://placeholder.invalid":window.location.origin);
-  sameOrigin=typeof window!=="undefined"&&url.origin===window.location.origin&&
-   (url.protocol==="https:"||(window.location.protocol==="http:"&&url.protocol==="http:"));
- }catch{sameOrigin=false;}
  async function load(){
-  if(!sameOrigin||loading)return;
+  if(loading)return;
+  let sameOrigin=false;
+  try{
+   const url=new URL(href,window.location.href);
+   sameOrigin=url.origin===window.location.origin&&
+    (url.protocol==="https:"||(window.location.protocol==="http:"&&url.protocol==="http:"));
+  }catch{/* Invalid evidence URL */}
+  if(!sameOrigin){
+   setError("The provider link cannot be previewed inside this project. Open the original file.");
+   return;
+  }
   setLoading(true);setError(null);setSummary(null);
   try{
    const response=await fetch(href,{credentials:"same-origin",redirect:"error",cache:"no-store"});
@@ -41,7 +45,7 @@ export function MentorXlsxEvidencePreview({href,name}:{
    }finally{await reader.cancel().catch(()=>undefined);}
    const bytes=new Uint8Array(length);let offset=0;
    for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
-   const file=new File([bytes],name,{type:
+   const file=new File([bytes.buffer as ArrayBuffer],name,{type:
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
    const csv=await recruiterXlsxToCsv(file);
    const parsed=mentorXlsxTrialSummary(csv);
@@ -58,11 +62,10 @@ export function MentorXlsxEvidencePreview({href,name}:{
    only when every populated data row contains a numeric value. They are not
    interpreted as grades, submissions or official trial results.
   </p>
-  {sameOrigin?<button type="button" disabled={loading} onClick={()=>void load()}
+  <button type="button" disabled={loading} onClick={()=>void load()
     className="rounded border border-border px-3 py-2 text-sm font-semibold disabled:opacity-60">
     {loading?"Reading spreadsheet…":summary?"Reload spreadsheet summary":"Load spreadsheet summary"}
-  </button>:<p>Automatic preview needs an authorized same-origin file link.
-    Open the external provider link to view this spreadsheet.</p>}
+  </button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {summary?<div className="space-y-2">
     <p className="text-sm">{summary.totalDataRows} data rows ·
