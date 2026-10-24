@@ -12,7 +12,7 @@ import {MentorSprintCreate} from "./mentor-sprint-write";
 import {MentorOverviewQuickActions} from "./mentor-overview-quick-actions";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
 import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
-import {MentorLearnerTeamActions} from "./project-team-controls";
+import {AddProjectMemberControl,MentorLearnerTeamActions} from "./project-team-controls";
 import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
@@ -279,7 +279,11 @@ export function MentorPrototypeTeamOverview({workspace,readOnly}:{workspace:Work
   return <section className="prototype-mentor-team-overview" aria-label="Current project team">
     <div className="prototype-mentor-card-title">
       <h2>The team · {students.length} students · {mentors.length} mentors</h2>
-      <Link href={base+"?tab=team#project-meetings"}>Meetings and requests →</Link>
+      <div className="flex flex-wrap items-center gap-2">
+        {!readOnly&&!workspace.project.teamGroupId?<AddProjectMemberControl
+          projectId={workspace.project.id} learnerOnly/>:null}
+        <Link href={base+"?tab=team#project-meetings"}>Meetings and requests →</Link>
+      </div>
     </div>
     <div className="prototype-mentor-roster-head prototype-mentor-roster-period-head" aria-hidden="true">
       <span>Person and role</span><span>{active?"Sprint "+active.sequence:"Current sprint"}</span>
