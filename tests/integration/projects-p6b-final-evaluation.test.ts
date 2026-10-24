@@ -750,6 +750,56 @@ describe("Projects P6B final delivery and evaluation", () => {
     });
   });
 
+  it("rejects all final delivery writes on a soft-deleted project without changing saved rows",async()=>{
+    const project=await createProject();
+    const draft=await createProjectSubmissionDraft(learner,project.id,{
+      summary:"Original safe draft",sourceUrl:"https://example.com/original",
+    });
+    await finishExecution(project.id);
+    await pool.query("UPDATE project_instances SET deleted_at=now() WHERE id=$1",[project.id]);
+    try{
+      await expect(createProjectSubmissionDraft(learner,project.id,{
+        summary:"Forbidden deleted-project draft",
+      })).rejects.toBeDefined();
+      await expect(updateProjectSubmissionDraft(learner,project.id,draft.id,{
+        summary:"Forbidden deleted-project edit",
+        expectedUpdatedAt:draft.updatedAt.toISOString(),
+      })).rejects.toBeDefined();
+      await expect(submitProjectSubmission(learner,project.id,draft.id,{
+        expectedUpdatedAt:draft.updatedAt.toISOString(),
+      })).rejects.toBeDefined();
+      const saved=await pool.query<{status:string;summary:string;updated_at:Date}>(
+        "SELECT status,summary,updated_at FROM project_submissions WHERE id=$1",[draft.id]);
+      expect(saved.rows[0]?.status).toBe("DRAFT");
+      expect(saved.rows[0]?.summary).toBe("Original safe draft");
+      expect(saved.rows[0]?.updated_at.getTime()).toBe(draft.updatedAt.getTime());
+      const count=await pool.query<{total:string}>(
+        "SELECT count(*)::text AS total FROM project_submissions WHERE project_id=$1",[project.id]);
+      expect(count.rows[0]?.total).toBe("1");
+    }finally{
+      await pool.query("UPDATE project_instances SET deleted_at=null WHERE id=$1",[project.id]);
+    }
+    const sent=await submitProjectSubmission(learner,project.id,draft.id,{
+      expectedUpdatedAt:draft.updatedAt.toISOString(),
+    });
+    expect(sent.status).toBe("SUBMITTED");
+    await pool.query("UPDATE project_instances SET deleted_at=now() WHERE id=$1",[project.id]);
+    try{
+      await expect(reviewProjectSubmission(mentor,project.id,draft.id,{
+        decision:"APPROVED",feedback:"Should never persist",
+      })).rejects.toBeDefined();
+      const reviews=await pool.query<{total:string}>(
+        "SELECT count(*)::text AS total FROM project_submission_reviews WHERE submission_id=$1",
+        [draft.id]);
+      expect(reviews.rows[0]?.total).toBe("0");
+      const stillSubmitted=await pool.query<{status:string}>(
+        "SELECT status FROM project_submissions WHERE id=$1",[draft.id]);
+      expect(stillSubmitted.rows[0]?.status).toBe("SUBMITTED");
+    }finally{
+      await pool.query("UPDATE project_instances SET deleted_at=null WHERE id=$1",[project.id]);
+    }
+  });
+
   it("blocks non-learners from final submission authoring and enforces DB review/score invariants", async () => {
     const project = await createProject();
 
