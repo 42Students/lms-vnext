@@ -451,17 +451,22 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
   const awaiting=inSprint.filter(task=>task.status==="IN_REVIEW");
   const blocked=inSprint.filter(task=>task.status==="BLOCKED");
   const students=workspace.members.filter(member=>member.role==="LEARNER");
-  const nextPlanned=[...workspace.sprints].filter(sprint=>sprint.status==="PLANNED"&&
-    (!active||sprint.sequence>active.sequence)).sort((a,b)=>a.sequence-b.sequence)[0];
+  // Sprint sequence is release-local; use persisted release chronology when
+  // finding the next work needing assignment across the release boundary.
+  const nextPlanned=active
+    ?nextPlannedMentorSprint(active,workspace.sprints,workspace.releases)
+    :orderMentorSprints(workspace.sprints,workspace.releases)
+      .find(sprint=>sprint.status==="PLANNED")??null;
   const unassignedNext=nextPlanned?live.filter(task=>
     task.sprintId===nextPlanned.id&&task.assigneeMembershipId===null):[];
   const requestedMeetings=workspace.meetings.filter(meeting=>meeting.status==="REQUESTED");
   const backlog=live.filter(task=>task.sprintId===null);
   const now=Date.now();
   const nextMeeting=workspace.meetings
-    .filter(meeting=>["SCHEDULED","RESCHEDULED"].includes(meeting.status)&&meeting.startsAt.getTime()>now)
+    .filter(meeting=>["SCHEDULED","RESCHEDULED"].includes(meeting.status)&&meeting.endsAt.getTime()>now)
     .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())[0];
-  const submitted=workspace.finalDelivery.submissions.at(-1);
+  const submitted=[...workspace.finalDelivery.submissions].sort((a,b)=>
+    b.version-a.version||b.createdAt.getTime()-a.createdAt.getTime())[0];
   const recentActivity=[...workspace.activity]
     .sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime())
     .slice(0,5);
@@ -620,7 +625,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
     </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title"><h2>Next meeting</h2>
-        <Link href={base+"?tab=team"}>All meetings →</Link></div>
+        <Link href={base+"?tab=meetings"}>All meetings →</Link></div>
       {nextMeeting?<div className="prototype-mentor-overview-actions">
         <strong>{nextMeeting.title}</strong>
         <p>{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",weekday:"short",
@@ -631,7 +636,9 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
         {safeProjectExternalHref(nextMeeting.meetingUrl)?<a
           href={safeProjectExternalHref(nextMeeting.meetingUrl)!}
           target="_blank" rel="noopener noreferrer">Join meeting ↗</a>:null}
-        <Link href={base+"?tab=team#project-meetings"}>Open meeting →</Link>
+        <Link href={base+"?tab=meetings#meeting-"+encodeURIComponent(nextMeeting.id)}>
+          Open this meeting →
+        </Link>
       </div>:<p className="prototype-mentor-summary-empty">No upcoming meeting recorded.</p>}
     </section>
     <section className="prototype-mentor-chart-card">
