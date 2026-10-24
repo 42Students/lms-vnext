@@ -61,6 +61,7 @@ export type ProjectsServiceErrorCode =
   | "PROJECT_MEETING_STALE_VERSION"
   | "PROJECT_MEETING_INVALID_STATE"
   | "PROJECT_MEETING_LINK_INVALID"
+  | "PROJECT_UPDATE_RATE_LIMITED"
   | "PROJECT_LIFECYCLE_INVALID_STATE";
 
 export class ProjectsServiceError extends Error {
