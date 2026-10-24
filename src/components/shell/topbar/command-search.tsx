@@ -10,6 +10,10 @@ import type { ShellNavItem } from "../shell-model";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 
 type LearnerCourse = { deliveryId: string; courseName: string; courseCode: string; sectionName: string; departmentName?: string; shortTitle?: string };
+type MentorCommandResult={
+  key:string;kind:"Project"|"Task"|"Student"|"Resource";
+  title:string;context:string;href:string;
+};
 import { topbarCommands, topbarConfigForPath, topbarSearchDestinations } from "./portal-config";
 import { SearchIcon } from "./icons";
 import { TpoFindSuggestions } from "./tpo-find-suggestions";
@@ -21,6 +25,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const config = topbarConfigForPath(pathname);
   const courseMode = config.portal === "learn" && !pathname.startsWith("/learn/my-placements");
   const [query, setQuery] = useState("");
+  const [mentorLookup,setMentorLookup]=useState<{
+    term:string;results:readonly MentorCommandResult[];failed:boolean;
+  }>({term:"",results:[],failed:false});
   const [courses, setCourses] = useState<LearnerCourse[]>([]);
   const [courseError, setCourseError] = useState<string | null>(null);
   const [queryError, setQueryError] = useState("");
@@ -121,6 +128,35 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const displayedCourses=!query.trim()?courseMatches.filter(course=>!recentIds.includes(course.deliveryId)):courseMatches;
   const commands = useMemo(() => topbarCommands(pathname, items), [pathname, items]);
   const destinations = topbarSearchDestinations(pathname, query);
+  const mentorTerm=query.trim();
+  const mentorResults=config.portal==="mentor"&&mentorLookup.term===mentorTerm
+    ?mentorLookup.results:[];
+  const mentorFailure=config.portal==="mentor"&&mentorLookup.term===mentorTerm&&
+    mentorLookup.failed;
+  // All returned results have already passed the server's active Mentor
+  // membership, role, college and assigned-project checks.
+  useEffect(()=>{
+    if(config.portal!=="mentor"||!open||query.trim().length<2)return;
+    const term=query.trim().slice(0,100);
+    const controller=new AbortController();
+    const handle=window.setTimeout(()=>{
+      void apiFetch<{results:MentorCommandResult[]}>(
+        "/api/mentor/search?q="+encodeURIComponent(term),
+        {cache:"no-store",signal:controller.signal},
+      ).then(payload=>{
+        if(controller.signal.aborted)return;
+        const results=Array.isArray(payload.results)?
+          payload.results.filter(row=>typeof row.key==="string"&&
+            typeof row.title==="string"&&typeof row.context==="string"&&
+            typeof row.href==="string"&&row.href.startsWith("/mentor/")&&
+            !row.href.startsWith("//")).slice(0,60):[];
+        setMentorLookup({term,results,failed:false});
+      }).catch(()=>{
+        if(!controller.signal.aborted)setMentorLookup({term,results:[],failed:true});
+      });
+    },180);
+    return ()=>{window.clearTimeout(handle);controller.abort();};
+  },[config.portal,open,query]);
   const matches = useMemo(() => {
     const search = query.trim().toLocaleLowerCase("en-IN");
     return (search ? commands.filter(command =>
@@ -165,6 +201,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
     if (query.trim() && courseMatches[0]) {
       rememberCourse(courseMatches[0].deliveryId);
       router.push("/learn/courses/" + encodeURIComponent(courseMatches[0].deliveryId) + "/home");
+    } else if (config.portal==="mentor"&&mentorResults[0]) {
+      router.push(mentorResults[0].href);
     } else if (matches[0]) {
       router.push(matches[0].href);
     } else if (destinations[0]) {
@@ -281,6 +319,35 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
               setOpen(false);
               setMobileOpen(false);
             }}/> : null}
+        {config.portal==="mentor"&&mentorTerm.length>=2&&mentorFailure?
+          <p role="alert" className="p-2 text-xs text-error">
+            Mentor results could not be loaded. Open the full search page to retry.
+          </p>:null}
+        {config.portal==="mentor"&&mentorTerm.length>=2&&
+          mentorLookup.term===mentorTerm&&!mentorFailure&&!mentorResults.length?
+          <p role="status" className="p-2 text-xs text-muted-foreground">
+            No matches in your assigned Mentor projects.
+          </p>:null}
+        {(["Student","Task","Project","Resource"] as const).map(kind=>{
+          const group=mentorResults.filter(result=>result.kind===kind);
+          if(!group.length)return null;
+          return <div key={kind}>
+            <p className="border-t border-border px-2 pt-2 text-xs font-semibold uppercase text-muted-foreground">
+              {kind==="Student"?"Students":kind==="Task"?"Tasks":
+                kind==="Project"?"Go to projects":"Resources"}
+            </p>
+            {group.map(result=><Link key={result.key} role="option"
+              aria-selected={false} href={result.href} className={style["suggestion"]}
+              onClick={()=>{setQuery("");setOpen(false);setMobileOpen(false);}}>
+              <SearchIcon/><span className="min-w-0">
+                <span className="block truncate">{result.title}</span>
+                <span className="block truncate text-xs text-muted-foreground">
+                  {result.context}
+                </span>
+              </span>
+            </Link>)}
+          </div>;
+        })}
         {destinations.length > 0 ? <p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-wide text-muted-foreground">Search within</p> : null}
         {destinations.map(destination => <Link key={destination.href}
           role="option" aria-selected={false} href={destination.href}
