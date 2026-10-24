@@ -113,6 +113,10 @@ export function MentorPrototypeHome({
         </p>
         <Link className="inline-flex min-h-10 items-center text-sm text-link underline"
           href="/mentor/projects?status=ARCHIVED">Browse archived teams →</Link>
+        <p className="mt-1 text-xs text-muted-foreground">
+          The system records primary Mentor assignments, not a separate
+          student team-lead designation. No student lead is inferred.
+        </p>
       </div>
     </div>
     <div className="prototype-mentor-home-columns">
