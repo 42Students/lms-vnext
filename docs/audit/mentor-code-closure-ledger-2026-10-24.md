@@ -38,7 +38,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 46-03 | CODE_READY | mentor-project-focus-queue.tsx; mentor-attention-service.ts; mentor-attention-later-service.ts; mentor-prototype-project-summaries.tsx |
 | 46-04 | CODE_READY | workspace-brief-editor.tsx; mentor-prototype-project-summaries.tsx; project-workspace.tsx |
 | 46-05 | CODE_READY | mentor-prototype-project-summaries.tsx; mentor-prototype-performance-table.tsx |
-| 46-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 46-06 | IMPLEMENTATION_OR_TEST_PENDING | Next meeting Overview shows true ceremony/status, agenda, duration, safe join and recorded participant names, with a direct meeting link. No persisted RSVP/invitation delivery record exists; do not claim invitations were sent or accepted. |
 | 46-07 | CODE_READY | mentor-prototype-project-summaries.tsx; readiness-service.ts |
 | 46-08 | CODE_READY | mentor-prototype-project-summaries.tsx; activity-service.ts |
 | 46-09 | IMPLEMENTATION_OR_TEST_PENDING | mentor-overview-quick-actions.tsx now adds task, sprint, release and resource entry points with read-only gating and existing mutation APIs; authentic learner-view simulation and post-mutation authenticated checks still missing. |
@@ -69,7 +69,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 48-12 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 49-01 | IMPLEMENTATION_OR_TEST_PENDING | Team roster now uses mentor-team-recent-actor-service.ts for persisted action-by-person timestamps, not task owner updates, and the parallel canonical mentor-learner-academic-facts-service.ts resolves roll/registration, department/program/cohort for authorized active learners; integration coverage added in learner-project-activity-filters.test.ts. Still reconcile prototype student lead/year labels and execute real DB/browser gates. |
 | 49-02 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 49-03 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 49-03 | IMPLEMENTATION_OR_TEST_PENDING | Team removal now atomically clears unfinished task owners, preserves DONE ownership and emits task audit events/mentor alert (member-service.ts; projects-p4-members.test.ts). But the prototype's Mentor-facing promote-lead/edit/removal workflow conflicts with current College Admin-only roster policy; authorization/product reconciliation and runtime tests remain. |
 | 49-04 | CODE_READY | mentor-meetings-calendar.tsx; mentor-meeting-list-filter-model.ts (all/review/retro/planning/standup/other quick filters; coming, requested, past, notes missing; bounded earlier history expansion) |
 | 49-05 | CODE_READY | mentor-calendar-service.ts; mentor-meetings-calendar.tsx; mentor-meeting-request-actions.tsx (persisted requester/task/suggested slot; Yes/Another time/No with exact version-checked project APIs) |
 | 49-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
@@ -86,7 +86,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 50-06 | CODE_READY | mentor-task-allocation.tsx and mentor-auto-assign-service.ts use nextMentorAllocatableSprint for first available planned sprint in project-wide release order; next-release sequence resets no longer reject legitimate allocation. PostgreSQL denial/positive regression authored, not executed. |
 | 50-07 | CODE_READY | mentor-next-sprint-assignment-model.ts and mentor-task-allocation.tsx; client allocation preview and server transaction share release-aware target selection, and preserve assignment point-balancing/recipient notification. |
 | 50-08 | CODE_READY | task-assignment-service.ts; mentor-auto-assign-service.ts; project-notification-service.ts (single, all-project and next-sprint assignments notify current active learner in the transaction) |
-| 50-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 50-09 | IMPLEMENTATION_OR_TEST_PENDING | Removed learners' unfinished tasks are now reassigned to the unassigned queue with CAS timestamp advances; DONE owners remain historical. Historical carried/review cases and full performance test matrix still pending. |
 | 50-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 51-01 | CODE_READY | project-resource-list.tsx; mentor-resource-sharer-service.ts |
 | 51-02 | CODE_READY | mentor-resource-groups-model.ts; project-resource-list.tsx (pinned, active/planned/earlier sprint, whole-project counts, show earlier; grouping off for reorder) |
