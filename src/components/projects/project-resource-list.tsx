@@ -19,9 +19,10 @@ type ResourceRow={
  resourceType?:string;pinned?:boolean;accessNotes?:string|null;templateKey?:string|null;
  sprintId?:string|null;taskId?:string|null;
 };
-export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tasks=[]}:{
+export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tasks=[],sharers=[]}:{
  projectId:string;rows:readonly ResourceRow[];mode:"MENTOR"|"ADMIN"|"LEARNER";readOnly:boolean;
  sprints?:readonly {id:string;label:string;status?:string}[];tasks?:readonly {id:string;label:string}[];
+ sharers?:readonly {resourceId:string;userId:string|null;displayName:string|null}[];
 }){
  const [search,setSearch]=useState("");
  const [showEarlier,setShowEarlier]=useState(false);
@@ -32,6 +33,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const [pinned,setPinned]=useState(false);
  const [sprint,setSprint]=useState("");
  const [task,setTask]=useState("");
+ const [sharer,setSharer]=useState("ALL");
+ const bySharer=new Map(sharers.map(row=>[row.resourceId,row] as const));
+ const sharerOptions=[...new Map(sharers.filter(row=>row.userId!==null)
+   .map(row=>[row.userId!,row.displayName??"Recorded author"] as const)).entries()]
+   .sort((a,b)=>a[1].localeCompare(b[1])||a[0].localeCompare(b[0]));
  const activeRows=rows.filter(row=>row.status==="ACTIVE");
  const sourceOrder=[...activeRows].sort((a,b)=>a.sequence-b.sequence).map(row=>row.id);
  const sourceKey=sourceOrder.join("|");
@@ -52,7 +58,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const [reorderError,setReorderError]=useState("");
  const canReorder=mode!=="LEARNER"&&!readOnly&&!reordering&&!sourceChanged&&
     !search.trim()&&type==="ALL"&&visibility==="ALL"&&status==="ACTIVE"&&!pinned&&
-    !sprint&&!task&&activeRows.length<=250&&
+    !sprint&&!task&&sharer==="ALL"&&activeRows.length<=250&&
     !(mode==="MENTOR"&&!showEarlier&&sprints.some(item=>item.status==="COMPLETED"&&
       activeRows.some(row=>row.sprintId===item.id)));
  async function saveOrder(){
@@ -107,11 +113,13 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     &&(status==="ALL"||row.status===status)
     &&(!pinned||row.pinned===true)
     &&(!sprint||row.sprintId===sprint)
-    &&(!task||row.taskId===task);
+    &&(!task||row.taskId===task)
+    &&(sharer==="ALL"||(sharer==="UNKNOWN"?!bySharer.get(row.id)?.userId:
+      bySharer.get(row.id)?.userId===sharer));
  });
  const earlierSprintIds=new Set(sprints.filter(item=>item.status==="COMPLETED").map(item=>item.id));
  const collapseEarlier=mode==="MENTOR"&&!showEarlier&&!search.trim()&&type==="ALL"&&
-    visibility==="ALL"&&status==="ACTIVE"&&!pinned&&!sprint&&!task;
+    visibility==="ALL"&&status==="ACTIVE"&&!pinned&&!sprint&&!task&&sharer==="ALL";
  const earlierCount=matching.filter(row=>row.sprintId!==null&&row.sprintId!==undefined&&
    earlierSprintIds.has(row.sprintId)).length;
  const filtered=collapseEarlier?matching.filter(row=>!row.sprintId||!earlierSprintIds.has(row.sprintId)):matching;
@@ -181,6 +189,13 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
           {sprints.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
       </label>
+      {mode==="MENTOR"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Shared by · recorded creator
+        <Select value={sharer} onChange={event=>setSharer(event.target.value)}>
+          <option value="ALL">Anyone</option>
+          {sharerOptions.map(([id,name])=><option value={id} key={id}>{name}</option>)}
+          <option value="UNKNOWN">Creator not recorded</option>
+        </Select>
+      </label>:null}
       <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Task
         <Select value={task} onChange={event=>setTask(event.target.value)}
           className="">
@@ -189,7 +204,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         </Select>
       </label>
     </>:null}
-    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
+    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");setSharer("ALL");}}
       className="min-h-11 text-sm font-[650] text-link underline md:min-h-9">Clear filters</Button>
   </div>
   {mode==="MENTOR"&&earlierCount>0?<div className="prototype-mentor-resource-earlier"
@@ -218,6 +233,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   />:filtered.length===0?<EmptyState title="No matching resources"
     description="No resources match these filters. Clear filters to see all resources." />:<div className="space-y-3">{orderedResources.map((resource,index)=>{
     const safe=resource.url?safeProjectExternalHref(resource.url):null;
+    const sourceSharer=bySharer.get(resource.id);
     return <Fragment key={resource.id}>
       {mode==="MENTOR"&&(index===0||Boolean(orderedResources[index-1]?.pinned)!==Boolean(resource.pinned))?
         <h3 className="prototype-mentor-resource-group-heading">
@@ -233,6 +249,12 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
        <p className="font-semibold text-foreground">{resource.title}</p>
+       {mode==="MENTOR"?<p className="text-xs text-muted-foreground">
+         Created by {sourceSharer?.displayName??"unknown recorded creator"} ·
+         {" "}{new Intl.DateTimeFormat("en-IN",{
+           day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+         }).format(new Date(resource.createdAt))} IST
+       </p>:null}
        {(rows.length<=12||expanded[resource.id])&&resource.description?<p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{resource.description}</p>:null}
        {(rows.length<=12||expanded[resource.id])&&mode!=="LEARNER"&&resource.accessNotes?
          <p className="mt-2 whitespace-pre-wrap break-words text-xs text-body leading-[20px]">
