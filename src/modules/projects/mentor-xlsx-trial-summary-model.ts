@@ -23,6 +23,8 @@ export function mentorCsvRows(csv:string,maxRows=5001):string[][]{
  }
  if(quoted)throw new Error("XLSX_PREVIEW_INVALID_CSV");
  if(field||row.length){row.push(field);rows.push(row);}
+ // A file lacking a trailing newline must obey the same row limit.
+ if(rows.length>maxRows)throw new Error("XLSX_PREVIEW_TOO_MANY_ROWS");
  return rows.filter(row=>row.some(value=>value.trim()));
 }
 export function mentorXlsxTrialSummary(csv:string):MentorXlsxTrialSummary{
