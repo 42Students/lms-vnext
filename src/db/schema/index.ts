@@ -131,3 +131,5 @@ export {
  db10LogAlertStates,db10LogAlertDailyCounts,
  db10LogAlertObservedEvents,
 } from "./db10-log-alerts.draft";
+
+export {mentorGoogleCalendarConnections} from "./mentor-google-calendar-connections";
