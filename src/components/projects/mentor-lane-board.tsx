@@ -13,6 +13,7 @@ import {nextMentorBoardFocus} from "@/modules/projects/mentor-board-keyboard-foc
 import {nextMentorReviewFocus} from "@/modules/projects/mentor-review-next-focus-model";
 import {mentorLanePage} from "@/modules/projects/mentor-board-lane-paging-model";
 import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
+import {mentorBoardSprintGroups,mentorBoardSprintTaskCounts} from "@/modules/projects/mentor-board-sprint-groups-model";
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
@@ -50,6 +51,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null),
  [visibleLimit,setVisibleLimit]=useState(150);
  const [laneLimits,setLaneLimits]=useState<Record<string,number>>({});
+ const [listLimits,setListLimits]=useState<Record<string,number>>({});
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
  const [dragging,setDragging]=useState(false);
  const [taskQuery,setTaskQuery]=useState("");
@@ -62,7 +64,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   return ()=>clearTimeout(expiration);
  },[undo]);
  function remember(name:string,value:string){
-  setVisibleLimit(150);setLaneLimits({});
+  setVisibleLimit(150);setLaneLimits({});setListLimits({});
   const query=new URLSearchParams(window.location.search);
   if(value)query.set(name,value);else query.delete(name);
   window.history.replaceState(null,"",window.location.pathname+"?"+query.toString());
@@ -134,14 +136,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    window.history.replaceState(null,"",window.location.pathname+
      (query.toString()?"?"+query.toString():""));
  }
- const sprintListGroups=[
-   ...orderMentorSprints(sprints,releases).map(row=>({
-     id:row.id,title:"Sprint "+row.sequence+" · "+row.title,
-     status:row.status,tasks:visible.filter(task=>task.sprintId===row.id),
-   })),
-   {id:"BACKLOG",title:"Product backlog · not in a sprint",
-     status:"BACKLOG",tasks:visible.filter(task=>task.sprintId===null)},
- ].filter(group=>group.tasks.length>0);
+ const orderedSprints=orderMentorSprints(sprints,releases);
+ const sprintListGroups=mentorBoardSprintGroups(orderedSprints,matching,listLimits);
+ const sprintTaskCounts=mentorBoardSprintTaskCounts(matching);
  // Per-lane counts always use the full filtered result, independent of
  // the List view paging size.
  const lanes=groupLearnerBoardLanes(matching,sprints);
@@ -231,8 +228,16 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint
     <Select data-slot="select" value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
       className="ml-2 min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
-     <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
-      .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
+     <option value="">All sprints · {matching.length} matching tasks</option>
+     {[...releases].sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id))
+      .filter(item=>!release||item.id===release)
+      .map(item=><optgroup key={item.id} label={item.title}>
+        {orderedSprints.filter(s=>s.releaseId===item.id).map(s=>
+          <option key={s.id} value={s.id}>
+            Sprint {s.sequence} · {s.title} ·
+            {" "}{sprintTaskCounts.get(s.id)??0} matching tasks
+          </option>)}
+      </optgroup>)}
     </Select></label>
    <Disclosure title="More board filters" defaultOpen={Boolean(scope==="all"||priority||taskType||assignee||statusFilter)} className="w-full min-w-0" contentClassName="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-4">
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint scope
@@ -421,7 +426,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       }}>
       <summary>
         <strong>{group.title}</strong>
-        <span>{group.tasks.length} tasks · {group.status.replaceAll("_"," ")}</span>
+        <span>{group.allCount} tasks · {group.status.replaceAll("_"," ")}</span>
       </summary>
       {group.tasks.map(task=>{
       const rowSprint=task.sprintId?bySprint.get(task.sprintId):null;
@@ -450,6 +455,13 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <span>{task.estimatePoints??"—"}</span>
       </div>;
     })}
+    {group.remaining>0?<Button type="button" size="sm" variant="secondary"
+      className="m-3"
+      onClick={()=>setListLimits(current=>({...current,
+        [group.id]:(current[group.id]??20)+20,
+      }))}>
+      Show 20 more in {group.title} · {group.remaining} remaining
+    </Button>:null}
     </details>)}
   </div>:null}
   <aside className="prototype-mentor-board-detail" aria-label="Selected task details">
@@ -544,9 +556,6 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </>:<p>No task selected.</p>}
   </aside>
   </div></>:null}
-  {view==="list"&&matching.length>visible.length?<Button variant="secondary" type="button"
-    className="min-h-11 px-4"
-    onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</Button>:null}
   {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
     projectId={projectId} task={tasks.find(task=>task.id===selected)!}
     sprintTitle={sprints.find(s=>s.id===tasks.find(task=>task.id===selected)?.sprintId)?.title??null}
