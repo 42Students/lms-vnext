@@ -175,6 +175,7 @@ export const ACTIVITY_EVENT_TYPES = {
   PROJECTS_MEETING_NOTES_UPDATED: "projects.meeting.notes_updated",
   PROJECTS_MENTOR_UPDATE_POSTED: "projects.mentor_update.posted",
   PROJECTS_MEETING_RESCHEDULED: "projects.meeting.rescheduled",
+  PROJECTS_MEETING_RSVP: "projects.meeting.rsvp",
   PROJECTS_DELIVERY_DRAFT_CREATED: "projects.delivery.draft_created",
   PROJECTS_DELIVERY_DRAFT_UPDATED: "projects.delivery.draft_updated",
   PROJECTS_DELIVERY_SUBMITTED: "projects.delivery.submitted",
