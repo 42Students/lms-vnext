@@ -96,6 +96,12 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
             sprintPlan={workspace.sprints.map(row=>({
               releaseId:row.releaseId,sequence:row.sequence,
               startDate:row.startDate,endDate:row.endDate,
+            }))}
+            canPullBacklog={workspace.project.status==="ACTIVE"}
+            backlogTasks={backlog.map(task=>({
+              id:task.id,title:task.title,status:task.status,
+              updatedAt:task.updatedAt.toISOString(),
+              estimatePoints:task.estimatePoints,
             }))}/>:<p>Create an unshipped release before planning its sprint.</p>}
       </section>:null}
     <section className="prototype-mentor-kpi-card" aria-label="Sprint and release totals">
@@ -190,6 +196,12 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
                   sprintPlan={workspace.sprints.map(row=>({
                     releaseId:row.releaseId,sequence:row.sequence,
                     startDate:row.startDate,endDate:row.endDate,
+                  }))}
+                  canPullBacklog={workspace.project.status==="ACTIVE"}
+                  backlogTasks={backlog.map(task=>({
+                    id:task.id,title:task.title,status:task.status,
+                    updatedAt:task.updatedAt.toISOString(),
+                    estimatePoints:task.estimatePoints,
                   }))}/>
               </>:null}
             </div>
@@ -543,7 +555,11 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
         }))}
         learners={students.map(student=>({
           membershipId:student.membershipId,displayName:student.displayName,
-        }))}/>:null}
+        }))}
+        backlogTasks={workspace.tasks.filter(task=>!task.deletedAt&&task.sprintId===null)
+          .map(task=>({id:task.id,title:task.title,status:task.status,
+            updatedAt:task.updatedAt.toISOString(),
+            estimatePoints:task.estimatePoints}))}/>:null}
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title"><h2>Where they are</h2>
         <span>{completed.length} of {live.length} recorded tasks done</span></div>
