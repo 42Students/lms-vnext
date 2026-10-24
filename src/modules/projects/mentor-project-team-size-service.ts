@@ -37,3 +37,40 @@ export async function getMentorProjectTeamSizes(context:RequestContext,
  for(const row of rows)sizes.set(row.projectId,Number(row.total));
  return sizes;
 }
+
+/** Count distinct students separately from project seats. One learner may
+ * belong to several teams; student headcount must not count that person twice.
+ */
+export async function getMentorPortfolioLearnerCounts(
+ context:RequestContext,
+ verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
+):Promise<{uniqueLearners:number;learnerAssignments:number}>{
+ const membership=context.membership;
+ if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+   context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
+     collegeId:membership.collegeId,organizationId:membership.organizationId,
+   }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const ids=(verifiedRows??await listMyProjectInstances(context))
+   .filter(row=>row.memberRole==="MENTOR"&&
+     row.project.collegeId===membership.collegeId)
+   .map(row=>row.project.id);
+ if(!ids.length)return {uniqueLearners:0,learnerAssignments:0};
+ const [totals]=await getDb().select({
+   learnerAssignments:count(),
+   uniqueLearners:sql<number>`count(distinct ${projectMembers.membershipId})::int`,
+ }).from(projectMembers)
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,and(
+     eq(membershipRoles.membershipId,collegeMemberships.id),
+     sql`cast(${membershipRoles.role} as text)='LEARNER'`,
+   ))
+   .where(and(inArray(projectMembers.projectId,ids),
+     eq(projectMembers.role,"LEARNER"),isNull(projectMembers.endedAt),
+     eq(collegeMemberships.collegeId,membership.collegeId),
+     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
+ return {uniqueLearners:Number(totals?.uniqueLearners??0),
+   learnerAssignments:Number(totals?.learnerAssignments??0)};
+}
