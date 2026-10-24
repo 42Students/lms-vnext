@@ -23,17 +23,27 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
   const sprints=[...workspace.sprints].sort((a,b)=>a.sequence-b.sequence);
   const historical=new Map(workspace.mentorSprintSnapshots.map(snapshot=>
     [snapshot.sprintId,snapshot] as const));
+  const commitments=new Map(workspace.mentorSprintCommitments.map(snapshot=>
+    [snapshot.sprintId,snapshot] as const));
   const chartPoints=(sprint:Workspace["sprints"][number])=>{
+    const initial=commitments.get(sprint.id);
+    const final=historical.get(sprint.id);
     if(sprint.status==="COMPLETED"){
-      const snapshot=historical.get(sprint.id);
-      return snapshot?{planned:snapshot.plannedPoints,done:snapshot.donePoints,recorded:true}:
-        {planned:0,done:0,recorded:false};
+      return final?
+        {planned:initial?.plannedPoints??final.plannedPoints,
+          done:final.donePoints,recorded:true,initialRecorded:Boolean(initial)}:
+        {planned:initial?.plannedPoints??0,done:0,recorded:false,
+          initialRecorded:Boolean(initial)};
     }
     const group=liveTasks.filter(task=>task.sprintId===sprint.id);
-    return {planned:points(group),done:points(group.filter(task=>task.status==="DONE")),
-      recorded:true};
+    return {planned:initial?.plannedPoints??points(group),
+      done:points(group.filter(task=>task.status==="DONE")),
+      recorded:true,initialRecorded:Boolean(initial)};
   };
-  const maxPts=Math.max(1,...sprints.map(sprint=>chartPoints(sprint).planned));
+  const maxPts=Math.max(1,...sprints.flatMap(sprint=>{
+    const value=chartPoints(sprint);
+    return [value.planned,value.done];
+  }));
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
   return <div className="prototype-mentor-sprint-plan">
     <section className="prototype-mentor-kpi-card" aria-label="Sprint and release totals">
@@ -53,7 +63,9 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
             return <Link href={base+"?tab=board&sprint="+encodeURIComponent(sprint.id)}
               key={sprint.id} className="prototype-mentor-sprint-bar"
               aria-label={"Sprint "+sprint.sequence+": "+(value.recorded?
-                completed+" of "+planned+" points done":"historical points not recorded")}>
+                completed+" points done against "+planned+
+                  (value.initialRecorded?" committed at sprint start":" at sign-off")+
+                  " points":"historical completed points not recorded")}>
               <span className="prototype-mentor-bar-columns">
                 <span style={{height:(planned?Math.max(5,Math.round(100*planned/maxPts)):0)+"%"}} className="prototype-mentor-bar-planned" />
                 <span style={{height:Math.max(0,Math.round(100*completed/maxPts))+"%"}} className="prototype-mentor-bar-done" />
@@ -62,10 +74,13 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
             </Link>;
           })}
         </div>:<p className="prototype-mentor-summary-empty">No sprints have been planned yet.</p>}
-      <div className="prototype-mentor-chart-legend"><span>■ Points at sign-off (completed)</span>
-        <span>■ Done</span></div>
-      <p>Completed sprint points are frozen at sign-off; earlier completed sprints
-        without a recorded snapshot are shown as unavailable, not zero.</p>
+      <div className="prototype-mentor-chart-legend">
+        <span>■ Planned at sprint start, when recorded</span><span>■ Done at sign-off</span>
+      </div>
+      <p>Planned values use immutable start-time commitments when available.
+        Older sprints without a start-time snapshot use sign-off planned totals,
+        not the original commitment. Completed sprints without sign-off history
+        are marked unavailable rather than claiming zero done.</p>
     </section>
     <section className="prototype-mentor-chart-card" aria-label="Release progress">
       <div className="prototype-mentor-card-title"><h2>Release plan</h2>
