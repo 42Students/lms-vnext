@@ -128,7 +128,7 @@ function MeetingRow({
       </section>:null}
       {meeting.facilitation?.notes?.trim()||meeting.outcome?.trim()?
         <section className="prototype-mentor-meeting-section">
-          <h3>Notes · the team sees them</h3>
+          <h3>Recorded mentor notes and outcome</h3>
           <p>{meeting.facilitation?.notes?.trim()||meeting.outcome}</p>
         </section>:null}
       {(meeting.facilitation?.actionItemRows?.length??0)>0?
