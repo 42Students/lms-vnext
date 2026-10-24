@@ -325,9 +325,11 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
     .filter(meeting=>["SCHEDULED","RESCHEDULED"].includes(meeting.status)&&meeting.startsAt.getTime()>now)
     .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())[0];
   const submitted=workspace.finalDelivery.submissions.at(-1);
-  const mentorUpdates=workspace.activity.filter(event=>
-    event.eventType==="projects.mentor_update.posted")
-    .sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime()).slice(0,3);
+  const recentActivity=[...workspace.activity]
+    .sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime())
+    .slice(0,5);
+  const signedOff=workspace.sprints.filter(row=>row.status==="COMPLETED").length;
+  const shipped=workspace.releases.filter(row=>row.status==="SHIPPED").length;
   const progress=live.length?Math.round(100*completed.length/live.length):0;
   const velocity=projectMentorVelocity(workspace.sprints,workspace.mentorSprintSnapshots,
     points(live.filter(task=>task.status!=="DONE")));
@@ -446,24 +448,33 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
       </div>:<p className="prototype-mentor-summary-empty">No upcoming meeting recorded.</p>}
     </section>
     <section className="prototype-mentor-chart-card">
-      <div className="prototype-mentor-card-title"><h2>Latest team updates</h2>
+      <div className="prototype-mentor-card-title"><h2>Latest project activity</h2>
         <Link href={base+"?tab=activity"}>All activity →</Link></div>
-      {mentorUpdates.length?mentorUpdates.map(update=>(
+      {recentActivity.length?recentActivity.map(update=>(
         <div key={update.id} className="prototype-mentor-overview-actions">
           <p>{update.summary}</p>
-          <span>{update.actorDisplayName||"Mentor"} · {new Intl.DateTimeFormat("en-IN",{
+          <span>{update.actorDisplayName||"Recorded project event"} · {new Intl.DateTimeFormat("en-IN",{
             day:"numeric",month:"short",timeZone:"Asia/Kolkata",
           }).format(update.occurredAt)}</span>
+          <Link href={base+"?tab="+(
+            update.subjectType==="project_task"?"board":
+            update.subjectType==="project_sprint"?"sprints":
+            update.subjectType==="project_meeting"?"team":"activity"
+          )}>View related section →</Link>
         </div>
-      )):<p className="prototype-mentor-summary-empty">No team updates posted yet.</p>}
+      )):<p className="prototype-mentor-summary-empty">No project activity recorded yet.</p>
     </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title"><h2>Final submission</h2>
         <Link href={base+"?tab=delivery"}>Open review →</Link></div>
       <div className="prototype-mentor-overview-actions">
+        <p>{signedOff} of {workspace.sprints.length} recorded sprints signed off
+          · {shipped} of {workspace.releases.length} releases shipped</p>
+        <p>{completed.length} of {live.length} current tasks marked done</p>
         <p>{submitted?"Version "+submitted.version+" · "+submitted.status.replaceAll("_"," "):
           "No final submission has been recorded yet."}</p>
         {workspace.project.endDate?<p>Project target: {workspace.project.endDate}</p>:null}
+        <p>These are recorded readiness facts, not permission to submit or an automatic acceptance decision.</p>
       </div>
     </section>
   </div>;
