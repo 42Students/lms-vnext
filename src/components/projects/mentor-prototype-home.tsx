@@ -8,7 +8,7 @@ import {mentorAttentionReceiptKey} from "@/modules/projects/mentor-attention-rea
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
 import type {MentorStudentWatchItem} from "@/modules/projects/mentor-student-watch-service";
 import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar-view";
-import {selectMentorHomeWeekMeetings} from "@/modules/projects/mentor-home-week-meetings-model";
+import {selectMentorHomeWeekMeetings,mentorHomeMeetingDisplayTitle} from "@/modules/projects/mentor-home-week-meetings-model";
 import {mentorHomeGreeting} from "@/modules/projects/mentor-home-greeting-model";
 
 type FocusItem = MentorProjectAttention;
@@ -158,7 +158,7 @@ export function MentorPrototypeHome({
               <span>{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",
                 weekday:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"})
                 .format(new Date(item.startsAt))}</span>
-              <strong>{item.title} · {item.projectTitle}</strong>
+              <strong>{mentorHomeMeetingDisplayTitle(item)}</strong>
             </Link>)}
             {meetings.length>4?<Link href="/mentor/calendar">
               {meetings.length-4} more this week →</Link>:null}
