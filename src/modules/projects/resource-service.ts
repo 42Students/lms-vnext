@@ -12,12 +12,14 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {projectResourceAuditInput} from "./mentor-resource-audit-model";
 import {isArchivableProjectResourceStatus,isArchivedResourceRestoreOnly} from "./mentor-resource-state-transition-model";
+import {mentorResourceNeedsVerifiedFile} from "./mentor-file-resource-visibility-model";
 import {randomUUID} from "node:crypto";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {z} from "zod";
 import {
   projectInstances,
   projectResources,
+  projectResourceFiles,
   projectSprints,
   projectTasks,
   projectMembers,
@@ -337,6 +339,25 @@ export async function updateProjectResource(
         taskId: input.taskId !== undefined ? input.taskId : resource.taskId,
       });
 
+    // A metadata-only file placeholder cannot be published to learners
+    // merely by changing status. The storage verifier must have committed
+    // a clean READY, same-project attachment first.
+    if(resource.status==="DRAFT"&&mentorResourceNeedsVerifiedFile({
+      status:merged.status??resource.status,
+      resourceType:merged.resourceType??resource.resourceType,
+      description:merged.description??null,url:merged.url??null,
+    })){
+      const [verified]=await tx.select({id:projectResourceFiles.id})
+        .from(projectResourceFiles).where(and(
+          eq(projectResourceFiles.projectId,scope.project.id),
+          eq(projectResourceFiles.collegeId,scope.collegeId),
+          eq(projectResourceFiles.resourceId,resource.id),
+          eq(projectResourceFiles.status,"READY"),
+          eq(projectResourceFiles.scanStatus,"CLEAN"),
+          isNull(projectResourceFiles.deletedAt),
+        )).limit(1);
+      if(!verified)throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+    }
     if(merged.sprintId){
       const [associated]=await tx.select({id:projectSprints.id}).from(projectSprints)
         .where(and(eq(projectSprints.id,merged.sprintId),

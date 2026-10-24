@@ -2097,8 +2097,10 @@ export function ProjectWorkspace({
           </p>:null}
           <ProjectResourceFilesSection
             projectId={workspace.project.id}
-            resources={workspace.resources.filter(item=>item.status==="ACTIVE")
-              .map(item=>({id:item.id,title:item.title,visibility:item.visibility}))}
+            resources={workspace.resources.filter(item=>
+                item.status==="ACTIVE"||mode!=="LEARNER"&&item.status==="DRAFT")
+              .map(item=>({id:item.id,title:item.title,visibility:item.visibility,
+                status:item.status,updatedAt:item.updatedAt.toISOString()}))}
             mode={mode}
             status={workspace.project.status}
             currentMembershipId={currentMembershipId}

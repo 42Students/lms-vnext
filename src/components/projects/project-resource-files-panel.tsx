@@ -9,6 +9,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Alert } from "@/components/ui/alert";
 
 import {useEffect,useRef,useState,type FormEvent} from "react";
+import {useRouter} from "next/navigation";
+import {projectMutation} from "./project-api";
 import {mentorPrivatePreviewKind,mentorPrivatePreviewGrantValid} from "@/modules/projects/mentor-private-resource-preview-model";
 import {mentorPdfEmbedUrl} from "@/modules/projects/mentor-pdf-evidence-controls-model";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -61,9 +63,11 @@ function putWithProgress(file:File,url:string,headers:Record<string,string>,
 }
 export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],canManage,canUpload=canManage}:{
   projectId:string;initialFiles:ProjectResourceFile[];canManage:boolean;canUpload?:boolean;
-  resources?:readonly {id:string;title:string}[];
+  resources?:readonly {id:string;title:string;status?:string;updatedAt?:string}[];
 }){
+  const router=useRouter();
   const [files,setFiles]=useState(initialFiles);
+  const [publishTarget,setPublishTarget]=useState<ProjectResourceFile|null>(null);
   const [preview,setPreview]=useState<{id:string;url:string;expiresAt:string;kind:"PDF"|"IMAGE"}|null>(null);
   const [pdfPage,setPdfPage]=useState(1);
   const [pdfZoom,setPdfZoom]=useState(100);
@@ -147,6 +151,24 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       // An UPLOADING record remains discoverable; Retry calls complete after the PUT has landed.
       try{await refresh();}catch{/* Keep the latest known row; never expose the grant. */}
     }finally{uploadingRef.current=false;setBusy(false);setProgress(null);setUploadPhase(null);}
+  }
+  async function publishDraftResource(){
+    const file=publishTarget;
+    if(!file||busy||file.status!=="READY"||!file.resourceId)return;
+    const linked=resources.find(row=>row.id===file.resourceId);
+    if(!linked||linked.status!=="DRAFT"||!linked.updatedAt)return;
+    setBusy(true);setFeedback(null);
+    try{
+      await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
+        "/resources/"+encodeURIComponent(linked.id),"PATCH",{
+        status:"ACTIVE",expectedUpdatedAt:linked.updatedAt,
+      });
+      setPublishTarget(null);
+      setFeedbackTone("success");
+      setFeedback("Verified file resource published to the project team.");
+      router.refresh();
+    }catch(error){problem(error);}
+    finally{setBusy(false);}
   }
   async function retryComplete(file:ProjectResourceFile){
     setBusy(true);setFeedback(null);
@@ -236,7 +258,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
         <Select value={linkedResourceId} disabled={busy} onChange={event=>setLinkedResourceId(event.target.value)}
           className="mt-1 block w-full">
           <option value="">New standalone file</option>
-          {resources.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
+          {resources.map(item=><option key={item.id} value={item.id}>{item.title}{item.status==="DRAFT"?" (draft · private)":""}</option>)}
         </Select>
       </label>:null}
       </Disclosure>
@@ -287,6 +309,13 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                 </Button>:null}
               {projectFileUsable(file)&&<Button variant="secondary" type="button" disabled={busy} onClick={()=>void download(file)}
                 className="min-h-11 w-full md:min-h-9 md:w-auto">Download file</Button>}
+              {canManage&&file.status==="READY"&&file.resourceId&&
+                resources.some(item=>item.id===file.resourceId&&item.status==="DRAFT")?
+                <Button variant="primary" type="button" disabled={busy}
+                  onClick={()=>{setFeedback(null);setPublishTarget(file);}}
+                  className="min-h-11 w-full md:min-h-9 md:w-auto">
+                  Publish linked draft
+                </Button>:null}
               {canManage&&file.status==="UPLOADING"&&<Button variant="secondary" type="button" disabled={busy}
                   onClick={()=>void retryComplete(file)} className="min-h-11 w-full md:min-h-9 md:w-auto">Retry</Button>}
             </div>
@@ -368,6 +397,12 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       })}
     </ul>}
     {feedback&&!(deleteTarget&&feedbackTone==="error")?<Alert tone={feedbackTone} role={feedbackTone==="error"?"alert":"status"}>{feedback}</Alert>:null}
+    <ConfirmDialog open={publishTarget!==null}
+      onOpenChange={value=>{if(!value&&!busy)setPublishTarget(null);}}
+      title="Publish verified file to students?"
+      description="The linked draft resource becomes active and visible to students with project access. Only verified CLEAN uploads qualify; this does not change other private resources."
+      confirmLabel="Publish resource" pending={busy}
+      onConfirm={()=>void publishDraftResource()}/>
     <ConfirmDialog open={discardGuard.discardOpen} onOpenChange={discardGuard.setDiscardOpen}
       title="Discard resource changes?"
       description="You have unsaved project changes. Leave this page and discard them?"

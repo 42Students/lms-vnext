@@ -22,6 +22,7 @@ import {
 } from "@/modules/storage/file-policy";
 import { requireProjectLifecycleAccess, requireProjectReadAccess } from "./access";
 import { projectResourceIdSchema } from "./validation";
+import {canAttachProjectFileToResource} from "./mentor-file-resource-visibility-model";
 
 type FileRow = typeof projectResourceFiles.$inferSelect;
 
@@ -125,7 +126,8 @@ export async function issueProjectFileUploadGrant(
       .from(projectResources)
       .where(and(eq(projectResources.id, input.resourceId), eq(projectResources.projectId, scope.project.id)))
       .limit(1);
-    if (!resource || resource.status !== "ACTIVE" || (scope.access==="LEARNER"&&resource.visibility!=="TEAM")) throw new StorageFileError("STORAGE_NOT_FOUND");
+    if (!canAttachProjectFileToResource(scope.access as "LEARNER"|"MENTOR"|"ADMIN",resource))
+      throw new StorageFileError("STORAGE_NOT_FOUND");
   }
 
   const grant = await issueObjectUpload({
@@ -139,13 +141,28 @@ export async function issueProjectFileUploadGrant(
   const row = await getDb().transaction(async (tx) => {
     await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${`prf:${scope.project.id}`}, 0))`);
     const [project] = await tx
-      .select({ status: projectInstances.status })
+      .select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt })
       .from(projectInstances)
-      .where(eq(projectInstances.id, scope.project.id))
+      .where(and(eq(projectInstances.id, scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId)))
       .for("share")
       .limit(1);
-    if (!project) throw new StorageFileError("STORAGE_NOT_FOUND");
+    if (!project||project.deletedAt) throw new StorageFileError("STORAGE_NOT_FOUND");
     requireOpenProject(project.status);
+    if(input.resourceId){
+      // The external object-store grant is not a project-file permission.
+      // Recheck the exact link and visibility inside the project lock before
+      // persisting an upload record, so a concurrent archive cannot leak it.
+      const [linked]=await tx.select({
+        status:projectResources.status,visibility:projectResources.visibility,
+      }).from(projectResources).where(and(
+        eq(projectResources.id,input.resourceId),
+        eq(projectResources.projectId,scope.project.id),
+      )).for("share").limit(1);
+      if(!canAttachProjectFileToResource(
+        scope.access as "LEARNER"|"MENTOR"|"ADMIN",linked??null))
+        throw new StorageFileError("STORAGE_NOT_FOUND");
+    }
     const [{ count }] = (await tx
       .select({ count: sql<number>`count(*)::int` })
       .from(projectResourceFiles)
