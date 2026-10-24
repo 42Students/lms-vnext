@@ -259,8 +259,7 @@ async function MentorNotificationsContent({
           const key=mentorAnnouncementReceiptKey(item);
           return [item.id,{key,read:sourceRead(key)}] as const;
         })):undefined}
-      items={(selectedPill==="unread"?announcements.filter(item=>
-        ownSourceReceipts!==null&&!sourceRead(mentorAnnouncementReceiptKey(item))):announcements).map(item=>({
+      items={announcements.map(item=>({
         id:item.id,title:item.title,message:item.message,
         senderType:item.senderType,receiverType:item.receiverType,
         isPinned:item.isPinned,createdAt:item.createdAt,
