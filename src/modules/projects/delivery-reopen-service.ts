@@ -8,6 +8,7 @@ import {learnerProjectDeliveryReopenedNotice} from "./learner-project-review-not
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {projectDeliveryLockInputSchema,mayReopenApprovedDelivery} from "./pr-s2-07-delivery-reopen-model";
 import {projectSubmissionIdSchema} from "./validation";
@@ -21,11 +22,17 @@ export async function reopenApprovedProjectDelivery(context:RequestContext,proje
  const input=projectDeliveryLockInputSchema.parse(rawInput);
  const actorMembershipId=context.membership.id;
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+  const [project]=await tx.select({
+    status:projectInstances.status,deletedAt:projectInstances.deletedAt,
+  }).from(projectInstances)
     .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
     .for("update").limit(1);
-  if(!project||project.status!=="ACTIVE")
+  if(!project||project.status!=="ACTIVE"||project.deletedAt)
     throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  // The earlier page/scope check is not a transaction-level authorization:
+  // lock and re-read the Mentor/Admin grant and membership before mutating
+  // the approved delivery or emitting learner notices.
+  await assertPersistedProjectMutationActor(tx,context,scope);
   const [latest]=await tx.select().from(projectSubmissions)
     .where(eq(projectSubmissions.projectId,scope.project.id))
     .orderBy(desc(projectSubmissions.version)).for("update").limit(1);

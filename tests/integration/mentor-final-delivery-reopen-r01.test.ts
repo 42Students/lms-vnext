@@ -78,6 +78,28 @@ describe.skipIf(!enabled)("MEN-projects-meetings-R01 mentor approval locks then 
     expect(learnerNotices.rows[0]?.count).toBe("1");
     const locks = await pool!.query("select event_type from project_delivery_events where submission_id=$1", [submission.id]);
     expect(locks.rows).toEqual([{ event_type: "LOCKED" }]);
+    // Removing the Mentor grant after approval may not reopen the delivery,
+    // even with a still-valid approval timestamp in a saved browser tab.
+    await pool!.query(`update project_members set can_mutate=false
+      where project_id=$1 and membership_id=$2 and role='MENTOR'`,[
+      project.id,SEED_IDS.facultyCollegeAMembership,
+    ]);
+    try{
+      await expect(reopenApprovedProjectDelivery(mentor,project.id,submission.id,{
+        expectedUpdatedAt:approved.submission.updatedAt.toISOString(),
+        reason:"Attempt while no longer authorized",
+      })).rejects.toBeDefined();
+      const rejected=await pool!.query<{count:string}>(`select count(*)::text as count
+        from project_delivery_events where submission_id=$1 and event_type='REOPENED'`,[
+        submission.id,
+      ]);
+      expect(rejected.rows[0]?.count).toBe("0");
+    }finally{
+      await pool!.query(`update project_members set can_mutate=true
+        where project_id=$1 and membership_id=$2 and role='MENTOR'`,[
+        project.id,SEED_IDS.facultyCollegeAMembership,
+      ]);
+    }
     const reopened = await reopenApprovedProjectDelivery(mentor, project.id, submission.id, {
       expectedUpdatedAt: approved.submission.updatedAt.toISOString(), reason: "Learner needs revision",
     });
