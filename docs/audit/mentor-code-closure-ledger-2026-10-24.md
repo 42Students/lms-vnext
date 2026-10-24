@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 39/132 `CODE_READY`, 86/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 41/132 `CODE_READY`, 84/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -25,7 +25,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | X-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 45-01 | CODE_READY | mentor-attention.ts; mentor-prototype-home.tsx |
 | 45-02 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 45-03 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 45-03 | CODE_READY | mentor-attention-later-service.ts; mentor-prototype-home.tsx; mentor/attention/later/route.ts |
 | 45-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 45-05 | CODE_READY | mentor-home-week-meetings-model.ts; mentor-prototype-home.tsx |
 | 45-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
@@ -34,7 +34,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 45-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 45-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 46-01 | CODE_READY | mentor-historical-plan-facts-model.ts; mentor-estimated-finish-model.ts; mentor-prototype-project-summaries.tsx |
-| 46-02 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 46-02 | CODE_READY | mentor-blocker-age-service.ts; mentor-blocker-age-model.ts; mentor-prototype-project-summaries.tsx |
 | 46-03 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 46-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 46-05 | CODE_READY | mentor-prototype-project-summaries.tsx; mentor-prototype-performance-table.tsx |
