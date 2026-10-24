@@ -636,7 +636,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
         {safeProjectExternalHref(nextMeeting.meetingUrl)?<a
           href={safeProjectExternalHref(nextMeeting.meetingUrl)!}
           target="_blank" rel="noopener noreferrer">Join meeting ↗</a>:null}
-        <Link href={base+"?tab=meetings#meeting-"+encodeURIComponent(nextMeeting.id)}>
+        <Link href={base+"?tab=team#meeting-"+encodeURIComponent(nextMeeting.id)}>
           Open this meeting →
         </Link>
       </div>:<p className="prototype-mentor-summary-empty">No upcoming meeting recorded.</p>}
