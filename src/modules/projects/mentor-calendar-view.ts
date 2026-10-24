@@ -1,4 +1,5 @@
 import type {MentorMeetingFacilitation} from "./mentor-meeting-facilitation-model";
+import type {MentorGoogleMeetingStatus} from "./mentor-google-calendar-status";
 
 /**
  * Mentor calendar rules mirrored from legacy /mentor/calendar.
@@ -25,6 +26,8 @@ export type MentorMeetingCalendarItem = {
   requestedByName?:string|null;
   legacyCalendarSyncStatus?:string|null;
   calendarSyncError?:string|null;
+  /** Only populated by a verified current Google API read, never imported copy. */
+  googleProviderStatus?:MentorGoogleMeetingStatus;
   agenda?:string|null;
   outcome?:string|null;
   facilitation?:Partial<MentorMeetingFacilitation>;
