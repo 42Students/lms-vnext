@@ -28,7 +28,10 @@ describe("Mentor-only learner academic facts boundaries",()=>{
  });
  it("labels absent programme, missing lead and online status as unavailable",()=>{
   expect(ui).toContain("Discipline not recorded");
-  expect(ui).toContain("no\n      student lead or academic year is inferred");
-  expect(ui).toContain("Last task change is based on recorded task timestamps");
+  expect(ui).toContain("no\n      student lead is inferred");
+  expect(ui).toContain("academic year\n      is shown only when it is recorded");
+  expect(academic).toContain("academicYear:cohorts.academicYear");
+  expect(academic).toContain("academicYear:row.departmentName?row.academicYear:null");
+  expect(ui).toContain("Last recorded action comes from persisted project events");
  });
 });

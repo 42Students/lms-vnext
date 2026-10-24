@@ -11,7 +11,7 @@ import {ProjectsServiceError} from "./errors";
 export type MentorLearnerAcademicFact={
  membershipId:string;rollNumber:string|null;
  registrationNumber:string|null;programName:string|null;
- departmentName:string|null;cohortName:string|null;
+ departmentName:string|null;cohortName:string|null;academicYear:string|null;
 };
 /** Mentor-only learner academic context, scoped to the exact authorized
  * project and college. Generic Project workspace readers never receive this.
@@ -30,6 +30,7 @@ export async function getMentorLearnerAcademicFacts(
   programName:programs.name,
   departmentName:departments.name,
   cohortName:cohorts.name,
+  academicYear:cohorts.academicYear,
  }).from(projectMembers)
   .innerJoin(collegeMemberships,and(
     eq(collegeMemberships.id,projectMembers.membershipId),
@@ -68,5 +69,6 @@ export async function getMentorLearnerAcademicFacts(
   programName:row.departmentName?row.programName:null,
   departmentName:row.departmentName,
   cohortName:row.departmentName?row.cohortName:null,
+  academicYear:row.departmentName?row.academicYear:null,
  }));
 }

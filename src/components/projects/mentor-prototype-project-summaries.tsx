@@ -306,6 +306,7 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
                 "Discipline not recorded"}
               {academics?.programName?" · "+academics.programName:""}
               {academics?.cohortName?" · "+academics.cohortName:""}
+              {academics?.academicYear?" · Academic year "+academics.academicYear:""}
             </small>:null}
           </div>
         </div>
@@ -324,7 +325,8 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
       Last recorded action comes from persisted project events authored by this person; it is not sign-in time, online presence or attendance.
       Membership changes use the authorized team editor below.
       Department and cohort refer to an active saved academic enrollment; no
-      student lead or academic year is inferred from a primary Mentor flag.
+      student lead is inferred from a primary Mentor flag. An academic year
+      is shown only when it is recorded for the learner’s active cohort.
       {missingHistory?
         " Earlier sign-offs lack a historical workload snapshot; their contribution to the last-four total is unavailable.":""}
     </p>
