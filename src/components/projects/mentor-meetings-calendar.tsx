@@ -13,6 +13,7 @@ import {buildMentorMeetingIcs} from "@/modules/projects/mentor-calendar-ics-mode
 import {Button} from "@/components/ui/button";
 import {MentorMeetingRequestActions} from "./mentor-meeting-request-actions";
 import {MentorMeetingOutcomeQuickEdit} from "./mentor-meeting-outcome-quick-edit";
+import {MentorMeetingFacilitationQuickEdit} from "./mentor-meeting-facilitation-quick-edit";
 import styles from "./mentor-meetings-calendar.module.css";
 
 const PAST_PREVIEW = 20;
@@ -123,6 +124,10 @@ function MeetingRow({
       <MentorMeetingOutcomeQuickEdit key={meeting.id}
         projectId={meeting.projectId} meetingId={meeting.id}
         recorded={meeting.outcome??null} updatedAt={meeting.updatedAt??null}
+        editable={meeting.projectStatus==="ACTIVE"&&meeting.status==="COMPLETED"}/>
+      <MentorMeetingFacilitationQuickEdit key={meeting.id+":facilitation"}
+        projectId={meeting.projectId} meetingId={meeting.id}
+        recorded={meeting.facilitation} updatedAt={meeting.updatedAt??null}
         editable={meeting.projectStatus==="ACTIVE"&&meeting.status==="COMPLETED"}/>
       {meeting.projectStatus === "ARCHIVED" ? (
         <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Archived project · Read-only</p>
