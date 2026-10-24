@@ -154,7 +154,8 @@ export default async function MentorProjectPage({
             <p>{subtitles[selectedTab??"overview"]}</p>
           </section>}
       {selectedTab==="overview" ? <><MentorPrototypeProjectOverview workspace={workspace}
-         attentionItems={overviewAttention} initialLater={overviewLater}/><MentorPrototypeProjectBrief workspace={workspace} /></> : null}
+         attentionItems={overviewAttention} initialLater={overviewLater}/><MentorPrototypeProjectBrief workspace={workspace}
+         readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"}/></> : null}
       {selectedTab==="sprints" ? <MentorPrototypeSprintPlan workspace={workspace} readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"} /> : null}
       {selectedTab==="team" ? <MentorPrototypeTeamOverview workspace={workspace} /> : null}
       {selectedTab==="performance" ? <MentorPrototypePerformance workspace={workspace} /> : null}
