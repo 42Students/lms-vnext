@@ -7,22 +7,23 @@ import {MentorReleaseEditor} from "./mentor-release-editor";
  * the Task Board and Sprint timeline. Never send mentors into learner-only
  * routes or bypass the server's version and membership checks.
  */
-export function MentorOverviewQuickActions({projectId,estimationUnit,
+export function MentorOverviewQuickActions({projectId,projectUpdatedAt,estimationUnit,
  releases,sprints,learners}:{
- projectId:string;estimationUnit:string|null;
+ projectId:string;projectUpdatedAt:string;estimationUnit:string|null;
  releases:readonly {id:string;title:string;status:string}[];
- sprints:readonly {id:string;title:string;status:string;updatedAt:string}[];
+ sprints:readonly {id:string;title:string;status:string;updatedAt:string;releaseId:string}[];
  learners:readonly {membershipId:string;displayName:string|null}[];
 }){
  const active=sprints.find(item=>item.status==="ACTIVE");
- const allowed=sprints.filter(item=>item.status!=="COMPLETED");
+ const allowed=sprints.filter(item=>item.status!=="COMPLETED"&&
+   releases.some(release=>release.id===item.releaseId&&release.status!=="SHIPPED"));
  const firstRelease=releases.find(item=>item.status!=="SHIPPED");
  return <section aria-label="Add project work"
   className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
   <strong className="mr-2">+ Add to this project</strong>
   <MentorTaskCreate projectId={projectId}
     sprintId={active?.id??""}
-    updatedAt={active?.updatedAt??new Date(0).toISOString()}
+    updatedAt={active?.updatedAt??projectUpdatedAt}
     estimationUnit={estimationUnit}
     sprints={allowed} learners={learners}/>
   {firstRelease?<MentorSprintCreate
