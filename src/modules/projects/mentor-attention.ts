@@ -16,11 +16,17 @@ export type MentorProjectAttentionSource = {
   meetings: readonly {
     id: string; status: string;title: string; startsAt: Date;
   }[];
+  sprints?:readonly {id:string;title:string;sequence:number;status:string;updatedAt:Date}[];
+  tasks?:readonly {
+    id:string;title:string;status:string;sprintId:string|null;
+    assigneeMembershipId:string|null;updatedAt:Date;
+  }[];
 };
 export type MentorProjectAttention = {
   projectId: string;
   key: string;
-  kind: "REVIEW" | "STALLED" | "REQUESTED" | "MEETING_SOON";
+  kind: "REVIEW" | "STALLED" | "REQUESTED" | "MEETING_SOON" |
+    "TASK_REVIEW" | "TASK_BLOCKED" | "SPRINT_SIGN_OFF" | "UNASSIGNED_NEXT";
   title: string;
   description: string;
   href: string;
@@ -72,6 +78,62 @@ export function deriveMentorProjectAttention(
       description:"This project hasn't had any recorded activity recently.",
       href:href+"?tab=activity",occurredAt:last.toISOString(),
     });
+    const tasks=project.tasks??[];
+    const sprints=project.sprints??[];
+    const active=sprints.find(sprint=>sprint.status==="ACTIVE");
+    for(const task of tasks) {
+      if(task.status==="IN_REVIEW"){
+        alerts.push({
+          projectId:project.projectId,
+          key:"task-review:"+task.id,kind:"TASK_REVIEW",
+          title:task.title+" — waiting for approval",
+          description:project.projectTitle+" · Review submitted task evidence.",
+          href:href+"?tab=board&task="+encodeURIComponent(task.id)+
+            "&lane=IN_REVIEW",
+          occurredAt:task.updatedAt.toISOString(),
+        });
+      }else if(task.status==="BLOCKED"){
+        alerts.push({
+          projectId:project.projectId,
+          key:"blocked:"+task.id,kind:"TASK_BLOCKED",
+          title:task.title+" — blocked",
+          description:project.projectTitle+" · Help the assigned team remove the blocker.",
+          href:href+"?tab=board&task="+encodeURIComponent(task.id)+
+            "&lane=BLOCKED",
+          occurredAt:task.updatedAt.toISOString(),
+        });
+      }
+    }
+    if(active){
+      const assigned=tasks.filter(task=>task.sprintId===active.id);
+      if(assigned.length>0&&assigned.every(task=>task.status==="DONE")){
+        alerts.push({
+          projectId:project.projectId,
+          key:"sprint-signoff:"+active.id,kind:"SPRINT_SIGN_OFF",
+          title:project.projectTitle+" — sprint "+active.sequence+" ready for sign-off",
+          description:assigned.length+" recorded sprint tasks done; check delivery evidence.",
+          href:href+"?tab=sprints",occurredAt:active.updatedAt.toISOString(),
+        });
+      }
+      const next=sprints.filter(row=>row.status==="PLANNED"&&
+        row.sequence>active.sequence).sort((a,b)=>a.sequence-b.sequence)[0];
+      if(next){
+        const unassigned=tasks.filter(task=>task.sprintId===next.id&&
+          task.assigneeMembershipId===null&&task.status!=="DONE");
+        if(unassigned.length>0){
+          alerts.push({
+            projectId:project.projectId,
+            key:"next-unassigned:"+next.id,kind:"UNASSIGNED_NEXT",
+            title:project.projectTitle+" — "+unassigned.length+" unassigned next-sprint tasks",
+            description:"Allocate upcoming sprint "+next.sequence+" work.",
+            href:href+"?tab=performance",
+            occurredAt:unassigned.reduce((old,task)=>
+              task.updatedAt.getTime()<old.getTime()?task.updatedAt:old,
+              unassigned[0]!.updatedAt).toISOString(),
+          });
+        }
+      }
+    }
     for (const meeting of project.meetings) {
       if (meeting.status==="REQUESTED") {
         alerts.push({
@@ -99,8 +161,9 @@ export function deriveMentorProjectAttention(
   // Announcements are a separate inbox source; project attention keeps the
   // legacy review / request / stalled / upcoming precedence within each feed.
   const priority:{[kind in MentorProjectAttention["kind"]]:number}={
-    REVIEW:0,REQUESTED:1,STALLED:2,MEETING_SOON:3,
+    REVIEW:0,TASK_REVIEW:1,SPRINT_SIGN_OFF:2,TASK_BLOCKED:3,
+    UNASSIGNED_NEXT:4,REQUESTED:5,STALLED:6,MEETING_SOON:7,
   };
   return alerts.sort((a,b)=>priority[a.kind]-priority[b.kind]||
-    b.occurredAt.localeCompare(a.occurredAt)||a.key.localeCompare(b.key));
+    a.occurredAt.localeCompare(b.occurredAt)||a.key.localeCompare(b.key));
 }
