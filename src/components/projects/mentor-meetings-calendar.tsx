@@ -129,8 +129,10 @@ function MeetingRow({
             onClick={()=>downloadMeetingCalendar(meeting)}>Add to my calendar (.ics)</Button>
         ) : null}
         <Link className={styles.action}
-          href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) + "?tab=team"}>
-          Schedule or manage meeting
+          href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) +
+            "?tab=team#meeting-"+encodeURIComponent(meeting.id)}>
+          {meeting.projectStatus==="ACTIVE"?
+            "Edit attendance, notes & action items":"View meeting record"}
         </Link>
         {safeProjectExternalHref(href) ? <a className={styles.action} href={safeProjectExternalHref(href)!}
           >Join link</a> : null}
