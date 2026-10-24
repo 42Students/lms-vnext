@@ -61,16 +61,17 @@ export const drizzleSystemRoleRepository: SystemRoleRepository = {
 
     try {
       return await db.transaction(async (tx) => {
+        // A phone-less email bootstrap must not match every unrelated
+        // null phone row. Only compare phone numbers when one was provided.
+        const phoneMatch=input.phoneE164
+          ?eq(users.phoneE164,input.phoneE164):undefined;
         const candidateWhere = input.email
           ? or(
               eq(users.identityUid, input.identityUid),
-              eq(users.phoneE164, input.phoneE164),
+              phoneMatch,
               sql<boolean>`lower(${users.email}) = ${input.email.toLowerCase()}`,
             )
-          : or(
-              eq(users.identityUid, input.identityUid),
-              eq(users.phoneE164, input.phoneE164),
-            );
+          : or(eq(users.identityUid, input.identityUid), phoneMatch);
 
         let candidates = await tx
           .select({
@@ -87,9 +88,9 @@ export const drizzleSystemRoleRepository: SystemRoleRepository = {
         const identityOwner = candidates.find(
           (candidate) => candidate.identityUid === input.identityUid,
         );
-        const phoneOwner = candidates.find(
+        const phoneOwner = input.phoneE164 ? candidates.find(
           (candidate) => candidate.phoneE164 === input.phoneE164,
-        );
+        ) : undefined;
         const emailOwner = input.email
           ? candidates.find((candidate) => emailsEqual(candidate.email, input.email))
           : undefined;
