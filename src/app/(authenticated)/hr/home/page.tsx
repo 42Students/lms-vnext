@@ -11,7 +11,8 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { recruiterTodayWeek } from "@/modules/placements/recruiter-today-model";
 import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-due-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
-import {recruiterOwnFullPortfolioTotals} from "@/modules/placements/recruiter-portfolio-counts-service";
+import {recruiterOwnFullPortfolioTotals,recruiterVisiblePortfolioCounts} from "@/modules/placements/recruiter-portfolio-counts-service";
+import {hrTodayLiveDriveRows} from "@/modules/placements/hr-today-live-drive-model";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
@@ -146,6 +147,13 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     inboxResult.status==="rejected"||conversationResult.status==="rejected";
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
+  // Legacy recruiter Today has a conditional live-drive tile; the vNext count
+  // must represent only college-shared applicants, never private applications.
+  const eligibleLiveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId,jobs.length);
+  const liveDriveCounts=await recruiterVisiblePortfolioCounts(
+    context,selectedId,eligibleLiveDrives.map(row=>row.job.id),
+  ).catch(()=>null);
+  const liveDrive=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId,1,liveDriveCounts)[0]??null;
   const unreadAction=inboxResult.status==="fulfilled"?hrTodayUnreadAction({...inboxResult.value,collegeId:selectedId}):null;
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
@@ -233,6 +241,14 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           timeZone:"Asia/Kolkata",weekday:"short",hour:"numeric",minute:"2-digit",hour12:true,
         }).format(item.startsAt),
       }))}
-      waiting={waiting} waitingUnavailable={!requestsResult.ok||conversationResult.status==="rejected"}/>
+      waiting={waiting} waitingUnavailable={!requestsResult.ok||conversationResult.status==="rejected"}
+      liveDrive={liveDrive?{
+        title:liveDrive.job.title,href:"/recruiter/drives/"+encodeURIComponent(liveDrive.job.id),
+        deadline:liveDrive.job.applicationDeadline
+          ?new Intl.DateTimeFormat("en-IN",{
+            timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+          }).format(liveDrive.job.applicationDeadline)+" IST":null,
+        sharedApplicants:liveDriveCounts?liveDriveCounts[liveDrive.job.id]?.sharedApplicants??0:null,
+      }:null}/>
   </div>;
 }
