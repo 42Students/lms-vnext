@@ -1,10 +1,20 @@
 import {describe,expect,it} from "vitest";
-import {selectMentorHomeWeekMeetings} from
+import {selectMentorHomeWeekMeetings,mentorHomeMeetingDisplayTitle} from
   "@/modules/projects/mentor-home-week-meetings-model";
 
 const meeting=(id:string,startsAt:string,status="SCHEDULED",projectStatus="ACTIVE")=>({
   id,startsAt,status,projectStatus,projectId:"p",projectTitle:"Project",
   title:"Review "+id,
+});
+describe("Mentor home meeting status labels",()=>{
+  it("does not present an unaccepted request as a confirmed meeting",()=>{
+    expect(mentorHomeMeetingDisplayTitle(meeting("req","2026-10-20T07:00:00Z","REQUESTED")))
+      .toBe("Request · Review req · Project");
+    expect(mentorHomeMeetingDisplayTitle(meeting("move","2026-10-20T07:00:00Z","RESCHEDULED")))
+      .toBe("Rescheduled · Review move · Project");
+    expect(mentorHomeMeetingDisplayTitle(meeting("meet","2026-10-20T07:00:00Z")))
+      .toBe("Review meet · Project");
+  });
 });
 describe("Mentor portfolio current-week IST meetings",()=>{
   it("shows all coming meetings in the week, not only the next 48 hours",()=>{
