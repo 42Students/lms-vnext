@@ -6,6 +6,7 @@ import {recentMentorWorkedSprintIds} from
   "@/modules/projects/mentor-recent-worked-sprints-model";
 import {mentorMemberSprintHistory,deriveMentorPerformanceInsights} from
   "@/modules/projects/mentor-performance-insights-model";
+import {mentorPointStack} from "@/modules/projects/mentor-point-stack-model";
 
 type Student={id:string;name:string;label:string};
 type Task={id:string;assigneeMembershipId:string|null;sprintId:string|null;
@@ -73,7 +74,11 @@ export function MentorPrototypePerformanceTable({
     const insights=deriveMentorPerformanceInsights({points:trend,
       currentOpenCount:currentOpen.filter(task=>task.assigneeMembershipId===student.id).length,
       totalProjectOpen:currentOpen.length});
-    return {student,trend,insights,done:done.length+sum(previous,"doneCount"),
+    const stack=mentorPointStack(pts(done)+sum(previous,"donePoints"),
+      pts(review)+sum(previous,"plannedPoints")-
+        sum(previous,"donePoints")-sum(previous,"openPoints"),
+      pts(open)+sum(previous,"openPoints"));
+    return {student,trend,insights,stack,done:done.length+sum(previous,"doneCount"),
       review:review.length+sum(previous,"waitingCount"),
       open:open.length+sum(previous,"openCount"),
       carried:carried.length+sum(previous,"carriedCount"),
@@ -132,6 +137,22 @@ export function MentorPrototypePerformanceTable({
           <span>{row.open}<small>{row.openPoints} pts</small></span>
           <span>{row.carried}</span>
           <span>{row.donePoints} pts</span>
+          <div className="col-span-full flex flex-col gap-1"
+            aria-label={row.student.name+" points: "+
+              row.stack.done+" done, "+row.stack.waiting+" waiting, "+
+              row.stack.open+" open; total "+row.stack.total}>
+            <div className="flex h-2 w-full overflow-hidden rounded-full bg-muted"
+              role="img" aria-label={row.student.name+" proportional work in points"}>
+              <span className="bg-success" style={{width:row.stack.donePct+"%"}}
+                title={row.stack.done+" completed points"}/>
+              <span className="bg-warning" style={{width:row.stack.waitingPct+"%"}}
+                title={row.stack.waiting+" waiting points"}/>
+              <span className="bg-info" style={{width:row.stack.openPct+"%"}}
+                title={row.stack.open+" open points"}/>
+            </div>
+            <small>{row.stack.done} done · {row.stack.waiting} waiting ·
+              {" "}{row.stack.open} open · {row.stack.total} planned points in selected range</small>
+          </div>
         </div>)}
         {!studentRows.length?<p className="prototype-mentor-summary-empty">
           No students are assigned to this project.
