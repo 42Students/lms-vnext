@@ -247,3 +247,7 @@ The sprint completion transaction now records an immutable sign-off workload sna
 The Mentor home weekly meeting rail now uses assigned-project calendar meetings through the end of the current IST week, rather than the 48-hour attention feed. Project Overview adds a learner sprint summary, actionable sign-off/assignment/request links and permitted meeting details. Activity exposes recorded sprint IDs and allows combining a sprint filter with actor/type/date filters; untagged events remain outside selected-sprint results.
 
 Focused pure-model TypeScript compile checks and isolated Node assertions passed on local copies of the new snapshot/week models. Repository Vitest, DB tests, lint, strict build, authenticated browser and visual checks were not run. All existing acceptance checkboxes remain open, as does the overall Mentor 0/12 verified status.
+
+### Further source changes in this batch
+
+Project Overview now uses sign-off point history for a limited velocity estimate: at least three completed snapshots are required, latest four are considered, and the UI explicitly avoids claiming a delivery date. Three focused pure modules (snapshot, IST-week meetings, velocity) passed strict TypeScript checks and isolated Node assertions on local copies; full repository tests and persistent DB validation are still outstanding. A dedicated four-case Vitest model suite was authored for velocity. These changes do not close the original forecast, notification, calendar-provider or database acceptance requirements.
