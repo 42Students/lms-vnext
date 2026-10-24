@@ -24,6 +24,28 @@ describe("Mentor actual IST-week meeting workload",()=>{
     row("invalid","2026-10-26T08:00:00Z","2026-10-26T07:00:00Z"),
   ];
   expect(mentorCalendarWeekWorkload(meetings,now)).toEqual({
-    scheduled:2,hours:0.5,requests:0,reviews:0,retros:0});
+    scheduled:2,hours:1.5,requests:0,reviews:0,retros:0});
+ });
+ it("prorates a scheduled meeting across IST Sunday/Monday boundaries",()=>{
+  const monday=new Date("2026-10-26T01:00:00Z");
+  const priorWeek=new Date("2026-10-25T12:00:00Z");
+  const spanning=row("overnight",
+    "2026-10-25T18:00:00Z","2026-10-25T19:30:00Z","SCHEDULED","REVIEW");
+  expect(mentorCalendarWeekWorkload([spanning],monday)).toEqual({
+    scheduled:1,hours:1,requests:0,reviews:1,retros:0,
+  });
+  expect(mentorCalendarWeekWorkload([spanning],priorWeek)).toEqual({
+    scheduled:1,hours:0.5,requests:0,reviews:1,retros:0,
+  });
+ });
+ it("ignores invalid scheduled windows and does not count requested durations",()=>{
+  const monday=new Date("2026-10-26T01:00:00Z");
+  expect(mentorCalendarWeekWorkload([
+    row("negative","2026-10-26T08:00:00Z","2026-10-26T07:00:00Z"),
+    row("missing","no-time","2026-10-26T09:00:00Z"),
+    row("request","2026-10-26T08:00:00Z","2026-10-26T09:00:00Z","REQUESTED"),
+  ],monday)).toEqual({
+    scheduled:0,hours:0,requests:1,reviews:0,retros:0,
+  });
  });
 });
