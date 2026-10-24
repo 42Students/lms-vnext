@@ -104,33 +104,61 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
 export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
   const students=workspace.members.filter(member=>member.role==="LEARNER");
   const mentors=workspace.members.filter(member=>member.role==="MENTOR");
+  const active=workspace.sprints.find(sprint=>sprint.status==="ACTIVE");
+  const lastFour=[...workspace.sprints].sort((a,b)=>b.sequence-a.sequence)
+    .slice(0,4).map(sprint=>sprint.id);
+  const recentIds=new Set(lastFour);
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
+  const lastTaskChange=(tasks:typeof workspace.tasks)=>{
+    const latest=tasks.reduce<Date|null>((most,task)=>{
+      const when=task.updatedAt;
+      return !most||when>most?when:most;
+    },null);
+    return latest?new Intl.DateTimeFormat("en-IN",{
+      day:"numeric",month:"short",timeZone:"Asia/Kolkata",
+    }).format(latest):"No task changes";
+  };
   return <section className="prototype-mentor-team-overview" aria-label="Current project team">
     <div className="prototype-mentor-card-title">
       <h2>The team · {students.length} students · {mentors.length} mentors</h2>
       <Link href={base+"?tab=team#project-meetings"}>Meetings and requests →</Link>
     </div>
-    <div className="prototype-mentor-roster-head" aria-hidden="true">
-      <span>Person and role</span><span>Done</span><span>Waiting</span><span>Open</span><span>Points completed</span>
+    <div className="prototype-mentor-roster-head prototype-mentor-roster-period-head" aria-hidden="true">
+      <span>Person and role</span><span>{active?"Sprint "+active.sequence:"Current sprint"}</span>
+      <span>Last 4 sprints</span><span>Last task change</span>
     </div>
     {workspace.members.map(member=>{
-      const assigned=workspace.tasks.filter(task=>task.assigneeMembershipId===member.membershipId);
-      const done=assigned.filter(task=>task.status==="DONE");
-      const initials=(member.displayName??"Team member").trim().split(/\s+/).slice(0,2).map(part=>part[0]??"").join("").toUpperCase();
-      return <div key={member.membershipId} className="prototype-mentor-roster-row">
+      const assigned=workspace.tasks.filter(task=>!task.deletedAt&&
+        task.assigneeMembershipId===member.membershipId);
+      const sprintTasks=active?assigned.filter(task=>task.sprintId===active.id):[];
+      const lastTasks=assigned.filter(task=>Boolean(task.sprintId&&recentIds.has(task.sprintId)));
+      const sprintDone=sprintTasks.filter(task=>task.status==="DONE");
+      const lastDone=lastTasks.filter(task=>task.status==="DONE");
+      const carried=lastTasks.filter(task=>Boolean(task.carriedFromSprintId));
+      const initials=(member.displayName??"Team member").trim()
+        .split(/\\s+/).slice(0,2).map(part=>part[0]??"").join("").toUpperCase();
+      return <div key={member.membershipId}
+        className="prototype-mentor-roster-row prototype-mentor-roster-period-row">
         <div className="prototype-mentor-roster-person">
           <span aria-hidden="true">{initials||"42"}</span>
           <div><strong>{member.displayName||"Team member"}</strong>
             <small>{member.isPrimary?"Primary mentor · ":""}{member.roleLabel||member.role.replaceAll("_"," ")}</small>
           </div>
         </div>
-        <span>{done.length}</span><span>{countTasks(assigned,"IN_REVIEW")}</span>
-        <span>{assigned.filter(task=>!["DONE","IN_REVIEW"].includes(task.status)).length}</span>
-        <span>{points(done)} pts</span>
+        <span>{sprintDone.length} done · {countTasks(sprintTasks,"IN_REVIEW")} waiting
+          {countTasks(sprintTasks,"BLOCKED")>0?" · "+countTasks(sprintTasks,"BLOCKED")+" blocked":""}
+        </span>
+        <span>{points(lastDone)} pts · {lastDone.length} done
+          {carried.length>0?" · "+carried.length+" carried":""}
+        </span>
+        <span>{lastTaskChange(assigned)}</span>
       </div>;
     })}
     {!workspace.members.length?<p className="prototype-mentor-summary-empty">No active team members.</p>:null}
-    <p className="prototype-mentor-roster-foot">Team membership changes are managed through the existing authorized roster controls below.</p>
+    <p className="prototype-mentor-roster-foot">
+      Last task change is based on recorded task timestamps, not a user's sign-in or online status.
+      Membership changes use the authorized team editor below.
+    </p>
   </section>;
 }
 
