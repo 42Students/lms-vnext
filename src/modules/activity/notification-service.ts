@@ -13,6 +13,7 @@ import {
   lte,
   or,
   sql,
+  type SQL,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -1288,6 +1289,8 @@ export async function listOwnNotificationPage(
     notificationType?: string;
     query?: string;
     category?: OwnNotificationCategory;
+    /** Optional caller-verified SQL event authorization; before pagination. */
+    eventVisibilityCondition?: SQL;
   } = {},
 ) {
   const limit = z.number().int().min(1).max(100)
@@ -1301,6 +1304,7 @@ export async function listOwnNotificationPage(
     releasedNotificationReceipt,
   ];
   if (options.collegeId) conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
+  if(options.eventVisibilityCondition)conditions.push(options.eventVisibilityCondition);
   if (options.unreadOnly) {
     conditions.push(isNull(inAppNotifications.readAt));
     if (options.unreadSince) {

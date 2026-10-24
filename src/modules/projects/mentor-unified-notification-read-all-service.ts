@@ -6,6 +6,8 @@ import {activityEvents,inAppNotifications} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePersistedMentorInboxMembership} from
   "@/modules/activity/mentor-notifications-service";
+import {mentorVisibleNotificationEventCondition} from
+  "@/modules/activity/mentor-personal-project-scope";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {ActivityServiceError} from "@/modules/activity/errors";
@@ -58,7 +60,8 @@ export async function markAllMentorUnifiedNotificationsRead(context:RequestConte
  return getDb().transaction(async tx=>{
    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${context.user.id}, 31))`);
    const eventIds=tx.select({id:activityEvents.id}).from(activityEvents)
-     .where(eq(activityEvents.collegeId,membership.collegeId));
+     .where(and(eq(activityEvents.collegeId,membership.collegeId),
+       mentorVisibleNotificationEventCondition(context)));
    const personal=await tx.update(inAppNotifications).set({readAt:new Date()})
      .where(and(eq(inAppNotifications.userId,context.user.id),
        inArray(inAppNotifications.eventId,eventIds),

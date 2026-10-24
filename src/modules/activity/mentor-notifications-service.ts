@@ -9,6 +9,7 @@ import {
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { listOwnNotificationPage } from "./notification-service";
 import { resolveMentorInboxQuery } from "./mentor-notifications-model";
+import {mentorVisibleNotificationEventCondition} from "./mentor-personal-project-scope";
 
 /**
  * Personal Mentor inbox: verify live role grants in migrated tables, not only
@@ -75,19 +76,20 @@ export function projectLegacyMentorNotification(input:{
 export async function getMentorPersonalInbox(context: RequestContext, rawQuery: unknown) {
   const {query,cursor}=resolveMentorInboxQuery(rawQuery);
   const membership=await requirePersistedMentorInboxMembership(context);
+  const scopeFilter=mentorVisibleNotificationEventCondition(context);
   const [page,unread] = await Promise.all([
     cursor.invalid
       ? Promise.resolve({items:[],nextCursor:null})
       : listOwnNotificationPage(context,{
         limit:50,unreadOnly:query.view==="unread",
-        collegeId:membership.collegeId,
+        collegeId:membership.collegeId,eventVisibilityCondition:scopeFilter,
         ...(cursor.cursor ?? {}),
       }),
     getDb().select({total:count()}).from(inAppNotifications)
       .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
       .where(and(
         eq(inAppNotifications.userId,context.user.id),
-        eq(activityEvents.collegeId,membership.collegeId),
+        eq(activityEvents.collegeId,membership.collegeId),scopeFilter,
         isNull(inAppNotifications.readAt),
         isNull(inAppNotifications.deletedAt),
       )),

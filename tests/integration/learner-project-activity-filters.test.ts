@@ -11,6 +11,9 @@ import {getMentorLearnerAcademicFacts} from "@/modules/projects/mentor-learner-a
 import {postMentorProjectUpdate} from "@/modules/projects/mentor-project-update-service";
 import {markAllMentorUnifiedNotificationsRead}
   from "@/modules/projects/mentor-unified-notification-read-all-service";
+import {getMentorPersonalInbox} from "@/modules/activity/mentor-notifications-service";
+import {markOwnMentorNotificationRead,markAllOwnMentorNotificationsRead}
+ from "@/modules/activity/mentor-notification-read-service";
 import { filterLearnerProjectActivity } from "@/modules/projects/learner-project-activity-filter-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 if (!process.env.TEST_DATABASE_URL) throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -584,4 +587,59 @@ describe("Mentor global search workspace privacy",()=>{
     await expect(searchMentorWorkspacePage(context,"Own Learner"))
       .rejects.toBeDefined();
   });
+});
+
+describe("Mentor bell and personal inbox project revocation",()=>{
+ it("filters scoped notices, unread records and acknowledgement after removal",async()=>{
+  const events=[randomUUID(),randomUUID(),randomUUID()];
+  const receipts=[randomUUID(),randomUUID(),randomUUID()];
+  const foreignProject=randomUUID();
+  try{
+   for(let i=0;i<3;i++){
+    const isProject=i<2;
+    await pool.query(`insert into activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,metadata)
+      values($1,$2,$3,$4,$5,$6,'project',$7,'Mentor notice privacy test',$8::jsonb)`,[
+      events[i],SEED_IDS.organization,ids.college,ids.mentor,
+      isProject?"PROJECTS":"ACADEMICS",
+      isProject?"projects.task.created":"academics.program.created",
+      ids.project,JSON.stringify(i===0?{projectId:ids.project}:
+        i===1?{projectId:foreignProject}:{}),
+    ]);
+    await pool.query(`insert into in_app_notifications
+      (id,user_id,event_id,title,body)
+      values($1,$2,$3,'Mentor private notice','Private')`,[
+      receipts[i],ids.mentor,events[i],
+    ]);
+   }
+   const first=await getMentorPersonalInbox(mentorContext,{view:"unread"});
+   const visible=new Set(first.page.items.map(row=>row.notification.id));
+   expect(visible.has(receipts[0]!)).toBe(true);
+   expect(visible.has(receipts[1]!)).toBe(false);
+   expect(visible.has(receipts[2]!)).toBe(true);
+   await expect(markOwnMentorNotificationRead(mentorContext,receipts[1]!))
+     .rejects.toBeDefined();
+   await pool.query("update project_members set ended_at=now() where id=$1",
+     [ids.mentorProjectMember]);
+   const revoked=await getMentorPersonalInbox(mentorContext,{view:"unread"});
+   const seen=revoked.page.items.map(row=>row.notification.id);
+   expect(seen).not.toContain(receipts[0]);
+   expect(seen).not.toContain(receipts[1]);
+   expect(seen).toContain(receipts[2]);
+   await expect(markOwnMentorNotificationRead(mentorContext,receipts[0]!))
+     .rejects.toBeDefined();
+   await markAllOwnMentorNotificationsRead(mentorContext);
+   const states=await pool.query<{id:string;read_at:Date|null}>(`
+      select id,read_at from in_app_notifications where id=any($1::uuid[])`,[receipts]);
+   expect(states.rows.find(x=>x.id===receipts[0])?.read_at).toBeNull();
+   expect(states.rows.find(x=>x.id===receipts[1])?.read_at).toBeNull();
+   expect(states.rows.find(x=>x.id===receipts[2])?.read_at).toBeInstanceOf(Date);
+  }finally{
+   await pool.query("update project_members set ended_at=null where id=$1",
+     [ids.mentorProjectMember]);
+   await pool.query("delete from in_app_notifications where id=any($1::uuid[])",[receipts]);
+   await pool.query("delete from activity_events where id=any($1::uuid[])",[events]);
+  }
+ });
 });

@@ -10,6 +10,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { ActivityServiceError } from "./errors";
 import { requirePersistedMentorInboxMembership } from "./mentor-notifications-service";
+import {mentorVisibleNotificationEventCondition} from "./mentor-personal-project-scope";
 
 /** Recipient + persisted current college are both required for Mentor acknowledgement. */
 export async function markOwnMentorNotificationRead(
@@ -19,7 +20,8 @@ export async function markOwnMentorNotificationRead(
   const membership=await requirePersistedMentorInboxMembership(context);
   return getDb().transaction(async tx=>{
     const eventIds=tx.select({id:activityEvents.id}).from(activityEvents)
-      .where(eq(activityEvents.collegeId,membership.collegeId));
+      .where(and(eq(activityEvents.collegeId,membership.collegeId),
+        mentorVisibleNotificationEventCondition(context)));
     const filter=and(
       eq(inAppNotifications.id,id),
       eq(inAppNotifications.userId,context.user.id),
@@ -55,7 +57,8 @@ export async function markAllOwnMentorNotificationsRead(context:RequestContext) 
   const membership=await requirePersistedMentorInboxMembership(context);
   return getDb().transaction(async tx=>{
     const eventIds=tx.select({id:activityEvents.id}).from(activityEvents)
-      .where(eq(activityEvents.collegeId,membership.collegeId));
+      .where(and(eq(activityEvents.collegeId,membership.collegeId),
+        mentorVisibleNotificationEventCondition(context)));
     const changed=await tx.update(inAppNotifications)
       .set({readAt:new Date()})
       .where(and(
