@@ -9,16 +9,11 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
+import {fromIstLocalInput} from "@/modules/projects/mentor-meeting-reschedule-model";
 
 type Choice={id:string;title:string;updatedAt:string;
   sprints:readonly {id:string;title:string;sequence:number;status:string}[]};
 type MeetingType="GENERAL"|"PLANNING"|"STANDUP"|"REVIEW"|"RETRO";
-const toInstant=(local:string)=>{
-  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))return null;
-  const value=new Date(local+":00+05:30");
-  return Number.isFinite(value.getTime())?value.toISOString():null;
-};
-
 export function MentorCalendarQuickSchedule({projects}:{
   projects:readonly Choice[];
 }){
@@ -40,7 +35,7 @@ export function MentorCalendarQuickSchedule({projects}:{
     event.preventDefault();
     if(!project||pending)return;
     setError(null);
-    const from=toInstant(start),until=toInstant(end);
+    const from=fromIstLocalInput(start),until=fromIstLocalInput(end);
     if(!from||!until||Date.parse(until)<=Date.parse(from)||
        Date.parse(from)<=Date.now()){
       setError("Choose a valid future start and end time in IST.");
