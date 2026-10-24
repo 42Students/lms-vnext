@@ -28,6 +28,7 @@ export async function getMentorProjectActivitySeenState(
   .from(activityEvents).where(and(
    eq(activityEvents.actorUserId,context.user.id),
    eq(activityEvents.collegeId,scope.collegeId),
+   eq(activityEvents.organizationId,scope.organizationId),
    eq(activityEvents.subjectType,MARKER_TYPE),
    eq(activityEvents.subjectId,scope.project.id),
    eq(activityEvents.eventType,MARKER_EVENT),
@@ -38,6 +39,7 @@ export async function getMentorProjectActivitySeenState(
  }).from(activityEvents).where(and(
   eq(activityEvents.module,"PROJECTS"),
   eq(activityEvents.collegeId,scope.collegeId),
+  eq(activityEvents.organizationId,scope.organizationId),
   gt(activityEvents.occurredAt,receipt.occurredAt),
   or(
    and(or(eq(activityEvents.subjectType,"project"),
@@ -62,10 +64,9 @@ export async function markMentorProjectActivitySeen(
  const scope=await requireProjectReadAccess(context,projectId);
  if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
- const now=new Date();
- await getDb().transaction(async tx=>{
+ const marker=await getDb().transaction(async tx=>{
   await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${context.user.id}, 37))`);
-  await recordActivityEventInTransaction(tx,context,{
+  return recordActivityEventInTransaction(tx,context,{
    eventType:MARKER_EVENT,collegeId:scope.collegeId,
    organizationId:scope.organizationId,
    subjectType:MARKER_TYPE,subjectId:scope.project.id,
@@ -75,5 +76,5 @@ export async function markMentorProjectActivitySeen(
    groupKey:"mentor:activity:"+context.user.id,
   });
  });
- return {lastSeenAt:now.toISOString()};
+ return {lastSeenAt:marker.occurredAt.toISOString()};
 }
