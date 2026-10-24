@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { getProjectActivityPage, listProjectActivity } from "@/modules/projects/activity-service";
 import {getMentorWeekActivityTotals} from "@/modules/projects/mentor-week-activity-totals-service";
+import {getMentorTeamRecentActorActivity} from "@/modules/projects/mentor-team-recent-actor-service";
 import { filterLearnerProjectActivity } from "@/modules/projects/learner-project-activity-filter-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 if (!process.env.TEST_DATABASE_URL) throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -275,5 +276,42 @@ describe("Mentor full-week project activity counters",()=>{
     },ids.project,now)).rejects.toBeDefined();
     await expect(getMentorWeekActivityTotals(mentorContext,randomUUID(),now))
       .rejects.toBeDefined();
+  });
+});
+
+describe("Mentor Team last recorded project actions",()=>{
+  it("shows actual authored events rather than unrelated task updates or another project's actions",async()=>{
+    const learnerAt="2026-12-01T07:15:00.123Z";
+    for(const row of [
+      {actor:ids.learner,college:ids.college,subject:ids.project,
+        event:"projects.task.comment.created",at:learnerAt},
+      {actor:ids.learner,college:ids.college,subject:randomUUID(),
+        event:"projects.task.status_changed",at:"2026-12-03T08:15:00.123Z"},
+      {actor:ids.learner,college:SEED_IDS.collegeB,subject:ids.project,
+        event:"projects.task.status_changed",at:"2026-12-04T08:15:00.123Z"},
+    ]){
+      await pool.query(`INSERT INTO activity_events
+        (id,organization_id,college_id,actor_user_id,module,event_type,
+         subject_type,subject_id,summary,occurred_at)
+        VALUES($1,$2,$3,$4,'PROJECTS',$5,'project',$6,'Recorded participant action',$7)`,[
+        randomUUID(),SEED_IDS.organization,row.college,row.actor,
+        row.event,row.subject,row.at,
+      ]);
+    }
+    const last=await getMentorTeamRecentActorActivity(
+      mentorContext,ids.project,[{userId:ids.learner},{userId:ids.mentor}],
+    );
+    expect(last[ids.learner]).toBe(learnerAt.replace(".123Z",".123Z"));
+    expect(last[ids.mentor]===undefined||
+      Number.isFinite(Date.parse(last[ids.mentor]!))).toBe(true);
+    await expect(getMentorTeamRecentActorActivity(
+      context,ids.project,[{userId:ids.learner}],
+    )).rejects.toBeDefined();
+    await expect(getMentorTeamRecentActorActivity(
+      {...mentorContext,membership:{...mentorContext.membership!,
+        collegeId:SEED_IDS.collegeB}},ids.project,[{userId:ids.learner}],
+    )).rejects.toBeDefined();
+    expect(await getMentorTeamRecentActorActivity(mentorContext,ids.project,[]))
+      .toEqual({});
   });
 });
