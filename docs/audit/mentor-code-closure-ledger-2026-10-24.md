@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 110/132 `CODE_READY`, 15/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted**; code-ready is not test acceptance. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 111/132 `CODE_READY`, 14/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted**; code-ready is not test acceptance. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -141,7 +141,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 56-04 | CODE_READY | mentor-account-overview-service.ts; mentor-account-summary-model.ts; mentor/account/page.tsx; account-menu.tsx |
 | 56-05 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 56-06 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 56-07 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 56-07 | CODE_READY | context-service.ts uses a persisted, server-validated membership and role cookie to narrow Faculty+Mentor or Admin+TPO accounts to one role; workspace switching rechecks active membership and returns to Dashboard. PrototypePortalFrame now delegates to a pure route/role skin selector, which never uses a TPO skin from a College Admin placement shortcut or substring pathname. mentor-shell-role-skin-matrix.test.ts covers multi-role switching, navigation and false skin activation. Live college-switch/browser refresh acceptance remains. |
 | 56-08 | CODE_READY | next.config.ts; mentor-retired-route-parity.test.ts |
 | 56-09 | CODE_READY | command-search.tsx now clears cached role-scoped Mentor hits when dismissed, restores input focus on Escape without reopening, renders truthful loading/empty/error states under debounced search, and retains Ctrl+K, Arrow and outside close controls. mentor-command-search-feedback-model.test.ts covers status cases; browser/focus/screen-reader acceptance is still required. |
 | 56-10 | IMPLEMENTATION_OR_TEST_PENDING | mentor-unified-search-service.ts builds category results only from assigned projects, then rechecks persisted user, Mentor role, membership, project assignment, college and undeleted project before returning any student/task/resource match. learner-project-activity-filters.test.ts adds search revocation and foreign-college denial cases. Bell/source privacy and actual cross-tab timing/browser verification still pending. |

@@ -2,6 +2,7 @@
 
 import type {ReactNode} from "react";
 import {usePathname} from "next/navigation";
+import {prototypeRoleSkinForPath} from "./prototype-role-skin-model";
 
 /**
  * Apply the uploaded prototype styles to the portal actually being viewed,
@@ -17,10 +18,9 @@ export function PrototypePortalFrame({
   const pathname=usePathname();
   // A College Admin's /tpo/home shortcut is NOT a TPO membership. Likewise
   // another role's route must not activate its prototype without a role grant.
-  const portal=mentorEnabled&&(pathname==="/mentor"||pathname.startsWith("/mentor/"))?"mentor":
-    tpoEnabled&&(pathname==="/tpo"||pathname.startsWith("/tpo/"))?"tpo":
-    recruiterEnabled&&(pathname==="/hr"||pathname.startsWith("/hr/")||
-      pathname==="/recruiter"||pathname.startsWith("/recruiter/"))?"recruiter":null;
+  const portal=prototypeRoleSkinForPath({
+    pathname,mentorEnabled,tpoEnabled,recruiterEnabled,
+  });
   return <div data-prototype-portal={portal??undefined} className={className}>
     {children}
   </div>;
