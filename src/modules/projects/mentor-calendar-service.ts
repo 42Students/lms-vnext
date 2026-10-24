@@ -74,6 +74,10 @@ export async function listMyMentorCalendarMeetings(
     timeZone: projectMeetings.timeZone,
     meetingUrl: projectMeetings.meetingUrl,
     linkedSprintTitle: projectSprints.title,
+    agenda:projectMeetings.agenda,
+    outcome:projectMeetings.outcome,
+    facilitation:projectMeetings.facilitation,
+    updatedAt:projectMeetings.updatedAt,
   })
     .from(projectMembers)
     .innerJoin(projectInstances, eq(projectInstances.id, projectMembers.projectId))
@@ -117,6 +121,10 @@ export async function listMyMentorCalendarMeetings(
     timeZone: window.organizerZone,
     meetingUrl: row.meetingUrl,
     linkedSprintTitle: row.linkedSprintTitle,
+    agenda:row.agenda,
+    outcome:row.outcome,
+    facilitation:row.facilitation,
+    updatedAt:row.updatedAt.toISOString(),
     };
   });
 }
