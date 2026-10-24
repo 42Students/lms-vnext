@@ -2097,6 +2097,7 @@ export function ProjectWorkspace({
           </p>:null}
           <ProjectResourceFilesSection
             projectId={workspace.project.id}
+            readOnly={readOnly}
             resources={workspace.resources.filter(item=>
                 item.status==="ACTIVE"||mode!=="LEARNER"&&item.status==="DRAFT")
               .map(item=>({id:item.id,title:item.title,visibility:item.visibility,
