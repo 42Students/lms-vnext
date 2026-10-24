@@ -29,10 +29,10 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
   }))throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
  const meetingId=projectMeetingIdSchema.parse(rawMeetingId);
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt}).from(projectInstances)
    .where(and(eq(projectInstances.id,scope.project.id),
     eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
-  if(!project||project.status==="ARCHIVED"||project.status==="COMPLETED")
+  if(!project||project.deletedAt||project.status==="ARCHIVED"||project.status==="COMPLETED")
    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   await assertPersistedProjectMutationActor(tx,context,scope);
   const [current]=await tx.select().from(projectMeetings).where(and(
