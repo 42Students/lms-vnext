@@ -12,7 +12,6 @@ import {listMentorBlockedTaskAges} from "./mentor-blocker-age-service";
 import {listMentorWeekContributors} from "./mentor-week-contributor-service";
 import {getMentorLearnerAcademicFacts} from "./mentor-learner-academic-facts-service";
 import {getMentorTeamRecentActorActivity} from "./mentor-team-recent-actor-service";
-import {getMentorTeamLearnerAcademics} from "./mentor-team-learner-academics-service";
 import {getMentorWeekActivityTotals} from "./mentor-week-activity-totals-service";
 import {listMentorSprintSignOffSnapshots,listMentorSprintCommitmentSnapshots}
   from "./mentor-sprint-signoff-snapshot-service";
@@ -126,8 +125,6 @@ export async function getProjectWorkspaceView(
     await listMentorWeekContributors(context,projectId):[];
   const mentorTeamRecentActorActivity=access.access==="MENTOR"&&!activityRead.failed
     ?await getMentorTeamRecentActorActivity(context,projectId,members):{};
-  const mentorTeamLearnerAcademics=access.access==="MENTOR"?
-    await getMentorTeamLearnerAcademics(context,projectId,members):{};
   const mentorWeekActivityTotals=access.access==="MENTOR"&&!activityRead.failed
     ?await getMentorWeekActivityTotals(context,projectId).catch((error:unknown)=>{
       if(!isUnavailableProjectSectionStorage(error))throw error;
@@ -326,7 +323,6 @@ export async function getProjectWorkspaceView(
     mentorBlockedTaskAges,
     mentorWeekContributors,
     mentorTeamRecentActorActivity,
-    mentorTeamLearnerAcademics,
     mentorWeekActivityTotals,
     mentorEvidence: buildMentorWorkspaceEvidence({
       tasks: workspace.tasks,
