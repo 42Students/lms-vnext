@@ -472,7 +472,7 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         {prechecks.map(item=><li key={item.key}>
           <strong>{item.state==="MET"?"✓":item.state==="PAST_TARGET"?"!":
             item.state==="UNKNOWN"?"?":"○"} {item.label}</strong>
-          {" · "}{item.requiredByServer?"Required by the current submission policy":
+          {" · "}{item.requiredByServer?"Required for normal submission (admin override may supersede)":
             "Advisory only"}
           {item.key==="TARGET"&&item.state==="PAST_TARGET"?
             " · Past target date; the configured submission policy has no independent deadline gate.":""}
