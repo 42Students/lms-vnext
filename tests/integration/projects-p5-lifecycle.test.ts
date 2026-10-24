@@ -33,6 +33,7 @@ import {approveProjectTaskThroughReview,assignProjectTaskToLearner} from "./supp
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
 import {listMentorSprintSignOffSnapshots} from "@/modules/projects/mentor-sprint-signoff-snapshot-service";
 import {updateMentorTaskDetails} from "@/modules/projects/mentor-task-details-service";
+import {moveMentorBacklogTask} from "@/modules/projects/mentor-backlog-service";
 import {createLearnerOwnTask,deleteLearnerOwnTask} from "@/modules/projects/learner-own-task-service";
 import {createProjectResource} from "@/modules/projects/resource-service";
 import {postProjectTaskComment,listProjectTaskComments} from "@/modules/projects/task-comment-service";
@@ -450,6 +451,37 @@ describe("Projects P5 lifecycle", () => {
     ).resolves.toMatchObject({
       status: "COMPLETED",
     });
+  });
+
+  it("moves an open Board task between sprints and backlog with version checks",async()=>{
+    const project=await createProject();
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    const from=workspace.sprints[0]!;
+    const to=workspace.sprints[1]!;
+    const task=workspace.tasks.find(item=>item.sprintId===from.id)!;
+    await startProjectSprint(mentor,project.id,from.id);
+    await expect(moveMentorBacklogTask(learner,project.id,{
+      taskId:task.id,targetSprintId:to.id,
+      expectedUpdatedAt:task.updatedAt.toISOString(),
+    })).rejects.toBeDefined();
+    const moved=await moveMentorBacklogTask(mentor,project.id,{
+      taskId:task.id,targetSprintId:to.id,
+      expectedUpdatedAt:task.updatedAt.toISOString(),
+    });
+    expect(moved.task.sprintId).toBe(to.id);
+    await expect(moveMentorBacklogTask(mentor,project.id,{
+      taskId:task.id,targetSprintId:null,
+      expectedUpdatedAt:task.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
+    const back=await moveMentorBacklogTask(mentor,project.id,{
+      taskId:task.id,targetSprintId:null,
+      expectedUpdatedAt:moved.task.updatedAt.toISOString(),
+    });
+    expect(back.task.sprintId).toBeNull();
+    expect(back.task.carriedFromSprintId).toBe(to.id);
+    const stored=await pool.query<{sprint_id:string|null;carried_from_sprint_id:string|null}>(
+      "select sprint_id,carried_from_sprint_id from project_tasks where id=$1",[task.id]);
+    expect(stored.rows[0]).toEqual({sprint_id:null,carried_from_sprint_id:to.id});
   });
 
   it("carries unfinished tasks to the product backlog when a sprint is completed", async () => {
