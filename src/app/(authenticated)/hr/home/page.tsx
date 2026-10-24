@@ -1,5 +1,4 @@
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
-import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -9,13 +8,10 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { hasActiveRecruiter } from "@/modules/identity/context";
-import { buildRecruiterToday, recruiterTodayWeek } from "@/modules/placements/recruiter-today-model";
+import { recruiterTodayWeek } from "@/modules/placements/recruiter-today-model";
 import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-due-model";
-import {hrResultsDueHref} from "@/modules/placements/hr-calendar-day-model";
-import {hrResultDeadlineUrgency,HR_DEADLINE_URGENCY_LABELS} from "@/modules/placements/hr-result-deadline-urgency-model";
-import {hrTodayLiveDriveRows} from "@/modules/placements/hr-today-live-drive-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
-import {recruiterVisiblePortfolioCounts,recruiterOwnFullPortfolioTotals} from "@/modules/placements/recruiter-portfolio-counts-service";
+import {recruiterOwnFullPortfolioTotals} from "@/modules/placements/recruiter-portfolio-counts-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
@@ -38,7 +34,6 @@ import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
-function when(value: Date) {return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);}
 
 export default async function HrHomePage({searchParams}: {searchParams:Promise<{collegeId?:string | string[]}>}) {
   const context = await getCurrentRequestContext();
@@ -149,20 +144,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const conversations=conversationResult.status==="fulfilled"?conversationResult.value:null;
   const summaryPartiallyUnavailable=calendarResult.status==="rejected"||
     inboxResult.status==="rejected"||conversationResult.status==="rejected";
-  const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
-  // Rank the primary card from the whole authorized live-drive preview,
-  // not just the first three deadline-sorted drives. Do not expose the
-  // legacy all-applicant count to HR; shared counts respect TPO grants.
-  const eligibleLiveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId,jobs.length);
-  const liveDriveCounts=await recruiterVisiblePortfolioCounts(
-    context,selectedId,eligibleLiveDrives.map(row=>row.job.id),
-  ).catch(() => null);
-  const liveDrives=hrTodayLiveDriveRows(
-    jobs,selectedId,recruiter.companyId,3,liveDriveCounts);
-  const mostSharedLiveId=liveDriveCounts&&liveDrives.length
-    ?liveDrives[0]?.job.id??null:null;
   const unreadAction=inboxResult.status==="fulfilled"?hrTodayUnreadAction({...inboxResult.value,collegeId:selectedId}):null;
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
@@ -176,7 +159,6 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     listRecruiterTodayOfferActions(selectedId,collegeJobs.map(row=>row.job.id)),
   ]);
   const changeRequests=changeResult.status==="fulfilled"?changeResult.value:[];
-  const totalOpenChangeRequests=changeRequests[0]?.totalOpen??0;
   const roundsNeedingSlots=slotsResult.status==="fulfilled"?slotsResult.value:[];
   const offerActions=offersResult.status==="fulfilled"?offersResult.value:[];
   const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,now,
@@ -202,249 +184,55 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </div>;
   }
   const greeting = recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length);
-  const actions = [
-    {label:"Live drives", value:fullPortfolio?.live??today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
-    {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
-    ...(calendarResult.status==="fulfilled" ? [
-      {label:"Scheduled rounds this week", value:today.upcomingRounds.length, url:"/hr/calendar"},
-      {label:"Results due this week", value:dueResults.length, url:"/hr/calendar"},
-    ] : []),
-    ...(conversationSignals && conversationSignals.unreadInPage>0 ? [{
-      label:"Unread conversations (first page)",value:conversationSignals.unreadInPage,
-      url:hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1}),
-    }] : []),
-    ...(unreadAction ? [unreadAction] : []),
+  const collegeName=grants.find(item=>item.collegeId===selectedId)?.collegeName??"this college";
+  const dateLabel=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",
+  }).format(now)+" · "+collegeName;
+  const tasks=actionQueue.map(task=>({
+    key:task.key,tone:task.tone,title:task.label,description:task.description,
+    href:task.href,at:task.at instanceof Date?task.at.toISOString():null,
+  }));
+  const waiting=[
+    ...waitingRequests.filter(item=>item.status==="REQUEST").map(item=>({
+      id:"request:"+item.id,title:item.title,detail:"Sent for placement-cell review",
+    })),
+    ...(conversationSignals?.waiting??[]).map(item=>({
+      id:"conversation:"+item.id,title:item.label,
+      detail:"Last message from you; a reply has not been confirmed.",href:item.href,
+    })),
   ];
-  return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader title={greeting.title}
-      description={greeting.subtitle}
-      actions={<Link href={recruiterDriveDraftHref({collegeId:selectedId})}
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-        Request a drive
-      </Link>} />
+  return <div className="min-w-0 max-w-full space-y-4">
     <HrUnsentDriveAlert collegeId={selectedId}
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedId,null)}/>
-    {grants.length > 1 ? <NeedsDoingChips label="Choose college:" selectedKey={selectedId}
-      items={grants.map(grant=>({
-        key:grant.collegeId,label:grant.collegeName,
-        href:"/hr/home?collegeId="+encodeURIComponent(grant.collegeId),
-      }))}/> : null}
-    {recentJobCapReached?<Alert tone="warning">
-      Today is displaying the 500 most recently created employer drives for this college.
-      {fullPortfolio
-       ? " The complete authorized portfolio has "+fullPortfolio.total+
-         " published or closed drives ("+fullPortfolio.live+" live, "+fullPortfolio.closed+
-         " closed). The Live drives headline uses the complete count."
-       : " Full portfolio counts are temporarily unavailable; the Live drives and upcoming-deadline summaries may be incomplete."}
-      Older drives may not appear in these quick summaries. Open Drives for full history.
-    </Alert>:null}
+    {grants.length>1?<NeedsDoingChips label="Choose college:" selectedKey={selectedId}
+      items={grants.map(item=>({key:item.collegeId,label:item.collegeName,
+        href:"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}))}/>:null}
+    {recentJobCapReached?<Alert tone="warning">Today uses only the 500 newest drives for its action preview.
+      {fullPortfolio?" Your complete authorized portfolio has "+fullPortfolio.total+" drives.": " Full portfolio totals are unavailable."}
+      Open Drives to see your entire history.</Alert>:null}
     {(summaryPartiallyUnavailable||otherSignalsUnavailable)?<Alert tone="warning">
-      <p className="font-semibold">Drive summary is partially unavailable.</p>
-      <p className="mt-1">Unavailable: {[...unavailableSources,...(!requestsResult.ok?["Drive requests"]:[]),
-      ...(changeResult.status==="rejected"?["Change requests"]:[]),
-      ...(slotsResult.status==="rejected"?["Interview slots"]:[]),
-      ...(offersResult.status==="rejected"?["Offer actions"]:[])].join(", ")}. We cannot confirm zero activity for these sources; verified drive data is shown separately.</p>
+      Some recruiter signals are unavailable: {[...unavailableSources,
+        ...(!requestsResult.ok?["Drive requests"]:[]),
+        ...(changeResult.status==="rejected"?["Change requests"]:[]),
+        ...(slotsResult.status==="rejected"?["Interview slots"]:[]),
+        ...(offersResult.status==="rejected"?["Offer actions"]:[])].join(", ")}.
+      Missing information does not mean there is no work.
       <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
-        className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>
+        className="ml-2 underline">Retry</Link>
     </Alert>:null}
-    {!liveDriveCounts ? <Alert tone="warning">Shared applicant counts are temporarily unavailable. Missing results have not been displayed as zero applicants.</Alert> : null}
-    <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-      <div className="min-w-0 space-y-4">    <section aria-label="Next recruiter actions" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-6">
-      <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Needs you</h2>
-      <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
-      {changeResult.status==="fulfilled"&&totalOpenChangeRequests>0?
-        <p role="status" className="text-xs text-body">
-          {totalOpenChangeRequests} open change request{totalOpenChangeRequests===1?"":"s"} from the placement cell.
-          {totalOpenChangeRequests>changeRequests.length?
-            " Showing the most recent "+changeRequests.length+" here; open Drives for earlier requests.":""}
-        </p>:null}
-      {actionQueue.length ? <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
-        {actionQueue.map(task => <li key={task.key}>
-          <div className="block min-h-11 min-w-0 py-4 min-[768px]:min-h-9">
-            <span className="inline-flex items-center gap-2 text-xs font-semibold text-body">
-              <span aria-label={task.tone==="URGENT"?"Urgent":task.tone==="SOON"?"Soon":"When you can"}
-                className={"inline-block size-2 rounded-full "+(task.tone==="URGENT"?"bg-error":task.tone==="SOON"?"bg-warning":"bg-info")}/>
-              <Badge tone={task.tone==="URGENT"?"error":task.tone==="SOON"?"warning":"info"}>
-                {task.tone==="URGENT"?"Urgent":task.tone==="SOON"?"Soon":"When you can"}
-              </Badge>
-            </span>
-            <span className="mt-2 block break-words font-semibold text-primary-text">{task.label}</span>
-            <span className="mt-1 block text-xs text-body">{task.description}</span>
-            {task.at?<span className="mt-1 block text-xs text-muted-foreground">
-              {task.key.startsWith("due:")||task.key.startsWith("deadline:") ? task.tone==="URGENT"?"Overdue since ":"Due " : "Recorded for "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(task.at)}
-            </span>:null}
-            {task.href?<Link href={task.href}
-              className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-              {task.tone==="URGENT"?"Review now →":task.key.startsWith("due:")?"Open results →":"Open →"}
-            </Link>:<span className="mt-3 block text-xs text-muted-foreground">
-              Waiting for the applicant or placement cell; no action is available yet.
-            </span>}
-          </div>
-        </li>)}
-      </ul> : !recentJobCapReached && collegeJobs.length===0 && requestCount===0 ? (
-        <div className="min-w-0 py-4">
-          <h3 className="font-semibold text-[var(--lms-heading)]">Start with your first drive</h3>
-          <ol className="mt-3 list-inside list-decimal space-y-2 text-sm text-body">
-            <li>Describe the role, pay and how you select. It takes a few minutes, and your draft is kept as you type.</li>
-            <li>The placement cell reviews it, sets the dates and publishes it to students.</li>
-            <li>Applicants show up here; you review them one by one and send results to the placement cell.</li>
-          </ol>
-          <Link href={recruiterDriveDraftHref({collegeId:selectedId})}
-            className="mt-4 inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-            Request your first drive
-          </Link>
-        </div>
-      ) : (
-        <EmptyState title="You are all caught up"
-          description="New applicants, replies and decisions from the placement cell will show up here." />
-      )}
-    </section>
-
-    <details open={waitingRequests.length > 0 || Boolean(conversationSignals?.waiting.length)} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-      <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">With the placement cell</summary>
-      <p className="mt-2 text-sm text-body">Formal requests awaiting a college decision. Results and selections require recorded submissions.</p>
-      {!requestsResult.ok?<p role="alert" className="mt-3 text-sm text-muted-foreground">Drive request status unavailable. Retry before treating this as empty.</p>:null}
-      {waitingRequests.length?<ul className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">
-        {waitingRequests.map(request=><li key={request.id}>
-          <Link href={"/recruiter/drives/new?collegeId="+encodeURIComponent(selectedId)+(request.status==="SENT_BACK"?"&fix=":"&edit=")+encodeURIComponent(request.id)}
-            className="block rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4 text-sm text-primary-text min-h-11 min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-            <span className="block font-semibold">{request.title}</span>
-            <span className="mt-1 block text-xs text-body">
-              {request.status==="REQUEST"?"Sent for review":"Needs your changes"}
-            </span>
-          </Link>
-        </li>)}
-      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground leading-[1.6]">
-        {requestsResult.ok?"No formal drive requests are waiting at this college.":"Request count is unavailable."}
-      </p>}
-      <h3 className="mt-4 font-semibold text-[var(--lms-heading)]">Conversations waiting for a reply</h3>
-      <p className="mt-1 text-sm text-body">These conversations were last updated by you. This does not prove a reply is due.</p>
-      {conversationResult.status==="rejected" ? <p role="alert" className="mt-3 text-sm text-muted-foreground">Conversation status unavailable.</p> : conversationSignals?.waiting.length?<ul className="mt-4 grid gap-3 min-[768px]:grid-cols-2">
-        {conversationSignals.waiting.map(row=><li key={row.id}>
-          <Link href={row.href} className="block rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4 text-sm text-primary-text min-h-11 min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-            {row.label} · Last message from you
-          </Link>
-        </li>)}
-      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground leading-[1.6]">
-        No recruiter-last-sent conversations on the visible inbox page.
-      </p>}
-      {conversationSignals?.limitedToCurrentPage?<Link
-        href={"/hr/conversations?collegeId="+encodeURIComponent(selectedId)}
-        className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-        View all conversations
-      </Link>:null}
-    </details>
-      </div>
-      <div className="min-w-0">    <section aria-label="This week" className="border-b border-[var(--lms-canvas-border)] pb-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">This week</h2>
-        <Link href={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)} className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Full calendar</Link>
-      </div>
-      {calendarResult.status==="rejected" ? <p role="alert" className="mt-3 text-sm text-muted-foreground">Calendar unavailable. Retry before checking this week's schedule.</p> :
-      weekEvents.length?<ul className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">
-        {weekEvents.map(item=><li key={item.id}>
-          <Link href={item.href} className="block min-h-11 min-w-0 break-words py-3 hover:bg-primary-subtle min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-            <span className="block text-xs font-semibold text-muted-foreground">{item.kind.replaceAll("_"," ")}</span>
-            <span className="mt-1 block font-semibold text-foreground">{item.title}</span>
-            <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
-            <span className="mt-1 block text-xs text-muted-foreground">
-              {item.dayLabel ? item.dayLabel+" · ":""}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(item.startsAt)} IST
-            </span>
-          </Link>
-        </li>)}
-      </ul>:<p className="mt-3 text-sm text-muted-foreground">Nothing scheduled here in the next 7 days.</p>}
-    </section>
-</div>
-    </div>
-    <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-heading)]">Quick numbers</summary>
-      <section aria-label="Recruiter tasks" className="mt-3 grid min-w-0 grid-cols-1 overflow-hidden rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-3">{actions.map(action=>
-      <Link key={action.label} href={action.url} className="flex min-h-11 min-w-0 items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] p-3 hover:bg-primary-subtle min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-        <span className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{action.label}</span><span className="shrink-0 text-[20px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{action.value}</span>
-      </Link>)}</section>
-    </details>
-    <section aria-label="Live recruiter hiring drives" className="border-b border-[var(--lms-canvas-border)] pb-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Live drives</h2>
-        <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
-          className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">See all live drives</Link>
-      </div>
-      <p className="mt-2 text-xs text-muted-foreground">The busiest visible shared-applicant drive appears first, followed by up to two more. Counts include only applicants explicitly shared with you by the placement cell—not private applications.</p>
-      {liveDrives.length?<div className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">
-        {liveDrives.map(row=><Link key={row.job.id}
-          href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
-          className="block min-w-0 break-words py-4 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-          <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
-          {liveDriveCounts&&row.job.id===mostSharedLiveId&&liveDrives.length>1&&(liveDriveCounts[row.job.id]?.sharedApplicants??0)>0?<Badge  tone="neutral" className="mt-1">Most shared applicants</Badge>:null}
-          <span className="mt-1 block text-xs text-muted-foreground">
-            {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
-          </span>
-          <span className="mt-2 block text-sm font-semibold text-foreground">
-            {liveDriveCounts ? `${liveDriveCounts[row.job.id]?.sharedApplicants??0} shared applicants` : "Shared applicant count unavailable"}
-          </span>
-          {liveDriveCounts&&(liveDriveCounts[row.job.id]?.sharedApplicants??0)===0?
-            <span className="mt-1 block text-xs text-muted-foreground">No shortlisted applicants have been shared yet.</span>:null}
-          <span className="mt-2 block text-sm text-primary-text">Open hiring drive →</span>
-        </Link>)}
-      </div>:<p className="mt-3 text-sm text-muted-foreground">No live, non-archived drives for this employer and college.</p>}
-    </section>
-    <details open={today.dueSoon.length > 0} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-      <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Actionable deadlines</summary>
-      {today.dueSoon.length ? <div className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">{today.dueSoon.map(item =>
-        <Link key={item.job.id} href={"/recruiter/drives/" + item.job.id}
-          className="block min-h-11 min-w-0 break-words py-3 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"><span className="block font-medium text-foreground">{item.job.title}</span>
-          <span className="mt-1 block text-sm text-body">Applications close {when(item.job.applicationDeadline!)}</span></Link>)}</div> :
-        <p className="mt-3 text-sm text-muted-foreground">No application deadlines in the next seven days.</p>}
-    </details>
-    <details open={today.upcomingRounds.length > 0} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-      <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">This week · upcoming rounds</summary>
-      {calendarResult.status==="rejected" ? <p role="alert" className="mt-3 text-sm text-muted-foreground">Round calendar unavailable. Use Retry above.</p> :
-      today.upcomingRounds.length ? <div className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">{today.upcomingRounds.map(event =>
-        <Link key={event.id} href={"/recruiter/drives/" + event.jobId + "?tab=rounds"}
-          className="block min-h-11 min-w-0 break-words py-3 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"><span className="block font-medium text-foreground">{event.title}</span>
-          <span className="mt-1 block text-sm text-body">{event.jobTitle} · {when(event.startsAt)}</span></Link>)}</div> :
-        <p className="mt-3 text-sm text-muted-foreground">No upcoming scheduled rounds for this college during this week.</p>}
-    </details>
-    <details open={dueResults.length > 0} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-      <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Results due this week</summary>
-      <p className="mt-1 text-sm text-body">Recorded result deadlines on authorized employer rounds. A past timestamp alone does not establish that results remain outstanding.</p>
-      {calendarResult.status==="rejected" ? <p role="alert" className="mt-3 text-sm text-muted-foreground">Result deadlines unavailable. Use Retry above.</p> :
-      dueResults.length ? <div className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">{dueResults.map(item =>
-        <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
-          className="block min-h-11 min-w-0 break-words py-3 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-          <span className="block break-words font-medium text-foreground">{item.roundName}</span>
-          <span className="mt-1 block text-sm text-body">{item.jobTitle} · {when(item.dueAt)} IST</span>
-          <Badge  tone="neutral" className="mt-2">
-            {HR_DEADLINE_URGENCY_LABELS[hrResultDeadlineUrgency(item.dueAt,now)]}
-          </Badge>
-        </Link>)}</div> : <p className="mt-3 text-sm text-muted-foreground">No upcoming results deadlines are recorded for this college this week.</p>}
-    </details>
-    <section aria-label="Unread placement-cell conversations"
-      className="border-b border-[var(--lms-canvas-border)] pb-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Replies to read</h2>
-        <Link href={hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1})}
-          className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View unread conversations</Link>
-      </div>
-      <p className="mt-1 text-xs text-muted-foreground">
-        Only employer-owned threads from your selected college. No message bodies appear on Today.
-      </p>
-      {conversationResult.status==="rejected" ? <p role="alert" className="mt-3 text-sm text-muted-foreground">Unread conversations unavailable. Use Retry above before drawing conclusions.</p> : conversationSignals?.unread.length?<ul className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">
-        {conversationSignals.unread.map(row=><li key={row.id}>
-          <Link href={row.href} className="block min-h-11 min-w-0 break-words py-3 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">
-            <span className="block break-words font-semibold text-primary-text">{row.label}</span>
-            <span className="mt-1 block text-sm text-body">{row.unread} unread placement-cell messages</span>
-          </Link>
-        </li>)}
-      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground leading-[1.6]">
-        No unread placement-cell conversations on this inbox page.
-      </p>}
-    </section>
-
-    <details className="min-w-0"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-heading)]">More recruiter links</summary><div className="flex flex-wrap gap-x-4 gap-y-2 text-sm"><Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/hr/drives?collegeId=" + encodeURIComponent(selectedId)}>Browse drives</Link>
-      <Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/hr/company?collegeId=" + encodeURIComponent(selectedId)}>Company & Team</Link>
-      <Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/recruiter/messages?collegeId="+encodeURIComponent(selectedId)}>Messages</Link>
-      <Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/hr/activity?collegeId="+encodeURIComponent(selectedId)}>Hiring activity</Link>
-      <Link className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href="/hr/profile">Your profile</Link></div></details>
+    <RecruiterTodayPrototype greeting={greeting.title} dateLabel={dateLabel}
+      collegeName={collegeName}
+      storageKey={"recruiter-today-later:"+context.user.id+":"+recruiter.companyId+":"+selectedId}
+      hasDriveHistory={requestsResult.ok?(collegeJobs.length>0||requests.length>0||recentJobCapReached):null}
+      firstDriveHref={recruiterDriveDraftHref({collegeId:selectedId})}
+      calendarHref={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)}
+      tasks={tasks}
+      weekEvents={weekEvents.map(item=>({
+        id:item.id,kind:item.kind,title:item.title,jobTitle:item.jobTitle,
+        href:item.href,when:new Intl.DateTimeFormat("en-IN",{
+          timeZone:"Asia/Kolkata",weekday:"short",hour:"numeric",minute:"2-digit",hour12:true,
+        }).format(item.startsAt),
+      }))}
+      waiting={waiting} waitingUnavailable={!requestsResult.ok||conversationResult.status==="rejected"}/>
   </div>;
 }
