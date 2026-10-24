@@ -36,11 +36,12 @@ const eventIstDay=(value:string|Date)=>{
 type Cursor={time:string;id:string};
 type Page={events:Event[];hasMore:boolean;nextCursor:Cursor|null};
 
-export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false,weekContributors=[],actorOptions=[]}:{
+export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false,weekContributors=[],weekTotals=null,actorOptions=[]}:{
  projectId:string;events:Event[];now:string;resourceAudit?:boolean;
  sprints?:readonly {id:string;title:string;sequence:number}[];
  mentorWeekSummary?:boolean;
  weekContributors?:readonly {membershipId:string;name:string;eventCount:number}[];
+ weekTotals?:{taskMoves:number;comments:number;resourcesShared:number;count:number}|null;
  actorOptions?:readonly {id:string;label:string}[];
 }){
  const [items,setItems]=useState<readonly Event[]>(events);
@@ -179,7 +180,8 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     &&(!fromDate||day>=fromDate)
     &&(!toDate||day<=toDate);
  });
- const week=mentorWeekSummary?mentorLoadedWeekActivitySummary(items,new Date(now)):null;
+ const week=mentorWeekSummary?
+   (weekTotals??mentorLoadedWeekActivitySummary(items,new Date(now))):null;
  const fewest=mentorWeekSummary?mentorFewestRecordedContributors(weekContributors):null;
  const resourceEvents=items.filter(item=>projectResourceAuditAction(item.eventType)!==null);
  const counts=[
@@ -199,14 +201,16 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  return <section className="space-y-3">
   {week?<div aria-label="This week in project activity"
     className="space-y-1 rounded-lg border border-border p-3">
-    <strong>This week · recorded in loaded activity</strong>
+    <strong>{weekTotals?"This week · all recorded project activity":
+      "This week · recorded in loaded activity"}</strong>
     <p>{week.taskMoves} task moves · {week.comments} comments ·
       {" "}{week.resourcesShared} shared resources · {week.count} total events</p>
     <p className="text-xs text-muted-foreground">
-      This is a summary of loaded history, not a complete project-wide count.
-      Task, comment and resource totals shown above use the loaded activity page.
-      The following learner comparison uses all recorded events in the authorized
-      current IST week, including events outside the loaded page.
+      {weekTotals?
+        "Task, comment and resource totals cover the authorized full IST week, including events outside the loaded feed.":
+        "The aggregate is unavailable, so these totals include only loaded events."}
+      {" "}The learner comparison uses persisted events for the same IST week;
+      it is not a measurement of attendance or contribution quality.
     </p>
     {fewest?.kind==="RESULT"?<p>
       Fewest recorded project events among active students:
