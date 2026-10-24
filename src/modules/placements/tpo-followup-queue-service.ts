@@ -204,6 +204,27 @@ export async function completeConfirmedTpoFollowup(
       throw new TpoCrmError("TPO_CRM_FOLLOWUP_ALREADY_DONE");
     }
 
+    // Same persistence rule as a separately confirmed new follow-up.
+    // A Done & next action is atomic: either both rows + both audit entries
+    // commit or neither does; a failed or stale write never adds next work.
+    const nextDueAt=input.nextDueAt?new Date(input.nextDueAt):null;
+    if(nextDueAt){
+      const now=new Date();
+      if(!Number.isFinite(nextDueAt.getTime())||
+        nextDueAt.getTime()<=now.getTime()||
+        nextDueAt.getTime()>now.getTime()+2*365*86400000)
+        throw new TpoCrmError("TPO_CRM_INVALID_DUE_AT");
+      const [lead]=await tx.select({
+        unsubscribedAt:placementTpoLeads.unsubscribedAt,
+        recruiterUserId:placementTpoLeads.recruiterUserId,
+      }).from(placementTpoLeads).where(and(
+        eq(placementTpoLeads.id,current.leadId),
+        eq(placementTpoLeads.collegeId,scope.collegeId),
+      )).for("update").limit(1);
+      if(!lead||lead.unsubscribedAt||lead.recruiterUserId)
+        throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+    }
+
     const [done] = await tx.update(placementTpoFollowups)
       .set({ doneAt: new Date() })
       .where(and(
@@ -221,6 +242,24 @@ export async function completeConfirmedTpoFollowup(
       note: tpoFollowupDoneAudit(input.outcome, input.note),
       createdByUserId: actorUserId,
     });
+    if(nextDueAt){
+      const [next]=await tx.insert(placementTpoFollowups).values({
+        collegeId:scope.collegeId,
+        leadId:current.leadId,
+        dueAt:nextDueAt,
+        ownerMembershipId:scope.ownerMembershipId,
+        note:"Follow-up after "+input.outcome.toLowerCase().replaceAll("_"," ")+
+          ": "+input.note,
+      }).returning({id:placementTpoFollowups.id});
+      if(!next)throw new Error("TPO_FOLLOWUP_CREATE_FAILED");
+      await tx.insert(placementTpoLeadActivities).values({
+        collegeId:scope.collegeId,leadId:current.leadId,
+        type:"NOTE",isSystem:false,outcome:"FOLLOWUP_CREATED",
+        note:tpoFollowupCreatedAudit(nextDueAt),
+        createdByUserId:actorUserId,
+      });
+      return {id:done.id,done:true as const,nextFollowupId:next.id};
+    }
     return { id: done.id, done: true as const };
   });
 }

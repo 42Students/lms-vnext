@@ -13,7 +13,8 @@ export const confirmedTpoFollowupCreateSchema = z.object({
 export const confirmedTpoFollowupDoneSchema = z.object({
   confirmed: z.literal(true),
   expectedDueAt: z.iso.datetime({ offset: true }),
-  outcome: z.enum(["CONTACTED", "NO_RESPONSE", "DECLINED", "OTHER"]),
+  outcome: z.enum(["CONTACTED", "NO_RESPONSE", "CALL_BACK", "DECLINED", "OTHER"]),
+  nextDueAt: z.iso.datetime({ offset: true }).optional(),
   note: z.string().trim().min(1).max(500),
 }).strict();
 
@@ -54,7 +55,7 @@ export function tpoFollowupCreatedAudit(dueAt: Date): string {
 }
 
 export function tpoFollowupDoneAudit(
-  outcome: "CONTACTED" | "NO_RESPONSE" | "DECLINED" | "OTHER",
+  outcome: "CONTACTED" | "NO_RESPONSE" | "CALL_BACK" | "DECLINED" | "OTHER",
   note: string,
 ): string {
   return "Follow-up completed (" + outcome + "): " + note;
