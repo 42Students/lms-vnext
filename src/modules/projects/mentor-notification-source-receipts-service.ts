@@ -94,3 +94,44 @@ export async function markOwnMentorSourceRead(
     return {markedRead:true};
   });
 }
+
+/** Explicit bulk acknowledgment for currently visible source items only.
+ * Process a bounded batch of 50 so large portfolios are not silently claimed
+ * complete and acknowledgement transactions remain responsive.
+ */
+export async function markVisibleMentorSourcesRead(context:RequestContext){
+  const membership=await requirePersistedMentorInboxMembership(context);
+  const allowed=[...new Set(await allowedMentorSourceKeys(context))];
+  const prior=await listOwnMentorSourceReceipts(context,allowed);
+  const missing=allowed.filter(key=>!prior.has(key));
+  const batch=missing.slice(0,50);
+  if(!batch.length)return {markedRead:0,remainingLoaded:0,notice:"All loaded source items acknowledged"};
+  return getDb().transaction(async tx=>{
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${context.user.id}, 31))`);
+    let markedRead=0;
+    for(const key of batch){
+      const [existing]=await tx.select({id:activityEvents.id}).from(activityEvents)
+        .where(and(eq(activityEvents.actorUserId,context.user.id),
+          eq(activityEvents.collegeId,membership.collegeId),
+          eq(activityEvents.subjectType,ACK_SUBJECT),
+          eq(activityEvents.eventType,ACK_EVENT),
+          eq(activityEvents.subjectId,key),
+        )).limit(1);
+      if(existing)continue;
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACK_EVENT,collegeId:membership.collegeId,
+        organizationId:membership.organizationId,
+        subjectType:ACK_SUBJECT,subjectId:key,
+        summary:"Mentor source notification acknowledged",
+        metadata:{source:key.startsWith("announcement:")?"ANNOUNCEMENT":"PROJECT_ATTENTION"},
+        groupKey:"mentor:notifications:"+context.user.id,
+        dedupeKey:"mentor:source-read:"+context.user.id+":"+receiptHash(key),
+      });
+      markedRead++;
+    }
+    return {markedRead,remainingLoaded:Math.max(0,missing.length-batch.length),
+      notice:allowed.length>=100?
+        "Read status covers sources visible in the loaded announcement window":
+        "Read state saved for verified visible project and college sources"};
+  });
+}
