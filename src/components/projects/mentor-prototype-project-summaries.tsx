@@ -6,6 +6,7 @@ import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evide
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
 import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
+import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 
@@ -284,8 +285,7 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
     normalizeArtifacts(latest?.attachments??[]),
     previous?normalizeArtifacts(previous.attachments??[]):null,
   );
-  const events=[...workspace.finalDelivery.history]
-    .sort((a,b)=>b.occurredAt.localeCompare(a.occurredAt)).slice(0,15);
+  const events=workspace.finalDelivery.history;
   return <section className="prototype-mentor-delivery-evidence" aria-label="Final submission evidence">
     <div className="prototype-mentor-card-title">
       <h2>Final submission · evidence</h2>
@@ -336,17 +336,7 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
       <p>Evidence badges compare saved names and links, not the contents of external files.</p>
     </section>:null}
     {artifacts.length>0?<MentorEvidenceGallery items={artifacts}/>:null}
-    <div className="prototype-mentor-delivery-history">
-      <h3>History · {workspace.finalDelivery.history.length} events</h3>
-      {events.length?<ol>{events.map(event=><li key={event.id}>
-        <strong>{event.kind.replaceAll("_"," ")}</strong>
-        <span>{event.actorName||"Project team"} · {new Intl.DateTimeFormat("en-IN",{
-          day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
-        }).format(new Date(event.occurredAt))}</span>
-        {event.feedback?<p>{event.feedback}</p>:null}
-      </li>)}</ol>:<p className="prototype-mentor-summary-empty">
-        No submission history recorded.</p>}
-    </div>
+    <MentorDeliveryHistory events={events}/> 
   </section>;
 }
 
