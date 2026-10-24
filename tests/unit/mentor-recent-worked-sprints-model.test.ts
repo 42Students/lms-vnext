@@ -35,6 +35,21 @@ describe("Mentor last-four worked sprint window",()=>{
     ])).toEqual([]);
   });
 
+  it("keeps the latest four chronological across release-local sequence reset",()=>{
+    const releases=[{id:"r1",sequence:0},{id:"r2",sequence:1}];
+    const rows=[
+      {id:"r1-s2",releaseId:"r1",sequence:2,status:"COMPLETED"},
+      {id:"r1-s3",releaseId:"r1",sequence:3,status:"COMPLETED"},
+      {id:"r1-s4",releaseId:"r1",sequence:4,status:"COMPLETED"},
+      {id:"r2-s0",releaseId:"r2",sequence:0,status:"COMPLETED"},
+      {id:"r2-s1",releaseId:"r2",sequence:1,status:"ACTIVE"},
+      {id:"r2-s2",releaseId:"r2",sequence:2,status:"PLANNED"},
+    ];
+    expect(recentMentorWorkedSprintIds(rows,releases)).toEqual([
+      "r2-s1","r2-s0","r1-s4","r1-s3",
+    ]);
+  });
+
   it("does not alter its caller's ordering",()=>{
     const sprints=[sprint(9,"COMPLETED"),sprint(11,"ACTIVE"),
       sprint(10,"COMPLETED"),sprint(12,"PLANNED")];
