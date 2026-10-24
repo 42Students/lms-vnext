@@ -26,6 +26,13 @@ describe("Mentor sprint plan default suggestions",()=>{
    {releaseId:"r",sequence:0,endDate:"2026-12-29"},
   ])).toMatchObject({startDate:"2026-12-30",endDate:"2027-01-05"});
  });
+ it("does not suggest an expired historical week while preserving release sequence",()=>{
+  const plan=mentorSprintPlanningDefaults("r",[
+    {releaseId:"r",sequence:12,endDate:"2021-01-02"},
+  ],"2026-10-24");
+  expect(plan).toEqual({title:"Sprint 14",sequence:13,
+    startDate:"",endDate:""});
+ });
  it("preserves the most recent sequence without reusing older gaps",()=>{
   expect(mentorSprintPlanningDefaults("r",[
     {releaseId:"r",sequence:0,endDate:"2026-10-01"},
