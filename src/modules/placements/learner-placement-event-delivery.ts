@@ -125,6 +125,8 @@ export async function deliverRecordedLearnerPlacementEvent(
  tx:Tx,
  input:{eventId:string;collegeId:string;membershipId:string;kind:LearnerPlacementEventKind;
   subject:string;jobId?:string;applicationId?:string;
+  /** Verified decision captured by the same transaction as the source event. */
+  requestDecisionStatus?:"APPROVED"|"REJECTED";requestDecisionNote?:string;
   /** Only a verified candidate-specific event writer can provide this. */
   approvedAssessmentUrl?:string},
 ):Promise<{delivered:boolean;skipped:LearnerPlacementDeliverySkip|null}>{
@@ -198,6 +200,8 @@ export async function deliverRecordedLearnerPlacementEvent(
   jobId:scopedJobId,jobTitle,applicationId:input.applicationId,
   status:applicationStatus,statusUpdatedAt:applicationStatusUpdatedAt,
   assessmentUrl:input.applicationId?input.approvedAssessmentUrl:undefined,
+  requestDecisionStatus:input.requestDecisionStatus,
+  requestDecisionNote:input.requestDecisionNote,
  });
  // The strict delivery schema accepts only these three fields (no copy metadata).
  const message={title:rendered.title,body:rendered.body,actionHref:rendered.actionHref};
