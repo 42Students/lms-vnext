@@ -2424,6 +2424,7 @@ export function ProjectWorkspace({
             projectId={workspace.project.id} events={workspace.activity}
             sprints={mode==="MENTOR"?workspace.sprints:[]}
             mentorWeekSummary={mode==="MENTOR"}
+            weekContributors={mode==="MENTOR"?workspace.mentorWeekContributors:[]}
             now={new Date().toISOString()} />:null}
 
 
