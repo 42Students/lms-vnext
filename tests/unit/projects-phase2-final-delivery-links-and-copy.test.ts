@@ -23,7 +23,8 @@ describe("PR-S2-07 registered 0091 final delivery links and Project page copy",(
   expect(learner).toContain("<LearnerProjectTabs");
   expect(college).toContain('if (basePath === "/college/projects") return null;');
   expect(college).not.toContain('basePath === "/admin/projects") return null');
-  expect(college).toContain('<Tabs className={styles.legacy}');
+  expect(college).toContain('styles["legacy"]');
+  expect(college).toContain('ariaLabel="Projects"');
   for(const label of ["Workspaces","At Risk","Readiness","Submissions","Templates","Audit"]){
    expect(legacyA).toContain('label: "'+label+'"');
    expect(legacyB).toContain('label: "'+label+'"');
