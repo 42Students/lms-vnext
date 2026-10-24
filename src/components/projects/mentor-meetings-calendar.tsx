@@ -17,6 +17,7 @@ import {MentorMeetingReschedule} from "./mentor-meeting-reschedule";
 import {MentorMeetingCancelInline} from "./mentor-meeting-cancel-inline";
 import {MentorMeetingOutcomeQuickEdit} from "./mentor-meeting-outcome-quick-edit";
 import {MentorMeetingFacilitationQuickEdit} from "./mentor-meeting-facilitation-quick-edit";
+import {MentorGoogleMeetingProviderStatus} from "./mentor-google-meeting-provider-status";
 import styles from "./mentor-meetings-calendar.module.css";
 
 const PAST_PREVIEW = 20;
@@ -114,10 +115,11 @@ function MeetingRow({
         </div>:null}
       <div className="prototype-mentor-meeting-section"
         aria-label="Recorded calendar integration status">
+        {meeting.googleProviderStatus?<MentorGoogleMeetingProviderStatus status={meeting.googleProviderStatus}/>:null}
         {meeting.legacyCalendarSyncStatus?<p>
           Imported calendar status: {meeting.legacyCalendarSyncStatus}.
           {" "}This historical field is not proof of a current Google connection.
-        </p>:<p>No verified live calendar sync for this meeting.
+        </p>:meeting.googleProviderStatus?null:<p>No verified live calendar sync for this meeting.
           Download an .ics file if you want a local calendar copy.</p>}
         {meeting.calendarSyncError?<p role="status">
           Recorded calendar error: {meeting.calendarSyncError}</p>:null}
