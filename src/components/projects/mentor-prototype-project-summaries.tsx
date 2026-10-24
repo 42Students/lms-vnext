@@ -10,8 +10,6 @@ import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycl
 import {MentorReleaseEditor} from "./mentor-release-editor";
 import {MentorSprintCreate} from "./mentor-sprint-write";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
-import {MentorSprintCreate} from "./mentor-sprint-write";
-import {MentorReleaseEditor} from "./mentor-release-editor";
 import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
 import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
