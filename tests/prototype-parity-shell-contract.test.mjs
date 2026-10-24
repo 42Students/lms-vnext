@@ -425,7 +425,8 @@ test("Mentor Resources show real pinned group without breaking resource actions"
 test("Mentor final submission Zoom uses sandboxed supported evidence links only",()=>{
   const preview=source("src/components/projects/mentor-evidence-preview.tsx");
   const summary=source("src/components/projects/mentor-prototype-project-summaries.tsx");
-  assert.match(preview,/\.pdf\|png/);
+  assert.match(preview,/previewable=/);
+  assert.match(preview,/jpe\?g\|webp\|gif/);
   assert.match(preview,/sandbox=""/);
   assert.match(preview,/referrerPolicy="no-referrer"/);
   assert.match(preview,/Open full size/);
