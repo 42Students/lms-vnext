@@ -25,6 +25,10 @@ import {mentorAttentionReceiptKey,mentorAnnouncementReceiptKey}
 import {MentorSourceNotificationRead} from
   "@/components/projects/mentor-source-notification-read";
 import {MentorSourceReadAll} from "@/components/projects/mentor-source-read-all";
+import {MentorUnifiedNotificationFeed} from
+  "@/components/projects/mentor-unified-notification-feed";
+import {sortMentorUnifiedNotifications,type MentorUnifiedNotification}
+  from "@/modules/projects/mentor-unified-notification-model";
 import {mentorAttentionKindSchema,mentorAttentionProjectSchema,mentorAttentionOrderSchema,selectMentorAttention,mentorAttentionProjectOptions} from "@/modules/projects/mentor-attention-kind-model";
 
 export const dynamic = "force-dynamic";
@@ -153,6 +157,29 @@ async function MentorNotificationsContent({
   }));
   const shownInbox=selectedPill==="unread"
     ? items.filter(item=>item.readAt===null):items;
+  const unifiedRows:MentorUnifiedNotification[]=sortMentorUnifiedNotifications([
+    ...items.map(item=>({
+      id:item.id,source:"PERSONAL" as const,title:item.title,
+      description:item.body,occurredAt:item.createdAt,
+      actionHref:item.actionHref,read:item.readAt!==null,receiptKey:null,
+    })),
+    ...alerts.map(alert=>{
+      const receiptKey=mentorAttentionReceiptKey(alert);
+      return {id:alert.key,source:"ATTENTION" as const,title:alert.title,
+        description:alert.description,occurredAt:alert.occurredAt,
+        actionHref:alert.href,read:ownSourceReceipts?
+          sourceRead(receiptKey):null,receiptKey};
+    }),
+    ...announcements.map(notice=>{
+      const receiptKey=mentorAnnouncementReceiptKey(notice);
+      return {id:notice.id,source:"ANNOUNCEMENT" as const,title:notice.title,
+        description:notice.message,occurredAt:notice.createdAt.toISOString(),
+        actionHref:null,read:ownSourceReceipts?
+          sourceRead(receiptKey):null,receiptKey};
+    }),
+  ]);
+  const mergedShown=selectedPill==="unread"?
+    unifiedRows.filter(row=>row.read===false):unifiedRows;
   const nextHref = inbox?.page.nextCursor
     ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor)+
       (selectedPill==="unread"?"&pill=unread":"") : null;
@@ -202,9 +229,20 @@ async function MentorNotificationsContent({
       </svg>
       <p className="text-sm font-semibold text-body">Nothing needs your attention right now.</p>
     </div>:null}
+    {(selectedPill==="all"||selectedPill==="unread")&&!allRelevantFailed?
+      <MentorUnifiedNotificationFeed items={mergedShown}/>:null}
+    {(selectedPill==="all"||selectedPill==="unread")&&inbox&&inbox.unreadCount>0?
+      <section aria-label="Personal inbox bulk read" className="space-y-2">
+        <h2 className="font-semibold">Personal messages · {inbox.unreadCount} unread</h2>
+        <NotificationToolbar view={inbox.query.view}
+          unreadCount={inbox.unreadCount}
+          display="mark-all" baseHref={MENTOR_INBOX}
+          markAllEndpoint="/api/mentor/notifications/read-all"
+          confirmMarkAll confirmMessage="Mark all personal Mentor inbox messages read? Project alerts and college notices have separate source read controls."/>
+      </section>:null}
     <div className="prototype-mentor-notifications-columns">
       <div className="prototype-mentor-notifications-feed">
-    {(selectedPill==="all"||selectedPill==="unread"||selectedPill==="ann")&&!allSourcesEmpty&&!allRelevantFailed?<AnnouncementFeed enabled={announcementsEnabled}
+    {selectedPill==="ann"&&!allSourcesEmpty&&!allRelevantFailed?<AnnouncementFeed enabled={announcementsEnabled}
       mentorReadStates={ownSourceReceipts?Object.fromEntries(
         announcements.map(item=>{
           const key=mentorAnnouncementReceiptKey(item);
@@ -216,7 +254,7 @@ async function MentorNotificationsContent({
         senderType:item.senderType,receiverType:item.receiverType,
         isPinned:item.isPinned,createdAt:item.createdAt,
       }))} />:null}
-    {(selectedPill==="all"||selectedPill==="unread"||selectedPill==="subs"||selectedPill==="meet"||selectedPill==="tasks")&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
+    {(selectedPill==="subs"||selectedPill==="meet"||selectedPill==="tasks")&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
       <h2 id="mentor-attention" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
         Project attention ({shownAlerts.length} of {alerts.length})
       </h2>
@@ -287,7 +325,7 @@ async function MentorNotificationsContent({
                   read={sourceRead(mentorAttentionReceiptKey(alert))}/>:null}
               </article>)}</div>}
     </section>:null}
-    {(selectedPill==="all"||selectedPill==="unread")&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
+    {false&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
       <h2 id="mentor-personal-notifications" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
         Personal notifications
       </h2>
