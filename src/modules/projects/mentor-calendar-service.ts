@@ -1,8 +1,8 @@
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNull, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, membershipRoles, projectInstances, projectMeetings,
-  projectMembers, projectSprints, users,
+  projectMembers, projectSprints, projectReleases, users,
 } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from
   "@/modules/identity/context";
@@ -127,4 +127,42 @@ export async function listMyMentorCalendarMeetings(
     updatedAt:row.updatedAt.toISOString(),
     };
   });
+}
+
+/** Schedulable sprint choices come only from the active Mentor roster.
+ * The browser may pick one ID, but the mutation service validates project and
+ * sprint identity again before writing any meeting.
+ */
+export async function listMyMentorSchedulableSprints(
+  context:RequestContext,
+  verifiedProjects?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
+){
+  const membership=context.membership;
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+    context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
+      collegeId:membership.collegeId,organizationId:membership.organizationId,
+    }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const roster=(verifiedProjects??await listMyProjectInstances(context))
+    .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId&&
+      row.project.status==="ACTIVE"&&!row.project.deletedAt);
+  const ids=roster.map(row=>row.project.id);
+  if(!ids.length)return [];
+  return getDb().select({
+    id:projectSprints.id,projectId:projectSprints.projectId,
+    title:projectSprints.title,sequence:projectSprints.sequence,
+    status:projectSprints.status,
+  }).from(projectSprints)
+    .innerJoin(projectReleases,and(
+      eq(projectReleases.id,projectSprints.releaseId),
+      eq(projectReleases.projectId,projectSprints.projectId),
+    ))
+    .where(and(
+      inArray(projectSprints.projectId,ids),
+      isNull(projectSprints.deletedAt),isNull(projectReleases.deletedAt),
+      inArray(projectSprints.status,["ACTIVE","PLANNED"]),
+      ne(projectReleases.status,"SHIPPED"),
+    ))
+    .orderBy(asc(projectSprints.sequence),asc(projectSprints.id));
 }
