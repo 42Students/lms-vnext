@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import {z} from "zod";
+import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {MENTOR_SIGNOFF_MAX_BODY_BYTES} from
+ "@/modules/projects/mentor-sprint-signoff-request-policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -30,11 +33,15 @@ export async function POST(
   try {
     const context = await getCurrentRequestContext();
     const { projectId, sprintId } = await params;
-    const raw=await request.text();
-    if(raw.length>4096)return NextResponse.json({error:"UPDATE_TOO_LONG"},{status:413});
+    const body=await readBoundedUtf8Body(request,MENTOR_SIGNOFF_MAX_BODY_BYTES);
+    if(body.kind==="TOO_LARGE")
+      return NextResponse.json({error:"UPDATE_TOO_LONG"},{status:413});
+    if(body.kind!=="OK")
+      return NextResponse.json({error:"INVALID_JSON"},{status:400});
     let input:unknown={};
-    if(raw.trim()){
-      try{input=JSON.parse(raw) as unknown;}
+    // Keep the legacy empty POST as a valid sign-off without task choices.
+    if(body.body.trim()){
+      try{input=JSON.parse(body.body) as unknown;}
       catch{return NextResponse.json({error:"INVALID_JSON"},{status:400});}
     }
     const parsed=z.object({
