@@ -1000,7 +1000,6 @@ export async function gradeAssignmentSubmission(
   }
   const gradeChanged=facultyGradeHasChanges(current,{
     pointsAwarded: input.pointsAwarded,
-    expectedVersion: input.expectedVersion,
     ...(input.feedback !== undefined ? { feedback: input.feedback } : {}),
     ...(input.hidePublished !== undefined ? { hidePublished: input.hidePublished } : {}),
   });
