@@ -13,6 +13,7 @@ import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { allowedMentorTaskTransition } from "./mentor-task-transition-model";
+import {buildMentorSprintSignOffSnapshot} from "./mentor-sprint-signoff-snapshot-model";
 import {
   projectInstances,
   projectReleases,
@@ -264,6 +265,21 @@ export async function completeProjectSprint(
       );
     }
 
+    // Preserve workload as it stood at sign-off, before NEXT/BACKLOG/DROP
+    // moves alter sprintId or archive unfinished tasks. Lock these rows in
+    // the same transaction as the lifecycle and audit write.
+    const signOffTasks=await tx.select({
+      status:projectTasks.status,
+      estimatePoints:projectTasks.estimatePoints,
+      assigneeMembershipId:projectTasks.assigneeMembershipId,
+      carriedFromSprintId:projectTasks.carriedFromSprintId,
+    }).from(projectTasks).where(and(
+      eq(projectTasks.projectId,scope.project.id),
+      eq(projectTasks.sprintId,sprint.id),
+      isNull(projectTasks.deletedAt),
+    )).for("update");
+    const signOffSnapshot=buildMentorSprintSignOffSnapshot(sprint.id,signOffTasks);
+
     const [openTask] = await tx
       .select({ id: projectTasks.id })
       .from(projectTasks)
@@ -400,6 +416,19 @@ export async function completeProjectSprint(
         "PROJECT_SPRINT_INVALID_STATE",
       );
     }
+    // This activity metadata is the immutable read model for historical
+    // Mentor workload/points. A reopened-and-signed-off sprint writes a later
+    // version; readers select the latest event while status is COMPLETED.
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project_sprint",subjectId:sprint.id,subjectLabel:sprint.title,
+      summary:"Sprint sign-off workload recorded",
+      metadata:{projectId:scope.project.id,sprintId:sprint.id,
+        mentorSignOffSnapshotVersion:1,sprintSnapshot:signOffSnapshot,
+        sourceTab:"sprints"},
+      groupKey:"project:"+scope.project.id,
+    });
     if(note){
       await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
