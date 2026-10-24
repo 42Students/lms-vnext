@@ -310,6 +310,12 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
   const inSprint=active?live.filter(task=>task.sprintId===active.id):[];
   const awaiting=inSprint.filter(task=>task.status==="IN_REVIEW");
   const blocked=inSprint.filter(task=>task.status==="BLOCKED");
+  const students=workspace.members.filter(member=>member.role==="LEARNER");
+  const nextPlanned=[...workspace.sprints].filter(sprint=>sprint.status==="PLANNED"&&
+    (!active||sprint.sequence>active.sequence)).sort((a,b)=>a.sequence-b.sequence)[0];
+  const unassignedNext=nextPlanned?live.filter(task=>
+    task.sprintId===nextPlanned.id&&task.assigneeMembershipId===null):[];
+  const requestedMeetings=workspace.meetings.filter(meeting=>meeting.status==="REQUESTED");
   const backlog=live.filter(task=>task.sprintId===null);
   const now=Date.now();
   const nextMeeting=workspace.meetings
@@ -355,6 +361,27 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
       </div>
     </section>
     <section className="prototype-mentor-chart-card">
+      <div className="prototype-mentor-card-title">
+        <h2>Team · {active?"Sprint "+active.sequence:"No active sprint"}</h2>
+        <Link href={base+"?tab=performance"}>All student performance →</Link>
+      </div>
+      {students.length?<ul className="prototype-mentor-overview-actions">
+        {students.slice(0,5).map(member=>{
+          const assigned=inSprint.filter(task=>task.assigneeMembershipId===member.membershipId);
+          const done=assigned.filter(task=>task.status==="DONE");
+          const waiting=assigned.filter(task=>task.status==="IN_REVIEW");
+          return <li key={member.membershipId}>
+            <strong>{member.displayName||"Student"}</strong>
+            <span> · {done.length} done · {waiting.length} awaiting review
+              · {assigned.length-done.length-waiting.length} open
+              · {points(done)} done points</span>
+          </li>;
+        })}
+        {students.length>5?<li><Link href={base+"?tab=performance"}>
+          View all {students.length} students →</Link></li>:null}
+      </ul>:<p className="prototype-mentor-summary-empty">No learners assigned yet.</p>}
+    </section>
+    <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title"><h2>Needs you on this project</h2></div>
       <div className="prototype-mentor-overview-actions">
         {awaiting.length?<Link href={base+"?tab=board&lane=IN_REVIEW"}>
@@ -363,9 +390,19 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
         {blocked.length?<Link href={base+"?tab=board&lane=BLOCKED"}>
           Help unblock {blocked.length} {blocked.length===1?"task":"tasks"} →
         </Link>:null}
+        {active&&awaiting.length===0?<Link href={base+"?tab=sprints"}>
+          Review sprint {active.sequence} for sign-off →
+        </Link>:null}
+        {unassignedNext.length?<Link href={base+"?tab=performance"}>
+          Assign {unassignedNext.length} next-sprint {unassignedNext.length===1?"task":"tasks"} →
+        </Link>:null}
+        {requestedMeetings.length?<Link href={base+"?tab=team#project-meetings"}>
+          Answer {requestedMeetings.length} meeting {requestedMeetings.length===1?"request":"requests"} →
+        </Link>:null}
         {workspace.project.nextAction?<p>{workspace.project.nextAction}</p>:null}
-        {!awaiting.length&&!blocked.length&&!workspace.project.nextAction?
-          <p>No pending review or blocked sprint tasks recorded.</p>:null}
+        {!awaiting.length&&!blocked.length&&!active&&!unassignedNext.length&&
+         !requestedMeetings.length&&!workspace.project.nextAction?
+          <p>No pending project action recorded.</p>:null}
       </div>
     </section>
     <section className="prototype-mentor-chart-card">
@@ -374,8 +411,14 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
       {nextMeeting?<div className="prototype-mentor-overview-actions">
         <strong>{nextMeeting.title}</strong>
         <p>{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",weekday:"short",
-          hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(nextMeeting.startsAt)} IST</p>
-        <Link href={base+"?tab=team"}>Open meeting →</Link>
+          hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(nextMeeting.startsAt)} IST
+          {" · "+Math.max(0,Math.round((nextMeeting.endsAt.getTime()-
+            nextMeeting.startsAt.getTime())/60000))+" minutes"}</p>
+        {nextMeeting.agenda?<p>Agenda: {nextMeeting.agenda}</p>:null}
+        {safeProjectExternalHref(nextMeeting.meetingUrl)?<a
+          href={safeProjectExternalHref(nextMeeting.meetingUrl)!}
+          target="_blank" rel="noopener noreferrer">Join meeting ↗</a>:null}
+        <Link href={base+"?tab=team#project-meetings"}>Open meeting →</Link>
       </div>:<p className="prototype-mentor-summary-empty">No upcoming meeting recorded.</p>}
     </section>
     <section className="prototype-mentor-chart-card">
