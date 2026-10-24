@@ -15,6 +15,7 @@ import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
 import {mentorSubmissionIdentity} from "@/modules/projects/mentor-submission-attribution-model";
+import {mentorDeliveryPrechecks} from "@/modules/projects/mentor-delivery-prechecks-model";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 import {MentorProjectFocusQueue} from "./mentor-project-focus-queue";
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
@@ -376,6 +377,13 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
     previous?normalizeArtifacts(previous.attachments??[]):null,
   );
   const events=workspace.finalDelivery.history;
+  const todayIst=new Date(Date.now()+330*60_000).toISOString().slice(0,10);
+  const prechecks=mentorDeliveryPrechecks({
+    sprints:workspace.readiness.execution.sprints,
+    tasks:workspace.readiness.execution.tasks,
+    releases:workspace.readiness.execution.releases,
+    targetEndDate:workspace.project.endDate??null,asOfIstDate:todayIst,
+  });
   return <section className="prototype-mentor-delivery-evidence" aria-label="Final submission evidence">
     <div className="prototype-mentor-card-title">
       <h2>Final submission · evidence</h2>
@@ -404,19 +412,22 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
     <section className="prototype-mentor-chart-card" aria-label="Final submission readiness">
       <h3>Ready for review · recorded prerequisites</h3>
       <ul className="prototype-mentor-overview-actions">
-        <li>{workspace.readiness.execution.sprints.completed} of
-          {" "}{workspace.readiness.execution.sprints.total} sprints signed off</li>
-        <li>{workspace.readiness.execution.tasks.done} of
-          {" "}{workspace.readiness.execution.tasks.total} current tasks completed</li>
-        <li>{workspace.readiness.execution.releases.shipped} of
-          {" "}{workspace.readiness.execution.releases.total} releases shipped
-          {" "}(advisory; the current submission policy does not require shipment)</li>
-        <li>{workspace.readiness.execution.tasks.proofCovered} completed tasks
-          with recorded submission evidence links</li>
-        <li>Submission gate: {workspace.readiness.legacyReadiness.readyForSubmission?
-          "Ready":"Not ready"}
+        {prechecks.map(item=><li key={item.key}>
+          <strong>{item.state==="MET"?"✓":item.state==="PAST_TARGET"?"!":
+            item.state==="UNKNOWN"?"?":"○"} {item.label}</strong>
+          {" · "}{item.requiredByServer?"Required by the current submission policy":
+            "Advisory only"}
+          {item.key==="TARGET"&&item.state==="PAST_TARGET"?
+            " · Past target date; the configured submission policy has no independent deadline gate.":""}
+        </li>)}
+        <li><strong>Server submission gate:</strong>
+          {" "}{workspace.readiness.legacyReadiness.readyForSubmission?
+            "Ready":"Not ready"}
           {workspace.readiness.legacyReadiness.reason?
             " · "+workspace.readiness.legacyReadiness.reason:""}</li>
+        <li><strong>Current attempt:</strong>
+          {" "}{latest?latest.status.replaceAll("_"," "):
+            "No final submission recorded"}</li>
       </ul>
       {workspace.readiness.legacyReadiness.overrideActive?
         <p>Recorded administrator readiness override:
