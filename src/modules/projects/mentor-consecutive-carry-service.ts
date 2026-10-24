@@ -40,6 +40,7 @@ export async function getMentorRecentCarryHistory(context:RequestContext):Promis
    .innerJoin(projectReleases,and(
      eq(projectReleases.id,projectSprints.releaseId),
      eq(projectReleases.projectId,projectSprints.projectId),
+     isNull(projectReleases.deletedAt),
    )).where(and(
      inArray(projectSprints.projectId,ids),
      isNull(projectSprints.deletedAt),
