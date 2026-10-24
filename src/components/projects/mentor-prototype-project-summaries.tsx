@@ -683,7 +683,18 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
           hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(nextMeeting.startsAt)} IST
           {" · "+Math.max(0,Math.round((nextMeeting.endsAt.getTime()-
             nextMeeting.startsAt.getTime())/60000))+" minutes"}</p>
-        {nextMeeting.agenda?<p>Agenda: {nextMeeting.agenda}</p>:null}
+        <p>Type: {nextMeeting.meetingType.replaceAll("_"," ")}
+          {" · Status: "}{nextMeeting.status.replaceAll("_"," ")}
+          {nextMeeting.linkedSprintId?" · Linked to a recorded sprint":""}</p>
+        <p>Calendar invitation delivery/RSVP status: not recorded.
+          The saved meeting and its join link do not confirm that anyone
+          received or accepted an invitation.</p>
+        {(nextMeeting.facilitation?.attendees?.length??0)>0?<p>
+          Recorded participants: {nextMeeting.facilitation.attendees.map(
+            entry=>entry.name).join(", ")}.
+          This is meeting attendance data, not invitation acceptance.</p>:null}
+        {nextMeeting.agenda?<p>Agenda: {nextMeeting.agenda}</p>:<p>
+          No meeting agenda recorded.</p>}
         {safeProjectExternalHref(nextMeeting.meetingUrl)?<a
           href={safeProjectExternalHref(nextMeeting.meetingUrl)!}
           target="_blank" rel="noopener noreferrer">Join meeting ↗</a>:null}
