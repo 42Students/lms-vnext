@@ -67,7 +67,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 48-10 | CODE_READY | mentor-sprint-velocity-model.ts; mentor-historical-plan-facts-model.ts; mentor-prototype-project-summaries.tsx |
 | 48-11 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 48-12 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 49-01 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 49-01 | IMPLEMENTATION_OR_TEST_PENDING | Team roster now uses mentor-team-recent-actor-service.ts for persisted action-by-person timestamps, not task owner updates, and the parallel canonical mentor-learner-academic-facts-service.ts resolves roll/registration, department/program/cohort for authorized active learners; integration coverage added in learner-project-activity-filters.test.ts. Still reconcile prototype student lead/year labels and execute real DB/browser gates. |
 | 49-02 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 49-03 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 49-04 | CODE_READY | mentor-meetings-calendar.tsx; mentor-meeting-list-filter-model.ts (all/review/retro/planning/standup/other quick filters; coming, requested, past, notes missing; bounded earlier history expansion) |
@@ -104,7 +104,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 52-05 | CODE_READY | project-activity-filtered-list.tsx |
 | 52-06 | CODE_READY | mentor-week-activity-totals-service.ts aggregates full authorized IST-week Tasks moved, Comments, Resources shared in PostgreSQL; workspace-view-service.ts passes results, project-activity-filtered-list.tsx identifies loaded-page fallback, and mentor-week-contributor-service.ts counts all authorized learner activity. DB acceptance pending. |
 | 52-07 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 52-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 52-08 | IMPLEMENTATION_OR_TEST_PENDING | activity-service.ts now pages via PostgreSQL microsecond cursor, filters actor+Sprint in SQL, retrieves authorized metadata-free/soft-deleted Sprint history through owned Sprint joins, and enforces college+organization+project; mentor-activity-date-filter-model.ts uses IST calendar dates and handles invalid timestamps. Unit/PG cases authored; need executed cursor/same-ms, imported-event and timezone acceptance. |
 | 52-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 53-01 | CODE_READY | mentor-submission-attribution-model.ts; mentor-prototype-project-summaries.tsx; submission-service.ts (latest revision, persisted submitter, timestamp and saved notes) |
 | 53-02 | CODE_READY | mentor-evidence-gallery.tsx; mentor-evidence-preview-model.ts |
