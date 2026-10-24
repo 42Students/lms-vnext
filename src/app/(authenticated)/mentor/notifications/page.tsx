@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
-import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
+import { listVisibleAnnouncementsForMembershipPage } from "@/modules/announcements/service";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { mentorInboxQuerySchema, mentorInboxPageHref } from "@/modules/activity/mentor-notifications-model";
 import { getMentorPersonalInbox } from "@/modules/activity/mentor-notifications-service";
@@ -98,11 +98,14 @@ async function MentorNotificationsContent({
   const [accessResult, announcementResult] = await Promise.allSettled([
     resolveOptionalModuleAccess(context),
     announcementsEnabled
-      ? listVisibleAnnouncementsForMembership(context) : Promise.resolve([]),
+      ? listVisibleAnnouncementsForMembershipPage(context) :
+        Promise.resolve({items:[],nextCursor:null}),
   ]);
   const projectAccess = accessResult.status === "fulfilled" ? accessResult.value : null;
   if (accessResult.status === "rejected") failedSources.push("Project access");
-  const announcements = announcementResult.status === "fulfilled" ? announcementResult.value : [];
+  const announcementPage=announcementResult.status==="fulfilled"?
+    announcementResult.value:{items:[],nextCursor:null};
+  const announcements=announcementPage.items;
   if (announcementResult.status === "rejected") failedSources.push("Announcements");
   const alerts = projectAccess?.projects.enabled
     ? await listMyMentorProjectAttention(context).catch(() => {
@@ -231,7 +234,13 @@ async function MentorNotificationsContent({
       <p className="text-sm font-semibold text-body">Nothing needs your attention right now.</p>
     </div>:null}
     {(selectedPill==="all"||selectedPill==="unread")&&!allRelevantFailed?
-      <MentorUnifiedNotificationFeed items={mergedShown}/>:null}
+      <MentorUnifiedNotificationFeed items={mergedShown}
+        unreadOnly={selectedPill==="unread"}
+        announcementNextCursor={announcementPage.nextCursor?{
+          beforePinned:announcementPage.nextCursor.isPinned?"1":"0",
+          beforeCreatedAt:announcementPage.nextCursor.createdAt.toISOString(),
+          beforeId:announcementPage.nextCursor.id,
+        }:null}/>:null}
     {(selectedPill==="all"||selectedPill==="unread")&&inbox?.cursor.invalid?
       <Alert tone="error" role="alert">
         Personal notification cursor is invalid.
