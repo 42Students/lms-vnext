@@ -509,13 +509,14 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
     {!readOnly&&workspace.project.status==="ACTIVE"?
       <MentorOverviewQuickActions
         projectId={workspace.project.id}
+        projectUpdatedAt={workspace.project.updatedAt.toISOString()}
         estimationUnit={workspace.project.estimationUnit??null}
         releases={workspace.releases.map(release=>({
           id:release.id,title:release.title,status:release.status,
         }))}
         sprints={workspace.sprints.map(sprint=>({
           id:sprint.id,title:sprint.title,status:sprint.status,
-          updatedAt:sprint.updatedAt.toISOString(),
+          updatedAt:sprint.updatedAt.toISOString(),releaseId:sprint.releaseId,
         }))}
         learners={students.map(student=>({
           membershipId:student.membershipId,displayName:student.displayName,
