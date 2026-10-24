@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {postMentorProjectUpdate} from "@/modules/projects/mentor-project-update-service";
 
@@ -7,6 +8,8 @@ export const runtime="nodejs";
 export async function POST(request:Request,{params}:{
   params:Promise<{projectId:string}>;
 }){
+  if(!isSameOriginRequest(request))
+    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try{
     const {projectId}=await params;
     // Bound request size before parsing; the validated message limit is 1000.
