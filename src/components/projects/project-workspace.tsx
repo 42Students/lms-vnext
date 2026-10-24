@@ -2426,6 +2426,7 @@ export function ProjectWorkspace({
             sprints={mode==="MENTOR"?workspace.sprints:[]}
             mentorWeekSummary={mode==="MENTOR"}
             weekContributors={mode==="MENTOR"?workspace.mentorWeekContributors:[]}
+            weekTotals={mode==="MENTOR"?workspace.mentorWeekActivityTotals:null}
             actorOptions={mode==="MENTOR"?workspace.members.map(member=>({
               id:member.userId,label:member.displayName??"Team member",
             })):[]}
