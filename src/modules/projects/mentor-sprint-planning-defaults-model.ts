@@ -7,6 +7,7 @@ export type MentorSprintPlanningRow={
 };
 export function mentorSprintPlanningDefaults(
  releaseId:string,rows:readonly MentorSprintPlanningRow[],
+ asOfDate?:string,
 ):{title:string;sequence:number;startDate:string;endDate:string}{
  const local=rows.filter(row=>row.releaseId===releaseId&&
    Number.isSafeInteger(row.sequence)&&row.sequence>=0);
@@ -21,6 +22,11 @@ export function mentorSprintPlanningDefaults(
  // Suggested 7-day planning window starts after the previous recorded end.
  const start=new Date(utc.getTime()+86400000);
  const end=new Date(utc.getTime()+7*86400000);
+ // Imported historical plans may end years ago. Do not propose a past
+ // calendar window for a new sprint opened today.
+ if(asOfDate&&/^\d{4}-\d{2}-\d{2}$/.test(asOfDate)&&
+   start.toISOString().slice(0,10)<asOfDate)
+   return {title:"Sprint "+(sequence+1),sequence,startDate:"",endDate:""};
  return {title:"Sprint "+(sequence+1),sequence,
   startDate:start.toISOString().slice(0,10),
   endDate:end.toISOString().slice(0,10)};
