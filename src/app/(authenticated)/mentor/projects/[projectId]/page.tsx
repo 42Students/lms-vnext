@@ -12,6 +12,7 @@ import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import {MentorProjectSectionCache} from "@/components/projects/mentor-project-section-cache";
 import {MentorProjectUpdateComposer} from "@/components/projects/mentor-project-update-composer";
 import {MentorActivitySinceLastVisit} from "@/components/projects/mentor-activity-since-last-visit";
+import {getMentorProjectActivitySeenState} from "@/modules/projects/mentor-activity-seen-service";
 import {MentorPrototypeSprintPlan,MentorPrototypeTeamOverview,MentorPrototypePerformance,MentorPrototypeActivitySummary,MentorPrototypeDeliveryEvidence,MentorPrototypeProjectOverview,MentorPrototypeProjectBrief} from "@/components/projects/mentor-prototype-project-summaries";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
@@ -74,6 +75,8 @@ export default async function MentorProjectPage({
       context,
       projectId,
     );
+  const activitySeen=selectedTab==="activity"&&access.access==="MENTOR"?
+    await getMentorProjectActivitySeenState(context,projectId):null;
   // The prototype's shared detail header is reused for Overview, Board,
   // Sprints & releases, Team & meetings, Performance, Resources and Activity.
   // Only actual persisted sprints become segments; 16 is NOT hard-coded.
@@ -148,10 +151,10 @@ export default async function MentorProjectPage({
       {selectedTab==="team" ? <MentorPrototypeTeamOverview workspace={workspace} /> : null}
       {selectedTab==="performance" ? <MentorPrototypePerformance workspace={workspace} /> : null}
       {selectedTab==="activity" ? <>
-        <MentorActivitySinceLastVisit userId={context.user.id} projectId={projectId}
-          events={workspace.activity.map(event=>({
-            id:event.id,occurredAt:event.occurredAt.toISOString(),
-          }))}/>
+        {activitySeen?<MentorActivitySinceLastVisit
+          projectId={projectId} lastSeenAt={activitySeen.lastSeenAt}
+          newCount={activitySeen.newCount}/>:
+          <p>Activity review markers are available to assigned Mentors only.</p>}
         <MentorProjectUpdateComposer projectId={projectId}
           readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"} />
         <MentorPrototypeActivitySummary workspace={workspace} />
