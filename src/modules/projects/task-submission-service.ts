@@ -15,6 +15,7 @@ import { can } from "@/modules/permissions/policy";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
+  projectMembers,
   inAppNotifications,
   membershipRoles,
   users,
@@ -429,6 +430,12 @@ export async function reviewProjectTaskSubmission(
       .innerJoin(membershipRoles,and(
         eq(membershipRoles.membershipId,collegeMemberships.id),
         eq(membershipRoles.role,"LEARNER")))
+      .innerJoin(projectMembers,and(
+        eq(projectMembers.membershipId,collegeMemberships.id),
+        eq(projectMembers.projectId,scope.project.id),
+        eq(projectMembers.role,"LEARNER"),
+        isNull(projectMembers.endedAt),
+      ))
       .where(and(eq(collegeMemberships.id,reviewed.submittedByMembershipId),
         eq(collegeMemberships.collegeId,scope.collegeId),
         eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
