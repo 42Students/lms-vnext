@@ -77,7 +77,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
  return <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
-  <RecruiterConversationLiveRefresh/>
+  <RecruiterConversationLiveRefresh collegeId={result.thread.collegeId} threadId={threadId}/>
   <PageHeader title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
   {driveLookupResult && !driveLookupResult.ok?
