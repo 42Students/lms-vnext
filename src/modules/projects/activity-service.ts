@@ -94,6 +94,7 @@ export async function getProjectActivityPage(
           sql`coalesce(${activityEvents.metadata} ->> 'sourceTab','') ilike ${contains(search)}`,
         ) : undefined,
         filters.eventType?eq(activityEvents.eventType,filters.eventType):undefined,
+        filters.subjectId?eq(activityEvents.subjectId,filters.subjectId):undefined,
         eq(
           activityEvents.module,
           "PROJECTS",
