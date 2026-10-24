@@ -122,6 +122,21 @@ export async function startProjectSprint(
         );
       }
 
+      // A planned Sprint cannot be started from a shipped, archived or
+      // soft-deleted release, including via the College Admin lifecycle API.
+      // Lock its parent release before changing task or Sprint state.
+      const [release] = await tx.select({
+        status: projectReleases.status,
+        deletedAt: projectReleases.deletedAt,
+      }).from(projectReleases).where(and(
+        eq(projectReleases.id, sprint.releaseId),
+        eq(projectReleases.projectId, scope.project.id),
+      )).for("update").limit(1);
+      if (!release || release.deletedAt ||
+          (release.status !== "PLANNED" && release.status !== "IN_PROGRESS")) {
+        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      }
+
       const [active] = await tx
         .select({ id: projectSprints.id })
         .from(projectSprints)
@@ -662,7 +677,10 @@ export async function reopenProjectSprint(
       }
 
       const [release] = await tx
-        .select({ status: projectReleases.status })
+        .select({
+          status: projectReleases.status,
+          deletedAt: projectReleases.deletedAt,
+        })
         .from(projectReleases)
         .where(
           and(
@@ -673,7 +691,8 @@ export async function reopenProjectSprint(
         .for("update")
         .limit(1);
 
-      if (!release || release.status === "SHIPPED") {
+      if (!release || release.deletedAt ||
+          (release.status !== "PLANNED" && release.status !== "IN_PROGRESS")) {
         throw new ProjectsServiceError(
           "PROJECT_SPRINT_INVALID_STATE",
         );
