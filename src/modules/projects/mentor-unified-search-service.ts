@@ -68,11 +68,11 @@ export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
       href:"/mentor/projects/"+encodeURIComponent(project.project.id)+"?tab=overview"});
   for(const item of tasks)result.push({key:"t:"+item.id,kind:"Task",
     title:item.title,context:byId.get(item.projectId)??"Project",
-    href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board"});
+    href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board&scope=all&task="+encodeURIComponent(item.id)});
   for(const item of students)result.push({key:"s:"+item.projectId+":"+item.id,
     kind:"Student",title:item.title??"Student",
     context:byId.get(item.projectId)??"Project",
-    href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=team"});
+    href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=performance#mentor-student-"+encodeURIComponent(item.id)});
   for(const item of resources)result.push({key:"r:"+item.id,kind:"Resource",
     title:item.title,context:byId.get(item.projectId)??"Project",
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=resources"});
