@@ -600,7 +600,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
             update.subjectType==="project_meeting"?"team":"activity"
           )}>View related section →</Link>
         </div>
-      )):<p className="prototype-mentor-summary-empty">No project activity recorded yet.</p>
+      )):<p className="prototype-mentor-summary-empty">No project activity recorded yet.</p>}
     </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title"><h2>Final submission</h2>
