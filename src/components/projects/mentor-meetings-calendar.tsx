@@ -88,6 +88,19 @@ function MeetingRow({
         {(meeting.linkedSprintTitle||meeting.legacySprintLabel)
           ? " · Sprint: " + (meeting.linkedSprintTitle||meeting.legacySprintLabel) : ""}
       </p>
+      {meeting.status==="REQUESTED"?<div className="prototype-mentor-meeting-section"
+        aria-label="Recorded meeting request details">
+        <h3>Asked to meet</h3>
+        <p>Requested by: {meeting.requestedByName??"Requester name unavailable"}</p>
+        <p>Suggested slot: {dateLabel(meeting.startsAt)} ·
+          {" "}{meetingTimeLabel(meeting)}</p>
+        {meeting.linkedTaskId&&meeting.linkedTaskTitle?<p>
+          Related task: <Link href={"/mentor/projects/"+
+            encodeURIComponent(meeting.projectId)+
+            "?tab=board&scope=all&task="+encodeURIComponent(meeting.linkedTaskId)}>
+            {meeting.linkedTaskTitle} →
+          </Link></p>:null}
+      </div>:null}
       <MentorMeetingRequestActions meeting={meeting}/>
       {meeting.projectStatus==="ACTIVE"&&meeting.updatedAt&&
         (meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")?
@@ -98,6 +111,16 @@ function MeetingRow({
           <MentorMeetingCancelInline projectId={meeting.projectId}
             meetingId={meeting.id} expectedUpdatedAt={meeting.updatedAt}/>
         </div>:null}
+      <div className="prototype-mentor-meeting-section"
+        aria-label="Recorded calendar integration status">
+        {meeting.legacyCalendarSyncStatus?<p>
+          Imported calendar status: {meeting.legacyCalendarSyncStatus}.
+          {" "}This historical field is not proof of a current Google connection.
+        </p>:<p>No verified live calendar sync for this meeting.
+          Download an .ics file if you want a local calendar copy.</p>}
+        {meeting.calendarSyncError?<p role="status">
+          Recorded calendar error: {meeting.calendarSyncError}</p>:null}
+      </div>
       {meeting.agenda?.trim()?<section className="prototype-mentor-meeting-section">
         <h3>Agenda</h3><p>{meeting.agenda}</p>
       </section>:null}
