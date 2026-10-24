@@ -6,6 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { getProjectActivityPage, listProjectActivity } from "@/modules/projects/activity-service";
 import {getMentorWeekActivityTotals} from "@/modules/projects/mentor-week-activity-totals-service";
 import {getMentorTeamRecentActorActivity} from "@/modules/projects/mentor-team-recent-actor-service";
+import {getMentorLearnerAcademicFacts} from "@/modules/projects/mentor-learner-academic-facts-service";
 import { filterLearnerProjectActivity } from "@/modules/projects/learner-project-activity-filter-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 if (!process.env.TEST_DATABASE_URL) throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -301,7 +302,7 @@ describe("Mentor Team last recorded project actions",()=>{
     const last=await getMentorTeamRecentActorActivity(
       mentorContext,ids.project,[{userId:ids.learner},{userId:ids.mentor}],
     );
-    expect(last[ids.learner]).toBe(learnerAt.replace(".123Z",".123Z"));
+    expect(last[ids.learner]).toBe(learnerAt);
     expect(last[ids.mentor]===undefined||
       Number.isFinite(Date.parse(last[ids.mentor]!))).toBe(true);
     await expect(getMentorTeamRecentActorActivity(
@@ -313,5 +314,32 @@ describe("Mentor Team last recorded project actions",()=>{
     )).rejects.toBeDefined();
     expect(await getMentorTeamRecentActorActivity(mentorContext,ids.project,[]))
       .toEqual({});
+  });
+});
+
+describe("Mentor project Team student academic scope",()=>{
+  it("reads only current project learners and their persisted academic labels",async()=>{
+    await pool.query(`INSERT INTO learner_profiles(membership_id,roll_number,
+      registration_number)VALUES($1,$2,$3)
+      ON CONFLICT(membership_id) DO UPDATE
+      SET roll_number=excluded.roll_number,
+        registration_number=excluded.registration_number`,[
+      ids.membership,"ROLL-2026","REG-2026",
+    ]);
+    const rows=await getMentorLearnerAcademicFacts(mentorContext,ids.project);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      membershipId:ids.membership,registrationNumber:"REG-2026",
+      rollNumber:"ROLL-2026",departmentName:"Own Project Test Department",
+      programName:"Own Project Program",cohortName:"Own Project Cohort",
+    });
+    await expect(getMentorLearnerAcademicFacts(context,ids.project))
+      .rejects.toBeDefined();
+    await expect(getMentorLearnerAcademicFacts({
+      ...mentorContext,membership:{...mentorContext.membership!,
+        collegeId:SEED_IDS.collegeB},
+    },ids.project)).rejects.toBeDefined();
+    await expect(getMentorLearnerAcademicFacts(mentorContext,randomUUID()))
+      .rejects.toBeDefined();
   });
 });
