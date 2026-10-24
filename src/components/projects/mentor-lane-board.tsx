@@ -10,6 +10,7 @@ import Link from "next/link";
 import {useRouter,useSearchParams} from "next/navigation";
 import {groupLearnerBoardLanes,learnerTaskLane} from "@/modules/projects/learner-board-lanes-model";
 import {nextMentorBoardFocus} from "@/modules/projects/mentor-board-keyboard-focus-model";
+import {nextMentorReviewFocus} from "@/modules/projects/mentor-review-next-focus-model";
 import {mentorLanePage} from "@/modules/projects/mentor-board-lane-paging-model";
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
@@ -124,6 +125,14 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    ? [...taskSubmissions].filter(row=>row.taskId===focused.id&&row.status==="SUBMITTED")
      .sort((a,b)=>b.version-a.version)[0]??null
    : null;
+ function advanceAfterReview(reviewedId:string){
+   const nextId=nextMentorReviewFocus(matching,reviewedId);
+   setFocusedId(nextId);
+   const query=new URLSearchParams(window.location.search);
+   if(nextId)query.set("task",nextId);else query.delete("task");
+   window.history.replaceState(null,"",window.location.pathname+
+     (query.toString()?"?"+query.toString():""));
+ }
  const sprintListGroups=[
    ...[...sprints].sort((a,b)=>a.sequence-b.sequence).map(row=>({
      id:row.id,title:"Sprint "+row.sequence+" · "+row.title,
@@ -514,11 +523,13 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <TaskReviewActions projectId={projectId} taskId={focused.id}
           submissionId={submittedReview.id} mode="MENTOR"
           expectedUpdatedAt={new Date(submittedReview.updatedAt).toISOString()}
-          initialDecision="APPROVED" triggerLabel="Approve A" shortcut="a"/>
+          initialDecision="APPROVED" triggerLabel="Approve A" shortcut="a"
+          onReviewSuccess={advanceAfterReview}/>
         <TaskReviewActions projectId={projectId} taskId={focused.id}
           submissionId={submittedReview.id} mode="MENTOR"
           expectedUpdatedAt={new Date(submittedReview.updatedAt).toISOString()}
-          initialDecision="CHANGES_REQUESTED" triggerLabel="Send back S" shortcut="s"/>
+          initialDecision="CHANGES_REQUESTED" triggerLabel="Send back S" shortcut="s"
+          onReviewSuccess={advanceAfterReview}/>
       </div>:null}
       <MentorTaskHistory key={focused.id} projectId={projectId} taskId={focused.id}/>
       <button type="button" className="prototype-mentor-board-detail-more"
