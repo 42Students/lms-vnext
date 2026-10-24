@@ -493,12 +493,30 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
         <Link href={base+"?tab=board"}>Board →</Link>
       </div>
       <div className="prototype-mentor-status-grid">
-        {summary.map(([label,value])=><Link key={label} href={base+"?tab=board&lane="+(
+        {summary.map(([label,value])=><Link key={label} href={base+"?tab=board&scope=all&lane="+(
           label==="To do"?"TODO":label==="In progress"?"IN_PROGRESS":
           label==="Waiting for you"?"IN_REVIEW":label==="Blocked"?"BLOCKED":
           label==="Done"?"DONE":"BACKLOG"
-        )}><strong>{value}</strong><span>{label}</span></Link>)}
+        )+(label==="Backlog"?"":active?
+          "&sprint="+encodeURIComponent(active.id):"")}>
+          <strong>{value}</strong><span>{label}</span>
+        </Link>)}
       </div>
+      {blocked.length?<div className="prototype-mentor-overview-actions">
+        <h3>Recorded blockers · Sprint {active?.sequence}</h3>
+        {blocked.map(task=>{
+          const age=workspace.mentorBlockedTaskAges[task.id];
+          return <Link key={task.id}
+            href={base+"?tab=board&scope=all&sprint="+
+              encodeURIComponent(active?.id??"")+
+              "&lane=BLOCKED&task="+encodeURIComponent(task.id)}>
+            {task.title} · {age?.days===null||age?.days===undefined?
+              "blocker start not recorded":
+              age.days===0?"blocked today":
+              "blocked for "+age.days+" full "+(age.days===1?"day":"days")}
+          </Link>;
+        })}
+      </div>:null}
     </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title">
