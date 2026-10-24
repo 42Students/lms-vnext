@@ -9,7 +9,7 @@ describe("TPO prototype's eight top-level destinations",()=>{
  });
  it("keeps legacy work reachable through owner sections",()=>{
   expect(TPO_PROTOTYPE_SECTIONS.Students.map(item=>item.label))
-   .toEqual(["All students","Who's in placements","To verify","Requests","Announcements","Eligibility"]);
+   .toEqual(["All students","Who's in placements","To verify","Requests","Announcements"]);
   expect(TPO_PROTOTYPE_SECTIONS.Companies.slice(0,5).map(item=>item.label))
    .toEqual(["Today","Recruiters","Companies","Emails","Messages"]);
  });
