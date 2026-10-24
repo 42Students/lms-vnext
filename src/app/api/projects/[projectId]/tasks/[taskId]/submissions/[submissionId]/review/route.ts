@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {readMentorProjectCommandBody,MentorProjectCommandBodyError,
+  mentorProjectBodyFailureMessage} from "@/modules/projects/mentor-command-body";
 import {
   reviewProjectTaskSubmission,
 } from "@/modules/projects/task-submission-service";
@@ -34,7 +36,7 @@ export async function POST(
       taskId,
       submissionId,
     } = await params;
-    const body = await request.json();
+    const body = await readMentorProjectCommandBody(request);
     const result =
       await reviewProjectTaskSubmission(
         context,
@@ -46,6 +48,10 @@ export async function POST(
 
     return NextResponse.json(result);
   } catch (error) {
+    if(error instanceof MentorProjectCommandBodyError)
+      return NextResponse.json({error:error.code,
+        message:mentorProjectBodyFailureMessage(error.status)},
+        {status:error.status,headers:{"Cache-Control":"no-store"}});
     return apiErrorResponse(error);
   }
 }
