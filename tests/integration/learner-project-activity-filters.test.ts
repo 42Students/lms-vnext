@@ -8,6 +8,8 @@ import {getMentorWeekActivityTotals} from "@/modules/projects/mentor-week-activi
 import {getMentorTeamRecentActorActivity} from "@/modules/projects/mentor-team-recent-actor-service";
 import {getMentorLearnerAcademicFacts} from "@/modules/projects/mentor-learner-academic-facts-service";
 import {postMentorProjectUpdate} from "@/modules/projects/mentor-project-update-service";
+import {markAllMentorUnifiedNotificationsRead}
+  from "@/modules/projects/mentor-unified-notification-read-all-service";
 import { filterLearnerProjectActivity } from "@/modules/projects/learner-project-activity-filter-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 if (!process.env.TEST_DATABASE_URL) throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -454,5 +456,70 @@ describe("Mentor project updates: atomic activity, recipients and posting limits
       await pool.query("UPDATE project_instances SET status='PLANNED' WHERE id=$1",
         [ids.project]);
     }
+  });
+});
+
+describe("Mentor unified personal and source mark-all",()=>{
+  it("acknowledges all eligible recipient messages, not just page 1 or another user",async()=>{
+    // More than one 50-item personal inbox page, with isolated recipient grants.
+    const records=await pool.query<{id:string}>(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary)
+      SELECT gen_random_uuid(),$1::uuid,$2::uuid,$3::uuid,'PROJECTS',
+        'projects.task.created','project',$4,'Notification pagination test'
+      FROM generate_series(1,74) RETURNING id`,[
+      SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,ids.project,
+    ]);
+    for(const record of records.rows){
+      await pool.query(`INSERT INTO in_app_notifications
+        (id,user_id,event_id,title,body)
+        VALUES($1,$2,$3,'Project event','Persisted personal notification')`,[
+        randomUUID(),ids.mentor,record.id,
+      ]);
+    }
+    const other=await pool.query<{id:string}>(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary)
+      VALUES($1,$2,$3,$4,'PROJECTS','projects.task.created','project',$5,
+        'Learner-only inbox event') RETURNING id`,[
+      randomUUID(),SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,ids.project,
+    ]);
+    await pool.query(`INSERT INTO in_app_notifications
+      (id,user_id,event_id,title,body)
+      VALUES($1,$2,$3,'Learner event','Learner inbox message')`,[
+      randomUUID(),ids.learner,other.rows[0]!.id,
+    ]);
+
+    const first=await markAllMentorUnifiedNotificationsRead(mentorContext);
+    expect(first.markedPersonal).toBeGreaterThanOrEqual(74);
+    expect(first.completeForCurrentVisibleSources).toBe(true);
+    const unread=await pool.query<{count:string}>(`select count(*)::text as count
+      from in_app_notifications where user_id=$1 and read_at is null`,[ids.mentor]);
+    expect(unread.rows[0]?.count).toBe("0");
+    const learnerUnread=await pool.query<{count:string}>(`select count(*)::text as count
+      from in_app_notifications where user_id=$1 and event_id=$2 and read_at is null`,
+      [ids.learner,other.rows[0]!.id]);
+    expect(learnerUnread.rows[0]?.count).toBe("1");
+    const second=await markAllMentorUnifiedNotificationsRead(mentorContext);
+    expect(second.markedPersonal).toBe(0);
+    expect(second.markedSources).toBe(0);
+    await expect(markAllMentorUnifiedNotificationsRead(context)).rejects.toBeDefined();
+
+    const newEvent=await pool.query<{id:string}>(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary)
+      VALUES($1,$2,$3,$4,'PROJECTS','projects.task.created','project',$5,
+        'New task after bulk acknowledge') RETURNING id`,[
+      randomUUID(),SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,ids.project,
+    ]);
+    await pool.query(`INSERT INTO in_app_notifications
+      (id,user_id,event_id,title,body) VALUES
+      ($1,$2,$3,'New task','Post-ack notification')`,[
+      randomUUID(),ids.mentor,newEvent.rows[0]!.id,
+    ]);
+    const latest=await pool.query<{read_at:Date|null}>(`select read_at
+      from in_app_notifications where user_id=$1 and event_id=$2`,
+      [ids.mentor,newEvent.rows[0]!.id]);
+    expect(latest.rows[0]?.read_at).toBeNull();
   });
 });
