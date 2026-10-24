@@ -15,8 +15,6 @@ export function RecruiterConversationLiveRefresh({collegeId,threadId}:{collegeId
  useEffect(()=>{
   let active=true;
   version.current=null;
-  setStale(false);
-  setNewMessages(false);
   const update=async()=>{
    if(checking.current || document.visibilityState!=="visible" || !navigator.onLine)return;
    const current=document.activeElement;
