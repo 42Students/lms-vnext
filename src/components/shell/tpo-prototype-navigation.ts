@@ -15,11 +15,10 @@ export const TPO_PROTOTYPE_NAV: readonly ShellNavItem[]=[
 export const TPO_PROTOTYPE_SECTIONS={
  Students:[
   {label:"All students",href:"/tpo/students"},
-  {label:"Who's in placements",href:"/tpo/placements/students"},
+  {label:"Who's in placements",href:"/tpo/batches"},
   {label:"To verify",href:"/tpo/verification"},
   {label:"Requests",href:"/tpo/requests"},
   {label:"Announcements",href:"/tpo/announcements"},
-  {label:"Eligibility",href:"/tpo/batches"},
  ],
  Drives:[
   {label:"Drives",href:"/tpo/placements"},
