@@ -32,10 +32,13 @@ export function mentorMeetingListMatch(
  meeting:MentorMeetingCalendarItem,
  kind:MentorMeetingListKind,scope:MentorMeetingListScope,now:Date,
 ):boolean{
- if(kind!=="ALL"&&(kind==="OTHER"?
-   meeting.meetingType!=="REVIEW"&&meeting.meetingType!=="RETRO"&&
-   meeting.meetingType!=="PLANNING"&&meeting.meetingType!=="STANDUP":
-   meeting.meetingType!==kind))return false;
+ if(kind!=="ALL"){
+  if(kind==="OTHER"){
+   // Other means a general/imported ceremony, never a Review or Retro.
+   if(meeting.meetingType==="REVIEW"||meeting.meetingType==="RETRO"||
+      meeting.meetingType==="PLANNING"||meeting.meetingType==="STANDUP")return false;
+  }else if(meeting.meetingType!==kind)return false;
+ }
  const start=Date.parse(meeting.startsAt);
  const end=Date.parse(meeting.endsAt);
  const current=now.getTime();
