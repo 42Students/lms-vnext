@@ -18,7 +18,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | X-03 | CODE_READY | mentor-sprint-signoff-snapshot-service.ts; lifecycle-service.ts; mentor-historical-plan-facts-model.ts |
 | X-04 | CODE_READY | mentor-notification-source-receipts-service.ts; mentor-unified-notification-read-all-service.ts |
 | X-05 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| X-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| X-06 | IMPLEMENTATION_OR_TEST_PENDING | task-submission-service.ts now rechecks persisted Learner/Mentor grants inside the locked DB write transaction and requires an ACTIVE nondeleted same-college project for submission/review; two submission/review routes now use bounded strict-UTF8 JSON input. projects-p6a-task-submissions.test.ts adds revoked-role and terminal-state rollback cases; mentor-task-submission-route-body.test.ts adds malformed/oversize/origin route coverage. Sign-off NEXT/BACKLOG/DROP and DB/CI execution remain separate acceptance gates. |
 | X-07 | CODE_READY | mentor-attention.ts; mentor-attention-service.ts |
 | X-08 | CODE_READY | command-search.tsx; mentor-unified-search-service.ts |
 | X-09 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
@@ -144,6 +144,6 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 56-07 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 56-08 | CODE_READY | next.config.ts; mentor-retired-route-parity.test.ts |
 | 56-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 56-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 56-10 | IMPLEMENTATION_OR_TEST_PENDING | mentor-unified-search-service.ts builds category results only from assigned projects, then rechecks persisted user, Mentor role, membership, project assignment, college and undeleted project before returning any student/task/resource match. learner-project-activity-filters.test.ts adds search revocation and foreign-college denial cases. Bell/source privacy and actual cross-tab timing/browser verification still pending. |
 
 **Code-closure exit:** Every row reaches CODE_READY based on its exact behavior (not just an adjacent component); then run strict TypeScript, lint, unit, PostgreSQL integration, authorization, and browser interaction tests. Fix all failed paths. Only **then** execute the deliberately deferred second hostile prototype audit and, later, visual acceptance.
