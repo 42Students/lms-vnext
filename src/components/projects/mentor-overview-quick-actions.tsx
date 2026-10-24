@@ -11,7 +11,8 @@ export function MentorOverviewQuickActions({projectId,projectUpdatedAt,estimatio
  releases,sprints,learners}:{
  projectId:string;projectUpdatedAt:string;estimationUnit:string|null;
  releases:readonly {id:string;title:string;status:string}[];
- sprints:readonly {id:string;title:string;status:string;updatedAt:string;releaseId:string}[];
+ sprints:readonly {id:string;title:string;status:string;updatedAt:string;releaseId:string;
+   sequence:number;startDate?:string|null;endDate?:string|null}[];
  learners:readonly {membershipId:string;displayName:string|null}[];
 }){
  const active=sprints.find(item=>item.status==="ACTIVE");
@@ -28,7 +29,9 @@ export function MentorOverviewQuickActions({projectId,projectUpdatedAt,estimatio
     sprints={allowed} learners={learners}/>
   {firstRelease?<MentorSprintCreate
     projectId={projectId} releaseId={firstRelease.id}
-    releases={releases}/>:null}
+    releases={releases}
+    sprintPlan={sprints.map(row=>({releaseId:row.releaseId,sequence:row.sequence,
+      startDate:row.startDate,endDate:row.endDate}))}/>:null}
   <MentorReleaseEditor projectId={projectId}
     existingReleaseCount={releases.length}/>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
