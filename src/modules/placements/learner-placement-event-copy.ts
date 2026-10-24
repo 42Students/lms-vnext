@@ -50,6 +50,8 @@ export type LearnerPlacementEventContext={
  learnerName?:string;jobTitle?:string;companyName?:string;status?:string;
  applicationId?:string;jobId?:string;assessmentUrl?:string;
  interviewVenue?:string;rejectionReason?:string;
+ /** Verified saved placement-request decision, never speculative UI state. */
+ requestDecisionStatus?:"APPROVED"|"REJECTED";requestDecisionNote?:string;
  appliedAt?:string|Date|null;statusUpdatedAt?:string|Date|null;
  interviewAt?:string|Date|null;interviewType?:string;interviewMode?:string;
  roundDescription?:string;contactMobile?:string;contactPhone?:string;
@@ -133,6 +135,13 @@ export function learnerPlacementEventCopy(
      " has been scheduled. Check dashboard for details.";break;
    default:body="Your application for "+named+" has been updated.";
   }
+ }else if((kind==="REQUEST_DECIDED"||kind==="RESCHEDULE_DECIDED")&&
+   (context.requestDecisionStatus==="APPROVED"||context.requestDecisionStatus==="REJECTED")){
+  const decision=context.requestDecisionStatus==="APPROVED"?"approved":"rejected";
+  const category=kind==="RESCHEDULE_DECIDED"?"reschedule":"placement";
+  const note=decision==="rejected"?cleanEventDetail(context.requestDecisionNote,350):"";
+  body="Your "+category+" request was "+decision+" for "+named+"."+
+    (note?" Reason: "+note+(note.endsWith(".")?"":"."):"");
  }else if(roundNotice){
   body=roundName+" for "+named+" has been scheduled. Check dashboard for details.";
  }else if(kind==="ROUND_REMINDER"&&interviewDateTime){
