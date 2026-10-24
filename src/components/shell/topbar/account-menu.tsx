@@ -4,7 +4,7 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {PopoverPanel} from "@/components/ui/popover";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { AdminScope } from "@/modules/identity/context";
 import type { AdminScopeChoices } from "@/modules/admin-scope/service";
 import type { MembershipChoice } from "@/modules/identity/context-service";
@@ -34,6 +34,8 @@ export function TopbarAccountMenu({
   scope: AdminScope | null | undefined;
 }) {
   const router = useRouter();
+  const pathname=usePathname()??"/";
+  const mentorPortal=pathname==="/mentor"||pathname.startsWith("/mentor/");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -125,6 +127,10 @@ export function TopbarAccountMenu({
         <p className={style.accountHeading}>{roleLabel}</p>
         <p className={style.accountSubheading}>{organizationName}</p>
       </div>
+      {mentorPortal?<Link href="/mentor/account"
+        onClick={()=>setOpen(false)} className={style.menuItem}>
+        Mentor profile details
+      </Link>:null}
       {copy.accountHref ? <Link href={copy.accountHref}
         onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel}</Link> : null}
       {adminScopeChoices || workspaceChoices(memberships).length > 1 ? <>
