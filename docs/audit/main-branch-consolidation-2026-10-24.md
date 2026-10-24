@@ -34,6 +34,17 @@ The two Oct 16 branches still contain older, divergent components, route and tes
 | `chatgpt/chat-7` (Oct 16 Recruiter legacy work) | Diverged: 20 unique commits, ~59K main-side commits since common base | Modern Recruiter calendar/conversations were significantly reworked. The safe round-duration helper/test were ported; older conversation pulse and auto-read components are absent from main and must be evaluated against current explicit read-receipt policy before any adoption. No wholesale merge. |
 | `work/remaining-2026-10-04` (PR #1) | Old divergent placement migration, >68K main-side commits since common base | Separate outdated placement work, not part of Mentor prototype pass. Open draft retained; needs a focused schema/service reconciliation before considering inclusion. |
 
+## Additional TPO decision-notice parity port
+
+The October 16 TPO branch also carried a learner-visible request outcome/rejection reason notice. The newer `main` already had safer in-transaction, recipient-scoped, preference-aware delivery, but its generic message did not communicate the saved request outcome/rejection reason.
+
+- `learner-placement-event-copy.ts` now builds a bounded, sanitized **approved/rejected** message for verified request and reschedule decisions without exposing optional approval notes.
+- The request transaction now passes its persisted decision, saved rejection note, correct job, and application IDs to `deliverRecordedLearnerPlacementEvent` for a fresh tenant/recipient scope check.
+- Focused `chat15-placement-event-copy.test.ts` cases check denied/approved copy, newline sanitization, note privacy, internal route and bounded length.
+- Commits: `c70c9af`, `c97784e`, `d3eaf8a`, `44f64e4`, `70b7423`, `8a2cccc`, `6c25bc0`.
+
+No green latest-main integration or browser acceptance is asserted.
+
 ## Mentor continuation after TPO/HR port
 
 - On the Mentor #45 home page, future **REQUESTED** meetings now have an explicit `Request ·` label and rescheduled entries have `Rescheduled ·`. The existing week selector and authorization remain intact, and an unaccepted request is not presented as confirmed. The shared presentation model and a focused unit test were committed directly to `main` in `c47eab8`, `b2f8ab9`, `36d3782`.
