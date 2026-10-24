@@ -429,6 +429,15 @@ describe("Mentor project updates: atomic activity, recipients and posting limits
         message:"Project week 1: sprint tasks ready",
       });
       expect(duplicate.id).toBe(first.id);
+      const competing=await Promise.all([
+        postMentorProjectUpdate(mentorContext,ids.project,{
+          message:"Project week 1: sprint tasks ready",
+        }),
+        postMentorProjectUpdate(mentorContext,ids.project,{
+          message:"Project week 1: sprint tasks ready",
+        }),
+      ]);
+      expect(competing.map(row=>row.id)).toEqual([first.id,first.id]);
       const learnerNotice=await pool.query<{
         user_id:string;action_href:string;
       }>(`SELECT n.user_id,n.action_href FROM in_app_notifications n
