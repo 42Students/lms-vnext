@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {TPO_PROTOTYPE_NAV,TPO_PROTOTYPE_SECTIONS,tpoPrototypeSectionForPath,tpoPrototypeSidebarActive}
+import {TPO_PROTOTYPE_NAV,TPO_PROTOTYPE_SECTIONS,tpoPrototypeSectionForPath,tpoPrototypeSidebarActive,tpoPrototypeTabActive}
  from "@/components/shell/tpo-prototype-navigation";
 describe("TPO prototype's eight top-level destinations",()=>{
  it("has exactly the reference sections in their reference order",()=>{
@@ -12,6 +12,14 @@ describe("TPO prototype's eight top-level destinations",()=>{
    .toEqual(["All students","Who's in placements","To verify","Requests","Announcements"]);
   expect(TPO_PROTOTYPE_SECTIONS.Companies.slice(0,5).map(item=>item.label))
    .toEqual(["Today","Recruiters","Companies","Emails","Messages"]);
+ });
+ it("keeps prototype Emails selected on actual campaign history and composer routes",()=>{
+  expect(TPO_PROTOTYPE_SECTIONS.Companies.find(item=>item.label==="Emails")?.href)
+   .toBe("/tpo/recruiters/campaigns");
+  expect(tpoPrototypeTabActive("/tpo/recruiters/campaigns",new URLSearchParams(),"/tpo/recruiters/campaigns")).toBe(true);
+  expect(tpoPrototypeTabActive("/tpo/recruiters/campaigns/new",new URLSearchParams(),"/tpo/recruiters/campaigns")).toBe(true);
+  expect(tpoPrototypeTabActive("/tpo/recruiters/campaigns/new",new URLSearchParams(),"/tpo/recruiters")).toBe(false);
+  expect(tpoPrototypeTabActive("/tpo/messages",new URLSearchParams("tab=team"),"/tpo/messages?tab=recruiters")).toBe(false);
  });
  it("Team Chat belongs to Team, not the Companies messaging inbox",()=>{
   expect(tpoPrototypeSectionForPath("/tpo/messages","team")).toBe("Team");
