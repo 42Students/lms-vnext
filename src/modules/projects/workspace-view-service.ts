@@ -149,6 +149,7 @@ export async function getProjectWorkspaceView(
         endedAt:projectMembers.endedAt,
         memberStatus:collegeMemberships.status,
         accountStatus:users.platformStatus,
+        lastLoginAt:users.lastLoginAt,
         displayName:users.displayName,
         academicTitle:facultyProfiles.academicTitle,
         bio:sql<string | null>`nullif(left(${facultyProfiles.profileDocument}->>'bio', 2000), '')`,
@@ -328,6 +329,10 @@ export async function getProjectWorkspaceView(
     mentorBlockedTaskAges,
     mentorWeekContributors,
     mentorTeamRecentActorActivity,
+    // Mentor-only, explicitly recorded authentication fact. This is NOT presence.
+    mentorTeamLastSignIn:Object.fromEntries(mentorRoster.filter(row=>!row.endedAt&&
+      row.memberStatus==="ACTIVE"&&row.accountStatus==="ACTIVE"&&row.lastLoginAt)
+      .map(row=>[row.membershipId,row.lastLoginAt!.toISOString()])),
     mentorWeekActivityTotals,
     mentorEvidence: buildMentorWorkspaceEvidence({
       tasks: workspace.tasks,
