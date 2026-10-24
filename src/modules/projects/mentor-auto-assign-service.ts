@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull} from "drizzle-orm";
+import {and,asc,eq,gt,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,projectInstances,projectMembers,projectTasks,projectSprints,projectReleases,users} from "@/db/schema";
@@ -106,6 +106,15 @@ export async function autoAssignMentorNextSprint(
     )).limit(1);
   if(active&&target.sequence<=active.sequence)
     throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+  const [nextPlanned]=await tx.select({id:projectSprints.id})
+    .from(projectSprints).where(and(
+      eq(projectSprints.projectId,scope.project.id),
+      eq(projectSprints.status,"PLANNED"),
+      isNull(projectSprints.deletedAt),
+      active?gt(projectSprints.sequence,active.sequence):undefined,
+    )).orderBy(asc(projectSprints.sequence),asc(projectSprints.id)).limit(1);
+  if(!nextPlanned||nextPlanned.id!==target.id)
+    throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   const [release]=await tx.select({status:projectReleases.status})
     .from(projectReleases).where(and(
       eq(projectReleases.id,target.releaseId),
@@ -145,7 +154,7 @@ export async function autoAssignMentorNextSprint(
     }).where(and(eq(projectTasks.id,item.taskId),
       eq(projectTasks.projectId,scope.project.id),
       isNull(projectTasks.assigneeMembershipId),
-      eq(projectTasks.updatedAt,source.updatedAt),
+      sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${source.updatedAt.toISOString()}::timestamptz`,
     )).returning();
     if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const event=await recordActivityEventInTransaction(tx,context,{
