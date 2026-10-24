@@ -1,4 +1,5 @@
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
+import {RecruiterTodayPrototype} from "@/components/hr/recruiter-today-prototype";
 import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { redirect } from "next/navigation";
