@@ -3,6 +3,7 @@ import {
   asc,
   desc,
   eq,
+  isNull,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -92,15 +93,13 @@ export async function submitProjectTask(
       const [project] = await tx
         .select({ status: projectInstances.status })
         .from(projectInstances)
-        .where(eq(projectInstances.id, scope.project.id))
+        .where(and(eq(projectInstances.id,scope.project.id),
+          eq(projectInstances.collegeId,scope.collegeId),
+          isNull(projectInstances.deletedAt)))
         .for("update")
         .limit(1);
 
-      if (
-        !project ||
-        project.status === "ARCHIVED" ||
-        project.status === "COMPLETED"
-      ) {
+      if (!project || project.status !== "ACTIVE") {
         throw new ProjectsServiceError(
           "PROJECT_TASK_SUBMISSION_INVALID_STATE",
         );
@@ -284,11 +283,13 @@ export async function reviewProjectTaskSubmission(
     const [project] = await tx
       .select({ status: projectInstances.status })
       .from(projectInstances)
-      .where(eq(projectInstances.id, scope.project.id))
+      .where(and(eq(projectInstances.id,scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId),
+        isNull(projectInstances.deletedAt)))
       .for("update")
       .limit(1);
 
-    if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
+    if (!project || project.status !== "ACTIVE") {
       throw new ProjectsServiceError(
         "PROJECT_TASK_SUBMISSION_INVALID_STATE",
       );
