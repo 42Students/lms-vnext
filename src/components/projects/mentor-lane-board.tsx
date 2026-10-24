@@ -107,8 +107,15 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      if(!nextTask)return;
      event.preventDefault();
      setFocusedId(target.id);
-     if(view==="list")setVisibleLimit(limit=>Math.max(limit,target.index+1));
-     else{
+     if(view==="list"){
+       const key=nextTask.sprintId??"BACKLOG";
+       const index=matching.filter(task=>
+         (task.sprintId??"BACKLOG")===key)
+         .findIndex(task=>task.id===target.id);
+       if(index>=0)setListLimits(old=>({...old,
+         [key]:Math.max(old[key]??20,index+1),
+       }));
+     }else{
        const statuses=new Map(sprints.map(item=>[item.id,item.status]));
        const lane=learnerTaskLane(nextTask,statuses);
        const indexInLane=matching.filter(task=>
@@ -413,7 +420,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <span>Task</span><span>Assignee</span><span>Sprint</span><span>State</span><span>Points</span>
     </div>
     {sprintListGroups.map(group=><details key={group.id}
-      className="prototype-mentor-board-sprint-group" open={group.status==="ACTIVE"}
+      className="prototype-mentor-board-sprint-group" open={group.status==="ACTIVE"||group.tasks.some(task=>task.id===focusedId)}
       onDragOver={event=>{
         if(!readOnly&&!busy&&(group.id==="BACKLOG"||creationSprints.some(row=>row.id===group.id)))
           event.preventDefault();
