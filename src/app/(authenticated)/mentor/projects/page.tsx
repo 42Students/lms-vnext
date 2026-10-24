@@ -100,7 +100,8 @@ export async function MentorProjectsContent({
       getMentorProjectWorkCounts(context,paged?allRows:undefined),
       getMentorProjectTeamSizes(context,paged?allRows:undefined),
       getMentorPrototypeSprintSummaries(context,paged?allRows:undefined),
-      getMentorStudentWatch(context,paged?allRows:undefined),
+      // The student watch is cross-team, never just the visible SQL page.
+      getMentorStudentWatch(context),
     ]);
     return {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch};
   })().catch(error=>({
