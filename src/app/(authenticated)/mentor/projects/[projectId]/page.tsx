@@ -159,7 +159,11 @@ export default async function MentorProjectPage({
          readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"}/><MentorPrototypeProjectBrief workspace={workspace}
          readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"}/></> : null}
       {selectedTab==="sprints" ? <MentorPrototypeSprintPlan workspace={workspace} readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"} /> : null}
-      {selectedTab==="team" ? <MentorPrototypeTeamOverview workspace={workspace} readOnly={access.access!=="MENTOR"||workspace.project.status==="COMPLETED"||workspace.project.status==="ARCHIVED"} /> : null}
+      {selectedTab==="team" ? <MentorPrototypeTeamOverview workspace={workspace}
+        readOnly={access.access!=="MENTOR"||workspace.project.status==="COMPLETED"||workspace.project.status==="ARCHIVED"}
+        canAddMentor={access.access==="MENTOR"&&workspace.members.some(member=>
+          member.membershipId===context.membership?.id&&member.role==="MENTOR"&&
+          member.isPrimary)} /> : null}
       {selectedTab==="performance" ? <MentorPrototypePerformance workspace={workspace} /> : null}
       {selectedTab==="activity" ? <>
         {activitySeen?<MentorActivitySinceLastVisit
