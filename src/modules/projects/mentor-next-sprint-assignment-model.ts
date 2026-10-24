@@ -21,13 +21,16 @@ export function planMentorNextSprintAssignments(
  tasks:readonly MentorAutoAssignTask[],
  activeMemberIds:readonly string[],
  targetSprintId:string,
+ eligibleOpenSprintIds?:ReadonlySet<string>,
 ):MentorNextSprintAssignmentPlan{
  const ids=[...new Set(activeMemberIds)].sort();
  const loads=new Map(ids.map(id=>[id,{
   membershipId:id,beforePoints:0,afterPoints:0,beforeTasks:0,afterTasks:0,
  }]));
  const open=tasks.filter(task=>!task.deletedAt&&
-   task.status!=="DONE");
+   task.status!=="DONE"&&
+   (task.sprintId===null||!eligibleOpenSprintIds||
+     eligibleOpenSprintIds.has(task.sprintId)));
  for(const task of open){
   const load=task.assigneeMembershipId?loads.get(task.assigneeMembershipId):null;
   if(load){
