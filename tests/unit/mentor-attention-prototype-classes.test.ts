@@ -69,6 +69,19 @@ describe("Mentor prototype additional attention classes",()=>{
     expect(first.revision).not.toBe(revised.revision);
     expect(first.occurredAt).toBe(revised.occurredAt);
   });
+  it("deep-links meeting attention to exact meeting row for both request and upcoming",()=>{
+    const meetingId="00000000-0000-4000-8000-000000000032";
+    const rows=deriveMentorProjectAttention([project({meetings:[
+      {id:meetingId,status:"REQUESTED",title:"Asked",startsAt:
+        new Date("2026-10-24T16:00:00.000Z")},
+      {id:"00000000-0000-4000-8000-000000000033",status:"SCHEDULED",
+        title:"Review",startsAt:new Date("2026-10-25T08:00:00.000Z")},
+    ]})],now);
+    expect(rows.find(item=>item.kind==="REQUESTED")?.href)
+      .toBe("/mentor/projects/"+id+"?tab=team#meeting-"+meetingId);
+    expect(rows.find(item=>item.kind==="MEETING_SOON")?.href)
+      .toContain("?tab=team#meeting-00000000-0000-4000-8000-000000000033");
+  });
   it("does not invent sign-off, approval or assignment on missing source lists",()=>{
     expect(deriveMentorProjectAttention([project({sprints:undefined,tasks:undefined})],now))
       .toEqual([]);
