@@ -16,11 +16,11 @@ export const learnerProjectActivityCategories = [
 
 export function learnerProjectActivityCategory(eventType: string): LearnerProjectActivityCategory | "OTHER" {
   if (eventType.startsWith("projects.delivery.") || eventType.startsWith("projects.submission.")) return "SUBMISSION";
-  if (eventType.startsWith("projects.sprint.")) return "SPRINT";
-  if (eventType.startsWith("projects.task.")) return "TASK";
-  if (["projects.team.", "projects.member.", "projects.mentor.", "projects.meeting."].some(prefix => eventType.startsWith(prefix))) return "TEAM";
-  if (eventType.startsWith("projects.resource.")) return "RESOURCE";
-  if (eventType.startsWith("projects.project.") || eventType.startsWith("projects.readiness.")) return "PROJECT";
+  if (["projects.sprint.","projects.release."].some(prefix => eventType.startsWith(prefix))) return "SPRINT";
+  if (["projects.task.","projects.task_comment."].some(prefix => eventType.startsWith(prefix))) return "TASK";
+  if (["projects.team.", "projects.team_member.", "projects.member.", "projects.mentor.", "projects.meeting."].some(prefix => eventType.startsWith(prefix))) return "TEAM";
+  if (["projects.resource.", "projects.resource_file.", "projects.file."].some(prefix => eventType.startsWith(prefix))) return "RESOURCE";
+  if (["projects.project.", "projects.readiness.", "projects.evaluation.", "projects.mentor_update."].some(prefix => eventType.startsWith(prefix))) return "PROJECT";
   return "OTHER";
 }
 
@@ -98,12 +98,12 @@ export function learnerProjectActivityDateBounds(filters: LearnerProjectActivity
 
 export function learnerProjectActivityPrefixes(category: LearnerProjectActivityCategory): readonly string[] {
   switch (category) {
-    case "SPRINT": return ["projects.sprint."];
-    case "TASK": return ["projects.task."];
-    case "TEAM": return ["projects.team.", "projects.member.", "projects.mentor.", "projects.meeting."];
-    case "RESOURCE": return ["projects.resource."];
+    case "SPRINT": return ["projects.sprint.", "projects.release."];
+    case "TASK": return ["projects.task.", "projects.task_comment."];
+    case "TEAM": return ["projects.team.", "projects.team_member.", "projects.member.", "projects.mentor.", "projects.meeting."];
+    case "RESOURCE": return ["projects.resource.", "projects.resource_file.", "projects.file."];
     case "SUBMISSION": return ["projects.delivery.", "projects.submission."];
-    case "PROJECT": return ["projects.project.", "projects.readiness."];
+    case "PROJECT": return ["projects.project.", "projects.readiness.", "projects.evaluation.", "projects.mentor_update."];
     default: return [];
   }
 }
