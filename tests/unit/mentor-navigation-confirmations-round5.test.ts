@@ -8,7 +8,8 @@ describe("mentor legacy bookmarks and confirmations",()=>{
   for(const s of ["/mentor/profile","/mentor/contacts/:path*","/mentor/allQuizzes",
     "/mentor/fileExplorer","/mentor/courses/:path*"])expect(cfg).toContain(s);
   expect(cfg).toContain('destination: "/mentor/projects"');
-  expect(cfg).toContain('destination: "/mentor"');
+  // Legacy Mentor links now land in the actual prototype Projects entrypoint.
+  expect(cfg).not.toContain('destination: "/mentor"');
  });
  it("MEN-projects-meetings-76 uses styled mentor sprint and project completion confirmation",()=>{
   for(const path of ["src/components/projects/mentor-sprint-write.tsx",
