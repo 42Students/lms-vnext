@@ -6,7 +6,7 @@ export const mentorCalendarFiltersSchema=z.object({
   join:z.enum(["ALL","HAS_SAFE_LINK","NO_SAFE_LINK"]).default("ALL"),
   sprint:z.enum(["ALL","LINKED","UNLINKED"]).default("ALL"),
   projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
-  attention:z.enum(["ALL","OVERDUE_REQUESTED","SOON_SCHEDULED","MISSED_SCHEDULED"]).default("ALL"),
+  attention:z.enum(["ALL","OVERDUE_REQUESTED","SOON_SCHEDULED","MISSED_SCHEDULED","NOTES_MISSING"]).default("ALL"),
   status:z.enum(["ALL","DRAFT","REQUESTED","SCHEDULED","RESCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
   type:z.enum(["ALL","GENERAL","PLANNING","STANDUP","REVIEW","RETRO"]).default("ALL"),
   projectState:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
@@ -50,6 +50,13 @@ export function filterMentorCalendar(
         : query.attention==="SOON_SCHEDULED"
           ? row.status==="SCHEDULED"&&Date.parse(row.startsAt)>=now.getTime()&&
             Date.parse(row.startsAt)<=now.getTime()+48*3600000
+          : query.attention==="NOTES_MISSING"
+          ? row.status==="COMPLETED"&&
+            !row.outcome?.trim()&&!row.facilitation?.notes?.trim()&&
+            !row.facilitation?.wentWell?.trim()&&
+            !row.facilitation?.retroDidntGoWell?.trim()&&
+            !row.facilitation?.improve?.trim()&&
+            !(row.facilitation?.actionItemRows?.length)
           : mentorMeetingDisplayStatus(row,now)==="MISSED"))&&
     (query.status==="ALL"||row.status===query.status)&&
     (!query.type||query.type==="ALL"||row.meetingType===query.type)&&
