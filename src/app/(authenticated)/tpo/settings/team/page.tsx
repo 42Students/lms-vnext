@@ -1,5 +1,6 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
+import {TpoTeamPeoplePrototype} from "@/components/tpo/tpo-team-people-prototype";
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
 import {TpoTeamAssignUnowned} from "@/components/tpo/tpo-team-assign-unowned";
 import {TpoTeamHandover} from "@/components/tpo/tpo-team-handover";
@@ -96,8 +97,20 @@ export default async function TpoPlacementTeamPage({searchParams}: {
         }
       />
       <TpoSettingsNav active="team" compact />
+      <TpoTeamPeoplePrototype
+        people={sortedMembers.map(member=>({
+          membershipId:member.membershipId,
+          displayName:member.displayName,
+          roles:member.roles,status:member.status,
+          openAsks:member.openAsks,overdueAsks:member.overdueAsks,
+          studentDutyCount:member.studentDuties.length,
+          awayUntil:awayByMember.get(member.membershipId)?.toISOString()??null,
+        }))}
+        workloadReady={workload.ready}
+        selfMembershipId={actorMembershipId}
+      />
 
-      {awayState.ready ? <section aria-label="Team availability" className="min-w-0 space-y-3 border-b border-border pb-4">
+      {awayState.ready ? <section id="tpo-team-availability" aria-label="Team availability" className="min-w-0 space-y-3 border-b border-border pb-4">
         <h2 className="text-base font-semibold text-foreground">Who is away</h2>
         <p className="text-sm text-body">Only verified away intervals for this placement team are shown.</p>
         {awayState.items.length ? <ul className="space-y-2 text-sm text-body">
@@ -182,7 +195,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
 
       <TpoSettingsTeamManage candidates={candidates} activeIds={members.map(member=>member.membershipId)} available={sources.teamAssignmentsAvailable}/>
 
-      <section className="border-t border-border">
+      <section id="tpo-team-management" className="border-t border-border">
         <div className="border-b border-border py-4">
           <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Active team memberships
