@@ -213,6 +213,7 @@ export function TaskReviewActions({
   projectId,
   taskId,
   submissionId,mode,expectedUpdatedAt,initialDecision="APPROVED",triggerLabel="Review submission",shortcut,
+  onReviewSuccess,
 }: {
   projectId: string;
   taskId: string;
@@ -220,6 +221,7 @@ export function TaskReviewActions({
   mode:"MENTOR"|"ADMIN"|"LEARNER";expectedUpdatedAt:string;
   initialDecision?:"APPROVED"|"CHANGES_REQUESTED";triggerLabel?:string;
   shortcut?:"a"|"s";
+  onReviewSuccess?:(taskId:string,decision:"APPROVED"|"CHANGES_REQUESTED")=>void;
 }) {
   const { pending, run } = useProjectAction();
   const [open, setOpen] = useState(false);
@@ -269,6 +271,7 @@ export function TaskReviewActions({
       () => {
         setOpen(false);
         setFeedback("");
+        onReviewSuccess?.(taskId,decision);
       },
     );
   }
