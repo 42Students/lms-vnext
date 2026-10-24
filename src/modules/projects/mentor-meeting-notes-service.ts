@@ -13,6 +13,8 @@ import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {mentorMeetingNotesParamsSchema,mentorMeetingNotesWriteSchema,meetingNotesEditable}
   from "./mentor-meeting-notes-model";
+import {mentorMeetingFacilitationSchema,mentorMeetingFacilitationWriteSchema}
+  from "./mentor-meeting-facilitation-model";
 
 async function getMentorMeetingNotesScope(context:RequestContext,projectId:string){
   const membership=context.membership;
@@ -84,4 +86,60 @@ export async function updateMentorMeetingNotes(context:RequestContext,
     });
     return updated;
   });
+}
+
+/** Edit only recorded post-meeting facilitation, without changing status,
+ * attendance invitations, schedule, or an already recorded outcome. */
+export async function updateMentorMeetingFacilitation(
+ context:RequestContext,rawParams:unknown,rawInput:unknown,
+){
+ const params=mentorMeetingNotesParamsSchema.parse(rawParams);
+ const input=mentorMeetingFacilitationWriteSchema.parse(rawInput);
+ const scope=await getMentorMeetingNotesScope(context,params.projectId);
+ return getDb().transaction(async tx=>{
+  const [project]=await tx.select({status:projectInstances.status})
+   .from(projectInstances).where(and(
+    eq(projectInstances.id,scope.project.id),
+    eq(projectInstances.collegeId,scope.collegeId),
+   )).for("update").limit(1);
+  await assertPersistedProjectMutationActor(tx,context,scope);
+  const [meeting]=await tx.select().from(projectMeetings)
+    .where(and(eq(projectMeetings.id,params.meetingId),
+      eq(projectMeetings.projectId,scope.project.id)))
+    .for("update").limit(1);
+  if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
+  const expected=new Date(input.expectedUpdatedAt);
+  if(meeting.updatedAt.getTime()!==expected.getTime())
+    throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
+  if(!project||!meetingNotesEditable(project.status,meeting.status))
+    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  const current=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
+  if(JSON.stringify(current)===JSON.stringify(input.facilitation))
+    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  const now=new Date(Math.max(Date.now(),meeting.updatedAt.getTime()+1));
+  const [updated]=await tx.update(projectMeetings).set({
+    facilitation:input.facilitation,updatedAt:now,
+  }).where(and(
+    eq(projectMeetings.id,meeting.id),
+    eq(projectMeetings.projectId,scope.project.id),
+    eq(projectMeetings.status,"COMPLETED"),
+    sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) =
+      ${expected.toISOString()}::timestamptz`,
+  )).returning({id:projectMeetings.id,updatedAt:projectMeetings.updatedAt});
+  if(!updated)throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
+  await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_NOTES_UPDATED,
+    collegeId:scope.collegeId,organizationId:scope.organizationId,
+    subjectType:"project_meeting",subjectId:meeting.id,
+    subjectLabel:meeting.title,
+    summary:"Completed meeting attendance and facilitation updated",
+    metadata:{projectId:scope.project.id,meetingId:meeting.id,
+      beforeAttendees:current.attendees.length,
+      afterAttendees:input.facilitation.attendees.length,
+      afterActionItems:input.facilitation.actionItemRows.length,
+      structured:true},
+    groupKey:"project:"+scope.project.id+":meetings",
+  });
+  return updated;
+ });
 }
