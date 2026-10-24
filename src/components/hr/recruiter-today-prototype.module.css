@@ -30,3 +30,7 @@
 .more{width:100%;text-align:left;background:#fff;cursor:pointer}.more:hover{color:#0a7c88}.foot button{text-decoration:underline;cursor:pointer}
 @media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr)}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:767px){.side{display:flex}.need{grid-template-columns:minmax(0,1fr);padding:14px}.needActions{justify-content:flex-start}.heading h1{font-size:23px}}
+
+.live{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:#172033}
+.live:hover{border-color:#0a7c88;color:#172033}
+.live strong{font-size:16px}
