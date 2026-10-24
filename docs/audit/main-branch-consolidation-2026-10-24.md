@@ -34,6 +34,12 @@ The two Oct 16 branches still contain older, divergent components, route and tes
 | `chatgpt/chat-7` (Oct 16 Recruiter legacy work) | Diverged: 20 unique commits, ~59K main-side commits since common base | Modern Recruiter calendar/conversations were significantly reworked. The safe round-duration helper/test were ported; older conversation pulse and auto-read components are absent from main and must be evaluated against current explicit read-receipt policy before any adoption. No wholesale merge. |
 | `work/remaining-2026-10-04` (PR #1) | Old divergent placement migration, >68K main-side commits since common base | Separate outdated placement work, not part of Mentor prototype pass. Open draft retained; needs a focused schema/service reconciliation before considering inclusion. |
 
+## Mentor continuation after TPO/HR port
+
+- On the Mentor #45 home page, future **REQUESTED** meetings now have an explicit `Request ·` label and rescheduled entries have `Rescheduled ·`. The existing week selector and authorization remain intact, and an unaccepted request is not presented as confirmed. The shared presentation model and a focused unit test were committed directly to `main` in `c47eab8`, `b2f8ab9`, `36d3782`.
+- This closes a narrow source-level rendering omission, **not** the 132-item functional acceptance gate or missing provider-backed invitation/calendar integration.
+- Re-run latest main CI and browser checks; previous checks were pending or cancelled while rapid new commits continued.
+
 ## Rules for subsequent chats
 
 1. Work against the fresh latest `main` file contents. Before adding a fix, check whether a parallel chat already landed its equivalent.
