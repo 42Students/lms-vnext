@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import {z} from "zod";
 import {
   and,
   eq,
@@ -203,7 +204,9 @@ export async function completeProjectSprint(
   context: RequestContext,
   projectIdInput: string,
   sprintIdInput: string,
+  signOffNote?:string,
 ) {
+  const note=z.string().trim().max(1000).optional().parse(signOffNote)??"";
   const scope =
     await requireProjectLifecycleMutationAccess(
       context,
@@ -303,6 +306,17 @@ export async function completeProjectSprint(
       throw new ProjectsServiceError(
         "PROJECT_SPRINT_INVALID_STATE",
       );
+    }
+    if(note){
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+        subjectType:"project_sprint",subjectId:sprint.id,subjectLabel:sprint.title,
+        summary:"Mentor sign-off: "+note.slice(0,950),
+        metadata:{projectId:scope.project.id,sprintId:sprint.id,
+          sourceTab:"sprints",signOffNote:note},
+        groupKey:"project:"+scope.project.id,
+      });
     }
 
     return completed;
