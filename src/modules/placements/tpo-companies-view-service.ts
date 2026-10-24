@@ -329,7 +329,7 @@ export async function exportTpoCompanyDirectory(
  const source=await loadCompanySources(context,input.collegeId);
  const all=buildTpoCompanyRows(source);
  const result=filterTpoCompanyRows(all,{
-  collegeId:input.collegeId,sort:input.sort,page:1,pageSize:2001,
+  sort:input.sort,page:1,pageSize:2001,
   ...(input.search !== undefined ? {search:input.search} : {}),
  });
  if(result.total>2000)throw new Error("COMPANY_EXPORT_TOO_LARGE");
