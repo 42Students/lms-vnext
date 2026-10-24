@@ -21,6 +21,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterCompanyTeam } from "@/modules/placements/recruiter-company-team-service";
+import {getRecruiterCompanyReports} from "@/modules/placements/recruiter-company-reports-service";
+import {RecruiterCompanyPrototype} from "@/components/hr/recruiter-company-prototype";
 import { recruiterTeamAttributedDriveCounts } from "@/modules/placements/recruiter-team-drive-count-service";
 import { hrTeamSearchSchema, searchHrTeam } from "@/modules/placements/hr-team-search-model";
 import {hrTeamRosterMessage} from "@/modules/placements/hr-team-roster-message-model";
@@ -69,7 +71,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
       action={<Link href="/hr/company?tab=team" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search</Link>} /></div>;
-  const result = await getRecruiterCompanyTeam(context, requestedCollegeId, tab==="team").catch(error=>{
+  const result = await getRecruiterCompanyTeam(context, requestedCollegeId, tab==="team"||tab==="company").catch(error=>{
     if(error instanceof AuthorizationError)throw error;
     return null;
   });
@@ -115,7 +117,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const overview = buildRecruiterCompanyOverview(jobs, result.grant.collegeId, result.company.relationshipId);
   let attributedDriveCounts: Record<string,number> = {};
   let teamCountsUnavailable = false;
-  if (tab==="team") {
+  if (tab==="team"||tab==="company") {
     try {
       attributedDriveCounts = await recruiterTeamAttributedDriveCounts(context,
         result.grant.collegeId,result.company.relationshipId,jobs);
@@ -132,7 +134,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const publicLogo=result.company.logoUrl??
     (profile?.logoPublicUrl && /^https:\/\/[^\s]+$/i.test(profile.logoPublicUrl)?profile.logoPublicUrl:null);
   const companyDomains=result.company.domains.map(domain=>"@"+domain.replace(/^@/,""));
-  if (tab==="team" && (!Array.isArray(result.team) ||
+  if ((tab==="team"||tab==="company") && (!Array.isArray(result.team) ||
     !result.team.every(member => typeof member.userId === "string" &&
       typeof member.displayName === "string" && typeof member.isYou === "boolean"))) {
     return <div className="min-w-0 space-y-4">
@@ -146,6 +148,39 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const matchingTeam = searchHrTeam(result.team,teamQuery.data);
   const teamPageResult = hrTeamPage(matchingTeam,teamPage.data);
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
+  // Prototype screen #41 combines company, colleagues and hiring on one page.
+  // The original Team tab and Reports deep links stay available for filters,
+  // full pagination and exports; no unshared applicant identities are read.
+  if(tab==="company"){
+    const report=await getRecruiterCompanyReports(context,{
+      collegeId:result.grant.collegeId,page:1,pageSize:10,
+    }).catch(error=>{
+      if(error instanceof AuthorizationError)throw error;
+      return null;
+    });
+    const readyReport=report?.status==="READY"&&
+      report.grant.collegeId===result.grant.collegeId?report:null;
+    const reportHref="/hr/company/reports?collegeId="+encodeURIComponent(result.grant.collegeId);
+    return <RecruiterCompanyPrototype
+      companyName={result.company.name}
+      website={result.company.websiteUrl}
+      industry={result.company.industry}
+      logoUrl={publicLogo}
+      verified={Boolean(result.company.verifiedAt)}
+      domains={result.company.domains}
+      collegeName={result.grant.collegeName}
+      collegeId={result.grant.collegeId}
+      choices={result.choices}
+      team={result.team}
+      rows={readyReport?.jobs??[]}
+      reportAvailable={readyReport!==null}
+      hasMore={Boolean(readyReport&&readyReport.matchedTotal>readyReport.jobs.length)}
+      reportHref={reportHref}
+      csvHref={"/api/placements/recruiter/reports/export?collegeId="+
+        encodeURIComponent(result.grant.collegeId)+"&status=ALL"}
+      teamCounts={attributedDriveCounts} teamCountsAvailable={!teamCountsUnavailable}
+    />;
+  }
   return (
     <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
       <PageHeader
