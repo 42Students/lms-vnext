@@ -17,6 +17,7 @@ export function MentorSourceNotificationRead({receiptKey,read}:{receiptKey:strin
        method:"POST",headers:{"content-type":"application/json"},
        body:JSON.stringify({key:receiptKey}),timeoutMs:12000,
      });
+     window.dispatchEvent(new Event("lms:notifications-updated"));
      router.refresh();
    }catch(caught){
      setError(caught instanceof Error?caught.message:"Could not save read state");
