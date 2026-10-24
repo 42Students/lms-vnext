@@ -126,7 +126,7 @@ export async function deliverRecordedLearnerPlacementEvent(
  input:{eventId:string;collegeId:string;membershipId:string;kind:LearnerPlacementEventKind;
   subject:string;jobId?:string;applicationId?:string;
   /** Verified decision captured by the same transaction as the source event. */
-  requestDecisionStatus?:"APPROVED"|"REJECTED";requestDecisionNote?:string;
+  requestDecisionStatus?:"APPROVED"|"REJECTED"|undefined;requestDecisionNote?:string|undefined;
   /** Only a verified candidate-specific event writer can provide this. */
   approvedAssessmentUrl?:string},
 ):Promise<{delivered:boolean;skipped:LearnerPlacementDeliverySkip|null}>{
