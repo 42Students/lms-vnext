@@ -288,6 +288,31 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         <Link href={base+"?tab=delivery"}>Review on this page ↓</Link>
       </div>
     </div>:<p className="prototype-mentor-summary-empty">No final submission has been recorded for this project yet.</p>}
+    <section className="prototype-mentor-chart-card" aria-label="Final submission readiness">
+      <h3>Ready for review · recorded prerequisites</h3>
+      <ul className="prototype-mentor-overview-actions">
+        <li>{workspace.readiness.execution.sprints.completed} of
+          {" "}{workspace.readiness.execution.sprints.total} sprints signed off</li>
+        <li>{workspace.readiness.execution.tasks.done} of
+          {" "}{workspace.readiness.execution.tasks.total} current tasks completed</li>
+        <li>{workspace.readiness.execution.releases.shipped} of
+          {" "}{workspace.readiness.execution.releases.total} releases shipped
+          {" "}(advisory; the current submission policy does not require shipment)</li>
+        <li>{workspace.readiness.execution.tasks.proofCovered} completed tasks
+          with recorded submission evidence links</li>
+        <li>Submission gate: {workspace.readiness.legacyReadiness.readyForSubmission?
+          "Ready":"Not ready"}
+          {workspace.readiness.legacyReadiness.reason?
+            " · "+workspace.readiness.legacyReadiness.reason:""}</li>
+      </ul>
+      {workspace.readiness.legacyReadiness.overrideActive?
+        <p>Recorded administrator readiness override:
+          {" "}{workspace.readiness.legacyReadiness.overrideValue?
+            "Unlocked":"Blocked"}.
+          {" "}This is a recorded permission decision, not a prototype fixture.</p>:null}
+      <p>Due-date and release-shipment facts are displayed for review; the
+        authoritative submit and accept permissions are enforced by the server.</p>
+    </section>
     {previous?<section className="prototype-mentor-delivery-history">
       <h3>Previous attempt · version {previous.version}</h3>
       <p>{previous.status.replaceAll("_"," ")}</p>
