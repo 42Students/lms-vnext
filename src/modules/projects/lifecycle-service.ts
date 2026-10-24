@@ -75,14 +75,14 @@ export async function startProjectSprint(
   try {
     return await db.transaction(async (tx) => {
       const [project] = await tx
-        .select({ status: projectInstances.status })
+        .select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt })
         .from(projectInstances)
         .where(and(eq(projectInstances.id, scope.project.id),
           eq(projectInstances.collegeId,scope.collegeId)))
         .for("update")
         .limit(1);
 
-      if (!project || !projectAllowsExecution(project.status)) {
+      if (!project || project.deletedAt || !projectAllowsExecution(project.status)) {
         throw new ProjectsServiceError(
           "PROJECT_SPRINT_INVALID_STATE",
         );
@@ -121,6 +121,17 @@ export async function startProjectSprint(
           "PROJECT_SPRINT_INVALID_STATE",
         );
       }
+
+      // Only a live, unshipped release may start another Sprint.
+      const [release]=await tx.select({
+        status:projectReleases.status,
+      }).from(projectReleases).where(and(
+        eq(projectReleases.id,sprint.releaseId),
+        eq(projectReleases.projectId,scope.project.id),
+        isNull(projectReleases.deletedAt),
+      )).for("update").limit(1);
+      if(!release||!["PLANNED","IN_PROGRESS"].includes(release.status))
+        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
 
       const [active] = await tx
         .select({ id: projectSprints.id })
@@ -623,14 +634,14 @@ export async function reopenProjectSprint(
   try {
     return await db.transaction(async (tx) => {
       const [project] = await tx
-        .select({ status: projectInstances.status })
+        .select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt })
         .from(projectInstances)
         .where(and(eq(projectInstances.id, scope.project.id),
           eq(projectInstances.collegeId,scope.collegeId)))
         .for("update")
         .limit(1);
 
-      if (!project || !projectAllowsExecution(project.status)) {
+      if (!project || project.deletedAt || !projectAllowsExecution(project.status)) {
         throw new ProjectsServiceError(
           "PROJECT_SPRINT_INVALID_STATE",
         );
@@ -668,6 +679,7 @@ export async function reopenProjectSprint(
           and(
             eq(projectReleases.id, sprint.releaseId),
             eq(projectReleases.projectId, scope.project.id),
+            isNull(projectReleases.deletedAt),
           ),
         )
         .for("update")
@@ -768,12 +780,12 @@ export async function updateProjectTaskStatus(
   const taskId = projectTaskIdSchema.parse(taskIdInput);
 
   return getDb().transaction(async (tx) => {
-    const [project] = await tx.select({ status: projectInstances.status })
+    const [project] = await tx.select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt })
       .from(projectInstances)
       .where(and(eq(projectInstances.id, scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId)))
       .for("update").limit(1);
-    if (!project || !projectAllowsExecution(project.status)) {
+    if (!project || project.deletedAt || !projectAllowsExecution(project.status)) {
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     }
     await assertPersistedProjectMutationActor(tx,context,scope);

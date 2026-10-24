@@ -307,6 +307,59 @@ afterAll(async () => {
 });
 
 describe("Projects P5 lifecycle", () => {
+  it("denies starting a Sprint within a shipped release even while the project is PLANNED",async()=>{
+    const project=await createProject();
+    const ws=await getProjectInstanceWorkspace(mentor,project.id);
+    const sprint=ws.sprints[0]!,release=ws.releases[0]!;
+    await pool.query("update project_releases set status='SHIPPED' where id=$1",
+      [release.id]);
+    await expect(startProjectSprint(mentor,project.id,sprint.id))
+      .rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    const state=await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1",[sprint.id]);
+    expect(state.rows[0]?.status).toBe("PLANNED");
+  });
+
+  it("rejects Sprint start and task-state updates after a soft-deleted project",async()=>{
+    const project=await createProject();
+    const ws=await getProjectInstanceWorkspace(mentor,project.id);
+    const first=ws.sprints[0]!,task=ws.tasks.find(row=>row.sprintId===first.id)!;
+    await pool.query("update project_instances set deleted_at=now() where id=$1",
+      [project.id]);
+    await expect(startProjectSprint(mentor,project.id,first.id)).rejects.toBeDefined();
+    const saved=await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1",[first.id]);
+    expect(saved.rows[0]?.status).toBe("PLANNED");
+    await pool.query("update project_instances set deleted_at=null where id=$1",[project.id]);
+    await startProjectSprint(mentor,project.id,first.id);
+    await pool.query("update project_instances set deleted_at=now() where id=$1",
+      [project.id]);
+    await expect(updateProjectTaskStatus(mentor,project.id,task.id,{
+      status:"IN_PROGRESS",expectedUpdatedAt:task.updatedAt.toISOString(),
+    })).rejects.toBeDefined();
+    const state=await pool.query<{status:string}>(
+      "select status from project_tasks where id=$1",[task.id]);
+    expect(state.rows[0]?.status).toBe(task.status);
+  });
+
+  it("rejects reopening a completed Sprint after soft deletion with no task rewrite",async()=>{
+    const project=await createProject();
+    const ws=await getProjectInstanceWorkspace(mentor,project.id);
+    const sprint=ws.sprints[0]!;
+    const task=ws.tasks.find(row=>row.sprintId===sprint.id)!;
+    await startProjectSprint(mentor,project.id,sprint.id);
+    await completeProjectSprint(mentor,project.id,sprint.id,undefined,[{
+      taskId:task.id,destination:"BACKLOG",
+      expectedUpdatedAt:task.updatedAt.toISOString(),
+    }]);
+    await pool.query("update project_instances set deleted_at=now() where id=$1",
+      [project.id]);
+    await expect(reopenProjectSprint(mentor,project.id,sprint.id)).rejects.toBeDefined();
+    const current=await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1",[sprint.id]);
+    expect(current.rows[0]?.status).toBe("COMPLETED");
+  });
+
   it("stores immutable release shipment revisions and rejects stale ship replay",async()=>{
     const project=await createProject();
     const ws=await getProjectInstanceWorkspace(mentor,project.id);
