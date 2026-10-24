@@ -40,6 +40,21 @@ describe("Mentor next-sprint point-balanced planner",()=>{
   ],["active"],"next");
   expect(plan.assignments.map(row=>row.membershipId)).toEqual(["active"]);
  });
+ it("ignores historical closed-sprint assignee loads and never targets shipped sprint work",()=>{
+  const tasks=[
+    task("archived-closed","completed","a",50,"BLOCKED"),
+    task("shipped","shipped","b",22),
+    task("current","active","b",3),
+    task("next","next",null,4),
+  ];
+  const openIds=new Set(["active","next"]);
+  const plan=planMentorNextSprintAssignments(tasks,["a","b"],"next",openIds);
+  expect(plan.assignments.map(row=>row.membershipId)).toEqual(["a"]);
+  expect(plan.loads.find(row=>row.membershipId==="a")?.beforePoints).toBe(0);
+  expect(plan.loads.find(row=>row.membershipId==="b")?.beforePoints).toBe(3);
+  expect(planMentorNextSprintAssignments(tasks,["a","b"],"shipped",openIds)
+    .assignments).toHaveLength(0);
+ });
  it("handles no eligible members without inventing assignment success",()=>{
   const tasks=[task("needed","next",null,null)];
   expect(planMentorNextSprintAssignments(tasks,[],"next").assignments).toEqual([]);
