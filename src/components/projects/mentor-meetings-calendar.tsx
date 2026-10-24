@@ -57,6 +57,37 @@ function downloadMeetingCalendar(meeting:MentorMeetingCalendarItem){
   anchor.click();anchor.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
+function downloadAllMentorMeetings(meetings:readonly MentorMeetingCalendarItem[]){
+  const eligible=meetings.filter(meeting=>
+    ["SCHEDULED","RESCHEDULED"].includes(meeting.status)&&
+    Number.isFinite(Date.parse(meeting.startsAt))&&
+    Number.isFinite(Date.parse(meeting.endsAt))&&
+    Date.parse(meeting.endsAt)>Date.parse(meeting.startsAt));
+  if(!eligible.length)return;
+  const escape=(value:string)=>value.replace(/\\/g,"\\\\").replace(/\n/g,"\\n")
+    .replace(/,/g,"\\,").replace(/;/g,"\\;");
+  const utc=(value:Date)=>value.toISOString().replace(/[-:]/g,"")
+    .replace(/\.\d{3}Z$/,"Z");
+  const stamp=utc(new Date());
+  const content=[
+    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//42LMS//Mentor Calendar//EN",
+    "CALSCALE:GREGORIAN","METHOD:PUBLISH",
+    ...eligible.flatMap(meeting=>[
+      "BEGIN:VEVENT","UID:"+escape(meeting.id+"@42lms"),
+      "DTSTAMP:"+stamp,"DTSTART:"+utc(new Date(meeting.startsAt)),
+      "DTEND:"+utc(new Date(meeting.endsAt)),
+      "SUMMARY:"+escape(meeting.title),
+      "DESCRIPTION:"+escape(meeting.projectTitle),
+      "STATUS:CONFIRMED","END:VEVENT",
+    ]),
+    "END:VCALENDAR","",
+  ].join("\r\n");
+  const href=URL.createObjectURL(new Blob([content],{type:"text/calendar;charset=utf-8"}));
+  const link=document.createElement("a");
+  link.href=href;link.download="42lms-mentor-meetings.ics";
+  document.body.appendChild(link);link.click();link.remove();
+  window.setTimeout(()=>URL.revokeObjectURL(href),1000);
+}
 function MeetingRow({
   meeting, now,
 }: {meeting: MentorMeetingCalendarItem; now: Date;}) {
@@ -201,6 +232,12 @@ export function MentorMeetingsCalendar({
   });
 
   return <div className="prototype-mentor-meetings" aria-label="Mentor meetings calendar">
+    <div className="prototype-mentor-calendar-export">
+      <span>All your active scheduled meetings · IST</span>
+      <Button type="button" size="sm" variant="secondary"
+        disabled={!meetings.some(meeting=>["SCHEDULED","RESCHEDULED"].includes(meeting.status))}
+        onClick={()=>downloadAllMentorMeetings(meetings)}>Add to my calendar (.ics)</Button>
+    </div>
     <div className="prototype-mentor-week-strip" aria-label="Meetings this week">
       {week.map(day=><div key={day.key} className={day.today?"prototype-mentor-weekday is-today":"prototype-mentor-weekday"}>
         <strong>{day.label}{day.today?" · today":""}</strong>
