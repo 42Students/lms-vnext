@@ -5,7 +5,7 @@ import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-se
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
-import {MentorEvidencePreview} from "./mentor-evidence-preview";
+import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
@@ -278,17 +278,7 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         <Link href={base+"?tab=delivery"}>Review on this page ↓</Link>
       </div>
     </div>:<p className="prototype-mentor-summary-empty">No final submission has been recorded for this project yet.</p>}
-    {artifacts.length>0?<div className="prototype-mentor-delivery-artifacts">
-      <h3>What they sent · {artifacts.length} files and links</h3>
-      <div>
-        {artifacts.map(artifact=><article key={artifact.index}>
-          <span aria-hidden="true">▣</span>
-          <div><strong>{artifact.name}</strong><small>{artifact.type}</small></div>
-          {artifact.href?<MentorEvidencePreview title={artifact.name}
-            href={artifact.href} kind={artifact.type}/>:<small>Preview unavailable</small>}
-        </article>)}
-      </div>
-    </div>:null}
+    {artifacts.length>0?<MentorEvidenceGallery items={artifacts}/>:null}
     <div className="prototype-mentor-delivery-history">
       <h3>History · {workspace.finalDelivery.history.length} events</h3>
       {events.length?<ol>{events.map(event=><li key={event.id}>
