@@ -41,7 +41,7 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
     const [meeting]=await tx.select().from(projectMeetings)
       .where(and(eq(projectMeetings.id,params.meetingId),
         eq(projectMeetings.projectId,scope.project.id))).for("update").limit(1);
-    if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
+    if(!meeting||meeting.deletedAt)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
     if(!project||project.deletedAt||!mentorMeetingCanReschedule(meeting.status,project.status))
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     // Legacy @Version Long becomes persisted updatedAt with millisecond CAS.
