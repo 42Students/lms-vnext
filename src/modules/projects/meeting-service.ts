@@ -302,12 +302,12 @@ export async function requestProjectMeeting(
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   }
   return getDb().transaction(async (tx) => {
-    const [project] = await tx.select({status:projectInstances.status})
+    const [project] = await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
       .from(projectInstances).where(and(
         eq(projectInstances.id, scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId),
       )).for("update").limit(1);
-    if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    if (!project||project.deletedAt) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     ensureMeetingProjectMutable(project.status);
     // The page-time learner grant can be revoked before this transaction obtains
     // the project lock. Verify the live user, college role and Project assignment
@@ -585,12 +585,12 @@ export async function transitionProjectMeeting(
     }
 
     return getDb().transaction(async tx => {
-    const [project]=await tx.select({status:projectInstances.status})
+    const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
       .from(projectInstances).where(and(
         eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId),
       )).for("update").limit(1);
-    if(!project)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    if(!project||project.deletedAt)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     ensureMeetingProjectMutable(project.status);
     await assertPersistedProjectMutationActor(tx,context,scope);
     const [completed] = await tx
@@ -669,12 +669,12 @@ export async function transitionProjectMeeting(
   }
 
   return getDb().transaction(async tx => {
-  const [project]=await tx.select({status:projectInstances.status})
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
     .from(projectInstances).where(and(
       eq(projectInstances.id,scope.project.id),
       eq(projectInstances.collegeId,scope.collegeId),
     )).for("update").limit(1);
-  if(!project)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  if(!project||project.deletedAt)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   ensureMeetingProjectMutable(project.status);
   if(scope.access==="MENTOR"||scope.access==="ADMIN")
     await assertPersistedProjectMutationActor(tx,context,scope);
