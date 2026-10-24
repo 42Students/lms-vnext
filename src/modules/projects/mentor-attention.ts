@@ -155,7 +155,8 @@ export function deriveMentorProjectAttention(
         key:"request:"+meeting.id,kind:"REQUESTED",
           title:meeting.title+" — "+project.projectTitle,
           description:"A team member requested this meeting — review and confirm the time.",
-          href:href+"?tab=team",occurredAt:meeting.startsAt.toISOString(),
+          href:href+"?tab=team#meeting-"+encodeURIComponent(meeting.id),
+          occurredAt:meeting.startsAt.toISOString(),
         });
       } else if ((meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")) {
         const delta=meeting.startsAt.getTime()-timestamp;
@@ -167,7 +168,8 @@ export function deriveMentorProjectAttention(
             timeZone:"Asia/Kolkata",weekday:"short",month:"short",day:"numeric",
             hour:"numeric",minute:"2-digit",hour12:true,
           }).format(meeting.startsAt)+" IST",
-          href:href+"?tab=team",occurredAt:meeting.startsAt.toISOString(),
+          href:href+"?tab=team#meeting-"+encodeURIComponent(meeting.id),
+          occurredAt:meeting.startsAt.toISOString(),
         });
       }
     }
