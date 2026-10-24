@@ -41,7 +41,7 @@ export async function getMentorMeetingNotes(context:RequestContext,rawParams:unk
     outcome:projectMeetings.outcome,updatedAt:projectMeetings.updatedAt,
   }).from(projectMeetings).where(and(eq(projectMeetings.id,params.meetingId),
     eq(projectMeetings.projectId,scope.project.id))).limit(1);
-  if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
+  if(!meeting||meeting.deletedAt)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
   return {projectTitle:scope.project.title,projectStatus:scope.project.status,meeting};
 }
 export async function updateMentorMeetingNotes(context:RequestContext,
@@ -58,7 +58,7 @@ export async function updateMentorMeetingNotes(context:RequestContext,
       eq(projectMeetings.id,params.meetingId),
       eq(projectMeetings.projectId,scope.project.id),
     )).for("update").limit(1);
-    if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
+    if(!meeting||meeting.deletedAt)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
     // A stale tab must be identified before no-op or terminal-state checks;
     // otherwise a duplicate write misleadingly reports an unrelated state error.
     const expected=new Date(input.expectedUpdatedAt);
@@ -108,7 +108,7 @@ export async function updateMentorMeetingFacilitation(
     .where(and(eq(projectMeetings.id,params.meetingId),
       eq(projectMeetings.projectId,scope.project.id)))
     .for("update").limit(1);
-  if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
+  if(!meeting||meeting.deletedAt)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
   const expected=new Date(input.expectedUpdatedAt);
   if(meeting.updatedAt.getTime()!==expected.getTime())
     throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
