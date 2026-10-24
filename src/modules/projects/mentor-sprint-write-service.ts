@@ -1,9 +1,10 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, ne, isNull } from "drizzle-orm";
+import { and, desc, eq, ne, isNull, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { mayCloseProjectSprint } from "./sprint-close-policy";
+import {mentorSprintCarryUndoReceiptSchema,mentorSprintCanUndoCarriedTasks} from "./mentor-sprint-carry-undo-model";
 import { projectInstances, projectReleases, projectSprints, projectTasks, projectMembers, activityEvents } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -188,6 +189,87 @@ export async function transitionMentorProjectSprint(
       if(!mayCloseProjectSprint(openTask ? 1 : 0))
         throw new ProjectsServiceError("PROJECT_SPRINT_HAS_OPEN_TASKS");
     }
+    if(input.restoreCarry && input.action!=="REOPEN")
+      throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+    let restoredTaskCount=0;
+    if(input.action==="REOPEN" && input.restoreCarry){
+      // Only the MOST RECENT sign-off generation can be undone, and only
+      // when every task still matches the post-sign-off receipt. The project
+      // row lock serializes the undo with every normal task and sprint write.
+      const [signoff]=await tx.select({metadata:activityEvents.metadata})
+        .from(activityEvents).where(and(
+          eq(activityEvents.module,"PROJECTS"),
+          eq(activityEvents.subjectType,"project_sprint"),
+          eq(activityEvents.subjectId,sprint.id),
+          eq(activityEvents.collegeId,scope.collegeId),
+          eq(activityEvents.organizationId,scope.organizationId),
+          eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED),
+          sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
+          sql`${activityEvents.metadata} ->> 'mentorSignOffSnapshotVersion' = '1'`,
+        )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(1);
+      const signOffToken=signoff?.metadata?.["signOffToken"];
+      if(typeof signOffToken!=="string")
+        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      const [carried]=await tx.select({metadata:activityEvents.metadata})
+        .from(activityEvents).where(and(
+          eq(activityEvents.module,"PROJECTS"),
+          eq(activityEvents.subjectType,"project_sprint"),
+          eq(activityEvents.subjectId,sprint.id),
+          eq(activityEvents.collegeId,scope.collegeId),
+          eq(activityEvents.organizationId,scope.organizationId),
+          eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED),
+          sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
+          sql`${activityEvents.metadata} #>> '{carryUndoReceipt,signOffToken}' = ${signOffToken}`,
+        )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(1);
+      const parsed=mentorSprintCarryUndoReceiptSchema.safeParse(
+        carried?.metadata?.["carryUndoReceipt"]);
+      if(!parsed.success||parsed.data.signOffToken!==signOffToken||
+         parsed.data.sprintId!==sprint.id)
+        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      const all=parsed.data.tasks;
+      if(all.length){
+        const ids=all.map(item=>item.taskId);
+        const tasks=await tx.select().from(projectTasks).where(and(
+          eq(projectTasks.projectId,scope.project.id),inArray(projectTasks.id,ids),
+        )).for("update");
+        const sourceTasks=await tx.select({id:projectTasks.id,sequence:projectTasks.sequence})
+          .from(projectTasks).where(and(
+            eq(projectTasks.projectId,scope.project.id),
+            eq(projectTasks.sprintId,sprint.id),
+            isNull(projectTasks.deletedAt),
+          )).for("update");
+        const occupied=new Set(sourceTasks.map(item=>item.sequence));
+        if(!mentorSprintCanUndoCarriedTasks(parsed.data,sprint.id,tasks,occupied))
+          throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+        for(const item of all){
+          const [updated]=await tx.update(projectTasks).set({
+            sprintId:sprint.id,sequence:item.beforeSequence,
+            deletedAt:null,carriedFromSprintId:item.beforeCarriedFromSprintId,
+            carriedOverAt:item.beforeCarriedOverAt?
+              new Date(item.beforeCarriedOverAt):null,
+            updatedAt:new Date(Math.max(Date.now(),Date.parse(item.afterUpdatedAt)+1)),
+            updatedByMembershipId:context.membership?.id??null,
+          }).where(and(
+            eq(projectTasks.id,item.taskId),eq(projectTasks.projectId,scope.project.id),
+          )).returning({id:projectTasks.id});
+          if(!updated)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+        }
+        restoredTaskCount=all.length;
+      }
+    }
+    // Also reject reopening an older release when a later release has
+    // already shipped; otherwise historic delivery versions become invalid.
+    if(input.action==="REOPEN"){
+      const [laterShipped]=await tx.select({id:projectReleases.id})
+        .from(projectReleases).where(and(
+          eq(projectReleases.projectId,scope.project.id),
+          eq(projectReleases.status,"SHIPPED"),isNull(projectReleases.deletedAt),
+          sql`${projectReleases.sequence} > (
+            select source.sequence from project_releases source
+              where source.id=${release.id})`,
+        )).limit(1);
+      if(laterShipped)throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
+    }
     const status=input.action==="COMPLETE"?"COMPLETED":"ACTIVE";
     const now=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));
     const actorMembershipId=context.membership&&context.membership.collegeId===scope.collegeId?
@@ -229,6 +311,8 @@ export async function transitionMentorProjectSprint(
         projectId:scope.project.id,sprintId:updated.id,
         action:input.action,from:sprint.status,to:updated.status,
         actorUserId:context.user.id,actorMembershipId,
+        ...(input.action==="REOPEN"?{carryUndo:input.restoreCarry===true,
+          restoredTaskCount}:{}),
         priorStartedAt:sprint.startedAt?.toISOString()??null,
         priorCompletedAt:sprint.completedAt?.toISOString()??null,
         completedAt:updated.completedAt?.toISOString()??null,

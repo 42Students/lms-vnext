@@ -270,6 +270,7 @@ export async function completeProjectSprint(
     }
     await assertPersistedProjectMutationActor(tx,context,scope);
 
+    const signOffToken=randomUUID();
     const [sprint] = await tx
       .select()
       .from(projectSprints)
@@ -332,7 +333,9 @@ export async function completeProjectSprint(
       // transaction as sign-off; a changed task set invalidates the form.
       const unfinished=await tx.select({
         id:projectTasks.id,status:projectTasks.status,
-        updatedAt:projectTasks.updatedAt,
+        updatedAt:projectTasks.updatedAt,sequence:projectTasks.sequence,
+        carriedFromSprintId:projectTasks.carriedFromSprintId,
+        carriedOverAt:projectTasks.carriedOverAt,
       }).from(projectTasks).where(and(
         eq(projectTasks.projectId,scope.project.id),
         eq(projectTasks.sprintId,sprint.id),isNull(projectTasks.deletedAt),
@@ -385,6 +388,12 @@ export async function completeProjectSprint(
         nextSequence=maxSequence?.value??0;
       }
       const now=new Date();
+      const reversalItems:Array<{
+        taskId:string;beforeSequence:number;beforeCarriedFromSprintId:string|null;
+        beforeCarriedOverAt:string|null;afterSprintId:string|null;
+        afterSequence:number;afterDeletedAt:string|null;afterUpdatedAt:string;
+        status:string;
+      }>=[];
       for(const item of unfinished){
         const destination=byTask.get(item.id)?.destination;
         if(!destination)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
@@ -400,6 +409,15 @@ export async function completeProjectSprint(
           sprintId:null,carriedFromSprintId:sprint.id,carriedOverAt:now,
           updatedAt:now,updatedByMembershipId:context.membership?.id??null,
         };
+        reversalItems.push({
+          taskId:item.id,beforeSequence:item.sequence,
+          beforeCarriedFromSprintId:item.carriedFromSprintId,
+          beforeCarriedOverAt:item.carriedOverAt?.toISOString()??null,
+          afterSprintId:destination==="NEXT"?validatedNext:null,
+          afterSequence:destination==="NEXT"?nextSequence:item.sequence,
+          afterDeletedAt:destination==="DROP"?now.toISOString():null,
+          afterUpdatedAt:now.toISOString(),status:item.status,
+        });
         const [changed]=await tx.update(projectTasks).set(changes)
           .where(and(eq(projectTasks.id,item.id),
             eq(projectTasks.projectId,scope.project.id),
@@ -420,7 +438,8 @@ export async function completeProjectSprint(
             counts.backlog+" to backlog, "+counts.dropped+" archived",
           metadata:{projectId:scope.project.id,sprintId:sprint.id,
             ...(validatedNext?{nextSprintId:validatedNext}:{}),
-            carryDecisions:decisions,counts},
+            carryDecisions:decisions,counts,
+            carryUndoReceipt:{version:1,signOffToken,sprintId:sprint.id,tasks:reversalItems}},
           groupKey:"project:"+scope.project.id,
         });
       }
@@ -473,6 +492,7 @@ export async function completeProjectSprint(
       summary:"Sprint sign-off workload recorded",
       metadata:{projectId:scope.project.id,sprintId:sprint.id,
         mentorSignOffSnapshotVersion:1,sprintSnapshot:signOffSnapshot,
+        signOffToken,
         sourceTab:"sprints"},
       groupKey:"project:"+scope.project.id,
     });

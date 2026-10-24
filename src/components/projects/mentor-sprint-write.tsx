@@ -199,6 +199,7 @@ export function MentorSprintTransition({
   const {showToast}=useToast();
   const [busy,setBusy]=useState(false);
   const [confirming,setConfirming]=useState(false);
+  const [restoreCarry,setRestoreCarry]=useState(false);
   const action=status==="PLANNED"?"START":
     status==="ACTIVE"?"COMPLETE":
     status==="COMPLETED"&&releaseStatus!=="SHIPPED"?"REOPEN":null;
@@ -212,12 +213,13 @@ export function MentorSprintTransition({
     setBusy(true);
     try {
       await projectMutation("/api/projects/"+projectId+"/sprints/"+sprintId+
-        "/mentor-transition","POST",{action,expectedUpdatedAt:updatedAt});
+        "/mentor-transition","POST",{action,expectedUpdatedAt:updatedAt,
+          ...(action==="REOPEN"&&restoreCarry?{restoreCarry:true}:{})});
       showToast({tone:"success",title:action==="COMPLETE"?"Sprint completed. Anything not done went back to the backlog.":action==="START"?"Sprint started.":"Sprint reopened."});
       router.refresh();
     } catch {
       showToast({tone:"error",title:"Sprint status was not changed",
-        description:"Reload the sprint to review its latest status, then try again."});
+        description:"Reload the sprint to review its latest status and task changes. Automatic restoration requires an untouched, recorded sign-off."});
     } finally {setBusy(false);}
   }
   return <>
@@ -226,7 +228,13 @@ export function MentorSprintTransition({
     </Button>
     <ConfirmDialog open={confirming} onOpenChange={setConfirming}
       title={label+"?"}
-      description="The sprint status and project activity will change."
-      confirmLabel={label} pending={busy} onConfirm={transition}/>
+      description={action==="REOPEN"?"Reopening changes the Sprint status. Task moves are not reversed unless you explicitly restore an unchanged recent sign-off. Restoring fails safely if tasks have changed or the release has shipped.":"The Sprint status and project activity will change."}
+      confirmLabel={label} pending={busy} onConfirm={transition}>
+      {action==="REOPEN"?<label className="flex items-start gap-2 text-sm">
+        <input type="checkbox" checked={restoreCarry} disabled={busy}
+          onChange={event=>setRestoreCarry(event.target.checked)}/>
+        Restore tasks carried to the next Sprint, backlog or archive at this Sprint’s last sign-off (only if all are untouched).
+      </label>:null}
+    </ConfirmDialog>
   </>;
 }

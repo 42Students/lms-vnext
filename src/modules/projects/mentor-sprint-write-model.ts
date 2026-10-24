@@ -25,6 +25,7 @@ export const mentorSprintTransitionParamsSchema = z.object({
 export const mentorSprintTransitionSchema = z.object({
   action:z.enum(["START","COMPLETE","REOPEN"]),
   expectedUpdatedAt:z.iso.datetime({offset:true}),
+  restoreCarry:z.boolean().optional(),
 }).strict();
 
 export function isValidMentorSprintTransition(before:string,action:string) {
