@@ -31,6 +31,7 @@ import {
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import {approveProjectTaskThroughReview,assignProjectTaskToLearner} from "./support/projects-review-fixture";
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
+import {listMentorSprintSignOffSnapshots} from "@/modules/projects/mentor-sprint-signoff-snapshot-service";
 import {updateMentorTaskDetails} from "@/modules/projects/mentor-task-details-service";
 import {createLearnerOwnTask,deleteLearnerOwnTask} from "@/modules/projects/learner-own-task-service";
 import {createProjectResource} from "@/modules/projects/resource-service";
@@ -479,6 +480,30 @@ describe("Projects P5 lifecycle", () => {
       sprint_id: null,
       carried_from_sprint_id: sprint.id,
     });
+    const saved=await listMentorSprintSignOffSnapshots(mentor,project.id,[sprint.id]);
+    expect(saved).toHaveLength(1);
+    expect(saved[0]).toMatchObject({version:1,sprintId:sprint.id,taskCount:1,
+      memberRows:[{taskCount:1,doneCount:0,openCount:1}]});
+  });
+
+  it("keeps active sprint and history untouched on stale carry decision",async()=>{
+    const project=await createProject();
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    const first=workspace.sprints[0]!;
+    const next=workspace.sprints[1]!;
+    const open=workspace.tasks.find(task=>task.sprintId===first.id)!;
+    await startProjectSprint(mentor,project.id,first.id);
+    await expect(completeProjectSprint(mentor,project.id,first.id,undefined,[{
+      taskId:open.id,destination:"NEXT",expectedUpdatedAt:"2000-01-01T00:00:00.000Z",
+    }],next.id)).rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    const stored=await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1",[first.id]);
+    expect(stored.rows[0]?.status).toBe("ACTIVE");
+    const taskRow=await pool.query<{sprint_id:string|null}>(
+      "select sprint_id from project_tasks where id=$1",[open.id]);
+    expect(taskRow.rows[0]?.sprint_id).toBe(first.id);
+    expect(await listMentorSprintSignOffSnapshots(mentor,project.id,[first.id]))
+      .toEqual([]);
   });
 
   it("ships a release only after every sprint completes and completes the project on the last release", async () => {
