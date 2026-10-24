@@ -116,6 +116,7 @@ export function MentorPrototypePerformanceTable({
           <span>Student</span><span>Done</span><span>Waiting</span><span>Open</span><span>Carried</span><span>Points done</span>
         </div>
         {studentRows.map(row=><div key={row.student.id}
+          id={"mentor-student-"+row.student.id}
           className="prototype-mentor-performance-row">
           <strong>{row.student.name}<small>{row.student.label}</small>
             {row.trend.length?<small aria-label={"Recorded sprint points for "+row.student.name}>
