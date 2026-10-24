@@ -41,6 +41,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [assignee,setAssignee]=useState(params.get("assignee")??""),[statusFilter,setStatusFilter]=useState(params.get("lane")??""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
  [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null),
  [visibleLimit,setVisibleLimit]=useState(150);
+ const [laneLimits,setLaneLimits]=useState<Record<string,number>>({});
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
  const [dragging,setDragging]=useState(false);
  const [taskQuery,setTaskQuery]=useState("");
@@ -53,7 +54,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   return ()=>clearTimeout(expiration);
  },[undo]);
  function remember(name:string,value:string){
-  setVisibleLimit(150);
+  setVisibleLimit(150);setLaneLimits({});
   const query=new URLSearchParams(window.location.search);
   if(value)query.set(name,value);else query.delete(name);
   window.history.replaceState(null,"",window.location.pathname+"?"+query.toString());
@@ -109,7 +110,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    {id:"BACKLOG",title:"Product backlog · not in a sprint",
      status:"BACKLOG",tasks:visible.filter(task=>task.sprintId===null)},
  ].filter(group=>group.tasks.length>0);
- const lanes=groupLearnerBoardLanes(visible,sprints);
+ // Per-lane counts always use the full filtered result, independent of
+ // the List view paging size.
+ const lanes=groupLearnerBoardLanes(matching,sprints);
  const activeFilterCount=[release,sprint,priority,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
  async function move(id:string,status:string,isUndo=false){
   const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
@@ -283,7 +286,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
     <h3 className={"prototype-mentor-board-lane-heading "+styles["header"]}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h3>
-    <ul className={styles["body"]}>{lane.tasks.map(task=>{
+    <ul className={styles["body"]}>{lane.tasks.slice(0,laneLimits[lane.id]??4).map(task=>{
      const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
        editable.includes(task.status as typeof editable[number]);
@@ -352,6 +355,12 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      </li>;
     })}
     {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
+    {lane.tasks.length>(laneLimits[lane.id]??4)?<li><Button
+       type="button" size="sm" variant="secondary"
+       onClick={()=>setLaneLimits(old=>({...old,[lane.id]:(old[lane.id]??4)+4}))}>
+       +{Math.min(4,lane.tasks.length-(laneLimits[lane.id]??4))} more ·
+       {" "}{lane.tasks.length-(laneLimits[lane.id]??4)} remaining
+    </Button></li>:null}
     </ul>
    </BoardColumn>)}
   </div></div>
@@ -469,7 +478,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </>:<p>No task selected.</p>}
   </aside>
   </div></>:null}
-  {matching.length>visible.length?<Button variant="secondary" type="button"
+  {view==="list"&&matching.length>visible.length?<Button variant="secondary" type="button"
     className="min-h-11 px-4"
     onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</Button>:null}
   {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
