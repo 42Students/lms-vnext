@@ -57,6 +57,18 @@ describe("Mentor prototype additional attention classes",()=>{
       "review:sub","task-review:older","task-review:later",
     ]);
   });
+  it("reissues a snoozed composite alert when its underlying task set changes",()=>{
+    const first=deriveMentorProjectAttention([project({tasks:[
+      task("t1","TODO","next",new Date("2026-10-20T00:00:00Z"),null),
+    ]})],now).find(item=>item.kind==="UNASSIGNED_NEXT")!;
+    const revised=deriveMentorProjectAttention([project({tasks:[
+      task("t1","TODO","next",new Date("2026-10-20T00:00:00Z"),null),
+      task("t2","TODO","next",new Date("2026-10-23T00:00:00Z"),null),
+    ]})],now).find(item=>item.kind==="UNASSIGNED_NEXT")!;
+    expect(first.key).toBe(revised.key);
+    expect(first.revision).not.toBe(revised.revision);
+    expect(first.occurredAt).toBe(revised.occurredAt);
+  });
   it("does not invent sign-off, approval or assignment on missing source lists",()=>{
     expect(deriveMentorProjectAttention([project({sprints:undefined,tasks:undefined})],now))
       .toEqual([]);
