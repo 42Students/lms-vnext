@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
-import {useEffect,useState} from "react";
+import {Fragment,useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -115,6 +115,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const earlierCount=matching.filter(row=>row.sprintId!==null&&row.sprintId!==undefined&&
    earlierSprintIds.has(row.sprintId)).length;
  const filtered=collapseEarlier?matching.filter(row=>!row.sprintId||!earlierSprintIds.has(row.sprintId)):matching;
+ const orderedResources=[...filtered].sort((a,b)=>
+   Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||
+   (a.status==="ACTIVE"?0:1)-(b.status==="ACTIVE"?0:1)||
+   (a.status==="ACTIVE"?stableOrder.indexOf(a.id):a.sequence)-
+   (b.status==="ACTIVE"?stableOrder.indexOf(b.id):b.sequence));
  const files=rows.filter(row=>row.resourceType==="FILE").length;
  const links=rows.filter(row=>row.resourceType==="LINK"||
    (!row.resourceType&&Boolean(row.url&&safeProjectExternalHref(row.url)))).length;
@@ -124,8 +129,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const pinnedCount=rows.filter(row=>row.pinned).length;
  // The editor already shows its own resource summary for managers.
  const legacySummary=mode!=="LEARNER";
- const currentOrder=(row:ResourceRow)=>row.status==="ACTIVE"?
-   stableOrder.indexOf(row.id):rows.length+row.sequence;
+
  return <section aria-label="Project resource directory" aria-busy={reordering} className="space-y-3">
   {/* The admin library editor immediately above owns the legacy headline
       and four metric chips; duplicating them in the read-only list would
@@ -212,10 +216,14 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     ?"Share the first link or file with your team."
     :"Add the briefs, templates and reference links your team will need."}
   />:filtered.length===0?<EmptyState title="No matching resources"
-    description="No resources match these filters. Clear filters to see all resources." />:<div className="space-y-3">{[...filtered].sort((a,b)=>
-      Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||currentOrder(a)-currentOrder(b)).map(resource=>{
+    description="No resources match these filters. Clear filters to see all resources." />:<div className="space-y-3">{orderedResources.map((resource,index)=>{
     const safe=resource.url?safeProjectExternalHref(resource.url):null;
-    return <article key={resource.id}
+    return <Fragment key={resource.id}>
+      {mode==="MENTOR"&&(index===0||Boolean(orderedResources[index-1]?.pinned)!==Boolean(resource.pinned))?
+        <h3 className="prototype-mentor-resource-group-heading">
+          {resource.pinned?"Pinned references":"Other resources"}
+        </h3>:null}
+    <article
       draggable={canReorder&&resource.status==="ACTIVE"}
       onDragStart={event=>{if(canReorder&&resource.status==="ACTIVE")event.dataTransfer.setData("text/plain",resource.id);}}
       onDragOver={event=>{if(canReorder&&resource.status==="ACTIVE")event.preventDefault();}}
@@ -276,7 +284,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          ...(resource.taskId === undefined ? {} : { taskId: resource.taskId })}}
         sprints={sprints} tasks={tasks}/>:null}
      </div>
-    </article>;
+    </article></Fragment>;
   })}</div>}
  </section>;
 }
