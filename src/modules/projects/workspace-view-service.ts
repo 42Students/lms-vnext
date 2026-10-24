@@ -7,6 +7,7 @@ import {getProjectActivityPage} from "./activity-service";
 import {ProjectsServiceError} from "./errors";
 import {requireProjectReadAccess} from "./access";
 import { buildMentorWorkspaceEvidence } from "./mentor-workspace-evidence-model";
+import {getMentorResourceSharers} from "./mentor-resource-sharer-service";
 import {listMentorSprintSignOffSnapshots,listMentorSprintCommitmentSnapshots}
   from "./mentor-sprint-signoff-snapshot-service";
 import {
@@ -106,6 +107,10 @@ export async function getProjectWorkspaceView(
     :[[],[]];
 
 
+  const mentorResourceSharers=access.access==="MENTOR"
+    ?await getMentorResourceSharers(context,projectId,
+       workspace.resources.map(resource=>resource.id))
+    :[];
   const meetings=meetingsRead.items;
   // MEN-projects-meetings-25: historical roster is mentor-only. Learners
   // retain the active roster and never receive former members' profile data.
@@ -292,6 +297,7 @@ export async function getProjectWorkspaceView(
     activityLoadError:activityRead.failed,
     mentorSprintSnapshots,
     mentorSprintCommitments,
+    mentorResourceSharers,
     mentorEvidence: buildMentorWorkspaceEvidence({
       tasks: workspace.tasks,
       members,
