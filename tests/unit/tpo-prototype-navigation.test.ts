@@ -13,6 +13,10 @@ describe("TPO prototype's eight top-level destinations",()=>{
   expect(TPO_PROTOTYPE_SECTIONS.Companies.slice(0,5).map(item=>item.label))
    .toEqual(["Today","Recruiters","Companies","Emails","Messages"]);
  });
+ it("Team Chat belongs to Team, not the Companies messaging inbox",()=>{
+  expect(tpoPrototypeSectionForPath("/tpo/messages","team")).toBe("Team");
+  expect(TPO_PROTOTYPE_NAV.filter(item=>tpoPrototypeSidebarActive("/tpo/messages",item,"team")).map(item=>item.label)).toEqual(["Team"]);
+ });
  it.each([
   ["/tpo/students/123","Students"],["/tpo/requests","Students"],["/tpo/batches","Students"],
   ["/tpo/placements/jobs/abc","Drives"],["/tpo/drive-day","Drives"],
