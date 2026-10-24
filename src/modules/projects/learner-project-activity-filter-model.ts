@@ -43,6 +43,7 @@ export const learnerProjectActivityFilterSchema = z.object({
   sourceTab:z.string().trim().max(80).optional(),
   search:z.string().trim().max(100).optional(),
   subjectId:z.string().uuid().optional(),
+  sprintId:z.string().uuid().optional(),
   actorUserId:z.string().uuid().optional(),
   sprintId:z.string().uuid().optional(),
   // Old /activity/feed supported bounded page/size and exact event type.
@@ -65,7 +66,7 @@ export function parseLearnerProjectActivityFilters(input: {
   category?:unknown;from?:unknown;to?:unknown;fromDate?:unknown;toDate?:unknown;
   beforeTime?:unknown;beforeId?:unknown;
   eventType?:unknown;page?:unknown;size?:unknown;
-  sourceTab?:unknown;search?:unknown;subjectId?:unknown;actorUserId?:unknown;sprintId?:unknown;
+  sourceTab?:unknown;search?:unknown;subjectId?:unknown;actorUserId?:unknown;sprintId?:unknown;sprintId?:unknown;
 }) {
   const categoryText=typeof input.category==="string"?input.category.toUpperCase():input.category;
   const aliases:Record<string,LearnerProjectActivityCategory>={
@@ -82,6 +83,7 @@ export function parseLearnerProjectActivityFilters(input: {
     page:input.page==="0"||input.page===0?1:input.page||undefined,
     sourceTab:input.sourceTab||undefined,search:input.search||undefined,
     subjectId:input.subjectId||undefined,
+    sprintId:input.sprintId||undefined,
     actorUserId:input.actorUserId||undefined,
     sprintId:input.sprintId||undefined,
     size:input.size||undefined,
