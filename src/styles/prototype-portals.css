@@ -2078,3 +2078,22 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-resource-group-heading:first-child{
   margin-top:0;
 }
+
+
+/* Mentor #53: safe zoom for image/PDF evidence and full-size fallback. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-delivery-artifacts article button{
+  min-height:30px;padding:0 9px;color:#0a7c88;font-size:11px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-evidence-preview{
+  display:flex;flex-direction:column;gap:10px;min-width:0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-evidence-preview iframe{
+  display:block;width:100%;height:min(68vh,720px);min-height:250px;
+  border:1px solid #e7ecf2;border-radius:8px;background:#f6f8fa;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-evidence-preview>div{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-evidence-preview a{
+  color:#0a7c88;font-size:12px;font-weight:700;
+}
