@@ -127,6 +127,6 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
     {config.portal === "learn" || config.portal === "hr"
       ? <ExistingBell portal={config.portal}/>
       : <IconLink href={config.notificationsHref} label="Notifications"
-          count={general} countPartial={config.portal==="mentor"&&generalPartial}/>}
+          count={general}/>}
   </div>;
 }
