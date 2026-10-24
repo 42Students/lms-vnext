@@ -43,6 +43,18 @@ describe("Mentor global calendar filters",()=>{
       .map(row=>row.id)).toEqual(["b","c"]);
     expect(mentorCalendarFilterHref({...all,period:"TODAY"})).toContain("period=TODAY");
   });
+  it("shows completed meetings lacking both recorded outcome and structured notes",()=>{
+    const completed=item("missing","COMPLETED","Review");
+    const withOutcome={...item("outcome","COMPLETED","Review"),outcome:"Decisions recorded"};
+    const withReflection={...item("retro","COMPLETED","Retro"),
+      facilitation:{wentWell:"Shared results"}};
+    const awaiting=item("requested","REQUESTED","Request");
+    const query=mentorCalendarFiltersSchema.parse({attention:"NOTES_MISSING"});
+    expect(filterMentorCalendar([
+      completed,withOutcome,withReflection,awaiting,
+    ],query).map(row=>row.id)).toEqual(["missing"]);
+    expect(mentorCalendarFilterHref(query)).toContain("attention=NOTES_MISSING");
+  });
   it("rejects untrusted scope and nonregistered status",()=>{
     expect(mentorCalendarFiltersSchema.safeParse({period:"NEVER"}).success).toBe(false);
     expect(mentorCalendarFiltersSchema.safeParse({status:"REMOVED"}).success).toBe(false);
