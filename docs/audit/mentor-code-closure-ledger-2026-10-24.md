@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 120/132 `CODE_READY`, 5/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted**; code-ready is not test acceptance. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 121/132 `CODE_READY`, 4/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted**; code-ready is not test acceptance. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -23,6 +23,12 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 - **X-06 CODE_READY:** The sign-off source and `mentor-sprint-signoff-adversarial.test.ts` cover NEXT/BACKLOG/DROP, all IDs, version/CAS, shipped destination and race-rollback; task review and end-of-project sources and PostgreSQL tests cover feedback, revocation and audit. No green database suite is claimed.
 - **53-10 CODE_READY:** Final draft/edit/submit now deny non-clean scans and unverified storage objects at the application layer in addition to the DB constraints and signed-read route. `project-final-file-evidence-model.ts` and focused unit negatives added. Actual cloud malware scanner and signed URL/provider tests remain integration-level acceptance dependencies.
 - The source inventory is now **120 code-ready / 5 code-or-test pending / 7 external**, not a claim that the complete project passes tests, or that any provider connection has been provisioned.
+
+## 25 October — #46 next meeting source closure
+
+- **46-06 CODE_READY:** The Mentor project overview now shows ceremony, status, real IST start/duration, persisted agenda, safe Join and exact meeting action. It reads verified in-app notification rows and the new tenant-scoped persisted in-app RSVP records, not fake accepted external invitations. See `mentor-prototype-project-summaries.tsx`, `mentor-meeting-in-app-notice-model.ts`, `mentor-meeting-rsvp-service.ts` and `projects-p7b-meetings.test.ts`.
+- Provider-backed Google invitation, Meet and email delivery remain under X-05, X-09 and the #49/#54/#56 external items; **this source classification is not end-to-end acceptance**.
+- Added read-only Google Calendar event status adapter and tests (`mentor-google-calendar-status.ts`, `mentor-google-calendar-status.test.ts`), with a UI slot that cannot assert Google sync until a consented credential exists and the live provider returns a verified event. No credential/configuration was assumed.
 
 ## 25 October — delivery evidence/readiness workflows
 
@@ -89,7 +95,7 @@ The previous rounds were dominated by security and CI repairs without finishing 
 | 46-03 | CODE_READY | mentor-project-focus-queue.tsx; mentor-attention-service.ts; mentor-attention-later-service.ts; mentor-prototype-project-summaries.tsx |
 | 46-04 | CODE_READY | workspace-brief-editor.tsx; mentor-prototype-project-summaries.tsx; project-workspace.tsx |
 | 46-05 | CODE_READY | mentor-prototype-project-summaries.tsx; mentor-prototype-performance-table.tsx |
-| 46-06 | IMPLEMENTATION_OR_TEST_PENDING | Next meeting shows ceremony/status, agenda, duration, safe join URL, linked action and actual recorded attendance. The server now counts only real in-app notification recipient rows associated with the latest tenant-scoped saved meeting event and shows its timestamp; empty/older/imported meeting events are reported as not recorded. This does NOT claim calendar/email invitation delivery or RSVP acceptance. mentor-meeting-in-app-notice-model.test.ts adds scope, latest-round and empty-recipient regression cases. Real RSVP/provider-backed verification remains. |
+| 46-06 | CODE_READY | Next meeting now displays persisted ceremony/type, status, actual IST time and duration, saved agenda, linked Sprint, safe Join action and exact Open meeting link. It reports persisted in-app meeting-notice inbox recipient counts and active participant RSVP response totals (accepted/tentative/declined/unrecorded), with recorded history. These are deliberately distinct from external Google Calendar invitations and delivery/acceptance, which remain separately blocked under X-05/X-09. Source UI and PostgreSQL RSVP test exist; no green browser/DB acceptance claimed. |
 | 46-07 | CODE_READY | mentor-prototype-project-summaries.tsx; readiness-service.ts |
 | 46-08 | CODE_READY | mentor-prototype-project-summaries.tsx; activity-service.ts |
 | 46-09 | CODE_READY | Mentor + Add uses existing validated task/Sprint/release mutations and resource editor. A dedicated read-only learner-visibility preview route now validates module grant and live Mentor/observer project membership server-side, projects only allowlisted student-visible tasks, Sprints and ACTIVE TEAM resources, and never exports Mentor-only notes or draft references. It explicitly does not impersonate a student or prove their signed URL access. mentor-student-visibility-preview-model.test.ts covers privacy; real learner-session and post-write browser acceptance remain. |
