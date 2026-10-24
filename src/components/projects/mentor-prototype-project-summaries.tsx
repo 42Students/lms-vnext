@@ -350,6 +350,25 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
         <p>{workspace.project.summary||"This project has not yet published a summary."}</p>
       </div>
     </section>
+    <section className="prototype-mentor-chart-card" aria-label="Signed-off sprint velocity">
+      <div className="prototype-mentor-card-title">
+        <h2>Momentum · signed-off sprint results</h2>
+        <Link href={base+"?tab=sprints"}>Sprint history →</Link>
+      </div>
+      {velocity.kind==="ESTIMATE"?<div className="prototype-mentor-health-summary">
+        <strong>{velocity.averageDonePoints} points per completed sprint</strong>
+        <p>Based on {velocity.sampleCount} saved sign-offs.
+          {" "}{velocity.trend==="UNKNOWN"?"Trend unknown":
+            velocity.trend==="STEADY"?"Recent points broadly steady":
+            velocity.trend==="RISING"?"Recent points increasing":"Recent points decreasing"}.</p>
+        <p>{velocity.remainingPoints} open estimated points.
+          Roughly {velocity.approximateSprints} further
+          {" "}{velocity.approximateSprints===1?"sprint":"sprints"} at the recorded average.
+          Not a confirmed finish date.</p>
+      </div>:<p className="prototype-mentor-summary-empty">
+        Forecast unavailable: {velocity.reason}
+      </p>}
+    </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title">
         <h2>{active?"Sprint "+active.sequence+" · "+active.title:"Current sprint"}</h2>
