@@ -121,7 +121,7 @@ export function TpoCompaniesToday({
     "This follow-up has changed. Refresh Today before trying again.":
     "The change was not confirmed. No success has been recorded.");
    if(kind==="DONE"&&(payload?.followup?.done!==true||
-       (nextDueAt&&!payload.followup.nextFollowupId)))
+       (nextDueAt&&!payload?.followup?.nextFollowupId)))
     throw new Error("The complete outcome and new follow-up receipt could not be confirmed. Refresh before retrying.");
    if(kind==="TOMORROW"&&!payload?.followup?.dueAt)
     throw new Error("The changed follow-up time could not be confirmed. Refresh before retrying.");
