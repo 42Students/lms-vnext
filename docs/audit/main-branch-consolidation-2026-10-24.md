@@ -10,6 +10,22 @@ This record distinguishes **commits already incorporated** from **stale branch-o
 - The Oct 23 prototype oracle draft PR [#199](https://github.com/42Students/lms-vnext/pull/199) is superseded by the longer, maintained `main` document `docs/prototypes/tpo-recruiter-mentor-parity.md`, including the Oct 24 owner override. PR #199 was closed without replacing newer screen-status evidence.
 - The valid Recruiter round end-time validation logic from the old `chatgpt/chat-7` branch was adapted to current `main` in [8dd5b18](https://github.com/42Students/lms-vnext/commit/8dd5b18969723ec3d0635305f8dd119c52ea8d43) with the original regression test transferred in [fbab92f](https://github.com/42Students/lms-vnext/commit/fbab92f23ae70414749e1d7a52dc52304ebaefb6).
 
+## 24 October direct-main TPO and HR continuation
+
+The owner's sequencing was clarified again: **move TPO and HR/Recruiter work to main first, then continue Mentor**. The following source-backed changes were safely ported directly onto the maintained `main` implementation:
+
+- TPO live pipeline and CSV export once again match on the distinct persisted learner `registration_number` field (not merely roll/email/name). The existing active-enrollment and tenant-scoped filters were preserved; the October 16 raw-query implementation was *not* substituted. Changes: `f5da914`, `50fafa1`.
+- TPO PostgreSQL regressions exercise registration-number search in the live pipeline and the export, including rollback of temporary profile fixture changes: `d8519ad`, `61dd7e9`.
+- Recruiter conversation refresh is constrained to the selected grant-backed college and, in a thread view, the selected thread. Its newer draft-preserving status/refresh UX, no-message-body version token and explicit POST-only read receipts remain intact. Commits: `8b29112`, `e014b98`, `c3a49ad`, `7149a0d`, `7f2af7f`, `880225a`, `d76e7ec`.
+
+The two Oct 16 branches still contain older, divergent components, route and test revisions. Examples explicitly inspected and **not** force-merged:
+
+- Current TPO has richer deadline, round reorder, applicants, request decisions and CSV pagination. Older `tpo-applicant-search.ts` used an obsolete joins/query shape, so only the missing registration search behavior was ported.
+- Current Recruiter has an authorized conversation pulse endpoint, guarded live refresh, a verified on-open acknowledgement receipt, local unsent draft expiration, calendar week copy and complete offer-count report fields. Older versions of those features are superseded and must not replace the active UI.
+- Remaining differences require item-by-item prototype comparison, rather than a stale-tree merge.
+
+**No green CI/DB/browser result was witnessed for these latest commits.** Commit-only work remains unverified.
+
 ## Historical branches that are NOT safe to merge indiscriminately
 
 | Source | GitHub comparison to current main | Disposition |
