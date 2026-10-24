@@ -129,7 +129,7 @@ export async function searchMentorWorkspacePage(
     title:item.title,context:byId.get(item.projectId)??"Project",
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=resources"});
   return {results:sortMentorSearchMatches(result,term),page,
-    hasMore:[matchingProjects,tasks,students,resources]
+    hasMore:page<100&&[matchingProjects,tasks,students,resources]
       .some(rows=>rows.length>SEARCH_PAGE_SIZE)};
 }
 export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
