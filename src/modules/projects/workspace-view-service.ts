@@ -10,6 +10,7 @@ import { buildMentorWorkspaceEvidence } from "./mentor-workspace-evidence-model"
 import {getMentorResourceSharers} from "./mentor-resource-sharer-service";
 import {listMentorBlockedTaskAges} from "./mentor-blocker-age-service";
 import {listMentorWeekContributors} from "./mentor-week-contributor-service";
+import {getMentorWeekActivityTotals} from "./mentor-week-activity-totals-service";
 import {listMentorSprintSignOffSnapshots,listMentorSprintCommitmentSnapshots}
   from "./mentor-sprint-signoff-snapshot-service";
 import {
@@ -120,6 +121,11 @@ export async function getProjectWorkspaceView(
     :{};
   const mentorWeekContributors=access.access==="MENTOR"?
     await listMentorWeekContributors(context,projectId):[];
+  const mentorWeekActivityTotals=access.access==="MENTOR"&&!activityRead.failed
+    ?await getMentorWeekActivityTotals(context,projectId).catch((error:unknown)=>{
+      if(!isUnavailableProjectSectionStorage(error))throw error;
+      return null;
+    }):null;
   const meetings=meetingsRead.items;
   // MEN-projects-meetings-25: historical roster is mentor-only. Learners
   // retain the active roster and never receive former members' profile data.
@@ -309,6 +315,7 @@ export async function getProjectWorkspaceView(
     mentorResourceSharers,
     mentorBlockedTaskAges,
     mentorWeekContributors,
+    mentorWeekActivityTotals,
     mentorEvidence: buildMentorWorkspaceEvidence({
       tasks: workspace.tasks,
       members,
