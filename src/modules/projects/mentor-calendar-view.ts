@@ -18,6 +18,11 @@ export type MentorMeetingCalendarItem = {
   timeZone: string;
   meetingUrl: string | null;
   linkedSprintTitle: string | null;
+  linkedTaskId?:string|null;
+  linkedTaskTitle?:string|null;
+  requestedByName?:string|null;
+  legacyCalendarSyncStatus?:string|null;
+  calendarSyncError?:string|null;
   agenda?:string|null;
   outcome?:string|null;
   facilitation?:Partial<MentorMeetingFacilitation>;
