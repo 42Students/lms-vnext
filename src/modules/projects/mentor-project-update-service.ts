@@ -59,10 +59,6 @@ export async function postMentorProjectUpdate(
      eq(activityEvents.subjectId,access.project.id),
      gte(activityEvents.occurredAt,hourAgo),
    ));
-   if((recent?.inMinute??0)>=mentorUpdateThrottlePolicy.maxPerMinute||
-      (recent?.total??0)>=mentorUpdateThrottlePolicy.maxPerHour)
-     throw new ProjectsServiceError("PROJECT_UPDATE_RATE_LIMITED");
-
    const [last]=await tx.select({
      id:activityEvents.id,summary:activityEvents.summary,
      occurredAt:activityEvents.occurredAt,
@@ -78,6 +74,9 @@ export async function postMentorProjectUpdate(
    if(last&&last.summary===message&&
       now.getTime()-last.occurredAt.getTime()<mentorUpdateThrottlePolicy.duplicateWindowMs)
      return last;
+   if((recent?.inMinute??0)>=mentorUpdateThrottlePolicy.maxPerMinute||
+      (recent?.total??0)>=mentorUpdateThrottlePolicy.maxPerHour)
+     throw new ProjectsServiceError("PROJECT_UPDATE_RATE_LIMITED");
 
    const event=await recordActivityEventInTransaction(tx,context,{
      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_UPDATE_POSTED,
