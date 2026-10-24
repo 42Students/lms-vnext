@@ -7,6 +7,7 @@ import Link from "next/link";
 
 export type ProjectParticipantListQuery = {
   search?: string;
+  segment?: "CURRENT"|"NEEDS_YOU"|"AT_RISK"|"FINAL_SUBMISSION"|"ARCHIVED";
   status?:
     | "CURRENT"
     | "PLANNED"
@@ -75,6 +76,7 @@ export function ProjectParticipantListControls({
       action={basePath}
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 [&_label]:min-w-0"
     >
+      {mentor&&query.segment?<input type="hidden" name="segment" value={query.segment}/>:null}
       <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
         Search
         <Input
@@ -244,6 +246,7 @@ export function ProjectParticipantPagination({
     if (query.search) {
       params.set("search", query.search);
     }
+    if (query.segment) params.set("segment",query.segment);
     if (query.status) {
       params.set("status", query.status);
     }
