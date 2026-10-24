@@ -15,6 +15,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { allowedMentorTaskTransition } from "./mentor-task-transition-model";
 import {buildMentorSprintSignOffSnapshot} from "./mentor-sprint-signoff-snapshot-model";
 import {isLaterMentorSprint} from "./mentor-sprint-order-model";
+import {mentorAtomicNextSprintEligible} from "./mentor-atomic-next-sprint-model";
 import {
   projectInstances,
   projectReleases,
@@ -233,6 +234,7 @@ export async function completeProjectSprint(
   signOffNote?:string,
   rawDecisions?:readonly {taskId:string;destination:"NEXT"|"BACKLOG"|"DROP";expectedUpdatedAt:string}[],
   nextSprintId?:string,
+  startNextSprint=false,
 ) {
   const note=z.string().trim().max(1000).optional().parse(signOffNote)??"";
   const decisions=z.array(z.strictObject({
@@ -241,6 +243,8 @@ export async function completeProjectSprint(
     expectedUpdatedAt:z.iso.datetime({offset:true}),
   })).max(250).optional().parse(rawDecisions);
   const validatedNext=nextSprintId===undefined?null:z.string().uuid().parse(nextSprintId);
+  if(startNextSprint&&!validatedNext)
+    throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   const scope =
     await requireProjectLifecycleMutationAccess(
       context,
@@ -484,6 +488,100 @@ export async function completeProjectSprint(
       });
     }
 
+    if(startNextSprint&&validatedNext){
+      // The source Sprint has just completed but is not committed yet.
+      // Any failed target authorization, order, release or active-sprint check
+      // rolls back all NEXT/BACKLOG/DROP choices, sign-off and audit rows.
+      const [primary]=await tx.select({id:projectMembers.id})
+        .from(projectMembers).where(and(
+          eq(projectMembers.projectId,scope.project.id),
+          eq(projectMembers.role,"MENTOR"),
+          eq(projectMembers.isPrimary,true),
+          isNull(projectMembers.endedAt),
+        )).limit(1);
+      const [next]=await tx.select({
+        id:projectSprints.id,title:projectSprints.title,
+        sequence:projectSprints.sequence,status:projectSprints.status,
+        releaseId:projectSprints.releaseId,
+      }).from(projectSprints).where(and(
+        eq(projectSprints.id,validatedNext),
+        eq(projectSprints.projectId,scope.project.id),
+        isNull(projectSprints.deletedAt),
+      )).for("update").limit(1);
+      if(!next)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      const [sourceRelease]=await tx.select({sequence:projectReleases.sequence})
+        .from(projectReleases).where(and(
+          eq(projectReleases.id,sprint.releaseId),
+          eq(projectReleases.projectId,scope.project.id),
+          isNull(projectReleases.deletedAt),
+        )).limit(1);
+      const [targetRelease]=await tx.select({
+        sequence:projectReleases.sequence,status:projectReleases.status,
+      }).from(projectReleases).where(and(
+        eq(projectReleases.id,next.releaseId),
+        eq(projectReleases.projectId,scope.project.id),
+        isNull(projectReleases.deletedAt),
+      )).for("update").limit(1);
+      const [anotherActive]=await tx.select({id:projectSprints.id})
+        .from(projectSprints).where(and(
+          eq(projectSprints.projectId,scope.project.id),
+          eq(projectSprints.status,"ACTIVE"),
+          isNull(projectSprints.deletedAt),
+        )).for("update").limit(1);
+      if(!sourceRelease||!targetRelease||
+         !mentorAtomicNextSprintEligible({
+           sourceSprintId:sprint.id,targetSprintId:next.id,
+           sourceReleaseSequence:sourceRelease.sequence,
+           sourceSprintSequence:sprint.sequence,
+           targetReleaseSequence:targetRelease.sequence,
+           targetSprintSequence:next.sequence,
+           targetSprintStatus:next.status,
+           targetReleaseStatus:targetRelease.status,
+           hasPrimaryMentor:Boolean(primary),
+           hasAnotherActiveSprint:Boolean(anotherActive),
+         }))throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+
+      // This start-time commitment includes tasks just carried NEXT above.
+      // Historical planned/done points remain reconstructable after later
+      // reassignment and completion, without using mutable task.sprintId.
+      const nextTasks=await tx.select({
+        status:projectTasks.status,estimatePoints:projectTasks.estimatePoints,
+        assigneeMembershipId:projectTasks.assigneeMembershipId,
+        carriedFromSprintId:projectTasks.carriedFromSprintId,
+      }).from(projectTasks).where(and(
+        eq(projectTasks.projectId,scope.project.id),
+        eq(projectTasks.sprintId,next.id),
+        isNull(projectTasks.deletedAt),
+      )).for("update");
+      const nextCommitment=buildMentorSprintSignOffSnapshot(next.id,nextTasks);
+      const [started]=await tx.update(projectSprints).set({
+        status:"ACTIVE",startedAt:new Date(),
+        startedByMembershipId:context.membership?.id??null,
+        updatedAt:new Date(),
+      }).where(and(
+        eq(projectSprints.id,next.id),
+        eq(projectSprints.projectId,scope.project.id),
+        eq(projectSprints.status,"PLANNED"),
+      )).returning({id:projectSprints.id});
+      if(!started)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      await tx.update(projectReleases).set({
+        status:"IN_PROGRESS",updatedAt:new Date(),
+      }).where(and(
+        eq(projectReleases.id,next.releaseId),
+        eq(projectReleases.projectId,scope.project.id),
+        eq(projectReleases.status,"PLANNED"),
+      ));
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+        subjectType:"project_sprint",subjectId:next.id,subjectLabel:next.title,
+        summary:"Sprint start-time commitment recorded",
+        metadata:{projectId:scope.project.id,sprintId:next.id,
+          mentorStartSnapshotVersion:1,sprintStartSnapshot:nextCommitment,
+          sourceTab:"sprints",startedWithSignOffOf:sprint.id},
+        groupKey:"project:"+scope.project.id,
+      });
+    }
     return completed;
   });
 }

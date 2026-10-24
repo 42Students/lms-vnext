@@ -40,6 +40,7 @@ export async function POST(
     const parsed=z.object({
       note:z.string().trim().max(1000).optional(),
       nextSprintId:z.string().uuid().optional(),
+      startNextSprint:z.boolean().optional(),
       decisions:z.array(z.strictObject({
         taskId:z.string().uuid(),
         destination:z.enum(["NEXT","BACKLOG","DROP"]),
@@ -54,6 +55,7 @@ export async function POST(
       parsed.data.note,
       parsed.data.decisions,
       parsed.data.nextSprintId,
+      parsed.data.startNextSprint??false,
     );
 
     return NextResponse.json({ sprint });

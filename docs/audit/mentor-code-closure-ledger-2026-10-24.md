@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 80/132 `CODE_READY`, 45/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 81/132 `CODE_READY`, 44/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -60,7 +60,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 48-03 | CODE_READY | mentor-prototype-project-summaries.tsx renders Add Release, per-release Edit and Add Sprint using existing authorized MentorReleaseEditor/MentorSprintCreate; mentor-sprint-write.tsx preselects the contextual release even with several releases. Runtime and permissions tests remain separate acceptance gates. |
 | 48-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 48-05 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 48-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 48-06 | CODE_READY | completeProjectSprint now optionally activates the explicitly selected PLANNED later sprint **inside the same project-locked sign-off transaction**, after per-task NEXT/BACKLOG/DROP and before commit; a target eligibility guard enforces project release chronology, a current primary Mentor, no other active Sprint and unshipped target release. The next Sprint start-time commitment is captured immutably, and mentor-sprint-sign-off.tsx sends one API call rather than claiming partial success after two writes. Unit model tests authored; PostgreSQL rollback/race/permission, strict TS and browser acceptance remain unverified. |
 | 48-07 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 48-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 48-09 | CODE_READY | mentor-sprint-write.tsx; mentor-sprint-planning-defaults-model.ts; mentor-sprint-backlog-pull.tsx; mentor-backlog-service.ts; mentor-sprint-write-service.ts (release-scoped sequence, seven-day editable plan, server date validation and explicit version-checked backlog pull) |

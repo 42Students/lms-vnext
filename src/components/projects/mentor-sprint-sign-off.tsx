@@ -11,11 +11,8 @@ import {projectMutation} from "./project-api";
 
 type UnfinishedTask={id:string;title:string;status:string;updatedAt:string};
 
-/** Sign off only after task reviews are resolved. The migrated domain service
- * already carries every unfinished sprint task into the backlog atomically.
- * Never pretend per-task next-sprint/drop choices are persisted if they aren't.
- * An optional next-sprint start is a second explicit mutation, with truthful
- * partial-success feedback if it fails. */
+/** Sign off only after reviews are resolved. Carry choices, immutable
+ * sign-off snapshot and optional next Sprint start commit atomically. */
 export function MentorSprintSignOff({
   projectId,sprintId,title,unfinished,nextSprint,
 }:{
@@ -51,27 +48,14 @@ export function MentorSprintSignOff({
         "POST",{
           ...(note.trim()?{note:note.trim()}:{}),
           decisions:choices,
-          ...(movingNext&&nextSprint?{nextSprintId:nextSprint.id}:{}),
+          ...((movingNext||startNext)&&nextSprint?{nextSprintId:nextSprint.id}:{}),
+          ...(nextSprint&&startNext?{startNextSprint:true}:{}),
         },
       );
     }catch{
-      setError("Sprint could not be signed off. Review the latest tasks and try again.");
+      setError("Sign-off and optional next Sprint start were not saved. Refresh the latest task and Sprint states before retrying.");
       setPending(false);
       return;
-    }
-    if(nextSprint&&startNext){
-      try{
-        await projectMutation(
-          "/api/projects/"+encodeURIComponent(projectId)+
-            "/sprints/"+encodeURIComponent(nextSprint.id)+"/start",
-          "POST",
-        );
-      }catch{
-        setOpen(false);setPending(false);router.refresh();
-        showToast({tone:"error",title:"Sprint signed off; next sprint not started",
-          description:"The completed sprint is saved. Start the next sprint separately after checking its status."});
-        return;
-      }
     }
     setOpen(false);setPending(false);setNote("");setDropConfirmed(false);
     setDestinations({});
@@ -90,7 +74,7 @@ export function MentorSprintSignOff({
       Sign off sprint
     </Button>
     <Dialog open={open} title={"Sign off "+title}
-      description="Approve submitted work first. Completing the sprint carries unfinished tasks into the product backlog."
+      description="Approve submitted work first. Select each unfinished task's next destination. Sign-off and the optional next Sprint start save together or not at all."
       onOpenChange={value=>{if(!pending)setOpen(value);}}>
       <div className="prototype-mentor-signoff">
         <p><strong>{unfinished.length}</strong> unfinished tasks ·
