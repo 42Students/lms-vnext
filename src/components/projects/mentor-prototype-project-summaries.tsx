@@ -12,6 +12,8 @@ import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
+import {MentorProjectFocusQueue} from "./mentor-project-focus-queue";
+import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
 type ProjectTask=Workspace["tasks"][number];
@@ -388,7 +390,9 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
 }
 
 
-export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}){
+export function MentorPrototypeProjectOverview({workspace,attentionItems=[],initialLater=[]}:{
+ workspace:Workspace;attentionItems?:readonly MentorProjectAttention[];initialLater?:readonly string[];
+}){
   const projectId=encodeURIComponent(workspace.project.id);
   const base="/mentor/projects/"+projectId;
   const live=workspace.tasks.filter(task=>!task.deletedAt);
@@ -541,7 +545,8 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
     </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title"><h2>Needs you on this project</h2></div>
-      <div className="prototype-mentor-overview-actions">
+      {attentionItems.length?<MentorProjectFocusQueue items={attentionItems}
+        initialLater={initialLater}/>:<div className="prototype-mentor-overview-actions">
         {awaiting.length?<Link href={base+"?tab=board&lane=IN_REVIEW"}>
           Review {awaiting.length} {awaiting.length===1?"task":"tasks"} waiting for a decision →
         </Link>:null}
@@ -561,7 +566,7 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
         {!awaiting.length&&!blocked.length&&!active&&!unassignedNext.length&&
          !requestedMeetings.length&&!workspace.project.nextAction?
           <p>No pending project action recorded.</p>:null}
-      </div>
+      </div>}
     </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title"><h2>Next meeting</h2>
