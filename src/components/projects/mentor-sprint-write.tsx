@@ -29,8 +29,10 @@ export function MentorSprintCreate({
   const [key,setKey]=useState(""),[dueLabel,setDueLabel]=useState("");
   const [goal,setGoal]=useState(""),[done,setDone]=useState("");
   const [startDate,setStartDate]=useState(""),[endDate,setEndDate]=useState(""),[dueDate,setDueDate]=useState("");
-  const initialReleaseId=releases.length===1&&releases[0]?.id===releaseId&&
-    releases[0]?.status!=="SHIPPED"?releaseId:"";
+  // A contextual "Add sprint" button must preselect its own release even when
+  // this project has several releases; the server still validates its scope.
+  const initialReleaseId=releases.some(item=>item.id===releaseId&&
+    item.status!=="SHIPPED")?releaseId:"";
   const [chosenReleaseId,setChosenReleaseId]=useState(initialReleaseId);
   const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
   const sprintKeyPreview=title.trim().toLowerCase().normalize("NFKD")
