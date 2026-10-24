@@ -121,6 +121,16 @@ export async function getProjectActivityPage(
             eq(activityEvents.subjectId,scope.project.id),
           ),
           sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
+          // Imported Sprint audit rows predate projectId metadata. Resolve
+          // their subject through the persisted, project-scoped Sprint table.
+          // Compare text IDs, never cast untrusted subject strings to UUID.
+          and(
+            eq(activityEvents.subjectType,"project_sprint"),
+            sql`exists (select 1 from project_sprints ps
+              where ps.id::text = ${activityEvents.subjectId}
+                and ps.project_id = ${scope.project.id}
+                and ps.deleted_at is null)`,
+          ),
           scope.project.legacyProjectId!==null?
            eq(activityEvents.legacyProjectId,scope.project.legacyProjectId):undefined,
         ),
