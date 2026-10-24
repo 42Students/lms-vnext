@@ -30,6 +30,7 @@ async function cleanup(){
  if(ids.app)await pool.query("DELETE FROM placement_applications WHERE id=$1",[ids.app]);
  for(const id of extraApps)await pool.query("DELETE FROM placement_applications WHERE id=$1",[id]);
  // These read-only learner fixtures never receive activity_events references.
+ for(const id of extraMembers)await pool.query("DELETE FROM learner_profiles WHERE membership_id=$1",[id]);
  for(const id of extraMembers){await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[id]);
   await pool.query("DELETE FROM college_memberships WHERE id=$1",[id]);}
  for(const id of extraUsers)await pool.query("DELETE FROM users WHERE id=$1",[id]);
@@ -77,6 +78,14 @@ for(let i=0;i<25;i++){
  const app=(await pool.query<{id:string}>("INSERT INTO placement_applications(job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id) VALUES($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) RETURNING id",
   [jobId,ids.role,member,user])).rows[0]!.id;extraApps.push(app);
 }
+// The original TPO prototype can find a student by their separate saved
+// registration number, not only by roll number or email.
+const registration="REG"+randomUUID().replaceAll("-","");
+await pool.query("INSERT INTO learner_profiles(membership_id,registration_number) VALUES($1,$2)",
+ [extraMembers[0],registration]);
+const byRegistration=await getTpoApplicantPipeline(tpo,{jobId,search:registration});
+expect(byRegistration.rows.map(row=>row.id)).toContain(extraApps[0]);
+expect(byRegistration.totalMatching).toBe(1);
 const alphabetical=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",sort:"LEARNER_NAME",page:1});
 expect(alphabetical.rows.length).toBeGreaterThan(0);
 expect(alphabetical.rows.map(row=>row.student??"").slice(0,2)).toEqual([...alphabetical.rows.map(row=>row.student??"").slice(0,2)].sort());
