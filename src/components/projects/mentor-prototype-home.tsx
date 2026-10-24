@@ -4,6 +4,8 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
 import type {MentorStudentWatchItem} from "@/modules/projects/mentor-student-watch-service";
+import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar-view";
+import {selectMentorHomeWeekMeetings} from "@/modules/projects/mentor-home-week-meetings-model";
 
 type FocusItem = MentorProjectAttention;
 const MAX_SNOOZED = 100;
@@ -46,10 +48,14 @@ function readLater(key:string):string[] {
  * the item reappears automatically when the event timestamp changes.
  */
 export function MentorPrototypeHome({
-  scope, attention, teamCount, membershipCount,studentWatch,
+  scope, nowIso,attention,teamCount,membershipCount,studentWatch,
+  weekMeetings,weekMeetingsLoadFailed,
 }:{
   scope:string;
+  nowIso:string;
   attention:readonly FocusItem[];
+  weekMeetings:readonly MentorMeetingCalendarItem[];
+  weekMeetingsLoadFailed:boolean;
   teamCount:number;
   membershipCount:number;
   studentWatch:readonly MentorStudentWatchItem[];
@@ -69,7 +75,7 @@ export function MentorPrototypeHome({
     ? attention.filter(item=>!snoozed.includes(item.key+"@"+item.occurredAt))
     : attention;
   const focus=active.slice(0,5);
-  const meetings=attention.filter(item=>item.kind==="MEETING_SOON").slice(0,4);
+  const meetings=selectMentorHomeWeekMeetings(weekMeetings,new Date(nowIso));
 
   const later=(item:FocusItem)=>{
     const eventKey=item.key+"@"+item.occurredAt;
@@ -109,12 +115,24 @@ export function MentorPrototypeHome({
       <aside className="prototype-mentor-home-right" aria-label="Team overview">
         <section className="prototype-mentor-small-card">
           <div className="prototype-mentor-small-title">
-            <strong>This week · meetings</strong>
+            <strong>This week · {meetings.length} {meetings.length===1?"meeting":"meetings"}</strong>
             <Link href="/mentor/calendar">All meetings ›</Link>
           </div>
-          {meetings.length?meetings.map(item=><Link href={item.href} className="prototype-mentor-small-row" key={item.key}>
-            <span>{activityTime(item.occurredAt)}</span><strong>{item.title}</strong>
-          </Link>):<p className="prototype-mentor-small-empty">No meetings in the next 48 hours. <Link href="/mentor/calendar">Open calendar</Link></p>}
+          {weekMeetingsLoadFailed?<p role="alert" className="prototype-mentor-small-empty">
+            Meetings could not be loaded. <Link href="/mentor/calendar">Open calendar</Link>
+          </p>:meetings.length?<>
+            {meetings.slice(0,4).map(item=><Link
+              href={"/mentor/calendar?projectId="+encodeURIComponent(item.projectId)}
+              className="prototype-mentor-small-row" key={item.id}>
+              <span>{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",
+                weekday:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"})
+                .format(new Date(item.startsAt))}</span>
+              <strong>{item.title} · {item.projectTitle}</strong>
+            </Link>)}
+            {meetings.length>4?<Link href="/mentor/calendar">
+              {meetings.length-4} more this week →</Link>:null}
+          </>:<p className="prototype-mentor-small-empty">No more meetings this week.
+            {" "}<Link href="/mentor/calendar">Open calendar</Link></p>}
         </section>
         <section className="prototype-mentor-small-card">
           <div className="prototype-mentor-small-title"><strong>Students to watch</strong>
