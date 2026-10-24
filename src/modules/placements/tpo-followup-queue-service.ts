@@ -199,7 +199,10 @@ export async function completeConfirmedTpoFollowup(
       )).for("update", { of: placementTpoFollowups }).limit(1);
 
     if (!current) throw new TpoCrmError("TPO_CRM_FOLLOWUP_NOT_FOUND");
-    if (current.doneAt !== null) return {id:current.id,done:true as const,unchanged:true as const};
+    if (current.doneAt !== null) {
+      if(input.nextDueAt)throw new TpoCrmError("TPO_CRM_FOLLOWUP_ALREADY_DONE");
+      return {id:current.id,done:true as const,unchanged:true as const};
+    }
     if (current.dueAt.toISOString() !== new Date(input.expectedDueAt).toISOString()) {
       throw new TpoCrmError("TPO_CRM_FOLLOWUP_ALREADY_DONE");
     }
@@ -248,8 +251,8 @@ export async function completeConfirmedTpoFollowup(
         leadId:current.leadId,
         dueAt:nextDueAt,
         ownerMembershipId:scope.ownerMembershipId,
-        note:"Follow-up after "+input.outcome.toLowerCase().replaceAll("_"," ")+
-          ": "+input.note,
+        note:("Follow-up after "+input.outcome.toLowerCase().replaceAll("_"," ")+
+          ": "+input.note).slice(0,500),
       }).returning({id:placementTpoFollowups.id});
       if(!next)throw new Error("TPO_FOLLOWUP_CREATE_FAILED");
       await tx.insert(placementTpoLeadActivities).values({
