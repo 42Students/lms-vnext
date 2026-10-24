@@ -205,13 +205,14 @@ export async function completeProjectSprint(
   projectIdInput: string,
   sprintIdInput: string,
   signOffNote?:string,
-  rawDecisions?:readonly {taskId:string;destination:"NEXT"|"BACKLOG"|"DROP"}[],
+  rawDecisions?:readonly {taskId:string;destination:"NEXT"|"BACKLOG"|"DROP";expectedUpdatedAt:string}[],
   nextSprintId?:string,
 ) {
   const note=z.string().trim().max(1000).optional().parse(signOffNote)??"";
   const decisions=z.array(z.strictObject({
     taskId:z.string().uuid(),
     destination:z.enum(["NEXT","BACKLOG","DROP"]),
+    expectedUpdatedAt:z.iso.datetime({offset:true}),
   })).max(250).optional().parse(rawDecisions);
   const validatedNext=nextSprintId===undefined?null:z.string().uuid().parse(nextSprintId);
   const scope =
@@ -281,14 +282,16 @@ export async function completeProjectSprint(
       // transaction as sign-off; a changed task set invalidates the form.
       const unfinished=await tx.select({
         id:projectTasks.id,status:projectTasks.status,
+        updatedAt:projectTasks.updatedAt,
       }).from(projectTasks).where(and(
         eq(projectTasks.projectId,scope.project.id),
         eq(projectTasks.sprintId,sprint.id),isNull(projectTasks.deletedAt),
         ne(projectTasks.status,"DONE"),
       )).for("update");
-      const byTask=new Map(decisions.map(item=>[item.taskId,item.destination]));
+      const byTask=new Map(decisions.map(item=>[item.taskId,item]));
       if(byTask.size!==decisions.length||byTask.size!==unfinished.length||
-         unfinished.some(item=>!byTask.has(item.id)||item.status==="IN_REVIEW")){
+         unfinished.some(item=>!byTask.has(item.id)||item.status==="IN_REVIEW"||
+           item.updatedAt.toISOString()!==byTask.get(item.id)?.expectedUpdatedAt)){
         throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
       }
       const moveNext=decisions.some(item=>item.destination==="NEXT");
@@ -313,7 +316,7 @@ export async function completeProjectSprint(
       }
       const now=new Date();
       for(const item of unfinished){
-        const destination=byTask.get(item.id);
+        const destination=byTask.get(item.id)?.destination;
         if(!destination)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
         const changes=destination==="NEXT"?{
           sprintId:validatedNext,sequence:++nextSequence,
