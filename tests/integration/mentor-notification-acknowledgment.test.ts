@@ -9,6 +9,8 @@ import {
 import {
   markAllOwnMentorNotificationsRead, markOwnMentorNotificationRead,
 } from "@/modules/activity/mentor-notification-read-service";
+import {markAllMentorUnifiedNotificationsRead} from
+  "@/modules/projects/mentor-unified-notification-read-all-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 if(!process.env.TEST_DATABASE_URL) {
@@ -127,5 +129,24 @@ describe("Mentor inbox persisted same-college acknowledgments",()=>{
       expect(row.actor_user_id).toBe(userId);
       expect(row.metadata).toEqual({count:1});
     }
+  it("atomically acknowledges all personal messages alongside the unified source scan",async()=>{
+    await fixture();
+    const result=await markAllMentorUnifiedNotificationsRead(actor);
+    expect(result.markedPersonal).toBe(2);
+    expect(result.completeForCurrentVisibleSources).toBe(true);
+    expect(result.markedSources).toBeGreaterThanOrEqual(0);
+    const repeat=await markAllMentorUnifiedNotificationsRead(actor);
+    expect(repeat.markedPersonal).toBe(0);
+    expect(repeat.markedSources).toBe(0);
+    const remaining=await getMentorPersonalInbox(actor,{view:"unread"});
+    expect(remaining.unreadCount).toBe(0);
+    const other=await pool.query<{read_at:Date|null}>(`
+      select read_at from in_app_notifications where id=$1`,[notificationIds[2]]);
+    expect(other.rows[0]?.read_at).toBeNull();
+    const wrongCollege:RequestContext={...actor,
+      membership:{...actor.membership!,collegeId:SEED_IDS.collegeB}};
+    await expect(markAllMentorUnifiedNotificationsRead(wrongCollege))
+      .rejects.toBeDefined();
+  });
   });
 });
