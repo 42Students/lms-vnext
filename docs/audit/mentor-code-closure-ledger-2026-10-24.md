@@ -11,6 +11,16 @@
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
+## Additional direct-main code + test work (2026-10-24)
+
+- **X-01 / CI:** Repaired Mentor task allocation parser, preview reserved-name lint and missing HR Today import (`69e755f`, `b6cd86d`, `0be04d9`). The next complete typecheck log revealed cross-domain TypeScript errors; source patches on `main` cover HR nullable scope/constant condition, TPO bulk selection and company filter shapes, learner due labels, assignment grading, shared grid comparator, academic CSV validation, DB08 debarment errors and Super Admin nullable phone identity lookup. **No green latest-head build is yet recorded.**
+- **X-02 / X-10:** New Playwright route/screen smoke `mentor-prototype-functional-matrix.spec.ts`, plus a seven-tab journey on a freshly created real project in `projects.spec.ts`, now exercise actual authenticated Mentor and learner role boundaries, tabs, alias redirects and invalid section state where fixture auth is available (`ce7eeec`, `b1d9979`, `44f2b10`). This is still short of all mutation/error/browser state acceptance and **no passing run has been claimed**.
+- **#45 / #50:** `mentor-consecutive-carry-service.ts` excludes deleted releases from historical carry alerts (`6e9955b`).
+- **49-01:** A saved learner team roleLabel equal to an explicit lead designation now renders a display-only Lead marker. Generic learner labels and Mentor primary status never imply student leadership, and this does not grant promotion/roster permissions. See `mentor-student-lead-label-model.ts`, Mentor team overview and unit test (`23ee4f9`, `9526485`, `7c8000e`). Explicit authorized student-lead mutations/assignment and database/browser acceptance still need resolution.
+- **Persistent acceptance blocker:** GitHub source-contracts/DB checks reported unregistered 0310/0311 SQL, journal entries 294/295 tagged 0312/0313, and missing 0294/0295 snapshots. Do not paper over with fabricated JSON or renames before reconciling applied migration history and generating real snapshots. Runtime PG evidence is gated on this.
+
+**The quantified source classification below remains unchanged (113 code-ready, 12 pending, 7 external), because improvements and authored tests are not functional sign-off.** Visual acceptance is still deliberately deferred until nonvisual implementation, tests and provider policy are reconciled.
+
 ## 24 October Mentor closure continuation — CI blockers and browser matrix
 
 **Do not inflate CODE_READY or acceptance totals from these commits.** A real CI run at source head `976cd925` (GitHub Actions run [40117293536](https://github.com/42Students/lms-vnext/actions/runs/40117293536)) confirmed:
