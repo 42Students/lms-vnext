@@ -17,6 +17,7 @@ type MentorCommandResult={
 import { topbarCommands, topbarConfigForPath, topbarSearchDestinations } from "./portal-config";
 import { SearchIcon } from "./icons";
 import { TpoFindSuggestions } from "./tpo-find-suggestions";
+import { RecruiterFindSuggestions } from "./recruiter-find-suggestions";
 import style from "./topbar.module.css";
 
 export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] }) {
@@ -312,6 +313,13 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         {displayedCourses.map(courseResult)}
         {courseMode&&!courseLoading&&!courseError&&courseMatches.length===0?
           <p role="status" className="px-2 py-2 text-xs text-muted-foreground">No courses found</p>:null}
+        {config.portal === "hr" && query.trim().length >= 2
+          ? <RecruiterFindSuggestions query={query} onOpen={href => {
+              router.push(href);
+              setQuery("");
+              setOpen(false);
+              setMobileOpen(false);
+            }}/> : null}
         {config.portal === "tpo" && query.trim().length >= 2
           ? <TpoFindSuggestions query={query} onOpen={href => {
               router.push(href);
