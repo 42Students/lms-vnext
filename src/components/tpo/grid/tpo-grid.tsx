@@ -211,7 +211,7 @@ export function TpoGrid<Row>({
    minWidth, maxWidth, width:160,resizable:true,sortable:Boolean(col.sortKind),
    valueGetter:p=>p.data?col.read(p.data):null,
    ...(col.sortKind?{comparator:(a:unknown,b:unknown,nodeA:{data?:Row},nodeB:{data?:Row},isDescending:boolean)=>compareNumberDate(
-    col.sortKind,
+    col.sortKind!,
     col.sortValue&&nodeA.data?col.sortValue(nodeA.data):a,
     col.sortValue&&nodeB.data?col.sortValue(nodeB.data):b,
     isDescending,
