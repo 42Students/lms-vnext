@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useState,type MouseEvent} from "react";
 import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
 import {safeNotificationActionHref} from "@/modules/activity/notification-action";
-import {mentorUnifiedNotificationGroups,type MentorUnifiedNotification} from
+import {mentorUnifiedNotificationGroups,mentorUnifiedOpenReadRequest,type MentorUnifiedNotification} from
   "@/modules/projects/mentor-unified-notification-model";
 import {MentorSourceNotificationRead} from "./mentor-source-notification-read";
 
@@ -35,6 +35,30 @@ function MentorPersonalRead({id}:{id:string}){
 }
 export function MentorUnifiedNotificationFeed({items}:{items:readonly MentorUnifiedNotification[]}){
  const groups=mentorUnifiedNotificationGroups(items);
+ const router=useRouter();
+ const [opening,setOpening]=useState<string|null>(null);
+ const [openError,setOpenError]=useState("");
+ function openNotification(event:MouseEvent<HTMLAnchorElement>,
+  item:MentorUnifiedNotification,href:string){
+  if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||
+     event.altKey||event.defaultPrevented||opening)return;
+  const request=mentorUnifiedOpenReadRequest(item);
+  if(!request)return;
+  event.preventDefault();
+  setOpening(item.source+":"+item.id);setOpenError("");
+  void apiFetch(request.url,{
+    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    ...(request.body?{body:request.body,
+      headers:{"content-type":"application/json"}}:{}),
+  }).then(()=>{
+    window.dispatchEvent(new Event("lms:notifications-updated"));
+    router.push(href);
+    router.refresh();
+  }).catch(reason=>{
+    setOpenError("Couldn't mark this item as read. Retry Open or use Mark read."+
+      (reason instanceof Error?" "+reason.message:""));
+  }).finally(()=>setOpening(null));
+ }
  return <section className="min-w-0 space-y-3" aria-label="Mentor chronological notifications">
   <header className="flex flex-wrap items-center justify-between gap-3">
     <h2 className="text-lg font-semibold">Your notifications · {items.length} loaded</h2>
@@ -42,6 +66,7 @@ export function MentorUnifiedNotificationFeed({items}:{items:readonly MentorUnif
       Personal messages, verified project attention and visible college notices · IST
     </p>
   </header>
+  {openError?<p role="alert" className="text-sm text-error">{openError}</p>:null}
   {groups.length?groups.map(group=><div key={group.label} className="space-y-2">
     <h3 className="border-b border-border py-2 text-sm font-semibold">{group.label}</h3>
     {group.items.map(item=>{
@@ -71,8 +96,10 @@ export function MentorUnifiedNotificationFeed({items}:{items:readonly MentorUnif
           </time>
           <div className="flex flex-wrap items-center gap-2">
             {href?<Link href={href}
+              aria-disabled={opening===item.source+":"+item.id}
+              onClick={event=>openNotification(event,item,href)}
               className="inline-flex min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-link">
-              Open →
+              {opening===item.source+":"+item.id?"Marking read…":"Open →"}
             </Link>:null}
             {item.read===false&&item.source==="PERSONAL"?
               <MentorPersonalRead id={item.id}/>:null}
