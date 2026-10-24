@@ -15,11 +15,11 @@ import {nextMentorAllocatableSprint} from "./mentor-next-allocatable-sprint-mode
 export async function autoAssignProjectTasks(context:RequestContext,projectId:string){
  const scope=await requireProjectLifecycleMutationAccess(context,projectId);
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt}).from(projectInstances)
    .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
    .for("update").limit(1);
   await assertPersistedProjectMutationActor(tx,context,scope);
-  if(!project||!["PLANNED","ACTIVE"].includes(project.status))
+  if(!project||project.deletedAt||!["PLANNED","ACTIVE"].includes(project.status))
    throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const members=await tx.select({membershipId:projectMembers.membershipId})
    .from(projectMembers).innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
@@ -42,7 +42,7 @@ export async function autoAssignProjectTasks(context:RequestContext,projectId:st
       eq(projectSprints.projectId,scope.project.id),
       isNull(projectSprints.deletedAt),
       inArray(projectSprints.status,["ACTIVE","PLANNED"]),
-      ne(projectReleases.status,"SHIPPED"),
+      inArray(projectReleases.status,["PLANNED","IN_PROGRESS"]),
     ));
   const permittedIds=new Set(permittedSprints.map(row=>row.id));
   const count=new Map(members.map(row=>[row.membershipId,0]));
@@ -100,13 +100,13 @@ export async function autoAssignMentorNextSprint(
  const input=nextSprintAssignmentInput.parse(raw);
  const scope=await requireProjectLifecycleMutationAccess(context,projectId);
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status})
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
     .from(projectInstances).where(and(
       eq(projectInstances.id,scope.project.id),
       eq(projectInstances.collegeId,scope.collegeId),
     )).for("update").limit(1);
   await assertPersistedProjectMutationActor(tx,context,scope);
-  if(project?.status!=="ACTIVE")
+  if(!project||project.deletedAt||project.status!=="ACTIVE")
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [target]=await tx.select().from(projectSprints)
     .where(and(eq(projectSprints.id,input.sprintId),
@@ -140,7 +140,7 @@ export async function autoAssignMentorNextSprint(
       eq(projectReleases.projectId,scope.project.id),
       isNull(projectReleases.deletedAt),
     )).limit(1);
-  if(!release||release.status==="SHIPPED")
+  if(!release||!["PLANNED","IN_PROGRESS"].includes(release.status))
     throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   const members=await tx.select({membershipId:projectMembers.membershipId})
     .from(projectMembers)
@@ -168,7 +168,7 @@ export async function autoAssignMentorNextSprint(
       eq(projectSprints.projectId,scope.project.id),
       isNull(projectSprints.deletedAt),
       inArray(projectSprints.status,["ACTIVE","PLANNED"]),
-      ne(projectReleases.status,"SHIPPED"),
+      inArray(projectReleases.status,["PLANNED","IN_PROGRESS"]),
     ));
   const permittedIds=new Set(permittedSprints.map(row=>row.id));
   const plan=planMentorNextSprintAssignments(

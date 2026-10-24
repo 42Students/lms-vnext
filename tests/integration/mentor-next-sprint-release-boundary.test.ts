@@ -96,6 +96,35 @@ async function fixture(){
    input:{sprintId:next.id,expectedSprintUpdatedAt:next.updatedAt.toISOString()}};
 }
 describe("Mentor next-sprint auto-assign crossing release numbering",()=>{
+ it("serializes two concurrent next Sprint requests into one audited allocation",async()=>{
+  const f=await fixture();
+  const responses=await Promise.all([
+    autoAssignMentorNextSprint(mentor,f.projectId,f.input),
+    autoAssignMentorNextSprint(mentor,f.projectId,f.input),
+  ]);
+  expect(responses.map(item=>item.assigned).sort()).toEqual([0,1]);
+  const persisted=await pool.query<{assignee_membership_id:string|null}>(
+    "select assignee_membership_id from project_tasks where id=$1",[f.future.id]);
+  expect(persisted.rows[0]?.assignee_membership_id).toBe(learner.membership!.id);
+  const notices=await pool.query<{id:string}>(`select id from activity_events
+    where subject_id=$1 and event_type='projects.task.details_updated'
+    and metadata->>'autoAssigned'='true'
+    and metadata->>'sprintId'=$2`,[f.future.id,f.next.id]);
+  expect(notices.rows).toHaveLength(1);
+ });
+ it("rejects completed and deleted project allocation without a task mutation",async()=>{
+  const f=await fixture();
+  await pool.query("update project_instances set status='COMPLETED' where id=$1",[f.projectId]);
+  await expect(autoAssignMentorNextSprint(mentor,f.projectId,f.input))
+    .rejects.toBeDefined();
+  await pool.query(`update project_instances set status='ACTIVE',deleted_at=now()
+     where id=$1`,[f.projectId]);
+  await expect(autoAssignMentorNextSprint(mentor,f.projectId,f.input))
+    .rejects.toBeDefined();
+  const result=await pool.query<{assignee_membership_id:string|null}>(
+    "select assignee_membership_id from project_tasks where id=$1",[f.future.id]);
+  expect(result.rows[0]?.assignee_membership_id).toBeNull();
+ });
  it("assigns only the first planned sprint in the next release and records an audited notification",async()=>{
   const f=await fixture();
   const result=await autoAssignMentorNextSprint(mentor,f.projectId,f.input);

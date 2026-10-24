@@ -8,14 +8,15 @@ const common={project:{id:"p",title:"Visible",summary:"Shared",status:"ACTIVE"},
  resources:[]};
 describe("Mentor student visibility-only preview",()=>{
  it("does not expose drafts, Mentor-only records or private metadata",()=>{
-  const result=preview({...common,resources:[
+  const sourceResources=[
    {id:"draft",title:"Private draft",status:"DRAFT",visibility:"TEAM",
     url:"https://example.org/draft",description:"secret"},
    {id:"mentor",title:"Mentor notes",status:"ACTIVE",visibility:"MENTOR_ONLY",
     url:"https://example.org/mentor",description:"secret"},
    {id:"visible",title:"Team reference",status:"ACTIVE",visibility:"TEAM",
     url:"https://example.org/file",description:"shared",accessNotes:"PRIVATE"},
-  ]});
+  ];
+  const result=preview({...common,resources:sourceResources});
   expect(result.resources).toEqual([{id:"visible",title:"Team reference",
     description:"shared",resourceType:null,url:"https://example.org/file"}]);
   expect(JSON.stringify(result)).not.toContain("PRIVATE");
