@@ -1,7 +1,9 @@
+import {orderMentorSprints,type MentorOrderedRelease} from "./mentor-sprint-order-model";
+
 /** Read-only, defensible sprint velocity derived only from persisted
  * sign-off facts. An estimate is NOT a delivery commitment or due-date check.
  */
-export type MentorVelocitySprint={id:string;sequence:number;status:string};
+export type MentorVelocitySprint={id:string;sequence:number;status:string;releaseId?:string};
 export type MentorVelocitySnapshot={sprintId:string;donePoints:number;plannedPoints:number};
 export type MentorVelocityProjection=
   |{kind:"INSUFFICIENT";sampleCount:number;reason:string}
@@ -12,10 +14,18 @@ export function projectMentorVelocity(
   sprints:readonly MentorVelocitySprint[],
   snapshots:readonly MentorVelocitySnapshot[],
   remainingPoints:number,
+  releases?:readonly MentorOrderedRelease[],
 ):MentorVelocityProjection {
   const byId=new Map(snapshots.map(row=>[row.sprintId,row] as const));
-  const samples=sprints.filter(row=>row.status==="COMPLETED")
-    .sort((a,b)=>b.sequence-a.sequence)
+  // Release-local sequence may restart at zero; the latest four signed-off
+  // sprints must follow project-wide release order, not numeric sprint IDs.
+  const releaseScoped=sprints.filter(
+    (row):row is MentorVelocitySprint&{releaseId:string}=>typeof row.releaseId==="string");
+  const chronological=releases&&releaseScoped.length===sprints.length
+    ?orderMentorSprints(releaseScoped,releases)
+    :[...sprints].sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id));
+  const samples=chronological.filter(row=>row.status==="COMPLETED")
+    .reverse()
     .flatMap(row=>{
       const item=byId.get(row.id);
       return item&&Number.isFinite(item.donePoints)&&item.donePoints>=0&&
