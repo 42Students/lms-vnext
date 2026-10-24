@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import {eq} from "drizzle-orm";
+import {eq,inArray,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {users} from "@/db/schema";
+import {users,projectSubmissions,projectReleases} from "@/db/schema";
 import {getMentorProjectTeamSizes,getMentorProjectLearnerSizes,getMentorPortfolioLearnerCounts} from "@/modules/projects/mentor-project-team-size-service";
 import {getMentorPrototypeSprintSummaries} from "@/modules/projects/mentor-prototype-sprint-summary-service";
 import {getMentorStudentWatch} from "@/modules/projects/mentor-student-watch-service";
@@ -36,6 +36,8 @@ import {listOwnMentorAttentionLater} from "@/modules/projects/mentor-attention-l
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import {listPagedMentorProjects} from "@/modules/projects/mentor-paged-project-list-service";
 import {canPageMentorProjectList} from "@/modules/projects/mentor-paged-project-list-model";
+import {MENTOR_PORTFOLIO_SEGMENTS,matchesMentorPortfolioSegment,mentorPortfolioSegmentHref}
+  from "@/modules/projects/mentor-portfolio-segment-model";
 
 function MentorProjectsLoading() {
   return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Checking Projects access">
@@ -95,7 +97,7 @@ export async function MentorProjectsContent({
 
   // MEN-projects-meetings-10: common filters are paged and counted in SQL.
   // Nontrivial attention/task ranking keeps the legacy full-set path.
-  const canPageInSql=canPageMentorProjectList(query);
+  const canPageInSql=!query.segment&&canPageMentorProjectList(query);
   // A list failure belongs next to this page, not to a route-level error that
   // loses the current filter controls. Never infer an empty list from a failed read.
   const loaded=await (async()=>{
@@ -133,6 +135,40 @@ export async function MentorProjectsContent({
   </div>;
   const {paged,allRows,attentionRows,workCounts,teamSizes,learnerSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead,learnerCounts}=loaded;
   const initialLater=await listOwnMentorAttentionLater(context,attentionRows);
+  // The FINAL_SUBMISSION chip is evaluated over already authorized project IDs.
+  // A saved draft/review counts as final-delivery work; otherwise the recorded
+  // plan must have actual sprints signed off AND actual releases shipped.
+  // No unpersisted phase labels or guessed readiness state count as evidence.
+  const finalFacts=await (async()=>{
+    const ids=allRows.filter(row=>row.memberRole==="MENTOR")
+      .map(row=>row.project.id);
+    if(query.segment!=="FINAL_SUBMISSION"||ids.length===0)
+      return {submitted:new Set<string>(),fullyDelivered:new Set<string>()};
+    const [submissions,releases]=await Promise.all([
+      getDb().select({projectId:projectSubmissions.projectId})
+        .from(projectSubmissions).where(
+          inArray(projectSubmissions.projectId,ids)).then(rows=>rows),
+      getDb().select({projectId:projectReleases.projectId,
+        status:projectReleases.status})
+        .from(projectReleases).where(
+          inArray(projectReleases.projectId,ids)),
+    ]);
+    const submitted=new Set(submissions.map(row=>row.projectId));
+    const counts=new Map<string,{total:number;shipped:number}>();
+    for(const release of releases){
+      const state=counts.get(release.projectId)??{total:0,shipped:0};
+      state.total++;
+      if(release.status==="SHIPPED")state.shipped++;
+      counts.set(release.projectId,state);
+    }
+    const fullyDelivered=new Set<string>();
+    for(const [id,state] of counts){
+      const sprint=sprintSummaries.get(id);
+      if(state.total>0&&state.shipped===state.total&&sprint&&
+        sprint.total>0&&sprint.completed===sprint.total)fullyDelivered.add(id);
+    }
+    return {submitted,fullyDelivered};
+  })();
   // Session identity has only immutable auth IDs. Resolve the person's name
   // from their own live user row without exposing another college's profile.
   const [greetingIdentity]=await getDb().select({name:users.displayName})
@@ -188,6 +224,12 @@ export async function MentorProjectsContent({
       (row) =>
         row.memberRole === "MENTOR",
     )
+    .filter(row => matchesMentorPortfolioSegment(query.segment,{
+      status:row.project.status,blocker:row.project.blocker??null,
+      attentionKinds:kinds.get(row.project.id),
+      hasFinalSubmission:finalFacts.submitted.has(row.project.id),
+      planFullyDelivered:finalFacts.fullyDelivered.has(row.project.id),
+    }))
     .filter(row => matchesMentorProjectAssignment(query.assignment, row.isPrimaryMentor))
     .filter(row => matchesMentorProjectWork(query.work, workCounts?.get(row.project.id)))
     .filter((row) => {
@@ -285,6 +327,7 @@ export async function MentorProjectsContent({
     pageSize: query.pageSize,
     page,
     ...(query.search !== undefined ? { search: query.search } : {}),
+    ...(query.segment !== undefined ? { segment: query.segment } : {}),
     ...(query.status !== undefined ? { status: query.status } : {}),
     ...(query.assignment !== undefined ? { assignment: query.assignment } : {}),
     ...(query.attention !== undefined ? { attention: query.attention } : {}),
@@ -308,6 +351,25 @@ export async function MentorProjectsContent({
         learnerAssignmentCount={learnerCounts.learnerAssignments}
       />
 
+      <nav aria-label="Mentor team segments"
+        className="flex flex-wrap gap-2 border-b border-border pb-3">
+        {([{id:undefined,label:"All teams"},
+          ...MENTOR_PORTFOLIO_SEGMENTS.map(id=>({id,label:{
+            CURRENT:"Current",NEEDS_YOU:"Need you",AT_RISK:"At risk or blocked",
+            FINAL_SUBMISSION:"Final submission stage",ARCHIVED:"Archived",
+          }[id]}))]).map(segment=><Link key={segment.id??"all"}
+          href={mentorPortfolioSegmentHref(segment.id,query)}
+          aria-current={query.segment===segment.id?"page":undefined}
+          className={"inline-flex min-h-10 items-center rounded-full border px-4 py-2 text-sm font-semibold "+
+            (query.segment===segment.id?"border-primary bg-primary-subtle text-primary-text":
+              "border-border text-body hover:bg-muted")}>
+          {segment.label}
+        </Link>)}
+      </nav>
+      {query.segment==="FINAL_SUBMISSION"?<p className="text-xs text-muted-foreground">
+        Based on recorded final-delivery drafts/reviews or a fully signed-off and shipped plan.
+        This is not a claim that final submission prerequisites are satisfied.
+      </p>:null}
       <ProjectParticipantListControls
         basePath="/mentor/projects"
         query={controlQuery}
