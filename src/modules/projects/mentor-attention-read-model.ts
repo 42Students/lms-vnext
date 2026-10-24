@@ -10,14 +10,16 @@ export function mentorAttentionReceiptKey(
   (alert.revision??alert.occurredAt);
 }
 export function mentorAnnouncementReceiptKey(
- notice:{id:string;createdAt:Date|string},
+ notice:{id:string;createdAt:Date|string;version?:number},
 ):string{
  const stamp=new Date(notice.createdAt);
- return "announcement:"+notice.id+"@"+stamp.toISOString();
+ const version=notice.version!==undefined&&Number.isSafeInteger(notice.version)&&
+   notice.version>=0?":v"+notice.version:"";
+ return "announcement:"+notice.id+"@"+stamp.toISOString()+version;
 }
 export function mentorUnreadAttentionCount(
  alerts:readonly MentorProjectAttention[],
- notices:readonly {id:string;createdAt:Date|string}[],
+ notices:readonly {id:string;createdAt:Date|string;version?:number}[],
  acknowledged:ReadonlySet<string>,
 ):number{
  return alerts.filter(alert=>!acknowledged.has(mentorAttentionReceiptKey(alert))).length+
