@@ -1,4 +1,5 @@
 import type {MentorSprintSignOffSnapshot} from "./mentor-sprint-signoff-snapshot-model";
+import {orderMentorSprints,type MentorOrderedRelease} from "./mentor-sprint-order-model";
 
 export type MentorMemberSprintPoint={
   sprintId:string;sequence:number;donePoints:number;plannedPoints:number;
@@ -7,13 +8,18 @@ export type MentorMemberSprintPoint={
 /** A factual summary of recorded sign-off snapshots, not a personal rating. */
 export function mentorMemberSprintHistory(
   membershipId:string,
-  orderedCompletedSprints:readonly {id:string;sequence:number;status:string}[],
+  orderedCompletedSprints:readonly {id:string;sequence:number;status:string;releaseId?:string}[],
   snapshots:readonly MentorSprintSignOffSnapshot[],
+  releases?:readonly MentorOrderedRelease[],
 ):MentorMemberSprintPoint[]{
   const bySprint=new Map(snapshots.map(row=>[row.sprintId,row] as const));
-  return orderedCompletedSprints
+  const scoped=orderedCompletedSprints.filter(
+    (s):s is typeof s&{releaseId:string}=>typeof s.releaseId==="string");
+  const ordered=releases&&scoped.length===orderedCompletedSprints.length
+    ?orderMentorSprints(scoped,releases)
+    :[...orderedCompletedSprints].sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id));
+  return ordered
     .filter(row=>row.status==="COMPLETED")
-    .sort((a,b)=>a.sequence-b.sequence)
     .flatMap(sprint=>{
       const snapshot=bySprint.get(sprint.id);
       if(!snapshot)return [];
