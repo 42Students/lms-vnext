@@ -136,6 +136,33 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       Suggested owners have the fewest current open estimated project points.
       Ties use task count and stable learner ID. This is a preview, not a write.
     </p>
+    {nextSprintPlan.assignments.length>0?<div className="space-y-2"
+      aria-label="Suggested next sprint task assignments">
+      <h4 className="text-sm font-semibold">Suggested owner per unassigned task</h4>
+      <ul className="space-y-2">
+       {nextSprintPlan.assignments.slice(0,25).map(proposal=>{
+         const task=tasks.find(item=>item.id===proposal.taskId);
+         const person=learners.find(item=>item.membershipId===proposal.membershipId);
+         return <li key={proposal.taskId}
+            className="flex flex-wrap items-center justify-between gap-2 rounded border border-border p-2">
+           <span className="text-sm"><strong>{task?.title??"Task"}</strong>
+             {" · "}{proposal.estimatedPoints} estimated points
+             {" · Suggested: "}{person?.displayName??"Learner"}
+             <small className="block text-muted-foreground">{proposal.reason}</small>
+           </span>
+           {!readOnly&&task?<Button type="button" size="sm" variant="secondary"
+             disabled={busy||task.assigneeMembershipId!==null}
+             onClick={()=>void assign(task.id,proposal.membershipId)}>
+             Give it to {person?.displayName??"learner"}
+           </Button>:null}
+         </li>;
+       })}
+      </ul>
+      {nextSprintPlan.assignments.length>25?<p className="text-xs text-muted-foreground">
+        Showing the first 25 suggestions. Use auto-assign for the complete
+        eligible next-sprint queue, or filter the allocation board below.
+      </p>:null}
+    </div>:null}
     <div className="flex flex-wrap gap-2" aria-label="Next sprint proposed student point loads">
       {nextSprintPlan.loads.slice(0,12).map(row=><span key={row.membershipId}
         className="rounded border border-border px-2 py-1 text-xs">
