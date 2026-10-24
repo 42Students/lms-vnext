@@ -12,6 +12,7 @@ import {MentorSprintCreate} from "./mentor-sprint-write";
 import {MentorOverviewQuickActions} from "./mentor-overview-quick-actions";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
 import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
+import {MentorLearnerTeamActions} from "./project-team-controls";
 import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
@@ -244,7 +245,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
   </div>;
 }
 
-export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
+export function MentorPrototypeTeamOverview({workspace,readOnly}:{workspace:Workspace;readOnly:boolean}){
   const students=workspace.members.filter(member=>member.role==="LEARNER");
   const mentors=workspace.members.filter(member=>member.role==="MENTOR");
   const academicByMember=new Map(workspace.mentorLearnerAcademicFacts.map(row=>
@@ -319,6 +320,10 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
               {academics?.cohortName?" · "+academics.cohortName:""}
               {academics?.academicYear?" · Academic year "+academics.academicYear:""}
             </small>:null}
+            {!readOnly&&member.role==="LEARNER"?
+              <MentorLearnerTeamActions projectId={workspace.project.id}
+                member={{id:member.id,displayName:member.displayName,
+                  roleLabel:member.roleLabel}}/>:null}
           </div>
         </div>
         <span>{sprintDone.length} done · {countTasks(sprintTasks,"IN_REVIEW")} waiting
