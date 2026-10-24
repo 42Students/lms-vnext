@@ -65,16 +65,16 @@
 | 42 | Recruiter | Recruiter › Bell, search, your details, college picker | NOT STARTED |
 | 43 | Recruiter/Public | Public › Invitation, public link, sign in | NOT STARTED |
 | 44 | Recruiter/Public | Public › Shared applicant list (no account) | NOT STARTED |
-| 45 | Mentor | Mentor › Projects (home: what needs you, your teams) | IN PROGRESS — real student watch, attention queue, Later and six-column teams |
+| 45 | Mentor | Mentor › Projects (home: what needs you, your teams) | IN PROGRESS — real student watch, attention queue, six-column teams and last-event timestamps |
 | 46 | Mentor | Mentor › Project › Overview | IN PROGRESS — real project brief, health, team updates and next actions |
 | 47 | Mentor | Mentor › Project › Board (sprint picker, 6 lanes, list view, task detail) | IN PROGRESS — six lanes, per-sprint grouped List, task pane, comments, A/S, J/K |
 | 48 | Mentor | Mentor › Project › Sprints & releases (16 sprints: sign off, carry over, ship) | IN PROGRESS — per-task next/backlog/drop choices, atomic sign-off, note, task CAS, optional next-sprint start |
-| 49 | Mentor | Mentor › Project › Team & meetings | IN PROGRESS — scoped roster, workload and linked meeting actions |
+| 49 | Mentor | Mentor › Project › Team & meetings | IN PROGRESS — sprint and last-four roster, task-change dates, real meeting actions |
 | 50 | Mentor | Mentor › Project › Performance (who did what, unassigned work) | IN PROGRESS — All/Current/Last-4/specific sprint workload and allocation editor |
-| 51 | Mentor | Mentor › Project › Resources | IN PROGRESS — resource filters, share controls and completed-sprint fold |
-| 52 | Mentor | Mentor › Project › Activity | IN PROGRESS — persisted Mentor-posted updates, activity feed and Overview |
-| 53 | Mentor | Mentor › Review a final submission (accept, request changes, lock, reopen) | IN PROGRESS — evidence files, review history, Accept/changes, lock/reopen flow |
-| 54 | Mentor | Mentor › Meetings (all teams: requests, coming up, notes) | IN PROGRESS — cross-team schedule/draft dialog, .ics, attendance/actions/retro/follow-up, meeting editor |
+| 51 | Mentor | Mentor › Project › Resources | IN PROGRESS — pinned resource groups, sharing filters, authorized actions and sprint fold |
+| 52 | Mentor | Mentor › Project › Activity | IN PROGRESS — posted updates, actor filters, time filters and device-only new-since-seen |
+| 53 | Mentor | Mentor › Review a final submission (accept, request changes, lock, reopen) | IN PROGRESS — Zoom-supported evidence, history, guarded review, lock/reopen |
+| 54 | Mentor | Mentor › Meetings (all teams: requests, coming up, notes) | IN PROGRESS — Yes/Another/No requests, cross-team scheduling, calendar .ics, facilitation |
 | 55 | Mentor | Mentor › Notifications | IN PROGRESS — six persisted-data category filters and read controls |
 | 56 | Mentor | Mentor › Everywhere: search, bell, your details | IN PROGRESS — authorized search across projects/tasks/students/resources; bell/profile |
 
@@ -137,6 +137,16 @@
 - **#54 Meetings:** compared with the saved original `54-mentor-template.html`; the calendar now offers a cross-team Schedule a meeting dialog for the current Mentor's active project assignments. The form calls the existing protected `scheduleProjectMeeting` route with project-version token, real IST instants and either an actual join URL or DRAFT status. No fake Meet link or Google Calendar write is claimed. The detail pane continues to expose persisted attendees, notes, action items and retro/follow-up, with a link to the existing authorized editor.
 - Fixed the newly added Mentor activity update POST route to enforce same-origin write protection. Updated stale search/Board prototype source contracts and checked all **27/27 source-contract tests** by evaluating their assertions against freshly fetched GitHub sources in this chat. These are not a confirmed runner/CI result.
 - **Acceptance unchanged:** Mentor #45–56 are in progress / visually unverified, **0/12 VERIFIED**. CI typecheck/build, real authenticated browser screenshots and exact prototype interaction comparison are required.
+
+## Mentor implementation continuation — pass 7, 2026-10-24
+- **#45 Projects:** replaced the misleading project-record modified date under “Last activity” with a query of actual project activity groups for the Mentor's assigned projects. When no event exists, the list says “No recorded activity.” Active project/college scoping comes from the verified Mentor membership query.
+- **#49 Team:** current sprint and last four recorded sprints now determine each student's task/completed-point summary. The time column is truthfully named “Last task change,” not an invented online-presence status. Authorized membership editor remains available.
+- **#51 Resources:** actual pinned resources now appear under Pinned references; other resources remain under their own heading. Completed-sprint folding and existing filter/create/share/edit controls remain.
+- **#52 Activity:** added a by-person filter to the existing searchable, paginated timeline and a transparent, opt-in "Mark these as seen" indicator, scoped to current user/project **on this browser only**. It does not claim a universal server read cursor.
+- **#53 Final submission:** supported safe HTTP(S) image/PDF evidence has a Zoom dialog, sandboxed without scripts or same-origin privileges; third-party framing may be blocked, so Open full size stays available. Existing authenticated review flows remain.
+- **#54 Meetings:** calendar request detail offers Yes (requires real safe join link and valid IST time), Another time (opens the authorized meeting editor), and No with note (existing audited mentor-decision endpoint and version token). Added all-team scheduled-only .ics export. No Google provider callback or invitation claim.
+- Added six corresponding source regression checks and ran all six against the latest fetched repository source. **No runtime/CI build or vNext screenshot was observed.**
+- **Status remains Mentor 0/12 VERIFIED** until exact screen state, permissions, interactions, latest CI, and reference visual diff all pass. Detailed stop-the-line audit: `docs/audit/mentor-prototype-brutal-pass-7.md`.
 
 ## First visual pilot
 Compare **#01 TPO Companies › Today**, **#31 Recruiter › Today**, and **#45 Mentor › Projects** to equivalent live vNext screens, identify shell-level fixes, then complete one workflow at a time. Treat unverified changes on `main` as needing re-review.
