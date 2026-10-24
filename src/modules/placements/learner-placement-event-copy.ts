@@ -51,7 +51,7 @@ export type LearnerPlacementEventContext={
  applicationId?:string;jobId?:string;assessmentUrl?:string;
  interviewVenue?:string;rejectionReason?:string;
  /** Verified saved placement-request decision, never speculative UI state. */
- requestDecisionStatus?:"APPROVED"|"REJECTED";requestDecisionNote?:string;
+ requestDecisionStatus?:"APPROVED"|"REJECTED"|undefined;requestDecisionNote?:string|undefined;
  appliedAt?:string|Date|null;statusUpdatedAt?:string|Date|null;
  interviewAt?:string|Date|null;interviewType?:string;interviewMode?:string;
  roundDescription?:string;contactMobile?:string;contactPhone?:string;
