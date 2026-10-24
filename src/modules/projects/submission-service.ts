@@ -12,6 +12,18 @@ import {assertCurrentEvaluationActor} from "./evaluation-service";
 import {readProjectReadinessOverride} from "./readiness-override-service";
 import {effectiveProjectSubmissionReady} from "./readiness-override-model";
 import {deriveProjectExecutionReadiness} from "./execution-readiness";
+import {projectFinalFileEvidenceIsVerified} from "./project-final-file-evidence-model";
+const finalFileEvidenceFields={
+ id:projectResourceFiles.id,resourceId:projectResourceFiles.resourceId,
+ status:projectResourceFiles.status,scanStatus:projectResourceFiles.scanStatus,
+ objectGeneration:projectResourceFiles.objectGeneration,
+ scanAttestedBy:projectResourceFiles.scanAttestedBy,
+ scanAttestedAt:projectResourceFiles.scanAttestedAt,
+ verifiedContentType:projectResourceFiles.verifiedContentType,
+ verifiedSizeBytes:projectResourceFiles.verifiedSizeBytes,
+ completedAt:projectResourceFiles.completedAt,
+ deletedAt:projectResourceFiles.deletedAt,
+};
 import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
 import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -163,14 +175,11 @@ export async function createProjectSubmissionDraft(
       // a learner attach a foreign or mentor-only resource by guessing its UUID.
       for(const attachment of input.attachments??[]){
         if(attachment.kind!=="FILE")continue;
-        const [file]=await tx.select({
-          id:projectResourceFiles.id,status:projectResourceFiles.status,
-          resourceId:projectResourceFiles.resourceId,
-        }).from(projectResourceFiles).where(and(
+        const [file]=await tx.select(finalFileEvidenceFields).from(projectResourceFiles).where(and(
           eq(projectResourceFiles.id,attachment.fileId!),
           eq(projectResourceFiles.projectId,scope.project.id),
         )).limit(1);
-        if(!file||file.status!=="READY")
+        if(!projectFinalFileEvidenceIsVerified(file))
           throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
         if(file.resourceId){
           const [resource]=await tx.select({status:projectResources.status,visibility:projectResources.visibility})
@@ -288,14 +297,11 @@ export async function updateProjectSubmissionDraft(
       // a learner attach a foreign or mentor-only resource by guessing its UUID.
       for(const attachment of input.attachments??[]){
         if(attachment.kind!=="FILE")continue;
-        const [file]=await tx.select({
-          id:projectResourceFiles.id,status:projectResourceFiles.status,
-          resourceId:projectResourceFiles.resourceId,
-        }).from(projectResourceFiles).where(and(
+        const [file]=await tx.select(finalFileEvidenceFields).from(projectResourceFiles).where(and(
           eq(projectResourceFiles.id,attachment.fileId!),
           eq(projectResourceFiles.projectId,scope.project.id),
         )).limit(1);
-        if(!file||file.status!=="READY")
+        if(!projectFinalFileEvidenceIsVerified(file))
           throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
         if(file.resourceId){
           const [resource]=await tx.select({status:projectResources.status,visibility:projectResources.visibility})
@@ -451,11 +457,10 @@ export async function submitProjectSubmission(
       throw new ProjectsServiceError("PROJECT_SUBMISSION_CONTENT_REQUIRED");
     }
     for(const entry of files){
-      const [file]=await tx.select({id:projectResourceFiles.id,status:projectResourceFiles.status,
-        resourceId:projectResourceFiles.resourceId}).from(projectResourceFiles).where(and(
+      const [file]=await tx.select(finalFileEvidenceFields).from(projectResourceFiles).where(and(
         eq(projectResourceFiles.id,entry.fileId),eq(projectResourceFiles.projectId,scope.project.id)
       )).limit(1);
-      if(file?.status!=="READY")throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
+      if(!projectFinalFileEvidenceIsVerified(file))throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
       if(file.resourceId){
         const [resource]=await tx.select({visibility:projectResources.visibility,status:projectResources.status})
           .from(projectResources).where(and(eq(projectResources.id,file.resourceId),
