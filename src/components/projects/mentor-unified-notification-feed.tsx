@@ -34,19 +34,47 @@ function MentorPersonalRead({id}:{id:string}){
  </div>;
 }
 type NoticeCursor={beforePinned:string;beforeCreatedAt:string;beforeId:string};
+type PersonalCursor={beforeCreatedAt:string;beforeId:string};
 type NoticePage={items:MentorUnifiedNotification[];nextCursor:NoticeCursor|null};
-export function MentorUnifiedNotificationFeed({items,announcementNextCursor,unreadOnly=false}:{
+type PersonalPage={items:MentorUnifiedNotification[];nextCursor:PersonalCursor|null};
+export function MentorUnifiedNotificationFeed({items,announcementNextCursor,personalNextCursor,
+ unreadOnly=false}:{
  items:readonly MentorUnifiedNotification[];
  announcementNextCursor:NoticeCursor|null;
+ personalNextCursor:PersonalCursor|null;
  unreadOnly?:boolean;
 }){
  const [olderNotices,setOlderNotices]=useState<MentorUnifiedNotification[]>([]);
  const [nextNotices,setNextNotices]=useState(announcementNextCursor);
+ const [olderPersonal,setOlderPersonal]=useState<MentorUnifiedNotification[]>([]);
+ const [nextPersonal,setNextPersonal]=useState(personalNextCursor);
+ const [loadingPersonal,setLoadingPersonal]=useState(false);
+ const [personalError,setPersonalError]=useState("");
  const [loadingMore,setLoadingMore]=useState(false);
  const [olderError,setOlderError]=useState("");
  const seen=new Set(items.map(item=>item.source+":"+item.id));
- const combined=[...items,...olderNotices.filter(item=>
-   !seen.has(item.source+":"+item.id)&&(!unreadOnly||item.read===false))];
+ const older=[...olderNotices,...olderPersonal].filter(item=>
+   !seen.has(item.source+":"+item.id)&&(!unreadOnly||item.read===false));
+ const combined=[...items,...older];
+ async function loadOlderPersonal(){
+  if(loadingPersonal||!nextPersonal)return;
+  setLoadingPersonal(true);setPersonalError("");
+  try{
+   const query=new URLSearchParams({view:unreadOnly?"unread":"all",
+     beforeCreatedAt:nextPersonal.beforeCreatedAt,beforeId:nextPersonal.beforeId});
+   const page=await apiFetch<PersonalPage>(
+     "/api/mentor/notifications/personal?"+query.toString(),
+     {cache:"no-store",credentials:"same-origin",timeoutMs:15000});
+   setOlderPersonal(previous=>{
+     const known=new Set(previous.map(row=>row.id));
+     return [...previous,...page.items.filter(
+      item=>item.source==="PERSONAL"&&!known.has(item.id))];
+   });
+   setNextPersonal(page.nextCursor);
+  }catch(caught){setPersonalError(caught instanceof Error?caught.message:
+     "Could not load older personal messages.");}
+  finally{setLoadingPersonal(false);}
+ }
  const groups=mentorUnifiedNotificationGroups(combined);
  async function loadOlderNotices(){
   if(loadingMore||!nextNotices)return;
@@ -144,6 +172,14 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,unre
   </div>):<p role="status" className="border-y border-border py-6">
     No notifications match this selection in the loaded sources.
   </p>}
+  {nextPersonal?<div className="flex flex-col items-start gap-2">
+    <Button type="button" variant="secondary" size="sm"
+      loading={loadingPersonal} disabled={loadingPersonal}
+      onClick={()=>void loadOlderPersonal()}>
+      {loadingPersonal?"Loading older personal messages…":"Load older personal messages"}
+    </Button>
+    {personalError?<p role="alert" className="text-xs text-error">{personalError}</p>:null}
+   </div>:null}
   {nextNotices?<div className="flex flex-col items-start gap-2">
     <Button type="button" variant="secondary" size="sm"
       loading={loadingMore} disabled={loadingMore}
@@ -153,8 +189,8 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,unre
     {olderError?<p role="alert" className="text-xs text-error">{olderError}</p>:null}
    </div>:null}
   <p className="text-xs text-muted-foreground">
-    Older personal messages and college announcements may require additional
-    pages. Read state is attached to your signed-in user, not this browser.
+    Older personal messages and college announcements can be loaded into the
+    merged feed above. Read state is attached to your signed-in user, not this browser.
   </p>
  </section>;
 }
