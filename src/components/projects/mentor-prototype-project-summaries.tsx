@@ -7,6 +7,8 @@ import {estimateMentorFinishWindow} from "@/modules/projects/mentor-estimated-fi
 import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
+import {MentorReleaseEditor} from "./mentor-release-editor";
+import {MentorSprintCreate} from "./mentor-sprint-write";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
 import {MentorSprintCreate} from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
@@ -79,6 +81,19 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
         href:base+"?tab=board&scope=all&task="+encodeURIComponent(task.id),
       })),
     ]}/>
+    {!readOnly&&workspace.project.status==="ACTIVE"?
+      <section aria-label="Plan a release or sprint" className="flex flex-wrap gap-4 border-b border-border pb-3">
+        <div className="min-w-44">
+          <MentorReleaseEditor projectId={workspace.project.id}
+            existingReleaseCount={workspace.releases.length}/>
+        </div>
+        {workspace.releases.some(release=>release.status!=="SHIPPED")?
+          <MentorSprintCreate projectId={workspace.project.id}
+            releaseId={workspace.releases.find(release=>release.status!=="SHIPPED")!.id}
+            releases={workspace.releases.map(release=>({
+              id:release.id,title:release.title,status:release.status,
+            }))}/>:<p>Create an unshipped release before planning its sprint.</p>}
+      </section>:null}
     <section className="prototype-mentor-kpi-card" aria-label="Sprint and release totals">
       <div><span>Sprints</span><strong>{sprints.length}</strong></div>
       <div><span>Signed off</span><strong>{sprints.filter(s=>s.status==="COMPLETED").length}</strong></div>
@@ -161,6 +176,22 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
               <ReleaseLifecycleActions projectId={workspace.project.id}
                 releaseId={release.id} status={release.status}
                 expectedUpdatedAt={release.updatedAt.toISOString()} />
+              {release.status!=="SHIPPED"?<>
+                <MentorReleaseEditor projectId={workspace.project.id}
+                  release={release} linkedSprints={group.length}
+                  hideShippingControl
+                  readiness={{
+                    readyToShip:group.length>0&&complete===group.length,
+                    completedSprintCount:complete,
+                    committedPoints:group.reduce((total,sprint)=>total+chartPoints(sprint).planned,0),
+                    completedPoints:group.reduce((total,sprint)=>total+chartPoints(sprint).done,0),
+                  }}/>
+                <MentorSprintCreate projectId={workspace.project.id}
+                  releaseId={release.id}
+                  releases={workspace.releases.map(item=>({
+                    id:item.id,title:item.title,status:item.status,
+                  }))}/>
+              </>:null}
             </div>
           ):null}
           <div className="prototype-mentor-release-sprints">
