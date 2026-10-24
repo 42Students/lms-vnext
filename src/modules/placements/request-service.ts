@@ -1083,6 +1083,8 @@ export async function actOnPlacementRequest(
         membershipId:current.application.membershipId,
         kind:request.requestType==="ROUND_RESCHEDULE"?"RESCHEDULE_DECIDED":"REQUEST_DECIDED",
         subject:(nextStatus==="APPROVED"?"Approved: ":"Rejected: ")+current.job.title,
+        requestDecisionStatus:nextStatus,
+        requestDecisionNote:nextStatus==="REJECTED"?updated.decisionNote??undefined:undefined,
       });
     }
 
