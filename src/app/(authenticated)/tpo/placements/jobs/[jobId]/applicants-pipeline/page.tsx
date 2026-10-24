@@ -131,7 +131,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
         id:row.id,label:(row.student ?? "Applicant") + " · " + row.role,
       }))}
       viewCount={data.totalMatching}
-      {...(data.allFiltered !== undefined ? { allRows: data.allFiltered.map(row=>({
+      {...(data.allFiltered != null ? { allRows: data.allFiltered.map(row=>({
         id:row.id,label:(row.student??"Applicant")+" · "+row.role,
       })) } : {})}
     /> : null}
