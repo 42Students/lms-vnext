@@ -18,6 +18,7 @@ import {MentorMeetingCancelInline} from "./mentor-meeting-cancel-inline";
 import {MentorMeetingOutcomeQuickEdit} from "./mentor-meeting-outcome-quick-edit";
 import {MentorMeetingFacilitationQuickEdit} from "./mentor-meeting-facilitation-quick-edit";
 import {MentorGoogleMeetingProviderStatus} from "./mentor-google-meeting-provider-status";
+import {MentorGoogleMeetingSyncControls} from "./mentor-google-meeting-sync-controls";
 import styles from "./mentor-meetings-calendar.module.css";
 
 const PAST_PREVIEW = 20;
@@ -123,6 +124,9 @@ function MeetingRow({
           Download an .ics file if you want a local calendar copy.</p>}
         {meeting.calendarSyncError?<p role="status">
           Recorded calendar error: {meeting.calendarSyncError}</p>:null}
+        {(meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")?
+          <MentorGoogleMeetingSyncControls projectId={meeting.projectId}
+            meetingId={meeting.id} canEdit={editable&&Date.parse(meeting.startsAt)>now.getTime()}/>:null}
       </div>
       {meeting.agenda?.trim()?<section className="prototype-mentor-meeting-section">
         <h3>Agenda</h3><p>{meeting.agenda}</p>
