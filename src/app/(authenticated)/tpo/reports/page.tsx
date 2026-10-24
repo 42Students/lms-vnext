@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {legacyTpoReportCard,TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} from "@/modules/placements/tpo-legacy-report-copy";
+import {tpoPrototypeReportRoute} from "@/modules/placements/tpo-report-prototype-routes";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
@@ -185,7 +186,7 @@ export default async function TpoReportsPage({
    ["/tpo/reports/recruiter-leads","/tpo/reports/outcomes","/tpo/reports/accreditation"],
   ] as const;
   const indexedCards=groups.flatMap(group=>group.cards);
-  const legacyPaths=new Set<string>(legacyReportOrder.flat());
+  const legacyPaths=new Set<string>(legacyReportOrder.flat().map(tpoPrototypeReportRoute));
   const retryParams=new URLSearchParams();
   for(const key of ["seasonId","jobId","q","group"] as const){
    const value=first(query[key]);
@@ -199,10 +200,9 @@ export default async function TpoReportsPage({
     ...(legacyReportOrder[index] ?? []).flatMap(path=>indexedCards.filter(card=>card.path===path)),
     ...group.cards.filter(card=>!legacyPaths.has(card.path)),
    ].map(card=>{
-    const legacyAlias=card.path==="/tpo/reports/recruiter-leads"?"/tpo/reports/leads":
-     card.path==="/tpo/reports/outcomes"?"/tpo/reports/after-college":card.path;
-    const withCopy=legacyTpoReportCard({...card,path:legacyAlias});
-    return {...card,title:withCopy.title,description:withCopy.description};
+    const actualPath=tpoPrototypeReportRoute(card.path);
+    const withCopy=legacyTpoReportCard({...card,path:actualPath});
+    return {...card,path:actualPath,title:withCopy.title,description:withCopy.description};
    }),
   }));
   // Preserve legacy order while displaying explicit additional report types afterward.
