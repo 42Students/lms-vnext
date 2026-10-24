@@ -6,7 +6,7 @@ export type MentorPrivatePreviewKind="PDF"|"IMAGE"|null;
 export function mentorPrivatePreviewKind(contentType:string):MentorPrivatePreviewKind{
  const type=contentType.split(";")[0]?.trim().toLowerCase()??"";
  if(type==="application/pdf")return "PDF";
- if(["image/png","image/jpeg","image/webp","image/gif"].includes(type))return "IMAGE";
+ if(["image/png","image/jpeg","image/webp"].includes(type))return "IMAGE";
  return null;
 }
 export function mentorPrivatePreviewGrantValid(
