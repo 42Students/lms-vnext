@@ -1903,3 +1903,51 @@
   margin:10px 0;padding:10px 12px;border-radius:8px;
   background:#eff8fa;color:#086670;font-size:12px;
 }
+
+
+/* Mentor #48: explicit sprint sign-off and truthful unfinished-task carry-over. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff{
+  display:flex;flex-direction:column;gap:14px;min-width:0;
+  color:#3b4a60;font-size:13px;line-height:1.5;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff p{
+  margin:0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff>div>h3{
+  margin:0 0 8px;color:#5b6b82;font-size:11px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff :where(ul){
+  display:flex;flex-direction:column;gap:0;list-style:none;margin:8px 0 0;padding:0;
+  border:1px solid #e7ecf2;border-radius:8px;overflow:hidden;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff li{
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;
+  gap:8px;padding:8px 12px;border-bottom:1px solid #f1f4f8;
+  font-size:12px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff li:last-child{border-bottom:0}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff li>span{
+  color:#0a7c88;font-size:11px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff-waiting{
+  display:flex;flex-direction:column;gap:8px;border:1px solid #f4d9a8;
+  border-radius:8px;padding:12px;background:#fffbf2;color:#9a3412;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff-waiting>a{
+  align-self:flex-start;color:#9a3412;text-decoration:underline;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff>label{
+  display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:700;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff>label>textarea{
+  min-height:68px;font-weight:400;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff>label.prototype-mentor-signoff-next{
+  display:flex;flex-direction:row;gap:8px;align-items:center;
+  font-size:13px;font-weight:400;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-signoff-actions{
+  display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;
+  padding-top:12px;border-top:1px solid #e7ecf2;
+}
