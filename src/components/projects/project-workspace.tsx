@@ -858,7 +858,8 @@ export function ProjectWorkspace({
       ) : null}
 
       {show("overview") ? (
-        <section className="border-b border-[var(--lms-canvas-border)] pb-5">
+        <section id={mode==="MENTOR"?"mentor-project-brief-editor":undefined}
+          className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</h2>
             {mentorReviewHref ? <Link href={mentorReviewHref}
