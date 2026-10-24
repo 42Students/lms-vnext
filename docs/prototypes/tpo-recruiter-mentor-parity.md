@@ -21,7 +21,7 @@
 ## Screen ledger
 | # | Portal | Prototype title | State |
 |---:|---|---|---|
-| 01 | TPO | Companies › Today | NOT STARTED |
+| 01 | TPO | Companies › Today | PARTIAL CODE — CRM queue, scope, Done/Next, Tomorrow, recruiter-message preview; campaign email replies not connected; UNVERIFIED |
 | 02 | TPO | Companies › Recruiters | NOT STARTED |
 | 03 | TPO | Companies › Companies | NOT STARTED |
 | 04 | TPO | Companies › Emails (a sent email open) | NOT STARTED |
@@ -44,14 +44,14 @@
 | 21 | TPO | Home | NOT STARTED |
 | 22 | TPO | Calendar | NOT STARTED |
 | 23 | TPO | Team › Chat | NOT STARTED |
-| 24 | TPO | Team › People | NOT STARTED |
+| 24 | TPO | Team › People | PARTIAL CODE — selected roster/detail and existing real handover/away actions; historical activity and full owned-company counts unavailable; UNVERIFIED |
 | 25 | TPO | Reports | NOT STARTED |
 | 26 | TPO | Reports › One report | NOT STARTED |
 | 27 | TPO | Settings | NOT STARTED |
 | 28 | TPO | Settings › Audit log | NOT STARTED |
 | 29 | TPO | Everywhere: search, bell, notifications, profile | NOT STARTED |
 | 30 | TPO | Companies › One recruiter (full page) | NOT STARTED |
-| 31 | Recruiter | Recruiter › Today | NOT STARTED |
+| 31 | Recruiter | Recruiter › Today | PARTIAL CODE — prioritized queue, Later, company-scoped cards; UNVERIFIED |
 | 32 | Recruiter | Recruiter › Drives | NOT STARTED |
 | 33 | Recruiter | Recruiter › Request a drive (and hire again, edit) | NOT STARTED |
 | 34 | Recruiter | Recruiter › Drive overview | NOT STARTED |
@@ -61,8 +61,8 @@
 | 38 | Recruiter | Recruiter › Drive › Talk (asks, change requests) | NOT STARTED |
 | 39 | Recruiter | Recruiter › Calendar | NOT STARTED |
 | 40 | Recruiter | Recruiter › Messages | NOT STARTED |
-| 41 | Recruiter | Recruiter › Company & Team | NOT STARTED |
-| 42 | Recruiter | Recruiter › Bell, search, your details, college picker | NOT STARTED |
+| 41 | Recruiter | Recruiter › Company & Team | PARTIAL CODE — unified company, team and reported hiring; round-cleared fact unavailable; UNVERIFIED |
+| 42 | Recruiter | Recruiter › Bell, search, your details, college picker | PARTIAL CODE — authorized Ctrl+K live drive search and college chooser; shared-applicant search and full visual states open; UNVERIFIED |
 | 43 | Recruiter/Public | Public › Invitation, public link, sign in | NOT STARTED |
 | 44 | Recruiter/Public | Public › Shared applicant list (no account) | NOT STARTED |
 | 45 | Mentor | Mentor › Projects (home: what needs you, your teams) | IN PROGRESS — real student watch, attention queue, six-column teams and last-event timestamps |
@@ -171,3 +171,48 @@ Compare **#01 TPO Companies › Today**, **#31 Recruiter › Today**, and **#45 
 - **#52** Activity adds a recorded-sprint filter, composable with existing actor/date/type filters. Records without sprint provenance do not appear under a chosen sprint.
 - New pure TS model checks for snapshot, week selection and velocity passed isolated local compiler/Node assertions. Full app TS, lint, unit, database, CI and browser tests are **not confirmed**.
 - The nonvisual backlog remains documented in `docs/audit/mentor-functional-prototype-gap-analysis-2026-10-24.md`. **Mentor 0/12 VERIFIED, 0/12 CLOSED, 0/56 total closed.** No published progress percentage is derived from the remaining checklist count.
+
+## TPO and Recruiter source implementation checkpoint — 24 October 2026
+
+**Status convention:** PARTIAL CODE means the named implementation has been committed
+but the entire prototype screen/workflow is *not* code-closed, independently tested,
+or visually verified. **0/44 TPO/Recruiter/Public screens are accepted CLOSED or
+VERIFIED by this checkpoint.** Old "NOT STARTED" rows elsewhere in this ledger are
+not proof that no existing page code exists; they simply lack this specific
+prototype-to-implementation gate.
+
+- **Shared TPO shell:** eight top-level sections from the prototype, with section
+  tabs preserving existing TPO service workflows. Reference commits:
+  `b75208bc`, `6ff8d938`; actual selected tab states remain browser-unverified.
+- **#01 Companies › Today:** recorded recruiter messages, college-scoped
+  follow-up queue, My Work/Everyone, IST day strip, four call outcomes,
+  confirmed Tomorrow, and atomic Done-plus-new-follow-up with audited actor.
+  Commits `661815a6`, `b02b8d3f`, `33000ef0`, `d66585ef`.
+  **Open:** original email *campaign* reply records and reply-send/mark-handled
+  lifecycle; no campaign reply is inferred from internal recruiter conversations.
+  DB09, concurrency, tenant-negative persistence, keyboard and browser acceptance.
+- **#24 Team › People:** selection and split details using recorded roles,
+  overdue asks, Drive Day duties and away intervals; audited management
+  controls retained below. Commits `a2ea2e1c`, `548db059`.
+  **Open:** trustworthy per-member company/drive ownership, last-active ledger,
+  member-message deep link, full prototype action/transition acceptance.
+- **#31 Recruiter Today:** consolidated priority queue and browser-scoped
+  Later, plus legacy live-drive tile using authorized shared-applicant
+  counts; commits `ce155056`, `803bbc02`.
+- **#41 Recruiter Company & Team:** company, college team, and hiring report
+  share one screen; authorized detailed tabs and CSV are preserved. Commits
+  `ad6cc727`, `972db143`. Cleared-round counts are unavailable in the
+  registered reporting source and deliberately never substituted.
+- **#42 Recruiter Everywhere:** Ctrl+K now uses exact active employer/college
+  scoped drive lookup with a multi-grant college chooser and forged college
+  pre-query refusal. Commits `b83d11c2`, `51a03bbf`, `81c8d830`.
+  **Open:** complete shared-applicant search, bell/profile/picker acceptance,
+  DB and browser negative cases.
+- **Companies › Emails:** campaign history/composer navigation active state
+  now follows actual /tpo/recruiters/campaigns routes; `bf555978`,
+  `3d9bd342`. This does **not** demonstrate outbound delivery or inbound
+  reply parity.
+
+No claim is made that CI, TypeScript strictness, the browser, PostgreSQL fixtures,
+or screenshots pass on current `main`: numerous GitHub CI runs were cancelled
+by overlapping concurrent commits. This is a nonvisual code checkpoint only.
