@@ -79,13 +79,22 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
       {active.href&&kind==="VIDEO"?<video key={active.href}
         src={active.href} controls preload="metadata"
         className="max-h-[28rem] w-full" />:
-       active.href&&(kind==="IMAGE"||kind==="DOCUMENT")?<iframe
+       active.href&&(kind==="IMAGE"||kind==="DOCUMENT"||kind==="TEXT")?<iframe
          key={pdfSrc??active.href} src={pdfSrc??active.href}
          title={"Preview of "+active.name}
          sandbox="" loading="lazy" referrerPolicy="no-referrer"
          className="h-[26rem] w-full border border-border" />:
        <p>Inline preview is not available for this evidence type.
          Use the original link to open it with its provider.</p>}
+      {kind==="TEXT"?<p className="text-xs text-muted-foreground">
+        Sandboxed text/code preview is read-only. It depends on the original provider
+        allowing embedded viewing; use the original link if the preview is blank.
+      </p>:null}
+      {active.href&&/\.(xlsx?|ods)(?:[?#]|$)/i.test(active.href)?<p
+        className="text-xs text-muted-foreground">
+        Spreadsheet contents are not parsed in this view. Open the source file
+        with its authorized provider; no trial totals are inferred.
+      </p>:null}
       {active.href?<a href={active.href} target="_blank"
         rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-link underline">
         Open evidence in a new tab ↗
