@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,gt,inArray,isNull,ne,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,ne,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,projectInstances,projectMembers,projectTasks,projectSprints,projectReleases,users} from "@/db/schema";
@@ -11,6 +11,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyProjectMemberships} from "./project-notification-service";
 import {planMentorNextSprintAssignments} from "./mentor-next-sprint-assignment-model";
+import {nextMentorAllocatableSprint} from "./mentor-next-allocatable-sprint-model";
 export async function autoAssignProjectTasks(context:RequestContext,projectId:string){
  const scope=await requireProjectLifecycleMutationAccess(context,projectId);
  return getDb().transaction(async tx=>{
@@ -114,21 +115,24 @@ export async function autoAssignMentorNextSprint(
   if(!target||target.status!=="PLANNED"||
     target.updatedAt.getTime()!==Date.parse(input.expectedSprintUpdatedAt))
     throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
-  const [active]=await tx.select({sequence:projectSprints.sequence})
-    .from(projectSprints).where(and(
-      eq(projectSprints.projectId,scope.project.id),
-      eq(projectSprints.status,"ACTIVE"),isNull(projectSprints.deletedAt),
-    )).limit(1);
-  if(active&&target.sequence<=active.sequence)
-    throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
-  const [nextPlanned]=await tx.select({id:projectSprints.id})
-    .from(projectSprints).where(and(
-      eq(projectSprints.projectId,scope.project.id),
-      eq(projectSprints.status,"PLANNED"),
-      isNull(projectSprints.deletedAt),
-      active?gt(projectSprints.sequence,active.sequence):undefined,
-    )).orderBy(asc(projectSprints.sequence),asc(projectSprints.id)).limit(1);
-  if(!nextPlanned||nextPlanned.id!==target.id)
+  // Sprint.sequence is release-local. Recompute the earliest future PLANNED
+  // target from persisted project-scoped release order inside this transaction,
+  // not from a numeric comparison against the currently active sprint.
+  const candidateSprints=await tx.select({
+    id:projectSprints.id,releaseId:projectSprints.releaseId,
+    sequence:projectSprints.sequence,status:projectSprints.status,
+  }).from(projectSprints).where(and(
+    eq(projectSprints.projectId,scope.project.id),
+    isNull(projectSprints.deletedAt),
+  ));
+  const candidateReleases=await tx.select({
+    id:projectReleases.id,sequence:projectReleases.sequence,
+    status:projectReleases.status,
+  }).from(projectReleases).where(and(
+    eq(projectReleases.projectId,scope.project.id),
+    isNull(projectReleases.deletedAt),
+  ));
+  if(nextMentorAllocatableSprint(candidateSprints,candidateReleases)?.id!==target.id)
     throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   const [release]=await tx.select({status:projectReleases.status})
     .from(projectReleases).where(and(
