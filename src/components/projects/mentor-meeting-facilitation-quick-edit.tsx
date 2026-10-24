@@ -7,6 +7,9 @@ import {projectMutation} from "./project-api";
 import {mentorMeetingFacilitationSchema,
  type MentorMeetingFacilitation} from
  "@/modules/projects/mentor-meeting-facilitation-model";
+import {addMentorMeetingAction,editMentorMeetingAction,
+ removeMentorMeetingAction,MENTOR_MEETING_MAX_ACTION_ITEMS} from
+ "@/modules/projects/mentor-meeting-facilitation-editor-model";
 
 type Fields=Partial<MentorMeetingFacilitation>;
 
@@ -32,11 +35,16 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
   value:string)=>setFacilitation(old=>({...old,[key]:value}));
  async function save(){
   if(busy||!dirty)return;
+  const checked=mentorMeetingFacilitationSchema.safeParse(facilitation);
+  if(!checked.success){
+    setError("Each action item needs text (up to 500 characters). Review the recorded meeting fields before saving.");
+    return;
+  }
   setBusy(true);setError("");
   try{
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
      "/meetings/"+encodeURIComponent(meetingId)+"/facilitation","PATCH",{
-     facilitation,expectedUpdatedAt:updatedAt,confirmed:true,
+     facilitation:checked.data,expectedUpdatedAt:updatedAt,confirmed:true,
    });
    setEditing(false);router.refresh();
   }catch(caught){
@@ -75,30 +83,61 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
     </label>)}
    </fieldset>:<p>No attendee list was recorded. Add attendees in the
      full project meeting editor before marking attendance.</p>}
-   {facilitation.actionItemRows.length>0?<fieldset className="space-y-2">
-     <legend className="font-semibold">Action items</legend>
+   <fieldset className="space-y-3">
+     <legend className="font-semibold">Action items · {facilitation.actionItemRows.length}</legend>
+     {!facilitation.actionItemRows.length?
+       <p className="text-sm text-muted-foreground">No action items recorded. Add one below.</p>:null}
      {facilitation.actionItemRows.map((item,index)=><div key={index}
-       className="flex flex-wrap items-center gap-2">
-       <label className="flex items-center gap-2">
-        <input type="checkbox" checked={item.complete} disabled={busy}
-         aria-label={"Completed: "+item.text}
-         onChange={event=>setFacilitation(old=>({...old,
-          actionItemRows:old.actionItemRows.map((entry,i)=>i===index?
-            {...entry,complete:event.target.checked}:entry),
-         }))}/>
-        <span>{item.text}</span>
+       className="grid gap-2 rounded border border-border p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto]">
+       <label className="grid gap-1 text-sm font-semibold">
+         Action {index+1}
+         <input type="text" required maxLength={500} disabled={busy}
+           className="min-h-11 min-w-0 rounded border border-border p-2"
+           value={item.text} placeholder="Action to complete"
+           onChange={event=>setFacilitation(old=>({...old,
+             actionItemRows:editMentorMeetingAction(old.actionItemRows,index,{
+               text:event.target.value,
+             }),
+           }))}/>
        </label>
-       <label className="text-sm">Owner
-        <input type="text" maxLength={160} disabled={busy}
-         className="ml-2 rounded border border-border p-2"
-         value={item.owner??""}
-         onChange={event=>setFacilitation(old=>({...old,
-          actionItemRows:old.actionItemRows.map((entry,i)=>i===index?
-            {...entry,owner:event.target.value||null}:entry),
-         }))}/>
+       <label className="grid gap-1 text-sm font-semibold">
+         Owner (recorded text)
+         <input type="text" maxLength={160} disabled={busy}
+           className="min-h-11 min-w-0 rounded border border-border p-2"
+           value={item.owner??""}
+           onChange={event=>setFacilitation(old=>({...old,
+             actionItemRows:editMentorMeetingAction(old.actionItemRows,index,{
+               owner:event.target.value||null,
+             }),
+           }))}/>
        </label>
+       <div className="flex flex-wrap items-end gap-2">
+         <label className="flex min-h-11 items-center gap-2 text-sm">
+           <input type="checkbox" checked={item.complete} disabled={busy}
+             aria-label={"Complete action "+(index+1)}
+             onChange={event=>setFacilitation(old=>({...old,
+               actionItemRows:editMentorMeetingAction(old.actionItemRows,index,{
+                 complete:event.target.checked,
+               }),
+             }))}/>
+           Done
+         </label>
+         <Button type="button" size="sm" variant="secondary" disabled={busy}
+           aria-label={"Remove action "+(index+1)}
+           onClick={()=>setFacilitation(old=>({...old,
+             actionItemRows:removeMentorMeetingAction(old.actionItemRows,index),
+           }))}>Remove</Button>
+       </div>
      </div>)}
-   </fieldset>:null}
+     <Button type="button" size="sm" variant="secondary"
+       disabled={busy||facilitation.actionItemRows.length>=MENTOR_MEETING_MAX_ACTION_ITEMS}
+       onClick={()=>setFacilitation(old=>({...old,
+         actionItemRows:addMentorMeetingAction(old.actionItemRows),
+       }))}>Add action item</Button>
+     {facilitation.actionItemRows.length>=MENTOR_MEETING_MAX_ACTION_ITEMS?
+       <p role="status" className="text-xs text-muted-foreground">
+         Maximum {MENTOR_MEETING_MAX_ACTION_ITEMS} action items reached.</p>:null}
+   </fieldset>
    <label className="block text-sm font-semibold">
      Follow-up state
      <select value={facilitation.followUpStatus} disabled={busy}

@@ -73,7 +73,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 49-04 | CODE_READY | mentor-meetings-calendar.tsx; mentor-meeting-list-filter-model.ts (all/review/retro/planning/standup/other quick filters; coming, requested, past, notes missing; bounded earlier history expansion) |
 | 49-05 | CODE_READY | mentor-calendar-service.ts; mentor-meetings-calendar.tsx; mentor-meeting-request-actions.tsx (persisted requester/task/suggested slot; Yes/Another time/No with exact version-checked project APIs) |
 | 49-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 49-07 | CODE_READY | mentor-meeting-facilitation-quick-edit.tsx; mentor-meeting-notes-service.ts; mentor-meetings-calendar.tsx |
+| 49-07 | CODE_READY | mentor-meeting-facilitation-quick-edit.tsx now edits, adds and removes up to 100 action rows with inline text/owner/completion alongside attendance, retrospective and follow-up; mentor-meeting-facilitation-editor-model.ts prevents forging attendee identities, follow-up timestamp or linked retro tasks through the completed-notes endpoint. Both rely on existing persisted CAS/audit service; full PG/browser acceptance remains pending. |
 | 49-08 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 49-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 49-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
@@ -120,7 +120,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 54-02 | CODE_READY | mentor-calendar-filter-model.ts; mentor/calendar/page.tsx |
 | 54-03 | CODE_READY | mentor-meeting-request-actions.tsx implements inline Yes / Another time / No using same-origin audited PATCH and mentor-decision routes, future IST time validation, actual join URL and CAS; mentor-meeting-form-model.ts records true alternative-window semantics. Integration/browser acceptance pending. |
 | 54-04 | CODE_READY | mentor-meetings-calendar.tsx exposes an upcoming safe Join link plus inline Move via MentorMeetingReschedule and Cancel via mentor-meeting-cancel-inline.tsx, both reusing authorized stale-token/overlap/audit/notification transactions. Live acceptance pending. |
-| 54-05 | CODE_READY | mentor-meeting-facilitation-quick-edit.tsx; mentor-meeting-facilitation-model.ts; mentor-meetings-calendar.tsx |
+| 54-05 | CODE_READY | mentor-meeting-facilitation-quick-edit.tsx now provides full inline action row add/edit/remove/complete, owner text, saved attendance, retrospective and follow-up controls; mentor-meeting-notes-service.ts guards recorded attendee identities and retro-linked tasks even under forged payloads. Strict schema checks run before PATCH and CAS/role/project guards remain server-owned. PG and browser verification pending. |
 | 54-06 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 54-07 | CODE_READY | mentor-calendar-quick-schedule.tsx; mentor-calendar-service.ts |
 | 54-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |

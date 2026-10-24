@@ -15,6 +15,7 @@ import {mentorMeetingNotesParamsSchema,mentorMeetingNotesWriteSchema,meetingNote
   from "./mentor-meeting-notes-model";
 import {mentorMeetingFacilitationSchema,mentorMeetingFacilitationWriteSchema}
   from "./mentor-meeting-facilitation-model";
+import {preservesMentorMeetingFacilitationReferences} from "./mentor-meeting-facilitation-editor-model";
 
 async function getMentorMeetingNotesScope(context:RequestContext,projectId:string){
   const membership=context.membership;
@@ -114,6 +115,11 @@ export async function updateMentorMeetingFacilitation(
   if(!project||!meetingNotesEditable(project.status,meeting.status))
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   const current=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
+  // Only status flags, notes and the inline action-item list are editable
+  // here. Invitation identity and linked retrospective tasks are immutable
+  // through this route even if a client forges a wider JSON payload.
+  if(!preservesMentorMeetingFacilitationReferences(current,input.facilitation))
+    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   if(JSON.stringify(current)===JSON.stringify(input.facilitation))
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   const now=new Date(Math.max(Date.now(),meeting.updatedAt.getTime()+1));
