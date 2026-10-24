@@ -80,13 +80,13 @@ export function MentorPrototypeHome({
     return ()=>window.cancelAnimationFrame(frame);
   },[scope]);
   const active=hydrated
-    ? attention.filter(item=>!snoozed.includes(item.key+"@"+item.occurredAt))
+    ? attention.filter(item=>!snoozed.includes(item.key+"@"+(item.revision??item.occurredAt)))
     : attention;
   const focus=active.slice(0,5);
   const meetings=selectMentorHomeWeekMeetings(weekMeetings,new Date(nowIso));
 
   const later=(item:FocusItem)=>{
-    const eventKey=item.key+"@"+item.occurredAt;
+    const eventKey=item.key+"@"+(item.revision??item.occurredAt);
     const next=[...new Set([...snoozed,eventKey])].slice(-MAX_SNOOZED);
     setSnoozed(next);
     try{localStorage.setItem(storageKey(scope),JSON.stringify(next));}catch{/* session still hides the item */}
