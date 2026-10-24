@@ -1,9 +1,11 @@
+import {orderMentorSprints,type MentorOrderedRelease} from "./mentor-sprint-order-model";
+
 /**
  * Read-only historical planning and carry guidance for the Mentor overview.
  * All completed-sprint earned points come from immutable sign-off events.
  * Original planned points are only labelled "committed" when a start snapshot exists.
  */
-export type MentorPlanSprint={id:string;sequence:number;status:string;
+export type MentorPlanSprint={id:string;sequence:number;status:string;releaseId?:string;
   startDate?:string|null;endDate?:string|null;completedAt?:Date|string|null};
 export type MentorPlanSnapshot={sprintId:string;plannedPoints:number;
   donePoints:number;taskCount:number;memberRows:readonly {
@@ -30,6 +32,7 @@ const nonnegative=(value:number|null|undefined)=>
 
 export function deriveMentorPlanFacts(input:{
   sprints:readonly MentorPlanSprint[];
+  releases?:readonly MentorOrderedRelease[];
   signOffs:readonly MentorPlanSnapshot[];
   starts:readonly MentorPlanSnapshot[];
   tasks:readonly MentorFutureTask[];
@@ -56,9 +59,16 @@ export function deriveMentorPlanFacts(input:{
    activeTasks.reduce((n,t)=>n+nonnegative(t.estimatePoints),0);
  const activeDone=activeTasks.filter(t=>t.status==="DONE")
    .reduce((n,t)=>n+nonnegative(t.estimatePoints),0);
- const future=[...input.sprints].filter(s=>s.status==="PLANNED"&&
-   (!active||s.sequence>active.sequence))
-   .sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id)).slice(0,2);
+ // Sprint sequence restarts for each release. Use the persisted release order
+ // when available, including for the "next two" plan after the active sprint.
+ const releaseScoped=input.sprints.filter(
+   (s):s is MentorPlanSprint&{releaseId:string}=>typeof s.releaseId==="string");
+ const ordered=input.releases&&releaseScoped.length===input.sprints.length
+   ?orderMentorSprints(releaseScoped,input.releases)
+   :[...input.sprints].sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id));
+ const activePosition=active?ordered.findIndex(s=>s.id===active.id):-1;
+ const future=ordered.filter((s,index)=>s.status==="PLANNED"&&
+   (activePosition<0||index>activePosition)).slice(0,2);
  const nextTwo=future.map(s=>{
   const work=input.tasks.filter(t=>!t.deletedAt&&t.sprintId===s.id);
   return {sprintId:s.id,sequence:s.sequence,
