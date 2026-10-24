@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,gt,isNull,sql} from "drizzle-orm";
+import {and,asc,eq,gt,inArray,isNull,ne,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,projectInstances,projectMembers,projectTasks,projectSprints,projectReleases,users} from "@/db/schema";
@@ -32,13 +32,28 @@ export async function autoAssignProjectTasks(context:RequestContext,projectId:st
   const tasks=await tx.select().from(projectTasks)
    .where(and(eq(projectTasks.projectId,scope.project.id),isNull(projectTasks.deletedAt)))
    .for("update");
+  const permittedSprints=await tx.select({id:projectSprints.id})
+    .from(projectSprints).innerJoin(projectReleases,and(
+      eq(projectReleases.id,projectSprints.releaseId),
+      eq(projectReleases.projectId,scope.project.id),
+      isNull(projectReleases.deletedAt),
+    )).where(and(
+      eq(projectSprints.projectId,scope.project.id),
+      isNull(projectSprints.deletedAt),
+      inArray(projectSprints.status,["ACTIVE","PLANNED"]),
+      ne(projectReleases.status,"SHIPPED"),
+    ));
+  const permittedIds=new Set(permittedSprints.map(row=>row.id));
   const count=new Map(members.map(row=>[row.membershipId,0]));
   for(const task of tasks){
-   if(task.assigneeMembershipId&&count.has(task.assigneeMembershipId)&&task.status!=="DONE")
+   if((task.sprintId===null||permittedIds.has(task.sprintId))&&
+      task.assigneeMembershipId&&count.has(task.assigneeMembershipId)&&
+      task.status!=="DONE")
     count.set(task.assigneeMembershipId,count.get(task.assigneeMembershipId)!+1);
   }
   let assigned=0;
   const open=tasks.filter(task=>!task.assigneeMembershipId&&
+    (task.sprintId===null||permittedIds.has(task.sprintId))&&
     ["TODO","IN_PROGRESS","BLOCKED"].includes(task.status))
     .sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id));
   for(const task of open){
@@ -140,8 +155,20 @@ export async function autoAssignMentorNextSprint(
   const tasks=await tx.select().from(projectTasks)
     .where(and(eq(projectTasks.projectId,scope.project.id),
       isNull(projectTasks.deletedAt))).for("update");
+  const permittedSprints=await tx.select({id:projectSprints.id})
+    .from(projectSprints).innerJoin(projectReleases,and(
+      eq(projectReleases.id,projectSprints.releaseId),
+      eq(projectReleases.projectId,scope.project.id),
+      isNull(projectReleases.deletedAt),
+    )).where(and(
+      eq(projectSprints.projectId,scope.project.id),
+      isNull(projectSprints.deletedAt),
+      inArray(projectSprints.status,["ACTIVE","PLANNED"]),
+      ne(projectReleases.status,"SHIPPED"),
+    ));
+  const permittedIds=new Set(permittedSprints.map(row=>row.id));
   const plan=planMentorNextSprintAssignments(
-    tasks,members.map(row=>row.membershipId),target.id);
+    tasks,members.map(row=>row.membershipId),target.id,permittedIds);
   for(const item of plan.assignments){
     const source=tasks.find(task=>task.id===item.taskId);
     if(!source||source.assigneeMembershipId!==null||
