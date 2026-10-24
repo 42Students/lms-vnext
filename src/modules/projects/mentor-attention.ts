@@ -89,7 +89,7 @@ export function deriveMentorProjectAttention(
           title:task.title+" — waiting for approval",
           description:project.projectTitle+" · Review submitted task evidence.",
           href:href+"?tab=board&task="+encodeURIComponent(task.id)+
-            "&lane=IN_REVIEW",
+            "&lane=IN_REVIEW&scope=all",
           occurredAt:task.updatedAt.toISOString(),
         });
       }else if(task.status==="BLOCKED"){
@@ -99,7 +99,7 @@ export function deriveMentorProjectAttention(
           title:task.title+" — blocked",
           description:project.projectTitle+" · Help the assigned team remove the blocker.",
           href:href+"?tab=board&task="+encodeURIComponent(task.id)+
-            "&lane=BLOCKED",
+            "&lane=BLOCKED&scope=all",
           occurredAt:task.updatedAt.toISOString(),
         });
       }
