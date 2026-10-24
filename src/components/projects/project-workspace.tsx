@@ -2421,6 +2421,7 @@ export function ProjectWorkspace({
           }))} /> : null}
           {!workspace.activityLoadError&&mode!=="ADMIN"?<ProjectActivityFilteredList
             projectId={workspace.project.id} events={workspace.activity}
+            sprints={mode==="MENTOR"?workspace.sprints:[]}
             now={new Date().toISOString()} />:null}
 
 
