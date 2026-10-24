@@ -484,6 +484,58 @@ describe("Projects P6A task submissions", () => {
     ]);
   });
 
+  it("rejects submission from a removed learner and leaves task/version untouched",async()=>{
+    const {project,sprint,task}=await createProject();
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
+    await startProjectSprint(mentor,project.id,sprint.id);
+    await pool.query(`update project_members set ended_at=now()
+      where project_id=$1 and membership_id=$2 and role='LEARNER'`,[
+      project.id,SEED_IDS.learnerCollegeAMembership,
+    ]);
+    await expect(submitProjectTask(learner,project.id,task.id,{
+      submissionUrl:"https://example.com/removed-user",
+    })).rejects.toBeDefined();
+    const [state]= (await pool.query<{status:string}>(`select status from
+      project_tasks where id=$1 and project_id=$2`,[task.id,project.id])).rows;
+    expect(state?.status).not.toBe("IN_REVIEW");
+    const [count]= (await pool.query<{count:string}>(`select count(*)::text as count
+      from project_task_submissions where task_id=$1`,[task.id])).rows;
+    expect(count?.count).toBe("0");
+  });
+
+  it("rejects review after Mentor revocation or terminal project state",async()=>{
+    const {project,sprint,task}=await createProject();
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
+    await startProjectSprint(mentor,project.id,sprint.id);
+    const submission=await submitProjectTask(learner,project.id,task.id,{
+      submissionUrl:"https://example.com/revoked-review",
+    });
+    const decision={decision:"APPROVED" as const,confirmed:true as const,
+      expectedUpdatedAt:submission.updatedAt.toISOString()};
+    await pool.query(`update project_members set ended_at=now()
+      where project_id=$1 and membership_id=$2 and role='MENTOR'`,[
+      project.id,SEED_IDS.facultyCollegeAMembership,
+    ]);
+    await expect(reviewProjectTaskSubmission(
+      mentor,project.id,task.id,submission.id,decision,
+    )).rejects.toBeDefined();
+    await pool.query(`update project_members set ended_at=null
+      where project_id=$1 and membership_id=$2 and role='MENTOR'`,[
+      project.id,SEED_IDS.facultyCollegeAMembership,
+    ]);
+    await pool.query(`update project_instances set status='COMPLETED'
+      where id=$1`,[project.id]);
+    await expect(reviewProjectTaskSubmission(
+      mentor,project.id,task.id,submission.id,decision,
+    )).rejects.toBeDefined();
+    const [unreviewed]=(await pool.query<{status:string}>(`select status
+      from project_task_submissions where id=$1`,[submission.id])).rows;
+    expect(unreviewed?.status).toBe("SUBMITTED");
+    const [taskState]=(await pool.query<{status:string}>(`select status
+      from project_tasks where id=$1`,[task.id])).rows;
+    expect(taskState?.status).toBe("IN_REVIEW");
+  });
+
   it("requires feedback for changes and enforces review shape in PostgreSQL", async () => {
     const { project, sprint, task } =
       await createProject();
