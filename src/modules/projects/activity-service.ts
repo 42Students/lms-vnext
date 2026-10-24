@@ -67,6 +67,7 @@ export async function getProjectActivityPage(
         nullif(${activityEvents.metadata} ->> 'actorType','')
       )`,
       sourceTab: sql<string|null>`nullif(${activityEvents.metadata} ->> 'sourceTab','')`,
+      sprintId:sql<string|null>`nullif(${activityEvents.metadata} ->> 'sprintId','')`,
     })
     .from(activityEvents)
     .leftJoin(
@@ -140,7 +141,7 @@ export async function listProjectActivity(
     subjectType: event.subjectType, subjectId: event.subjectId,
     subjectLabel: event.subjectLabel, summary: event.summary,
     occurredAt: event.occurredAt, actorDisplayName: event.actorDisplayName,
-    actorType:event.actorType,sourceTab:event.sourceTab,
+    actorType:event.actorType,sourceTab:event.sourceTab,sprintId:event.sprintId,
     projectSlug:event.projectSlug,title:event.title,
   }));
 }
