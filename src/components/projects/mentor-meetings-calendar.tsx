@@ -9,6 +9,7 @@ import {
 import { StatusBadge } from "@/components/ui/status-badge";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import {mentorCalendarWeekWorkload} from "@/modules/projects/mentor-calendar-week-workload-model";
+import {buildMentorMeetingIcs} from "@/modules/projects/mentor-calendar-ics-model";
 import {Button} from "@/components/ui/button";
 import {MentorMeetingRequestActions} from "./mentor-meeting-request-actions";
 import {MentorMeetingOutcomeQuickEdit} from "./mentor-meeting-outcome-quick-edit";
@@ -37,58 +38,25 @@ function meetingTimeLabel(meeting:MentorMeetingCalendarItem){
 }
 /** Export a real RFC 5545-compatible calendar invitation on explicit
  * interaction. Never export a pending/invalid meeting as a confirmed event. */
+/** Download only an explicitly requested local ICS export. This does not
+ * synchronize a cloud calendar or imply team invitations were delivered.
+ */
+function downloadIcs(meetings:readonly MentorMeetingCalendarItem[],filename:string){
+ const content=buildMentorMeetingIcs(meetings);
+ if(!content)return;
+ const url=URL.createObjectURL(new Blob([content],{
+  type:"text/calendar;charset=utf-8",
+ }));
+ const anchor=document.createElement("a");
+ anchor.href=url;anchor.download=filename;
+ document.body.appendChild(anchor);anchor.click();anchor.remove();
+ window.setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 function downloadMeetingCalendar(meeting:MentorMeetingCalendarItem){
-  if(!["SCHEDULED","RESCHEDULED"].includes(meeting.status))return;
-  const starts=new Date(meeting.startsAt),ends=new Date(meeting.endsAt);
-  if(!Number.isFinite(starts.getTime())||!Number.isFinite(ends.getTime())||
-      ends.getTime()<=starts.getTime())return;
-  const escape=(text:string)=>text.replace(/\\/g,"\\\\").replace(/\n/g,"\\n")
-    .replace(/,/g,"\\,").replace(/;/g,"\\;");
-  const utc=(value:Date)=>value.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");
-  const calendar=[
-    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//42LMS//Mentor Meeting//EN","CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH","BEGIN:VEVENT",
-    "UID:"+escape(meeting.id+"@42lms"),
-    "DTSTAMP:"+utc(new Date()),"DTSTART:"+utc(starts),"DTEND:"+utc(ends),
-    "SUMMARY:"+escape(meeting.title),"DESCRIPTION:"+escape(meeting.projectTitle),
-    "STATUS:CONFIRMED","END:VEVENT","END:VCALENDAR","",
-  ].join("\r\n");
-  const url=URL.createObjectURL(new Blob([calendar],{type:"text/calendar;charset=utf-8"}));
-  const anchor=document.createElement("a");
-  anchor.href=url;anchor.download="42lms-mentor-meeting.ics";document.body.appendChild(anchor);
-  anchor.click();anchor.remove();
-  window.setTimeout(()=>URL.revokeObjectURL(url),1000);
+ downloadIcs([meeting],"42lms-mentor-meeting.ics");
 }
 function downloadAllMentorMeetings(meetings:readonly MentorMeetingCalendarItem[]){
-  const eligible=meetings.filter(meeting=>
-    ["SCHEDULED","RESCHEDULED"].includes(meeting.status)&&
-    Number.isFinite(Date.parse(meeting.startsAt))&&
-    Number.isFinite(Date.parse(meeting.endsAt))&&
-    Date.parse(meeting.endsAt)>Date.parse(meeting.startsAt));
-  if(!eligible.length)return;
-  const escape=(value:string)=>value.replace(/\\/g,"\\\\").replace(/\n/g,"\\n")
-    .replace(/,/g,"\\,").replace(/;/g,"\\;");
-  const utc=(value:Date)=>value.toISOString().replace(/[-:]/g,"")
-    .replace(/\.\d{3}Z$/,"Z");
-  const stamp=utc(new Date());
-  const content=[
-    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//42LMS//Mentor Calendar//EN",
-    "CALSCALE:GREGORIAN","METHOD:PUBLISH",
-    ...eligible.flatMap(meeting=>[
-      "BEGIN:VEVENT","UID:"+escape(meeting.id+"@42lms"),
-      "DTSTAMP:"+stamp,"DTSTART:"+utc(new Date(meeting.startsAt)),
-      "DTEND:"+utc(new Date(meeting.endsAt)),
-      "SUMMARY:"+escape(meeting.title),
-      "DESCRIPTION:"+escape(meeting.projectTitle),
-      "STATUS:CONFIRMED","END:VEVENT",
-    ]),
-    "END:VCALENDAR","",
-  ].join("\r\n");
-  const href=URL.createObjectURL(new Blob([content],{type:"text/calendar;charset=utf-8"}));
-  const link=document.createElement("a");
-  link.href=href;link.download="42lms-mentor-meetings.ics";
-  document.body.appendChild(link);link.click();link.remove();
-  window.setTimeout(()=>URL.revokeObjectURL(href),1000);
+ downloadIcs(meetings,"42lms-mentor-meetings.ics");
 }
 function MeetingRow({
   meeting, now,
