@@ -501,6 +501,55 @@ describe("Projects P4 team and mentor membership", () => {
       .toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   });
 
+  it("lets an assigned Mentor promote, edit and remove learners without granting roster administration", async () => {
+    const project=await createProject();
+    const student=await addProjectMember(collegeAdmin,project.id,{
+      membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER",
+    });
+    const second=await addProjectMember(collegeAdmin,project.id,{
+      membershipId:outsider.membershipId,role:"LEARNER",
+    });
+    const faculty=await addProjectMember(collegeAdmin,project.id,{
+      membershipId:SEED_IDS.facultyCollegeAMembership,role:"MENTOR",isPrimary:true,
+    });
+    const promoted=await updateProjectMember(mentor,project.id,student.id,{
+      roleLabel:"Student lead",
+    });
+    expect(promoted.roleLabel).toBe("Student lead");
+    await expect(updateProjectMember(mentor,project.id,second.id,{
+      roleLabel:"Team lead",
+    })).rejects.toMatchObject({code:"PROJECT_MEMBER_CONFLICT"});
+    await expect(updateProjectMember(mentor,project.id,faculty.id,{
+      roleLabel:"Illicit new Mentor responsibility",
+    })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    await expect(updateProjectMember(mentor,project.id,student.id,{
+      canMutate:false,
+    })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    await expect(endProjectMember(mentor,project.id,faculty.id))
+      .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    await expect(updateProjectMember(learner,project.id,student.id,{
+      roleLabel:"Student lead",
+    })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    const demoted=await updateProjectMember(mentor,project.id,student.id,{
+      roleLabel:"Student",
+    });
+    expect(demoted.roleLabel).toBe("Student");
+    const lead=await updateProjectMember(mentor,project.id,second.id,{
+      roleLabel:"Team lead",
+    });
+    expect(lead.roleLabel).toBe("Team lead");
+    const removed=await endProjectMember(mentor,project.id,student.id);
+    expect(removed.endedAt).toBeInstanceOf(Date);
+    await expect(getProjectInstanceWorkspace(learner,project.id))
+      .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    const history=await pool.query<{action:string;total:string}>(`
+      select metadata->>'action' as action,count(*)::text as total from activity_events
+      where module='PROJECTS' and metadata->>'projectId'=$1
+        and event_type like 'projects.member.%'
+      group by metadata->>'action'`,[project.id]);
+    expect(history.rows.length).toBeGreaterThan(0);
+  });
+
   it("lists only eligible same-college candidates and excludes active teammates", async () => {
     const project = await createProject();
 
