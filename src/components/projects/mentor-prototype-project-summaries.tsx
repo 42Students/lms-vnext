@@ -2,6 +2,7 @@ import Link from "next/link";
 import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
+import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
@@ -73,9 +74,17 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
             <div className="prototype-mentor-sprint-action-list">
               {group.map(sprint=><div key={sprint.id}>
                 <span>Sprint {sprint.sequence} · {sprint.title}</span>
-                <SprintLifecycleActions projectId={workspace.project.id}
-                  sprintId={sprint.id} status={sprint.status}
-                  releaseStatus={release.status} />
+                {sprint.status==="ACTIVE"?
+                  <MentorSprintSignOff projectId={workspace.project.id}
+                    sprintId={sprint.id} title={"Sprint "+sprint.sequence+" · "+sprint.title}
+                    unfinished={liveTasks.filter(task=>task.sprintId===sprint.id&&task.status!=="DONE")
+                      .map(task=>({id:task.id,title:task.title,status:task.status}))}
+                    nextSprint={sprints.find(next=>next.sequence>sprint.sequence&&next.status==="PLANNED")??null}
+                  />:
+                  <SprintLifecycleActions projectId={workspace.project.id}
+                    sprintId={sprint.id} status={sprint.status}
+                    releaseStatus={release.status}/>}
+
               </div>)}
             </div>
           ):null}
