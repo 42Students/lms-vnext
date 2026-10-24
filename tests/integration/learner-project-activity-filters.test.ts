@@ -503,6 +503,14 @@ describe("Mentor unified personal and source mark-all",()=>{
     const second=await markAllMentorUnifiedNotificationsRead(mentorContext);
     expect(second.markedPersonal).toBe(0);
     expect(second.markedSources).toBe(0);
+    // Two tabs acknowledging the same inbox are serialized by the user-bound
+    // advisory lock; neither should duplicate receipts or regress read state.
+    const concurrent=await Promise.all([
+      markAllMentorUnifiedNotificationsRead(mentorContext),
+      markAllMentorUnifiedNotificationsRead(mentorContext),
+    ]);
+    expect(concurrent.every(row=>row.markedPersonal===0&&row.markedSources===0))
+      .toBe(true);
     await expect(markAllMentorUnifiedNotificationsRead(context)).rejects.toBeDefined();
 
     const newEvent=await pool.query<{id:string}>(`INSERT INTO activity_events
