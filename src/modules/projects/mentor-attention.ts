@@ -31,7 +31,19 @@ export type MentorProjectAttention = {
   description: string;
   href: string;
   occurredAt: string;
+  /** Stable version of the source task set for Later-until-changed. */
+  revision?:string;
 };
+
+function mentorTaskSetRevision(tasks:readonly {id:string;status:string;updatedAt:Date}[]){
+  const input=tasks.map(task=>task.id+":"+task.status+":"+
+    task.updatedAt.toISOString()).sort().join("|");
+  let hash=2166136261;
+  for(let i=0;i<input.length;i++){
+    hash=Math.imul(hash^input.charCodeAt(i),16777619)>>>0;
+  }
+  return tasks.length+":"+hash.toString(36);
+}
 
 export function deriveMentorProjectAttention(
   projects: readonly MentorProjectAttentionSource[],
@@ -113,6 +125,7 @@ export function deriveMentorProjectAttention(
           title:project.projectTitle+" — sprint "+active.sequence+" ready for sign-off",
           description:assigned.length+" recorded sprint tasks done; check delivery evidence.",
           href:href+"?tab=sprints",occurredAt:active.updatedAt.toISOString(),
+          revision:mentorTaskSetRevision(assigned),
         });
       }
       const next=sprints.filter(row=>row.status==="PLANNED"&&
@@ -130,6 +143,7 @@ export function deriveMentorProjectAttention(
             occurredAt:unassigned.reduce((old,task)=>
               task.updatedAt.getTime()<old.getTime()?task.updatedAt:old,
               unassigned[0]!.updatedAt).toISOString(),
+            revision:mentorTaskSetRevision(unassigned),
           });
         }
       }
