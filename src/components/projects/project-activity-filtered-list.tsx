@@ -8,6 +8,7 @@ import {useEffect,useState,useRef} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {mentorActivityCategory, mentorActivityLabel, mentorActivityRelativeTime} from "@/modules/projects/mentor-activity-display-model";
 import {projectResourceAuditAction,projectResourceAuditMatches} from "@/modules/projects/project-resource-audit-model";
+import {mentorLoadedWeekActivitySummary} from "@/modules/projects/mentor-week-activity-summary-model";
 
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
@@ -26,9 +27,10 @@ function resourceActionLabel(eventType:string):string {
 type Cursor={time:string;id:string};
 type Page={events:Event[];hasMore:boolean;nextCursor:Cursor|null};
 
-export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[]}:{
+export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false}:{
  projectId:string;events:Event[];now:string;resourceAudit?:boolean;
  sprints?:readonly {id:string;title:string;sequence:number}[];
+ mentorWeekSummary?:boolean;
 }){
  const [items,setItems]=useState<readonly Event[]>(events);
  const [hasMore,setHasMore]=useState(events.length>=100);
@@ -98,6 +100,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     &&(!fromDate||day>=fromDate)
     &&(!toDate||day<=toDate);
  });
+ const week=mentorWeekSummary?mentorLoadedWeekActivitySummary(items,new Date(now)):null;
  const resourceEvents=items.filter(item=>projectResourceAuditAction(item.eventType)!==null);
  const counts=[
   ["Changes",resourceEvents.length],
@@ -110,6 +113,16 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const paged=resourceAudit?filtered.slice((activePage-1)*PAGE_SIZE,activePage*PAGE_SIZE):filtered;
  const resetFilters=()=>{setSearch("");setResourceAction("ALL");setType("");setActor("");setSprint("");setRange("ALL");setFromDate("");setToDate("");setPage(1);};
  return <section className="space-y-3">
+  {week?<div aria-label="This week in project activity"
+    className="space-y-1 rounded-lg border border-border p-3">
+    <strong>This week · recorded in loaded activity</strong>
+    <p>{week.taskMoves} task moves · {week.comments} comments ·
+      {" "}{week.resourcesShared} shared resources · {week.count} total events</p>
+    <p className="text-xs text-muted-foreground">
+      This is a summary of loaded history, not a complete project-wide count.
+      Quietest-student comparisons need verified full history and active roster.
+    </p>
+   </div>:null}
   {resourceAudit?<div aria-label="Resource activity totals" className="grid grid-cols-2 gap-2 sm:grid-cols-4">{counts.map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">{label}</p><p className="text-xl font-semibold tabular-nums">{value}</p></div>)}</div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search {resourceAudit?"resource or actor":"activity"}
