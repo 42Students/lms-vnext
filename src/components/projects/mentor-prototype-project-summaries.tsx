@@ -92,6 +92,10 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
             releaseId={workspace.releases.find(release=>release.status!=="SHIPPED")!.id}
             releases={workspace.releases.map(release=>({
               id:release.id,title:release.title,status:release.status,
+            }))}
+            sprintPlan={workspace.sprints.map(row=>({
+              releaseId:row.releaseId,sequence:row.sequence,
+              startDate:row.startDate,endDate:row.endDate,
             }))}/>:<p>Create an unshipped release before planning its sprint.</p>}
       </section>:null}
     <section className="prototype-mentor-kpi-card" aria-label="Sprint and release totals">
@@ -182,6 +186,10 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
                   releaseId={release.id}
                   releases={workspace.releases.map(item=>({
                     id:item.id,title:item.title,status:item.status,
+                  }))}
+                  sprintPlan={workspace.sprints.map(row=>({
+                    releaseId:row.releaseId,sequence:row.sequence,
+                    startDate:row.startDate,endDate:row.endDate,
                   }))}/>
               </>:null}
             </div>
@@ -531,6 +539,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
         sprints={workspace.sprints.map(sprint=>({
           id:sprint.id,title:sprint.title,status:sprint.status,
           updatedAt:sprint.updatedAt.toISOString(),releaseId:sprint.releaseId,
+          sequence:sprint.sequence,startDate:sprint.startDate,endDate:sprint.endDate,
         }))}
         learners={students.map(student=>({
           membershipId:student.membershipId,displayName:student.displayName,
