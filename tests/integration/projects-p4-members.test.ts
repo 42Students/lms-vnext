@@ -433,6 +433,49 @@ describe("Projects P4 team and mentor membership", () => {
     });
   });
 
+  it("atomically unassigns unfinished tasks on learner removal while preserving completed owner history", async () => {
+    const project=await createProject();
+    const member=await addProjectMember(collegeAdmin,project.id,{
+      membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER",
+    });
+    const work=await pool.query<{id:string}>(`
+      update project_tasks
+      set assignee_membership_id=$1
+      where project_id=$2 and status <> 'DONE' and deleted_at is null
+      returning id
+    `,[SEED_IDS.learnerCollegeAMembership,project.id]);
+    expect(work.rowCount).toBeGreaterThan(0);
+    const oldDone=await pool.query<{id:string}>(`
+      insert into project_tasks
+        (project_id,template_key,title,status,sequence,assignee_membership_id)
+      values ($1,'history-done-before-removal','Historical completed task',
+        'DONE',99,$2)
+      returning id
+    `,[project.id,SEED_IDS.learnerCollegeAMembership]);
+    const removed=await endProjectMember(collegeAdmin,project.id,member.id);
+    expect(removed.endedAt).not.toBeNull();
+    const unassigned=await pool.query<{id:string;assignee_membership_id:string|null}>(`
+      select id,assignee_membership_id from project_tasks
+      where project_id=$1 and id=any($2::uuid[])
+    `,[project.id,work.rows.map(row=>row.id)]);
+    expect(unassigned.rows).toHaveLength(work.rows.length);
+    expect(unassigned.rows.every(task=>task.assignee_membership_id===null))
+      .toBe(true);
+    const completed=await pool.query<{assignee_membership_id:string|null}>(`
+      select assignee_membership_id from project_tasks where id=$1
+    `,[oldDone.rows[0]!.id]);
+    expect(completed.rows[0]?.assignee_membership_id)
+      .toBe(SEED_IDS.learnerCollegeAMembership);
+    const events=await pool.query<{subject_id:string}>(`
+      select subject_id from activity_events
+      where subject_id=any($1::uuid[]) and event_type='projects.task.details_updated'
+        and metadata->>'previousAssigneeMembershipId'=$2
+    `,[work.rows.map(row=>row.id),SEED_IDS.learnerCollegeAMembership]);
+    expect(events.rowCount).toBe(work.rows.length);
+    await expect(getProjectInstanceWorkspace(learner,project.id)).rejects
+      .toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  });
+
   it("lists only eligible same-college candidates and excludes active teammates", async () => {
     const project = await createProject();
 
