@@ -7,6 +7,7 @@ import {recentMentorWorkedSprintIds} from
 import {mentorMemberSprintHistory,deriveMentorPerformanceInsights} from
   "@/modules/projects/mentor-performance-insights-model";
 import {mentorPointStack} from "@/modules/projects/mentor-point-stack-model";
+import {mentorSprintPointSparkline} from "@/modules/projects/mentor-member-points-sparkline-model";
 
 type Student={id:string;name:string;label:string};
 type Task={id:string;assigneeMembershipId:string|null;sprintId:string|null;
@@ -71,6 +72,7 @@ export function MentorPrototypePerformanceTable({
     const carried=assigned.filter(task=>task.carriedFromSprintId!==null);
     const previous=historicalRows.filter(row=>row.membershipId===student.id);
     const trend=mentorMemberSprintHistory(student.id,sorted,snapshots);
+    const sparkline=mentorSprintPointSparkline(trend);
     const insights=deriveMentorPerformanceInsights({points:trend,
       currentOpenCount:currentOpen.filter(task=>task.assigneeMembershipId===student.id).length,
       totalProjectOpen:currentOpen.length});
@@ -78,7 +80,7 @@ export function MentorPrototypePerformanceTable({
       pts(review)+sum(previous,"plannedPoints")-
         sum(previous,"donePoints")-sum(previous,"openPoints"),
       pts(open)+sum(previous,"openPoints"));
-    return {student,trend,insights,stack,done:done.length+sum(previous,"doneCount"),
+    return {student,trend,sparkline,insights,stack,done:done.length+sum(previous,"doneCount"),
       review:review.length+sum(previous,"waitingCount"),
       open:open.length+sum(previous,"openCount"),
       carried:carried.length+sum(previous,"carriedCount"),
@@ -124,13 +126,28 @@ export function MentorPrototypePerformanceTable({
           id={"mentor-student-"+row.student.id}
           className="prototype-mentor-performance-row">
           <strong>{row.student.name}<small>{row.student.label}</small>
-            {row.trend.length?<small aria-label={"Recorded sprint points for "+row.student.name}>
-              {row.trend.slice(-4).map(item=>
-                <span key={item.sprintId} title={"Sprint "+item.sequence+
-                  ": "+item.donePoints+" of "+item.plannedPoints+" points earned"}>
-                  S{item.sequence}: {item.donePoints}/{item.plannedPoints}{" "}
+            {row.sparkline.length?<span className="mt-2 block"
+              aria-label={row.student.name+" last "+row.sparkline.length+
+                " recorded sprint point results"}>
+              <span className="flex h-12 items-end gap-2"
+                role="img" aria-label={row.sparkline.map(item=>
+                  "Sprint "+item.sequence+": "+item.donePoints+
+                  " of "+item.plannedPoints+" points earned").join("; ")}>
+                {row.sparkline.map(item=><span key={item.sprintId}
+                  className="relative block h-11 w-4 shrink-0 rounded-t-sm bg-muted"
+                  title={"Sprint "+item.sequence+": "+item.donePoints+
+                    " of "+item.plannedPoints+" points earned"}>
+                  <span className="absolute bottom-0 left-0 right-0 bg-info/30"
+                    style={{height:item.plannedHeightPct+"%"}}/>
+                  <span className="absolute bottom-0 left-0 right-0 bg-success"
+                    style={{height:item.doneHeightPct+"%"}}/>
                 </span>)}
-            </small>:<small>No signed-off sprint points recorded</small>}
+              </span>
+              <small className="block">
+                {row.sparkline.map(item=>"S"+item.sequence+": "+item.donePoints+
+                  "/"+item.plannedPoints).join(" · ")} pts
+              </small>
+            </span>:<small>No signed-off sprint points recorded</small>}
           </strong>
           <span>{row.done}<small>{row.donePoints} pts</small></span>
           <span>{row.review}<small>{row.waitingPoints} pts</small></span>
