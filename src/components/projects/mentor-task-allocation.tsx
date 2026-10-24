@@ -53,9 +53,15 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    releases.find(row=>row.id===nextSprint.releaseId):null;
  const nextSprintEligible=Boolean(nextSprint&&nextSprint.updatedAt&&
    nextSprintRelease&&nextSprintRelease.status!=="SHIPPED");
+ const permittedOpenSprintIds=new Set(sprints.filter(row=>
+   ["ACTIVE","PLANNED"].includes(row.status??"")&&
+   releases.some(release=>release.id===row.releaseId&&
+     release.status!==undefined&&release.status!=="SHIPPED"))
+   .map(row=>row.id));
  const nextSprintPlan=nextSprintEligible&&nextSprint?planMentorNextSprintAssignments(
    tasks.map(task=>({...task,sequence:task.sequence??0})),
-   learners.map(row=>row.membershipId),nextSprint.id):null;
+   learners.map(row=>row.membershipId),nextSprint.id,
+   permittedOpenSprintIds):null;
  const filtered=useMemo(()=>tasks.filter(task=>{
   const linked=sprints.find(item=>item.id===task.sprintId);
   return (!sprint||task.sprintId===sprint)&&(!release||linked?.releaseId===release)&&
@@ -70,7 +76,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
  const groups=[{membershipId:null,displayName:"Unassigned"},...learners,
    ...previousAssignees.map(id=>({membershipId:id,displayName:"Former member"}))];
  const unassigned=filtered.filter(t=>t.assigneeMembershipId===null).length;
- const projectUnassigned=tasks.filter(t=>t.assigneeMembershipId===null &&
+ const projectUnassigned=tasks.filter(t=>!t.deletedAt&&
+   (t.sprintId===null||permittedOpenSprintIds.has(t.sprintId))&&
+   t.assigneeMembershipId===null &&
    !["DONE","IN_REVIEW"].includes(t.status)).length;
  const activeFilterCount=[release,sprint,priority,status,assignmentScope].filter(Boolean).length;
  async function assign(id:string,membershipId:string|null){
