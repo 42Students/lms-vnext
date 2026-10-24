@@ -7,6 +7,7 @@ import {hasActiveMembership,hasMembershipRole} from "@/modules/identity/context"
 import {ProjectsServiceError} from "./errors";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {listMyProjectInstances} from "./member-service";
+import {mentorAccountAssignments} from "./mentor-account-summary-model";
 
 /** All profile fields are resolved from the signed-in identity, never a
  * client-supplied person, college, phone number, or project identifier.
@@ -33,14 +34,14 @@ export async function getMentorAccountOverview(context:RequestContext){
   )).limit(1);
  if(!identity)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
- const assignments=enabled?(await listMyProjectInstances(context))
-   .filter(row=>row.memberRole==="MENTOR"&&
-       row.project.collegeId===membership.collegeId):[];
- const courses=[...new Set(assignments.map(row=>row.project.courseLabel?.trim())
-   .filter((label):label is string=>Boolean(label)))].sort();
+ const assignments=enabled?await listMyProjectInstances(context):[];
+ const summary=mentorAccountAssignments(assignments.map(row=>({
+  id:row.project.id,courseLabel:row.project.courseLabel,
+  memberRole:row.memberRole,collegeId:row.project.collegeId,
+ })),membership.collegeId);
  return {name:identity.name??"Mentor",email:identity.email,
   phone:identity.phone,collegeName:identity.collegeName,
   collegeCode:identity.collegeCode,
-  teamCount:assignments.length,courses,projectsEnabled:enabled,
+  teamCount:summary.teamCount,courses:summary.courses,projectsEnabled:enabled,
   hasFacultyProfile:membership.roles.includes("FACULTY")};
 }
