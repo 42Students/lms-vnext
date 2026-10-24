@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { getProjectActivityPage, listProjectActivity } from "@/modules/projects/activity-service";
+import {getMentorWeekActivityTotals} from "@/modules/projects/mentor-week-activity-totals-service";
 import { filterLearnerProjectActivity } from "@/modules/projects/learner-project-activity-filter-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 if (!process.env.TEST_DATABASE_URL) throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -23,6 +24,11 @@ const context:RequestContext={
   user:{id:ids.learner,identityUid:"chat7-learner-"+suffix,platformStatus:"ACTIVE",systemRoles:[]},
   membership:{id:ids.membership,collegeId:ids.college,
     organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
+};
+const mentorContext:RequestContext={
+  user:{id:ids.mentor,identityUid:"chat7-mentor-"+suffix,platformStatus:"ACTIVE",systemRoles:[]},
+  membership:{id:ids.mentorMembership,collegeId:ids.college,
+    organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["MENTOR"]},
 };
 async function setup() {
   await pool.query("insert into colleges(id,organization_id,name,code) values($1,$2,$3,$4)",
@@ -228,5 +234,46 @@ describe("Mentor sprint-scoped persisted activity pagination",()=>{
       sprintId:randomUUID(),
     })).events).toHaveLength(0);
     await expect(getProjectActivityPage(context,randomUUID(),match)).rejects.toBeDefined();
+  });
+});
+
+describe("Mentor full-week project activity counters",()=>{
+  it("counts 100+ recorded events, not only the first activity page",async()=>{
+    const timestamp="2026-11-10T09:00:00Z";
+    for(const [kind,count] of [
+      ["projects.task.status_changed",105],
+      ["projects.task.comment.created",3],
+      ["projects.resource.created",2],
+    ] as const){
+      await pool.query(`INSERT INTO activity_events
+        (id,organization_id,college_id,actor_user_id,module,event_type,
+         subject_type,subject_id,summary,occurred_at)
+        SELECT gen_random_uuid(),$1::uuid,$2::uuid,$3::uuid,'PROJECTS',
+          $4,'project',$5,'Weekly historical activity',$6::timestamptz
+        FROM generate_series(1,$7::int)`,[
+        SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,
+        kind,ids.project,timestamp,count,
+      ]);
+    }
+    await pool.query(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,occurred_at)
+      VALUES($1,$2,$3,$4,'PROJECTS','projects.task.status_changed',
+       'project',$5,'Foreign project activity',$6::timestamptz)`,[
+      randomUUID(),SEED_IDS.organization,SEED_IDS.collegeB,
+      SEED_IDS.superAdminUser,ids.project,timestamp,
+    ]);
+    const now=new Date("2026-11-11T10:00:00Z");
+    expect(await getMentorWeekActivityTotals(mentorContext,ids.project,now)).toEqual({
+      taskMoves:105,comments:3,resourcesShared:2,count:110,
+    });
+    // The same feed in a learner context must not grant Mentor-only reports.
+    await expect(getMentorWeekActivityTotals(context,ids.project,now)).rejects.toBeDefined();
+    await expect(getMentorWeekActivityTotals({
+      ...mentorContext,membership:{...mentorContext.membership!,
+        collegeId:SEED_IDS.collegeB},
+    },ids.project,now)).rejects.toBeDefined();
+    await expect(getMentorWeekActivityTotals(mentorContext,randomUUID(),now))
+      .rejects.toBeDefined();
   });
 });
