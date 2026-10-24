@@ -11,10 +11,10 @@ it("MEN-projects-meetings-04 preserves the reviewed mentor surface",()=>{const v
 expect(value.toLowerCase()).toContain("blocked");
 expect(value.toLowerCase()).toContain("blockedhref");
 });
-it("MEN-projects-meetings-12 preserves the reviewed mentor surface",()=>{const value=src("src/components/projects/mentor-project-tabs.tsx");
+it("MEN-projects-meetings-12 follows the seven Mentor prototype detail tabs",()=>{const value=src("src/components/projects/mentor-project-tabs.tsx");
 expect(value.toLowerCase()).toContain("sprints & releases");
 expect(value.toLowerCase()).toContain("board");
-expect(value.toLowerCase()).toContain("task allocation");
+expect(value.toLowerCase()).toContain("performance");
 });
 it("MEN-projects-meetings-26 preserves the reviewed mentor surface",()=>{const value=src("src/components/projects/mentor-meeting-history.tsx");
 expect(value.toLowerCase()).toContain("past meetings (");
