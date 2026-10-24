@@ -1,4 +1,7 @@
 import { Suspense } from "react";
+import {eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {users} from "@/db/schema";
 import {getMentorProjectTeamSizes,getMentorProjectLearnerSizes,getMentorPortfolioLearnerCounts} from "@/modules/projects/mentor-project-team-size-service";
 import {getMentorPrototypeSprintSummaries} from "@/modules/projects/mentor-prototype-sprint-summary-service";
 import {getMentorStudentWatch} from "@/modules/projects/mentor-student-watch-service";
@@ -130,6 +133,11 @@ export async function MentorProjectsContent({
   </div>;
   const {paged,allRows,attentionRows,workCounts,teamSizes,learnerSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead,learnerCounts}=loaded;
   const initialLater=await listOwnMentorAttentionLater(context,attentionRows);
+  // Session identity has only immutable auth IDs. Resolve the person's name
+  // from their own live user row without exposing another college's profile.
+  const [greetingIdentity]=await getDb().select({name:users.displayName})
+    .from(users).where(eq(users.id,context.user.id)).limit(1)
+    .catch(()=>[] as {name:string|null}[]);
   const alerts = new Map<
     string,
     Set<string>
@@ -286,14 +294,16 @@ export async function MentorProjectsContent({
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <MentorPrototypeHome
+        mentorName={greetingIdentity?.name??null}
+        courseLabels={learnerCounts.courseLabels}
         initialLater={initialLater}
         nowIso={new Date().toISOString()}
         attention={attentionRows}
         studentWatch={studentWatch}
         weekMeetings={weekMeetingsRead.rows}
         weekMeetingsLoadFailed={weekMeetingsRead.failed}
-        teamCount={allRows.filter(row=>row.memberRole==="MENTOR").length}
-        membershipCount={Array.from(teamSizes.values()).reduce((sum,count)=>sum+count,0)}
+        teamCount={learnerCounts.teamCount}
+        membershipCount={learnerCounts.membershipCount}
         uniqueLearnerCount={learnerCounts.uniqueLearners}
         learnerAssignmentCount={learnerCounts.learnerAssignments}
       />
