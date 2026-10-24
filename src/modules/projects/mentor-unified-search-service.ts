@@ -2,7 +2,8 @@ import "server-only";
 import {and,eq,ilike,inArray,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {projectTasks,projectResources,projectMembers,collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {projectTasks,projectResources,projectMembers,collegeMemberships,membershipRoles,users,
+  projectInstances} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveMembership,hasMembershipRole} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
@@ -82,7 +83,40 @@ export async function searchMentorWorkspacePage(
         then 1 else 2 end`,users.displayName,collegeMemberships.id)
       .limit(SEARCH_PAGE_SIZE+1).offset(offset),
   ]);
-  const taskOwnerMembershipIds=[...new Set(tasks.map(task=>
+  // Recheck persisted project/tenant/Mentor grants after all category reads.
+  // A removal between the initial assignment list and the three independent
+  // queries must not disclose the now-inaccessible task/resource/student.
+  const liveGrants=await getDb().select({projectId:projectMembers.projectId})
+    .from(projectMembers)
+    .innerJoin(projectInstances,and(
+      eq(projectInstances.id,projectMembers.projectId),
+      eq(projectInstances.collegeId,membership.collegeId),
+      isNull(projectInstances.deletedAt),
+    ))
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,projectMembers.membershipId),
+      eq(collegeMemberships.id,membership.id),
+      eq(collegeMemberships.collegeId,membership.collegeId),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.status,"ACTIVE"),
+    ))
+    .innerJoin(users,and(
+      eq(users.id,collegeMemberships.userId),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"MENTOR"),
+    ))
+    .where(and(inArray(projectMembers.projectId,ids),
+      eq(projectMembers.role,"MENTOR"),
+      isNull(projectMembers.endedAt),
+    ));
+  const liveIds=new Set(liveGrants.map(row=>row.projectId));
+  const visibleTasks=tasks.filter(item=>liveIds.has(item.projectId));
+  const visibleResources=resources.filter(item=>liveIds.has(item.projectId));
+  const visibleStudents=students.filter(item=>liveIds.has(item.projectId));
+  const taskOwnerMembershipIds=[...new Set(visibleTasks.map(task=>
     task.assigneeMembershipId).filter((id):id is string=>id!==null))];
   const activeOwners=taskOwnerMembershipIds.length?await getDb().select({
       id:projectMembers.membershipId,projectId:projectMembers.projectId,
@@ -104,6 +138,7 @@ export async function searchMentorWorkspacePage(
   ] as const));
   const result:MentorSearchResult[]=[];
   const matchingProjects=projects.filter(item=>
+    liveIds.has(item.project.id)&&
     [item.project.title,item.project.summary??""].some(value=>
       value.toLocaleLowerCase("en-IN").includes(term.toLocaleLowerCase("en-IN"))))
     .sort((a,b)=>mentorSearchRank(a.project.title,term)-
@@ -115,22 +150,22 @@ export async function searchMentorWorkspacePage(
     result.push({key:"p:"+project.project.id,kind:"Project",
       title:project.project.title,context:project.project.courseLabel??"Mentor project",
       href:"/mentor/projects/"+encodeURIComponent(project.project.id)+"?tab=overview"});
-  for(const item of tasks.slice(0,SEARCH_PAGE_SIZE))result.push({key:"t:"+item.id,kind:"Task",
+  for(const item of visibleTasks.slice(0,SEARCH_PAGE_SIZE))result.push({key:"t:"+item.id,kind:"Task",
     title:item.title,context:(byId.get(item.projectId)??"Project")+
       " · "+(item.assigneeMembershipId?
         ownerByTaskScope.get(item.projectId+":"+item.assigneeMembershipId)??"Owner unavailable":
         "Unassigned")+" · "+item.status.replaceAll("_"," "),
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board&scope=all&task="+encodeURIComponent(item.id)});
-  for(const item of students.slice(0,SEARCH_PAGE_SIZE))result.push({key:"s:"+item.projectId+":"+item.id,
+  for(const item of visibleStudents.slice(0,SEARCH_PAGE_SIZE))result.push({key:"s:"+item.projectId+":"+item.id,
     kind:"Student",title:item.title??"Student",
     context:byId.get(item.projectId)??"Project",
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=performance#mentor-student-"+encodeURIComponent(item.id)});
-  for(const item of resources.slice(0,SEARCH_PAGE_SIZE))result.push({key:"r:"+item.id,kind:"Resource",
+  for(const item of visibleResources.slice(0,SEARCH_PAGE_SIZE))result.push({key:"r:"+item.id,kind:"Resource",
     title:item.title,context:byId.get(item.projectId)??"Project",
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+
       "?tab=resources#mentor-resource-"+encodeURIComponent(item.id)});
   return {results:sortMentorSearchMatches(result,term),page,
-    hasMore:page<100&&[matchingProjects,tasks,students,resources]
+    hasMore:page<100&&[matchingProjects,visibleTasks,visibleStudents,visibleResources]
       .some(rows=>rows.length>SEARCH_PAGE_SIZE)};
 }
 export async function searchMentorWorkspace(context:RequestContext,raw:unknown):
