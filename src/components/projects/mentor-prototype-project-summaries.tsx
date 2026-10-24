@@ -160,17 +160,9 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
         const complete=group.filter(sprint=>sprint.status==="COMPLETED").length;
         return <div key={release.id} className="prototype-mentor-release-row">
           <div><strong>{release.title}</strong><small>{complete} of {group.length} sprints signed off</small></div>
-          {!readOnly&&workspace.project.status==="ACTIVE"?
-            <MentorReleaseEditor projectId={workspace.project.id}
-              release={release} linkedSprints={group.length}/>:null}
           <span className={"prototype-mentor-release-status "+statusTone(release.status)}>{release.status.replaceAll("_"," ")}</span>
           {!readOnly&&workspace.project.status==="ACTIVE"?(
             <div className="prototype-mentor-release-actions">
-              {release.status!=="SHIPPED"?
-                <MentorSprintCreate projectId={workspace.project.id}
-                  releaseId={release.id} releases={workspace.releases.map(item=>({
-                    id:item.id,title:item.title,status:item.status,
-                  }))}/>:null}
               <ReleaseLifecycleActions projectId={workspace.project.id}
                 releaseId={release.id} status={release.status}
                 expectedUpdatedAt={release.updatedAt.toISOString()} />
