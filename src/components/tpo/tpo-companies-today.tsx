@@ -3,7 +3,7 @@ import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
-import {istDateKey,nextTpoFollowupTomorrow,type TpoCompaniesTodayRow} from
+import {istDateKey,nextTpoFollowupTomorrow,nextTpoTodayFollowupAt, type TpoTodayNextPlan,type TpoCompaniesTodayRow} from
  "@/modules/placements/tpo-companies-today-model";
 import styles from "./tpo-companies-today.module.css";
 
@@ -11,12 +11,12 @@ type RecruiterReply={
  id:string;name:string;company:string|null;subject:string;
  preview:string|null;receivedAt:string;accessEnded:boolean;
 };
-type Outcome="CONTACTED"|"NO_RESPONSE"|"DECLINED"|"OTHER";
+type Outcome="CONTACTED"|"NO_RESPONSE"|"CALL_BACK"|"DECLINED";
 const outcomes:{value:Outcome;label:string}[]=[
- {value:"CONTACTED",label:"Connected"},
- {value:"NO_RESPONSE",label:"No answer"},
- {value:"DECLINED",label:"Not interested"},
- {value:"OTHER",label:"Other"},
+ {value:"CONTACTED",label:"1 Spoke to them"},
+ {value:"NO_RESPONSE",label:"2 No answer"},
+ {value:"CALL_BACK",label:"3 Asked to call back"},
+ {value:"DECLINED",label:"4 Not interested"},
 ];
 function when(value:string){
  return new Intl.DateTimeFormat("en-IN",{
@@ -38,6 +38,8 @@ export function TpoCompaniesToday({
  const [done,setDone]=useState<string[]>([]);
  const [outcome,setOutcome]=useState<Outcome>("CONTACTED");
  const [note,setNote]=useState("");
+ const [nextPlan,setNextPlan]=useState<TpoTodayNextPlan>("NONE");
+ const [customLocal,setCustomLocal]=useState("");
  const [pending,setPending]=useState(false);
  const [confirm,setConfirm]=useState<"DONE"|"TOMORROW"|null>(null);
  const [error,setError]=useState("");
@@ -70,7 +72,7 @@ export function TpoCompaniesToday({
    if(current&&!pending&&!confirm){
     if(/^[1-4]$/.test(e.key)){
      const selected=outcomes[Number(e.key)-1];
-     if(selected){e.preventDefault();setOutcome(selected.value);}
+     if(selected){e.preventDefault();chooseOutcome(selected.value);}
     }else if(e.key.toLowerCase()==="t"){
      e.preventDefault();setConfirm("TOMORROW");
     }else if(e.key==="Enter"&&note.trim()){
@@ -81,8 +83,12 @@ export function TpoCompaniesToday({
   document.addEventListener("keydown",onKey);
   return ()=>document.removeEventListener("keydown",onKey);
  },[displayed,current,pending,confirm,note]);
+ function chooseOutcome(value:Outcome){
+   setOutcome(value);
+   setNextPlan(value==="CALL_BACK"?"TOMORROW":"NONE");
+ }
  function pick(row:TpoCompaniesTodayRow){
-  setSelectedId(row.id);setOutcome("CONTACTED");setNote("");setError("");setNotice("");
+  setSelectedId(row.id);setOutcome("CONTACTED");setNextPlan("NONE");setCustomLocal("");setNote("");setError("");setNotice("");
  }
  function pickDay(value:number){setDay(value);setSelectedId(null);setError("");}
  async function submit(kind:"DONE"|"TOMORROW"){
@@ -90,12 +96,20 @@ export function TpoCompaniesToday({
   if(kind==="DONE"&&!note.trim()){
    setConfirm(null);setError("Record the outcome before completing the follow-up.");return;
   }
+  const nextDueAt=nextTpoTodayFollowupAt(nextPlan,new Date(),customLocal);
+  if(kind==="DONE"&&nextPlan!=="NONE"&&!nextDueAt){
+   setConfirm(null);setError("Choose a valid future follow-up time before saving.");return;
+  }
+  if(kind==="DONE"&&nextDueAt&&!current.canContact){
+   setConfirm(null);setError("This recruiter lead can no longer be scheduled for outreach.");return;
+  }
   inFlight.current=true;setPending(true);setError("");setNotice("");
   try{
    const endpoint="/api/placements/tpo/follow-up-queue/"+encodeURIComponent(current.id)+
     (kind==="DONE"?"/complete":"/reschedule");
    const body=kind==="DONE"?
-    {confirmed:true,expectedDueAt:current.dueAt,outcome,note:note.trim()}:
+    {confirmed:true,expectedDueAt:current.dueAt,outcome,note:note.trim(),
+     ...(nextDueAt?{nextDueAt}:{})}:
     {confirmed:true,expectedDueAt:current.dueAt,dueAt:nextTpoFollowupTomorrow(new Date())};
    const response=await fetch(endpoint,{
     method:"POST",credentials:"same-origin",
@@ -106,8 +120,8 @@ export function TpoCompaniesToday({
     "This follow-up has changed. Refresh Today before trying again.":
     "The change was not confirmed. No success has been recorded.");
    setDone(ids=>[...ids,current.id]);
-   setSelectedId(null);setNote("");setConfirm(null);
-   setNotice(kind==="DONE"?"Outcome recorded. Next follow-up selected.":"Moved to tomorrow at 10:00 AM IST.");
+   setSelectedId(null);setNote("");setNextPlan("NONE");setCustomLocal("");setConfirm(null);
+   setNotice(kind==="DONE"?(nextDueAt?"Outcome and next follow-up saved together.":"Outcome recorded. Next follow-up selected."):"Moved to tomorrow at 10:00 AM IST.");
    router.refresh();
   }catch(e){setConfirm(null);setError(e instanceof Error?e.message:"Could not save the change.");}
   finally{inFlight.current=false;setPending(false);}
@@ -182,7 +196,22 @@ export function TpoCompaniesToday({
       {outcomes.map(item=><button key={item.value} type="button"
        aria-pressed={outcome===item.value}
        className={outcome===item.value?styles.outcomeActive:styles.outcome}
-       onClick={()=>setOutcome(item.value)} disabled={pending}>{item.label}</button>)}
+       onClick={()=>chooseOutcome(item.value)} disabled={pending}>{item.label}</button>)}
+     </fieldset>
+     <fieldset className={styles.outcomes}>
+       <legend className={styles.eyebrow}>WHEN SHOULD YOU FOLLOW UP?</legend>
+       {([["NONE","No next follow-up"],["TOMORROW","Tomorrow · 10 AM"],
+          ["WEEK","In 7 days · 10 AM"],["CUSTOM","Pick a date"]] as const).map(([value,label])=>
+         <button type="button" key={value} disabled={pending||(!current.canContact&&value!=="NONE")}
+          aria-pressed={nextPlan===value}
+          className={nextPlan===value?styles.outcomeActive:styles.outcome}
+          onClick={()=>setNextPlan(value)}>{label}</button>)}
+       {nextPlan==="CUSTOM"?<label className={styles.noteLabel}>Follow up at (IST)
+          <input type="datetime-local" value={customLocal} disabled={pending}
+           onChange={event=>setCustomLocal(event.target.value)}
+           className="min-h-11 rounded-lg border border-[#d6e1ee] bg-white p-2 text-[14px]"/>
+         </label>:null}
+       {!current.canContact?<p className={styles.sub}>Further outreach to this contact is unavailable under current CRM rules.</p>:null}
      </fieldset>
      <label className={styles.noteLabel}>Outcome note (required)
        <textarea maxLength={500} rows={4} value={note} disabled={pending}
