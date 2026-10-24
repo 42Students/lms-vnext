@@ -71,10 +71,16 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const [search,setSearch]=useState("");
  const [resourceAction,setResourceAction]=useState("ALL");
  const [type,setType]=useState("");
+ const [actor,setActor]=useState("");
  const [range,setRange]=useState("ALL");
  const [fromDate,setFromDate]=useState("");
  const [toDate,setToDate]=useState("");
  const categories=[...new Set(items.map(event=>event.eventType))].sort();
+ const actors=[...new Map(items.filter(event=>Boolean(event.actorUserId)||Boolean(event.actorDisplayName))
+   .map(event=>[event.actorUserId??event.actorDisplayName??"",
+     {id:event.actorUserId??event.actorDisplayName??"",
+      label:event.actorDisplayName??"Team member"}])).values()]
+   .sort((a,b)=>a.label.localeCompare(b.label));
  const current=Date.parse(now);
  const filtered=items.filter(event=>{
   const occurred=new Date(event.occurredAt);
@@ -84,6 +90,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     &&(!term||[event.summary,event.actorDisplayName??"",event.actorUserId??"",event.actorType??"",actorTypeLabel(event.actorType),event.eventType,event.subjectLabel??"",event.subjectId??"",event.resourceKey??"",resourceLabel(event.resourceKey??event.subjectLabel),resourceActionLabel(event.eventType)].some(value=>value.toLocaleLowerCase("en-IN").includes(term)))
     &&projectResourceAuditMatches(event.eventType,resourceAction)
     &&(!type||event.eventType===type)
+    &&(!actor||(event.actorUserId??event.actorDisplayName)===actor)
     &&(range==="ALL"||current-occurred.getTime()<Number(range)*86400000)
     &&(!fromDate||day>=fromDate)
     &&(!toDate||day<=toDate);
@@ -98,7 +105,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
  const activePage=Math.min(page,totalPages);
  const paged=resourceAudit?filtered.slice((activePage-1)*PAGE_SIZE,activePage*PAGE_SIZE):filtered;
- const resetFilters=()=>{setSearch("");setResourceAction("ALL");setType("");setRange("ALL");setFromDate("");setToDate("");setPage(1);};
+ const resetFilters=()=>{setSearch("");setResourceAction("ALL");setType("");setActor("");setRange("ALL");setFromDate("");setToDate("");setPage(1);};
  return <section className="space-y-3">
   {resourceAudit?<div aria-label="Resource activity totals" className="grid grid-cols-2 gap-2 sm:grid-cols-4">{counts.map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">{label}</p><p className="text-xl font-semibold tabular-nums">{value}</p></div>)}</div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
@@ -120,6 +127,13 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
      {categories.map(kind=><option key={kind} value={kind}>{mentorActivityLabel(kind)}</option>)}
     </Select>
    </label>
+   {!resourceAudit?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">By person
+     <Select value={actor} onChange={event=>{setActor(event.target.value);setPage(1);}}
+       className="w-full">
+       <option value="">By anyone</option>
+       {actors.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
+     </Select>
+   </label>:null}
    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Date range
     <Select value={range} onChange={event=>{setRange(event.target.value);setPage(1);}}
       className="w-full">
