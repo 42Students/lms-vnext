@@ -51,6 +51,7 @@ import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
 import {MentorMeetingHistory} from "./mentor-meeting-history";
+import {MentorMeetingRsvpControl} from "./mentor-meeting-rsvp-control";
 import { ProjectMeetingPlanEditor } from "./project-meeting-plan-editor";
 import { projectMeetingPlanToken } from "@/modules/projects/project-meeting-plan-token";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
@@ -2211,6 +2212,7 @@ export function ProjectWorkspace({
                   "No project meetings have been recorded."} />
             ) : (
               workspace.meetings.map((meeting) => {
+                const rsvp=workspace.projectMeetingRsvpFacts.find(fact=>fact.meetingId===meeting.id);
                 const href = safeHttpHref(
                   meeting.meetingUrl,
                 );
@@ -2241,6 +2243,19 @@ export function ProjectWorkspace({
                         </StatusBadge>
                       </div>
                     </div>
+                    {rsvp&&mode==="MENTOR"?<p className="mt-2 text-xs text-muted-foreground">
+                      In-app invitations: {rsvp.activeInvitees} current project members ·
+                      {" "}{rsvp.accepted} accepted · {rsvp.tentative} maybe ·
+                      {" "}{rsvp.declined} declined · {rsvp.notRecorded} unrecorded.
+                      These are not Google Calendar RSVP receipts.
+                    </p>:null}
+                    {(mode==="LEARNER"||mode==="MENTOR")&&!readOnly&&
+                      (meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")&&
+                      meeting.startsAt.getTime()>renderTime.getTime()?
+                      <MentorMeetingRsvpControl projectId={workspace.project.id}
+                        meetingId={meeting.id}
+                        expectedUpdatedAt={meeting.updatedAt.toISOString()}
+                        initialResponse={rsvp?.myResponse??null}/> : null}
                     {meeting.status==="REQUESTED"? (
                       <p className="mt-2 text-xs font-semibold text-warning-text">
                         Waiting for a mentor response
