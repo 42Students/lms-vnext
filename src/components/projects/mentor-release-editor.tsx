@@ -11,10 +11,11 @@ type Release={id:string;title:string;description:string|null;targetDate?:string|
 type Readiness={readyToShip:boolean;completedSprintCount:number;
  committedPoints:number;completedPoints:number};
 export function MentorReleaseEditor({
- projectId,release,linkedSprints=0,readiness,
+ projectId,release,linkedSprints=0,readiness,existingReleaseCount=0,hideShippingControl=false,
  releasesLoading=false,releasesError=null,onRetryReleases,
 }:{
  projectId:string;release?:Release;linkedSprints?:number;readiness?:Readiness;
+ existingReleaseCount?:number;hideShippingControl?:boolean;
  releasesLoading?:boolean;releasesError?:string|null;onRetryReleases?:()=>void;
 }){
  const router=useRouter(),[open,setOpen]=useState(false),[pending,setPending]=useState(false);
@@ -99,7 +100,7 @@ export function MentorReleaseEditor({
     <Button size="sm" variant="secondary" type="button"
       onClick={()=>{onRetryReleases?.();router.refresh();}}>Retry</Button>
    </div>:null}
-  {!release&&!releasesLoading&&!releasesError?<div className="border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
+  {!release&&existingReleaseCount===0&&!releasesLoading&&!releasesError?<div className="border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
     <strong className="block text-foreground">No releases on this project yet</strong>
     <p className="text-body">A sprint must belong to a release. Create or seed a project release before adding a new sprint.</p>
    </div>:null}
@@ -107,9 +108,9 @@ export function MentorReleaseEditor({
    <p>{readiness
     ? `${readiness.completedSprintCount} of ${linkedSprints} sprints complete · ${readiness.completedPoints} of ${readiness.committedPoints} points completed`
     : "Release readiness is not loaded. Refresh the linked sprint summary."}</p>
-   {release.status!=="SHIPPED"?<Button type="button" disabled={!canShip||pending} onClick={()=>setConfirmShip(true)}>
+   {!hideShippingControl&&release.status!=="SHIPPED"?<Button type="button" disabled={!canShip||pending} onClick={()=>setConfirmShip(true)}>
     Ship release</Button>:null}
-   {release.status!=="SHIPPED"&&!canShip?<p className="text-xs text-muted-foreground">
+   {!hideShippingControl&&release.status!=="SHIPPED"&&!canShip?<p className="text-xs text-muted-foreground">
     A release needs at least one linked sprint and all linked sprints completed before shipping.</p>:null}
   </div>:null}
   {(!release||release.status!=="SHIPPED")?<Button variant={release?"secondary":"primary"} type="button" aria-expanded={open} aria-controls={editorId}
