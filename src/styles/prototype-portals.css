@@ -10,7 +10,6 @@
  * accent #0a7c88, accent hover #086670, selected #eff8fa,
  * secondary #5b6b82, nav #3b4a60, badge #d92d20, font Lato.
  */
-@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
 
 .lms-shell-frame[data-prototype-portal] {
   --prototype-bg: #f4f7fa;
