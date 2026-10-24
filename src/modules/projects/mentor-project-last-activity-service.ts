@@ -25,27 +25,25 @@ export async function getMentorProjectLastActivity(
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const assigned=(await listMyProjectInstances(context)).filter(row=>
     row.memberRole==="MENTOR"&&row.project.collegeId===member.collegeId);
-  const keys=assigned.flatMap(row=>[
-    "project:"+row.project.id,
-    "project:"+row.project.id+":meetings",
-  ]);
+  const ids=assigned.map(row=>row.project.id);
   const result=new Map<string,Date>();
-  if(!keys.length)return result;
+  if(!ids.length)return result;
+  // Action group keys may be project:<id>, project:<id>:meetings,
+  // project:<id>:tasks, etc. Resolve the persisted project segment once.
+  const groupProjectId=sql<string>`split_part(${activityEvents.groupKey},':',2)`;
   const records=await getDb().select({
-    group:activityEvents.groupKey,
+    projectId:groupProjectId,
     last:sql<Date>`max(${activityEvents.occurredAt})`,
   }).from(activityEvents).where(and(
     eq(activityEvents.collegeId,member.collegeId),
-    inArray(activityEvents.groupKey,keys),
-  )).groupBy(activityEvents.groupKey);
-  const allowed=new Set(assigned.map(row=>row.project.id));
+    inArray(groupProjectId,ids),
+    sql`${activityEvents.groupKey} LIKE 'project:%'`,
+  )).groupBy(groupProjectId);
   for(const row of records){
-    if(!row.group||!row.last)continue;
-    const id=row.group.split(":")[1];
-    if(!id||!allowed.has(id))continue;
+    if(!row.projectId||!row.last)continue;
     const date=new Date(row.last);
     if(!Number.isFinite(date.getTime()))continue;
-    if(date.getTime()>(result.get(id)?.getTime()??0))result.set(id,date);
+    result.set(row.projectId,date);
   }
   return result;
 }
