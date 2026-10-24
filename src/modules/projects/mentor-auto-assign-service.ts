@@ -1,7 +1,8 @@
 import "server-only";
 import {and,eq,isNull} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,projectInstances,projectMembers,projectTasks,users} from "@/db/schema";
+import {collegeMemberships,membershipRoles,projectInstances,projectMembers,projectTasks,projectSprints,projectReleases,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
@@ -9,6 +10,7 @@ import {ProjectsServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyProjectMemberships} from "./project-notification-service";
+import {planMentorNextSprintAssignments} from "./mentor-next-sprint-assignment-model";
 export async function autoAssignProjectTasks(context:RequestContext,projectId:string){
  const scope=await requireProjectLifecycleMutationAccess(context,projectId);
  return getDb().transaction(async tx=>{
@@ -28,7 +30,8 @@ export async function autoAssignProjectTasks(context:RequestContext,projectId:st
       eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
   if(!members.length)throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
   const tasks=await tx.select().from(projectTasks)
-   .where(eq(projectTasks.projectId,scope.project.id)).for("update");
+   .where(and(eq(projectTasks.projectId,scope.project.id),isNull(projectTasks.deletedAt)))
+   .for("update");
   const count=new Map(members.map(row=>[row.membershipId,0]));
   for(const task of tasks){
    if(task.assigneeMembershipId&&count.has(task.assigneeMembershipId)&&task.status!=="DONE")
