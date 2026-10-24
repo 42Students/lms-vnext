@@ -5,6 +5,7 @@ const optionalSelect = <T extends z.ZodTypeAny>(schema: T) =>
 
 export const mentorProjectListQuerySchema = z.object({
   search: z.string().trim().max(120).optional(),
+  segment: optionalSelect(z.enum(["CURRENT","NEEDS_YOU","AT_RISK","FINAL_SUBMISSION","ARCHIVED"])),
   status: optionalSelect(z.enum(["CURRENT","PLANNED","ACTIVE","COMPLETED","ARCHIVED","IN_PROGRESS","READY","BLOCKED"])),
   attention: optionalSelect(z.enum(["MENTOR_REVIEW","MENTOR_REQUESTED","MENTOR_STALLED",
     "MENTOR_MEETING_SOON","MENTOR_ANY_ATTENTION","MENTOR_NO_ATTENTION","BLOCKED"])),
