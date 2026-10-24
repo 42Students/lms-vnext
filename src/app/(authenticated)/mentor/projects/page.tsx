@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-team-size-service";
 import {getMentorPrototypeSprintSummaries} from "@/modules/projects/mentor-prototype-sprint-summary-service";
 import {getMentorStudentWatch} from "@/modules/projects/mentor-student-watch-service";
+import {getMentorProjectLastActivity} from "@/modules/projects/mentor-project-last-activity-service";
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
@@ -95,15 +96,16 @@ export async function MentorProjectsContent({
     const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
     const allRows=paged?.items??await listMyProjectInstances(context);
     if(!Array.isArray(allRows))throw new Error("INVALID_PROJECT_RECORDS");
-    const [attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch]=await Promise.all([
+    const [attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity]=await Promise.all([
       listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
       getMentorProjectWorkCounts(context,paged?allRows:undefined),
       getMentorProjectTeamSizes(context,paged?allRows:undefined),
       getMentorPrototypeSprintSummaries(context,paged?allRows:undefined),
       // The student watch is cross-team, never just the visible SQL page.
       getMentorStudentWatch(context),
+      getMentorProjectLastActivity(context),
     ]);
-    return {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch};
+    return {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity};
   })().catch(error=>({
     failure:error instanceof Error&&error.message==="INVALID_PROJECT_RECORDS"
       ?"The projects page did not return a valid records array."
@@ -118,7 +120,7 @@ export async function MentorProjectsContent({
           typeof item[1]==="string"&&item[1].length<=120)
       ).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
   </div>;
-  const {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch}=loaded;
+  const {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity}=loaded;
   const alerts = new Map<
     string,
     Set<string>
@@ -327,6 +329,7 @@ export async function MentorProjectsContent({
               row.project.status,
             updatedAt:
               row.project.updatedAt,
+            ...(lastActivity.has(row.project.id)?{lastActivityAt:lastActivity.get(row.project.id)!}:{}),
             memberCount: teamSizes.get(row.project.id) ?? 0,
             ...(workCounts.has(row.project.id) ? {
               taskTotal:workCounts.get(row.project.id)!.total,
