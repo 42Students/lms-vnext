@@ -8,12 +8,13 @@ import {MentorReleaseEditor} from "./mentor-release-editor";
  * routes or bypass the server's version and membership checks.
  */
 export function MentorOverviewQuickActions({projectId,projectUpdatedAt,estimationUnit,
- releases,sprints,learners}:{
+ releases,sprints,learners,backlogTasks=[]}:{
  projectId:string;projectUpdatedAt:string;estimationUnit:string|null;
  releases:readonly {id:string;title:string;status:string}[];
  sprints:readonly {id:string;title:string;status:string;updatedAt:string;releaseId:string;
    sequence:number;startDate?:string|null;endDate?:string|null}[];
  learners:readonly {membershipId:string;displayName:string|null}[];
+ backlogTasks?:readonly {id:string;title:string;status:string;updatedAt:string;estimatePoints:number|null}[];
 }){
  const active=sprints.find(item=>item.status==="ACTIVE");
  const allowed=sprints.filter(item=>item.status!=="COMPLETED"&&
@@ -31,7 +32,8 @@ export function MentorOverviewQuickActions({projectId,projectUpdatedAt,estimatio
     projectId={projectId} releaseId={firstRelease.id}
     releases={releases}
     sprintPlan={sprints.map(row=>({releaseId:row.releaseId,sequence:row.sequence,
-      startDate:row.startDate,endDate:row.endDate}))}/>:null}
+      startDate:row.startDate,endDate:row.endDate}))}
+    backlogTasks={backlogTasks} canPullBacklog/>:null}
   <MentorReleaseEditor projectId={projectId}
     existingReleaseCount={releases.length}/>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
