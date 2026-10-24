@@ -30,7 +30,7 @@ export function mentorDeliveryPrechecks(input:{
   {key:"TASKS",label:done+" of "+tasks+" current tasks completed",
     state:tasks>0&&tasks===done?"MET":"OPEN",requiredByServer:true},
   {key:"RELEASES",label:shipped+" of "+releases+" releases shipped",
-    state:releases>0&&releases===shipped?"MET":"OPEN",requiredByServer:false},
+    state:releases>0&&releases===shipped?"MET":"OPEN",requiredByServer:true},
   {key:"EVIDENCE",label:proof+" of "+done+" completed tasks have proof links",
     state:done>0&&proof>=done?"MET":"OPEN",requiredByServer:false},
   {key:"TARGET",label:due?"Project target: "+due:"Project target date not recorded",
