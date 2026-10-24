@@ -337,6 +337,26 @@ afterAll(async () => {
 });
 
 describe("Projects P7A resources and readiness", () => {
+  it("stores API-created metadata-only documents as DRAFT and refuses early publication",async()=>{
+    const project=await createProject();
+    await pool.query("update project_instances set status='ACTIVE' where id=$1",[project.id]);
+    const initial=await createProjectResource(mentor,project.id,{
+      title:"Unattached document",resourceType:"DOCUMENT",status:"ACTIVE",
+      visibility:"TEAM",
+    });
+    // A forged direct API request cannot announce that empty metadata is a
+    // published downloadable file. The UI and service enforce the same rule.
+    expect(initial.status).toBe("DRAFT");
+    expect((await listProjectResources(learner,project.id))
+      .some(row=>row.id===initial.id)).toBe(false);
+    await expect(updateProjectResource(mentor,project.id,initial.id,{
+      status:"ACTIVE",expectedUpdatedAt:initial.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_RESOURCE_INVALID_STATE"});
+    const read=await pool.query<{status:string}>(
+      "select status from project_resources where id=$1",[initial.id]);
+    expect(read.rows[0]?.status).toBe("DRAFT");
+  });
+
   it("keeps file drafts private until activation, and restores only with a fresh version", async () => {
     const project=await createProject();
     await pool.query("update project_instances set status='ACTIVE' where id=$1",[project.id]);

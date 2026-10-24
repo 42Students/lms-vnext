@@ -209,7 +209,13 @@ export async function createProjectResource(
           visibility: input.visibility ?? "TEAM",
           resourceType: input.resourceType ?? (input.url ? "LINK" : "NOTE"),
           legacyResourceKind:scope.access==="LEARNER"?null:input.legacyResourceKind??null,
-          status: scope.access==="LEARNER"?"ACTIVE":input.status??"ACTIVE",
+          // An empty FILE/DOCUMENT metadata entry is a draft, never a
+          // shared file. Upload verification and explicit publish come later.
+          status: scope.access==="LEARNER"?"ACTIVE":
+            mentorResourceNeedsVerifiedFile({
+              status:input.status??"ACTIVE",resourceType:input.resourceType??null,
+              description:input.description??null,url:input.url??null,
+            })?"DRAFT":input.status??"ACTIVE",
           pinned: scope.access==="LEARNER"?false:input.pinned??false,
           accessNotes: scope.access==="LEARNER"?null:input.accessNotes??null,
           sprintId: scope.access==="LEARNER"?null:input.sprintId??null,
@@ -342,7 +348,9 @@ export async function updateProjectResource(
     // A metadata-only file placeholder cannot be published to learners
     // merely by changing status. The storage verifier must have committed
     // a clean READY, same-project attachment first.
-    if(resource.status==="DRAFT"&&mentorResourceNeedsVerifiedFile({
+    if((resource.status!=="ACTIVE"||
+        input.description!==undefined||input.url!==undefined||
+        input.resourceType!==undefined)&&mentorResourceNeedsVerifiedFile({
       status:merged.status??resource.status,
       resourceType:merged.resourceType??resource.resourceType,
       description:merged.description??null,url:merged.url??null,
