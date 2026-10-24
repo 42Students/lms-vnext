@@ -129,6 +129,7 @@ describe("Mentor inbox persisted same-college acknowledgments",()=>{
       expect(row.actor_user_id).toBe(userId);
       expect(row.metadata).toEqual({count:1});
     }
+  });
   it("atomically acknowledges all personal messages alongside the unified source scan",async()=>{
     await fixture();
     const result=await markAllMentorUnifiedNotificationsRead(actor);
@@ -147,6 +148,5 @@ describe("Mentor inbox persisted same-college acknowledgments",()=>{
       membership:{...actor.membership!,collegeId:SEED_IDS.collegeB}};
     await expect(markAllMentorUnifiedNotificationsRead(wrongCollege))
       .rejects.toBeDefined();
-  });
   });
 });
