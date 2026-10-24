@@ -199,5 +199,25 @@ test.describe("Projects browser regression", () => {
     await expect(
       page.getByText("Seed Learner", { exact: true }),
     ).toBeVisible();
+
+    // The project created above is a genuine, seeded, authorized workspace.
+    // Exercise all seven prototype tabs in its empty/newly-created state.
+    const detailPath=new URL(page.url()).pathname;
+    for(const [key,label] of [
+      ["overview","Overview"],["board","Board"],["sprints","Sprints & releases"],
+      ["team","Team & meetings"],["performance","Performance"],
+      ["resources","Resources"],["activity","Activity"],
+    ] as const){
+      await page.goto(detailPath+"?tab="+key);
+      await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
+      await expect(page.getByRole("navigation",{name:"Project sections"})
+        .getByRole("link",{name:label,exact:true})).toHaveAttribute("aria-current","page");
+      await expect(page.getByText("No project content available for this section.")).toHaveCount(0);
+    }
+
+    // A project learner's access to /learn/projects is not a Mentor grant.
+    await authenticate(context,"seed-learner",SEED_IDS.learnerCollegeAMembership);
+    await page.goto(detailPath+"?tab=delivery");
+    await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
   });
 });
