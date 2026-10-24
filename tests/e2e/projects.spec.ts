@@ -215,6 +215,19 @@ test.describe("Projects browser regression", () => {
       await expect(page.getByText("No project content available for this section.")).toHaveCount(0);
     }
 
+    // The Mentor prototype team actions must mutate saved role labels, not
+    // merely flip a local icon. Primary Mentors may offer both team roles.
+    await page.goto(detailPath+"?tab=team");
+    await expect(page.getByRole("button",{name:"Add teammate"})).toBeVisible();
+    await expect(page.getByRole("button",{name:"Promote lead"})).toBeVisible();
+    await page.getByRole("button",{name:"Promote lead"}).click();
+    await expect(page.getByRole("button",{name:"Remove lead"})).toBeVisible();
+    await page.getByRole("button",{name:"Edit role"}).click();
+    const editor=page.getByRole("dialog",{name:/Edit Seed Learner's project responsibility/});
+    await editor.getByLabel("Responsibility label").fill("Student");
+    await editor.getByRole("button",{name:"Save role"}).click();
+    await expect(page.getByRole("button",{name:"Promote lead"})).toBeVisible();
+
     // A project learner's access to /learn/projects is not a Mentor grant.
     await authenticate(context,"seed-learner",SEED_IDS.learnerCollegeAMembership);
     await page.goto(detailPath+"?tab=delivery");
