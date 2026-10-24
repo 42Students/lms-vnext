@@ -4,6 +4,8 @@ import type {MentorSprintMemberSnapshot,MentorSprintSignOffSnapshot}
   from "@/modules/projects/mentor-sprint-signoff-snapshot-model";
 import {recentMentorWorkedSprintIds} from
   "@/modules/projects/mentor-recent-worked-sprints-model";
+import {mentorMemberSprintHistory,deriveMentorPerformanceInsights} from
+  "@/modules/projects/mentor-performance-insights-model";
 
 type Student={id:string;name:string;label:string};
 type Task={id:string;assigneeMembershipId:string|null;sprintId:string|null;
@@ -29,11 +31,12 @@ export function MentorPrototypePerformanceTable({
   const lastFour=new Set(recentMentorWorkedSprintIds(sorted));
   const chosen=sorted.find(item=>item.id===range);
   const releaseId=range.startsWith("release:")?range.slice("release:".length):null;
-  const included=range==="last4"
-    ?sorted.filter(item=>lastFour.has(item.id))
+  const included=range==="whole"?sorted
+    :range==="last4"?sorted.filter(item=>lastFour.has(item.id))
     :releaseId?sorted.filter(item=>item.releaseId===releaseId)
     :chosen?[chosen]:range==="current"?sorted.filter(item=>item.id===active?.id):[];
-  const historyMode=range==="last4"||Boolean(releaseId)||chosen?.status==="COMPLETED";
+  const historyMode=range==="whole"||range==="last4"||Boolean(releaseId)||
+    chosen?.status==="COMPLETED";
   const historicalSprints=included.filter(item=>item.status==="COMPLETED");
   const liveSprintIds=new Set(included.filter(item=>item.status!=="COMPLETED")
     .map(item=>item.id));
@@ -45,6 +48,8 @@ export function MentorPrototypePerformanceTable({
   const missingHistory=historicalSprints.filter(item=>!snapshotMap.has(item.id));
   const liveTasks=tasks.filter(task=>{
     if(range==="all")return true;
+    if(range==="whole")return task.sprintId===null||Boolean(
+      task.sprintId&&liveSprintIds.has(task.sprintId));
     if(range==="current")return task.sprintId===active?.id;
     if(range==="last4"||releaseId||chosen)return Boolean(task.sprintId&&
       liveSprintIds.has(task.sprintId));
@@ -56,6 +61,7 @@ export function MentorPrototypePerformanceTable({
   const unassignedPast=historicalRows.filter(row=>row.membershipId===null);
   const unassignedCount=unassigned.length+sum(unassignedPast,"openCount");
   const unassignedPoints=pts(unassigned)+sum(unassignedPast,"openPoints");
+  const currentOpen=tasks.filter(task=>!["DONE","IN_REVIEW"].includes(task.status));
   const studentRows=students.map(student=>{
     const assigned=liveTasks.filter(task=>task.assigneeMembershipId===student.id);
     const done=assigned.filter(task=>task.status==="DONE");
@@ -63,7 +69,11 @@ export function MentorPrototypePerformanceTable({
     const open=assigned.filter(task=>!["DONE","IN_REVIEW"].includes(task.status));
     const carried=assigned.filter(task=>task.carriedFromSprintId!==null);
     const previous=historicalRows.filter(row=>row.membershipId===student.id);
-    return {student,done:done.length+sum(previous,"doneCount"),
+    const trend=mentorMemberSprintHistory(student.id,sorted,snapshots);
+    const insights=deriveMentorPerformanceInsights({points:trend,
+      currentOpenCount:currentOpen.filter(task=>task.assigneeMembershipId===student.id).length,
+      totalProjectOpen:currentOpen.length});
+    return {student,trend,insights,done:done.length+sum(previous,"doneCount"),
       review:review.length+sum(previous,"waitingCount"),
       open:open.length+sum(previous,"openCount"),
       carried:carried.length+sum(previous,"carriedCount"),
@@ -79,6 +89,7 @@ export function MentorPrototypePerformanceTable({
         <label>In
           <select value={range} onChange={event=>setRange(event.target.value)}>
             <option value="all">All (current task records)</option>
+            <option value="whole">Whole project (sign-off history + current)</option>
             <option value="current">Current sprint</option>
             <option value="last4">Last four worked sprints</option>
             {releases.map(release=><option key={release.id} value={"release:"+release.id}>
@@ -106,7 +117,15 @@ export function MentorPrototypePerformanceTable({
         </div>
         {studentRows.map(row=><div key={row.student.id}
           className="prototype-mentor-performance-row">
-          <strong>{row.student.name}<small>{row.student.label}</small></strong>
+          <strong>{row.student.name}<small>{row.student.label}</small>
+            {row.trend.length?<small aria-label={"Recorded sprint points for "+row.student.name}>
+              {row.trend.slice(-4).map(item=>
+                <span key={item.sprintId} title={"Sprint "+item.sequence+
+                  ": "+item.donePoints+" of "+item.plannedPoints+" points earned"}>
+                  S{item.sequence}: {item.donePoints}/{item.plannedPoints}{" "}
+                </span>)}
+            </small>:<small>No signed-off sprint points recorded</small>}
+          </strong>
           <span>{row.done}<small>{row.donePoints} pts</small></span>
           <span>{row.review}<small>{row.waitingPoints} pts</small></span>
           <span>{row.open}<small>{row.openPoints} pts</small></span>
@@ -121,6 +140,16 @@ export function MentorPrototypePerformanceTable({
             No recorded work in this sprint range.
           </p>:null}
       </div>
+      {studentRows.some(row=>row.insights.length>0)?<div
+        className="prototype-mentor-performance-intro" aria-label="Worth a look">
+        <h3>Worth a look · recorded workload signals</h3>
+        <ul>{studentRows.flatMap(row=>row.insights.map(signal=>
+          <li key={row.student.id+":"+signal.code}>
+            <strong>{row.student.name}</strong>: {signal.description}
+          </li>))}</ul>
+        <p>These are factual workload prompts, not individual performance ratings
+          or predictions about students.</p>
+      </div>:null}
     </section>
     <section className="prototype-mentor-backlog-card">
       <div className="prototype-mentor-card-title">
