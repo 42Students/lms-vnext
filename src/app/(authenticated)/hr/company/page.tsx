@@ -71,7 +71,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
       action={<Link href="/hr/company?tab=team" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search</Link>} /></div>;
-  const result = await getRecruiterCompanyTeam(context, requestedCollegeId, tab==="team"||tab==="company").catch(error=>{
+  const result = await getRecruiterCompanyTeam(context, requestedCollegeId, true).catch(error=>{
     if(error instanceof AuthorizationError)throw error;
     return null;
   });
