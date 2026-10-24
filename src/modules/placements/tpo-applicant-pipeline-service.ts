@@ -119,7 +119,8 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
     input.search?or(
       ilike(users.displayName,queryPattern),ilike(placementJobRoleOptions.title,queryPattern),
-      ilike(learnerProfiles.rollNumber,queryPattern),ilike(users.email,queryPattern),
+      ilike(learnerProfiles.rollNumber,queryPattern),
+      ilike(learnerProfiles.registrationNumber,queryPattern),ilike(users.email,queryPattern),
       ilike(users.phoneE164,queryPattern),rosterMatch,
       sql<boolean>`concat_ws(' ',coalesce(${users.displayName},''),coalesce(${placementJobRoleOptions.title},''),coalesce(${learnerProfiles.rollNumber},''),coalesce(${users.email},'')) ilike ${queryPattern}`):undefined);
    const stage=sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
