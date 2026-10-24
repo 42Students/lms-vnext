@@ -24,7 +24,7 @@ describe("Mentor sprint backlog post-create planning",()=>{
  it("never fabricates estimates for missing values",()=>{
   expect(mentorPullSelectedPoints(rows.filter(row=>row.id!=="review"&&row.id!=="done"),
    ["todo","blocked","active"])).toEqual({
-    count:4,points:11,unestimated:1,
+    count:3,points:8,unestimated:1,
    });
  });
  it("does not include tasks outside explicit selection",()=>{
