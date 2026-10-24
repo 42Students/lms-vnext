@@ -545,7 +545,7 @@ describe("Projects P4 team and mentor membership", () => {
     const history=await pool.query<{action:string;total:string}>(`
       select metadata->>'action' as action,count(*)::text as total from activity_events
       where module='PROJECTS' and metadata->>'projectId'=$1
-        and event_type like 'projects.member.%'
+        and subject_type='project_member'
       group by metadata->>'action'`,[project.id]);
     expect(history.rows.length).toBeGreaterThan(0);
   });
