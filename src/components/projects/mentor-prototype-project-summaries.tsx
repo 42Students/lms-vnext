@@ -6,6 +6,7 @@ import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evide
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
 import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
+import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
@@ -244,11 +245,16 @@ export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}
 
 export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace}){
   const latest=workspace.finalDelivery.submissions.at(-1);
+  const previous=workspace.finalDelivery.submissions.length>1?
+    workspace.finalDelivery.submissions.at(-2):null;
   const review=workspace.finalDelivery.reviews.at(-1);
+  const previousFeedback=previous?workspace.finalDelivery.reviews
+    .filter(item=>item.submissionId===previous.id).at(-1):null;
   const source=latest?.sourceUrl?safeProjectExternalHref(latest.sourceUrl):null;
   const demo=latest?.demoUrl?safeProjectExternalHref(latest.demoUrl):null;
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
-  const artifacts=(latest?.attachments??[]).flatMap((entry,index)=>{
+  const normalizeArtifacts=(entries:readonly unknown[])=>
+    entries.flatMap((entry,index)=>{
     if(!entry||typeof entry!=="object"||Array.isArray(entry))return [];
     const item=entry as Record<string,unknown>;
     const name=safeBriefString(item["name"])||safeBriefString(item["fileName"])||
@@ -259,6 +265,10 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
     const type=safeBriefString(item["type"])||safeBriefString(item["mimeType"])||"Attachment";
     return [{name,href,type,index}];
   }).slice(0,30);
+  const artifacts=compareMentorEvidenceReferences(
+    normalizeArtifacts(latest?.attachments??[]),
+    previous?normalizeArtifacts(previous.attachments??[]):null,
+  );
   const events=[...workspace.finalDelivery.history]
     .sort((a,b)=>b.occurredAt.localeCompare(a.occurredAt)).slice(0,15);
   return <section className="prototype-mentor-delivery-evidence" aria-label="Final submission evidence">
@@ -278,6 +288,13 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         <Link href={base+"?tab=delivery"}>Review on this page ↓</Link>
       </div>
     </div>:<p className="prototype-mentor-summary-empty">No final submission has been recorded for this project yet.</p>}
+    {previous?<section className="prototype-mentor-delivery-history">
+      <h3>Previous attempt · version {previous.version}</h3>
+      <p>{previous.status.replaceAll("_"," ")}</p>
+      {previousFeedback?.feedback?<p>Previous reviewer feedback: {previousFeedback.feedback}</p>:
+        <p>No reviewer feedback recorded for the previous attempt.</p>}
+      <p>Evidence badges compare saved names and links, not the contents of external files.</p>
+    </section>:null}
     {artifacts.length>0?<MentorEvidenceGallery items={artifacts}/>:null}
     <div className="prototype-mentor-delivery-history">
       <h3>History · {workspace.finalDelivery.history.length} events</h3>
