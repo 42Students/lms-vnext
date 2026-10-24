@@ -12,6 +12,8 @@ import {assertCurrentEvaluationActor} from "./evaluation-service";
 import {readProjectReadinessOverride} from "./readiness-override-service";
 import {effectiveProjectSubmissionReady} from "./readiness-override-model";
 import {deriveProjectExecutionReadiness} from "./execution-readiness";
+import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { projectDeliveryActivity } from "./delivery-activity-model";
 import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notification-model";
@@ -126,6 +128,7 @@ export async function createProjectSubmissionDraft(
           "PROJECT_SUBMISSION_INVALID_STATE",
         );
       }
+    await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
 
       const [open] = await tx
         .select({ id: projectSubmissions.id })
@@ -242,6 +245,7 @@ export async function updateProjectSubmissionDraft(
         "PROJECT_SUBMISSION_INVALID_STATE",
       );
     }
+    await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
 
     const [submission] = await tx
       .select()
@@ -389,6 +393,7 @@ export async function submitProjectSubmission(
     if (!project || project.deletedAt || project.status === "ARCHIVED" || project.status === "COMPLETED") {
       throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
     }
+    await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
     const [releases,sprints,tasks]=await Promise.all([
       tx.select({status:projectReleases.status}).from(projectReleases)
         .where(and(eq(projectReleases.projectId,scope.project.id),
@@ -531,6 +536,7 @@ export async function reviewProjectSubmission(
           "PROJECT_SUBMISSION_INVALID_STATE",
         );
       }
+      await assertPersistedProjectMutationActor(tx,context,scope);
 
       const [submission] = await tx
         .select()
