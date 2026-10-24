@@ -1872,3 +1872,34 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-board-sprint-group[open]>summary{
   background:#eff8fa;color:#0a7c88;
 }
+
+
+/* Mentor #54: original recorded agenda, attendance, retrospective,
+   action items and follow-up in selected meeting details. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-section {
+  display:flex;flex-direction:column;gap:8px;
+  margin:12px 0 0;padding:12px 0 0;border-top:1px solid #e7ecf2;min-width:0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-section>h3{
+  margin:0;color:#5b6b82;font-size:11px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-section p{
+  margin:0;color:#3b4a60;font-size:12px;line-height:1.55;white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-section :is(ul,ol){
+  list-style:none;display:flex;flex-direction:column;gap:0;margin:0;padding:0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-section :is(li){
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:6px 12px;padding:8px 0;border-bottom:1px solid #f1f4f8;
+  font-size:12px;line-height:1.45;color:#172033;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-section li small{
+  color:#5b6b82;font-size:11px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-followup{
+  margin:10px 0;padding:10px 12px;border-radius:8px;
+  background:#eff8fa;color:#086670;font-size:12px;
+}
