@@ -41,6 +41,10 @@ describe("Google Calendar provider-confirmed Mentor meeting status",()=>{
   expect(result.responseCounts).toBeNull();
   expect(result.responseCountReason).toBe("ATTENDEES_OMITTED");
   expect(result.reminderOneHour).toBeNull();
+  const noRoster=await readMentorGoogleMeetingStatus("token","primary",id,
+   reader({id:calendarEventId,status:"confirmed"}));
+  expect(noRoster.responseCounts).toBeNull();
+  expect(noRoster.responseCountReason).toBe("ATTENDEES_OMITTED");
  });
  it("distinguishes missing, cancelled and provider errors",async()=>{
   const missing=await readMentorGoogleMeetingStatus("token","primary",id,
@@ -49,6 +53,7 @@ describe("Google Calendar provider-confirmed Mentor meeting status",()=>{
   const cancelled=await readMentorGoogleMeetingStatus("token","primary",id,
    reader({id:calendarEventId,status:"cancelled"}));
   expect(cancelled.syncState).toBe("CANCELLED");
+  expect(cancelled.responseCounts).toBeNull();
   await expect(readMentorGoogleMeetingStatus("token","primary",id,
    reader({error:{message:"expired"}},401)))
    .rejects.toThrow("GOOGLE_CALENDAR_STATUS_UNAVAILABLE");
