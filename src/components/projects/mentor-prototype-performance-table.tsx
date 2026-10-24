@@ -8,29 +8,35 @@ import {recentMentorWorkedSprintIds} from
 type Student={id:string;name:string;label:string};
 type Task={id:string;assigneeMembershipId:string|null;sprintId:string|null;
   status:string;estimatePoints:number|null;carriedFromSprintId:string|null};
-type Sprint={id:string;sequence:number;title:string;status:string};
+type Sprint={id:string;sequence:number;title:string;status:string;releaseId:string};
+type Release={id:string;title:string};
 
 const pts=(tasks:readonly Task[])=>tasks.reduce((sum,task)=>sum+(task.estimatePoints??0),0);
 const sum=(rows:readonly MentorSprintMemberSnapshot[],key:keyof Pick<
   MentorSprintMemberSnapshot,"doneCount"|"waitingCount"|"openCount"|"carriedCount"|
-    "donePoints"|"openPoints">)=>rows.reduce((total,row)=>total+row[key],0);
+    "donePoints"|"openPoints"|"plannedPoints">)=>rows.reduce((total,row)=>total+row[key],0);
 
 /** Completed sprint workload must come from recorded sign-off history, not
  * current task.sprintId/assignee, which changes on carry-over or reassignment.
  */
 export function MentorPrototypePerformanceTable({
-  students,tasks,sprints,snapshots,
+  students,tasks,sprints,releases,snapshots,
 }:{students:readonly Student[];tasks:readonly Task[];sprints:readonly Sprint[];
-  snapshots:readonly MentorSprintSignOffSnapshot[]}){
+  releases:readonly Release[];snapshots:readonly MentorSprintSignOffSnapshot[]}){
   const [range,setRange]=useState("all");
   const sorted=useMemo(()=>[...sprints].sort((a,b)=>a.sequence-b.sequence),[sprints]);
   const active=sorted.find(item=>item.status==="ACTIVE");
   const lastFour=new Set(recentMentorWorkedSprintIds(sorted));
   const chosen=sorted.find(item=>item.id===range);
-  const historyMode=range==="last4"||chosen?.status==="COMPLETED";
-  const historicalSprints=range==="last4"
-    ?sorted.filter(item=>lastFour.has(item.id)&&item.status==="COMPLETED")
-    :chosen?.status==="COMPLETED"?[chosen]:[];
+  const releaseId=range.startsWith("release:")?range.slice("release:".length):null;
+  const included=range==="last4"
+    ?sorted.filter(item=>lastFour.has(item.id))
+    :releaseId?sorted.filter(item=>item.releaseId===releaseId)
+    :chosen?[chosen]:range==="current"?sorted.filter(item=>item.id===active?.id):[];
+  const historyMode=range==="last4"||Boolean(releaseId)||chosen?.status==="COMPLETED";
+  const historicalSprints=included.filter(item=>item.status==="COMPLETED");
+  const liveSprintIds=new Set(included.filter(item=>item.status!=="COMPLETED")
+    .map(item=>item.id));
   const snapshotMap=new Map(snapshots.map(snapshot=>[snapshot.sprintId,snapshot] as const));
   const saved=historicalSprints.flatMap(item=>{
     const snapshot=snapshotMap.get(item.id);
@@ -40,9 +46,9 @@ export function MentorPrototypePerformanceTable({
   const liveTasks=tasks.filter(task=>{
     if(range==="all")return true;
     if(range==="current")return task.sprintId===active?.id;
-    if(range==="last4")return Boolean(active&&lastFour.has(active.id)&&
-      task.sprintId===active.id);
-    return chosen?.status==="COMPLETED"?false:task.sprintId===range;
+    if(range==="last4"||releaseId||chosen)return Boolean(task.sprintId&&
+      liveSprintIds.has(task.sprintId));
+    return false;
   });
   const historicalRows=saved.flatMap(snapshot=>snapshot.memberRows);
   const unassigned=liveTasks.filter(task=>task.assigneeMembershipId===null&&
@@ -61,7 +67,10 @@ export function MentorPrototypePerformanceTable({
       review:review.length+sum(previous,"waitingCount"),
       open:open.length+sum(previous,"openCount"),
       carried:carried.length+sum(previous,"carriedCount"),
-      donePoints:pts(done)+sum(previous,"donePoints")};
+      donePoints:pts(done)+sum(previous,"donePoints"),
+      waitingPoints:pts(review)+sum(previous,"plannedPoints")-
+        sum(previous,"donePoints")-sum(previous,"openPoints"),
+      openPoints:pts(open)+sum(previous,"openPoints")};
   });
   return <div className="prototype-mentor-performance">
     <section className="prototype-mentor-chart-card">
@@ -72,6 +81,9 @@ export function MentorPrototypePerformanceTable({
             <option value="all">All (current task records)</option>
             <option value="current">Current sprint</option>
             <option value="last4">Last four worked sprints</option>
+            {releases.map(release=><option key={release.id} value={"release:"+release.id}>
+              {release.title}
+            </option>)}
             {sorted.map(sprint=><option key={sprint.id} value={sprint.id}>
               Sprint {sprint.sequence} · {sprint.title}
             </option>)}
@@ -95,8 +107,10 @@ export function MentorPrototypePerformanceTable({
         {studentRows.map(row=><div key={row.student.id}
           className="prototype-mentor-performance-row">
           <strong>{row.student.name}<small>{row.student.label}</small></strong>
-          <span>{row.done}</span><span>{row.review}</span>
-          <span>{row.open}</span><span>{row.carried}</span>
+          <span>{row.done}<small>{row.donePoints} pts</small></span>
+          <span>{row.review}<small>{row.waitingPoints} pts</small></span>
+          <span>{row.open}<small>{row.openPoints} pts</small></span>
+          <span>{row.carried}</span>
           <span>{row.donePoints} pts</span>
         </div>)}
         {!studentRows.length?<p className="prototype-mentor-summary-empty">
