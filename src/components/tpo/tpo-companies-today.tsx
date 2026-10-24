@@ -7,6 +7,10 @@ import {istDateKey,nextTpoFollowupTomorrow,type TpoCompaniesTodayRow} from
  "@/modules/placements/tpo-companies-today-model";
 import styles from "./tpo-companies-today.module.css";
 
+type RecruiterReply={
+ id:string;name:string;company:string|null;subject:string;
+ preview:string|null;receivedAt:string;accessEnded:boolean;
+};
 type Outcome="CONTACTED"|"NO_RESPONSE"|"DECLINED"|"OTHER";
 const outcomes:{value:Outcome;label:string}[]=[
  {value:"CONTACTED",label:"Connected"},
@@ -23,8 +27,9 @@ function dayLabel(date:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(date);
 }
 export function TpoCompaniesToday({
- rows,nowIso,hasMore,unreadMessages
-}:{rows:TpoCompaniesTodayRow[];nowIso:string;hasMore:boolean;unreadMessages:number|null}){
+ rows,nowIso,hasMore,unreadMessages,replies,replyTotal
+}:{rows:TpoCompaniesTodayRow[];nowIso:string;hasMore:boolean;unreadMessages:number|null;
+  replies:RecruiterReply[];replyTotal:number|null}){
  const router=useRouter();
  const now=new Date(nowIso);
  const todayKey=istDateKey(now);
@@ -107,6 +112,24 @@ export function TpoCompaniesToday({
    </div>
    <Link className={styles.link} href="/tpo/recruiters">All recruiters ›</Link>
   </div>
+  {replyTotal!==null&&replyTotal>0?<section className={styles.answer} aria-label="Recruiter replies waiting" data-testid="tpo.today.replies">
+    <div className={styles.replyHead}>
+     <strong>Answer · {replyTotal} recruiter {replyTotal===1?"reply":"replies"} waiting</strong>
+     <Link href="/tpo/messages?tab=recruiters&status=REPLY">All replies in Messages ›</Link>
+    </div>
+    <div className={styles.replyList}>
+     {replies.map(item=><article key={item.id} className={styles.reply}>
+      <span className={styles.replyWho}><strong>{item.name}</strong>
+       <small>{item.company??"Recruiter"} · {item.subject} · {when(item.receivedAt)}</small>
+      </span>
+      {item.preview?<span className={styles.replyPreview}>{item.preview}</span>:null}
+      <Link href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(item.id)}
+        className={styles.replyAction}>{item.accessEnded?"Open history":"Answer"}</Link>
+     </article>)}
+    </div>
+    {replyTotal>replies.length?<p className={styles.sub}>Showing the newest {replies.length} recruiter conversations. Open Messages for the rest.</p>:null}
+   </section>:null}
+  {replyTotal===null?<p className={styles.warning} role="status">Recruiter reply preview is temporarily unavailable. Open Messages to check the inbox.</p>:null}
   {unreadMessages!==null&&unreadMessages>0?<div className={styles.answer}>
    <strong>Answer · {unreadMessages} unread recruiter {unreadMessages===1?"message":"messages"}</strong>
    <Link href="/tpo/messages?tab=recruiters">Open Messages ›</Link>

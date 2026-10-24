@@ -5,6 +5,7 @@ import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness"
 import {getTpoDueFollowupQueue} from "@/modules/placements/tpo-followup-queue-service";
 import {rankTpoCompaniesToday} from "@/modules/placements/tpo-companies-today-model";
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
+import {getTpoMessagesInbox} from "@/modules/placements/tpo-messages-service";
 import {TpoCompaniesToday} from "@/components/tpo/tpo-companies-today";
 import {Alert} from "@/components/ui/alert";
 import Link from "next/link";
@@ -22,10 +23,11 @@ export default async function TpoCompaniesTodayPage(){
   <Link href="/tpo/recruiters" className="font-semibold text-link underline">Open recruiter contacts</Link>
  </section>;
  const now=new Date();
- const [due,next,unread]=await Promise.allSettled([
+ const [due,next,unread,replyResult]=await Promise.allSettled([
   getTpoDueFollowupQueue(context,now,{scope:"TEAM",window:"DUE",page:1}),
   getTpoDueFollowupQueue(context,now,{scope:"TEAM",window:"NEXT_7_DAYS",page:1}),
   countTpoUnreadRecruiterMessages(context),
+  getTpoMessagesInbox(context,{status:"REPLY",page:1,pageSize:3}),
  ]);
  if(due.status==="rejected"||next.status==="rejected")return <section className="space-y-4">
   <h1 className="text-2xl font-bold">Companies · Today</h1>
@@ -33,7 +35,18 @@ export default async function TpoCompaniesTodayPage(){
   <Link href="/tpo/follow-ups" className="font-semibold text-link underline">Open the full follow-up queue</Link>
  </section>;
  const rows=rankTpoCompaniesToday(due.value.rows,next.value.rows);
+ // This feed is persisted recruiter-to-placement-cell conversation activity.
+ // It is not evidence of replies to bulk email campaigns or of email delivery.
+ const replies=replyResult.status==="fulfilled"&&replyResult.value.source==="RECRUITER_THREADS"
+  ?replyResult.value.items.map(row=>({
+   id:row.id,name:row.participantName,company:row.companyName??null,
+   subject:row.subject,preview:row.lastPreview??null,
+   receivedAt:row.occurredAt.toISOString(),accessEnded:row.accessEnded??false,
+  })):[];
+ const replyTotal=replyResult.status==="fulfilled"&&replyResult.value.source==="RECRUITER_THREADS"
+  ?replyResult.value.total:null;
  return <TpoCompaniesToday rows={rows} nowIso={now.toISOString()}
   unreadMessages={unread.status==="fulfilled"?unread.value:null}
+  replies={replies} replyTotal={replyTotal}
   hasMore={due.value.total>due.value.rows.length||next.value.total>next.value.rows.length}/>;
 }
