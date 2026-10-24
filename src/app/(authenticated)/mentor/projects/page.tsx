@@ -3,6 +3,8 @@ import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-tea
 import {getMentorPrototypeSprintSummaries} from "@/modules/projects/mentor-prototype-sprint-summary-service";
 import {getMentorStudentWatch} from "@/modules/projects/mentor-student-watch-service";
 import {getMentorProjectLastActivity} from "@/modules/projects/mentor-project-last-activity-service";
+import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
+import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar-view";
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
@@ -96,7 +98,7 @@ export async function MentorProjectsContent({
     const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
     const allRows=paged?.items??await listMyProjectInstances(context);
     if(!Array.isArray(allRows))throw new Error("INVALID_PROJECT_RECORDS");
-    const [attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity]=await Promise.all([
+    const [attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead]=await Promise.all([
       listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
       getMentorProjectWorkCounts(context,paged?allRows:undefined),
       getMentorProjectTeamSizes(context,paged?allRows:undefined),
@@ -104,8 +106,11 @@ export async function MentorProjectsContent({
       // The student watch is cross-team, never just the visible SQL page.
       getMentorStudentWatch(context),
       getMentorProjectLastActivity(context),
+      listMyMentorCalendarMeetings(context)
+        .then(rows=>({rows,failed:false as const}))
+        .catch(()=>({rows:[] as MentorMeetingCalendarItem[],failed:true as const})),
     ]);
-    return {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity};
+    return {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead};
   })().catch(error=>({
     failure:error instanceof Error&&error.message==="INVALID_PROJECT_RECORDS"
       ?"The projects page did not return a valid records array."
@@ -120,7 +125,7 @@ export async function MentorProjectsContent({
           typeof item[1]==="string"&&item[1].length<=120)
       ).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
   </div>;
-  const {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity}=loaded;
+  const {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead}=loaded;
   const alerts = new Map<
     string,
     Set<string>
@@ -280,6 +285,8 @@ export async function MentorProjectsContent({
         scope={context.user.id}
         attention={attentionRows}
         studentWatch={studentWatch}
+        weekMeetings={weekMeetingsRead.rows}
+        weekMeetingsLoadFailed={weekMeetingsRead.failed}
         teamCount={allRows.filter(row=>row.memberRole==="MENTOR").length}
         membershipCount={Array.from(teamSizes.values()).reduce((sum,count)=>sum+count,0)}
       />
