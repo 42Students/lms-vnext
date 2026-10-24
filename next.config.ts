@@ -14,8 +14,14 @@ const nextConfig: NextConfig = {
       { source: "/mentor/fileExplorer", destination: "/mentor/projects", permanent: false },
       // Legacy faculty bookmarks must resolve before authorization on /teacher/courses.
       { source: "/teacher/fileExplorer", destination: "/teacher/courses", permanent: false },
-      { source: "/mentor/courses", destination: "/mentor", permanent: false },
+      { source: "/mentor/courses", destination: "/mentor/projects", permanent: false },
       { source: "/mentor/courses/:path*", destination: "/mentor/projects", permanent: false },
+      { source: "/mentor/quizzes", destination: "/mentor/projects", permanent: false },
+      { source: "/mentor/quizzes/:path*", destination: "/mentor/projects", permanent: false },
+      { source: "/mentor/allQuizzes/:path*", destination: "/mentor/projects", permanent: false },
+      { source: "/mentor/fileExplorer/:path*", destination: "/mentor/projects", permanent: false },
+      { source: "/mentor/files", destination: "/mentor/projects", permanent: false },
+      { source: "/mentor/files/:path*", destination: "/mentor/projects", permanent: false },
     ];
   },
   async headers() {
