@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {mentorSprintDefaultReleaseId} from "@/modules/projects/mentor-sprint-order-model";
+import {mentorSprintPlanningDefaults,type MentorSprintPlanningRow} from "@/modules/projects/mentor-sprint-planning-defaults-model";
 
 /** Deliberate vNext granularity: each sprint mutation is a separate
  * version-checked transaction. A multi-sprint legacy Save plan is NOT atomic
@@ -19,8 +20,9 @@ import {mentorSprintDefaultReleaseId} from "@/modules/projects/mentor-sprint-ord
 export const MENTOR_SPRINT_PLAN_SAVE_POLICY="PER_SPRINT_VERSIONED" as const;
 
 export function MentorSprintCreate({
-  projectId, releaseId,releases=[],inline=false,
-}: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[];inline?:boolean}) {
+  projectId, releaseId,releases=[],sprintPlan=[],inline=false,
+}: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[];
+ sprintPlan?:readonly MentorSprintPlanningRow[];inline?:boolean}) {
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
@@ -35,6 +37,7 @@ export function MentorSprintCreate({
   const initialReleaseId=mentorSprintDefaultReleaseId(releaseId,releases);
   const [chosenReleaseId,setChosenReleaseId]=useState(initialReleaseId);
   const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
+  const suggested=mentorSprintPlanningDefaults(chosenReleaseId,sprintPlan);
   const sprintKeyPreview=title.trim().toLowerCase().normalize("NFKD")
     .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,64);
   const dirty=Boolean(title||key||dueLabel||description||goal||done||startDate||endDate||dueDate||chosenReleaseId!==initialReleaseId);
@@ -43,6 +46,13 @@ export function MentorSprintCreate({
     setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(initialReleaseId);
   }
   const guard=useProjectEditorDiscardGuard(open,dirty,busy,discardDraft);
+  function beginCreate(){
+    if(!open){const proposal=mentorSprintPlanningDefaults(initialReleaseId,sprintPlan);
+      setChosenReleaseId(initialReleaseId);setTitle(proposal.title);
+      setStartDate(proposal.startDate);setEndDate(proposal.endDate);
+    }
+    setOpen(true);
+  }
   const datesValid=(!startDate||!endDate||endDate>=startDate)&&
     (!dueDate||!startDate||dueDate>=startDate);
   async function create() {
@@ -79,7 +89,12 @@ export function MentorSprintCreate({
   const sprintForm=(<div className="grid min-w-0 gap-[var(--lms-space-4)]">
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Release
           <Select value={chosenReleaseId} disabled={busy} required aria-invalid={!chosenReleaseId}
-            onChange={event=>setChosenReleaseId(event.target.value)}
+            onChange={event=>{
+              const choice=event.target.value;
+              const proposal=mentorSprintPlanningDefaults(choice,sprintPlan);
+              setChosenReleaseId(choice);setTitle(proposal.title);
+              setStartDate(proposal.startDate);setEndDate(proposal.endDate);
+            }}
             className="min-h-11 w-full min-[768px]:min-h-9">
             <option value="" disabled>Pick the release this sprint ships in</option>
             {releases.filter(release=>release.status!=="SHIPPED").map(release=>
@@ -87,6 +102,11 @@ export function MentorSprintCreate({
           </Select>
         </label>
         {!chosenReleaseId?<p role="alert" className="text-xs text-error">Select a release before saving.</p>:null}
+        {chosenReleaseId?<p className="text-xs text-muted-foreground">
+          Suggested {suggested.title} in this release.
+          {suggested.startDate?" Proposed weekly dates follow the last recorded sprint end.":" No reliable previous sprint end date; choose dates explicitly."}
+          These are editable defaults; the server assigns the final sequence.
+        </p>:null}
         <div className="grid min-w-0 gap-3 md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Key (optional)
             <Input maxLength={120} placeholder="Auto-generated from title if left blank"
@@ -129,7 +149,7 @@ export function MentorSprintCreate({
         </p>:null}
       </div>);
   return <>
-    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)} className="min-h-11 md:min-h-9">
+    <Button size="sm" variant="secondary" onClick={beginCreate} className="min-h-11 md:min-h-9">
       Add sprint
     </Button>
     {inline ? (open ? <section aria-label="Create sprint"
@@ -142,7 +162,7 @@ export function MentorSprintCreate({
       {sprintActions}
       <p className="text-xs text-body">Only this workspace’s sprint plan is updated.</p>
     </section> : null) :
-      <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
+      <Dialog open={open} onOpenChange={next=>{if(next)beginCreate();else guard.requestClose();}}
         title="Create sprint"
         description="Add a sprint to your plan. Its title is kept when its generated key is assigned. Individual sprints save separately so other planned work is not overwritten."
         footer={sprintActions}>
