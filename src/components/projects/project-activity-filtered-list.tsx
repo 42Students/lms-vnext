@@ -132,8 +132,8 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
    actorGeneration.current+=1;
    const generationNow=actorGeneration.current;
    setActor(id);setPage(1);setActorFeed(null);setActorError("");
+   setActorBusy(Boolean(id));
    if(!id)return;
-   setActorBusy(true);
    try{
      const query=new URLSearchParams({actorUserId:id});
      const page=await apiFetch<Page>("/api/projects/"+
