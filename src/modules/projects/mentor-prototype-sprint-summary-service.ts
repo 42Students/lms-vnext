@@ -8,42 +8,9 @@ import {can} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {ProjectsServiceError} from "./errors";
 import {listMyProjectInstances} from "./member-service";
-
-export type MentorPrototypeSprintSummary={
-  total:number;
-  completed:number;
-  activeSequence:number|null;
-  segments:readonly {sequence:number;releaseSequence:number;status:string}[];
-};
-
-/** Use the project-wide position for "Sprint n of total".
- * The persisted sprint.sequence is release-local and may restart at zero.
- */
-export function summarizeMentorProjectSprints(rows:readonly {
-  id:string;projectId:string;sequence:number;releaseSequence:number;status:string;
-}[]):Map<string,MentorPrototypeSprintSummary>{
- const ordered=[...rows].sort((a,b)=>
-   a.projectId.localeCompare(b.projectId)||
-   a.releaseSequence-b.releaseSequence||a.sequence-b.sequence||
-   a.id.localeCompare(b.id));
- const grouped=new Map<string,Array<{sequence:number;releaseSequence:number;status:string}>>();
- for(const row of ordered){
-  const found=grouped.get(row.projectId)??[];
-  found.push({sequence:row.sequence,releaseSequence:row.releaseSequence,status:row.status});
-  grouped.set(row.projectId,found);
- }
- const results=new Map<string,MentorPrototypeSprintSummary>();
- for(const [projectId,segments] of grouped){
-  const activeIndex=segments.findIndex(item=>item.status==="ACTIVE");
-  results.set(projectId,{
-   total:segments.length,
-   completed:segments.filter(item=>item.status==="COMPLETED").length,
-   activeSequence:activeIndex>=0?activeIndex+1:null,
-   segments,
-  });
- }
- return results;
-}
+import {summarizeMentorProjectSprints,type MentorPrototypeSprintSummary}
+ from "./mentor-project-sprint-position-model";
+export type {MentorPrototypeSprintSummary} from "./mentor-project-sprint-position-model";
 
 /** Counts only real, non-deleted project sprints in the mentor's authorized
  * college/project set. This summary never assumes the prototype's sample 16
