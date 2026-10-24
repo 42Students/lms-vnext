@@ -236,6 +236,10 @@ async function MentorNotificationsContent({
     {(selectedPill==="all"||selectedPill==="unread")&&!allRelevantFailed?
       <MentorUnifiedNotificationFeed items={mergedShown}
         unreadOnly={selectedPill==="unread"}
+        personalNextCursor={inbox?.page.nextCursor?{
+          beforeCreatedAt:inbox.page.nextCursor.beforeCreatedAt.toISOString(),
+          beforeId:inbox.page.nextCursor.beforeId,
+        }:null}
         announcementNextCursor={announcementPage.nextCursor?{
           beforePinned:announcementPage.nextCursor.isPinned?"1":"0",
           beforeCreatedAt:announcementPage.nextCursor.createdAt.toISOString(),
