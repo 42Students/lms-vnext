@@ -18,6 +18,7 @@ import { RouteTransition } from "./route-transition";
 import { RouteProgress } from "./route-progress";
 import { LearnerFacultyMobileFooter } from "./learner-faculty-mobile-footer";
 import {ShellWidgetBoundary} from "./shell-widget-boundary";
+import {TPO_PROTOTYPE_NAV} from "./tpo-prototype-navigation";
 import {ShellConnectivityNotice} from "./shell-connectivity-notice";
 import {canOpenTpoWorkspace} from "@/modules/placements/tpo-workspace-access-model";
 import { ToastProvider } from "@/components/ui/toast";
@@ -52,13 +53,14 @@ export async function AppShell({
     : null;
   const tpoVerificationEnabled=hasMembershipRole(context,"TPO")
     ?await getTpoShellVerificationAccess(context):false;
-  const navigation=getShellNavigation(context,learnerAccess,tpoVerificationEnabled);
+  const resolvedNavigation=getShellNavigation(context,learnerAccess,tpoVerificationEnabled);
   // The prototype shell applies only to these single-workspace portals.
   // Mixed-role and College Admin navigation retain the existing shell.
   const prototypePortal =
-    navigation[0]?.href === "/tpo/home" ? "tpo" :
-    navigation[0]?.href === "/hr/home" ? "recruiter" :
-    navigation[0]?.href === "/mentor/projects" ? "mentor" : null;
+    resolvedNavigation[0]?.href === "/tpo/home" ? "tpo" :
+    resolvedNavigation[0]?.href === "/hr/home" ? "recruiter" :
+    resolvedNavigation[0]?.href === "/mentor/projects" ? "mentor" : null;
+  const navigation=prototypePortal==="tpo"?TPO_PROTOTYPE_NAV:resolvedNavigation;
   const homeHref=navigation[0]?.href??"/dashboard";
   const currentMembership = context.membership
     ? memberships.find(

@@ -11,6 +11,7 @@ import {canonicalShellPath,scopedShellNavigation,shellNavIconKey,
  TPO_SECTION_LABELS,type ShellNavItem} from "./shell-model";
 import {ShellNavGlyph} from "./shell-nav-icons";
 import {legacySidebarItemActive} from "./legacy-sidebar-active-model";
+import {tpoPrototypeSidebarActive} from "./tpo-prototype-navigation";
 import {superAdminLegacyGroupForPath} from "@/modules/people/super-admin-legacy-tabs-model";
 import {collegeLegacyGroupForPath} from "@/modules/people/college-legacy-tabs-model";
 import "./sidebar-legacy.css";
@@ -99,8 +100,10 @@ export function SidebarNav({
  >{visibleItems.map((item,index)=>{
    const previousGroup=index>0?visibleItems[index-1]?.group:null;
    const startsNewGroup=Boolean(item.group)&&(index===0||item.group!==previousGroup);
-   const active=legacySidebarItemActive(route,item,
-    superAdminGroup?.title??null,collegeGroup?.title??null);
+   const prototypeTpo=sidebarPortal==="tpo"&&visibleItems.length===8&&
+     visibleItems.some(entry=>entry.href==="/tpo/companies/today");
+   const active=prototypeTpo?tpoPrototypeSidebarActive(pathname,item):
+     legacySidebarItemActive(route,item,superAdminGroup?.title??null,collegeGroup?.title??null);
    const label=sectionLabel(item,sidebarPortal);
    const count=tpoCounts?tpoItemCount(item.href,tpoCounts):null;
    const badge=count===null?null:shellUnreadBadge(count);
