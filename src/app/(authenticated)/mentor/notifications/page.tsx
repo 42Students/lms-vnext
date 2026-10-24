@@ -110,7 +110,8 @@ async function MentorNotificationsContent({
   // tie-breaker within a priority rather than the only sort key.
   const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data)
     .slice().sort((a,b)=>{
-      const rank={REVIEW:0,REQUESTED:1,STALLED:2,MEETING_SOON:3} as const;
+      const rank={REVIEW:0,TASK_REVIEW:1,SPRINT_SIGN_OFF:2,TASK_BLOCKED:3,
+        UNASSIGNED_NEXT:4,REQUESTED:5,STALLED:6,MEETING_SOON:7} as const;
       return rank[a.kind]-rank[b.kind] ||
         b.occurredAt.localeCompare(a.occurredAt) || a.key.localeCompare(b.key);
     });
@@ -118,7 +119,8 @@ async function MentorNotificationsContent({
     selectedPill==="all" ? true :
     selectedPill==="subs" ? alert.kind==="REVIEW" :
     selectedPill==="meet" ? alert.kind==="REQUESTED"||alert.kind==="MEETING_SOON" :
-    selectedPill==="tasks" ? alert.kind==="STALLED" : false);
+    selectedPill==="tasks" ? ["STALLED","TASK_REVIEW","TASK_BLOCKED",
+      "SPRINT_SIGN_OFF","UNASSIGNED_NEXT"].includes(alert.kind) : false);
   const attentionFiltered=Boolean(projectId.data)||kind.data!=="ALL"||attentionOrder.data!=="RECENT";
   const items:NotificationListItem[] = (inbox?.page.items ?? []).map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
@@ -145,7 +147,7 @@ async function MentorNotificationsContent({
   const retryHref = MENTOR_INBOX+(retryParams.size?"?"+retryParams.toString():"");
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Notifications"
-      description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
+      description="Announcements, final submissions, task approvals, sprint sign-offs, blockers and meetings." />
     <nav className="prototype-mentor-notification-pills" aria-label="Notification categories">
       {([
         ["all","All"],["unread","Unread · "+(inbox?.unreadCount??0)],
@@ -211,6 +213,10 @@ async function MentorNotificationsContent({
             <option value="STALLED">Stalled</option>
             <option value="REQUESTED">Meeting requests</option>
             <option value="MEETING_SOON">Meetings soon</option>
+            <option value="TASK_REVIEW">Task approvals</option>
+            <option value="TASK_BLOCKED">Blocked tasks</option>
+            <option value="SPRINT_SIGN_OFF">Sprint sign-offs</option>
+            <option value="UNASSIGNED_NEXT">Next sprint unassigned</option>
           </Select>
         </label>
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
@@ -232,10 +238,15 @@ async function MentorNotificationsContent({
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{alert.title}</h3>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
-                    alert.kind === "REVIEW" || alert.kind === "REQUESTED" ? "warning" : "info"}>
+                    ["REVIEW","REQUESTED","TASK_REVIEW","TASK_BLOCKED",
+                      "SPRINT_SIGN_OFF","UNASSIGNED_NEXT"].includes(alert.kind) ? "warning" : "info"}>
                     {alert.kind === "MEETING_SOON" ? "Upcoming meeting" :
                       alert.kind === "REQUESTED" ? "Meeting requested" :
-                      alert.kind === "REVIEW" ? "Needs review" : "Stalled"}
+                      alert.kind === "REVIEW" ? "Needs review" :
+                      alert.kind === "TASK_REVIEW" ? "Task approval" :
+                      alert.kind === "TASK_BLOCKED" ? "Task blocked" :
+                      alert.kind === "SPRINT_SIGN_OFF" ? "Sprint sign-off" :
+                      alert.kind === "UNASSIGNED_NEXT" ? "Unassigned next sprint" : "Stalled"}
                   </StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body leading-[22px]">{alert.description}</p>
