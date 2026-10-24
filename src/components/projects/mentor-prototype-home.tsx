@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import {useEffect, useState} from "react";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {mentorAttentionReceiptKey} from "@/modules/projects/mentor-attention-read-model";
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
 import type {MentorStudentWatchItem} from "@/modules/projects/mentor-student-watch-service";
 import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar-view";
 import {selectMentorHomeWeekMeetings} from "@/modules/projects/mentor-home-week-meetings-model";
 
 type FocusItem = MentorProjectAttention;
-const MAX_SNOOZED = 100;
 
 function attentionLabel(kind:FocusItem["kind"]):string {
   switch(kind) {
@@ -41,27 +43,16 @@ function activityTime(value:string) {
     day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
   }).format(parsed);
 }
-function storageKey(scope:string) {
-  return "42lms:mentor:prototype:later:v1:" + scope;
-}
-function readLater(key:string):string[] {
-  try {
-    const value=JSON.parse(localStorage.getItem(key)||"[]") as unknown;
-    return Array.isArray(value) ? value.filter((x):x is string=>typeof x==="string").slice(-MAX_SNOOZED) : [];
-  } catch {return [];}
-}
-
-/** Prototype screen #45: focus queue and right-side panels backed by real
- * membership-scoped attention. "Later" is per-account/per-event local state;
- * the item reappears automatically when the event timestamp changes.
+/** Prototype screen #45: verified project attention with durable,
+ * recipient-scoped Later receipts that reopen when source revisions change.
  */
 export function MentorPrototypeHome({
-  scope, nowIso,attention,teamCount,membershipCount,studentWatch,
-  uniqueLearnerCount,learnerAssignmentCount,
+  nowIso,attention,teamCount,membershipCount,studentWatch,
+  uniqueLearnerCount,learnerAssignmentCount,initialLater,
   weekMeetings,weekMeetingsLoadFailed,
 }:{
-  scope:string;
   nowIso:string;
+  initialLater:readonly string[];
   attention:readonly FocusItem[];
   weekMeetings:readonly MentorMeetingCalendarItem[];
   weekMeetingsLoadFailed:boolean;
@@ -71,28 +62,32 @@ export function MentorPrototypeHome({
   learnerAssignmentCount:number;
   studentWatch:readonly MentorStudentWatchItem[];
 }) {
-  const [snoozed,setSnoozed]=useState<readonly string[]>([]);
-  const [hydrated,setHydrated]=useState(false);
-  useEffect(()=>{
-    // Defer storage hydration until the first animation frame so the initial
-    // server/client trees agree and React's effect-set-state rule is respected.
-    const frame=window.requestAnimationFrame(()=>{
-      setSnoozed(readLater(storageKey(scope)));
-      setHydrated(true);
-    });
-    return ()=>window.cancelAnimationFrame(frame);
-  },[scope]);
-  const active=hydrated
-    ? attention.filter(item=>!snoozed.includes(item.key+"@"+(item.revision??item.occurredAt)))
-    : attention;
+  const router=useRouter();
+  const [snoozed,setSnoozed]=useState<readonly string[]>(initialLater);
+  const [laterBusy,setLaterBusy]=useState<string|null>(null);
+  const [laterError,setLaterError]=useState("");
+  const active=attention.filter(item=>
+    !snoozed.includes(mentorAttentionReceiptKey(item)));
   const focus=active.slice(0,5);
   const meetings=selectMentorHomeWeekMeetings(weekMeetings,new Date(nowIso));
 
-  const later=(item:FocusItem)=>{
-    const eventKey=item.key+"@"+(item.revision??item.occurredAt);
-    const next=[...new Set([...snoozed,eventKey])].slice(-MAX_SNOOZED);
-    setSnoozed(next);
-    try{localStorage.setItem(storageKey(scope),JSON.stringify(next));}catch{/* session still hides the item */}
+  const later=async(item:FocusItem)=>{
+    const key=mentorAttentionReceiptKey(item);
+    if(laterBusy)return;
+    setLaterBusy(key);setLaterError("");
+    try{
+      const result=await apiFetch<{hidden:boolean}>(
+        "/api/mentor/attention/later",{
+          method:"POST",headers:{"content-type":"application/json"},
+          body:JSON.stringify({key}),timeoutMs:12000,
+        });
+      if(!result.hidden)throw new Error("Attention was not postponed.");
+      setSnoozed(previous=>[...new Set([...previous,key])]);
+      router.refresh();
+    }catch(reason){
+      setLaterError(reason instanceof Error?reason.message:
+        "Couldn't postpone the item. Retry.");
+    }finally{setLaterBusy(null);}
   };
 
   return <div className="prototype-mentor-home">
@@ -112,6 +107,7 @@ export function MentorPrototypeHome({
           <strong>Needs you · oldest within priority</strong>
           <span>Later hides it until this event changes</span>
         </div>
+        {laterError?<p role="alert">{laterError}</p>:null}
         {focus.length ? focus.map(item=><article className="prototype-mentor-focus-item" key={item.key}>
           <div>
             <span className="prototype-mentor-focus-kind">{attentionLabel(item.kind)} · {activityTime(item.occurredAt)}</span>
@@ -120,7 +116,11 @@ export function MentorPrototypeHome({
           </div>
           <div className="prototype-mentor-focus-actions">
             <Link href={item.href}>{attentionAction(item.kind)}</Link>
-            <button type="button" onClick={()=>later(item)} aria-label={"Later: "+item.title}>Later</button>
+            <button type="button" disabled={laterBusy!==null}
+              onClick={()=>void later(item)}
+              aria-label={"Later: "+item.title}>
+              {laterBusy===mentorAttentionReceiptKey(item)?"Saving…":"Later"}
+            </button>
           </div>
         </article>):<p className="prototype-mentor-empty">No pending sprint sign-offs, task reviews, blockers or meeting requests in your current projects.</p>}
         {active.length>5?<p className="prototype-mentor-focus-footer">{active.length-5} more items need attention. <Link href="/mentor/notifications">See notifications</Link></p>:null}
