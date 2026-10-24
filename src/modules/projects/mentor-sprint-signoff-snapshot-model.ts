@@ -17,6 +17,7 @@ export type MentorSprintMemberSnapshot = {
   carriedCount:number;
   donePoints:number;
   plannedPoints:number;
+  openPoints:number;
 };
 export type MentorSprintSignOffSnapshot = {
   version:1;
@@ -41,7 +42,7 @@ export function buildMentorSprintSignOffSnapshot(
     let member=byMember.get(key);
     if(!member){
       member={membershipId:key,taskCount:0,doneCount:0,waitingCount:0,
-        openCount:0,carriedCount:0,donePoints:0,plannedPoints:0,plannedPoints:0};
+        openCount:0,carriedCount:0,donePoints:0,plannedPoints:0,openPoints:0};
       byMember.set(key,member);
     }
     member.taskCount++;
@@ -53,6 +54,7 @@ export function buildMentorSprintSignOffSnapshot(
       member.waitingCount++;
     }else{
       member.openCount++;
+      member.openPoints+=amount;
     }
     if(task.carriedFromSprintId)member.carriedCount++;
   }
@@ -71,7 +73,8 @@ const validMember=(value:unknown):value is MentorSprintMemberSnapshot=>
   isCount(value["taskCount"])&&isCount(value["doneCount"])&&
   isCount(value["waitingCount"])&&isCount(value["openCount"])&&
   isCount(value["carriedCount"])&&isCount(value["donePoints"])&&
-  isCount(value["plannedPoints"])&&value["donePoints"]<=value["plannedPoints"]&&
+  isCount(value["plannedPoints"])&&isCount(value["openPoints"])&&
+  value["donePoints"]<=value["plannedPoints"]&&value["openPoints"]<=value["plannedPoints"]&&
   value["doneCount"]+value["waitingCount"]+value["openCount"]===value["taskCount"]&&
   value["carriedCount"]<=value["taskCount"];
 
@@ -97,5 +100,5 @@ export function parseMentorSprintSignOffSnapshot(
 
 export const emptyMentorMemberWork=():MentorSprintMemberSnapshot=>({
   membershipId:null,taskCount:0,doneCount:0,waitingCount:0,
-  openCount:0,carriedCount:0,donePoints:0,
+  openCount:0,carriedCount:0,donePoints:0,plannedPoints:0,openPoints:0,
 });
