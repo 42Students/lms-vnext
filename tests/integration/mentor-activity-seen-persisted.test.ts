@@ -14,6 +14,7 @@ import {
   getMentorProjectActivitySeenState,markMentorProjectActivitySeen,
 } from "@/modules/projects/mentor-activity-seen-service";
 import {postMentorProjectUpdate} from "@/modules/projects/mentor-project-update-service";
+import {listProjectActivity} from "@/modules/projects/activity-service";
 
 // Requires the seeded, migrated disposable DB. Never point TEST_DATABASE_URL at
 // a shared environment: this suite creates project/member and immutable audit data.
@@ -130,6 +131,9 @@ describe("Mentor project Activity seen state (PostgreSQL)",()=>{
     await postMentorProjectUpdate(mentor,second,{message:"Not a notification for the first project"});
     expect((await getMentorProjectActivitySeenState(mentor,first)).newCount).toBe(0);
     await postMentorProjectUpdate(mentor,first,{message:"Update from this Mentor"});
+    const learnerFeed=await listProjectActivity(learner,first);
+    expect(learnerFeed.some(event=>event.summary==="Update from this Mentor")).toBe(true);
+    expect(learnerFeed.some(event=>event.summary==="Not a notification for the first project")).toBe(false);
     const fromSecondSession:RequestContext={...mentor,
       user:{...mentor.user},membership:{...mentor.membership!}};
     expect((await getMentorProjectActivitySeenState(fromSecondSession,first)).newCount).toBe(1);
