@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 43/132 `CODE_READY`, 82/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 44/132 `CODE_READY`, 81/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -28,7 +28,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 45-03 | CODE_READY | mentor-attention-later-service.ts; mentor-prototype-home.tsx; mentor/attention/later/route.ts |
 | 45-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 45-05 | CODE_READY | mentor-home-week-meetings-model.ts; mentor-prototype-home.tsx |
-| 45-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 45-06 | CODE_READY | mentor-student-task-signals-model.ts; mentor-consecutive-carry-service.ts; mentor-consecutive-carry-model.ts; mentor-student-watch-service.ts |
 | 45-07 | CODE_READY | mentor-project-team-size-service.ts; mentor-prototype-home.tsx |
 | 45-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 45-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
