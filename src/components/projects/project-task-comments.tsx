@@ -13,8 +13,9 @@ import {PROJECT_TASK_COMMENT_KINDS,PROJECT_TASK_COMMENT_KIND_LABELS,
 type Comment={id:string;body:string;commentKind:string;createdAt:string;
  authorMembershipId:string;authorName:string|null;progressValue:number|null;
  taskStatusSnapshot:string|null};
-export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
+export function ProjectTaskComments({projectId,taskId,updatedAt,canPost,blockerReply=false}:{
  projectId:string;taskId:string;updatedAt:string;canPost:boolean;
+ blockerReply?:boolean;
 }){
  const router=useRouter();
  const [rows,setRows]=useState<Comment[]>([]);const [body,setBody]=useState("");
@@ -63,6 +64,11 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   finally{setBusy(false);}
  }
  return <div className="mt-[var(--lms-space-2)] min-w-0 space-y-[var(--lms-space-3)]">
+   {canPost&&blockerReply?<Button size="sm" variant="secondary" type="button"
+      disabled={busy} onClick={()=>{
+        setKind("NOTE");setBody("Suggested workaround: ");
+        void show();
+      }}>Reply with a way round it</Button>:null}
    <Button size="sm" variant="secondary" aria-expanded={open}
     aria-controls={"project-task-comments-"+taskId}
     onClick={()=>open?discard.requestClose():void show()}>
