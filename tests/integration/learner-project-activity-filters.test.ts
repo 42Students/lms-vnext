@@ -410,6 +410,16 @@ describe("Mentor project updates: atomic activity, recipients and posting limits
       await expect(postMentorProjectUpdate(mentorContext,ids.project,{
         message:"   ",
       })).rejects.toBeDefined();
+      await pool.query("UPDATE project_members SET ended_at=now() WHERE id=$1",
+        [ids.mentorProjectMember]);
+      try{
+        await expect(postMentorProjectUpdate(mentorContext,ids.project,{
+          message:"Removed Mentor cannot post",
+        })).rejects.toBeDefined();
+      }finally{
+        await pool.query("UPDATE project_members SET ended_at=null WHERE id=$1",
+          [ids.mentorProjectMember]);
+      }
 
       const first=await postMentorProjectUpdate(mentorContext,ids.project,{
         message:"Project week 1: sprint tasks ready",
