@@ -209,7 +209,9 @@ export function MentorPrototypePerformance({workspace}:{workspace:Workspace}){
     }))}
     sprints={workspace.sprints.map(sprint=>({
       id:sprint.id,sequence:sprint.sequence,title:sprint.title,status:sprint.status,
+      releaseId:sprint.releaseId,
     }))}
+    releases={workspace.releases.map(release=>({id:release.id,title:release.title}))}
     snapshots={workspace.mentorSprintSnapshots} />;
 }
 
