@@ -127,7 +127,8 @@ export async function searchMentorWorkspacePage(
     href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=performance#mentor-student-"+encodeURIComponent(item.id)});
   for(const item of resources.slice(0,SEARCH_PAGE_SIZE))result.push({key:"r:"+item.id,kind:"Resource",
     title:item.title,context:byId.get(item.projectId)??"Project",
-    href:"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=resources"});
+    href:"/mentor/projects/"+encodeURIComponent(item.projectId)+
+      "?tab=resources#mentor-resource-"+encodeURIComponent(item.id)});
   return {results:sortMentorSearchMatches(result,term),page,
     hasMore:page<100&&[matchingProjects,tasks,students,resources]
       .some(rows=>rows.length>SEARCH_PAGE_SIZE)};
