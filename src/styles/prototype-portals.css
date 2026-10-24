@@ -2022,3 +2022,34 @@
     grid-template-columns:minmax(0,1fr);
   }
 }
+
+
+/* Mentor #54: prototype Yes / Another time / No request decisions. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-request{
+  display:flex;flex-direction:column;gap:9px;margin-top:12px;
+  padding:12px;border:1px solid #f4d9a8;border-radius:10px;background:#fffbf2;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-request h3{
+  margin:0;color:#9a3412;font-size:12px;font-weight:700;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-request p{
+  margin:0;color:#7c4a19;font-size:12px;line-height:1.5;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-request-buttons{
+  display:flex;flex-wrap:wrap;align-items:center;gap:7px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-request-buttons>a{
+  display:inline-flex;align-items:center;justify-content:center;min-height:34px;
+  padding:0 12px;border:1px solid #d6e1ee;border-radius:8px;
+  background:#fff;color:#0a7c88;text-decoration:none;font-size:12px;font-weight:700;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-decision-form{
+  display:flex;flex-direction:column;gap:12px;min-width:0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-decision-form>label{
+  display:flex;flex-direction:column;gap:6px;font-size:12px;color:#3b4a60;font-weight:700;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-meeting-decision-actions{
+  display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;
+  padding-top:12px;border-top:1px solid #e7ecf2;
+}
