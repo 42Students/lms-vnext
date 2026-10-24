@@ -1,8 +1,31 @@
-import { collegeBatchDirectoryBaseSchema,withCollegeBatchFilterCheck,collegeSemesterDirectoryBaseSchema,withCollegeSemesterCreditCheck } from "./college-academic-directory-model";
+import { collegeBatchDirectoryBaseSchema,collegeSemesterDirectoryBaseSchema } from "./college-academic-directory-model";
 import { buildCollegeDirectoryCsv,exportParams } from "./college-directory-export-model";
 export const ACADEMIC_EXPORT_CAP=1000;
-export const semesterCsvSchema=withCollegeSemesterCreditCheck(collegeSemesterDirectoryBaseSchema.omit({page:true}));
-export const batchCsvSchema=withCollegeBatchFilterCheck(collegeBatchDirectoryBaseSchema.omit({page:true}));
+// Export query schemas omit pagination but retain all directory cross-field
+// constraints. The directory helpers accept page-bearing objects only.
+export const semesterCsvSchema=collegeSemesterDirectoryBaseSchema.omit({page:true})
+ .refine(q=>q.minimumCredits===undefined||q.maximumCredits===undefined||
+   q.minimumCredits<=q.maximumCredits,{
+  path:["maximumCredits"],message:"Maximum credits must be at least the minimum",
+ })
+ .refine(q=>q.creditState!=="UNSET"||
+   (q.minimumCredits===undefined&&q.maximumCredits===undefined),{
+  path:["creditState"],message:"Unconfigured semester credits cannot be combined with credit bounds",
+ });
+export const batchCsvSchema=collegeBatchDirectoryBaseSchema.omit({page:true})
+ .refine(q=>q.startOnOrAfter===undefined||q.startOnOrBefore===undefined||
+   q.startOnOrAfter<=q.startOnOrBefore,{
+  path:["startOnOrBefore"],message:"Batch start-date end limit must not precede start limit",
+ })
+ .refine(q=>q.progression!=="MISSING"||q.currentTerm===undefined,{
+  path:["currentTerm"],message:"A missing progression record cannot have a recorded current term",
+ })
+ .refine(q=>q.academicYearState!=="UNRECORDED"||q.yearStart===undefined,{
+  path:["yearStart"],message:"An unrecorded academic year cannot match a year-start filter",
+ })
+ .refine(q=>q.progression!=="MISSING"||q.yearStart===undefined,{
+  path:["yearStart"],message:"A missing progression record cannot match a recorded academic year",
+ });
 export type AcademicCsvKind="SEMESTERS"|"BATCHES";
 export function academicExportHref(kind:AcademicCsvKind,query:{
  q:string;programId?:string | undefined;status:string;termNumber?:number | undefined;minimumCredits?:number | undefined;maximumCredits?:number | undefined;creditState?:"ALL"|"CONFIGURED"|"UNSET" | undefined;yearStart?:number | undefined;currentTerm?:number | undefined;progression?:"ALL"|"RECORDED"|"MISSING" | undefined;
