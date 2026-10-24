@@ -245,7 +245,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
   </div>;
 }
 
-export function MentorPrototypeTeamOverview({workspace,readOnly}:{workspace:Workspace;readOnly:boolean}){
+export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{workspace:Workspace;readOnly:boolean;canAddMentor:boolean}){
   const students=workspace.members.filter(member=>member.role==="LEARNER");
   const mentors=workspace.members.filter(member=>member.role==="MENTOR");
   const academicByMember=new Map(workspace.mentorLearnerAcademicFacts.map(row=>
@@ -281,7 +281,7 @@ export function MentorPrototypeTeamOverview({workspace,readOnly}:{workspace:Work
       <h2>The team · {students.length} students · {mentors.length} mentors</h2>
       <div className="flex flex-wrap items-center gap-2">
         {!readOnly&&!workspace.project.teamGroupId?<AddProjectMemberControl
-          projectId={workspace.project.id} learnerOnly/>:null}
+          projectId={workspace.project.id} learnerOnly={!canAddMentor}/>:null}
         <Link href={base+"?tab=team#project-meetings"}>Meetings and requests →</Link>
       </div>
     </div>
