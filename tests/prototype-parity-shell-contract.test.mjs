@@ -122,7 +122,7 @@ test("Mentor Board provides real keyboard-accessible Board/List controls and tas
   assert.match(src,/aria-pressed=\{view==="list"\}/);
   assert.match(src,/group\.tasks\.map\(task=>/);
   assert.match(src,/sprintListGroups/);
-  assert.match(src,/setSelected\(task\.id\)/);
+  assert.match(src,/setFocusedId\(task\.id\)/);
   assert.match(src,/MentorBoardTaskDetailDialog/);
   assert.match(src,/projectMutation/);
 });
