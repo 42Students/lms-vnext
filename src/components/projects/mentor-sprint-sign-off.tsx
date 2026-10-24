@@ -9,7 +9,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
 
-type UnfinishedTask={id:string;title:string;status:string};
+type UnfinishedTask={id:string;title:string;status:string;updatedAt:string};
 
 /** Sign off only after task reviews are resolved. The migrated domain service
  * already carries every unfinished sprint task into the backlog atomically.
@@ -36,7 +36,8 @@ export function MentorSprintSignOff({
   const carried=unfinished.filter(task=>task.status!=="IN_REVIEW");
   const destinationFor=(taskId:string):"NEXT"|"BACKLOG"|"DROP"=>
     destinations[taskId]??(nextSprint?"NEXT":"BACKLOG");
-  const choices=unfinished.map(task=>({taskId:task.id,destination:destinationFor(task.id)}));
+  const choices=unfinished.map(task=>({taskId:task.id,destination:destinationFor(task.id),
+    expectedUpdatedAt:task.updatedAt}));
   const movingNext=choices.some(item=>item.destination==="NEXT");
   const dropping=choices.filter(item=>item.destination==="DROP").length;
   const canSign=waiting.length===0&&!pending&&(!dropping||dropConfirmed);
