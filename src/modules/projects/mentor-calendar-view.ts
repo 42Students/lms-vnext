@@ -27,6 +27,16 @@ export type MentorMeetingCalendarItem = {
   legacyEndTime?:string|null;
 };
 
+/** Legacy imports may contain a nonstandard meeting kind; do not mislabel it. */
+export function safeMentorCalendarMeetingType(value:string|null|undefined):
+  MentorMeetingCalendarItem["meetingType"] {
+  switch(value){
+    case "GENERAL":case "PLANNING":case "STANDUP":case "REVIEW":case "RETRO":
+      return value;
+    default:return undefined;
+  }
+}
+
 export function splitMentorMeetings(
   items: readonly MentorMeetingCalendarItem[],
   now: Date,
