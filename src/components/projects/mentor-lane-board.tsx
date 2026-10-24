@@ -8,7 +8,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {useRouter,useSearchParams} from "next/navigation";
-import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
+import {groupLearnerBoardLanes,learnerTaskLane} from "@/modules/projects/learner-board-lanes-model";
+import {nextMentorBoardFocus} from "@/modules/projects/mentor-board-keyboard-focus-model";
 import {mentorLanePage} from "@/modules/projects/mentor-board-lane-paging-model";
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
@@ -84,9 +85,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    (!assignee||(assignee==="UNASSIGNED"?task.assigneeMembershipId===null:
      task.assigneeMembershipId===assignee))&&
    (!statusFilter||(statusFilter==="BACKLOG"?task.sprintId===null:task.status===statusFilter)));
- const visible=matching.slice(0,visibleLimit);
- const focused=matching.find(task=>task.id===focusedId)??visible[0]??null;
- useEffect(()=>{
+ const visible= useEffect(()=>{
    const onKey=(event:KeyboardEvent)=>{
      if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
        event.repeat||event.defaultPrevented)return;
@@ -95,13 +94,28 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      if(event.target instanceof Element&&event.target.closest(
        "input,textarea,select,button,a,[contenteditable],[role=dialog]"))return;
      if(document.querySelector('[role="dialog"]')||matching.length===0)return;
-     const index=visible.findIndex(task=>task.id===(focusedId??visible[0]?.id));
-     const next=Math.max(0,Math.min(visible.length-1,index+(key==="j"?1:-1)));
-     const task=visible[next];
-     if(!task)return;
-     event.preventDefault();setFocusedId(task.id);
+     const target=nextMentorBoardFocus(matching.map(task=>task.id),
+       focusedId,key as "j"|"k");
+     if(!target)return;
+     const nextTask=matching[target.index];
+     if(!nextTask)return;
+     event.preventDefault();
+     setFocusedId(target.id);
+     if(view==="list")setVisibleLimit(limit=>Math.max(limit,target.index+1));
+     else{
+       const statuses=new Map(sprints.map(item=>[item.id,item.status]));
+       const lane=learnerTaskLane(nextTask,statuses);
+       const indexInLane=matching.filter(task=>
+         learnerTaskLane(task,statuses)===lane).findIndex(task=>task.id===target.id);
+       if(indexInLane>=0)setLaneLimits(old=>({...old,
+         [lane]:Math.max(old[lane]??4,indexInLane+1),
+       }));
+     }
    };
    document.addEventListener("keydown",onKey);
+   return()=>document.removeEventListener("keydown",onKey);
+ },[focusedId,matching,sprints,view]);
+ner("keydown",onKey);
    return()=>document.removeEventListener("keydown",onKey);
  },[focusedId,visible]);
  const latestEvidence=focused?[...taskSubmissions]
