@@ -11,6 +11,7 @@ import {MentorProductBacklog} from "@/components/projects/mentor-product-backlog
 import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import {MentorProjectSectionCache} from "@/components/projects/mentor-project-section-cache";
 import {MentorProjectUpdateComposer} from "@/components/projects/mentor-project-update-composer";
+import {MentorActivitySinceLastVisit} from "@/components/projects/mentor-activity-since-last-visit";
 import {MentorPrototypeSprintPlan,MentorPrototypeTeamOverview,MentorPrototypePerformance,MentorPrototypeActivitySummary,MentorPrototypeDeliveryEvidence,MentorPrototypeProjectOverview,MentorPrototypeProjectBrief} from "@/components/projects/mentor-prototype-project-summaries";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
@@ -147,6 +148,10 @@ export default async function MentorProjectPage({
       {selectedTab==="team" ? <MentorPrototypeTeamOverview workspace={workspace} /> : null}
       {selectedTab==="performance" ? <MentorPrototypePerformance workspace={workspace} /> : null}
       {selectedTab==="activity" ? <>
+        <MentorActivitySinceLastVisit userId={context.user.id} projectId={projectId}
+          events={workspace.activity.map(event=>({
+            id:event.id,occurredAt:event.occurredAt.toISOString(),
+          }))}/>
         <MentorProjectUpdateComposer projectId={projectId}
           readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"} />
         <MentorPrototypeActivitySummary workspace={workspace} />
