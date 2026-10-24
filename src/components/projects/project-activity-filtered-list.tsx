@@ -35,11 +35,12 @@ const eventIstDay=(value:string|Date)=>{
 type Cursor={time:string;id:string};
 type Page={events:Event[];hasMore:boolean;nextCursor:Cursor|null};
 
-export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false,weekContributors=[]}:{
+export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false,weekContributors=[],actorOptions=[]}:{
  projectId:string;events:Event[];now:string;resourceAudit?:boolean;
  sprints?:readonly {id:string;title:string;sequence:number}[];
  mentorWeekSummary?:boolean;
  weekContributors?:readonly {membershipId:string;name:string;eventCount:number}[];
+ actorOptions?:readonly {id:string;label:string}[];
 }){
  const [items,setItems]=useState<readonly Event[]>(events);
  const [hasMore,setHasMore]=useState(events.length>=100);
@@ -48,6 +49,12 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const [loadError,setLoadError]=useState("");
  const lock=useRef(false);
  const generation=useRef(0);
+ const actorGeneration=useRef(0);
+ const [actorFeed,setActorFeed]=useState<{
+   id:string;events:Event[];hasMore:boolean;nextCursor:Cursor|null;
+ }|null>(null);
+ const [actorBusy,setActorBusy]=useState(false);
+ const [actorError,setActorError]=useState("");
  const [page,setPage]=useState(1);
  useEffect(()=>{
   generation.current+=1;
@@ -55,6 +62,32 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
   return ()=>{generation.current+=1;};
  },[projectId,events]);
  async function loadMore(){
+  if(actor){
+   if(lock.current||!actorFeed?.hasMore||!actorFeed.nextCursor)return;
+   lock.current=true;setBusy(true);setLoadError("");
+   const generationNow=actorGeneration.current;
+   const query=new URLSearchParams({actorUserId:actor,
+     beforeTime:actorFeed.nextCursor.time,beforeId:actorFeed.nextCursor.id});
+   try{
+    const page=await apiFetch<Page>("/api/projects/"+
+      encodeURIComponent(projectId)+"/activity?"+query.toString(),
+      {cache:"no-store"});
+    if(generationNow!==actorGeneration.current)return;
+    setActorFeed(previous=>{
+      if(!previous||previous.id!==actor)return previous;
+      const seen=new Set(previous.events.map(event=>event.id));
+      return {id:actor,events:[...previous.events,
+        ...page.events.filter(event=>!seen.has(event.id))],
+        hasMore:page.hasMore,nextCursor:page.nextCursor};
+    });
+   }catch{
+    if(generationNow===actorGeneration.current)
+      setLoadError("Could not load older events by this person. Retry.");
+   }finally{lock.current=false;
+      if(generationNow===actorGeneration.current)setBusy(false);
+   }
+   return;
+  }
   if(lock.current||!hasMore)return;
   lock.current=true;setBusy(true);setLoadError("");
   const requestGeneration=generation.current;
@@ -89,13 +122,37 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const [fromDate,setFromDate]=useState("");
  const [toDate,setToDate]=useState("");
  const categories=[...new Set(items.map(event=>event.eventType))].sort();
- const actors=[...new Map(items.filter(event=>Boolean(event.actorUserId)||Boolean(event.actorDisplayName))
-   .map(event=>[event.actorUserId??event.actorDisplayName??"",
-     {id:event.actorUserId??event.actorDisplayName??"",
-      label:event.actorDisplayName??"Team member"}] as const)).values()]
-   .sort((a,b)=>a.label.localeCompare(b.label));
+ const actors=[...new Map([
+    ...items.filter(event=>Boolean(event.actorUserId)).map(event=>
+      ({id:event.actorUserId!,label:event.actorDisplayName??"Recorded actor"})),
+    ...actorOptions,
+   ].map(row=>[row.id,row] as const)).values()]
+   .sort((a,b)=>a.label.localeCompare(b.label)||a.id.localeCompare(b.id));
+ async function selectActor(id:string){
+   actorGeneration.current+=1;
+   const generationNow=actorGeneration.current;
+   setActor(id);setPage(1);setActorFeed(null);setActorError("");
+   if(!id)return;
+   setActorBusy(true);
+   try{
+     const query=new URLSearchParams({actorUserId:id});
+     const page=await apiFetch<Page>("/api/projects/"+
+       encodeURIComponent(projectId)+"/activity?"+query.toString(),
+       {cache:"no-store"});
+     if(generationNow!==actorGeneration.current)return;
+     setActorFeed({id,events:page.events,hasMore:page.hasMore,
+       nextCursor:page.nextCursor});
+   }catch{
+     if(generationNow===actorGeneration.current)
+       setActorError("Could not load that person's complete recorded history. Retry the selection.");
+   }finally{
+     if(generationNow===actorGeneration.current)setActorBusy(false);
+   }
+ }
+ const working=actor?(actorFeed?.id===actor?actorFeed.events:[]):items;
+ const activeHasMore=actor?(actorFeed?.id===actor?actorFeed.hasMore:false):hasMore;
  const current=Date.parse(now);
- const filtered=items.filter(event=>{
+ const filtered=working.filter(event=>{
   const occurred=new Date(event.occurredAt);
   const day=occurred.toISOString().slice(0,10);
   const term=search.trim().toLocaleLowerCase("en-IN");
@@ -121,7 +178,11 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
  const activePage=Math.min(page,totalPages);
  const paged=resourceAudit?filtered.slice((activePage-1)*PAGE_SIZE,activePage*PAGE_SIZE):filtered;
- const resetFilters=()=>{setSearch("");setResourceAction("ALL");setType("");setActor("");setSprint("");setRange("ALL");setFromDate("");setToDate("");setPage(1);};
+ const resetFilters=()=>{
+   actorGeneration.current+=1;setActorFeed(null);setActor("");setActorError("");
+   setSearch("");setResourceAction("ALL");setType("");setSprint("");
+   setRange("ALL");setFromDate("");setToDate("");setPage(1);
+ };
  return <section className="space-y-3">
   {week?<div aria-label="This week in project activity"
     className="space-y-1 rounded-lg border border-border p-3">
@@ -165,7 +226,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     </Select>
    </label>
    {!resourceAudit?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">By person
-     <Select value={actor} onChange={event=>{setActor(event.target.value);setPage(1);}}
+     <Select value={actor} onChange={event=>void selectActor(event.target.value)}
        className="w-full">
        <option value="">By anyone</option>
        {actors.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
@@ -200,9 +261,11 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
    <Button variant="secondary" type="button" onClick={resetFilters}
       className="">Clear filters</Button>
   </div>
+  {actorBusy?<p role="status">Loading complete recorded activity for the selected person…</p>:null}
+  {actorError?<p role="alert">{actorError}</p>:null}
   <p className="text-xs text-muted-foreground">{resourceAudit
     ? filtered.length===0?"0 matching changes":`${(activePage-1)*PAGE_SIZE+1}–${Math.min(activePage*PAGE_SIZE,filtered.length)} of ${filtered.length} matching changes`
-    :`${filtered.length} events`} · Times shown in IST.{sprint?" Events without a recorded sprint ID are excluded.":""}{hasMore?" Load more to include older events.":""}</p>
+    :`${filtered.length} events`} · Times shown in IST.{sprint?" Events without a recorded sprint ID are excluded.":""}{activeHasMore?" Load more to include older events.":""}</p>
   {!filtered.length
     ? <EmptyState title={resourceAudit?(items.length===0?"No resource changes yet":"No resource changes match these filters"):(items.length===0?"No project activity yet":"No matching activity")}
       description={items.length===0
@@ -261,7 +324,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     <span className="text-sm" aria-live="polite">Page {activePage} of {totalPages}</span>
     <Button type="button" variant="secondary" disabled={activePage>=totalPages} onClick={()=>setPage(value=>Math.min(totalPages,value+1))}>Next</Button>
   </nav>:null}
-  {hasMore?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void loadMore()}
+  {activeHasMore?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void loadMore()}
    className="">
    {busy?"Loading activity…":"Load more activity"}
   </Button>:null}
