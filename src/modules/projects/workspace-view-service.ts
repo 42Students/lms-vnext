@@ -7,6 +7,7 @@ import {getProjectActivityPage} from "./activity-service";
 import {ProjectsServiceError} from "./errors";
 import {requireProjectReadAccess} from "./access";
 import { buildMentorWorkspaceEvidence } from "./mentor-workspace-evidence-model";
+import {listMentorSprintSignOffSnapshots} from "./mentor-sprint-signoff-snapshot-service";
 import {
   getProjectInstanceWorkspace,
 } from "./instance-service";
@@ -94,6 +95,11 @@ export async function getProjectWorkspaceView(
       }),
   ]);
   const activity=activityRead.items;
+  const mentorSprintSnapshots=access.access==="MENTOR"
+    ?await listMentorSprintSignOffSnapshots(context,projectId,
+        workspace.sprints.map(sprint=>sprint.id))
+    :[];
+
 
   const meetings=meetingsRead.items;
   // MEN-projects-meetings-25: historical roster is mentor-only. Learners
@@ -279,6 +285,7 @@ export async function getProjectWorkspaceView(
     evaluation,
     activity,
     activityLoadError:activityRead.failed,
+    mentorSprintSnapshots,
     mentorEvidence: buildMentorWorkspaceEvidence({
       tasks: workspace.tasks,
       members,
