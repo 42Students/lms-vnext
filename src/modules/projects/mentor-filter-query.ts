@@ -5,7 +5,7 @@ export function singleValueMentorFilters(
   // Legacy bookmarks can contain unrelated selector keys: do not pass them
   // to the strict query schema or let them influence tenant scope.
   const allowed = new Set([
-    "search", "status", "segment", "feedback", "attention", "assignment", "work", "sort", "page", "pageSize",
+    "search", "status", "segment", "feedback", "attention", "assignment", "work", "sort", "page", "page1", "legacyPage", "pageSize",
     "view", "age", "version", "priority", "importance", "outcome", "required",
     // Named project filters are user-selectable but must reach strict Zod UUID/state validation.
     "projectId", "projectStatus", "sprintId", "releaseStatus", "sprintStatus", "role", "primary",
