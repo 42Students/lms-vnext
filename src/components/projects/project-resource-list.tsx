@@ -24,7 +24,7 @@ type ResourceRow={
 export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tasks=[],sharers=[]}:{
  projectId:string;rows:readonly ResourceRow[];mode:"MENTOR"|"ADMIN"|"LEARNER";readOnly:boolean;
  sprints?:readonly {id:string;label:string;status?:string}[];tasks?:readonly {id:string;label:string}[];
- sharers?:readonly {resourceId:string;userId:string|null;displayName:string|null}[];
+ sharers?:readonly {resourceId:string;userId:string|null;displayName:string|null;sharedAt?:string|null}[];
 }){
  const [search,setSearch]=useState("");
  const [showEarlier,setShowEarlier]=useState(false);
@@ -278,6 +278,15 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          {" "}{new Intl.DateTimeFormat("en-IN",{
            day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
          }).format(new Date(resource.createdAt))} IST
+       </p>:null}
+       {mode==="MENTOR"?<p className="mt-1 text-xs text-muted-foreground">
+         {sourceSharer?.sharedAt?
+           <>First shared with team: <time dateTime={sourceSharer.sharedAt}>{
+             new Intl.DateTimeFormat("en-IN",{
+               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+             }).format(new Date(sourceSharer.sharedAt))
+           } IST</>:
+           "Team sharing time not recorded"}
        </p>:null}
        {(rows.length<=12||expanded[resource.id])&&resource.description?<p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{resource.description}</p>:null}
        {(rows.length<=12||expanded[resource.id])&&mode!=="LEARNER"&&resource.accessNotes?
