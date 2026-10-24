@@ -12,7 +12,7 @@ import {MentorMeetingsCalendar} from "@/components/projects/mentor-meetings-cale
 import {MentorCalendarQuickSchedule} from "@/components/projects/mentor-calendar-quick-schedule";
 import {listMyProjectInstances} from "@/modules/projects/member-service";
 import {MentorCalendarLoadFailure} from "@/components/projects/mentor-calendar-load-failure";
-import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
+import {listMyMentorCalendarMeetings,listMyMentorSchedulableSprints} from "@/modules/projects/mentor-calendar-service";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
@@ -47,11 +47,16 @@ export default async function MentorCalendarPage({searchParams}:{
     <MentorCalendarLoadFailure reason={calendarRead.reason??"UNKNOWN"}/>
   </div>;
   const meetings=calendarRead.items;
-  const choices=(await listMyProjectInstances(context))
+  const assigned=(await listMyProjectInstances(context))
     .filter(row=>row.memberRole==="MENTOR"&&row.project.status==="ACTIVE"&&
-      row.project.collegeId===context.membership?.collegeId&&!row.project.deletedAt)
-    .map(row=>({id:row.project.id,title:row.project.title,
-      updatedAt:row.project.updatedAt.toISOString()}));
+      row.project.collegeId===context.membership?.collegeId&&!row.project.deletedAt);
+  const schedulable=await listMyMentorSchedulableSprints(context,assigned);
+  const choices=assigned.map(row=>({
+    id:row.project.id,title:row.project.title,
+    updatedAt:row.project.updatedAt.toISOString(),
+    sprints:schedulable.filter(item=>item.projectId===row.project.id)
+      .map(item=>({id:item.id,title:item.title,sequence:item.sequence,status:item.status})),
+  }));
   // eslint-disable-next-line react-hooks/purity -- Server snapshot drives IST period filters and initial client clock.
   const now=new Date();
   const displayed=filterMentorCalendar(meetings,parsed.data,now);
