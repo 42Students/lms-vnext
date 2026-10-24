@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, max, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, max, sql, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   activityEvents,
@@ -6,6 +6,7 @@ import {
   projectSubmissions,
   projectSubmissionReviews,
   projectTaskSubmissions,
+  projectTasks,projectSprints,
 } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from
   "@/modules/identity/context";
@@ -59,6 +60,7 @@ export async function listMyMentorProjectAttention(
     submissionActivity,
     meetingActivity,
     taskSubmissionActivity,
+    taskRows,sprintRows,
   ] = await Promise.all([
     getDb().select({
       id:projectSubmissions.id,projectId:projectSubmissions.projectId,
@@ -106,6 +108,22 @@ export async function listMyMentorProjectAttention(
     }).from(projectTaskSubmissions)
       .where(inArray(projectTaskSubmissions.projectId,ids))
       .groupBy(projectTaskSubmissions.projectId),
+    getDb().select({
+      id:projectTasks.id,projectId:projectTasks.projectId,title:projectTasks.title,
+      status:projectTasks.status,sprintId:projectTasks.sprintId,
+      assigneeMembershipId:projectTasks.assigneeMembershipId,
+      updatedAt:projectTasks.updatedAt,
+    }).from(projectTasks).where(and(
+      inArray(projectTasks.projectId,ids),isNull(projectTasks.deletedAt),
+    )),
+    getDb().select({
+      id:projectSprints.id,projectId:projectSprints.projectId,title:projectSprints.title,
+      sequence:projectSprints.sequence,status:projectSprints.status,
+      updatedAt:projectSprints.updatedAt,
+    }).from(projectSprints).where(and(
+      inArray(projectSprints.projectId,ids),isNull(projectSprints.deletedAt),
+      inArray(projectSprints.status,["ACTIVE","PLANNED"]),
+    )),
   ]);
   const submissionMap=currentPendingMentorSubmissions(submissions);
   const meetingMap=new Map<string,typeof meetings>();
@@ -137,6 +155,16 @@ export async function listMyMentorProjectAttention(
   for (const row of taskSubmissionActivity) {
     recordActivity(row.projectId,row.occurredAt);
   }
+  const tasksByProject=new Map<string,typeof taskRows>();
+  for(const item of taskRows){
+    const collection=tasksByProject.get(item.projectId)??[];
+    collection.push(item);tasksByProject.set(item.projectId,collection);
+  }
+  const sprintsByProject=new Map<string,typeof sprintRows>();
+  for(const item of sprintRows){
+    const collection=sprintsByProject.get(item.projectId)??[];
+    collection.push(item);sprintsByProject.set(item.projectId,collection);
+  }
   return deriveMentorProjectAttention(rows.map(row=>({
     projectId:row.project.id,projectTitle:row.project.title,
     projectStatus:row.project.status,projectUpdatedAt:row.project.updatedAt,
@@ -144,5 +172,7 @@ export async function listMyMentorProjectAttention(
     lastActivityAt:activityMap.get(row.project.id)??null,
     submission:submissionMap.get(row.project.id)??null,
     meetings:meetingMap.get(row.project.id)??[],
+    tasks:tasksByProject.get(row.project.id)??[],
+    sprints:sprintsByProject.get(row.project.id)??[],
   })),now);
 }
