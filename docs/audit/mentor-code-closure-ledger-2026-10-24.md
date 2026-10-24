@@ -109,7 +109,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 53-01 | CODE_READY | mentor-submission-attribution-model.ts; mentor-prototype-project-summaries.tsx; submission-service.ts (latest revision, persisted submitter, timestamp and saved notes) |
 | 53-02 | CODE_READY | mentor-evidence-gallery.tsx; mentor-evidence-preview-model.ts |
 | 53-03 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 53-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 53-04 | IMPLEMENTATION_OR_TEST_PENDING | mentor-delivery-prechecks-model.ts and MentorPrototypeDeliveryEvidence now show five real checks and the exact server readiness decision. Prototype depicts release-shipment/deadline as gates; old LMS policy treats these as advisory. Policy reconciliation and tests remain; do not fabricate hard gating. |
 | 53-05 | CODE_READY | mentor-evidence-revision-model.ts; mentor-prototype-project-summaries.tsx |
 | 53-06 | CODE_READY | project-final-delivery-controls.tsx; mentor-final-delivery-decision-model.ts; mentor-final-delivery-decision-service.ts (Accept / Request changes, four quick reason pills, required feedback, confirmation, stale-version reject, auditable server decision) |
 | 53-07 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
