@@ -21,7 +21,8 @@ function MentorPersonalRead({id}:{id:string}){
    await apiFetch("/api/mentor/notifications/"+encodeURIComponent(id)+"/read",{
     method:"POST",timeoutMs:12000,
    });
-   router.refresh();
+   window.dispatchEvent(new Event("lms:notifications-updated"));
+     router.refresh();
   }catch(caught){setError(caught instanceof Error?caught.message:
     "Unable to acknowledge your personal notification.");}
   finally{setBusy(false);}
