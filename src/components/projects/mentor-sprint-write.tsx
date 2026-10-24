@@ -13,6 +13,7 @@ import { projectMutation } from "./project-api";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {mentorSprintDefaultReleaseId} from "@/modules/projects/mentor-sprint-order-model";
 import {mentorSprintPlanningDefaults,type MentorSprintPlanningRow} from "@/modules/projects/mentor-sprint-planning-defaults-model";
+import {MentorSprintBacklogPull,type MentorSprintBacklogChoice} from "./mentor-sprint-backlog-pull";
 
 /** Deliberate vNext granularity: each sprint mutation is a separate
  * version-checked transaction. A multi-sprint legacy Save plan is NOT atomic
@@ -20,12 +21,15 @@ import {mentorSprintPlanningDefaults,type MentorSprintPlanningRow} from "@/modul
 export const MENTOR_SPRINT_PLAN_SAVE_POLICY="PER_SPRINT_VERSIONED" as const;
 
 export function MentorSprintCreate({
-  projectId, releaseId,releases=[],sprintPlan=[],inline=false,
+  projectId, releaseId,releases=[],sprintPlan=[],backlogTasks=[],canPullBacklog=false,inline=false,
 }: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[];
- sprintPlan?:readonly MentorSprintPlanningRow[];inline?:boolean}) {
+ sprintPlan?:readonly MentorSprintPlanningRow[];
+ backlogTasks?:readonly MentorSprintBacklogChoice[];canPullBacklog?:boolean;
+ inline?:boolean}) {
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
+  const [justCreated,setJustCreated]=useState<{id:string;title:string}|null>(null);
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
@@ -62,13 +66,16 @@ export function MentorSprintCreate({
       chosenRelease?.status==="SHIPPED") return;
     setBusy(true);
     try {
-      await projectMutation("/api/projects/"+projectId+"/sprints","POST",{
+      const receipt=await projectMutation("/api/projects/"+projectId+"/sprints","POST",{
         releaseId:chosenReleaseId,title:title.trim(),key:key.trim(),
         dueLabel:dueLabel.trim()||null,description:description.trim()||null,
         goal:goal.trim()||null,definitionOfDone:done.trim()||null,
         startDate:startDate||null,endDate:endDate||null,dueDate:dueDate||null,
-      });
-      showToast({tone:"success",title:"Sprint created"});
+      }) as {sprint?:{id:string;title:string}};
+      if(!receipt.sprint?.id)throw Error("Sprint creation result could not be verified. Reload the project before trying again.");
+      setJustCreated({id:receipt.sprint.id,title:receipt.sprint.title});
+      showToast({tone:"success",title:"Sprint created",description:
+        "Sprint saved. Pull backlog tasks individually below or use the Board."});
       discardDraft();
       router.refresh();
     } catch {
@@ -168,6 +175,10 @@ export function MentorSprintCreate({
         footer={sprintActions}>
         {sprintForm}
       </Dialog>}
+    {justCreated?<MentorSprintBacklogPull key={justCreated.id}
+      projectId={projectId} sprintId={justCreated.id}
+      sprintTitle={justCreated.title} tasks={backlogTasks}
+      canPull={canPullBacklog}/>:null}
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard sprint changes?"
       description="You have unsaved project changes. Leave this page and discard them?"
