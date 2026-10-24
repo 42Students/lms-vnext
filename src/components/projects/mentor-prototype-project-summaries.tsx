@@ -8,6 +8,8 @@ import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-se
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
+import {MentorSprintCreate} from "./mentor-sprint-write";
+import {MentorReleaseEditor} from "./mentor-release-editor";
 import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
 import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
@@ -137,15 +139,25 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
     </section>
     <section className="prototype-mentor-chart-card" aria-label="Release progress">
       <div className="prototype-mentor-card-title"><h2>Release plan</h2>
+        {!readOnly&&workspace.project.status==="ACTIVE"?
+          <MentorReleaseEditor projectId={workspace.project.id}/>:null}
         <Link href={base+"?tab=board&scope=all"}>Open full task history →</Link></div>
       {workspace.releases.length?workspace.releases.map(release=>{
         const group=sprints.filter(sprint=>sprint.releaseId===release.id);
         const complete=group.filter(sprint=>sprint.status==="COMPLETED").length;
         return <div key={release.id} className="prototype-mentor-release-row">
           <div><strong>{release.title}</strong><small>{complete} of {group.length} sprints signed off</small></div>
+          {!readOnly&&workspace.project.status==="ACTIVE"?
+            <MentorReleaseEditor projectId={workspace.project.id}
+              release={release} linkedSprints={group.length}/>:null}
           <span className={"prototype-mentor-release-status "+statusTone(release.status)}>{release.status.replaceAll("_"," ")}</span>
           {!readOnly&&workspace.project.status==="ACTIVE"?(
             <div className="prototype-mentor-release-actions">
+              {release.status!=="SHIPPED"?
+                <MentorSprintCreate projectId={workspace.project.id}
+                  releaseId={release.id} releases={workspace.releases.map(item=>({
+                    id:item.id,title:item.title,status:item.status,
+                  }))}/>:null}
               <ReleaseLifecycleActions projectId={workspace.project.id}
                 releaseId={release.id} status={release.status}
                 expectedUpdatedAt={release.updatedAt.toISOString()} />
