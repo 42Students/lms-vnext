@@ -9,17 +9,16 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {projectMutation} from "./project-api";
 import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar-view";
+import {mentorMeetingHasDifferentRequestedWindow}
+  from "@/modules/projects/mentor-meeting-form-model";
+import {fromIstLocalInput} from "@/modules/projects/mentor-meeting-reschedule-model";
 
 const displayIst=(instant:string)=>{
   const date=new Date(instant);
   return Number.isFinite(date.getTime())?
     new Date(date.getTime()+330*60_000).toISOString().slice(0,16):"";
 };
-const parseIst=(local:string)=>{
-  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))return null;
-  const date=new Date(local+":00+05:30");
-  return Number.isFinite(date.getTime())?date.toISOString():null;
-};
+const parseIst=fromIstLocalInput;
 
 /** The prototype's Yes / Another time / No decisions use actual supported
  * scheduling and mentor decision endpoints. "Another time" opens the editor;
@@ -28,7 +27,7 @@ export function MentorMeetingRequestActions({meeting}:{
   meeting:MentorMeetingCalendarItem;
 }){
   const router=useRouter();
-  const [action,setAction]=useState<"YES"|"NO"|null>(null);
+  const [action,setAction]=useState<"YES"|"ANOTHER"|"NO"|null>(null);
   const [startsAt,setStartsAt]=useState(displayIst(meeting.startsAt));
   const [endsAt,setEndsAt]=useState(displayIst(meeting.endsAt));
   const [joinUrl,setJoinUrl]=useState("");
@@ -46,10 +45,13 @@ export function MentorMeetingRequestActions({meeting}:{
       "/meetings/"+encodeURIComponent(meeting.id);
     setBusy(true);
     try{
-      if(action==="YES"){
+      if(action==="YES"||action==="ANOTHER"){
         const from=parseIst(startsAt),until=parseIst(endsAt);
         if(!from||!until||Date.parse(from)<=Date.now()||Date.parse(until)<=Date.parse(from))
           throw Error("Choose a future time window in IST.");
+        if(action==="ANOTHER"&&!mentorMeetingHasDifferentRequestedWindow(
+          meeting.startsAt,meeting.endsAt,from,until,
+        ))throw Error("Choose a different start or end time for this request.");
         let url:URL;
         try{url=new URL(joinUrl.trim());}catch{throw Error("A real meeting join link is required.");}
         if(!["http:","https:"].includes(url.protocol)||url.username||url.password||!url.hostname)
@@ -79,26 +81,31 @@ export function MentorMeetingRequestActions({meeting}:{
   }
   return <section className="prototype-mentor-meeting-request" aria-label="Answer meeting request">
     <h3>Meeting request · needs your answer</h3>
-    <p>Accept the requested time with a real join link, propose another time in the
-      project editor, or decline with an optional note. The team is informed only
-      after the server saves the decision.</p>
+    <p>Confirm the requested time, choose a different future time, or decline with
+      an optional note. Scheduling requires a real join link. The team is informed
+      only when the server saves the change; no calendar sync is claimed.</p>
     <div className="prototype-mentor-meeting-request-buttons">
       <Button type="button" size="sm" onClick={()=>{setError(null);setAction("YES");}}>
         Yes, this time
       </Button>
-      <Link href={editor}>Another time</Link>
+      <Button type="button" size="sm" variant="secondary"
+        onClick={()=>{setError(null);setAction("ANOTHER");}}>
+        Another time
+      </Button>
       <Button type="button" size="sm" variant="secondary"
         onClick={()=>{setError(null);setAction("NO");}}>
         No, answer in a note
       </Button>
     </div>
-    <Dialog title={action==="YES"?"Accept meeting request":"Decline meeting request"}
-      description={action==="YES"?"Confirm the time and provide the actual link. No link is generated automatically.":
+    <Dialog title={action==="YES"?"Accept meeting request":
+      action==="ANOTHER"?"Choose another meeting time":"Decline meeting request"}
+      description={action==="YES"?"Confirm the requested slot and provide the actual link. No link is generated automatically.":
+        action==="ANOTHER"?"Choose a different future slot. Confirming schedules that time; it is not a tentative provider invitation.":
         "Declining keeps the request and note in the project's history."}
       open={action!==null}
       onOpenChange={next=>{if(!next&&!busy)setAction(null);}}>
       <form onSubmit={submit} className="prototype-mentor-meeting-decision-form">
-        {action==="YES"?<>
+        {action!=="NO"?<>
           <label>Start time (IST)
             <Input required type="datetime-local" value={startsAt} disabled={busy}
               onChange={event=>setStartsAt(event.target.value)}/>
@@ -122,10 +129,12 @@ export function MentorMeetingRequestActions({meeting}:{
           <Button type="button" variant="secondary" disabled={busy}
             onClick={()=>setAction(null)}>Back</Button>
           <Button type="submit" loading={busy} disabled={busy}>
-            {action==="YES"?"Confirm meeting":"Decline request"}
+            {action==="YES"?"Confirm meeting":action==="ANOTHER"?
+              "Confirm different time":"Decline request"}
           </Button>
         </div>
       </form>
     </Dialog>
+    <Link href={editor} className="text-sm underline">Open full meeting editor</Link>
   </section>;
 }
