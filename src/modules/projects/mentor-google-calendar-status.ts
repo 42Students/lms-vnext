@@ -21,10 +21,11 @@ function googleEventStats(body:GoogleEventResponse):MentorGoogleMeetingStatus {
  const state=body.status==="cancelled"?"CANCELLED":
   body.status==="tentative"?"TENTATIVE":"CONFIRMED";
  const attendees=Array.isArray(body.attendees)?body.attendees as GoogleAttendee[]:[];
- const responseCountReason=body.attendeesOmitted===true?"ATTENDEES_OMITTED":
+ const responseCountReason=body.attendeesOmitted===true||
+  !Array.isArray(body.attendees)?"ATTENDEES_OMITTED":
   attendees.length>200?"TOO_MANY_GUESTS":"COMPLETE";
  let counts:MentorGoogleMeetingStatus["responseCounts"]=null;
- if(responseCountReason==="COMPLETE"){
+ if(state!=="CANCELLED"&&responseCountReason==="COMPLETE"){
   counts={accepted:0,declined:0,tentative:0,needsAction:0};
   for(const entry of attendees){
    if(!entry||typeof entry!=="object"||entry.organizer===true)continue;
