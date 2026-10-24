@@ -158,6 +158,59 @@ describe("Mentor final delivery reviewed with immutable audit",()=>{
  });
 });
 
+
+describe("Mentor final delivery changes-requested persistence",()=>{
+ it("requires feedback, rejects stale decisions and keeps revision unlocked",async()=>{
+  const {project,mentor,learner}=await fixture();
+  const submissionId=randomUUID();
+  const created=await pool.query<{updated_at:Date}>(`insert into project_submissions
+    (id,project_id,version,status,summary,created_by_membership_id,
+      submitted_by_membership_id,submitted_at)
+    values($1,$2,1,'SUBMITTED','Needs revision',$3,$3,now())
+    returning updated_at`,[
+    submissionId,project.id,learner.membership!.id,
+  ]);
+  const decision={
+    decision:"CHANGES_REQUESTED" as const,feedback:"Please attach the test run.",
+    expectedUpdatedAt:created.rows[0]!.updated_at.toISOString(),
+    confirmed:true as const,
+  };
+  await expect(decideMentorFinalDelivery(mentor,project.id,submissionId,{
+    ...decision,feedback:undefined,
+  })).rejects.toMatchObject({name:"ZodError"});
+  await expect(decideMentorFinalDelivery(mentor,project.id,submissionId,{
+    ...decision,expectedUpdatedAt:"2001-01-01T00:00:00Z",
+  })).rejects.toMatchObject({code:"PROJECT_SUBMISSION_STALE_VERSION"});
+  const result=await decideMentorFinalDelivery(
+    mentor,project.id,submissionId,decision,
+  );
+  expect(result.submission.status).toBe("CHANGES_REQUESTED");
+  expect(result.submission.lockedAt).toBeNull();
+  expect(result.review.feedback).toBe(decision.feedback);
+  await expect(decideMentorFinalDelivery(
+    mentor,project.id,submissionId,decision,
+  )).rejects.toMatchObject({code:"PROJECT_SUBMISSION_INVALID_STATE"});
+  const history=await pool.query<{decision:string;feedback:string|null}>(`
+    select decision,feedback from project_submission_reviews
+    where submission_id=$1`,[submissionId]);
+  expect(history.rows).toEqual([{
+    decision:"CHANGES_REQUESTED",feedback:decision.feedback,
+  }]);
+  const lockEvents=await pool.query<{n:string}>(`
+    select count(*)::text as n from project_delivery_events
+    where submission_id=$1 and event_type='LOCKED'`,[submissionId]);
+  expect(lockEvents.rows[0]?.n).toBe("0");
+  const notices=await pool.query<{n:string}>(`
+    select count(*)::text as n from in_app_notifications n
+    join activity_events e on e.id=n.event_id
+    where n.user_id=$1 and e.subject_id=$2
+      and e.event_type='projects.delivery.reviewed'`,[
+    learner.user.id,submissionId,
+  ]);
+  expect(notices.rows[0]?.n).toBe("1");
+ });
+});
+
 describe("Mentor meeting audited optimistic decisions on disposable PostgreSQL",()=>{
  it("completes a SQL-backed meeting and denies replay/foreign/wrong-role",async()=>{
   const {project,mentor,foreign,learner}=await fixture();
