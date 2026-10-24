@@ -133,7 +133,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 55-04 | CODE_READY | mentor-unified-notification-feed.tsx; mentor-unified-notification-model.ts; mentor-source-notification-read.tsx; mentor notification read routes |
 | 55-05 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 55-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 55-07 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 55-07 | IMPLEMENTATION_OR_TEST_PENDING | Personal notifications and college announcements now cursor-page independently inside the unified feed (personal route + mentor-unified-notification-feed.tsx); mark-all uses all visible announcement pages. Still verify filter-specific total counts, badge consistency and concurrent read changes in database/browser. |
 | 55-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 56-01 | CODE_READY | command-search.tsx; mentor-unified-search-service.ts |
 | 56-02 | CODE_READY | mentor-unified-search-service.ts; mentor-search-ranking-model.ts; mentor/search/page.tsx (4 scoped categories, owner context, ranking, term highlighting, bounded pagination) |
