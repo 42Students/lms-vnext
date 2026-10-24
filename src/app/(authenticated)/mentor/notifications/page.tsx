@@ -282,13 +282,15 @@ async function MentorNotificationsContent({
       <aside className="prototype-mentor-notifications-about" aria-label="What you are notified about">
         <h2>What you’re told about</h2>
         <dl>
-          <div><dt>Final submissions</dt><dd>Here and by email</dd></div>
-          <div><dt>Meeting requests</dt><dd>Here and by email</dd></div>
+          <div><dt>Final submissions</dt><dd>In-app; external email delivery not verified</dd></div>
+          <div><dt>Meeting requests</dt><dd>In-app; external email delivery not verified</dd></div>
           <div><dt>Tasks waiting for you</dt><dd>Here</dd></div>
           <div><dt>Blocked or quiet teams</dt><dd>Here</dd></div>
           <div><dt>College announcements</dt><dd>Here</dd></div>
         </dl>
-        <p>Email only for the two that can’t wait; everything else stays here.</p>
+        <p>Notification read tracking currently applies to personal in-app messages.
+          Email provider delivery and read synchronization for the other sources
+          remain pending functional verification.</p>
       </aside>
     </div>
   </div>;
