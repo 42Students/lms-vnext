@@ -256,14 +256,14 @@ export async function completeProjectSprint(
 
   return db.transaction(async (tx) => {
     const [project] = await tx
-      .select({ status: projectInstances.status })
+      .select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt })
       .from(projectInstances)
       .where(and(eq(projectInstances.id, scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId)))
       .for("update")
       .limit(1);
 
-    if (!project || !projectAllowsExecution(project.status)) {
+    if (!project || project.deletedAt || !projectAllowsExecution(project.status)) {
       throw new ProjectsServiceError(
         "PROJECT_SPRINT_INVALID_STATE",
       );

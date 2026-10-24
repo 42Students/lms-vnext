@@ -25,10 +25,13 @@ export async function decideMentorFinalDelivery(context:RequestContext,projectId
  }))throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
  const submissionId=projectSubmissionIdSchema.parse(submissionIdInput);
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+  const [project]=await tx.select({
+    status:projectInstances.status,deletedAt:projectInstances.deletedAt,
+  }).from(projectInstances)
    .where(and(eq(projectInstances.id,scope.project.id),
     eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
-  if(!project)throw new ProjectsServiceError("PROJECT_SUBMISSION_NOT_FOUND");
+  if(!project||project.deletedAt)
+    throw new ProjectsServiceError("PROJECT_SUBMISSION_NOT_FOUND");
   // The read-only page grant may have expired while the mentor reviewed it.
   // Recheck the persisted user, membership and project assignment under lock.
   await assertPersistedProjectMutationActor(tx,context,scope);

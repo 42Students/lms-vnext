@@ -55,6 +55,19 @@ describe.skipIf(!enabled)("MEN-projects-meetings-R01 mentor approval locks then 
         returning id,updated_at`, [project.id, SEED_IDS.learnerCollegeAMembership],
     );
     const submission = inserted.rows[0]!;
+    // An ACTIVE status cannot revive a soft-deleted project for review.
+    await pool!.query("update project_instances set deleted_at=now() where id=$1",[project.id]);
+    try{
+      await expect(decideMentorFinalDelivery(mentor,project.id,submission.id,{
+        decision:"APPROVED",expectedUpdatedAt:submission.updated_at.toISOString(),
+        confirmed:true,
+      })).rejects.toBeDefined();
+      const denied=await pool!.query<{count:string}>(`select count(*)::text as count
+        from project_submission_reviews where submission_id=$1`,[submission.id]);
+      expect(denied.rows[0]?.count).toBe("0");
+    }finally{
+      await pool!.query("update project_instances set deleted_at=null where id=$1",[project.id]);
+    }
     const approved = await decideMentorFinalDelivery(mentor, project.id, submission.id, {
       decision: "APPROVED", expectedUpdatedAt: submission.updated_at.toISOString(), confirmed: true,
     });

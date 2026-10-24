@@ -371,12 +371,15 @@ export async function scheduleProjectMeeting(
   }
   const links = await validateMeetingLinks(scope.project.id,input.linkedSprintId,input.linkedTaskId);
   return getDb().transaction(async (tx) => {
-    const [project] = await tx.select({status:projectInstances.status,updatedAt:projectInstances.updatedAt})
-      .from(projectInstances).where(and(
+    const [project] = await tx.select({
+      status:projectInstances.status,updatedAt:projectInstances.updatedAt,
+      deletedAt:projectInstances.deletedAt,
+    }).from(projectInstances).where(and(
         eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId),
       )).for("update").limit(1);
-    if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    if (!project||project.deletedAt)
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     ensureMeetingProjectMutable(project.status);
     await assertPersistedProjectMutationActor(tx,context,scope);
     // A future window validated before a contended row lock may be in the past
