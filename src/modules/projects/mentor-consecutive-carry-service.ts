@@ -1,7 +1,7 @@
 import "server-only";
 import {and,desc,eq,inArray,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,projectSprints} from "@/db/schema";
+import {activityEvents,projectReleases,projectSprints} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveMembership,hasMembershipRole} from "@/modules/identity/context";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -29,20 +29,33 @@ export async function getMentorRecentCarryHistory(context:RequestContext):Promis
       row.project.collegeId===member.collegeId&&row.project.status==="ACTIVE");
  const ids=[...new Set(projects.map(row=>row.project.id))];
  if(!ids.length)return {sprints:[],snapshots:[]};
- const completed=await getDb().select({
+ // Sprint sequence is release-local. Order every non-deleted project sprint by
+ // release and sprint, including ACTIVE/PLANNED slots, before selecting the
+ // last three completed records. This prevents "consecutive" false positives
+ // across skipped sprints and release boundaries.
+ const all=await getDb().select({
    id:projectSprints.id,projectId:projectSprints.projectId,
-   sequence:projectSprints.sequence,
- }).from(projectSprints).where(and(
-   inArray(projectSprints.projectId,ids),
-   eq(projectSprints.status,"COMPLETED"),
-   isNull(projectSprints.deletedAt),
- )).orderBy(desc(projectSprints.sequence),desc(projectSprints.id)).limit(6000);
+   sequence:projectSprints.sequence,status:projectSprints.status,
+ }).from(projectSprints)
+   .innerJoin(projectReleases,and(
+     eq(projectReleases.id,projectSprints.releaseId),
+     eq(projectReleases.projectId,projectSprints.projectId),
+   )).where(and(
+     inArray(projectSprints.projectId,ids),
+     isNull(projectSprints.deletedAt),
+   )).orderBy(desc(projectReleases.sequence),
+     desc(projectSprints.sequence),desc(projectSprints.id)).limit(6000);
  const perProject=new Map<string,number>();
- const sprints:MentorRecentCompletedSprint[]=completed.flatMap(row=>{
+ const ordinalByProject=new Map<string,number>();
+ const sprints:MentorRecentCompletedSprint[]=all.flatMap(row=>{
+   const historyOrdinal=ordinalByProject.get(row.projectId)??0;
+   ordinalByProject.set(row.projectId,historyOrdinal+1);
+   if(row.status!=="COMPLETED")return [];
    const count=perProject.get(row.projectId)??0;
    if(count>=3)return [];
    perProject.set(row.projectId,count+1);
-   return [row];
+   return [{id:row.id,projectId:row.projectId,sequence:row.sequence,
+     historyOrdinal}];
  });
  if(!sprints.length)return {sprints:[],snapshots:[]};
  const byId=new Map(sprints.map(s=>[s.id,s.projectId] as const));
