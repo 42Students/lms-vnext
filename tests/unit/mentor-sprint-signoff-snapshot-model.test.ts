@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {
   buildMentorSprintSignOffSnapshot,parseMentorSprintSignOffSnapshot,
+  latestValidMentorSprintSnapshots,
 } from "@/modules/projects/mentor-sprint-signoff-snapshot-model";
 
 const task=(status:string,assigneeMembershipId:string|null,
@@ -53,6 +54,34 @@ describe("Mentor immutable sprint sign-off workload snapshot",()=>{
     expect(parseMentorSprintSignOffSnapshot({...record,
       memberRows:[{...record.memberRows[0]!,openCount:999},record.memberRows[1]]},sprintId))
       .toBeNull();
+  });
+
+  it("ignores malformed newer events and chooses the newest valid signed snapshot",()=>{
+    const valid=buildMentorSprintSignOffSnapshot(sprintId,[task("DONE",memberA,5)]);
+    const old=buildMentorSprintSignOffSnapshot(sprintId,[task("DONE",memberA,3)]);
+    const events=[
+      {subjectId:sprintId,metadata:{projectId:"project-a",
+        mentorSignOffSnapshotVersion:1,sprintSnapshot:{...valid,donePoints:999}}},
+      {subjectId:sprintId,metadata:{projectId:"foreign",
+        mentorSignOffSnapshotVersion:1,sprintSnapshot:valid}},
+      {subjectId:sprintId,metadata:{projectId:"project-a",
+        mentorSignOffSnapshotVersion:1,sprintSnapshot:valid}},
+      {subjectId:sprintId,metadata:{projectId:"project-a",
+        mentorSignOffSnapshotVersion:1,sprintSnapshot:old}},
+    ];
+    expect(latestValidMentorSprintSnapshots(events,"project-a",
+      "mentorSignOffSnapshotVersion","sprintSnapshot")).toEqual([valid]);
+    expect(latestValidMentorSprintSnapshots(events,"project-a",
+      "mentorStartSnapshotVersion","sprintStartSnapshot")).toEqual([]);
+  });
+  it("never invents a snapshot from wrong Sprint identity or unversioned metadata",()=>{
+    const valid=buildMentorSprintSignOffSnapshot(sprintId,[task("TODO",memberA,2)]);
+    expect(latestValidMentorSprintSnapshots([
+      {subjectId:"different",metadata:{projectId:"project-a",
+        mentorSignOffSnapshotVersion:1,sprintSnapshot:valid}},
+      {subjectId:sprintId,metadata:{projectId:"project-a",
+        mentorSignOffSnapshotVersion:0,sprintSnapshot:valid}},
+    ],"project-a","mentorSignOffSnapshotVersion","sprintSnapshot")).toEqual([]);
   });
 
   it("supports empty and no-estimate snapshots without inventing velocity",()=>{
