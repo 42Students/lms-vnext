@@ -34,7 +34,7 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
   if(start.getTime()<=Date.now())
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   return getDb().transaction(async tx=>{
-    const [project]=await tx.select({status:projectInstances.status})
+    const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
       .from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
     await assertPersistedProjectMutationActor(tx,context,scope);
@@ -42,7 +42,7 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
       .where(and(eq(projectMeetings.id,params.meetingId),
         eq(projectMeetings.projectId,scope.project.id))).for("update").limit(1);
     if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
-    if(!project||!mentorMeetingCanReschedule(meeting.status,project.status))
+    if(!project||project.deletedAt||!mentorMeetingCanReschedule(meeting.status,project.status))
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     // Legacy @Version Long becomes persisted updatedAt with millisecond CAS.
     // JPA's fresh-row null version is not a valid client token here: the
