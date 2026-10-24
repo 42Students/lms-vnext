@@ -38,7 +38,7 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
   const [current]=await tx.select().from(projectMeetings).where(and(
    eq(projectMeetings.id,meetingId),eq(projectMeetings.projectId,scope.project.id),
   )).for("update").limit(1);
-  if(!current)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
+  if(!current||current.deletedAt)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
   // Duplicate/stale-tab decisions should report the authoritative version
   // mismatch instead of hiding concurrency behind a terminal-state message.
   const expected=new Date(input.expectedUpdatedAt);
