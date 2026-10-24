@@ -143,6 +143,20 @@ export async function startProjectSprint(
         );
       }
 
+      // Capture the original sprint commitment before the ACTIVE transition.
+      // Later additions, re-estimates and NEXT/BACKLOG/DROP dispositions may
+      // change current task ownership; this event retains start-time points.
+      const commitmentTasks=await tx.select({
+        status:projectTasks.status,
+        estimatePoints:projectTasks.estimatePoints,
+        assigneeMembershipId:projectTasks.assigneeMembershipId,
+        carriedFromSprintId:projectTasks.carriedFromSprintId,
+      }).from(projectTasks).where(and(
+        eq(projectTasks.projectId,scope.project.id),
+        eq(projectTasks.sprintId,sprint.id),isNull(projectTasks.deletedAt),
+      )).for("update");
+      const commitment=buildMentorSprintSignOffSnapshot(sprint.id,commitmentTasks);
+
       const [started] = await tx
         .update(projectSprints)
         .set({
@@ -191,6 +205,16 @@ export async function startProjectSprint(
           ),
         );
 
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+        subjectType:"project_sprint",subjectId:sprint.id,subjectLabel:sprint.title,
+        summary:"Sprint start-time commitment recorded",
+        metadata:{projectId:scope.project.id,sprintId:sprint.id,
+          mentorStartSnapshotVersion:1,sprintStartSnapshot:commitment,
+          sourceTab:"sprints"},
+        groupKey:"project:"+scope.project.id,
+      });
       return started;
     });
   } catch (error) {
