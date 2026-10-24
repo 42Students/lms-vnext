@@ -125,7 +125,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 54-07 | CODE_READY | mentor-calendar-quick-schedule.tsx; mentor-calendar-service.ts |
 | 54-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 54-09 | CODE_READY | mentor-calendar-ics-model.ts; mentor-meetings-calendar.tsx |
-| 54-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 54-10 | IMPLEMENTATION_OR_TEST_PENDING | meeting-service.ts serializes scheduling by project lock and organizer advisory lock, rechecks persisted Mentor membership/status, prevents interval overlaps and validates IST windows, CAS tokens and future times. projects-p7b-meetings.test.ts now adds competing same-Mentor bookings across two projects and an adjacent-boundary success case; database execution, revoked-in-flight rights and foreign-viewer confirmation remain. |
 | 54-11 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 55-01 | CODE_READY | mentor-unified-notification-feed.tsx; mentor-notification-source-receipts-service.ts |
 | 55-02 | CODE_READY | mentor-unified-notification-read-all-service.ts; mentor-unified-read-all.tsx |
