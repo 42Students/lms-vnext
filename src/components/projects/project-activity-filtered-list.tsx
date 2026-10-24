@@ -60,8 +60,10 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const [page,setPage]=useState(1);
  useEffect(()=>{
   generation.current+=1;
+  actorGeneration.current+=1;
+  setActorFeed(null);setActor("");setSprint("");setActorError("");setActorBusy(false);
   setItems(events);setHasMore(events.length>=100);setCursor(null);setBusy(false);setLoadError("");setPage(1);
-  return ()=>{generation.current+=1;};
+  return ()=>{generation.current+=1;actorGeneration.current+=1;};
  },[projectId,events]);
  async function loadMore(){
   if(actor||sprint){
@@ -140,7 +142,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
    const generationNow=actorGeneration.current;
    const key=nextActor+"|"+nextSprint;
    setActor(nextActor);setSprint(nextSprint);setPage(1);
-   setActorFeed(null);setActorError("");
+   setActorFeed(null);setActorError("");setLoadError("");setBusy(false);
    setActorBusy(Boolean(nextActor||nextSprint));
    if(!nextActor&&!nextSprint)return;
    try{
