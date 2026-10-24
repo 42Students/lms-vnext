@@ -21,6 +21,18 @@ export function mentorMeetingHttpUrl(raw: string): boolean {
   }
 }
 
+/** Distinguish an accepted requested slot from a genuine alternative.
+ * Compare UTC instants, not textual timezone spellings.
+ */
+export function mentorMeetingHasDifferentRequestedWindow(
+  requestedStart:string,requestedEnd:string,proposedStart:string,proposedEnd:string,
+):boolean{
+  const originalStart=Date.parse(requestedStart),originalEnd=Date.parse(requestedEnd);
+  const nextStart=Date.parse(proposedStart),nextEnd=Date.parse(proposedEnd);
+  return [originalStart,originalEnd,nextStart,nextEnd].every(Number.isFinite)&&
+    (originalStart!==nextStart||originalEnd!==nextEnd);
+}
+
 function istInstant(value: string): number {
   const parts=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
   if (!parts) return NaN;
