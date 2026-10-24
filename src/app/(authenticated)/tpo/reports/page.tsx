@@ -186,7 +186,8 @@ export default async function TpoReportsPage({
    ["/tpo/reports/recruiter-leads","/tpo/reports/outcomes","/tpo/reports/accreditation"],
   ] as const;
   const indexedCards=groups.flatMap(group=>group.cards);
-  const legacyPaths=new Set<string>(legacyReportOrder.flat().map(tpoPrototypeReportRoute));
+  const legacyOriginalPaths=new Set<string>(legacyReportOrder.flat());
+  const legacyPaths=new Set<string>([...legacyOriginalPaths].map(tpoPrototypeReportRoute));
   const retryParams=new URLSearchParams();
   for(const key of ["seasonId","jobId","q","group"] as const){
    const value=first(query[key]);
@@ -198,7 +199,7 @@ export default async function TpoReportsPage({
    eyebrow:["Placement health","Student outcomes","Relationships and compliance"][index],
    cards:[
     ...(legacyReportOrder[index] ?? []).flatMap(path=>indexedCards.filter(card=>card.path===path)),
-    ...group.cards.filter(card=>!legacyPaths.has(card.path)),
+    ...group.cards.filter(card=>!legacyOriginalPaths.has(card.path)),
    ].map(card=>{
     const actualPath=tpoPrototypeReportRoute(card.path);
     const withCopy=legacyTpoReportCard({...card,path:actualPath});
