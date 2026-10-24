@@ -12,6 +12,7 @@ import {groupLearnerBoardLanes,learnerTaskLane} from "@/modules/projects/learner
 import {nextMentorBoardFocus} from "@/modules/projects/mentor-board-keyboard-focus-model";
 import {nextMentorReviewFocus} from "@/modules/projects/mentor-review-next-focus-model";
 import {mentorLanePage} from "@/modules/projects/mentor-board-lane-paging-model";
+import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
@@ -30,7 +31,7 @@ type Task={id:string;title:string;status:string;priority:string;sprintId:string|
  description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
 type Sprint={id:string;title:string;status:string;releaseId:string;updatedAt:Date;sequence:number;startDate?:string|null;endDate?:string|null};
-type Release={id:string;title:string;status:string};
+type Release={id:string;title:string;status:string;sequence:number};
 type Person={membershipId:string;displayName:string|null;role:string};
 type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;updatedAt:Date;submittedByMembershipId?:string|null};
 type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType:string};
@@ -134,7 +135,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      (query.toString()?"?"+query.toString():""));
  }
  const sprintListGroups=[
-   ...[...sprints].sort((a,b)=>a.sequence-b.sequence).map(row=>({
+   ...orderMentorSprints(sprints,releases).map(row=>({
      id:row.id,title:"Sprint "+row.sequence+" · "+row.title,
      status:row.status,tasks:visible.filter(task=>task.sprintId===row.id),
    })),
