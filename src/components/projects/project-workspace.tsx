@@ -1454,7 +1454,13 @@ export function ProjectWorkspace({
                       sprintPlan={workspace.sprints.map(item=>({
                         releaseId:item.releaseId,sequence:item.sequence,
                         startDate:item.startDate,endDate:item.endDate,
-                      }))} />
+                      }))}
+                      canPullBacklog={workspace.project.status==="ACTIVE"}
+                      backlogTasks={workspace.tasks.filter(task=>
+                        !task.deletedAt&&task.sprintId===null)
+                        .map(task=>({id:task.id,title:task.title,status:task.status,
+                          updatedAt:task.updatedAt.toISOString(),
+                          estimatePoints:task.estimatePoints}))} />
                   ) : null}
                   {mode !== "LEARNER" && !readOnly ? (
                     <ReleaseLifecycleActions
