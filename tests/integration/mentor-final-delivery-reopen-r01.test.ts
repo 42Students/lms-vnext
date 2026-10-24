@@ -59,6 +59,23 @@ describe.skipIf(!enabled)("MEN-projects-meetings-R01 mentor approval locks then 
       decision: "APPROVED", expectedUpdatedAt: submission.updated_at.toISOString(), confirmed: true,
     });
     expect(approved.submission.lockedAt).toBeInstanceOf(Date);
+    // A saved stale decision must not produce a duplicate immutable review,
+    // second lock, or another learner notification.
+    await expect(decideMentorFinalDelivery(mentor,project.id,submission.id,{
+      decision:"APPROVED",expectedUpdatedAt:submission.updated_at.toISOString(),
+      confirmed:true,
+    })).rejects.toMatchObject({code:"PROJECT_SUBMISSION_INVALID_STATE"});
+    const reviews=await pool!.query<{count:string}>(`select count(*)::text as count
+      from project_submission_reviews where submission_id=$1`,[submission.id]);
+    expect(reviews.rows[0]?.count).toBe("1");
+    const learnerNotices=await pool!.query<{count:string}>(`select count(*)::text as count
+      from in_app_notifications notice
+      inner join activity_events activity on activity.id=notice.event_id
+      where notice.user_id=$1 and activity.subject_id=$2
+        and activity.event_type='projects.delivery.reviewed'`,[
+      SEED_IDS.learnerUser,submission.id,
+    ]);
+    expect(Number(learnerNotices.rows[0]?.count??0)).toBeLessThanOrEqual(1);
     const locks = await pool!.query("select event_type from project_delivery_events where submission_id=$1", [submission.id]);
     expect(locks.rows).toEqual([{ event_type: "LOCKED" }]);
     const reopened = await reopenApprovedProjectDelivery(mentor, project.id, submission.id, {
