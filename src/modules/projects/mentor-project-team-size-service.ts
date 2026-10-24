@@ -55,7 +55,7 @@ export async function getMentorProjectLearnerSizes(context:RequestContext,
 export async function getMentorPortfolioLearnerCounts(
  context:RequestContext,
  verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
-):Promise<{uniqueLearners:number;learnerAssignments:number}>{
+):Promise<{uniqueLearners:number;learnerAssignments:number;teamCount:number;membershipCount:number;courseLabels:string[]}>{
  const membership=context.membership;
  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
    context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
@@ -63,12 +63,17 @@ export async function getMentorPortfolioLearnerCounts(
    }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
- const ids=(verifiedRows??await listMyProjectInstances(context))
+ const authorized=(verifiedRows??await listMyProjectInstances(context))
    .filter(row=>row.memberRole==="MENTOR"&&
-     row.project.collegeId===membership.collegeId)
-   .map(row=>row.project.id);
- if(!ids.length)return {uniqueLearners:0,learnerAssignments:0};
- const [totals]=await getDb().select({
+     row.project.collegeId===membership.collegeId);
+ const ids=[...new Set(authorized.map(row=>row.project.id))];
+ const courseLabels=[...new Set(authorized.map(row=>row.project.courseLabel?.trim())
+   .filter((label):label is string=>Boolean(label)))].sort((a,b)=>a.localeCompare(b));
+ if(!ids.length)return {uniqueLearners:0,learnerAssignments:0,
+   teamCount:0,membershipCount:0,courseLabels};
+ const [sizes,totalsRows]=await Promise.all([
+   getMentorProjectTeamSizes(context,authorized),
+   getDb().select({
    learnerAssignments:count(),
    uniqueLearners:sql<number>`count(distinct ${projectMembers.membershipId})::int`,
  }).from(projectMembers)
@@ -81,7 +86,12 @@ export async function getMentorPortfolioLearnerCounts(
    .where(and(inArray(projectMembers.projectId,ids),
      eq(projectMembers.role,"LEARNER"),isNull(projectMembers.endedAt),
      eq(collegeMemberships.collegeId,membership.collegeId),
-     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
+     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))),
+ ]);
+ const totals=totalsRows[0];
  return {uniqueLearners:Number(totals?.uniqueLearners??0),
-   learnerAssignments:Number(totals?.learnerAssignments??0)};
+   learnerAssignments:Number(totals?.learnerAssignments??0),
+   teamCount:ids.length,
+   membershipCount:[...sizes.values()].reduce((n,size)=>n+size,0),
+   courseLabels};
 }
