@@ -52,7 +52,11 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,unre
   if(loadingMore||!nextNotices)return;
   setLoadingMore(true);setOlderError("");
   try{
-   const query=new URLSearchParams(nextNotices);
+   const query=new URLSearchParams({
+     beforePinned:nextNotices.beforePinned,
+     beforeCreatedAt:nextNotices.beforeCreatedAt,
+     beforeId:nextNotices.beforeId,
+   });
    const page=await apiFetch<NoticePage>(
      "/api/mentor/notifications/announcements?"+query.toString(),
      {cache:"no-store",credentials:"same-origin",timeoutMs:15000});
