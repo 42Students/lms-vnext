@@ -506,11 +506,21 @@ describe("Projects P4 team and mentor membership", () => {
     const student=await addProjectMember(collegeAdmin,project.id,{
       membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER",
     });
-    const second=await addProjectMember(collegeAdmin,project.id,{
-      membershipId:outsider.membershipId,role:"LEARNER",
-    });
     const faculty=await addProjectMember(collegeAdmin,project.id,{
       membershipId:SEED_IDS.facultyCollegeAMembership,role:"MENTOR",isPrimary:true,
+    });
+    const candidateList=await listProjectMemberCandidates(mentor,project.id,{
+      role:"LEARNER",q:"",limit:20,
+    });
+    expect(candidateList.map(row=>row.membershipId)).toContain(outsider.membershipId);
+    await expect(listProjectMemberCandidates(mentor,project.id,{
+      role:"MENTOR",q:"",limit:20,
+    })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    await expect(addProjectMember(mentor,project.id,{
+      membershipId:secondMentor.membershipId,role:"MENTOR",
+    })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    const second=await addProjectMember(mentor,project.id,{
+      membershipId:outsider.membershipId,role:"LEARNER",
     });
     const promoted=await updateProjectMember(mentor,project.id,student.id,{
       roleLabel:"Student lead",
