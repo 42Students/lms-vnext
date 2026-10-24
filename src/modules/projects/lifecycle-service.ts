@@ -205,8 +205,15 @@ export async function completeProjectSprint(
   projectIdInput: string,
   sprintIdInput: string,
   signOffNote?:string,
+  rawDecisions?:readonly {taskId:string;destination:"NEXT"|"BACKLOG"|"DROP"}[],
+  nextSprintId?:string,
 ) {
   const note=z.string().trim().max(1000).optional().parse(signOffNote)??"";
+  const decisions=z.array(z.strictObject({
+    taskId:z.string().uuid(),
+    destination:z.enum(["NEXT","BACKLOG","DROP"]),
+  })).max(250).optional().parse(rawDecisions);
+  const validatedNext=nextSprintId===undefined?null:z.string().uuid().parse(nextSprintId);
   const scope =
     await requireProjectLifecycleMutationAccess(
       context,
@@ -269,9 +276,85 @@ export async function completeProjectSprint(
       .for("update")
       .limit(1);
 
-    if(openTask){
-      // Migration 0110: carry incomplete work into the product backlog.
-      const carried = await tx.update(projectTasks).set({
+    if(decisions!==undefined){
+      // Review decisions and task mutations execute in the same locked sprint
+      // transaction as sign-off; a changed task set invalidates the form.
+      const unfinished=await tx.select({
+        id:projectTasks.id,status:projectTasks.status,
+      }).from(projectTasks).where(and(
+        eq(projectTasks.projectId,scope.project.id),
+        eq(projectTasks.sprintId,sprint.id),isNull(projectTasks.deletedAt),
+        ne(projectTasks.status,"DONE"),
+      )).for("update");
+      const byTask=new Map(decisions.map(item=>[item.taskId,item.destination]));
+      if(byTask.size!==decisions.length||byTask.size!==unfinished.length||
+         unfinished.some(item=>!byTask.has(item.id)||item.status==="IN_REVIEW")){
+        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      }
+      const moveNext=decisions.some(item=>item.destination==="NEXT");
+      let nextSequence=0;
+      if(moveNext){
+        if(!validatedNext)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+        const [nextSprint]=await tx.select({
+          id:projectSprints.id,sequence:projectSprints.sequence,
+          status:projectSprints.status,
+        }).from(projectSprints).where(and(
+          eq(projectSprints.id,validatedNext),
+          eq(projectSprints.projectId,scope.project.id),
+          isNull(projectSprints.deletedAt),
+        )).for("update").limit(1);
+        if(!nextSprint||nextSprint.status!=="PLANNED"||
+           nextSprint.sequence<=sprint.sequence)
+          throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+        const [maxSequence]=await tx.select({
+          value:sql<number>`coalesce(max(${projectTasks.sequence}),0)::int`,
+        }).from(projectTasks).where(eq(projectTasks.sprintId,nextSprint.id));
+        nextSequence=maxSequence?.value??0;
+      }
+      const now=new Date();
+      for(const item of unfinished){
+        const destination=byTask.get(item.id);
+        if(!destination)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+        const changes=destination==="NEXT"?{
+          sprintId:validatedNext,sequence:++nextSequence,
+          carriedFromSprintId:sprint.id,carriedOverAt:now,
+          updatedAt:now,updatedByMembershipId:context.membership?.id??null,
+        }:destination==="DROP"?{
+          sprintId:null,carriedFromSprintId:sprint.id,carriedOverAt:now,
+          deletedAt:now,updatedAt:now,
+          updatedByMembershipId:context.membership?.id??null,
+        }:{
+          sprintId:null,carriedFromSprintId:sprint.id,carriedOverAt:now,
+          updatedAt:now,updatedByMembershipId:context.membership?.id??null,
+        };
+        const [changed]=await tx.update(projectTasks).set(changes)
+          .where(and(eq(projectTasks.id,item.id),
+            eq(projectTasks.projectId,scope.project.id),
+            eq(projectTasks.sprintId,sprint.id),
+            isNull(projectTasks.deletedAt),ne(projectTasks.status,"DONE")))
+          .returning({id:projectTasks.id});
+        if(!changed)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      }
+      if(decisions.length){
+        const counts={next:decisions.filter(x=>x.destination==="NEXT").length,
+          backlog:decisions.filter(x=>x.destination==="BACKLOG").length,
+          dropped:decisions.filter(x=>x.destination==="DROP").length};
+        await recordActivityEventInTransaction(tx,context,{
+          eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
+          collegeId:scope.collegeId,organizationId:scope.organizationId,
+          subjectType:"project_sprint",subjectId:sprint.id,subjectLabel:sprint.title,
+          summary:"Sprint sign-off: "+counts.next+" to next sprint, "+
+            counts.backlog+" to backlog, "+counts.dropped+" archived",
+          metadata:{projectId:scope.project.id,sprintId:sprint.id,
+            ...(validatedNext?{nextSprintId:validatedNext}:{}),
+            carryDecisions:decisions,counts},
+          groupKey:"project:"+scope.project.id,
+        });
+      }
+    }else if(openTask){
+      // Backward compatibility: existing callers still carry all incomplete
+      // tasks to the backlog rather than silently dropping them.
+      const carried=await tx.update(projectTasks).set({
         sprintId:null,carriedFromSprintId:sprint.id,
         carriedOverAt:new Date(),updatedAt:new Date(),
       }).where(and(eq(projectTasks.projectId,scope.project.id),
