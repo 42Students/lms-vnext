@@ -50,7 +50,7 @@ export async function updateMentorMeetingNotes(context:RequestContext,
   const input=mentorMeetingNotesWriteSchema.parse(rawInput);
   const scope=await getMentorMeetingNotesScope(context,params.projectId);
   return getDb().transaction(async tx=>{
-    const [project]=await tx.select({status:projectInstances.status})
+    const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
       .from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
     await assertPersistedProjectMutationActor(tx,context,scope);
@@ -64,7 +64,7 @@ export async function updateMentorMeetingNotes(context:RequestContext,
     const expected=new Date(input.expectedUpdatedAt);
     if(meeting.updatedAt.getTime()!==expected.getTime())
       throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
-    if(!project||!meetingNotesEditable(project.status,meeting.status)||
+    if(!project||project.deletedAt||!meetingNotesEditable(project.status,meeting.status)||
       meeting.outcome?.trim()===input.outcome)
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     const now=new Date(Math.max(Date.now(),meeting.updatedAt.getTime()+1));
@@ -98,7 +98,7 @@ export async function updateMentorMeetingFacilitation(
  const input=mentorMeetingFacilitationWriteSchema.parse(rawInput);
  const scope=await getMentorMeetingNotesScope(context,params.projectId);
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status})
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
    .from(projectInstances).where(and(
     eq(projectInstances.id,scope.project.id),
     eq(projectInstances.collegeId,scope.collegeId),
@@ -112,7 +112,7 @@ export async function updateMentorMeetingFacilitation(
   const expected=new Date(input.expectedUpdatedAt);
   if(meeting.updatedAt.getTime()!==expected.getTime())
     throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
-  if(!project||!meetingNotesEditable(project.status,meeting.status))
+  if(!project||project.deletedAt||!meetingNotesEditable(project.status,meeting.status))
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   const current=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
   // Only status flags, notes and the inline action-item list are editable
