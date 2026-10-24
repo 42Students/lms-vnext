@@ -313,7 +313,6 @@ export async function getTpoCompaniesView(
       (company) => company.unlinkedLeadGroup,
     ).length,
     page: filterTpoCompanyRows(all, {
-      collegeId: input.collegeId,
       sort: input.sort,
       page: input.page,
       pageSize: input.pageSize,
