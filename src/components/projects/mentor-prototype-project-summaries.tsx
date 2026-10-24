@@ -2,6 +2,7 @@ import Link from "next/link";
 import {recentMentorWorkedSprintIds} from "@/modules/projects/mentor-recent-worked-sprints-model";
 import {projectMentorVelocity} from "@/modules/projects/mentor-sprint-velocity-model";
 import {deriveMentorPlanFacts} from "@/modules/projects/mentor-historical-plan-facts-model";
+import {estimateMentorFinishWindow} from "@/modules/projects/mentor-estimated-finish-model";
 import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
@@ -416,6 +417,10 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
   const progress=live.length?Math.round(100*completed.length/live.length):0;
   const velocity=projectMentorVelocity(workspace.sprints,workspace.mentorSprintSnapshots,
     points(live.filter(task=>task.status!=="DONE")));
+  const finish=estimateMentorFinishWindow({
+    velocity,sprints:workspace.sprints,asOf:new Date(),
+    dueDate:workspace.project.endDate??null,
+  });
   const planFacts=deriveMentorPlanFacts({
     sprints:workspace.sprints,signOffs:workspace.mentorSprintSnapshots,
     starts:workspace.mentorSprintCommitments,tasks:workspace.tasks,
@@ -469,6 +474,15 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
           Roughly {velocity.approximateSprints} further
           {" "}{velocity.approximateSprints===1?"sprint":"sprints"} at the recorded average.
           Not a confirmed finish date.</p>
+        {finish.kind==="PROJECTED"?<p>Conditional finish projection:
+          {" "}{finish.projectedFinishDate} using a median of
+          {" "}{finish.sprintDays} calendar days per signed-off sprint.
+          {" "}{finish.dueDate?finish.dueComparison==="AFTER"?
+            "This is later than the recorded target "+finish.dueDate+".":
+            "This is on or before the recorded target "+finish.dueDate+".":
+            "No project target due date is recorded."}
+          This is a planning estimate, not a guarantee.</p>:
+          <p>Estimated finish date unavailable: {finish.reason}</p>}
       </div>:<p className="prototype-mentor-summary-empty">
         Forecast unavailable: {velocity.reason}
       </p>}
