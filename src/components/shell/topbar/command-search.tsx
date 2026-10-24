@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ShellNavItem } from "../shell-model";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
+import {mentorSearchFeedback} from "@/modules/projects/mentor-command-search-feedback-model";
 
 type LearnerCourse = { deliveryId: string; courseName: string; courseCode: string; sectionName: string; departmentName?: string; shortTitle?: string };
 type MentorCommandResult={
@@ -27,8 +28,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const courseMode = config.portal === "learn" && !pathname.startsWith("/learn/my-placements");
   const [query, setQuery] = useState("");
   const [mentorLookup,setMentorLookup]=useState<{
-    term:string;results:readonly MentorCommandResult[];failed:boolean;
-  }>({term:"",results:[],failed:false});
+    term:string;results:readonly MentorCommandResult[];failed:boolean;pending:boolean;
+  }>({term:"",results:[],failed:false,pending:false});
   const [courses, setCourses] = useState<LearnerCourse[]>([]);
   const [courseError, setCourseError] = useState<string | null>(null);
   const [queryError, setQueryError] = useState("");
@@ -41,6 +42,15 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const input = useRef<HTMLInputElement>(null);
   const selectionWriteRef=useRef(false);
   const root = useRef<HTMLDivElement>(null);
+  const skipNextFocusOpen=useRef(false);
+  function closeSearch(restoreFocus=false){
+    setOpen(false);setMobileOpen(false);
+    setMentorLookup({term:"",results:[],failed:false,pending:false});
+    if(restoreFocus && document.activeElement!==input.current){
+      skipNextFocusOpen.current=true;
+      input.current?.focus();
+    }
+  }
   // Recent history is session-only and is always intersected with authorized courses.
   useEffect(()=>{
     if(!courseMode)return;
@@ -130,10 +140,12 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const commands = useMemo(() => topbarCommands(pathname, items), [pathname, items]);
   const destinations = topbarSearchDestinations(pathname, query);
   const mentorTerm=query.trim();
-  const mentorResults=config.portal==="mentor"&&mentorLookup.term===mentorTerm
-    ?mentorLookup.results:[];
-  const mentorFailure=config.portal==="mentor"&&mentorLookup.term===mentorTerm&&
-    mentorLookup.failed;
+  const mentorFeedback=mentorSearchFeedback({
+    portal:config.portal,query:mentorTerm,lookupTerm:mentorLookup.term,
+    pending:mentorLookup.pending,failed:mentorLookup.failed,
+    resultCount:mentorLookup.results.length,
+  });
+  const mentorResults=mentorFeedback==="RESULTS"?mentorLookup.results:[];
   // All returned results have already passed the server's active Mentor
   // membership, role, college and assigned-project checks.
   useEffect(()=>{
@@ -141,6 +153,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
     const term=query.trim().slice(0,100);
     const controller=new AbortController();
     const handle=window.setTimeout(()=>{
+      setMentorLookup({term,results:[],failed:false,pending:true});
       void apiFetch<{results:MentorCommandResult[]}>(
         "/api/mentor/search?q="+encodeURIComponent(term),
         {cache:"no-store",signal:controller.signal},
@@ -151,9 +164,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             typeof row.title==="string"&&typeof row.context==="string"&&
             typeof row.href==="string"&&row.href.startsWith("/mentor/")&&
             !row.href.startsWith("//")).slice(0,60):[];
-        setMentorLookup({term,results,failed:false});
+        setMentorLookup({term,results,failed:false,pending:false});
       }).catch(()=>{
-        if(!controller.signal.aborted)setMentorLookup({term,results:[],failed:true});
+        if(!controller.signal.aborted)setMentorLookup({term,results:[],failed:true,pending:false});
       });
     },180);
     return ()=>{window.clearTimeout(handle);controller.abort();};
@@ -175,14 +188,12 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       if (event.key === "Escape" && open && !event.defaultPrevented &&
           event.target instanceof Node && root.current?.contains(event.target)) {
         event.preventDefault();
-        setOpen(false);
-        setMobileOpen(false);
+        closeSearch();
       }
     };
     const outside = (event: PointerEvent) => {
       if (root.current && !root.current.contains(event.target as Node)) {
-        setOpen(false);
-        setMobileOpen(false);
+        closeSearch();
       }
     };
     document.addEventListener("keydown", shortcut);
@@ -213,13 +224,12 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       router.push(config.searchHref + "?q=" + encodeURIComponent(query.trim().slice(0,100)));
     }
     setQuery("");
-    setOpen(false);
-    setMobileOpen(false);
+    closeSearch();
   }
   function courseResult(course:LearnerCourse){
     return <Link key={course.deliveryId} role="option" aria-selected={false}
       href={"/learn/courses/"+encodeURIComponent(course.deliveryId)+"/home"} className={style["suggestion"]}
-      onClick={()=>{rememberCourse(course.deliveryId);setQuery("");setOpen(false);setMobileOpen(false);}}>
+      onClick={()=>{rememberCourse(course.deliveryId);setQuery("");closeSearch();}}>
       <SearchIcon/> <span className="min-w-0"><span className="block truncate">{course.shortTitle||course.courseName}</span>
         <span className="block truncate text-[length:var(--lms-topbar-caption-size,11px)] text-muted-foreground">{course.departmentName||course.sectionName} · {course.courseCode}</span>
       </span>
@@ -244,7 +254,11 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           autoComplete="off" role="combobox" aria-haspopup="listbox" aria-keyshortcuts="Control+K Meta+K"
           aria-controls={open ? "lms-topbar-command-results" : undefined} aria-expanded={open} aria-describedby="lms-topbar-command-key-help"
           placeholder={config.placeholder} className={style["searchInput"]}
-          onFocus={() => { setOpen(true); setMobileOpen(true); }}
+          onFocus={() => {
+            if(skipNextFocusOpen.current){skipNextFocusOpen.current=false;return;}
+            if(!open)setMentorLookup({term:"",results:[],failed:false,pending:false});
+            setOpen(true);setMobileOpen(true);
+          }}
           onChange={event => {
             if (event.target.value.length>200) {
               setQueryError("Query length must not exceed 200");
@@ -266,14 +280,12 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         <kbd id="lms-topbar-command-key-help" className={style["searchHint"]}>Ctrl K</kbd>
       </div>
       {open ? <PopoverListbox id="lms-topbar-command-results" label="Workspace commands" className={style["dropdown"]}
-        onDismiss={() => {setOpen(false);setMobileOpen(false);input.current?.focus();}}
+        onDismiss={() => closeSearch(true)}
         onKeyDown={event => {
           if (event.defaultPrevented || event.nativeEvent.isComposing) return;
           if (event.key === "Escape") {
             event.preventDefault();
-            input.current?.focus();
-            setOpen(false);
-            setMobileOpen(false);
+            closeSearch(true);
             return;
           }
           if (event.target instanceof Element &&
@@ -317,22 +329,23 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           ? <RecruiterFindSuggestions query={query} onOpen={href => {
               router.push(href);
               setQuery("");
-              setOpen(false);
-              setMobileOpen(false);
+              closeSearch();
             }}/> : null}
         {config.portal === "tpo" && query.trim().length >= 2
           ? <TpoFindSuggestions query={query} onOpen={href => {
               router.push(href);
               setQuery("");
-              setOpen(false);
-              setMobileOpen(false);
+              closeSearch();
             }}/> : null}
-        {config.portal==="mentor"&&mentorTerm.length>=2&&mentorFailure?
+        {mentorFeedback==="LOADING"?<p role="status" aria-live="polite"
+          className="p-2 text-xs text-muted-foreground">
+          Searching assigned Mentor projects…
+        </p>:null}
+        {mentorFeedback==="FAILED"?
           <p role="alert" className="p-2 text-xs text-error">
             Mentor results could not be loaded. Open the full search page to retry.
           </p>:null}
-        {config.portal==="mentor"&&mentorTerm.length>=2&&
-          mentorLookup.term===mentorTerm&&!mentorFailure&&!mentorResults.length?
+        {mentorFeedback==="EMPTY"?
           <p role="status" className="p-2 text-xs text-muted-foreground">
             No matches in your assigned Mentor projects.
           </p>:null}
@@ -346,7 +359,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             </p>
             {group.map(result=><Link key={result.key} role="option"
               aria-selected={false} href={result.href} className={style["suggestion"]}
-              onClick={()=>{setQuery("");setOpen(false);setMobileOpen(false);}}>
+              onClick={()=>{setQuery("");closeSearch();}}>
               <SearchIcon/><span className="min-w-0">
                 <span className="block truncate">{result.title}</span>
                 <span className="block truncate text-xs text-muted-foreground">

@@ -133,13 +133,9 @@ async function MentorNotificationsContent({
   // Legacy priority: announcements first, then reviews/meeting requests,
   // stalled projects, and finally meetings coming up soon. Timestamp is the
   // tie-breaker within a priority rather than the only sort key.
-  const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data)
-    .slice().sort((a,b)=>{
-      const rank={REVIEW:0,TASK_REVIEW:1,SPRINT_SIGN_OFF:2,TASK_BLOCKED:3,
-        UNASSIGNED_NEXT:4,REQUESTED:5,STALLED:6,MEETING_SOON:7} as const;
-      return rank[a.kind]-rank[b.kind] ||
-        b.occurredAt.localeCompare(a.occurredAt) || a.key.localeCompare(b.key);
-    });
+  // Do not override the selected RECENT / REVIEW_FIRST ordering.
+  const visibleAlerts=selectMentorAttention(
+    alerts,kind.data,projectId.data,attentionOrder.data);
   const shownAlerts=visibleAlerts.filter(alert=>
     selectedPill==="all" ? true :
     selectedPill==="unread" ? ownSourceReceipts!==null&&
@@ -192,6 +188,7 @@ async function MentorNotificationsContent({
   if(kind.data!=="ALL")retryParams.set("kind",kind.data);
   if(projectId.data)retryParams.set("projectId",projectId.data);
   if(attentionOrder.data!=="RECENT")retryParams.set("attentionOrder",attentionOrder.data);
+  if(selectedPill!=="all")retryParams.set("pill",selectedPill);
   const retryHref = MENTOR_INBOX+(retryParams.size?"?"+retryParams.toString():"");
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Notifications"
