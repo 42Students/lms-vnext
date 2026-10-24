@@ -5,11 +5,11 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {projectMutation} from "./project-api";
+import {mentorPullEligible,mentorPullSelectedPoints} from "@/modules/projects/mentor-sprint-backlog-pull-model";
 
 export type MentorSprintBacklogChoice={
  id:string;title:string;status:string;updatedAt:string;estimatePoints:number|null;
 };
-const EDITABLE=new Set(["TODO","IN_PROGRESS","BLOCKED"]);
 /** Follow-up after a confirmed sprint create. Task moves are independent
  * row-version-checked writes; never represent multiple moves as atomic.
  */
@@ -19,7 +19,8 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
  tasks:readonly MentorSprintBacklogChoice[];canPull?:boolean;
 }){
  const router=useRouter();
- const eligible=tasks.filter(task=>EDITABLE.has(task.status)).slice(0,60);
+ const planned=mentorPullEligible(tasks);
+ const eligible=planned.candidates;
  const [selected,setSelected]=useState<string[]>([]);
  const [moved,setMoved]=useState<string[]>([]);
  const [busy,setBusy]=useState(false);
@@ -27,8 +28,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
  const [failed,setFailed]=useState<string[]>([]);
  const remaining=eligible.filter(task=>!moved.includes(task.id));
  const selectedRows=remaining.filter(task=>selected.includes(task.id));
- const total=selectedRows.reduce((sum,task)=>sum+
-   Math.max(0,task.estimatePoints??0),0);
+ const totals=mentorPullSelectedPoints(selectedRows,selected);
  async function pull(){
   if(busy||!canPull||!selectedRows.length)return;
   if(!window.confirm("Move "+selectedRows.length+" backlog task"+
@@ -86,11 +86,16 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
          </label>
        </li>)}
      </ul>:<p>No eligible backlog tasks in the loaded project workspace.</p>}
-     {tasks.length>eligible.length?<p className="text-xs text-muted-foreground">
-       This panel shows up to 60 eligible tasks. Use the Board for the rest,
-       including work already done or awaiting review.</p>:null}
-     {selectedRows.length?<p>{selectedRows.length} chosen ·
-       {" "}{total} currently estimated points</p>:null}
+     {planned.moreEligible>0?<p className="text-xs text-muted-foreground">
+       {planned.moreEligible} additional eligible backlog tasks are available on the Board.
+       Pull them there or reload this planner after the first batch.</p>:null}
+     {planned.excluded>0?<p className="text-xs text-muted-foreground">
+       {planned.excluded} unavailable, repeated or review-complete task entries were excluded.
+     </p>:null}
+     {selectedRows.length?<p>{totals.count} chosen ·
+       {" "}{totals.points} currently estimated points
+       {totals.unestimated>0?" · "+totals.unestimated+" unestimated":""}
+     </p>:null}
      <Button type="button" size="sm" disabled={busy||!selectedRows.length}
        loading={busy} onClick={()=>void pull()}>Pull selected into sprint</Button>
    </>}
