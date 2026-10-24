@@ -95,7 +95,7 @@ test("Mentor Meetings and Notifications expose prototype split panels",()=>{
 test("Mentor search is only routed to authorized implemented filters",()=>{
   const topbar=source("src/components/shell/topbar/portal-config.ts");
   assert.match(topbar,/case "mentor": return \[/);
-  assert.match(topbar,/\/mentor\/projects\?search=/);
+  assert.match(topbar,/\/mentor\/search\?q=/);
   assert.match(topbar,/\/mentor\/calendar\?search=/);
 });
 
