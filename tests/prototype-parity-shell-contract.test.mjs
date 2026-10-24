@@ -366,3 +366,23 @@ test("Mentor sprint sign-off explicitly gates review tasks and persists note ato
   assert.match(service,/eventType:ACTIVITY_EVENT_TYPES\.PROJECTS_SPRINT_UPDATED/);
   assert.match(service,/signOffNote:note/);
 });
+
+
+test("Mentor calendar cross-team Schedule a meeting persists or drafts through guarded API",()=>{
+  const page=source("src/app/(authenticated)/mentor/calendar/page.tsx");
+  const form=source("src/components/projects/mentor-calendar-quick-schedule.tsx");
+  const route=source("src/app/api/projects/[projectId]/meetings/route.ts");
+  assert.match(page,/getMentorCalendar/);
+  assert.match(page,/listMyProjectInstances\(context\)/);
+  assert.match(page,/row\.memberRole==="MENTOR"/);
+  assert.match(page,/row\.project\.status==="ACTIVE"/);
+  assert.match(page,/<MentorCalendarQuickSchedule projects=\{choices\}/);
+  assert.match(form,/expectedProjectUpdatedAt:project\.updatedAt/);
+  assert.match(form,/status:link\?"SCHEDULED":"DRAFT"/);
+  assert.match(form,/meetingUrl:link\|\|null/);
+  assert.match(form,/\/meetings","POST"/);
+  assert.match(form,/toInstant\(start\)/);
+  assert.match(form,/No Google Meet link is generated automatically/);
+  assert.match(route,/isSameOriginRequest/);
+  assert.match(route,/scheduleProjectMeeting\(/);
+});
