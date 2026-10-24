@@ -483,7 +483,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <div className="prototype-mentor-board-detail-block">
         <h4>Comments and progress</h4>
         <ProjectTaskComments key={focused.id} projectId={projectId} taskId={focused.id}
-          updatedAt={new Date(focused.updatedAt).toISOString()} canPost={!readOnly}/>
+          updatedAt={new Date(focused.updatedAt).toISOString()} canPost={!readOnly}
+         blockerReply={focused.status==="BLOCKED"}/>
       </div>
     </>:<p>No task selected.</p>}
   </aside>
