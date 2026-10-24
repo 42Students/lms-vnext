@@ -17,6 +17,7 @@ import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
 import {mentorSubmissionIdentity} from "@/modules/projects/mentor-submission-attribution-model";
 import {mentorDeliveryPrechecks} from "@/modules/projects/mentor-delivery-prechecks-model";
+import {recordedMentorStudentLead} from "@/modules/projects/mentor-student-lead-label-model";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 import {MentorProjectFocusQueue} from "./mentor-project-focus-queue";
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
@@ -298,6 +299,7 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
           <span aria-hidden="true">{initials||"42"}</span>
           <div><strong>{member.displayName||"Team member"}</strong>
             <small>{member.isPrimary?"Primary mentor · ":""}{member.roleLabel||member.role.replaceAll("_"," ")}</small>
+            {recordedMentorStudentLead(member)?<small aria-label="Saved student lead label">★ Lead · saved team designation (not a separate permission)</small>:null}
             {member.role==="LEARNER"?<small>
               {academics?.registrationNumber?
                 "Registration "+academics.registrationNumber+" · ":
