@@ -588,6 +588,144 @@ describe("Projects P5 lifecycle", () => {
       .toEqual([]);
   });
 
+  it("persists an explicit NEXT sign-off disposition with its pre-carry snapshot", async () => {
+    const project = await createProject();
+    const initial = await getProjectInstanceWorkspace(mentor, project.id);
+    const current = initial.sprints[0]!;
+    const next = initial.sprints[1]!;
+    const moving = initial.tasks.find(task => task.sprintId === current.id)!;
+    const alreadyNext = initial.tasks.find(task => task.sprintId === next.id)!;
+
+    await startProjectSprint(mentor, project.id, current.id);
+    const fresh = await getProjectInstanceWorkspace(mentor, project.id);
+    const task = fresh.tasks.find(row => row.id === moving.id)!;
+    const completed = await completeProjectSprint(
+      mentor, project.id, current.id, "Carry this item to the next sprint", [{
+        taskId: task.id, destination: "NEXT",
+        expectedUpdatedAt: task.updatedAt.toISOString(),
+      }], next.id,
+    );
+    expect(completed.status).toBe("COMPLETED");
+
+    const rows = await pool.query<{
+      sprint_id:string|null;carried_from_sprint_id:string|null;
+      was_carried:boolean;was_dropped:boolean;sequence:number;
+    }>(`
+      select sprint_id, carried_from_sprint_id,
+        carried_over_at is not null as was_carried,
+        deleted_at is not null as was_dropped, sequence
+      from project_tasks where id=$1 and project_id=$2
+    `, [task.id, project.id]);
+    expect(rows.rows[0]).toMatchObject({
+      sprint_id: next.id, carried_from_sprint_id: current.id,
+      was_carried: true, was_dropped: false,
+    });
+    expect(rows.rows[0]!.sequence).toBeGreaterThan(alreadyNext.sequence);
+
+    const facts = await listMentorSprintSignOffSnapshots(
+      mentor, project.id, [current.id],
+    );
+    expect(facts).toHaveLength(1);
+    expect(facts[0]).toMatchObject({
+      sprintId: current.id, version: 1, taskCount: 1,
+      memberRows: [{taskCount: 1, doneCount: 0, openCount: 1}],
+    });
+    // A future reassignment or move must not rewrite the original sign-off.
+    const after = await getProjectInstanceWorkspace(mentor, project.id);
+    expect(after.tasks.find(row => row.id === task.id)?.sprintId).toBe(next.id);
+    expect(await listMentorSprintSignOffSnapshots(mentor, project.id, [current.id]))
+      .toEqual(facts);
+  });
+
+  it.each(["BACKLOG", "DROP"] as const)(
+    "persists explicit %s sign-off and retains an immutable workload snapshot",
+    async (destination) => {
+      const project = await createProject();
+      const initial = await getProjectInstanceWorkspace(mentor, project.id);
+      const current = initial.sprints[0]!;
+      const open = initial.tasks.find(task => task.sprintId === current.id)!;
+      await startProjectSprint(mentor, project.id, current.id);
+      const fresh = await getProjectInstanceWorkspace(mentor, project.id);
+      const task = fresh.tasks.find(row => row.id === open.id)!;
+      const completed = await completeProjectSprint(
+        mentor, project.id, current.id, undefined, [{
+          taskId: task.id, destination,
+          expectedUpdatedAt: task.updatedAt.toISOString(),
+        }],
+      );
+      expect(completed.status).toBe("COMPLETED");
+
+      const rows = await pool.query<{
+        sprint_id:string|null;carried_from_sprint_id:string|null;
+        was_carried:boolean;was_dropped:boolean;
+      }>(`
+        select sprint_id, carried_from_sprint_id,
+          carried_over_at is not null as was_carried,
+          deleted_at is not null as was_dropped
+        from project_tasks where id=$1 and project_id=$2
+      `, [task.id, project.id]);
+      expect(rows.rows[0]).toEqual({
+        sprint_id: null, carried_from_sprint_id: current.id,
+        was_carried: true, was_dropped: destination === "DROP",
+      });
+      const facts = await listMentorSprintSignOffSnapshots(
+        mentor, project.id, [current.id],
+      );
+      expect(facts).toHaveLength(1);
+      expect(facts[0]).toMatchObject({
+        sprintId: current.id, version: 1, taskCount: 1,
+        memberRows: [{taskCount: 1, doneCount: 0, openCount: 1}],
+      });
+    },
+  );
+
+  it("rolls back invalid NEXT, missing, and duplicate sign-off dispositions", async () => {
+    const project = await createProject();
+    const initial = await getProjectInstanceWorkspace(mentor, project.id);
+    const current = initial.sprints[0]!;
+    const next = initial.sprints[1]!;
+    const open = initial.tasks.find(task => task.sprintId === current.id)!;
+    await startProjectSprint(mentor, project.id, current.id);
+    const fresh = await getProjectInstanceWorkspace(mentor, project.id);
+    const task = fresh.tasks.find(row => row.id === open.id)!;
+    const decision = {
+      taskId: task.id, destination: "NEXT" as const,
+      expectedUpdatedAt: task.updatedAt.toISOString(),
+    };
+    await expect(completeProjectSprint(
+      mentor, project.id, current.id, undefined, [decision],
+    )).rejects.toMatchObject({code: "PROJECT_SPRINT_INVALID_STATE"});
+    await expect(completeProjectSprint(
+      mentor, project.id, current.id, undefined, [decision, decision], next.id,
+    )).rejects.toMatchObject({code: "PROJECT_SPRINT_INVALID_STATE"});
+    await expect(completeProjectSprint(
+      mentor, project.id, current.id, undefined, [], next.id,
+    )).rejects.toMatchObject({code: "PROJECT_SPRINT_INVALID_STATE"});
+
+    const sprintState = await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1", [current.id],
+    );
+    expect(sprintState.rows[0]?.status).toBe("ACTIVE");
+    const taskState = await pool.query<{
+      sprint_id:string|null;deleted_at:Date|null;carried_over_at:Date|null;
+    }>(
+      "select sprint_id,deleted_at,carried_over_at from project_tasks where id=$1",
+      [task.id],
+    );
+    expect(taskState.rows[0]).toMatchObject({
+      sprint_id: current.id, deleted_at: null, carried_over_at: null,
+    });
+    expect(await listMentorSprintSignOffSnapshots(mentor, project.id, [current.id]))
+      .toEqual([]);
+    // Rejecting bad decisions must leave a valid retry possible.
+    await expect(completeProjectSprint(
+      mentor, project.id, current.id, undefined, [{
+        taskId: task.id, destination: "BACKLOG",
+        expectedUpdatedAt: task.updatedAt.toISOString(),
+      }],
+    )).resolves.toMatchObject({status: "COMPLETED"});
+  });
+
   it("ships a release only after every sprint completes and completes the project on the last release", async () => {
     const project = await createProject();
     let workspace =
