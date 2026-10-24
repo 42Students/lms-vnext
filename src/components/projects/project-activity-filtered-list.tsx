@@ -9,7 +9,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {mentorActivityCategory, mentorActivityLabel, mentorActivityRelativeTime} from "@/modules/projects/mentor-activity-display-model";
 import {projectResourceAuditAction,projectResourceAuditMatches} from "@/modules/projects/project-resource-audit-model";
 
-type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null};
+type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
 
 function resourceLabel(value:string|null|undefined):string {
@@ -26,8 +26,9 @@ function resourceActionLabel(eventType:string):string {
 type Cursor={time:string;id:string};
 type Page={events:Event[];hasMore:boolean;nextCursor:Cursor|null};
 
-export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false}:{
+export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[]}:{
  projectId:string;events:Event[];now:string;resourceAudit?:boolean;
+ sprints?:readonly {id:string;title:string;sequence:number}[];
 }){
  const [items,setItems]=useState<readonly Event[]>(events);
  const [hasMore,setHasMore]=useState(events.length>=100);
@@ -72,6 +73,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const [resourceAction,setResourceAction]=useState("ALL");
  const [type,setType]=useState("");
  const [actor,setActor]=useState("");
+ const [sprint,setSprint]=useState("");
  const [range,setRange]=useState("ALL");
  const [fromDate,setFromDate]=useState("");
  const [toDate,setToDate]=useState("");
@@ -91,6 +93,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     &&projectResourceAuditMatches(event.eventType,resourceAction)
     &&(!type||event.eventType===type)
     &&(!actor||(event.actorUserId??event.actorDisplayName)===actor)
+     &&(!sprint||event.sprintId===sprint)
     &&(range==="ALL"||current-occurred.getTime()<Number(range)*86400000)
     &&(!fromDate||day>=fromDate)
     &&(!toDate||day<=toDate);
@@ -105,7 +108,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
  const activePage=Math.min(page,totalPages);
  const paged=resourceAudit?filtered.slice((activePage-1)*PAGE_SIZE,activePage*PAGE_SIZE):filtered;
- const resetFilters=()=>{setSearch("");setResourceAction("ALL");setType("");setActor("");setRange("ALL");setFromDate("");setToDate("");setPage(1);};
+ const resetFilters=()=>{setSearch("");setResourceAction("ALL");setType("");setActor("");setSprint("");setRange("ALL");setFromDate("");setToDate("");setPage(1);};
  return <section className="space-y-3">
   {resourceAudit?<div aria-label="Resource activity totals" className="grid grid-cols-2 gap-2 sm:grid-cols-4">{counts.map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">{label}</p><p className="text-xl font-semibold tabular-nums">{value}</p></div>)}</div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
@@ -134,7 +137,16 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
        {actors.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
      </Select>
    </label>:null}
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Date range
+   {!resourceAudit&&sprints.length>0?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+      In sprint
+      <Select value={sprint} onChange={event=>{setSprint(event.target.value);setPage(1);}}
+        className="w-full">
+        <option value="">Any sprint</option>
+        {[...sprints].sort((a,b)=>a.sequence-b.sequence).map(item=>
+          <option key={item.id} value={item.id}>Sprint {item.sequence} · {item.title}</option>)}
+      </Select>
+    </label>:null}
+    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Date range
     <Select value={range} onChange={event=>{setRange(event.target.value);setPage(1);}}
       className="w-full">
      <option value="ALL">All time</option><option value="1">Today</option>
@@ -156,14 +168,14 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
   </div>
   <p className="text-xs text-muted-foreground">{resourceAudit
     ? filtered.length===0?"0 matching changes":`${(activePage-1)*PAGE_SIZE+1}–${Math.min(activePage*PAGE_SIZE,filtered.length)} of ${filtered.length} matching changes`
-    :`${filtered.length} events`} · Times shown in IST.{hasMore?" Load more to include older events.":""}</p>
+    :`${filtered.length} events`} · Times shown in IST.{sprint?" Events without a recorded sprint ID are excluded.":""}{hasMore?" Load more to include older events.":""}</p>
   {!filtered.length
     ? <EmptyState title={resourceAudit?(items.length===0?"No resource changes yet":"No resource changes match these filters"):(items.length===0?"No project activity yet":"No matching activity")}
       description={items.length===0
         ? "Task moves, sprint updates and resource changes will appear here."
-        : (type||search||resourceAction!=="ALL") && (fromDate||toDate||range!=="ALL")
+        : (type||search||sprint||resourceAction!=="ALL") && (fromDate||toDate||range!=="ALL")
           ? "No activity matches this source and date range."
-          : search||resourceAction!=="ALL" ? "No activity matches these resource or search filters."
+          : search||sprint||resourceAction!=="ALL" ? "No activity matches these activity filters."
           : fromDate||toDate||range!=="ALL" ? "No activity in this date range."
           : "No activity recorded from this source yet."} />
     : resourceAudit ? <div className="min-w-0 overflow-x-auto">
