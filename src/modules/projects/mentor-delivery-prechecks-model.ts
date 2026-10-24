@@ -1,7 +1,7 @@
-/** A factual project delivery precheck. This intentionally does NOT invent
- * a new submission/approval gate: the persisted readiness service owns policy.
- * Release shipment, proof links and project due date remain informational in
- * existing LMS logic even when the prototype displays them together.
+/** Factual project delivery prechecks backed by persisted execution readiness.
+ * Normal submission requires shipped releases, completed Sprints and all tasks
+ * done. A saved administrator FORCE_UNLOCK can bypass normal execution rules;
+ * proof links and the target date remain advisory under current LMS policy.
  */
 export type MentorDeliveryPrecheck={
  key:"SPRINTS"|"TASKS"|"RELEASES"|"EVIDENCE"|"TARGET";
