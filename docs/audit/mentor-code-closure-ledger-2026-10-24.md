@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 56/132 `CODE_READY`, 69/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 59/132 `CODE_READY`, 66/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -24,7 +24,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | X-09 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | X-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 45-01 | CODE_READY | mentor-attention.ts; mentor-prototype-home.tsx |
-| 45-02 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 45-02 | CODE_READY | mentor-attention.ts; mentor-prototype-home.tsx; mentor-attention-prototype-classes.test.ts |
 | 45-03 | CODE_READY | mentor-attention-later-service.ts; mentor-prototype-home.tsx; mentor/attention/later/route.ts |
 | 45-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 45-05 | CODE_READY | mentor-home-week-meetings-model.ts; mentor-prototype-home.tsx |
@@ -81,7 +81,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 50-01 | CODE_READY | mentor-prototype-performance-table.tsx |
 | 50-02 | CODE_READY | mentor-sprint-signoff-snapshot-model.ts; mentor-prototype-performance-table.tsx |
 | 50-03 | CODE_READY | mentor-point-stack-model.ts; mentor-prototype-performance-table.tsx; mentor-sprint-signoff-snapshot-model.ts |
-| 50-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 50-04 | CODE_READY | mentor-member-points-sparkline-model.ts; mentor-performance-insights-model.ts; mentor-prototype-performance-table.tsx |
 | 50-05 | CODE_READY | mentor-performance-insights-model.ts; mentor-prototype-performance-table.tsx |
 | 50-06 | CODE_READY | mentor-task-allocation.tsx; mentor-auto-assign-service.ts |
 | 50-07 | CODE_READY | mentor-next-sprint-assignment-model.ts; mentor-task-allocation.tsx |
@@ -137,7 +137,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 55-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 56-01 | CODE_READY | command-search.tsx; mentor-unified-search-service.ts |
 | 56-02 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 56-03 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 56-03 | CODE_READY | mentor-notification-bell-preview.tsx; mentor/notifications/preview/route.ts; mentor-unified-notification-model.ts |
 | 56-04 | CODE_READY | mentor-account-overview-service.ts; mentor-account-summary-model.ts; mentor/account/page.tsx; account-menu.tsx |
 | 56-05 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 56-06 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
