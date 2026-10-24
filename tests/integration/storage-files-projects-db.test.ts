@@ -141,6 +141,33 @@ afterAll(async () => {
 });
 
 describe("project resource files against PostgreSQL", () => {
+  it("denies file signing, completion and edits after soft deletion even for admin",async()=>{
+    const project=await createProject();
+    const {done}=await readyFile(project.id);
+    const bytes=pdfBytes("pending");
+    const uploading=await issueProjectFileUploadGrant(mentor,project.id,{
+      originalName:"pending.pdf",contentType:"application/pdf",
+      sizeBytes:bytes.length,title:"Pending resource",
+    });
+    putFromGrant(uploading.grant,bytes);
+    await pool.query("update project_instances set deleted_at=now() where id=$1",[project.id]);
+    await expect(issueProjectFileDownloadGrant(collegeAdmin,project.id,done.id))
+      .rejects.toMatchObject({code:"STORAGE_NOT_FOUND"});
+    await expect(completeProjectFileUpload(collegeAdmin,project.id,uploading.file.id))
+      .rejects.toMatchObject({code:"STORAGE_NOT_FOUND"});
+    await expect(updateProjectFileDetails(collegeAdmin,project.id,done.id,{
+      title:"Invalid change",
+    })).rejects.toMatchObject({code:"STORAGE_NOT_FOUND"});
+    await expect(removeProjectFile(collegeAdmin,project.id,done.id))
+      .rejects.toMatchObject({code:"STORAGE_NOT_FOUND"});
+    const saved=await pool.query<{status:string;title:string}>(
+      "select status,title from project_resource_files where id=$1",[done.id]);
+    expect(saved.rows[0]).toMatchObject({status:"READY",title:"Project brief"});
+    const pending=await pool.query<{status:string}>(
+      "select status from project_resource_files where id=$1",[uploading.file.id]);
+    expect(pending.rows[0]?.status).toBe("UPLOADING");
+  });
+
   it("lets mentors upload and members download verified files only", async () => {
     const project = await createProject();
     const { done } = await readyFile(project.id);

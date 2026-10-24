@@ -253,10 +253,10 @@ export async function completeProjectFileUpload(
     if (raced.status === "READY") return toProjectFileDto(raced);
     if (row.uploadExpiresAt.getTime() + 60_000 < Date.now()) {
       const expiredOrWinner = await getDb().transaction(async tx=>{
-        const [liveProject] = await tx.select({status:projectInstances.status})
+        const [liveProject] = await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
           .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
           .for("share").limit(1);
-        if(!liveProject)throw new StorageFileError("STORAGE_NOT_FOUND");
+        if(!liveProject||liveProject.deletedAt)throw new StorageFileError("STORAGE_NOT_FOUND");
         requireOpenProject(liveProject.status);
         const [failed] = await tx.update(projectResourceFiles)
           .set({status:"FAILED",failureCode:"STORAGE_UPLOAD_EXPIRED",updatedAt:new Date()})
@@ -279,9 +279,9 @@ export async function completeProjectFileUpload(
   }
 
   const updated = await getDb().transaction(async (tx) => {
-    const [liveProject] = await tx.select({ status: projectInstances.status }).from(projectInstances)
+    const [liveProject] = await tx.select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt }).from(projectInstances)
       .where(eq(projectInstances.id, scope.project.id)).for("share").limit(1);
-    if (!liveProject) throw new StorageFileError("STORAGE_NOT_FOUND");
+    if (!liveProject||liveProject.deletedAt) throw new StorageFileError("STORAGE_NOT_FOUND");
     requireOpenProject(liveProject.status);
     const [next] = await tx
       .update(projectResourceFiles)
@@ -373,9 +373,9 @@ export async function updateProjectFileDetails(
   const row = await loadFile(scope.project.id, fileIdInput);
   if (row.status === "DELETED") throw new StorageFileError("STORAGE_NOT_FOUND");
   const updated = await getDb().transaction(async (tx) => {
-    const [liveProject] = await tx.select({ status: projectInstances.status }).from(projectInstances)
+    const [liveProject] = await tx.select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt }).from(projectInstances)
       .where(eq(projectInstances.id, scope.project.id)).for("share").limit(1);
-    if (!liveProject) throw new StorageFileError("STORAGE_NOT_FOUND");
+    if (!liveProject||liveProject.deletedAt) throw new StorageFileError("STORAGE_NOT_FOUND");
     requireOpenProject(liveProject.status);
     const [next] = await tx
       .update(projectResourceFiles)
@@ -409,9 +409,9 @@ export async function removeProjectFile(
   const row = await loadFile(scope.project.id, fileIdInput);
   if (row.status === "DELETED") return toProjectFileDto(row);
   const updated = await getDb().transaction(async (tx) => {
-    const [liveProject] = await tx.select({ status: projectInstances.status }).from(projectInstances)
+    const [liveProject] = await tx.select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt }).from(projectInstances)
       .where(eq(projectInstances.id, scope.project.id)).for("share").limit(1);
-    if (!liveProject) throw new StorageFileError("STORAGE_NOT_FOUND");
+    if (!liveProject||liveProject.deletedAt) throw new StorageFileError("STORAGE_NOT_FOUND");
     requireOpenProject(liveProject.status);
     const [next] = await tx
       .update(projectResourceFiles)
@@ -455,6 +455,7 @@ export async function issueProjectFileDownloadGrant(
   if (row.collegeId !== scope.collegeId) throw new StorageFileError("STORAGE_NOT_FOUND");
   if (row.status === "DELETED") throw new StorageFileError("STORAGE_NOT_FOUND");
   const manager = scope.access === "ADMIN" || scope.access === "MENTOR";
+  if(scope.project.deletedAt)throw new StorageFileError("STORAGE_NOT_FOUND");
   if(row.resourceId && !manager){
     // Never issue a signed URL when a linked resource is mentor-only, even if
     // a caller bypasses the Resources page and guesses a stored file UUID.
