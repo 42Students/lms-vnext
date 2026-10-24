@@ -67,10 +67,20 @@ export function TpoCompaniesToday({
     const next=displayed[Math.max(0,Math.min(displayed.length-1,at+(e.key==="j"?1:-1)))];
     if(next){e.preventDefault();setSelectedId(next.id);}
    }
+   if(current&&!pending&&!confirm){
+    if(/^[1-4]$/.test(e.key)){
+     const selected=outcomes[Number(e.key)-1];
+     if(selected){e.preventDefault();setOutcome(selected.value);}
+    }else if(e.key.toLowerCase()==="t"){
+     e.preventDefault();setConfirm("TOMORROW");
+    }else if(e.key==="Enter"&&note.trim()){
+     e.preventDefault();setConfirm("DONE");
+    }
+   }
   }
   document.addEventListener("keydown",onKey);
   return ()=>document.removeEventListener("keydown",onKey);
- },[displayed,current]);
+ },[displayed,current,pending,confirm,note]);
  function pick(row:TpoCompaniesTodayRow){
   setSelectedId(row.id);setOutcome("CONTACTED");setNote("");setError("");setNotice("");
  }
@@ -159,7 +169,7 @@ export function TpoCompaniesToday({
      </button>)}</div>:
      <div className={styles.empty}>No open, recorded follow-ups in this date window.
       <Link href="/tpo/follow-ups">Check the full follow-up queue</Link></div>}
-    <footer className={styles.foot}>J / K to choose a person · {displayed.length} shown
+    <footer className={styles.foot}>J / K to choose · 1–4 outcome · T tomorrow · Enter to review Done · {displayed.length} shown
      {hasMore?" · more exist":""}</footer>
    </section>
    <section className={styles.detail} aria-label="Selected">
