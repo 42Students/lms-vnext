@@ -51,7 +51,8 @@ export function MentorSprintCreate({
   }
   const guard=useProjectEditorDiscardGuard(open,dirty,busy,discardDraft);
   function beginCreate(){
-    if(!open){const proposal=mentorSprintPlanningDefaults(initialReleaseId,sprintPlan);
+    if(!open){const proposal=mentorSprintPlanningDefaults(initialReleaseId,sprintPlan,
+      new Date().toISOString().slice(0,10));
       setChosenReleaseId(initialReleaseId);setTitle(proposal.title);
       setStartDate(proposal.startDate);setEndDate(proposal.endDate);
     }
@@ -98,7 +99,8 @@ export function MentorSprintCreate({
           <Select value={chosenReleaseId} disabled={busy} required aria-invalid={!chosenReleaseId}
             onChange={event=>{
               const choice=event.target.value;
-              const proposal=mentorSprintPlanningDefaults(choice,sprintPlan);
+              const proposal=mentorSprintPlanningDefaults(choice,sprintPlan,
+                new Date().toISOString().slice(0,10));
               setChosenReleaseId(choice);setTitle(proposal.title);
               setStartDate(proposal.startDate);setEndDate(proposal.endDate);
             }}
