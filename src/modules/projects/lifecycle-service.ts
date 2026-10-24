@@ -862,14 +862,14 @@ export async function unshipProjectRelease(
 
   return db.transaction(async (tx) => {
     const [project] = await tx
-      .select({ status: projectInstances.status })
+      .select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt })
       .from(projectInstances)
       .where(and(eq(projectInstances.id, scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId)))
       .for("update")
       .limit(1);
 
-    if (!project || project.status === "ARCHIVED") {
+    if (!project || project.deletedAt || project.status === "ARCHIVED") {
       throw new ProjectsServiceError(
         "PROJECT_RELEASE_INVALID_STATE",
       );
@@ -883,6 +883,7 @@ export async function unshipProjectRelease(
         and(
           eq(projectReleases.id, releaseId),
           eq(projectReleases.projectId, scope.project.id),
+            isNull(projectReleases.deletedAt),
         ),
       )
       .for("update")
@@ -922,7 +923,8 @@ export async function unshipProjectRelease(
       .update(projectReleases)
       .set({
         status: nextStatus,
-        updatedAt: new Date(),
+        updatedAt: new Date(Math.max(Date.now(),release.updatedAt.getTime()+1)),
+        version:sql`${projectReleases.version} + 1`,
       })
       .where(
         and(
@@ -952,6 +954,19 @@ export async function unshipProjectRelease(
         ),
       );
 
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_UPDATED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project_release",subjectId:unshipped.id,subjectLabel:unshipped.title,
+      summary:"Project release un-shipped",
+      metadata:{projectId:scope.project.id,releaseId:unshipped.id,
+        releaseKey:unshipped.templateKey,sourceTab:"sprints",
+        change:"UNSHIPPED",from:release.status,to:unshipped.status,
+        previousVersion:release.version,version:unshipped.version,
+        previousUpdatedAt:release.updatedAt.toISOString(),
+        updatedAt:unshipped.updatedAt.toISOString()},
+      groupKey:"project:"+scope.project.id,
+    });
     return unshipped;
   });
 }
@@ -975,14 +990,14 @@ export async function shipProjectRelease(
 
   return db.transaction(async (tx) => {
     const [project] = await tx
-      .select({ status: projectInstances.status })
+      .select({ status: projectInstances.status,deletedAt:projectInstances.deletedAt })
       .from(projectInstances)
       .where(and(eq(projectInstances.id, scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId)))
       .for("update")
       .limit(1);
 
-    if (!project || !projectAllowsExecution(project.status)) {
+    if (!project || project.deletedAt || !projectAllowsExecution(project.status)) {
       throw new ProjectsServiceError(
         "PROJECT_RELEASE_INVALID_STATE",
       );
@@ -996,6 +1011,7 @@ export async function shipProjectRelease(
         and(
           eq(projectReleases.id, releaseId),
           eq(projectReleases.projectId, scope.project.id),
+            isNull(projectReleases.deletedAt),
         ),
       )
       .for("update")
@@ -1055,7 +1071,8 @@ export async function shipProjectRelease(
       .update(projectReleases)
       .set({
         status: "SHIPPED",
-        updatedAt: new Date(),
+        updatedAt: new Date(Math.max(Date.now(),release.updatedAt.getTime()+1)),
+        version:sql`${projectReleases.version} + 1`,
       })
       .where(
         and(
@@ -1075,6 +1092,19 @@ export async function shipProjectRelease(
     // Shipping finishes the release; only the approved mentor closeout
     // workflow may transition the project to COMPLETED.
 
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_UPDATED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project_release",subjectId:shipped.id,subjectLabel:shipped.title,
+      summary:"Project release shipped",
+      metadata:{projectId:scope.project.id,releaseId:shipped.id,
+        releaseKey:shipped.templateKey,sourceTab:"sprints",
+        change:"SHIPPED",from:release.status,to:shipped.status,
+        previousVersion:release.version,version:shipped.version,
+        previousUpdatedAt:release.updatedAt.toISOString(),
+        updatedAt:shipped.updatedAt.toISOString()},
+      groupKey:"project:"+scope.project.id,
+    });
     return shipped;
   });
 }

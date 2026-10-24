@@ -307,6 +307,45 @@ afterAll(async () => {
 });
 
 describe("Projects P5 lifecycle", () => {
+  it("stores immutable release shipment revisions and rejects stale ship replay",async()=>{
+    const project=await createProject();
+    const ws=await getProjectInstanceWorkspace(mentor,project.id);
+    const [first,second]=ws.sprints;
+    const release=ws.releases[0]!;
+    await startProjectSprint(mentor,project.id,first!.id);
+    await completeProjectSprint(mentor,project.id,first!.id);
+    await startProjectSprint(mentor,project.id,second!.id);
+    await completeProjectSprint(mentor,project.id,second!.id);
+    const original=await pool.query<{updated_at:Date;version:number}>(
+      "select updated_at,version from project_releases where id=$1",[release.id]);
+    const firstVersion=original.rows[0]!;
+    const shipped=await shipProjectRelease(mentor,project.id,release.id,{
+      expectedUpdatedAt:firstVersion.updated_at.toISOString(),
+    });
+    expect(shipped.status).toBe("SHIPPED");
+    expect(shipped.version).toBe(firstVersion.version+1);
+    await expect(shipProjectRelease(mentor,project.id,release.id,{
+      expectedUpdatedAt:firstVersion.updated_at.toISOString(),
+    })).rejects.toBeDefined();
+    const unshipped=await unshipProjectRelease(mentor,project.id,release.id,{
+      expectedUpdatedAt:shipped.updatedAt.toISOString(),
+    });
+    expect(unshipped.status).toBe("IN_PROGRESS");
+    expect(unshipped.version).toBe(shipped.version+1);
+    const events=await pool.query<{change:string;from_status:string;
+      to_status:string;version:number}>(`
+      select metadata->>'change' as change,metadata->>'from' as from_status,
+        metadata->>'to' as to_status,(metadata->>'version')::int as version
+      from activity_events where subject_id=$1
+        and event_type='projects.release.updated'
+      order by occurred_at,id
+    `,[release.id]);
+    expect(events.rows).toEqual([
+      {change:"SHIPPED",from_status:"IN_PROGRESS",to_status:"SHIPPED",version:shipped.version},
+      {change:"UNSHIPPED",from_status:"SHIPPED",to_status:"IN_PROGRESS",version:unshipped.version},
+    ]);
+  });
+
   it.each(["NEXT","BACKLOG","DROP"] as const)(
     "reopens a signed-off sprint and atomically undoes untouched %s dispositions",
     async(destination)=>{
