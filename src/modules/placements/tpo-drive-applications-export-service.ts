@@ -110,7 +110,8 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
      then ${placementApplicationScreenings.status}::text else 'PENDING' end = ${stage}::text`,
    search?or(ilike(users.displayName,queryPattern),
     ilike(placementJobRoleOptions.title,queryPattern),
-    ilike(learnerProfiles.rollNumber,queryPattern),ilike(users.email,queryPattern),
+    ilike(learnerProfiles.rollNumber,queryPattern),
+    ilike(learnerProfiles.registrationNumber,queryPattern),ilike(users.email,queryPattern),
     ilike(users.phoneE164,queryPattern),rosterMatch):undefined,
   ))
   .orderBy(sort==="OLDEST"?asc(placementApplications.submittedAt):
