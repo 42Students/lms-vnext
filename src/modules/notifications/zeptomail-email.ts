@@ -147,7 +147,8 @@ function isTemplateId(value: string): boolean {
 export type ZeptoMailPurpose =
   | { kind: "OTP" }
   | { kind: "EVENT"; event: LegacyMailEvent }
-  | { kind: "TPO"; templateName: string };
+  | { kind: "TPO"; templateName: string }
+  | { kind: "PROJECTS"; templateName: "FINAL_SUBMISSION" | "MEETING_REQUEST" };
 
 export type ZeptoMailTemplateMessage = {
   purpose: ZeptoMailPurpose;
@@ -206,7 +207,7 @@ export type ZeptoMailSendResult =
 
 function purposeLabel(purpose: ZeptoMailPurpose): string {
   return purpose.kind === "EVENT" ? purpose.event :
-    purpose.kind === "TPO" ? "TPO" : "OTP";
+    purpose.kind === "TPO" ? "TPO" : purpose.kind === "PROJECTS" ? "PROJECTS" : "OTP";
 }
 
 /** Explicitly provisioned IDs only. No guessed placeholder or fallback template. */
@@ -222,6 +223,8 @@ export function resolveZeptoMailTemplateId(
     if (!Object.prototype.hasOwnProperty.call(LEGACY_NOTIFICATION_TEMPLATE_KEYS, purpose.event)) return null;
     const legacyKey = LEGACY_NOTIFICATION_TEMPLATE_KEYS[purpose.event];
     value = env["ZEPTOMAIL_TEMPLATE_" + purpose.event] ?? env["zepto.template." + legacyKey];
+  } else if (purpose.kind === "PROJECTS") {
+    value = env["ZEPTOMAIL_TEMPLATE_PROJECTS_" + purpose.templateName];
   } else {
     const name = purpose.templateName.trim();
     if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$/.test(name)) return null;
