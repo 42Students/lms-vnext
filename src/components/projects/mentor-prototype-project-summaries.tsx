@@ -32,7 +32,8 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
   const historical=new Map(workspace.mentorSprintSnapshots.map(snapshot=>
     [snapshot.sprintId,snapshot] as const));
   const planFacts=deriveMentorPlanFacts({
-    sprints:workspace.sprints,signOffs:workspace.mentorSprintSnapshots,
+    sprints:workspace.sprints,releases:workspace.releases,
+    signOffs:workspace.mentorSprintSnapshots,
     starts:workspace.mentorSprintCommitments,tasks:workspace.tasks,
   });
   const commitments=new Map(workspace.mentorSprintCommitments.map(snapshot=>
@@ -433,13 +434,14 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
   const shipped=workspace.releases.filter(row=>row.status==="SHIPPED").length;
   const progress=live.length?Math.round(100*completed.length/live.length):0;
   const velocity=projectMentorVelocity(workspace.sprints,workspace.mentorSprintSnapshots,
-    points(live.filter(task=>task.status!=="DONE")));
+    points(live.filter(task=>task.status!=="DONE")),workspace.releases);
   const finish=estimateMentorFinishWindow({
     velocity,sprints:workspace.sprints,asOf:new Date(),
     dueDate:workspace.project.endDate??null,
   });
   const planFacts=deriveMentorPlanFacts({
-    sprints:workspace.sprints,signOffs:workspace.mentorSprintSnapshots,
+    sprints:workspace.sprints,releases:workspace.releases,
+    signOffs:workspace.mentorSprintSnapshots,
     starts:workspace.mentorSprintCommitments,tasks:workspace.tasks,
   });
   const summary=[
