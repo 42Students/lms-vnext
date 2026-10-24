@@ -3,6 +3,7 @@ import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-se
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
+import {MentorEvidencePreview} from "./mentor-evidence-preview";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
@@ -221,8 +222,8 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         {artifacts.map(artifact=><article key={artifact.index}>
           <span aria-hidden="true">▣</span>
           <div><strong>{artifact.name}</strong><small>{artifact.type}</small></div>
-          {artifact.href?<a target="_blank" rel="noopener noreferrer" href={artifact.href}>
-            Open full size ↗</a>:<small>Preview unavailable</small>}
+          {artifact.href?<MentorEvidencePreview title={artifact.name}
+            href={artifact.href} kind={artifact.type}/>:<small>Preview unavailable</small>}
         </article>)}
       </div>
     </div>:null}
