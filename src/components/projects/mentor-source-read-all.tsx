@@ -23,7 +23,8 @@ export function MentorSourceReadAll({unread}:{unread:number}){
    setFeedback(result.markedRead+" source alerts marked read"+
      (result.remainingLoaded>0?
        "; "+result.remainingLoaded+" more loaded items still need review.":"."));
-   router.refresh();
+   window.dispatchEvent(new Event("lms:notifications-updated"));
+     router.refresh();
   }catch(caught){setError(caught instanceof Error?
     caught.message:"Source notifications could not be updated.");}
   finally{setBusy(false);}
