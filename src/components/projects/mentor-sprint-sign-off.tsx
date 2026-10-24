@@ -27,12 +27,19 @@ export function MentorSprintSignOff({
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
   const [note,setNote]=useState("");
+  const [destinations,setDestinations]=useState<Record<string,"NEXT"|"BACKLOG"|"DROP">>({});
+  const [dropConfirmed,setDropConfirmed]=useState(false);
   const [startNext,setStartNext]=useState(Boolean(nextSprint));
   const [pending,setPending]=useState(false);
   const [error,setError]=useState<string|null>(null);
   const waiting=unfinished.filter(task=>task.status==="IN_REVIEW");
   const carried=unfinished.filter(task=>task.status!=="IN_REVIEW");
-  const canSign=waiting.length===0&&!pending;
+  const destinationFor=(taskId:string):"NEXT"|"BACKLOG"|"DROP"=>
+    destinations[taskId]??(nextSprint?"NEXT":"BACKLOG");
+  const choices=unfinished.map(task=>({taskId:task.id,destination:destinationFor(task.id)}));
+  const movingNext=choices.some(item=>item.destination==="NEXT");
+  const dropping=choices.filter(item=>item.destination==="DROP").length;
+  const canSign=waiting.length===0&&!pending&&(!dropping||dropConfirmed);
   async function signOff(){
     if(!canSign)return;
     setPending(true);setError(null);
@@ -40,7 +47,11 @@ export function MentorSprintSignOff({
       await projectMutation(
         "/api/projects/"+encodeURIComponent(projectId)+
           "/sprints/"+encodeURIComponent(sprintId)+"/complete",
-        "POST",{note:note.trim()||undefined},
+        "POST",{
+          ...(note.trim()?{note:note.trim()}:{}),
+          decisions:choices,
+          ...(movingNext&&nextSprint?{nextSprintId:nextSprint.id}:{}),
+        },
       );
     }catch{
       setError("Sprint could not be signed off. Review the latest tasks and try again.");
@@ -61,15 +72,20 @@ export function MentorSprintSignOff({
         return;
       }
     }
-    setOpen(false);setPending(false);setNote("");
+    setOpen(false);setPending(false);setNote("");setDropConfirmed(false);
+    setDestinations({});
     showToast({tone:"success",title:nextSprint&&startNext?
       "Sprint signed off and next sprint started":"Sprint signed off",
       ...(unfinished.length?{description:
-        unfinished.length+" unfinished tasks were carried into the backlog."}:{}),});
+        choices.filter(item=>item.destination==="NEXT").length+" to next sprint, "+
+        choices.filter(item=>item.destination==="BACKLOG").length+" to backlog, "+
+        dropping+" archived."}:{}),});
     router.refresh();
   }
   return <>
-    <Button size="sm" variant="secondary" type="button" onClick={()=>setOpen(true)}>
+    <Button size="sm" variant="secondary" type="button" onClick={()=>{
+      setDestinations({});setDropConfirmed(false);setOpen(true);
+    }}>
       Sign off sprint
     </Button>
     <Dialog open={open} title={"Sign off "+title}
@@ -87,11 +103,33 @@ export function MentorSprintSignOff({
         </div>:null}
         {carried.length?<div>
           <h3>Unfinished · where will these go?</h3>
-          <p>The current project lifecycle moves them into the backlog. They can be assigned to
-            the next sprint from the project task planner after sign-off.</p>
-          <ul>{carried.map(task=><li key={task.id}>
-            <strong>{task.title}</strong><span>→ Product backlog</span>
+          <p>Choose where each unfinished task goes. All choices are saved with the sprint
+            sign-off in one transaction.</p>
+          <ul>{carried.map(task=><li key={task.id} className="prototype-mentor-carry-task">
+            <span><strong>{task.title}</strong><small>{task.status.replaceAll("_"," ")}</small></span>
+            <fieldset aria-label={"Where should "+task.title+" go?"}
+              className="prototype-mentor-carry-choices">
+              {([
+                ...(nextSprint?[{destination:"NEXT" as const,label:nextSprint.title}]:[]),
+                {destination:"BACKLOG" as const,label:"Backlog"},
+                {destination:"DROP" as const,label:"Drop it"},
+              ]).map(choice=><label key={choice.destination}
+                className={destinationFor(task.id)===choice.destination?"is-selected":""}>
+                <input type="radio" name={"carry-"+task.id}
+                  checked={destinationFor(task.id)===choice.destination}
+                  onChange={()=>{setDestinations(previous=>({
+                    ...previous,[task.id]:choice.destination,
+                  }));setDropConfirmed(false);}} disabled={pending}/>
+                {choice.label}
+              </label>)}
+            </fieldset>
           </li>)}</ul>
+          {dropping>0?<label className="prototype-mentor-signoff-next">
+            <input type="checkbox" checked={dropConfirmed} disabled={pending}
+              onChange={event=>setDropConfirmed(event.target.checked)}/>
+            I understand that {dropping} dropped task{dropping===1?" is":"s are"} archived
+            from the board, with their history retained.
+          </label>:null}
         </div>:null}
         <label>
           A note to the team, shown in sprint activity (optional)
@@ -111,7 +149,8 @@ export function MentorSprintSignOff({
             onClick={()=>setOpen(false)}>Cancel</Button>
           <Button type="button" disabled={!canSign} loading={pending}
             onClick={()=>void signOff()}>
-            {waiting.length?"Approve tasks first":nextSprint&&startNext?
+            {waiting.length?"Approve tasks first":dropping&&!dropConfirmed?
+              "Confirm dropped tasks":nextSprint&&startNext?
               "Sign off and start next sprint":"Sign off sprint"}
           </Button>
         </div>
