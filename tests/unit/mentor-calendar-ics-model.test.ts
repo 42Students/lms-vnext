@@ -23,7 +23,7 @@ describe("Mentor RFC5545 ICS export",()=>{
   expect(content).toContain("DTSTART:20261026T040000Z");
   expect(content).toContain("DTEND:20261026T050000Z");
   expect(content).toContain("UID:11111111-1111-4111-8111-111111111111@42lms");
-  expect(content.split("\\r\\n").filter(line=>line==="BEGIN:VEVENT")).toHaveLength(1);
+  expect(content.split("\r\n").filter(line=>line==="BEGIN:VEVENT")).toHaveLength(1);
   expect(content.endsWith("\r\n")).toBe(true);
  });
  it("rejects exports of only requests, drafts or invalid durations",()=>{
@@ -35,7 +35,7 @@ describe("Mentor RFC5545 ICS export",()=>{
   const title="Agenda, minutes; confirm\r\nBEGIN:VEVENT";
   const content=buildMentorMeetingIcs([meeting({title,
    projectTitle:"Team\\Lead;Quality"})])!;
-  expect(content.split("\\r\\n").filter(line=>line==="BEGIN:VEVENT")).toHaveLength(1);
+  expect(content.split("\r\n").filter(line=>line==="BEGIN:VEVENT")).toHaveLength(1);
   expect(content).toContain("SUMMARY:Agenda\\, minutes\\; confirm\\nBEGIN:VEVENT");
   expect(mentorIcsEscape("a\\b")).toBe("a\\\\b");
  });
