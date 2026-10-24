@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 75/132 `CODE_READY`, 50/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 76/132 `CODE_READY`, 49/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -43,7 +43,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 46-08 | CODE_READY | mentor-prototype-project-summaries.tsx; activity-service.ts |
 | 46-09 | IMPLEMENTATION_OR_TEST_PENDING | mentor-overview-quick-actions.tsx now adds task, sprint, release and resource entry points with read-only gating and existing mutation APIs; authentic learner-view simulation and post-mutation authenticated checks still missing. |
 | 46-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 47-01 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 47-01 | CODE_READY | mentor-lane-board.tsx; mentor-board-sprint-groups-model.ts; mentor-sprint-order-model.ts (release-local sprint scope with counts, URL-persisted selection and independently paged full-history groups) |
 | 47-02 | CODE_READY | mentor-lane-board.tsx; mentor-board-lane-paging-model.ts |
 | 47-03 | CODE_READY | mentor-lane-board.tsx; mentor-backlog-service.ts |
 | 47-04 | CODE_READY | mentor-lane-board.tsx |
