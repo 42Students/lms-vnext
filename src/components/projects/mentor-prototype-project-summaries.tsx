@@ -136,7 +136,7 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
       const lastDone=lastTasks.filter(task=>task.status==="DONE");
       const carried=lastTasks.filter(task=>Boolean(task.carriedFromSprintId));
       const initials=(member.displayName??"Team member").trim()
-        .split(/\\s+/).slice(0,2).map(part=>part[0]??"").join("").toUpperCase();
+        .split(/\s+/).slice(0,2).map(part=>part[0]??"").join("").toUpperCase();
       return <div key={member.membershipId}
         className="prototype-mentor-roster-row prototype-mentor-roster-period-row">
         <div className="prototype-mentor-roster-person">
