@@ -37,10 +37,10 @@ vi.mock("@/modules/projects/task-submission-service",()=>({
 const routes=[
   {name:"learner submit",params:{params:Promise.resolve(ids)},
    invoke:(request:Request)=>submit(request,{params:Promise.resolve(ids)}),
-   expected:"submissions"},
+   expected:"submissions",validBody:{submissionUrl:"https://example.com/task-evidence"}},
   {name:"Mentor review",params:{params:Promise.resolve(ids)},
    invoke:(request:Request)=>review(request,{params:Promise.resolve(ids)}),
-   expected:"reviews"},
+   expected:"reviews",validBody:{decision:"APPROVED",confirmed:true}},
 ] as const;
 function post(body:BodyInit,media="application/json",length?:number){
   return new Request("https://college.example/api/projects/task-submissions",{
@@ -88,7 +88,7 @@ describe("Task submission and review routes reject unsafe payloads",()=>{
       expect(state[route.expected]).toBe(0);
     });
     it(route.name+" forwards a valid JSON object exactly once",async()=>{
-      const body={decision:"APPROVED",confirmed:true};
+      const body=route.validBody;
       const response=await route.invoke(post(JSON.stringify(body)));
       expect(response.status).toBeGreaterThanOrEqual(200);
       expect(response.status).toBeLessThan(300);
