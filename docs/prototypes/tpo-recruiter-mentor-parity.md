@@ -68,13 +68,13 @@
 | 45 | Mentor | Mentor › Projects (home: what needs you, your teams) | IN PROGRESS — real student watch, attention queue, Later and six-column teams |
 | 46 | Mentor | Mentor › Project › Overview | IN PROGRESS — real project brief, health, team updates and next actions |
 | 47 | Mentor | Mentor › Project › Board (sprint picker, 6 lanes, list view, task detail) | IN PROGRESS — six lanes, per-sprint grouped List, task pane, comments, A/S, J/K |
-| 48 | Mentor | Mentor › Project › Sprints & releases (16 sprints: sign off, carry over, ship) | IN PROGRESS — real sprint/release bars and lifecycle ship/sign-off controls |
+| 48 | Mentor | Mentor › Project › Sprints & releases (16 sprints: sign off, carry over, ship) | IN PROGRESS — sprint/release bars, explicit sign-off note, honest backlog carry, guarded next sprint and ship controls |
 | 49 | Mentor | Mentor › Project › Team & meetings | IN PROGRESS — scoped roster, workload and linked meeting actions |
 | 50 | Mentor | Mentor › Project › Performance (who did what, unassigned work) | IN PROGRESS — All/Current/Last-4/specific sprint workload and allocation editor |
 | 51 | Mentor | Mentor › Project › Resources | IN PROGRESS — resource filters, share controls and completed-sprint fold |
 | 52 | Mentor | Mentor › Project › Activity | IN PROGRESS — persisted Mentor-posted updates, activity feed and Overview |
 | 53 | Mentor | Mentor › Review a final submission (accept, request changes, lock, reopen) | IN PROGRESS — evidence files, review history, Accept/changes, lock/reopen flow |
-| 54 | Mentor | Mentor › Meetings (all teams: requests, coming up, notes) | IN PROGRESS — week/list/detail, .ics, notes and meeting request links |
+| 54 | Mentor | Mentor › Meetings (all teams: requests, coming up, notes) | IN PROGRESS — week/list/detail, .ics, stored attendance/actions/retro/follow-up and editor links |
 | 55 | Mentor | Mentor › Notifications | IN PROGRESS — six persisted-data category filters and read controls |
 | 56 | Mentor | Mentor › Everywhere: search, bell, your details | IN PROGRESS — authorized search across projects/tasks/students/resources; bell/profile |
 
@@ -125,6 +125,12 @@
 - Screen #47 Board/List now groups the real list by sprint and backlog; active sprint is expanded and other sprint groups are individually expandable. The persistent task pane and guarded review controls remain intact.
 - Screen #50 Performance now supports All recorded, Current, Last four or an individual sprint. Student workload and unassigned task totals are recomputed from the matching persisted task records; the original authorized assignment editor remains.
 - Neither change is accepted as pixel-perfect before actual browser snapshots and UI interactions pass.
+
+## Mentor continuation: actual meeting facilitation + sprint sign-off (2026-10-24)
+- **Meeting storage correction:** The current schema already has typed `project_meetings.facilitation` with attendees, structured action rows, retrospective notes and follow-up. Calendar now reads and displays these facts, linking the selected meeting to the same persisted authorized meeting editor.
+- **Sprint 12-style sign-off:** Active sprints now show pending reviews, explicit unfinished-task carry-over, optional transactional note (via existing sprint completion endpoint), and optional start-next action with truthful partial-error reporting.
+- The prototype's per-task Next / Backlog / Drop choices, recurring provider-backed Google Calendar/Meet and exact running-app screenshots are **not yet closed**.
+- CI/typecheck and rendered acceptance remain **unverified; Mentor 0/12 VERIFIED**.
 
 ## First visual pilot
 Compare **#01 TPO Companies › Today**, **#31 Recruiter › Today**, and **#45 Mentor › Projects** to equivalent live vNext screens, identify shell-level fixes, then complete one workflow at a time. Treat unverified changes on `main` as needing re-review.
