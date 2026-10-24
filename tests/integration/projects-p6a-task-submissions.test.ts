@@ -536,6 +536,39 @@ describe("Projects P6A task submissions", () => {
     expect(taskState?.status).toBe("IN_REVIEW");
   });
 
+  it("preserves review audit but never notifies a learner removed from the project",async()=>{
+    const {project,sprint,task}=await createProject();
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
+    await startProjectSprint(mentor,project.id,sprint.id);
+    const submission=await submitProjectTask(learner,project.id,task.id,{
+      submissionUrl:"https://example.com/review-after-removal",
+    });
+    await pool.query(`update project_members set ended_at=now()
+      where project_id=$1 and membership_id=$2 and role='LEARNER'`,[
+      project.id,SEED_IDS.learnerCollegeAMembership,
+    ]);
+    const reviewed=await reviewProjectTaskSubmission(
+      mentor,project.id,task.id,submission.id,{
+        decision:"APPROVED",confirmed:true,
+        expectedUpdatedAt:submission.updatedAt.toISOString(),
+      },
+    );
+    expect(reviewed.submission.status).toBe("APPROVED");
+    expect(reviewed.task.status).toBe("DONE");
+    const notice=await pool.query<{total:string}>(`select count(*)::text as total
+      from in_app_notifications n
+      join activity_events e on e.id=n.event_id
+      where e.dedupe_key=$1 and n.user_id=$2`,[
+      "project-task-submission:"+submission.id+":reviewed",SEED_IDS.learnerUser,
+    ]);
+    expect(notice.rows[0]?.total).toBe("0");
+    const audit=await pool.query<{id:string}>(`select id from activity_events
+      where dedupe_key=$1`,[
+      "project-task-submission:"+submission.id+":reviewed",
+    ]);
+    expect(audit.rows).toHaveLength(1);
+  });
+
   it("requires feedback for changes and enforces review shape in PostgreSQL", async () => {
     const { project, sprint, task } =
       await createProject();
