@@ -10,7 +10,7 @@ describe("Mentor source-backed final submission prechecks",()=>{
   const checks=mentorDeliveryPrechecks(base);
   expect(checks.map(x=>[x.key,x.state,x.requiredByServer])).toEqual([
    ["SPRINTS","MET",true],["TASKS","MET",true],
-   ["RELEASES","OPEN",false],["EVIDENCE","OPEN",false],
+   ["RELEASES","OPEN",true],["EVIDENCE","OPEN",false],
    ["TARGET","MET",false],
   ]);
   expect(checks[0]?.label).toBe("16 of 16 sprints signed off");
