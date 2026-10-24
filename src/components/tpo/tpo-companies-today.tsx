@@ -27,8 +27,8 @@ function dayLabel(date:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(date);
 }
 export function TpoCompaniesToday({
- rows,nowIso,hasMore,unreadMessages,replies,replyTotal
-}:{rows:TpoCompaniesTodayRow[];nowIso:string;hasMore:boolean;unreadMessages:number|null;
+ scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal
+}:{scope:"MINE"|"TEAM";rows:TpoCompaniesTodayRow[];nowIso:string;hasMore:boolean;unreadMessages:number|null;
   replies:RecruiterReply[];replyTotal:number|null}){
  const router=useRouter();
  const now=new Date(nowIso);
@@ -142,6 +142,17 @@ export function TpoCompaniesToday({
    </div>
    <Link className={styles.link} href="/tpo/recruiters">All recruiters ›</Link>
   </div>
+  <nav aria-label="Today ownership" className="flex flex-wrap items-center gap-2">
+    {([["MINE","My Work"],["TEAM","Everyone"]] as const).map(([value,label])=>
+      <Link key={value} href={value==="MINE"?"/tpo/companies/today":"/tpo/companies/today?scope=TEAM"}
+        aria-current={scope===value?"page":undefined}
+        className="inline-flex min-h-11 items-center rounded-lg border border-[#d6e1ee] bg-white px-4 text-[13px] font-bold text-[#3b4a60] aria-[current=page]:border-[#0a7c88] aria-[current=page]:bg-[#eff8fa] aria-[current=page]:text-[#0a7c88]">
+        {label}
+      </Link>)}
+    <span className={styles.sub}>{scope==="MINE"?
+      "Only follow-ups assigned to your signed-in placement team membership.":
+      "Open follow-ups from your college's placement team."}</span>
+  </nav>
   {replyTotal!==null&&replyTotal>0?<section className={styles.answer} aria-label="Recruiter replies waiting" data-testid="tpo.today.replies">
     <div className={styles.replyHead}>
      <strong>Answer · {replyTotal} recruiter {replyTotal===1?"reply":"replies"} waiting</strong>
