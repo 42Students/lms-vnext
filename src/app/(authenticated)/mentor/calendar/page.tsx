@@ -10,6 +10,8 @@ import {FilterBar} from "@/components/ui/filter-bar";
 import {Disclosure} from "@/components/ui/disclosure";
 import {MentorMeetingsCalendar} from "@/components/projects/mentor-meetings-calendar";
 import {MentorCalendarQuickSchedule} from "@/components/projects/mentor-calendar-quick-schedule";
+import {MentorGoogleCalendarAccount} from "@/components/projects/mentor-google-calendar-account";
+import {mentorGoogleConnectionState} from "@/modules/projects/mentor-google-calendar-connection-service";
 import {listMyProjectInstances} from "@/modules/projects/member-service";
 import {MentorCalendarLoadFailure} from "@/components/projects/mentor-calendar-load-failure";
 import {listMyMentorCalendarMeetings,listMyMentorSchedulableSprints} from "@/modules/projects/mentor-calendar-service";
@@ -48,6 +50,8 @@ export default async function MentorCalendarPage({searchParams}:{
     <MentorCalendarLoadFailure reason={calendarRead.reason??"UNKNOWN"}/>
   </div>;
   const meetings=calendarRead.items;
+  const googleConnection=await mentorGoogleConnectionState(context)
+    .catch(()=>({connected:false,available:false,connectedAt:null}));
   const assigned=(await listMyProjectInstances(context))
     .filter(row=>row.project.collegeId===context.membership?.collegeId&&
       !row.project.deletedAt&&mentorCalendarCanMutateMeeting({
@@ -74,6 +78,7 @@ export default async function MentorCalendarPage({searchParams}:{
       <PageHeader title="Meetings"
         description="Every scheduled meeting across your assigned projects, in one place."/>
       <MentorCalendarQuickSchedule projects={choices}/>
+      <MentorGoogleCalendarAccount {...googleConnection}/>
     </div>
     <section className="prototype-mentor-meetings-surface min-w-0"
       aria-label="Meeting dates and history">
