@@ -9,6 +9,7 @@ import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
 import type {MentorStudentWatchItem} from "@/modules/projects/mentor-student-watch-service";
 import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar-view";
 import {selectMentorHomeWeekMeetings} from "@/modules/projects/mentor-home-week-meetings-model";
+import {mentorHomeGreeting} from "@/modules/projects/mentor-home-greeting-model";
 
 type FocusItem = MentorProjectAttention;
 
@@ -47,11 +48,13 @@ function activityTime(value:string) {
  * recipient-scoped Later receipts that reopen when source revisions change.
  */
 export function MentorPrototypeHome({
-  nowIso,attention,teamCount,membershipCount,studentWatch,
+  nowIso,mentorName,courseLabels,attention,teamCount,membershipCount,studentWatch,
   uniqueLearnerCount,learnerAssignmentCount,initialLater,
   weekMeetings,weekMeetingsLoadFailed,
 }:{
   nowIso:string;
+  mentorName:string|null;
+  courseLabels:readonly string[];
   initialLater:readonly string[];
   attention:readonly FocusItem[];
   weekMeetings:readonly MentorMeetingCalendarItem[];
@@ -93,12 +96,23 @@ export function MentorPrototypeHome({
   return <div className="prototype-mentor-home">
     <div className="prototype-mentor-home-heading">
       <div>
+        <p className="text-sm font-semibold">
+          {mentorHomeGreeting(nowIso,mentorName)}
+        </p>
         <p>{teamCount} {teamCount===1?"team":"teams"} · {uniqueLearnerCount} distinct {uniqueLearnerCount===1?"student":"students"} ·
           {" "}{learnerAssignmentCount} learner team {learnerAssignmentCount===1?"seat":"seats"} ·
           {" "}{membershipCount} total project memberships</p>
         <h1>{active.length
           ? active.length+" "+(active.length===1?"thing needs":"things need")+" you."
           : "You’re all caught up."}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {courseLabels.length?
+            "Your recorded courses: "+courseLabels.slice(0,4).join(" · ")+
+              (courseLabels.length>4?" · +"+(courseLabels.length-4)+" more":""):
+            "No course labels are recorded for your current project assignments."}
+        </p>
+        <Link className="inline-flex min-h-10 items-center text-sm text-link underline"
+          href="/mentor/projects?status=ARCHIVED">Browse archived teams →</Link>
       </div>
     </div>
     <div className="prototype-mentor-home-columns">
