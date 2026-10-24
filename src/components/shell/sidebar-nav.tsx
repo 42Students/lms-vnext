@@ -5,7 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {safeTpoShellCounters,shellUnreadBadge,type TpoShellCounters} from "./shell-counts-model";
 import Image from "next/image";
 import Link from "next/link";
-import {usePathname} from "next/navigation";
+import {usePathname,useSearchParams} from "next/navigation";
 import {cx} from "@/lib/class-names";
 import {canonicalShellPath,scopedShellNavigation,shellNavIconKey,
  TPO_SECTION_LABELS,type ShellNavItem} from "./shell-model";
@@ -47,6 +47,7 @@ export function SidebarNav({
 }){
  const pathname=usePathname();
  const route=canonicalShellPath(pathname);
+ const urlSearch=useSearchParams();
  const [tpoCounts,setTpoCounts]=useState<TpoShellCounters|null>(null);
  const visibleItems=scopedShellNavigation(items,route);
  // A college-only Placement cell shortcut still renders the college menu
@@ -102,7 +103,7 @@ export function SidebarNav({
    const startsNewGroup=Boolean(item.group)&&(index===0||item.group!==previousGroup);
    const prototypeTpo=sidebarPortal==="tpo"&&visibleItems.length===8&&
      visibleItems.some(entry=>entry.href==="/tpo/companies/today");
-   const active=prototypeTpo?tpoPrototypeSidebarActive(pathname,item):
+   const active=prototypeTpo?tpoPrototypeSidebarActive(pathname,item,urlSearch.get("tab")):
      legacySidebarItemActive(route,item,superAdminGroup?.title??null,collegeGroup?.title??null);
    const label=sectionLabel(item,sidebarPortal);
    const count=tpoCounts?tpoItemCount(item.href,tpoCounts):null;
