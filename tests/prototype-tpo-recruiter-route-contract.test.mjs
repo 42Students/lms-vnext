@@ -47,7 +47,7 @@ const screens=[
  [33,"Recruiter · Request/fix/hire again",hr("drives/new/page.tsx")],
  [34,"Recruiter · Drive overview",recruiter("drives/[jobId]/page.tsx")],
  [35,"Recruiter · Focused applicants",recruiter("drives/[jobId]/page.tsx")],
- [36,"Recruiter · Rounds and slots",recruiter("drives/[jobId]/rounds/page.tsx")],
+ [36,"Recruiter · Rounds and slots",recruiter("drives/[jobId]/page.tsx")],
  [37,"Recruiter · Offers",recruiter("drives/[jobId]/page.tsx")],
  [38,"Recruiter · Drive talk",recruiter("drives/[jobId]/messages/page.tsx")],
  [39,"Recruiter · Calendar",hr("calendar/page.tsx")],
