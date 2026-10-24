@@ -63,6 +63,27 @@ describe("Mentor historical sprint plan and carry facts",()=>{
   expect(result.carryRatioPct).toBeNull();
   expect(result.primaryCarrier).toBeNull();
  });
+ it("uses release and sprint order when the next release resets its sequence",()=>{
+  const result=deriveMentorPlanFacts({
+    releases:[{id:"r1",sequence:0},{id:"r2",sequence:1}],
+    sprints:[
+      {id:"already",releaseId:"r1",sequence:5,status:"COMPLETED"},
+      {id:"now",releaseId:"r1",sequence:6,status:"ACTIVE"},
+      {id:"earlier",releaseId:"r1",sequence:4,status:"PLANNED"},
+      {id:"next",releaseId:"r2",sequence:0,status:"PLANNED"},
+      {id:"after",releaseId:"r2",sequence:1,status:"PLANNED"},
+      {id:"later",releaseId:"r2",sequence:2,status:"PLANNED"},
+    ],
+    signOffs:[],starts:[],tasks:[
+      {sprintId:"earlier",status:"TODO",estimatePoints:99},
+      {sprintId:"next",status:"TODO",estimatePoints:7},
+      {sprintId:"after",status:"TODO",estimatePoints:3},
+      {sprintId:"later",status:"TODO",estimatePoints:20},
+    ],
+  });
+  expect(result.nextTwo.map(row=>row.sprintId)).toEqual(["next","after"]);
+  expect(result.nextTwoEstimatePoints).toBe(10);
+ });
  it("handles no sprint without fabricating a forecast denominator",()=>{
   const result=deriveMentorPlanFacts({sprints:[],signOffs:[],starts:[],tasks:[]});
   expect(result).toMatchObject({
