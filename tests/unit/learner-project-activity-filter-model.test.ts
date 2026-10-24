@@ -16,6 +16,21 @@ describe("learner Project Activity categories", () => {
     expect(learnerProjectActivityCategory("projects.delivery.reviewed")).toBe("SUBMISSION");
     expect(learnerProjectActivityCategory("placements.task.created")).toBe("OTHER");
   });
+  it("keeps SQL category prefixes aligned with the full Mentor event taxonomy",()=>{
+    for(const [type,expected] of [
+      ["projects.release.shipped","SPRINT"],
+      ["projects.task_comment.added","TASK"],
+      ["projects.team_member.removed","TEAM"],
+      ["projects.resource_file.uploaded","RESOURCE"],
+      ["projects.file.shared","RESOURCE"],
+      ["projects.evaluation.changed","PROJECT"],
+      ["projects.mentor_update.posted","PROJECT"],
+    ] as const){
+      expect(learnerProjectActivityCategory(type)).toBe(expected);
+      expect(learnerProjectActivityPrefixes(expected).some(prefix=>
+        type.startsWith(prefix))).toBe(true);
+    }
+  });
   it("keeps unknown event types in All and handles invalid or repeated query values", () => {
     const events = [{ eventType: "projects.future.event" }];
     expect(filterLearnerProjectActivity(events, "invalid")).toEqual(events);
