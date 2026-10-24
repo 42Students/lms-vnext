@@ -38,6 +38,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(params.get("release")??""),
  [sprint,setSprint]=useState(params.get("sprint")??""),[scope,setScope]=useState(params.get("scope")==="all"?"all":"current"),
  [priority,setPriority]=useState(params.get("priority")??""),
+ [taskType,setTaskType]=useState(params.get("taskType")??""),
  [assignee,setAssignee]=useState(params.get("assignee")??""),[statusFilter,setStatusFilter]=useState(params.get("lane")??""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
  [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null),
  [visibleLimit,setVisibleLimit]=useState(150);
@@ -60,8 +61,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   window.history.replaceState(null,"",window.location.pathname+"?"+query.toString());
  }
  function clearFilters(){
-  setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");
-  ["priority","assignee","sprint","release","lane","scope"].forEach(key=>remember(key,""));
+  setPriority("");setTaskType("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");
+  ["priority","taskType","assignee","sprint","release","lane","scope"].forEach(key=>remember(key,""));
  }
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
  const currentSprint=sprints.find(item=>item.status==="ACTIVE");
@@ -75,6 +76,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    (Boolean(sprint||release)||scope==="all"||task.sprintId===null||
      (Boolean(currentSprint)&&task.sprintId===currentSprint?.id))&&
    (!priority||task.priority===priority)&&
+   (!taskType||task.taskType===taskType)&&
    (!assignee||(assignee==="UNASSIGNED"?task.assigneeMembershipId===null:
      task.assigneeMembershipId===assignee))&&
    (!statusFilter||(statusFilter==="BACKLOG"?task.sprintId===null:task.status===statusFilter)));
@@ -113,7 +115,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  // Per-lane counts always use the full filtered result, independent of
  // the List view paging size.
  const lanes=groupLearnerBoardLanes(matching,sprints);
- const activeFilterCount=[release,sprint,priority,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
+ const activeFilterCount=[release,sprint,priority,taskType,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
  async function move(id:string,status:string,isUndo=false){
   const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
   if(!task||!sp||sp.status!=="ACTIVE"||readOnly||busy||
@@ -202,7 +204,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </Select></label>
-   <Disclosure title="More board filters" defaultOpen={Boolean(scope==="all"||priority||assignee||statusFilter)} className="w-full min-w-0" contentClassName="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-4">
+   <Disclosure title="More board filters" defaultOpen={Boolean(scope==="all"||priority||taskType||assignee||statusFilter)} className="w-full min-w-0" contentClassName="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-4">
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint scope
     <Select data-slot="select" value={scope} aria-label="Board sprint scope"
       onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
@@ -216,6 +218,13 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
+    </Select>
+   </label>
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task type
+    <Select data-slot="select" value={taskType} onChange={e=>{setTaskType(e.target.value);remember("taskType",e.target.value);}}
+     className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
+     <option value="">All types</option>
+     {["STORY","BUG","CHORE","SPIKE"].map(type=><option key={type} value={type}>{type}</option>)}
     </Select>
    </label>
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Assignee
