@@ -9,7 +9,9 @@ import { hasActiveMembership, hasMembershipRole, type RequestContext } from
 import { ProjectsServiceError } from "./errors";
 import { can } from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
-import type { MentorMeetingCalendarItem } from "./mentor-calendar-view";
+import {listMyProjectInstances} from "./member-service";
+import {safeMentorCalendarMeetingType,type MentorMeetingCalendarItem}
+  from "./mentor-calendar-view";
 
 /**
  * Organizer time zones describe how meetings were originally scheduled, not
@@ -115,7 +117,9 @@ export async function listMyMentorCalendarMeetings(
     projectStatus: row.projectStatus,
     title: row.title,
     status: row.status as MentorMeetingCalendarItem["status"],
-    ...(row.meetingType === null ? {} : { meetingType: row.meetingType }),
+    ...(safeMentorCalendarMeetingType(row.meetingType)?{
+      meetingType:safeMentorCalendarMeetingType(row.meetingType)!,
+    }:{}),
     startsAt: window.startsAt,
     endsAt: window.endsAt,
     timeZone: window.organizerZone,
