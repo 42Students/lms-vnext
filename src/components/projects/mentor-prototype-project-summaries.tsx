@@ -628,7 +628,7 @@ function safeBriefList(value:unknown):string[]{
 
 /** #46 "About this project" reads the student's persisted authored brief;
  * never substitutes canned example deliverables/acceptance conditions. */
-export function MentorPrototypeProjectBrief({workspace}:{workspace:Workspace}){
+export function MentorPrototypeProjectBrief({workspace,readOnly=false}:{workspace:Workspace;readOnly?:boolean}){
   const brief=workspace.project.authoredBrief;
   const record=typeof brief==="object"&&brief!==null&&!Array.isArray(brief)
     ? brief as Record<string,unknown> : {};
@@ -641,6 +641,8 @@ export function MentorPrototypeProjectBrief({workspace}:{workspace:Workspace}){
   return <section className="prototype-mentor-project-brief" aria-label="About this project">
     <div className="prototype-mentor-card-title">
       <h2>About this project · what students see on their Overview</h2>
+      {!readOnly&&workspace.project.status==="ACTIVE"?
+        <Link href="#mentor-project-brief-editor">Edit project brief ↓</Link>:null}
     </div>
     <div className="prototype-mentor-brief-body">
       <div><h3>Goal</h3><p>{goal||description||"No project goal has been recorded."}</p></div>
