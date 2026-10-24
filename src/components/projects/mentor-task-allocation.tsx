@@ -53,7 +53,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    releases.find(row=>row.id===nextSprint.releaseId):null;
  const nextSprintEligible=Boolean(nextSprint&&nextSprint.updatedAt&&
    nextSprintRelease&&nextSprintRelease.status!=="SHIPPED");
- const nextSprintPlan=nextSprintEligible?planMentorNextSprintAssignments(
+ const nextSprintPlan=nextSprintEligible&&nextSprint?planMentorNextSprintAssignments(
    tasks.map(task=>({...task,sequence:task.sequence??0})),
    learners.map(row=>row.membershipId),nextSprint.id):null;
  const filtered=useMemo(()=>tasks.filter(task=>{
