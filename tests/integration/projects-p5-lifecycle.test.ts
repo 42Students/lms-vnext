@@ -688,6 +688,43 @@ describe("Projects P5 lifecycle", () => {
       .toHaveLength(1);
   });
 
+  it("retains valid sign-off history beneath corrupt newer events and after Sprint deletion",async()=>{
+    const project=await createProject();
+    const initial=await getProjectInstanceWorkspace(mentor,project.id);
+    const current=initial.sprints[0]!,next=initial.sprints[1]!;
+    await startProjectSprint(mentor,project.id,current.id);
+    const opened=await getProjectInstanceWorkspace(mentor,project.id);
+    const task=opened.tasks.find(row=>row.sprintId===current.id)!;
+    await completeProjectSprint(mentor,project.id,current.id,undefined,[{
+      taskId:task.id,destination:"NEXT",
+      expectedUpdatedAt:task.updatedAt.toISOString(),
+    }],next.id);
+    const snapshots=await listMentorSprintSignOffSnapshots(
+      mentor,project.id,[current.id]);
+    expect(snapshots).toHaveLength(1);
+    // A malformed newer version-tagged event cannot shadow valid history.
+    const corrupt={...snapshots[0],donePoints:999999};
+    await pool.query(`insert into activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,metadata,occurred_at)
+      values(gen_random_uuid(),$1,$2,$3,'PROJECTS','projects.sprint.updated',
+       'project_sprint',$4,'Corrupt newer sign-off',
+       $5::jsonb,now()+interval '1 minute')`,[
+      SEED_IDS.organization,SEED_IDS.collegeA,SEED_IDS.facultyUser,current.id,
+      JSON.stringify({projectId:project.id,
+        mentorSignOffSnapshotVersion:1,sprintSnapshot:corrupt}),
+    ]);
+    expect(await listMentorSprintSignOffSnapshots(
+      mentor,project.id,[current.id])).toEqual(snapshots);
+    // A soft-delete is not permission to erase already-signed evidence.
+    await pool.query("update project_sprints set deleted_at=now() where id=$1",
+      [current.id]);
+    expect(await listMentorSprintSignOffSnapshots(
+      mentor,project.id,[current.id])).toEqual(snapshots);
+    expect(await listMentorSprintSignOffSnapshots(
+      learner,project.id,[current.id])).toEqual([]);
+  });
+
   it("persists an explicit NEXT sign-off disposition with its pre-carry snapshot", async () => {
     const project = await createProject();
     const initial = await getProjectInstanceWorkspace(mentor, project.id);
