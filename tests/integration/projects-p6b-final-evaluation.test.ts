@@ -800,6 +800,53 @@ describe("Projects P6B final delivery and evaluation", () => {
     }
   });
 
+  it("requires persisted live learner and Mentor grants at each final-delivery write",async()=>{
+    const project=await createProject();
+    const setMutate=async(role:"LEARNER"|"MENTOR",value:boolean)=>{
+      await pool.query("UPDATE project_members SET can_mutate=$1 WHERE project_id=$2 AND role=$3",
+        [value,project.id,role]);
+    };
+    await setMutate("LEARNER",false);
+    try{
+      await expect(createProjectSubmissionDraft(learner,project.id,{
+        summary:"Should not create",
+      })).rejects.toBeDefined();
+      const rows=await pool.query<{n:string}>(
+        "SELECT count(*)::text AS n FROM project_submissions WHERE project_id=$1",[project.id]);
+      expect(rows.rows[0]?.n).toBe("0");
+    }finally{await setMutate("LEARNER",true);}
+    const draft=await createProjectSubmissionDraft(learner,project.id,{
+      summary:"Persisted revision",sourceUrl:"https://example.com/review",
+    });
+    await finishExecution(project.id);
+    await setMutate("LEARNER",false);
+    try{
+      await expect(updateProjectSubmissionDraft(learner,project.id,draft.id,{
+        summary:"Forbidden stale role update",
+        expectedUpdatedAt:draft.updatedAt.toISOString(),
+      })).rejects.toBeDefined();
+      await expect(submitProjectSubmission(learner,project.id,draft.id,{
+        expectedUpdatedAt:draft.updatedAt.toISOString(),
+      })).rejects.toBeDefined();
+      const row=await pool.query<{summary:string;status:string}>(
+        "SELECT summary,status FROM project_submissions WHERE id=$1",[draft.id]);
+      expect(row.rows[0]).toMatchObject({summary:"Persisted revision",status:"DRAFT"});
+    }finally{await setMutate("LEARNER",true);}
+    const sent=await submitProjectSubmission(learner,project.id,draft.id,{
+      expectedUpdatedAt:draft.updatedAt.toISOString(),
+    });
+    expect(sent.status).toBe("SUBMITTED");
+    await setMutate("MENTOR",false);
+    try{
+      await expect(reviewProjectSubmission(mentor,project.id,draft.id,{
+        decision:"APPROVED",feedback:"Should be rolled back",
+      })).rejects.toBeDefined();
+      const reviews=await pool.query<{n:string}>(
+        "SELECT count(*)::text AS n FROM project_submission_reviews WHERE submission_id=$1",[draft.id]);
+      expect(reviews.rows[0]?.n).toBe("0");
+    }finally{await setMutate("MENTOR",true);}
+  });
+
   it("blocks non-learners from final submission authoring and enforces DB review/score invariants", async () => {
     const project = await createProject();
 
