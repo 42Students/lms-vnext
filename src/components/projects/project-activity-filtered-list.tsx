@@ -9,6 +9,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {mentorActivityCategory, mentorActivityLabel, mentorActivityRelativeTime} from "@/modules/projects/mentor-activity-display-model";
 import {projectResourceAuditAction,projectResourceAuditMatches} from "@/modules/projects/project-resource-audit-model";
 import {mentorLoadedWeekActivitySummary} from "@/modules/projects/mentor-week-activity-summary-model";
+import {mentorFewestRecordedContributors} from "@/modules/projects/mentor-week-contributor-model";
 
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
@@ -34,10 +35,11 @@ const eventIstDay=(value:string|Date)=>{
 type Cursor={time:string;id:string};
 type Page={events:Event[];hasMore:boolean;nextCursor:Cursor|null};
 
-export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false}:{
+export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false,weekContributors=[]}:{
  projectId:string;events:Event[];now:string;resourceAudit?:boolean;
  sprints?:readonly {id:string;title:string;sequence:number}[];
  mentorWeekSummary?:boolean;
+ weekContributors?:readonly {membershipId:string;name:string;eventCount:number}[];
 }){
  const [items,setItems]=useState<readonly Event[]>(events);
  const [hasMore,setHasMore]=useState(events.length>=100);
@@ -108,6 +110,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     &&(!toDate||day<=toDate);
  });
  const week=mentorWeekSummary?mentorLoadedWeekActivitySummary(items,new Date(now)):null;
+ const fewest=mentorWeekSummary?mentorFewestRecordedContributors(weekContributors):null;
  const resourceEvents=items.filter(item=>projectResourceAuditAction(item.eventType)!==null);
  const counts=[
   ["Changes",resourceEvents.length],
@@ -127,8 +130,19 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
       {" "}{week.resourcesShared} shared resources · {week.count} total events</p>
     <p className="text-xs text-muted-foreground">
       This is a summary of loaded history, not a complete project-wide count.
-      Quietest-student comparisons need verified full history and active roster.
+      Task, comment and resource totals shown above use the loaded activity page.
+      The following learner comparison uses all recorded events in the authorized
+      current IST week, including events outside the loaded page.
     </p>
+    {fewest?.kind==="RESULT"?<p>
+      Fewest recorded project events among active students:
+      {" "}{fewest.members.map(member=>member.name).join(", ")}
+      {" "}({fewest.count} recorded {fewest.count===1?"event":"events"}).
+      {fewest.members.length>1?" Tied at the lowest count.":""}
+      This is not a measure of attendance, activity outside this project
+      or a student's contribution quality.
+    </p>:<p>Student activity comparison requires at least two currently
+      assigned learners with valid recorded event counts.</p>}
    </div>:null}
   {resourceAudit?<div aria-label="Resource activity totals" className="grid grid-cols-2 gap-2 sm:grid-cols-4">{counts.map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">{label}</p><p className="text-xl font-semibold tabular-nums">{value}</p></div>)}</div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
