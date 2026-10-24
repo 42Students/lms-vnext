@@ -1139,7 +1139,7 @@ export function LearnerCourseWorkspace({
                             caption={"Assignment"+(!assignment.submissionId&&
                               assignment.dueAt&&assignment.dueAt.getTime()<workspace.snapshotNowMs
                                ?" · Not submitted":"")}
-                            {...(assignmentDueText != null ? { dueText: assignmentDueText } : {})}
+                            {...(assignment.dueAt ? {dueText:formatDateTime(assignment.dueAt)} : {})}
                             progress={item.progress.status}
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
