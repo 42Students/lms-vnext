@@ -1,50 +1,48 @@
 "use client";
 
-import {useEffect,useState} from "react";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import {apiFetch} from "@/lib/api-fetch";
 
-/** Source activity events have no per-user read cursors. Keep the state
- * device-scoped, transparent and isolated by user/project. Never claim this
- * counts events outside the loaded history or across other devices. */
-export function MentorActivitySinceLastVisit({userId,projectId,events}:{
-  userId:string;projectId:string;
-  events:readonly {id:string;occurredAt:string}[];
+/** The recipient-specific high-water marker and total come from PostgreSQL.
+ * The client never stores a parallel localStorage cursor or guesses from
+ * the first page of events. New events after marking remain unread.
+ */
+export function MentorActivitySinceLastVisit({projectId,lastSeenAt,newCount}:{
+ projectId:string;lastSeenAt:string|null;newCount:number|null;
 }){
-  const key="42lms:mentor:activity-seen:v1:"+userId+":"+projectId;
-  const [seen,setSeen]=useState<string|null|undefined>(undefined);
-  const [available,setAvailable]=useState(true);
-  useEffect(()=>{
-    try{
-      const old=localStorage.getItem(key);
-      if(old&&Number.isFinite(Date.parse(old))){
-        setSeen(old);
-      }else{
-        const initial=new Date().toISOString();
-        localStorage.setItem(key,initial);
-        setSeen(initial);
-      }
-    }catch{
-      setAvailable(false);setSeen(null);
-    }
-  },[key]);
-  if(seen===undefined)return null;
-  const newEvents=seen?events.filter(event=>
-    Number.isFinite(Date.parse(event.occurredAt))&&
-    Date.parse(event.occurredAt)>Date.parse(seen)).length:0;
-  function markSeen(){
-    const value=new Date().toISOString();
-    try{localStorage.setItem(key,value);setSeen(value);}
-    catch{setAvailable(false);}
-  }
-  return <div className="prototype-mentor-activity-since-seen" role="status">
-    {available?<p><strong>{newEvents} new</strong> in the loaded activity since you last
-      marked it read on this device
-      {seen?" · "+new Intl.DateTimeFormat("en-IN",{
-        day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
-        timeZone:"Asia/Kolkata",
-      }).format(new Date(seen)):""}
-    </p>:<p>Read tracking is unavailable in this browser. The complete activity feed remains below.</p>}
-    {available&&newEvents>0?<Button size="sm" variant="secondary"
-      type="button" onClick={markSeen}>Mark these as seen</Button>:null}
-  </div>;
+ const router=useRouter();
+ const [busy,setBusy]=useState(false);
+ const [error,setError]=useState("");
+ async function markSeen(){
+  if(busy)return;
+  setBusy(true);setError("");
+  try{
+   await apiFetch("/api/projects/"+encodeURIComponent(projectId)+
+     "/activity/seen",{method:"POST",cache:"no-store",timeoutMs:12000});
+   router.refresh();
+  }catch(reason){
+   setError(reason instanceof Error?reason.message:
+     "Couldn't save the activity marker. Retry.");
+  }finally{setBusy(false);}
+ }
+ return <section className="prototype-mentor-activity-since-seen"
+   aria-label="Project activity since last review">
+  {lastSeenAt!==null&&newCount!==null?
+   <p role="status"><strong>{newCount} new</strong> recorded project events
+     since you last marked this project seen
+     {" · "}{new Intl.DateTimeFormat("en-IN",{
+       day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
+       timeZone:"Asia/Kolkata",
+     }).format(new Date(lastSeenAt))} IST.
+     This is the full authorized project event count, not just loaded rows.</p>:
+   <p role="status">No saved activity review marker yet.
+     Mark the current project history seen to begin cross-device tracking.</p>}
+  <Button type="button" variant="secondary" size="sm"
+    disabled={busy} loading={busy} onClick={()=>void markSeen()}>
+    {lastSeenAt?"Mark activity seen again":"Start activity tracking"}
+  </Button>
+  {error?<p role="alert">{error}</p>:null}
+ </section>;
 }
