@@ -79,6 +79,44 @@ function MeetingRow({
         {(meeting.linkedSprintTitle||meeting.legacySprintLabel)
           ? " · Sprint: " + (meeting.linkedSprintTitle||meeting.legacySprintLabel) : ""}
       </p>
+      {meeting.agenda?.trim()?<section className="prototype-mentor-meeting-section">
+        <h3>Agenda</h3><p>{meeting.agenda}</p>
+      </section>:null}
+      {(meeting.facilitation?.attendees?.length??0)>0?<section className="prototype-mentor-meeting-section">
+        <h3>Who came · {meeting.facilitation?.attendees?.length??0}</h3>
+        <ul className="prototype-mentor-meeting-attendees">
+          {meeting.facilitation?.attendees?.map((person,index)=><li key={person.membershipId??index}>
+            <span>{person.name}</span>
+            <small>{person.attended?"Came":"Didn't attend"}</small>
+          </li>)}
+        </ul>
+      </section>:null}
+      {meeting.facilitation?.notes?.trim()||meeting.outcome?.trim()?
+        <section className="prototype-mentor-meeting-section">
+          <h3>Notes · the team sees them</h3>
+          <p>{meeting.facilitation?.notes?.trim()||meeting.outcome}</p>
+        </section>:null}
+      {(meeting.facilitation?.actionItemRows?.length??0)>0?
+        <section className="prototype-mentor-meeting-section">
+          <h3>Action items · one a line, @ who</h3>
+          <ol>{meeting.facilitation?.actionItemRows?.map((item,index)=>
+            <li key={index}><span>{item.text}</span>
+              {item.owner?<small>Owner: {item.owner}</small>:null}
+              {item.complete?<small>Done</small>:null}
+            </li>)}</ol>
+        </section>:null}
+      {meeting.facilitation?.wentWell||meeting.facilitation?.improve?
+        <section className="prototype-mentor-meeting-section">
+          <h3>Retrospective</h3>
+          {meeting.facilitation.wentWell?<p>Went well: {meeting.facilitation.wentWell}</p>:null}
+          {meeting.facilitation.improve?<p>Improve: {meeting.facilitation.improve}</p>:null}
+          {meeting.facilitation.nextTime?<p>Next time: {meeting.facilitation.nextTime}</p>:null}
+        </section>:null}
+      {meeting.facilitation?.followUpStatus&&meeting.facilitation.followUpStatus!=="NOT_PLANNED"?
+        <p className="prototype-mentor-meeting-followup">
+          Follow-up: {meeting.facilitation.followUpStatus.replaceAll("_"," ")}
+          {meeting.facilitation.followUpNotes?" · "+meeting.facilitation.followUpNotes:""}
+        </p>:null}
       {meeting.projectStatus === "ARCHIVED" ? (
         <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Archived project · Read-only</p>
       ) : null}
