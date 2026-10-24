@@ -45,3 +45,11 @@ export function nextTpoTodayFollowupAt(
  if(value.getTime()<=now.getTime()||value.getTime()>now.getTime()+2*365*86400000)return null;
  return iso;
 }
+
+/** Old TPO Today defaults to the signed-in placement worker. An explicit
+ * Everyone selection changes query scope, not data ownership permissions. */
+export function tpoCompaniesTodayScope(raw:unknown):"MINE"|"TEAM"|null{
+ if(raw===undefined||raw===null||raw==="MINE")return "MINE";
+ if(raw==="TEAM")return "TEAM";
+ return null;
+}
