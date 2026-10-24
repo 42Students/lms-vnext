@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import {TpoPrototypeSectionTabs} from "@/components/tpo/tpo-prototype-section-tabs";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { canOpenTpoWorkspace, hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 import { TpoKeyboardShortcuts } from "@/components/tpo/tpo-keyboard-shortcuts";
@@ -16,6 +18,7 @@ export default async function TpoLayout({ children }: Readonly<{ children: React
     return <div className="min-w-0 space-y-4 pb-20 md:pb-0">{children}</div>;
   return <div className="min-w-0 space-y-4">
     <TpoKeyboardShortcuts showTrigger={false}/>
+    <Suspense fallback={null}><TpoPrototypeSectionTabs/></Suspense>
     {children}
     <TpoMobileFooter/>
   </div>;
