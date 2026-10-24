@@ -28,6 +28,7 @@ export async function GET(request:Request,{params}:{
     beforeTime:url.searchParams.get("beforeTime")??undefined,
     beforeId:url.searchParams.get("beforeId")??undefined,
     eventType:url.searchParams.get("eventType")??undefined,
+    subjectId:url.searchParams.get("subjectId")??undefined,
     page:url.searchParams.get("page")??undefined,
     size:url.searchParams.get("size")??undefined,
   });
