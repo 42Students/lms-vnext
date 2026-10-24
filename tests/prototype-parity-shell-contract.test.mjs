@@ -442,7 +442,7 @@ test("Mentor Projects last activity uses recorded scoped events rather than proj
   assert.match(service,/hasMembershipRole\(context,"MENTOR"\)/);
   assert.match(service,/listMyProjectInstances\(context\)/);
   assert.match(service,/eq\(activityEvents\.collegeId,member\.collegeId\)/);
-  assert.match(service,/inArray\(activityEvents\.groupKey,keys\)/);
+  assert.match(service,/inArray\(groupProjectId,ids\)/);
   assert.match(service,/max\(\$\{activityEvents\.occurredAt\}\)/);
   assert.match(page,/getMentorProjectLastActivity\(context\)/);
   assert.match(page,/lastActivityAt:lastActivity\.get/);
