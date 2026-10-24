@@ -24,9 +24,11 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
-  requireProjectLifecycleAccess,
+  requireProjectLifecycleMutationAccess,
   requireProjectReadAccess,
 } from "./access";
+import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {
   ProjectsServiceError,
   postgresConstraintName,
@@ -103,6 +105,9 @@ export async function submitProjectTask(
           "PROJECT_TASK_SUBMISSION_INVALID_STATE",
         );
       }
+      await assertPersistedLearnerProjectMutation(
+        tx,context,scope.project.id,scope.collegeId,
+      );
 
       const [task] = await tx
         .select()
@@ -252,7 +257,7 @@ export async function reviewProjectTaskSubmission(
   rawInput: ReviewProjectTaskSubmissionInput,
 ) {
   const scope =
-    await requireProjectLifecycleAccess(
+    await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
@@ -283,11 +288,12 @@ export async function reviewProjectTaskSubmission(
       .for("update")
       .limit(1);
 
-    if (!project || project.status === "ARCHIVED") {
+    if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
       throw new ProjectsServiceError(
         "PROJECT_TASK_SUBMISSION_INVALID_STATE",
       );
     }
+    await assertPersistedProjectMutationActor(tx,context,scope);
 
     const [submission] = await tx
       .select()
