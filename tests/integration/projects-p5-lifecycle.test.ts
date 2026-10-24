@@ -39,6 +39,7 @@ import {createLearnerOwnTask,deleteLearnerOwnTask} from "@/modules/projects/lear
 import {createProjectResource} from "@/modules/projects/resource-service";
 import {postProjectTaskComment,listProjectTaskComments} from "@/modules/projects/task-comment-service";
 import {autoAssignMentorNextSprint} from "@/modules/projects/mentor-auto-assign-service";
+import {transitionMentorProjectSprint} from "@/modules/projects/mentor-sprint-write-service";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -306,6 +307,79 @@ afterAll(async () => {
 });
 
 describe("Projects P5 lifecycle", () => {
+  it.each(["NEXT","BACKLOG","DROP"] as const)(
+    "reopens a signed-off sprint and atomically undoes untouched %s dispositions",
+    async(destination)=>{
+      const project=await createProject();
+      const initial=await getProjectInstanceWorkspace(mentor,project.id);
+      const source=initial.sprints[0]!;
+      const next=initial.sprints[1]!;
+      await startProjectSprint(mentor,project.id,source.id);
+      const opened=await getProjectInstanceWorkspace(mentor,project.id);
+      const task=opened.tasks.find(item=>item.sprintId===source.id)!;
+      const beforeSequence=task.sequence;
+      await completeProjectSprint(mentor,project.id,source.id,
+        "Team can review carry",[{taskId:task.id,destination,
+          expectedUpdatedAt:task.updatedAt.toISOString()}],
+        destination==="NEXT"?next.id:undefined);
+      const after=await getProjectInstanceWorkspace(mentor,project.id);
+      const completed=after.sprints.find(row=>row.id===source.id)!;
+      expect(completed.status).toBe("COMPLETED");
+      const outcome=await transitionMentorProjectSprint(mentor,{
+        projectId:project.id,sprintId:source.id,
+      },{
+        action:"REOPEN",expectedUpdatedAt:completed.updatedAt.toISOString(),
+        restoreCarry:true,
+      });
+      expect(outcome.status).toBe("ACTIVE");
+      const restored=await pool.query<{
+        sprint_id:string|null;sequence:number;deleted_at:Date|null;
+        carried_from_sprint_id:string|null;
+      }>("select sprint_id,sequence,deleted_at,carried_from_sprint_id from project_tasks where id=$1",
+        [task.id]);
+      expect(restored.rows[0]).toMatchObject({
+        sprint_id:source.id,sequence:beforeSequence,
+        deleted_at:null,
+      });
+      const audit=await pool.query<{carry_undo:boolean;restored_task_count:number}>(`
+        select (metadata->>'carryUndo')::boolean as carry_undo,
+          (metadata->>'restoredTaskCount')::integer as restored_task_count
+        from activity_events where subject_id=$1
+          and metadata->>'action'='REOPEN' order by occurred_at desc limit 1
+      `,[source.id]);
+      expect(audit.rows[0]).toEqual({carry_undo:true,restored_task_count:1});
+    },
+  );
+
+  it("refuses undo when a carried task changed after the original sign-off",async()=>{
+    const project=await createProject();
+    const initial=await getProjectInstanceWorkspace(mentor,project.id);
+    const source=initial.sprints[0]!,next=initial.sprints[1]!;
+    await startProjectSprint(mentor,project.id,source.id);
+    const opened=await getProjectInstanceWorkspace(mentor,project.id);
+    const task=opened.tasks.find(item=>item.sprintId===source.id)!;
+    await completeProjectSprint(mentor,project.id,source.id,undefined,[{
+      taskId:task.id,destination:"NEXT",
+      expectedUpdatedAt:task.updatedAt.toISOString(),
+    }],next.id);
+    const committed=await getProjectInstanceWorkspace(mentor,project.id);
+    const completed=committed.sprints.find(item=>item.id===source.id)!;
+    await pool.query(`update project_tasks
+      set updated_at=updated_at+interval '1 minute' where id=$1`,[task.id]);
+    await expect(transitionMentorProjectSprint(mentor,{
+      projectId:project.id,sprintId:source.id,
+    },{
+      action:"REOPEN",expectedUpdatedAt:completed.updatedAt.toISOString(),
+      restoreCarry:true,
+    })).rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    const persisted=await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1",[source.id]);
+    expect(persisted.rows[0]?.status).toBe("COMPLETED");
+    const carried=await pool.query<{sprint_id:string|null}>(
+      "select sprint_id from project_tasks where id=$1",[task.id]);
+    expect(carried.rows[0]?.sprint_id).toBe(next.id);
+  });
+
   it("enforces one active sprint and keeps lifecycle mentor/admin-only", async () => {
     const project = await createProject();
     const workspace =
