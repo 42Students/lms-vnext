@@ -98,7 +98,7 @@ export async function AppShell({
           </Link>
         </div>
         <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4">
-          <ShellWidgetBoundary name="Sidebar navigation" fallbackHref={homeHref}><SidebarNav items={navigation} /></ShellWidgetBoundary>
+          <ShellWidgetBoundary name="Sidebar navigation" fallbackHref={homeHref}><Suspense fallback={null}><SidebarNav items={navigation} /></Suspense></ShellWidgetBoundary>
         </div>
         {prototypePortal === "recruiter" ? (
           <Link href="/hr/drives/new" className="lms-prototype-recruiter-action">+ Request a drive</Link>
