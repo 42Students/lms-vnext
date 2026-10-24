@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 76/132 `CODE_READY`, 49/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 77/132 `CODE_READY`, 48/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -78,13 +78,13 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 49-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 49-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 49-11 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 50-01 | CODE_READY | mentor-prototype-performance-table.tsx |
+| 50-01 | CODE_READY | mentor-prototype-performance-table.tsx now offers release range and individually picked sprints across releases; mentor-performance-range-model.ts validates the authorized sprint selection (unit tests authored). Historical sign-off snapshot requirement remains; DB/browser verification pending. |
 | 50-02 | CODE_READY | mentor-sprint-signoff-snapshot-model.ts; mentor-prototype-performance-table.tsx |
 | 50-03 | CODE_READY | mentor-point-stack-model.ts; mentor-prototype-performance-table.tsx; mentor-sprint-signoff-snapshot-model.ts |
 | 50-04 | CODE_READY | mentor-member-points-sparkline-model.ts; mentor-performance-insights-model.ts; mentor-prototype-performance-table.tsx |
 | 50-05 | CODE_READY | mentor-performance-insights-model.ts; mentor-prototype-performance-table.tsx |
-| 50-06 | CODE_READY | mentor-task-allocation.tsx; mentor-auto-assign-service.ts |
-| 50-07 | CODE_READY | mentor-next-sprint-assignment-model.ts; mentor-task-allocation.tsx |
+| 50-06 | CODE_READY | mentor-task-allocation.tsx and mentor-auto-assign-service.ts use nextMentorAllocatableSprint for first available planned sprint in project-wide release order; next-release sequence resets no longer reject legitimate allocation. PostgreSQL denial/positive regression authored, not executed. |
+| 50-07 | CODE_READY | mentor-next-sprint-assignment-model.ts and mentor-task-allocation.tsx; client allocation preview and server transaction share release-aware target selection, and preserve assignment point-balancing/recipient notification. |
 | 50-08 | CODE_READY | task-assignment-service.ts; mentor-auto-assign-service.ts; project-notification-service.ts (single, all-project and next-sprint assignments notify current active learner in the transaction) |
 | 50-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 50-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
@@ -103,7 +103,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 52-04 | CODE_READY | mentor-activity-seen-service.ts; mentor-activity-since-last-visit.tsx |
 | 52-05 | CODE_READY | project-activity-filtered-list.tsx |
 | 52-06 | CODE_READY | mentor-week-activity-totals-service.ts aggregates full authorized IST-week Tasks moved, Comments, Resources shared in PostgreSQL; workspace-view-service.ts passes results, project-activity-filtered-list.tsx identifies loaded-page fallback, and mentor-week-contributor-service.ts counts all authorized learner activity. DB acceptance pending. |
-| 52-07 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 52-07 | CODE_READY | mentor-project-update-service.ts persists scoped Mentor-authored PROJECTS_MENTOR_UPDATE_POSTED events; activity-service.ts exposes project-scoped rows to active learners, and mentor-activity-seen-persisted.test.ts asserts saved updates are visible only in the matching project. No team email/delivery is implied. Integration test is authored, not executed. |
 | 52-08 | IMPLEMENTATION_OR_TEST_PENDING | activity-service.ts now pages via PostgreSQL microsecond cursor, filters actor+Sprint in SQL, retrieves authorized metadata-free/soft-deleted Sprint history through owned Sprint joins, and enforces college+organization+project; mentor-activity-date-filter-model.ts uses IST calendar dates and handles invalid timestamps. Unit/PG cases authored; need executed cursor/same-ms, imported-event and timezone acceptance. |
 | 52-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 53-01 | CODE_READY | mentor-submission-attribution-model.ts; mentor-prototype-project-summaries.tsx; submission-service.ts (latest revision, persisted submitter, timestamp and saved notes) |
@@ -135,7 +135,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 55-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 55-07 | IMPLEMENTATION_OR_TEST_PENDING | Personal notifications and college announcements now cursor-page independently inside the unified feed (personal route + mentor-unified-notification-feed.tsx); mark-all uses all visible announcement pages. Still verify filter-specific total counts, badge consistency and concurrent read changes in database/browser. |
 | 55-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 56-01 | CODE_READY | command-search.tsx; mentor-unified-search-service.ts |
+| 56-01 | CODE_READY | command-search.tsx includes grouped in-place Mentor results and keyboard navigation; mentor-unified-search-service.ts targets exact Board task and Performance student, plus newly anchors matching resource cards through project-resource-list.tsx. Authenticated browser/focus verification pending. |
 | 56-02 | CODE_READY | mentor-unified-search-service.ts; mentor-search-ranking-model.ts; mentor/search/page.tsx (4 scoped categories, owner context, ranking, term highlighting, bounded pagination) |
 | 56-03 | CODE_READY | mentor-notification-bell-preview.tsx; mentor/notifications/preview/route.ts; mentor-unified-notification-model.ts |
 | 56-04 | CODE_READY | mentor-account-overview-service.ts; mentor-account-summary-model.ts; mentor/account/page.tsx; account-menu.tsx |
