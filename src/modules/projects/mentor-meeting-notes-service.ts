@@ -36,6 +36,7 @@ export async function getMentorMeetingNotes(context:RequestContext,rawParams:unk
   const scope=await getMentorMeetingNotesScope(context,params.projectId);
   const [meeting]=await getDb().select({
     id:projectMeetings.id,title:projectMeetings.title,
+    deletedAt:projectMeetings.deletedAt,
     status:projectMeetings.status,startsAt:projectMeetings.startsAt,
     endsAt:projectMeetings.endsAt,timeZone:projectMeetings.timeZone,
     outcome:projectMeetings.outcome,updatedAt:projectMeetings.updatedAt,
