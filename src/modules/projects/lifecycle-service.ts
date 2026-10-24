@@ -304,6 +304,11 @@ export async function completeProjectSprint(
       isNull(projectTasks.deletedAt),
     )).for("update");
     const signOffSnapshot=buildMentorSprintSignOffSnapshot(sprint.id,signOffTasks);
+    // This invariant must apply to BOTH the explicit decision workflow and
+    // older callers that omit decisions. A submitted task cannot be silently
+    // removed from its sprint while its learner submission awaits review.
+    if(signOffTasks.some(task=>task.status==="IN_REVIEW"))
+      throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
 
     const [openTask] = await tx
       .select({ id: projectTasks.id })

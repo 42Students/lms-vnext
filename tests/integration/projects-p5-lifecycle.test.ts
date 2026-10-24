@@ -30,6 +30,7 @@ import {
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import {approveProjectTaskThroughReview,assignProjectTaskToLearner} from "./support/projects-review-fixture";
+import {submitProjectTask} from "@/modules/projects/task-submission-service";
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
 import {listMentorSprintSignOffSnapshots,listMentorSprintCommitmentSnapshots} from "@/modules/projects/mentor-sprint-signoff-snapshot-service";
 import {updateMentorTaskDetails} from "@/modules/projects/mentor-task-details-service";
@@ -566,6 +567,61 @@ describe("Projects P5 lifecycle", () => {
     expect(saved).toHaveLength(1);
     expect(saved[0]).toMatchObject({version:1,sprintId:sprint.id,taskCount:1,
       memberRows:[{taskCount:1,doneCount:0,openCount:1}]});
+  });
+
+  it("rejects pending learner review on both explicit and legacy sprint sign-off",async()=>{
+    const project=await createProject();
+    const original=await getProjectInstanceWorkspace(mentor,project.id);
+    const sprint=original.sprints[0]!;
+    const task=original.tasks.find(row=>row.sprintId===sprint.id)!;
+    await startProjectSprint(mentor,project.id,sprint.id);
+    await assignProjectTaskToLearner({
+      learner,mentor,projectId:project.id,taskId:task.id,
+    });
+    await submitProjectTask(learner,project.id,task.id,{
+      submissionUrl:"https://example.com/pending-review",
+    });
+    const fresh=await getProjectInstanceWorkspace(mentor,project.id);
+    const pending=fresh.tasks.find(row=>row.id===task.id)!;
+    expect(pending.status).toBe("IN_REVIEW");
+    await expect(completeProjectSprint(
+      mentor,project.id,sprint.id,undefined,[{
+        taskId:pending.id,destination:"BACKLOG",
+        expectedUpdatedAt:pending.updatedAt.toISOString(),
+      }],
+    )).rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    // An older client omitting decisions must not bypass the review gate.
+    await expect(completeProjectSprint(
+      mentor,project.id,sprint.id,
+    )).rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    const taskRow=await pool.query<{sprint_id:string|null;status:string}>(
+      "select sprint_id,status from project_tasks where id=$1",[task.id]);
+    expect(taskRow.rows[0]).toEqual({sprint_id:sprint.id,status:"IN_REVIEW"});
+    const sprintRow=await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1",[sprint.id]);
+    expect(sprintRow.rows[0]?.status).toBe("ACTIVE");
+    expect(await listMentorSprintSignOffSnapshots(mentor,project.id,[sprint.id]))
+      .toEqual([]);
+  });
+
+  it("rejects unauthorized learners and foreign-college mentors at sign-off",async()=>{
+    const project=await createProject();
+    const initial=await getProjectInstanceWorkspace(mentor,project.id);
+    const current=initial.sprints[0]!;
+    await startProjectSprint(mentor,project.id,current.id);
+    await expect(completeProjectSprint(
+      learner,project.id,current.id,
+    )).rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
+    const foreign:RequestContext={...mentor,membership:{
+      ...mentor.membership!,collegeId:SEED_IDS.collegeB,
+    }};
+    await expect(completeProjectSprint(
+      foreign,project.id,current.id,
+    )).rejects.toBeDefined();
+    expect(await listMentorSprintSignOffSnapshots(mentor,project.id,[current.id]))
+      .toEqual([]);
+    const after=await getProjectInstanceWorkspace(mentor,project.id);
+    expect(after.sprints.find(row=>row.id===current.id)?.status).toBe("ACTIVE");
   });
 
   it("keeps active sprint and history untouched on stale carry decision",async()=>{
