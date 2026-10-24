@@ -12,6 +12,8 @@ import {mentorCalendarWeekWorkload} from "@/modules/projects/mentor-calendar-wee
 import {buildMentorMeetingIcs} from "@/modules/projects/mentor-calendar-ics-model";
 import {Button} from "@/components/ui/button";
 import {MentorMeetingRequestActions} from "./mentor-meeting-request-actions";
+import {MentorMeetingReschedule} from "./mentor-meeting-reschedule";
+import {MentorMeetingCancelInline} from "./mentor-meeting-cancel-inline";
 import {MentorMeetingOutcomeQuickEdit} from "./mentor-meeting-outcome-quick-edit";
 import {MentorMeetingFacilitationQuickEdit} from "./mentor-meeting-facilitation-quick-edit";
 import styles from "./mentor-meetings-calendar.module.css";
@@ -63,7 +65,10 @@ function MeetingRow({
   meeting, now,
 }: {meeting: MentorMeetingCalendarItem; now: Date;}) {
   const status = mentorMeetingDisplayStatus(meeting, now);
-  const href = safeMentorMeetingJoinUrl(meeting, now);
+  // A recorded safe join link must be reachable before a scheduled meeting
+  // starts, not only during its duration. Hide actions for already-ended slots.
+  const href = Date.parse(meeting.endsAt)>now.getTime()
+    ?safeMentorMeetingJoinUrl(meeting):null;
   return (
     <article className={styles.row}>
       <div className={styles.head}>
@@ -83,6 +88,15 @@ function MeetingRow({
           ? " · Sprint: " + (meeting.linkedSprintTitle||meeting.legacySprintLabel) : ""}
       </p>
       <MentorMeetingRequestActions meeting={meeting}/>
+      {meeting.projectStatus==="ACTIVE"&&meeting.updatedAt&&
+        (meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")?
+        <div className="flex flex-wrap items-center gap-2">
+          <MentorMeetingReschedule projectId={meeting.projectId}
+            meetingId={meeting.id} startsAt={meeting.startsAt}
+            endsAt={meeting.endsAt} updatedAt={meeting.updatedAt}/>
+          <MentorMeetingCancelInline projectId={meeting.projectId}
+            meetingId={meeting.id} expectedUpdatedAt={meeting.updatedAt}/>
+        </div>:null}
       {meeting.agenda?.trim()?<section className="prototype-mentor-meeting-section">
         <h3>Agenda</h3><p>{meeting.agenda}</p>
       </section>:null}
