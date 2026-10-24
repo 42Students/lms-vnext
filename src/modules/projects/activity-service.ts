@@ -114,6 +114,7 @@ export async function getProjectActivityPage(
           activityEvents.collegeId,
           scope.collegeId,
         ),
+        eq(activityEvents.organizationId,scope.organizationId),
         or(
           and(
             or(eq(activityEvents.subjectType,"project"),
