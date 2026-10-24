@@ -218,7 +218,7 @@ export function TpoGrid<Row>({
    )}:{}),
    ...(col.tooltip?{tooltipValueGetter:(p:{data?:Row})=>p.data?col.tooltip?.(p.data):undefined}:{}),
    ...(openPrimary?.columnKey===col.key?{cellRenderer:(p:{data?:Row})=>p.data?<Button variant="ghost" className="min-h-9 px-0 text-left underline"
-      aria-label={openPrimary.ariaLabel(p.data)} onClick={()=>openPrimary.onOpen(p.data)}>
+      aria-label={openPrimary.ariaLabel(p.data)} onClick={()=>openPrimary.onOpen(p.data!)}>
       {col.render?col.render(p.data):cellValue(col.read(p.data))}</Button>:null}
     :col.render?{cellRenderer:(p:{data?:Row})=>p.data?col.render?.(p.data):null}:{}),
   });
