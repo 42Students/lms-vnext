@@ -1,5 +1,7 @@
 "use client";
 
+import {Badge} from "@/components/ui/badge";
+
 /** Authorized, read-only snapshot of one pinned template version.
  * Super Admin editing uses the separate permission-gated, versioned
  * Overview editor (goal, lists, submission type and instructions).
