@@ -7,13 +7,14 @@ import {recentMentorWorkedSprintIds} from
 import {mentorMemberSprintHistory,deriveMentorPerformanceInsights} from
   "@/modules/projects/mentor-performance-insights-model";
 import {mentorPointStack} from "@/modules/projects/mentor-point-stack-model";
+import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
 import {mentorSprintPointSparkline} from "@/modules/projects/mentor-member-points-sparkline-model";
 
 type Student={id:string;name:string;label:string};
 type Task={id:string;assigneeMembershipId:string|null;sprintId:string|null;
   status:string;estimatePoints:number|null;carriedFromSprintId:string|null};
 type Sprint={id:string;sequence:number;title:string;status:string;releaseId:string};
-type Release={id:string;title:string};
+type Release={id:string;title:string;sequence:number};
 
 const pts=(tasks:readonly Task[])=>tasks.reduce((sum,task)=>sum+(task.estimatePoints??0),0);
 const sum=(rows:readonly MentorSprintMemberSnapshot[],key:keyof Pick<
@@ -28,9 +29,9 @@ export function MentorPrototypePerformanceTable({
 }:{students:readonly Student[];tasks:readonly Task[];sprints:readonly Sprint[];
   releases:readonly Release[];snapshots:readonly MentorSprintSignOffSnapshot[]}){
   const [range,setRange]=useState("all");
-  const sorted=useMemo(()=>[...sprints].sort((a,b)=>a.sequence-b.sequence),[sprints]);
+  const sorted=useMemo(()=>orderMentorSprints(sprints,releases),[sprints,releases]);
   const active=sorted.find(item=>item.status==="ACTIVE");
-  const lastFour=new Set(recentMentorWorkedSprintIds(sorted));
+  const lastFour=new Set(recentMentorWorkedSprintIds(sorted,releases));
   const chosen=sorted.find(item=>item.id===range);
   const releaseId=range.startsWith("release:")?range.slice("release:".length):null;
   const included=range==="whole"?sorted
@@ -71,7 +72,7 @@ export function MentorPrototypePerformanceTable({
     const open=assigned.filter(task=>!["DONE","IN_REVIEW"].includes(task.status));
     const carried=assigned.filter(task=>task.carriedFromSprintId!==null);
     const previous=historicalRows.filter(row=>row.membershipId===student.id);
-    const trend=mentorMemberSprintHistory(student.id,sorted,snapshots);
+    const trend=mentorMemberSprintHistory(student.id,sorted,snapshots,releases);
     const sparkline=mentorSprintPointSparkline(trend);
     const insights=deriveMentorPerformanceInsights({points:trend,
       currentOpenCount:currentOpen.filter(task=>task.assigneeMembershipId===student.id).length,
