@@ -64,8 +64,10 @@ export async function moveMentorBacklogTask(context: RequestContext, projectIdIn
     const [updated] = await tx.update(projectTasks).set({
       sprintId:input.targetSprintId,
       sequence:(last?.sequence??-1)+1,
-      carriedFromSprintId:input.targetSprintId===null?task.sprintId:task.carriedFromSprintId,
-      carriedOverAt:input.targetSprintId===null?now:task.carriedOverAt,
+      // Any direct sprint-to-sprint move is real carry-over, not just a
+      // reordered task. Backlog -> sprint retains its recorded previous sprint.
+      carriedFromSprintId:task.sprintId??task.carriedFromSprintId,
+      carriedOverAt:task.sprintId?now:task.carriedOverAt,
       updatedAt:now,
     }).where(and(eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
       sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${task.updatedAt.toISOString()}::timestamptz`)).returning();
