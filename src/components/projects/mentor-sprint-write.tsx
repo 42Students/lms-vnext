@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
+import {mentorSprintDefaultReleaseId} from "@/modules/projects/mentor-sprint-order-model";
 
 /** Deliberate vNext granularity: each sprint mutation is a separate
  * version-checked transaction. A multi-sprint legacy Save plan is NOT atomic
@@ -31,8 +32,7 @@ export function MentorSprintCreate({
   const [startDate,setStartDate]=useState(""),[endDate,setEndDate]=useState(""),[dueDate,setDueDate]=useState("");
   // A contextual "Add sprint" button must preselect its own release even when
   // this project has several releases; the server still validates its scope.
-  const initialReleaseId=releases.some(item=>item.id===releaseId&&
-    item.status!=="SHIPPED")?releaseId:"";
+  const initialReleaseId=mentorSprintDefaultReleaseId(releaseId,releases);
   const [chosenReleaseId,setChosenReleaseId]=useState(initialReleaseId);
   const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
   const sprintKeyPreview=title.trim().toLowerCase().normalize("NFKD")
