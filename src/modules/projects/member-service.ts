@@ -704,9 +704,9 @@ export async function addProjectMember(
 
   try {
     const [member] = await getDb().transaction(async tx => {
-      const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId,status:projectInstances.status })
+      const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId,status:projectInstances.status,deletedAt:projectInstances.deletedAt })
         .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
-      if(!project||project.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+      if(!project||project.deletedAt||["ARCHIVED","COMPLETED"].includes(project.status))throw new ProjectsServiceError("PROJECT_INVALID_STATE");
       await assertPersistedPlatformPermission(tx,context,"projects.manage",{
         collegeId:scope.collegeId,organizationId:scope.organizationId,
       });
@@ -789,10 +789,10 @@ export async function updateProjectMember(
 
   try {
     const [updated]=await getDb().transaction(async tx=>{
-      const [project]=await tx.select({status:projectInstances.status})
+      const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
         .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
         .for("update").limit(1);
-      if(!project||project.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+      if(!project||project.deletedAt||["ARCHIVED","COMPLETED"].includes(project.status))throw new ProjectsServiceError("PROJECT_INVALID_STATE");
       await assertPersistedPlatformPermission(tx,context,"projects.manage",{
         collegeId:scope.collegeId,organizationId:scope.organizationId,
       });
@@ -867,9 +867,9 @@ export async function endProjectMember(
   );
 
   return getDb().transaction(async tx => {
-    const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId,status:projectInstances.status })
+    const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId,status:projectInstances.status,deletedAt:projectInstances.deletedAt })
       .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
-    if(!project||project.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+    if(!project||project.deletedAt||["ARCHIVED","COMPLETED"].includes(project.status))throw new ProjectsServiceError("PROJECT_INVALID_STATE");
     await assertPersistedPlatformPermission(tx,context,"projects.manage",{
         collegeId:scope.collegeId,organizationId:scope.organizationId,
       });

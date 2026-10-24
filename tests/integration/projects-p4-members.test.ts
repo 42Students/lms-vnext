@@ -315,6 +315,31 @@ afterAll(async () => {
 });
 
 describe("Projects P4 team and mentor membership", () => {
+  it.each(["COMPLETED","ARCHIVED"] as const)(
+    "denies direct roster add, edit and removal after a project is %s",async(status)=>{
+      const project=await createProject();
+      const member=await addProjectMember(collegeAdmin,project.id,{
+        membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER",
+      });
+      await pool.query("update project_instances set status=$1 where id=$2",
+        [status,project.id]);
+      await expect(addProjectMember(collegeAdmin,project.id,{
+        membershipId:outsider.membershipId,role:"LEARNER",
+      })).rejects.toMatchObject({code:"PROJECT_INVALID_STATE"});
+      await expect(updateProjectMember(collegeAdmin,project.id,member.id,{
+        roleLabel:"Illicit roster change",
+      })).rejects.toMatchObject({code:"PROJECT_INVALID_STATE"});
+      await expect(endProjectMember(collegeAdmin,project.id,member.id))
+        .rejects.toMatchObject({code:"PROJECT_INVALID_STATE"});
+      const persistent=await pool.query<{
+        active_count:number;role_label:string|null;
+      }>(`select count(*) filter(where ended_at is null)::int as active_count,
+          max(role_label) as role_label
+         from project_members where project_id=$1 and role='LEARNER'`,[project.id]);
+      expect(persistent.rows[0]).toEqual({active_count:1,role_label:null});
+    },
+  );
+
   it("uses canonical college memberships and exact project membership for participant access", async () => {
     const project = await createProject();
 
