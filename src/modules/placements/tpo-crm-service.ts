@@ -56,13 +56,15 @@ export type TpoCrmErrorCode =
   | "TPO_CRM_LEAD_DUPLICATE"
   | "TPO_CRM_CONTACT_REQUIRED"
   | "TPO_CRM_FOLLOWUP_NOT_FOUND"
-  | "TPO_CRM_FOLLOWUP_ALREADY_DONE";
+  | "TPO_CRM_FOLLOWUP_ALREADY_DONE"
+  | "TPO_CRM_INVALID_DUE_AT";
 
 const TPO_CRM_ERROR_MESSAGES: Partial<Record<TpoCrmErrorCode, string>> = {
   TPO_CRM_LEAD_DUPLICATE: "This recruiter is already in your list. Search for them to open it.",
   TPO_CRM_LEAD_NOT_FOUND: "This recruiter contact is no longer available in this college.",
   TPO_CRM_FOLLOWUP_NOT_FOUND: "This follow-up could not be found. Reload your calendar and try again.",
   TPO_CRM_FOLLOWUP_ALREADY_DONE: "A finished follow-up cannot be moved",
+  TPO_CRM_INVALID_DUE_AT: "Choose a future date and time for this follow-up.",
 };
 
 export class TpoCrmError extends Error {
