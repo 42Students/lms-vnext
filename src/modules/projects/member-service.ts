@@ -6,6 +6,7 @@ import {
   ilike,
   inArray,
   isNull,
+  ne,
   or,
   sql,
 } from "drizzle-orm";
