@@ -300,7 +300,7 @@ export async function completeProjectSprint(
         if(!validatedNext)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
         const [nextSprint]=await tx.select({
           id:projectSprints.id,sequence:projectSprints.sequence,
-          status:projectSprints.status,
+          status:projectSprints.status,releaseId:projectSprints.releaseId,
         }).from(projectSprints).where(and(
           eq(projectSprints.id,validatedNext),
           eq(projectSprints.projectId,scope.project.id),
@@ -308,6 +308,13 @@ export async function completeProjectSprint(
         )).for("update").limit(1);
         if(!nextSprint||nextSprint.status!=="PLANNED"||
            nextSprint.sequence<=sprint.sequence)
+          throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+        const [targetRelease]=await tx.select({status:projectReleases.status})
+          .from(projectReleases).where(and(
+            eq(projectReleases.id,nextSprint.releaseId),
+            eq(projectReleases.projectId,scope.project.id),
+          )).for("update").limit(1);
+        if(!targetRelease||targetRelease.status==="SHIPPED")
           throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
         const [maxSequence]=await tx.select({
           value:sql<number>`coalesce(max(${projectTasks.sequence}),0)::int`,
