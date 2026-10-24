@@ -1450,6 +1450,10 @@ export function ProjectWorkspace({
                       inline={mode==="ADMIN"} releaseId={release.id}
                       releases={workspace.releases.map(item=>({
                         id:item.id,title:item.title,status:item.status,
+                      }))}
+                      sprintPlan={workspace.sprints.map(item=>({
+                        releaseId:item.releaseId,sequence:item.sequence,
+                        startDate:item.startDate,endDate:item.endDate,
                       }))} />
                   ) : null}
                   {mode !== "LEARNER" && !readOnly ? (
