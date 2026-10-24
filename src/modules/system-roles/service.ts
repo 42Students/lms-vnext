@@ -44,8 +44,8 @@ export type SystemRoleUserView = {
 
 export type PersistBootstrapUserInput = {
   identityUid: string;
-  phoneE164: string;
-  email?: string;
+  phoneE164: string | null;
+  email?: string | null;
   displayName: string;
 };
 
