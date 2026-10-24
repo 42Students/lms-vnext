@@ -258,7 +258,8 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
           {mentorResourceGroupLabel(groupKey(resource),sprints)}
           {" · "}{groupCounts.get(groupKey(resource))??0}
         </h3>:null}
-    <article
+    <article id={"mentor-resource-"+resource.id}
+      tabIndex={-1}
       draggable={canReorder&&resource.status==="ACTIVE"}
       onDragStart={event=>{if(canReorder&&resource.status==="ACTIVE")event.dataTransfer.setData("text/plain",resource.id);}}
       onDragOver={event=>{if(canReorder&&resource.status==="ACTIVE")event.preventDefault();}}
