@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Alert } from "@/components/ui/alert";
 
-import {useRef,useState,type FormEvent} from "react";
+import {useEffect,useRef,useState,type FormEvent} from "react";
+import {mentorPrivatePreviewKind,mentorPrivatePreviewGrantValid} from "@/modules/projects/mentor-private-resource-preview-model";
+import {mentorPdfEmbedUrl} from "@/modules/projects/mentor-pdf-evidence-controls-model";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {acceptAttributeFor,formatFileSize,isSafeSignedUrl,limitsSummary} from "@/modules/storage/ui-models";
@@ -62,6 +64,9 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
   resources?:readonly {id:string;title:string}[];
 }){
   const [files,setFiles]=useState(initialFiles);
+  const [preview,setPreview]=useState<{id:string;url:string;expiresAt:string;kind:"PDF"|"IMAGE"}|null>(null);
+  const [pdfPage,setPdfPage]=useState(1);
+  const [pdfZoom,setPdfZoom]=useState(100);
   const [selected,setSelected]=useState<File|null>(null);
   const [uploadTitle,setUploadTitle]=useState("");
   const [uploadDescription,setUploadDescription]=useState("");
@@ -89,6 +94,12 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
   const discardGuard=useProjectEditorDiscardGuard(true,dirty,busy,discardDraft);
   const endpoint="/api/projects/"+encodeURIComponent(projectId)+"/resource-files";
   const fileEndpoint=(fileId:string)=>endpoint+"/"+encodeURIComponent(fileId);
+  useEffect(()=>{
+    if(!preview)return;
+    const remaining=Date.parse(preview.expiresAt)-Date.now();
+    const timeout=window.setTimeout(()=>setPreview(null),Math.max(1,Math.min(remaining,2147483647)));
+    return ()=>window.clearTimeout(timeout);
+  },[preview]);
   async function refresh(){
     const next=await jsonRequest<FileListResponse>(endpoint,"GET");
     setFiles(next.files);
@@ -157,6 +168,22 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       // Short-lived signed URL stays local to this click; never render, cache or log it.
       window.location.assign(result.grant.url);
     }catch(error){problem(error);}
+  }
+  async function openPreview(file:ProjectResourceFile){
+    const kind=mentorPrivatePreviewKind(file.contentType);
+    if(!projectFileUsable(file)||!kind||busy)return;
+    setPreview(null);setBusy(true);setFeedback(null);
+    try{
+      const result=await jsonRequest<DownloadResponse>(
+        fileEndpoint(file.id)+"/download-grant","POST",{
+          disposition:"inline",
+        });
+      if(!mentorPrivatePreviewGrantValid(result.grant,Date.now(),isSafeSignedUrl))
+        throw new FileApiError("STORAGE_NOT_FOUND");
+      setPdfPage(1);setPdfZoom(100);
+      setPreview({id:file.id,url:result.grant.url,
+        expiresAt:result.grant.expiresAt,kind});
+    }catch(error){problem(error);}finally{setBusy(false);}
   }
   function beginEdit(file:ProjectResourceFile){
     setEditing(file.id);setEditTitle(file.title);setEditDescription(file.description??"");
@@ -252,12 +279,68 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
               </p>
             </div>
             <div className="flex w-full min-w-0 flex-col gap-2 md:w-auto md:flex-row md:flex-wrap">
+              {projectFileUsable(file)&&mentorPrivatePreviewKind(file.contentType)?
+                <Button variant="secondary" type="button" disabled={busy}
+                  onClick={()=>void openPreview(file)}
+                  className="min-h-11 w-full md:min-h-9 md:w-auto">
+                  Preview file
+                </Button>:null}
               {projectFileUsable(file)&&<Button variant="secondary" type="button" disabled={busy} onClick={()=>void download(file)}
-                className="min-h-11 w-full md:min-h-9 md:w-auto">Open file</Button>}
+                className="min-h-11 w-full md:min-h-9 md:w-auto">Download file</Button>}
               {canManage&&file.status==="UPLOADING"&&<Button variant="secondary" type="button" disabled={busy}
                   onClick={()=>void retryComplete(file)} className="min-h-11 w-full md:min-h-9 md:w-auto">Retry</Button>}
             </div>
           </div>
+          {preview?.id===file.id?<section
+            className="mt-3 space-y-3 border border-border p-3"
+            aria-label={"Private file preview for "+file.title}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h4 className="font-semibold">Private preview · {file.title}</h4>
+              <Button type="button" variant="secondary" size="sm"
+                onClick={()=>setPreview(null)}>Close preview</Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Access is checked again for each short-lived preview request.
+              The preview closes when its authorization grant expires.
+            </p>
+            {preview.kind==="PDF"?<div className="flex flex-wrap items-center gap-3"
+              role="group" aria-label="PDF page and zoom">
+              <Button type="button" variant="secondary" size="sm"
+                disabled={pdfPage<=1} onClick={()=>setPdfPage(n=>Math.max(1,n-1))}>
+                Previous page
+              </Button>
+              <label>Page
+                <input className="ml-2 w-20 rounded border border-border p-2"
+                  type="number" min={1} max={999} value={pdfPage}
+                  onChange={event=>{
+                    const n=Number(event.target.value);
+                    if(Number.isSafeInteger(n))setPdfPage(Math.max(1,Math.min(999,n)));
+                  }}/>
+              </label>
+              <Button type="button" size="sm" variant="secondary"
+                disabled={pdfPage>=999} onClick={()=>setPdfPage(n=>Math.min(999,n+1))}>
+                Next page
+              </Button>
+              <label>Zoom
+                <select className="ml-2 rounded border border-border p-2"
+                  value={pdfZoom}
+                  onChange={event=>setPdfZoom(Number(event.target.value))}>
+                  {[50,75,100,125,150,200].map(n=><option key={n} value={n}>{n}%</option>)}
+                </select>
+              </label>
+            </div>:null}
+            {preview.kind==="PDF"?<iframe title={"Private PDF "+file.title}
+              src={mentorPdfEmbedUrl(preview.url,pdfPage,pdfZoom)??undefined}
+              sandbox="" loading="lazy" referrerPolicy="no-referrer"
+              className="h-[29rem] w-full border border-border"/>:
+              <img src={preview.url} alt={"Preview of "+file.title}
+                referrerPolicy="no-referrer" className="max-h-[29rem] max-w-full"
+                />}
+            <p className="text-xs text-muted-foreground">
+              Some PDF viewers or file providers may block embedding.
+              Use Download file for unsupported formats or blocked previews.
+            </p>
+          </section>:null}
           {canManage?<Disclosure title="Manage file" className="mt-2" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
             <Button variant="secondary" aria-label={"Edit resource "+file.title} disabled={busy} onClick={()=>beginEdit(file)} className="min-h-11 w-full md:min-h-9 md:w-auto">Edit resource</Button>
             <Button variant="link" aria-label={"Delete resource "+file.title} disabled={busy} onClick={()=>{setFeedback(null);setDeleteTarget(file);}} className="min-h-11 w-full !text-[var(--lms-error)] md:min-h-9 md:w-auto">Delete</Button>
