@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {recentMentorWorkedSprintIds} from "@/modules/projects/mentor-recent-worked-sprints-model";
 import {projectMentorVelocity} from "@/modules/projects/mentor-sprint-velocity-model";
+import {deriveMentorPlanFacts} from "@/modules/projects/mentor-historical-plan-facts-model";
 import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
@@ -25,6 +26,10 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
   const sprints=[...workspace.sprints].sort((a,b)=>a.sequence-b.sequence);
   const historical=new Map(workspace.mentorSprintSnapshots.map(snapshot=>
     [snapshot.sprintId,snapshot] as const));
+  const planFacts=deriveMentorPlanFacts({
+    sprints:workspace.sprints,signOffs:workspace.mentorSprintSnapshots,
+    starts:workspace.mentorSprintCommitments,tasks:workspace.tasks,
+  });
   const commitments=new Map(workspace.mentorSprintCommitments.map(snapshot=>
     [snapshot.sprintId,snapshot] as const));
   const chartPoints=(sprint:Workspace["sprints"][number])=>{
@@ -101,6 +106,28 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
         Older sprints without a start-time snapshot use sign-off planned totals,
         not the original commitment. Completed sprints without sign-off history
         are marked unavailable rather than claiming zero done.</p>
+    </section>
+    <section className="prototype-mentor-chart-card" aria-label="Sprint carry-over history">
+      <div className="prototype-mentor-card-title">
+        <h2>Historical carry-over · recorded sign-offs</h2>
+        <Link href={base+"?tab=performance"}>Team point history →</Link>
+      </div>
+      {planFacts.observedCompletedSprints>0?<>
+        <p>{planFacts.carriedIntoCompleted} of {planFacts.observedTaskCount}
+          {" "}tasks in observed completed sprints had been carried in from an earlier sprint
+          {planFacts.carryRatioPct!==null?
+            " · "+planFacts.carryRatioPct+"%":""}.</p>
+        {planFacts.primaryCarrier?<p>Most incoming carries on recorded sign-offs:
+          {" "}{workspace.members.find(m=>m.membershipId===
+            planFacts.primaryCarrier?.membershipId)?.displayName??"Previous team member"}
+          {" "}({planFacts.primaryCarrier.count}). This is work allocation,
+          not a measure of student engagement.</p>:null}
+        {planFacts.missingSignOffIds.length?<p>
+          {planFacts.missingSignOffIds.length} completed sprints lack historical
+          sign-off records; the ratio excludes those sprints.
+        </p>:null}
+      </>:<p>No persisted completed-sprint carry facts are available yet.
+        Historical carry-over is not inferred from current tasks.</p>}
     </section>
     <section className="prototype-mentor-chart-card" aria-label="Release progress">
       <div className="prototype-mentor-card-title"><h2>Release plan</h2>
@@ -389,6 +416,10 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
   const progress=live.length?Math.round(100*completed.length/live.length):0;
   const velocity=projectMentorVelocity(workspace.sprints,workspace.mentorSprintSnapshots,
     points(live.filter(task=>task.status!=="DONE")));
+  const planFacts=deriveMentorPlanFacts({
+    sprints:workspace.sprints,signOffs:workspace.mentorSprintSnapshots,
+    starts:workspace.mentorSprintCommitments,tasks:workspace.tasks,
+  });
   const summary=[
     ["To do",countTasks(inSprint,"TODO")],
     ["In progress",countTasks(inSprint,"IN_PROGRESS")],
@@ -414,6 +445,19 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
       <div className="prototype-mentor-card-title">
         <h2>Momentum · signed-off sprint results</h2>
         <Link href={base+"?tab=sprints"}>Sprint history →</Link>
+      </div>
+      <div className="prototype-mentor-health-summary">
+        <strong>{planFacts.completedDonePoints} earned of {planFacts.plannedToDatePoints}
+          {" "}planned-to-date points</strong>
+        <p>{planFacts.signedOff} of {planFacts.totalSprints} sprints signed off.
+          {planFacts.plannedToDateReliable?" Planned totals use saved start-time commitments.":
+            " Some start-time commitments or sign-off results are missing; these are observed totals, not a complete historical commitment."}</p>
+        <p>Next {planFacts.nextTwo.length} planned sprints:
+          {" "}{planFacts.nextTwoEstimatePoints} currently estimated points.
+          {" "}{planFacts.nextTwo.map(sprint=>
+            "S"+sprint.sequence+" · "+sprint.plannedPoints+" pts").join(" · ")||
+            "No future planned sprint recorded"}.
+          Future task assignments and estimates may change.</p>
       </div>
       {velocity.kind==="ESTIMATE"?<div className="prototype-mentor-health-summary">
         <strong>{velocity.averageDonePoints} points per completed sprint</strong>
