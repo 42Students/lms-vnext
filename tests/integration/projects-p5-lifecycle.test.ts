@@ -1208,6 +1208,51 @@ describe("Projects P5 lifecycle", () => {
     expect(persisted.rows[0]?.status).toBe("COMPLETED");
   });
 
+  it("denies starting a Sprint in a shipped or deleted parent release", async () => {
+    const project = await createProject();
+    const workspace = await getProjectInstanceWorkspace(mentor, project.id);
+    const planned = workspace.sprints[0]!;
+    const release = workspace.releases[0]!;
+    await pool.query(
+      "update project_releases set status='SHIPPED' where id=$1",
+      [release.id],
+    );
+    await expect(startProjectSprint(collegeAdmin, project.id, planned.id))
+      .rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    await pool.query(
+      "update project_releases set status='PLANNED',deleted_at=now() where id=$1",
+      [release.id],
+    );
+    await expect(startProjectSprint(collegeAdmin, project.id, planned.id))
+      .rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    const after = await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1", [planned.id],
+    );
+    expect(after.rows[0]?.status).toBe("PLANNED");
+  });
+
+  it("denies reopening a signed-off Sprint in a deleted release", async () => {
+    const project = await createProject();
+    const workspace = await getProjectInstanceWorkspace(mentor, project.id);
+    const current = workspace.sprints[0]!;
+    await startProjectSprint(mentor, project.id, current.id);
+    await approveProjectTaskThroughReview({
+      learner,mentor,projectId:project.id,
+      taskId:workspace.tasks.find(row=>row.sprintId===current.id)!.id,
+    });
+    await completeProjectSprint(mentor, project.id, current.id);
+    await pool.query(
+      "update project_releases set deleted_at=now() where id=$1",
+      [workspace.releases[0]!.id],
+    );
+    await expect(reopenProjectSprint(collegeAdmin, project.id, current.id))
+      .rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    const persisted = await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1", [current.id],
+    );
+    expect(persisted.rows[0]?.status).toBe("COMPLETED");
+  });
+
   it("enforces the active-sprint invariant in PostgreSQL too", async () => {
     const project = await createProject();
     const workspace =
