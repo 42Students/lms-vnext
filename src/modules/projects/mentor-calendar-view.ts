@@ -1,3 +1,5 @@
+import type {MentorMeetingFacilitation} from "./mentor-meeting-facilitation-model";
+
 /**
  * Mentor calendar rules mirrored from legacy /mentor/calendar.
  * All instants are stored in UTC; display and date boundaries use Asia/Kolkata.
@@ -16,6 +18,10 @@ export type MentorMeetingCalendarItem = {
   timeZone: string;
   meetingUrl: string | null;
   linkedSprintTitle: string | null;
+  agenda?:string|null;
+  outcome?:string|null;
+  facilitation?:Partial<MentorMeetingFacilitation>;
+  updatedAt?:string;
   legacySprintLabel?:string|null;
   legacyStartTime?:string|null;
   legacyEndTime?:string|null;
