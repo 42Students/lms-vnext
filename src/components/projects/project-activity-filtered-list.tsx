@@ -79,7 +79,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const actors=[...new Map(items.filter(event=>Boolean(event.actorUserId)||Boolean(event.actorDisplayName))
    .map(event=>[event.actorUserId??event.actorDisplayName??"",
      {id:event.actorUserId??event.actorDisplayName??"",
-      label:event.actorDisplayName??"Team member"}])).values()]
+      label:event.actorDisplayName??"Team member"}] as const)).values()]
    .sort((a,b)=>a.label.localeCompare(b.label));
  const current=Date.parse(now);
  const filtered=items.filter(event=>{
