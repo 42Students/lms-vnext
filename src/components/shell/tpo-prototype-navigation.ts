@@ -30,7 +30,6 @@ export const TPO_PROTOTYPE_SECTIONS={
   {label:"Companies",href:"/tpo/companies?directory=1"},
   {label:"Emails",href:"/tpo/recruiters?view=campaigns"},
   {label:"Messages",href:"/tpo/messages?tab=recruiters"},
-  {label:"Follow-ups",href:"/tpo/follow-ups"},
  ],
  Team:[
   {label:"Chat",href:"/tpo/messages?tab=team"},
