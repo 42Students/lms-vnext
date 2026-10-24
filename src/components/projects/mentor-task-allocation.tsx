@@ -54,7 +54,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
  const permittedOpenSprintIds=new Set(sprints.filter(row=>
    ["ACTIVE","PLANNED"].includes(row.status??"")&&
    releases.some(release=>release.id===row.releaseId&&
-     ["PLANNED","IN_PROGRESS"].includes(release.status??""))
+     ["PLANNED","IN_PROGRESS"].includes(release.status??"")))
    .map(row=>row.id));
  const nextSprintPlan=nextSprintEligible&&nextSprint?planMentorNextSprintAssignments(
    tasks.map(task=>({...task,sequence:task.sequence??0})),
