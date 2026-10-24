@@ -68,6 +68,29 @@ describe.skipIf(!enabled)("TPO scoped application export PostgreSQL",()=>{
   expect(full.csv).toContain("Email");
   expect(full.csv).toContain("Phone");
   expect((await getTpoDriveApplicationsExport(tpo,{jobId,stage:"PENDING",search:"FORMULA"})).rows).toHaveLength(1);
+  // Registration number is distinct from roll and must work in the same
+  // tenant-scoped CSV source as the live applicant pipeline.
+  const registration="REG"+randomUUID().replaceAll("-","");
+  const previousProfile=await pool.query<{registration_number:string|null}>(
+    "SELECT registration_number FROM learner_profiles WHERE membership_id=$1",
+    [SEED_IDS.learnerCollegeAMembership],
+  );
+  await pool.query(
+    "INSERT INTO learner_profiles(membership_id,registration_number) VALUES($1,$2) ON CONFLICT(membership_id) DO UPDATE SET registration_number=EXCLUDED.registration_number",
+    [SEED_IDS.learnerCollegeAMembership,registration],
+  );
+  try {
+    const byRegistration=await getTpoDriveApplicationsExport(tpo,{jobId,search:registration});
+    expect(byRegistration.rows.map(row=>row.applicationId)).toEqual([ids.application]);
+    expect(byRegistration.csv).toContain("Roll number");
+  }finally{
+    if(previousProfile.rows.length)await pool.query(
+      "UPDATE learner_profiles SET registration_number=$1 WHERE membership_id=$2",
+      [previousProfile.rows[0]?.registration_number??null,SEED_IDS.learnerCollegeAMembership],
+    );
+    else await pool.query("DELETE FROM learner_profiles WHERE membership_id=$1",
+      [SEED_IDS.learnerCollegeAMembership]);
+  }
   expect((await getTpoDriveApplicationsExport(tpo,{jobId,stage:"REJECTED"})).rows).toHaveLength(0);
   expect((await getTpoDriveApplicationsExport(tpo,{jobId,search:"%"})).rows).toHaveLength(0);
   await pool.query("UPDATE placement_applications SET status='WITHDRAWN',withdrawn_at=now() WHERE id=$1",[ids.application]);
