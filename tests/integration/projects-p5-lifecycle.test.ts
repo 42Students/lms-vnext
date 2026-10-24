@@ -244,13 +244,13 @@ async function cleanup() {
   );
 }
 
-async function createProject() {
+async function createProject(plan=blueprint()) {
   const template = await createProjectTemplate(
     superAdmin,
     {
       slug: "p5-lifecycle-template",
       title: "P5 Lifecycle Template",
-      blueprint: blueprint(),
+      blueprint: plan,
     },
   );
   await publishProjectTemplate(
@@ -586,6 +586,40 @@ describe("Projects P5 lifecycle", () => {
     expect(taskRow.rows[0]?.sprint_id).toBe(first.id);
     expect(await listMentorSprintSignOffSnapshots(mentor,project.id,[first.id]))
       .toEqual([]);
+  });
+
+  it("can carry to the first sprint of the next release when sequence resets", async () => {
+    const plan=blueprint();
+    plan.releases.push({key:"release-2",title:"P5 Release Two",sequence:1});
+    plan.sprints[1]={
+      key:"sprint-2",releaseKey:"release-2",
+      title:"P5 Sprint Two",sequence:0,
+    };
+    const project=await createProject(plan);
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    const current=workspace.sprints.find(row=>
+      row.releaseId===workspace.releases.find(r=>r.sequence===0)?.id)!;
+    const next=workspace.sprints.find(row=>
+      row.releaseId===workspace.releases.find(r=>r.sequence===1)?.id)!;
+    expect(current.sequence).toBe(0);
+    expect(next.sequence).toBe(0);
+    await startProjectSprint(mentor,project.id,current.id);
+    const fresh=await getProjectInstanceWorkspace(mentor,project.id);
+    const open=fresh.tasks.find(row=>row.sprintId===current.id)!;
+    await expect(completeProjectSprint(
+      mentor,project.id,current.id,undefined,[{
+        taskId:open.id,destination:"NEXT",
+        expectedUpdatedAt:open.updatedAt.toISOString(),
+      }],next.id,
+    )).resolves.toMatchObject({status:"COMPLETED"});
+    const after=await pool.query<{
+      sprint_id:string|null;carried_from_sprint_id:string|null;
+    }>("select sprint_id,carried_from_sprint_id from project_tasks where id=$1",[open.id]);
+    expect(after.rows[0]).toEqual({
+      sprint_id:next.id,carried_from_sprint_id:current.id,
+    });
+    expect(await listMentorSprintSignOffSnapshots(mentor,project.id,[current.id]))
+      .toHaveLength(1);
   });
 
   it("persists an explicit NEXT sign-off disposition with its pre-carry snapshot", async () => {

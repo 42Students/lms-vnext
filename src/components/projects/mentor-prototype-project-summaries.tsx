@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {recentMentorWorkedSprintIds} from "@/modules/projects/mentor-recent-worked-sprints-model";
+import {orderMentorSprints,nextPlannedMentorSprint} from "@/modules/projects/mentor-sprint-order-model";
 import {projectMentorVelocity} from "@/modules/projects/mentor-sprint-velocity-model";
 import {deriveMentorPlanFacts} from "@/modules/projects/mentor-historical-plan-facts-model";
 import {estimateMentorFinishWindow} from "@/modules/projects/mentor-estimated-finish-model";
@@ -26,7 +27,7 @@ const statusTone=(status:string)=>status==="COMPLETED"||status==="SHIPPED"?"done
 export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Workspace;readOnly:boolean}){
   const liveTasks=workspace.tasks.filter(task=>!task.deletedAt);
   const backlog=liveTasks.filter(task=>task.sprintId===null);
-  const sprints=[...workspace.sprints].sort((a,b)=>a.sequence-b.sequence);
+  const sprints=orderMentorSprints(workspace.sprints,workspace.releases);
   const historical=new Map(workspace.mentorSprintSnapshots.map(snapshot=>
     [snapshot.sprintId,snapshot] as const));
   const planFacts=deriveMentorPlanFacts({
@@ -165,7 +166,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
                     unfinished={liveTasks.filter(task=>task.sprintId===sprint.id&&task.status!=="DONE")
                       .map(task=>({id:task.id,title:task.title,status:task.status,
                         updatedAt:task.updatedAt.toISOString()}))}
-                    nextSprint={sprints.find(next=>next.sequence>sprint.sequence&&next.status==="PLANNED")??null}
+                    nextSprint={nextPlannedMentorSprint(sprint,sprints,workspace.releases)}
                   />:
                   <SprintLifecycleActions projectId={workspace.project.id}
                     sprintId={sprint.id} status={sprint.status}

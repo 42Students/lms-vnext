@@ -14,6 +14,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { allowedMentorTaskTransition } from "./mentor-task-transition-model";
 import {buildMentorSprintSignOffSnapshot} from "./mentor-sprint-signoff-snapshot-model";
+import {isLaterMentorSprint} from "./mentor-sprint-order-model";
 import {
   projectInstances,
   projectReleases,
@@ -346,16 +347,29 @@ export async function completeProjectSprint(
           eq(projectSprints.projectId,scope.project.id),
           isNull(projectSprints.deletedAt),
         )).for("update").limit(1);
-        if(!nextSprint||nextSprint.status!=="PLANNED"||
-           nextSprint.sequence<=sprint.sequence)
+        if(!nextSprint||nextSprint.status!=="PLANNED")
           throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
-        const [targetRelease]=await tx.select({status:projectReleases.status})
+        const [targetRelease]=await tx.select({
+          status:projectReleases.status,sequence:projectReleases.sequence,
+        }).from(projectReleases).where(and(
+          eq(projectReleases.id,nextSprint.releaseId),
+          eq(projectReleases.projectId,scope.project.id),
+          isNull(projectReleases.deletedAt),
+        )).for("update").limit(1);
+        const [sourceRelease]=await tx.select({sequence:projectReleases.sequence})
           .from(projectReleases).where(and(
-            eq(projectReleases.id,nextSprint.releaseId),
+            eq(projectReleases.id,sprint.releaseId),
             eq(projectReleases.projectId,scope.project.id),
-          )).for("update").limit(1);
-        if(!targetRelease||targetRelease.status==="SHIPPED")
-          throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+            isNull(projectReleases.deletedAt),
+          )).limit(1);
+        // Release order is project-wide; sprint sequence starts again at zero
+        // inside the next release and cannot be compared in isolation.
+        if(!targetRelease||targetRelease.status==="SHIPPED"||!sourceRelease||
+           !isLaterMentorSprint({
+             releaseSequence:sourceRelease.sequence,sprintSequence:sprint.sequence,
+           },{
+             releaseSequence:targetRelease.sequence,sprintSequence:nextSprint.sequence,
+           }))throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
         const [maxSequence]=await tx.select({
           value:sql<number>`coalesce(max(${projectTasks.sequence}),0)::int`,
         }).from(projectTasks).where(eq(projectTasks.sprintId,nextSprint.id));
