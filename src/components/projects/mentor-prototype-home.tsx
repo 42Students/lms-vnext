@@ -148,10 +148,14 @@ export function MentorPrototypeHome({
               <small>{[
                 item.blocked?item.blocked+" blocked":null,
                 item.waiting?item.waiting+" awaiting review":null,
+                ...item.signals,
               ].filter(Boolean).join(" · ")}</small>
             </span>
           </Link>):<p className="prototype-mentor-small-empty">No student has blocked or review-pending tasks in the visible teams.</p>}
-          <p className="prototype-mentor-watch-note">Based on recorded blocked and review-pending tasks, not a personal risk prediction.</p>
+          <p className="prototype-mentor-watch-note">Based on assigned open-task changes,
+            blocked/review states and current workload concentration. Task changes may be
+            made by any authorized team member; these are not login, attendance or
+            personal-risk predictions.</p>
         </section>
       </aside>
     </div>
