@@ -1159,6 +1159,8 @@ export async function listMyProjectInstances(
     .select({
       memberId: projectMembers.id,
       memberRole: projectMembers.role,
+      memberRoleKind:projectMembers.roleKind,
+      memberCanMutate:projectMembers.canMutate,
       isPrimaryMentor: projectMembers.isPrimary,
       project: projectInstances,
     })

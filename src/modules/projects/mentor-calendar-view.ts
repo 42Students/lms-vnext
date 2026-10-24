@@ -10,6 +10,8 @@ export type MentorMeetingCalendarItem = {
   projectId: string;
   projectTitle: string;
   projectStatus: string;
+  /** Server-derived write capability; absent means read-only. */
+  canMutate?:boolean;
   title: string;
   status: "DRAFT" | "REQUESTED" | "SCHEDULED" | "RESCHEDULED" | "COMPLETED" | "CANCELLED";
   meetingType?: "GENERAL" | "PLANNING" | "STANDUP" | "REVIEW" | "RETRO";

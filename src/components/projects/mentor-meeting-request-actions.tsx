@@ -34,7 +34,8 @@ export function MentorMeetingRequestActions({meeting}:{
   const [note,setNote]=useState("");
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState<string|null>(null);
-  if(meeting.status!=="REQUESTED"||meeting.projectStatus!=="ACTIVE"||!meeting.updatedAt)
+  if(meeting.status!=="REQUESTED"||meeting.projectStatus!=="ACTIVE"||
+    meeting.canMutate!==true||!meeting.updatedAt)
     return null;
   const editor="/mentor/projects/"+encodeURIComponent(meeting.projectId)+
     "?tab=team#meeting-"+encodeURIComponent(meeting.id);

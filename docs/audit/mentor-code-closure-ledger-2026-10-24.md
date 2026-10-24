@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 87/132 `CODE_READY`, 38/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted**; code-ready is not test acceptance. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 90/132 `CODE_READY`, 35/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted**; code-ready is not test acceptance. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -42,7 +42,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 46-07 | CODE_READY | mentor-prototype-project-summaries.tsx; readiness-service.ts |
 | 46-08 | CODE_READY | mentor-prototype-project-summaries.tsx; activity-service.ts |
 | 46-09 | IMPLEMENTATION_OR_TEST_PENDING | mentor-overview-quick-actions.tsx now adds task, sprint, release and resource entry points with read-only gating and existing mutation APIs; authentic learner-view simulation and post-mutation authenticated checks still missing. |
-| 46-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 46-10 | CODE_READY | The Mentor project route gates module and scoped Mentor/observer access before loading; Overview, Brief, Sprint plan, Board and other editors are read-only for completed/archived/view-only roles. Cross-project calendar quick schedule additionally excludes read-only grants. PostgreSQL and browser state matrix across planned/completed/archived and observer Mentors remains unrun. |
 | 47-01 | CODE_READY | mentor-lane-board.tsx; mentor-board-sprint-groups-model.ts; mentor-sprint-order-model.ts (release-local sprint scope with counts, URL-persisted selection and independently paged full-history groups) |
 | 47-02 | CODE_READY | mentor-lane-board.tsx; mentor-board-lane-paging-model.ts |
 | 47-03 | CODE_READY | mentor-lane-board.tsx; mentor-backlog-service.ts |
@@ -77,7 +77,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 49-08 | EXTERNAL_INTEGRATION_MISSING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 49-09 | CODE_READY | meeting-service.ts has persisted role-grant rechecks, project status locks, future-window and overlap validation, meeting CAS, typed transition and read-only-guide gates; projects-p7b-meetings.test.ts includes cross-project booking races and adjacent slots. PostgreSQL/race/wrong-tenant execution is still necessary. |
 | 49-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
-| 49-11 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 49-11 | CODE_READY | Team and calendar now distinguish writable primary/co-mentor assignments from read-only observer/reviewer Mentor roles using persisted roleKind/canMutate. Roster supports empty/multiple Mentor rows; imported facilitation and historic attendee identity remain optional, not online status. mentor-calendar-mutation-access-model.test.ts covers permission and terminal status; DB/browser imported/no-invitee/multi-Mentor cases still need execution. |
 | 50-01 | CODE_READY | mentor-prototype-performance-table.tsx now offers release range and individually picked sprints across releases; mentor-performance-range-model.ts validates the authorized sprint selection (unit tests authored). Historical sign-off snapshot requirement remains; DB/browser verification pending. |
 | 50-02 | CODE_READY | mentor-sprint-signoff-snapshot-model.ts; mentor-prototype-performance-table.tsx |
 | 50-03 | CODE_READY | mentor-point-stack-model.ts; mentor-prototype-performance-table.tsx; mentor-sprint-signoff-snapshot-model.ts |
@@ -126,7 +126,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 54-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 54-09 | CODE_READY | mentor-calendar-ics-model.ts; mentor-meetings-calendar.tsx |
 | 54-10 | IMPLEMENTATION_OR_TEST_PENDING | meeting-service.ts serializes scheduling by project lock and organizer advisory lock, rechecks persisted Mentor membership/status, prevents interval overlaps and validates IST windows, CAS tokens and future times. projects-p7b-meetings.test.ts now adds competing same-Mentor bookings across two projects and an adjacent-boundary success case; database execution, revoked-in-flight rights and foreign-viewer confirmation remain. |
-| 54-11 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 54-11 | CODE_READY | Cross-project calendar request, cancellation, reschedule and completed-notes edit controls now depend on the viewer's persisted write grant instead of merely ACTIVE project status; read-only Mentors can still inspect past records and safe join links. Old attendee names, drafts, cancellations and missing agendas retain read views. Full authenticated no-invitee/archived/secondary Mentor acceptance is still pending. |
 | 55-01 | CODE_READY | mentor-unified-notification-feed.tsx; mentor-notification-source-receipts-service.ts |
 | 55-02 | CODE_READY | mentor-unified-notification-read-all-service.ts; mentor-unified-read-all.tsx |
 | 55-03 | CODE_READY | mentor-unified-notification-feed.tsx; mentor-unified-notification-model.ts |

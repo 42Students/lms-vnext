@@ -13,6 +13,7 @@ import {MentorCalendarQuickSchedule} from "@/components/projects/mentor-calendar
 import {listMyProjectInstances} from "@/modules/projects/member-service";
 import {MentorCalendarLoadFailure} from "@/components/projects/mentor-calendar-load-failure";
 import {listMyMentorCalendarMeetings,listMyMentorSchedulableSprints} from "@/modules/projects/mentor-calendar-service";
+import {mentorCalendarCanMutateMeeting} from "@/modules/projects/mentor-calendar-mutation-access-model";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
@@ -48,8 +49,11 @@ export default async function MentorCalendarPage({searchParams}:{
   </div>;
   const meetings=calendarRead.items;
   const assigned=(await listMyProjectInstances(context))
-    .filter(row=>row.memberRole==="MENTOR"&&row.project.status==="ACTIVE"&&
-      row.project.collegeId===context.membership?.collegeId&&!row.project.deletedAt);
+    .filter(row=>row.project.collegeId===context.membership?.collegeId&&
+      !row.project.deletedAt&&mentorCalendarCanMutateMeeting({
+        memberRole:row.memberRole,roleKind:row.memberRoleKind,
+        canMutate:row.memberCanMutate,projectStatus:row.project.status,
+      }));
   const schedulable=await listMyMentorSchedulableSprints(context,assigned);
   const choices=assigned.map(row=>({
     id:row.project.id,title:row.project.title,

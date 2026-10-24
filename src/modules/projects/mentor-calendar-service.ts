@@ -10,6 +10,7 @@ import { ProjectsServiceError } from "./errors";
 import { can } from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {listMyProjectInstances} from "./member-service";
+import {mentorCalendarCanMutateMeeting} from "./mentor-calendar-mutation-access-model";
 import {safeMentorCalendarMeetingType,type MentorMeetingCalendarItem}
   from "./mentor-calendar-view";
 
@@ -68,6 +69,9 @@ export async function listMyMentorCalendarMeetings(
     projectId: projectInstances.id,
     projectTitle: projectInstances.title,
     projectStatus: projectInstances.status,
+    memberRole:projectMembers.role,
+    memberRoleKind:projectMembers.roleKind,
+    memberCanMutate:projectMembers.canMutate,
     title: projectMeetings.title,
     status: projectMeetings.status,
     meetingType: projectMeetings.meetingType,
@@ -135,6 +139,10 @@ export async function listMyMentorCalendarMeetings(
     projectId: row.projectId,
     projectTitle: row.projectTitle,
     projectStatus: row.projectStatus,
+    canMutate:mentorCalendarCanMutateMeeting({
+      memberRole:row.memberRole,roleKind:row.memberRoleKind,
+      canMutate:row.memberCanMutate,projectStatus:row.projectStatus,
+    }),
     title: row.title,
     status: row.status as MentorMeetingCalendarItem["status"],
     ...(safeMentorCalendarMeetingType(row.meetingType)?{
@@ -175,8 +183,11 @@ export async function listMyMentorSchedulableSprints(
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const roster=(verifiedProjects??await listMyProjectInstances(context))
-    .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId&&
-      row.project.status==="ACTIVE"&&!row.project.deletedAt);
+    .filter(row=>row.project.collegeId===membership.collegeId&&
+      !row.project.deletedAt&&mentorCalendarCanMutateMeeting({
+        memberRole:row.memberRole,roleKind:row.memberRoleKind,
+        canMutate:row.memberCanMutate,projectStatus:row.project.status,
+      }));
   const ids=roster.map(row=>row.project.id);
   if(!ids.length)return [];
   return getDb().select({

@@ -66,6 +66,7 @@ function MeetingRow({
   meeting, now,
 }: {meeting: MentorMeetingCalendarItem; now: Date;}) {
   const status = mentorMeetingDisplayStatus(meeting, now);
+  const editable=meeting.canMutate===true&&meeting.projectStatus==="ACTIVE";
   // A recorded safe join link must be reachable before a scheduled meeting
   // starts, not only during its duration. Hide actions for already-ended slots.
   const href = Date.parse(meeting.endsAt)>now.getTime()
@@ -102,7 +103,7 @@ function MeetingRow({
           </Link></p>:null}
       </div>:null}
       <MentorMeetingRequestActions meeting={meeting}/>
-      {meeting.projectStatus==="ACTIVE"&&meeting.updatedAt&&
+      {editable&&meeting.updatedAt&&
         (meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")?
         <div className="flex flex-wrap items-center gap-2">
           <MentorMeetingReschedule projectId={meeting.projectId}
@@ -162,13 +163,16 @@ function MeetingRow({
       <MentorMeetingOutcomeQuickEdit key={meeting.id}
         projectId={meeting.projectId} meetingId={meeting.id}
         recorded={meeting.outcome??null} updatedAt={meeting.updatedAt??null}
-        editable={meeting.projectStatus==="ACTIVE"&&meeting.status==="COMPLETED"}/>
+        editable={editable&&meeting.status==="COMPLETED"}/>
       <MentorMeetingFacilitationQuickEdit key={meeting.id+":facilitation"}
         projectId={meeting.projectId} meetingId={meeting.id}
         recorded={meeting.facilitation} updatedAt={meeting.updatedAt??null}
-        editable={meeting.projectStatus==="ACTIVE"&&meeting.status==="COMPLETED"}/>
-      {meeting.projectStatus === "ARCHIVED" ? (
-        <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Archived project · Read-only</p>
+        editable={editable&&meeting.status==="COMPLETED"}/>
+      {!editable ? (
+        <p className="mt-2 text-xs text-muted-foreground leading-[20px]">
+          {meeting.projectStatus==="ARCHIVED"?"Archived project · Read-only":
+            "This Mentor assignment is read-only for meeting changes."}
+        </p>
       ) : null}
       <div className={styles.actions}>
         {(meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")&&
@@ -181,7 +185,7 @@ function MeetingRow({
         <Link className={styles.action}
           href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) +
             "?tab=team#meeting-"+encodeURIComponent(meeting.id)}>
-          {meeting.projectStatus==="ACTIVE"?
+          {editable?
             "Edit attendance, notes & action items":"View meeting record"}
         </Link>
         {safeProjectExternalHref(href) ? <a className={styles.action} href={safeProjectExternalHref(href)!}
