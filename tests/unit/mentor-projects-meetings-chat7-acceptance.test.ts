@@ -12,7 +12,7 @@ expect(value.toLowerCase()).toContain("blocked");
 expect(value.toLowerCase()).toContain("blockedhref");
 });
 it("MEN-projects-meetings-12 preserves the reviewed mentor surface",()=>{const value=src("src/components/projects/mentor-project-tabs.tsx");
-expect(value.toLowerCase()).toContain("releases and sprints");
+expect(value.toLowerCase()).toContain("sprints & releases");
 expect(value.toLowerCase()).toContain("board");
 expect(value.toLowerCase()).toContain("task allocation");
 });
