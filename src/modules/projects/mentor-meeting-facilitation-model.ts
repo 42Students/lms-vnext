@@ -44,3 +44,13 @@ export const emptyMentorMeetingFacilitation:MentorMeetingFacilitation={
  notes:"",actionItems:"",wentWell:"",retroDidntGoWell:"",improve:"",nextTime:"",
  followUpAt:null,followUpStatus:"NOT_PLANNED",followUpNotes:"",
 };
+
+/** Calendar detail can update post-meeting notes without rescheduling,
+ * overwriting meeting status, re-inviting attendees, or changing the outcome.
+ * A stale meeting timestamp must be rejected by the service.
+ */
+export const mentorMeetingFacilitationWriteSchema=z.strictObject({
+ facilitation:mentorMeetingFacilitationSchema,
+ expectedUpdatedAt:z.iso.datetime({offset:true}),
+ confirmed:z.literal(true),
+});
