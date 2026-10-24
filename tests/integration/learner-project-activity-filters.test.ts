@@ -170,3 +170,63 @@ describe("Project Activity cursor pages on equal microsecond timestamps", () => 
     ] as RequestContext[]) await expect(getProjectActivityPage(actor, ids.project, nextFilters)).rejects.toBeDefined();
   });
 });
+
+describe("Mentor sprint-scoped persisted activity pagination",()=>{
+  it("paginates matching sprint and actor across 100+ events without leaking unrelated records",async()=>{
+    // These events share one persisted sprint ID and the same microsecond.
+    // The filter must be applied in PostgreSQL before the row cap.
+    const otherSprint=randomUUID();
+    const subject=randomUUID();
+    const insert=await pool.query(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,metadata,occurred_at)
+      SELECT gen_random_uuid(),$1::uuid,$2::uuid,$3::uuid,'PROJECTS',
+        'projects.task.status_changed','project_task',$4::text,
+        'Sprint-scoped cursor fixture',
+        jsonb_build_object('projectId',$5::text,'sprintId',$6::text),
+        '2026-10-20T10:00:00.123456Z'::timestamptz
+      FROM generate_series(1,101)`,
+      [SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,
+       subject,ids.project,ids.sprint]);
+    expect(insert.rowCount).toBe(101);
+    for(const [college,actor,sprint] of [
+      [ids.college,ids.mentor,ids.sprint],
+      [ids.college,SEED_IDS.superAdminUser,otherSprint],
+      [SEED_IDS.collegeB,SEED_IDS.superAdminUser,ids.sprint],
+    ]){
+      await pool.query(`INSERT INTO activity_events
+        (id,organization_id,college_id,actor_user_id,module,event_type,
+         subject_type,subject_id,summary,metadata,occurred_at)
+        VALUES($1,$2,$3,$4,'PROJECTS','projects.task.status_changed',
+         'project_task',$5,'Other sprint actor or tenant',
+         jsonb_build_object('projectId',$6::text,'sprintId',$7::text),
+         '2026-10-20T10:00:00.123456Z')`,
+        [randomUUID(),SEED_IDS.organization,college,actor,subject,ids.project,sprint]);
+    }
+    const match={sprintId:ids.sprint,actorUserId:SEED_IDS.superAdminUser,size:100};
+    const first=await getProjectActivityPage(context,ids.project,match);
+    expect(first.events).toHaveLength(100);
+    expect(first.hasMore).toBe(true);
+    const cursor=first.events.at(-1)!;
+    const second=await getProjectActivityPage(context,ids.project,{
+      ...match,beforeTime:cursor.cursorOccurredAt,beforeId:cursor.id,
+    });
+    expect(second.events).toHaveLength(1);
+    expect(second.hasMore).toBe(false);
+    const all=[...first.events,...second.events];
+    expect(new Set(all.map(event=>event.id)).size).toBe(101);
+    expect(all.every(event=>event.sprintId===ids.sprint&&
+      event.actorUserId===SEED_IDS.superAdminUser)).toBe(true);
+    const otherActor=await getProjectActivityPage(context,ids.project,{
+      sprintId:ids.sprint,actorUserId:ids.mentor,
+    });
+    expect(otherActor.events).toHaveLength(1);
+    expect((await getProjectActivityPage(context,ids.project,{
+      sprintId:otherSprint,actorUserId:ids.mentor,
+    })).events).toHaveLength(0);
+    expect((await getProjectActivityPage(context,ids.project,{
+      sprintId:randomUUID(),
+    })).events).toHaveLength(0);
+    await expect(getProjectActivityPage(context,randomUUID(),match)).rejects.toBeDefined();
+  });
+});
