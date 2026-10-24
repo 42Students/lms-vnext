@@ -8,7 +8,7 @@ import {TPO_PROTOTYPE_SECTIONS,tpoPrototypeSectionForPath} from "@/components/sh
 export function TpoPrototypeSectionTabs(){
  const pathname=usePathname();
  const search=useSearchParams();
- const section=tpoPrototypeSectionForPath(pathname);
+ const section=tpoPrototypeSectionForPath(pathname,search.get("tab"));
  const links=section==="Students"?TPO_PROTOTYPE_SECTIONS.Students:
   section==="Drives"?TPO_PROTOTYPE_SECTIONS.Drives:
   section==="Companies"?TPO_PROTOTYPE_SECTIONS.Companies:
