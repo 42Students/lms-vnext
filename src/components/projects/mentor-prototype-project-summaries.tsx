@@ -704,9 +704,18 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
         <p>Type: {nextMeeting.meetingType.replaceAll("_"," ")}
           {" · Status: "}{nextMeeting.status.replaceAll("_"," ")}
           {nextMeeting.linkedSprintId?" · Linked to a recorded sprint":""}</p>
-        <p>Calendar invitation delivery/RSVP status: not recorded.
-          The saved meeting and its join link do not confirm that anyone
-          received or accepted an invitation.</p>
+        {workspace.mentorMeetingNoticeFacts.find(row=>row.meetingId===nextMeeting.id)
+          ?<p>Latest in-app meeting notice: {
+            workspace.mentorMeetingNoticeFacts.find(row=>row.meetingId===nextMeeting.id)!
+              .notifiedRecipients
+          } recipient inbox record(s), saved {
+            new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
+              timeZone:"Asia/Kolkata"}).format(new Date(
+                workspace.mentorMeetingNoticeFacts.find(row=>row.meetingId===nextMeeting.id)!
+                  .announcedAt))} IST.</p>
+          :<p>No in-app meeting notice event recorded.</p>}
+        <p>External calendar invitation delivery/RSVP status: not recorded.
+          In-app notices and meeting links do not prove anyone accepted an invitation.</p>
         {(nextMeeting.facilitation?.attendees?.length??0)>0?<p>
           Recorded participants: {nextMeeting.facilitation.attendees.map(
             entry=>entry.name).join(", ")}.
