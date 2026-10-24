@@ -5,7 +5,7 @@ import {listMyProjectInstances} from "@/modules/projects/member-service";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type {NotificationListItem} from "@/components/activity/notification-list";
-import { NotificationToolbar } from "@/components/activity/notification-toolbar";
+
 import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
@@ -23,6 +23,7 @@ import {mentorAttentionReceiptKey,mentorAnnouncementReceiptKey}
 import {MentorSourceNotificationRead} from
   "@/components/projects/mentor-source-notification-read";
 import {MentorSourceReadAll} from "@/components/projects/mentor-source-read-all";
+import {MentorUnifiedReadAll} from "@/components/projects/mentor-unified-read-all";
 import {MentorUnifiedNotificationFeed} from
   "@/components/projects/mentor-unified-notification-feed";
 import {sortMentorUnifiedNotifications,type MentorUnifiedNotification}
@@ -203,7 +204,11 @@ async function MentorNotificationsContent({
         aria-current={selectedPill===value?"page":undefined}
         className={selectedPill===value?"is-active":undefined}>{label}</Link>)}
     </nav>
-    {ownSourceReceipts&&(projectUnread+announcementUnread)>0?
+    {(selectedPill==="all"||selectedPill==="unread")&&ownSourceReceipts?
+      <MentorUnifiedReadAll loadedUnread={unifiedUnreadCount}
+        moreNoticesPossible={announcementsEnabled&&announcements.length>=100}/>:null}
+    {selectedPill!=="all"&&selectedPill!=="unread"&&
+      ownSourceReceipts&&(projectUnread+announcementUnread)>0?
       <MentorSourceReadAll unread={projectUnread+announcementUnread}/>:null}
     {selectedPill==="unread"?<p className="prototype-mentor-unread-note">
       Unread shows the loaded personal, project-attention and college-announcement sources with a saved recipient read state. Older paginated sources may have additional items.
@@ -237,15 +242,6 @@ async function MentorNotificationsContent({
       <Link href={nextHref} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-link underline">
         Older personal notifications →
       </Link>:null}
-    {(selectedPill==="all"||selectedPill==="unread")&&inbox&&inbox.unreadCount>0?
-      <section aria-label="Personal inbox bulk read" className="space-y-2">
-        <h2 className="font-semibold">Personal messages · {inbox.unreadCount} unread</h2>
-        <NotificationToolbar view={inbox.query.view}
-          unreadCount={inbox.unreadCount}
-          display="mark-all" baseHref={MENTOR_INBOX}
-          markAllEndpoint="/api/mentor/notifications/read-all"
-          confirmMarkAll confirmMessage="Mark all personal Mentor inbox messages read? Project alerts and college notices have separate source read controls."/>
-      </section>:null}
     <div className="prototype-mentor-notifications-columns">
       <div className="prototype-mentor-notifications-feed">
     {selectedPill==="ann"&&!allSourcesEmpty&&!allRelevantFailed?<AnnouncementFeed enabled={announcementsEnabled}
