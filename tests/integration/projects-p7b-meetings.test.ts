@@ -484,6 +484,51 @@ describe("Projects P7B meetings", () => {
     expect(meeting).toMatchObject({id:request.id,status:"CANCELLED"});
   });
 
+  it("serializes competing Mentor bookings across two projects and permits adjacent slots",async()=>{
+    const projectA=await createProject(),projectB=await createProject();
+    const [a,b]=await Promise.all([
+      getProjectInstanceWorkspace(mentor,projectA.id),
+      getProjectInstanceWorkspace(mentor,projectB.id),
+    ]);
+    const proposed={
+      title:"Cross-project mentor office hour",
+      startsAt:"2099-11-18T10:00:00+05:30",
+      endsAt:"2099-11-18T10:30:00+05:30",
+      timeZone:"Asia/Kolkata" as const,
+      meetingUrl:"https://meet.example.com/cross-project",
+    };
+    const results=await Promise.allSettled([
+      scheduleProjectMeeting(mentor,projectA.id,null,{
+        ...proposed,expectedProjectUpdatedAt:a.project.updatedAt.toISOString(),
+      }),
+      scheduleProjectMeeting(mentor,projectB.id,null,{
+        ...proposed,expectedProjectUpdatedAt:b.project.updatedAt.toISOString(),
+      }),
+    ]);
+    const accepted=results.filter(result=>result.status==="fulfilled");
+    const refused=results.filter(result=>result.status==="rejected");
+    expect(accepted).toHaveLength(1);
+    expect(refused).toHaveLength(1);
+    expect(refused[0]).toMatchObject({
+      reason:{code:"PROJECT_MEETING_SCHEDULE_CONFLICT"},
+    });
+    const meetings=await pool.query<{project_id:string}>(`
+      select project_id from project_meetings where
+      scheduled_by_user_id=$1 and status in ('SCHEDULED','RESCHEDULED')
+        and starts_at='2099-11-18T10:00:00+05:30'::timestamptz
+    `,[mentor.user.id]);
+    expect(meetings.rows).toHaveLength(1);
+    const losing=results[0]?.status==="rejected"?projectA:projectB;
+    const fresh=await getProjectInstanceWorkspace(mentor,losing.id);
+    const adjacent=await scheduleProjectMeeting(mentor,losing.id,null,{
+      ...proposed,title:"Adjacent office hour",
+      startsAt:"2099-11-18T10:30:00+05:30",
+      endsAt:"2099-11-18T11:00:00+05:30",
+      expectedProjectUpdatedAt:fresh.project.updatedAt.toISOString(),
+    });
+    expect(adjacent).toMatchObject({status:"SCHEDULED"});
+  });
+
   it("denies disabled platform accounts in both project list and direct workspace reads",async()=>{
     const project=await createProject();
     const disabled: RequestContext = {
