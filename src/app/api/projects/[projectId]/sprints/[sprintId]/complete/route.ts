@@ -37,13 +37,22 @@ export async function POST(
       try{input=JSON.parse(raw) as unknown;}
       catch{return NextResponse.json({error:"INVALID_JSON"},{status:400});}
     }
-    const parsed=z.object({note:z.string().trim().max(1000).optional()}).strict().safeParse(input);
+    const parsed=z.object({
+      note:z.string().trim().max(1000).optional(),
+      nextSprintId:z.string().uuid().optional(),
+      decisions:z.array(z.strictObject({
+        taskId:z.string().uuid(),
+        destination:z.enum(["NEXT","BACKLOG","DROP"]),
+      })).max(250).optional(),
+    }).strict().safeParse(input);
     if(!parsed.success)return NextResponse.json({error:"INVALID_SIGNOFF_NOTE"},{status:400});
     const sprint = await completeProjectSprint(
       context,
       projectId,
       sprintId,
       parsed.data.note,
+      parsed.data.decisions,
+      parsed.data.nextSprintId,
     );
 
     return NextResponse.json({ sprint });
