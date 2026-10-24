@@ -12,11 +12,14 @@ import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter,useSearchParams} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {Button} from "@/components/ui/button";
+import {planMentorNextSprintAssignments} from "@/modules/projects/mentor-next-sprint-assignment-model";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
- updatedAt:Date;status:string;priority:string;estimatePoints:number|null};
+ updatedAt:Date;status:string;priority:string;estimatePoints:number|null;
+ sequence?:number;deletedAt?:Date|null};
 type Member={membershipId:string;displayName:string|null;role:string};
-type Sprint={id:string;title:string;releaseId:string};
-type Release={id:string;title:string};
+type Sprint={id:string;title:string;releaseId:string;
+ sequence?:number;status?:string;updatedAt?:Date};
+type Release={id:string;title:string;status?:string};
 export function MentorTaskAllocation({projectId,initialTasks,members,sprints,releases,readOnly=false}:{
  projectId:string;initialTasks:Task[];members:Member[];sprints:Sprint[];releases:Release[];readOnly?:boolean;
 }){
@@ -41,6 +44,18 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     (query.toString()?"?"+query.toString():""));
  }
  const learners=members.filter(member=>member.role==="LEARNER");
+ const activeSprint=sprints.find(row=>row.status==="ACTIVE");
+ const nextSprint=[...sprints].filter(row=>row.status==="PLANNED"&&
+   typeof row.sequence==="number"&&
+   (!activeSprint||row.sequence>(activeSprint.sequence??-1)))
+   .sort((a,b)=>(a.sequence??0)-(b.sequence??0)||a.id.localeCompare(b.id))[0];
+ const nextSprintRelease=nextSprint?
+   releases.find(row=>row.id===nextSprint.releaseId):null;
+ const nextSprintEligible=nextSprint&&nextSprint.updatedAt&&
+   nextSprintRelease?.status!=="SHIPPED";
+ const nextSprintPlan=nextSprintEligible?planMentorNextSprintAssignments(
+   tasks.map(task=>({...task,sequence:task.sequence??0})),
+   learners.map(row=>row.membershipId),nextSprint.id):null;
  const filtered=useMemo(()=>tasks.filter(task=>{
   const linked=sprints.find(item=>item.id===task.sprintId);
   return (!sprint||task.sprintId===sprint)&&(!release||linked?.releaseId===release)&&
@@ -102,6 +117,48 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
        finally{setBusy(false);}
      }}>Auto-assign {projectUnassigned} eligible project task(s)</Button>:null}
+  {nextSprint&&nextSprintPlan?<section
+    aria-label="Next sprint allocation preview" className="space-y-2 border-y border-border py-3">
+    <h3 className="font-semibold">Next sprint · Sprint {nextSprint.sequence}</h3>
+    <p className="text-sm">
+      {nextSprintPlan.assignments.length} unassigned eligible
+      {" "}{nextSprintPlan.assignments.length===1?"task":"tasks"} ·
+      {" "}{nextSprintPlan.assignments.reduce((sum,row)=>sum+row.estimatedPoints,0)}
+      {" "}estimated points to distribute.
+      Suggested owners have the fewest current open estimated project points.
+      Ties use task count and stable learner ID. This is a preview, not a write.
+    </p>
+    <div className="flex flex-wrap gap-2" aria-label="Next sprint proposed student point loads">
+      {nextSprintPlan.loads.slice(0,12).map(row=><span key={row.membershipId}
+        className="rounded border border-border px-2 py-1 text-xs">
+        {learners.find(member=>member.membershipId===row.membershipId)?.displayName??"Student"}:
+        {" "}{row.beforePoints} → {row.afterPoints} open pts
+      </span>)}
+    </div>
+    {!readOnly?<Button type="button" size="sm" disabled={busy||
+       !nextSprintPlan.assignments.length}
+      onClick={async()=>{
+        if(!nextSprint.updatedAt||!await askConfirm(
+          "Allocate only the "+nextSprintPlan.assignments.length+
+          " eligible unassigned tasks in Sprint "+nextSprint.sequence+
+          "? Other sprints and the backlog will not be changed."
+        ))return;
+        setBusy(true);setError("");setNotice("");
+        try{
+          const response=await projectMutation(
+            "/api/projects/"+encodeURIComponent(projectId)+
+              "/tasks/auto-assign-next","POST",{
+              sprintId:nextSprint.id,
+              expectedSprintUpdatedAt:new Date(nextSprint.updatedAt).toISOString(),
+          }) as {assigned:number;unassignedRemaining:number};
+          setNotice(response.assigned+" Sprint "+nextSprint.sequence+
+            " tasks assigned. Recorded learner notifications accompany each assignment.");
+          router.refresh();
+        }catch(caught){setError(caught instanceof Error?caught.message:
+          "Next sprint allocation could not be saved.");}
+        finally{setBusy(false);}
+      }}>Auto-assign next sprint ({nextSprintPlan.assignments.length})</Button>:null}
+   </section>:null}
   <Button variant="secondary" type="button" aria-expanded={filtersOpen}
     aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}
