@@ -95,6 +95,7 @@ export default async function MentorCalendarPage({searchParams}:{
           <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
           <option value="SOON_SCHEDULED">Scheduled within 48 hours</option>
           <option value="MISSED_SCHEDULED">Past-day scheduled meetings without completion</option>
+          <option value="NOTES_MISSING">Completed meetings with no recorded notes or outcome</option>
         </Select>
       </label>
       <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">IST dates
