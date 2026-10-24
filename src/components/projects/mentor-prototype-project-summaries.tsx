@@ -736,8 +736,15 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
                 workspace.mentorMeetingNoticeFacts.find(row=>row.meetingId===nextMeeting.id)!
                   .announcedAt))} IST.</p>
           :<p>No in-app meeting notice event recorded.</p>}
-        <p>External calendar invitation delivery/RSVP status: not recorded.
-          In-app notices and meeting links do not prove anyone accepted an invitation.</p>
+        {workspace.projectMeetingRsvpFacts.find(row=>row.meetingId===nextMeeting.id)
+          ?<p>Recorded in-app attendee responses: {(()=>{
+            const fact=workspace.projectMeetingRsvpFacts.find(row=>row.meetingId===nextMeeting.id)!;
+            return fact.accepted+" accepted · "+fact.tentative+" tentative · "+
+              fact.declined+" declined · "+fact.notRecorded+" not recorded of "+
+              fact.activeInvitees+" current project participants.";
+          })()}</p>:<p>No in-app attendee responses recorded.</p>}
+        <p>External Google Calendar invitation delivery and provider RSVP status:
+          not recorded. In-app responses and links do not prove provider delivery.</p>
         {(nextMeeting.facilitation?.attendees?.length??0)>0?<p>
           Recorded participants: {nextMeeting.facilitation.attendees.map(
             entry=>entry.name).join(", ")}.
