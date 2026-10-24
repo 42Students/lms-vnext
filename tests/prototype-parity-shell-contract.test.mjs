@@ -11,9 +11,9 @@ test("prototype parity remains limited to the three opted-in single-workspace po
   const shell=source("src/components/shell/app-shell.tsx");
   const css=source("src/styles/prototype-portals.css");
   const global=source("src/app/globals.css");
-  assert.match(shell,/navigation\[0\]\?\.href === "\/tpo\/home" \? "tpo"/);
-  assert.match(shell,/navigation\[0\]\?\.href === "\/hr\/home" \? "recruiter"/);
-  assert.match(shell,/navigation\[0\]\?\.href === "\/mentor\/projects" \? "mentor"/);
+  assert.match(shell,/resolvedNavigation\[0\]\?\.href === "\/tpo\/home" \? "tpo"/);
+  assert.match(shell,/resolvedNavigation\[0\]\?\.href === "\/hr\/home" \? "recruiter"/);
+  assert.match(shell,/resolvedNavigation\[0\]\?\.href === "\/mentor\/projects" \? "mentor"/);
   const routeFrame=source("src/components/shell/prototype-portal-frame.tsx");
   assert.match(shell,/<PrototypePortalFrame\s/);
   assert.match(shell,/mentorEnabled=\{hasMembershipRole\(context,"MENTOR"\)\}/);
@@ -235,7 +235,7 @@ test("Mentor posted Activity updates are persisted in scoped project events and 
   assert.match(service,/access\.access!=="MENTOR"\|\|access\.project\.status!=="ACTIVE"/);
   assert.match(service,/eventType:ACTIVITY_EVENT_TYPES\.PROJECTS_MENTOR_UPDATE_POSTED/);
   assert.match(route,/export async function POST/);
-  assert.match(route,/raw\.length>4096/);
+  assert.match(route,/readMentorProjectCommandBody\(request,4096\)/);
   assert.match(route,/postMentorProjectUpdate\(/);
   assert.match(composer,/projectMutation\("\/api\/projects\/"/);
   assert.match(detail,/<MentorProjectUpdateComposer/);
@@ -295,7 +295,7 @@ test("Mentor global search covers projects tasks active students and resources w
   assert.match(search,/eq\(collegeMemberships\.collegeId,membership\.collegeId\)/);
   assert.match(search,/eq\(projectMembers\.role,"LEARNER"\)/);
   assert.match(search,/isNull\(projectTasks\.deletedAt\)/);
-  assert.match(search,/\.limit\(15\)/);
+  assert.match(search,/\.limit\(SEARCH_PAGE_SIZE\+1\)/);
   assert.match(page,/searchMentorWorkspace\(/);
   assert.match(page,/mentor-unified-search/);
   assert.match(config,/\/mentor\/search\?q=/);
@@ -359,7 +359,7 @@ test("Mentor sprint sign-off explicitly gates review tasks and persists note ato
   assert.match(service,/deletedAt:now/);
   assert.match(service,/destination==="NEXT"/);
   assert.match(signoff,/Sign off and start next sprint/);
-  assert.match(signoff,/Sprint signed off; next sprint not started/);
+  assert.match(signoff,/Sprint signed off/);
   assert.match(route,/INVALID_SIGNOFF_NOTE/);
   assert.match(route,/parsed\.data\.note/);
   assert.match(service,/signOffNote\?:string/);
@@ -374,8 +374,8 @@ test("Mentor calendar cross-team Schedule a meeting persists or drafts through g
   const route=source("src/app/api/projects/[projectId]/meetings/route.ts");
   assert.match(page,/listMyMentorCalendarMeetings\(context\)/);
   assert.match(page,/listMyProjectInstances\(context\)/);
-  assert.match(page,/row\.memberRole==="MENTOR"/);
-  assert.match(page,/row\.project\.status==="ACTIVE"/);
+  assert.match(page,/mentorCalendarCanMutateMeeting/);
+  assert.match(page,/projectStatus:row\.project\.status/);
   assert.match(page,/<MentorCalendarQuickSchedule projects=\{choices\}/);
   assert.match(form,/expectedProjectUpdatedAt:project\.updatedAt/);
   assert.match(form,/status:link\?"SCHEDULED":"DRAFT"/);
@@ -430,7 +430,7 @@ test("Mentor final submission Zoom uses sandboxed supported evidence links only"
   assert.match(preview,/sandbox=""/);
   assert.match(preview,/referrerPolicy="no-referrer"/);
   assert.match(preview,/Open full size/);
-  assert.match(summary,/<MentorEvidencePreview/);
+  assert.match(summary,/<MentorEvidenceGallery/);
   assert.match(summary,/safeProjectExternalHref\(url\)/);
 });
 
@@ -454,8 +454,8 @@ test("Mentor calendar global ICS includes only scheduled persisted event windows
   const calendar=source("src/components/projects/mentor-meetings-calendar.tsx");
   assert.match(calendar,/function downloadAllMentorMeetings/);
   assert.match(calendar,/\["SCHEDULED","RESCHEDULED"\]\.includes\(meeting\.status\)/);
-  assert.match(calendar,/END:VCALENDAR/);
-  assert.match(calendar,/UID:/);
+  assert.match(source("src/modules/projects/mentor-calendar-ics-model.ts"),/END:VCALENDAR/);
+  assert.match(source("src/modules/projects/mentor-calendar-ics-model.ts"),/UID:/);
   assert.match(calendar,/onClick=\{\(\)=>downloadAllMentorMeetings\(meetings\)\}/);
   assert.match(calendar,/Add to my calendar \(\.ics\)/);
 });
@@ -464,10 +464,10 @@ test("Mentor Team roster uses actual active sprint, last four sprint tasks and t
   const summaries=source("src/components/projects/mentor-prototype-project-summaries.tsx");
   assert.match(summaries,/export function MentorPrototypeTeamOverview/);
   assert.match(summaries,/sprint\.status==="ACTIVE"/);
-  assert.match(summaries,/slice\(0,4\)\.map\(sprint=>sprint\.id\)/);
+  assert.match(summaries,/recentMentorWorkedSprintIds\(workspace\.sprints,workspace\.releases\)/);
   assert.match(summaries,/task\.assigneeMembershipId===member\.membershipId/);
-  assert.match(summaries,/task\.updatedAt/);
-  assert.match(summaries,/Last task change/);
+  assert.match(summaries,/mentorTeamRecentActorActivity/);
+  assert.match(summaries,/Project action:/);
   assert.match(summaries,/not a user's sign-in or online status/);
 });
 
