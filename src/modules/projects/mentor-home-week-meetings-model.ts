@@ -29,3 +29,13 @@ export function selectMentorHomeWeekMeetings<T extends MentorHomeWeekMeeting>(
   }).sort((a,b)=>Date.parse(a.startsAt)-Date.parse(b.startsAt)||
     a.id.localeCompare(b.id));
 }
+
+/** Distinguish unaccepted requests from confirmed calendar events in the
+ * compact portfolio rail. A REQUESTED slot is never labelled confirmed. */
+export function mentorHomeMeetingDisplayTitle(meeting:Pick<
+  MentorHomeWeekMeeting,"title"|"projectTitle"|"status"
+>):string{
+  const prefix=meeting.status==="REQUESTED"?"Request · ":
+    meeting.status==="RESCHEDULED"?"Rescheduled · ":"";
+  return prefix+meeting.title+" · "+meeting.projectTitle;
+}
