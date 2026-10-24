@@ -192,7 +192,7 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
   const students=workspace.members.filter(member=>member.role==="LEARNER");
   const mentors=workspace.members.filter(member=>member.role==="MENTOR");
   const active=workspace.sprints.find(sprint=>sprint.status==="ACTIVE");
-  const recentIds=new Set(recentMentorWorkedSprintIds(workspace.sprints));
+  const recentIds=new Set(recentMentorWorkedSprintIds(workspace.sprints,workspace.releases));
   const completedRecent=workspace.sprints.filter(sprint=>
     sprint.status==="COMPLETED"&&recentIds.has(sprint.id));
   const recentSnapshots=workspace.mentorSprintSnapshots.filter(snapshot=>
@@ -280,7 +280,9 @@ export function MentorPrototypePerformance({workspace}:{workspace:Workspace}){
       id:sprint.id,sequence:sprint.sequence,title:sprint.title,status:sprint.status,
       releaseId:sprint.releaseId,
     }))}
-    releases={workspace.releases.map(release=>({id:release.id,title:release.title}))}
+    releases={workspace.releases.map(release=>({
+      id:release.id,title:release.title,sequence:release.sequence,
+    }))}
     snapshots={workspace.mentorSprintSnapshots} />;
 }
 
