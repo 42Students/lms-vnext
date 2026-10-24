@@ -37,6 +37,7 @@ import {moveMentorBacklogTask} from "@/modules/projects/mentor-backlog-service";
 import {createLearnerOwnTask,deleteLearnerOwnTask} from "@/modules/projects/learner-own-task-service";
 import {createProjectResource} from "@/modules/projects/resource-service";
 import {postProjectTaskComment,listProjectTaskComments} from "@/modules/projects/task-comment-service";
+import {autoAssignMentorNextSprint} from "@/modules/projects/mentor-auto-assign-service";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -360,6 +361,47 @@ describe("Projects P5 lifecycle", () => {
       project_status: "ACTIVE",
       release_status: "IN_PROGRESS",
     });
+  });
+
+  it("allocates only the immediate planned sprint and records current learner assignments",async()=>{
+    const project=await createProject();
+    const initial=await getProjectInstanceWorkspace(mentor,project.id);
+    const current=initial.sprints[0]!;
+    const next=initial.sprints[1]!;
+    await startProjectSprint(mentor,project.id,current.id);
+    const refreshed=await getProjectInstanceWorkspace(mentor,project.id);
+    const target=refreshed.sprints.find(item=>item.id===next.id)!;
+    const expectedSprintUpdatedAt=target.updatedAt.toISOString();
+    const payload={sprintId:next.id,expectedSprintUpdatedAt};
+    await expect(autoAssignMentorNextSprint(learner,project.id,payload))
+      .rejects.toBeDefined();
+    const assigned=await autoAssignMentorNextSprint(mentor,project.id,payload);
+    expect(assigned).toMatchObject({
+      sprintId:next.id,assigned:1,unassignedRemaining:0,
+    });
+    expect(assigned.assignments[0]?.membershipId).toBe(learner.membership!.id);
+    expect(assigned.loadPreview).toHaveLength(1);
+    const after=await getProjectInstanceWorkspace(mentor,project.id);
+    expect(after.tasks.find(item=>item.sprintId===next.id)?.assigneeMembershipId)
+      .toBe(learner.membership!.id);
+    expect(after.tasks.find(item=>item.sprintId===current.id)?.assigneeMembershipId)
+      .toBeNull();
+    const receipt=await pool.query<{recipient_id:string}>(`
+      select user_id as recipient_id from in_app_notifications n
+      join activity_events e on e.id=n.event_id
+      where e.group_key=$1 and e.summary='Next-sprint task auto-assigned'`,
+      ["project:"+project.id]);
+    expect(receipt.rows.map(row=>row.recipient_id)).toContain(learner.user.id);
+    const repeat=await autoAssignMentorNextSprint(mentor,project.id,payload);
+    expect(repeat.assigned).toBe(0);
+    const foreign:RequestContext={...mentor,membership:{
+      ...mentor.membership!,collegeId:SEED_IDS.collegeB,
+    }};
+    await expect(autoAssignMentorNextSprint(foreign,project.id,payload))
+      .rejects.toBeDefined();
+    await expect(autoAssignMentorNextSprint(mentor,project.id,{
+      sprintId:next.id,expectedSprintUpdatedAt:"2020-01-01T00:00:00Z",
+    })).rejects.toBeDefined();
   });
 
   it("matches PostgreSQL microseconds for assignment and task-status CAS, but rejects stale tokens", async () => {
