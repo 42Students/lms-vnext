@@ -20,6 +20,7 @@ import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
 import {MentorTaskCriteriaChecklist} from "./mentor-task-criteria-checklist";
+import {MentorTaskHistory} from "./mentor-task-history";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Alert} from "@/components/ui/alert";
 import {BoardColumn} from "@/components/ui/board-column";
@@ -106,8 +107,6 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const latestEvidence=focused?[...taskSubmissions]
     .filter(row=>row.taskId===focused.id)
     .sort((a,b)=>b.version-a.version||b.createdAt.getTime()-a.createdAt.getTime())[0]??null:null;
- const focusedEvents=focused?[...taskActivity].filter(event=>event.subjectId===focused.id)
-    .sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime()):[];
  const submittedReview=focused&&!readOnly&&focused.status==="IN_REVIEW"
    ? [...taskSubmissions].filter(row=>row.taskId===focused.id&&row.status==="SUBMITTED")
      .sort((a,b)=>b.version-a.version)[0]??null
@@ -508,16 +507,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
           expectedUpdatedAt={new Date(submittedReview.updatedAt).toISOString()}
           initialDecision="CHANGES_REQUESTED" triggerLabel="Send back S" shortcut="s"/>
       </div>:null}
-      {focusedEvents.length?<div className="prototype-mentor-board-detail-block">
-        <h4>Recent recorded task activity · {focusedEvents.length} loaded</h4>
-        <ul>{focusedEvents.slice(0,5).map(event=><li key={event.id}>
-          {event.summary} · {event.actorDisplayName??"Recorded actor"} ·
-          {" "}{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",
-            year:"numeric",timeZone:"Asia/Kolkata"}).format(event.occurredAt)}
-        </li>)}</ul>
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
-           "?tab=activity"}>Browse older project events →</Link>
-      </div>:null}
+      <MentorTaskHistory key={focused.id} projectId={projectId} taskId={focused.id}/>
       <button type="button" className="prototype-mentor-board-detail-more"
         onClick={()=>setSelected(focused.id)}>Open full task details →</button>
       <div className="prototype-mentor-board-detail-block">
