@@ -9,6 +9,8 @@ import {Select} from "@/components/ui/select";
 import {FilterBar} from "@/components/ui/filter-bar";
 import {Disclosure} from "@/components/ui/disclosure";
 import {MentorMeetingsCalendar} from "@/components/projects/mentor-meetings-calendar";
+import {MentorCalendarQuickSchedule} from "@/components/projects/mentor-calendar-quick-schedule";
+import {listMyProjectInstances} from "@/modules/projects/member-service";
 import {MentorCalendarLoadFailure} from "@/components/projects/mentor-calendar-load-failure";
 import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
 import {ProjectsServiceError} from "@/modules/projects/errors";
@@ -45,6 +47,11 @@ export default async function MentorCalendarPage({searchParams}:{
     <MentorCalendarLoadFailure reason={calendarRead.reason??"UNKNOWN"}/>
   </div>;
   const meetings=calendarRead.items;
+  const choices=(await listMyProjectInstances(context))
+    .filter(row=>row.memberRole==="MENTOR"&&row.project.status==="ACTIVE"&&
+      row.project.collegeId===context.membership?.collegeId&&!row.project.deletedAt)
+    .map(row=>({id:row.project.id,title:row.project.title,
+      updatedAt:row.project.updatedAt.toISOString()}));
   // eslint-disable-next-line react-hooks/purity -- Server snapshot drives IST period filters and initial client clock.
   const now=new Date();
   const displayed=filterMentorCalendar(meetings,parsed.data,now);
@@ -54,8 +61,11 @@ export default async function MentorCalendarPage({searchParams}:{
   const advancedCount=Number(Boolean(parsed.data.projectId))+Number(parsed.data.sprint!=="ALL")+Number(parsed.data.join!=="ALL")+
     Number(parsed.data.status!=="ALL")+Number(parsed.data.type!=="ALL")+Number(parsed.data.projectState!=="ALL");
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader title="Meetings"
-      description="Every scheduled meeting across your assigned projects, in one place."/>
+    <div className="prototype-mentor-calendar-heading">
+      <PageHeader title="Meetings"
+        description="Every scheduled meeting across your assigned projects, in one place."/>
+      <MentorCalendarQuickSchedule projects={choices}/>
+    </div>
     <section className="prototype-mentor-meetings-surface min-w-0"
       aria-label="Meeting dates and history">
       <MentorMeetingsCalendar meetings={displayed}
