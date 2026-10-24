@@ -20,7 +20,7 @@ describe("W03 mentor project detail legacy tab contract", () => {
   it("keeps the exact seven legacy mentor tabs and labels", () => {
     for (const [key, label] of [
       ["overview", "Overview"],
-      ["team", "People & Meetings"],
+      ["team", "Team & meetings"],
       ["sprints", "Releases and Sprints"],
       ["board", "Board"],
       ["performance", "Task Allocation"],
