@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 66/132 `CODE_READY`, 59/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 67/132 `CODE_READY`, 58/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -57,7 +57,7 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 47-12 | CODE_READY | mentor-lane-board.tsx; mentor-board-task-detail-dialog.tsx; mentor-transition and backlog authorization routes |
 | 48-01 | CODE_READY | lifecycle-service.ts; mentor-sprint-signoff-snapshot-model.ts; mentor-sprint-signoff-snapshot-service.ts |
 | 48-02 | CODE_READY | mentor-sprint-timeline-search.tsx; mentor-prototype-project-summaries.tsx |
-| 48-03 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 48-03 | CODE_READY | mentor-prototype-project-summaries.tsx renders Add Release, per-release Edit and Add Sprint using existing authorized MentorReleaseEditor/MentorSprintCreate; mentor-sprint-write.tsx preselects the contextual release even with several releases. Runtime and permissions tests remain separate acceptance gates. |
 | 48-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 48-05 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 48-06 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
