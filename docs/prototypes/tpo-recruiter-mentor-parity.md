@@ -45,7 +45,7 @@
 | 22 | TPO | Calendar | NOT STARTED |
 | 23 | TPO | Team › Chat | NOT STARTED |
 | 24 | TPO | Team › People | PARTIAL CODE — selected roster/detail and existing real handover/away actions; historical activity and full owned-company counts unavailable; UNVERIFIED |
-| 25 | TPO | Reports | NOT STARTED |
+| 25 | TPO | Reports | PARTIAL CODE — real report gallery aliases repaired; visual gallery and saved-report interactions UNVERIFIED |
 | 26 | TPO | Reports › One report | NOT STARTED |
 | 27 | TPO | Settings | NOT STARTED |
 | 28 | TPO | Settings › Audit log | NOT STARTED |
@@ -216,3 +216,9 @@ prototype-to-implementation gate.
 No claim is made that CI, TypeScript strictness, the browser, PostgreSQL fixtures,
 or screenshots pass on current `main`: numerous GitHub CI runs were cancelled
 by overlapping concurrent commits. This is a nonvisual code checkpoint only.
+
+- **#25 TPO Reports directory:** repaired two gallery links to nonexistent
+  URLs (Recruiter leads, After college), preserving original order and
+  deduplicating original aliases in both loaded and unavailable dashboard states.
+  Commits `34678293`, `af6c4bf1`. Saved report configurations, exact gallery
+  visuals, live fixture and route browser acceptance remain open.
