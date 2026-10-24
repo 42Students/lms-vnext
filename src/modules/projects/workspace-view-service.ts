@@ -10,6 +10,7 @@ import { buildMentorWorkspaceEvidence } from "./mentor-workspace-evidence-model"
 import {getMentorResourceSharers} from "./mentor-resource-sharer-service";
 import {listMentorBlockedTaskAges} from "./mentor-blocker-age-service";
 import {listMentorWeekContributors} from "./mentor-week-contributor-service";
+import {getMentorTeamRecentActorActivity} from "./mentor-team-recent-actor-service";
 import {getMentorWeekActivityTotals} from "./mentor-week-activity-totals-service";
 import {listMentorSprintSignOffSnapshots,listMentorSprintCommitmentSnapshots}
   from "./mentor-sprint-signoff-snapshot-service";
@@ -121,6 +122,8 @@ export async function getProjectWorkspaceView(
     :{};
   const mentorWeekContributors=access.access==="MENTOR"?
     await listMentorWeekContributors(context,projectId):[];
+  const mentorTeamRecentActorActivity=access.access==="MENTOR"&&!activityRead.failed
+    ?await getMentorTeamRecentActorActivity(context,projectId,members):{};
   const mentorWeekActivityTotals=access.access==="MENTOR"&&!activityRead.failed
     ?await getMentorWeekActivityTotals(context,projectId).catch((error:unknown)=>{
       if(!isUnavailableProjectSectionStorage(error))throw error;
@@ -315,6 +318,7 @@ export async function getProjectWorkspaceView(
     mentorResourceSharers,
     mentorBlockedTaskAges,
     mentorWeekContributors,
+    mentorTeamRecentActorActivity,
     mentorWeekActivityTotals,
     mentorEvidence: buildMentorWorkspaceEvidence({
       tasks: workspace.tasks,
