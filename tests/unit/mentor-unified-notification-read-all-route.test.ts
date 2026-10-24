@@ -37,7 +37,7 @@ describe("Atomic Mentor all-source read endpoint",()=>{
   expect(state.calls).toBe(0);
  });
  it("accepts only an empty request and no client tenant selectors",async()=>{
-  for(const body of ["{","{\\\"collegeId\\\":\\\"forged\\\"}","x".repeat(257)]){
+  for(const body of ["{",JSON.stringify({collegeId:"forged"}),"x".repeat(257)]){
    const response=await POST(request(body));
    expect(response.status).not.toBe(200);
   }
