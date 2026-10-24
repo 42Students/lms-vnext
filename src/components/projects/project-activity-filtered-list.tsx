@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {Fragment,useEffect,useState,useRef} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {mentorActivityCategory, mentorActivityLabel, mentorActivityRelativeTime} from "@/modules/projects/mentor-activity-display-model";
+import {mentorActivityCategoryChoices,mentorActivityGroup,type MentorActivityCategory} from "@/modules/projects/mentor-activity-category-model";
 import {projectResourceAuditAction,projectResourceAuditMatches} from "@/modules/projects/project-resource-audit-model";
 import {mentorLoadedWeekActivitySummary} from "@/modules/projects/mentor-week-activity-summary-model";
 import {mentorFewestRecordedContributors} from "@/modules/projects/mentor-week-contributor-model";
@@ -114,6 +115,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
   finally{lock.current=false;if(requestGeneration===generation.current)setBusy(false);}
  }
  const [search,setSearch]=useState("");
+ const [mentorCategory,setMentorCategory]=useState<MentorActivityCategory>("ALL");
  const [resourceAction,setResourceAction]=useState("ALL");
  const [type,setType]=useState("");
  const [actor,setActor]=useState("");
@@ -156,7 +158,8 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
   const occurred=new Date(event.occurredAt);
   const day=occurred.toISOString().slice(0,10);
   const term=search.trim().toLocaleLowerCase("en-IN");
-  return (!resourceAudit||projectResourceAuditAction(event.eventType)!==null)
+  return (!mentorWeekSummary||mentorCategory==="ALL"||mentorActivityGroup(event.eventType)===mentorCategory)
+    &&(!resourceAudit||projectResourceAuditAction(event.eventType)!==null)
     &&(!term||[event.summary,event.actorDisplayName??"",event.actorUserId??"",event.actorType??"",actorTypeLabel(event.actorType),event.eventType,event.subjectLabel??"",event.subjectId??"",event.resourceKey??"",resourceLabel(event.resourceKey??event.subjectLabel),resourceActionLabel(event.eventType)].some(value=>value.toLocaleLowerCase("en-IN").includes(term)))
     &&projectResourceAuditMatches(event.eventType,resourceAction)
     &&(!type||event.eventType===type)
@@ -180,7 +183,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const paged=resourceAudit?filtered.slice((activePage-1)*PAGE_SIZE,activePage*PAGE_SIZE):filtered;
  const resetFilters=()=>{
    actorGeneration.current+=1;setActorFeed(null);setActor("");setActorError("");
-   setSearch("");setResourceAction("ALL");setType("");setSprint("");
+   setSearch("");setMentorCategory("ALL");setResourceAction("ALL");setType("");setSprint("");
    setRange("ALL");setFromDate("");setToDate("");setPage(1);
  };
  return <section className="space-y-3">
@@ -206,6 +209,16 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
       assigned learners with valid recorded event counts.</p>}
    </div>:null}
   {resourceAudit?<div aria-label="Resource activity totals" className="grid grid-cols-2 gap-2 sm:grid-cols-4">{counts.map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">{label}</p><p className="text-xl font-semibold tabular-nums">{value}</p></div>)}</div>:null}
+  {mentorWeekSummary?<div role="group" aria-label="Mentor activity categories"
+    className="flex flex-wrap gap-2">
+    {mentorActivityCategoryChoices.map(option=><Button key={option.value}
+      type="button" size="sm"
+      variant={mentorCategory===option.value?"primary":"secondary"}
+      aria-pressed={mentorCategory===option.value}
+      onClick={()=>{setMentorCategory(option.value);setPage(1);}}>
+      {option.label}
+    </Button>)}
+  </div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search {resourceAudit?"resource or actor":"activity"}
     <Input type="search" value={search} onChange={event=>{setSearch(event.target.value);setPage(1);}}
