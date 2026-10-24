@@ -85,7 +85,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    (!assignee||(assignee==="UNASSIGNED"?task.assigneeMembershipId===null:
      task.assigneeMembershipId===assignee))&&
    (!statusFilter||(statusFilter==="BACKLOG"?task.sprintId===null:task.status===statusFilter)));
- const visible= useEffect(()=>{
+ const visible=matching.slice(0,visibleLimit);
+ const focused=matching.find(task=>task.id===focusedId)??visible[0]??null;
+ useEffect(()=>{
    const onKey=(event:KeyboardEvent)=>{
      if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
        event.repeat||event.defaultPrevented)return;
@@ -115,9 +117,6 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    document.addEventListener("keydown",onKey);
    return()=>document.removeEventListener("keydown",onKey);
  },[focusedId,matching,sprints,view]);
-ner("keydown",onKey);
-   return()=>document.removeEventListener("keydown",onKey);
- },[focusedId,visible]);
  const latestEvidence=focused?[...taskSubmissions]
     .filter(row=>row.taskId===focused.id)
     .sort((a,b)=>b.version-a.version||b.createdAt.getTime()-a.createdAt.getTime())[0]??null:null;
