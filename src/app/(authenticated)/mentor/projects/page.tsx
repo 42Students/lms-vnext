@@ -29,6 +29,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
+import {listOwnMentorAttentionLater} from "@/modules/projects/mentor-attention-later-service";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import {listPagedMentorProjects} from "@/modules/projects/mentor-paged-project-list-service";
 import {canPageMentorProjectList} from "@/modules/projects/mentor-paged-project-list-model";
@@ -127,6 +128,7 @@ export async function MentorProjectsContent({
       ).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
   </div>;
   const {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead,learnerCounts}=loaded;
+  const initialLater=await listOwnMentorAttentionLater(context,attentionRows);
   const alerts = new Map<
     string,
     Set<string>
@@ -283,7 +285,7 @@ export async function MentorProjectsContent({
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <MentorPrototypeHome
-        scope={context.user.id}
+        initialLater={initialLater}
         nowIso={new Date().toISOString()}
         attention={attentionRows}
         studentWatch={studentWatch}
