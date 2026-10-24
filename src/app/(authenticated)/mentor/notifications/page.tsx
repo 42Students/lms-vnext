@@ -260,8 +260,9 @@ async function MentorNotificationsContent({
               {failedSources.length ? "No project alerts are visible, but some notification sources could not be checked." : "Nothing needs your attention right now."}
             </p>
           : <div className="min-w-0 divide-y divide-border border-b border-border">{shownAlerts.map(alert=>
-              <Link key={alert.key} href={alert.href}
-                className="block min-h-11 min-w-0 py-4 transition hover:border-primary focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
+              <article key={alert.key}
+                className="block min-h-11 min-w-0 py-4 transition md:min-h-[var(--lms-control-height)]">
+                <Link href={alert.href} className="block rounded focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{alert.title}</h3>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
@@ -277,10 +278,11 @@ async function MentorNotificationsContent({
                   </StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body leading-[22px]">{alert.description}</p>
+                </Link>
                 {ownSourceReceipts?<MentorSourceNotificationRead
                   receiptKey={mentorAttentionReceiptKey(alert)}
                   read={sourceRead(mentorAttentionReceiptKey(alert))}/>:null}
-              </Link>)}</div>}
+              </article>)}</div>}
     </section>:null}
     {(selectedPill==="all"||selectedPill==="unread")&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
       <h2 id="mentor-personal-notifications" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
