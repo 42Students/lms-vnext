@@ -19,6 +19,21 @@ describe("Mentor historical member performance insights",()=>{
       [snapshot("s1","DONE",4),snapshot("s3","DONE",6)]);
     expect(rows.map(item=>[item.sequence,item.donePoints])).toEqual([[1,4],[3,6]]);
   });
+  it("keeps member point series in release order when numbering resets",()=>{
+    const releases=[{id:"r1",sequence:0},{id:"r2",sequence:1}];
+    const completed=[
+      {id:"s1",releaseId:"r1",sequence:3,status:"COMPLETED"},
+      {id:"s2",releaseId:"r2",sequence:0,status:"COMPLETED"},
+      {id:"s3",releaseId:"r2",sequence:1,status:"COMPLETED"},
+    ];
+    const rows=mentorMemberSprintHistory(member,[...completed].reverse(),[
+      snapshot("s1","DONE",5),snapshot("s2","DONE",8),
+      snapshot("s3","DONE",13),
+    ],releases);
+    expect(rows.map(item=>[item.sprintId,item.donePoints])).toEqual([
+      ["s1",5],["s2",8],["s3",13],
+    ]);
+  });
   it("identifies repeated incoming carried tasks from three real sign-offs",()=>{
     const rows=mentorMemberSprintHistory(member,sprints,[
       snapshot("s2","TODO",5,"s1"),
