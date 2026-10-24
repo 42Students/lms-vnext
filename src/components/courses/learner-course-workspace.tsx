@@ -1171,7 +1171,7 @@ export function LearnerCourseWorkspace({
                             ?"Quiz · Unavailable · deadline missing":quiz.progress.status==="MISSED"
                               ?"Quiz · Missed":"Quiz"}
                           locked={!quiz.dueAt&&quiz.attemptsUsed===0}
-                          {...(quizDueText != null ? { dueText: quizDueText } : {})}
+                          {...(quiz.dueAt ? {dueText:formatDateTime(quiz.dueAt)} : {})}
                           progress={item.progress.status}
                           initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                           highlighted={focusContentId===item.id && focusLessonId===lesson.id}
