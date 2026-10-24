@@ -354,7 +354,8 @@ export async function MentorProjectsContent({
               sprintActiveSequence:sprintSummaries.get(row.project.id)!.activeSequence,
               sprintSegments:sprintSummaries.get(row.project.id)!.segments,
             } : {}),
-            ...(progress?.percent !== undefined ? { progressPercent: progress.percent } : {}),
+            ...(typeof progress?.percent==="number"&&Number.isFinite(progress.percent)
+               ? {progressPercent:progress.percent}:{}),
             ...(progress?.label !== undefined ? { progressDetail: progress.label } : {}),
             readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
             courseLabel:row.project.courseLabel,
