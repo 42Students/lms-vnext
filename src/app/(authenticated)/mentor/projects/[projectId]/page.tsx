@@ -18,6 +18,7 @@ import {listOwnMentorAttentionLater} from "@/modules/projects/mentor-attention-l
 import {MentorPrototypeSprintPlan,MentorPrototypeTeamOverview,MentorPrototypePerformance,MentorPrototypeActivitySummary,MentorPrototypeDeliveryEvidence,MentorPrototypeProjectOverview,MentorPrototypeProjectBrief} from "@/components/projects/mentor-prototype-project-summaries";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
+import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
 
 
 export default async function MentorProjectPage({
@@ -87,7 +88,7 @@ export default async function MentorProjectPage({
   // The prototype's shared detail header is reused for Overview, Board,
   // Sprints & releases, Team & meetings, Performance, Resources and Activity.
   // Only actual persisted sprints become segments; 16 is NOT hard-coded.
-  const timeline = [...workspace.sprints].sort((a,b) => a.sequence - b.sequence);
+  const timeline = orderMentorSprints(workspace.sprints,workspace.releases);
   const currentSprint = timeline.find(sprint => sprint.status === "ACTIVE");
   const completedSprints = timeline.filter(sprint => sprint.status === "COMPLETED").length;
   const studentCount = workspace.members.filter(member => member.role === "LEARNER").length;
