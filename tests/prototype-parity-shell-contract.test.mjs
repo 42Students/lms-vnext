@@ -433,3 +433,29 @@ test("Mentor final submission Zoom uses sandboxed supported evidence links only"
   assert.match(summary,/<MentorEvidencePreview/);
   assert.match(summary,/safeProjectExternalHref\(url\)/);
 });
+
+
+test("Mentor Projects last activity uses recorded scoped events rather than project updatedAt",()=>{
+  const service=source("src/modules/projects/mentor-project-last-activity-service.ts");
+  const page=source("src/app/(authenticated)/mentor/projects/page.tsx");
+  const list=source("src/components/projects/project-list.tsx");
+  assert.match(service,/hasMembershipRole\(context,"MENTOR"\)/);
+  assert.match(service,/listMyProjectInstances\(context\)/);
+  assert.match(service,/eq\(activityEvents\.collegeId,member\.collegeId\)/);
+  assert.match(service,/inArray\(activityEvents\.groupKey,keys\)/);
+  assert.match(service,/max\(\$\{activityEvents\.occurredAt\}\)/);
+  assert.match(page,/getMentorProjectLastActivity\(context\)/);
+  assert.match(page,/lastActivityAt:lastActivity\.get/);
+  assert.match(list,/const activityAt=item\.lastActivityAt/);
+  assert.match(list,/No recorded activity/);
+});
+
+test("Mentor calendar global ICS includes only scheduled persisted event windows",()=>{
+  const calendar=source("src/components/projects/mentor-meetings-calendar.tsx");
+  assert.match(calendar,/function downloadAllMentorMeetings/);
+  assert.match(calendar,/\["SCHEDULED","RESCHEDULED"\]\.includes\(meeting\.status\)/);
+  assert.match(calendar,/END:VCALENDAR/);
+  assert.match(calendar,/UID:/);
+  assert.match(calendar,/onClick=\{\(\)=>downloadAllMentorMeetings\(meetings\)\}/);
+  assert.match(calendar,/Add to my calendar \(\.ics\)/);
+});
