@@ -8,6 +8,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {notifyActiveProjectMembers,projectNoticeHref}
   from "./project-notification-service";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 
@@ -41,6 +42,8 @@ export async function postMentorProjectUpdate(
    )).for("update").limit(1);
    if(project?.status!=="ACTIVE")
      throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
+   // Project members can be revoked while a post waits for the project lock.
+   await assertPersistedProjectMutationActor(tx,context,access);
 
    await tx.execute(sql`select pg_advisory_xact_lock(
      hashtextextended(${access.project.id+"|"+context.user.id}, 47))`);
