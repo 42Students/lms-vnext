@@ -9,6 +9,7 @@ import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evide
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
 import {MentorReleaseEditor} from "./mentor-release-editor";
 import {MentorSprintCreate} from "./mentor-sprint-write";
+import {MentorOverviewQuickActions} from "./mentor-overview-quick-actions";
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
 import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
 import {MentorDeliveryHistory} from "./mentor-delivery-history";
@@ -450,8 +451,9 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
 }
 
 
-export function MentorPrototypeProjectOverview({workspace,attentionItems=[],initialLater=[]}:{
- workspace:Workspace;attentionItems?:readonly MentorProjectAttention[];initialLater?:readonly string[];
+export function MentorPrototypeProjectOverview({workspace,attentionItems=[],initialLater=[],readOnly=false}:{
+ workspace:Workspace;attentionItems?:readonly MentorProjectAttention[];
+ initialLater?:readonly string[];readOnly?:boolean;
 }){
   const projectId=encodeURIComponent(workspace.project.id);
   const base="/mentor/projects/"+projectId;
@@ -504,6 +506,20 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
     ["Backlog",backlog.length],
   ] as const;
   return <div className="prototype-mentor-overview">
+    {!readOnly&&workspace.project.status==="ACTIVE"?
+      <MentorOverviewQuickActions
+        projectId={workspace.project.id}
+        estimationUnit={workspace.project.estimationUnit??null}
+        releases={workspace.releases.map(release=>({
+          id:release.id,title:release.title,status:release.status,
+        }))}
+        sprints={workspace.sprints.map(sprint=>({
+          id:sprint.id,title:sprint.title,status:sprint.status,
+          updatedAt:sprint.updatedAt.toISOString(),
+        }))}
+        learners={students.map(student=>({
+          membershipId:student.membershipId,displayName:student.displayName,
+        }))}/>:null}
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title"><h2>Where they are</h2>
         <span>{completed.length} of {live.length} recorded tasks done</span></div>
