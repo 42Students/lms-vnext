@@ -162,3 +162,12 @@
 Compare **#01 TPO Companies › Today**, **#31 Recruiter › Today**, and **#45 Mentor › Projects** to equivalent live vNext screens, identify shell-level fixes, then complete one workflow at a time. Treat unverified changes on `main` as needing re-review.
 
 **Status:** reference saved and indexed; no screens have been accepted or marked visually verified by this document.
+
+## Mentor functionality implementation checkpoint — 2026-10-24
+
+- **#45** Projects home current-week meeting list now uses the assigned-Mentor calendar reader and a current IST week boundary; request time and load-failure handling are explicit. Not visually verified.
+- **#46** Project Overview adds current-sprint learner summary, meeting details and contextual actions; a cautious velocity estimate appears only with three or more saved completed-sprint workload records, never a fabricated deadline.
+- **#48, #49, #50** Sprint sign-off now saves a versioned, per-member workload snapshot in the same existing activity transaction before carry-over; charts, last-four team figures and completed-sprint Performance use these historical records. Pre-feature completed sprints without history show unavailable. These are **sign-off values**, not guaranteed original sprint-start estimates. Positive persistence and stale-decision rollback PostgreSQL tests are authored but not executed.
+- **#52** Activity adds a recorded-sprint filter, composable with existing actor/date/type filters. Records without sprint provenance do not appear under a chosen sprint.
+- New pure TS model checks for snapshot, week selection and velocity passed isolated local compiler/Node assertions. Full app TS, lint, unit, database, CI and browser tests are **not confirmed**.
+- The nonvisual backlog remains documented in `docs/audit/mentor-functional-prototype-gap-analysis-2026-10-24.md`. **Mentor 0/12 VERIFIED, 0/12 CLOSED, 0/56 total closed.** No published progress percentage is derived from the remaining checklist count.
