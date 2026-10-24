@@ -4,6 +4,7 @@ import {useState} from "react";
 import {mentorEvidenceDisplayKind} from
   "@/modules/projects/mentor-evidence-preview-model";
 import {mentorPdfEmbedUrl} from "@/modules/projects/mentor-pdf-evidence-controls-model";
+import {MentorXlsxEvidencePreview} from "./mentor-xlsx-evidence-preview";
 
 export type MentorEvidenceGalleryItem={
   index:number;name:string;type:string;href:string|null;
@@ -90,10 +91,13 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
         Sandboxed text/code preview is read-only. It depends on the original provider
         allowing embedded viewing; use the original link if the preview is blank.
       </p>:null}
-      {active.href&&/\.(xlsx?|ods)(?:[?#]|$)/i.test(active.href)?<p
+      {active.href&&(/\.xlsx(?:[?#]|$)/i.test(active.href)||/\.xlsx$/i.test(active.name)||
+        /spreadsheetml\.sheet/i.test(active.type))?
+        <MentorXlsxEvidencePreview key={active.index} href={active.href}
+          name={active.name.endsWith(".xlsx")?active.name:"evidence.xlsx"}/>:null}
+      {active.href&&/\.(xls|ods)(?:[?#]|$)/i.test(active.href)?<p
         className="text-xs text-muted-foreground">
-        Spreadsheet contents are not parsed in this view. Open the source file
-        with its authorized provider; no trial totals are inferred.
+        This legacy spreadsheet format needs its original authorized provider.
       </p>:null}
       {active.href?<a href={active.href} target="_blank"
         rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-link underline">
