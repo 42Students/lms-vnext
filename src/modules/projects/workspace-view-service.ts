@@ -7,7 +7,8 @@ import {getProjectActivityPage} from "./activity-service";
 import {ProjectsServiceError} from "./errors";
 import {requireProjectReadAccess} from "./access";
 import { buildMentorWorkspaceEvidence } from "./mentor-workspace-evidence-model";
-import {listMentorSprintSignOffSnapshots} from "./mentor-sprint-signoff-snapshot-service";
+import {listMentorSprintSignOffSnapshots,listMentorSprintCommitmentSnapshots}
+  from "./mentor-sprint-signoff-snapshot-service";
 import {
   getProjectInstanceWorkspace,
 } from "./instance-service";
@@ -95,10 +96,14 @@ export async function getProjectWorkspaceView(
       }),
   ]);
   const activity=activityRead.items;
-  const mentorSprintSnapshots=access.access==="MENTOR"
-    ?await listMentorSprintSignOffSnapshots(context,projectId,
-        workspace.sprints.map(sprint=>sprint.id))
-    :[];
+  const [mentorSprintSnapshots,mentorSprintCommitments]=access.access==="MENTOR"
+    ?await Promise.all([
+        listMentorSprintSignOffSnapshots(context,projectId,
+          workspace.sprints.map(sprint=>sprint.id)),
+        listMentorSprintCommitmentSnapshots(context,projectId,
+          workspace.sprints.map(sprint=>sprint.id)),
+      ])
+    :[[],[]];
 
 
   const meetings=meetingsRead.items;
@@ -286,6 +291,7 @@ export async function getProjectWorkspaceView(
     activity,
     activityLoadError:activityRead.failed,
     mentorSprintSnapshots,
+    mentorSprintCommitments,
     mentorEvidence: buildMentorWorkspaceEvidence({
       tasks: workspace.tasks,
       members,
