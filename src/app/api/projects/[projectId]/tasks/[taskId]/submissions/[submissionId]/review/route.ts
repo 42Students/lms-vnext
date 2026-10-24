@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {reviewProjectTaskSubmissionInputSchema} from "@/modules/projects/validation";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,
   mentorProjectBodyFailureMessage} from "@/modules/projects/mentor-command-body";
 import {
@@ -36,7 +37,7 @@ export async function POST(
       taskId,
       submissionId,
     } = await params;
-    const body = await readMentorProjectCommandBody(request);
+    const body = reviewProjectTaskSubmissionInputSchema.parse(await readMentorProjectCommandBody(request));
     const result =
       await reviewProjectTaskSubmission(
         context,
