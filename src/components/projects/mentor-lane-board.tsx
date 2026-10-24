@@ -138,6 +138,30 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   const id=event.dataTransfer.getData("text/plain");
   if(id)void move(id,status);
  }
+ async function moveToSprint(id:string,targetSprintId:string|null){
+  const task=tasks.find(item=>item.id===id);
+  const destination=targetSprintId?sprints.find(item=>item.id===targetSprintId):null;
+  if(readOnly||busy||!task||task.sprintId===targetSprintId||
+    !editable.includes(task.status as typeof editable[number])||
+    (targetSprintId&&(!destination||destination.status==="COMPLETED"||
+      !releases.some(item=>item.id===destination.releaseId&&item.status!=="SHIPPED"))))return;
+  if(!window.confirm("Move "+task.title+" to "+(destination?
+    "Sprint "+destination.sequence+" · "+destination.title:"Product backlog")+"?"))return;
+  setError("");setBusy(true);
+  try{
+    const response=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
+      "/backlog","PATCH",{
+      taskId:task.id,targetSprintId,
+      expectedUpdatedAt:new Date(task.updatedAt).toISOString(),
+    }) as {task:Task};
+    if(!response.task||response.task.id!==task.id)throw new Error("Task move receipt was invalid.");
+    setTasks(rows=>rows.map(row=>row.id===id?{...row,...response.task}:row));
+    setFocusedId(id);
+    router.refresh();
+  }catch(reason){
+    setError(reason instanceof Error?reason.message:"Sprint move failed. Reload the latest board.");
+  }finally{setBusy(false);}
+ }
  const learnerChoices=members.filter(member=>member.role==="LEARNER");
  const creationSprints=sprints.filter(item=>item.status!=="COMPLETED"&&
    releases.some(release=>release.id===item.releaseId&&release.status!=="SHIPPED"));
@@ -336,7 +360,17 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <span>Task</span><span>Assignee</span><span>Sprint</span><span>State</span><span>Points</span>
     </div>
     {sprintListGroups.map(group=><details key={group.id}
-      className="prototype-mentor-board-sprint-group" open={group.status==="ACTIVE"}>
+      className="prototype-mentor-board-sprint-group" open={group.status==="ACTIVE"}
+      onDragOver={event=>{
+        if(!readOnly&&!busy&&(group.id==="BACKLOG"||creationSprints.some(row=>row.id===group.id)))
+          event.preventDefault();
+      }}
+      onDrop={event=>{
+        if(readOnly||busy)return;
+        event.preventDefault();
+        const id=event.dataTransfer.getData("text/plain");
+        if(id)void moveToSprint(id,group.id==="BACKLOG"?null:group.id);
+      }}>
       <summary>
         <strong>{group.title}</strong>
         <span>{group.tasks.length} tasks · {group.status.replaceAll("_"," ")}</span>
@@ -345,11 +379,22 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       const rowSprint=task.sprintId?bySprint.get(task.sprintId):null;
       const canMove=!readOnly&&!busy&&rowSprint?.status==="ACTIVE"&&
         editable.includes(task.status as typeof editable[number]);
-      return <div key={task.id} className="prototype-mentor-board-list-row">
+      const canReassign=!readOnly&&!busy&&editable.includes(task.status as typeof editable[number]);
+      return <div key={task.id} className="prototype-mentor-board-list-row"
+        draggable={canReassign}
+        onDragStart={event=>event.dataTransfer.setData("text/plain",task.id)}>
         <Button type="button" variant="ghost" size="sm" className="!justify-start !text-left"
           onClick={()=>setFocusedId(task.id)}>{task.title}</Button>
         <span>{members.find(member=>member.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"}</span>
-        <span>{rowSprint?.title??"Backlog"}</span>
+        {canReassign?<Select value={task.sprintId??"BACKLOG"} disabled={busy}
+          aria-label={"Move "+task.title+" to sprint"}
+          onChange={event=>void moveToSprint(task.id,
+            event.target.value==="BACKLOG"?null:event.target.value)}>
+          <option value="BACKLOG">Product backlog</option>
+          {creationSprints.map(item=><option key={item.id} value={item.id}>
+            Sprint {item.sequence} · {item.title}
+          </option>)}
+        </Select>:<span>{rowSprint?.title??"Backlog"}</span>}
         {canMove?<Select value={task.status} disabled={busy}
           aria-label={"Move "+task.title+" to lane"} onChange={e=>void move(task.id,e.target.value)}>
           {editable.map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
@@ -385,7 +430,25 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       </div>:null}
       {focused.blockerReason?<div className="prototype-mentor-board-detail-block is-blocked">
         <h4>Blocked</h4><p>{focused.blockerReason}</p>
+        {focused.status==="BLOCKED"&&!readOnly?<Button type="button"
+          variant="secondary" disabled={busy}
+          onClick={()=>void move(focused.id,"IN_PROGRESS")}>
+          It's unblocked · back to In progress
+        </Button>:null}
       </div>:null}
+      {!readOnly&&editable.includes(focused.status as typeof editable[number])?
+        <label className="prototype-mentor-board-detail-block">
+          Move to sprint or backlog
+          <Select value={focused.sprintId??"BACKLOG"} disabled={busy}
+            aria-label={"Move "+focused.title+" to another sprint"}
+            onChange={event=>void moveToSprint(focused.id,
+              event.target.value==="BACKLOG"?null:event.target.value)}>
+            <option value="BACKLOG">Product backlog</option>
+            {creationSprints.map(item=><option key={item.id} value={item.id}>
+              Sprint {item.sequence} · {item.title}
+            </option>)}
+          </Select>
+        </label>:null}
       {submittedReview&&focused?<div className="prototype-mentor-board-review-actions" aria-label="Review task submission">
         <TaskReviewActions projectId={projectId} taskId={focused.id}
           submissionId={submittedReview.id} mode="MENTOR"
