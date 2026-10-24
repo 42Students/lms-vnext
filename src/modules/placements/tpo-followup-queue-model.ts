@@ -98,3 +98,11 @@ export function tpoFollowupQueueExportHref(input:{scope:"TEAM"|"MINE";window:"DU
  if(input.q)p.set("q",input.q);
  return "/api/placements/tpo/follow-up-queue/export?"+p;
 }
+
+/** Companies > Today Tomorrow: move, never duplicate, an open follow-up. */
+export const confirmedTpoFollowupRescheduleSchema=z.object({
+ confirmed:z.literal(true),expectedDueAt:z.iso.datetime({offset:true}),
+ dueAt:z.iso.datetime({offset:true}),
+}).strict().refine(input=>
+ new Date(input.dueAt).getTime()!==new Date(input.expectedDueAt).getTime(),
+ {message:"A moved follow-up must have a different due time"});

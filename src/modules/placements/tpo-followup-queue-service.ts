@@ -16,6 +16,7 @@ import { requirePlacementManageScope } from "./scope";
 import {
   confirmedTpoFollowupCreateSchema,
   confirmedTpoFollowupDoneSchema,
+  confirmedTpoFollowupRescheduleSchema,
   projectTpoFollowupQueue,
   tpoFollowupQueueQuerySchema,
   tpoFollowupCreatedAudit,
@@ -258,4 +259,51 @@ export async function listLegacyTpoFollowups(
 ){
  const queue=await getTpoDueFollowupQueue(context,new Date(),rawQuery);
  return queue.rows;
+}
+
+/** Atomic, tenant-scoped Tomorrow operation. A task cannot be duplicated by
+ * concurrent tabs, overwritten after a competing change, or moved after Done.
+ * Recording the actor and previous/new time is part of the same transaction. */
+export async function rescheduleConfirmedTpoFollowup(
+ context:RequestContext,rawFollowupId:unknown,raw:unknown,now=new Date(),
+){
+ const scope=await requireTpo(context);
+ const id=tpoFollowupIdSchema.parse(rawFollowupId);
+ const input=confirmedTpoFollowupRescheduleSchema.parse(raw);
+ const dueAt=new Date(input.dueAt);
+ if(!Number.isFinite(dueAt.getTime())||dueAt.getTime()<=now.getTime())
+  throw new TpoCrmError("TPO_CRM_INVALID_DUE_AT");
+ return getDb().transaction(async tx=>{
+  const [current]=await tx.select({
+   id:placementTpoFollowups.id,
+   leadId:placementTpoFollowups.leadId,
+   dueAt:placementTpoFollowups.dueAt,
+   doneAt:placementTpoFollowups.doneAt,
+  }).from(placementTpoFollowups)
+   .innerJoin(placementTpoLeads,and(
+    eq(placementTpoFollowups.leadId,placementTpoLeads.id),
+    eq(placementTpoFollowups.collegeId,placementTpoLeads.collegeId),
+   )).where(and(
+    eq(placementTpoFollowups.id,id),
+    eq(placementTpoFollowups.collegeId,scope.collegeId),
+    eq(placementTpoLeads.collegeId,scope.collegeId),
+   )).for("update",{of:placementTpoFollowups}).limit(1);
+  if(!current)throw new TpoCrmError("TPO_CRM_FOLLOWUP_NOT_FOUND");
+  if(current.doneAt!==null||current.dueAt.toISOString()!==new Date(input.expectedDueAt).toISOString())
+   throw new TpoCrmError("TPO_CRM_FOLLOWUP_ALREADY_DONE");
+  const [updated]=await tx.update(placementTpoFollowups)
+   .set({dueAt}).where(and(eq(placementTpoFollowups.id,id),
+    eq(placementTpoFollowups.collegeId,scope.collegeId),
+    eq(placementTpoFollowups.dueAt,current.dueAt),
+    isNull(placementTpoFollowups.doneAt)))
+   .returning({id:placementTpoFollowups.id});
+  if(!updated)throw new TpoCrmError("TPO_CRM_FOLLOWUP_ALREADY_DONE");
+  await tx.insert(placementTpoLeadActivities).values({
+   collegeId:scope.collegeId,leadId:current.leadId,type:"NOTE",
+   isSystem:false,outcome:"FOLLOWUP_RESCHEDULED",
+   note:"Follow-up moved from "+current.dueAt.toISOString()+" to "+dueAt.toISOString(),
+   createdByUserId:context.user.id,
+  });
+  return {id:updated.id,dueAt:dueAt.toISOString()};
+ });
 }
