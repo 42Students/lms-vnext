@@ -7,6 +7,7 @@ import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycl
 import {MentorSprintSignOff} from "./mentor-sprint-sign-off";
 import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
 import {MentorDeliveryHistory} from "./mentor-delivery-history";
+import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 
@@ -47,6 +48,24 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
   }));
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
   return <div className="prototype-mentor-sprint-plan">
+    <MentorSprintTimelineSearch items={[
+      ...workspace.releases.map(release=>({
+        id:release.id,kind:"RELEASE" as const,title:release.title,
+        context:release.status.replaceAll("_"," "),
+        href:base+"?tab=board&release="+encodeURIComponent(release.id),
+      })),
+      ...sprints.map(sprint=>({
+        id:sprint.id,kind:"SPRINT" as const,
+        title:"Sprint "+sprint.sequence+" · "+sprint.title,
+        context:sprint.status.replaceAll("_"," "),
+        href:base+"?tab=board&sprint="+encodeURIComponent(sprint.id),
+      })),
+      ...liveTasks.map(task=>({
+        id:task.id,kind:"TASK" as const,title:task.title,
+        context:sprints.find(sprint=>sprint.id===task.sprintId)?.title??"Backlog",
+        href:base+"?tab=board&scope=all&task="+encodeURIComponent(task.id),
+      })),
+    ]}/>
     <section className="prototype-mentor-kpi-card" aria-label="Sprint and release totals">
       <div><span>Sprints</span><strong>{sprints.length}</strong></div>
       <div><span>Signed off</span><strong>{sprints.filter(s=>s.status==="COMPLETED").length}</strong></div>
