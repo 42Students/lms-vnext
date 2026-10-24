@@ -3,6 +3,17 @@ import {
   type PlacementCalendarEvent,
 } from "./placement-calendar-model";
 
+/** A round ends only when its persisted duration is a valid positive number
+ * of minutes. Never guess an end time from a missing or malformed value. */
+export function recruiterRoundEndTime(
+  start: Date | null, durationMinutes: number | null | undefined,
+): Date | null {
+  if (!start || !Number.isFinite(start.getTime()) ||
+      durationMinutes == null || !Number.isInteger(durationMinutes) ||
+      durationMinutes <= 0 || durationMinutes > 24 * 60) return null;
+  return new Date(start.getTime() + durationMinutes * 60_000);
+}
+
 export const RECRUITER_CALENDAR_EVENT_STYLE={
  ROUND:{label:"Round",color:"blue"},
  INTERVIEW_SLOT:{label:"Interview slot",color:"green"},
@@ -138,9 +149,7 @@ export function buildRecruiterCalendarEvents(input: {
       id: `round:${round.id}`,
       kind: "ROUND",
       startsAt: round.scheduledAt!,
-      endsAt: round.durationMinutes && round.durationMinutes > 0
-        ? new Date(round.scheduledAt!.getTime() + round.durationMinutes * 60_000)
-        : null,
+      endsAt: recruiterRoundEndTime(round.scheduledAt, round.durationMinutes),
       title: round.name,
       companyId: job.companyId,
       companyName: job.companyName,
