@@ -1,11 +1,11 @@
 import "server-only";
-import {and,desc,eq,inArray} from "drizzle-orm";
+import {and,desc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents} from "@/db/schema";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
-import {parseMentorSprintSignOffSnapshot,type MentorSprintSignOffSnapshot}
+import {latestValidMentorSprintSnapshots,type MentorSprintSignOffSnapshot}
   from "./mentor-sprint-signoff-snapshot-model";
 
 /** Read only persisted snapshot facts for the currently authorized project.
@@ -28,18 +28,15 @@ async function listScopedMentorSnapshots(
     eq(activityEvents.collegeId,scope.collegeId),
     eq(activityEvents.organizationId,scope.organizationId),
     inArray(activityEvents.subjectId,[...sprintIds]),
+    // The event's claimed projectId is not proof that its Sprint belongs to
+    // this project. Resolve persisted Sprint ownership (including soft-deleted
+    // historical Sprints) before considering a JSON snapshot.
+    sql`exists (select 1 from project_sprints ps
+      where ps.id::text = ${activityEvents.subjectId}
+      and ps.project_id = ${scope.project.id})`,
   )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id));
-  const seen=new Set<string>();
-  const snapshots:MentorSprintSignOffSnapshot[]=[];
-  for(const row of rows){
-    if(row.metadata["projectId"]!==scope.project.id||
-      row.metadata[versionKey]!==1||
-      seen.has(row.subjectId))continue;
-    seen.add(row.subjectId);
-    const parsed=parseMentorSprintSignOffSnapshot(row.metadata[valueKey],row.subjectId);
-    if(parsed)snapshots.push(parsed);
-  }
-  return snapshots;
+  return latestValidMentorSprintSnapshots(rows,scope.project.id,
+    versionKey,valueKey);
 }
 
 export const listMentorSprintSignOffSnapshots=(
