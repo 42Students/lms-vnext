@@ -16,6 +16,13 @@ describe("Mentor durable source notification read identity",()=>{
    expect(mentorAnnouncementReceiptKey(notice)).toBe(
      mentorAnnouncementReceiptKey({id:notice.id,createdAt:notice.createdAt.toISOString()}));
  });
+ it("reopens an acknowledged college notice after a recorded edit",()=>{
+  const original=mentorAnnouncementReceiptKey({...notice,version:1});
+  const revised=mentorAnnouncementReceiptKey({...notice,version:2});
+  expect(original).not.toBe(revised);
+  expect(mentorUnreadAttentionCount([],[{...notice,version:2}],
+   new Set([original]))).toBe(1);
+ });
  it("reopens an alert when its underlying task-set version changes",()=>{
    const earlier=mentorAttentionReceiptKey(alert("v1"));
    const newer=mentorAttentionReceiptKey(alert("v2"));
