@@ -343,3 +343,42 @@ describe("Mentor project Team student academic scope",()=>{
       .rejects.toBeDefined();
   });
 });
+
+describe("Legacy project Sprint audit without metadata",()=>{
+  it("recovers only events for a Sprint actually owned by this authorized project",async()=>{
+    await pool.query(`INSERT INTO project_releases
+      (id,project_id,template_key,title,sequence)
+      VALUES($1,$2,'mentor-legacy-release','Legacy release',0)`,[
+      ids.release,ids.project,
+    ]);
+    await pool.query(`INSERT INTO project_sprints
+      (id,project_id,release_id,template_key,title,sequence)
+      VALUES($1,$2,$3,'mentor-legacy-sprint','Legacy sprint',0)`,[
+      ids.sprint,ids.project,ids.release,
+    ]);
+    const legacyId=randomUUID(),unrelatedId=randomUUID();
+    for(const row of [
+      {id:legacyId,college:ids.college,subject:ids.sprint},
+      {id:unrelatedId,college:ids.college,subject:randomUUID()},
+      {id:randomUUID(),college:SEED_IDS.collegeB,subject:ids.sprint},
+    ]){
+      await pool.query(`INSERT INTO activity_events
+        (id,organization_id,college_id,actor_user_id,module,event_type,
+         subject_type,subject_id,summary,occurred_at)
+        VALUES($1,$2,$3,$4,'PROJECTS','projects.sprint.updated',
+          'project_sprint',$5,'Legacy sprint event without project metadata',
+          '2026-09-18T09:00:00Z')`,[
+        row.id,SEED_IDS.organization,row.college,
+        SEED_IDS.superAdminUser,row.subject,
+      ]);
+    }
+    const result=await getProjectActivityPage(context,ids.project,{
+      sprintId:ids.sprint,from:"2026-09-18",to:"2026-09-18",
+    });
+    expect(result.events.map(row=>row.id)).toContain(legacyId);
+    expect(result.events.map(row=>row.id)).not.toContain(unrelatedId);
+    await expect(getProjectActivityPage({
+      ...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB},
+    },ids.project,{sprintId:ids.sprint})).rejects.toBeDefined();
+  });
+});
