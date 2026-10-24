@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
-import {mentorUnifiedNotificationGroups,sortMentorUnifiedNotifications} from
+import {mentorUnifiedNotificationGroups,sortMentorUnifiedNotifications,
+  mentorUnifiedOpenReadRequest} from
   "@/modules/projects/mentor-unified-notification-model";
 
 const row=(id:string,source:"PERSONAL"|"ATTENTION"|"ANNOUNCEMENT",
@@ -34,5 +35,26 @@ describe("Mentor merged notification chronology",()=>{
   ];
   sortMentorUnifiedNotifications(rows);
   expect(rows.map(item=>item.id)).toEqual(["old","new"]);
+ });
+ it("opens personal, project and college notifications through their own saved read action",()=>{
+  const personal={...row(
+    "11111111-1111-4111-8111-111111111111","PERSONAL",
+    "2026-10-24T11:00:00Z"),receiptKey:null};
+  const project={...row("review-task","ATTENTION",
+    "2026-10-24T11:00:00Z"),receiptKey:"attention:project:task@version1"};
+  const college={...row("notice","ANNOUNCEMENT",
+    "2026-10-24T11:00:00Z"),receiptKey:"announcement:notice@revision1"};
+  expect(mentorUnifiedOpenReadRequest(personal)).toEqual({
+   url:"/api/mentor/notifications/"+personal.id+"/read",
+  });
+  for(const item of [project,college]){
+   expect(mentorUnifiedOpenReadRequest(item)).toEqual({
+     url:"/api/mentor/notifications/source-read",
+     body:JSON.stringify({key:item.receiptKey}),
+   });
+  }
+  expect(mentorUnifiedOpenReadRequest({...project,read:true})).toBeNull();
+  expect(mentorUnifiedOpenReadRequest({...college,receiptKey:null})).toBeNull();
+  expect(mentorUnifiedOpenReadRequest({...personal,id:"not-a-uuid"})).toBeNull();
  });
 });
