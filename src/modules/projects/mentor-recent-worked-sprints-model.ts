@@ -1,3 +1,5 @@
+import {orderMentorSprints,type MentorOrderedRelease} from "./mentor-sprint-order-model";
+
 /**
  * For the Mentor prototype's "Last four sprints", only sprints that have
  * actually begun can contribute to historical workload. Future PLANNED
@@ -9,15 +11,22 @@
 export type MentorWorkedSprint = {
   id: string;
   sequence: number;
+  releaseId?: string;
   status: string;
 };
 
 export function recentMentorWorkedSprintIds(
   sprints: readonly MentorWorkedSprint[],
+  releases?: readonly MentorOrderedRelease[],
 ): string[] {
-  return sprints
+  const scoped=sprints.filter(
+    (s):s is MentorWorkedSprint&{releaseId:string}=>typeof s.releaseId==="string");
+  const chronological=releases&&scoped.length===sprints.length
+    ?orderMentorSprints(scoped,releases)
+    :[...sprints].sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id));
+  return chronological
     .filter((sprint) => sprint.status === "ACTIVE" || sprint.status === "COMPLETED")
-    .sort((left, right) => right.sequence - left.sequence)
+    .reverse()
     .slice(0, 4)
     .map((sprint) => sprint.id);
 }
