@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-team-size-service";
+import {getMentorProjectTeamSizes,getMentorPortfolioLearnerCounts} from "@/modules/projects/mentor-project-team-size-service";
 import {getMentorPrototypeSprintSummaries} from "@/modules/projects/mentor-prototype-sprint-summary-service";
 import {getMentorStudentWatch} from "@/modules/projects/mentor-student-watch-service";
 import {getMentorProjectLastActivity} from "@/modules/projects/mentor-project-last-activity-service";
@@ -98,7 +98,7 @@ export async function MentorProjectsContent({
     const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
     const allRows=paged?.items??await listMyProjectInstances(context);
     if(!Array.isArray(allRows))throw new Error("INVALID_PROJECT_RECORDS");
-    const [attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead]=await Promise.all([
+    const [attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead,learnerCounts]=await Promise.all([
       listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
       getMentorProjectWorkCounts(context,paged?allRows:undefined),
       getMentorProjectTeamSizes(context,paged?allRows:undefined),
@@ -109,8 +109,9 @@ export async function MentorProjectsContent({
       listMyMentorCalendarMeetings(context)
         .then(rows=>({rows,failed:false as const}))
         .catch(()=>({rows:[] as MentorMeetingCalendarItem[],failed:true as const})),
+      getMentorPortfolioLearnerCounts(context,paged?allRows:undefined),
     ]);
-    return {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead};
+    return {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead,learnerCounts};
   })().catch(error=>({
     failure:error instanceof Error&&error.message==="INVALID_PROJECT_RECORDS"
       ?"The projects page did not return a valid records array."
@@ -125,7 +126,7 @@ export async function MentorProjectsContent({
           typeof item[1]==="string"&&item[1].length<=120)
       ).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
   </div>;
-  const {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead}=loaded;
+  const {paged,allRows,attentionRows,workCounts,teamSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead,learnerCounts}=loaded;
   const alerts = new Map<
     string,
     Set<string>
@@ -290,6 +291,8 @@ export async function MentorProjectsContent({
         weekMeetingsLoadFailed={weekMeetingsRead.failed}
         teamCount={allRows.filter(row=>row.memberRole==="MENTOR").length}
         membershipCount={Array.from(teamSizes.values()).reduce((sum,count)=>sum+count,0)}
+        uniqueLearnerCount={learnerCounts.uniqueLearners}
+        learnerAssignmentCount={learnerCounts.learnerAssignments}
       />
 
       <ProjectParticipantListControls
