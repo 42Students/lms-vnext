@@ -165,6 +165,8 @@ export async function listPagedMentorProjects(context:RequestContext,query:Mento
    :null;
  const items=await getDb().select({
    memberId:projectMembers.id,memberRole:projectMembers.role,
+   memberRoleKind:projectMembers.roleKind,
+   memberCanMutate:projectMembers.canMutate,
    isPrimaryMentor:projectMembers.isPrimary,project:projectInstances,
  }).from(projectMembers)
    .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
