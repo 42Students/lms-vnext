@@ -314,3 +314,26 @@ test("Mentor Performance filters current, last four and selected sprint work, pr
   assert.match(summaries,/<MentorPrototypePerformanceTable/);
   assert.match(detail,/<MentorTaskAllocation/);
 });
+
+
+test("Mentor Meetings selected pane exposes real persisted facilitation and edit location",()=>{
+  const model=source("src/modules/projects/mentor-meeting-facilitation-model.ts");
+  const service=source("src/modules/projects/mentor-calendar-service.ts");
+  const view=source("src/modules/projects/mentor-calendar-view.ts");
+  const calendar=source("src/components/projects/mentor-meetings-calendar.tsx");
+  const workspace=source("src/components/projects/project-workspace.tsx");
+  assert.match(model,/attendees:z\.array\(meetingAttendeeSchema\)/);
+  assert.match(model,/actionItemRows:z\.array\(meetingActionRowSchema\)/);
+  assert.match(model,/retroActions:z\.array\(meetingRetroActionSchema\)/);
+  assert.match(model,/followUpStatus:z\.enum/);
+  assert.match(service,/facilitation:projectMeetings\.facilitation/);
+  assert.match(service,/agenda:projectMeetings\.agenda/);
+  assert.match(service,/facilitation:row\.facilitation/);
+  assert.match(view,/facilitation\?:Partial<MentorMeetingFacilitation>/);
+  assert.match(calendar,/meeting\.facilitation\?\.attendees/);
+  assert.match(calendar,/meeting\.facilitation\?\.actionItemRows/);
+  assert.match(calendar,/meeting\.facilitation\?\.followUpStatus/);
+  assert.match(calendar,/\?tab=team#meeting-/);
+  assert.match(workspace,/id=\{"meeting-"\+meeting\.id\}/);
+  assert.match(workspace,/<ScheduleProjectMeetingControl/);
+});
