@@ -386,3 +386,49 @@ test("Mentor calendar cross-team Schedule a meeting persists or drafts through g
   assert.match(route,/isSameOriginRequest/);
   assert.match(route,/scheduleProjectMeeting\(/);
 });
+
+
+test("Mentor meeting request offers real Yes, Another time and No actions with guarded endpoints",()=>{
+  const panel=source("src/components/projects/mentor-meeting-request-actions.tsx");
+  const calendar=source("src/components/projects/mentor-meetings-calendar.tsx");
+  assert.match(calendar,/<MentorMeetingRequestActions meeting=\{meeting\}/);
+  assert.match(panel,/meeting\.status!=="REQUESTED"/);
+  assert.match(panel,/expectedUpdatedAt:meeting\.updatedAt/);
+  assert.match(panel,/status:"SCHEDULED"/);
+  assert.match(panel,/base,"PATCH"/);
+  assert.match(panel,/base\+"\/mentor-decision","POST"/);
+  assert.match(panel,/action:"CANCEL",confirmed:true/);
+  assert.match(panel,/Another time/);
+  assert.match(panel,/No, answer in a note/);
+  assert.match(panel,/No link is generated automatically/);
+});
+
+test("Mentor Activity since-seen message states local-device limitations",()=>{
+  const marker=source("src/components/projects/mentor-activity-since-last-visit.tsx");
+  const route=source("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
+  assert.match(marker,/localStorage\.getItem\(key\)/);
+  assert.match(marker,/localStorage\.setItem\(key,value\)/);
+  assert.match(marker,/this device/);
+  assert.match(marker,/events\.filter\(event=>/);
+  assert.match(route,/<MentorActivitySinceLastVisit userId=\{context\.user\.id\}/);
+});
+
+test("Mentor Resources show real pinned group without breaking resource actions",()=>{
+  const resources=source("src/components/projects/project-resource-list.tsx");
+  assert.match(resources,/orderedResources\.map\(\(resource,index\)=>/);
+  assert.match(resources,/Pinned references/);
+  assert.match(resources,/Other resources/);
+  assert.match(resources,/<ProjectResourceActions/);
+  assert.match(resources,/fragment/i);
+});
+
+test("Mentor final submission Zoom uses sandboxed supported evidence links only",()=>{
+  const preview=source("src/components/projects/mentor-evidence-preview.tsx");
+  const summary=source("src/components/projects/mentor-prototype-project-summaries.tsx");
+  assert.match(preview,/\.pdf\|png/);
+  assert.match(preview,/sandbox=""/);
+  assert.match(preview,/referrerPolicy="no-referrer"/);
+  assert.match(preview,/Open full size/);
+  assert.match(summary,/<MentorEvidencePreview/);
+  assert.match(summary,/safeProjectExternalHref\(url\)/);
+});
