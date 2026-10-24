@@ -7,6 +7,7 @@ import { getProjectActivityPage, listProjectActivity } from "@/modules/projects/
 import {getMentorWeekActivityTotals} from "@/modules/projects/mentor-week-activity-totals-service";
 import {getMentorTeamRecentActorActivity} from "@/modules/projects/mentor-team-recent-actor-service";
 import {getMentorLearnerAcademicFacts} from "@/modules/projects/mentor-learner-academic-facts-service";
+import {postMentorProjectUpdate} from "@/modules/projects/mentor-project-update-service";
 import { filterLearnerProjectActivity } from "@/modules/projects/learner-project-activity-filter-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 if (!process.env.TEST_DATABASE_URL) throw new Error("Requires disposable TEST_DATABASE_URL");
@@ -387,5 +388,71 @@ describe("Legacy project Sprint audit without metadata",()=>{
     await expect(getProjectActivityPage({
       ...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB},
     },ids.project,{sprintId:ids.sprint})).rejects.toBeDefined();
+  });
+});
+
+describe("Mentor project updates: atomic activity, recipients and posting limits",()=>{
+  it("persists one event per post and notifies only active project recipients",async()=>{
+    await pool.query("UPDATE project_instances SET status='ACTIVE' WHERE id=$1",[ids.project]);
+    try{
+      await expect(postMentorProjectUpdate(context,ids.project,{
+        message:"A learner cannot author Mentor updates",
+      })).rejects.toBeDefined();
+      await expect(postMentorProjectUpdate({
+        ...mentorContext,membership:{...mentorContext.membership!,
+          collegeId:SEED_IDS.collegeB},
+      },ids.project,{message:"Foreign college"})).rejects.toBeDefined();
+      await expect(postMentorProjectUpdate(mentorContext,randomUUID(),{
+        message:"Different project",
+      })).rejects.toBeDefined();
+      await expect(postMentorProjectUpdate(mentorContext,ids.project,{
+        message:"   ",
+      })).rejects.toBeDefined();
+
+      const first=await postMentorProjectUpdate(mentorContext,ids.project,{
+        message:"Project week 1: sprint tasks ready",
+      });
+      const duplicate=await postMentorProjectUpdate(mentorContext,ids.project,{
+        message:"Project week 1: sprint tasks ready",
+      });
+      expect(duplicate.id).toBe(first.id);
+      const learnerNotice=await pool.query<{
+        user_id:string;action_href:string;
+      }>(`SELECT n.user_id,n.action_href FROM in_app_notifications n
+         WHERE n.event_id=$1`,[first.id]);
+      expect(learnerNotice.rows).toEqual([{
+        user_id:ids.learner,
+        action_href:"/learn/projects/"+ids.project+"?tab=activity",
+      }]);
+      const [ownCount]= (await pool.query<{total:string}>(`select
+        count(*)::text as total from in_app_notifications
+        where event_id=$1 and user_id=$2`,[first.id,ids.mentor])).rows;
+      expect(ownCount?.total).toBe("0");
+
+      await postMentorProjectUpdate(mentorContext,ids.project,{
+        message:"Project week 1: office hours scheduled",
+      });
+      await postMentorProjectUpdate(mentorContext,ids.project,{
+        message:"Project week 1: evidence checklist",
+      });
+      await expect(postMentorProjectUpdate(mentorContext,ids.project,{
+        message:"Spam must not be published",
+      })).rejects.toMatchObject({code:"PROJECT_UPDATE_RATE_LIMITED"});
+      const events=await pool.query<{summary:string}>(`select summary from activity_events
+        where event_type='projects.mentor_update.posted'
+          and subject_id=$1 and actor_user_id=$2`,[ids.project,ids.mentor]);
+      expect(events.rows).toHaveLength(3);
+      expect(events.rows.map(row=>row.summary))
+        .not.toContain("Spam must not be published");
+
+      await pool.query("UPDATE project_instances SET status='ARCHIVED' WHERE id=$1",
+        [ids.project]);
+      await expect(postMentorProjectUpdate(mentorContext,ids.project,{
+        message:"Archived projects cannot be posted to",
+      })).rejects.toBeDefined();
+    }finally{
+      await pool.query("UPDATE project_instances SET status='PLANNED' WHERE id=$1",
+        [ids.project]);
+    }
   });
 });
