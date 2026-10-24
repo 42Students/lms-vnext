@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {recentMentorWorkedSprintIds} from "@/modules/projects/mentor-recent-worked-sprints-model";
 import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
@@ -105,9 +106,7 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
   const students=workspace.members.filter(member=>member.role==="LEARNER");
   const mentors=workspace.members.filter(member=>member.role==="MENTOR");
   const active=workspace.sprints.find(sprint=>sprint.status==="ACTIVE");
-  const lastFour=[...workspace.sprints].sort((a,b)=>b.sequence-a.sequence)
-    .slice(0,4).map(sprint=>sprint.id);
-  const recentIds=new Set(lastFour);
+  const recentIds=new Set(recentMentorWorkedSprintIds(workspace.sprints));
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
   const lastTaskChange=(tasks:typeof workspace.tasks)=>{
     const latest=tasks.reduce<Date|null>((most,task)=>{
