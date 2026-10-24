@@ -11,6 +11,17 @@
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
+## 24 October Mentor closure continuation — CI blockers and browser matrix
+
+**Do not inflate CODE_READY or acceptance totals from these commits.** A real CI run at source head `976cd925` (GitHub Actions run [40117293536](https://github.com/42Students/lms-vnext/actions/runs/40117293536)) confirmed:
+- TypeScript could not parse `mentor-task-allocation.tsx` line 58 due to a missing filter-close parenthesis. Fixed directly on `main` at `69e755f`.
+- ESLint reported a reserved `module` variable in the Mentor learner-preview route and an absent Recruiter Today import. Fixed at `b6cd86d` and `0be04d9`.
+- `db:journal:verify` was failing BEFORE PostgreSQL acceptance with journal entries #294–295 tagged `0312_`/`0313_`, missing `0294_snapshot.json`/`0295_snapshot.json`, and unregistered SQL `0310_`/`0311_`. These are real migration sequence and snapshot problems. Do not fabricate snapshots or mechanically rewrite already-applied migration history; reconcile actual Drizzle schema and production/apply history before registering.
+- The `getMentorRecentCarryHistory` source query now excludes soft-deleted releases rather than counting phantom historical carries (commit `6e9955b`).
+- The new authenticated Playwright smoke `tests/e2e/mentor-prototype-functional-matrix.spec.ts` covers role-route denial, all seven detail tabs, legacy tab aliases and invalid-tab fallback *when the fixture has an assigned project* (commits `ce7eeec`, `b1d9979`). This is test source only; it has not been run to acceptance and does not cover every interactive mutation/state.
+- CI cancellations caused by rapid commits are not passing runs. X-01/X-02/X-10 remain implementation/test pending until current SHA has green typecheck, lint, unit, database and authenticated-browser outcomes.
+
+
 | ID | Code-first status | Source evidence or next step |
 |---|---|---|
 | X-01 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
