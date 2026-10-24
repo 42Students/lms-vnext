@@ -1194,6 +1194,118 @@ describe("Projects P5 lifecycle", () => {
     });
   });
 
+  it("rejects starting a sprint on a soft-deleted project even for College Admin", async () => {
+    const project = await createProject();
+    const workspace = await getProjectInstanceWorkspace(mentor, project.id);
+    const planned = workspace.sprints[0]!;
+    await pool.query(
+      "update project_instances set deleted_at=now() where id=$1",
+      [project.id],
+    );
+    await expect(startProjectSprint(collegeAdmin, project.id, planned.id))
+      .rejects.toMatchObject({code: "PROJECT_SPRINT_INVALID_STATE"});
+    const persisted = await pool.query<{status:string;started_at:Date|null}>(
+      "select status,started_at from project_sprints where id=$1",
+      [planned.id],
+    );
+    expect(persisted.rows[0]).toMatchObject({status: "PLANNED", started_at: null});
+  });
+
+  it("blocks sign-off and task writes after soft deletion without partial updates", async () => {
+    const project = await createProject();
+    const workspace = await getProjectInstanceWorkspace(mentor, project.id);
+    const current = workspace.sprints[0]!;
+    const task = workspace.tasks.find(row=>row.sprintId===current.id)!;
+    await startProjectSprint(mentor, project.id, current.id);
+    const before = await pool.query<{status:string;updated_at:Date}>(
+      "select status,updated_at from project_tasks where id=$1", [task.id],
+    );
+    await pool.query(
+      "update project_instances set deleted_at=now() where id=$1",
+      [project.id],
+    );
+    await expect(completeProjectSprint(collegeAdmin, project.id, current.id))
+      .rejects.toMatchObject({code: "PROJECT_SPRINT_INVALID_STATE"});
+    await expect(updateProjectTaskStatus(collegeAdmin, project.id, task.id, {
+      status:"IN_PROGRESS",expectedUpdatedAt:task.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code: "PROJECT_TASK_INVALID_STATE"});
+    const after = await pool.query<{status:string;updated_at:Date}>(
+      "select status,updated_at from project_tasks where id=$1", [task.id],
+    );
+    expect(after.rows).toEqual(before.rows);
+    const sprint = await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1", [current.id],
+    );
+    expect(sprint.rows[0]?.status).toBe("ACTIVE");
+  });
+
+  it("rejects reopening a signed-off sprint after project soft deletion", async () => {
+    const project = await createProject();
+    const initial = await getProjectInstanceWorkspace(mentor, project.id);
+    const current = initial.sprints[0]!;
+    await startProjectSprint(mentor, project.id, current.id);
+    await approveProjectTaskThroughReview({
+      learner,mentor,projectId:project.id,
+      taskId:initial.tasks.find(row=>row.sprintId===current.id)!.id,
+    });
+    await completeProjectSprint(mentor, project.id, current.id);
+    await pool.query(
+      "update project_instances set deleted_at=now() where id=$1",
+      [project.id],
+    );
+    await expect(reopenProjectSprint(collegeAdmin, project.id, current.id))
+      .rejects.toMatchObject({code: "PROJECT_SPRINT_INVALID_STATE"});
+    const persisted = await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1", [current.id],
+    );
+    expect(persisted.rows[0]?.status).toBe("COMPLETED");
+  });
+
+  it("denies starting a Sprint in a shipped or deleted parent release", async () => {
+    const project = await createProject();
+    const workspace = await getProjectInstanceWorkspace(mentor, project.id);
+    const planned = workspace.sprints[0]!;
+    const release = workspace.releases[0]!;
+    await pool.query(
+      "update project_releases set status='SHIPPED' where id=$1",
+      [release.id],
+    );
+    await expect(startProjectSprint(collegeAdmin, project.id, planned.id))
+      .rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    await pool.query(
+      "update project_releases set status='PLANNED',deleted_at=now() where id=$1",
+      [release.id],
+    );
+    await expect(startProjectSprint(collegeAdmin, project.id, planned.id))
+      .rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    const after = await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1", [planned.id],
+    );
+    expect(after.rows[0]?.status).toBe("PLANNED");
+  });
+
+  it("denies reopening a signed-off Sprint in a deleted release", async () => {
+    const project = await createProject();
+    const workspace = await getProjectInstanceWorkspace(mentor, project.id);
+    const current = workspace.sprints[0]!;
+    await startProjectSprint(mentor, project.id, current.id);
+    await approveProjectTaskThroughReview({
+      learner,mentor,projectId:project.id,
+      taskId:workspace.tasks.find(row=>row.sprintId===current.id)!.id,
+    });
+    await completeProjectSprint(mentor, project.id, current.id);
+    await pool.query(
+      "update project_releases set deleted_at=now() where id=$1",
+      [workspace.releases[0]!.id],
+    );
+    await expect(reopenProjectSprint(collegeAdmin, project.id, current.id))
+      .rejects.toMatchObject({code:"PROJECT_SPRINT_INVALID_STATE"});
+    const persisted = await pool.query<{status:string}>(
+      "select status from project_sprints where id=$1", [current.id],
+    );
+    expect(persisted.rows[0]?.status).toBe("COMPLETED");
+  });
+
   it("enforces the active-sprint invariant in PostgreSQL too", async () => {
     const project = await createProject();
     const workspace =
