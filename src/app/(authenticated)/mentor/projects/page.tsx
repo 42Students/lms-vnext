@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import {eq,inArray,isNull} from "drizzle-orm";
+import {and,eq,inArray,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {users,projectSubmissions,projectReleases} from "@/db/schema";
 import {getMentorProjectTeamSizes,getMentorProjectLearnerSizes,getMentorPortfolioLearnerCounts} from "@/modules/projects/mentor-project-team-size-service";
@@ -146,12 +146,12 @@ export async function MentorProjectsContent({
       return {submitted:new Set<string>(),fullyDelivered:new Set<string>()};
     const [submissions,releases]=await Promise.all([
       getDb().select({projectId:projectSubmissions.projectId})
-        .from(projectSubmissions).where(
-          inArray(projectSubmissions.projectId,ids)).then(rows=>rows),
+        .from(projectSubmissions).where(and(
+          inArray(projectSubmissions.projectId,ids),isNull(projectSubmissions.deletedAt))),
       getDb().select({projectId:projectReleases.projectId,
         status:projectReleases.status})
-        .from(projectReleases).where(
-          inArray(projectReleases.projectId,ids)),
+        .from(projectReleases).where(and(
+          inArray(projectReleases.projectId,ids),isNull(projectReleases.deletedAt))),
     ]);
     const submitted=new Set(submissions.map(row=>row.projectId));
     const counts=new Map<string,{total:number;shipped:number}>();
