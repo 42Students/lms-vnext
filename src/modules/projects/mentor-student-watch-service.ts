@@ -9,6 +9,8 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {ProjectsServiceError} from "./errors";
 import {listMyProjectInstances} from "./member-service";
 import {deriveMentorStudentTaskSignals} from "./mentor-student-task-signals-model";
+import {getMentorRecentCarryHistory} from "./mentor-consecutive-carry-service";
+import {mentorConsecutiveCarryInSignal} from "./mentor-consecutive-carry-model";
 
 export type MentorStudentWatchItem={
   id:string;
@@ -82,6 +84,7 @@ export async function getMentorStudentWatch(
       .groupBy(projectTasks.projectId),
   ]);
   const teamOpen=new Map(projectTotals.map(row=>[row.projectId,Number(row.open)] as const));
+  const recentHistory=await getMentorRecentCarryHistory(context);
   return rows.map(row=>{
     const open=Number(row.open),total=teamOpen.get(row.projectId)??0;
     const stamp=row.lastChanged?new Date(row.lastChanged):null;
@@ -89,12 +92,19 @@ export async function getMentorStudentWatch(
     const signals=deriveMentorStudentTaskSignals({
       open,teamOpen:total,lastOpenTaskChange:changes,
     },now);
+    const carry=mentorConsecutiveCarryInSignal(
+      row.memberId,row.projectId,recentHistory.sprints,recentHistory.snapshots);
+    const carryLabel=carry?
+      ["Work carried into",String(carry.consecutive),"consecutive recorded sprint sign-offs",
+        "("+carry.carriedTasks+" carried tasks)"].join(" "):null;
     return {
       id:row.memberId,name:row.name??"Student",
       projectId:row.projectId,projectTitle:byId.get(row.projectId)??"Project",
       blocked:Number(row.blocked),waiting:Number(row.waiting),
-      open,teamOpen:total,signals:signals.map(item=>item.label),
-      priority:signals.reduce((sum,item)=>sum+item.weight,0),
+      open,teamOpen:total,
+      signals:[...signals.map(item=>item.label),...(carryLabel?[carryLabel]:[])],
+      priority:signals.reduce((sum,item)=>sum+item.weight,0)+
+        (carry?carry.consecutive*5:0),
     };
   }).filter(row=>row.blocked>0||row.waiting>0||row.signals.length>0)
     .sort((a,b)=>b.blocked-a.blocked||b.waiting-a.waiting||
