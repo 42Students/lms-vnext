@@ -51,8 +51,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    .sort((a,b)=>(a.sequence??0)-(b.sequence??0)||a.id.localeCompare(b.id))[0];
  const nextSprintRelease=nextSprint?
    releases.find(row=>row.id===nextSprint.releaseId):null;
- const nextSprintEligible=nextSprint&&nextSprint.updatedAt&&
-   nextSprintRelease?.status!=="SHIPPED";
+ const nextSprintEligible=Boolean(nextSprint&&nextSprint.updatedAt&&
+   nextSprintRelease&&nextSprintRelease.status!=="SHIPPED");
  const nextSprintPlan=nextSprintEligible?planMentorNextSprintAssignments(
    tasks.map(task=>({...task,sequence:task.sequence??0})),
    learners.map(row=>row.membershipId),nextSprint.id):null;
