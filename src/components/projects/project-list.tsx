@@ -8,6 +8,7 @@ export type ProjectListItem = {
   summary: string | null;
   status: string;
   updatedAt: Date;
+  lastActivityAt?:Date;
   participation?: string | null;
   mentorName?: string | null;
   memberCount?: number;
@@ -115,10 +116,12 @@ export function ProjectList({
             const stateTone = /blocked|stalled/i.test(state) ? "bad"
               : /risk|review|sign.off/i.test(state) ? "warn"
               : item.status === "COMPLETED" ? "ok" : "info";
-            const updated = new Intl.DateTimeFormat("en-IN", {
-              day: "numeric", month: "short", year: "numeric",
-              timeZone: "Asia/Kolkata",
-            }).format(item.updatedAt);
+            const activityAt=item.lastActivityAt;
+            const updated=activityAt&&Number.isFinite(activityAt.getTime())?
+              new Intl.DateTimeFormat("en-IN",{
+                day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
+                timeZone:"Asia/Kolkata",
+              }).format(activityAt):"No recorded activity";
             return (
               <Link key={item.id}
                 href={item.href ?? basePath + "/" + encodeURIComponent(item.id)}
