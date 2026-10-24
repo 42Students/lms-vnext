@@ -13,6 +13,7 @@ import {ProjectResourceOpenLink} from "./project-resource-open-link";
 import {ProjectResourceActions} from "./project-resource-controls";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {mentorResourceGroupKey,mentorResourceGroupLabel,mentorResourceGroupOrder} from "@/modules/projects/mentor-resource-groups-model";
+import {mentorResourceEarlierScope,mentorResourceLinkedScopeLabels,mentorResourceMatchesType} from "@/modules/projects/mentor-resource-directory-model";
 
 type ResourceRow={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
@@ -109,8 +110,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   return (!search.trim()||[row.title,row.description,row.url,row.accessNotes,row.resourceType,row.templateKey]
     .filter(Boolean).join(" ").toLocaleLowerCase("en-IN")
      .includes(search.trim().toLocaleLowerCase("en-IN")))
-    &&(type==="ALL"||(type==="LINK"&&link)||(type==="OTHER"&&!link)||
-      type===kind)
+    &&mentorResourceMatchesType(type,kind,link)
     &&(visibility==="ALL"||row.visibility===visibility)
     &&(status==="ALL"||row.status===status)
     &&(!pinned||row.pinned===true)
@@ -122,9 +122,9 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const earlierSprintIds=new Set(sprints.filter(item=>item.status==="COMPLETED").map(item=>item.id));
  const collapseEarlier=mode==="MENTOR"&&!showEarlier&&!search.trim()&&type==="ALL"&&
     visibility==="ALL"&&status==="ACTIVE"&&!pinned&&!sprint&&!task&&sharer==="ALL";
- const earlierCount=matching.filter(row=>row.sprintId!==null&&row.sprintId!==undefined&&
-   earlierSprintIds.has(row.sprintId)).length;
- const filtered=collapseEarlier?matching.filter(row=>!row.sprintId||!earlierSprintIds.has(row.sprintId)):matching;
+ const earlierScope=mentorResourceEarlierScope(matching,earlierSprintIds,collapseEarlier);
+ const earlierCount=earlierScope.earlierCount;
+ const filtered=earlierScope.visibleRows;
  const listOrder=[...filtered].sort((a,b)=>
    Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||
    (a.status==="ACTIVE"?0:1)-(b.status==="ACTIVE"?0:1)||
@@ -247,8 +247,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   {rows.length===0?<EmptyState title="No resources yet" description={mode==="LEARNER"
     ?"Share the first link or file with your team."
     :"Add the briefs, templates and reference links your team will need."}
-  />:filtered.length===0?<EmptyState title="No matching resources"
-    description="No resources match these filters. Clear filters to see all resources." />:<div className="space-y-3">{orderedResources.map((resource,index)=>{
+  />:filtered.length===0?<EmptyState
+    title={collapseEarlier&&earlierCount>0?"Only earlier-sprint resources":"No matching resources"}
+    description={collapseEarlier&&earlierCount>0?
+      "Earlier-sprint resources are folded. Select Show earlier sprints to view them.":
+      "No resources match these filters. Clear filters to see all resources."} />:<div className="space-y-3">{orderedResources.map((resource,index)=>{
     const safe=resource.url?safeProjectExternalHref(resource.url):null;
     const sourceSharer=bySharer.get(resource.id);
     return <Fragment key={resource.id}>
@@ -293,8 +296,8 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
        {resource.visibility==="MENTOR_ONLY"&&mode!=="LEARNER"?<StatusBadge tone="neutral">Mentors only</StatusBadge>:null}
        {resource.required?<StatusBadge tone="warning">Required</StatusBadge>:null}
        {resource.pinned?<StatusBadge tone="warning">Pinned</StatusBadge>:null}
-       {resource.sprintId?<StatusBadge tone="neutral">Sprint linked</StatusBadge>:null}
-       {resource.taskId?<StatusBadge tone="neutral">Task linked</StatusBadge>:null}
+       {mentorResourceLinkedScopeLabels(resource,sprints,tasks).map(label=>
+         <StatusBadge key={label} tone="neutral">{label}</StatusBadge>)}
       </div>
      </div>
      {rows.length>12?<Button variant="secondary" type="button" className="mt-2 text-xs"

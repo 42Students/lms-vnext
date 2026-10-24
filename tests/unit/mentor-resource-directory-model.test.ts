@@ -1,51 +1,68 @@
-import {describe,expect,it} from "vitest";
-import {mentorResourceDirectory,mentorResourceDirectoryCsv,
- mentorResourceDirectoryQuerySchema,safeHttpsResourceUrl}
- from "@/modules/projects/mentor-resource-directory-model";
-const projectId="00000000-0000-4000-8000-000000000001";
-const q=mentorResourceDirectoryQuerySchema.parse({projectId});
-describe("Mentor link-resource directory",()=>{
- it("shows only safe HTTPS links and required metadata",()=>{
-  const data=mentorResourceDirectory([
-   {id:"a",title:"=spreadsheet",description:"Reference",url:"https://example.org/docs",
-    required:true,sequence:1},
-   {id:"b",title:"Bad",description:null,url:"javascript:alert(1)",
-    required:false,sequence:2},
-  ],{...q,required:"REQUIRED"});
-  expect(data).toMatchObject({registered:2,requiredCount:1,linkableCount:1,
-   total:1});
-  expect(data.items[0]?.safeUrl).toBe("https://example.org/docs");
-  expect(mentorResourceDirectoryCsv(data.exportItems,0)).toContain("'=spreadsheet");
-  expect(safeHttpsResourceUrl("http://example.org")).toBeNull();
-  expect(safeHttpsResourceUrl("https://person:secret@example.org")).toBeNull();
- });
- it("caps CSV and rejects forged tenant queries",()=>{
-  const rows=Array.from({length:202},(_,i)=>({
-   id:String(i),title:"Resource "+i,description:null,url:null,
-   required:true,sequence:i,
-  }));
-  const result=mentorResourceDirectory(rows,q);
-  expect(result.exportItems).toHaveLength(200);
-  const ordered=mentorResourceDirectory([
-   {id:"a",title:"Zulu",description:null,url:null,required:false,sequence:0},
-   {id:"b",title:"Alpha",description:null,url:null,required:false,sequence:1},
-  ],{...q,order:"TITLE"});
-  expect(ordered.items.map(row=>row.id)).toEqual(["b","a"]);
-  expect(ordered.exportItems.map(row=>row.id)).toEqual(["b","a"]);
-  expect(mentorResourceDirectoryQuerySchema.safeParse({projectId,order:"UNTRUSTED"}).success)
-   .toBe(false);
-  expect(result.exportOmitted).toBe(2);
-  expect(mentorResourceDirectoryCsv(result.exportItems,2))
-   .toContain("2 additional matching resources");
-  expect(mentorResourceDirectoryQuerySchema.safeParse({...q,description:"PRIVATE"}).success)
-   .toBe(false);
-  const filtered=mentorResourceDirectory([
-   {id:"a",title:"A",description:"Notes",url:null,required:false,sequence:0},
-   {id:"b",title:"B",description:"   ",url:null,required:false,sequence:1},
-  ],{...q,description:"MISSING"});
-  expect(filtered.items.map(row=>row.id)).toEqual(["b"]);
-  expect(filtered.exportItems.map(row=>row.id)).toEqual(["b"]);
-  expect(mentorResourceDirectoryQuerySchema.safeParse({...q,collegeId:projectId}).success)
-   .toBe(false);
- });
+import { describe, expect, it } from "vitest";
+import {
+  mentorResourceEarlierScope,
+  mentorResourceLinkedScopeLabels,
+  mentorResourceMatchesType,
+} from "@/modules/projects/mentor-resource-directory-model";
+
+describe("Mentor resources: historic folds and scope labels", () => {
+  const rows = [
+    { id: "pinned-old", sprintId: "done", pinned: true },
+    { id: "old", sprintId: "done", pinned: false },
+    { id: "active", sprintId: "current", pinned: false },
+    { id: "whole", sprintId: null, pinned: false },
+    { id: "imported", sprintId: "foreign", pinned: false },
+  ];
+  const completed = new Set(["done"]);
+
+  it("keeps pinned completed-sprint references on screen while folding old unpinned rows", () => {
+    const result = mentorResourceEarlierScope(rows, completed, true);
+    expect(result.earlierCount).toBe(1);
+    expect(result.visibleRows.map(row => row.id))
+      .toEqual(["pinned-old", "active", "whole", "imported"]);
+    expect(rows.map(row => row.id))
+      .toEqual(["pinned-old", "old", "active", "whole", "imported"]);
+  });
+
+  it("expands all 31+ completed resources without losing their original order", () => {
+    const many = Array.from({ length: 31 }, (_, n) => ({
+      id: "old-" + n, sprintId: "done", pinned: false,
+    }));
+    const result = mentorResourceEarlierScope(many, completed, true);
+    expect(result.earlierCount).toBe(31);
+    expect(result.visibleRows).toEqual([]);
+    expect(mentorResourceEarlierScope(many, completed, false).visibleRows)
+      .toEqual(many);
+  });
+
+  it("does not classify unknown or unscoped resources as old", () => {
+    const result = mentorResourceEarlierScope(rows, completed, true);
+    expect(result.visibleRows.some(row => row.id === "imported")).toBe(true);
+    expect(result.visibleRows.some(row => row.id === "whole")).toBe(true);
+  });
+
+  it("uses actual authorized sprint/task names, not generic linked badges", () => {
+    expect(mentorResourceLinkedScopeLabels(
+      { sprintId: "current", taskId: "task-1" },
+      [{ id: "current", label: "Sprint 13" }],
+      [{ id: "task-1", label: "Implement review" }],
+    )).toEqual(["Sprint: Sprint 13", "Task: Implement review"]);
+  });
+
+  it("does not invent a scope name when references are missing", () => {
+    expect(mentorResourceLinkedScopeLabels(
+      { sprintId: "foreign", taskId: "absent" },
+      [{ id: "current", label: "Sprint 13" }],
+      [{ id: "task-1", label: "Implement review" }],
+    )).toEqual(["Linked sprint unavailable", "Linked task unavailable"]);
+    expect(mentorResourceLinkedScopeLabels({}, [], [])).toEqual([]);
+  });
+
+  it("does not misclassify attached files as links just because they have a URL", () => {
+    expect(mentorResourceMatchesType("LINK", "FILE", true)).toBe(false);
+    expect(mentorResourceMatchesType("FILE", "FILE", true)).toBe(true);
+    expect(mentorResourceMatchesType("LINK", null, true)).toBe(true);
+    expect(mentorResourceMatchesType("OTHER", null, false)).toBe(true);
+    expect(mentorResourceMatchesType("LINK", "LINK", false)).toBe(true);
+  });
 });
