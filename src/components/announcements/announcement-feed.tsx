@@ -141,10 +141,10 @@ export function AnnouncementFeed({
                   {announcementDateLabel(item.createdAt)}
                 </time>
               </div>
-              {mentorReadStates?.[item.id] ? <div className="mt-2">
+              {mentorReadStates?.[item.id]?.key ? <div className="mt-2">
                 <MentorSourceNotificationRead
-                  receiptKey={mentorReadStates[item.id].key}
-                  read={mentorReadStates[item.id].read}/>
+                  receiptKey={mentorReadStates?.[item.id]?.key??""}
+                  read={mentorReadStates?.[item.id]?.read??true}/>
               </div>:null}
               <p className="mt-3 whitespace-pre-wrap text-sm leading-[22px] text-body">
                 {item.message?.trim() || "An announcement was shared with you."}
