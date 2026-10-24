@@ -257,6 +257,15 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
     completedRecent.some(sprint=>sprint.id===snapshot.sprintId));
   const missingHistory=completedRecent.length>recentSnapshots.length;
   const base="/mentor/projects/"+encodeURIComponent(workspace.project.id);
+  const lastSignIn=(membershipId:string)=>{
+    const stamp=workspace.mentorTeamLastSignIn[membershipId];
+    if(!stamp)return "Not recorded";
+    const when=new Date(stamp);
+    return Number.isFinite(when.getTime())?new Intl.DateTimeFormat("en-IN",{
+      day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
+      timeZone:"Asia/Kolkata",
+    }).format(when)+" IST":"Not recorded";
+  };
   const lastRecordedAction=(userId:string)=>{
     const stamp=workspace.mentorTeamRecentActorActivity[userId];
     if(!stamp)return "No recorded action";
@@ -273,7 +282,7 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
     </div>
     <div className="prototype-mentor-roster-head prototype-mentor-roster-period-head" aria-hidden="true">
       <span>Person and role</span><span>{active?"Sprint "+active.sequence:"Current sprint"}</span>
-      <span>Last 4 sprints</span><span>Last recorded action</span>
+      <span>Last 4 sprints</span><span>Last sign-in / project action</span>
     </div>
     {workspace.members.map(member=>{
       const assigned=workspace.tasks.filter(task=>!task.deletedAt&&
@@ -319,12 +328,12 @@ export function MentorPrototypeTeamOverview({workspace}:{workspace:Workspace}){
           {historyCarried+activeCarried>0?
             " · "+(historyCarried+activeCarried)+" carried":""}
         </span>
-        <span>{lastRecordedAction(member.userId)}</span>
+        <span><small className="block">Sign-in: {lastSignIn(member.membershipId)}</small><small className="block">Project action: {lastRecordedAction(member.userId)}</small></span>
       </div>;
     })}
     {!workspace.members.length?<p className="prototype-mentor-summary-empty">No active team members.</p>:null}
     <p className="prototype-mentor-roster-foot">
-      Last recorded action comes from persisted project events authored by this person; it is not sign-in time, online presence or attendance.
+      Last sign-in comes from a saved authentication timestamp; last project action comes from this person’s authored project events. Neither establishes current online presence or attendance.
       Membership changes use the authorized team editor below.
       Department and cohort refer to an active saved academic enrollment; no
       student lead is inferred from a primary Mentor flag. An academic year
