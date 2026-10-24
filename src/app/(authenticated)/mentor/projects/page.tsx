@@ -283,6 +283,7 @@ export async function MentorProjectsContent({
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <MentorPrototypeHome
         scope={context.user.id}
+        nowIso={new Date().toISOString()}
         attention={attentionRows}
         studentWatch={studentWatch}
         weekMeetings={weekMeetingsRead.rows}
