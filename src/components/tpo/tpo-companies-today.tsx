@@ -72,7 +72,8 @@ export function TpoCompaniesToday({
    if(current&&!pending&&!confirm){
     if(/^[1-4]$/.test(e.key)){
      const selected=outcomes[Number(e.key)-1];
-     if(selected){e.preventDefault();chooseOutcome(selected.value);}
+     if(selected){e.preventDefault();setOutcome(selected.value);
+       setNextPlan(selected.value==="CALL_BACK"?"TOMORROW":"NONE");}
     }else if(e.key.toLowerCase()==="t"){
      e.preventDefault();setConfirm("TOMORROW");
     }else if(e.key==="Enter"&&note.trim()){
