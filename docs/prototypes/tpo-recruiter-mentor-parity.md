@@ -148,6 +148,16 @@
 - Added six corresponding source regression checks and ran all six against the latest fetched repository source. **No runtime/CI build or vNext screenshot was observed.**
 - **Status remains Mentor 0/12 VERIFIED** until exact screen state, permissions, interactions, latest CI, and reference visual diff all pass. Detailed stop-the-line audit: `docs/audit/mentor-prototype-brutal-pass-7.md`.
 
+## Mentor functionality-first gap audit (2026-10-24)
+
+**Canonical nonvisual acceptance backlog:** [Mentor screens 45–56 — exhaustive functional gap analysis](../audit/mentor-functional-prototype-gap-analysis-2026-10-24.md).
+
+- Compared all 12 uploaded Mentor prototype HTML screens, including control attributes and DCLogic state, against current `main` UI/service evidence.
+- **132 unchecked requirement / verification items** across shared and per-screen sections. This is not a count of distinct missing features: some are testing/verification gates or subparts of one workflow.
+- Priority P0 defects include historical sprint points changing after carry-over, missing unified recipient read state, and unconfirmed latest CI / database workflow tests. P1 includes prototype-specific task/meeting controls, velocity, activity and search details.
+- Explicitly excludes visual/pixel parity; that is a separate gate **after functional parity**.
+- Mentor remains **0/12 VERIFIED**. Update individual statuses only with named execution evidence, not static source assertions.
+
 ## First visual pilot
 Compare **#01 TPO Companies › Today**, **#31 Recruiter › Today**, and **#45 Mentor › Projects** to equivalent live vNext screens, identify shell-level fixes, then complete one workflow at a time. Treat unverified changes on `main` as needing re-review.
 
