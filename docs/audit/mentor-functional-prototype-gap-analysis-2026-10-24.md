@@ -251,3 +251,58 @@ Focused pure-model TypeScript compile checks and isolated Node assertions passed
 ### Further source changes in this batch
 
 Project Overview now uses sign-off point history for a limited velocity estimate: at least three completed snapshots are required, latest four are considered, and the UI explicitly avoids claiming a delivery date. Three focused pure modules (snapshot, IST-week meetings, velocity) passed strict TypeScript checks and isolated Node assertions on local copies; full repository tests and persistent DB validation are still outstanding. A dedicated four-case Vitest model suite was authored for velocity. These changes do not close the original forecast, notification, calendar-provider or database acceptance requirements.
+
+
+## Source implementation checkpoint — notifications, allocation, calendar export (2026-10-24)
+
+This is **implementation tracking, not the second adversarial audit**. Existing unchecked
+acceptance requirements remain unchecked until database, browser, permissions and
+end-to-end state-matrix evidence exists. Visual acceptance stays explicitly deferred.
+
+- **X-04 / 55-01 to 55-04 / 56-03 — SOURCE IMPLEMENTED; not accepted.** Added
+  recipient-specific persisted read identities for project-attention revisions and
+  published college-announcement versions. New same-origin endpoints authorize
+  individual source reads, page old college notices, and atomically mark personal
+  inbox, verified assigned-project attention and all recipient-visible announcement
+  pages read. All/Unread feed is merged by IST day; opening an unread navigable
+  notification waits for the authorized read acknowledgment and refreshes the
+  Mentor bell. Tests authored:
+  `mentor-attention-read-model.test.ts`,
+  `mentor-unified-notification-model.test.ts`,
+  `mentor-notification-count-route.test.ts`,
+  `mentor-source-notification-read-route.test.ts`,
+  `mentor-unified-notification-read-all-route.test.ts`,
+  `mentor-older-college-notifications-route.test.ts`,
+  and a database scenario in `mentor-notification-acknowledgment.test.ts`.
+  **Not run:** full TS/lint/Vitest/PostgreSQL authenticated client flow,
+  concurrent writes, 100+ notice source pagination, role revocation and
+  source-mutation races. No claim of delivered email/provider push.
+- **50-06 / 50-07 — SOURCE IMPLEMENTED; not accepted.** Separate
+  `auto-assign-next` mutation scopes to the immediate next PLANNED sprint,
+  checks release and project, recalculates eligible student load under locks,
+  applies each write with CAS, creates auditable per-student assignment
+  notifications, and exposes a workload preview plus per-task **Give it** and
+  bulk actions. Isolated planner, route tests and a P5 PostgreSQL integration
+  scenario are authored, not executed.
+- **54-02 — SOURCE IMPLEMENTED; not accepted.** Global calendar now filters
+  completed meetings missing both outcome and facilitator notes, with test.
+  Provider recurrence, guest invitations and Google account connectivity
+  remain uncovered.
+- **54-09 — ISOLATED PASS ONLY.** Both Mentor .ics download paths share a
+  formatter that validates SCHEDULED/RESCHEDULED rows, uses UTC, escapes
+  CR/LF and RFC content separators, and folds on 75 UTF-8 octets. The pure
+  model passed isolated `tsc --strict --noEmit` and six direct Node assertions
+  in the current working session. The committed Vitest spec and entire
+  application build are still unexecuted. This export is **not** Google
+  Calendar/Meet synchronization, an RSVP, reminder or a cancellation push.
+- **Other unaccepted source changes:** independently paginated Board status
+  lanes; task-blocker workaround reply; correct unique student count; immutable
+  sprint-start planned points; full final-submission history, prior feedback
+  and reference-only evidence comparisons; actual IST weekly meeting workload;
+  source-backed resource creators; per-meeting outcome note edit.
+  Their unit and integration tests were authored, but remain subject to
+  full repository execution and permission/browser evidence.
+
+**Gate:** no Mentor screen has yet met the original checklist's complete
+end-to-end functional closure standard. Do not turn these into 132 checked
+requirements or start the deferred visual/audit pass on the basis of commits.
