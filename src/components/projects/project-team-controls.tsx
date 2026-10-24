@@ -428,3 +428,90 @@ export function ProjectMemberActions({
     </>
   );
 }
+
+
+/** Mentor prototype Team ... menu: saved learner designation and removal only.
+ * Mentor writes are tenant-scoped and authorization-checked in the service;
+ * a UI role label is not a privilege or a platform role.
+ */
+export function MentorLearnerTeamActions({projectId,member}:{
+  projectId:string;
+  member:{id:string;displayName:string|null;roleLabel:string|null};
+}){
+  const router=useRouter();
+  const {showToast}=useToast();
+  const [editOpen,setEditOpen]=useState(false);
+  const [removeOpen,setRemoveOpen]=useState(false);
+  const [label,setLabel]=useState(member.roleLabel??"Student");
+  const [pending,setPending]=useState(false);
+  const [error,setError]=useState<string|null>(null);
+  const isLead=["lead","student lead","team lead","team leader"]
+    .includes((member.roleLabel??"").trim().toLowerCase());
+  const endpoint="/api/projects/"+encodeURIComponent(projectId)+
+    "/members/"+encodeURIComponent(member.id);
+  async function save(nextLabel:string){
+    if(!nextLabel.trim()||pending)return;
+    setPending(true);setError(null);
+    try{
+      await projectMutation(endpoint,"PATCH",{roleLabel:nextLabel.trim()});
+      setEditOpen(false);
+      showToast({tone:"success",title:"Learner responsibility updated"});
+      router.refresh();
+    }catch(err){
+      const message=err instanceof Error?err.message:"Could not update learner role.";
+      setError(message);showToast({tone:"error",title:"Could not update role",description:message});
+    }finally{setPending(false);}
+  }
+  async function remove(){
+    if(pending)return;
+    setPending(true);setError(null);
+    try{
+      await projectMutation(endpoint,"DELETE");
+      setRemoveOpen(false);
+      showToast({tone:"success",title:"Learner removed",
+        description:"Unfinished work is unassigned; completed contributions stay recorded."});
+      router.refresh();
+    }catch(err){
+      const message=err instanceof Error?err.message:"Could not remove learner.";
+      setError(message);showToast({tone:"error",title:"Could not remove learner",description:message});
+    }finally{setPending(false);}
+  }
+  return <div className="mt-2 flex flex-wrap items-center gap-2" aria-label={
+    "Manage "+(member.displayName??"learner")}>
+    <Button type="button" size="sm" variant="secondary" disabled={pending}
+      onClick={()=>{setLabel(member.roleLabel??"Student");setError(null);setEditOpen(true);}}>
+      Edit role
+    </Button>
+    <Button type="button" size="sm" variant="secondary" disabled={pending}
+      onClick={()=>void save(isLead?"Student":"Student lead")}>
+      {isLead?"Remove lead":"Promote lead"}
+    </Button>
+    <Button type="button" size="sm" variant="ghost" disabled={pending}
+      onClick={()=>{setError(null);setRemoveOpen(true);}}>Remove</Button>
+    <Dialog open={editOpen} onOpenChange={next=>{if(!pending)setEditOpen(next);}}
+      title={"Edit "+(member.displayName??"learner")+"'s project responsibility"}>
+      <form onSubmit={event=>{event.preventDefault();void save(label);}}
+        className="space-y-3">
+        <label className="block text-sm font-semibold">Saved responsibility
+          <Input value={label} maxLength={120} disabled={pending}
+            onChange={event=>setLabel(event.target.value)}
+            aria-label="Responsibility label" />
+        </label>
+        <p className="text-xs text-muted-foreground">This is a project label,
+          not a new platform permission. Only one student lead is allowed.</p>
+        {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="secondary" disabled={pending}
+            onClick={()=>setEditOpen(false)}>Cancel</Button>
+          <Button type="submit" disabled={pending||!label.trim()} loading={pending}>
+            Save role
+          </Button>
+        </div>
+      </form>
+    </Dialog>
+    <ConfirmDialog open={removeOpen} onOpenChange={setRemoveOpen}
+      title={"Remove "+(member.displayName??"learner")+"?"}
+      description="The learner loses project access. Unfinished tasks become unassigned and past completed contributions remain in the audit history."
+      confirmLabel="Remove learner" pending={pending} onConfirm={remove}/>
+  </div>;
+}
