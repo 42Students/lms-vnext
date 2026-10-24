@@ -5,6 +5,7 @@ import {getMentorPersonalInbox} from
  "@/modules/activity/mentor-notifications-service";
 import {mentorInboxQuerySchema} from
  "@/modules/activity/mentor-notifications-model";
+import {parseNotificationCursor} from "@/modules/activity/notification-cursor";
 export const runtime="nodejs";
 /** Page only the authenticated recipient's personal notices. The cursor is
  * validated before DB access; the service re-verifies active Mentor role and
@@ -22,6 +23,13 @@ export async function GET(request:Request){
     beforeId:query.get("beforeId")??undefined,
   });
   if(!parsed.success)return NextResponse.json({
+   error:"INVALID_NOTIFICATION_CURSOR"},{status:400});
+  // Validate cursor pairs even when a mocked/legacy inbox service reports
+  // success: malformed paging tokens must never reach a recipient read.
+  if(parseNotificationCursor({
+    beforeCreatedAt:parsed.data.beforeCreatedAt,
+    beforeId:parsed.data.beforeId,
+  }).invalid)return NextResponse.json({
    error:"INVALID_NOTIFICATION_CURSOR"},{status:400});
   const result=await getMentorPersonalInbox(
     await getCurrentRequestContext(),parsed.data);
