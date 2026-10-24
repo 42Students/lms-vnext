@@ -61,7 +61,7 @@
 
 | ID | State | Requirement / missing or uncertain behavior | Required closure evidence |
 |---|---|---|---|
-| M49-01 | DEFECT | TeamOverview's lastFour takes highest 4 sprint sequence numbers irrespective of lifecycle state. For a project with four future PLANNED sprints, LAST 4 SPRINTS displays future rather than recently worked sprints. Exclude future-only periods; clarify completed/current inclusion. | Fixture with 12 completed + four future planned sprints; expected last four observable sprints. |
+| M49-01 | SOURCE FIX / TEST | Previously TeamOverview selected highest 4 sequence numbers including future PLANNED periods. It now uses shared recentMentorWorkedSprintIds (ACTIVE/COMPLETED only); no passing test runner result observed. | Execute authored 16-sprint regression and cross-check roster counts against persisted tasks. |
 | M49-02 | GAP | Prototype LAST ACTIVE is a person-presence signal; code accurately labels LAST TASK CHANGE based on task updatedAt, which is not user login/online presence. Need privacy-approved real activity source or an approved wording difference. | Persisted/authorized user activity model, including inactive/no-consent users, or owner-approved divergence. |
 | M49-03 | GAP | Calendar/provider-backed invitations, shared team calendar write, reminder, 'every sprint' recurrence and Meet link creation are not implemented. Scheduling requires user-provided join URL or saves DRAFT. | Real OAuth/configured provider sandbox, token refresh/revoke, invitation, recurrence, timezone and partial failure. |
 | M49-04 | TEST | Existing team member role/lead/removal editor must fully match prototype '⋯' action intent and unassign a removed member's tasks according to authorized transactional rule. | Role grant, reassign, group membership, team-lead uniqueness, foreign-college, last-Mentor denial and affected-task tests. |
@@ -71,7 +71,7 @@
 
 | ID | State | Requirement / missing or uncertain behavior | Required closure evidence |
 |---|---|---|---|
-| M50-01 | DEFECT | PerformanceTable selects last four by sprints.slice(-4), including future PLANNED entries and excluding actual recently worked sprints in the supplied 16-sprint prototype state. Define the last-four completed/active window and fix both #49 and #50 consistently. | 16-sprint fixture with 12 ended, 13–16 future, active-sprint edge cases. |
+| M50-01 | SOURCE FIX / TEST | PerformanceTable now uses the same shared ACTIVE/COMPLETED recent-four selector as TeamOverview rather than slicing four future PLANNED sprints; browser behavior and test execution unverified. | Execute authored 16-sprint, active and empty-period regressions; compare exact task/point counts. |
 | M50-02 | GAP | Prototype's per-student WORTH A LOOK explanations (quiet/stuck/concentrated work) are not composed from event/task history in the current numerical summary. | Auditable reason codes and threshold tests; no speculative individual risk labels. |
 | M50-03 | TEST | Existing assignment editor/auto-assign must show actual persisted result, load rebalance and communication state; prototype claims students 'were told' but current implementation must not claim delivered notifications without an actual producer. | POST response/transaction, failed delivery, constraints, reload and unequal-workload cases. |
 | M50-04 | TEST | All/Current/Last-four/picked-sprint views correctly count Done/Waiting/Open/Carried and points with deleted/archived/tasks carrying across sprints. | Table vs Board/sprint source count reconciliation, zero estimated points, empty team. |
@@ -134,7 +134,7 @@
 
 ## Shared stop-the-line acceptance queue (not visual defects)
 
-1. **P0 / ACT-01** Fix both #49/#50 last-four-sprint source logic; freeze a single documented definition and add unit + integration fixtures for future PLANNED sprints.
+1. **P0 / ACT-01 — SOURCE FIX, TEST PENDING** Both #49/#50 now use the same recentMentorWorkedSprintIds helper selecting last four ACTIVE/COMPLETED periods. Four focused Vitest cases were authored; still run tests, add persisted DB/real-browser fixtures, and verify intended definition.
 2. **P0 / ACT-02** Verify #48 transactional Next/Backlog/Drop, stale CAS, rollback and release/archive boundaries with disposable PostgreSQL.
 3. **P0 / ACT-03** Verify #47 review A/S send-back feedback, task mutation authorization, cross-project isolation and keyboard state; build accessible sprint cross-list drag if required.
 4. **P0 / ACT-04** Establish latest main CI evidence: npm run typecheck; npx tsc -p tsconfig.strict.json --noEmit; npm run lint; source contract + unit; PostgreSQL integration; Playwright logged-in Mentor tests. **No command or CI result was observed in this pass.**
@@ -151,3 +151,9 @@
 After functional gaps and real-data workflows: launch disposable authenticated Mentor fixture, capture running vNext #45–56 at the same 1440px reference viewport and all prototype dialog/keyboard states, compare each original extracted HTML rendering by overlay/diff, then repair shell/body geometry, typography, spacing, mobile focus/overflow and accessibility. Repeat test suites and visual captures after fixes.
 
 **Closure rule:** Individual screen status remains IMPLEMENTED / UNVERIFIED, never VERIFIED or CLOSED, until both that screen's source-backed functional acceptance and actual rendered/browser comparison have proof. This ledger corrects outdated assertions in passes 4–6; do not re-open already implemented carry decisions or meeting facilitation storage on the basis of stale notes.
+
+## Continuation after pass-8 audit (source change, not acceptance)
+
+- Added src/modules/projects/mentor-recent-worked-sprints-model.ts with a single recent-work window definition (ACTIVE or COMPLETED, most recent four by sequence, excludes future PLANNED periods).
+- Team roster and Performance range filter now both invoke the shared selector. This resolves the identified source-level M49-01/M50-01 defect without changing data ownership, permissions or historical records.
+- Added tests/unit/mentor-recent-worked-sprints-model.test.ts (four scenarios: 16-sprint reference with future plans, active period, empty/short periods and immutable caller input). **Tests authored; not executed.** No claim of clean typecheck/CI or browser acceptance.
