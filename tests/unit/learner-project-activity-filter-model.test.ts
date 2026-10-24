@@ -62,6 +62,19 @@ describe("Activity cursor URL boundary", () => {
     expect(query.get("activityCategory")).toBe("TASK");
     expect(learnerProjectActivityPageHref("project", { category: "TASK", beforeTime: time, beforeId: id })).not.toContain("activityBefore");
   });
+  it("preserves authorized sprint selection through paginated activity URLs",()=>{
+    const sprintId="00000000-0000-4000-8000-000000000002";
+    const actorId="00000000-0000-4000-8000-000000000003";
+    const parsed=parseLearnerProjectActivityFilters({sprintId,actorUserId:actorId});
+    expect(parsed.success).toBe(true);
+    if(!parsed.success)throw new Error("Expected scoped activity filters");
+    const url=new URL(learnerProjectActivityPageHref("project",parsed.data),
+      "https://example.test");
+    expect(url.searchParams.get("activitySprintId")).toBe(sprintId);
+    expect(parseLearnerProjectActivityFilters({sprintId:"not-a-uuid"}).success).toBe(false);
+    expect(parseLearnerProjectActivityFilters({sprintId:[sprintId]}).success).toBe(false);
+    expect(parseLearnerProjectActivityFilters({sprintId:""}).success).toBe(true);
+  });
   it("rejects half cursors, repeated timestamps and forged IDs", () => {
     expect(parseLearnerProjectActivityFilters({ beforeTime: "2026-10-14T10:00:00Z" }).success).toBe(false);
     expect(parseLearnerProjectActivityFilters({ beforeTime: "2026-10-14T10:00:00Z", beforeId: "forged" }).success).toBe(false);
