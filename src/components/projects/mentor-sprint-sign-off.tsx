@@ -56,7 +56,7 @@ export function MentorSprintSignOff({
         );
       }catch{
         setOpen(false);setPending(false);router.refresh();
-        showToast({tone:"warning",title:"Sprint signed off; next sprint not started",
+        showToast({tone:"error",title:"Sprint signed off; next sprint not started",
           description:"The completed sprint is saved. Start the next sprint separately after checking its status."});
         return;
       }
@@ -64,8 +64,8 @@ export function MentorSprintSignOff({
     setOpen(false);setPending(false);setNote("");
     showToast({tone:"success",title:nextSprint&&startNext?
       "Sprint signed off and next sprint started":"Sprint signed off",
-      description:unfinished.length?
-        unfinished.length+" unfinished tasks were carried into the backlog.":undefined});
+      ...(unfinished.length?{description:
+        unfinished.length+" unfinished tasks were carried into the backlog."}:{}),});
     router.refresh();
   }
   return <>
