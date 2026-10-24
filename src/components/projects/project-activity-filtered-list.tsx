@@ -63,27 +63,31 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
   return ()=>{generation.current+=1;};
  },[projectId,events]);
  async function loadMore(){
-  if(actor){
+  if(actor||sprint){
    if(lock.current||!actorFeed?.hasMore||!actorFeed.nextCursor)return;
    lock.current=true;setBusy(true);setLoadError("");
    const generationNow=actorGeneration.current;
-   const query=new URLSearchParams({actorUserId:actor,
-     beforeTime:actorFeed.nextCursor.time,beforeId:actorFeed.nextCursor.id});
+   const scopedKey=actor+"|"+sprint;
+   const query=new URLSearchParams({
+     ...(actor?{actorUserId:actor}:{}),
+     ...(sprint?{sprintId:sprint}:{}),
+     beforeTime:actorFeed.nextCursor.time,beforeId:actorFeed.nextCursor.id,
+   });
    try{
     const page=await apiFetch<Page>("/api/projects/"+
       encodeURIComponent(projectId)+"/activity?"+query.toString(),
       {cache:"no-store"});
     if(generationNow!==actorGeneration.current)return;
     setActorFeed(previous=>{
-      if(!previous||previous.id!==actor)return previous;
+      if(!previous||previous.id!==scopedKey)return previous;
       const seen=new Set(previous.events.map(event=>event.id));
-      return {id:actor,events:[...previous.events,
+      return {id:scopedKey,events:[...previous.events,
         ...page.events.filter(event=>!seen.has(event.id))],
         hasMore:page.hasMore,nextCursor:page.nextCursor};
     });
    }catch{
     if(generationNow===actorGeneration.current)
-      setLoadError("Could not load older events by this person. Retry.");
+      setLoadError("Could not load older matching events. Retry.");
    }finally{lock.current=false;
       if(generationNow===actorGeneration.current)setBusy(false);
    }
@@ -130,29 +134,36 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     ...actorOptions,
    ].map(row=>[row.id,row] as const)).values()]
    .sort((a,b)=>a.label.localeCompare(b.label)||a.id.localeCompare(b.id));
- async function selectActor(id:string){
+ async function selectScopedHistory(nextActor:string,nextSprint:string){
    actorGeneration.current+=1;
    const generationNow=actorGeneration.current;
-   setActor(id);setPage(1);setActorFeed(null);setActorError("");
-   setActorBusy(Boolean(id));
-   if(!id)return;
+   const key=nextActor+"|"+nextSprint;
+   setActor(nextActor);setSprint(nextSprint);setPage(1);
+   setActorFeed(null);setActorError("");
+   setActorBusy(Boolean(nextActor||nextSprint));
+   if(!nextActor&&!nextSprint)return;
    try{
-     const query=new URLSearchParams({actorUserId:id});
-     const page=await apiFetch<Page>("/api/projects/"+
+     const query=new URLSearchParams({
+       ...(nextActor?{actorUserId:nextActor}:{}),
+       ...(nextSprint?{sprintId:nextSprint}:{}),
+     });
+     const result=await apiFetch<Page>("/api/projects/"+
        encodeURIComponent(projectId)+"/activity?"+query.toString(),
        {cache:"no-store"});
      if(generationNow!==actorGeneration.current)return;
-     setActorFeed({id,events:page.events,hasMore:page.hasMore,
-       nextCursor:page.nextCursor});
+     setActorFeed({id:key,events:result.events,hasMore:result.hasMore,
+       nextCursor:result.nextCursor});
    }catch{
      if(generationNow===actorGeneration.current)
-       setActorError("Could not load that person's complete recorded history. Retry the selection.");
+       setActorError("Could not load the complete matching activity history. Retry the selection.");
    }finally{
      if(generationNow===actorGeneration.current)setActorBusy(false);
    }
  }
- const working=actor?(actorFeed?.id===actor?actorFeed.events:[]):items;
- const activeHasMore=actor?(actorFeed?.id===actor?actorFeed.hasMore:false):hasMore;
+ const scopedKey=actor+"|"+sprint;
+ const scoped=Boolean(actor||sprint);
+ const working=scoped?(actorFeed?.id===scopedKey?actorFeed.events:[]):items;
+ const activeHasMore=scoped?(actorFeed?.id===scopedKey?actorFeed.hasMore:false):hasMore;
  const current=Date.parse(now);
  const filtered=working.filter(event=>{
   const occurred=new Date(event.occurredAt);
@@ -163,8 +174,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     &&(!term||[event.summary,event.actorDisplayName??"",event.actorUserId??"",event.actorType??"",actorTypeLabel(event.actorType),event.eventType,event.subjectLabel??"",event.subjectId??"",event.resourceKey??"",resourceLabel(event.resourceKey??event.subjectLabel),resourceActionLabel(event.eventType)].some(value=>value.toLocaleLowerCase("en-IN").includes(term)))
     &&projectResourceAuditMatches(event.eventType,resourceAction)
     &&(!type||event.eventType===type)
-    &&(!actor||(event.actorUserId??event.actorDisplayName)===actor)
-     &&(!sprint||event.sprintId===sprint)
+    &&(!actor||event.actorUserId===actor)
     &&(range==="ALL"||current-occurred.getTime()<Number(range)*86400000)
     &&(!fromDate||day>=fromDate)
     &&(!toDate||day<=toDate);
@@ -182,7 +192,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const activePage=Math.min(page,totalPages);
  const paged=resourceAudit?filtered.slice((activePage-1)*PAGE_SIZE,activePage*PAGE_SIZE):filtered;
  const resetFilters=()=>{
-   actorGeneration.current+=1;setActorFeed(null);setActor("");setActorError("");
+   actorGeneration.current+=1;setActorFeed(null);setActor("");setActorError("");setActorBusy(false);
    setSearch("");setMentorCategory("ALL");setResourceAction("ALL");setType("");setSprint("");
    setRange("ALL");setFromDate("");setToDate("");setPage(1);
  };
@@ -239,7 +249,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     </Select>
    </label>
    {!resourceAudit?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">By person
-     <Select value={actor} onChange={event=>void selectActor(event.target.value)}
+     <Select value={actor} onChange={event=>void selectScopedHistory(event.target.value,sprint)}
        className="w-full">
        <option value="">By anyone</option>
        {actors.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
@@ -247,7 +257,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
    </label>:null}
    {!resourceAudit&&sprints.length>0?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
       In sprint
-      <Select value={sprint} onChange={event=>{setSprint(event.target.value);setPage(1);}}
+      <Select value={sprint} onChange={event=>void selectScopedHistory(actor,event.target.value)}
         className="w-full">
         <option value="">Any sprint</option>
         {[...sprints].sort((a,b)=>a.sequence-b.sequence).map(item=>
@@ -274,11 +284,11 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
    <Button variant="secondary" type="button" onClick={resetFilters}
       className="">Clear filters</Button>
   </div>
-  {actorBusy?<p role="status">Loading complete recorded activity for the selected person…</p>:null}
+  {actorBusy?<p role="status">Loading complete recorded activity for the selected person or sprint…</p>:null}
   {actorError?<p role="alert">{actorError}</p>:null}
   <p className="text-xs text-muted-foreground">{resourceAudit
     ? filtered.length===0?"0 matching changes":`${(activePage-1)*PAGE_SIZE+1}–${Math.min(activePage*PAGE_SIZE,filtered.length)} of ${filtered.length} matching changes`
-    :`${filtered.length} events`} · Times shown in IST.{sprint?" Events without a recorded sprint ID are excluded.":""}{activeHasMore?" Load more to include older events.":""}</p>
+    :`${filtered.length} events`} · Times shown in IST.{sprint?" Events are scoped to the recorded sprint (including historical sprint updates).":""}{activeHasMore?" Load more to include older events.":""}</p>
   {!filtered.length
     ? <EmptyState title={resourceAudit?(items.length===0?"No resource changes yet":"No resource changes match these filters"):(items.length===0?"No project activity yet":"No matching activity")}
       description={items.length===0
