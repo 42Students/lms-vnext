@@ -20,9 +20,11 @@ export function mentorPullSelectedPoints(
  selected:readonly string[],
 ):{count:number;points:number;unestimated:number}{
  const selectedIds=new Set(selected);
+ const counted=new Set<string>();
  let count=0,points=0,unestimated=0;
  for(const item of tasks){
-  if(!selectedIds.has(item.id))continue;
+  if(!selectedIds.has(item.id)||counted.has(item.id))continue;
+  counted.add(item.id);
   count++;
   if(item.estimatePoints===null||!Number.isSafeInteger(item.estimatePoints)||
     item.estimatePoints<0)unestimated++;
