@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 /** Poll only a scoped version token; refresh the expensive server page only
  * after an authorized conversation changes, never while editing a message. */
-export function RecruiterConversationLiveRefresh(){
+export function RecruiterConversationLiveRefresh({collegeId,threadId}:{collegeId?:string;threadId?:string}={}){
  const router=useRouter();
  const version=useRef<string|null>(null);
  const checking=useRef(false);
@@ -14,6 +14,9 @@ export function RecruiterConversationLiveRefresh(){
  const refresh=useRef<()=>void>(()=>{});
  useEffect(()=>{
   let active=true;
+  version.current=null;
+  setStale(false);
+  setNewMessages(false);
   const update=async()=>{
    if(checking.current || document.visibilityState!=="visible" || !navigator.onLine)return;
    const current=document.activeElement;
@@ -22,7 +25,11 @@ export function RecruiterConversationLiveRefresh(){
    if(document.querySelector('dialog[open], [role="dialog"][aria-modal="false"], [role="dialog"][aria-modal="true"], [role="alertdialog"], [aria-haspopup][aria-expanded="true"], details[open]'))return;
    checking.current=true;
    try{
-    const response=await fetch("/api/placements/recruiter/conversations/pulse",{
+    const params=new URLSearchParams();
+    if(collegeId)params.set("collegeId",collegeId);
+    if(threadId)params.set("threadId",threadId);
+    const response=await fetch("/api/placements/recruiter/conversations/pulse"+
+      (params.size?"?"+params.toString():""),{
      method:"GET",credentials:"same-origin",cache:"no-store",
      headers:{Accept:"application/json"},
     });
@@ -47,7 +54,7 @@ export function RecruiterConversationLiveRefresh(){
   window.addEventListener("focus",refresh.current);
   return ()=>{active=false;window.clearInterval(interval);
     window.removeEventListener("focus",refresh.current);};
- },[router]);
+ },[router,collegeId,threadId]);
  return stale || newMessages ? <div role="status" className="flex flex-wrap items-center gap-2 border-b border-[var(--lms-canvas-border)] py-2 text-sm text-body">
    {stale ? "This refresh failed. Showing the last successful inbox." : "New messages available. Your draft is unchanged."}
    <Button type="button" size="sm" variant="secondary" onClick={()=>{
