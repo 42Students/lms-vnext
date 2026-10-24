@@ -9,6 +9,7 @@ import {useEffect,useState} from "react";
 import Link from "next/link";
 import {useRouter,useSearchParams} from "next/navigation";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
+import {mentorLanePage} from "@/modules/projects/mentor-board-lane-paging-model";
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
@@ -295,7 +296,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
     <h3 className={"prototype-mentor-board-lane-heading "+styles["header"]}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h3>
-    <ul className={styles["body"]}>{lane.tasks.slice(0,laneLimits[lane.id]??4).map(task=>{
+    <ul className={styles["body"]}>{mentorLanePage(lane.tasks,laneLimits[lane.id]).items.map(task=>{
      const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
        editable.includes(task.status as typeof editable[number]);
@@ -364,11 +365,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      </li>;
     })}
     {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
-    {lane.tasks.length>(laneLimits[lane.id]??4)?<li><Button
+    {mentorLanePage(lane.tasks,laneLimits[lane.id]).remaining>0?<li><Button
        type="button" size="sm" variant="secondary"
        onClick={()=>setLaneLimits(old=>({...old,[lane.id]:(old[lane.id]??4)+4}))}>
-       +{Math.min(4,lane.tasks.length-(laneLimits[lane.id]??4))} more ·
-       {" "}{lane.tasks.length-(laneLimits[lane.id]??4)} remaining
+       +{mentorLanePage(lane.tasks,laneLimits[lane.id]).moreCount} more ·
+       {" "}{mentorLanePage(lane.tasks,laneLimits[lane.id]).remaining} remaining
     </Button></li>:null}
     </ul>
    </BoardColumn>)}
