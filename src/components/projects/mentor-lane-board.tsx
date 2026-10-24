@@ -46,7 +46,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
  const [dragging,setDragging]=useState(false);
  const [taskQuery,setTaskQuery]=useState("");
- const [focusedId,setFocusedId]=useState<string|null>(null);
+ const [focusedId,setFocusedId]=useState<string|null>(params.get("task"));
  const [view,setView]=useState<"board"|"list">(params.get("view")==="list"?"list":"board");
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
@@ -81,7 +81,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      task.assigneeMembershipId===assignee))&&
    (!statusFilter||(statusFilter==="BACKLOG"?task.sprintId===null:task.status===statusFilter)));
  const visible=matching.slice(0,visibleLimit);
- const focused=visible.find(task=>task.id===focusedId)??visible[0]??null;
+ const focused=matching.find(task=>task.id===focusedId)??visible[0]??null;
  useEffect(()=>{
    const onKey=(event:KeyboardEvent)=>{
      if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
@@ -90,7 +90,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      if(key!=="j"&&key!=="k")return;
      if(event.target instanceof Element&&event.target.closest(
        "input,textarea,select,button,a,[contenteditable],[role=dialog]"))return;
-     if(document.querySelector('[role="dialog"]')||visible.length===0)return;
+     if(document.querySelector('[role="dialog"]')||matching.length===0)return;
      const index=visible.findIndex(task=>task.id===(focusedId??visible[0]?.id));
      const next=Math.max(0,Math.min(visible.length-1,index+(key==="j"?1:-1)));
      const task=visible[next];
