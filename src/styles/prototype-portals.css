@@ -2097,3 +2097,14 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-evidence-preview a{
   color:#0a7c88;font-size:12px;font-weight:700;
 }
+
+
+/* Mentor #49: prototype current sprint / last four sprints / last task change. */
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-roster-period-head,
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-roster-period-row{
+  grid-template-columns:minmax(200px,2fr) minmax(125px,1fr) minmax(135px,1fr) minmax(105px,.8fr);
+  min-width:640px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-roster-period-row>span{
+  color:#3b4a60;font-size:12px;line-height:1.5;
+}
