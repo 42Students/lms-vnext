@@ -116,10 +116,15 @@ export function TpoCompaniesToday({
     method:"POST",credentials:"same-origin",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
    });
-   const payload=await response.json().catch(()=>null) as {error?:string}|null;
+   const payload=await response.json().catch(()=>null) as {error?:string;followup?:{id?:string;done?:boolean;nextFollowupId?:string;dueAt?:string}}|null;
    if(!response.ok)throw new Error(payload?.error==="TPO_CRM_FOLLOWUP_ALREADY_DONE"?
     "This follow-up has changed. Refresh Today before trying again.":
     "The change was not confirmed. No success has been recorded.");
+   if(kind==="DONE"&&(payload?.followup?.done!==true||
+       (nextDueAt&&!payload.followup.nextFollowupId)))
+    throw new Error("The complete outcome and new follow-up receipt could not be confirmed. Refresh before retrying.");
+   if(kind==="TOMORROW"&&!payload?.followup?.dueAt)
+    throw new Error("The changed follow-up time could not be confirmed. Refresh before retrying.");
    setDone(ids=>[...ids,current.id]);
    setSelectedId(null);setNote("");setNextPlan("NONE");setCustomLocal("");setConfirm(null);
    setNotice(kind==="DONE"?(nextDueAt?"Outcome and next follow-up saved together.":"Outcome recorded. Next follow-up selected."):"Moved to tomorrow at 10:00 AM IST.");
