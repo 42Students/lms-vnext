@@ -12,6 +12,7 @@ import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
 import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
+import {mentorSubmissionIdentity} from "@/modules/projects/mentor-submission-attribution-model";
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 import {MentorProjectFocusQueue} from "./mentor-project-focus-queue";
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
@@ -310,10 +311,13 @@ export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}
 }
 
 export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace}){
-  const latest=workspace.finalDelivery.submissions.at(-1);
-  const previous=workspace.finalDelivery.submissions.length>1?
-    workspace.finalDelivery.submissions.at(-2):null;
-  const review=workspace.finalDelivery.reviews.at(-1);
+  const submissions=[...workspace.finalDelivery.submissions].sort((a,b)=>
+    b.version-a.version||b.createdAt.getTime()-a.createdAt.getTime());
+  const latest=submissions[0]??null;
+  const previous=submissions[1]??null;
+  const review=latest?workspace.finalDelivery.reviews
+    .filter(row=>row.submissionId===latest.id).at(-1):null;
+  const submitter=latest?mentorSubmissionIdentity(latest,workspace.members):null;
   const previousFeedback=previous?workspace.finalDelivery.reviews
     .filter(item=>item.submissionId===previous.id).at(-1):null;
   const source=latest?.sourceUrl?safeProjectExternalHref(latest.sourceUrl):null;
@@ -344,7 +348,15 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
     {latest?<div className="prototype-mentor-delivery-main">
       <div className="prototype-mentor-delivery-details">
         <strong>{latest.summary||"Final project submission"}</strong>
-        <p>Status: {latest.status.replaceAll("_"," ")}{review?" · Latest review: "+review.decision.replaceAll("_"," "):""}</p>
+        {submitter?<p>
+          {submitter.attempt} · Submitted by {submitter.submitter}
+          {submitter.submittedAt?" · "+
+            new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
+              timeZone:"Asia/Kolkata"}).format(new Date(submitter.submittedAt))+" IST":
+            " · submission timestamp unavailable"}
+          {submitter.source==="HISTORIC"?" (preserved imported name)":""}
+        </p>:null}
+        <p>Status: {latest.status.replaceAll("_"," ")}{review?" · This attempt's review: "+review.decision.replaceAll("_"," "):""}</p>
         {latest.notes?<p className="prototype-mentor-delivery-notes">{latest.notes}</p>:null}
       </div>
       <div className="prototype-mentor-delivery-links">
