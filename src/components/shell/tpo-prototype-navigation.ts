@@ -28,7 +28,7 @@ export const TPO_PROTOTYPE_SECTIONS={
   {label:"Today",href:"/tpo/companies/today"},
   {label:"Recruiters",href:"/tpo/recruiters"},
   {label:"Companies",href:"/tpo/companies?directory=1"},
-  {label:"Emails",href:"/tpo/recruiters?view=campaigns"},
+  {label:"Emails",href:"/tpo/recruiters/campaigns"},
   {label:"Messages",href:"/tpo/messages?tab=recruiters"},
  ],
  Team:[
@@ -60,4 +60,23 @@ export function tpoPrototypeSectionForPath(pathname:string,tab?:string|null):
 }
 export function tpoPrototypeSidebarActive(pathname:string,item:Pick<ShellNavItem,"label"|"href">,tab?:string|null):boolean{
  return item.label===tpoPrototypeSectionForPath(pathname,tab);
+}
+
+/** Exact navigation ownership also includes nested draft/composer pages.
+ * Query filter tabs retain their own identity and never double-highlight. */
+export function tpoPrototypeTabActive(pathname:string,query:URLSearchParams,href:string):boolean{
+ const [route,search]=href.split("?");
+ if(!route)return false;
+ const withinRoute=pathname===route||
+   (href==="/tpo/placements"&&pathname.startsWith("/tpo/placements/"))||
+   (href==="/tpo/students"&&pathname.startsWith("/tpo/students/"))||
+   (href==="/tpo/recruiters/campaigns"&&pathname.startsWith("/tpo/recruiters/campaigns/"));
+ if(!withinRoute)return false;
+ const params=new URLSearchParams(search??"");
+ for(const [key,value] of params){
+   if(query.get(key)!==value)return false;
+ }
+ if(href==="/tpo/recruiters"&&query.get("view")==="campaigns")return false;
+ if(href==="/tpo/messages?tab=recruiters"&&query.get("tab")!=="recruiters")return false;
+ return true;
 }
