@@ -15,6 +15,8 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import {canSaveMentorResourceEntry,mentorResourceEffectiveStatus} from
+ "@/modules/projects/mentor-resource-entry-model";
 
 type CanonicalResourceType="FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT";
 type LegacyResourceType="PDF"|"DOC"|"PPT"|"VIDEO";
@@ -102,7 +104,8 @@ function ResourceForm({
       </label>
       <label>
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          URL
+          {["FILE","DOCUMENT","PDF","DOC","PPT"].includes(metadata.resourceType)?
+            "File or document URL (optional)":"URL"}
         </span>
         <Input
           type="url"
@@ -128,6 +131,11 @@ function ResourceForm({
           }
         />
       </label>
+      {!isLearner && ["FILE","DOCUMENT","PDF","DOC","PPT"].includes(metadata.resourceType)?
+        <p className="md:col-span-2 text-xs text-muted-foreground">
+          Saving this metadata does not upload a file. If the URL and description
+          are empty, a draft is created for later completion.
+        </p>:null}
       {!isLearner ? <details className="min-w-0 md:col-span-2 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]" open={metadata.status!=="ACTIVE"||metadata.resourceType!=="LINK"||metadata.pinned||Boolean(metadata.accessNotes||metadata.sprintId||metadata.taskId)}>
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Resource details</summary>
         <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-4)]">
@@ -237,10 +245,10 @@ export function CreateProjectResourceControl({
   ) {
     event.preventDefault();
     setError(null);
-    if (!description.trim() && !url.trim()) {
-      setError(
-        "Add a description or an HTTP(S) resource URL.",
-      );
+    if (!canSaveMentorResourceEntry({
+      type:metadata.resourceType,description,url,isLearner,
+    })) {
+      setError("Add a description or an HTTP(S) URL, or select File/Document to create an unattached draft.");
       return;
     }
 
@@ -258,7 +266,9 @@ export function CreateProjectResourceControl({
           visibility: isLearner ? "TEAM" : visibility,
           ...(!isLearner?{resourceType:canonicalResourceType(metadata.resourceType),
             legacyResourceKind:isLegacy(metadata.resourceType)?metadata.resourceType:null,
-            status:metadata.status,
+            status:mentorResourceEffectiveStatus({
+              type:metadata.resourceType,description,url,selectedStatus:metadata.status,
+            }),
             pinned:metadata.pinned,accessNotes:metadata.accessNotes||null,
             sprintId:metadata.sprintId||null,taskId:metadata.taskId||null}:{}),
         },
@@ -345,8 +355,9 @@ export function CreateProjectResourceControl({
               disabled={
                 pending ||
                 !title.trim() ||
-                (!description.trim() &&
-                  !url.trim())
+                !canSaveMentorResourceEntry({
+                  type:metadata.resourceType,description,url,isLearner,
+                })
               }
             >
               {pending ? "Saving…" : "Add resource"}
@@ -423,10 +434,10 @@ export function ProjectResourceActions({
     event.preventDefault();
     setError(null);
     if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
-    if (!description.trim() && !url.trim()) {
-      setError(
-        "Add a description or an HTTP(S) resource URL.",
-      );
+    if (!canSaveMentorResourceEntry({
+      type:metadata.resourceType,description,url,
+    })) {
+      setError("Add a description or an HTTP(S) URL, or select File/Document to keep a draft.");
       return;
     }
 
@@ -445,7 +456,9 @@ export function ProjectResourceActions({
           visibility,
           resourceType:canonicalResourceType(metadata.resourceType),
           legacyResourceKind:isLegacy(metadata.resourceType)?metadata.resourceType:null,
-          status:metadata.status,
+          status:mentorResourceEffectiveStatus({
+            type:metadata.resourceType,description,url,selectedStatus:metadata.status,
+          }),
           pinned:metadata.pinned,accessNotes:metadata.accessNotes||null,
           sprintId:metadata.sprintId||null,taskId:metadata.taskId||null,
         },
@@ -595,8 +608,9 @@ export function ProjectResourceActions({
               disabled={
                 pending ||
                 !title.trim() ||
-                (!description.trim() &&
-                  !url.trim())
+                !canSaveMentorResourceEntry({
+                  type:metadata.resourceType,description,url,
+                })
               }
             >
               {pending ? "Saving…" : "Save"}

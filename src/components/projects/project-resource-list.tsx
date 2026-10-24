@@ -18,7 +18,7 @@ import {mentorResourceEarlierScope,mentorResourceLinkedScopeLabels,mentorResourc
 type ResourceRow={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
  visibility:string;status:string;createdAt:Date;updatedAt:Date;sequence:number;
- resourceType?:string;pinned?:boolean;accessNotes?:string|null;templateKey?:string|null;
+ resourceType?:string;legacyResourceKind?:string|null;pinned?:boolean;accessNotes?:string|null;templateKey?:string|null;
  sprintId?:string|null;taskId?:string|null;
 };
 export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tasks=[],sharers=[]}:{
@@ -322,6 +322,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          resourceType:(["FILE","LINK","DOCUMENT","CODE","NOTE","ENVIRONMENT"].includes(resource.resourceType??"")
            ?resource.resourceType:"LINK") as "FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT",
          status:resource.status==="DRAFT"?"DRAFT":resource.status==="ARCHIVED"?"ARCHIVED":"ACTIVE",
+         legacyResourceKind:resource.legacyResourceKind??null,
          ...(resource.pinned === undefined ? {} : { pinned: resource.pinned }),
          ...(resource.accessNotes === undefined ? {} : { accessNotes: resource.accessNotes }),
          updatedAt:resource.updatedAt,
