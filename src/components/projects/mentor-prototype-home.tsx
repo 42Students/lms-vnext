@@ -57,6 +57,7 @@ function readLater(key:string):string[] {
  */
 export function MentorPrototypeHome({
   scope, nowIso,attention,teamCount,membershipCount,studentWatch,
+  uniqueLearnerCount,learnerAssignmentCount,
   weekMeetings,weekMeetingsLoadFailed,
 }:{
   scope:string;
@@ -66,6 +67,8 @@ export function MentorPrototypeHome({
   weekMeetingsLoadFailed:boolean;
   teamCount:number;
   membershipCount:number;
+  uniqueLearnerCount:number;
+  learnerAssignmentCount:number;
   studentWatch:readonly MentorStudentWatchItem[];
 }) {
   const [snoozed,setSnoozed]=useState<readonly string[]>([]);
@@ -95,7 +98,9 @@ export function MentorPrototypeHome({
   return <div className="prototype-mentor-home">
     <div className="prototype-mentor-home-heading">
       <div>
-        <p>{teamCount} {teamCount===1?"team":"teams"} · {membershipCount} team {membershipCount===1?"membership":"memberships"} · project workspace</p>
+        <p>{teamCount} {teamCount===1?"team":"teams"} · {uniqueLearnerCount} distinct {uniqueLearnerCount===1?"student":"students"} ·
+          {" "}{learnerAssignmentCount} learner team {learnerAssignmentCount===1?"seat":"seats"} ·
+          {" "}{membershipCount} total project memberships</p>
         <h1>{active.length
           ? active.length+" "+(active.length===1?"thing needs":"things need")+" you."
           : "You’re all caught up."}</h1>
