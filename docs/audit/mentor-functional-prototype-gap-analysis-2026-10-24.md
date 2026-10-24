@@ -239,3 +239,11 @@ Do **not** interpret "implementation exists" as "behavior is complete." No scree
 - **Source fix, tests unexecuted:** Shared src/modules/projects/mentor-recent-worked-sprints-model.ts now returns the most recent four ACTIVE/COMPLETED sprints, rather than including future PLANNED sprint sequences. Both src/components/projects/mentor-prototype-project-summaries.tsx (Team last-four totals) and src/components/projects/mentor-prototype-performance-table.tsx (Last four filter) consume it.
 - Added four cases in tests/unit/mentor-recent-worked-sprints-model.test.ts, including the 16-sprint prototype (11 completed, one active, four future planned), active/completed ordering, short/empty state and input immutability. **No Vitest/typecheck/CI/browser result has been observed.** The checkboxes above remain unchecked until those gates pass.
 - **Important distinction:** This selector corrects future-sprint inclusion but does **not** fix X-03 / 48-01 historical commitment points shifting after per-task carry-over; that still requires a verified immutable snapshot or event-reconstruction design.
+
+## Source continuation checkpoint (2026-10-24)
+
+The sprint completion transaction now records an immutable sign-off workload snapshot before task NEXT/BACKLOG/DROP moves; Mentor sprint bars, per-student Performance and Team last-four stats use this persisted record. It represents the sign-off workload, not initial commitment. Historical completed sprints lacking snapshots display unavailable. Snapshot DB concurrency, permission and reopen tests remain to be executed.
+
+The Mentor home weekly meeting rail now uses assigned-project calendar meetings through the end of the current IST week, rather than the 48-hour attention feed. Project Overview adds a learner sprint summary, actionable sign-off/assignment/request links and permitted meeting details. Activity exposes recorded sprint IDs and allows combining a sprint filter with actor/type/date filters; untagged events remain outside selected-sprint results.
+
+Focused pure-model TypeScript compile checks and isolated Node assertions passed on local copies of the new snapshot/week models. Repository Vitest, DB tests, lint, strict build, authenticated browser and visual checks were not run. All existing acceptance checkboxes remain open, as does the overall Mentor 0/12 verified status.
