@@ -49,3 +49,21 @@ export function mentorUnifiedOpenReadRequest(
  return {url:"/api/mentor/notifications/source-read",
    body:JSON.stringify({key:item.receiptKey})};
 }
+
+/** Union independently paged authenticated notification sources without
+ * duplicate cards. Newest server-loaded state wins over an older page.
+ */
+export function mergeMentorUnifiedPages(
+ initial:readonly MentorUnifiedNotification[],
+ olderNotices:readonly MentorUnifiedNotification[],
+ olderPersonal:readonly MentorUnifiedNotification[],
+ unreadOnly:boolean,
+):MentorUnifiedNotification[]{
+ const merged=new Map<string,MentorUnifiedNotification>();
+ for(const item of [...initial,...olderNotices,...olderPersonal]){
+  if(unreadOnly&&item.read!==false)continue;
+  const key=item.source+":"+item.id;
+  if(!merged.has(key))merged.set(key,item);
+ }
+ return sortMentorUnifiedNotifications([...merged.values()]);
+}
