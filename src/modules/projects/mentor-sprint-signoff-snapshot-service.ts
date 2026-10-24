@@ -8,11 +8,13 @@ import {requireProjectReadAccess} from "./access";
 import {parseMentorSprintSignOffSnapshot,type MentorSprintSignOffSnapshot}
   from "./mentor-sprint-signoff-snapshot-model";
 
-/** Read only sign-off facts for the currently authorized exact project.
+/** Read only persisted snapshot facts for the currently authorized project.
  * Raw activity metadata is never sent to the UI.
  */
-export async function listMentorSprintSignOffSnapshots(
+async function listScopedMentorSnapshots(
   context:RequestContext,projectId:string,sprintIds:readonly string[],
+  versionKey:"mentorSignOffSnapshotVersion"|"mentorStartSnapshotVersion",
+  valueKey:"sprintSnapshot"|"sprintStartSnapshot",
 ):Promise<MentorSprintSignOffSnapshot[]> {
   const scope=await requireProjectReadAccess(context,projectId);
   if(scope.access!=="MENTOR"||sprintIds.length===0)return [];
@@ -31,11 +33,24 @@ export async function listMentorSprintSignOffSnapshots(
   const snapshots:MentorSprintSignOffSnapshot[]=[];
   for(const row of rows){
     if(row.metadata["projectId"]!==scope.project.id||
-      row.metadata["mentorSignOffSnapshotVersion"]!==1||
+      row.metadata[versionKey]!==1||
       seen.has(row.subjectId))continue;
     seen.add(row.subjectId);
-    const parsed=parseMentorSprintSignOffSnapshot(row.metadata["sprintSnapshot"],row.subjectId);
+    const parsed=parseMentorSprintSignOffSnapshot(row.metadata[valueKey],row.subjectId);
     if(parsed)snapshots.push(parsed);
   }
   return snapshots;
 }
+
+export const listMentorSprintSignOffSnapshots=(
+  context:RequestContext,projectId:string,sprintIds:readonly string[],
+)=>listScopedMentorSnapshots(context,projectId,sprintIds,
+  "mentorSignOffSnapshotVersion","sprintSnapshot");
+
+/** Immutable start-of-sprint planned workload, captured before work begins.
+ * For pre-feature sprints this is absent rather than synthesized.
+ */
+export const listMentorSprintCommitmentSnapshots=(
+  context:RequestContext,projectId:string,sprintIds:readonly string[],
+)=>listScopedMentorSnapshots(context,projectId,sprintIds,
+  "mentorStartSnapshotVersion","sprintStartSnapshot");
