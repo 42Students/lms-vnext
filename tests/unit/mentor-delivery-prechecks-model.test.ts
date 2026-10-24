@@ -6,7 +6,7 @@ const base={sprints:{total:16,completed:16},
  releases:{total:3,shipped:2},
  targetEndDate:"2026-10-30",asOfIstDate:"2026-10-24"};
 describe("Mentor source-backed final submission prechecks",()=>{
- it("distinguishes required sprints/tasks from advisory releases and proof",()=>{
+ it("matches the normal server shipment/Sprint/task gates and advisory proof",()=>{
   const checks=mentorDeliveryPrechecks(base);
   expect(checks.map(x=>[x.key,x.state,x.requiredByServer])).toEqual([
    ["SPRINTS","MET",true],["TASKS","MET",true],
