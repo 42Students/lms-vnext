@@ -26,7 +26,7 @@ export function groupMentorResourcesBySprint<T extends MentorResourceForSection>
      "Unmapped sprint resources":"Whole project").rows.push(row);
    continue;
   }
-  slot("SPRINT:"+sprint.id,sprint.label+" · "+sprint.status?.replaceAll("_"," ")??"")
+  slot("SPRINT:"+sprint.id,sprint.label+" · "+(sprint.status?.replaceAll("_"," ")??"Unknown state"))
    .rows.push(row);
  }
  const sortKey=(section:MentorResourceSection<T>)=>{
