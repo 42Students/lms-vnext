@@ -2422,6 +2422,7 @@ export function ProjectWorkspace({
           {!workspace.activityLoadError&&mode!=="ADMIN"?<ProjectActivityFilteredList
             projectId={workspace.project.id} events={workspace.activity}
             sprints={mode==="MENTOR"?workspace.sprints:[]}
+            mentorWeekSummary={mode==="MENTOR"}
             now={new Date().toISOString()} />:null}
 
 
