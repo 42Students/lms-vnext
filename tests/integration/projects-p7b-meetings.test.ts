@@ -326,6 +326,35 @@ describe("Projects P7B meetings", () => {
     expect(visible[0]?.status).toBe("COMPLETED");
   });
 
+  it("cannot request or cancel a meeting after project soft deletion",async()=>{
+    const project=await createProject();
+    const request=await requestProjectMeeting(learner,project.id,requestedWindow);
+    await pool.query("UPDATE project_instances SET deleted_at=now() WHERE id=$1",[project.id]);
+    try{
+      await expect(requestProjectMeeting(learner,project.id,{
+        ...requestedWindow,
+        startsAt:"2099-10-11T10:00:00+05:30",
+        endsAt:"2099-10-11T10:30:00+05:30",
+      })).rejects.toBeDefined();
+      await expect(transitionProjectMeeting(learner,project.id,request.id,{
+        action:"CANCEL",note:"Should not persist",
+      })).rejects.toBeDefined();
+      await expect(transitionProjectMeeting(mentor,project.id,request.id,{
+        action:"CANCEL",note:"Should also be rejected",
+      })).rejects.toBeDefined();
+      const stored=await pool.query<{status:string;cancellation_note:string|null}>(
+        "SELECT status,cancellation_note FROM project_meetings WHERE id=$1",[request.id]);
+      expect(stored.rows[0]).toMatchObject({
+        status:"REQUESTED",cancellation_note:null,
+      });
+      const count=await pool.query<{total:string}>(
+        "SELECT count(*)::text AS total FROM project_meetings WHERE project_id=$1",[project.id]);
+      expect(count.rows[0]?.total).toBe("1");
+    }finally{
+      await pool.query("UPDATE project_instances SET deleted_at=null WHERE id=$1",[project.id]);
+    }
+  });
+
   it("lets a learner cancel only their own pending request", async () => {
     const project = await createProject();
     const request = await requestProjectMeeting(
