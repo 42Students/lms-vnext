@@ -18,7 +18,7 @@ export type ProjectListItem = {
   sprintTotal?: number;
   sprintCompleted?: number;
   sprintActiveSequence?: number|null;
-  sprintSegments?: readonly {sequence:number;status:string}[];
+  sprintSegments?: readonly {sequence:number;status:string;releaseSequence?:number}[];
   progressDetail?: string;
   readOnlyLabel?: string | null;
   attention?: readonly string[];
@@ -141,7 +141,9 @@ export function ProjectList({
                       <span className="prototype-mentor-sprint-dots" aria-label={sprintSeries.length+" recorded sprints"}>
                         {sprintSeries.slice(0,32).map((sprint,index)=>(
                           <span key={sprint.sequence+"-"+index}
-                            title={"Sprint "+sprint.sequence+" · "+sprint.status}
+                            title={(sprint.releaseSequence===undefined?"":"Release sequence "+
+                              sprint.releaseSequence+" · ")+
+                              "Sprint "+sprint.sequence+" · "+sprint.status}
                             className={sprint.status==="COMPLETED"?"done":sprint.status==="ACTIVE"?"current":""} />
                         ))}
                       </span>
