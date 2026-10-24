@@ -11,7 +11,8 @@ import { listMyProjectInstances } from "./member-service";
 
 /** Active persisted project memberships only, scoped by the same authenticated Mentor roster. */
 export async function getMentorProjectTeamSizes(context:RequestContext,
- verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][]){
+ verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
+ learnerOnly=false){
  const membership=context.membership;
  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
    context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
@@ -31,11 +32,21 @@ export async function getMentorProjectTeamSizes(context:RequestContext,
    .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
      sql`cast(${membershipRoles.role} as text)=${projectMembers.role}`))
    .where(and(inArray(projectMembers.projectId,ids),isNull(projectMembers.endedAt),
+     learnerOnly?eq(projectMembers.role,"LEARNER"):undefined,
      eq(collegeMemberships.collegeId,membership.collegeId),
      eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
    .groupBy(projectMembers.projectId);
  for(const row of rows)sizes.set(row.projectId,Number(row.total));
  return sizes;
+}
+
+/** Per-project learner seats for the Projects table's "Students" column.
+ * Count only active, authorized learner-role assignments; Mentor seats remain
+ * included in the independent Team size sort.
+ */
+export async function getMentorProjectLearnerSizes(context:RequestContext,
+ verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][]){
+ return getMentorProjectTeamSizes(context,verifiedRows,true);
 }
 
 /** Count distinct students separately from project seats. One learner may
