@@ -24,7 +24,7 @@ The prior claim that attendance and action-item storage were absent was **incorr
 
 ## Mandatory unresolved prototype requirements (implementation is not complete)
 1. **#47 Board:** exact task approval/send-back experience in persistent pane (current guarded decision confirmation modal), sprint-to-sprint drag in List view, exact modal/keyboard/focus design.
-2. **#48 Sprints:** prototype sign-off note, unfinished task carry-over flow and start-next-sprint checkboxes. Existing lifecycle endpoints alone do not reproduce these distinct states.
+2. **#48 Sprints:** new sign-off dialog now requires pending task reviews to be resolved, previews unfinished tasks moving to backlog, persists an optional note in the scoped sprint activity transaction, and can start the next planned sprint as a separate explicit mutation with partial-success handling. Still missing exact per-task prototype choices (“next sprint”, “backlog”, “drop”) and atomic one-step sign-off/next-sprint semantics.
 3. **#49/#54 Meetings:** structured attendance, retrospective notes, action rows, and follow-up fields already persist in `project_meetings.facilitation` and can be edited in the existing authorized meeting editor. The calendar selected-detail pane now renders these recorded values. Still missing: provider-backed recurring Google Calendar/Meet creation and invite sync, and the prototype's fully inline meeting editor.
 4. **#50 Performance:** prototype-specific student risk explanations and auto-assign result presentation; filters now implemented but not verified at runtime.
 5. **#51 Resources:** exact pinned group, share/upload modal states, private signed previews and earlier-sprint presentation.
@@ -35,6 +35,14 @@ The prior claim that attendance and action-item storage were absent was **incorr
 10. **#45/#46 Home/Overview:** exact per-student last activity and health forecasts require verified source data; do not fake prototype's sample time/point forecasts.
 11. **All:** actual captured vNext page and interaction states at the reference desktop viewport, side-by-side comparison with real prototype frames, visual corrections, mobile and accessibility checks.
 12. **All:** `npm run typecheck`, `npx tsc -p tsconfig.strict.json --noEmit`, `npm run lint`, unit, DB and e2e tests must PASS on the latest main; no successful run was observed.
+
+## Pass 7 — sprint sign-off behavior implementation
+- The migrated `completeProjectSprint` transaction already moves all unfinished work to the product backlog, and records the carry count in project activity. That behavior was previously obscured by the generic "Complete sprint" button.
+- Added `MentorSprintSignOff` with pending-review list and Board link, an explicit unfinished-task backlog preview, optional team-facing sign-off note (up to 1,000 chars), and a checkbox to start the next planned sprint.
+- The existing completion endpoint now accepts strictly validated optional `note`; the service records it as a scoped project activity event in the same transaction as sprint completion.
+- Starting the next sprint is a **separate** request, not falsely described as atomic; on partial failure the UI states that the sprint was completed and the next was not started.
+- Exact prototype per-task Sprint N / Backlog / Drop selection is not implemented until a validated task reassignment/discard backend workflow can back it.
+- These are source-verified changes only; CI, browser and screenshot acceptance remain unverified.
 
 ## Release gate
 - A `src/` edit plus source assertion can be **IMPLEMENTED / UNVERIFIED**, never `CLOSED`.
