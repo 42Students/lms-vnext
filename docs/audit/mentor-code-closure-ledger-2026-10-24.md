@@ -7,7 +7,7 @@
 - **IMPLEMENTATION_OR_TEST_PENDING:** Cannot yet claim the complete expected behavior solely from source; additional code, linked behavior, or test-led fixes remain.
 - **EXTERNAL_INTEGRATION_MISSING:** Provider-backed functionality (OAuth/Calendar/Meet/email) is not present and cannot be replaced by static connected-state copy or a local .ics download.
 
-**Current source-only classification:** 73/132 `CODE_READY`, 52/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
+**Current source-only classification:** 74/132 `CODE_READY`, 51/132 implementation or validation pending, 7/132 clearly missing provider-backed integration. **0/132 formally accepted** under the separate master checklist.
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
@@ -29,8 +29,8 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 45-04 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 45-05 | CODE_READY | mentor-home-week-meetings-model.ts; mentor-prototype-home.tsx |
 | 45-06 | CODE_READY | mentor-student-task-signals-model.ts; mentor-consecutive-carry-service.ts; mentor-consecutive-carry-model.ts; mentor-student-watch-service.ts |
-| 45-07 | CODE_READY | mentor-project-team-size-service.ts; mentor-prototype-home.tsx |
-| 45-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
+| 45-07 | CODE_READY | mentor-project-team-size-service.ts now separately counts learner seats per project and distinct portfolio learners; mentor/projects/page.tsx uses learner seats for the Students column and full team sizes only for team sorting; faculty-mentor-positive-projects.test.ts covers both counts. PostgreSQL and browser acceptance pending. |
+| 45-08 | CODE_READY | mentor-prototype-sprint-summary-service.ts joins persisted releases for project-wide sprint ordering, mentor-project-sprint-position-model.ts supplies chronological active-position and completed/total, project-list.tsx renders tracker and attention state, mentor-project-last-activity-service.ts renders last recorded event. Unit coverage added; DB/browser acceptance pending. |
 | 45-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 45-10 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 46-01 | CODE_READY | mentor-historical-plan-facts-model.ts; mentor-estimated-finish-model.ts; mentor-prototype-project-summaries.tsx |
@@ -98,11 +98,11 @@ The IDs and descriptions remain authoritative in [mentor-functional-prototype-ga
 | 51-08 | CODE_READY | project-resource-files-panel.tsx; project-resource-file-service.ts inline signed grants; mentor-private-resource-preview-model.ts (PDF/image preview, safe download fallback for spreadsheets/code) |
 | 51-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 52-01 | CODE_READY | mentor-activity-category-model.ts; project-activity-filtered-list.tsx (seven prototype category pills, persisted event taxonomy, AND filters) |
-| 52-02 | CODE_READY | project-activity-filtered-list.tsx; activity-service.ts |
+| 52-02 | CODE_READY | ProjectActivityFilteredList now passes Sprint and person selections to a project-scoped server cursor; activity-service.ts applies Sprint metadata/subject matching before the row limit; route/model reject malformed Sprint IDs, and 101-event PostgreSQL coverage added. Runtime acceptance pending. |
 | 52-03 | CODE_READY | activity-service.ts; learner-project-activity-filter-model.ts; project-activity-filtered-list.tsx; member-service.ts (full roster actor picker + SQL-scoped actor cursor pagination) |
 | 52-04 | CODE_READY | mentor-activity-seen-service.ts; mentor-activity-since-last-visit.tsx |
 | 52-05 | CODE_READY | project-activity-filtered-list.tsx |
-| 52-06 | CODE_READY | mentor-week-activity-summary-model.ts; mentor-week-contributor-service.ts; mentor-week-contributor-model.ts; project-activity-filtered-list.tsx |
+| 52-06 | CODE_READY | mentor-week-activity-totals-service.ts aggregates full authorized IST-week Tasks moved, Comments, Resources shared in PostgreSQL; workspace-view-service.ts passes results, project-activity-filtered-list.tsx identifies loaded-page fallback, and mentor-week-contributor-service.ts counts all authorized learner activity. DB acceptance pending. |
 | 52-07 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 52-08 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
 | 52-09 | IMPLEMENTATION_OR_TEST_PENDING | Review the original acceptance item; implement missing behavior or prove existing source. |
