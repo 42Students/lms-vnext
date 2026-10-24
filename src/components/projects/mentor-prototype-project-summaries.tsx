@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {recentMentorWorkedSprintIds} from "@/modules/projects/mentor-recent-worked-sprints-model";
+import {projectMentorVelocity} from "@/modules/projects/mentor-sprint-velocity-model";
 import type {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {ReleaseLifecycleActions,SprintLifecycleActions} from "./project-lifecycle-actions";
@@ -326,6 +327,8 @@ export function MentorPrototypeProjectOverview({workspace}:{workspace:Workspace}
     event.eventType==="projects.mentor_update.posted")
     .sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime()).slice(0,3);
   const progress=live.length?Math.round(100*completed.length/live.length):0;
+  const velocity=projectMentorVelocity(workspace.sprints,workspace.mentorSprintSnapshots,
+    points(live.filter(task=>task.status!=="DONE")));
   const summary=[
     ["To do",countTasks(inSprint,"TODO")],
     ["In progress",countTasks(inSprint,"IN_PROGRESS")],
