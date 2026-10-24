@@ -102,3 +102,22 @@ export const emptyMentorMemberWork=():MentorSprintMemberSnapshot=>({
   membershipId:null,taskCount:0,doneCount:0,waitingCount:0,
   openCount:0,carriedCount:0,donePoints:0,plannedPoints:0,openPoints:0,
 });
+
+/** Newest-first event selection. Corrupt/imported new events must not erase
+ * an older, valid immutable snapshot for the same Sprint.
+ */
+export function latestValidMentorSprintSnapshots(
+ events:readonly {subjectId:string;metadata:Record<string,unknown>}[],
+ projectId:string,
+ versionKey:"mentorSignOffSnapshotVersion"|"mentorStartSnapshotVersion",
+ valueKey:"sprintSnapshot"|"sprintStartSnapshot",
+):MentorSprintSignOffSnapshot[]{
+ const valid=new Map<string,MentorSprintSignOffSnapshot>();
+ for(const row of events){
+  if(valid.has(row.subjectId)||row.metadata["projectId"]!==projectId||
+    row.metadata[versionKey]!==1)continue;
+  const parsed=parseMentorSprintSignOffSnapshot(row.metadata[valueKey],row.subjectId);
+  if(parsed)valid.set(row.subjectId,parsed);
+ }
+ return [...valid.values()];
+}
