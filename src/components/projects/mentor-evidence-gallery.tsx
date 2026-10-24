@@ -6,6 +6,7 @@ import {mentorEvidenceDisplayKind} from
 
 export type MentorEvidenceGalleryItem={
   index:number;name:string;type:string;href:string|null;
+  change?:"NEW"|"LINK_CHANGED"|"UNCHANGED"|"ORIGINAL";
 };
 
 export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGalleryItem[]}){
@@ -20,7 +21,11 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
         onClick={()=>setSelected(item.index)}
         className="flex min-h-11 w-full items-start justify-between gap-2 border-b border-border px-3 py-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         <span><strong>{item.name}</strong>
-          <small className="block">{item.type}</small></span>
+          <small className="block">{item.type}</small>
+          {item.change&&item.change!=="ORIGINAL"?<small className="block">
+            {item.change==="NEW"?"New reference":
+              item.change==="LINK_CHANGED"?"Reference changed":"Same saved reference"}
+          </small>:null}</span>
         <span>{active?.index===item.index?"Selected":"Preview →"}</span>
       </button>)}
     </div>
@@ -28,6 +33,12 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
       className="space-y-2 border border-border p-3">
       <h4 className="font-semibold">{active.name}</h4>
       <p className="text-xs text-muted-foreground">{active.type}</p>
+      {active.change&&active.change!=="ORIGINAL"?<p className="text-xs text-muted-foreground">
+        {active.change==="NEW"?"This reference was not found under a unique name in the previous attempt.":
+          active.change==="LINK_CHANGED"?"The recorded link or type changed from the previous attempt.":
+          "The saved link and type match the previous attempt."}
+        {" "}File contents have not been compared.
+      </p>:null}
       {active.href&&kind==="VIDEO"?<video key={active.href}
         src={active.href} controls preload="metadata"
         className="max-h-[28rem] w-full" />:
