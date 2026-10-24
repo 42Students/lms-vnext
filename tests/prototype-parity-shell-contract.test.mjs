@@ -337,3 +337,23 @@ test("Mentor Meetings selected pane exposes real persisted facilitation and edit
   assert.match(workspace,/id=\{"meeting-"\+meeting\.id\}/);
   assert.match(workspace,/<ScheduleProjectMeetingControl/);
 });
+
+
+test("Mentor sprint sign-off explicitly gates review tasks and persists note atomically",()=>{
+  const page=source("src/components/projects/mentor-prototype-project-summaries.tsx");
+  const signoff=source("src/components/projects/mentor-sprint-sign-off.tsx");
+  const route=source("src/app/api/projects/[projectId]/sprints/[sprintId]/complete/route.ts");
+  const service=source("src/modules/projects/lifecycle-service.ts");
+  assert.match(page,/<MentorSprintSignOff/);
+  assert.match(page,/status!=="DONE"/);
+  assert.match(signoff,/waiting=unfinished\.filter\(task=>task\.status==="IN_REVIEW"\)/);
+  assert.match(signoff,/const canSign=waiting\.length===0&&!pending/);
+  assert.match(signoff,/Product backlog/);
+  assert.match(signoff,/Sign off and start next sprint/);
+  assert.match(signoff,/Sprint signed off; next sprint not started/);
+  assert.match(route,/INVALID_SIGNOFF_NOTE/);
+  assert.match(route,/parsed\.data\.note/);
+  assert.match(service,/signOffNote\?:string/);
+  assert.match(service,/eventType:ACTIVITY_EVENT_TYPES\.PROJECTS_SPRINT_UPDATED/);
+  assert.match(service,/signOffNote:note/);
+});
