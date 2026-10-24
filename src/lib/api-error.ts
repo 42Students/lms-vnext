@@ -281,11 +281,13 @@ export function apiErrorResponse(error: unknown) {
     return respond(
       { error: error.code },
       {
-        status: notFound.has(error.code)
-          ? 404
-          : forbidden.has(error.code)
-            ? 403
-            : 409,
+        status: error.code === "PROJECT_UPDATE_RATE_LIMITED"
+          ? 429
+          : notFound.has(error.code)
+            ? 404
+            : forbidden.has(error.code)
+              ? 403
+              : 409,
       },
     );
   }
