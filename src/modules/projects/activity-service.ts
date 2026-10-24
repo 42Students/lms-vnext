@@ -62,6 +62,7 @@ export async function getProjectActivityPage(
         nullif(${activityEvents.metadata} ->> 'actorName',''),
         ${users.displayName}
       )`,
+      actorUserId:activityEvents.actorUserId,
       actorType: sql<string|null>`coalesce(
         nullif(${activityEvents.actorRoleSnapshot},''),
         nullif(${activityEvents.metadata} ->> 'actorType','')
@@ -95,6 +96,7 @@ export async function getProjectActivityPage(
         ) : undefined,
         filters.eventType?eq(activityEvents.eventType,filters.eventType):undefined,
         filters.subjectId?eq(activityEvents.subjectId,filters.subjectId):undefined,
+        filters.actorUserId?eq(activityEvents.actorUserId,filters.actorUserId):undefined,
         eq(
           activityEvents.module,
           "PROJECTS",
@@ -142,7 +144,8 @@ export async function listProjectActivity(
     subjectType: event.subjectType, subjectId: event.subjectId,
     subjectLabel: event.subjectLabel, summary: event.summary,
     occurredAt: event.occurredAt, actorDisplayName: event.actorDisplayName,
-    actorType:event.actorType,sourceTab:event.sourceTab,sprintId:event.sprintId,
+    actorType:event.actorType,actorUserId:event.actorUserId,
+    sourceTab:event.sourceTab,sprintId:event.sprintId,
     projectSlug:event.projectSlug,title:event.title,
   }));
 }
