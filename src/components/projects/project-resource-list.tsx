@@ -12,6 +12,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {ProjectResourceOpenLink} from "./project-resource-open-link";
 import {ProjectResourceActions} from "./project-resource-controls";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
+import {mentorResourceGroupKey,mentorResourceGroupLabel,mentorResourceGroupOrder} from "@/modules/projects/mentor-resource-groups-model";
 
 type ResourceRow={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
@@ -26,6 +27,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
 }){
  const [search,setSearch]=useState("");
  const [showEarlier,setShowEarlier]=useState(false);
+ const [groupBySprint,setGroupBySprint]=useState(mode==="MENTOR");
  const [expanded,setExpanded]=useState<Record<string,boolean>>({});
  const [type,setType]=useState("ALL");
  const [visibility,setVisibility]=useState("ALL");
@@ -58,7 +60,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const [reorderError,setReorderError]=useState("");
  const canReorder=mode!=="LEARNER"&&!readOnly&&!reordering&&!sourceChanged&&
     !search.trim()&&type==="ALL"&&visibility==="ALL"&&status==="ACTIVE"&&!pinned&&
-    !sprint&&!task&&sharer==="ALL"&&activeRows.length<=250&&
+    !sprint&&!task&&sharer==="ALL"&&!groupBySprint&&activeRows.length<=250&&
     !(mode==="MENTOR"&&!showEarlier&&sprints.some(item=>item.status==="COMPLETED"&&
       activeRows.some(row=>row.sprintId===item.id)));
  async function saveOrder(){
@@ -123,11 +125,20 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const earlierCount=matching.filter(row=>row.sprintId!==null&&row.sprintId!==undefined&&
    earlierSprintIds.has(row.sprintId)).length;
  const filtered=collapseEarlier?matching.filter(row=>!row.sprintId||!earlierSprintIds.has(row.sprintId)):matching;
- const orderedResources=[...filtered].sort((a,b)=>
+ const listOrder=[...filtered].sort((a,b)=>
    Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||
    (a.status==="ACTIVE"?0:1)-(b.status==="ACTIVE"?0:1)||
    (a.status==="ACTIVE"?stableOrder.indexOf(a.id):a.sequence)-
    (b.status==="ACTIVE"?stableOrder.indexOf(b.id):b.sequence));
+ const orderedResources=mode==="MENTOR"&&groupBySprint?
+   mentorResourceGroupOrder(listOrder,sprints):listOrder;
+ const groupKey=(row:ResourceRow)=>
+   mentorResourceGroupKey(row,groupBySprint,sprints);
+ const groupCounts=new Map<string,number>();
+ for(const row of orderedResources){
+   const key=groupKey(row);
+   groupCounts.set(key,(groupCounts.get(key)??0)+1);
+ }
  const files=rows.filter(row=>row.resourceType==="FILE").length;
  const links=rows.filter(row=>row.resourceType==="LINK"||
    (!row.resourceType&&Boolean(row.url&&safeProjectExternalHref(row.url)))).length;
@@ -182,6 +193,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         <Checkbox className="size-5" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
         Pinned only
       </label>
+      {mode==="MENTOR"?<label className="flex min-h-10 items-center gap-2 text-xs font-semibold">
+        <Checkbox className="size-5" checked={groupBySprint}
+          onChange={event=>setGroupBySprint(event.target.checked)}/>
+        Show by sprint
+      </label>:null}
       <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Sprint
         <Select value={sprint} onChange={event=>setSprint(event.target.value)}
           className="">
@@ -216,7 +232,8 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     </Button>
   </div>:null}
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
-    {canReorder?"Drag resources to arrange a draft, then select Save order.":
+    {groupBySprint?"Turn off Show by sprint to rearrange the saved resource order.":
+      canReorder?"Drag resources to arrange a draft, then select Save order.":
       activeRows.length>250?"Reorder up to 500 resources in Edit resource library; the directory only reorders complete lists of 250 or fewer.":
       "Resource reordering is available when no filters are active."}
   </p>:null}
@@ -235,9 +252,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     const safe=resource.url?safeProjectExternalHref(resource.url):null;
     const sourceSharer=bySharer.get(resource.id);
     return <Fragment key={resource.id}>
-      {mode==="MENTOR"&&(index===0||Boolean(orderedResources[index-1]?.pinned)!==Boolean(resource.pinned))?
+      {mode==="MENTOR"&&(index===0||
+        (orderedResources[index-1]?groupKey(orderedResources[index-1]!)!==groupKey(resource):true))?
         <h3 className="prototype-mentor-resource-group-heading">
-          {resource.pinned?"Pinned references":"Other resources"}
+          {mentorResourceGroupLabel(groupKey(resource),sprints)}
+          {" · "}{groupCounts.get(groupKey(resource))??0}
         </h3>:null}
     <article
       draggable={canReorder&&resource.status==="ACTIVE"}
