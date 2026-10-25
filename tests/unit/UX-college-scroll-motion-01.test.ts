@@ -7,7 +7,9 @@ describe("UX-college-scroll-motion-01 hidden scrollbars retain honest cues",()=>
   it("keeps one vertical scroller per dialog via the shared accessible scroll cue",()=>{
     const dialog=read("src/components/ui/dialog.tsx");
     expect(dialog).toContain('<ScrollCue axis="y"');
-    expect(dialog).toContain('className="min-h-0 flex-1"');
+    expect(dialog).toContain('className="min-h-0 flex-1 overflow-hidden"');
+    expect(dialog).toContain('data-slot="dialog-header" className="relative z-10');
+    expect(dialog).toContain('data-slot="dialog-footer" className="relative z-10');
     expect(dialog).toContain("pb-[max(1rem,env(safe-area-inset-bottom))]");
     for(const name of ["college-faculty-schedule-reassign","college-person-audit-modal"]){
       const s=component(name);
