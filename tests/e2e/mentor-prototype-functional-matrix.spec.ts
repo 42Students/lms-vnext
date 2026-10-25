@@ -31,6 +31,8 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
    ["/mentor/projects","Mentoring Projects"],
    ["/mentor/calendar","Meetings"],
    ["/mentor/notifications","Notifications"],
+   ["/mentor/search","Search"],
+   ["/mentor/account","Mentor · My account"],
   ] as const){
    await page.goto(path);
    await expect(page.getByRole("heading",{level:1,name:heading})).toBeVisible();
@@ -90,6 +92,18 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
    await page.goto(path);
    await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
   }
+ });
+
+ test("invalid project and notification filters offer an authorized clear path",async({page,context})=>{
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  await page.goto("/mentor/projects?page=-1");
+  await expect(page.getByText("Invalid Project filters")).toBeVisible();
+  await expect(page.getByRole("link",{name:"Clear filters"}))
+   .toHaveAttribute("href","/mentor/projects");
+  await page.goto("/mentor/notifications?kind=INVALID");
+  await expect(page.getByRole("heading",{name:"Invalid notification filters"})).toBeVisible();
+  await expect(page.getByRole("link",{name:"Return to newest notifications"}))
+   .toHaveAttribute("href","/mentor/notifications");
  });
 
  test("malformed calendar filters fail recoverably for an authenticated Mentor",async({page,context})=>{
