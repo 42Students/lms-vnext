@@ -92,7 +92,8 @@ describe("UX-projects-shared-overlays-02 guarded action/confirmation paths",()=>
   });
   it("project-team-controls confirms teammate removal separately from adding a member",()=>{
     const s=src("project-team-controls");
-    expect(s).toContain('title="Add Project teammate"');
+    expect(s).toContain('title={learnerOnly?"Add project student":"Add Project teammate"}');
+    expect(s).toContain('confirmLabel="Remove teammate"');
     expect(s).toContain("Remove ${member.displayName");
     expect(s).toContain('aria-label="Find eligible member"');
   });

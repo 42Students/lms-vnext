@@ -100,7 +100,7 @@ export default async function MentorProjectPage({
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <div className="prototype-mentor-project-heading">
-        <Link href="/mentor/projects" className="prototype-mentor-back">‹ Projects</Link>
+        <Link href="/mentor/projects" className="prototype-mentor-back inline-flex min-h-11 items-center">‹ Projects</Link>
         <div className="prototype-mentor-title-line">
           <span className="prototype-mentor-team-avatar" aria-hidden="true">
             {workspace.project.title.trim().slice(0,2).toUpperCase() || "42"}
