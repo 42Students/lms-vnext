@@ -6,8 +6,8 @@ it("UX-teacher-courses-deliveryid-discussions-01 /teacher/courses/[deliveryId]/d
  expect(source).toContain("getCurrentRequestContext");
  expect(source).toContain("getFacultyCourseWorkspace(");
  expect(source).toContain("<header");
- expect(source).toContain(">Discussions</h2>");
- expect(source).toContain("{workspace.course.courseName} · {workspace.course.sectionName}");
+ expect(source).toContain("Course discussions · {workspace.course.sectionName}");
+ expect(source).toContain("Other classes have their own.");
  expect(source).toContain("<LearnerCourseDiscussion");
  expect(source).toContain("moderate");
 });

@@ -81,7 +81,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
        <FacultySubmissionFileReview submissionId={selected.id}/>:
        selected.textContent?<article className="rounded-xl bg-[#f7f9fc] p-6 text-sm whitespace-pre-wrap text-[#40516a]">{selected.textContent}</article>:
        selected.submissionUrl&&/^https:\/\//i.test(selected.submissionUrl)?
-        <Link className="faculty-proto-link" href={selected.submissionUrl} target="_blank" rel="noopener noreferrer">Open student submission</Link>:
+        <Link className="faculty-proto-link" href={selected.submissionUrl} rel="noopener noreferrer">Open student submission</Link>:
         <p className="faculty-proto-subtitle">No preview is available for this submission. Use the grading editor to see supported submission details.</p>}
      </div>
      <div className="px-5 py-5">
