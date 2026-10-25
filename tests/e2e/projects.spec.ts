@@ -127,6 +127,6 @@ test.describe("Projects browser regression", () => {
     // Revoking the user role cookie cannot make a Learner into a Mentor.
     await authenticate(context,"seed-learner",SEED_IDS.learnerCollegeAMembership);
     await page.goto("/mentor/projects/"+id+"?tab=delivery");
-    await expect(page).toHaveURL(/\\/dashboard(?:[/?#]|$)/);
+    await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
   });
 });
