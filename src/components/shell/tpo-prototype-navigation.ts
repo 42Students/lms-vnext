@@ -67,16 +67,40 @@ export function tpoPrototypeSidebarActive(pathname:string,item:Pick<ShellNavItem
 export function tpoPrototypeTabActive(pathname:string,query:URLSearchParams,href:string):boolean{
  const [route,search]=href.split("?");
  if(!route)return false;
- const withinRoute=pathname===route||
-   (href==="/tpo/placements"&&pathname.startsWith("/tpo/placements/"))||
-   (href==="/tpo/students"&&pathname.startsWith("/tpo/students/"))||
-   (href==="/tpo/recruiters/campaigns"&&pathname.startsWith("/tpo/recruiters/campaigns/"));
- if(!withinRoute)return false;
- const params=new URLSearchParams(search??"");
- for(const [key,value] of params){
-   if(query.get(key)!==value)return false;
+ const expected=new URLSearchParams(search??"");
+ // The recruiter inbox defaults to the Recruiters tab when "tab" is absent.
+ // Team Chat and Companies Messages must never be active at the same time.
+ if(route==="/tpo/messages"){
+  return pathname==="/tpo/messages" &&
+   (query.get("tab")??"recruiters")===expected.get("tab");
  }
- if(href==="/tpo/recruiters"&&query.get("view")==="campaigns")return false;
- if(href==="/tpo/messages?tab=recruiters"&&query.get("tab")!=="recruiters")return false;
+ // Details keep their parent prototype tab active; the old LMS routes remain
+ // addressable without making the sidebar or section tabs appear to disappear.
+ if(route==="/tpo/companies/today"){
+  return pathname==="/tpo/companies/today"||pathname.startsWith("/tpo/follow-ups");
+ }
+ if(route==="/tpo/companies"){
+  return pathname==="/tpo/companies"||
+   (pathname.startsWith("/tpo/companies/")&&!pathname.startsWith("/tpo/companies/today"));
+ }
+ if(route==="/tpo/recruiters"){
+  return (pathname==="/tpo/recruiters"&&query.get("view")!=="campaigns")||
+   (pathname.startsWith("/tpo/recruiters/")&&!pathname.startsWith("/tpo/recruiters/campaigns/")&&pathname!=="/tpo/recruiters/campaigns");
+ }
+ const nestedParents=new Set([
+  "/tpo/recruiters/campaigns","/tpo/placements","/tpo/drive-day",
+  "/tpo/students","/tpo/batches","/tpo/verification",
+  "/tpo/requests","/tpo/announcements","/tpo/reports",
+  "/tpo/settings","/tpo/audit",
+ ]);
+ const withinRoute=pathname===route||
+  (nestedParents.has(route)&&pathname.startsWith(route+"/"));
+ if(!withinRoute)return false;
+ // A nested People screen belongs to Team, not the Settings tab.
+ if(route==="/tpo/settings"&&pathname.startsWith("/tpo/settings/team"))return false;
+ // Two Settings links share /tpo/settings; Audit must not become Settings.
+ for(const [key,value] of expected){
+  if(query.get(key)!==value)return false;
+ }
  return true;
 }
