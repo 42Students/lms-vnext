@@ -27,9 +27,10 @@ function dayLabel(date:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(date);
 }
 export function TpoCompaniesToday({
- scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId
+ scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId,notContacted
 }:{scope:"MINE"|"TEAM";rows:TpoCompaniesTodayRow[];nowIso:string;hasMore:boolean;unreadMessages:number|null;
-  replies:RecruiterReply[];replyTotal:number|null;initialFollowupId?:string|undefined}){
+  replies:RecruiterReply[];replyTotal:number|null;initialFollowupId?:string|undefined;
+  notContacted:{count:number;oldestAddedAt:string|null}|null}){
  const router=useRouter();
  const now=new Date(nowIso);
  const todayKey=istDateKey(now);
@@ -217,6 +218,13 @@ export function TpoCompaniesToday({
      </button>)}</div>:
      <div className={styles.empty}>No open, recorded follow-ups in this date window.
       <Link href="/tpo/follow-ups">Check the full follow-up queue</Link></div>}
+    <div className="flex flex-col gap-1 border-t border-[#e7ecf2] bg-[#f8fafb] px-4 py-3 text-[13px]">
+     {notContacted===null?<span role="status" className="text-[#617084]">Not-contacted recruiter count unavailable.</span>:
+      <Link href="/tpo/recruiters?stage=NEW" className="font-bold text-[#087f8b]">
+       {notContacted.count} not contacted yet · start with them
+      </Link>}
+     <Link href="/tpo/follow-ups" className="text-[#087f8b]">Re-plan your week</Link>
+    </div>
     <footer className={styles.foot}>J / K to choose · 1–4 outcome · T tomorrow · Enter to review Done · {displayed.length} shown
      {hasMore?" · more exist":""}</footer>
    </section>
