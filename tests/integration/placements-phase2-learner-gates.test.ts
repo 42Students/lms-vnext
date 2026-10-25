@@ -1,6 +1,6 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import { randomUUID } from "node:crypto";
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -88,6 +88,18 @@ async function clean() {
 
 const extraCohorts: string[] = [];
 
+// SQL permission checks must see the exact persisted TPO role. The mock
+// RequestContext role array is not sufficient authorization.
+let fixtureTpoRoleId:string|null=null;
+beforeAll(async()=>{
+ const granted=await pool.query<{id:string}>(
+  "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT (membership_id,role) DO NOTHING RETURNING id",
+  [SEED_IDS.facultyCollegeAMembership],
+ );
+ fixtureTpoRoleId=granted.rows[0]?.id??null;
+});
+
+
 async function makeJob(title: string, beforePublish?: (jobId: string) => Promise<void>) {
   const uid = randomUUID();
   const company = await createPlacementCompany(tpo, {
@@ -135,6 +147,7 @@ beforeEach(async () => {
 });
 afterAll(async () => {
   await clean();
+  if(fixtureTpoRoleId)await pool.query("DELETE FROM membership_roles WHERE id=$1",[fixtureTpoRoleId]);
   await pool.end();
   await closeDatabaseConnection();
 });
