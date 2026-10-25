@@ -45,7 +45,7 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   getTpoDueFollowupQueue(context,now,{scope,window:"NEXT_7_DAYS",page:1}),
   countTpoUnreadRecruiterMessages(context),
   getTpoMessagesInbox(context,{status:"REPLY",page:1,pageSize:3}),
-  view==="focus"?Promise.resolve(null):listTpoLeads(context,context.membership.collegeId),
+  listTpoLeads(context,context.membership.collegeId),
  ]);
  if(due.status==="rejected"||next.status==="rejected")return <section className="space-y-4">
   <h1 className="text-2xl font-bold">Companies · Today</h1>
@@ -71,6 +71,7 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   replies={replies} replyTotal={replyTotal}
   hasMore={due.value.total>due.value.rows.length||next.value.total>next.value.rows.length}/>;
  return <TpoCompaniesToday scope={scope} rows={rows} nowIso={now.toISOString()}
+  notContacted={notContacted}
   initialFollowupId={typeof params.lead==="string"?params.lead:undefined}
   unreadMessages={unread.status==="fulfilled"?unread.value:null}
   replies={replies} replyTotal={replyTotal}
