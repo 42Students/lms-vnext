@@ -260,7 +260,7 @@ export function LearnerCourseList({
               </LearnerMetricPopover>
             ) : null}
             <LearnerMetricPopover title={`${periodRows.length} ${periodRows.length === 1 ? "Course" : "Courses"}`}>
-              <ul className="max-h-64 space-y-1 overflow-auto" aria-label="All courses" tabIndex={0}>
+              <ul className="max-h-64 space-y-1 overflow-auto overscroll-contain" aria-label="All courses" tabIndex={0}>
                 {periodRows.slice(0, 100).map(row => (
                   <li key={row.course.deliveryId}>
                     {learnerCourseUnavailableReason(row) ? (
@@ -274,11 +274,12 @@ export function LearnerCourseList({
                   </li>
                 ))}
               </ul>
+              <p className="mt-1 text-xs text-muted-foreground">Scroll inside the list for more courses.</p>
               {periodRows.length > 100 ? <p>Showing the first 100 courses; use search to narrow the list.</p> : null}
             </LearnerMetricPopover>
             {creditSummary.recordedCount > 0 ? (
               <LearnerMetricPopover title={`${creditSummary.credits} Credits`}>
-                <ul className="max-h-64 space-y-1 overflow-auto" aria-label="Credits breakdown" tabIndex={0}>
+                <ul className="max-h-64 space-y-1 overflow-auto overscroll-contain" aria-label="Credits breakdown" tabIndex={0}>
                   {periodRows.slice(0, 100).map(row => (
                     <li key={row.course.deliveryId}>
                       {row.course.courseName} · {row.course.credits === null || !Number.isFinite(row.course.credits) || row.course.credits < 0
@@ -286,6 +287,7 @@ export function LearnerCourseList({
                     </li>
                   ))}
                 </ul>
+                <p className="mt-1 text-xs text-muted-foreground">Scroll inside the list for the credits breakdown.</p>
                 <p className="mt-2 font-semibold">Total {creditSummary.credits} Credits</p>
               </LearnerMetricPopover>
             ) : null}

@@ -15,6 +15,7 @@ const delegated:Record<string,{contains:string; target?:string}>={
   // Hiring is a legacy alias; authorization and college scoping happen on the destination.
   "placements/hiring/page.tsx":{contains:'redirect("/admin/placements/analytics',target:"placements/analytics/page.tsx"},
   "projects/[projectId]/page.tsx":{contains:"redirect(",target:"projects/[projectId]/[section]/page.tsx"},
+  "projects/workspaces/[workspaceId]/page.tsx":{contains:'redirect("/admin/projects/"+encodeURIComponent(workspaceId))',target:"projects/[projectId]/page.tsx"},
   "projects/[projectId]/[section]/page.tsx":{contains:"AdminProjectSectionPage",target:"src/components/projects/admin-project-section-page.tsx"},
   "projects/[projectId]/readiness/page.tsx":{contains:"ProjectWorkspaceReadiness",target:"src/components/projects/project-workspace-readiness.tsx"},
   "projects/templates/[templateId]/resources/page.tsx":{contains:"SuperAdminTemplateSubviewPage",target:"src/components/projects/super-admin-template-subview-page.tsx"},
@@ -71,6 +72,9 @@ describe("Super Admin Projects and Placements page routes — independent securi
           if(delegate.target.startsWith("placements/")){
             expect(target,path).toContain("getCurrentRequestContext");
             expect(target,path).toContain("requireSuperAdminSelectedCollege");
+          }else if(delegate.target==="projects/[projectId]/page.tsx"){
+            expect(target,path).toContain("getCurrentRequestContext");
+            expect(target,path).toContain("requireProjectManageAccess");
           }else expect(target,path).toContain("AdminProjectSectionPage");
         }
       }else{

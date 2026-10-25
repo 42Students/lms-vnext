@@ -11,7 +11,7 @@ describe("UX-chat7-learner-scroll-motion-01 hidden scrollbar resilience",()=>{
   expect(boardStyles).toContain("overscroll-behavior-x: contain");
   expect(boardStyles).toContain(".scrollRegion:focus-visible");
   expect(board).toContain("Scroll sideways to see all Board lanes.");
-  expect(board).toContain("styles.scrollRegion");
+  expect(board).toContain('styles["scrollRegion"]');
   expect(board).toContain("min-h-11");
  });
  it("keeps both Semester course and credits lists operable without visible scrollbars",()=>{

@@ -56,7 +56,7 @@ describe("PROJ-BREAK-LEARNER-96/97 board filter and mobile navigation resilience
   expect(board).toContain('aria-label="Project Board lanes, scroll horizontally to see more"');
   expect(board).toContain('tabIndex={0}');
   const boardStyles=read("src/components/projects/legacy-project-board.module.css");
-  expect(board).toMatch(/className=\{styles\.scrollRegion\+"[^\"]*focus-visible:outline-2/);
+  expect(board).toContain('styles["scrollRegion"]+" focus-visible:outline-2');
   expect(boardStyles).toMatch(/\.scrollRegion\s*\{[^}]*overflow-x:\s*auto;/);
   expect(boardStyles).toMatch(/\.scrollRegion\s*\{[^}]*overscroll-behavior-x:\s*contain;/);
   expect(board).toContain('Scroll sideways to see all Board lanes.');
