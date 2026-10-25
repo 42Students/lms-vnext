@@ -50,6 +50,7 @@ import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-requ
 import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
 import {recruiterChangeShortcut,RECRUITER_CHANGE_SHORTCUTS} from "@/modules/placements/recruiter-change-shortcuts-model";
 import {getRecruiterBookedInterviews} from "@/modules/placements/recruiter-booked-interviews-service";
+import {groupRecruiterBookedPanels} from "@/modules/placements/recruiter-booked-interviews-model";
 import {RecruiterJoiningReportForm} from "@/components/hr/recruiter-joining-report-form";
 import {RecruiterPanelActions} from "@/components/hr/recruiter-panel-actions";
 import {Tabs} from "@/components/ui/tabs";
@@ -1011,12 +1012,13 @@ export default async function HrPlacementJobPage({
               Booked interview identities could not be verified. Refresh before relying on the panel list.
             </p>:bookedInterviews?.items.length?
               <div className="grid gap-3 lg:grid-cols-2">
-                {workspace.rounds.filter(round=>round.kind==="INTERVIEW").map(round=>{
-                  const appointments=bookedInterviews.items.filter(item=>item.roundId===round.id);
-                  return appointments.length?<article key={round.id} className="space-y-2 border-t border-border pt-3">
-                    <h4 className="font-semibold text-foreground">{round.name} · {appointments.length} booked</h4>
+                {groupRecruiterBookedPanels(bookedInterviews.items).map(group=>{
+                  const round=workspace.rounds.find(item=>item.id===group.roundId);
+                  return <article key={group.key} className="space-y-2 border-t border-border pt-3">
+                    <h4 className="font-semibold text-foreground">{round?.name??"Interview"} · {group.appointments.length} booked</h4>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.panel} · {group.room}</p>
                     <ol className="space-y-1">
-                      {appointments.map(slot=><li key={slot.slotId}
+                      {group.appointments.map(slot=><li key={slot.slotId}
                         className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-border px-3 py-2 text-sm">
                         <span className="min-w-0 flex-1">
                           <strong>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true}).format(slot.startsAt)}</strong>
@@ -1030,7 +1032,7 @@ export default async function HrPlacementJobPage({
                         </span>
                       </li>)}
                     </ol>
-                  </article>:null;
+                  </article>;
                 })}
               </div>:
               <p className="text-sm text-muted-foreground">No college-booked interviews are visible for currently shared applicants. Your proposed employer slots are shown separately.</p>}
