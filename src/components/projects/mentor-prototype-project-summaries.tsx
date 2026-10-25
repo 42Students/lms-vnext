@@ -360,6 +360,8 @@ export function MentorPrototypePerformance({workspace}:{workspace:Workspace}){
       name:member.displayName||"Student",
       label:member.roleLabel||"Student",
     }))}
+    formerStudents={workspace.mentorRoster.filter(member=>member.role==="LEARNER"&&member.endedAt!==null)
+      .map(member=>({id:member.membershipId,name:member.displayName||"Former student"}))}
     tasks={workspace.tasks.filter(task=>!task.deletedAt).map(task=>({
       id:task.id,
       assigneeMembershipId:task.assigneeMembershipId,

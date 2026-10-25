@@ -14,6 +14,7 @@ import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
 import {mentorSprintPointSparkline} from "@/modules/projects/mentor-member-points-sparkline-model";
 
 type Student={id:string;name:string;label:string};
+type FormerStudent={id:string;name:string};
 type Task={id:string;assigneeMembershipId:string|null;sprintId:string|null;
   status:string;estimatePoints:number|null;carriedFromSprintId:string|null};
 type Sprint={id:string;sequence:number;title:string;status:string;releaseId:string};
@@ -28,10 +29,10 @@ const sum=(rows:readonly MentorSprintMemberSnapshot[],key:keyof Pick<
  * current task.sprintId/assignee, which changes on carry-over or reassignment.
  */
 export function MentorPrototypePerformanceTable({
-  students,tasks,sprints,releases,snapshots,
-}:{students:readonly Student[];tasks:readonly Task[];sprints:readonly Sprint[];
+  students,formerStudents=[],tasks,sprints,releases,snapshots,
+}:{students:readonly Student[];formerStudents?:readonly FormerStudent[];tasks:readonly Task[];sprints:readonly Sprint[];
   releases:readonly Release[];snapshots:readonly MentorSprintSignOffSnapshot[]}){
-  const [range,setRange]=useState("all");
+  const [range,setRange]=useState(()=>sprints.some(row=>row.status==="ACTIVE")?"current":"whole");
   const [pickedSprintIds,setPickedSprintIds]=useState<string[]>([]);
   const sorted=useMemo(()=>orderMentorSprints(sprints,releases),[sprints,releases]);
   const active=sorted.find(item=>item.status==="ACTIVE");
@@ -64,10 +65,18 @@ export function MentorPrototypePerformanceTable({
   const unassigned=liveTasks.filter(task=>task.assigneeMembershipId===null&&
     !["DONE","IN_REVIEW"].includes(task.status));
   const unassignedPast=historicalRows.filter(row=>row.membershipId===null);
-  const unassignedCount=unassigned.length+sum(unassignedPast,"openCount");
-  const unassignedPoints=pts(unassigned)+sum(unassignedPast,"openPoints");
+  // Past sign-off snapshots are evidence, never actionable assignments.
+  const unassignedCount=unassigned.length;
+  const unassignedPoints=pts(unassigned);
+  const formerNames=new Map(formerStudents.map(row=>[row.id,row.name] as const));
+  const activeIds=new Set(students.map(row=>row.id));
+  const historicalContributors=[...new Set(historicalRows.map(row=>row.membershipId)
+    .filter((id):id is string=>id!==null&&!activeIds.has(id)))];
+  const participants=[...students,...historicalContributors.map(id=>({
+    id,name:formerNames.get(id)??"Former student",label:"Former team member · saved history",
+  }))];
   const currentOpen=tasks.filter(task=>!["DONE","IN_REVIEW"].includes(task.status));
-  const studentRows=students.map(student=>{
+  const studentRows=participants.map(student=>{
     const assigned=liveTasks.filter(task=>task.assigneeMembershipId===student.id);
     const done=assigned.filter(task=>task.status==="DONE");
     const review=assigned.filter(task=>task.status==="IN_REVIEW");
@@ -226,6 +235,11 @@ export function MentorPrototypePerformanceTable({
       </div>
       <p>Use the assignment controls below to allocate current unassigned tasks.
         Historical sprint counts are read-only and never reassigned retroactively.</p>
+      {unassignedPast.length>0?<p role="status">
+        Historical sign-offs separately recorded {sum(unassignedPast,"openCount")}
+        {" "}unassigned task snapshots ({sum(unassignedPast,"openPoints")} points).
+        These are not part of the actionable allocation count.
+      </p>:null}
     </section>
   </div>;
 }

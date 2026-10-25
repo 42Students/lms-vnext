@@ -105,24 +105,12 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     className="text-sm font-semibold text-link underline focus-visible:underline">Back to project</Link>
     <PageHeader title="Task Allocation" />
     <p className="mt-1 text-sm text-body leading-[22px]">{unassigned} needs assigning · {filtered.length} matching tasks</p>
-    <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Auto-assign acts on eligible tasks across the project, not only filtered cards.</p>
+    <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Plan the next sprint first; project-wide allocation is under Advanced.</p>
     {previousAssignees.length>0?<p role="status" className="mt-1 text-xs text-warning-text leading-[20px]">
       {previousAssignees.length} former assignee(s) have tasks that need review.
     </p>:null}
    </div>
   </div>
-  {!readOnly?<Button type="button" disabled={busy||projectUnassigned===0||!learners.length}
-     
-     onClick={async()=>{
-       if(!await askConfirm("Auto-assign unassigned tasks to learners with the fewest open tasks?"))return;
-       setBusy(true);setError("");setNotice("");
-       try{
-        const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
-          "/tasks/auto-assign","POST") as {assigned:number};
-        setNotice(result.assigned+" task(s) auto-assigned.");router.refresh();
-       }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
-       finally{setBusy(false);}
-     }}>Auto-assign {projectUnassigned} eligible project task(s)</Button>:null}
   {nextSprint&&nextSprintPlan?<section
     aria-label="Next sprint allocation preview" className="space-y-2 border-y border-border py-3">
     <h3 className="font-semibold">Next sprint · Sprint {nextSprint.sequence}</h3>
@@ -192,6 +180,22 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         finally{setBusy(false);}
       }}>Auto-assign next sprint ({nextSprintPlan.assignments.length})</Button>:null}
    </section>:null}
+  {!readOnly?<details className="rounded border border-border p-3" aria-label="Advanced project-wide assignment">
+    <summary className="cursor-pointer font-semibold">Advanced · assign across the entire project</summary>
+    <p className="my-3 text-sm">This action includes the backlog and other eligible sprints, not just the upcoming sprint. It requires explicit confirmation.</p>
+  {!readOnly?<Button type="button" disabled={busy||projectUnassigned===0||!learners.length}
+     
+     onClick={async()=>{
+       if(!await askConfirm("Auto-assign unassigned tasks to learners with the fewest open tasks?"))return;
+       setBusy(true);setError("");setNotice("");
+       try{
+        const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
+          "/tasks/auto-assign","POST") as {assigned:number};
+        setNotice(result.assigned+" task(s) auto-assigned.");router.refresh();
+       }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
+       finally{setBusy(false);}
+     }}>Auto-assign {projectUnassigned} eligible project task(s)</Button>:null}
+  </details>:null}
   <Button variant="secondary" type="button" aria-expanded={filtersOpen}
     aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}
