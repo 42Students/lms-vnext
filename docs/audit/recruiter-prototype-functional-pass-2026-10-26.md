@@ -42,6 +42,16 @@ being present is not test or acceptance evidence.
 - `77ebd02`: seeded browser acceptance spec for Rounds and Offers; it must execute with eligible fixtures to count.
 - `a701c9d`, `be07364`, `807ee59`, `34aa3bc`: authenticated bounded XLSX ZIP/XML parser, first-column UUID allowlist validation, compressed/shared-string unit cases, and two primary Offers actions matching the prototype. This is **committed**, not accepted until CI plus an actual Excel and recruiter/TPO review flow pass.
 
+## Recruiter continuation — latest implementation and adversarial checks
+
+- `1c33c99`: added the three-step Offers explainer (selection, student response, joining) shown in screenshot 07, backed by existing recorded counts and truthful placement-cell authority; corrected the misplaced empty-state instruction.
+- `bb36ee3`: fixed a real TypeScript failure in the booked-interview grant join. The grant schema has no `collegeId`: the read now joins the exact employer-college relationship and rechecks active, verified, unexpired `DRIVES` capability. Confirm the subsequent typecheck passes before closing this defect.
+- `6d22fc4`, `c048c0d`: group the booked interview list by round, panel and room, order bookings by the actual timestamp and test the boundaries; aligns screenshot 06 without inventing confirmation.
+- `52ccbaa`, `b7bb129`: bound the full multipart upload stream before parsing XLSX, including chunked requests without Content-Length; added oversized-envelope tests.
+- A completed older CI run `40233488111` exposed the booked-interview missing-column error and an unrelated Faculty type error. It cannot be counted as green. Main CI/browser runs continue to be interrupted by concurrent pushes.
+
+**Known remaining gaps**: confirm PostgreSQL and browser behavior for all 14 Recruiter/public screens, real provider OTP delivery/replay, workbook upload with an actual Excel file, authoritative TPO offer letter attachments and joining, candidate booking/reschedule lifecycle, and complete two-role (employer/placement cell) transitions. The visual screenshot audit remains deliberately deferred.
+
 ## Acceptance gate (not yet passed)
 
 1. Run strict typecheck and unit tests at a stable HEAD, including the newly added models.
