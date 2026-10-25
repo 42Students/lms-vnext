@@ -66,4 +66,35 @@ describe("2026 TPO screenshot navigation parity",()=>{
   expect(source).toContain("pool>0");
   expect(home).toContain("Other placement tools and indicators");
  });
+ it("uses the prototype Reports landing without losing the extended report catalogue",()=>{
+  const reports=readFileSync(join(process.cwd(),"src/app/(authenticated)/tpo/reports/page.tsx"),"utf8");
+  expect(reports).toContain('data-testid="tpo.reports.prototype-overview"');
+  for(const heading of ["HOW ARE WE DOING?","WHO STILL NEEDS HELP?","OFFERS AND JOINING","COMPANIES","FOR NAAC AND NIRF","YOUR SAVED VIEWS"])
+   expect(reports).toContain(heading);
+  expect(reports).toContain("workspace.report.metrics.averagePackageInr");
+  expect(reports).toContain("workspace.report.metrics.joined");
+  expect(reports).toContain("Advanced reporting, filters and full report catalogue");
+  expect(reports).toContain("ReportFilters workspace={workspace}");
+  expect(reports).toContain("ReportScopeNote");
+ });
+ it("opens prototype Settings on real college rules rather than a link-only placeholder",()=>{
+  const settings=readFileSync(join(process.cwd(),"src/app/(authenticated)/tpo/settings/page.tsx"),"utf8");
+  const rules=readFileSync(join(process.cwd(),"src/app/(authenticated)/tpo/settings/rules/page.tsx"),"utf8");
+  expect(settings).toContain("TpoPlacementRulesSettingsPage searchParams={Promise.resolve({})}");
+  expect(settings).toContain("TpoLegacySettingsRedirect");
+  expect(settings).toContain("Other placement settings");
+  expect(rules).toContain('<Disclosure title="Current college-wide offer policy" defaultOpen');
+  expect(rules).toContain("TpoCollegeRulesControl");
+ });
+ it("keeps Companies Today recruiter contact actions and explicit outcome confirmation",()=>{
+  const today=readFileSync(join(process.cwd(),"src/components/tpo/tpo-companies-today.tsx"),"utf8");
+  const styles=readFileSync(join(process.cwd(),"src/components/tpo/tpo-companies-today.module.css"),"utf8");
+  expect(today).toContain('className={styles.queueTitle}');
+  expect(today).toContain('className={styles.personHead}');
+  expect(today).toContain("current.canContact");
+  expect(today).toContain("ConfirmDialog");
+  expect(today).toContain("expectedDueAt:current.dueAt");
+  expect(styles).toContain("grid-template-columns:minmax(310px,340px) minmax(0,1fr)");
+ });
+
 });
