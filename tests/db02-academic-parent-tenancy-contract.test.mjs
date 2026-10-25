@@ -158,12 +158,11 @@ test("historic parent insertion locks close reparent races", () => {
   assert.match(canonical, /FROM section_schedule_events WHERE id = NEW\.schedule_event_id FOR SHARE/);
 });
 
-test("canonical DB02 preserves reversible cohort INACTIVE transaction-safely and zero-credit offerings", () => {
-  assert.doesNotMatch(canonical, /ALTER TYPE cohort_status ADD VALUE/);
-  assert.match(canonical, /ALTER TYPE cohort_status RENAME TO cohort_status_pre_db02/);
-  assert.match(canonical, /CREATE TYPE cohort_status AS ENUM/);
-  assert.match(canonical, /'INACTIVE'/);
-  assert.match(canonical, /DROP TYPE cohort_status_pre_db02/);
+test("canonical DB02 preserves reversible cohort INACTIVE idempotently and retains zero-credit offerings", () => {
+  assert.match(canonical, /ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE' BEFORE 'COMPLETED'/);
+  assert.doesNotMatch(canonical, /ALTER TYPE cohort_status RENAME TO/);
+  assert.doesNotMatch(canonical, /DROP TYPE cohort_status/);
+  assert.match(canonical, /db02_guard_cohort_status_lifecycle/);
   assert.match(canonical, /db02_course_offerings_credits_ck/);
   assert.match(canonical, /credits IS NULL OR credits BETWEEN 0 AND 30/);
 });

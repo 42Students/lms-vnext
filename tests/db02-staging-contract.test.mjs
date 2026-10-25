@@ -82,7 +82,7 @@ test("DB02 draft prevents overlapping faculty, section, and room bookings", () =
 });
 
 test("term-bound course offerings are tenant and program scoped", () => {
-  assert.match(sql, /ADD COLUMN program_term_id uuid NOT NULL/);
+  assert.match(sql, /ADD COLUMN (?:IF NOT EXISTS )?program_term_id uuid NOT NULL/);
   assert.match(sql, /db02_course_offering_program_term_guard/);
   assert.match(sql, /term_program <> cohort_program/);
   assert.match(sql, /course_college <> cohort_college OR period_college <> cohort_college/);
@@ -122,27 +122,20 @@ test("DB02 draft has no duplicate created tables, functions, triggers, or compat
   uniqueNames(/\bCREATE TRIGGER\s+([a-z_][a-z0-9_]*)/gi, "triggers");
 
   assert.equal([...sql.matchAll(/ADD COLUMN (?:IF NOT EXISTS )?description text/g)].length, 1);
-  assert.equal([...sql.matchAll(/ADD COLUMN minimum_capacity integer/g)].length, 1);
+  assert.equal([...sql.matchAll(/ADD COLUMN (?:IF NOT EXISTS )?minimum_capacity integer/g)].length, 1);
   assert.equal([...sql.matchAll(/cohorts_lifecycle_date_order_ck/g)].length, 1);
   assert.doesNotMatch(sql, /ADD COLUMN lifecycle_start_date/);
   assert.doesNotMatch(sql, /ADD COLUMN lifecycle_end_date/);
 });
 
-test("DB02 preserves reversible INACTIVE state with transaction-safe enum replacement", () => {
-  assert.doesNotMatch(sql, /ALTER TYPE cohort_status ADD VALUE/);
-  assert.match(sql, /ALTER TABLE cohorts ALTER COLUMN status DROP DEFAULT/);
-  assert.match(sql, /ALTER TYPE cohort_status RENAME TO cohort_status_pre_db02/);
-  assert.match(
-    sql,
-    /CREATE TYPE cohort_status AS ENUM \([\s\S]*'PLANNED'[\s\S]*'ACTIVE'[\s\S]*'INACTIVE'[\s\S]*'COMPLETED'[\s\S]*'ARCHIVED'[\s\S]*\)/,
-  );
-  assert.match(
-    sql,
-    /ALTER COLUMN status TYPE cohort_status\s+USING status::text::cohort_status/,
-  );
-  assert.match(sql, /ALTER COLUMN status SET DEFAULT 'PLANNED'::cohort_status/);
-  assert.match(sql, /DROP TYPE cohort_status_pre_db02/);
-  assert.match(sql, /ALTER TABLE cohorts\s+ADD COLUMN start_date date,\s+ADD COLUMN end_date date/);
+test("DB02 preserves reversible INACTIVE state with idempotent standalone enum extension", () => {
+  // The disposable psql runner commits each statement; the idempotent enum
+  // extension keeps the live enum OID and dependent constraints stable.
+  assert.match(sql, /ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE' BEFORE 'COMPLETED'/);
+  assert.doesNotMatch(sql, /ALTER TYPE cohort_status RENAME TO/);
+  assert.doesNotMatch(sql, /DROP TYPE cohort_status/);
+  assert.match(sql, /CREATE FUNCTION db02_guard_cohort_status_lifecycle\(\)/);
+  assert.match(sql, /ALTER TABLE cohorts\s+ADD COLUMN (?:IF NOT EXISTS )?start_date date,\s+ADD COLUMN (?:IF NOT EXISTS )?end_date date/);
   assert.match(sql, /cohorts_lifecycle_date_order_ck/);
 });
 
@@ -228,7 +221,7 @@ test("CORE offering locks curriculum and materialized curriculum cannot be delet
   const offeringGuardEnd = sql.indexOf("CREATE TRIGGER db02_course_offering_program_term_guard", offeringGuardStart);
   assert.ok(offeringGuardStart !== -1 && offeringGuardEnd > offeringGuardStart);
   const offeringGuard = sql.slice(offeringGuardStart, offeringGuardEnd);
-  assert.match(sql, /ADD COLUMN program_term_course_id uuid[\s\S]*REFERENCES program_term_courses\(id\) ON DELETE RESTRICT/);
+  assert.match(sql, /ADD COLUMN (?:IF NOT EXISTS )?program_term_course_id uuid[\s\S]*REFERENCES program_term_courses\(id\) ON DELETE RESTRICT/);
   assert.match(sql, /course_offerings_curriculum_ref_ck/);
   assert.match(sql, /type = 'CORE' AND program_term_course_id IS NOT NULL/);
   assert.match(sql, /type = 'ELECTIVE' AND program_term_course_id IS NULL/);

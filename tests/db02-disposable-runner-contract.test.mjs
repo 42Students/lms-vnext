@@ -58,7 +58,7 @@ test("runner derives and compares the exact canonical DB02 trigger manifest", ()
   assert.match(runner, /EXPECTED_TRIGGER_NAMES/);
   assert.match(
     runner,
-    /grep -Eo '\^CREATE TRIGGER db02_\[a-z0-9_\]\+'/,
+    /grep -Eo '\^CREATE \(OR REPLACE \)\?TRIGGER db02_\[a-z0-9_\]\+'/,
   );
   assert.match(runner, /REGISTERED_TRIGGER_NAMES/);
   assert.match(runner, /tgname LIKE 'db02_%'/);

@@ -612,15 +612,11 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_period_window();
 -- Legacy batch status is ACTIVE | INACTIVE | COMPLETED and INACTIVE is editable/reversible.
 -- ARCHIVED is a separate vNext terminal/storage concern and cannot substitute for INACTIVE.
 --
--- drizzle-orm's PostgreSQL migrator wraps every pending migration in one transaction.
--- PostgreSQL does not permit a value introduced by ALTER TYPE ... ADD VALUE to be used
--- until that transaction commits. cohort_status is isolated to cohorts.status in the
--- current snapshot, so recreate the enum transactionally and preserve existing values.
--- A registered DB02 migration has already promoted this enum on migrated DBs.
--- Re-running staging must not rename a live enum referenced by constraints.
--- On an older pre-DB02 database, perform the one-time transactional rewrite.
--- Keep the registered PostgreSQL enum OID and its dependent functions.
--- This staging script is run by psql with statement autocommit.
+-- PostgreSQL cannot use an enum value introduced in the same transaction.
+-- The registered migration already promotes INACTIVE; this psql-only replay
+-- runs with statement autocommit and keeps the existing enum OID intact.
+-- Never rename the live enum and invalidate dependent constraints/functions.
+-- The disposable runner verifies INACTIVE is registered before replay.
 ALTER TYPE cohort_status ADD VALUE IF NOT EXISTS 'INACTIVE' BEFORE 'COMPLETED';
 
 -- Preserve the editable legacy ACTIVE/INACTIVE/COMPLETED states while protecting vNext's

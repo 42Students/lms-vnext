@@ -33,7 +33,7 @@ test("only retyping a materialized CORE curriculum is blocked", () => {
 });
 
 test("canonical CORE offering validates and locks the curriculum parent", () => {
-  assert.match(base, /ADD COLUMN program_term_course_id uuid/);
+  assert.match(base, /ADD COLUMN (?:IF NOT EXISTS )?program_term_course_id uuid/);
   assert.match(base, /ptc\.program_term_id = NEW\.program_term_id/);
   assert.match(base, /ptc\.course_id = NEW\.course_id/);
   assert.match(base, /ptc\.type = 'CORE'/);
