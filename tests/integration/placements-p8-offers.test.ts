@@ -1358,7 +1358,7 @@ describe("Placement P8 offers and joining", () => {
       [issued.id],
     );
     const replay=await actOnPlacementOffer(
-      learner,issued.id,{action:"ACCEPT"},new Date("2099-10-18T18:30:00Z"),
+      learner,issued.id,{action:"ACCEPT"},new Date("2099-11-01T18:30:00Z"),
     );
     expect(replay.status).toBe("ACCEPTED");
     if (!("cascadeId" in replay) || !("cascadeId" in accepted)) {
@@ -1371,7 +1371,7 @@ describe("Placement P8 offers and joining", () => {
     );
     expect(historyAfterExpiredRetry.rows).toEqual(historyBeforeExpiredRetry.rows);
     await expect(actOnPlacementOffer(
-      learner,issued.id,{action:"DECLINE"},new Date("2099-10-18T18:30:00Z"),
+      learner,issued.id,{action:"DECLINE"},new Date("2099-11-01T18:30:00Z"),
     )).rejects.toMatchObject({code:"PLACEMENT_OFFER_EXPIRED"});
 
 

@@ -1,4 +1,6 @@
 import { spawnSync } from "node:child_process";
+import { Pool } from "pg";
+import { SEED_IDS } from "./db-seed-data";
 import { fileURLToPath } from "node:url";
 import {
   requireDatabaseUrl,
@@ -31,11 +33,38 @@ function assertDestructiveTestTargetPreflight() {
   }
 }
 
+/**
+ * Integration scenarios use the seeded faculty identity as an expressly
+ * assigned placement officer in both colleges. Persist the matching grants
+ * only on the preflight-approved disposable TEST_DATABASE_URL.
+ * The general seed stays least-privileged; production permissions still
+ * reconstruct actual membership roles under transaction locks.
+ */
+async function grantPlacementIntegrationFixtureRoles(databaseUrl: string) {
+  const pool = new Pool({ connectionString: databaseUrl, max: 1 });
+  try {
+    for (const membershipId of [
+      SEED_IDS.facultyCollegeAMembership,
+      SEED_IDS.facultyCollegeBMembership,
+    ]) {
+      await pool.query(
+        `INSERT INTO membership_roles (membership_id, role)
+         VALUES ($1, 'TPO')
+         ON CONFLICT (membership_id, role) DO NOTHING`,
+        [membershipId],
+      );
+    }
+  } finally {
+    await pool.end();
+  }
+}
+
 async function main() {
   assertDestructiveTestTargetPreflight();
   const databaseUrl = requireDatabaseUrl("TEST_DATABASE_URL");
   await resetDatabase(databaseUrl);
   await seedDatabase(databaseUrl);
+  await grantPlacementIntegrationFixtureRoles(databaseUrl);
   process.stdout.write("Test database reset, migrated, and seeded.\n");
 }
 
