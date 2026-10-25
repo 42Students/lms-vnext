@@ -64,17 +64,21 @@ export function companyShareExpiry(now: Date, days: number) {
   return new Date(now.getTime() + parsed * 86_400_000);
 }
 
-/** PUB-auth-public-50: code is shown to the issuing placement cell ONCE. */
-export const companyShareAccessCodeSchema=z.string().regex(/^\d{6}$/);
+/** PUB-auth-public-50: shown to the issuing placement cell once.
+ * New prototype uses six uppercase letters/digits. Accept historical
+ * six-digit issued codes without forcing a reissue or weakening the gate. */
+export const companyShareAccessCodeSchema=z.string().regex(/^[A-Za-z0-9]{6}$/);
+const COMPANY_SHARE_CODE_ALPHABET="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 export function issueCompanyShareAccessCode(){
- const code=String(randomInt(0,1_000_000)).padStart(6,"0");
+ const code=Array.from({length:6},()=>
+  COMPANY_SHARE_CODE_ALPHABET[randomInt(COMPANY_SHARE_CODE_ALPHABET.length)]).join("");
  const salt=randomBytes(16).toString("hex");
  return {code,salt,hash:hashCompanyShareAccessCode(code,salt)};
 }
 export function hashCompanyShareAccessCode(code:string,salt:string){
  if(!/^[a-f0-9]{32}$/.test(salt)||!companyShareAccessCodeSchema.safeParse(code).success)
   throw new Error("Invalid company-share challenge");
- return scryptSync(code,Buffer.from(salt,"hex"),32).toString("hex");
+ return scryptSync(code.toUpperCase(),Buffer.from(salt,"hex"),32).toString("hex");
 }
 export function validCompanyShareAccessCode(code:unknown,salt:string,expected:string){
  if(!companyShareAccessCodeSchema.safeParse(code).success||!/^[a-f0-9]{32}$/.test(salt)||!/^[a-f0-9]{64}$/.test(expected))return false;

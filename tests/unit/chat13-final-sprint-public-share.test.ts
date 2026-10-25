@@ -1,17 +1,22 @@
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {issueCompanyShareAccessCode,validCompanyShareAccessCode,
- companyShareIssueSchema,companyShareTokenSchema} from "@/modules/placements/company-share/token-model";
+ companyShareIssueSchema,companyShareTokenSchema,hashCompanyShareAccessCode} from "@/modules/placements/company-share/token-model";
 import {safeCompanyShareColumns,projectCompanyShareRows,
  companyShareSelectedCsv} from "@/modules/placements/company-share/column-model";
 const read=(p:string)=>readFileSync(p,"utf8");
 describe("chat-13 final sprint public company share",()=>{
- it("PUB-auth-public-50 requires a separate six-digit salted access code and a server-side signed proof",()=>{
+ it("PUB-auth-public-50 requires a six-character salted access code and a server-side signed proof",()=>{
   const code=issueCompanyShareAccessCode();
-  expect(code.code).toMatch(/^\d{6}$/);
+  expect(code.code).toMatch(/^[A-Z2-9]{6}$/);
   expect(code.salt).toMatch(/^[a-f0-9]{32}$/);
   expect(code.hash).toMatch(/^[a-f0-9]{64}$/);
   expect(validCompanyShareAccessCode(code.code,code.salt,code.hash)).toBe(true);
+  expect(validCompanyShareAccessCode(code.code.toLowerCase(),code.salt,code.hash)).toBe(true);
+  const legacyCode="123456";
+  const legacyHash=hashCompanyShareAccessCode(legacyCode,code.salt);
+  expect(validCompanyShareAccessCode(legacyCode,code.salt,legacyHash)).toBe(true);
+  expect(validCompanyShareAccessCode("invalid!",code.salt,code.hash)).toBe(false);
   expect(validCompanyShareAccessCode("wrong",code.salt,code.hash)).toBe(false);
   expect(companyShareTokenSchema.safeParse("x".repeat(43)).success).toBe(true);
   const publicService=read("src/modules/placements/company-share/public-service.ts");
@@ -20,7 +25,7 @@ describe("chat-13 final sprint public company share",()=>{
   const csv=read("src/app/api/placements/company-share/[token]/export/route.ts");
   expect(csv).toContain('get("company_share_access")');
   const page=read("src/app/company-share/[token]/page.tsx");
-  expect(page).toContain("Enter the one-time code the placement cell sent you.");
+  expect(page).toContain("Enter the six-character code the placement cell sent you.");
  });
  it("PUB-auth-public-52 locks at 10 wrong codes in 60 minutes and notifies the issuing TPO",()=>{
   const service=read("src/modules/placements/company-share/access-service.ts");

@@ -36,7 +36,7 @@ export default async function CompanySharePage({
   return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
   <section className="mx-auto mt-12 min-w-0 max-w-[480px] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
    <h1 className="mb-4 break-words text-xl font-semibold leading-7 text-[var(--lms-heading)]">Applicants for {result.title}</h1>
-   <p className="mb-4 break-words text-sm leading-[22px] text-body">Shared with {result.companyName}. Enter the one-time code the placement cell sent you.</p>
+   <p className="mb-4 break-words text-sm leading-[22px] text-body">Shared with {result.companyName}. Enter the six-character code the placement cell sent you.</p>
    {access==="invalid"?<p role="alert" className="mb-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-error)] bg-[rgba(239,68,68,0.06)] px-3 py-2 text-sm text-error">That code did not work, or this share is no longer available.</p>:null}
    <ShareCodeForm action={"/company-share/"+encodeURIComponent(token)+"/access"}/>
    <div className="mt-3 space-y-2 border-t border-[var(--lms-canvas-border)] pt-3">
