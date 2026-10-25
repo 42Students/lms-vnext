@@ -30,6 +30,7 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
   const [start,setStart]=useState("");
   const [end,setEnd]=useState("");
   const [meetingUrl,setMeetingUrl]=useState("");
+  const [venue,setVenue]=useState("");
   const [useGoogle,setUseGoogle]=useState(false);
   const [repeat,setRepeat]=useState<"once"|"4"|"8">("once");
   const [pending,setPending]=useState(false);
@@ -49,6 +50,8 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
       setError("Choose a sprint assigned to this project.");return;
     }
     const link=meetingUrl.trim();
+    const location=venue.trim();
+    if(location.length>200){setError("Physical venue must be at most 200 characters.");return;}
     if(link){
       try{
         const url=new URL(link);
@@ -67,14 +70,16 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
         ...(agenda.trim()?{agenda:agenda.trim()}:{}),
         startsAt:from,endsAt:until,timeZone:"Asia/Kolkata",
         meetingType,linkedSprintId:linkedSprintId||null,
-        status:link?"SCHEDULED":"DRAFT",
+        status:link||location?"SCHEDULED":"DRAFT",
         meetingUrl:link||null,
+        ...(location?{location}:{}),
       });
-      let titleForToast=link?"Meeting scheduled":"Meeting draft saved";
+      let titleForToast=link||location?"Meeting scheduled":"Meeting draft saved";
       let description=link?
         "The meeting is recorded. Share the actual join link with attendees.":
+        location?"In-person meeting recorded at "+location+". The team can find the venue in the meeting agenda.":
         "Open the draft in Meetings to generate a verified Google Meet link, or add your own link.";
-      if(!link&&useGoogle&&googleConnected){
+      if(!link&&!location&&useGoogle&&googleConnected){
         const row=saved&&typeof saved==="object"&&"meeting" in saved?
           saved.meeting:null;
         const id=row&&typeof row==="object"&&"id" in row?
@@ -101,7 +106,7 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
         }
       }
       setOpen(false);setTitle("");setAgenda("");setStart("");setEnd("");setMeetingUrl("");
-      setMeetingType("GENERAL");setLinkedSprintId("");setUseGoogle(false);setRepeat("once");
+      setMeetingType("GENERAL");setLinkedSprintId("");setUseGoogle(false);setRepeat("once");setVenue("");
       showToast({tone:"success",title:titleForToast,description});
       router.refresh();
     }catch{
@@ -161,12 +166,17 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
               onChange={event=>setEnd(event.target.value)}/>
           </label>
         </div>
-        <label>Meeting link (optional for a draft)
+        <label>Meeting link (optional for in-person or draft meetings)
           <Input value={meetingUrl} type="url" maxLength={500} disabled={pending}
             onChange={event=>setMeetingUrl(event.target.value)}
             placeholder="https://meet.google.com/…"/>
         </label>
-        {!meetingUrl.trim()&&googleConnected?
+        <label>Physical venue (optional for an online meeting)
+          <Input value={venue} type="text" maxLength={200} disabled={pending}
+            onChange={event=>setVenue(event.target.value)}
+            placeholder="Lab 2, Room 304"/>
+        </label>
+        {!meetingUrl.trim()&&!venue.trim()&&googleConnected?
           <div className="space-y-2 rounded border border-border p-3">
             <label className="flex min-h-11 items-center gap-2 text-sm">
               <input type="checkbox" className="size-5" checked={useGoogle}
@@ -201,7 +211,7 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
           <Button type="button" variant="secondary" disabled={pending}
             onClick={()=>setOpen(false)}>Cancel</Button>
           <Button type="submit" disabled={pending||!project||!title.trim()} loading={pending}>
-            {meetingUrl.trim()?"Schedule meeting":useGoogle&&googleConnected?
+            {meetingUrl.trim()||venue.trim()?"Schedule meeting":useGoogle&&googleConnected?
               "Save and create Google Meet":"Save draft"}
           </Button>
         </div>
