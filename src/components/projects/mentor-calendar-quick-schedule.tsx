@@ -68,7 +68,7 @@ export function MentorCalendarQuickSchedule({projects}:{
       setMeetingType("GENERAL");setLinkedSprintId("");
       showToast({tone:"success",title:link?"Meeting scheduled":"Meeting draft saved",
         description:link?"The meeting is recorded. Share the actual join link with attendees.":
-          "Add a meeting link in the project's meeting editor to schedule the draft."});
+          "Open the draft in Meetings to generate a verified Google Meet link after connecting Calendar, or add your own link."});
       router.refresh();
     }catch{
       setError("Could not save this meeting. It may overlap another meeting, or the project has changed. Review and try again.");
@@ -133,8 +133,9 @@ export function MentorCalendarQuickSchedule({projects}:{
             placeholder="https://meet.google.com/…"/>
         </label>
         <p className="prototype-mentor-calendar-quick-note">
-          No Google Meet link is generated automatically. Structured attendance, notes and
-          follow-ups can be edited on the project meeting record.
+          A saved draft can generate its first Google Meet link in the Meetings
+          panel after Google Calendar consent. Attendance, notes and follow-ups
+          are edited on the project meeting record.
           {project?<Link href={"/mentor/projects/"+encodeURIComponent(project.id)+"?tab=team"}>
             Open full meeting editor →
           </Link>:null}
