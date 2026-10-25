@@ -32,6 +32,8 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
  const [success,setSuccess]=useState("");
  const [csvError,setCsvError]=useState("");
  const [csvStatus,setCsvStatus]=useState("");
+ const [importing,setImporting]=useState(false);
+ const importPending=useRef(false);
  const nonce=useRef<string|null>(null);
  const pending=useRef(false);
  const eligible=new Set(candidates.map(candidate=>candidate.id));
@@ -42,21 +44,57 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
  const canSend=!disabled&&!busy&&chosen.length>0&&validCtc&&
   packageDescription.trim().length<=500;
 
- async function importCsv(file:File|undefined){
-  if(!file)return;
+ async function importList(file:File|undefined){
+  if(!file||pending.current||importPending.current)return;
   setCsvError("");setCsvStatus("");
-  if(file.size>65536||!file.name.toLowerCase().endsWith(".csv")){
-   setCsvError("Use an Excel-exported .csv file of at most 64 KB.");
+  const name=file.name.toLowerCase();
+  const xlsx=name.endsWith(".xlsx");
+  if((xlsx&&file.size>256000)||(!xlsx&&(file.size>65536||!name.endsWith(".csv")))){
+   setCsvError("Use a .csv file under 64 KB or an .xlsx workbook under 250 KB.");
    return;
   }
+  importPending.current=true;setImporting(true);
   try{
-   const text=await file.text();
-   const result=parseRecruiterSelectionCsv(text,new Set(candidates.map(candidate=>candidate.id.toLowerCase())));
+   let csv:string;
+   if(xlsx){
+    const form=new FormData();
+    form.set("file",file);
+    const response=await fetch("/api/placements/recruiter/selection-xlsx/parse",{
+     method:"POST",credentials:"same-origin",body:form,
+    });
+    const payload:unknown=await response.json().catch(()=>null);
+    if(!response.ok){
+     const error=payload&&typeof payload==="object"&&!Array.isArray(payload)
+      ?(payload as {error?:unknown}).error:null;
+     setCsvError(response.status===403?"Sign in with an authorized recruiter account to import a workbook.":
+      response.status===413?"Workbook is too large.":
+      typeof error==="string"&&error.length<180&&!/[<>]/.test(error)?error:
+      "Could not read the Excel workbook. Save it as CSV and retry.");
+     return;
+    }
+    if(!payload||typeof payload!=="object"||Array.isArray(payload)||
+       (payload as {ok?:unknown}).ok!==true||
+       typeof (payload as {csv?:unknown}).csv!=="string"){
+     setCsvError("The workbook parser returned an invalid result.");
+     return;
+    }
+    csv=(payload as {csv:string}).csv;
+    if(csv.length>65536){
+     setCsvError("Workbook contains too many applicant IDs.");
+     return;
+    }
+   }else csv=await file.text();
+   // An Excel file is never proof of authorization: all IDs must be in the
+   // exact eligible set that the recruiter received from the protected job.
+   const allowed=new Set(candidates.map(candidate=>candidate.id.toLowerCase()));
+   const result=parseRecruiterSelectionCsv(csv,allowed);
    if(!result.ok){setCsvError(result.error);return;}
    setSelected(result.ids);nonce.current=null;setError("");setSuccess("");
-   setCsvStatus(result.ids.length+" eligible applicants selected from CSV. Review the selection before sending.");
+   setCsvStatus(result.ids.length+" eligible applicants selected from "+(xlsx?"Excel":"CSV")+
+    ". Review them before sending. No offer was issued.");
    setOpen(true);
-  }catch{setCsvError("Could not read the CSV. No changes were made.");}
+  }catch{setCsvError("Could not import this file. No changes were made.");}
+  finally{importPending.current=false;setImporting(false);}
  }
  function downloadTemplate(){
   const blob=new Blob([recruiterSelectionCsvTemplate(candidates)],{type:"text/csv;charset=utf-8"});
@@ -161,14 +199,14 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
     <h4 className="font-semibold text-foreground">Upload your list from Excel</h4>
     <p className="text-xs text-body">
      Download eligible applicants, keep application_id unchanged, choose the rows to include,
-     then use Excel's Save As CSV (UTF-8). Only eligible IDs are imported.
-     Spreadsheet files (.xlsx) are not accepted directly.
+     then upload the .xlsx workbook or Excel's CSV (UTF-8). Only eligible IDs are imported.
+     The file is read without executing formulas. You must review the selected applicants before sending.
     </p>
     <div className="flex flex-wrap gap-3">
      <Button type="button" variant="secondary" onClick={downloadTemplate}>Download Excel-compatible template</Button>
-     <label className="grid gap-1 text-xs font-medium text-body">Upload CSV from Excel
-      <Input type="file" accept=".csv,text/csv" disabled={busy}
-       onChange={event=>{void importCsv(event.target.files?.[0]);event.target.value="";}}/>
+     <label className="grid gap-1 text-xs font-medium text-body">Upload Excel or CSV
+      <Input type="file" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" disabled={busy||importing}
+       onChange={event=>{void importList(event.target.files?.[0]);event.target.value="";}}/>
      </label>
     </div>
    </section>
