@@ -4,6 +4,7 @@ import {useState} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {projectMutation} from "./project-api";
 import {mentorPullEligible,mentorPullSelectedPoints} from "@/modules/projects/mentor-sprint-backlog-pull-model";
 
@@ -24,6 +25,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
  const [selected,setSelected]=useState<string[]>([]);
  const [moved,setMoved]=useState<string[]>([]);
  const [busy,setBusy]=useState(false);
+ const [confirmOpen,setConfirmOpen]=useState(false);
  const [notice,setNotice]=useState("");
  const [failed,setFailed]=useState<string[]>([]);
  const remaining=eligible.filter(task=>!moved.includes(task.id));
@@ -31,9 +33,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
  const totals=mentorPullSelectedPoints(selectedRows,selected);
  async function pull(){
   if(busy||!canPull||!selectedRows.length)return;
-  if(!window.confirm("Move "+selectedRows.length+" backlog task"+
-    (selectedRows.length===1?"":"s")+" to "+sprintTitle+
-    "? Each task is saved separately."))return;
+  setConfirmOpen(false);
   setBusy(true);setNotice("");setFailed([]);
   const successes:string[]=[],errors:string[]=[];
   for(const task of selectedRows){
@@ -97,8 +97,14 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
        {totals.unestimated>0?" · "+totals.unestimated+" unestimated":""}
      </p>:null}
      <Button type="button" size="sm" disabled={busy||!selectedRows.length}
-       loading={busy} onClick={()=>void pull()}>Pull selected into sprint</Button>
+       loading={busy} onClick={()=>setConfirmOpen(true)}>Pull selected into sprint</Button>
    </>}
+   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+     title={"Pull "+selectedRows.length+" backlog tasks into "+sprintTitle+"?"}
+     description="Each task is saved individually, with a version check. Earlier successful moves remain saved if another task fails."
+     confirmLabel="Pull selected tasks" confirmVariant="primary"
+     confirmDisabled={selectedRows.length===0||!canPull} pending={busy}
+     onConfirm={()=>void pull()}/>
    {notice?<p role="status">{notice}</p>:null}
    <Link className="inline-flex min-h-10 items-center text-link underline"
      href={base}>Open full product backlog on the Board →</Link>
