@@ -28,14 +28,16 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
  test("mentor portfolio and cross-team surfaces respond to the authenticated role",async({page,context})=>{
   await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
   for(const [path,heading] of [
-   ["/mentor/projects","Mentoring Projects"],
+   ["/mentor/projects","__DYNAMIC_MENTOR_ATTENTION_HEADING__"],
    ["/mentor/calendar","Meetings"],
    ["/mentor/notifications","Notifications"],
    ["/mentor/search","Search"],
    ["/mentor/account","Mentor · My account"],
   ] as const){
    await page.goto(path);
-   await expect(page.getByRole("heading",{level:1,name:heading})).toBeVisible();
+   if(heading==="__DYNAMIC_MENTOR_ATTENTION_HEADING__")
+    await expect(page.locator(".prototype-mentor-home-heading h1")).toBeVisible();
+   else await expect(page.getByRole("heading",{level:1,name:heading})).toBeVisible();
    await expect(page.locator("body")).not.toContainText("Application error: a server-side exception");
   }
  });

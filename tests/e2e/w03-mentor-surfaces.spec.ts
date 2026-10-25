@@ -26,7 +26,7 @@ test.describe("W03 Mentor Meetings and Notifications browser parity",()=>{
     await authenticate(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
     await page.goto("/mentor");
     await expect(page).toHaveURL(/\/mentor\/projects(?:\?|$)/);
-    await expect(page.getByRole("heading",{level:1,name:"Mentoring Projects"})).toBeVisible();
+    await expect(page.locator(".prototype-mentor-home-heading h1")).toBeVisible();
     await page.getByRole("link",{name:"Meetings"}).last().click();
     await expect(page.getByRole("heading",{level:1,name:"Meetings"})).toBeVisible();
     await expect(page.getByRole("heading",{name:/Upcoming \(\d+\)/})).toBeVisible();

@@ -17,7 +17,7 @@ import {MentorCalendarLoadFailure} from "@/components/projects/mentor-calendar-l
 import {listMyMentorCalendarMeetings,listMyMentorSchedulableSprints} from "@/modules/projects/mentor-calendar-service";
 import {mentorCalendarCanMutateMeeting} from "@/modules/projects/mentor-calendar-mutation-access-model";
 import {ProjectsServiceError} from "@/modules/projects/errors";
-import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
+import {singleValueMentorCalendarFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
   from "@/modules/projects/mentor-calendar-filter-model";
 export const dynamic="force-dynamic";
@@ -26,7 +26,7 @@ export default async function MentorCalendarPage({searchParams}:{
   searchParams:Promise<Search>;
 }){
   const raw=await searchParams;
-  const parsed=mentorCalendarFiltersSchema.safeParse(singleValueMentorFilters({
+  const parsed=mentorCalendarFiltersSchema.safeParse(singleValueMentorCalendarFilters({
     sprint:raw.sprint,join:raw.join,projectId:raw.projectId,
     attention:raw.attention,status:raw.status,type:raw.type,
     projectState:raw.projectState,search:raw.search,period:raw.period,

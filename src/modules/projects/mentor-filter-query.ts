@@ -37,3 +37,24 @@ export function singleValueMentorExportFilters(
   }
   return fields;
 }
+
+/** Calendar-specific query normalizer. The generic Mentor project parser has
+ * a different allowlist; using it here silently dropped period, join, sprint
+ * and projectState and could show unfiltered meetings for a filtered URL.
+ * Duplicated recognized keys fail closed instead of choosing one silently.
+ */
+export function singleValueMentorCalendarFilters(
+  params:Record<string,string|string[]|undefined>,
+):Record<string,string|undefined>|null{
+  const allowed=new Set(["search","status","period","projectId","sprint",
+    "join","attention","type","projectState"]);
+  const entries:[string,string|undefined][]=[];
+  for(const [key,value] of Object.entries(params)){
+    if(!allowed.has(key))continue;
+    if(Array.isArray(value)){
+      if(value.length!==1)return null;
+      entries.push([key,value[0]]);
+    }else entries.push([key,value]);
+  }
+  return Object.fromEntries(entries);
+}
