@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -20,6 +20,27 @@ if (!url || process.env.DATABASE_URL !== url ||
   throw new Error("DB08-B requires matching TEST_DATABASE_URL/DATABASE_URL, DB08_ISOLATED_TEST_DATABASE=1 and DB08_B_MIGRATION_APPLIED=1; use a disposable PostgreSQL with DB08-A/B schemas actually applied.");
 }
 const pool = new Pool({ connectionString: url, max: 3 });
+ 
+// Distinct test identity avoids violating the registered rule permitting
+// one active learner program enrollment per membership. This database is
+// explicitly disposable; do not mutate seed learners' real enrollment.
+const db08LearnerUser = randomUUID();
+const db08LearnerMembership = randomUUID();
+beforeAll(async () => {
+  await pool.query(
+    "INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,$3)",
+    [db08LearnerUser,"db08-registration-"+db08LearnerUser,"DB08 Registration Learner"],
+  );
+  await pool.query(
+    "INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3)",
+    [db08LearnerMembership,db08LearnerUser,SEED_IDS.collegeA],
+  );
+  await pool.query(
+    "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER')",
+    [db08LearnerMembership],
+  );
+});
+
 
 const admin: RequestContext = {
   user: {
@@ -33,11 +54,11 @@ const admin: RequestContext = {
 };
 const learner: RequestContext = {
   user: {
-    id: SEED_IDS.learnerUser, identityUid: "seed-learner",
+    id: db08LearnerUser, identityUid: "db08-registration-learner",
     platformStatus: "ACTIVE", systemRoles: [],
   },
   membership: {
-    id: SEED_IDS.learnerCollegeAMembership, collegeId: SEED_IDS.collegeA,
+    id: db08LearnerMembership, collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization, status: "ACTIVE", roles: ["LEARNER"],
   },
 };
@@ -75,7 +96,7 @@ async function createBatchFixture(invited = true, deadline = "2026-12-01T00:00:0
   );
   await pool.query(
     "INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
-    [ids.enrollment, SEED_IDS.learnerCollegeAMembership, ids.program, ids.cohort],
+    [ids.enrollment, db08LearnerMembership, ids.program, ids.cohort],
   );
   await pool.query(
     "INSERT INTO section_enrollments(id,learner_enrollment_id,section_id,academic_period_id) VALUES($1,$2,$3,$4)",
@@ -141,7 +162,7 @@ afterEach(async () => {
   await pool.query("TRUNCATE TABLE placement_eligibility_events");
   await pool.query("DELETE FROM placement_batch_registrations WHERE cohort_id=ANY($1::uuid[])", [touched.cohort]);
   await pool.query("DELETE FROM placement_debarments WHERE membership_id=$1",
-    [SEED_IDS.learnerCollegeAMembership]);
+    [db08LearnerMembership]);
   await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='COHORT' AND scope_id=ANY($1::uuid[])", [touched.cohort]);
   await pool.query("DELETE FROM placement_batch_lifecycles WHERE cohort_id=ANY($1::uuid[])", [touched.cohort]);
   await pool.query("DELETE FROM section_enrollments WHERE id=ANY($1::uuid[])", [touched.sectionEnrollment]);
@@ -168,7 +189,7 @@ describe("DB08-B per-cohort consented learner registration", () => {
     try {
       await pool.query(
         "UPDATE users SET platform_status='DISABLED' WHERE id=$1",
-        [SEED_IDS.learnerUser],
+        [db08LearnerUser],
       );
       await expect(registerOwnPlacementChoice(learner, {
         choice: "PLACEMENTS", acceptedConsent: true,
@@ -177,13 +198,13 @@ describe("DB08-B per-cohort consented learner registration", () => {
       // A failed authorization must not persist either consent or event.
       const registrations = await pool.query(
         "SELECT id FROM placement_batch_registrations WHERE membership_id=$1 AND cohort_id=$2",
-        [SEED_IDS.learnerCollegeAMembership, fixture.cohort],
+        [db08LearnerMembership, fixture.cohort],
       );
       expect(registrations.rows).toHaveLength(0);
     } finally {
       await pool.query(
         "UPDATE users SET platform_status='ACTIVE' WHERE id=$1",
-        [SEED_IDS.learnerUser],
+        [db08LearnerUser],
       );
     }
   });
@@ -193,7 +214,7 @@ describe("DB08-B per-cohort consented learner registration", () => {
     try {
       await pool.query(
         "UPDATE college_memberships SET status='SUSPENDED' WHERE id=$1",
-        [SEED_IDS.learnerCollegeAMembership],
+        [db08LearnerMembership],
       );
       await expect(registerOwnPlacementChoice(learner, {
         choice: "PLACEMENTS", acceptedConsent: true,
@@ -201,13 +222,13 @@ describe("DB08-B per-cohort consented learner registration", () => {
 
       const registrations = await pool.query(
         "SELECT id FROM placement_batch_registrations WHERE membership_id=$1 AND cohort_id=$2",
-        [SEED_IDS.learnerCollegeAMembership, fixture.cohort],
+        [db08LearnerMembership, fixture.cohort],
       );
       expect(registrations.rows).toHaveLength(0);
     } finally {
       await pool.query(
         "UPDATE college_memberships SET status='ACTIVE' WHERE id=$1",
-        [SEED_IDS.learnerCollegeAMembership],
+        [db08LearnerMembership],
       );
     }
   });
@@ -265,7 +286,7 @@ describe("DB08-B per-cohort consented learner registration", () => {
     const a = await createBatchFixture();
     await expect(pool.query(
       "INSERT INTO placement_batch_registrations(college_id,cohort_id,membership_id,choice,consent_at,consent_version,source,recorded_by_user_id) VALUES($1,$2,$3,'PLACEMENTS',now(),'v1','SELF',$4)",
-      [SEED_IDS.collegeA, randomUUID(), SEED_IDS.learnerCollegeAMembership, SEED_IDS.learnerUser],
+      [SEED_IDS.collegeA, randomUUID(), db08LearnerMembership, db08LearnerUser],
     )).rejects.toMatchObject({
       // Ownership trigger rejects a nonexistent/non-enrolled cohort before
       // PostgreSQL's deferred FK check; this is the stronger fail-closed gate.
@@ -274,7 +295,7 @@ describe("DB08-B per-cohort consented learner registration", () => {
     });
     await expect(pool.query(
       "INSERT INTO placement_batch_registrations(college_id,cohort_id,membership_id,choice,source,recorded_by_user_id) VALUES($1,$2,$3,'PLACEMENTS','SELF',$4)",
-      [SEED_IDS.collegeA, a.cohort, SEED_IDS.learnerCollegeAMembership, SEED_IDS.learnerUser],
+      [SEED_IDS.collegeA, a.cohort, db08LearnerMembership, db08LearnerUser],
     )).rejects.toMatchObject({ code: "23514" });
   });
 });
@@ -283,7 +304,7 @@ describe("DB08-B manager debarment with SQL-generated immutable audit", () => {
   it("creates and lifts a manual debarment, idempotently", async () => {
     const created = await createPlacementDebarment(admin, {
       collegeId: SEED_IDS.collegeA,
-      membershipId: SEED_IDS.learnerCollegeAMembership,
+      membershipId: db08LearnerMembership,
       reason: "Placement policy violation",
       untilDrives: 3,
     });
