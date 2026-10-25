@@ -30,7 +30,7 @@ export function groupRecruiterBookedPanels<T extends {
   const prior=grouped.get(key);
   if(prior){
    prior.appointments.push(item);
-   if(item.startsAt<prior.startsAt)prior.startsAt=item.startsAt;
+   if(item.startsAt.getTime()<prior.startsAt.getTime())prior.startsAt=item.startsAt;
   }else grouped.set(key,{key,roundId:item.roundId,panel,room,startsAt:item.startsAt,appointments:[item]});
  }
  return [...grouped.values()].map(group=>({
