@@ -3,6 +3,7 @@ import {describe,expect,it} from "vitest";
 import {
  splitTpoTodayFollowups,tpoTodayFocusHref,rankTpoCompaniesToday,
  tpoTodayAgendaDay,tpoTodayAgendaHref,
+ summarizeTpoTodayNotContacted,
  type TpoCompaniesTodayRow,
 } from "@/modules/placements/tpo-companies-today-model";
 
@@ -50,6 +51,24 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
    expect(tpoTodayAgendaDay(value)).toBeNull();
   }
  });
+ it("counts only true NEW recruiters in the college-scoped selected ownership view",()=>{
+  const leads=[
+   {stage:"NEW",ownerMembershipId:null,createdAt:new Date("2026-10-20T10:00:00Z")},
+   {stage:"NEW",ownerMembershipId:"self",createdAt:new Date("2026-10-22T10:00:00Z")},
+   {stage:"NEW",ownerMembershipId:"other",createdAt:new Date("2026-10-19T10:00:00Z")},
+   {stage:"CONTACTED",ownerMembershipId:"self",createdAt:new Date("2026-10-18T10:00:00Z")},
+   {stage:"INVITED",ownerMembershipId:null,createdAt:new Date("2026-10-17T10:00:00Z")},
+  ];
+  expect(summarizeTpoTodayNotContacted(leads,"MINE","self")).toEqual({
+   count:2,oldestAddedAt:"2026-10-20T10:00:00.000Z",
+  });
+  expect(summarizeTpoTodayNotContacted(leads,"TEAM","self")).toEqual({
+   count:3,oldestAddedAt:"2026-10-19T10:00:00.000Z",
+  });
+  expect(summarizeTpoTodayNotContacted([],"MINE","self")).toEqual({
+   count:0,oldestAddedAt:null,
+  });
+ });
  it("routes both screenshot variants to real data and the existing persisted action workflow",()=>{
   const page=readFileSync("src/app/(authenticated)/tpo/companies/today/page.tsx","utf8");
   const views=readFileSync("src/components/tpo/tpo-today-alternate-views.tsx","utf8");
@@ -57,6 +76,9 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(page).toContain('view==="agenda"||view==="brief"');
   expect(page).toContain("getTpoDueFollowupQueue");
   expect(page).toContain("getTpoMessagesInbox");
+  expect(page).toContain("listTpoLeads");
+  expect(views).toContain("notContacted.count");
+  expect(views).toContain("href=\"/tpo/recruiters?stage=NEW\"");
   expect(page).toContain("initialFollowupId=");
   expect(views).toContain('view==="agenda"');
   expect(views).toContain('view==="brief"');
