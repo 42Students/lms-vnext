@@ -8,6 +8,7 @@ import {notFound,redirect} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {FacultyAttendanceScheduleEditor} from "@/components/attendance/faculty-attendance-schedule-editor";
 import {FacultyClassSwitcher} from "@/components/attendance/faculty-class-switcher";
+import {FacultyPrototypeAttendance} from "@/components/attendance/faculty-prototype-attendance";
 import {
   FacultyAttendanceWorkspace,
   type FacultyAttendanceWorkspaceData,
@@ -132,11 +133,16 @@ async function FacultyCourseAttendanceContent({
         Review session coverage →
       </Link>
       </nav>
+      <FacultyPrototypeAttendance workspace={workspace} deliveryId={deliveryId} selectedSessionId={initialSessionId}/>
+      <details className="border-t border-[#e5ebf2] pt-4" open={initialSessionId!==null} id="faculty-attendance-editor">
+       <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Mark attendance and advanced session reports</summary>
+       <div className="mt-5 space-y-4">
       <FacultyAttendanceWorkspace
         key={`${deliveryId}:${initialSessionId ?? "report"}`}
         workspace={workspace}
         initialSessionId={initialSessionId}
       />
+       </div></details>
       <Disclosure title="Advanced attendance session scheduling" className="border-t border-border" contentClassName="min-w-0 pb-4">
       <FacultyAttendanceScheduleEditor
         deliveryId={deliveryId}
