@@ -14,8 +14,10 @@ describe("chat-16 linked private file resources",()=>{
   expect(panel).toContain('resourceId:linkedResourceId');
   expect(panel).toContain('Resource: {resources.find(item=>item.id===file.resourceId)?.title}');
   expect(service).toContain('eq(projectResources.projectId, scope.project.id)');
-  expect(service).toContain('resource.status !== "ACTIVE"');
-  expect(service).toContain('resource.visibility!=="TEAM"');
+  expect(service).toContain("canAttachProjectFileToResource(");
+  const policy=code("src/modules/projects/mentor-file-resource-visibility-model.ts");
+  expect(policy).toContain('resource.status==="ACTIVE"&&resource.visibility==="TEAM"');
+  expect(policy).toContain('resource.status==="ACTIVE"||resource.status==="DRAFT"');
  });
  it("MEN-projects-meetings-58 does not reveal storage grants in a resource row or open files without a scoped download",()=>{
   const panel=code("src/components/projects/project-resource-files-panel.tsx");

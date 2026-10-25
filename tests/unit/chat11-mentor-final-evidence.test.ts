@@ -9,7 +9,8 @@ describe("final-delivery mentor review context",()=>{
       "Additional evidence","Submission history","submission.reopenedAt","submission.lockedAt"])
       expect(s).toContain(name);
     expect(s).toContain("<ProjectDeliveryEvidenceDownload");
-    expect(s).toContain("typeof row.fileId");
+    expect(s).toContain('typeof row["fileId"]==="string"');
+    expect(s).toContain('row["kind"]==="FILE"');
   });
   it("MEN-projects-meetings-64 opens verified evidence through a same-origin short-lived grant",()=>{
     const s=source("src/components/projects/project-delivery-evidence-download.tsx");

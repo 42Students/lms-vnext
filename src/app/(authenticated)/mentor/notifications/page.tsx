@@ -246,7 +246,7 @@ async function MentorNotificationsContent({
     {(selectedPill==="all"||selectedPill==="unread")&&inbox?.cursor.invalid?
       <Alert tone="error" role="alert">
         Personal notification cursor is invalid.
-        <Link href={MENTOR_INBOX} className="ml-2 text-link underline">
+        <Link href={MENTOR_INBOX} className="ml-2 inline-flex min-h-11 items-center text-link underline">
           Return to newest notifications</Link>
       </Alert>:null}
     {(selectedPill==="all"||selectedPill==="unread")&&nextHref?

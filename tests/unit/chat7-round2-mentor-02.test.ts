@@ -27,9 +27,9 @@ it("MEN-projects-meetings-09 number-aware Team ordering",()=>{
 });
 it("MEN-projects-meetings-12 distinct legacy navigation tabs",()=>{
  const code=readFileSync("src/components/projects/mentor-project-tabs.tsx","utf8");
- expect(code).toContain("key: \"sprints\", label: \"Releases and Sprints\"");
+ expect(code).toContain("key: \"sprints\", label: \"Sprints & releases\"");
  expect(code).toContain("key: \"board\", label: \"Board\"");
- expect(code).toContain("key: \"performance\", label: \"Task Allocation\"");
+ expect(code).toContain("key: \"performance\", label: \"Performance\"");
 
 });
 it("MEN-projects-meetings-13 legacy task and meeting deep-link aliases",()=>{

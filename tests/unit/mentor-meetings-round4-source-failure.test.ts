@@ -20,6 +20,6 @@ describe("mentor notification resilience",()=>{
   expect(source).toContain('const alerts = projectAccess?.projects.enabled');
   expect(source).toContain('const items:NotificationListItem[] = (inbox?.page.items ?? [])');
   expect(source).toContain('failedSources.length ? "No project alerts are visible, but some notification sources could not be checked."');
-  expect(source).toContain('!inbox ? "Personal notifications are temporarily unavailable."');
+  expect(source).toContain('const allRelevantFailed=!inbox &&');
  });
 });

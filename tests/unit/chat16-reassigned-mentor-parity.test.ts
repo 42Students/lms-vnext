@@ -97,7 +97,7 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
   });
   it("MEN-projects-meetings-70 renders legacy notification heading and persisted attention labels",()=>{
     const page=read("src/app/(authenticated)/mentor/notifications/page.tsx");
-    expect(page).toContain("Announcements, submissions waiting for review, stalled projects, and meetings coming up soon.");
+    expect(page).toContain("Announcements, final submissions, task approvals, sprint sign-offs, blockers and meetings.");
     expect(page).toContain("Nothing needs your attention right now.");
     expect(page).toContain("Needs review");
     expect(page).toContain("Meeting requested");

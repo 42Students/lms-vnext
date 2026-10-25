@@ -16,14 +16,14 @@ describe("UX-mentor-scroll-motion-01 invisible scrollbar affordances",()=>{
   it("makes allocation cards discoverable and keyboard scrollable",()=>{
     const source=read("mentor-task-allocation");
     expect(source).toContain('role="region" aria-label="Task allocation cards; scroll sideways for more learners" tabIndex={0}');
-    expect(source).toContain("className={styles.scrollRegion}");
+    expect(source).toContain('className={styles["scrollRegion"]}');
     expect(boardCss()).toContain("overscroll-behavior-x: contain");
     expect(boardCss()).toContain(".scrollRegion:focus-visible");
   });
   it("makes the status lanes discoverable without clipping touch or keyboard scrolling",()=>{
     const source=read("mentor-lane-board");
     expect(source).toContain('role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0}');
-    expect(source).toContain("className={styles.scrollRegion}");
+    expect(source).toContain('className={styles["scrollRegion"]}');
     expect(boardCss()).toContain("overflow-x: auto");
     expect(boardCss()).toContain("overscroll-behavior-x: contain");
     expect(boardCss()).toContain(".scrollRegion:focus-visible");
