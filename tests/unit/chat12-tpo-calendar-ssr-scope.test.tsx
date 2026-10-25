@@ -68,7 +68,7 @@ describe("UX-tpo-first-third-calendar-02 SSR scope, invalid filters and navigati
   const workspace=readFileSync("src/components/placements/placement-calendar-workspace.tsx","utf8");
   expect(route).toContain("<PlacementCalendarWorkspace");
   expect(route).toContain('audience="TPO"');
-  expect(route).toContain("searchParams={{...parsed.data,kinds:first(raw.kinds)}}");
+  expect(route).toContain('searchParams={{...parsed.data,...(first(raw.kinds) === undefined ? {} : { kinds: first(raw.kinds) })}}');
   expect(workspace).toContain("calendarHref(basePath,audience,state,");
   expect(workspace).toContain("Rounds and talks");
   expect(workspace).toContain("View interviews");

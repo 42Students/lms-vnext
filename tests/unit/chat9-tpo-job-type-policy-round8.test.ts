@@ -20,10 +20,11 @@ describe("chat9 TPO job-type and drive-approval verification",()=>{
   expect(source).toContain("TPO_JOB_TYPE_LAST_ACTIVE");
   expect(source).toContain("TPO_JOB_TYPE_BUILTIN");
   expect(source).toContain("renameSchema");
-  expect(source).toContain('if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
+  expect(source).toContain('if(usageCount>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
+  expect(source).toContain("const usageCount=usage?.n??0");
   const remove=source.slice(source.indexOf("export async function removeTpoJobType("),source.indexOf("const bulkJobTypeSchema="));
-  expect(remove).toContain('if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
-  expect(remove.indexOf('if((usage?.n??0)>0)')).toBeLessThan(remove.indexOf("tx.delete(placementTpoJobTypes)"));
+  expect(remove).toContain('if(usageCount>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
+  expect(remove.indexOf('if(usageCount>0)')).toBeLessThan(remove.indexOf("tx.delete(placementTpoJobTypes)"));
   const bulk=source.slice(source.indexOf("export async function saveTpoJobTypes("));
   expect(bulk).toContain('if(oldDrives>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE"');
   expect(bulk.indexOf("if(oldDrives>0)")).toBeLessThan(bulk.indexOf("tx.delete(placementTpoJobTypes)"));

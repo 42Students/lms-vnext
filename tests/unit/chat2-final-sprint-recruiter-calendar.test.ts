@@ -33,8 +33,10 @@ describe("Final sprint recruiter calendar verification",()=>{
   expect(page).toContain("encodeURIComponent(event.jobId)");
  });
  it("REC-calendar-messages-profile-03 independent final-sprint acceptance regression",()=>{
-  expect(src("src/modules/placements/recruiter-calendar-model.ts")).toContain("endsAt: round.durationMinutes && round.durationMinutes > 0");
-  expect(src("src/modules/placements/recruiter-calendar-model.ts")).toContain("round.durationMinutes * 60_000");
+  const model=src("src/modules/placements/recruiter-calendar-model.ts");
+  expect(model).toContain("endsAt: recruiterRoundEndTime(round.scheduledAt, round.durationMinutes)");
+  expect(model).toContain("return new Date(start.getTime() + durationMinutes * 60_000)");
+  expect(model).toContain("durationMinutes <= 0 || durationMinutes > 24 * 60");
   expect(src("src/app/(authenticated)/hr/calendar/page.tsx")).toContain("eventTime(event.endsAt)");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-03 |");
  });

@@ -26,7 +26,7 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   expect(route).toContain("getLearnerCourseFileReference(");
   expect(route).not.toContain("getLearnerCourseWorkspace(");
   expect(route).not.toContain("getObjectStream(");
-  expect(route).toContain('presignUrl(config,{method:"GET",key,expiresSeconds:900,query})');
+  expect(route).toContain('presignUrl(config,{method:"GET",key,expiresSeconds:900,...(query === undefined ? {} : {query})})');
   expect(route).toContain('"Referrer-Policy":"no-referrer"');
  });
  it("LEARNER-home-courses-06 legacy filtered results and empty titles",()=>{

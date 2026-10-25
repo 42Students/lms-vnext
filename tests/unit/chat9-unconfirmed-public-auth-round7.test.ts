@@ -6,7 +6,7 @@ describe("chat-9 public auth unconfirmed decisions",()=>{
  it("PUB-auth-public-22 shows static college when there is only one active choice",()=>{
   const s=read("src/components/shell/membership-switcher.tsx");
   expect(s).toContain("if (choices.length === 1 && active)");
-  expect(s).toContain("{choices[0].label}");
+  expect(s).toContain("{active.label}");
  });
  it("PUB-auth-public-23 ignores blank selection and never clears membership through the switcher",()=>{
   const s=read("src/components/shell/membership-switcher.tsx");
