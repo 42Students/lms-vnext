@@ -10,8 +10,8 @@ describe("UX-tpo-overlay: focus-safe mobile and desktop workflows", () => {
     expect(source).toContain("<Drawer open={true} onOpenChange=");
     expect(source).toContain('title={student.displayName+" · "+(student.rollNumber');
     expect(source).toContain("footer={");
-    expect(source).toContain("onNavigate(rows[index-1].membershipId)");
-    expect(source).toContain("onNavigate(rows[index+1].membershipId)");
+    expect(source).toContain("if(previous)onNavigate(previous.membershipId)");
+    expect(source).toContain("if(next)onNavigate(next.membershipId)");
     expect(source).toContain("grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr]");
     expect(source).toContain('onClick={()=>void fetchDetail()}>Retry</Button>');
     expect(source).not.toContain('role="dialog"');

@@ -24,8 +24,8 @@ describe("TPO-students-02 roster student deep link and drawer",()=>{
   expect(page).toContain("Open student panel");
   expect(page).toContain("q.set(\"student\",id)");
   for(const tab of ["Profile","Placement","Requests","Notes","History"])expect(modal).toContain('"'+tab+'"');
-  expect(modal).toContain("onNavigate(rows[index-1].membershipId)");
-  expect(modal).toContain("onNavigate(rows[index+1].membershipId)");
+  expect(modal).toContain("if(previous)onNavigate(previous.membershipId)");
+  expect(modal).toContain("if(next)onNavigate(next.membershipId)");
   // Shared Drawer renders a native named modal with Escape and focus restoration.
   const drawer=readFileSync("src/components/ui/drawer.tsx","utf8");
   expect(modal).toContain("<Drawer open={true}");

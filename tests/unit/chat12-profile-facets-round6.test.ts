@@ -11,7 +11,7 @@ describe("TPO saved profile count facets",()=>{
  it("TPO-students-24 has URL-bound profile filters",()=>{expect(src("src/app/(authenticated)/tpo/students/page.tsx")).toContain("Profile strength filters");});
  it("TPO-students-26 exposes non-sensitive spreadsheet columns",()=>{expect(src("src/components/tpo/tpo-students-spreadsheet.tsx")).toContain('label:"Skills"');});
  it("TPO-students-29 never infers missing personal facts",()=>{expect(tpoStudentProfileFacts({personalDetails:{gender:"Prefer not to say"}}).gender).toBe(null);});
- it("TPO-students-31 uses saved profile and separate placement readiness",()=>{const model=src("src/modules/placements/tpo-students-model.ts");expect(model).toContain('profileFacts:source.profileDocument && typeof source.profileDocument==="object"');expect(model).toContain('!Array.isArray(source.profileDocument)?tpoStudentProfileFacts(source.profileDocument):undefined');});
+ it("TPO-students-31 uses saved profile and separate placement readiness",()=>{const model=src("src/modules/placements/tpo-students-model.ts");expect(model).toContain('source.profileDocument && typeof source.profileDocument==="object"');expect(model).toContain('!Array.isArray(source.profileDocument)?{profileFacts:tpoStudentProfileFacts(source.profileDocument)}:{}');});
  it("TPO-students-43 only reads the profile for authorized TPO roster",()=>{expect(src("src/modules/placements/tpo-students-service.ts")).toContain("profileDocument:learner.profileDocument");});
  it("TPO-students-52 counts persisted career details, not prep scores",()=>{expect(tpoStudentProfileFacts({projects:[{}],experiences:[{}]}).experiences).toBe(1);});
 });

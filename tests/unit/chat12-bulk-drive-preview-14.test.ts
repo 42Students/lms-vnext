@@ -20,7 +20,7 @@ describe("TPO Add-to-Drive bulk scope preview",()=>{
  it("TPO-students-14 reuses authorized whole-filter rows and retains unsuccessful selections",()=>{
   const page=src("src/app/(authenticated)/tpo/students/page.tsx");
   const ui=src("src/components/tpo/tpo-students-bulk-add.tsx");
-  expect(page).toContain("allLearners={roster.total<=5000?");
+  expect(page).toContain("roster.total<=5000 && data.exportRows ? {allLearners:data.exportRows.map(student=>");
   expect(ui).toContain("Search open drives");
   expect(ui).toContain("200 learners from this filtered roster");
   expect(ui).toContain('alreadyAppliedCount+" of them already applied."');

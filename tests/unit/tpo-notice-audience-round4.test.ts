@@ -21,7 +21,7 @@ describe("TPO notice audience selection and graceful preview",()=>{
  it("TPO-inbox-team-45 keeps live preview and zero-recipient guards while using truthful student reach",()=>{
   const page=text("src/app/(authenticated)/tpo/announcements/page.tsx");
   const preview=text("src/components/tpo/tpo-notice-live-preview.tsx");
-  expect(preview).toContain('const count=(value as Record<string,unknown>).potentiallyVisibleMemberships');
+  expect(preview).toContain('const count=(value as Record<string,unknown>)["potentiallyVisibleMemberships"]');
   expect(preview).toContain("Goes to <strong>{preview.count}");
   expect(preview).toContain("preview.count!==null&&preview.count>0");
   expect(page).toContain("<TpoNoticeLiveAudienceProvider");
