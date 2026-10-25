@@ -127,7 +127,9 @@ describe("Sprint and task mutating routes under Mentor account",()=>{
    // checking a real, valid status transition rather than an editor payload.
    const body=route.name==="task-status"
     ? {expectedUpdatedAt:"2099-01-01T00:00:00.000Z",status:"IN_PROGRESS"}
-    : {expectedUpdatedAt:"2099-01-01T00:00:00.000Z",title:"Sprint"};
+    : route.name==="sprint-complete"
+      ? {note:"Sprint review complete",decisions:[]}
+      : {expectedUpdatedAt:"2099-01-01T00:00:00.000Z",title:"Sprint"};
    const response=await route.invoke(request(route.method,body));
    expect(response.status).toBeLessThan(300);
    expect(state.lastOperation).toBe(route.name);

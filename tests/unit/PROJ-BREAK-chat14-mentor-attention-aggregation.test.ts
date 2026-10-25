@@ -38,6 +38,13 @@ vi.mock("@/db/schema",()=>({
   version:"submission.version",updatedAt:"submission.updated_at",reopenedAt:"submission.reopened_at"},
  projectSubmissionReviews:{submissionId:"review.submission_id",reviewedAt:"review.reviewed_at"},
  projectTaskSubmissions:{projectId:"task_submission.project_id",updatedAt:"task_submission.updated_at"},
+ projectTasks:{id:"task.id",projectId:"task.project_id",title:"task.title",
+  status:"task.status",sprintId:"task.sprint_id",
+  assigneeMembershipId:"task.assignee_membership_id",updatedAt:"task.updated_at",
+  deletedAt:"task.deleted_at"},
+ projectSprints:{id:"sprint.id",projectId:"sprint.project_id",title:"sprint.title",
+  status:"sprint.status",sequence:"sprint.sequence",updatedAt:"sprint.updated_at",
+  deletedAt:"sprint.deleted_at"},
 }));
 vi.mock("drizzle-orm",()=>({
  and:(...args:unknown[])=>["AND",...args],
@@ -108,7 +115,7 @@ describe("Mentor activity aggregation and tenancy at scale",()=>{
   expect(JSON.stringify(query?.where)).toContain(ownId);
   expect(JSON.stringify(query?.where)).not.toContain(otherId);
   expect(query?.orderBy).toBe(false);
-  expect(state.queries).toHaveLength(6);
+  expect(state.queries).toHaveLength(8);
  });
  it("PROJ-BREAK-MENTOR-355 keeps a 1,200-project activity feed bounded to 1,200 grouped rows",async()=>{
   const rows=Array.from({length:1200},(_,i)=>roster(
