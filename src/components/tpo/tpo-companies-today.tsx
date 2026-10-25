@@ -27,14 +27,22 @@ function dayLabel(date:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(date);
 }
 export function TpoCompaniesToday({
- scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal
+ scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId
 }:{scope:"MINE"|"TEAM";rows:TpoCompaniesTodayRow[];nowIso:string;hasMore:boolean;unreadMessages:number|null;
-  replies:RecruiterReply[];replyTotal:number|null}){
+  replies:RecruiterReply[];replyTotal:number|null;initialFollowupId?:string|undefined}){
  const router=useRouter();
  const now=new Date(nowIso);
  const todayKey=istDateKey(now);
- const [day,setDay]=useState(0);
- const [selectedId,setSelectedId]=useState<string|null>(null);
+ const [day,setDay]=useState(()=>{
+  const target=rows.find(row=>row.id===initialFollowupId);
+  if(!target)return 0;
+  const key=istDateKey(new Date(target.dueAt));
+  if(key<=todayKey)return 0;
+  const offset=Array.from({length:6},(_,i)=>i+1)
+   .find(i=>istDateKey(new Date(now.getTime()+i*86400000))===key);
+  return offset??0;
+ });
+ const [selectedId,setSelectedId]=useState<string|null>(rows.some(row=>row.id===initialFollowupId)?initialFollowupId??null:null);
  const [done,setDone]=useState<string[]>([]);
  const [outcome,setOutcome]=useState<Outcome>("CONTACTED");
  const [note,setNote]=useState("");
@@ -140,7 +148,11 @@ export function TpoCompaniesToday({
     <h1>Today</h1>
     <p className={styles.sub}>Reply to recruiters and finish your next follow-ups, one at a time.</p>
    </div>
-   <Link className={styles.link} href="/tpo/recruiters">All recruiters ›</Link>
+   <nav aria-label="Today layouts" className="flex flex-wrap items-center gap-3">
+    <Link className={styles.link} href={"/tpo/companies/today"+(scope==="TEAM"?"?scope=TEAM&":"?")+"view=agenda"}>Agenda</Link>
+    <Link className={styles.link} href={"/tpo/companies/today"+(scope==="TEAM"?"?scope=TEAM&":"?")+"view=brief"}>Brief</Link>
+    <Link className={styles.link} href="/tpo/recruiters">All recruiters ›</Link>
+   </nav>
   </div>
   <nav aria-label="Today ownership" className="flex flex-wrap items-center gap-2">
     {([["MINE","My Work"],["TEAM","Everyone"]] as const).map(([value,label])=>
