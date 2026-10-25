@@ -49,6 +49,23 @@ test.describe("Recruiter prototype functional journeys",()=>{
   await expectNoRawErrors(page);
  });
 
+ test("Rounds and Offers show scoped scheduling and selection workspaces",async({page,context})=>{
+  await authenticateGracefulRole(context,"recruiter");
+  await page.goto("/hr/drives");
+  const candidates=await page.locator('a[href^="/recruiter/drives/"]').evaluateAll(links=>links
+   .map(link=>link.getAttribute("href")??"")
+   .filter(href=>/^\/recruiter\/drives\/[0-9a-f-]{36}(?:[?#]|$)/i.test(href)));
+  test.skip(candidates.length===0,"Seed has no recruiter-visible drive");
+  const drive=candidates[0]!.split(/[?#]/)[0]!;
+  await page.goto(drive+"?tab=rounds");
+  await expect(page.getByRole("heading",{name:"Who, when · interview panel lists"})).toBeVisible();
+  await expect(page.getByText(/Only placement-cell-booked, actively shortlisted applicants/)).toBeVisible();
+  await page.goto(drive+"?tab=offers");
+  await expect(page.getByRole("heading",{name:"Selection readiness across all rounds"})).toBeVisible();
+  await expect(page.getByRole("region",{name:"Selection list"})).toBeVisible();
+  await expectNoRawErrors(page);
+ });
+
  test("A learner cannot open the employer messaging workspace",async({page,context})=>{
   await authenticateGracefulRole(context,"learner");
   await page.goto("/hr/conversations");
