@@ -3,7 +3,8 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
 import {getTpoDueFollowupQueue} from "@/modules/placements/tpo-followup-queue-service";
-import {rankTpoCompaniesToday,tpoCompaniesTodayScope,tpoTodayAgendaDay} from "@/modules/placements/tpo-companies-today-model";
+import {listTpoLeads} from "@/modules/placements/tpo-crm-service";
+import {rankTpoCompaniesToday,tpoCompaniesTodayScope,tpoTodayAgendaDay,summarizeTpoTodayNotContacted} from "@/modules/placements/tpo-companies-today-model";
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
 import {getTpoMessagesInbox} from "@/modules/placements/tpo-messages-service";
 import {TpoCompaniesToday} from "@/components/tpo/tpo-companies-today";
@@ -39,11 +40,12 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   <Link href="/tpo/companies/today" className="font-semibold text-link underline">Open My Work</Link>
  </section>;
  const now=new Date();
- const [due,next,unread,replyResult]=await Promise.allSettled([
+ const [due,next,unread,replyResult,leadsResult]=await Promise.allSettled([
   getTpoDueFollowupQueue(context,now,{scope,window:"DUE",page:1}),
   getTpoDueFollowupQueue(context,now,{scope,window:"NEXT_7_DAYS",page:1}),
   countTpoUnreadRecruiterMessages(context),
   getTpoMessagesInbox(context,{status:"REPLY",page:1,pageSize:3}),
+  view==="focus"?Promise.resolve(null):listTpoLeads(context,context.membership.collegeId),
  ]);
  if(due.status==="rejected"||next.status==="rejected")return <section className="space-y-4">
   <h1 className="text-2xl font-bold">Companies · Today</h1>
@@ -61,8 +63,11 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   })):[];
  const replyTotal=replyResult.status==="fulfilled"&&replyResult.value.source==="RECRUITER_THREADS"
   ?replyResult.value.total:null;
+ const notContacted=leadsResult.status==="fulfilled"&&leadsResult.value!==null?
+  summarizeTpoTodayNotContacted(leadsResult.value,scope,context.membership.id):null;
  if(view==="agenda"||view==="brief")return <TpoTodayAlternateViews
   view={view} scope={scope} rows={rows} selectedDay={selectedDay!} nowIso={now.toISOString()}
+  notContacted={notContacted}
   replies={replies} replyTotal={replyTotal}
   hasMore={due.value.total>due.value.rows.length||next.value.total>next.value.rows.length}/>;
  return <TpoCompaniesToday scope={scope} rows={rows} nowIso={now.toISOString()}
