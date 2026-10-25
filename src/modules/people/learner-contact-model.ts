@@ -9,7 +9,7 @@ export const learnerContactEditSchema = z.object({
   }).strict().optional(),
   contacts: z.object({
     alternatePhone: z.string().trim().max(32).refine(
-      value=>value==="" || /^\d{10,15}$/.test(value),
+      value=>value==="" || (/^[+\d][\d\s-]*$/.test(value) && /^\d{10,15}$/.test(value.replace(/\D/g,""))),
       "Alternate phone number must be 10 to 15 digits",
     ),
     contactEmail: z.string().trim().max(320),
@@ -38,9 +38,10 @@ export function validateLearnerAlternatePhoneAgainstPrimary(alternateRaw:string,
  const alternate=alternateRaw.trim();
  const primary=(primaryRaw??"").replace(/\D/g,"");
  if(!alternate)return null;
- if(!/^\d{10,15}$/.test(alternate))return "ALTERNATE_PHONE_INVALID" as const;
+ const digits=alternate.replace(/\D/g,"");
+ if(!/^[+\d][\d\s-]*$/.test(alternate)||!/^\d{10,15}$/.test(digits))return "ALTERNATE_PHONE_INVALID" as const;
  if(!primary)return "ALTERNATE_PHONE_PRIMARY_REQUIRED" as const;
- return alternate.slice(-10)===primary.slice(-10)
+ return digits.slice(-10)===primary.slice(-10)
   ? "ALTERNATE_PHONE_SAME_AS_PRIMARY" as const:null;
 }
 
