@@ -7,8 +7,13 @@ describe("DB04 learner profile formatting regressions", () => {
     expect(learnerProfileDocumentSchema.parse({
       contacts: {alternatePhone: "919876543210"},
     }).contacts.alternatePhone).toBe("919876543210");
-    expect(() => learnerProfileDocumentSchema.parse({
+    // Historical contact imports use a leading country code and separators;
+    // accept the valid number without accepting alphabetic impersonators.
+    expect(learnerProfileDocumentSchema.parse({
       contacts: {alternatePhone: "+91 98765-43210"},
+    }).contacts.alternatePhone).toBe("+91 98765-43210");
+    expect(() => learnerProfileDocumentSchema.parse({
+      contacts: {alternatePhone: "+91 +98765-43210"},
     })).toThrow();
     expect(() => learnerProfileDocumentSchema.parse({
       contacts: {alternatePhone: "dddddddddddd"},

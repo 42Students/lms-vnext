@@ -22,7 +22,8 @@ export function resolveLearnerOfferingDelivery(
     .filter(row => (seen.has(row.deliveryId) ? false : (seen.add(row.deliveryId), true)))
     .map(row => ({ deliveryId: row.deliveryId, courseName: row.courseName }));
   if (options.length === 0) return { kind: "none" };
-  const only = options[0];
-  if (only) return { kind: "selected", deliveryId: only.deliveryId };
+  // A learner may have several valid deliveries for one offering. Selecting
+  // the first entry leaks the wrong class context into downstream actions.
+  if (options.length === 1) return { kind: "selected", deliveryId: options[0]!.deliveryId };
   return { kind: "choose", options };
 }

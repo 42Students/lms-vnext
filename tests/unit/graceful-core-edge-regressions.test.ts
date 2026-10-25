@@ -183,7 +183,10 @@ describe("chat-14 graceful shared-layer edge regression audit", () => {
     expect(validateUpload(file, { maxBytes: 3000, allowedTypes: ["image/png"] }).ok).toBe(false);
     const code = source("src/lib/upload-progress.ts");
     expect(code).toContain("friendlyApiError({");
-    expect(code).toContain("status: xhr.status || undefined");
+    // Exact-optional types require an absent status for network failures;
+    // the browser status 0 must still be reported as an offline error.
+    expect(code).toContain('...(xhr.status ? { status: xhr.status } : {})');
+    expect(code).toContain('network: xhr.status === 0');
     expect(code).not.toContain("xhr.status === 503 ?");
   });
 

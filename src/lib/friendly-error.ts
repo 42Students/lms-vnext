@@ -7,7 +7,8 @@
  */
 export type FriendlyErrorInput = {
   status?: number | null;
-  code?: string | null;
+  // Explicit undefined is supported under exactOptionalPropertyTypes.
+  code?: string | null | undefined;
   network?: boolean;
 };
 

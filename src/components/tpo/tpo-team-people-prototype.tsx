@@ -20,7 +20,7 @@ export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
    <div className={styles.columns}>
     <div className={styles.list}>
      <div className={styles.rowHead}>
-      <span>PERSON</span><span>HANDLES</span><span>LATE</span>
+      <span className="uppercase">Person</span><span className="uppercase">Handles</span><span>LATE</span>
       <span>WAITING ON THEM</span><span>LAST ACTIVE</span>
      </div>
      {people.map(row=>{

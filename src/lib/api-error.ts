@@ -44,7 +44,7 @@ export function apiErrorResponse(error: unknown) {
         ? "Too many applications in the last minute. Please try again shortly."
         : code === "FACULTY_TEACHING_SCOPE_REQUIRED"
         ? "You do not teach this course or class"
-        : friendlyApiError({ status, ...(code !== undefined ? { code } : {}) }),
+        : friendlyApiError({ status, code }),
       requestId,
     }, { ...init, status, headers });
   };

@@ -9,7 +9,10 @@ export function learnerCodingProfileLink(platform:unknown,raw:unknown){
   if(/^[a-z][a-z\d+.-]*:\/\//i.test(value)){
     let url:URL;
     try{url=new URL(value);}catch{return null;}
-    if(url.protocol!=="https:"||url.username||url.password||url.port)return null;
+    // The platform validator pins the exact host/path and returns HTTPS.
+    // Accept legacy HTTP only as input; never expose a plain-HTTP link.
+    if((url.protocol!=="https:"&&url.protocol!=="http:")||
+      url.username||url.password||url.port)return null;
   }
   return normalizeCodingProfile(key.data,value);
 }
