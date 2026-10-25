@@ -20,7 +20,7 @@ function formatTime(date:Date){
 function messageHref(id:string){
  return "/tpo/messages?tab=recruiters&thread="+encodeURIComponent(id);
 }
-function ReplyRow({reply}:{reply:TpoTodayReply}){
+function ReplyRow({reply,mode="brief"}:{reply:TpoTodayReply;mode?:"brief"|"agenda"}){
  return <li className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e8edf2] px-4 py-3 last:border-b-0">
   <div className="min-w-0 flex-1">
    <p className="font-bold text-[#172033]">{reply.name}
@@ -29,18 +29,20 @@ function ReplyRow({reply}:{reply:TpoTodayReply}){
    <p className="mt-1 text-[13px] text-[#617084]">{reply.company??"Recruiter"} · {reply.subject}</p>
    {reply.preview?<p className="mt-2 break-words rounded-lg bg-[#fff7ed] px-3 py-2 text-[13px] text-[#26354a]">{reply.preview}</p>:null}
   </div>
-  <Link className="inline-flex min-h-10 items-center rounded-lg bg-[#087f8b] px-4 text-[13px] font-bold text-white"
+  <Link className={"inline-flex min-h-10 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
+    "border-[#d6e1ee] bg-white text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
    href={messageHref(reply.id)}>{reply.accessEnded?"Open history":"Answer"}</Link>
  </li>;
 }
-function FollowupRow({row,scope}:{row:TpoCompaniesTodayRow;scope:"MINE"|"TEAM"}){
+function FollowupRow({row,scope,mode="brief"}:{row:TpoCompaniesTodayRow;scope:"MINE"|"TEAM";mode?:"brief"|"agenda"}){
  return <li className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e8edf2] px-4 py-3 last:border-b-0">
   <div className="min-w-0 flex-1">
    <p className="font-bold text-[#172033]">{row.leadName}</p>
    <p className="mt-1 text-[13px] text-[#617084]">{row.companyName??"Recruiter"} · {row.overdue?"Overdue":"Follow-up due"} · {formatDay(new Date(row.dueAt))}</p>
    <p className="mt-1 text-[13px] text-[#26354a]">{row.note?.trim()||"Recorded recruiter follow-up."}</p>
   </div>
-  <Link className="inline-flex min-h-10 items-center rounded-lg bg-[#087f8b] px-4 text-[13px] font-bold text-white"
+  <Link className={"inline-flex min-h-10 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
+    "border-[#d6e1ee] bg-white text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
    href={tpoTodayFocusHref(scope,row.id)}>Log the call</Link>
  </li>;
 }
@@ -80,18 +82,13 @@ export function TpoTodayAlternateViews({
  const panel="min-w-0 overflow-hidden rounded-xl border border-[#e7ecf2] bg-white";
  const heading="border-b border-[#e7ecf2] px-4 py-4 text-[17px] font-bold text-[#172033]";
  return <div className="min-w-0 space-y-4 text-[#172033]" data-testid={"tpo.today."+view}>
-  <header className="flex flex-wrap items-center justify-between gap-4">
+  {view==="brief"?<header className="flex flex-wrap items-center justify-between gap-4">
    <div>
     <p className="text-xs font-bold uppercase tracking-wide text-[#617084]">{formatDay(now,"long")} · {scope==="MINE"?"Yours and unassigned":"Everyone's work"}</p>
-    <h1 className="mt-1 text-[24px] font-bold leading-tight">{view==="brief"?
-      taskCount+" things need you today":"Your seven-day follow-up agenda"}</h1>
+    <h1 className="mt-1 text-[24px] font-bold leading-tight">{taskCount} things need you today</h1>
    </div>
-   <div className="flex flex-wrap items-center gap-2">
-    <Link className="rounded-lg border border-[#d6e1ee] px-3 py-2 text-[13px] font-semibold text-[#26354a]" href={tpoTodayFocusHref(scope)}>Focus</Link>
-    <Link className="rounded-lg border border-[#d6e1ee] px-3 py-2 text-[13px] font-semibold text-[#26354a]" href={tpoTodayFocusHref(scope)+(scope==="TEAM"?"&":"?")+"view="+(view==="brief"?"agenda":"brief")}>{view==="brief"?"Agenda":"Brief"}</Link>
-    <Link className="rounded-lg bg-[#087f8b] px-4 py-3 text-[13px] font-bold text-white" href={startHref}>Start · {view==="agenda"?agendaRows.length+(agendaReplyTotal??0):taskCount} things</Link>
-   </div>
-  </header>
+   <Link className="inline-flex min-h-11 items-center rounded-lg bg-[#087f8b] px-5 text-[13px] font-bold text-white" href={startHref}>Start · {taskCount} things</Link>
+  </header>:null}
   {replyTotal===null?<p role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">Recruiter replies are temporarily unavailable. No zero reply count is implied. <Link href="/tpo/messages?tab=recruiters" className="font-semibold underline">Check Messages</Link></p>:null}
   {hasMore?<p role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">This agenda uses a limited preview of the due and upcoming follow-up queue. <Link href="/tpo/follow-ups" className="font-semibold underline">Open all follow-ups</Link>.</p>:null}
   {view==="agenda"?<>
@@ -107,17 +104,20 @@ export function TpoTodayAlternateViews({
    </nav>
    <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
     <section className={panel} aria-label="Due today">
-     <h2 className={heading}>{selectedDay===0?"Today":formatDay(agendaDay)}: {agendaReplyTotal===null?"replies unavailable":agendaReplyTotal+" to answer"}, {agendaRows.length} to reach</h2>
-     {agendaReplies.length?<ul>{agendaReplies.map(reply=><ReplyRow key={reply.id} reply={reply}/>)}</ul>:null}
-     {agendaRows.length?<ul>{agendaRows.map(row=><FollowupRow key={row.id} row={row} scope={scope}/>)}</ul>:null}
+     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e7ecf2] px-5 py-4">
+      <h2 className="text-[18px] font-bold text-[#172033]">{selectedDay===0?"Today":formatDay(agendaDay)}: {agendaReplyTotal===null?"replies unavailable":agendaReplyTotal+" to answer"}, {agendaRows.length} to reach</h2>
+      <Link className="inline-flex min-h-11 items-center rounded-lg bg-[#087f8b] px-5 text-[13px] font-bold text-white" href={startHref}>Start · {agendaRows.length+(agendaReplyTotal??0)} things</Link>
+     </div>
+     {agendaReplies.length?<ul>{agendaReplies.map(reply=><ReplyRow key={reply.id} reply={reply} mode="agenda"/>)}</ul>:null}
+     {agendaRows.length?<ul>{agendaRows.map(row=><FollowupRow key={row.id} row={row} scope={scope} mode="agenda"/>)}</ul>:null}
      {!agendaReplies.length&&!agendaRows.length?<p className="p-5 text-sm text-[#617084]">No recorded recruiter replies or follow-ups for this day in the available preview.</p>:null}
     </section>
     <aside className="space-y-3" aria-label="Other follow-up actions">
-     <section className={panel}><h2 className={heading}>Your week ahead</h2>
+     <section className={panel}><h2 className={heading}>Not on the week</h2>
       <p className="px-4 py-3 text-sm text-[#617084]">{upcoming.length} scheduled follow-ups in the next seven days{hasMore?" (preview)":""}.</p>
       <Link href="/tpo/follow-ups" className="inline-flex min-h-10 items-center px-4 pb-3 font-semibold text-[#087f8b]">Re-plan your week</Link>
      </section>
-     <section className={panel}><h2 className={heading}>Find recruiters to contact</h2>
+     <section className={panel}><h2 className={heading}>Not contacted yet</h2>
       <p className="px-4 py-3 text-sm text-[#617084]">Review leads without scheduled follow-ups in the recruiter directory.</p>
       <Link href="/tpo/recruiters?nextFollowup=NONE" className="inline-flex min-h-10 items-center px-4 pb-3 font-semibold text-[#087f8b]">Start with them</Link>
      </section>
