@@ -360,7 +360,7 @@ export async function MentorProjectsContent({
           }[id]}))]).map(segment=><Link key={segment.id??"all"}
           href={mentorPortfolioSegmentHref(segment.id,query)}
           aria-current={query.segment===segment.id?"page":undefined}
-          className={"inline-flex min-h-10 items-center rounded-full border px-4 py-2 text-sm font-semibold "+
+          className={"inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm font-semibold "+
             (query.segment===segment.id?"border-primary bg-primary-subtle text-primary-text":
               "border-border text-body hover:bg-muted")}>
           {segment.label}
