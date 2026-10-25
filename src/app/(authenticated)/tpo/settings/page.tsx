@@ -1,36 +1,27 @@
 import Link from "next/link";
-import {PageHeader} from "@/components/ui/page-header";
-import {TpoSettingsNav} from "@/components/placements/tpo-settings-nav";
+import TpoPlacementRulesSettingsPage from "./rules/page";
 import {TpoLegacySettingsRedirect,TpoSettingsHashRedirect} from "@/components/tpo/tpo-legacy-settings-redirect";
 
-/** Old bookmarks select a panel; an ordinary visit renders the legacy parent
- * heading and two-column section navigator instead of an invisible redirect. */
+/** The Settings screenshot opens directly on live placement rules. The
+ * previous index's extra destinations remain available in a secondary
+ * disclosure; deep-linked legacy ?tab= bookmarks still resolve as before. */
 export default async function TpoSettingsIndex({searchParams}:{
  searchParams:Promise<{tab?:string|string[]}>
 }){
  const params=await searchParams;
  const tab=Array.isArray(params.tab)?params.tab[0]:params.tab;
  if(tab)return <TpoLegacySettingsRedirect tab={tab}/>;
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4" data-testid="tpo.settings.prototype-rules">
   <TpoSettingsHashRedirect/>
-  <PageHeader title="Settings" description="How your placement cell runs: its rules, its people, and what students and companies get."/>
-  <div className="grid min-w-0 items-start gap-5 md:grid-cols-[14rem_minmax(0,1fr)]">
-   <TpoSettingsNav active="rules"/>
-   <section aria-label="Settings sections" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
-    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Placement Rules</h2>
-    <Link href="/tpo/settings/season" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
-      Placement Season — current, create and edit
-    </Link>
-    <p className="text-sm leading-6 text-body">Choose a settings section to review the policy, people, and visibility options for this college. Changes are saved within each section.</p>
-    <Link href="/tpo/settings/rules"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-     Open Placement Rules
-    </Link>
-    <Link href="/tpo/settings/public-page" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">Public placements settings</Link>
-    <p className="border-t border-border pt-3 text-xs text-muted-foreground">
-     The left navigation stays available while you choose a settings category. Unsaved values on the current section are never changed by opening this overview.
-    </p>
-   </section>
-  </div>
+  <TpoPlacementRulesSettingsPage searchParams={Promise.resolve({})}/>
+  <details className="rounded-xl border border-[#e7ecf2] bg-white">
+   <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-[#172033]">Other placement settings</summary>
+   <nav aria-label="Other placement settings" className="flex flex-wrap gap-4 border-t border-[#e7ecf2] p-4 text-sm">
+    <Link href="/tpo/settings/season" className="font-semibold text-[#0a7c88] underline">Placement season</Link>
+    <Link href="/tpo/settings/public-page" className="font-semibold text-[#0a7c88] underline">Public placements settings</Link>
+    <Link href="/tpo/settings/notifications" className="font-semibold text-[#0a7c88] underline">Notifications</Link>
+    <Link href="/tpo/settings/templates" className="font-semibold text-[#0a7c88] underline">Templates</Link>
+   </nav>
+  </details>
  </div>;
 }
