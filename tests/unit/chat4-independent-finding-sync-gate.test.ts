@@ -11,6 +11,6 @@ describe("SA-tenants-modules-46 inaccessible audit repository",()=>{
   expect(service).toContain('eq(db10AuditFindingSyncs.source,"42Students/lms-findings")');
   expect(service).toContain("lastSyncedAt");
   expect(service).toContain("refusedFiles");
-  expect(service).toContain('process.env.DB10_AUDIT_FINDINGS_READY==="DB10_VERIFIED"');
+  expect(service).toContain('process.env["DB10_AUDIT_FINDINGS_READY"]==="DB10_VERIFIED"');
  });
 });

@@ -41,8 +41,15 @@ export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
  // Tenant identifiers and secret fields are not part of an authored brief.
  // Reject injected envelopes and always return fresh independent arrays.
  const forbidden=["collegeId","organizationId","membershipId","secret"];
- if(forbidden.some(key=>Object.hasOwn(envelope,key)||Object.hasOwn(nested,key)))
-  return {goal:"",description:"",deliverables:[],completionConditions:[],personas:[]};
+ if(forbidden.some(key=>Object.hasOwn(envelope,key)||Object.hasOwn(nested,key))){
+  // Historic persisted envelopes can wrap authored fields inside overview.
+  // Ignore tenant metadata entirely, and never trust forged top-level fields.
+  const authored=["goal","description","deliverables","definitionOfDone",
+   "completionConditions","personas"];
+  const clean=Object.fromEntries(Object.entries(nested).filter(([key])=>authored.includes(key)));
+  return Object.keys(clean).length?parseWorkspaceBrief(clean):
+   {goal:"",description:"",deliverables:[],completionConditions:[],personas:[]};
+ }
  const raw={...nested,...envelope};
  const list=(data:unknown):string[]=>Array.isArray(data)
   ?data.filter((item):item is string=>typeof item==="string")

@@ -11,7 +11,7 @@ describe("chat-9 final sprint",()=>{
   expect(service).toContain("issueTpoCampaignRecipientToken({");
   expect(service).toContain('note:"Campaign: "+draft.subject.slice(0,180)');
   expect(service).toContain('status:"EMAILED"');
-  expect(service).toContain('process.env.TPO_CAMPAIGNS_READY!=="VERIFIED"');
+  expect(service).toContain('process.env["TPO_CAMPAIGNS_READY"]!=="VERIFIED"');
   expect(service).toContain("messagingDeliveryReceipts");
  });
 });

@@ -16,7 +16,7 @@ describe("chat-3 owner decisions for uncertain legacy behaviors",()=>{
  });
  it("COL-courses-content-02 fails closed until course display migration is explicitly verified",()=>{
   const source=src("src/modules/courses/course-display-readiness.ts");
-  expect(source).toContain('process.env.DB05_COURSE_DISPLAY_READY === "DB05_VERIFIED"');
+  expect(source).toContain('process.env["DB05_COURSE_DISPLAY_READY"] === "DB05_VERIFIED"');
   const service=src("src/modules/courses/course-display-service.ts");
   expect(service).toContain('if (!courseDisplayRuntimeEnabled())');
   expect(courseDisplayRuntimeEnabled()).toBe(process.env.DB05_COURSE_DISPLAY_READY==="DB05_VERIFIED");
