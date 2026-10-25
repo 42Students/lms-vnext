@@ -78,7 +78,7 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
     await expect(page.locator(".prototype-mentor-search-page").getByRole("status"))
       .toContainText("No matching projects, tasks, students or resources");
     await page.goto("/mentor/search?q=hello&page=not-a-page");
-    await expect(page.getByRole("alert"))
+    await expect(page.locator(".prototype-mentor-search-page").getByRole("alert"))
       .toContainText("with a valid results page");
   });
 
