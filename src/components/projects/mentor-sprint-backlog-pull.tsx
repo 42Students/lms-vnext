@@ -70,7 +70,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
        remain saved if a later one fails.</p>
      {remaining.length?<ul className="max-h-64 space-y-2 overflow-y-auto">
        {remaining.map(task=><li key={task.id}>
-         <label className="flex min-h-10 items-start gap-2">
+         <label className="flex min-h-11 items-start gap-2">
            <input type="checkbox" className="mt-1" disabled={busy}
              checked={selected.includes(task.id)}
              onChange={event=>setSelected(old=>event.target.checked?
@@ -106,7 +106,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
      confirmDisabled={selectedRows.length===0||!canPull} pending={busy}
      onConfirm={()=>void pull()}/>
    {notice?<p role="status">{notice}</p>:null}
-   <Link className="inline-flex min-h-10 items-center text-link underline"
+   <Link className="inline-flex min-h-11 items-center text-link underline"
      href={base}>Open full product backlog on the Board →</Link>
  </section>;
 }
