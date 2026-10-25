@@ -380,6 +380,7 @@ export function CreateProjectControl({
               value={templateQuery} onChange={event=>setTemplateQuery(event.target.value)}/>
             <Select
               ref={templateRef}
+              aria-label="Template"
               aria-invalid={attempted&&!templateId}
               required
               value={templateId}
