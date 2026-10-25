@@ -1,12 +1,11 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
-import {listAssignmentSubmissions} from "@/modules/courses/assignment-submission-service";
 import {getDb} from "@/db/client";
-import {courseDiscussionMessages} from "@/db/schema";
+import {assignmentSubmissions,attendanceSessions,courseDiscussionMessages} from "@/db/schema";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import {users} from "@/db/schema";
-import {and,desc,eq,gte,inArray,isNull} from "drizzle-orm";
+import {and,desc,eq,gte,inArray,isNull,sql} from "drizzle-orm";
 import {FacultyTodayPanel,type FacultyTodayTask,
  type FacultyTodayClass,type FacultyTodayDeadline} from "@/components/faculty/faculty-today-panel";
 
@@ -48,9 +47,19 @@ export default async function TeacherIndex(){
  const todayEvents=[...new Map((schedule?.events??[])
   .filter(event=>dateKey(event.startsAt)===todayKey)
   .map(event=>[event.id,event] as const)).values()];
+ const eventIds=[...new Set(todayEvents.map(event=>event.id))];
+ const markedRead=eventIds.length?await getDb().select({
+  id:attendanceSessions.scheduleEventId,
+  status:attendanceSessions.status,
+ }).from(attendanceSessions)
+  .where(inArray(attendanceSessions.scheduleEventId,eventIds))
+  .catch(()=>null):[];
+ const markedIds=markedRead===null?null:
+  new Set(markedRead.filter(item=>item.status==="MARKED").map(item=>item.id));
  const dailyClasses:FacultyTodayClass[]=todayEvents.slice(0,5).map(event=>({
   id:event.id,title:event.courseCode??event.title,sectionName:event.sectionName,
   timeLabel:clock(event.startsAt),location:event.location,learnerCount:null,
+  actionLabel:markedIds?.has(event.id)?"Review attendance":"Take attendance",
   href:event.deliveryId?
    "/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(event.id):
    "/teacher/calendar",
@@ -72,30 +81,48 @@ export default async function TeacherIndex(){
     gte(courseDiscussionMessages.createdAt,new Date(now.getTime()-24*3600*1000))))
   .orderBy(desc(courseDiscussionMessages.createdAt)).limit(30):[];
 
+ const assignmentIds=[...new Set(assessments.assignments.map(item=>item.id))];
+ const deliveryIds=[...new Set(assessments.assignments.map(item=>item.deliveryId))];
+ const pendingRead=assignmentIds.length&&deliveryIds.length?
+  await getDb().select({
+   id:assignmentSubmissions.assignmentId,
+   deliveryId:assignmentSubmissions.deliveryId,
+   pending:sql<number>`count(*) filter (where ${assignmentSubmissions.gradingStatus} <> 'GRADED')::int`,
+  }).from(assignmentSubmissions).where(and(
+   inArray(assignmentSubmissions.assignmentId,assignmentIds),
+   inArray(assignmentSubmissions.deliveryId,deliveryIds),
+  )).groupBy(assignmentSubmissions.assignmentId,assignmentSubmissions.deliveryId)
+  .catch(()=>null):[];
+ const pendingByAssignment=new Map(pendingRead?.map(item=>[
+  item.id+":"+item.deliveryId,item.pending] as const)??[]);
  const assignment=[...new Map(assessments.assignments
-  .filter(item=>item.hasSubmissions).map(item=>[item.id+":"+item.deliveryId,item] as const)).values()][0];
+  .filter(item=>item.status==="PUBLISHED"&&(pendingRead===null?
+   item.hasSubmissions:(pendingByAssignment.get(item.id+":"+item.deliveryId)??0)>0))
+  .map(item=>[item.id+":"+item.deliveryId,item] as const)).values()]
+  .sort((a,b)=>(pendingByAssignment.get(b.id+":"+b.deliveryId)??0)-
+   (pendingByAssignment.get(a.id+":"+a.deliveryId)??0))[0];
  if(assignment){
-  const submissions=await listAssignmentSubmissions(context,assignment.id,assignment.deliveryId)
-   .catch(()=>null);
-  const pending=submissions?.filter(item=>item.gradingStatus!=="GRADED")??null;
-  if(pending===null||pending.length>0)tasks.push({
+  const pending=pendingRead===null?null:pendingByAssignment.get(assignment.id+":"+assignment.deliveryId)??0;
+  if(pending===null||pending>0)tasks.push({
    id:"grade-"+assignment.id+":"+assignment.deliveryId,eyebrow:"TO GRADE",tone:"warning",
    title:pending===null?"Review "+assignment.title:
-    pending.length+" "+(pending.length===1?"submission waits":"submissions wait")+" for a grade",
+    pending+" "+(pending===1?"submission waits":"submissions wait")+" for a grade",
    detail:assignment.title+" · "+assignment.courseCode+" · "+assignment.sectionName+
     (pending===null?" · Grading count unavailable.":" · Review learner submissions."),
    action:"Grade",href:"/teacher/report/assignment/"+encodeURIComponent(assignment.id)+
     "/grade?deliveryId="+encodeURIComponent(assignment.deliveryId),
   });
  }
- if(todayEvents.length){
-  const event=todayEvents.find(item=>item.deliveryId!==null)??todayEvents[0]!;
+ const unmarkedEvent=todayEvents.find(item=>item.deliveryId!==null&&
+  (markedIds===null||!markedIds.has(item.id)));
+ if(unmarkedEvent){
+  const event=unmarkedEvent;
   tasks.push({
    id:"attendance-"+event.id,
    eyebrow:"TODAY, "+clock(event.startsAt),tone:"warning",
    title:"Take attendance for "+event.sectionName,
    detail:(event.location??"Room not provided")+" · "+(event.courseName??event.title)+
-    ". Open the recorded class session to review or mark attendance.",
+    ". Open the class session to record attendance.",
    action:"Take attendance",
    href:event.deliveryId?
     "/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(event.id):

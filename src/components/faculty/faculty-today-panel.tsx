@@ -8,7 +8,7 @@ export type FacultyTodayTask = {
 };
 export type FacultyTodayClass = {
  id:string;title:string;sectionName:string;timeLabel:string;location:string|null;
- learnerCount:number|null;href:string;
+ learnerCount:number|null;href:string;actionLabel:string;
 };
 export type FacultyTodayDeadline = {
  id:string;title:string;dateLabel:string;detail:string;href:string;
@@ -70,7 +70,7 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
         <p className="faculty-proto-subtitle">{item.location??"Room not provided"}{item.learnerCount!==null?" · "+item.learnerCount+" students":""}</p>
        </div>
        <Link className={index===0?"faculty-proto-action shrink-0":"faculty-proto-secondary shrink-0"} href={item.href}>
-        {index===0?"Take attendance":"Open"}
+        {index===0?item.actionLabel:"Open"}
        </Link>
       </li>)}
      </ol>:<p className="faculty-proto-subtitle mt-3">No classes scheduled for today.</p>}
