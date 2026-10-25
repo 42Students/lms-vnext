@@ -17,7 +17,9 @@ describe("legacy placement decision compatibility without coercion",()=>{
   expect(eligibility).toContain('record["override"]!==null&&typeof record["override"]!=="boolean"');
   expect(eligibility).toContain('record["override"]===null');
   expect(eligibility).toContain('record["override"]?"INCLUDE":"EXCLUDE"');
-  expect(eligibility).toContain("revokeEligibilityOverride(context,jobId,membershipId,clear.data)");
+  expect(eligibility).toContain("revokeEligibilityOverride(context,jobId,membershipId,{");
+  expect(eligibility).toContain("clear.data.expectedOverrideId");
+  expect(eligibility).toContain("clear.data.reason");
   expect(eligibility).toContain("setEligibilityOverride(context,jobId,membershipId,parsed.data)");
  });
 });

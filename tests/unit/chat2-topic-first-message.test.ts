@@ -21,7 +21,7 @@ describe("TPO Team topic creation with optional first message",()=>{
   expect(service).toContain('actionHref:"/tpo/team/"+thread.id+(initial?"?m="+initial.id:"")');
   expect(service).toContain("input.firstMessage??input.topic");
   expect(route).toContain('firstMessage:form.get("firstMessage")||undefined');
-  expect(route).toContain("source.firstMessage??source.message??undefined");
+  expect(route).toContain('source["firstMessage"]??source["message"]??undefined');
   expect(route).toContain("internalThreadSchema.safeParse");
   expect(form).toContain("First message (optional)");
   expect(form).toContain("firstMessage:firstMessage.trim()");

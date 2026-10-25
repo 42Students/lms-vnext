@@ -60,7 +60,7 @@ describe("Super Admin assessment export service scoped pagination",()=>{
   });
   const response=await exportSuperAdminLearningDirectory(new Request(
    "https://app.invalid/api/admin/quizzes/export?results=HIDDEN&courseCode=CS401&scope=SHARED"
-  ),"QUIZ",state.reader);
+  ),"QUIZ");
   expect(response.status).toBe(200);
   expect(state.reader).toHaveBeenCalledTimes(2);
   for(const call of state.reader.mock.calls){
@@ -77,7 +77,7 @@ describe("Super Admin assessment export service scoped pagination",()=>{
   }));
   const response=await exportSuperAdminLearningDirectory(new Request(
    "https://app.invalid/api/admin/assignments/export?status=PUBLISHED"
-  ),"ASSIGNMENT",state.reader);
+  ),"ASSIGNMENT");
   expect(response.status).toBe(200);
   expect(state.reader).toHaveBeenCalledTimes(20);
   expect(response.headers.get("X-Export-Truncated")).toBe("true");
