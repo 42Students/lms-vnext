@@ -16,11 +16,10 @@ export default async function FacultyCourseDiscussionsPage({
     );
 
   return (
-    <div className="min-w-0 max-w-full space-y-4">
-      <header className="min-w-0 border-b border-border pb-3">
-        <h2 className="text-base font-semibold text-foreground">Discussions</h2>
-        <p className="mt-1 text-sm text-body">Keep course conversations in one place and follow along easily.</p>
-        <p className="mt-1 text-xs text-muted-foreground">{workspace.course.courseName} · {workspace.course.sectionName}</p>
+    <div className="faculty-prototype-discussion min-w-0 max-w-full space-y-4">
+      <header className="min-w-0 border-b border-[#e5ebf2] pb-5">
+        <h2 className="text-xl font-bold text-[#1d293f]">Course discussions · {workspace.course.sectionName}</h2>
+        <p className="mt-1 text-sm text-body">Everyone in this class who takes this course can see these messages. Other classes have their own.</p>
       </header>
       <LearnerCourseDiscussion
         key={deliveryId}
