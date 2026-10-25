@@ -28,6 +28,16 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
 }){
  const [search,setSearch]=useState("");
  const [showEarlier,setShowEarlier]=useState(false);
+ // Deep links from the persisted activity timeline must reveal records that
+ // would otherwise be folded under a completed Sprint or archived status.
+ useEffect(()=>{
+   if(mode!=="MENTOR"||typeof window==="undefined")return;
+   const match=/^#mentor-resource-([0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12})$/i
+     .exec(window.location.hash);
+   if(!match||!rows.some(row=>row.id===match[1]))return;
+   setShowEarlier(true);
+   setStatus("ALL");
+ },[mode,rows]);
  const [groupBySprint,setGroupBySprint]=useState(mode==="MENTOR");
  const [expanded,setExpanded]=useState<Record<string,boolean>>({});
  const [type,setType]=useState("ALL");

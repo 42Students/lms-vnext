@@ -50,6 +50,8 @@ function mentorEventHref(projectId:string,event:Event):string{
    return base+"?tab=board&sprint="+safeId;
  if(event.subjectType==="project_meeting"&&safeId)
    return base+"?tab=team#meeting-"+safeId;
+ if(event.subjectType==="project_resource"&&safeId)
+   return base+"?tab=resources#mentor-resource-"+safeId;
  if(event.subjectType==="project_resource")return base+"?tab=resources";
  if(event.eventType.startsWith("projects.delivery."))return base+"?tab=delivery";
  if(event.eventType.startsWith("projects.resource."))return base+"?tab=resources";
