@@ -10,7 +10,7 @@ export function projectRecruiterBookedInterviews(
 ):Array<RecruiterBookedInterview & {confirmation:"CONFIRMED"|"AWAITING_STUDENT"|"AWAITING_COLLEGE"}>{
  return rows.filter(row=>row.startsAt instanceof Date&&row.endsAt instanceof Date&&
    Number.isFinite(row.startsAt.getTime())&&Number.isFinite(row.endsAt.getTime())&&
-   row.endsAt>row.startsAt)
+   row.endsAt.getTime()>row.startsAt.getTime())
  .map(row=>({...row,confirmation:row.confirmedAt===null?"AWAITING_COLLEGE" as const:
    row.learnerConfirmedAt===null?"AWAITING_STUDENT" as const:"CONFIRMED" as const}))
  .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime()||a.slotId.localeCompare(b.slotId));

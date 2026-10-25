@@ -15,7 +15,7 @@ export function ShareCodeForm({action}:{action:string}){
   <p id="company-share-code-help" className="text-sm text-body">
    The six-character code came with this link. It keeps students' details safe.
   </p>
-  <div className="relative" onClick={()=>input.current?.focus()}>
+  <div className="group relative" onClick={()=>input.current?.focus()}>
    <div aria-hidden="true" className="grid grid-cols-6 gap-2">
     {Array.from({length:6},(_,index)=><span key={index} className={
       "flex h-14 min-w-0 items-center justify-center rounded-lg border border-border bg-surface text-xl font-semibold text-foreground "+
