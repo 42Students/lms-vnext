@@ -792,7 +792,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       .toBe("Alice HR");
     expect(detail.documents).toEqual([]);
     expect(detail.documentsStatus)
-      .toBe("PENDING_DB09_SHARE_LINK_PERSISTENCE");
+      .toBe("READY");
   });
 
   it("keeps Company Memory tenant-scoped and returns not-found without cross-college leakage", async () => {
