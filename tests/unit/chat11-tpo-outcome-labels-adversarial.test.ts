@@ -31,13 +31,15 @@ describe("TPO-settings-audit-OUTCOME-CAS-01 custom outcome label retries",()=>{
   const service=source.slice(source.indexOf("export async function saveTpoOutcomeLabels("));
   const lock=service.indexOf('.for("update")');
   const persisted=service.indexOf('assertPersistedPlatformPermission(tx,context,"placements.manage"');
-  const same=service.indexOf("tpoOutcomeLabelsAlreadyApplied(stored.data,input.labels)");
+  const same=service.indexOf("tpoOutcomeLabelsAlreadyApplied(");
   const stale=service.indexOf('new TpoOutcomeLabelError("TPO_SETTINGS_STALE")');
   const update=service.indexOf(".set({\n   outcomeLabels:labels,updatedAt:");
   const activity=service.indexOf("await tx.insert(activityEvents)");
   expect(lock).toBeGreaterThan(0);
   expect(persisted).toBeGreaterThan(lock);
   expect(same).toBeGreaterThan(persisted);
+  expect(service).toContain("stored.data.map(row=>({...row,id:row.id??null}))");
+  expect(service).toContain("input.labels.map(row=>({...row,id:row.id??null}))");
   expect(stale).toBeGreaterThan(same);
   expect(update).toBeGreaterThan(stale);
   expect(activity).toBeGreaterThan(update);

@@ -81,7 +81,7 @@ export default async function PublicPlacementsPage() {
         <section className="min-w-0 rounded-[8px] border border-[#e5e9f0] bg-white p-5 shadow-none sm:p-6"
           aria-labelledby="placements-public-heading">
           <h1 id="placements-public-heading" className="m-0 break-words text-[26px] font-semibold leading-tight text-[#172033] sm:text-[30px]">
-            Placements at {college?.collegeName??"your college"}
+            {college?.collegeName??"College placements"}
           </h1>
           {published&&content?.about ? (
             <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-body">

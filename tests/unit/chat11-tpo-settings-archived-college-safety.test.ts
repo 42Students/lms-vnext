@@ -33,7 +33,7 @@ describe("TPO-settings-audit-OUTCOME-CAS-01 live college state for custom outcom
   const lock=save.indexOf('.for("update").limit(1)');
   const active=save.indexOf('if(!college||college.status!=="ACTIVE")',lock);
   const role=save.indexOf('assertPersistedPlatformPermission(tx,context,"placements.manage"',active);
-  const noOp=save.indexOf("tpoOutcomeLabelsAlreadyApplied(stored.data,input.labels)",role);
+  const noOp=save.indexOf("tpoOutcomeLabelsAlreadyApplied(",role);
   const mutate=save.indexOf("tx.update(placementTpoCollegeSettings)",noOp);
   expect(lock).toBeGreaterThan(0);
   expect(active).toBeGreaterThan(lock);

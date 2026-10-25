@@ -19,7 +19,7 @@ describe("chat-9 round 6 calendar and settings",()=>{
    const path="/tpo/reports/"+slug;
    expect(TPO_LEGACY_REPORT_COPY[path]?.description).toBeTruthy();
    const s=source("src/app/(authenticated)"+path+"/page.tsx");
-   expect(s).toContain('TPO_LEGACY_REPORT_COPY["'+path+'"].description');
+   expect(s).toContain('TPO_LEGACY_REPORT_COPY["'+path+'"]?.description');
   }
  });
  it("TPO-settings-audit-03 uses the original Settings section names in the grouped navigation",()=>{
