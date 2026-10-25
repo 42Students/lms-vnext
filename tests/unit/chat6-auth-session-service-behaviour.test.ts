@@ -57,7 +57,7 @@ describe("AUTH-sessions-06: DB-backed device lifecycle and fail-closed revocatio
     const start=source.indexOf("export async function resolveSession(");
     const end=source.indexOf("export async function revokeSessionByToken(",start);
     const section=source.slice(start,end);
-    expect(section).toContain("WHERE id = ${row.session_id as string}");
+    expect(section).toContain('WHERE id = ${row["session_id"] as string}');
     expect(section).toContain("AND revoked_at IS NULL");
     expect(section).toContain("AND expires_at > now()");
     expect(section).toContain("AND last_seen_at < now() - interval '60 seconds'");

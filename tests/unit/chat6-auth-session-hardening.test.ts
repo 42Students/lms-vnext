@@ -8,7 +8,7 @@ const src=(path:string)=>readFileSync(path,"utf8");
 describe("chat-6 high priority auth login OTP session and deactivation adversarial coverage",()=>{
  it("AUTH-session-01 a disabled platform account's session is refused before last_seen mutation",()=>{
   const s=src("src/modules/auth/session-service.ts");
-  const denied=s.indexOf('if (row.platform_status !== "ACTIVE")');
+  const denied=s.indexOf('if (row["platform_status"] !== "ACTIVE")');
   const updated=s.indexOf('SET last_seen_at = now()');
   expect(denied).toBeGreaterThan(-1);
   expect(updated).toBeGreaterThan(denied);
