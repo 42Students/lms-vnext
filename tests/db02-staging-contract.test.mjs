@@ -123,7 +123,9 @@ test("DB02 draft has no duplicate created tables, functions, triggers, or compat
 
   assert.equal([...sql.matchAll(/ADD COLUMN (?:IF NOT EXISTS )?description text/g)].length, 1);
   assert.equal([...sql.matchAll(/ADD COLUMN (?:IF NOT EXISTS )?minimum_capacity integer/g)].length, 1);
-  assert.equal([...sql.matchAll(/cohorts_lifecycle_date_order_ck/g)].length, 1);
+  // Replay-safe DDL checks the catalogue and installs the constraint once.
+  assert.equal([...sql.matchAll(/conname = 'cohorts_lifecycle_date_order_ck'/g)].length, 1);
+  assert.equal([...sql.matchAll(/ADD CONSTRAINT cohorts_lifecycle_date_order_ck/g)].length, 1);
   assert.doesNotMatch(sql, /ADD COLUMN lifecycle_start_date/);
   assert.doesNotMatch(sql, /ADD COLUMN lifecycle_end_date/);
 });
