@@ -211,6 +211,9 @@ describe("identity context and system roles against PostgreSQL", () => {
     const collegeB = await resolveRequestContext({
       identityUid: "seed-shared-faculty",
       activeMembershipId: SEED_IDS.facultyCollegeBMembership,
+      // This assertion exercises the explicit FACULTY role, not whatever
+      // higher-priority TPO fixture another integration suite has granted.
+      activeRole: "FACULTY",
     });
     expect(collegeB.membership).toMatchObject({
       id: SEED_IDS.facultyCollegeBMembership,

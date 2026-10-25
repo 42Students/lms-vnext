@@ -1119,21 +1119,42 @@ describe("Placement P8 offers and joining", () => {
       expectedStatus:"ISSUED" as const,reason:"Recruiter formally extended the response deadline",
       expiresAt:new Date(Date.now()+1000*60*60*24*7).toISOString(),
     };
+
+    // Revocation must not remove the shared seeded faculty TPO grant used by
+    // other concurrent integration files. Give this negative test its own
+    // persisted TPO actor, then revoke only that actor's membership role.
+    const revokedUserId=randomUUID();
+    const revokedMembershipId=randomUUID();
+    const revokedRoleId=randomUUID();
+    const identityUid="p8-revocation-"+revokedUserId;
+    const revokedTpo:RequestContext={
+      ...tpo,
+      user:{...tpo.user,id:revokedUserId,identityUid},
+      membership:{...tpo.membership!,id:revokedMembershipId,roles:["TPO"]},
+    };
+    await pool.query(
+      "insert into users(id,identity_uid) values($1,$2)",
+      [revokedUserId,identityUid],
+    );
     try{
-      const storedRole=await pool.query<{id:string}>(
-        "select id from membership_roles where membership_id=$1 and role='TPO'",
-        [SEED_IDS.facultyCollegeAMembership]);
-      expect(storedRole.rows).toHaveLength(1);
-      await pool.query("delete from membership_roles where id=$1",[storedRole.rows[0]!.id]);
-      await expect(recordTpoOfferLifecycle(tpo,job.id,request))
+      await pool.query(
+        "insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+        [revokedMembershipId,revokedUserId,SEED_IDS.collegeA],
+      );
+      await pool.query(
+        "insert into membership_roles(id,membership_id,role) values($1,$2,'TPO')",
+        [revokedRoleId,revokedMembershipId],
+      );
+      await pool.query("delete from membership_roles where id=$1",[revokedRoleId]);
+      await expect(recordTpoOfferLifecycle(revokedTpo,job.id,request))
         .rejects.toBeInstanceOf(AuthorizationError);
       const persisted=await pool.query<{expires_at:Date|null}>(
         "select expires_at from placement_offers where id=$1",[offer.id]);
       expect(persisted.rows[0]?.expires_at?.getTime()).toBe(offer.expiresAt?.getTime());
     }finally{
-      await pool.query(
-        "insert into membership_roles(id,membership_id,role) values($1,$2,'TPO') on conflict(membership_id,role) do nothing",
-        [testTpoRoleId,SEED_IDS.facultyCollegeAMembership]);
+      await pool.query("delete from membership_roles where membership_id=$1",[revokedMembershipId]);
+      await pool.query("delete from college_memberships where id=$1",[revokedMembershipId]);
+      await pool.query("delete from users where id=$1",[revokedUserId]);
     }
   });
 
