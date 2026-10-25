@@ -52,4 +52,12 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(views).toContain("tpoTodayFocusHref(scope,row.id)");
   expect(focus).toContain("rows.some(row=>row.id===initialFollowupId)");
  });
+ it("keeps unassigned CRM follow-ups visible in My Work without dropping the college boundary",()=>{
+  const source=readFileSync("src/modules/placements/tpo-followup-queue-service.ts","utf8");
+  expect(source).toContain("eq(placementTpoFollowups.collegeId,collegeId)");
+  expect(source).toContain("eq(placementTpoLeads.collegeId,collegeId)");
+  expect(source).toContain('...(query.scope==="MINE"?[or(');
+  expect(source).toContain("eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)");
+  expect(source).toContain("isNull(placementTpoFollowups.ownerMembershipId)");
+ });
 });
