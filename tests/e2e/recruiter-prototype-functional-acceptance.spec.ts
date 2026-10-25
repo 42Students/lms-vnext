@@ -61,8 +61,14 @@ test.describe("Recruiter prototype functional journeys",()=>{
   await expect(page.getByRole("heading",{name:"Who, when · interview panel lists"})).toBeVisible();
   await expect(page.getByText(/Only placement-cell-booked, actively shortlisted applicants/)).toBeVisible();
   await page.goto(drive+"?tab=offers");
+  await expect(page.getByRole("heading",{name:"Send your selection list"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Students answer"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Joining"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"Selection readiness across all rounds"})).toBeVisible();
-  await expect(page.getByRole("region",{name:"Selection list"})).toBeVisible();
+  const list=page.getByRole("region",{name:"Selection list"});
+  await expect(list).toBeVisible();
+  await expect(list.getByRole("button",{name:"Upload your list (Excel)"})).toBeVisible();
+  await expect(list.getByRole("button",{name:"Pick from those who clear"})).toBeVisible();
   await expectNoRawErrors(page);
  });
 
