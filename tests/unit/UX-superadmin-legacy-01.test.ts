@@ -11,10 +11,10 @@ describe("UX-superadmin-legacy-01",()=>{
   expect(code).toContain("if (!destination) {");
   expect(code).toContain("notFound();");
   expect(code).toContain("No template in this link");
-  expect(code).toMatch(/query\.q\.length\s*<=\s*100/);
+  expect(code).toMatch(/query\["q"\]\.length\s*<=\s*100/);
   expect(code).toMatch(/return redirect\(destination\s*\+\s*\(search\.size\s*\?\s*"\?"\s*\+\s*search\.toString\(\)\s*:\s*""\)\);/);
   expect(code).toContain('new URLSearchParams()');
-  expect(code).toContain('search.set("q", query.q)');
+  expect(code).toContain('search.set("q", query["q"])');
 
   expect(code).not.toContain("window.location");
   const loading=source("src/app/(authenticated)/superadmin/[...legacy]/loading.tsx");

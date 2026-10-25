@@ -54,7 +54,7 @@ describe("Team asks permission and lifecycle",()=>{
  it("TPO-inbox-team-30 opens a valid ask deeplink in its authorized conversation",()=>{
   const page=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
   const panel=src("src/components/tpo/tpo-team-ask-panel.tsx");
-  expect(page).toContain("highlightAskId={highlightAskId}");
+  expect(page).toContain('...(highlightAskId !== undefined ? {highlightAskId} : {})');
   expect(panel).toContain('document.getElementById("team-ask-"+highlightAskId)');
   expect(panel).toContain("Could not send the ask. Your draft is still here.");
   expect(panel).toContain("timeoutMs:12000");

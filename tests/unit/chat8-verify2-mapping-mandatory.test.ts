@@ -27,7 +27,7 @@ describe("semester mapping legacy mandatory/type independence", () => {
     const service = readFileSync(
       "src/modules/academics/college-term-mapping-service.ts", "utf8",
     );
-    expect(service).toContain("termCourseEditFields(current, input)");
+    expect(service).toContain("termCourseEditFields(current, {");
     expect(service).toContain("before.findIndex(row => row.id === mappingId) + 1");
   });
 });

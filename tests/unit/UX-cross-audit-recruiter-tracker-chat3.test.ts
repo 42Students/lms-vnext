@@ -5,7 +5,7 @@ const read=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("Chat-3 source cross-audit - actual UX and safety contracts",()=>{
 it("UX-recruiter-drives-jobId-change-requests-02" ,()=>{const s=read("src/components/placements/tpo-drive-change-requests.tsx");
 expect(s).toContain("if(!response.ok){");
-expect(s).toContain("receipt.status!==statuses[String(body.action)]");
+expect(s).toContain('receipt["status"]!==statuses[String(body["action"])]');
 expect(s).toContain('throw Error("Could not verify saved change request.")');
 expect(s).toContain("if(inFlightRef.current||busy)return;");
 expect(s).toContain("<ConfirmDialog");

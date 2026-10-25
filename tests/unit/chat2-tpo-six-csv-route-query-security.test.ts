@@ -36,7 +36,7 @@ describe("UX-tpo-last-third-CSV-01 private report export ambiguity and tenant co
  it("UX-tpo-last-third-CSV-03 after-college rejects unknown filters instead of ignoring them",()=>{
   const s=readFileSync(routes[0][1],"utf8");
   expect(s).toContain('key!=="batchId"&&key!=="branchId"');
-  expect(s).toContain('params.parse({batchId:q.get("batchId")');
+  expect(s).toContain('params.parse({...(q.get("batchId")?{batchId:q.get("batchId")}:{}),');
   expect(s).toContain('listTpoBatches(ctx)');
   expect(s).toContain('INVALID_BATCH');
   expect(s).toContain('INVALID_BRANCH');
