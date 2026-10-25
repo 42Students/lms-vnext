@@ -102,7 +102,9 @@ describe("HR-BREAK-chat19-calendar-company: account-deny and stable navigation",
  it("no grants provides clear company access recovery without roster/drive reads",async()=>{
   const result=await company();
   expect(readText(result)).toContain("no active college session");
-  expect(m.team).toHaveBeenCalledWith(actor,null,false);
+  // The current company page requests the verified full Team response even
+  // when no college is selected; NO_ACCESS still blocks drive/team reads.
+  expect(m.team).toHaveBeenCalledWith(actor,null,true);
   expect(m.jobs).not.toHaveBeenCalled();
   expect(m.counts).not.toHaveBeenCalled();
  });

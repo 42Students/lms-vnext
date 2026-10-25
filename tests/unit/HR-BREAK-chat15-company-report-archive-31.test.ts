@@ -35,19 +35,21 @@ describe("HR-REPORT-ARCHIVE-31 published/closed company report portfolio parity"
   expect(clampRecruiterCompanyReportPage(5,1,25)).toBe(1);
   expect(recruiterCompanyReportsQuerySchema.safeParse({status:"ARCHIVED"}).success).toBe(false);
  });
- it("HR-REPORT-MEMBER-42 counts only shortlisted ACTIVE college members with ACTIVE student accounts",()=>{
+ it("HR-REPORT-MEMBER-42 retains historically authorized college applicants without exposing other tenants",()=>{
   const source=readFileSync("src/modules/placements/recruiter-company-reports-service.ts","utf8");
   const aggregation=source.slice(source.indexOf("const reportCounts"),
    source.indexOf("const summaryRecord"));
   expect(aggregation).toMatch(/collegeMemberships\.collegeId,\s*collegeId/);
-  expect(aggregation).toMatch(/eq\(collegeMemberships\.status,\s*"ACTIVE"\)/);
+  expect(aggregation).not.toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(aggregation).toMatch(/eq\(users\.id,\s*collegeMemberships\.userId\)/);
-  expect(aggregation).toMatch(/eq\(users\.platformStatus,\s*"ACTIVE"\)/);
+  expect(aggregation).not.toContain('eq(users.platformStatus,"ACTIVE")');
   // Shortlist stage is computed in the funnel, not the per-job offer tally.
   expect(source).toContain("where s.status='SHORTLISTED'");
   const funnel=source.slice(source.indexOf("const funnelRows="));
-  expect(funnel).toContain("and m.college_id=${collegeId}::uuid and m.status='ACTIVE'");
-  expect(funnel).toContain("join users u on u.id=m.user_id and u.platform_status='ACTIVE'");
+  expect(funnel).toContain("and m.college_id=${collegeId}::uuid");
+  expect(funnel).not.toContain("m.status='ACTIVE'");
+  expect(funnel).toContain("join users u on u.id=m.user_id");
+  expect(funnel).not.toContain("u.platform_status='ACTIVE'");
   expect(funnel).toContain("s.application_id=a.id");
   expect(funnel).toContain("where s.status='SHORTLISTED'");
   expect(source).toContain("matchedTotal = selectedTotal");

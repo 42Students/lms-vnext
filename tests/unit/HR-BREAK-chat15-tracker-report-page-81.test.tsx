@@ -58,7 +58,8 @@ describe("HR-TRACKER-PAGE-81: authenticated reporter intake and HR privacy",()=>
   const form=nodes(output).find(n=>"contextPrefill" in (n.props as object));
   expect(form).toBeDefined();
   expect(form?.props).toMatchObject({contextPrefill:"Cannot submit a drive",
-   canSearchSimilar:false,knownErrorId:undefined});
+   canSearchSimilar:false});
+  expect(form?.props).not.toHaveProperty("knownErrorId");
  });
  it("admin can link a well-formed known error, but never an unvalidated arbitrary identifier",async()=>{
   m.ctx.mockResolvedValue(admin);

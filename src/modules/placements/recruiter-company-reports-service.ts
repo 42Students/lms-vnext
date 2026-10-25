@@ -272,8 +272,10 @@ export async function getRecruiterCompanyReports(
 
 
   // Entire authorized employer-college portfolio, independent of pagination.
-  // Apply the same active membership/account filters to the funnel
-  // as the per-drive counts above.
+  // Preserve historical job-funnel outcomes after graduation, account
+  // suspension or college transfer. Employment outcomes are immutable
+  // events: active status is not a condition for employer aggregate reads.
+  // Job and college relationship authorization still bound the entire query.
   // Return counts only; never materialize private candidate information.
   const funnelRows=await db.execute<{
     applied:number;shortlisted:number;assessment:number;interview:number;
@@ -289,8 +291,8 @@ export async function getRecruiterCompanyReports(
       select a.id,a.status from placement_applications a
       join jobs j on j.id=a.job_id
       join college_memberships m on m.id=a.membership_id
-        and m.college_id=${collegeId}::uuid and m.status='ACTIVE'
-      join users u on u.id=m.user_id and u.platform_status='ACTIVE'
+        and m.college_id=${collegeId}::uuid
+      join users u on u.id=m.user_id
     )
     select
       (select count(*)::int from applicants) as applied,
