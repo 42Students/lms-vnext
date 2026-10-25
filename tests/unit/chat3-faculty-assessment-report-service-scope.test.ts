@@ -34,7 +34,9 @@ const wrongDelivery = "22222222-2222-4222-8222-222222222222";
 const assignmentId = "33333333-3333-4333-8333-333333333333";
 const quizId = "44444444-4444-4444-8444-444444444444";
 const q1 = "55555555-5555-4555-8555-555555555555";
-const a = "learner-a", b = "learner-b", otherCollege = "foreign-learner";
+// The lower-level service authorizes the exact college and delivery. A former
+// class member remains historical evidence when they leave the current roster.
+const a = "learner-a", b = "learner-b", formerLearner = "former-learner";
 const oldDate = new Date("2099-01-03T10:00:00.000Z");
 const newDate = new Date("2099-01-04T10:00:00.000Z");
 const dueDate = new Date("2099-01-03T12:00:00.000Z");
@@ -57,7 +59,7 @@ beforeEach(() => {
   stubs.assignments.mockResolvedValue([
     { membershipId: a, gradingStatus: "GRADED", gradePublished: true,
       submittedAt: oldDate, pointsAwarded: 8 },
-    { membershipId: otherCollege, gradingStatus: "GRADED", gradePublished: true,
+    { membershipId: formerLearner, gradingStatus: "GRADED", gradePublished: true,
       submittedAt: newDate, pointsAwarded: 10 },
   ]);
   stubs.quizzes.mockResolvedValue([
@@ -65,39 +67,39 @@ beforeEach(() => {
       score: 2, maxScore: 10, answers: [{ questionId: q1, correct: false }] },
     { membershipId: a, attemptNumber: 2, submittedAt: newDate,
       score: 9, maxScore: 10, answers: [{ questionId: q1, correct: true }] },
-    { membershipId: otherCollege, attemptNumber: 1, submittedAt: newDate,
+    { membershipId: formerLearner, attemptNumber: 1, submittedAt: newDate,
       score: 10, maxScore: 10, answers: [{ questionId: q1, correct: true }] },
   ]);
   stubs.quizDetails.mockResolvedValue({ questions: [{ id: q1, prompt: "Example?", points: 10 }] });
 });
 
 describe("FAC-REPORT-SERVICE-01 authenticated Section report projections", () => {
-  it("hides foreign learner submissions before summary, export counts or distribution are computed", async () => {
+  it("keeps independently scoped historical submissions while counting missing current learners", async () => {
     const result = await getFacultyAssignmentReport(actor, assignmentId, deliveryId);
-    expect(result.submissions).toHaveLength(1);
+    expect(result.submissions).toHaveLength(2);
     expect(result.submissions[0]?.membershipId).toBe(a);
     expect(result.missingLearners).toEqual([{ membershipId: b }]);
     expect(result.metrics).toMatchObject({
-      eligibleLearners: 2, submitted: 1, missing: 1, onTime: 1,
-      late: 0, graded: 1, gradePublished: 1, averagePercent: 80,
+      eligibleLearners: 2, submitted: 2, missing: 1, onTime: 1,
+      late: 1, graded: 2, gradePublished: 2, averagePercent: 90,
     });
-    expect(JSON.stringify(result)).not.toContain(otherCollege);
+    expect(JSON.stringify(result)).toContain(formerLearner);
     expect(stubs.assignments).toHaveBeenCalledWith(actor, assignmentId, deliveryId);
   });
 
-  it("uses only the latest retake for question accuracy and scored results, with no foreign rows", async () => {
+  it("uses latest retake and preserves historical transferred learner evidence", async () => {
     const result = await getFacultyQuizReport(actor, quizId, deliveryId);
-    expect(result.attempts).toHaveLength(2);
-    expect(result.latestAttempts).toHaveLength(1);
+    expect(result.attempts).toHaveLength(3);
+    expect(result.latestAttempts).toHaveLength(2);
     expect(result.latestAttempts[0]?.attemptNumber).toBe(2);
     expect(result.questions).toMatchObject([{
-      id: q1, answeredCount: 1, correctCount: 1, accuracyPercent: 100,
+      id: q1, answeredCount: 2, correctCount: 2, accuracyPercent: 100,
     }]);
     expect(result.metrics).toMatchObject({
-      eligibleLearners: 2, uniqueLearners: 1, submittedLearners: 1,
-      notAttempted: 1, averagePercent: 90, totalAttempts: 2,
+      eligibleLearners: 2, uniqueLearners: 2, submittedLearners: 2,
+      notAttempted: 1, averagePercent: 95, totalAttempts: 3,
     });
-    expect(JSON.stringify(result)).not.toContain(otherCollege);
+    expect(JSON.stringify(result)).toContain(formerLearner);
     expect(stubs.quizDetails).toHaveBeenCalledWith(actor, quizId, deliveryId);
   });
 
