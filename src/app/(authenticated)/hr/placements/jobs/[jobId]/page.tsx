@@ -51,6 +51,7 @@ import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-r
 import {recruiterChangeShortcut,RECRUITER_CHANGE_SHORTCUTS} from "@/modules/placements/recruiter-change-shortcuts-model";
 import {getRecruiterBookedInterviews} from "@/modules/placements/recruiter-booked-interviews-service";
 import {RecruiterJoiningReportForm} from "@/components/hr/recruiter-joining-report-form";
+import {RecruiterPanelActions} from "@/components/hr/recruiter-panel-actions";
 import {Tabs} from "@/components/ui/tabs";
 
 function currentTimeMs(){return Date.now();}
@@ -1004,6 +1005,8 @@ export default async function HrPlacementJobPage({
                 })}
               </div>:
               <p className="text-sm text-muted-foreground">No college-booked interviews are visible for currently shared applicants. Your proposed employer slots are shown separately.</p>}
+            {!bookedInterviews?.unavailable&&bookedInterviews?.items.length?
+             <RecruiterPanelActions jobId={workspace.job.id}/>:null}
             {bookedInterviews?.truncated?<p role="status" className="text-sm font-semibold text-body">
               Showing the first 200 authorized appointments. Ask the placement cell for the full panel list.
             </p>:null}
