@@ -11,6 +11,13 @@ const state=vi.hoisted(()=>({
   lock:"",filters:[] as unknown[],limits:[] as number[],
 }));
 vi.mock("@/modules/projects/access",()=>({
+  // The production API now delegates to its live read-grant resolver first,
+  // then requires ADMIN or an assigned MENTOR for the candidate search.
+  requireProjectReadAccess:async()=>{
+    state.scopes++;
+    return {access:"ADMIN",project:{id:projectId,title:"Dharwad"},collegeId,
+      organizationId:"33333333-3333-4333-8333-333333333333"};
+  },
   requireProjectManageAccess:async()=>{
     state.scopes++;
     return {project:{id:projectId,title:"Dharwad"},collegeId,
