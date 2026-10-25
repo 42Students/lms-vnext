@@ -99,9 +99,9 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
         className="text-xs text-muted-foreground">
         This legacy spreadsheet format needs its original authorized provider.
       </p>:null}
-      {active.href?<a href={active.href} target="_blank"
+      {active.href?<a href={active.href}
         rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-link underline">
-        Open evidence in a new tab ↗
+        Open evidence ↗
       </a>:<p>The saved record has no accessible evidence link.</p>}
       <p className="text-xs text-muted-foreground">Preview availability depends on
         the original provider's access rules; permission to this workspace
