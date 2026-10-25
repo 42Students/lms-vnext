@@ -89,13 +89,12 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
   legacyInterviewType:interviews.legacyInterviewType,
   start:interviews.startsAt,
   duration:sql<number>`extract(epoch from(${interviews.endsAt}-${interviews.startsAt}))/60`.as("slot_minutes"),
-  status:sql<string>`case when ${interviews.legacyInterviewStatus} in
-      ('SCHEDULED','CONFIRMED','RESCHEDULE_REQUESTED','COMPLETED','CANCELLED','NO_SHOW')
-      then ${interviews.legacyInterviewStatus}
+  status:sql<string>`case
     when ${interviews.status}='CANCELLED' then 'CANCELLED'
+    // Final persisted outcome takes precedence over an imported scheduled
+    // label. A fresh NO_SHOW result must remain visible in filtered lists.
     when ${interviews.interviewOutcome} in ('COMPLETED','NO_SHOW')
       then ${interviews.interviewOutcome}
-    when ${interviews.confirmedAt} is not null then 'CONFIRMED'
     when exists(select 1 from activity_events ae
       where ae.subject_type='placement_round_candidate_slot' and ae.subject_id=${interviews.id}::text
        and ae.college_id=${placementJobs.collegeId}
@@ -104,6 +103,10 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
       where ae.subject_type='placement_round_candidate_slot' and ae.subject_id=${interviews.id}::text
        and ae.college_id=${placementJobs.collegeId}
        and ae.event_type='PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED') then 'COMPLETED'
+    when ${interviews.legacyInterviewStatus} in
+      ('SCHEDULED','CONFIRMED','RESCHEDULE_REQUESTED','COMPLETED','CANCELLED','NO_SHOW')
+      then ${interviews.legacyInterviewStatus}
+    when ${interviews.confirmedAt} is not null then 'CONFIRMED'
     else 'SCHEDULED' end`.as("interview_status"),
   mode:sql<string>`case when ${interviews.room} like 'https://%' then 'VIRTUAL' else 'ON_CAMPUS' end`.as("interview_mode"),
   venue:interviews.room,meetingUrl:sql<string|null>`case when ${interviews.room} like 'https://%'
