@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {Fragment,useEffect,useState,useRef} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {mentorActivityCategory, mentorActivityLabel, mentorActivityRelativeTime} from "@/modules/projects/mentor-activity-display-model";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {mentorActivityCategoryChoices,mentorActivityGroup,type MentorActivityCategory} from "@/modules/projects/mentor-activity-category-model";
 import {projectResourceAuditAction,projectResourceAuditMatches} from "@/modules/projects/project-resource-audit-model";
 import {mentorLoadedWeekActivitySummary} from "@/modules/projects/mentor-week-activity-summary-model";
@@ -217,7 +218,13 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  // Query string is the stable dependency; each change aborts the previous search.
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[remoteActive,remoteKey,projectId]);
- const categories=[...new Set(items.map(event=>event.eventType))].sort();
+ // A type absent from the first loaded page must still be selectable.
+ // Registered Project event codes form the stable filter vocabulary; add
+ // imported unknown types once they are encountered without losing history.
+ const categories=[...new Set([
+   ...Object.values(ACTIVITY_EVENT_TYPES).filter(code=>code.startsWith("projects.")),
+   ...items.map(event=>event.eventType),
+ ])].sort();
  const actors=[...new Map([
     ...items.filter(event=>Boolean(event.actorUserId)).map(event=>
       ({id:event.actorUserId!,label:event.actorDisplayName??"Recorded actor"})),
