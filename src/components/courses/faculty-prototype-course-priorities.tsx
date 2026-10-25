@@ -67,7 +67,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
  return <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_308px]">
   <section aria-label="Needs you" className="faculty-proto-task-list min-w-0">
    <h2 className="border-b border-[#e5ebf2] px-5 py-4 text-xs font-bold uppercase tracking-wide text-[#60718b]">
-    Needs you · {course.sectionName}
+    Needs you · <span>{course.sectionName}</span>
    </h2>
    {priorities.map(item=><article key={item.id}
      className="flex min-h-[67px] flex-wrap items-center justify-between gap-4 border-b border-[#edf1f5] px-5 py-4 last:border-b-0">

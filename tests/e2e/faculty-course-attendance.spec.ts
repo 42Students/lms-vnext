@@ -48,7 +48,7 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   expect(sessionId).toMatch(/^[0-9a-f-]{36}$/i);
   await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail?sessionId="+sessionId);
   const advanced=page.locator("#faculty-attendance-editor");
-  await expect(advanced.getByRole("button",{name:"Mark attendance"})).toBeVisible();
+  await expect(advanced.getByRole("radio",{name:"Mark attendance"})).toBeVisible();
   await expect(advanced.getByLabel("Class session")).toHaveValue(sessionId);
   await expect(page.getByText("Attendance has not been submitted for this session yet.")).toBeVisible();
   await advanced.getByRole("button",{name:"Mark all present"}).click();
@@ -68,7 +68,7 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   await page.getByRole("button",{name:"Submit Attendance"}).click();
   const corrected=await correction;
   expect(corrected.status(),await corrected.text()).toBe(200);
-  await advanced.getByRole("button",{name:"Attendance report"}).click();
+  await advanced.getByRole("radio",{name:"Attendance report"}).click();
   await expect(page.getByRole("heading",{name:"Monthly class health"})).toBeVisible();
   await expect(page.getByRole("region",{name:"Monthly class health"})).toContainText("0%");
   await expect(page.getByRole("region",{name:"Attendance threshold guidance"})).toContainText("below guidance");
