@@ -34,7 +34,8 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   // Keep nearly all of the writer's five-minute grace for CI scheduling
   // delays while retaining an already-started session for real attendance.
   const start=new Date(Date.now()-15_000).toISOString();
-  const end=new Date(Date.now()+20*60_000).toISOString();
+  // Retry-safe short class window. Correction remains possible during the college correction period.
+  const end=new Date(Date.now()+30_000).toISOString();
   const creation=await page.evaluate(async ({deliveryId,start,end})=>{
    const response=await fetch("/api/courses/faculty/attendance/"+deliveryId+"/schedule",{
     method:"POST",headers:{"Content-Type":"application/json"},
@@ -54,20 +55,20 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   await expect(advanced.getByLabel("Select Class")).toHaveValue(sessionId);
   await expect(page.getByText("Attendance has not been submitted for this session yet.")).toBeVisible();
   await advanced.getByRole("button",{name:"Mark all present"}).click();
-  page.once("dialog",dialog=>dialog.accept());
   const marking=page.waitForResponse(r=>r.request().method()==="PATCH" &&
    new URL(r.url()).pathname==="/api/attendance/faculty/sessions/"+sessionId);
   await advanced.getByRole("button",{name:"Submit Attendance"}).click();
+  await page.getByRole("alertdialog",{name:"Submit Attendance"}).getByRole("button",{name:"Confirm"}).click();
   const response=await marking;
   expect(response.status(),await response.text()).toBe(200);
   await expect(page.getByText("Attendance was already submitted. Saving again performs a correction.")).toBeVisible();
   await advanced.getByRole("button",{name:"Mark all absent"}).click();
   await advanced.getByPlaceholder("What changed in the recorded attendance?")
    .fill("Confirmed correction following classroom roll call");
-  page.once("dialog",dialog=>dialog.accept());
   const correction=page.waitForResponse(r=>r.request().method()==="PATCH" &&
    new URL(r.url()).pathname==="/api/attendance/faculty/sessions/"+sessionId);
-  await page.getByRole("button",{name:"Submit Attendance"}).click();
+  await advanced.getByRole("button",{name:"Submit Attendance"}).click();
+  await page.getByRole("alertdialog",{name:"Submit Attendance"}).getByRole("button",{name:"Confirm"}).click();
   const corrected=await correction;
   expect(corrected.status(),await corrected.text()).toBe(200);
   await advanced.getByRole("radio",{name:"Attendance report"}).click();
