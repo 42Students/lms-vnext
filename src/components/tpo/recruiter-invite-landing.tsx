@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -103,6 +104,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   const [name,setName]=useState("");
   const [designation,setDesignation]=useState("");
   const [mobile,setMobile]=useState("");
+  const [notHiringOpen,setNotHiringOpen]=useState(false);
+  const [notHiringNote,setNotHiringNote]=useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -142,7 +145,12 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     try {
       await apiFetch<void>(
         "/api/public/recruiter-invite/"+encodeURIComponent(token)+"/"+kind,
-        {method:"POST",credentials:"same-origin"},
+        {method:"POST",credentials:"same-origin",
+         ...(kind==="not-hiring"?{
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({note:notHiringNote.trim().slice(0,500)}),
+         }:{}),
+        },
       );
       setState("declined");
     } catch(error) {
@@ -391,9 +399,24 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       </div> : null}
 
       <div className="mt-5 space-y-2 border-t border-[var(--lms-canvas-border)] pt-4">
-        <Button type="button" className="min-h-11 w-full justify-start text-link underline md:min-h-9" variant="link" disabled={busy} onClick={() => void answer("not-hiring")}>
+        {!notHiringOpen?<Button type="button" className="min-h-11 w-full justify-start text-link underline md:min-h-9" variant="link" disabled={busy} onClick={()=>setNotHiringOpen(true)}>
           Not hiring from this college this season
-        </Button>
+        </Button>:<div className="space-y-3 rounded-lg border border-border p-3">
+          <p className="text-sm font-semibold text-foreground">Not hiring this season</p>
+          <p className="text-xs text-body">The placement cell may contact you next season. You can leave a brief note.</p>
+          <label className="grid gap-1 text-xs font-medium text-muted-foreground">Note (optional)
+            <Textarea rows={2} maxLength={500} value={notHiringNote}
+             onChange={event=>setNotHiringNote(event.target.value)} />
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" disabled={busy} onClick={()=>void answer("not-hiring")}>
+              {busy?"Saving…":"Confirm not hiring"}
+            </Button>
+            <Button type="button" variant="secondary" disabled={busy} onClick={()=>setNotHiringOpen(false)}>
+              Cancel
+            </Button>
+          </div>
+        </div>}
         <Button type="button" className="min-h-11 w-full justify-start text-link underline md:min-h-9" variant="link" disabled={busy} onClick={() => void answer("unsubscribe")}>
           Stop contacting me
         </Button>

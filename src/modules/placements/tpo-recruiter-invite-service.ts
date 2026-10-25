@@ -1,4 +1,5 @@
 import { and, eq, gt, isNull } from "drizzle-orm";
+import {recruiterInviteNotHiringReason} from "./recruiter-invite-not-hiring-note-model";
 import { getDb } from "@/db/client";
 import {
   activityEvents, collegeMemberships, inAppNotifications, membershipRoles, users,
@@ -394,6 +395,7 @@ async function mutatePublicInvite(
   token: string,
   now: Date,
   action: "NOT_HIRING" | "UNSUBSCRIBE",
+  note?:string,
 ) {
   if (!isRecruiterInviteTokenShape(token)) {
     return invalidPublicInvite();
@@ -420,8 +422,7 @@ async function mutatePublicInvite(
         .update(placementTpoLeads)
         .set({
           manualStage: "NOT_NOW",
-          notNowReason:
-            "Said they are not hiring from this college this season",
+          notNowReason:recruiterInviteNotHiringReason(note),
           notNowUntil: indiaDateSixMonthsAfter(now),
           inviteTokenHash: null,
           updatedAt: now,
@@ -436,7 +437,7 @@ async function mutatePublicInvite(
         collegeId: lead.collegeId,
         leadId: lead.id,
         type: "SYSTEM",
-        note: "Replied: not hiring this season",
+        note: recruiterInviteNotHiringReason(note),
         isSystem: true,
         createdAt: now,
       });
@@ -473,8 +474,9 @@ async function mutatePublicInvite(
 export function markRecruiterInviteNotHiring(
   token: string,
   now = new Date(),
+  note?:string,
 ) {
-  return mutatePublicInvite(token, now, "NOT_HIRING");
+  return mutatePublicInvite(token, now, "NOT_HIRING",note);
 }
 
 export function unsubscribeRecruiterInvite(

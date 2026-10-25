@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import {recruiterInviteNotHiringNoteSchema} from "@/modules/placements/recruiter-invite-not-hiring-note-model";
 import { isSameOriginRequest } from "@/auth/origin";
 import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-api-error";
 import { markRecruiterInviteNotHiring } from "@/modules/placements/tpo-recruiter-invite-service";
@@ -15,7 +16,25 @@ export async function POST(request: Request, { params }: RouteContext) {
   }
   try {
     const { token } = await params;
-    return NextResponse.json(await markRecruiterInviteNotHiring(token));
+    // A public bearer token only permits declining this invitation. Limit the
+    // optional plain-text note without allowing any other caller-selected CRM field.
+    const bytes=Number(request.headers.get("content-length")??"0");
+    if(!Number.isFinite(bytes)||bytes>2048)
+      return NextResponse.json({error:"INVALID_BODY"},{status:413});
+    let payload:unknown={};
+    if(request.headers.get("content-type")?.startsWith("application/json")){
+      try{const body=await request.text();if(body.length>2048)
+        return NextResponse.json({error:"INVALID_BODY"},{status:413});
+        payload=JSON.parse(body) as unknown;
+      }catch{return NextResponse.json({error:"INVALID_BODY"},{status:400});}
+    }
+    if(!payload||typeof payload!=="object"||Array.isArray(payload)||
+       Object.keys(payload).some(key=>key!=="note"))
+      return NextResponse.json({error:"INVALID_BODY"},{status:400});
+    const parsed=recruiterInviteNotHiringNoteSchema.safeParse(
+      (payload as {note?:unknown}).note);
+    if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
+    return NextResponse.json(await markRecruiterInviteNotHiring(token,new Date(),parsed.data));
   } catch (error) {
     return tpoRecruiterInviteApiErrorResponse(error);
   }
