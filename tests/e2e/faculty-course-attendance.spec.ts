@@ -31,7 +31,9 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   // The live writer permits only a five-minute booking grace. A separate
   // mobile test would collide with this instructor\u0027s still-active session;
   // verify both viewport sizes against the SAME authorized marked session.
-  const start=new Date(Date.now()-2*60_000).toISOString();
+  // Keep nearly all of the writer's five-minute grace for CI scheduling
+  // delays while retaining an already-started session for real attendance.
+  const start=new Date(Date.now()-15_000).toISOString();
   const end=new Date(Date.now()+20*60_000).toISOString();
   const creation=await page.evaluate(async ({deliveryId,start,end})=>{
    const response=await fetch("/api/courses/faculty/attendance/"+deliveryId+"/schedule",{
