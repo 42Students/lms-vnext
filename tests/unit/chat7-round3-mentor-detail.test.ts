@@ -28,7 +28,7 @@ describe("chat-7 mentor authored briefing, reviewer access and scheduling",()=>{
   const base={title:"Review",startsAt:"2099-02-01T10:00",endsAt:"2099-02-01T11:00",meetingUrl:"https://example.edu/meet",nowMs:Date.parse("2099-01-01T00:00:00Z")};
   expect(mentorMeetingScheduleError(base)).toBe(null);
   expect(mentorMeetingScheduleError({...base,startsAt:"2098-12-01T10:00"})).toBe("Meeting date must be in the future.");
-  expect(mentorMeetingScheduleError({...base,meetingUrl:""})).toBe("Meeting link is required.");
+  expect(mentorMeetingScheduleError({...base,meetingUrl:""})).toBe("Meeting link or physical venue is required.");
   expect(mentorMeetingScheduleError({...base,meetingUrl:"",draft:true})).toBe(null);
  });
 });

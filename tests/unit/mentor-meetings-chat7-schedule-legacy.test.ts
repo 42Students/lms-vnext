@@ -38,7 +38,7 @@ describe("Chat-7 mentor meeting legacy parity", () => {
     expect(mentorMeetingScheduleError({ ...valid, nowMs: new Date("2099-05-10T10:00:00+05:30").getTime() }))
       .toBe("Meeting date must be in the future.");
     expect(mentorMeetingScheduleError({ ...valid, meetingUrl: "" }))
-      .toBe("Meeting link is required.");
+      .toBe("Meeting link or physical venue is required.");
     expect(mentorMeetingScheduleError({ ...valid, meetingUrl: "javascript:alert(1)" }))
       .toBe("Enter a valid meeting link.");
     expect(mentorMeetingScheduleError(valid)).toBeNull();

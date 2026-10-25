@@ -126,7 +126,7 @@ describe("chat-14 mentor attention risk and workflow policies",()=>{
    expect(mentorMeetingScheduleError(base)).toBeNull();
    expect(mentorMeetingScheduleError({...base,title:" "})).toBe("Meeting title is required.");
    expect(mentorMeetingScheduleError({...base,endsAt:"2099-01-01T09:00"})).toBe("Meeting end time must be after the start time.");
-   expect(mentorMeetingScheduleError({...base,meetingUrl:""})).toBe("Meeting link is required.");
+   expect(mentorMeetingScheduleError({...base,meetingUrl:""})).toBe("Meeting link or physical venue is required.");
    expect(mentorMeetingScheduleError({...base,meetingUrl:"",draft:true})).toBeNull();
    expect(mentorMeetingHttpUrl("javascript:alert(1)")).toBe(false);
    expect(mentorMeetingHttpUrl("https://user:pass@example.org")).toBe(false);

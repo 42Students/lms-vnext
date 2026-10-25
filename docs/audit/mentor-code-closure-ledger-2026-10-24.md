@@ -11,6 +11,17 @@
 
 The IDs and descriptions remain authoritative in [mentor-functional-prototype-gap-analysis-2026-10-24.md](./mentor-functional-prototype-gap-analysis-2026-10-24.md). Source evidence names below are within `src/` (usually `modules/projects/` or `components/projects/`).
 
+## 26 October 2026 — Mentor corrective code commits and acceptance evidence
+
+The top-level **127/132 source-code-ready, 3 test/implementation pending, 2 live-provider unverified, 0 formally accepted** classification is deliberately unchanged. The following is new implementation and partial test evidence, **not** approval of all 132 items:
+
+- `1e704d7` updates an obsolete auto-allocation unit contract to validate next-Sprint-only assignment, version safeguards and explicit advanced project-wide allocation; existing unit CI on `0700113` was **16/17 successful jobs**, with the sole failure in `unit`.
+- `014ea14` clips shared dialog scroll content and protects header/footer click targets after the Mentor browser acceptance failure on the task-create Cancel button.
+- `cba38af` moves Activity resource-action filtering into the project/college-authorized persisted SQL query before cursor pagination. The default search, actor, sprint and IST date filters already reached this database query; this fix covers action-specific matches beyond the client-loaded rows.
+- `650b571` and `c8d06ab` complete in-person venue entry in the full Mentor meeting editor, validate online/physical alternatives, and normalize persisted `Location:` agenda prefixes when editing or rescheduling; unit cases cover venue replacement/removal, malformed links and draft behavior.
+- On the **older** `cba38af` run [Mentor code acceptance 40223952160](https://github.com/42Students/lms-vnext/actions/runs/40223952160), the **Mentor browser** and **Mentor PostgreSQL** jobs passed; `mentor-source` was still running at this checkpoint. This is partial proof on that exact SHA, **not** latest-HEAD green.
+- Google Calendar/Meet (X-05) and ZeptoMail (X-09) remain explicitly **live-provider unverified**, with no authorized provider account evidence or receipt proof. X-01, X-02 and X-10 remain test/acceptance-pending until current-HEAD green CI and complete functional state verification. Pixel-perfect visual acceptance stays deferred.
+
 ## 25 October follow-on — source-based external connector reconciliation
 
 - The October 24 classification predates the Google/ZeptoMail integration source currently checked into `main`. Auditing the actual account/calendar/meeting controls, provider adapters, scoped PostgreSQL services, event producers, dispatch worker and regression tests moves **49-06, 49-08, 54-06, 55-05, 56-05 and 56-06** from incomplete to source-only `CODE_READY`.
