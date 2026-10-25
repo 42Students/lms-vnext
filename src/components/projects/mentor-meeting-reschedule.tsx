@@ -6,6 +6,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
+import {mentorGoogleMeetingFollowUp} from "./mentor-google-meeting-follow-up";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -43,7 +44,12 @@ export function MentorMeetingReschedule(props:{
         "/meetings/"+encodeURIComponent(props.meetingId)+"/mentor-reschedule",
         "PATCH",parsed.data);
       setConfirm(false);
-      showToast({tone:"success",title:"Meeting rescheduled"});
+      const googleUpdated=await mentorGoogleMeetingFollowUp(
+        props.projectId,props.meetingId,"RESCHEDULE");
+      showToast({tone:"success",title:"Meeting rescheduled",
+        description:googleUpdated?
+          "The LMS time was saved and Google accepted the updated event invitation.":
+          "The LMS time was saved. Google calendar updates could not be confirmed; verify or retry from Calendar."});
       router.refresh();
     }catch(caught){
       const message=caught instanceof FriendlyFetchError?caught.message:friendlyApiError({});
@@ -87,7 +93,7 @@ export function MentorMeetingReschedule(props:{
     </Dialog>
     <ConfirmDialog open={confirm} onOpenChange={next=>{if(pending)return;setConfirm(next);if(!next)setOpen(true);}}
       title="Confirm meeting reschedule?" confirmLabel="Confirm reschedule"
-      description="Your new IST time will be checked for conflicts. Project members are notified in-app after rescheduling; no calendar invitation or email is sent."
+      description="Your new IST time is checked for conflicts. The LMS update and in-app notices commit first; Google calendar synchronization is attempted separately and may require a retry."
       pending={pending} onConfirm={save}>
       <p className="text-sm text-body leading-[22px]">{start.replace("T"," ")} – {end.replace("T"," ")} IST</p>
       {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}

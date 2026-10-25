@@ -7,6 +7,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
+import {mentorGoogleMeetingFollowUp} from "./mentor-google-meeting-follow-up";
 
 /** Selected Mentor calendar cancellation reuses the audited, version-checked
  * meeting decision transaction. A cancelled meeting is not silently erased.
@@ -35,8 +36,12 @@ export function MentorMeetingCancelInline(props:{
         },
       );
       setOpen(false);setNote("");
+      const googleUpdated=await mentorGoogleMeetingFollowUp(
+        props.projectId,props.meetingId,"CANCEL");
       showToast({tone:"success",title:"Meeting cancelled",
-        description:"The cancellation is recorded. Active project members receive an in-app update."});
+        description:googleUpdated?
+          "Cancellation was saved in the LMS and Google accepted removal of its event.":
+          "Cancellation was saved in the LMS. Google removal could not be confirmed; use the Calendar cleanup action if connected."});
       router.refresh();
     }catch{
       setError("Meeting not cancelled. Its status or version may have changed. Refresh and retry.");
@@ -50,7 +55,7 @@ export function MentorMeetingCancelInline(props:{
     </Button>
     <ConfirmDialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}}
       title="Cancel this meeting?" confirmLabel="Confirm cancellation"
-      description="Cancellation is permanent for this meeting record. Project members receive an in-app notification; this does not cancel any external calendar invite."
+      description="Cancellation is permanent in the LMS. Active project members receive an in-app update; after saving, Google Calendar removal is attempted separately and may need a retry."
       pending={pending} onConfirm={()=>void cancel()}>
       <label className="block text-sm">
         Note to the team (optional)
