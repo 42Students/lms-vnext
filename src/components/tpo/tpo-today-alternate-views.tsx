@@ -51,11 +51,12 @@ function FollowupRow({row,scope,mode="brief"}:{row:TpoCompaniesTodayRow;scope:"M
  * preview pages are explicitly labeled; we never infer an uncontacted count
  * or email-delivery status from CRM follow-up rows. */
 export function TpoTodayAlternateViews({
- view,scope,rows,replies,replyTotal,nowIso,hasMore,selectedDay
+ view,scope,rows,replies,replyTotal,nowIso,hasMore,selectedDay,notContacted
 }:{
  view:"agenda"|"brief";scope:"MINE"|"TEAM";selectedDay:number;
  rows:readonly TpoCompaniesTodayRow[];replies:readonly TpoTodayReply[];
  replyTotal:number|null;nowIso:string;hasMore:boolean;
+ notContacted:{count:number;oldestAddedAt:string|null}|null;
 }){
  const now=new Date(nowIso);
  const todayKey=istDateKey(now);
@@ -114,12 +115,12 @@ export function TpoTodayAlternateViews({
     </section>
     <aside className="space-y-3" aria-label="Other follow-up actions">
      <section className={panel}><h2 className={heading}>Not on the week</h2>
-      <p className="px-4 py-3 text-sm text-[#617084]">{upcoming.length} scheduled follow-ups in the next seven days{hasMore?" (preview)":""}.</p>
+      <p className="px-4 py-3 text-sm text-[#617084]">Later and undated follow-ups cannot be counted from this seven-day preview.</p>
       <Link href="/tpo/follow-ups" className="inline-flex min-h-10 items-center px-4 pb-3 font-semibold text-[#087f8b]">Re-plan your week</Link>
      </section>
      <section className={panel}><h2 className={heading}>Not contacted yet</h2>
-      <p className="px-4 py-3 text-sm text-[#617084]">Review leads without scheduled follow-ups in the recruiter directory.</p>
-      <Link href="/tpo/recruiters?nextFollowup=NONE" className="inline-flex min-h-10 items-center px-4 pb-3 font-semibold text-[#087f8b]">Start with them</Link>
+      <p className="px-4 py-3 text-sm text-[#617084]">{notContacted===null?"Count unavailable":notContacted.count+" recruiter leads"} not contacted yet{notContacted?.oldestAddedAt?" · oldest added "+formatDay(new Date(notContacted.oldestAddedAt)):""}.</p>
+      <Link href="/tpo/recruiters?stage=NEW" className="inline-flex min-h-10 items-center px-4 pb-3 font-semibold text-[#087f8b]">Start with them</Link>
      </section>
     </aside>
    </div>
@@ -145,9 +146,9 @@ export function TpoTodayAlternateViews({
     </li>)}</ul>
     {!upcoming.length?<p className="p-4 text-sm text-[#617084]">No further scheduled follow-ups in this preview.</p>:null}
     <div className="border-t border-[#e8edf2] bg-[#f8fafb] p-4">
-     <p className="font-bold">Not contacted yet</p>
-     <p className="mt-1 text-xs text-[#617084]">Find new recruiter leads; totals have not been inferred from this queue.</p>
-     <Link href="/tpo/recruiters?nextFollowup=NONE" className="mt-2 inline-flex min-h-10 items-center rounded-lg border border-[#d6e1ee] px-3 text-xs font-bold text-[#26354a]">Start with them</Link>
+     <p className="font-bold">{notContacted===null?"Not contacted yet":notContacted.count+" not contacted yet"}</p>
+     <p className="mt-1 text-xs text-[#617084]">{notContacted===null?"Count temporarily unavailable.":notContacted.oldestAddedAt?"Oldest added "+formatDay(new Date(notContacted.oldestAddedAt)):"No uncontacted recruiters in the authorized roster."}</p>
+     <Link href="/tpo/recruiters?stage=NEW" className="mt-2 inline-flex min-h-10 items-center rounded-lg border border-[#d6e1ee] px-3 text-xs font-bold text-[#26354a]">Start with them</Link>
     </div>
    </section>
   </div>}
