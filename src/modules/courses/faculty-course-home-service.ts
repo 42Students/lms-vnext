@@ -1,8 +1,8 @@
 import {facultyStudentRosterMetrics} from "./faculty-student-roster-metrics";
 import "server-only";
-import {and,eq,inArray,isNull} from "drizzle-orm";
+import {and,eq,gte,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {learnerContentProgress,quizAttempts} from "@/db/schema";
+import {courseDiscussionMessages,learnerContentProgress,quizAttempts} from "@/db/schema";
 import {facultyCourseCompletion} from "./faculty-course-completion-model";
 
 import type { RequestContext } from "@/modules/identity/context";
@@ -98,6 +98,24 @@ export async function getFacultyCourseHomeSignals(
      membershipId:sub.membershipId,itemId:row.id,
     }))),
   }):null;
+  // Current course activity only: "recent" is explicit, never an invented
+  // unread count. A transient discussion error cannot blank other signals.
+  const discussionRead=await getDb().select({
+   count:sql<number>`count(*)::int`,
+  }).from(courseDiscussionMessages).where(and(
+   eq(courseDiscussionMessages.deliveryId,course.deliveryId),
+   eq(courseDiscussionMessages.senderRole,"LEARNER"),
+   isNull(courseDiscussionMessages.deletedAt),
+   gte(courseDiscussionMessages.createdAt,new Date(Date.now()-7*86400000)),
+  )).then(rows=>rows[0]?.count??0).catch(()=>null);
+  const nowIst=new Intl.DateTimeFormat("en-GB",{
+   timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric",
+  }).format(new Date());
+  const todayUnmarked=attendance?.sessions.find(session=>
+   session.attendanceStatus!=="MARKED"&&
+   new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric",
+   }).format(session.startsAt)===nowIst)??null;
   const signals = buildFacultyCourseHomeSignals({
     roster: attendance?.roster ?? [],
     attendanceSessions: attendance?.sessions.map((session) => ({
@@ -114,6 +132,14 @@ export async function getFacultyCourseHomeSignals(
   });
   return {
     ...signals,
+    overviewActivity:{
+      studentMessagesLast7Days:discussionRead,
+      todayUnmarkedSession:todayUnmarked?{
+       id:todayUnmarked.id,title:todayUnmarked.title,
+       startsAt:todayUnmarked.startsAt.toISOString(),
+       location:todayUnmarked.location,
+      }:null,
+    },
     courseCompletion,
     studentRosterMetrics:facultyStudentRosterMetrics({
       roster:attendance?.roster??[],

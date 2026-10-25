@@ -29,7 +29,12 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
  if(quiz?.dueAt)priorities.push({
   id:"quiz",title:quiz.title+" closes "+
    new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long"}).format(quiz.dueAt),
-  detail:"Students can attempt this quiz until its published deadline.",
+  detail:(()=>{
+   const attempted=signals?.courseCompletion?.quizAttemptsById.find(item=>item.quizId===quiz.id)?.attempted;
+   const roster=signals?.studentRosterMetrics.byLearner.length;
+   return attempted!==undefined&&roster!==undefined?
+    attempted+" of "+roster+" have taken it.":"Students can attempt this quiz until its published deadline.";
+  })(),
   href:"/teacher/report/quiz/"+encodeURIComponent(quiz.id)+
    "?deliveryId="+encodeURIComponent(course.deliveryId),
   action:"See who is left",
@@ -40,16 +45,28 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
   href:base+"/blueprint?lesson="+encodeURIComponent(draft.lessonId)+"&content="+encodeURIComponent(draft.id)+"&advanced=1",
   action:"Open quiz",
  });
- if(signals?.completeness.attendance)priorities.push({
-  id:"attendance",title:"Review attendance for "+course.sectionName,
-  detail:signals.attendance.markedSessions+" class "+
-   (signals.attendance.markedSessions===1?"session recorded":"sessions recorded")+
-   " · Mark any outstanding class session.",
-  href:base+"/attendanceDetail",action:"Take it",
+ if(signals?.overviewActivity.todayUnmarkedSession){
+  const event=signals.overviewActivity.todayUnmarkedSession;
+  priorities.push({
+   id:"attendance",title:"Attendance for today not taken",
+   detail:"Class at "+new Intl.DateTimeFormat("en-IN",{
+    timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
+   }).format(new Date(event.startsAt))+" · "+(event.location??course.sectionName),
+   href:base+"/attendanceDetail?sessionId="+encodeURIComponent(event.id),action:"Take it",
+  });
+ }else if(signals?.completeness.attendance)priorities.push({
+  id:"attendance",title:"Review class attendance",
+  detail:signals.attendance.markedSessions+" class sessions recorded.",
+  href:base+"/attendanceDetail",action:"Review",
  });
+ const messages=signals?.overviewActivity.studentMessagesLast7Days??null;
  priorities.push({
-  id:"discussions",title:"Questions in Discussions",
-  detail:"Read and reply to student questions in this class.",
+  id:"discussions",
+  title:messages===null?"Discussions":messages===0?"Check Discussions":
+   messages+" student "+(messages===1?"message":"messages")+" in the last 7 days",
+  detail:messages===null?"Open your class messages.":
+   messages===0?"No student messages were posted in the last 7 days.":
+   "Read and reply to recent student messages in this class.",
   href:base+"/discussions",action:"Reply",
  });
 
