@@ -2,7 +2,7 @@ import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getFacultyAssignmentReport} from "@/modules/courses/faculty-assessment-report-service";
-import {FacultyAssignmentReview} from "@/components/courses/faculty-assignment-review";
+import {FacultyPrototypeInlineGrader} from "@/components/courses/faculty-prototype-inline-grader";
 import {FacultySubmissionFileReview} from "@/components/courses/faculty-submission-file-review";
 import {assignmentFilesRuntimeEnabled} from "@/modules/courses/assignment-file-readiness";
 import {facultyAssignmentReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
@@ -87,8 +87,18 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
      <div className="px-5 py-5">
       <h3 className="text-sm font-bold text-[#1d293f]">Grade and student feedback</h3>
       <p className="faculty-proto-subtitle mt-1">Open the verified grading editor to enter a score, save privately, or publish it to the learner.</p>
-      <FacultyAssignmentReview assignmentId={assignment.id} deliveryId={assignment.deliveryId}
-       filesEnabled={assignmentFilesRuntimeEnabled()} maxPoints={assignment.maxPoints} status={assignment.status}/>
+      <FacultyPrototypeInlineGrader key={selected.id+":"+selected.version}
+       submission={{
+        id:selected.id,assignmentId:selected.assignmentId,deliveryId:selected.deliveryId,
+        membershipId:selected.membershipId,submissionType:selected.submissionType,
+        textContent:selected.textContent,submissionUrl:selected.submissionUrl,
+        submittedAt:selected.submittedAt.toISOString(),pointsAwarded:selected.pointsAwarded,
+        feedback:selected.feedback,gradingStatus:selected.gradingStatus,
+        gradePublished:selected.gradePublished,version:selected.version,
+        learnerDisplayName:selected.learnerDisplayName,learnerEmail:selected.learnerEmail,
+       }}
+       filesEnabled={assignmentFilesRuntimeEnabled()} maxPoints={assignment.maxPoints}/>
+       <Link className="faculty-proto-link mt-4 inline-block" href={"/teacher/report/assignment/"+encodeURIComponent(assignment.id)+"/submissions?deliveryId="+encodeURIComponent(assignment.deliveryId)}>Advanced submissions review and grading history</Link>
      </div>
     </>:<p className="faculty-proto-subtitle p-6">Select a submitted learner to see their work. Missing students have no submission to grade.</p>}
    </div>

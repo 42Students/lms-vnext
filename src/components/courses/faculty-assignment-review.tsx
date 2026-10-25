@@ -84,15 +84,17 @@ function formatDateTime(value: string) {
   }).format(date);
 }
 
-function SubmissionGradeCard({
+export function SubmissionGradeCard({
   submission,
   maxPoints,
   onUpdated,
   onRefresh,
   onBusyChange,
   filesEnabled,
+  hideSubmissionContent=false,
 }: {
   submission: Submission;
+  hideSubmissionContent?:boolean;
   maxPoints: number;
   filesEnabled: boolean;
   onUpdated: (submission: Submission) => void;
@@ -397,7 +399,7 @@ function SubmissionGradeCard({
         </StatusBadge>
       </div>
 
-      <div className="mt-3 min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
+      {!hideSubmissionContent?<div className="mt-3 min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
         {submission.submissionType === "FILE" && filesEnabled ? (
           <div className="space-y-3">
             {submission.textContent?<div>
@@ -415,7 +417,7 @@ function SubmissionGradeCard({
             {content.label}
           </Link>
         ) : <p role="status" className="text-sm text-muted-foreground">{content.message}</p>}
-      </div>
+      </div>:null}
 
       <form
         onSubmit={saveGrade}
