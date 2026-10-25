@@ -156,6 +156,59 @@ describe("Project Activity date filters precede the PostgreSQL row cap", () => {
   });
 });
 
+describe("Mentor resource-action search across the full authorized history",()=>{
+  it("finds archived resources beneath 125 newer created events before applying page limits",async()=>{
+    const archived=randomUUID();
+    const stamp="2027-02-01T18:30:00.123456Z";
+    await pool.query(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,occurred_at)
+      VALUES($1,$2,$3,$4,'PROJECTS','projects.resource.archived',
+      'project',$5,'Older resource removal',$6)`,[
+       archived,SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,
+       ids.project,stamp,
+    ]);
+    await pool.query(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,occurred_at)
+      SELECT gen_random_uuid(),$1::uuid,$2::uuid,$3::uuid,
+       'PROJECTS','projects.resource.created','project',$4::text,
+       'Newer resource addition','2027-02-01T19:30:00Z'::timestamptz
+      FROM generate_series(1,125)`,[
+       SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,ids.project,
+    ]);
+    // A forged same-project subject in another tenant may never appear.
+    await pool.query(`INSERT INTO activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,occurred_at)
+      VALUES($1,$2,$3,$4,'PROJECTS','projects.resource.archived',
+       'project',$5,'Other tenant removal',$6)`,[
+      randomUUID(),SEED_IDS.organization,SEED_IDS.collegeB,
+      SEED_IDS.superAdminUser,ids.project,stamp,
+    ]);
+    const range={category:"RESOURCE" as const,resourceAction:"Removed" as const,
+      from:"2027-02-02",to:"2027-02-02",size:10};
+    const page=await getProjectActivityPage(mentorContext,ids.project,range);
+    expect(page.events.map(e=>e.id)).toEqual([archived]);
+    expect(page.hasMore).toBe(false);
+    const added=await getProjectActivityPage(mentorContext,ids.project,{
+      ...range,resourceAction:"Added",size:100,
+    });
+    expect(added.events).toHaveLength(100);
+    expect(added.hasMore).toBe(true);
+    const cursor=added.events.at(-1)!;
+    const rest=await getProjectActivityPage(mentorContext,ids.project,{
+      ...range,resourceAction:"Added",size:100,
+      beforeTime:cursor.cursorOccurredAt,beforeId:cursor.id,
+    });
+    expect(rest.events).toHaveLength(25);
+    expect(rest.hasMore).toBe(false);
+    await expect(getProjectActivityPage({
+      ...mentorContext,membership:{...mentorContext.membership!,collegeId:SEED_IDS.collegeB},
+    },ids.project,range)).rejects.toBeDefined();
+  });
+});
+
 describe("Project Activity cursor pages on equal microsecond timestamps", () => {
   it("continues beyond 100 own events without duplicates, gaps or foreign access", async () => {
     await pool.query(`INSERT INTO activity_events
