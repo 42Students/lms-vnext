@@ -8,9 +8,9 @@ const route=readFileSync("src/app/api/courses/lessons/route.ts","utf8");
 describe("legacy lesson authoring is atomic and scoped",()=>{
  it("normalizes legacy lessonName and contentsDTOs without trusting arbitrary child identities",()=>{
   expect(lesson).toContain("const {contentsDTOs,lessonName,courseSlug,courseId,...lessonFields}=rawObject");
-  expect(lesson).toContain("if(resolvedLegacyPath&&lessonFields.learningPathId!==undefined");
-  expect(lesson).toContain("item.lessonId!==undefined");
-  expect(lesson).toContain("item.deliveryId!=null");
+  expect(lesson).toContain('if(resolvedLegacyPath&&lessonFields["learningPathId"]!==undefined');
+  expect(lesson).toContain('item["lessonId"]!==undefined');
+  expect(lesson).toContain('item["deliveryId"]!=null');
   expect(lesson).toContain("CONTENT_DELIVERY_MISMATCH");
   expect(lesson).toContain("createLessonContentInputSchema.parse");
  });

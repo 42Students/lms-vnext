@@ -12,7 +12,7 @@ describe("PR-S2-07 registered 0091 attachments",()=>{
   expect(projectSubmissionDraftInputSchema.shape.attachments).toBeDefined();
  });
  it("validates registered READY team scoped uploads and audits updates",()=>{
-  expect(source).toContain('file.status!=="READY"');
+  expect(source).toContain('projectFinalFileEvidenceIsVerified(file)');
   expect(source).toContain('resource.visibility!=="TEAM"');
   expect(source).toContain('eventType:"ATTACHMENTS_CHANGED"');
   expect(source).toContain('attachments:input.attachments??[]');

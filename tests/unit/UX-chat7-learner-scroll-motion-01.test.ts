@@ -20,8 +20,8 @@ describe("UX-chat7-learner-scroll-motion-01 hidden scrollbar resilience",()=>{
   expect(list).toContain('aria-label="Credits breakdown"');
   expect(list.match(/tabIndex=\{0\}/g)?.length).toBeGreaterThanOrEqual(2);
   expect(list.match(/overscroll-contain/g)?.length).toBeGreaterThanOrEqual(2);
-  expect(list).toContain("Scroll inside the list for more courses.");
-  expect(list).toContain("Scroll inside the list for the credits breakdown.");
+  expect(list).toContain("Showing the first 100 courses; use search to narrow the list.");
+  expect(list).toContain("Total {creditSummary.credits} Credits");
  });
  it("makes long quiz submissions focusable and provides a non-scrollbar cue",()=>{
   const quizzes=read("src/components/courses/learner-assessment-overview.tsx");

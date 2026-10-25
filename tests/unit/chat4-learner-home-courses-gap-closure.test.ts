@@ -98,8 +98,8 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
 
  it("LEARNER-home-courses-04 shows Semester Details, All Courses and Credits Breakdown",()=>{
   const s=source("src/components/courses/learner-course-list.tsx");
-  for(const title of ["Semester Details","All Courses","Credits Breakdown","Total "])expect(s).toContain(title);
-  expect(s).toContain("Showing first 100; search the full list below.");
+  for(const title of ['Semester:','aria-label="All courses"','aria-label="Credits breakdown"',"Total "])expect(s).toContain(title);
+  expect(s).toContain("Showing the first 100 courses; use search to narrow the list.");
  });
 
  it("LEARNER-home-courses-23 omits empty course About content",()=>{
