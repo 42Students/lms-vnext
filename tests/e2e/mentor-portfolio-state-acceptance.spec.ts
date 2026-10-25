@@ -69,13 +69,13 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
       .toHaveAttribute("href", "/mentor/review-history");
 
     await page.goto("/mentor/search");
-    await expect(page.getByRole("status")).toContainText("Enter a search term");
+    await expect(page.locator(".prototype-mentor-search-page").getByRole("status")).toContainText("Enter a search term");
     const search = page.locator("#mentor-unified-search");
     const unmatched = "missing-mentor-work-" + Date.now();
     await search.fill(unmatched);
     await search.press("Enter");
     await expect(page).toHaveURL(new RegExp("q=" + unmatched));
-    await expect(page.getByRole("status"))
+    await expect(page.locator(".prototype-mentor-search-page").getByRole("status"))
       .toContainText("No matching projects, tasks, students or resources");
     await page.goto("/mentor/search?q=hello&page=not-a-page");
     await expect(page.getByRole("alert"))
