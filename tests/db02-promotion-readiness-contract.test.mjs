@@ -6,7 +6,7 @@ import { test } from "node:test";
 const canonical = readFileSync(
   new URL("../scripts/sql/db02-academic-progression-and-rooms-staging.sql", import.meta.url),
   "utf8",
-);
+).replace(/\bCREATE OR REPLACE (FUNCTION|TRIGGER)\b/g, "CREATE $1");
 // Both guards are consolidated into canonical DB02 SQL; isolate this function
 // and its trigger to avoid matching other curriculum clauses in the whole draft.
 const promotionStart = canonical.indexOf("CREATE FUNCTION db02_guard_cohort_promotion_readiness()");

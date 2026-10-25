@@ -6,7 +6,7 @@ import { test } from "node:test";
 const canonical = readFileSync(
   new URL("../scripts/sql/db02-academic-progression-and-rooms-staging.sql", import.meta.url),
   "utf8",
-);
+).replace(/\bCREATE OR REPLACE (FUNCTION|TRIGGER)\b/g, "CREATE $1");
 const acceptance = readFileSync(
   new URL("../scripts/sql/db02-schedule-progression-integrity-acceptance-unregistered.sql", import.meta.url),
   "utf8",
