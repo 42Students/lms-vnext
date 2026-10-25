@@ -77,6 +77,33 @@ export async function mentorGoogleRefreshToken(
   refresh_token:refreshToken,grant_type:"refresh_token",
  }),fetchImpl);
 }
+/** A refreshable OAuth token is not sufficient proof of Calendar access.
+ * Probe the Events collection through Google with the saved scoped grant.
+ * No calendar entries, credential material or attendee details are returned.
+ */
+export async function mentorGoogleVerifyCalendarAccess(
+ accessToken:string,calendarId:string,fetchImpl:typeof fetch=fetch,
+):Promise<void>{
+ if(!accessToken||accessToken.length>4096||!calendarId||calendarId.length>254||
+    /[\x00-\x1f\x7f]/.test(calendarId))
+  throw new Error("GOOGLE_CALENDAR_CONNECTION_UNAVAILABLE");
+ const url=new URL(CALENDAR_ROOT+"/calendars/"+
+  encodeURIComponent(calendarId)+"/events");
+ url.searchParams.set("maxResults","1");
+ url.searchParams.set("fields","kind");
+ const response=await fetchImpl(url.toString(),{
+  method:"GET",redirect:"error",cache:"no-store",
+  headers:{Authorization:"Bearer "+accessToken,Accept:"application/json"},
+ });
+ if(!response.ok)throw new Error("GOOGLE_CALENDAR_ACCESS_REJECTED");
+ const raw=await response.text();
+ if(raw.length>4096)throw new Error("GOOGLE_CALENDAR_ACCESS_INVALID");
+ let data:unknown;
+ try{data=JSON.parse(raw);}catch{throw new Error("GOOGLE_CALENDAR_ACCESS_INVALID");}
+ if(!data||typeof data!=="object"||!("kind" in data)||
+   data.kind!=="calendar#events")
+  throw new Error("GOOGLE_CALENDAR_ACCESS_INVALID");
+}
 export type MentorCalendarEventInput={
  meetingId:string;title:string;agenda:string|null;
  startsAt:Date;endsAt:Date;timeZone:string;

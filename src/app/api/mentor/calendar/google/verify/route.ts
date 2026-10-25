@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
+import {mentorGoogleVerifyCalendarAccess} from "@/modules/projects/mentor-google-calendar-provider";
 import {getMentorGoogleAccessToken,mentorGoogleConnectionState}
  from "@/modules/projects/mentor-google-calendar-connection-service";
 export const runtime="nodejs";
@@ -22,7 +23,7 @@ export async function POST(request:Request){
  }catch(error){return apiErrorResponse(error);}
  try{
   const token=await getMentorGoogleAccessToken(context);
-  if(!token.accessToken)throw new Error("GOOGLE_CALENDAR_TOKEN_MISSING");
+  await mentorGoogleVerifyCalendarAccess(token.accessToken,token.calendarId);
   return NextResponse.json({verified:true},{headers});
  }catch{
   return NextResponse.json({verified:false,error:"GOOGLE_CALENDAR_VERIFICATION_FAILED"},

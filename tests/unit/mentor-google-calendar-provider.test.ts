@@ -1,7 +1,7 @@
 import {describe,expect,it,vi} from "vitest";
 import {mentorGoogleConfig,mentorGoogleConsentUrl,
  mentorGoogleEventBody,mentorGoogleUpsertMeeting,mentorGoogleRemoveMeeting,
- mentorGoogleEventId,mentorGoogleRefreshToken}
+ mentorGoogleEventId,mentorGoogleRefreshToken,mentorGoogleVerifyCalendarAccess}
  from "@/modules/projects/mentor-google-calendar-provider";
 const uuid="12345678-1234-4123-8123-123456789abc";
 const config={clientId:"client.apps.googleusercontent.com",
@@ -59,6 +59,22 @@ describe("Mentor Google Calendar real-provider bridge",()=>{
   const result=await mentorGoogleUpsertMeeting("token","primary",input,mock as typeof fetch);
   expect(result.meetUrl).toBeNull();
   expect(mock.mock.calls[1][1].method).toBe("PUT");
+ });
+ it("probes Events API and denies a token without Calendar permission",async()=>{
+  const allowed=vi.fn(async()=>new Response(JSON.stringify({kind:"calendar#events"}),{status:200}));
+  await expect(mentorGoogleVerifyCalendarAccess("token","primary",allowed as typeof fetch))
+    .resolves.toBeUndefined();
+  const [url,options]=allowed.mock.calls[0] as unknown as [string,RequestInit];
+  expect(url).toContain("/calendars/primary/events?");
+  expect(url).toContain("maxResults=1");
+  expect(url).toContain("fields=kind");
+  expect(options.method).toBe("GET");
+  const denied=vi.fn(async()=>new Response("",{status:403}));
+  await expect(mentorGoogleVerifyCalendarAccess("token","primary",denied as typeof fetch))
+    .rejects.toThrow("GOOGLE_CALENDAR_ACCESS_REJECTED");
+  const invalid=vi.fn(async()=>new Response(JSON.stringify({kind:"other"}),{status:200}));
+  await expect(mentorGoogleVerifyCalendarAccess("token","primary",invalid as typeof fetch))
+    .rejects.toThrow("GOOGLE_CALENDAR_ACCESS_INVALID");
  });
  it("fails closed on provider revocation and never treats 401 as success",async()=>{
   const bad=vi.fn(async()=>new Response("",{status:401}));
