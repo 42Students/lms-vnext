@@ -9,7 +9,7 @@ const identities: Record<GracefulRole, {
   uid: string; membershipId?: string; membershipRole?: string;
 }> = {
   learner: { uid: "seed-learner", membershipId: SEED_IDS.learnerCollegeAMembership },
-  faculty: { uid: "seed-shared-faculty", membershipId: SEED_IDS.facultyCollegeAMembership },
+  faculty: { uid: "seed-shared-faculty", membershipId: SEED_IDS.facultyCollegeAMembership, membershipRole: "FACULTY" },
   mentor: { uid: "lms_test_919100061103", membershipRole: "MENTOR" },
   college: { uid: "seed-college-admin", membershipId: SEED_IDS.collegeAdminMembership },
   tpo: { uid: "lms_test_919100061105", membershipRole: "TPO" },
@@ -47,6 +47,10 @@ export async function authenticateGracefulRole(
     await context.addCookies([{
       name: "lms_membership", value: matching!.id,
       url: baseUrl, sameSite: "Lax", httpOnly: true,
+    }]);
+    await context.addCookies([{
+      name:"lms_role",value:account.membershipRole,
+      url:baseUrl,sameSite:"Lax",httpOnly:true,
     }]);
   }
 }

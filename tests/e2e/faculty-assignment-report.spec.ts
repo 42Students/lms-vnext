@@ -8,6 +8,7 @@ test.skip(!secret,"Assignment Report acceptance requires isolated E2E auth");
 
 async function login(context:BrowserContext){
  await context.addCookies([
+  {name:"lms_role",value:"FACULTY",url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"},
   {name:E2E_IDENTITY_COOKIE_NAME,value:"seed-shared-faculty",
    url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"},
   {name:E2E_SECRET_COOKIE_NAME,value:secret!,

@@ -6,6 +6,7 @@ const secret=process.env.E2E_AUTH_SECRET;
 test.skip(!secret,"Faculty All Contacts browser requires E2E_AUTH_SECRET");
 async function login(context:BrowserContext){
  await context.addCookies([
+  {name:"lms_role",value:"FACULTY",url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"},
   {name:E2E_IDENTITY_COOKIE_NAME,value:"seed-shared-faculty",url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"},
   {name:E2E_SECRET_COOKIE_NAME,value:secret!,url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"},
   {name:"lms_membership",value:SEED_IDS.facultyCollegeAMembership,url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"},
