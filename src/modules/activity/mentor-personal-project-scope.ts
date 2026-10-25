@@ -44,6 +44,11 @@ export function mentorVisibleNotificationEventCondition(context:RequestContext){
        or(
          sql`${activityEvents.metadata} ->> 'projectId' = ${projectMembers.projectId}::text`,
          and(
+           // Metadata projectId is authoritative when present: a foreign
+           // project reference must never be rescued by an unrelated local
+           // subjectId. The subject fallback is exclusively for legacy
+           // direct-project events with no metadata projectId at all.
+           sql`${activityEvents.metadata} ->> 'projectId' is null`,
            inArray(activityEvents.subjectType,["project","project_instance"]),
            sql`${activityEvents.subjectId} = ${projectMembers.projectId}::text`,
          ),
