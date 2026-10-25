@@ -2,10 +2,15 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 const read=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
 describe("chat-7 mentor allocation and meeting safety",()=>{
-it("MEN-projects-meetings-51 auto-assignment acts on all eligible project tasks",()=>{
+it("MEN-projects-meetings-51 next-sprint auto-assignment is primary and project-wide allocation stays explicit",()=>{
 const source=read("src/components/projects/mentor-task-allocation.tsx");
-expect(source).toContain("Auto-assign");
-expect(source).toContain("eligible tasks");
+expect(source).toContain("Auto-assign next sprint");
+expect(source).toContain("/tasks/auto-assign-next");
+expect(source).toContain("expectedSprintUpdatedAt");
+expect(source).toContain("Advanced project-wide assignment");
+expect(source).toContain("includes the backlog and other eligible sprints");
+expect(source).toContain("/tasks/auto-assign");
+expect(source.indexOf("Auto-assign next sprint")).toBeLessThan(source.indexOf("Advanced project-wide assignment"));
 });
 it("MEN-projects-meetings-52 per-member workload uses done blocked and point counts",()=>{
 const source=read("src/components/projects/mentor-task-allocation.tsx");
