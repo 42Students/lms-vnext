@@ -244,7 +244,7 @@ test("Mentor posted Activity updates are persisted in scoped project events and 
   assert.match(route,/postMentorProjectUpdate\(/);
   assert.match(composer,/projectMutation\("\/api\/projects\/"/);
   assert.match(detail,/<MentorProjectUpdateComposer/);
-  assert.match(overview,/event\.eventType==="projects\.mentor_update\.posted"/);
+  assert.match(overview,/update\.eventType==="projects\.mentor_update\.posted"/);
 });
 
 test("Mentor sprint release controls and learner-facing brief derive from existing schema",()=>{
@@ -280,7 +280,9 @@ test("Mentor student watch uses active scoped learner roles and real blocked/rev
   assert.match(service,/eq\(collegeMemberships\.status,"ACTIVE"\)/);
   assert.match(service,/eq\(users\.platformStatus,"ACTIVE"\)/);
   assert.match(service,/isNull\(projectTasks\.deletedAt\)/);
-  assert.match(service,/projectTasks\.status,\["BLOCKED","IN_REVIEW"\]/);
+  assert.match(service,/inArray\(projectTasks\.status,\s*\["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW"\]\)/);
+  assert.match(service,/\$\{projectTasks\.status\} = 'BLOCKED'/);
+  assert.match(service,/\$\{projectTasks\.status\} = 'IN_REVIEW'/);
   assert.match(route,/getMentorStudentWatch\(context/);
   assert.match(home,/studentWatch\.slice\(0,5\)\.map/);
   assert.match(home,/Students to watch/);
@@ -416,7 +418,7 @@ test("Mentor Activity since-seen message states local-device limitations",()=>{
   assert.match(marker,/method:"POST"/);
   assert.match(marker,/cross-device tracking/);
   assert.match(marker,/newCount/);
-  assert.match(route,/<MentorActivitySinceLastVisit projectId=/);
+  assert.match(route,/<MentorActivitySinceLastVisit\s+projectId=/);
 });
 
 test("Mentor Resources show real pinned group without breaking resource actions",()=>{

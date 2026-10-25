@@ -189,11 +189,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
           <option value="DRAFT">Draft</option><option value="ARCHIVED">Archived</option>
         </Select>
       </label>
-      <label className="flex min-h-10 items-center gap-2 text-xs font-semibold">
+      <label className="flex min-h-11 items-center gap-2 text-xs font-semibold">
         <Checkbox className="size-5" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
         Pinned only
       </label>
-      {mode==="MENTOR"?<label className="flex min-h-10 items-center gap-2 text-xs font-semibold">
+      {mode==="MENTOR"?<label className="flex min-h-11 items-center gap-2 text-xs font-semibold">
         <Checkbox className="size-5" checked={groupBySprint}
           onChange={event=>setGroupBySprint(event.target.checked)}/>
         Show by sprint

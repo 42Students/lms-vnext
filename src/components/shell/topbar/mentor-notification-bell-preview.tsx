@@ -3,6 +3,7 @@ import Link from "next/link";
 import {useEffect,useRef,useState,type MouseEvent} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {safeNotificationActionHref} from "@/modules/activity/notification-action";
 import {mentorUnifiedOpenReadRequest,type MentorUnifiedNotification}
  from "@/modules/projects/mentor-unified-notification-model";
@@ -18,6 +19,7 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
  unreadCount:number|null;partial:boolean;
 }){
  const [open,setOpen]=useState(false);
+ const [confirmOpen,setConfirmOpen]=useState(false);
  const [busy,setBusy]=useState(false);
  const [working,setWorking]=useState<string|null>(null);
  const [items,setItems]=useState<readonly MentorUnifiedNotification[]>([]);
@@ -80,14 +82,14 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
   finally{setWorking(null);}
  }
  async function markAll(){
-  if(working||!window.confirm(
-   "Mark all currently visible personal, project-attention and college notifications as read? New changes will still appear."))return;
+  if(working)return;
   setWorking("all");setError("");
   try{
    await apiFetch("/api/mentor/notifications/unified-read-all",{
     method:"POST",credentials:"same-origin",timeoutMs:25000,
    });
    window.dispatchEvent(new Event("lms:notifications-updated"));
+   setConfirmOpen(false);
    await load();router.refresh();
   }catch(caught){setError(caught instanceof Error?caught.message:
     "Could not mark all notifications read.");}
@@ -145,12 +147,17 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
     <button type="button" className="text-xs underline"
      disabled={working!==null||busy}
-     onClick={()=>void markAll()}>Mark all read</button>
+     onClick={()=>setConfirmOpen(true)}>Mark all read</button>
     <Link href="/mentor/notifications" onClick={()=>setOpen(false)}
       className="text-sm font-semibold text-link underline">
       See all{hasMore?" notifications":" notifications"} →
     </Link>
    </div>
   </section>:null}
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+   title="Mark all Mentor notifications read?"
+   description="Acknowledge your current personal, project-attention and visible college notifications. New events may appear unread again."
+   confirmLabel="Mark all read" confirmVariant="primary" pending={working==="all"}
+   onConfirm={()=>void markAll()}/>
  </div>;
 }
