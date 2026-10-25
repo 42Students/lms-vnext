@@ -50,6 +50,7 @@ import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-requ
 import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
 import {recruiterChangeShortcut,RECRUITER_CHANGE_SHORTCUTS} from "@/modules/placements/recruiter-change-shortcuts-model";
 import {getRecruiterBookedInterviews} from "@/modules/placements/recruiter-booked-interviews-service";
+import {RecruiterJoiningReportForm} from "@/components/hr/recruiter-joining-report-form";
 import {Tabs} from "@/components/ui/tabs";
 
 function currentTimeMs(){return Date.now();}
@@ -861,6 +862,23 @@ export default async function HrPlacementJobPage({
               joiningDate:offer.joiningDate??"-",
             }))}
           /></section> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. When you know who you want to hire, send your selection list below; the placement cell checks it and releases the offers.</p>:null}
+          {offers.some(offer=>offer.status==="ACCEPTED")?<section aria-label="Recruiter joining reports" className="space-y-3 border-t border-border pt-4">
+            <h3 className="font-semibold text-foreground">Joining · report to the placement cell</h3>
+            <p className="text-sm text-body">
+              You can report Joined, Deferred or Did not join for an accepted offer.
+              The placement cell verifies the report and records the authoritative outcome.
+              These reports appear in the drive's discussion; an email or report never silently changes student records.
+            </p>
+            <div className="grid gap-3 md:grid-cols-2">
+              {offers.filter(offer=>offer.status==="ACCEPTED").map(offer=>
+                <RecruiterJoiningReportForm key={offer.id}
+                  collegeId={workspace.college.id} jobId={workspace.job.id}
+                  jobTitle={workspace.job.title} offerId={offer.id}
+                  candidate={offer.name||"Unnamed applicant"}
+                  currentOutcome={offer.joiningStatus}/>
+              )}
+            </div>
+          </section>:null}
           {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)&&offersPage.pages>1?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
