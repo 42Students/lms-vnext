@@ -5,6 +5,8 @@ import {getMentorAccountOverview} from
  "@/modules/projects/mentor-account-overview-service";
 import {AccountActions} from "@/components/shell/account-actions";
 import {PageHeader} from "@/components/ui/page-header";
+import {MentorGoogleCalendarAccount} from "@/components/projects/mentor-google-calendar-account";
+import {mentorGoogleConnectionState} from "@/modules/projects/mentor-google-calendar-connection-service";
 
 export const dynamic="force-dynamic";
 export default async function MentorAccountPage(){
@@ -14,6 +16,11 @@ export default async function MentorAccountPage(){
     !context.membership.roles.includes("MENTOR"))
    redirect("/dashboard");
  const account=await getMentorAccountOverview(context);
+ const googleConnection=account.projectsEnabled
+   ? await mentorGoogleConnectionState(context).catch(()=>({
+       connected:false,available:false,connectedAt:null,
+     }))
+   :null;
  return <div className="mx-auto max-w-3xl space-y-5">
   <PageHeader title="Mentor · My account"
     description="Your current college, contact details and assigned project teams."/>
@@ -50,6 +57,16 @@ export default async function MentorAccountPage(){
      <Link className="inline-flex min-h-11 items-center text-link underline"
        href="/mentor/projects">Open my teams →</Link>
    </>:<p>Project access is disabled for this college.</p>}
+  </section>
+  <section aria-label="Connected services" className="space-y-3 border-t border-border pt-4">
+   <h2 className="text-lg font-semibold">Connected services</h2>
+   {googleConnection
+     ? <MentorGoogleCalendarAccount {...googleConnection}/>
+     : <p>Project calendar connections are disabled for this college.</p>}
+   <p className="text-xs text-muted-foreground">
+     Google consent is separate from verified delivery of individual
+     meeting invitations or email notifications.
+   </p>
   </section>
   <section aria-label="Account actions" className="space-y-3 border-t border-border pt-4">
    <h2 className="text-lg font-semibold">Account actions</h2>
