@@ -75,8 +75,8 @@ describe("chat-16 recruiter email bridge security and resend policy",()=>{
   const inbound=read("src/modules/placements/recruiter-message-email-inbound-service.ts");
   expect(inbound).toContain("verifyRecruiterMailBridgeWithRotation({");
   expect(inbound).toContain("body:rawBody,signature,currentSecret:secret");
-  expect(inbound).toContain("previousSecret:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET");
-  expect(inbound).toContain("previousExpiresAt:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL");
+  expect(inbound).toContain('previousSecret:env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET"]');
+  expect(inbound).toContain('previousExpiresAt:env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL"]');
   expect(inbound).toContain("RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED");
   expect(inbound).toContain("g.verification_status='VERIFIED'");
   expect(inbound).toContain("'DRIVES'=any(g.capabilities)");

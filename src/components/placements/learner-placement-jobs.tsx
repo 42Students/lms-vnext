@@ -834,7 +834,12 @@ export function LearnerPlacementJobs({
             </div>
 
             <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt,snapshotNowIso)}</p>
-             <div className="mt-2 flex flex-wrap gap-2"><StatusBadge tone={urgency.tone}>{urgency.label}</StatusBadge></div>
+            {item.roleOption.minimumAnnualCtcInr===null&&item.roleOption.maximumAnnualCtcInr===null
+              ?<p className="mt-1 text-xs text-muted-foreground">Compensation: Not disclosed</p>:null}
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="sr-only">Deadline</span>
+              <StatusBadge tone={urgency.tone}>{urgency.label}</StatusBadge>
+            </div>
             {!item.canApply && !item.application ? (
               <div className="mt-3 min-w-0 border-t border-border pt-3 text-sm text-body"
                 aria-label="Why this role is not open to you">

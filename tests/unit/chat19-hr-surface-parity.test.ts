@@ -5,13 +5,14 @@ const source = (path: string) => readFileSync(path, "utf8");
 const hr = "src/app/(authenticated)/hr/";
 
 describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
-  it("separates Today sections using dividers rather than nested full-size cards", () => {
+  it("keeps the source-backed Today prototype rather than nested generic cards", () => {
     const text = source(hr + "home/page.tsx");
-    expect(text).toContain('aria-label="Next recruiter actions"');
-    expect(text).toContain('aria-label="Recruiter tasks" className="mt-3 grid min-w-0 grid-cols-1 overflow-hidden rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-3"');
-    expect(text).toContain('aria-label="Live recruiter hiring drives" className="border-b border-[var(--lms-canvas-border)] pb-6"');
-    expect(text).not.toContain('<section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">');
-    expect(text).toContain('border-b border-[var(--lms-canvas-border)] pb-6');
+    expect(text).toContain("<RecruiterTodayPrototype");
+    const view = source("src/components/hr/recruiter-today-prototype.tsx");
+    expect(view).toContain('aria-label="Needs you"');
+    expect(view).toContain('aria-label="This week"');
+    expect(view).toContain('aria-label="Waiting on the placement cell"');
+    expect(view).not.toContain('<section className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">');
   });
 
   it("uses a single old-LMS counter strip for calendar and company reports", () => {

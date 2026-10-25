@@ -7,9 +7,9 @@ describe("Super Admin department guard contracts",()=>{
   const f=source("src/components/admin/department-create-form.tsx");
   expect(f).toContain("Please enter department name");
   expect(f).toContain("Department name must be 255 characters or less");
-  expect(f).toContain('data.error==="DEPARTMENT_NAME_CONFLICT"');
+  expect(f).toContain('data["error"]==="DEPARTMENT_NAME_CONFLICT"');
   expect(f).toContain("DEPARTMENT_COPY.createFailed");
-  expect(f).toContain('data.code==="DEPARTMENT_NAME_CONFLICT"');
+  expect(f).toContain('data["code"]==="DEPARTMENT_NAME_CONFLICT"');
   expect(f).toContain('catch{fail("Failed to create department");}');
  });
  it("SA-academics-people-08 disables archive when dependencies are recorded or unknown",()=>{
