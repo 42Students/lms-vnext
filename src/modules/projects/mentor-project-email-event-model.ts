@@ -21,3 +21,14 @@ export function classifyMentorProjectEmailSource(event:{
   return {kind:"MEETING_REQUEST",projectId};
  return null;
 }
+
+/** A queued email must not outlive the actual submitted record. Accepted
+ * or review-requested submissions remain historical submissions; deleted
+ * records, rolled-back drafts and impossible missing submit timestamps do not.
+ */
+export function mentorProjectEmailSubmissionIsNotifiable(row:{
+ status:string;deletedAt:Date|null;submittedAt:Date|null;
+}|null):boolean{
+ return Boolean(row&&!row.deletedAt&&row.submittedAt&&
+   ["SUBMITTED","CHANGES_REQUESTED","APPROVED"].includes(row.status));
+}

@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {classifyMentorProjectEmailSource as classify} from
+import {classifyMentorProjectEmailSource as classify,
+ mentorProjectEmailSubmissionIsNotifiable as allowedSubmission} from
  "@/modules/projects/mentor-project-email-event-model";
 const projectId="11111111-1111-4111-8111-111111111111";
 const subjectId="22222222-2222-4222-8222-222222222222";
@@ -26,5 +27,22 @@ describe("Mentor external-email source allowlist",()=>{
    metadata:{projectId:"forged",status:"REQUESTED"}})).toBeNull();
   expect(classify({...base,eventType:kind,
    subjectId:"not-a-uuid",metadata:{projectId,status:"REQUESTED"}})).toBeNull();
+ });
+});
+
+describe("Mentor final-submission email dispatch recheck",()=>{
+ const submittedAt=new Date("2026-10-01T10:00:00.000Z");
+ it("permits current and historically reviewed submissions",()=>{
+  for(const status of ["SUBMITTED","CHANGES_REQUESTED","APPROVED"])
+   expect(allowedSubmission({status,submittedAt,deletedAt:null})).toBe(true);
+ });
+ it("suppresses missing, deleted and reverted-to-draft submissions",()=>{
+  expect(allowedSubmission(null)).toBe(false);
+  expect(allowedSubmission({status:"SUBMITTED",submittedAt,deletedAt:new Date()}))
+   .toBe(false);
+  expect(allowedSubmission({status:"DRAFT",submittedAt,deletedAt:null}))
+   .toBe(false);
+  expect(allowedSubmission({status:"SUBMITTED",submittedAt:null,deletedAt:null}))
+   .toBe(false);
  });
 });

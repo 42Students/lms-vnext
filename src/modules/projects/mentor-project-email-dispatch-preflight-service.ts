@@ -6,7 +6,8 @@ import {activityEvents,colleges,collegeMemberships,membershipRoles,
  projectInstances,projectMembers,projectMeetings,projectSubmissions,users}
  from "@/db/schema";
 import {mentorEmailPreferenceFromSavedEvent} from "./mentor-email-preference-model";
-import {classifyMentorProjectEmailSource} from "./mentor-project-email-event-model";
+import {classifyMentorProjectEmailSource,mentorProjectEmailSubmissionIsNotifiable}
+ from "./mentor-project-email-event-model";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {MentorProjectEmailDispatch} from "./mentor-project-email-provider";
 
@@ -50,12 +51,15 @@ export async function resolveMentorProjectEmailPreflight(
  // A submitted event must still point to its own real project submission;
  // a meeting request must still be waiting for response in this project.
  if(source.kind==="FINAL_SUBMISSION"){
-  const [submitted]=await db.select({id:projectSubmissions.id})
-   .from(projectSubmissions).where(and(
+  const [submitted]=await db.select({
+   id:projectSubmissions.id,status:projectSubmissions.status,
+   deletedAt:projectSubmissions.deletedAt,
+   submittedAt:projectSubmissions.submittedAt,
+  }).from(projectSubmissions).where(and(
     eq(projectSubmissions.id,event.subjectId),
     eq(projectSubmissions.projectId,project.id),
    )).limit(1);
-  if(!submitted)return null;
+  if(!mentorProjectEmailSubmissionIsNotifiable(submitted??null))return null;
  }else{
   const [requested]=await db.select({id:projectMeetings.id})
    .from(projectMeetings).where(and(
