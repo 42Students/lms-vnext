@@ -9,7 +9,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
  const base="/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/blueprint";
  const lessonUrl=(id:string,advanced=false)=>base+"?lesson="+encodeURIComponent(id)+(advanced?"&advanced=1#learning-path":"");
  const items=current?[
-  ...current.contents.map(item=>({id:item.id,title:item.title,kind:item.contentType,status:item.status,description:item.description??null})),
+  ...current.contents.map(item=>({id:item.id,title:item.title,kind:item.contentType,status:item.status,description:item.notes??null})),
   ...current.assignments.map(item=>({id:item.id,title:item.title,kind:"ASSIGNMENT",status:item.status,description:item.dueAt?"Due "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.dueAt):null})),
   ...current.quizzes.map(item=>({id:item.id,title:item.title,kind:"QUIZ",status:item.status,description:null})),
  ]:[];
@@ -41,7 +41,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
   <section className="min-w-0 overflow-hidden rounded-xl border border-[#e5ebf2]">
    <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e5ebf2] p-5">
     <div><h2 className="text-xl font-bold text-[#1d293f]">
-     {current?"Lesson "+(lessons.indexOf(current)+1)+": "+current.name:"No lesson selected"}
+     {current?"Lesson "+(lessons.findIndex(lesson=>lesson.id===current.id)+1)+": "+current.name:"No lesson selected"}
     </h2>
     <p className="faculty-proto-subtitle mt-1">{items.length} items · {workspace.learningPath?.status==="PUBLISHED"?"Published path":"Draft path"}</p></div>
     {current?<Link className="faculty-proto-action" href={lessonUrl(current.id,true)}>+ Lesson item</Link>:null}
