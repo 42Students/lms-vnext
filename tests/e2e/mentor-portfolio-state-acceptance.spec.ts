@@ -133,7 +133,7 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
       ["/mentor/reviews?age=INVALID", "Invalid review filters"],
     ] as const) {
       await page.goto(path);
-      await expect(page.getByRole("heading", { name: expected })).toBeVisible();
+      await expect(page.getByText(expected, { exact: true })).toBeVisible();
       await expect(page.getByRole("link", { name: "Clear filters" })).toHaveAttribute(
         "href", path.split("?")[0],
       );
@@ -144,9 +144,8 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
     await signIn(context, "seed-shared-faculty", SEED_IDS.facultyCollegeAMembership);
     await page.goto("/mentor/calendar");
     await expect(page.getByRole("heading", { name: "Meetings", level: 1 })).toBeVisible();
-    const disclosure = page.locator('details[data-slot="disclosure"]')
-      .filter({ has: page.locator('summary', { hasText: "Search & filters" }) }).first();
-    await disclosure.locator("summary").click();
+    await page.locator('details[data-slot="disclosure"] > summary')
+      .filter({ hasText: "Search & filters" }).click();
     const keyword = "unmatched-mentor-calendar-" + Date.now();
     const search = page.locator('input[name="search"][form="mentor-calendar-filters"]');
     await search.fill(keyword);
