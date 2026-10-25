@@ -493,11 +493,11 @@ describe("Projects P7B meetings", () => {
       expectedProjectUpdatedAt:workspace.project.updatedAt.toISOString(),
     });
     expect(created).toMatchObject({status:"SCHEDULED",meetingUrl:null,
-      agenda:"Location: Lab 2\\nReview the team demo"});
+      agenda:"Location: Lab 2\nReview the team demo"});
     const stored=await pool.query<{agenda:string;meeting_url:string|null}>(
       "SELECT agenda,meeting_url FROM project_meetings WHERE id=$1",[created.id]);
     expect(stored.rows[0]).toEqual({
-      agenda:"Location: Lab 2\\nReview the team demo",meeting_url:null,
+      agenda:"Location: Lab 2\nReview the team demo",meeting_url:null,
     });
     const nextWindow={...venueWindow,
       startsAt:"2099-12-27T13:35:00+05:30",
@@ -509,13 +509,13 @@ describe("Projects P7B meetings", () => {
     };
     const moved=await scheduleProjectMeeting(mentor,project.id,created.id,nextWindow);
     expect(moved).toMatchObject({status:"RESCHEDULED",meetingUrl:null,
-      agenda:"Location: Room 304\\nReview the team demo"});
+      agenda:"Location: Room 304\nReview the team demo"});
     await expect(scheduleProjectMeeting(mentor,project.id,created.id,{
       ...nextWindow,location:"Lab 999",
     })).rejects.toMatchObject({code:"PROJECT_MEETING_STALE_VERSION"});
     const latest=await listProjectMeetings(learner,project.id);
     expect(latest.find(item=>item.id===created.id)).toMatchObject({
-      agenda:"Location: Room 304\\nReview the team demo",meetingUrl:null,
+      agenda:"Location: Room 304\nReview the team demo",meetingUrl:null,
     });
     // Replacing an in-person venue with a valid online link may remove the
     // old venue; invalid empty link + no venue cannot erase the meeting mode.
