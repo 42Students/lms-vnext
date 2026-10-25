@@ -6,10 +6,13 @@ describe("Mentor cross audit delivery discovery and contrast",()=>{
   const nav=read("src/components/projects/mentor-project-tabs.tsx");
   const page=read("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
   const workspace=read("src/components/projects/project-workspace.tsx");
-  expect(nav).toContain('{ key: "delivery", label: "Delivery" }');
+  expect(nav).not.toContain('{ key: "delivery", label: "Delivery" }');
+  expect(nav).toContain('label: "Team & meetings"');
+  expect(nav).toContain('label: "Activity"');
   expect(page).toContain('delivery: "Overview"');
   expect(page).toContain('selectedTab === "delivery"');
-  expect(workspace).toContain('delivery: "Delivery"');
+  expect(workspace).toContain('activeSection === "delivery"');
+  expect(page).toContain('<MentorPrototypeDeliveryEvidence workspace={workspace}');
  });
  it("UX-mentor-cross-N02 ProjectList uses accessible text and keyboard focus on all roles",()=>{
   const src=read("src/components/projects/project-list.tsx");
