@@ -1,7 +1,7 @@
 import "server-only";
-import {and,asc,eq,inArray,isNotNull} from "drizzle-orm";
+import {and,asc,eq,gt,inArray,isNotNull,isNull,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,placementApplications,placementApplicationScreenings,users} from "@/db/schema";
+import {collegeMemberships,placementApplications,placementApplicationScreenings,placementRecruiterCollegeGrants,users} from "@/db/schema";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import type {RequestContext} from "@/modules/identity/context";
 import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
@@ -27,6 +27,16 @@ export async function getRecruiterBookedInterviews(context:RequestContext,jobId:
    confirmedAt:placementRoundCandidateSlots.confirmedAt,
    learnerConfirmedAt:placementRoundCandidateSlots.learnerConfirmedAt,
  }).from(placementRoundCandidateSlots)
+ // Re-check persisted grant at the instant of this privacy-sensitive read.
+ // A stale session grant is not authority after revocation or expiry.
+ .innerJoin(placementRecruiterCollegeGrants,and(
+   eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+   eq(placementRecruiterCollegeGrants.collegeId,workspace.college.id),
+   eq(placementRecruiterCollegeGrants.companyRelationshipId,workspace.job.companyRelationshipId),
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+   eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+   or(isNull(placementRecruiterCollegeGrants.validUntil),
+      gt(placementRecruiterCollegeGrants.validUntil,new Date()))))
  .innerJoin(placementApplications,and(
    eq(placementApplications.id,placementRoundCandidateSlots.applicationId),
    eq(placementApplications.jobId,workspace.job.id),
