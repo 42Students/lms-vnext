@@ -225,17 +225,16 @@ describe("core admin domains against PostgreSQL", () => {
       status: "ARCHIVED",
     });
 
-    // The archived college still has a live foreign key to its parent.
-    // An organization may be archived only when no active or archived colleges
-    // remain, so this attempted cascade must fail without deleting history.
+    // Legacy soft-delete semantics only block ACTIVE colleges. The archived
+    // college and its foreign key remain intact for future restore/audit.
     await expect(
       archiveOrganization(
         superAdmin,
         organization.id,
       ),
-    ).rejects.toMatchObject({
-      code: "ORGANIZATION_HAS_COLLEGES",
-      blockers: { active: 0, archived: 1 },
+    ).resolves.toMatchObject({
+      id: organization.id,
+      status: "ARCHIVED",
     });
   });
 
