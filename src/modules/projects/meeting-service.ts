@@ -36,6 +36,7 @@ import { ProjectsServiceError } from "./errors";
 import { isFutureProjectMeetingWindow } from "./meeting-window-policy";
 import {mentorMeetingFacilitationSchema,emptyMentorMeetingFacilitation} from "./mentor-meeting-facilitation-model";
 import {maySaveMentorMeetingStatus} from "./mentor-meeting-status-model";
+import {formatMentorMeetingVenueAgenda,parseMentorMeetingVenueAgenda} from "./mentor-meeting-form-model";
 import {
   projectMeetingIdSchema,
   projectMeetingTransitionInputSchema,
@@ -421,9 +422,13 @@ export async function scheduleProjectMeeting(
     // A direct call to the legacy scheduling service must obey the same
     // audited state machine as the Mentor UI. In particular, a changed time
     // cannot silently remain SCHEDULED; only SCHEDULED -> RESCHEDULED is valid.
+    const requestedAgenda=input.agenda===undefined?existing?.agenda??null:input.agenda;
+    const nextAgenda=input.location
+      ?formatMentorMeetingVenueAgenda(requestedAgenda,input.location):requestedAgenda;
+    const effectiveMeetingUrl=input.meetingUrl===undefined?existing?.meetingUrl??null:input.meetingUrl;
+    const effectiveVenue=parseMentorMeetingVenueAgenda(nextAgenda).location;
     if (!maySaveMentorMeetingStatus(existing?.status??null,targetStatus,timeChanged) ||
-      (targetStatus!=="DRAFT" && !(input.meetingUrl??existing?.meetingUrl) &&
-        !input.location && !/^(?:Location|Venue):\s*[^\n]+/i.test(existing?.agenda??"")))
+      (targetStatus!=="DRAFT" && !effectiveMeetingUrl && !effectiveVenue))
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     // MEN-projects-meetings-R02: prevent the organiser being double-booked
     // across multiple Project workspaces. The transaction-scoped lock makes
@@ -456,11 +461,9 @@ export async function scheduleProjectMeeting(
       status: targetStatus,
       meetingType: input.meetingType ?? existing?.meetingType ?? "GENERAL" as const,
       title: input.title,
-      agenda: input.location
-        ? "Location: "+input.location+"\n"+(input.agenda?.trim()??"")
-        : input.agenda===undefined?existing?.agenda??null:input.agenda,
+      agenda:nextAgenda,
       startsAt, endsAt, timeZone: input.timeZone,
-      meetingUrl: targetStatus==="DRAFT"?null:(input.meetingUrl??existing?.meetingUrl??null),
+      meetingUrl: targetStatus==="DRAFT"?null:effectiveMeetingUrl,
       scheduledByUserId: targetStatus==="DRAFT"?null:organiserId,
       scheduledByMembershipId:targetStatus==="DRAFT"?null:(existing?.scheduledByMembershipId??context.membership?.id??null),
       linkedSprintId: effectiveSprintId, linkedTaskId: effectiveTaskId,

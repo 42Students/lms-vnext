@@ -11,7 +11,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
-import { mentorMeetingCeremonyLabel, mentorMeetingScheduleError } from "@/modules/projects/mentor-meeting-form-model";
+import { mentorMeetingCeremonyLabel, mentorMeetingScheduleError, parseMentorMeetingVenueAgenda } from "@/modules/projects/mentor-meeting-form-model";
 import {emptyMentorMeetingFacilitation,mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import {projectMeetingTransitionPayload} from "@/modules/projects/project-meeting-transition-payload-model";
 
@@ -328,8 +328,9 @@ export function ScheduleProjectMeetingControl({
     meeting?.title ?? "",
   );
   const [agenda, setAgenda] = useState(
-    meeting?.agenda ?? "",
+    parseMentorMeetingVenueAgenda(meeting?.agenda).agenda,
   );
+  const [location,setLocation]=useState(()=>parseMentorMeetingVenueAgenda(meeting?.agenda).location);
   const [startsAt, setStartsAt] = useState(
     meeting
       ? toLocalInput(meeting.startsAt)
@@ -364,7 +365,9 @@ export function ScheduleProjectMeetingControl({
   const [error, setError] =
     useState<string | null>(null);
   const initialFacilitation=mentorMeetingFacilitationSchema.parse(meeting?.facilitation??emptyMentorMeetingFacilitation);
-  const dirty=title!==(meeting?.title??"")||agenda!==(meeting?.agenda??"")||
+  const dirty=title!==(meeting?.title??"")||
+    agenda!==parseMentorMeetingVenueAgenda(meeting?.agenda).agenda||
+    location!==parseMentorMeetingVenueAgenda(meeting?.agenda).location||
     startsAt!==(meeting?toLocalInput(meeting.startsAt):"")||
     endsAt!==(meeting?toLocalInput(meeting.endsAt):"")||
     meetingUrl!==(meeting?.meetingUrl??"")||
@@ -380,7 +383,8 @@ export function ScheduleProjectMeetingControl({
   function openDialog() {
     setScheduleMinStart(toLocalInput(new Date(Date.now() + 60_000)));
     setTitle(meeting?.title ?? "");
-    setAgenda(meeting?.agenda ?? "");
+    setAgenda(parseMentorMeetingVenueAgenda(meeting?.agenda).agenda);
+    setLocation(parseMentorMeetingVenueAgenda(meeting?.agenda).location);
     setStartsAt(
       meeting
         ? toLocalInput(meeting.startsAt)
@@ -428,6 +432,7 @@ export function ScheduleProjectMeetingControl({
       startsAt,
       endsAt,
       meetingUrl,
+      location,
       draft:meetingStatus==="DRAFT",
       nowMs: Date.now(),
     });
@@ -466,12 +471,14 @@ export function ScheduleProjectMeetingControl({
         meeting ? "PATCH" : "POST",
         {
           title: title.trim(),
-          agenda: agenda.trim() || undefined,
+          // An explicit null clears a removed venue; omission would retain old agenda.
+          agenda: agenda.trim() || null,
+          ...(location.trim()?{location:location.trim()}:{}),
           startsAt: toIso(startsAt),
           endsAt: toIso(endsAt),
           timeZone,
           status:meetingStatus,
-          meetingUrl:meetingStatus==="DRAFT"?null:meetingUrl.trim(),
+          meetingUrl:meetingStatus==="DRAFT"?null:meetingUrl.trim()||null,
           expectedProjectUpdatedAt: new Date(projectUpdatedAt).toISOString(),
           ...(meeting?{expectedUpdatedAt:new Date(meeting.updatedAt).toISOString()}:{}),
           meetingType,
@@ -522,7 +529,7 @@ export function ScheduleProjectMeetingControl({
             ? "Schedule Project meeting"
             : "New Project meeting"
         }
-        description="Add meeting details, then Save meeting plan. Drafts stay private. Scheduling accepts HTTP or HTTPS links; final outcomes use the separate Complete or Cancel actions."
+        description="Add meeting details, then Save meeting plan. Drafts stay private. Scheduling accepts a web link or physical venue; final outcomes use the separate Complete or Cancel actions."
       >
         <form
           noValidate
@@ -591,7 +598,7 @@ export function ScheduleProjectMeetingControl({
             </span>
             <Input
               type="url"
-              required={meetingStatus!=="DRAFT"}
+              required={meetingStatus!=="DRAFT"&&!location.trim()}
               value={meetingUrl}
               maxLength={500}
               placeholder="https://… or http://…"
@@ -601,6 +608,11 @@ export function ScheduleProjectMeetingControl({
                 )
               }
             />
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Physical venue (or use a meeting link)
+            <Input type="text" value={location} maxLength={200}
+              placeholder="Lab 2, Room 304" onChange={event=>setLocation(event.target.value)}/>
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label>

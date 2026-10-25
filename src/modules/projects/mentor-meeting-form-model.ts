@@ -1,4 +1,20 @@
 /** User-facing validation for the mentor schedule dialog. Local wall times use IST. */
+const storedVenueLine=/^(?:Location|Venue):[ \\t]*([^\\r\\n]+)(?:\\r?\\n|$)/i;
+
+/** Until a venue column is migrated, keep one structured venue line in agenda.
+ * Do not duplicate the line when a meeting is edited or rescheduled. */
+export function parseMentorMeetingVenueAgenda(value:string|null|undefined){
+  const source=value??"";
+  const matched=storedVenueLine.exec(source);
+  return matched?{location:matched[1]?.trim()??"",agenda:source.slice(matched[0].length)}:
+    {location:"",agenda:source};
+}
+export function formatMentorMeetingVenueAgenda(value:string|null|undefined,location:string){
+  const body=parseMentorMeetingVenueAgenda(value).agenda.trim();
+  const venue=location.trim();
+  return (venue?"Location: "+venue+(body?"\\n"+body:""):body)||null;
+}
+
 export function mentorMeetingCeremonyLabel(value: string): string {
   switch (value) {
     case "GENERAL": return "General";
@@ -56,6 +72,7 @@ export function mentorMeetingScheduleError(input: {
   startsAt: string;
   endsAt: string;
   meetingUrl: string;
+  location?:string;
   nowMs: number;
   draft?: boolean;
 }): string | null {
@@ -69,7 +86,9 @@ export function mentorMeetingScheduleError(input: {
   if (!Number.isFinite(end) || end <= start) {
     return "Meeting end time must be after the start time.";
   }
-  if (!input.draft && !input.meetingUrl.trim()) return "Meeting link is required.";
+  if ((input.location?.trim().length??0)>200) return "Physical venue must be at most 200 characters.";
+  if (!input.draft && !input.meetingUrl.trim() && !input.location?.trim())
+    return "Meeting link or physical venue is required.";
   if (input.meetingUrl.trim() && !mentorMeetingHttpUrl(input.meetingUrl.trim())) {
     return "Enter a valid meeting link.";
   }
