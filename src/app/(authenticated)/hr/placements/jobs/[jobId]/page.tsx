@@ -787,7 +787,36 @@ export default async function HrPlacementJobPage({
               Export offers CSV
             </Link>:null}
           </div>
-          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include only issued offer records, and the table loads 15 at a time. Pre-issue selections appear separately below. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
+          <section aria-label="Hiring offers and joining process" className="overflow-hidden rounded-xl border border-border bg-surface">
+             <ol className="divide-y divide-border">
+              <li className="flex min-w-0 items-start gap-3 p-4">
+               <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary">1</span>
+               <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-foreground">Send your selection list</h3>
+                <p className="mt-1 text-sm text-body">After interview and HR results, choose whom to hire. The placement cell checks eligibility and verifies each selection before releasing offers.</p>
+                <a href="#recruiter-selection-list" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Pick from those who clear or upload Excel</a>
+                <p className="text-xs text-muted-foreground">{selectionReadyIds.size} shared applicants have applied PASS outcomes in every completed evaluative round.</p>
+               </div>
+              </li>
+              <li className="flex min-w-0 items-start gap-3 p-4">
+               <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-secondary text-sm font-bold text-foreground">2</span>
+               <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-foreground">Students answer</h3>
+                <p className="mt-1 text-sm text-body">Students respond to official offers by their recorded deadlines. Offer letters are issued or withdrawn by the placement cell; a recruiter selection is not an offer.</p>
+                <p className="mt-2 text-xs text-muted-foreground">{offerSummary.awaitingReply} awaiting reply · {offerSummary.accepted} accepted · {offerSummary.declined} declined</p>
+               </div>
+              </li>
+              <li className="flex min-w-0 items-start gap-3 p-4">
+               <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-secondary text-sm font-bold text-foreground">3</span>
+               <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-foreground">Joining</h3>
+                <p className="mt-1 text-sm text-body">Report Joined, Deferred or Did not join against accepted offers below. The college verifies and records the official joining outcome.</p>
+                <p className="mt-2 text-xs text-muted-foreground">{offerSummary.joined} officially confirmed as joined</p>
+               </div>
+              </li>
+             </ol>
+            </section>
+            <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include only issued offer records, and the table loads 15 at a time. Pre-issue selections appear separately below. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
           <div className="grid min-w-0 gap-3 md:grid-cols-3">
             {[
               {label:"Recorded offers",value:offerSummary.recorded},
@@ -801,7 +830,7 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xl font-bold text-foreground">{item.value}</p>
             </div>)}
           </div>
-          <section className="space-y-2 border-b border-border pb-4 md:pb-6">
+          <section id="recruiter-selection-list" className="scroll-mt-24 "space-y-2 border-b border-border pb-4 md:pb-6">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds</h3>
             <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. Recruiters can submit a selection proposal; only the placement cell can verify and release a formal offer.</p>
             <RecruiterSelectionComposer
@@ -862,7 +891,7 @@ export default async function HrPlacementJobPage({
                 offer.joiningStatus==="DID_NOT_JOIN"?"Did not join":"-",
               joiningDate:offer.joiningDate??"-",
             }))}
-          /></section> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. When you know who you want to hire, send your selection list below; the placement cell checks it and releases the offers.</p>:null}
+          /></section> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers recorded for this filter. Use the selection list above to send eligible applicants for placement-cell verification.</p>:null}
           {offers.some(offer=>offer.status==="ACCEPTED")?<section aria-label="Recruiter joining reports" className="space-y-3 border-t border-border pt-4">
             <h3 className="font-semibold text-foreground">Joining · report to the placement cell</h3>
             <p className="text-sm text-body">
