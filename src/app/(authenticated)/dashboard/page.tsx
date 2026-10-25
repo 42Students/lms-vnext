@@ -34,6 +34,7 @@ import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-se
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { listSignedInRecruiterPendingInvites } from "@/modules/placements/public-recruiter-invite-accept-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   getPlacementTpoOperations,
 } from "@/modules/placements/tpo-operations-service";
@@ -318,9 +319,14 @@ async function MembershipDashboard({
         )
       : Promise.resolve(null),
     hasWorkspace("LEARNER")
-      ? listLearnerPlacementJobs(
-          context,
-        )
+      ? listLearnerPlacementJobs(context).catch((error: unknown) => {
+          // Placements is optional and eligibility-gated for Learners. Its
+          // denial must hide only the placement card, not crash the whole
+          // dashboard (including Mentor-route denial redirects). Preserve
+          // real DB/provider faults so they remain visible to operators.
+          if (error instanceof AuthorizationError) return null;
+          throw error;
+        })
       : Promise.resolve(null),
     hasActiveRecruiter(context)
       ? listOwnRecruiterPlacementJobs(

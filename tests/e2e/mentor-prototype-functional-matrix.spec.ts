@@ -212,6 +212,9 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
     "/mentor/projects/00000000-0000-4000-8000-000000000001/board-review"]){
    await page.goto(path);
    await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
+   await expect(page.getByRole("heading",{level:1,name:"Dashboard"})).toBeVisible();
+   await expect(page.locator("body"))
+    .not.toContainText("Application error: a server-side exception");
   }
  });
 
