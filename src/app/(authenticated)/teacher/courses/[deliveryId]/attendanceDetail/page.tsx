@@ -134,7 +134,7 @@ async function FacultyCourseAttendanceContent({
       </Link>
       </nav>
       <FacultyPrototypeAttendance workspace={workspace} deliveryId={deliveryId} selectedSessionId={initialSessionId}/>
-      <details className="border-t border-[#e5ebf2] pt-4" open={initialSessionId!==null} id="faculty-attendance-editor">
+      <details className="border-t border-[#e5ebf2] pt-4" open={initialSessionId!==null||(await searchParams).advanced==="1"} id="faculty-attendance-editor">
        <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Mark attendance and advanced session reports</summary>
        <div className="mt-5 space-y-4">
       <FacultyAttendanceWorkspace
