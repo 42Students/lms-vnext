@@ -35,3 +35,15 @@ describe("Recruiter company active roles respect authorized drive lifecycle",()=
   ])).toHaveLength(8);
  });
 });
+
+it("shows verified cleared counts, including zero, without inventing pending-round outcomes",()=>{
+ const base={
+  id:"a",title:"Engineer",status:"PUBLISHED",employmentType:"FULL_TIME",
+  publishedAt:null,closedAt:null,applications:100,submittedApplications:100,
+  withdrawnApplications:0,outstandingOffers:1,acceptedOffers:2,
+  declinedOffers:0,joinedOffers:2,
+ };
+ expect(recruiterCompanyHiringDisplay([{...base,cleared:64}])[0]?.cleared).toBe(64);
+ expect(recruiterCompanyHiringDisplay([{...base,cleared:0}])[0]?.cleared).toBe(0);
+ expect(recruiterCompanyHiringDisplay([{...base,cleared:null}])[0]?.cleared).toBeNull();
+});

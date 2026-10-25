@@ -46,6 +46,7 @@ export type RecruiterReportJob = {
 
 export type RecruiterReportCounts = {
   jobId: string;
+  cleared?:number|null;
   applications: number;
   submittedApplications: number;
   withdrawnApplications: number;
@@ -65,6 +66,7 @@ const EMPTY_COUNTS = {
   submittedApplications: 0,
   withdrawnApplications: 0,
   outstandingOffers: 0,
+  cleared:null as number|null,
   acceptedOffers: 0,
   declinedOffers: 0,
   joinedOffers: 0,

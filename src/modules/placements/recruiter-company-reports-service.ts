@@ -258,6 +258,43 @@ export async function getRecruiterCompanyReports(
           placementApplications.jobId,
         );
 
+  // The prototype's CLEARED column means applicants who have applied PASS
+  // outcomes in every completed evaluative round of this employer drive.
+  // Scheduled or pending rounds must not reduce the count; when no evaluative
+  // round is completed, NULL is honest and safer than inventing a zero.
+  // Only job IDs from the already authorized, paginated company/college query
+  // enter this aggregate. Never materialize student names or unshared notes.
+  const clearedRows=jobIds.length?await db.execute<{
+    jobId:string;cleared:number;
+  }>(sql`
+    with completed as (
+      select r.id,r.job_id
+      from placement_job_rounds r
+      where r.job_id in (${sql.join(jobIds.map(id=>sql`${id}::uuid`),sql`,`)})
+        and r.status='COMPLETED'
+        and r.kind in ('TEST','VENDOR_TEST','GD','INTERVIEW')
+    ), totals as (
+      select job_id,count(*)::int as required
+      from completed group by job_id
+    ), passing as (
+      select r.job_id,results.application_id,count(distinct r.id)::int as passed
+      from completed r
+      join placement_round_results results on results.round_id=r.id
+        and results.status='APPLIED' and results.outcome='PASS'
+      join placement_applications application on application.id=results.application_id
+        and application.job_id=r.job_id
+      join college_memberships membership on membership.id=application.membership_id
+        and membership.college_id=${collegeId}::uuid
+      group by r.job_id,results.application_id
+    )
+    select totals.job_id as "jobId",
+      count(passing.application_id) filter
+        (where passing.passed=totals.required)::int as cleared
+    from totals left join passing on passing.job_id=totals.job_id
+    group by totals.job_id,totals.required
+  `).then(value=>value.rows).catch(()=>[]):[];
+  const clearedByJob=new Map(clearedRows.map(row=>[row.jobId,Number(row.cleared)]));
+
   const summaryRecord = portfolioCounts[0];
 
   const summary = summarizeRecruiterReportPortfolio({
@@ -368,6 +405,7 @@ export async function getRecruiterCompanyReports(
         acceptedOffers: Number(record.acceptedOffers),
         declinedOffers: Number(record.declinedOffers),
         joinedOffers: Number(record.joinedOffers),
+        cleared:clearedByJob.get(record.jobId)??null,
       })),
     ),
   };

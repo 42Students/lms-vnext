@@ -79,11 +79,11 @@ export function RecruiterCompanyPrototype({
        hiring.length?<div className={styles.tableWrap}><table className={styles.table}>
         <thead><tr><th>DRIVE</th><th>APPLIED</th><th>CLEARED</th><th>OFFERED</th><th>JOINED</th><th>RATE</th></tr></thead>
         <tbody>{hiring.map(row=><tr key={row.id}><th scope="row"><Link href={"/recruiter/drives/"+encodeURIComponent(row.id)}>{row.title}</Link><small>{row.status==="PUBLISHED"?"Live":"Closed"}</small></th>
-          <td>{row.applied}</td><td title="Cleared-round counts are not verified in this report">—</td>
+          <td>{row.applied}</td><td>{row.cleared===null?"—":row.cleared}</td>
           <td>{row.offered}</td><td>{row.joined}</td><td>{row.joiningRate===null?"—":row.joiningRate+"%"}</td>
         </tr>)}</tbody></table></div>:<p className={styles.muted}>No authorized published or closed hiring drives at this college.</p>}
       {reportAvailable?<p className={styles.muted}>
-       Cleared-round counts are unavailable in this source. Rates are joined applicants divided by applications.
+       Cleared counts require an applied PASS outcome in every completed evaluative round; “—” means no verified count. Rates are joined applicants divided by applications.
        {hasMore?" Only the first 10 recent drives appear here; the report contains the rest.":""}
       </p>:null}
       <div className={styles.exports}>
