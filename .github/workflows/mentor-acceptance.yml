@@ -19,6 +19,7 @@ on:
       - "tests/integration/mentor*.test.ts"
       - "tests/integration/learner-project-activity-filters.test.ts"
       - "tests/e2e/mentor-prototype-functional-matrix.spec.ts"
+      - "tests/e2e/w03-mentor-surfaces.spec.ts"
 
 permissions:
   contents: read
