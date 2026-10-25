@@ -77,7 +77,8 @@ export default async function MentorCalendarPage({searchParams}:{
     <div className="prototype-mentor-calendar-heading">
       <PageHeader title="Meetings"
         description="Every scheduled meeting across your assigned projects, in one place."/>
-      <MentorCalendarQuickSchedule projects={choices}/>
+      <MentorCalendarQuickSchedule projects={choices}
+        googleConnected={googleConnection.connected}/>
       <MentorGoogleCalendarAccount {...googleConnection}/>
     </div>
     <section className="prototype-mentor-meetings-surface min-w-0"
