@@ -15,7 +15,7 @@ const acceptance = readFileSync(new URL(
 const base = readFileSync(new URL(
   "../scripts/sql/db02-academic-progression-and-rooms-staging.sql",
   import.meta.url,
-), "utf8");
+), "utf8").replace(/\bCREATE OR REPLACE (FUNCTION|TRIGGER)\b/g, "CREATE $1");
 const extension = base;
 
 test("consolidated SQL retains all seven history-parent functions and paired bodies", () => {

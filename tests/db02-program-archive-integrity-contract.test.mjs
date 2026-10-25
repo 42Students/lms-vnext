@@ -6,7 +6,7 @@ import { test } from "node:test";
 const sql = readFileSync(
   new URL("../scripts/sql/db02-academic-progression-and-rooms-staging.sql", import.meta.url),
   "utf8",
-);
+).replace(/\bCREATE OR REPLACE (FUNCTION|TRIGGER)\b/g, "CREATE $1");
 const acceptance = readFileSync(
   new URL("../scripts/sql/db02-program-archive-acceptance-unregistered.sql", import.meta.url),
   "utf8",
@@ -22,7 +22,7 @@ test("DB02 prevents program archive while live academic cohorts remain", () => {
 
 test("DB02 locks live parent program on both child create and status activation", () => {
   const cohortLifecycle = sql.slice(
-    sql.indexOf("CREATE OR REPLACE FUNCTION db02_guard_cohort_status_lifecycle()"),
+    sql.indexOf("CREATE FUNCTION db02_guard_cohort_status_lifecycle()"),
     sql.indexOf("CREATE TRIGGER db02_cohort_status_lifecycle_guard"),
   );
   assert.match(cohortLifecycle, /FROM programs\s+WHERE id = NEW\.program_id FOR SHARE/);
