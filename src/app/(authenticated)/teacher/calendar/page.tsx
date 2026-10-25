@@ -1,3 +1,4 @@
+import {FacultyPrototypeSchedule} from "@/components/courses/faculty-prototype-schedule";
 import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -44,9 +45,14 @@ export default async function FacultyCalendarPage({
   </section>;
   }
   const context=await getCurrentRequestContext();
-  const [primary,upcomingRead]=await Promise.all([
+  const [primary,upcomingRead,prototypeRead]=await Promise.all([
     getFacultyIstMonth(context,input.data),
     getFacultyClassSchedule(context,{startAt:new Date()}).then(value=>({available:true as const,value}))
+      .catch(()=>({available:false as const,value:null})),
+    getFacultyClassSchedule(context,{
+      startAt:new Date(Date.now()-7*86400000),
+      endAt:new Date(Date.now()+35*86400000),
+    }).then(value=>({available:true as const,value}))
       .catch(()=>({available:false as const,value:null})),
   ]);
   const {schedule,grid}=primary;
@@ -71,6 +77,19 @@ export default async function FacultyCalendarPage({
       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
       View live classes
     </Link>} />
+    {prototypeRead.available?<FacultyPrototypeSchedule
+      nowIso={new Date().toISOString()}
+      minDate={new Date(Date.now()-7*86400000).toISOString().slice(0,10)}
+      maxDate={new Date(Date.now()+35*86400000).toISOString().slice(0,10)}
+      events={[...new Map(prototypeRead.value.events.map(e=>[e.id,e] as const)).values()]
+        .filter(e=>!selected||e.deliveryId===selected||
+          (e.deliveryId===null&&schedule.courses.some(c=>c.deliveryId===selected&&c.sectionId===e.sectionId)))
+        .map(e=>({id:e.id,title:e.title,sectionName:e.sectionName,courseCode:e.courseCode,
+          startsAt:e.startsAt.toISOString(),location:e.location,deliveryId:e.deliveryId}))}
+      />:<Alert tone="warning">Unable to load the weekly schedule. The detailed calendar is still available below.</Alert>}
+    <details className="border-t border-[#e5ebf2] pt-4">
+      <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Advanced schedule and full calendar</summary>
+      <div className="mt-4 space-y-4">
     <section aria-label="Upcoming classes" className="min-w-0 space-y-3 border-b border-border pb-4">
      <div className="flex flex-wrap items-center justify-between gap-3">
       <h2 className="text-base font-semibold text-foreground">Next classes</h2>
@@ -172,5 +191,6 @@ export default async function FacultyCalendarPage({
       </p>
     </section>
     </Disclosure>
+    </div></details>
   </div>;
 }
