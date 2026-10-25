@@ -163,7 +163,7 @@ export default async function TpoPlacementRulesSettingsPage({
         </p>
       </section>
 
-      <Disclosure title="Current college-wide offer policy" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
+      <Disclosure title="Current college-wide offer policy" defaultOpen className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section className="min-w-0 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
