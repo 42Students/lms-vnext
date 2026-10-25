@@ -149,9 +149,9 @@ test("DB030 negative witness helpers accept independent learner identities", () 
     "tests/integration/db06-assessment-parent-scope.test.ts", "utf8",
   );
   assert.match(source,
-    /async function attempt\(db:Sql,q:string,d:string,m:string=SEED_IDS\.learnerCollegeAMembership\)/);
+    /async function attempt\(db:Sql,q:string,d:string,m:string=ownedLearnerMembership\)/);
   assert.match(source,
-    /async function submission\(db:Sql,a:string,d:string,m:string=SEED_IDS\.learnerCollegeAMembership\)/);
+    /async function submission\(db:Sql,a:string,d:string,m:string=ownedLearnerMembership\)/);
 });
 
 
