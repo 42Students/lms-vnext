@@ -14,9 +14,10 @@ export default async function MentorSearchPage({searchParams}:{
   const parsed=q.trim()?mentorUnifiedSearchQuery.safeParse(q):null;
   const pageRaw=Array.isArray(raw.page)?raw.page[0]:raw.page;
   const pageParse=mentorSearchPageSchema.safeParse(pageRaw??"0");
-  const invalid=(parsed!==null&&!parsed.success)||!pageParse.success;
+  const duplicates=Array.isArray(raw.q)||Array.isArray(raw.page);
+  const invalid=duplicates||(parsed!==null&&!parsed.success)||!pageParse.success;
   const page=pageParse.success?pageParse.data:0;
-  const found=parsed?.success&&pageParse.success
+  const found=!invalid&&parsed?.success&&pageParse.success
     ?await searchMentorWorkspacePage(await getCurrentRequestContext(),
        parsed.data,page):{results:[],hasMore:false,page:0};
   const results=found.results;
@@ -32,8 +33,8 @@ export default async function MentorSearchPage({searchParams}:{
         required/><button type="submit">Search</button></div>
     </form>
     {invalid?<p role="alert">Search must be between 1 and 100 characters, with a valid results page.</p>:null}
-    {!parsed?<p role="status">Enter a search term to find matching work in your assigned projects.</p>:null}
-    {parsed?.success&&results.length===0?<p role="status">
+    {!invalid&&!parsed?<p role="status">Enter a search term to find matching work in your assigned projects.</p>:null}
+    {!invalid&&parsed?.success&&results.length===0?<p role="status">
       {page>0?"No further results on this page. Return to an earlier page.": 
         "No matching projects, tasks, students or resources in your current Mentor workspaces."}
     </p>:null}
@@ -53,7 +54,7 @@ export default async function MentorSearchPage({searchParams}:{
         </Link></li>)}</ul>
       </section>;
     })}
-    {parsed?.success&&pageParse.success?<nav
+    {!invalid&&parsed?.success&&pageParse.success?<nav
       aria-label="Mentor search results pagination"
       className="flex flex-wrap items-center gap-4">
       {page>0?<Link className="min-h-11 text-link underline"

@@ -78,8 +78,14 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
     await expect(page.locator(".prototype-mentor-search-page").getByRole("status"))
       .toContainText("No matching projects, tasks, students or resources");
     await page.goto("/mentor/search?q=hello&page=not-a-page");
-    await expect(page.locator(".prototype-mentor-search-page").getByRole("alert"))
+    const searchSurface = page.locator(".prototype-mentor-search-page");
+    await expect(searchSurface.getByRole("alert"))
       .toContainText("with a valid results page");
+    await expect(searchSurface.getByRole("status")).toHaveCount(0);
+    await page.goto("/mentor/search?q=hello&q=world");
+    await expect(searchSurface.getByRole("alert"))
+      .toContainText("with a valid results page");
+    await expect(searchSurface.getByRole("status")).toHaveCount(0);
   });
 
   test("college administrators and selected TPOs cannot read Mentor report screens or export", async ({ page, context }) => {
