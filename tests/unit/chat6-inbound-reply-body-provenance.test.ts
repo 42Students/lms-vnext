@@ -16,8 +16,8 @@ describe("verified recruiter email reply provenance",()=>{
   const source=readFileSync("src/modules/placements/recruiter-message-email-inbound-service.ts","utf8");
   expect(source).toContain("verifyRecruiterMailBridgeWithRotation({");
   expect(source).toContain("body:rawBody,signature,currentSecret:secret");
-  expect(source).toContain("previousSecret:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET");
-  expect(source).toContain("previousExpiresAt:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL");
+  expect(source).toContain("previousSecret:env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET"]");
+  expect(source).toContain("previousExpiresAt:env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL"]");
   expect(source).toContain("senderVerified(input.auth,input.from)");
   expect(source).toContain('return auditResult("NOT_VERIFIED")');
   expect(source).toContain('return auditResult("WRONG_SENDER")');

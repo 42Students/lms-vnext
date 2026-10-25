@@ -125,8 +125,8 @@ describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()
  it("REC-calendar-messages-profile-R01 rejects untrusted inbound sender, invalid grant, and replay",()=>{
   const service=source("src/modules/placements/recruiter-message-email-inbound-service.ts");
   expect(service).toContain("verifyRecruiterMailBridgeWithRotation({");
-  expect(service).toContain("previousSecret:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET");
-  expect(service).toContain("previousExpiresAt:env.RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL");
+  expect(service).toContain("previousSecret:env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_SECRET"]");
+  expect(service).toContain("previousExpiresAt:env["RECRUITER_MESSAGE_INBOUND_HMAC_PREVIOUS_UNTIL"]");
   expect(service).toContain("lower(u.email)=");
   expect(service).toContain("g.verification_status='VERIFIED'");
   expect(service).toContain("g.valid_until > now()");

@@ -7,7 +7,7 @@ describe("public legacy redirect accessibility and privacy",()=>{
   const page=read("src/app/e2e/superadmin-login/page.tsx");
   expect(page).toContain('href="/login"');
   expect(page).toContain('process.env.NODE_ENV === "development"');
-  expect(page).toContain('process.env.E2E_AUTH_ENABLED === "true"');
+  expect(page).toContain('process.env["E2E_AUTH_ENABLED"] === "true"');
   expect(page).not.toContain("createSession");
   expect(page).not.toContain("SUPER_ADMIN");
  });
