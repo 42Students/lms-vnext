@@ -19,3 +19,15 @@ export function legacyTpoBranchReportRow(row:{
   branchPackageLpa(row.averagePackageInr),branchPackageLpa(row.highestPackageInr),
   row.registered,row.applicants,row.applications,row.acceptedOffers] as const;
 }
+
+
+/** Percent rails use a fixed 0–100 scale, never "largest branch = 100%".
+ * Missing or impossible denominators stay unavailable instead of becoming zero. */
+export function tpoBranchChartPercent(
+ placed:number,registered:number,reportedPercent:number|null,
+):number|null{
+ if(!Number.isFinite(placed)||!Number.isFinite(registered)||registered<=0||
+  placed<0||placed>registered||reportedPercent===null||
+  !Number.isFinite(reportedPercent)||reportedPercent<0||reportedPercent>100)return null;
+ return reportedPercent;
+}
