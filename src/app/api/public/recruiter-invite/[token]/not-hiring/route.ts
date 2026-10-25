@@ -34,7 +34,9 @@ export async function POST(request: Request, { params }: RouteContext) {
     const parsed=recruiterInviteNotHiringNoteSchema.safeParse(
       (payload as {note?:unknown}).note);
     if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
-    return NextResponse.json(await markRecruiterInviteNotHiring(token,new Date(),parsed.data));
+    return NextResponse.json(await (parsed.data
+      ?markRecruiterInviteNotHiring(token,new Date(),parsed.data)
+      :markRecruiterInviteNotHiring(token)));
   } catch (error) {
     return tpoRecruiterInviteApiErrorResponse(error);
   }
