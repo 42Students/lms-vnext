@@ -140,8 +140,8 @@ describe("Mentor next-sprint auto-assign crossing release numbering",()=>{
       and metadata->>'autoAssigned'='true'
       and metadata->>'sprintId'=$2`,[f.future.id,f.next.id]);
   expect(audit.rows).toHaveLength(1);
-  await expect(autoAssignMentorNextSprint(mentor,f.projectId,f.input))
-    .rejects.toBeDefined();
+  const retry=await autoAssignMentorNextSprint(mentor,f.projectId,f.input);
+  expect(retry).toMatchObject({sprintId:f.next.id,assigned:0,unassignedRemaining:0});
  });
  it("rejects stale sprint tokens and forged or cross-college Mentors without changes",async()=>{
   const f=await fixture();

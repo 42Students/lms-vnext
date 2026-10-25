@@ -161,7 +161,8 @@ describe("Mentor final delivery reviewed with immutable audit",()=>{
 
 describe("Mentor final delivery changes-requested persistence",()=>{
  it("requires feedback, rejects stale decisions and keeps revision unlocked",async()=>{
-  const {project,mentor,learner}=await fixture();
+  const {project,mentor,learner,sprint}=await fixture();
+  await startProjectSprint(mentor,project.id,sprint.id);
   const submissionId=randomUUID();
   const created=await pool.query<{updated_at:Date}>(`insert into project_submissions
     (id,project_id,version,status,summary,created_by_membership_id,

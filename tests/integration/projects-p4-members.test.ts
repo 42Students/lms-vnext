@@ -493,7 +493,7 @@ describe("Projects P4 team and mentor membership", () => {
       .toBe(SEED_IDS.learnerCollegeAMembership);
     const events=await pool.query<{subject_id:string}>(`
       select subject_id from activity_events
-      where subject_id=any($1::uuid[]) and event_type='projects.task.details_updated'
+      where subject_id=any($1::text[]) and event_type='projects.task.details_updated'
         and metadata->>'previousAssigneeMembershipId'=$2
     `,[work.rows.map(row=>row.id),SEED_IDS.learnerCollegeAMembership]);
     expect(events.rowCount).toBe(work.rows.length);

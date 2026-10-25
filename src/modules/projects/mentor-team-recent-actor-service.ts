@@ -20,7 +20,7 @@ export async function getMentorTeamRecentActorActivity(
  if(!users.length)return {};
  const rows=await getDb().select({
    actorId:activityEvents.actorUserId,
-   lastAt:sql<Date|null>`max(${activityEvents.occurredAt})`,
+   lastAt:sql<Date|string|null>`max(${activityEvents.occurredAt})`,
  }).from(activityEvents).where(and(
    eq(activityEvents.module,"PROJECTS"),
    eq(activityEvents.collegeId,scope.collegeId),
@@ -35,7 +35,10 @@ export async function getMentorTeamRecentActorActivity(
        eq(activityEvents.legacyProjectId,scope.project.legacyProjectId):undefined,
    ),
  )).groupBy(activityEvents.actorUserId);
- return Object.fromEntries(rows.flatMap(row=>
-   row.actorId&&row.lastAt&&Number.isFinite(row.lastAt.getTime())?
-     [[row.actorId,row.lastAt.toISOString()]]:[]));
+ return Object.fromEntries(rows.flatMap(row=>{
+   const instant=row.lastAt instanceof Date?row.lastAt:
+     typeof row.lastAt==="string"?new Date(row.lastAt):null;
+   return row.actorId&&instant&&Number.isFinite(instant.getTime())?
+     [[row.actorId,instant.toISOString()]]:[];
+ }));
 }
