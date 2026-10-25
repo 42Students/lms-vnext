@@ -15,15 +15,15 @@ being present is not test or acceptance evidence.
 | 03 Request a drive | `/hr/drives/new`, `hr-drive-draft-form`, drive request POST/PATCH | Formal request/draft/save/edit/resubmit exists. Verify round template, pay/CGPA/branch warnings, upload receipt, TPO acknowledgment and concurrency under PostgreSQL. |
 | 04 Overview | `/recruiter/drives/[jobId]` | Verify drive progress, next action, live applicant/funnel counts, closed read-only links and TPO authorization. |
 | 05 Applicants | `/recruiter/drives/[jobId]?tab=applicants` | Verify only shared shortlist, focused keyboard controls, notes/private ratings, resume access and result staging. |
-| 06 Rounds | `/recruiter/drives/[jobId]?tab=rounds` and `/interview-slots` | Slot proposals exist; candidate-specific panel schedules and confirmations are not proven equivalent to prototype. Require TPO booking integration and browser fixtures. |
-| 07 Offers/joining | `/recruiter/drives/[jobId]?tab=offers` | Selection composer, offer history and export exist. Recruiter direct joining action is not implemented; TPO authority, offer letters and completion flow need owner-safe verification. |
+| 06 Rounds | `/recruiter/drives/[jobId]?tab=rounds` and `/interview-slots` | Candidate-specific booked panel read added (`839e870`), including TPO and learner confirmation and active shortlist scope; print/resume controls added (`78bb4df`). Proposals and official bookings remain separate. Needs real database and browser acceptance. |
+| 07 Offers/joining | `/recruiter/drives/[jobId]?tab=offers` | Selection composer, offer history/export exist. Accepted-offer joining reports (`f901bda`) are sent to the placement cell without changing official outcomes. Eligible-only Excel-compatible CSV import (`961e9c1`) exists; native XLSX remains open. Verify actual offer/letter release and TPO joining writes. |
 | 08 Talk | `?tab=discussion`, `TpoDriveChangeRequests` | Existing persisted requests and replies retained. Commit `4f83af1` adds five prototype quick choices opening ASK dialog. Verify actual decision side effects and notifications. |
 | 09 Calendar | `/hr/calendar` | Round, slot, deadline and result-due sources exist. Verify event/college filters, week/month layouts and exact deep-link destinations. |
 | 10 Messages | `/hr/conversations` | Commit `4719f7b` adds two-pane inbox, reply, search and scoped thread selection; `bf87075` fixes chronology, `a41daee` opens first general thread. Retains advanced inbox. Requires browser/database acceptance. |
 | 11 Company & Team | `/hr/company` | About/hiring roles (`b570387`), colleague invite request (`48db25d`), cleared round aggregate (`d9c59f8`). Verify permissions, company-wide reports, multiple colleges and full export. |
 | 12 Bell/search/profile/picker | `/hr/profile`, recruiter topbar, notifications | Notifications and scoped search sources exist. Exercise unread/read, restricted data, cross-college choice, profile save/reload and keyboard dismissals. |
-| 13 Public Invitation | `/recruiter-invite/[token]` | OTP/join/consent source present. Verify real delivery, wrong/expired/replayed codes, company domain, revoked/expired invite and sign-in. |
-| 14 Public shared applicants | `/company-share/[token]` | Code gate, expiry, CSV and selected columns present; `8f7bb06` accepts prototype alphanumeric code and historical numeric codes. Verify real delivery, expiry, CSV scope and revoked proof. |
+| 13 Public Invitation | `/recruiter-invite/[token]` | OTP/join/consent source present; optional not-hiring note captured and capped to registered CRM field (`4a770a9`,`16b5460`). Verify real provider delivery, wrong/expired/replayed codes, company domain, revoked/expired invite and sign-in. |
+| 14 Public shared applicants | `/company-share/[token]` | Code gate, expiry, CSV and selected columns present; `8f7bb06` accepts prototype alphanumeric and legacy numeric codes. Six-cell paste/autofill UI (`3b6a3a5`) added. Verify real delivery, expiry, CSV scope and revoked proof. |
 
 ## Actual changes in this continuation
 
@@ -31,6 +31,15 @@ being present is not test or acceptance evidence.
 - `4f83af1`: drive Talk shortcuts connected to existing TPO-authorized change-request composer.
 - `d9c59f8`: completed evaluative round PASS totals on Company & Team; unresolved counts remain blank.
 - `872c1df`: browser acceptance cases for Messages/Company role gates.
+
+## Second implementation batch — 2026-10-26
+- `839e870`: scoped booked interview panel read, TPO/learner confirmation projection and pure tests.
+- `f901bda`: accepted-offer joining report to the authorized drive discussion (does not apply outcomes).
+- `3b6a3a5`, `4c867ff`: six-position code entry and hardened interview time display.
+- `4a770a9`, `16b5460`, `491e600`: optional not-hiring reason, 200-character bound to 255-character CRM column, compatibility.
+- `961e9c1`, `ee77bc2`: Excel-compatible CSV selection list import, strict eligible allowlist, formula escaping, explicit XLSX limitation.
+- `78bb4df`: print panel action and existing capped authorized resume export on the Rounds view.
+- `77ebd02`: seeded browser acceptance spec for Rounds and Offers; it must execute with eligible fixtures to count.
 
 ## Acceptance gate (not yet passed)
 
