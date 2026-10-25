@@ -35,7 +35,7 @@ concurrency:
 jobs:
   mentor-source:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -47,21 +47,14 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
-      - name: Mentor provider, revocation, file proof and candidate privacy unit tests
+      - name: Full Mentor unit, provider and adversarial source matrix
         run: |
-          npx vitest run \
-            tests/unit/mentor-calendar-filter-query-normalization.test.ts \
-            tests/unit/mentor-meeting-collection-pagination.test.ts \
-            tests/unit/mentor-quick-google-schedule-feedback.test.ts \
-            tests/unit/mentor-project-email-event-model.test.ts \
-            tests/unit/mentor-project-email-outbox-source.test.ts \
-            tests/unit/mentor-google-calendar-provider.test.ts \
-            tests/unit/mentor-google-calendar-connection.test.ts \
-            tests/unit/mentor-google-meeting-follow-up.test.ts \
-            tests/unit/mentor-email-preference-model.test.ts \
+          npx vitest run tests/unit/mentor- \
             tests/unit/PROJ-BREAK-chat9-member-candidate-privacy.test.ts \
             tests/unit/PROJ-BREAK-chat6-backlog-readiness-cross-scope.test.ts \
             tests/unit/PROJ-BREAK-chat6-delivery-grade-notices.test.ts
+      - name: Repository lint and UX guard
+        run: npm run lint
 
   mentor-postgres:
     runs-on: ubuntu-latest
@@ -95,13 +88,11 @@ jobs:
         env:
           DATABASE_URL: ""
         run: npm run db:test:prepare
-      - name: Mentor notification privacy, delivery and concurrent scheduling acceptance
+      - name: Complete registered Mentor PostgreSQL tenant, lifecycle and mutation regression
         run: |
           npx vitest run --config vitest.db.registered.config.ts \
+            tests/integration/mentor- \
             tests/integration/learner-project-activity-filters.test.ts \
-            tests/integration/mentor-notification-acknowledgment.test.ts \
-            tests/integration/mentor-sprint-signoff-adversarial.test.ts \
-            tests/integration/mentor-meeting-reschedule.test.ts \
             tests/integration/projects-p7b-meetings.test.ts
 
   mentor-browser:
