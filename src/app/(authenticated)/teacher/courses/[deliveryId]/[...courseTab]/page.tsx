@@ -109,6 +109,7 @@ export default async function FacultyCourseTabPage({
         contentFilter={filter}
         selectedLessonId={lessonId}
         selectedContentId={requestedContent}
+        advanced={query.advanced==="1"}
       />
     </div>
   );

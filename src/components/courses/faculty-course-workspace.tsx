@@ -23,6 +23,7 @@ import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submissio
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
 import { FacultyPrototypeCoursePriorities } from "./faculty-prototype-course-priorities";
+import {FacultyPrototypeBlueprint} from "./faculty-prototype-blueprint";
 import { FacultyCourseItemViewer } from "./faculty-course-item-viewer";
 import { CourseDisplayReadOnly } from "./course-display-read-only";
 import { FacultyContentOrderEditor } from "./faculty-content-order-editor";
@@ -409,6 +410,7 @@ export function FacultyCourseWorkspace({
   contentFilter="ALL",
   selectedLessonId=null,
   selectedContentId=null,
+  advanced=false,
 }: {
   workspace: Workspace;
   homeSignals: Awaited<
@@ -419,6 +421,7 @@ export function FacultyCourseWorkspace({
   contentFilter?:"ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
   selectedLessonId?:string|null;
   selectedContentId?:string|null;
+  advanced?:boolean;
 }) {
   const { course, learningPath, summary } =
     workspace;
@@ -540,6 +543,10 @@ export function FacultyCourseWorkspace({
 
       {view !== "OVERVIEW" ? (
         <>
+        <FacultyPrototypeBlueprint workspace={workspace} selectedLessonId={selectedLessonId}/>
+        <details className="border-t border-[#e5ebf2] pt-4" open={advanced}>
+         <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Full blueprint editor, publishing and content ordering</summary>
+         <div className="mt-5 space-y-5">
       {!learningPath ? (
         <EmptyState
           title="No current learning path"
@@ -775,6 +782,8 @@ export function FacultyCourseWorkspace({
           )}
         </>
       )}
+        </div>
+        </details>
         </>
       ) : null}
     </div>
