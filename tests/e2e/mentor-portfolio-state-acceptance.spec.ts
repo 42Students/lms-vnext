@@ -100,4 +100,81 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
       expect((await denied.json() as {error?:string}).error).toBe("PROJECT_ACCESS_DENIED");
     }
   });
+
+  test("activity, pending reviews and reviewed deliveries have keyboard-filtered empty and recovery states", async ({ page, context }) => {
+    await signIn(context, "seed-shared-faculty", SEED_IDS.facultyCollegeAMembership);
+    const unmatched = "mentor-browser-unmatched-" + Date.now();
+    const surfaces = [
+      { path: "/mentor/activity", form: "Mentor project activity filters", empty: "No recorded activity" },
+      { path: "/mentor/reviews", form: "mentor reviews filters", empty: "No deliveries awaiting review" },
+      { path: "/mentor/review-history", form: "mentor review history filters", empty: "No recorded delivery reviews" },
+    ] as const;
+    for (const surface of surfaces) {
+      await page.goto(surface.path);
+      const form = page.getByRole("search", { name: surface.form });
+      const search = form.locator('input[name="search"]');
+      await search.fill(unmatched);
+      await search.press("Enter");
+      await expect(page).toHaveURL(new RegExp("search=" + unmatched));
+      await expect(page.getByText(surface.empty, { exact: true })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Clear", exact: true }).first())
+        .toHaveAttribute("href", surface.path);
+      await page.goto(surface.path);
+      await expect(page.getByRole("search", { name: surface.form })).toBeVisible();
+    }
+    for (const [path, expected] of [
+      ["/mentor/activity?view=INVALID", "Invalid activity filters"],
+      ["/mentor/reviews?age=INVALID", "Invalid review filters"],
+    ] as const) {
+      await page.goto(path);
+      await expect(page.getByRole("heading", { name: expected })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Clear filters" })).toHaveAttribute(
+        "href", path.split("?")[0],
+      );
+    }
+  });
+
+  test("calendar keyword filtering and notification category tabs preserve real empty and selected states", async ({ page, context }) => {
+    await signIn(context, "seed-shared-faculty", SEED_IDS.facultyCollegeAMembership);
+    await page.goto("/mentor/calendar");
+    await expect(page.getByRole("heading", { name: "Meetings", level: 1 })).toBeVisible();
+    const disclosure = page.locator('details[data-slot="disclosure"]')
+      .filter({ has: page.locator('summary', { hasText: "Search & filters" }) }).first();
+    await disclosure.locator("summary").click();
+    const keyword = "unmatched-mentor-calendar-" + Date.now();
+    const search = page.locator('input[name="search"][form="mentor-calendar-filters"]');
+    await search.fill(keyword);
+    await search.press("Enter");
+    await expect(page).toHaveURL(new RegExp("search=" + keyword));
+    await expect(page.getByText(/^0 matching meetings of \d+ currently assigned\.$/)).toBeVisible();
+    await expect(page.getByRole("link", { name: "Clear", exact: true }).first())
+      .toHaveAttribute("href", "/mentor/calendar");
+
+    await page.goto("/mentor/notifications?pill=tasks");
+    let tabs = page.getByRole("navigation", { name: "Notification categories" });
+    await expect(tabs.getByRole("link", { name: "Tasks and teams" })).toHaveAttribute("aria-current", "page");
+    await tabs.getByRole("link", { name: "Meetings" }).click();
+    await expect(page).toHaveURL(/\/mentor\/notifications\?pill=meet$/);
+    tabs = page.getByRole("navigation", { name: "Notification categories" });
+    await expect(tabs.getByRole("link", { name: "Meetings" })).toHaveAttribute("aria-current", "page");
+    await tabs.getByRole("link", { name: "All", exact: true }).click();
+    await expect(page).toHaveURL(/\/mentor\/notifications$/);
+  });
+
+  test("unified search keyboard submits a real assigned project and opens its scoped overview", async ({ page, context }) => {
+    test.skip(process.env["MENTOR_E2E_SEED_PROJECT"] !== "true", "Requires dedicated persisted Mentor fixture");
+    await signIn(context, "seed-shared-faculty", SEED_IDS.facultyCollegeAMembership);
+    await page.goto("/mentor/search");
+    const search = page.locator("#mentor-unified-search");
+    await search.focus();
+    await expect(search).toBeFocused();
+    await search.fill("E2E Mentor Acceptance Project");
+    await search.press("Enter");
+    await expect(page).toHaveURL(/q=E2E/);
+    const project = page.getByRole("link", { name: /E2E Mentor Acceptance Project/ }).first();
+    await expect(project).toBeVisible();
+    await project.click();
+    await expect(page).toHaveURL(/\/mentor\/projects\/[0-9a-f-]{36}\?tab=overview$/i);
+    await expect(page.getByRole("heading", { name: "E2E Mentor Acceptance Project", level: 1 })).toBeVisible();
+  });
 });
