@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {istDateKey,type TpoCompaniesTodayRow} from "@/modules/placements/tpo-companies-today-model";
+import {istDateKey,splitTpoTodayFollowups,tpoTodayFocusHref,type TpoCompaniesTodayRow} from "@/modules/placements/tpo-companies-today-model";
 
 export type TpoTodayView="focus"|"agenda"|"brief";
 export type TpoTodayReply={
@@ -16,13 +16,6 @@ function formatTime(date:Date){
  return new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
  }).format(date);
-}
-function focusHref(scope:"MINE"|"TEAM",id?:string){
- const params=new URLSearchParams();
- if(scope==="TEAM")params.set("scope","TEAM");
- if(id)params.set("lead",id);
- const query=params.toString();
- return "/tpo/companies/today"+(query?"?"+query:"");
 }
 function messageHref(id:string){
  return "/tpo/messages?tab=recruiters&thread="+encodeURIComponent(id);
@@ -48,7 +41,7 @@ function FollowupRow({row,scope}:{row:TpoCompaniesTodayRow;scope:"MINE"|"TEAM"})
    <p className="mt-1 text-[13px] text-[#26354a]">{row.note?.trim()||"Recorded recruiter follow-up."}</p>
   </div>
   <Link className="inline-flex min-h-10 items-center rounded-lg bg-[#087f8b] px-4 text-[13px] font-bold text-white"
-   href={focusHref(scope,row.id)}>Log the call</Link>
+   href={tpoTodayFocusHref(scope,row.id)}>Log the call</Link>
  </li>;
 }
 
@@ -64,8 +57,7 @@ export function TpoTodayAlternateViews({
 }){
  const now=new Date(nowIso);
  const todayKey=istDateKey(now);
- const due=rows.filter(row=>istDateKey(new Date(row.dueAt))<=todayKey);
- const upcoming=rows.filter(row=>istDateKey(new Date(row.dueAt))>todayKey);
+ const {due,upcoming}=splitTpoTodayFollowups(rows,now);
  const days=Array.from({length:7},(_,index)=>{
   const date=new Date(now.getTime()+index*86400000);
   const key=istDateKey(date);
@@ -76,7 +68,7 @@ export function TpoTodayAlternateViews({
  const replyTasks=replyTotal??0;
  const taskCount=due.length+replyTasks;
  const firstAction=replies.find(item=>!item.accessEnded);
- const startHref=firstAction?messageHref(firstAction.id):focusHref(scope,due[0]?.id);
+ const startHref=firstAction?messageHref(firstAction.id):tpoTodayFocusHref(scope,due[0]?.id);
  const panel="min-w-0 overflow-hidden rounded-xl border border-[#e7ecf2] bg-white";
  const heading="border-b border-[#e7ecf2] px-4 py-4 text-[17px] font-bold text-[#172033]";
  return <div className="min-w-0 space-y-4 text-[#172033]" data-testid={"tpo.today."+view}>
@@ -87,8 +79,8 @@ export function TpoTodayAlternateViews({
       taskCount+" things need you today":"Your seven-day follow-up agenda"}</h1>
    </div>
    <div className="flex flex-wrap items-center gap-2">
-    <Link className="rounded-lg border border-[#d6e1ee] px-3 py-2 text-[13px] font-semibold text-[#26354a]" href={focusHref(scope)}>Focus</Link>
-    <Link className="rounded-lg border border-[#d6e1ee] px-3 py-2 text-[13px] font-semibold text-[#26354a]" href={focusHref(scope)+(scope==="TEAM"?"&":"?")+"view="+(view==="brief"?"agenda":"brief")}>{view==="brief"?"Agenda":"Brief"}</Link>
+    <Link className="rounded-lg border border-[#d6e1ee] px-3 py-2 text-[13px] font-semibold text-[#26354a]" href={tpoTodayFocusHref(scope)}>Focus</Link>
+    <Link className="rounded-lg border border-[#d6e1ee] px-3 py-2 text-[13px] font-semibold text-[#26354a]" href={tpoTodayFocusHref(scope)+(scope==="TEAM"?"&":"?")+"view="+(view==="brief"?"agenda":"brief")}>{view==="brief"?"Agenda":"Brief"}</Link>
     <Link className="rounded-lg bg-[#087f8b] px-4 py-3 text-[13px] font-bold text-white" href={startHref}>Start · {taskCount} things</Link>
    </div>
   </header>
@@ -97,7 +89,7 @@ export function TpoTodayAlternateViews({
   {view==="agenda"?<>
    <nav className="grid grid-cols-7 gap-2 max-sm:gap-1" aria-label="Next seven days">
     {days.map((day,index)=><Link key={day.key}
-     href={index===0?focusHref(scope):"/tpo/follow-ups?window=NEXT_7_DAYS"}
+     href={index===0?tpoTodayFocusHref(scope):"/tpo/follow-ups?window=NEXT_7_DAYS"}
      className={"rounded-xl border px-2 py-3 text-center "+(index===0?
       "border-[#087f8b] bg-[#eef8fa]":"border-[#e7ecf2] bg-white")}>
      <span className="block text-[11px] font-bold uppercase text-[#617084]">{formatDay(day.date).split(" ")[0]}</span>
@@ -140,7 +132,7 @@ export function TpoTodayAlternateViews({
     <ul>{upcoming.slice(0,8).map(row=><li key={row.id} className="border-b border-[#e8edf2] p-4 last:border-b-0">
      <p className="text-xs font-bold uppercase text-[#617084]">{formatDay(new Date(row.dueAt))}</p>
      <div className="mt-2 flex items-center justify-between gap-2"><span className="text-sm font-semibold">{row.leadName} · {row.companyName??"Recruiter"}</span>
-      <Link href={focusHref(scope,row.id)} className="text-xs font-bold text-[#087f8b]">Follow up</Link>
+      <Link href={tpoTodayFocusHref(scope,row.id)} className="text-xs font-bold text-[#087f8b]">Follow up</Link>
      </div>
     </li>)}</ul>
     {!upcoming.length?<p className="p-4 text-sm text-[#617084]">No further scheduled follow-ups in this preview.</p>:null}
