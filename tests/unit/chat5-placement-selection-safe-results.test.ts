@@ -35,7 +35,7 @@ describe("TPO release — no internal errors leak in partial results",()=>{
   const code=src("src/modules/placements/tpo-drive-selection-service.ts");
   const reconcile=code.slice(code.indexOf('if(selection.status==="VERIFIED"'),code.indexOf('if(candidate?.offer&&',code.indexOf('if(selection.status==="VERIFIED"')));
   expect(reconcile).toContain('candidate.offer.kind==="OFFER"');
-  expect(reconcile).toContain('matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id])');
+  expect(reconcile).toContain('matchesTpoSelectionReleaseRevision(locked,selection,expectedRecordedAt)');
   expect(reconcile).toContain('.for("update").limit(1)');
   expect(reconcile).toContain('persistedOffer.kind!=="OFFER"');
   expect(reconcile).toContain('persistedOffer.applicationId!==locked.applicationId');
@@ -47,7 +47,7 @@ describe("TPO release — no internal errors leak in partial results",()=>{
   // The post-issue write path also checks the client's original exact terms,
   // not merely VERIFIED, before accounting an offer release.
   const after=code.slice(code.indexOf('const offer=await issuePlacementOffer('));
-  expect(after).toContain('matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id])');
+  expect(after).toContain('matchesTpoSelectionReleaseRevision(locked,selection,expectedRecordedAt)');
   expect(after).toContain('if(locked.status==="RELEASED"&&locked.releasedOfferId===offer.id)return');
  });
  it("PLACEMENTS-SELECTION-CAS-04 behaviour: a version and every visible offer term must match exactly",()=>{
@@ -78,13 +78,15 @@ describe("TPO release — no internal errors leak in partial results",()=>{
   expect(matchesTpoSelectionReleaseRevision(saved,{...displayed,roleTitle:"Different job"},equivalent)).toBe(false);
   expect(matchesTpoSelectionReleaseRevision(saved,{...displayed,annualCtcInr:950001},equivalent)).toBe(false);
   const service=src("src/modules/placements/tpo-drive-selection-service.ts");
-  expect(service).toContain("!matchesTpoSelectionReleaseRevision(selection,selection,input.expectedRecordedAt[id])");
+  // The immutable expected revision is read once for each selected ID.
+  expect(service).toContain("const expectedRecordedAt = input.expectedRecordedAt[id]");
+  expect(service).toContain("!matchesTpoSelectionReleaseRevision(selection,selection,expectedRecordedAt)");
  });
  it("PLACEMENTS-SELECTION-CAS-06 rechecks all displayed selection terms under the verification lock",()=>{
   const service=src("src/modules/placements/tpo-drive-selection-service.ts");
   const start=service.indexOf("const candidateMap=new Map(",service.indexOf("export async function verifyAndReleaseTpoSelections"));
   const verification=service.slice(start,service.indexOf("const offer=await issuePlacementOffer(",start));
-  expect(verification).toContain("!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id])");
+  expect(verification).toContain("!matchesTpoSelectionReleaseRevision(locked,selection,expectedRecordedAt)");
   expect(verification).not.toContain("locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]");
   expect(verification).toContain('!["SELECTED","VERIFIED"].includes(locked.status)');
   expect(verification).toContain('await requireTpoJobActor(tx,context)');

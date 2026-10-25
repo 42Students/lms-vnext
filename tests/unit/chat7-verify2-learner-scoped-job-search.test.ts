@@ -6,8 +6,8 @@ describe("authenticated learner legacy job search",()=>{
   const route=readFileSync("src/app/api/placements/jobs/route.ts","utf8");
   expect(route).toContain("const own=await listLearnerPlacementJobs(context)");
   expect(route).toContain("filterLearnerPlacementJobs(permitted");
-  expect(route).toContain("responsibilities:item.job.legacyPostingDetails?.responsibilities");
-  expect(route).toMatch(/jobType:\s*parsed\.data\.jobType\s*\|\|\s*undefined/);
+  expect(route).toContain("responsibilities:item.job.legacyPostingDetails?.responsibilities??null");
+  expect(route).toContain("...(parsed.data.jobType ? {jobType:parsed.data.jobType} : {})");
   expect(route).not.toContain("const match=parsed.data.q.toLocaleLowerCase");
  });
 });

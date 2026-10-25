@@ -9,7 +9,8 @@ describe("Learner published placement Job Detail", () => {
     const page = read("src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx");
     expect(page).toContain("listLearnerPlacementJobs(context,new Date(),jobId)");
     expect(page).toContain("row.job.id===jobId");
-    expect(page).toContain('<EmptyState title="Job unavailable"');
+    expect(page).toContain('<EmptyState title="This drive can\'t be shown"');
+    expect(page).toContain("unpublished, or no longer visible to your selected college");
     expect(page).toContain("bookmarkActionsEnabled={savedJobs.available}");
     // Own historical applications remain readable after a drive is closed or
     // cancelled; an arbitrary unowned unpublished job still returns not-found.
