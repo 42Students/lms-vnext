@@ -2,7 +2,7 @@ import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {LEGACY_TPO_BRANCH_COLUMNS,legacyTpoBranchReportRow} from "@/modules/placements/tpo-branch-report-view-model";
-import {ReportBarChart} from "@/components/placements/report-bar-chart";
+import {TpoByBranchPrototypeChart} from "@/components/tpo/tpo-by-branch-prototype-chart";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -67,11 +67,7 @@ export default async function TpoByBranchReportPage({
       />
       <ReportMetrics metrics={workspace.report.metrics} />
       <ReportScopeNote note={workspace.registrationScopeNote} />
-      <ReportBarChart title="Placement rate by branch" units="percent"
-       rows={workspace.report.byBranch.flatMap(row=>row.placementRatePercent===null?[]:[{
-        label:row.departmentName,value:row.placementRatePercent,
-        detail:row.placed+" placed of "+row.registered+" registered",
-       }])}/>
+      <TpoByBranchPrototypeChart rows={workspace.report.byBranch}/>
 
       {workspace.noSeason ? (
         <EmptyState
