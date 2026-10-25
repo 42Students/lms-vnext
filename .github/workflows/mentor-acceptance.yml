@@ -41,6 +41,8 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Strict application typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
       - name: Mentor provider, revocation, file proof and candidate privacy unit tests
         run: |
