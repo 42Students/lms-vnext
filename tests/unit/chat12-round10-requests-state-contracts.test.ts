@@ -17,7 +17,7 @@ describe("chat-12 requests and verification queue residual contracts",()=>{
  it("TPO-requests-verification-29 keeps secure document review and prior decision evidence",()=>{
   const drawer=src("src/components/verification/VerificationReviewDrawer.tsx");
   expect(drawer).toContain("Recorded decision history");
-  expect(drawer).toContain("submittedSnapshot.education");
+  expect(drawer).toContain('submittedSnapshot["education"]');
   expect(drawer).toContain("documents/");
  });
 });

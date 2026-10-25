@@ -34,7 +34,7 @@ describe("UX-UNOWNED-TABLE-06 private verification education grid",()=>{
     expect(source.startsWith('"use client";')).toBe(true);
     expect(source).toContain('import { DataTable } from "@/components/ui/data-table"');
     expect(source).toContain('caption="Submitted education records"');
-    expect(source).toContain('verificationEducationRows(detail.review.submittedSnapshot.education)');
+    expect(source).toContain('verificationEducationRows(detail.review.submittedSnapshot["education"])');
     for(const col of ["Level","Institution","Year","Marks","Marksheet"])
       expect(source).toContain('header:"'+col+'"');
     expect(source).toContain('Open {doc.purpose==="RESUME"?"resume":doc.purpose==="MARKSHEET"?"marksheet":"document"} (private signed link)');
