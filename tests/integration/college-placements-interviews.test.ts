@@ -129,7 +129,7 @@ describe.skipIf(!enabled)("College Admin interviews: isolated PostgreSQL", () =>
     await pool!.query("UPDATE placement_application_screenings SET status='SHORTLISTED' WHERE application_id=$1", [d.app]);
     const other = await makeDrive();
     await pool!.query("UPDATE placement_application_screenings SET status='PENDING',decided_by_user_id=NULL,decided_at=NULL WHERE application_id=$1", [other.app]);
-    await expect(schedule(other.job, other)).rejects.toThrow(/shortlisted/);
+    await expect(schedule(other.job, other)).rejects.toThrow(/shortlist/i);
     const closed = await makeDrive("CLOSED");
     await expect(schedule(closed.job, closed)).rejects.toThrow(/open drive/);
   });
