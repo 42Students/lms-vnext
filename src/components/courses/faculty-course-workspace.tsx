@@ -450,8 +450,8 @@ export function FacultyCourseWorkspace({
 
       {view !== "BLUEPRINT" ? (
         <>
-      <FacultyPrototypeCoursePriorities signals={homeSignals} workspace={workspace} />
-      <details className="min-w-0 border-t border-[#e5ebf2] pt-3"><summary className="cursor-pointer text-sm font-semibold text-[#078191]">More course insights and teaching tools</summary><div className="mt-5 space-y-6">
+      <FacultyPrototypeCoursePriorities signals={homeSignals} workspace={workspace} display={display} />
+      <details id="course-details" open={advanced} className="min-w-0 border-t border-[#e5ebf2] pt-3"><summary className="cursor-pointer text-sm font-semibold text-[#078191]">More course insights and teaching tools</summary><div className="mt-5 space-y-6">
 
       <CourseDisplayReadOnly
         introductionText={
