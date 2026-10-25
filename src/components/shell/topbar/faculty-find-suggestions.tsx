@@ -7,7 +7,7 @@ import style from "./topbar.module.css";
 
 type Result={key:string;group:"Courses"|"Assignments"|"Quizzes";label:string;context:string;href:string};
 const permitted=(raw:unknown):raw is Result=>
- Boolean(raw)&&typeof raw==="object"&&
+ raw!==null&&typeof raw==="object"&&
  "key" in raw&&typeof raw.key==="string"&&
  "label" in raw&&typeof raw.label==="string"&&
  "context" in raw&&typeof raw.context==="string"&&
