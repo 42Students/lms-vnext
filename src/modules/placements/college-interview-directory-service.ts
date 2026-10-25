@@ -91,8 +91,8 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
   duration:sql<number>`extract(epoch from(${interviews.endsAt}-${interviews.startsAt}))/60`.as("slot_minutes"),
   status:sql<string>`case
     when ${interviews.status}='CANCELLED' then 'CANCELLED'
-    // Final persisted outcome takes precedence over an imported scheduled
-    // label. A fresh NO_SHOW result must remain visible in filtered lists.
+    -- Final persisted outcome takes precedence over an imported scheduled
+    -- label. A fresh NO_SHOW result must remain visible in filtered lists.
     when ${interviews.interviewOutcome} in ('COMPLETED','NO_SHOW')
       then ${interviews.interviewOutcome}
     when exists(select 1 from activity_events ae
