@@ -10,7 +10,7 @@ const secret=process.env.E2E_AUTH_SECRET;
  * successful mutation. Skip detail assertions when seed has no owned project. */
 async function signIn(
  context:BrowserContext,user:string,membershipId:string,
- role:"MENTOR"|"LEARNER"|"FACULTY"="MENTOR",
+ role:"MENTOR"|"LEARNER"|"FACULTY"|"COLLEGE_ADMIN"="MENTOR",
 ) {
  if(!secret)throw new Error("E2E_AUTH_SECRET is required");
  await context.clearCookies();
@@ -83,6 +83,59 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   await page.goto(base+"?tab=definitely-invalid");
   await expect(page.getByText("No project content available for this section."))
     .toBeVisible();
+ });
+
+ test("archived Mentor workspace stays readable but rejects team writes",async({page,context})=>{
+  // Use a fresh, independently named project so parallel browser tests cannot
+  // mutate the shared Mentor acceptance fixture or each other's team state.
+  await signIn(context,"seed-college-admin",SEED_IDS.collegeAdminMembership,"COLLEGE_ADMIN");
+  await page.goto("/college/projects/create");
+  const form=page.getByRole("region",{name:"Create workspace"});
+  const template=form.getByLabel("Template",{exact:true});
+  await template.selectOption({index:1});
+  const templateId=await template.inputValue();
+  expect(templateId).toMatch(/^[0-9a-f-]{36}$/i);
+  const unique=Date.now().toString();
+  const title="Mentor Archive Browser "+unique;
+  const created=await page.request.post("/api/projects",{
+   headers:{Origin:origin},
+   data:{collegeId:SEED_IDS.collegeA,templateId,title,
+    slug:"mentor-archive-browser-"+unique,initialStatus:"ACTIVE",
+    primaryMentorMembershipId:SEED_IDS.facultyCollegeAMembership,
+    learnerMembershipIds:[SEED_IDS.learnerCollegeAMembership]},
+  });
+  expect(created.status()).toBe(201);
+  const creation=await created.json() as {project?:{id?:string;updatedAt?:string}};
+  const projectId=creation.project?.id;
+  const expectedUpdatedAt=creation.project?.updatedAt;
+  expect(projectId).toMatch(/^[0-9a-f-]{36}$/i);
+  expect(expectedUpdatedAt).toBeTruthy();
+  const archive=await page.request.post("/api/projects/"+projectId+"/archive",{
+   headers:{Origin:origin},data:{expectedUpdatedAt},
+  });
+  expect(archive.status()).toBe(200);
+  const archived=await archive.json() as {project?:{status?:string}};
+  expect(archived.project?.status).toBe("ARCHIVED");
+
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  const base="/mentor/projects/"+projectId;
+  await page.goto(base+"?tab=team");
+  await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
+  await expect(page.locator(".prototype-mentor-title-line")).toContainText("Archived");
+  await expect(page.getByRole("region",{name:"Current project team"})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Add student"})).toHaveCount(0);
+  await expect(page.getByRole("button",{name:"Promote lead"})).toHaveCount(0);
+  await expect(page.getByRole("button",{name:"Edit role"})).toHaveCount(0);
+  const denied=await page.request.post("/api/projects/"+projectId+"/members",{
+   headers:{Origin:origin},
+   data:{membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER"},
+  });
+  expect(denied.status()).toBe(409);
+  expect((await denied.json() as {error?:string}).error).toBe("PROJECT_INVALID_STATE");
+  await page.goto(base+"?tab=overview");
+  await expect(page.getByRole("link",{name:/Edit project brief/})).toHaveCount(0);
+  await page.goto(base+"?tab=sprints");
+  await expect(page.getByRole("region",{name:"Plan a release or sprint"})).toHaveCount(0);
  });
 
  test("a learner cannot open any Mentor route, including deep-linked project tabs",async({page,context})=>{
