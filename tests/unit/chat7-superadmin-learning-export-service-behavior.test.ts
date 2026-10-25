@@ -38,7 +38,7 @@ describe("Super Admin assessment export service scoped pagination",()=>{
  it("SA-academics-people-64 passes the acting session and selected assignment filters to the authorized reader",async()=>{
   state.reader.mockResolvedValue({items:[row(0)],total:1,totalPages:1});
   const request=new Request("https://app.invalid/api/admin/assignments/export?q=Graphs&status=PUBLISHED&courseCode=CS401&scope=SECTION");
-  const response=await exportSuperAdminLearningDirectory(request,"ASSIGNMENT");
+  const response=await exportSuperAdminLearningDirectory(request,"ASSIGNMENT",state.reader);
   expect(response.status).toBe(200);
   expect(state.reader).toHaveBeenCalledTimes(1);
   const [context,kind,query]=state.reader.mock.calls[0];
@@ -60,7 +60,7 @@ describe("Super Admin assessment export service scoped pagination",()=>{
   });
   const response=await exportSuperAdminLearningDirectory(new Request(
    "https://app.invalid/api/admin/quizzes/export?results=HIDDEN&courseCode=CS401&scope=SHARED"
-  ),"QUIZ");
+  ),"QUIZ",state.reader);
   expect(response.status).toBe(200);
   expect(state.reader).toHaveBeenCalledTimes(2);
   for(const call of state.reader.mock.calls){
@@ -77,7 +77,7 @@ describe("Super Admin assessment export service scoped pagination",()=>{
   }));
   const response=await exportSuperAdminLearningDirectory(new Request(
    "https://app.invalid/api/admin/assignments/export?status=PUBLISHED"
-  ),"ASSIGNMENT");
+  ),"ASSIGNMENT",state.reader);
   expect(response.status).toBe(200);
   expect(state.reader).toHaveBeenCalledTimes(20);
   expect(response.headers.get("X-Export-Truncated")).toBe("true");

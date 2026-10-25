@@ -39,7 +39,7 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
    return {items:Array.from({length:page===3?11:COLLEGE_ASSESSMENT_PAGE_SIZE},(_,i)=>row((page-1)*COLLEGE_ASSESSMENT_PAGE_SIZE+i)),
     total:51,totalPages:3};
   });
-  const out=await exportCollegeAssessments(context,"QUIZ",{status:"PUBLISHED",exportMode:"ALL"});
+  const out=await exportCollegeAssessments(context,"QUIZ",{status:"PUBLISHED",exportMode:"ALL"},state.reader);
   expect(state.reader).toHaveBeenCalledTimes(3);
   for(const call of state.reader.mock.calls){
    expect(call[0]).toBe(context);
@@ -57,7 +57,7 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
    items:Array.from({length:COLLEGE_ASSESSMENT_PAGE_SIZE},(_,i)=>row((query.page-1)*COLLEGE_ASSESSMENT_PAGE_SIZE+i)),
    total:1001,totalPages:Math.ceil(1001/COLLEGE_ASSESSMENT_PAGE_SIZE),
   }));
-  const out=await exportCollegeAssessments(context,"ASSIGNMENT",{exportMode:"ALL"});
+  const out=await exportCollegeAssessments(context,"ASSIGNMENT",{exportMode:"ALL"},state.reader);
   expect(out.rows).toHaveLength(1000);
   expect(out.truncated).toBe(true);
   expect(out.cap).toBe(1000);

@@ -259,7 +259,7 @@ describe("chat-3 Drives round 4",()=>{
   const form=source("src/components/placements/placement-job-create-form.tsx");
   expect(form).toContain("const deadlineTimeChosen=useRef(false)");
   expect(form).toContain("if(!deadlineTimeChosen.current&&");
-   expect(form).toContain('if(typeof saved.values.applicationDeadline==="string"&&saved.values.applicationDeadline.trim()){');
+   expect(form).toContain('if(typeof saved.values["applicationDeadline"]==="string"&&saved.values["applicationDeadline"].trim()){');
   expect(form).toContain("field.value=driveDeadlineIstEndOfDay(field.value);deadlineTimeChosen.current=true");
   expect(form).toContain("A newly selected date defaults to 11:59 PM; you can change the time.");
   expect(form).toContain('markDirty();');

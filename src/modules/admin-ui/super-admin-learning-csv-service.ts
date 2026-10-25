@@ -8,7 +8,8 @@ import {listCollegeAssessmentAggregate} from "@/modules/courses/college-assessme
 import {adminLearningQuerySchema} from "@/modules/courses/admin-learning-read-model";
 import {adminAssessmentQuerySchema} from "@/modules/courses/admin-assessment-directory-model";
 type Kind="LESSONS"|"PROGRESS"|"ASSIGNMENT"|"QUIZ";
-export async function exportSuperAdminLearningDirectory(request:Request,kind:Kind):Promise<Response>{
+export async function exportSuperAdminLearningDirectory(request:Request,kind:Kind,
+ reader:typeof listCollegeAssessmentAggregate=listCollegeAssessmentAggregate):Promise<Response>{
  try{
   // Exports are private Super Admin endpoints. Deny stale or lower-privilege
   // contexts before echoing even generic filter validation feedback.
@@ -52,7 +53,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
     rows.push(...data.items.map(item=>[item.offeringId,item.courseName,item.courseCode,item.cohortName,item.periodName,item.offeringStatus,item.recordedRows,item.completedRows,item.learnersWithRecords]));
     if(page>=data.totalPages)break;
    }else{
-    const data=await listCollegeAssessmentAggregate(context,kind,{...params.data,page});
+    const data=await reader(context,kind,{...params.data,page});
     total=data.total;
     collegeId=data.collegeId;
     if(pageOnly){

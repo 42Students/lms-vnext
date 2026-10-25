@@ -9,12 +9,13 @@ import {COLLEGE_ASSESSMENT_EXPORT_CAP,collegeAssessmentExportQuerySchema,renderC
  * route-level aggregate reader and leaking/mixing the wrong assessment scope.
  * The cap bounds both exported rows and SQL query count.
  */
-export async function exportCollegeAssessments(context:RequestContext,kind:CollegeAssessmentKind,raw:unknown){
+export async function exportCollegeAssessments(context:RequestContext,kind:CollegeAssessmentKind,raw:unknown,
+ reader:typeof listCollegeAssessmentAggregate=listCollegeAssessmentAggregate){
  const {exportMode,...query}=collegeAssessmentExportQuerySchema.parse(raw);
  // An assignment cannot request a quiz-only results filter or CLOSED status.
  // Share the same kind-aware validation as the paged directory before any read.
  const validatedQuery=parseCollegeAssessmentQuery(kind,{...query,page:1});
- const first=await listCollegeAssessmentAggregate(context,kind,{...validatedQuery,page:exportMode==="PAGE"?query.page:1});
+ const first=await reader(context,kind,{...validatedQuery,page:exportMode==="PAGE"?query.page:1});
  if(exportMode==="PAGE")return {
   rows:first.items,truncated:false,cap:COLLEGE_ASSESSMENT_PAGE_SIZE,
   csv:renderCollegeAssessmentPageCsv(kind,first.items),
@@ -23,7 +24,7 @@ export async function exportCollegeAssessments(context:RequestContext,kind:Colle
  const rows=[...first.items];
  const lastPage=Math.min(first.totalPages,Math.ceil(COLLEGE_ASSESSMENT_EXPORT_CAP/COLLEGE_ASSESSMENT_PAGE_SIZE));
  for(let page=2;page<=lastPage;page++){
-  const next=await listCollegeAssessmentAggregate(context,kind,{...validatedQuery,page});
+  const next=await reader(context,kind,{...validatedQuery,page});
   rows.push(...next.items);
  }
  const data={rows:rows.slice(0,COLLEGE_ASSESSMENT_EXPORT_CAP),
