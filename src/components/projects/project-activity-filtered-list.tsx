@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,7 @@ import {mentorFewestRecordedContributors} from "@/modules/projects/mentor-week-c
 import {mentorActivityMatchesDateFilters,mentorActivityIstDayKey}
  from "@/modules/projects/mentor-activity-date-filter-model";
 
-type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
+type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;subjectType?:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
 
 function resourceLabel(value:string|null|undefined):string {
@@ -37,6 +38,23 @@ const eventIstDay=(value:string|Date)=>{
 };
 type Cursor={time:string;id:string};
 type Page={events:Event[];hasMore:boolean;nextCursor:Cursor|null};
+/** The route authorizes this project and tenant before resolving any event IDs. */
+function mentorEventHref(projectId:string,event:Event):string{
+ const base="/mentor/projects/"+encodeURIComponent(projectId);
+ const safeId=typeof event.subjectId==="string"&&
+   /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(event.subjectId)
+   ?encodeURIComponent(event.subjectId):null;
+ if(event.subjectType==="project_task"&&safeId)
+   return base+"?tab=board&scope=all&task="+safeId;
+ if(event.subjectType==="project_sprint"&&safeId)
+   return base+"?tab=board&sprint="+safeId;
+ if(event.subjectType==="project_meeting"&&safeId)
+   return base+"?tab=team#meeting-"+safeId;
+ if(event.subjectType==="project_resource")return base+"?tab=resources";
+ if(event.eventType.startsWith("projects.delivery."))return base+"?tab=delivery";
+ if(event.eventType.startsWith("projects.resource."))return base+"?tab=resources";
+ return base+"?tab=activity";
+}
 
 export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false,weekContributors=[],weekTotals=null,actorOptions=[]}:{
  projectId:string;events:Event[];now:string;resourceAudit?:boolean;
@@ -68,6 +86,26 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
   return ()=>{generation.current+=1;actorGeneration.current+=1;};
  },[projectId,events]);
  async function loadMore(){
+  if(remoteActive){
+    if(remoteBusy||!remote||remote.key!==remoteKey||!remote.hasMore||!remote.nextCursor)return;
+    setRemoteBusy(true);setRemoteError("");
+    const params=new URLSearchParams(serverParams);
+    params.set("beforeTime",remote.nextCursor.time);
+    params.set("beforeId",remote.nextCursor.id);
+    try{
+      const page=await apiFetch<Page>("/api/projects/"+encodeURIComponent(projectId)+
+        "/activity?"+params.toString(),{cache:"no-store"});
+      setRemote(old=>{
+        if(!old||old.key!==remoteKey)return old;
+        const seen=new Set(old.events.map(event=>event.id));
+        return {...old,events:[...old.events,...page.events.filter(event=>!seen.has(event.id))],
+          hasMore:page.hasMore,nextCursor:page.nextCursor};
+      });
+    }catch(reason){setRemoteError(reason instanceof Error?reason.message:
+      "Could not load more matching history. Retry.");}
+    finally{setRemoteBusy(false);}
+    return;
+  }
   if(actor||sprint){
    if(lock.current||!actorFeed?.hasMore||!actorFeed.nextCursor)return;
    lock.current=true;setBusy(true);setLoadError("");
@@ -132,6 +170,50 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const [range,setRange]=useState("ALL");
  const [fromDate,setFromDate]=useState("");
  const [toDate,setToDate]=useState("");
+ const serverParams=new URLSearchParams({size:"100"});
+ const term=search.trim();
+ if(term)serverParams.set("search",term.slice(0,100));
+ if(resourceAudit)serverParams.set("category","RESOURCE");
+ else if(mentorWeekSummary&&mentorCategory!=="ALL")serverParams.set("category",mentorCategory);
+ if(type)serverParams.set("eventType",type);
+ if(actor)serverParams.set("actorUserId",actor);
+ if(sprint)serverParams.set("sprintId",sprint);
+ const dayNow=mentorActivityIstDayKey(now);
+ const rolling=range==="7"||range==="30"
+   ?mentorActivityIstDayKey(new Date(Date.parse(now)-Number(range)*86400000)):null;
+ const start=fromDate|| (range==="1"?dayNow??"":rolling??"");
+ const end=toDate|| (range==="1"?dayNow??"":"");
+ if(start)serverParams.set("from",start);
+ if(end)serverParams.set("to",end);
+ const remoteActive=Boolean(term||type||actor||sprint||resourceAction!=="ALL"||
+   mentorWeekSummary&&mentorCategory!=="ALL"||range!=="ALL"||fromDate||toDate);
+ const remoteKey=serverParams.toString()+"&resourceAction="+resourceAction;
+ const [remote,setRemote]=useState<{key:string;events:Event[];hasMore:boolean;nextCursor:Cursor|null}|null>(null);
+ const [remoteBusy,setRemoteBusy]=useState(false);
+ const [remoteError,setRemoteError]=useState("");
+ useEffect(()=>{
+   if(!remoteActive)return;
+   const abort=new AbortController();
+   // A saved query runs on the server before pagination, not just in browser rows.
+   // This eliminates false "nothing found" results for matches on older pages.
+   void Promise.resolve().then(async()=>{
+     setRemoteBusy(true);setRemoteError("");
+     try{
+       const result=await apiFetch<Page>("/api/projects/"+encodeURIComponent(projectId)+
+         "/activity?"+serverParams.toString(),{cache:"no-store",signal:abort.signal});
+       if(abort.signal.aborted)return;
+       setRemote({key:remoteKey,events:result.events,
+         hasMore:result.hasMore,nextCursor:result.nextCursor});
+       setPage(1);
+     }catch(reason){
+       if(!abort.signal.aborted)setRemoteError(reason instanceof Error?reason.message:
+         "Could not search the full project history. Retry the filters.");
+     }finally{if(!abort.signal.aborted)setRemoteBusy(false);}
+   });
+   return ()=>abort.abort();
+ // Query string is the stable dependency; each change aborts the previous search.
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[remoteActive,remoteKey,projectId]);
  const categories=[...new Set(items.map(event=>event.eventType))].sort();
  const actors=[...new Map([
     ...items.filter(event=>Boolean(event.actorUserId)).map(event=>
@@ -167,8 +249,11 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  }
  const scopedKey=actor+"|"+sprint;
  const scoped=Boolean(actor||sprint);
- const working=scoped?(actorFeed?.id===scopedKey?actorFeed.events:[]):items;
- const activeHasMore=scoped?(actorFeed?.id===scopedKey?actorFeed.hasMore:false):hasMore;
+ const remoteReady=remote?.key===remoteKey;
+ const working=remoteActive?(remoteReady?remote.events:[]):scoped?
+   (actorFeed?.id===scopedKey?actorFeed.events:[]):items;
+ const activeHasMore=remoteActive?(remoteReady?remote.hasMore:false):scoped?
+   (actorFeed?.id===scopedKey?actorFeed.hasMore:false):hasMore;
  const filtered=working.filter(event=>{
   const term=search.trim().toLocaleLowerCase("en-IN");
   return (!mentorWeekSummary||mentorCategory==="ALL"||mentorActivityGroup(event.eventType)===mentorCategory)
@@ -287,12 +372,20 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
    <Button variant="secondary" type="button" onClick={resetFilters}
       className="">Clear filters</Button>
   </div>
-  {actorBusy?<p role="status">Loading complete recorded activity for the selected person or sprint…</p>:null}
+  {remoteActive&&(!remoteReady||remoteBusy)?<p role="status">
+    {remoteReady?"Loading more matching history…":"Searching the full recorded project history…"}
+  </p>:null}
+  {remoteError?<p role="alert">{remoteError}</p>:null}
+  {!remoteActive&&actorBusy?<p role="status">Loading complete recorded activity for the selected person or sprint…</p>:null}
   {actorError?<p role="alert">{actorError}</p>:null}
   <p className="text-xs text-muted-foreground">{resourceAudit
     ? filtered.length===0?"0 matching changes":`${(activePage-1)*PAGE_SIZE+1}–${Math.min(activePage*PAGE_SIZE,filtered.length)} of ${filtered.length} matching changes`
     :`${filtered.length} events`} · Times shown in IST.{sprint?" Events are scoped to the recorded sprint (including historical sprint updates).":""}{activeHasMore?" Load more to include older events.":""}</p>
-  {!filtered.length
+  {remoteActive&&(!remoteReady||remoteError)&&!filtered.length?
+    <p role="status">Results are not yet verified. The project history search must complete.</p>:
+   !filtered.length&&activeHasMore?
+    <p role="status">No matching events in the loaded batch. Older matching history may remain. Load more activity to continue.</p>:
+   !filtered.length
     ? <EmptyState title={resourceAudit?(items.length===0?"No resource changes yet":"No resource changes match these filters"):(items.length===0?"No project activity yet":"No matching activity")}
       description={items.length===0
         ? "Task moves, sprint updates and resource changes will appear here."
@@ -343,6 +436,10 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
          <StatusBadge tone="neutral">{mentorActivityCategory(event.eventType)}</StatusBadge>
         </div>
        </div>
+       <Link className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline"
+         href={mentorEventHref(projectId,event)}>
+         Open related record →
+       </Link>
       </article></Fragment>)}
      </div>}
   {resourceAudit&&totalPages>1?<nav aria-label="Resource audit pages" className="flex items-center gap-2">
@@ -350,7 +447,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     <span className="text-sm" aria-live="polite">Page {activePage} of {totalPages}</span>
     <Button type="button" variant="secondary" disabled={activePage>=totalPages} onClick={()=>setPage(value=>Math.min(totalPages,value+1))}>Next</Button>
   </nav>:null}
-  {activeHasMore?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void loadMore()}
+  {activeHasMore?<Button variant="secondary" type="button" disabled={busy||remoteBusy} onClick={()=>void loadMore()}
    className="">
    {busy?"Loading activity…":"Load more activity"}
   </Button>:null}

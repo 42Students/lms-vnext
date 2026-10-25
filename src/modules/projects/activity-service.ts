@@ -92,6 +92,11 @@ export async function getProjectActivityPage(
         search ? or(
           ilike(activityEvents.eventType,contains(search)),
           ilike(activityEvents.subjectLabel,contains(search)),
+          ilike(activityEvents.summary,contains(search)),
+          ilike(users.displayName,contains(search)),
+          ilike(activityEvents.actorNameSnapshot,contains(search)),
+          sql`coalesce(${activityEvents.metadata} ->> 'actorName','') ilike ${contains(search)}`,
+          sql`coalesce(${activityEvents.metadata} ->> 'resourceKey','') ilike ${contains(search)}`,
           sql`coalesce(${activityEvents.metadata} ->> 'sourceTab','') ilike ${contains(search)}`,
         ) : undefined,
         filters.eventType?eq(activityEvents.eventType,filters.eventType):undefined,
