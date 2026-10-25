@@ -15,18 +15,19 @@ export type FacultyTodayTask = {
 
 /** "Later" hides an item in the current view only; there is no fabricated
  * server-side snooze record or simulated unread count. */
-export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass}:{
+export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting}:{
   tasks:readonly FacultyTodayTask[];
   firstName:string;
   dateLabel:string;
   nextClass:string|null;
+  greeting:string;
 }){
  const [later,setLater]=useState<string[]>([]);
  const active=tasks.filter(item=>!later.includes(item.id));
  return <section className="mx-auto max-w-5xl min-w-0">
   <p className="faculty-proto-subtitle">{dateLabel}</p>
   <h1 className="faculty-proto-heading mt-2">
-    Good {new Date().getHours()<12?"morning":new Date().getHours()<17?"afternoon":"evening"}{firstName?", "+firstName:""}. {active.length} {active.length===1?"thing needs":"things need"} you.
+    Good {greeting}{firstName?", "+firstName:""}. {active.length} {active.length===1?"thing needs":"things need"} you.
   </h1>
   <p className="mt-1 mb-6 text-base text-[#40516a]">
     {nextClass??"Your teaching priorities and upcoming classes."}

@@ -47,10 +47,12 @@ export default async function TeacherIndex(){
  const dateLabel=new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",
  }).format(new Date());
+ const hour=Number(new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23"}).format(new Date()));
+ const greeting=hour<12?"morning":hour<17?"afternoon":"evening";
  const nextClass=next?"Next class: "+(next.title?.trim()||"Scheduled class")+
   " · "+next.sectionName+" · "+new Intl.DateTimeFormat("en-IN",{
    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
   }).format(next.startsAt)+" IST.":null;
- return <FacultyTodayPanel tasks={tasks} firstName={firstName} dateLabel={dateLabel}
+ return <FacultyTodayPanel tasks={tasks} firstName={firstName} dateLabel={dateLabel} greeting={greeting}
   nextClass={nextClass}/>;
 }

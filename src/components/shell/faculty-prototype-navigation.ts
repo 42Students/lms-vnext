@@ -12,7 +12,7 @@ export const FACULTY_PROTOTYPE_NAV: readonly ShellNavItem[] = [
 
 export function facultyPrototypeSidebarActive(pathname:string,href:string):boolean {
   if(href==="/teacher") return pathname==="/teacher";
-  if(href==="/teacher/courses") return pathname.startsWith("/teacher/courses/");
+  if(href==="/teacher/courses") return pathname==="/teacher/courses" || pathname.startsWith("/teacher/courses/");
   if(href==="/teacher/assessments") return pathname==="/teacher/assessments" ||
     pathname.startsWith("/teacher/allAssignments") ||
     pathname.startsWith("/teacher/allQuizzes") ||

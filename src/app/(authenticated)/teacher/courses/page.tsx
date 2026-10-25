@@ -2,6 +2,7 @@ import Link from "next/link";
 import { parseFacultyCourseListLocation } from "@/modules/courses/faculty-course-list-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseList } from "@/components/courses/faculty-course-list";
+import { FacultyPrototypeCourseDirectory } from "@/components/courses/faculty-prototype-course-directory";
 import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
 import {loadAuthorizedCourseDisplayContentsIfReady} from "@/modules/courses/course-display-service";
 import {ErrorState} from "@/components/ui/error-state";
@@ -46,11 +47,16 @@ export default async function TeacherCoursesPage({searchParams}: {
   });
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <PageHeader
-        title="My Courses"
-      />
-      <FacultyCourseList rows={rows} diagnostics={diagnosticResult.ok?diagnosticResult.value:[]}
-        diagnosticsUnavailable={!diagnosticResult.ok} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
+      <FacultyPrototypeCourseDirectory rows={rows} totalAssignments={list.scopeCount}/>
+      <details className="min-w-0 border-t border-[#e5ebf2] pt-4">
+        <summary className="cursor-pointer text-sm font-semibold text-[#078191]">
+          Advanced teaching filters, class assignments and detailed course cards
+        </summary>
+        <div className="mt-4">
+          <FacultyCourseList rows={rows} diagnostics={diagnosticResult.ok?diagnosticResult.value:[]}
+            diagnosticsUnavailable={!diagnosticResult.ok} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
+        </div>
+      </details>
     </div>
   );
 }
