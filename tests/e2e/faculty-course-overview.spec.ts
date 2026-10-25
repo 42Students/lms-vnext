@@ -34,10 +34,14 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page.getByRole("region",{name:"Needs you"})).toBeVisible();
   await expect(page.getByRole("complementary",{name:"Course summary"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"How the class is doing"})).toBeVisible();
+  // The newest Faculty prototype deliberately foregrounds the priority
+  // queue and course-health summary. Older diagnostics remain in Advanced.
+  await expect(page.getByRole("heading",{name:"About this course"})).toBeVisible();
+  await expect(page.getByText("Course progress (average)")).toBeVisible();
+  await expect(page.getByText("Quiz average")).toBeVisible();
+  await expect(page.getByText("Behind (under 30% progress)")).toBeVisible();
   await page.getByText("More course insights and teaching tools").click();
-  await expect(page.getByText("Exact teaching assignment")).toBeVisible();
-  await expect(page.getByText("PRIMARY",{exact:true})).toBeVisible();
-  await expect(page.getByText("Course work is up to date")).toBeVisible();
+  await expect(page.getByRole("link",{name:"Current Section students"})).toBeVisible();
   const labels=["Lessons","Content","Assignments","Quizzes","Draft items"];
   for(const label of labels){
    const labelText=page.getByText(label,{exact:true});
