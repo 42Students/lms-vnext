@@ -198,7 +198,7 @@ export async function saveCollegeBranding(
     ?await tx.update(collegeBranding).set({
       ...merged,version:sql`${collegeBranding.version} + 1`,updatedAt:new Date(),
      }).where(eq(collegeBranding.collegeId,college.id)).returning()
-    :await tx.insert(collegeBranding).values({collegeId:college.id,...merged}).returning();
+    :await tx.insert(collegeBranding).values({collegeId:college.id,...merged,version:1}).returning();
 
    if (!row) throw new Error("BRANDING_SAVE_FAILED");
    await recordActivityEventInTransaction(tx, context, {
