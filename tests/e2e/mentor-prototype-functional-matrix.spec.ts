@@ -51,6 +51,9 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
     .filter(href=>/^\/mentor\/projects\/[0-9a-f-]{36}$/i.test(href)),
   );
   const project=[...new Set(paths)][0];
+  // An isolated Mentor CI run must exercise all seven tabs, never skip.
+  if(!project&&process.env["MENTOR_E2E_SEED_PROJECT"]==="true")
+    throw new Error("The persisted Mentor acceptance project was not found.");
   test.skip(!project,"No assigned Mentor project in disposable seed");
   const base=project!;
   const tabs=[

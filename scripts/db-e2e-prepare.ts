@@ -69,6 +69,8 @@ async function main() {
     lessonService,
     contentService,
     projectTemplateService,
+    projectInstanceService,
+    projectMemberService,
   ] = await Promise.all([
     import("./db-lib"),
     import("./db-seed-data"),
@@ -88,6 +90,8 @@ async function main() {
     import("../src/modules/courses/lesson-service"),
     import("../src/modules/courses/lesson-content-service"),
     import("../src/modules/projects/template-service"),
+    import("../src/modules/projects/instance-service"),
+    import("../src/modules/projects/member-service"),
   ]);
 
   await dbLib.resetDatabase(databaseUrl);
@@ -417,6 +421,27 @@ async function main() {
       projectTemplate.template.id,
       ids.collegeA,
     );
+
+    // Only isolated Mentor acceptance uses this production-service fixture.
+    // Full browser jobs keep their normal data and separate workflows.
+    if(process.env["MENTOR_E2E_SEED_PROJECT"]==="true"){
+      const project=await projectInstanceService.createProjectInstance(
+        collegeAdmin,{
+          collegeId:ids.collegeA,
+          templateId:projectTemplate.template.id,
+          slug:"mentor-acceptance-e2e-project",
+          title:"E2E Mentor Acceptance Project",
+        });
+      await projectMemberService.addProjectMember(collegeAdmin,project.id,{
+        membershipId:ids.facultyCollegeAMembership,
+        role:"MENTOR",
+        isPrimary:true,
+      });
+      await projectMemberService.addProjectMember(collegeAdmin,project.id,{
+        membershipId:ids.learnerCollegeAMembership,role:"LEARNER",
+      });
+      process.stdout.write("Persisted Mentor browser project "+project.id+"\\n");
+    }
 
     process.stdout.write(
       "Deterministic Course + Project + Placement browser E2E fixtures applied.\n",
