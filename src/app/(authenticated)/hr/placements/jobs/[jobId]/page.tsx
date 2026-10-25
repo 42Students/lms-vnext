@@ -48,6 +48,7 @@ import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversa
 import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
 import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
 import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
+import {recruiterChangeShortcut,RECRUITER_CHANGE_SHORTCUTS} from "@/modules/placements/recruiter-change-shortcuts-model";
 import {Tabs} from "@/components/ui/tabs";
 
 function currentTimeMs(){return Date.now();}
@@ -88,7 +89,7 @@ export default async function HrPlacementJobPage({
   params: Promise<{ jobId: string }>;
   searchParams: Promise<{ tab?: string; stage?: string; applicant?: string; page?: string;
     offerPage?:string; offerState?:string;
-    roundId?:string; outcome?:string; review?:string; returnTo?:string; applicantSearch?:string; requestId?:string }>;
+    roundId?:string; outcome?:string; review?:string; returnTo?:string; applicantSearch?:string; requestId?:string;change?:string }>;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -151,6 +152,7 @@ export default async function HrPlacementJobPage({
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion"||requestsTab;
+  const changeShortcut=recruiterChangeShortcut(query.change);
   const requestData=discussionTab?await getDriveChangeRequests(context,workspace.job.id):null;
   const requestsToAnswer=requestData?.requests.filter(item=>
     item.status==="OPEN"&&item.targetParty==="COMPANY").length??0;
@@ -516,6 +518,18 @@ export default async function HrPlacementJobPage({
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Discussion</h2>
         <p className="text-sm text-body">Between you and the placement cell. Students never see this, and the placement team&apos;s internal notes stay separate.</p>
+         <nav aria-label="Ask the placement cell for a change" className="space-y-2 rounded-xl border border-border p-4">
+          <h3 className="font-semibold text-foreground">Ask for a change</h3>
+          <p className="text-sm text-body">Choose what to discuss. The placement cell decides; opening a request makes no changes.</p>
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+           {RECRUITER_CHANGE_SHORTCUTS.map(shortcut=><Link key={shortcut.key}
+            href={"/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"?tab=discussion&change="+shortcut.key+returnQuery+"#drive-requests"}
+            className="flex min-h-11 flex-col justify-center rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2">
+            {shortcut.label}
+            {shortcut.help?<span className="text-xs font-normal text-muted-foreground">{shortcut.help}</span>:null}
+           </Link>)}
+          </div>
+         </nav>
         {requestData?.party==="COMPANY"&&requestData.requests.length>0?
           <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm">
             <p className="font-semibold text-foreground">Change-request activity · {requestData.requests.length} recorded</p>
@@ -561,7 +575,10 @@ export default async function HrPlacementJobPage({
             </Link>)}
           </div>
         </details>:null}
-        {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
+        {requestData.storageReady?<TpoDriveChangeRequests
+           key={changeShortcut?.key??"default"} initialField={changeShortcut?.field}
+           openInitially={Boolean(changeShortcut)}
+           jobId={workspace.job.id} party="COMPANY"
           userId={context.user.id} requests={requestData.requests}/> :
          <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body leading-[1.6]">{requestData.pendingMessage}</p>}
       </section>:null}

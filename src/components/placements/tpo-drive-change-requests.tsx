@@ -61,13 +61,16 @@ const fields=[["ROLE_TITLE","Role title"],["DESCRIPTION","Description"],["LOCATI
  ["CTC","CTC (LPA)"],["STIPEND","Monthly stipend"],["MIN_CGPA","Minimum CGPA"],
  ["BRANCHES","Branches (comma separated)"],["OTHER","Something else"],["ROUNDS","Interview rounds"],
  ["PAY","Pay / package"],["ELIGIBILITY","Eligibility"]] as const;
-export function TpoDriveChangeRequests({jobId,party,requests}:{jobId:string;party:Party;userId:string;requests:Item[]}){
+export function TpoDriveChangeRequests({jobId,party,requests,initialField,openInitially=false}:{
+ jobId:string;party:Party;userId:string;requests:Item[];
+ initialField?:"ROUNDS"|"BRANCHES"|"CTC"|"OTHER";openInitially?:boolean;
+}){
  const router=useRouter();
  const {showToast}=useToast();
  const [fieldError,setFieldError]=useState("");
- const [mode,setMode]=useState<"SUGGEST"|"ASK">("SUGGEST");
- const [field,setField]=useState<(typeof fields)[number][0]|"">("");
- const [composerOpen,setComposerOpen]=useState(false);
+ const [mode,setMode]=useState<"SUGGEST"|"ASK">(openInitially?"ASK":"SUGGEST");
+ const [field,setField]=useState<(typeof fields)[number][0]|"">(initialField??"");
+ const [composerOpen,setComposerOpen]=useState(openInitially);
  const [discardComposer,setDiscardComposer]=useState(false);
  const [value,setValue]=useState("");const [reason,setReason]=useState("");
  const [notes,setNotes]=useState<Record<string,string>>({});
