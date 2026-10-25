@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq,gt,inArray,isNull,lt,ne,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {projectMeetings,projectInstances,projectMembers,collegeMemberships,users}
+import {projectMeetings,projectInstances,projectMembers,collegeMemberships,membershipRoles,users}
  from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
@@ -14,6 +14,7 @@ import {readMentorGoogleMeetingStatus} from "./mentor-google-calendar-status";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {scopedMentorInviteeEmails} from "./mentor-google-invitee-selection-model";
 
 /** Every Google read/write is scoped to a live assigned Mentor, saved meeting
  * and its live same-college project roster. A client cannot supply invitees.
@@ -47,7 +48,8 @@ async function verifiedGoogleMeeting(context:RequestContext,projectId:string,mee
    throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
   if(!["DRAFT","SCHEDULED","RESCHEDULED",...(allowCancelled?["CANCELLED"]:[])].includes(meeting.status))
    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
-  const people=await tx.select({email:users.email}).from(projectMembers)
+  const people=await tx.select({membershipId:projectMembers.membershipId,
+   email:users.email,displayName:users.displayName}).from(projectMembers)
    .innerJoin(collegeMemberships,and(
      eq(collegeMemberships.id,projectMembers.membershipId),
      eq(collegeMemberships.collegeId,scope.collegeId),
@@ -56,14 +58,25 @@ async function verifiedGoogleMeeting(context:RequestContext,projectId:string,mee
    .innerJoin(users,and(
      eq(users.id,collegeMemberships.userId),
      eq(users.platformStatus,"ACTIVE"),
+   ))
+   .innerJoin(membershipRoles,and(
+     eq(membershipRoles.membershipId,collegeMemberships.id),
+     eq(membershipRoles.role,projectMembers.role),
    )).where(and(
      eq(projectMembers.projectId,scope.project.id),
+     inArray(projectMembers.role,["LEARNER","MENTOR"]),
      isNull(projectMembers.endedAt),
    ));
-  const invitees=[...new Set(people.flatMap(person=>person.email?
-    [person.email.trim().toLowerCase()]:[]))].filter(Boolean);
-  return {scope,meeting,invitees};
+  return {scope,meeting,people};
  });
+}
+export async function listMentorGoogleInvitees(
+ context:RequestContext,projectId:string,meetingId:string,
+){
+ const {people}=await verifiedGoogleMeeting(context,projectId,meetingId);
+ return {members:people.filter(person=>person.email?.trim()).map(person=>({
+  membershipId:person.membershipId,displayName:person.displayName??"Project member",
+ }))};
 }
 export async function checkMentorGoogleMeeting(
  context:RequestContext,projectId:string,meetingId:string,
@@ -74,11 +87,15 @@ export async function checkMentorGoogleMeeting(
 }
 export async function syncMentorGoogleMeeting(
  context:RequestContext,projectId:string,meetingId:string,weeklyCount?:number,
+ selectedMembershipIds?:readonly string[],
 ){
  if(weeklyCount!==undefined&&(!Number.isSafeInteger(weeklyCount)||
     weeklyCount<2||weeklyCount>52))
   throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
- const {scope,meeting,invitees}=await verifiedGoogleMeeting(context,projectId,meetingId);
+ const {scope,meeting,people}=await verifiedGoogleMeeting(context,projectId,meetingId);
+ let invitees:string[];
+ try{invitees=scopedMentorInviteeEmails(people,selectedMembershipIds);}
+ catch{throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");}
  if(meeting.startsAt.getTime()<=Date.now())
   throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
  const {accessToken,calendarId}=await getMentorGoogleAccessToken(context);

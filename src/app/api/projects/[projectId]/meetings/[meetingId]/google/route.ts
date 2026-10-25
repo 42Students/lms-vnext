@@ -10,6 +10,7 @@ export const runtime="nodejs";
 type Params={params:Promise<{projectId:string;meetingId:string}>};
 const inputSchema=z.strictObject({
  weeklyCount:z.number().int().min(2).max(52).optional(),
+ inviteeMembershipIds:z.array(z.uuid()).min(1).max(100).optional(),
 });
 export async function GET(_request:Request,{params}:Params){
  try{
@@ -24,12 +25,12 @@ export async function POST(request:Request,{params}:Params){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const raw=await request.text();
-  if(raw.length>256)return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
+  if(raw.length>6000)return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
   const input=inputSchema.safeParse(JSON.parse(raw||"{}"));
   if(!input.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   const {projectId,meetingId}=await params;
   const result=await syncMentorGoogleMeeting(await getCurrentRequestContext(),
-   projectId,meetingId,input.data.weeklyCount);
+   projectId,meetingId,input.data.weeklyCount,input.data.inviteeMembershipIds);
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof SyntaxError)
