@@ -3,7 +3,7 @@
 export function recruiterSelectionCsvTemplate(rows:readonly {id:string;name:string}[]):string{
  const cell=(value:string)=>'"'+value.replace(/[\x00-\x1f\x7f]/g," ").replace(/"/g,'""')+'"';
  return ["application_id,name",...rows.slice(0,200).map(row=>
-  [cell(row.id),cell(row.name.replace(/^([=+@-])/,"'$1"))].join(","))].join("\r\n")+"\r\n";
+  [cell(row.id),cell(/^[\\s\\ufeff]*[=+@-]/.test(row.name)?"'"+row.name:row.name)].join(","))].join("\r\n")+"\r\n";
 }
 export function parseRecruiterSelectionCsv(
  content:string,allowed:ReadonlySet<string>,

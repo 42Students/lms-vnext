@@ -49,7 +49,7 @@ export function RecruiterJoiningReportForm({
    <Textarea rows={2} value={reason} required={status==="DID_NOT_JOIN"} maxLength={1000}
     onChange={event=>{setReason(event.target.value);setConfirm(false);}}/>
   </label>
-  <label className="flex items-start gap-2 text-xs text-body">
+  <label className="flex min-h-11 items-start gap-2 py-2 text-xs text-body">
    <input type="checkbox" className="mt-1" checked={confirm} onChange={event=>setConfirm(event.target.checked)}/>
    Send this report to the college placement cell for verification. It will not overwrite the official outcome.
   </label>
