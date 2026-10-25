@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementTpoFollowups,
@@ -71,7 +71,10 @@ export async function getTpoDueFollowupQueue(
     eq(placementTpoLeads.collegeId,collegeId),
     isNull(placementTpoFollowups.doneAt),
     ...timeConditions,
-    ...(query.scope==="MINE"?[eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)]:[]),
+    ...(query.scope==="MINE"?[or(
+      eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId),
+      isNull(placementTpoFollowups.ownerMembershipId),
+    )]:[]),
     ...(query.q?[sql<boolean>`position(lower(${query.q}::text) in lower(coalesce(${placementTpoLeads.name}, '') || ' ' || coalesce(${placementTpoLeads.companyName}, ''))) > 0`]:[]),
   );
   const [totalResult]=await db.select({total:count()}).from(placementTpoFollowups)
