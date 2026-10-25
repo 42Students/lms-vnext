@@ -18,6 +18,6 @@ describe("TPO Calendar multi-chip filter",()=>{
   expect(page).toContain("filterTpoCalendarChipEvents");
   expect(page).toContain("Select multiple event types");
   expect(page).toContain("params.set(\"kinds\"");
-  expect(source("src/app/(authenticated)/tpo/calendar/page.tsx")).toContain("kinds:first(raw.kinds)");
+  expect(source("src/app/(authenticated)/tpo/calendar/page.tsx")).toContain("kinds: first(raw.kinds)");
  });
 });

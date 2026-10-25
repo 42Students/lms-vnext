@@ -23,7 +23,7 @@ describe("Chat-7 schedule parity",()=>{
   // The copy fallback remains available for clients that cannot launch a browser.
   expect(s).toContain("<ThirdPartyLink href={row.testUrl}");
   expect(link).toContain('url.protocol === "https:" && !url.username && !url.password');
-  expect(link).toContain('rel="noopener noreferrer" href={safeHref}');
+  expect(link).toContain('href={safeHref} rel="noopener noreferrer"');
   expect(link).not.toContain('target="_blank"');
   expect(link).toContain("Show link to copy");
   expect(s).toContain("not an attendance confirmation or final outcome");

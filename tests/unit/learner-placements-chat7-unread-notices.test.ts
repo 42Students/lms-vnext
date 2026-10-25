@@ -15,7 +15,7 @@ describe("Unread learner placement notifications",()=>{
   expect(unreadCount).toContain("isNull(inAppNotifications.readAt)");
   expect(layout).toContain("getUnreadOwnLearnerPlacementAlertCount(context)");
   expect(tabs).toContain('unreadPersonalAlerts: _unreadPersonalAlerts=null');
-  expect(tabs).toContain('count: tab.label==="Notices" && unreadCollegeAnnouncements!==null');
+  expect(tabs).toContain('tab.label==="Notices" && unreadCollegeAnnouncements!==null && unreadCollegeAnnouncements>0');
   expect(tabs).not.toContain('count: unreadPersonalAlerts');
  });
  it("LEARNER-placements-46 does not confuse loaded preview size with all unread alerts",()=>{

@@ -48,7 +48,7 @@ describe("TPO Batches resilient working set",()=>{
   expect(reader).toContain("startYear:sql<number|null>");
   expect(reader).toContain("endYear:sql<number|null>");
   expect(overview).toContain("Placement eligibility");
-  expect(overview).toContain("tpoBatchReturnHref(query.returnTo)");
+  expect(overview).toContain('tpoBatchReturnHref(query["returnTo"])');
   expect(overview).toContain("tpoBatchPlacementState");
   expect(overview).toContain("batch.endYear");
  });
