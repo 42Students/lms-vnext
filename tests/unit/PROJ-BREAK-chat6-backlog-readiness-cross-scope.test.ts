@@ -74,8 +74,8 @@ describe("IIT Dharwad Projects breaker: backlog, readiness and tenant boundaries
     expect(code).toContain("selectDistinctOn([activityEvents.subjectId]");
     expect(code).toContain("desc(activityEvents.occurredAt)");
     expect(code).toContain("desc(activityEvents.id)");
-    expect(code).toContain('row.metadata.state==="FORCE_UNLOCK"||row.metadata.state==="FORCE_BLOCK"');
+    expect(code).toContain('row.metadata["state"]==="FORCE_UNLOCK"||row.metadata["state"]==="FORCE_BLOCK"');
     expect(code).toContain("const titles=new Map(projects.map");
-    expect(code).toContain('direction:row.metadata.state==="FORCE_UNLOCK"?"Ready":"Not ready"');
+    expect(code).toContain('direction:row.metadata["state"]==="FORCE_UNLOCK"?"Ready":"Not ready"');
   });
 });

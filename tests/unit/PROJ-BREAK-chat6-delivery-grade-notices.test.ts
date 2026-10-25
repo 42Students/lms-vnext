@@ -43,7 +43,12 @@ describe("IIT Dharwad: adversarial file, submission, grading and notification ru
     const service = source("src/modules/projects/submission-service.ts");
     expect(service).toContain("eq(projectResourceFiles.projectId,scope.project.id)");
     expect(service).toContain('resource.visibility!=="TEAM"');
-    expect(service).toContain('file.status!=="READY"');
+    // The validity contract moved into one reusable proof gate rather than
+    // duplicating status checks inside every mutation call site.
+    expect(service).toContain("projectFinalFileEvidenceIsVerified(file)");
+    const evidenceModel = source("src/modules/projects/project-final-file-evidence-model.ts");
+    expect(evidenceModel).toContain('file.status==="READY"');
+    expect(evidenceModel).toContain('file.scanStatus==="CLEAN"');
   });
 
   it("PROJ-BREAK-grading-03 completed and archived projects cannot receive new rubric evaluations", () => {
