@@ -96,11 +96,42 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   }
  });
 
+ test("a planned Mentor project shows read-only overview and sprint planning states",async({page,context})=>{
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  await page.goto("/mentor/projects");
+  const link=page.getByRole("link",{name:/E2E Mentor Acceptance Project.*Open project/}).first();
+  if(process.env["MENTOR_E2E_SEED_PROJECT"]==="true")
+   await expect(link).toBeVisible();
+  else test.skip((await link.count())===0,"Requires the disposable Mentor acceptance project");
+  const href=await link.getAttribute("href");
+  expect(href).toMatch(/^\/mentor\/projects\/[0-9a-f-]{36}(?:\?.*)?$/i);
+  const base=href!.split("?")[0]!;
+  await page.goto(base+"?tab=overview");
+  await expect(page.getByRole("heading",{level:1,name:"E2E Mentor Acceptance Project"})).toBeVisible();
+  await expect(page.locator(".prototype-mentor-title-line")).toContainText("Planned");
+  await expect(page.getByRole("link",{name:/Edit project brief/})).toHaveCount(0);
+  await page.goto(base+"?tab=sprints");
+  await expect(page.getByRole("navigation",{name:"Project sections"})
+   .getByRole("link",{name:"Sprints & releases",exact:true})).toHaveAttribute("aria-current","page");
+  await expect(page.getByRole("region",{name:"Plan a release or sprint"})).toHaveCount(0);
+  await expect(page.getByRole("region",{name:"Sprint and release totals"})).toBeVisible();
+ });
+
  test("a Faculty-only college switch cannot inherit the same user's other college Mentor grant",async({page,context})=>{
+  // Deny an actual persisted College A project rather than only a synthetic UUID.
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  await page.goto("/mentor/projects");
+  const ownProject=page.getByRole("link",{name:/E2E Mentor Acceptance Project.*Open project/}).first();
+  if(process.env["MENTOR_E2E_SEED_PROJECT"]==="true")
+   await expect(ownProject).toBeVisible();
+  else test.skip((await ownProject.count())===0,"Requires the disposable Mentor acceptance project");
+  const projectHref=await ownProject.getAttribute("href");
+  expect(projectHref).toMatch(/^\/mentor\/projects\/[0-9a-f-]{36}(?:\?.*)?$/i);
+  const foreignProjectPath=projectHref!.split("?")[0]!+"?tab=team";
   await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeBMembership,"FACULTY");
   for(const path of ["/mentor/projects","/mentor/calendar",
     "/mentor/notifications","/mentor/search",
-    "/mentor/projects/00000000-0000-4000-8000-000000000001?tab=team"]){
+    foreignProjectPath]){
    await page.goto(path);
    await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
   }
