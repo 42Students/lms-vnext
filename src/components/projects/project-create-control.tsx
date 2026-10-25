@@ -435,6 +435,7 @@ export function CreateProjectControl({
               onChange={event => {setMentorPage(0);setMentorQuery(event.target.value);}} />
             <Select
               value={mentorMembershipId}
+              aria-label="Primary mentor"
               aria-invalid={attempted&&initialStatus==="ACTIVE"&&!mentorMembershipId}
               disabled={pending || mentorsLoading}
               onChange={(event) =>
