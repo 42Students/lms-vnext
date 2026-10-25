@@ -84,7 +84,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
     "/mentor/notifications","/mentor/search",
     "/mentor/projects/00000000-0000-4000-8000-000000000001?tab=team"]){
    await page.goto(path);
-   await expect(page).toHaveURL(/\\/dashboard(?:[/?#]|$)/);
+   await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
   }
  });
 
