@@ -16,6 +16,7 @@ import {AddProjectMemberControl,MentorLearnerTeamActions} from "./project-team-c
 import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
 import {MentorSprintDetailTable} from "./mentor-sprint-detail-table";
+import {mentorSprintOpenCount} from "@/modules/projects/mentor-sprint-detail-open-model";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
 import {mentorSubmissionIdentity} from "@/modules/projects/mentor-submission-attribution-model";
 import {mentorDeliveryPrechecks} from "@/modules/projects/mentor-delivery-prechecks-model";
@@ -129,6 +130,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
           carriedCount:signOff&&sprint.status==="COMPLETED"?
             signOff.memberRows.reduce((n,row)=>n+row.carriedCount,0):
             tasks.filter(task=>Boolean(task.carriedFromSprintId)).length,
+          openCount:mentorSprintOpenCount(sprint.status,tasks.map(task=>task.status),signOff??null),
         };
       })}/>
     <section className="prototype-mentor-chart-card" aria-label="Points per sprint">

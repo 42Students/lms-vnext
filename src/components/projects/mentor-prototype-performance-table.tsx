@@ -75,7 +75,9 @@ export function MentorPrototypePerformanceTable({
   const participants=[...students,...historicalContributors.map(id=>({
     id,name:formerNames.get(id)??"Former student",label:"Former team member · saved history",
   }))];
-  const currentOpen=tasks.filter(task=>!["DONE","IN_REVIEW"].includes(task.status));
+  // Workload signals must use the selected range, never silently mix all
+  // current project assignments into a historical sprint comparison.
+  const currentOpen=liveTasks.filter(task=>!["DONE","IN_REVIEW"].includes(task.status));
   const studentRows=participants.map(student=>{
     const assigned=liveTasks.filter(task=>task.assigneeMembershipId===student.id);
     const done=assigned.filter(task=>task.status==="DONE");
@@ -85,7 +87,8 @@ export function MentorPrototypePerformanceTable({
     const previous=historicalRows.filter(row=>row.membershipId===student.id);
     const trend=mentorMemberSprintHistory(student.id,sorted,snapshots,releases);
     const sparkline=mentorSprintPointSparkline(trend);
-    const insights=deriveMentorPerformanceInsights({points:trend,
+    const scopedTrend=mentorMemberSprintHistory(student.id,included,snapshots,releases);
+    const insights=deriveMentorPerformanceInsights({points:scopedTrend,
       currentOpenCount:currentOpen.filter(task=>task.assigneeMembershipId===student.id).length,
       totalProjectOpen:currentOpen.length});
     const stack=mentorPointStack(pts(done)+sum(previous,"donePoints"),
@@ -224,8 +227,8 @@ export function MentorPrototypePerformanceTable({
           <li key={row.student.id+":"+signal.code}>
             <strong>{row.student.name}</strong>: {signal.description}
           </li>))}</ul>
-        <p>These are factual workload prompts, not individual performance ratings
-          or predictions about students.</p>
+        <p>These signals are limited to the selected sprint range, not
+          a project-wide assessment or rating of students.</p>
       </div>:null}
     </section>
     <section className="prototype-mentor-backlog-card">

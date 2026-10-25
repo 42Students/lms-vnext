@@ -6,6 +6,7 @@ export type MentorSprintDetailRow={
   id:string;sequence:number;title:string;release:string;
   status:string;startDate:string|null;endDate:string|null;
   taskCount:number;plannedPoints:number|null;donePoints:number|null;carriedCount:number;
+  openCount:number|null;
 };
 
 /** Preserve the prototype's per-sprint operational rows alongside vNext charts.
@@ -59,6 +60,7 @@ export function MentorSprintDetailTable({projectId,rows}:{
             <th scope="col" className="p-2">Done</th>
             <th scope="col" className="p-2">Carried</th>
             <th scope="col" className="p-2">Open</th>
+            <th scope="col" className="p-2">Action</th>
           </tr></thead>
           <tbody>{matching.map(row=><tr key={row.id} className="border-b border-border">
             <td className="p-2"><strong>Sprint {row.sequence} · {row.title}</strong>
@@ -69,6 +71,7 @@ export function MentorSprintDetailTable({projectId,rows}:{
             <td className="p-2 tabular-nums">{row.plannedPoints??"Not recorded"}</td>
             <td className="p-2 tabular-nums">{row.donePoints??"Not recorded"}</td>
             <td className="p-2 tabular-nums">{row.carriedCount}</td>
+            <td className="p-2 tabular-nums">{row.openCount??"Not recorded"}</td>
             <td className="p-2"><Link className="font-semibold text-link underline"
               href={base+"?tab=board&sprint="+encodeURIComponent(row.id)}>
               View tasks</Link></td>
@@ -76,8 +79,9 @@ export function MentorSprintDetailTable({projectId,rows}:{
         </table>
       </div>}
     <p className="mt-2 text-xs text-muted-foreground">
-      Completed-sprint points use saved sign-off snapshots. Unrecorded historical
-      points are labelled unavailable, never replaced by live task totals.
+      Completed-sprint points and open tasks use saved sign-off snapshots;
+      live sprint counts use current records. Open excludes tasks waiting for review.
+      Missing historical snapshots are labelled unavailable, never replaced by live task totals.
     </p>
   </section>;
 }
