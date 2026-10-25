@@ -16,7 +16,7 @@ being present is not test or acceptance evidence.
 | 04 Overview | `/recruiter/drives/[jobId]` | Verify drive progress, next action, live applicant/funnel counts, closed read-only links and TPO authorization. |
 | 05 Applicants | `/recruiter/drives/[jobId]?tab=applicants` | Verify only shared shortlist, focused keyboard controls, notes/private ratings, resume access and result staging. |
 | 06 Rounds | `/recruiter/drives/[jobId]?tab=rounds` and `/interview-slots` | Candidate-specific booked panel read added (`839e870`), including TPO and learner confirmation and active shortlist scope; print/resume controls added (`78bb4df`). Proposals and official bookings remain separate. Needs real database and browser acceptance. |
-| 07 Offers/joining | `/recruiter/drives/[jobId]?tab=offers` | Selection composer, offer history/export exist. Accepted-offer joining reports (`f901bda`) are sent to the placement cell without changing official outcomes. Eligible-only Excel-compatible CSV import (`961e9c1`) exists; native XLSX remains open. Verify actual offer/letter release and TPO joining writes. |
+| 07 Offers/joining | `/recruiter/drives/[jobId]?tab=offers` | Selection composer, offer history/export exist. Accepted-offer joining reports (`f901bda`) are sent to the placement cell without changing official outcomes. Eligible-only CSV (`961e9c1`) and direct bounded XLSX upload/parser (`a701c9d`, `be07364`, `807ee59`, `34aa3bc`) now exist. Excel IDs remain subject to the recruiter-visible eligibility allowlist; uploaded files never issue offers. Verify real Excel fixture, DB approval and TPO joining writes. Verify actual offer/letter release and TPO joining writes. |
 | 08 Talk | `?tab=discussion`, `TpoDriveChangeRequests` | Existing persisted requests and replies retained. Commit `4f83af1` adds five prototype quick choices opening ASK dialog. Verify actual decision side effects and notifications. |
 | 09 Calendar | `/hr/calendar` | Round, slot, deadline and result-due sources exist. Verify event/college filters, week/month layouts and exact deep-link destinations. |
 | 10 Messages | `/hr/conversations` | Commit `4719f7b` adds two-pane inbox, reply, search and scoped thread selection; `bf87075` fixes chronology, `a41daee` opens first general thread. Retains advanced inbox. Requires browser/database acceptance. |
@@ -40,6 +40,7 @@ being present is not test or acceptance evidence.
 - `961e9c1`, `ee77bc2`: Excel-compatible CSV selection list import, strict eligible allowlist, formula escaping, explicit XLSX limitation.
 - `78bb4df`: print panel action and existing capped authorized resume export on the Rounds view.
 - `77ebd02`: seeded browser acceptance spec for Rounds and Offers; it must execute with eligible fixtures to count.
+- `a701c9d`, `be07364`, `807ee59`, `34aa3bc`: authenticated bounded XLSX ZIP/XML parser, first-column UUID allowlist validation, compressed/shared-string unit cases, and two primary Offers actions matching the prototype. This is **committed**, not accepted until CI plus an actual Excel and recruiter/TPO review flow pass.
 
 ## Acceptance gate (not yet passed)
 
