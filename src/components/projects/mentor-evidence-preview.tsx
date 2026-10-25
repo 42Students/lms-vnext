@@ -23,14 +23,14 @@ export function MentorEvidencePreview({title,href,kind}:{
   return <>
     {previewable?<Button type="button" size="sm" variant="secondary"
       onClick={()=>setOpen(true)}>Zoom</Button>:null}
-    <a target="_blank" rel="noopener noreferrer" href={href}>Open full size ↗</a>
+    <a rel="noopener noreferrer" href={href}>Open full size ↗</a>
     {previewable?<Dialog title={"Preview · "+title}
       description="This preview is read-only. Some file providers block embedding; use Open full size if it does not load."
       open={open} onOpenChange={setOpen}>
       <div className="prototype-mentor-evidence-preview">
         <iframe title={"Evidence preview: "+title} sandbox=""
           referrerPolicy="no-referrer" loading="lazy" src={open?href:undefined} />
-        <div><a href={href} target="_blank" rel="noopener noreferrer">
+        <div><a href={href} rel="noopener noreferrer">
           Open full size ↗</a>
           <Button type="button" size="sm" variant="secondary" onClick={()=>setOpen(false)}>
             Close preview
