@@ -11,7 +11,7 @@ describe("Mentor cross audit delivery discovery and contrast",()=>{
   expect(nav).toContain('label: "Activity"');
   expect(page).toContain('delivery: "Overview"');
   expect(page).toContain('selectedTab === "delivery"');
-  expect(workspace).toContain('activeSection === "delivery"');
+  expect(workspace).toContain('delivery: "Delivery"');
   expect(page).toContain('<MentorPrototypeDeliveryEvidence workspace={workspace}');
  });
  it("UX-mentor-cross-N02 ProjectList uses accessible text and keyboard focus on all roles",()=>{
