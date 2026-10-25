@@ -1,3 +1,6 @@
+import {and,eq,inArray,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {assignmentSubmissions,courseAssignments} from "@/db/schema";
 import Link from "next/link";
 import { parseFacultyCourseListLocation } from "@/modules/courses/faculty-course-list-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -45,9 +48,20 @@ export default async function TeacherCoursesPage({searchParams}: {
     const workspace = summaries.get(course.deliveryId);
     return workspace ? [{ course, workspace, thumbnailUrl:display.get(course.courseId)?.thumbnailUrl??null }] : [];
   });
+  const deliveryIds=[...new Set(rows.map(row=>row.course.deliveryId))];
+  const waiting=deliveryIds.length?await getDb().select({
+   deliveryId:assignmentSubmissions.deliveryId,
+   total:sql<number>`count(*)::int`,
+  }).from(assignmentSubmissions)
+   .innerJoin(courseAssignments,eq(courseAssignments.id,assignmentSubmissions.assignmentId))
+   .where(and(inArray(assignmentSubmissions.deliveryId,deliveryIds),
+    eq(courseAssignments.status,"PUBLISHED"),
+    sql`${assignmentSubmissions.gradingStatus} <> 'GRADED'`))
+   .groupBy(assignmentSubmissions.deliveryId):[];
+  const pendingByDelivery=Object.fromEntries(waiting.map(row=>[row.deliveryId,row.total] as const));
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <FacultyPrototypeCourseDirectory rows={rows} totalAssignments={list.scopeCount}/>
+      <FacultyPrototypeCourseDirectory rows={rows} totalAssignments={list.scopeCount} pendingByDelivery={pendingByDelivery}/>
       <details className="min-w-0 border-t border-[#e5ebf2] pt-4">
         <summary className="cursor-pointer text-sm font-semibold text-[#078191]">
           Advanced teaching filters, class assignments and detailed course cards
