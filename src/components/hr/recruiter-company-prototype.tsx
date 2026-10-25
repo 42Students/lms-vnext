@@ -41,7 +41,7 @@ export function RecruiterCompanyPrototype({
       </div>
       <dl className={styles.facts}>
         <div><dt>Name</dt><dd>{companyName}</dd></div>
-        <div><dt>Website</dt><dd>{safeWebsite?<a href={safeWebsite} target="_blank" rel="noreferrer">{safeWebsite}</a>:website||"Not recorded"}</dd></div>
+        <div><dt>Website</dt><dd>{safeWebsite?<a href={safeWebsite} rel="noreferrer">{safeWebsite}</a>:website||"Not recorded"}</dd></div>
         <div><dt>Work email domains</dt><dd>{domains.length?domains.map(value=>"@"+value.replace(/^@/,"")).join(", "):"Not recorded"}</dd></div>
       </dl>
       <p className={styles.muted}>Your placement cell manages company details and its trusted domains. Ask them to correct a name, logo or website.</p>
