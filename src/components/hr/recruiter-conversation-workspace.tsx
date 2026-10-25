@@ -93,7 +93,15 @@ export function RecruiterConversationWorkspace({
       <div className="mt-auto border-t border-border p-4">
        <RecruiterConversationReplyForm threadId={selected.id} historyAvailable={Boolean(history)}/>
       </div>
-    </>}</>:<p className="p-6 text-sm text-muted-foreground">Choose a conversation or open a drive to write to the placement cell.</p>}
+    </>}</>:<div className="space-y-4 p-6">
+     <p className="text-sm text-muted-foreground">Start a general conversation with the placement cell, or open a drive to discuss its hiring process.</p>
+     {!q?<form method="post" action="/api/placements/recruiter/conversations/open">
+       <input type="hidden" name="collegeId" value={collegeId}/>
+       <button type="submit" className="inline-flex min-h-11 items-center rounded-lg border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+        Open general conversation
+       </button>
+     </form>:<Link href={base} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear search</Link>}
+    </div>}
    </section>
   </div>
  </main>;
