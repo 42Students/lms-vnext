@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import styles from "./legacy-project-board.module.css";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Textarea} from "@/components/ui/textarea";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Disclosure } from "@/components/ui/disclosure";
 import {useEffect,useState} from "react";
@@ -54,6 +56,10 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const [listLimits,setListLimits]=useState<Record<string,number>>({});
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
  const [dragging,setDragging]=useState(false);
+ const [pendingAction,setPendingAction]=useState<
+   {kind:"STATUS";id:string;status:string}|
+   {kind:"SPRINT";id:string;targetSprintId:string|null}|null>(null);
+ const [blockerNote,setBlockerNote]=useState("");
  const [taskQuery,setTaskQuery]=useState("");
  const [focusedId,setFocusedId]=useState<string|null>(params.get("task"));
  const [view,setView]=useState<"board"|"list">(params.get("view")==="list"?"list":"board");
@@ -150,15 +156,22 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  // the List view paging size.
  const lanes=groupLearnerBoardLanes(matching,sprints);
  const activeFilterCount=[release,sprint,priority,taskType,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
- async function move(id:string,status:string,isUndo=false){
+ async function move(id:string,status:string,isUndo=false,confirmed=false,
+   suppliedBlockerReason?:string){
   const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
   if(!task||!sp||sp.status!=="ACTIVE"||readOnly||busy||
     !editable.includes(task.status as typeof editable[number])||
     !editable.includes(status as typeof editable[number])||task.status===status)return;
+  if(!isUndo&&!confirmed){
+    setBlockerNote("");setPendingAction({kind:"STATUS",id,status});return;
+  }
   const blockerReason=status==="BLOCKED"&&!task.blockerReason?.trim()
-    ? window.prompt("What's blocking this task?")?.trim() : undefined;
-  if(status==="BLOCKED"&&!task.blockerReason?.trim()&&!blockerReason)return;
-  if(!isUndo&&!window.confirm("Move task to "+status.replaceAll("_"," ")+"?"))return;
+    ? suppliedBlockerReason?.trim():undefined;
+  if(status==="BLOCKED"&&!task.blockerReason?.trim()&&!blockerReason){
+    setError("A blocker reason is required before moving a task to Blocked.");
+    return;
+  }
+  if(confirmed)setPendingAction(null);
   setError("");setBusy(true);
   try{
    const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
@@ -177,15 +190,15 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   const id=event.dataTransfer.getData("text/plain");
   if(id)void move(id,status);
  }
- async function moveToSprint(id:string,targetSprintId:string|null){
+ async function moveToSprint(id:string,targetSprintId:string|null,confirmed=false){
   const task=tasks.find(item=>item.id===id);
   const destination=targetSprintId?sprints.find(item=>item.id===targetSprintId):null;
   if(readOnly||busy||!task||task.sprintId===targetSprintId||
     !editable.includes(task.status as typeof editable[number])||
     (targetSprintId&&(!destination||destination.status==="COMPLETED"||
       !releases.some(item=>item.id===destination.releaseId&&item.status!=="SHIPPED"))))return;
-  if(!window.confirm("Move "+task.title+" to "+(destination?
-    "Sprint "+destination.sequence+" · "+destination.title:"Product backlog")+"?"))return;
+  if(!confirmed){setPendingAction({kind:"SPRINT",id,targetSprintId});return;}
+  setPendingAction(null);
   setError("");setBusy(true);
   try{
     const response=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
@@ -563,6 +576,35 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </>:<p>No task selected.</p>}
   </aside>
   </div></>:null}
+  <ConfirmDialog open={pendingAction!==null}
+    onOpenChange={open=>{if(!open&&!busy)setPendingAction(null);}}
+    title={pendingAction?.kind==="STATUS"?
+      "Move task to "+pendingAction.status.replaceAll("_"," ")+"?":
+      pendingAction?.kind==="SPRINT"?
+      "Move task to "+(pendingAction.targetSprintId?
+        sprints.find(item=>item.id===pendingAction.targetSprintId)?.title??"selected sprint":
+        "Product backlog")+"?":"Confirm task movement"}
+    description="The server checks the task's latest saved version before applying the change."
+    confirmLabel="Confirm move" confirmVariant="primary"
+    pending={busy}
+    confirmDisabled={Boolean(pendingAction?.kind==="STATUS"&&
+      pendingAction.status==="BLOCKED"&&
+      !tasks.find(row=>row.id===pendingAction.id)?.blockerReason?.trim()&&
+      !blockerNote.trim())}
+    onConfirm={()=>{
+      if(!pendingAction)return;
+      if(pendingAction.kind==="STATUS")
+        void move(pendingAction.id,pendingAction.status,false,true,blockerNote);
+      else void moveToSprint(pendingAction.id,pendingAction.targetSprintId,true);
+    }}>
+    {pendingAction?.kind==="STATUS"&&pendingAction.status==="BLOCKED"&&
+      !tasks.find(row=>row.id===pendingAction.id)?.blockerReason?.trim()?
+      <label className="block text-sm font-semibold">Why is this task blocked?
+        <Textarea value={blockerNote} maxLength={2000} disabled={busy}
+          onChange={event=>setBlockerNote(event.target.value)}
+          required aria-label="Blocker reason" rows={3}/>
+      </label>:null}
+  </ConfirmDialog>
   {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
     projectId={projectId} task={tasks.find(task=>task.id===selected)!}
     sprintTitle={sprints.find(s=>s.id===tasks.find(task=>task.id===selected)?.sprintId)?.title??null}
