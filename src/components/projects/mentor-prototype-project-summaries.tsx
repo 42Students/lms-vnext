@@ -461,8 +461,8 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         {latest.notes?<p className="prototype-mentor-delivery-notes">{latest.notes}</p>:null}
       </div>
       <div className="prototype-mentor-delivery-links">
-        {source?<a href={source} rel="noopener noreferrer" target="_blank">Source repository ↗</a>:null}
-        {demo?<a href={demo} rel="noopener noreferrer" target="_blank">Demo ↗</a>:null}
+        {source?<a href={source} rel="noopener noreferrer">Source repository ↗</a>:null}
+        {demo?<a href={demo} rel="noopener noreferrer">Demo ↗</a>:null}
         <Link href={base+"?tab=delivery"}>Review on this page ↓</Link>
       </div>
     </div>:<p className="prototype-mentor-summary-empty">No final submission has been recorded for this project yet.</p>}
@@ -753,7 +753,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
           No meeting agenda recorded.</p>}
         {safeProjectExternalHref(nextMeeting.meetingUrl)?<a
           href={safeProjectExternalHref(nextMeeting.meetingUrl)!}
-          target="_blank" rel="noopener noreferrer">Join meeting ↗</a>:null}
+          rel="noopener noreferrer">Join meeting ↗</a>:null}
         <Link href={base+"?tab=team#meeting-"+encodeURIComponent(nextMeeting.id)}>
           Open this meeting →
         </Link>
