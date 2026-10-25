@@ -1,3 +1,4 @@
+import {facultyStudentRosterMetrics} from "./faculty-student-roster-metrics";
 import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
@@ -66,6 +67,12 @@ export async function getFacultyCourseHomeSignals(
   });
   return {
     ...signals,
+    studentRosterMetrics:facultyStudentRosterMetrics({
+      roster:attendance?.roster??[],
+      attendanceSessions:attendance?.sessions??[],
+      attendanceRecords:attendance?.records??[],
+      assignments:assignmentRows,
+    }),
     completeness: {
       attendance: attendanceComplete,
       assignments: assignmentsComplete,
