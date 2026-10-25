@@ -990,10 +990,12 @@ describe("Placement P8 offers and joining", () => {
       await new Promise(resolve=>setTimeout(resolve,1400));
       await blocker.query("commit");
       expect(await outcome).toEqual({accepted:false,code:"PLACEMENT_OFFER_EXPIRED"});
-      const saved=await pool.query<{status:string}>(
+      // The blocker still owns the sole test Pool connection (max: 1).
+      // Reuse it after COMMIT; pool.query would deadlock until finally releases it.
+      const saved=await blocker.query<{status:string}>(
         "select status from placement_offers where id=$1",[issued.id]);
       expect(saved.rows[0]?.status).toBe("ISSUED");
-      const acceptedHistory=await pool.query<{count:number}>(
+      const acceptedHistory=await blocker.query<{count:number}>(
         "select count(*)::integer as count from placement_offer_status_history where offer_id=$1 and to_status='ACCEPTED'",
         [issued.id]);
       expect(acceptedHistory.rows[0]?.count).toBe(0);
