@@ -111,7 +111,7 @@ export function MentorPrototypeHome({
               (courseLabels.length>4?" · +"+(courseLabels.length-4)+" more":""):
             "No course labels are recorded for your current project assignments."}
         </p>
-        <Link className="inline-flex min-h-10 items-center text-sm text-link underline"
+        <Link className="inline-flex min-h-11 items-center text-sm text-link underline"
           href="/mentor/projects?status=ARCHIVED">Browse archived teams →</Link>
         <p className="mt-1 text-xs text-muted-foreground">
           The system records primary Mentor assignments, not a separate
