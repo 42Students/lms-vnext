@@ -34,7 +34,12 @@ describe("PROJ-BREAK-MENTOR meeting calendar and bounded history semantics",()=>
   expect(mentorMeetingScheduleError({...valid,title:"  "}))
    .toBe("Meeting title is required.");
   expect(mentorMeetingScheduleError({...valid,meetingUrl:""}))
-   .toBe("Meeting link is required.");
+   .toBe("Meeting link or physical venue is required.");
+  // Physical meetings satisfy scheduling without a Google Meet URL, while an
+  // explicit invalid link is still rejected even if a venue is supplied.
+  expect(mentorMeetingScheduleError({...valid,meetingUrl:"",location:"Room 304"})).toBeNull();
+  expect(mentorMeetingScheduleError({...valid,meetingUrl:"javascript:alert(1)",location:"Room 304"}))
+   .toBe("Enter a valid meeting link.");
   expect(mentorMeetingScheduleError({...valid,meetingUrl:"",draft:true})).toBeNull();
  });
  it("PROJ-BREAK-MENTOR-24 meeting links cannot be script/data/file/credential URLs",()=>{
