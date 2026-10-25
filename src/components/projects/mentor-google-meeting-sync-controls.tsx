@@ -15,15 +15,40 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
  const [busy,setBusy]=useState(false);
  const [notice,setNotice]=useState<string|null>(null);
  const [repeat,setRepeat]=useState("once");
+ const [inviteMode,setInviteMode]=useState<"ALL"|"SELECTED">("ALL");
+ const [inviteOptions,setInviteOptions]=useState<readonly {
+  membershipId:string;displayName:string;
+ }[]|null>(null);
+ const [selectedIds,setSelectedIds]=useState<string[]>([]);
  const endpoint="/api/projects/"+encodeURIComponent(projectId)+
   "/meetings/"+encodeURIComponent(meetingId)+"/google";
+ async function selectInviteMode(next:"ALL"|"SELECTED"){
+  setInviteMode(next);setError(null);setNotice(null);
+  if(next!=="SELECTED"||inviteOptions!==null)return;
+  setBusy(true);
+  try{
+   const response=await fetch(endpoint+"/invitees",{
+    credentials:"same-origin",cache:"no-store",
+   });
+   if(!response.ok)throw new Error("Could not verify the current project roster.");
+   const data=await response.json() as {
+    members:readonly {membershipId:string;displayName:string}[];
+   };
+   setInviteOptions(data.members);
+  }catch(e){
+   setError(e instanceof Error?e.message:"Could not load current invitees.");
+  }finally{setBusy(false);}
+ }
  async function call(method:"GET"|"POST"|"DELETE"){
   if(busy)return;setBusy(true);setError(null);setNotice(null);
   try{
    const response=await fetch(endpoint,{
     method,credentials:"same-origin",cache:"no-store",
     ...(method==="POST"?{headers:{"Content-Type":"application/json"},
-     body:JSON.stringify(repeat==="once"?{}:{weeklyCount:Number(repeat)})}:{})
+     body:JSON.stringify({
+      ...(repeat==="once"?{}:{weeklyCount:Number(repeat)}),
+      ...(inviteMode==="SELECTED"?{inviteeMembershipIds:selectedIds}:{}),
+     })}:{})
    });
    if(!response.ok)throw new Error(response.status===403?
      "Your Mentor permission or Google consent is no longer active.":
@@ -69,11 +94,37 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
       <option value="8">Weekly × 8</option>
      </select>
     </label>
-    <Button size="sm" type="button" disabled={busy}
+    <label className="text-sm">Invite
+     <select value={inviteMode} disabled={busy}
+      onChange={e=>void selectInviteMode(e.target.value as "ALL"|"SELECTED")}
+      className="ml-2 min-h-11 rounded border border-border bg-background p-2">
+      <option value="ALL">Whole active team</option>
+      <option value="SELECTED">Selected active members</option>
+     </select>
+    </label>
+    <Button size="sm" type="button" disabled={busy||
+      inviteMode==="SELECTED"&&(!inviteOptions||selectedIds.length===0)}
       loading={busy} onClick={()=>void call("POST")}>
        {draft?"Generate Meet link and schedule":"Sync to Google and invite team"}
     </Button>
    </div>:null}
+   {canEdit&&!cancelled&&inviteMode==="SELECTED"?
+    <fieldset className="space-y-1 rounded border border-border p-3"
+      disabled={busy} aria-label="Select verified project invitees">
+      <legend className="px-1 text-sm font-semibold">Members to invite</legend>
+      {inviteOptions===null?
+        <p role="status" className="text-sm">Loading current eligible members, or retry selection.</p>:
+       inviteOptions.length===0?
+        <p className="text-sm">No members with saved email addresses are available.</p>:
+        inviteOptions.map(person=><label key={person.membershipId}
+          className="flex min-h-11 items-center gap-2 text-sm">
+          <input type="checkbox" className="size-5"
+            checked={selectedIds.includes(person.membershipId)}
+            onChange={e=>setSelectedIds(ids=>e.target.checked?
+              [...ids,person.membershipId]:ids.filter(id=>id!==person.membershipId))}/>
+          {person.displayName}
+        </label>)}
+    </fieldset>:null}
    {canEdit&&cancelled?<Button size="sm" variant="secondary" type="button"
      disabled={busy} loading={busy} onClick={()=>void call("DELETE")}>
      Remove cancelled event from Google
