@@ -74,10 +74,12 @@ test("Mentor home focus uses real scoped attention and event-keyed Later action"
   const home=source("src/components/projects/mentor-prototype-home.tsx");
   const route=source("src/app/(authenticated)/mentor/projects/page.tsx");
   assert.match(route,/attention=\{attentionRows\}/);
-  assert.match(route,/scope=\{context\.user\.id\}/);
-  assert.match(home,/item\.key\+"@"\+item\.occurredAt/);
-  assert.match(home,/localStorage\.setItem\(storageKey\(scope\)/);
-  assert.match(home,/onClick=\{\(\)=>later\(item\)\}/);
+  assert.match(route,/listOwnMentorAttentionLater\(context,attentionRows\)/);
+  assert.match(route,/initialLater=\{initialLater\}/);
+  assert.match(home,/mentorAttentionReceiptKey\(item\)/);
+  assert.match(home,/\/"api\/mentor\/attention\/later"/);
+  assert.match(home,/method:"POST"/);
+  assert.match(home,/onClick=\{\(\)=>void later\(item\)\}/);
   assert.match(home,/href=\{item\.href\}/);
 });
 
@@ -468,14 +470,15 @@ test("Mentor Team roster uses actual active sprint, last four sprint tasks and t
   assert.match(summaries,/task\.assigneeMembershipId===member\.membershipId/);
   assert.match(summaries,/mentorTeamRecentActorActivity/);
   assert.match(summaries,/Project action:/);
-  assert.match(summaries,/not a user's sign-in or online status/);
+  assert.match(summaries,/Last sign-in comes from a saved authentication timestamp/);
+  assert.match(summaries,/Neither establishes current online presence or attendance/);
 });
 
 test("Mentor Activity can filter by recorded actor, not a guessed team identity",()=>{
   const activity=source("src/components/projects/project-activity-filtered-list.tsx");
   assert.match(activity,/const \[actor,setActor\]=useState/);
-  assert.match(activity,/event\.actorUserId\?\?event\.actorDisplayName/);
-  assert.match(activity,/\(!actor\|\|/);
+  assert.match(activity,/event\.actorUserId===actor/);
+  assert.match(activity,/actorUserId:nextActor/);
   assert.match(activity,/By anyone/);
   assert.match(activity,/setActor\(""\)/);
 });
