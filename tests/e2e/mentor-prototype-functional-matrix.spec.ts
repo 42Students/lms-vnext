@@ -110,6 +110,26 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   const expectedUpdatedAt=creation.project?.updatedAt;
   expect(projectId).toMatch(/^[0-9a-f-]{36}$/i);
   expect(expectedUpdatedAt).toBeTruthy();
+  // Real active project: shared prototype controls must open scoped dialogs.
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  const activeBase="/mentor/projects/"+projectId;
+  await page.goto(activeBase+"?tab=overview");
+  const header=page.locator(".prototype-mentor-header-actions");
+  await header.getByRole("button",{name:"Create task"}).click();
+  const taskDialog=page.getByRole("dialog",{name:"Confirm new task"});
+  await expect(taskDialog).toBeVisible();
+  await taskDialog.getByRole("button",{name:"Cancel"}).click();
+  await header.getByRole("button",{name:"Schedule a meeting"}).click();
+  const meetingDialog=page.getByRole("dialog",{name:"Schedule a meeting"});
+  await expect(meetingDialog).toBeVisible();
+  await expect(meetingDialog.getByLabel(/Physical venue/)).toBeVisible();
+  await meetingDialog.getByRole("button",{name:"Cancel"}).click();
+  await page.goto(activeBase+"?tab=sprints");
+  const detail=page.getByRole("region",{name:"Detailed sprint plan"});
+  await expect(detail).toBeVisible();
+  await detail.getByLabel("Filter sprint state").selectOption("PLANNED");
+  await expect(detail.getByLabel("Filter sprint state")).toHaveValue("PLANNED");
+  await signIn(context,"seed-college-admin",SEED_IDS.collegeAdminMembership,"COLLEGE_ADMIN");
   const archive=await page.request.post("/api/projects/"+projectId+"/archive",{
    headers:{Origin:origin},data:{expectedUpdatedAt},
   });

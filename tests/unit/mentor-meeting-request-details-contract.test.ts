@@ -22,12 +22,13 @@ describe("Recorded Mentor meeting request detail contract",()=>{
   expect(pane).toContain("This historical field is not proof of a current Google connection");
   expect(pane).toContain("No verified live calendar sync");
  });
- it("offers three explicit decisions and real join URL on YES or ANOTHER",()=>{
+ it("offers three explicit decisions and online or in-person confirmation",()=>{
   expect(controls).toContain("Yes, this time");
   expect(controls).toContain("Another time");
   expect(controls).toContain("No, answer in a note");
   expect(controls).toContain('expectedUpdatedAt:meeting.updatedAt');
-  expect(controls).toContain("A real meeting join link is required");
+  expect(controls).toContain("Provide a join link or physical meeting venue.");
+  expect(controls).toContain("location:venue.trim()");
   expect(controls).toContain('action:"CANCEL",confirmed:true');
  });
 });
