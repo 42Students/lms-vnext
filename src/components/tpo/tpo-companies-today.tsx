@@ -162,7 +162,7 @@ export function TpoCompaniesToday({
         {label}
       </Link>)}
     <span className={styles.sub}>{scope==="MINE"?
-      "Only follow-ups assigned to your signed-in placement team membership.":
+      "Your follow-ups and unassigned work from this college.":
       "Open follow-ups from your college's placement team."}</span>
   </nav>
   {replyTotal!==null&&replyTotal>0?<section className={styles.answer} aria-label="Recruiter replies waiting" data-testid="tpo.today.replies">
@@ -196,7 +196,7 @@ export function TpoCompaniesToday({
      <div className={styles.queueTitle}>
       <span className={styles.eyebrow}>{day===0?"TODAY · ": "PLANNED · "}{dayLabel(new Date(now.getTime()+day*86400000)).toUpperCase()}</span>
       <strong>{displayed.length} {displayed.length===1?"thing":"things"} need you</strong>
-      <small>{scope==="MINE"?"Yours and assigned to you":"Your placement team's open follow-ups"}</small>
+      <small>{scope==="MINE"?"Yours and unassigned":"Your placement team's open follow-ups"}</small>
      </div>
      <Link href="/tpo/follow-ups">Re-plan your week ›</Link></div>
     <div className={styles.week} role="group" aria-label="This week">
