@@ -71,3 +71,18 @@ export function tpoTodayFocusHref(scope:"MINE"|"TEAM",followupId?:string){
  const query=search.toString();
  return "/tpo/companies/today"+(query?"?"+query:"");
 }
+
+/** Relative-day selection is bounded to the seven-day prototype strip.
+ * Invalid or repeated query values must not silently become Today. */
+export function tpoTodayAgendaDay(raw:unknown):number|null{
+ if(raw===undefined)return 0;
+ if(typeof raw!=="string"||!/^[0-6]$/.test(raw))return null;
+ return Number(raw);
+}
+export function tpoTodayAgendaHref(scope:"MINE"|"TEAM",day:number):string{
+ const search=new URLSearchParams();
+ if(scope==="TEAM")search.set("scope","TEAM");
+ search.set("view","agenda");
+ if(Number.isInteger(day)&&day>0&&day<7)search.set("day",String(day));
+ return "/tpo/companies/today?"+search.toString();
+}
