@@ -9,6 +9,8 @@ import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import {recruiterSelectionRangeWarning} from "@/modules/placements/recruiter-selection-list-model";
+import {parseRecruiterSelectionCsv,recruiterSelectionCsvTemplate}
+ from "@/modules/placements/recruiter-selection-csv-model";
 
 type Candidate={id:string;name:string};
 type Kind="OFFER"|"LETTER_OF_INTENT";
@@ -28,6 +30,8 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [success,setSuccess]=useState("");
+ const [csvError,setCsvError]=useState("");
+ const [csvStatus,setCsvStatus]=useState("");
  const nonce=useRef<string|null>(null);
  const pending=useRef(false);
  const eligible=new Set(candidates.map(candidate=>candidate.id));
@@ -37,6 +41,30 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
   (!ctcLpa||Number(ctcLpa)>0);
  const canSend=!disabled&&!busy&&chosen.length>0&&validCtc&&
   packageDescription.trim().length<=500;
+
+ async function importCsv(file:File|undefined){
+  if(!file)return;
+  setCsvError("");setCsvStatus("");
+  if(file.size>65536||!file.name.toLowerCase().endsWith(".csv")){
+   setCsvError("Use an Excel-exported .csv file of at most 64 KB.");
+   return;
+  }
+  try{
+   const text=await file.text();
+   const result=parseRecruiterSelectionCsv(text,new Set(candidates.map(candidate=>candidate.id.toLowerCase())));
+   if(!result.ok){setCsvError(result.error);return;}
+   setSelected(result.ids);nonce.current=null;setError("");setSuccess("");
+   setCsvStatus(result.ids.length+" eligible applicants selected from CSV. Review the selection before sending.");
+   setOpen(true);
+  }catch{setCsvError("Could not read the CSV. No changes were made.");}
+ }
+ function downloadTemplate(){
+  const blob=new Blob([recruiterSelectionCsvTemplate(candidates)],{type:"text/csv;charset=utf-8"});
+  const href=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=href;link.download="recruiter-eligible-applicants.csv";link.click();
+  window.setTimeout(()=>URL.revokeObjectURL(href),3000);
+ }
  function changeSelection(id:string,checked:boolean){
   setSelected(previous=>checked?[...new Set([...previous,id])]:previous.filter(value=>value!==id));
   nonce.current=null;setError("");setSuccess("");
@@ -90,6 +118,8 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
   {!disabled&&candidates.length===0?<p role="status" className="text-sm text-body">No applicants have passed every completed assessment and interview round.</p>:null}
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {csvError?<p role="alert" className="text-sm text-error">{csvError}</p>:null}
+  {csvStatus?<p role="status" className="text-sm text-success">{csvStatus}</p>:null}
   {open&&!disabled?<div className="space-y-4 border-t border-border pt-4">
    <div className="grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold text-body">Selection kind
@@ -127,6 +157,21 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
      </label>)}
     </div>
    </div>
+   <section aria-label="Import applicant IDs from Excel" className="space-y-2 border-t border-border pt-3">
+    <h4 className="font-semibold text-foreground">Upload your list from Excel</h4>
+    <p className="text-xs text-body">
+     Download eligible applicants, keep application_id unchanged, choose the rows to include,
+     then use Excel's Save As CSV (UTF-8). Only eligible IDs are imported.
+     Spreadsheet files (.xlsx) are not accepted directly.
+    </p>
+    <div className="flex flex-wrap gap-3">
+     <Button type="button" variant="secondary" onClick={downloadTemplate}>Download Excel-compatible template</Button>
+     <label className="grid gap-1 text-xs font-medium text-body">Upload CSV from Excel
+      <Input type="file" accept=".csv,text/csv" disabled={busy}
+       onChange={event=>{void importCsv(event.target.files?.[0]);event.target.value="";}}/>
+     </label>
+    </div>
+   </section>
    <p className="text-xs text-muted-foreground">Selections go to your college placement cell for review. This action does not issue or release offers.</p>
    <div className="flex flex-wrap gap-2">
     <Button type="button" disabled={!canSend} onClick={startConfirmation}>Review and send</Button>
