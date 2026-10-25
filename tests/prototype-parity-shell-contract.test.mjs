@@ -207,8 +207,9 @@ test("Mentor Notifications pills filter real source categories and unread pagina
   assert.match(page,/selectedPill==="unread" \? "unread"/);
   assert.match(page,/mentorInboxPageHref\(inbox\.query\.view,inbox\.page\.nextCursor\)/);
   assert.match(page,/selectedPill==="meet" \? alert\.kind==="REQUESTED"\|\|alert\.kind==="MEETING_SOON"/);
-  assert.match(page,/<NotificationList items=\{shownInbox\}/);
-  assert.match(page,/<AnnouncementFeed enabled=\{announcementsEnabled\}/);
+  assert.match(page,/<MentorUnifiedNotificationFeed/);
+  assert.match(page,/unifiedRows\.filter\(row=>row\.source==="ANNOUNCEMENT"\)/);
+  assert.match(page,/announcementNextCursor=\{announcementPage\.nextCursor/);
   assert.match(css,/prototype-mentor-notification-pills>a\[aria-current="page"\]/);
 });
 
@@ -274,7 +275,7 @@ test("Mentor student watch uses active scoped learner roles and real blocked/rev
   const route=source("src/app/(authenticated)/mentor/projects/page.tsx");
   const home=source("src/components/projects/mentor-prototype-home.tsx");
   assert.match(service,/hasMembershipRole\(context,"MENTOR"\)/);
-  assert.match(service,/inArray\(projectTasks\.projectId,\[\.\.\.byId\.keys\(\)\]\)/);
+  assert.match(service,/inArray\(projectTasks\.projectId,ids\)/);
   assert.match(service,/eq\(projectMembers\.role,"LEARNER"\)/);
   assert.match(service,/eq\(collegeMemberships\.status,"ACTIVE"\)/);
   assert.match(service,/eq\(users\.platformStatus,"ACTIVE"\)/);
@@ -300,7 +301,7 @@ test("Mentor global search covers projects tasks active students and resources w
   assert.match(search,/eq\(projectMembers\.role,"LEARNER"\)/);
   assert.match(search,/isNull\(projectTasks\.deletedAt\)/);
   assert.match(search,/\.limit\(SEARCH_PAGE_SIZE\+1\)/);
-  assert.match(page,/searchMentorWorkspace\(/);
+  assert.match(page,/searchMentorWorkspacePage\(/);
   assert.match(page,/mentor-unified-search/);
   assert.match(config,/\/mentor\/search\?q=/);
 });
@@ -421,8 +422,8 @@ test("Mentor Activity since-seen message states local-device limitations",()=>{
 test("Mentor Resources show real pinned group without breaking resource actions",()=>{
   const resources=source("src/components/projects/project-resource-list.tsx");
   assert.match(resources,/orderedResources\.map\(\(resource,index\)=>/);
-  assert.match(resources,/Pinned references/);
-  assert.match(resources,/Other resources/);
+  assert.match(resources,/resource\.pinned\?<StatusBadge/);
+  assert.match(resources,/mentorResourceGroupOrder\(listOrder,sprints\)/);
   assert.match(resources,/<ProjectResourceActions/);
   assert.match(resources,/fragment/i);
 });
