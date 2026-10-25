@@ -80,7 +80,10 @@ async function cleanup() {
     "delete from learner_program_enrollments where membership_id=$1",
     [coordinatorMembershipId],
   );
-  await pool.query("delete from placement_batch_registration_events where registration_id in (select id from placement_batch_registrations where membership_id = $1)", [coordinatorMembershipId]);
+  // These are append-only by design: the registered database denies row
+  // DELETE. This file runs alone in a disposable PostgreSQL test database;
+  // truncate its temporary history before deleting the owned registration.
+  await pool.query("TRUNCATE TABLE placement_batch_registration_events");
   await pool.query("delete from placement_batch_registrations where membership_id = $1", [coordinatorMembershipId]);
   await pool.query("delete from membership_roles where id = $1", [coordinatorRoleId]);
   await pool.query("delete from college_memberships where id = $1", [coordinatorMembershipId]);
