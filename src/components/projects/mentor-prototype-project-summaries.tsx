@@ -408,14 +408,19 @@ export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}
   const classify=(type:string):"task"|"resource"|"meeting"|"other"=>
     /TASK/i.test(type)?"task":/RESOURCE|FILE|LINK/i.test(type)?"resource":
       /MEETING/i.test(type)?"meeting":"other";
-  const taskEvents=recent.filter(event=>classify(event.eventType)==="task").length;
-  const resourceEvents=recent.filter(event=>classify(event.eventType)==="resource").length;
-  const meetingEvents=recent.filter(event=>classify(event.eventType)==="meeting").length;
-  const otherEvents=recent.filter(event=>classify(event.eventType)==="other").length;
+  // Use the tenant-authorized, unpaginated database aggregation whenever
+  // available. A 100-event workspace snapshot is not a complete seven-day total.
+  const full=workspace.mentorProjectActivityCounts;
+  const week=full?.lastSevenDays;
+  const taskEvents=week?.task??recent.filter(event=>classify(event.eventType)==="task").length;
+  const resourceEvents=week?.resource??recent.filter(event=>classify(event.eventType)==="resource").length;
+  const meetingEvents=week?.meeting??recent.filter(event=>classify(event.eventType)==="meeting").length;
+  const otherEvents=week?.other??recent.filter(event=>classify(event.eventType)==="other").length;
+  const count=week?.count??recent.length;
   return <section className="prototype-mentor-activity-summary" aria-label="Recorded activity this week">
     <div className="prototype-mentor-card-title">
       <h2>Project activity · last seven days</h2>
-      <span>{recent.length} recorded {recent.length===1?"event":"events"}</span>
+      <span>{count} {week?"recorded":"loaded"} {count===1?"event":"events"}</span>
     </div>
     <div className="prototype-mentor-activity-stat-row">
       <div><strong>{taskEvents}</strong><span>Task events</span></div>
@@ -423,7 +428,17 @@ export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}
       <div><strong>{resourceEvents}</strong><span>Resource events</span></div>
       <div><strong>{otherEvents}</strong><span>Other events</span></div>
     </div>
-    <p>Use the activity filters below to browse the complete recorded history. Event counts are based on stored project activity types, not inferred actions.</p>
+    {full?<div role="group" aria-label="All recorded resource changes">
+      <h3 className="text-sm font-semibold">Resource changes · all recorded history</h3>
+      <div className="prototype-mentor-activity-stat-row">
+        <div><strong>{full.resources.changes}</strong><span>Changes</span></div>
+        <div><strong>{full.resources.added}</strong><span>Added</span></div>
+        <div><strong>{full.resources.edited+full.resources.saved}</strong><span>Edited or saved</span></div>
+        <div><strong>{full.resources.removed}</strong><span>Removed</span></div>
+      </div>
+    </div>:<p role="status">Only loaded activity is counted here. Full-history totals are unavailable; older events may not appear in these figures.</p>}
+    <p>Use the activity filters below to browse recorded events. Full-history totals
+      include authorized events beyond the initial loaded page and are not inferred from task state.</p>
   </section>;
 }
 

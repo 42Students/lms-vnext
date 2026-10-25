@@ -15,6 +15,7 @@ import {listMentorWeekContributors} from "./mentor-week-contributor-service";
 import {getMentorLearnerAcademicFacts} from "./mentor-learner-academic-facts-service";
 import {getMentorTeamRecentActorActivity} from "./mentor-team-recent-actor-service";
 import {getMentorWeekActivityTotals} from "./mentor-week-activity-totals-service";
+import {getMentorProjectActivityCounts} from "./mentor-project-activity-counts-service";
 import {listMentorSprintSignOffSnapshots,listMentorSprintCommitmentSnapshots}
   from "./mentor-sprint-signoff-snapshot-service";
 import {
@@ -129,6 +130,13 @@ export async function getProjectWorkspaceView(
     ?await getMentorTeamRecentActorActivity(context,projectId,members):{};
   const mentorWeekActivityTotals=access.access==="MENTOR"&&!activityRead.failed
     ?await getMentorWeekActivityTotals(context,projectId).catch((error:unknown)=>{
+      if(!isUnavailableProjectSectionStorage(error))throw error;
+      return null;
+    }):null;
+  // Unlike workspace.activity (the most recent 100 records), these totals
+  // are aggregated before paging across all authorized project events.
+  const mentorProjectActivityCounts=access.access==="MENTOR"&&!activityRead.failed
+    ?await getMentorProjectActivityCounts(context,projectId).catch((error:unknown)=>{
       if(!isUnavailableProjectSectionStorage(error))throw error;
       return null;
     }):null;
@@ -339,6 +347,7 @@ export async function getProjectWorkspaceView(
       row.memberStatus==="ACTIVE"&&row.accountStatus==="ACTIVE"&&row.lastLoginAt)
       .map(row=>[row.membershipId,row.lastLoginAt!.toISOString()])),
     mentorWeekActivityTotals,
+    mentorProjectActivityCounts,
     mentorEvidence: buildMentorWorkspaceEvidence({
       tasks: workspace.tasks,
       members,
