@@ -35,7 +35,7 @@ export function FacultyFindSuggestions({query,onOpen}:{
     const rows=payload&&typeof payload==="object"&&"results" in payload&&
       Array.isArray(payload.results)?payload.results:null;
     if(!rows)throw new Error("Invalid find results");
-    setState({term:needle,results:rows.filter(permitted).slice(0,12),error:false});
+    setState({term:needle,results:rows.filter(permitted).slice(0,24),error:false});
    }).catch(()=>{if(!controller.signal.aborted)setState({term:needle,results:[],error:true});});
   },220);
   return ()=>{controller.abort();window.clearTimeout(timer);};
@@ -48,8 +48,8 @@ export function FacultyFindSuggestions({query,onOpen}:{
    <p role="alert" className="flex-1 text-xs text-red-700">Find could not load your teaching records.</p>
    <Button size="sm" variant="link" type="button" onClick={()=>setRetry(x=>x+1)}>Retry</Button>
   </div>:null}
-  {(["Students","Colleagues","Courses","Assignments","Quizzes","Pages"] as const).map(group=>{
-   const entries=ready&&!state.error?state.results.filter(row=>row.group===group):[];
+  {(["Students","Colleagues","Courses","Assignments","Quizzes"] as const).map(group=>{
+   const entries=ready&&!state.error?state.results.filter(row=>row.group===group||(group==="Courses"&&row.group==="Pages")):[];
    return entries.length?<div key={group}>
     <p className="border-t border-[#edf1f5] px-3 pt-3 text-xs font-bold uppercase tracking-wide text-[#60718b]">{group==="Students"?"Students in your classes":
       group==="Colleagues"?"Colleagues":group==="Courses"||group==="Pages"?"Courses and pages":group}</p>

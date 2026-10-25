@@ -72,7 +72,7 @@ export async function GET(request:Request){
     label:course.courseName,context:course.courseCode+" · "+course.sectionName,
     href:"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/home",
    });
-   if(results.length>=5)break;
+   if(results.filter(row=>row.group==="Courses").length>=5)break;
   }
   for(const item of assessments.assignments){
    if(![item.title,item.courseName,item.courseCode,item.sectionName].some(has))continue;
