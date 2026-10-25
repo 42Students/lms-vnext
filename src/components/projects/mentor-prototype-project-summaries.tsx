@@ -764,6 +764,8 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
         <Link href={base+"?tab=activity"}>All activity →</Link></div>
       {recentActivity.length?recentActivity.map(update=>(
         <div key={update.id} className="prototype-mentor-overview-actions">
+          {update.eventType==="projects.mentor_update.posted"?
+            <strong>Mentor update · saved project activity</strong>:null}
           <p>{update.summary}</p>
           <span>{update.actorDisplayName||"Recorded project event"} · {new Intl.DateTimeFormat("en-IN",{
             day:"numeric",month:"short",timeZone:"Asia/Kolkata",
