@@ -316,12 +316,18 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
   });
 
   it("LEARNER-placements-50 registers, records consent and refuses after closure", async () => {
-    // Registration requires the placements module; enable it for this test only.
-    const moduleRuleId=randomUUID();
-    await pool.query(
-      "INSERT INTO module_access_rules(id,scope_type,scope_id,module,enabled) VALUES($1,'COLLEGE',$2,'placements',true)",
-      [moduleRuleId,SEED_IDS.collegeA],
+    // Seed migrations may already install the scoped feature flag. Preserve
+    // its previous value instead of conflicting with the unique scope key.
+    const priorRule=await pool.query<{id:string;enabled:boolean}>(
+      "SELECT id,enabled FROM module_access_rules WHERE scope_type='COLLEGE' AND scope_id=$1 AND module='placements'",
+      [SEED_IDS.collegeA],
     );
+    const moduleRuleId=priorRule.rows[0]?.id??randomUUID();
+    if(priorRule.rows[0])await pool.query(
+      "UPDATE module_access_rules SET enabled=true WHERE id=$1",[moduleRuleId]);
+    else await pool.query(
+      "INSERT INTO module_access_rules(id,scope_type,scope_id,module,enabled) VALUES($1,'COLLEGE',$2,'placements',true)",
+      [moduleRuleId,SEED_IDS.collegeA]);
     try{
     const a=await makeAcademicFixture(SEED_IDS.collegeA);
     const membershipId=await makeLearner(SEED_IDS.collegeA,a);
@@ -368,7 +374,9 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
       choice:"PLACEMENTS",acceptedConsent:true,
     })).rejects.toMatchObject({code:"DB08_REGISTRATION_WINDOW_CLOSED"});
     }finally{
-      await pool.query("DELETE FROM module_access_rules WHERE id=$1",[moduleRuleId]);
+      if(priorRule.rows[0])await pool.query(
+        "UPDATE module_access_rules SET enabled=$2 WHERE id=$1",[moduleRuleId,priorRule.rows[0].enabled]);
+      else await pool.query("DELETE FROM module_access_rules WHERE id=$1",[moduleRuleId]);
     }
   });
 

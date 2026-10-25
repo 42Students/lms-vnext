@@ -774,9 +774,11 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     const acme = companies.find(row => row.key === "acme");
     expect(acme).toBeDefined();
     expect(acme?.contacts).toBe(2);
-    expect(acme?.studentsPlaced).toBeNull();
+    // The live college counts-as-placed policy is now implemented; a company
+    // with no qualifying offer evidence correctly reports zero, not unknown.
+    expect(acme?.studentsPlaced).toBe(0);
     expect(acme?.studentsPlacedEvidence)
-      .toBe("PENDING_W04_COUNTS_AS_PLACED_POLICY");
+      .toBe("COLLEGE_COUNTS_AS_PLACED_POLICY");
 
     const detail = await getTpoCompanyMemory(
       tpo, SEED_IDS.collegeA, "acme corporation",
