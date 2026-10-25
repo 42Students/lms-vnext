@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {RecruiterColleagueInviteRequest} from "./recruiter-colleague-invite-request";
 import {recruiterCompanyHiringDisplay} from "@/modules/placements/recruiter-company-unified-prototype-model";
 import type {RecruiterReportRow} from "@/modules/placements/recruiter-company-reports-model";
 import styles from "./recruiter-company-prototype.module.css";
@@ -65,7 +66,9 @@ export function RecruiterCompanyPrototype({
          </div>
        </li>)}
       </ul>:<p className={styles.muted}>Team data is not available. Ask the placement cell to verify access.</p>}
-      <p className={styles.muted}>The placement cell approves new teammates; opening Messages does not send an invitation.</p>
+      <RecruiterColleagueInviteRequest collegeId={collegeId} companyName={companyName}
+       collegeName={collegeName} allowedDomains={domains}/>
+      <p className={styles.muted}>Invitation requests are sent to the placement cell for approval. They do not grant access immediately.</p>
      </section>
     </div>
     <section className={styles.panel} aria-label="Your hiring at this college">
