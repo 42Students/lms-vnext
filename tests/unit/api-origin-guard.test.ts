@@ -20,6 +20,8 @@ const ALLOWED: Record<string, string> = {
     "Inbound mail provider uses signed x-inbound-mail-signature, verified by ingestVerifiedInboundMail; no browser session.",
   "src/app/api/internal/notifications/release/route.ts POST":
     "Scheduler-only bearer token with timingSafeEqual; no browser session or Origin header.",
+  "src/app/api/internal/mentor-project-email-dispatch/route.ts POST":
+    "Mentor email worker uses an independent rotated bearer secret, strict length guard and timingSafeEqual; no browser session.",
 
   // "src/app/api/example/route.ts POST": "authenticated by provider signature",
   "src/app/api/internal/alerts/tick/route.ts POST":
@@ -121,7 +123,7 @@ describe("state-changing API routes", () => {
     const source=fs.readFileSync(file,"utf8");
     expect(ALLOWED["src/app/api/webhooks/telegram/route.ts POST"]).toContain("provider webhook");
     expect(source).toContain('validTelegramWebhookSecret(request.headers.get("x-telegram-bot-api-secret-token"))');
-    expect(source).toContain("if (process.env.APP_ENV !== \"production\")");
+    expect(source).toContain('process.env["APP_ENV"] !== "production"');
     expect(source).not.toContain("getCurrentRequestContext");
   });
 
@@ -131,7 +133,7 @@ describe("state-changing API routes", () => {
     expect(ALLOWED["src/app/api/internal/alerts/tick/route.ts POST"]).toContain("timing-safe");
     expect(source).toContain('timingSafeEqual');
     expect(source).toContain('x-internal-alerts-key');
-    expect(source).toContain('process.env.INTERNAL_ALERT_TICK_SECRET');
+    expect(source).toContain('process.env["INTERNAL_ALERT_TICK_SECRET"]');
     expect(source).toContain('if (!provided || !expected) return false;');
     expect(source).not.toContain('getCurrentRequestContext');
   });
@@ -145,6 +147,13 @@ describe("state-changing API routes", () => {
     expect(scheduler).toContain("timingSafeEqual(actual, expected)");
     expect(scheduler).toContain("!secret || !incoming");
     expect(scheduler).not.toContain("getCurrentRequestContext");
+    const mentorWorker=fs.readFileSync(path.join(ROOT,
+      "api/internal/mentor-project-email-dispatch/route.ts"),"utf8");
+    expect(mentorWorker).toContain('process.env["MENTOR_PROJECT_EMAIL_WORKER_TOKEN"]');
+    expect(mentorWorker).toContain('expected.length<32');
+    expect(mentorWorker).toContain('actual.startsWith("Bearer ")');
+    expect(mentorWorker).toContain('timingSafeEqual(');
+    expect(mentorWorker).not.toContain("getCurrentRequestContext");
   });
 
   it("every POST/PUT/PATCH/DELETE handler checks the request origin", () => {

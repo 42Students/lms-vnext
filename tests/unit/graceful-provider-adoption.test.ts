@@ -15,7 +15,8 @@ describe("graceful outbound provider adoption", () => {
     expect(email).toContain("outboundFetch(");
     expect(email).toContain("maxAttempts: canRetry?3:1");
     expect(email).toContain('purpose.kind!=="OTP"');
-    expect(email).toContain('ZEPTOMAIL_IDEMPOTENCY_SUPPORTED==="confirmed"');
+    expect(email).toContain('env["ZEPTOMAIL_IDEMPOTENCY_SUPPORTED"]==="confirmed"');
+    expect(email).toContain('typeof message.idempotencyKey==="string"');
     expect(email).toContain("idempotencyKey:message.idempotencyKey");
     expect(email).toContain("fetchImpl,");
   });

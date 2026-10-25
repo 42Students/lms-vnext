@@ -27,7 +27,9 @@ describe("W03 project admin daily-use surface parity", () => {
       expect(source).toContain("ProjectAdminPagination");
       expect(source).toContain("listProjectAdminSnapshots");
       expect(source).toContain("searchParams");
-      expect(source).toMatch(/const query(?:: ProjectAdminCollectionQuery)? = parsed\.data;/);
+      // Admin can preserve the parsed query directly; college separates the
+      // table/card view toggle before passing strict DB-only filters.
+      expect(source).toMatch(/(?:const query(?:: ProjectAdminCollectionQuery)? = parsed\.data;|const \{ q, status, \.\.\.requiredQuery \} = parsed\.data;)/);
       expect(source).toContain("if (!parsed.success)");
       expect(source).toContain("Invalid project filters");
       expect(source).toContain("Clear filters");

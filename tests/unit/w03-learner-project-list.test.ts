@@ -19,11 +19,11 @@ const service = readFileSync(
 describe("W03 learner project discovery and attention contract", () => {
   it("keeps search, status, needs-action and pagination addressable", () => {
     for (const token of [
-      "params.search",
-      "params.status",
-      "params.attention",
-      "params.page",
-      "params.pageSize",
+      'params["search"]',
+      'params["status"]',
+      'params["attention"]',
+      'params["page"]',
+      'params["pageSize"]',
       "ProjectParticipantPagination",
     ]) {
       expect(listPage).toContain(token);
