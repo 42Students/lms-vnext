@@ -49,6 +49,7 @@ import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conver
 import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
 import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
 import {recruiterChangeShortcut,RECRUITER_CHANGE_SHORTCUTS} from "@/modules/placements/recruiter-change-shortcuts-model";
+import {getRecruiterBookedInterviews} from "@/modules/placements/recruiter-booked-interviews-service";
 import {Tabs} from "@/components/ui/tabs";
 
 function currentTimeMs(){return Date.now();}
@@ -153,6 +154,13 @@ export default async function HrPlacementJobPage({
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion"||requestsTab;
   const changeShortcut=recruiterChangeShortcut(query.change);
+  const bookedInterviews=filters.tab==="rounds"
+    ?await getRecruiterBookedInterviews(context,workspace.job.id)
+      .then(value=>({items:value.items,truncated:value.truncated,unavailable:false as const}))
+      .catch(()=>({items:[] as Awaited<ReturnType<typeof getRecruiterBookedInterviews>>["items"],
+        truncated:false,unavailable:true as const}))
+    :null;
+
   const requestData=discussionTab?await getDriveChangeRequests(context,workspace.job.id):null;
   const requestsToAnswer=requestData?.requests.filter(item=>
     item.status==="OPEN"&&item.targetParty==="COMPANY").length??0;
@@ -939,6 +947,49 @@ export default async function HrPlacementJobPage({
                  className="mt-2 inline-flex min-h-9 max-[767px]:min-h-11 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Change or remove</Link>:null}
             </li>)}
           </ul>
+
+          <section aria-label="Who and when - booked interview panel" className="space-y-3 rounded-xl border border-border p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 className="font-semibold text-foreground">Who, when · interview panel lists</h3>
+                <p className="text-sm text-muted-foreground">Only placement-cell-booked, actively shortlisted applicants are listed. Student confirmation is separate from college booking.</p>
+              </div>
+              <Link href={"/recruiter/drives/"+workspace.job.id+"/interview-slots"}
+                className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+                Change your time plan
+              </Link>
+            </div>
+            {bookedInterviews?.unavailable?<p role="alert" className="text-sm text-body">
+              Booked interview identities could not be verified. Refresh before relying on the panel list.
+            </p>:bookedInterviews?.items.length?
+              <div className="grid gap-3 lg:grid-cols-2">
+                {workspace.rounds.filter(round=>round.kind==="INTERVIEW").map(round=>{
+                  const appointments=bookedInterviews.items.filter(item=>item.roundId===round.id);
+                  return appointments.length?<article key={round.id} className="space-y-2 border-t border-border pt-3">
+                    <h4 className="font-semibold text-foreground">{round.name} · {appointments.length} booked</h4>
+                    <ol className="space-y-1">
+                      {appointments.map(slot=><li key={slot.slotId}
+                        className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-border px-3 py-2 text-sm">
+                        <span className="min-w-0 flex-1">
+                          <strong>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true}).format(slot.startsAt)}</strong>
+                          {" · "}{slot.name||"Unnamed applicant"}
+                          <small className="block text-muted-foreground">{slot.panel||"Panel not assigned"} · {slot.room}</small>
+                        </span>
+                        <span className={slot.confirmation==="CONFIRMED"?"text-success":
+                          slot.confirmation==="AWAITING_STUDENT"?"text-warning":"text-muted-foreground"}>
+                          {slot.confirmation==="CONFIRMED"?"✓ Confirmed":
+                            slot.confirmation==="AWAITING_STUDENT"?"Awaiting student":"Awaiting college"}
+                        </span>
+                      </li>)}
+                    </ol>
+                  </article>:null;
+                })}
+              </div>:
+              <p className="text-sm text-muted-foreground">No college-booked interviews are visible for currently shared applicants. Your proposed employer slots are shown separately.</p>}
+            {bookedInterviews?.truncated?<p role="status" className="text-sm font-semibold text-body">
+              Showing the first 200 authorized appointments. Ask the placement cell for the full panel list.
+            </p>:null}
+          </section>
           {roundSchedule.length?<div className="grid gap-3 md:grid-cols-2">
             {roundSchedule.map(round=><article key={round.id} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] min-[768px]:p-[var(--lms-canvas-padding)] shadow-none">
               <h4 className="font-semibold text-[var(--lms-heading)]">{round.sequence}. {round.name}</h4>
