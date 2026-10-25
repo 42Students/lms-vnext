@@ -3,18 +3,18 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 type Outcome={markedRead:number;remainingLoaded:number;notice:string};
 export function MentorSourceReadAll({unread}:{unread:number}){
  const router=useRouter();
  const [busy,setBusy]=useState(false);
+ const [confirmOpen,setConfirmOpen]=useState(false);
  const [error,setError]=useState("");
  const [feedback,setFeedback]=useState("");
  async function run(){
   if(busy||unread===0)return;
-  if(!window.confirm(
-    "Mark up to 50 currently visible project and college alerts as read? This does not affect personal messages or older notices outside the loaded window."
-  ))return;
+  setConfirmOpen(false);
   setBusy(true);setError("");setFeedback("");
   try{
    const result=await apiFetch<Outcome>(
@@ -33,9 +33,14 @@ export function MentorSourceReadAll({unread}:{unread:number}){
    className="flex flex-wrap items-center gap-3">
    <span className="text-sm">{unread} unread in loaded project and college sources</span>
    <Button type="button" variant="secondary" size="sm" loading={busy}
-     disabled={!unread||busy} onClick={()=>void run()}>
+     disabled={!unread||busy} onClick={()=>setConfirmOpen(true)}>
      Mark visible source alerts read
    </Button>
+   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+     title="Mark visible source alerts as read?"
+     description="Up to 50 currently loaded project and college alerts will be marked read. Personal messages and older unpaginated alerts are not affected."
+     confirmLabel="Mark visible alerts read" confirmVariant="primary"
+     confirmDisabled={!unread} pending={busy} onConfirm={()=>void run()}/>
    {feedback?<span role="status" className="text-xs">{feedback}</span>:null}
    {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
  </div>;
