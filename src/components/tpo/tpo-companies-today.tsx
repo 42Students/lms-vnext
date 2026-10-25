@@ -180,7 +180,12 @@ export function TpoCompaniesToday({
   {hasMore?<p role="status" className={styles.warning}>This is a 50-item focus preview from the first CRM pages. Older follow-ups are available in the full queue.</p>:null}
   <div className={styles.grid}>
    <section className={styles.queue} aria-label="Follow-up queue">
-    <div className={styles.queueHead}><strong>{day===0?"Needs your attention":"Planned follow-ups"}</strong>
+    <div className={styles.queueHead}>
+     <div className={styles.queueTitle}>
+      <span className={styles.eyebrow}>{day===0?"TODAY · ": "PLANNED · "}{dayLabel(new Date(now.getTime()+day*86400000)).toUpperCase()}</span>
+      <strong>{displayed.length} {displayed.length===1?"thing":"things"} need you</strong>
+      <small>{scope==="MINE"?"Yours and assigned to you":"Your placement team's open follow-ups"}</small>
+     </div>
      <Link href="/tpo/follow-ups">Re-plan your week ›</Link></div>
     <div className={styles.week} role="group" aria-label="This week">
      {days.map(item=><button type="button" key={item.offset}
@@ -205,7 +210,13 @@ export function TpoCompaniesToday({
    </section>
    <section className={styles.detail} aria-label="Selected">
     {current?<><span className={styles.eyebrow}>{current.overdue?"OVERDUE · ":"DUE · "}{when(current.dueAt)}</span>
-     <h2>{current.leadName}</h2><p className={styles.sub}>{current.companyName??"Recruiter"}</p>
+     <div className={styles.personHead}>
+      <div><h2>{current.leadName}</h2><p className={styles.sub}>{current.companyName??"Recruiter"}</p></div>
+      <div className={styles.personActions}>
+       {contact?<a href={contact} className={styles.secondary}>Call</a>:null}
+       <Link href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)} className={styles.secondary}>Open page</Link>
+      </div>
+     </div>
      <div className={styles.context}><span className={styles.eyebrow}>WHY THIS PERSON</span>
        <strong>{current.note?.trim()||"A recorded recruiter follow-up is due."}</strong></div>
      <p className={styles.sub}>Record what happened. An outcome is saved with your account and the recorded follow-up is closed together.</p>
