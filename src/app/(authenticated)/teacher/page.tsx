@@ -25,7 +25,7 @@ export default async function TeacherIndex(){
   title:"Review submissions for "+assignment.title,
   detail:assignment.courseName+" · "+assignment.sectionName+
    " · Open the report to check grading status.",
-  action:"Grade",href:"/teacher/report/assignment/"+encodeURIComponent(assignment.id)+
+  action:"Grade",href:"/teacher/report/assignment/"+encodeURIComponent(assignment.id)+"/grade"+
    "?deliveryId="+encodeURIComponent(assignment.deliveryId),
  });
  const next=schedule?.nextUpcoming;

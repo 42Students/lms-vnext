@@ -14,7 +14,7 @@ export function FacultyPrototypeAssignmentReport({report}:{
  const fmt=(when:Date)=>new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"
  }).format(when);
- const gradeHref="/teacher/report/assignment/"+encodeURIComponent(assignment.id)+"/submissions?deliveryId="+encodeURIComponent(assignment.deliveryId);
+ const gradeHref="/teacher/report/assignment/"+encodeURIComponent(assignment.id)+"/grade?deliveryId="+encodeURIComponent(assignment.deliveryId);
  return <section aria-label="Faculty prototype assignment report" className="space-y-5">
   <Link className="faculty-proto-link" href="/teacher/assessments">‹ Assignments & quizzes</Link>
   <div><h1 className="faculty-proto-heading">{assignment.title?.trim()||"Untitled assignment"}</h1>

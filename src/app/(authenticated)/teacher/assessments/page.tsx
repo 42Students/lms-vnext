@@ -14,7 +14,7 @@ export default async function FacultyAssessmentsPage({searchParams}:{
   key:"assignment-"+item.deliveryId+"-"+item.id,id:item.id,kind:"Assignment" as const,
   courseCode:item.courseCode,sectionName:item.sectionName,title:item.title,
   dueAt:item.dueAt,status:item.status,deliveryId:item.deliveryId,
-  primaryHref:"/teacher/report/assignment/"+encodeURIComponent(item.id)+
+  primaryHref:"/teacher/report/assignment/"+encodeURIComponent(item.id)+"/grade"+
    "?deliveryId="+encodeURIComponent(item.deliveryId),
   editorHref:"/teacher/allAssignments",primaryLabel:"Grade",
  }));
