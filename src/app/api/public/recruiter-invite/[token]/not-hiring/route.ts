@@ -23,8 +23,22 @@ export async function POST(request: Request, { params }: RouteContext) {
       return NextResponse.json({error:"INVALID_BODY"},{status:413});
     let payload:unknown={};
     if(request.headers.get("content-type")?.startsWith("application/json")){
-      try{const body=await request.text();if(body.length>2048)
-        return NextResponse.json({error:"INVALID_BODY"},{status:413});
+      try{
+        const reader=request.body?.getReader();
+        if(!reader)return NextResponse.json({error:"INVALID_BODY"},{status:400});
+        const decoder=new TextDecoder("utf-8",{fatal:true});
+        let body="",received=0;
+        while(true){
+          const chunk=await reader.read();
+          if(chunk.done)break;
+          received+=chunk.value.byteLength;
+          if(received>2048){
+            await reader.cancel().catch(()=>undefined);
+            return NextResponse.json({error:"INVALID_BODY"},{status:413});
+          }
+          body+=decoder.decode(chunk.value,{stream:true});
+        }
+        body+=decoder.decode();
         payload=JSON.parse(body) as unknown;
       }catch{return NextResponse.json({error:"INVALID_BODY"},{status:400});}
     }
