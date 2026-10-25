@@ -7,6 +7,8 @@ import {AccountActions} from "@/components/shell/account-actions";
 import {PageHeader} from "@/components/ui/page-header";
 import {MentorGoogleCalendarAccount} from "@/components/projects/mentor-google-calendar-account";
 import {mentorGoogleConnectionState} from "@/modules/projects/mentor-google-calendar-connection-service";
+import {getMentorEmailPreference} from "@/modules/projects/mentor-email-preference-service";
+import {MentorEmailPreferenceControls} from "@/components/projects/mentor-email-preference-controls";
 
 export const dynamic="force-dynamic";
 export default async function MentorAccountPage(){
@@ -20,6 +22,9 @@ export default async function MentorAccountPage(){
    ? await mentorGoogleConnectionState(context).catch(()=>({
        connected:false,available:false,connectedAt:null,
      }))
+   :null;
+ const emailPreference=account.projectsEnabled
+   ?await getMentorEmailPreference(context).catch(()=>null)
    :null;
  return <div className="mx-auto max-w-3xl space-y-5">
   <PageHeader title="Mentor · My account"
@@ -63,9 +68,13 @@ export default async function MentorAccountPage(){
    {googleConnection
      ? <MentorGoogleCalendarAccount {...googleConnection}/>
      : <p>Project calendar connections are disabled for this college.</p>}
+   {emailPreference
+     ? <MentorEmailPreferenceControls {...emailPreference}/>
+     : <p role="status" className="text-sm">
+         Email preferences cannot be verified right now; outbound email stays off.
+       </p>}
    <p className="text-xs text-muted-foreground">
-     Google consent is separate from verified delivery of individual
-     meeting invitations or email notifications.
+     Google consent and email opt-in are independent of verified provider delivery.
    </p>
   </section>
   <section aria-label="Account actions" className="space-y-3 border-t border-border pt-4">
