@@ -62,7 +62,7 @@ describe("learner/projects verified gap closure",()=>{
   const s=read("src/components/projects/project-participant-list-controls.tsx");
   expect(s).toContain("In progress");expect(s).toContain("Ready");
   expect(s).toContain('<option value="BLOCKED">Blocked</option>');
-  expect(page()).toMatch(/const attention\s*=\s*one\(params\.attention\)/);
+  expect(page()).toMatch(/const attention\s*=\s*one\(params\["attention"\]\)/);
   expect(page()).toContain('attentionSchema = z.enum(["LEARNER_ACTION","BLOCKED"])');
  });
  it("LEARNER-projects-06 exact list empty copy distinguishes no assignment from filters",()=>{

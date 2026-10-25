@@ -56,7 +56,7 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
   const page=src("src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx");
   expect(page).toContain('href={"/activity?collegeId="+encodeURIComponent(item.id)}');
   expect(page).toContain('href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}');
-  expect(src("src/app/(authenticated)/activity/page.tsx")).toContain("collegeId: selectedCollegeId??one(params.collegeId)");
+  expect(src("src/app/(authenticated)/activity/page.tsx")).toContain('...(selectedCollegeId || !requestedCollegeId ? {} : {collegeId: requestedCollegeId})');
   expect(src("src/app/api/activity/admin-export/route.ts")).toContain("exportSuperAdminActivity");
  });
  it("PUB-auth-public-61 does not accept guessed legacy slugs in place of scoped course delivery identities",()=>{

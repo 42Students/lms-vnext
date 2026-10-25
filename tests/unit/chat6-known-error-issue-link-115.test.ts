@@ -11,7 +11,7 @@ describe("Known Errors create-and-link tracker workflow",()=>{
  });
  it("SA-placements-projects-115 restricts linking to global Super Admin actors",()=>{
   const page=read("src/app/(authenticated)/tracker/page.tsx");
-  expect(page).toContain('knownErrorId={isSuperAdmin(context)?knownErrorId:undefined}');
+  expect(page).toContain('...(isSuperAdmin(context) && knownErrorId !== undefined ? {knownErrorId} : {})');
   expect(page).toContain('typeof raw.knownErrorId==="string"');
   const service=read("src/modules/log-alerts/admin-service.ts");
   expect(service).toContain("requireGlobalLogAdmin(context)");

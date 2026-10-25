@@ -65,7 +65,7 @@ describe("UX-HR-PAGES-07: recruiter and tracker page role, error and alias contr
   expect(page).not.toContain("DB10_TRACKER_READY");
   expect(page).not.toContain("DB10_VERIFIED");
   expect(page).not.toContain("Migration 0076");
-  expect(page).toContain("isSuperAdmin(context)?knownErrorId:undefined");
+  expect(page).toContain("isSuperAdmin(context) && knownErrorId !== undefined ? {knownErrorId} : {}");
  });
  it("UX-TRACKER-RECOVERY-07: reporters get meaningful empty, failed and retryable states",()=>{
   const mine=read("tracker/mine/page.tsx");
