@@ -77,7 +77,7 @@ test("Mentor home focus uses real scoped attention and event-keyed Later action"
   assert.match(route,/listOwnMentorAttentionLater\(context,attentionRows\)/);
   assert.match(route,/initialLater=\{initialLater\}/);
   assert.match(home,/mentorAttentionReceiptKey\(item\)/);
-  assert.match(home,/\/"api\/mentor\/attention\/later"/);
+  assert.match(home,/\/api\/mentor\/attention\/later/);
   assert.match(home,/method:"POST"/);
   assert.match(home,/onClick=\{\(\)=>void later\(item\)\}/);
   assert.match(home,/href=\{item\.href\}/);
