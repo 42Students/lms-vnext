@@ -38,7 +38,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   // queue and course-health summary. Older diagnostics remain in Advanced.
   await expect(page.getByRole("heading",{name:"About this course"})).toBeVisible();
   await expect(page.getByText("Course progress (average)")).toBeVisible();
-  await expect(page.getByText("Quiz average")).toBeVisible();
+  await expect(page.getByRole("complementary",{name:"Course summary"}).getByText("Quiz average",{exact:true})).toBeVisible();
   await expect(page.getByText("Behind (under 30% progress)")).toBeVisible();
   await page.getByText("More course insights and teaching tools").click();
   await expect(page.getByRole("link",{name:"Current Section students"})).toBeVisible();
