@@ -74,7 +74,7 @@ fi
 # preflight cannot silently go stale as the source is hardened. Trigger names are part of the
 # reviewable migration contract; a missing OR unexpected db02_* trigger fails closed.
 EXPECTED_TRIGGER_NAMES="$(
-  grep -Eo '^CREATE TRIGGER db02_[a-z0-9_]+'     scripts/sql/db02-academic-progression-and-rooms-staging.sql     | awk '{print $3}'     | sort -u
+  grep -Eo '^CREATE (OR REPLACE )?TRIGGER db02_[a-z0-9_]+' scripts/sql/db02-academic-progression-and-rooms-staging.sql | awk '{print $NF}' | sort -u
 )"
 if [[ -z "$EXPECTED_TRIGGER_NAMES" ]]; then
   echo "DB02 canonical staging exposes no trigger manifest" >&2
