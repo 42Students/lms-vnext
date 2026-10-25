@@ -124,10 +124,12 @@ function MeetingRow({
           Download an .ics file if you want a local calendar copy.</p>}
         {meeting.calendarSyncError?<p role="status">
           Recorded calendar error: {meeting.calendarSyncError}</p>:null}
-        {(["DRAFT","SCHEDULED","RESCHEDULED"].includes(meeting.status))?
+        {(["DRAFT","SCHEDULED","RESCHEDULED","CANCELLED"].includes(meeting.status))?
           <MentorGoogleMeetingSyncControls projectId={meeting.projectId}
             meetingId={meeting.id} draft={meeting.status==="DRAFT"}
-            canEdit={editable&&Date.parse(meeting.startsAt)>now.getTime()}/>:null}
+            cancelled={meeting.status==="CANCELLED"}
+            canEdit={editable&&(
+              meeting.status==="CANCELLED"||Date.parse(meeting.startsAt)>now.getTime())}/>:null}
       </div>
       {meeting.agenda?.trim()?<section className="prototype-mentor-meeting-section">
         <h3>Agenda</h3><p>{meeting.agenda}</p>

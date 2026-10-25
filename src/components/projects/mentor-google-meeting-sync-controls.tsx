@@ -6,8 +6,8 @@ import type {MentorGoogleMeetingStatus} from
  "@/modules/projects/mentor-google-calendar-status";
 import {MentorGoogleMeetingProviderStatus} from "./mentor-google-meeting-provider-status";
 
-export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,draft=false}:{
- projectId:string;meetingId:string;canEdit:boolean;draft?:boolean;
+export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,draft=false,cancelled=false}:{
+ projectId:string;meetingId:string;canEdit:boolean;draft?:boolean;cancelled?:boolean;
 }){
  const router=useRouter();
  const [status,setStatus]=useState<MentorGoogleMeetingStatus|null>(null);
@@ -17,7 +17,7 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
  const [repeat,setRepeat]=useState("once");
  const endpoint="/api/projects/"+encodeURIComponent(projectId)+
   "/meetings/"+encodeURIComponent(meetingId)+"/google";
- async function call(method:"GET"|"POST"){
+ async function call(method:"GET"|"POST"|"DELETE"){
   if(busy)return;setBusy(true);setError(null);setNotice(null);
   try{
    const response=await fetch(endpoint,{
@@ -31,10 +31,16 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
      "The Google Calendar provider could not verify this meeting.");
    const json=await response.json() as MentorGoogleMeetingStatus|{
      providerStatus:MentorGoogleMeetingStatus|null;
-     meetingScheduled:boolean;invitationStatus:"NOT_SENT"|"RETRY_REQUIRED"|"PROVIDER_ACCEPTED";
+     meetingScheduled?:boolean;
+     invitationStatus?:"NOT_SENT"|"RETRY_REQUIRED"|"PROVIDER_ACCEPTED";
+     removed?:boolean;
    };
    const next="providerStatus" in json?json.providerStatus:json;
    setStatus(next);
+   if(method==="DELETE"&&"removed" in json&&json.removed){
+    setNotice("Google accepted the event removal. Verify again to confirm its current provider state.");
+    router.refresh();
+   }
    if(method==="POST"&&"meetingScheduled" in json){
     setNotice(!json.meetingScheduled?
       "Google Meet creation is pending. The meeting stays a draft; no invitations were requested. Retry sync.":
@@ -53,7 +59,7 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
      email addresses. A draft first obtains its private Meet link; after the
      meeting is saved as scheduled, Google receives the team invitation update.
    </p>
-   {canEdit?<div className="flex flex-wrap items-center gap-2">
+   {canEdit&&!cancelled?<div className="flex flex-wrap items-center gap-2">
     <label className="text-sm">Repeat
      <select value={repeat} disabled={busy}
       onChange={e=>setRepeat(e.target.value)}
@@ -68,6 +74,10 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
        {draft?"Generate Meet link and schedule":"Sync to Google and invite team"}
     </Button>
    </div>:null}
+   {canEdit&&cancelled?<Button size="sm" variant="secondary" type="button"
+     disabled={busy} loading={busy} onClick={()=>void call("DELETE")}>
+     Remove cancelled event from Google
+   </Button>:null}
    <Button size="sm" variant="secondary" type="button"
      disabled={busy} onClick={()=>void call("GET")}>
      Verify Google event and RSVPs

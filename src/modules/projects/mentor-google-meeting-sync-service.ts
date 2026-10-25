@@ -9,7 +9,7 @@ import {requireProjectReadAccess} from "./access";
 import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {getMentorGoogleAccessToken} from "./mentor-google-calendar-connection-service";
-import {mentorGoogleUpsertMeeting} from "./mentor-google-calendar-provider";
+import {mentorGoogleUpsertMeeting,mentorGoogleRemoveMeeting} from "./mentor-google-calendar-provider";
 import {readMentorGoogleMeetingStatus} from "./mentor-google-calendar-status";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -18,7 +18,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 /** Every Google read/write is scoped to a live assigned Mentor, saved meeting
  * and its live same-college project roster. A client cannot supply invitees.
  */
-async function verifiedGoogleMeeting(context:RequestContext,projectId:string,meetingId:string){
+async function verifiedGoogleMeeting(context:RequestContext,projectId:string,meetingId:string,allowCancelled=false){
  if(!z.uuid().safeParse(meetingId).success)
   throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
  const scope=await requireProjectReadAccess(context,projectId);
@@ -45,7 +45,7 @@ async function verifiedGoogleMeeting(context:RequestContext,projectId:string,mee
   )).for("update").limit(1);
   if(!meeting||meeting.deletedAt)
    throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
-  if(!["DRAFT","SCHEDULED","RESCHEDULED"].includes(meeting.status))
+  if(!["DRAFT","SCHEDULED","RESCHEDULED",...(allowCancelled?["CANCELLED"]:[])].includes(meeting.status))
    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   const people=await tx.select({email:users.email}).from(projectMembers)
    .innerJoin(collegeMemberships,and(
@@ -68,7 +68,7 @@ async function verifiedGoogleMeeting(context:RequestContext,projectId:string,mee
 export async function checkMentorGoogleMeeting(
  context:RequestContext,projectId:string,meetingId:string,
 ){
- await verifiedGoogleMeeting(context,projectId,meetingId);
+ await verifiedGoogleMeeting(context,projectId,meetingId,true);
  const {accessToken,calendarId}=await getMentorGoogleAccessToken(context);
  return readMentorGoogleMeetingStatus(accessToken,calendarId,meetingId);
 }
@@ -190,4 +190,22 @@ export async function syncMentorGoogleMeeting(
  return {eventId:event.eventId,meetUrl:event.meetUrl,
   invitedRecipients:invitationStatus==="PROVIDER_ACCEPTED"?invitees.length:0,
   meetingScheduled:true,invitationStatus,providerStatus};
+}
+
+/** Local cancellation and external Calendar removal are independent actions.
+ * DELETE is explicit and idempotent (Google 404/410 counts as already absent).
+ * Recheck the real current cancelled row, active assigned Mentor and tenant
+ * before touching the provider, never a meeting/client URL supplied by a user.
+ */
+export async function removeCancelledMentorGoogleMeeting(
+ context:RequestContext,projectId:string,meetingId:string,
+){
+ const {meeting}=await verifiedGoogleMeeting(context,projectId,meetingId,true);
+ if(meeting.status!=="CANCELLED")
+  throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+ const {accessToken,calendarId}=await getMentorGoogleAccessToken(context);
+ await mentorGoogleRemoveMeeting(accessToken,calendarId,meetingId);
+ const providerStatus=await readMentorGoogleMeetingStatus(
+  accessToken,calendarId,meetingId).catch(()=>null);
+ return {removed:true,providerStatus};
 }
