@@ -16,7 +16,8 @@ describe("UX-chat7-learner-scroll-motion-01 hidden scrollbar resilience",()=>{
  });
  it("keeps both Semester course and credits lists operable without visible scrollbars",()=>{
   const list=read("src/components/courses/learner-course-list.tsx");
-  expect(list).toContain('aria-label="Scrollable course list"');
+  expect(list).toContain('aria-label="All courses"');
+  expect(list).toContain('aria-label="Credits breakdown"');
   expect(list.match(/tabIndex=\{0\}/g)?.length).toBeGreaterThanOrEqual(2);
   expect(list.match(/overscroll-contain/g)?.length).toBeGreaterThanOrEqual(2);
   expect(list).toContain("Scroll inside the list for more courses.");

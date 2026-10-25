@@ -44,7 +44,7 @@ describe("College/tenant exhaustive coverage slice: exports and sign-in policy",
   it("SA-tenants-signin-READ-01 public read never accepts request-body tenant IDs and refuses corrupt policy", () => {
     const source = read("src/modules/colleges/public-signin-policy-service.ts");
     expect(source).toContain('if(!collegeId)return {method:fallback,requiresAdminReview:false,source:"DEFAULT" as const}');
-    expect(source).toContain('if(!result.rows[0]?.present)return {method:fallback,requiresAdminReview:false,source:"DEFAULT" as const}');
+    expect(source).toContain('if(!result.rows[0]?.["present"])return {method:fallback,requiresAdminReview:false,source:"DEFAULT" as const}');
     expect(source).toContain("collegeSignInMethodSchema.safeParse(row.method)");
     expect(source).toContain("eq(collegeSigninPolicies.collegeId,collegeId)");
     expect(source).toContain("signInCapabilities(await effectiveCollegeSignInMethod(collegeId))");

@@ -49,7 +49,7 @@ describe("TPO Team remaining gap increments, not full object-thread parity",()=>
   expect(team).toContain('const thread = first(params["c"]) ?? first(params["thread"]) ?? first(params["conversationId"])');
   expect(team).toContain('/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(thread)');
   expect(team).toContain('redirect("/tpo/messages?" + target.toString())');
-  expect(team).toContain('redirect("/tpo/settings?tab=team")');
+  expect(team).toContain('redirect("/tpo/settings/team")');
  });
  it("TPO-inbox-team-31 displays real workload counts, never fabricated unregistered owner values",()=>{
   const directory=source("src/components/tpo/tpo-team-messages-directory.tsx");

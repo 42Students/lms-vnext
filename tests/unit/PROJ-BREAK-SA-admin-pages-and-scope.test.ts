@@ -14,6 +14,8 @@ const pageFiles=(rootPath:string):string[]=>readdirSync(rootPath,{withFileTypes:
 const delegated:Record<string,{contains:string; target?:string}>={
   // Hiring is a legacy alias; authorization and college scoping happen on the destination.
   "placements/hiring/page.tsx":{contains:'redirect("/admin/placements/analytics',target:"placements/analytics/page.tsx"},
+  "projects/workspaces/[workspaceId]/page.tsx":{contains:'redirect("/admin/projects/"'},
+  "projects/workspaces/[workspaceId]/summary/page.tsx":{contains:'redirect("/admin/projects/"'},
   "projects/[projectId]/page.tsx":{contains:"redirect(",target:"projects/[projectId]/[section]/page.tsx"},
   "projects/workspaces/[workspaceId]/page.tsx":{contains:'redirect("/admin/projects/"+encodeURIComponent(workspaceId))',target:"projects/[projectId]/page.tsx"},
   "projects/[projectId]/[section]/page.tsx":{contains:"AdminProjectSectionPage",target:"src/components/projects/admin-project-section-page.tsx"},
@@ -63,6 +65,12 @@ describe("Super Admin Projects and Placements page routes — independent securi
       const delegate=delegated[subpath];
       if(delegate){
         expect(page,path).toContain(delegate.contains);
+        if(subpath.startsWith("projects/workspaces/")){
+          const canonical=source(root+"/projects/[projectId]/page.tsx");
+          expect(canonical).toContain("getCurrentRequestContext");
+          expect(canonical).toContain("requireProjectManageAccess");
+          expect(canonical).toContain("eq(projectInstances.collegeId,collegeId)");
+        }
         if(delegate.target&&delegate.target.startsWith("src/")){
           const component=source(delegate.target);
           expect(component,path).toContain("getCurrentRequestContext");
