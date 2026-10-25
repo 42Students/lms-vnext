@@ -114,8 +114,9 @@ export function MentorPrototypeHome({
         <Link className="inline-flex min-h-11 items-center text-sm text-link underline"
           href="/mentor/projects?status=ARCHIVED">Browse archived teams →</Link>
         <p className="mt-1 text-xs text-muted-foreground">
-          The system records primary Mentor assignments, not a separate
-          student team-lead designation. No student lead is inferred.
+          Student team leads are shown only when a learner's saved project
+          responsibility explicitly identifies them as a lead. A primary
+          Mentor assignment does not designate a student lead.
         </p>
       </div>
     </div>
