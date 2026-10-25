@@ -6,6 +6,10 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import {MentorTaskAllocation} from "@/components/projects/mentor-task-allocation";
+import {MentorTaskCreate} from "@/components/projects/mentor-task-create";
+import {MentorCalendarQuickSchedule} from "@/components/projects/mentor-calendar-quick-schedule";
+import {mentorGoogleConnectionState} from "@/modules/projects/mentor-google-calendar-connection-service";
+import {mentorAttentionReceiptKey} from "@/modules/projects/mentor-attention-read-model";
 import {MentorLaneBoard} from "@/components/projects/mentor-lane-board";
 import {MentorProductBacklog} from "@/components/projects/mentor-product-backlog";
 import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
@@ -80,7 +84,7 @@ export default async function MentorProjectPage({
     );
   const activitySeen=selectedTab==="activity"&&access.access==="MENTOR"?
     await getMentorProjectActivitySeenState(context,projectId):null;
-  const overviewAttention=selectedTab==="overview"&&access.access==="MENTOR"
+  const overviewAttention=access.access==="MENTOR"
     ?(await listMyMentorProjectAttention(context))
       .filter(item=>item.projectId===projectId):[];
   const overviewLater=overviewAttention.length
@@ -88,6 +92,13 @@ export default async function MentorProjectPage({
   // The prototype's shared detail header is reused for Overview, Board,
   // Sprints & releases, Team & meetings, Performance, Resources and Activity.
   // Only actual persisted sprints become segments; 16 is NOT hard-coded.
+  const headerAction=overviewAttention.find(item=>
+    !overviewLater.includes(mentorAttentionReceiptKey(item)))??null;
+  const canCreate=access.access==="MENTOR"&&workspace.project.status==="ACTIVE";
+  const googleConnected=canCreate?
+    (await mentorGoogleConnectionState(context).catch(()=>({connected:false}))).connected:false;
+  const allowedSprints=workspace.sprints.filter(item=>item.status!=="COMPLETED"&&
+    workspace.releases.some(release=>release.id===item.releaseId&&release.status!=="SHIPPED"));
   const timeline = orderMentorSprints(workspace.sprints,workspace.releases);
   const currentSprint = timeline.find(sprint => sprint.status === "ACTIVE");
   const completedSprints = timeline.filter(sprint => sprint.status === "COMPLETED").length;
@@ -110,12 +121,19 @@ export default async function MentorProjectPage({
             <p>{workspace.project.courseLabel || "Project"} · {studentCount} {studentCount===1?"student":"students"} · <strong>{projectStatus}</strong></p>
           </div>
           <div className="prototype-mentor-header-actions">
-            {access.access === "MENTOR" && workspace.project.status === "ACTIVE"
-              ? <Link href={mentorBase + "?tab=team"}>Schedule a meeting</Link>
-              : null}
-            {access.access === "MENTOR" && workspace.project.status !== "ARCHIVED" && workspace.project.status !== "COMPLETED" ? (
-              <Link href={mentorBase + "?tab=board"}>+ Task</Link>
-            ) : null}
+            {canCreate?<MentorCalendarQuickSchedule googleConnected={googleConnected}
+              projects={[{id:projectId,title:workspace.project.title,
+                updatedAt:workspace.project.updatedAt.toISOString(),
+                sprints:allowedSprints.map(item=>({id:item.id,title:item.title,
+                  sequence:item.sequence,status:item.status}))}]}/>:null}
+            {canCreate?<MentorTaskCreate primary
+              projectId={projectId} sprintId={currentSprint?.id??""}
+              updatedAt={(currentSprint?.updatedAt??workspace.project.updatedAt).toISOString()}
+              estimationUnit={workspace.project.estimationUnit??null}
+              sprints={allowedSprints.map(item=>({id:item.id,title:item.title,
+                status:item.status,updatedAt:item.updatedAt.toISOString()}))}
+              learners={workspace.members.filter(item=>item.role==="LEARNER")
+                .map(item=>({membershipId:item.membershipId,displayName:item.displayName}))}/>:null}
           </div>
         </div>
         {timeline.length > 0 ? (
@@ -143,6 +161,12 @@ export default async function MentorProjectPage({
           </section>
         ) : null}
       </div>
+      {headerAction?<aside className="flex min-w-0 flex-wrap items-center gap-3 rounded border border-border px-3 py-2"
+        aria-label="Next for you in this project">
+        <strong>Next for you</strong>
+        <span className="min-w-0 flex-1 text-sm">{headerAction.title}</span>
+        <Link href={headerAction.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Open action →</Link>
+      </aside>:null}
       <MentorProjectTabs projectId={projectId}/>
       {tab && !(selectedTab in subtitles)
         ? <p role="status" className="border-b border-border py-3 text-sm text-muted-foreground">
