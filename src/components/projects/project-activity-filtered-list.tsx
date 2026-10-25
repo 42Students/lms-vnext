@@ -174,6 +174,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const term=search.trim();
  if(term)serverParams.set("search",term.slice(0,100));
  if(resourceAudit)serverParams.set("category","RESOURCE");
+ if(resourceAction!=="ALL")serverParams.set("resourceAction",resourceAction);
  else if(mentorWeekSummary&&mentorCategory!=="ALL")serverParams.set("category",mentorCategory);
  if(type)serverParams.set("eventType",type);
  if(actor)serverParams.set("actorUserId",actor);

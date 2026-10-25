@@ -35,6 +35,12 @@ export async function getProjectActivityPage(
   const prefixes = learnerProjectActivityPrefixes(filters.category);
   const sourceTab=filters.sourceTab?.trim();
   const search=filters.search?.trim();
+  const resourceSuffixes={
+    Added:["created","added","create"],
+    Edited:["updated","edited","update"],
+    Saved:["saved","upsert"],
+    Removed:["archived","deleted","removed","delete"],
+  } as const;
   const contains=(value:string)=>"%"+value.replaceAll("\\","\\\\").replaceAll("%","\\%").replaceAll("_","\\_")+"%";
 
   const rows = await getDb()
@@ -99,6 +105,13 @@ export async function getProjectActivityPage(
           sql`coalesce(${activityEvents.metadata} ->> 'resourceKey','') ilike ${contains(search)}`,
           sql`coalesce(${activityEvents.metadata} ->> 'sourceTab','') ilike ${contains(search)}`,
         ) : undefined,
+        // Compare the same normalized resource-event actions as the client,
+        // within the authorized query and BEFORE applying LIMIT/cursor.
+        filters.resourceAction?and(
+          sql`lower(replace(${activityEvents.eventType}, '_', '.')) like '%.resource.%'`,
+          or(...resourceSuffixes[filters.resourceAction].map(suffix=>
+            sql`lower(replace(${activityEvents.eventType}, '_', '.')) like ${"%."+suffix}`)),
+        ):undefined,
         filters.eventType?eq(activityEvents.eventType,filters.eventType):undefined,
         filters.subjectId?eq(activityEvents.subjectId,filters.subjectId):undefined,
         filters.actorUserId?eq(activityEvents.actorUserId,filters.actorUserId):undefined,

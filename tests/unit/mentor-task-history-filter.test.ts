@@ -21,6 +21,15 @@ describe("Exact task activity filter guard",()=>{
    subjectId:"' OR TRUE --",
   }).success).toBe(false);
  });
+ it("accepts only known resource actions for server-side pre-pagination filters",()=>{
+  for(const action of ["Added","Edited","Saved","Removed"] as const){
+   const parsed=parseLearnerProjectActivityFilters({category:"RESOURCE",resourceAction:action});
+   expect(parsed.success).toBe(true);
+   if(parsed.success)expect(parsed.data.resourceAction).toBe(action);
+  }
+  expect(parseLearnerProjectActivityFilters({resourceAction:"ALL"}).success).toBe(false);
+  expect(parseLearnerProjectActivityFilters({resourceAction:"Unknown"}).success).toBe(false);
+ });
  it("rejects incomplete pagination cursors",()=>{
   expect(parseLearnerProjectActivityFilters({
    subjectId:id,beforeTime:"2026-10-24T10:30:00.000Z",
