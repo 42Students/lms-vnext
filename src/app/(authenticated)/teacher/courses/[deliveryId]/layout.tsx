@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { PageBackLink } from "@/components/ui/page-back-link";
+import Link from "next/link";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { CoursesServiceError } from "@/modules/courses/errors";
@@ -63,8 +63,18 @@ export default async function FacultyCourseTabLayout({
     legacyClassId:a.legacyClassId}));
   return (
     <div className="min-w-0 space-y-5">
-      <PageHeader title={active.courseName} description="Course workspace"
-        actions={<PageBackLink href="/teacher/courses" label="Back to courses" />}/>
+      <header className="min-w-0">
+       <Link href="/teacher/courses" className="inline-flex min-h-10 items-center text-sm font-semibold text-[#078191] hover:underline">
+        ‹ Courses
+       </Link>
+       <h1 className="faculty-proto-heading mt-1">{active.courseName}</h1>
+       <p className="faculty-proto-subtitle mt-1">
+        {active.courseCode}
+        {active.cohortName?" · "+active.cohortName:""}
+        {active.credits!==null?" · "+active.credits+" credits":""}
+        {active.academicPeriodName?" · "+active.academicPeriodName:""}
+       </p>
+      </header>
       <FacultyCourseTabNavigation
         deliveryId={deliveryId}
         courseName={active.courseName}

@@ -68,7 +68,7 @@ export function FacultyCourseTabNavigation({
     <div className="flex min-w-0 flex-col gap-4">
       <p className="sr-only">{courseName} · {sectionName}</p>
       <div className="flex min-w-0 items-center justify-between gap-3">
-        <Link href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9">Back to courses</Link>
+        {/* The prototype places the sole back link in the shared course header. */}
         {teachingSections.length > 1 &&
          (activeTab==="students"||activeTab==="attendanceDetail") ? (
           <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-40">
