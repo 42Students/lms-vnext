@@ -70,9 +70,31 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
  test("a learner cannot open any Mentor route, including deep-linked project tabs",async({page,context})=>{
   await signIn(context,"seed-learner",SEED_IDS.learnerCollegeAMembership);
   for(const path of ["/mentor/projects","/mentor/calendar",
-    "/mentor/notifications","/mentor/search"]){
+    "/mentor/notifications","/mentor/search",
+    "/mentor/projects/00000000-0000-4000-8000-000000000001?tab=board",
+    "/mentor/projects/00000000-0000-4000-8000-000000000001/board-review"]){
    await page.goto(path);
    await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
   }
+ });
+
+ test("a Faculty-only college switch cannot inherit the same user's other college Mentor grant",async({page,context})=>{
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeBMembership);
+  for(const path of ["/mentor/projects","/mentor/calendar",
+    "/mentor/notifications","/mentor/search",
+    "/mentor/projects/00000000-0000-4000-8000-000000000001?tab=team"]){
+   await page.goto(path);
+   await expect(page).toHaveURL(/\\/dashboard(?:[/?#]|$)/);
+  }
+ });
+
+ test("malformed calendar filters fail recoverably for an authenticated Mentor",async({page,context})=>{
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  await page.goto("/mentor/calendar?period=INVALID");
+  await expect(page.getByRole("heading",{name:"Invalid meeting filters"})).toBeVisible();
+  await expect(page.getByRole("link",{name:"Clear filters"}))
+   .toHaveAttribute("href","/mentor/calendar");
+  await expect(page.locator("body"))
+   .not.toContainText("Application error: a server-side exception");
  });
 });
