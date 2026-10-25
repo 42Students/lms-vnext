@@ -476,6 +476,65 @@ describe("Projects P7B meetings", () => {
     });
   });
 
+  it("persists in-person venues through real scheduling and rescheduling, with CAS and role checks",async()=>{
+    const project=await createProject();
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    const venueWindow={
+      title:"In-person Sprint review",agenda:"Review the team demo",
+      startsAt:"2099-12-27T13:05:00+05:30",
+      endsAt:"2099-12-27T13:35:00+05:30",
+      timeZone:"Asia/Kolkata" as const,
+    };
+    await expect(scheduleProjectMeeting(learner,project.id,null,{
+      ...venueWindow,location:"Lab 2",
+    })).rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
+    const created=await scheduleProjectMeeting(mentor,project.id,null,{
+      ...venueWindow,meetingUrl:null,location:"Lab 2",
+      expectedProjectUpdatedAt:workspace.project.updatedAt.toISOString(),
+    });
+    expect(created).toMatchObject({status:"SCHEDULED",meetingUrl:null,
+      agenda:"Location: Lab 2\\nReview the team demo"});
+    const stored=await pool.query<{agenda:string;meeting_url:string|null}>(
+      "SELECT agenda,meeting_url FROM project_meetings WHERE id=$1",[created.id]);
+    expect(stored.rows[0]).toEqual({
+      agenda:"Location: Lab 2\\nReview the team demo",meeting_url:null,
+    });
+    const nextWindow={...venueWindow,
+      startsAt:"2099-12-27T13:35:00+05:30",
+      endsAt:"2099-12-27T14:05:00+05:30",
+      status:"RESCHEDULED" as const,location:"Room 304",
+      // An editor sends agenda without the old Location: line.
+      agenda:"Review the team demo",meetingUrl:null,
+      expectedUpdatedAt:created.updatedAt.toISOString(),
+    };
+    const moved=await scheduleProjectMeeting(mentor,project.id,created.id,nextWindow);
+    expect(moved).toMatchObject({status:"RESCHEDULED",meetingUrl:null,
+      agenda:"Location: Room 304\\nReview the team demo"});
+    await expect(scheduleProjectMeeting(mentor,project.id,created.id,{
+      ...nextWindow,location:"Lab 999",
+    })).rejects.toMatchObject({code:"PROJECT_MEETING_STALE_VERSION"});
+    const latest=await listProjectMeetings(learner,project.id);
+    expect(latest.find(item=>item.id===created.id)).toMatchObject({
+      agenda:"Location: Room 304\\nReview the team demo",meetingUrl:null,
+    });
+    // Replacing an in-person venue with a valid online link may remove the
+    // old venue; invalid empty link + no venue cannot erase the meeting mode.
+    await expect(scheduleProjectMeeting(mentor,project.id,created.id,{
+      ...nextWindow,agenda:"Review the team demo",location:undefined,
+      expectedUpdatedAt:moved.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_MEETING_INVALID_STATE"});
+    const online=await scheduleProjectMeeting(mentor,project.id,created.id,{
+      ...nextWindow,agenda:"Review the team demo",location:undefined,
+      meetingUrl:"https://meet.example.com/updated-review",
+      expectedUpdatedAt:moved.updatedAt.toISOString(),
+    });
+    expect(online).toMatchObject({meetingUrl:"https://meet.example.com/updated-review",
+      agenda:"Review the team demo"});
+    const count=await pool.query<{count:string}>(
+      "SELECT count(*)::text AS count FROM project_meetings WHERE id=$1",[created.id]);
+    expect(count.rows[0]?.count).toBe("1");
+  });
+
   it("rejects invalid windows in validation and PostgreSQL", async () => {
     const project = await createProject();
 
