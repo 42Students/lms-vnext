@@ -49,7 +49,7 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail?sessionId="+sessionId);
   const advanced=page.locator("#faculty-attendance-editor");
   await expect(advanced.getByRole("radio",{name:"Mark attendance"})).toBeVisible();
-  await expect(advanced.getByLabel("Class session")).toHaveValue(sessionId);
+  await expect(advanced.getByLabel("Select Class")).toHaveValue(sessionId);
   await expect(page.getByText("Attendance has not been submitted for this session yet.")).toBeVisible();
   await advanced.getByRole("button",{name:"Mark all present"}).click();
   page.once("dialog",dialog=>dialog.accept());
