@@ -384,13 +384,16 @@ test("Mentor calendar cross-team Schedule a meeting persists or drafts through g
   assert.match(page,/listMyProjectInstances\(context\)/);
   assert.match(page,/mentorCalendarCanMutateMeeting/);
   assert.match(page,/projectStatus:row\.project\.status/);
-  assert.match(page,/<MentorCalendarQuickSchedule projects=\{choices\}/);
+  assert.match(page,/<MentorCalendarQuickSchedule projects=\{choices\}[\s\S]*?googleConnected=\{googleConnection\.connected\}/);
   assert.match(form,/expectedProjectUpdatedAt:project\.updatedAt/);
   assert.match(form,/status:link\?"SCHEDULED":"DRAFT"/);
   assert.match(form,/meetingUrl:link\|\|null/);
   assert.match(form,/\/meetings","POST"/);
   assert.match(form,/fromIstLocalInput\(start\)/);
-  assert.match(form,/A saved draft can generate its first Google Meet link/);
+  assert.match(form,/A saved draft can also generate its Google Meet link/);
+  assert.match(form,/if\(!link&&useGoogle&&googleConnected\)/);
+  assert.match(form,/if\(!sync\.ok\)throw Error/);
+  assert.match(form,/The meeting draft was saved, but Google synchronization was not verified/);
   const sync=source("src/modules/projects/mentor-google-meeting-sync-service.ts");
   assert.match(sync,/if\(draft&&!event\.meetUrl\)/);
   assert.match(sync,/status:"SCHEDULED",meetingUrl:event\.meetUrl!/);
