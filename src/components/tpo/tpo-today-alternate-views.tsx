@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {istDateKey,splitTpoTodayFollowups,tpoTodayFocusHref,type TpoCompaniesTodayRow} from "@/modules/placements/tpo-companies-today-model";
+import {istDateKey,splitTpoTodayFollowups,tpoTodayFocusHref,tpoTodayAgendaHref,type TpoCompaniesTodayRow} from "@/modules/placements/tpo-companies-today-model";
 
 export type TpoTodayView="focus"|"agenda"|"brief";
 export type TpoTodayReply={
@@ -49,9 +49,9 @@ function FollowupRow({row,scope}:{row:TpoCompaniesTodayRow;scope:"MINE"|"TEAM"})
  * preview pages are explicitly labeled; we never infer an uncontacted count
  * or email-delivery status from CRM follow-up rows. */
 export function TpoTodayAlternateViews({
- view,scope,rows,replies,replyTotal,nowIso,hasMore
+ view,scope,rows,replies,replyTotal,nowIso,hasMore,selectedDay
 }:{
- view:"agenda"|"brief";scope:"MINE"|"TEAM";
+ view:"agenda"|"brief";scope:"MINE"|"TEAM";selectedDay:number;
  rows:readonly TpoCompaniesTodayRow[];replies:readonly TpoTodayReply[];
  replyTotal:number|null;nowIso:string;hasMore:boolean;
 }){
@@ -65,10 +65,18 @@ export function TpoTodayAlternateViews({
    istDateKey(new Date(row.dueAt))<=todayKey:
    istDateKey(new Date(row.dueAt))===key).length};
  });
+ const agendaRows=selectedDay===0?due:rows.filter(row=>
+  istDateKey(new Date(row.dueAt))===days[selectedDay]?.key);
+ const agendaReplies=selectedDay===0?replies:[];
+ const agendaReplyTotal=selectedDay===0?replyTotal:0;
+ const agendaDay=days[selectedDay]?.date??now;
  const replyTasks=replyTotal??0;
  const taskCount=due.length+replyTasks;
  const firstAction=replies.find(item=>!item.accessEnded);
- const startHref=firstAction?messageHref(firstAction.id):tpoTodayFocusHref(scope,due[0]?.id);
+ const agendaAction=selectedDay===0?firstAction:undefined;
+ const startHref=view==="agenda"?(agendaAction?messageHref(agendaAction.id):
+  tpoTodayFocusHref(scope,agendaRows[0]?.id)):
+  firstAction?messageHref(firstAction.id):tpoTodayFocusHref(scope,due[0]?.id);
  const panel="min-w-0 overflow-hidden rounded-xl border border-[#e7ecf2] bg-white";
  const heading="border-b border-[#e7ecf2] px-4 py-4 text-[17px] font-bold text-[#172033]";
  return <div className="min-w-0 space-y-4 text-[#172033]" data-testid={"tpo.today."+view}>
@@ -81,7 +89,7 @@ export function TpoTodayAlternateViews({
    <div className="flex flex-wrap items-center gap-2">
     <Link className="rounded-lg border border-[#d6e1ee] px-3 py-2 text-[13px] font-semibold text-[#26354a]" href={tpoTodayFocusHref(scope)}>Focus</Link>
     <Link className="rounded-lg border border-[#d6e1ee] px-3 py-2 text-[13px] font-semibold text-[#26354a]" href={tpoTodayFocusHref(scope)+(scope==="TEAM"?"&":"?")+"view="+(view==="brief"?"agenda":"brief")}>{view==="brief"?"Agenda":"Brief"}</Link>
-    <Link className="rounded-lg bg-[#087f8b] px-4 py-3 text-[13px] font-bold text-white" href={startHref}>Start · {taskCount} things</Link>
+    <Link className="rounded-lg bg-[#087f8b] px-4 py-3 text-[13px] font-bold text-white" href={startHref}>Start · {view==="agenda"?agendaRows.length+(agendaReplyTotal??0):taskCount} things</Link>
    </div>
   </header>
   {replyTotal===null?<p role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">Recruiter replies are temporarily unavailable. No zero reply count is implied. <Link href="/tpo/messages?tab=recruiters" className="font-semibold underline">Check Messages</Link></p>:null}
@@ -89,8 +97,8 @@ export function TpoTodayAlternateViews({
   {view==="agenda"?<>
    <nav className="grid grid-cols-7 gap-2 max-sm:gap-1" aria-label="Next seven days">
     {days.map((day,index)=><Link key={day.key}
-     href={index===0?tpoTodayFocusHref(scope):"/tpo/follow-ups?window=NEXT_7_DAYS"}
-     className={"rounded-xl border px-2 py-3 text-center "+(index===0?
+     href={tpoTodayAgendaHref(scope,index)} aria-current={selectedDay===index?"date":undefined}
+     className={"rounded-xl border px-2 py-3 text-center "+(selectedDay===index?
       "border-[#087f8b] bg-[#eef8fa]":"border-[#e7ecf2] bg-white")}>
      <span className="block text-[11px] font-bold uppercase text-[#617084]">{formatDay(day.date).split(" ")[0]}</span>
      <strong className="mt-1 block text-xl">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(day.date)}</strong>
@@ -99,10 +107,10 @@ export function TpoTodayAlternateViews({
    </nav>
    <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
     <section className={panel} aria-label="Due today">
-     <h2 className={heading}>Today: {replyTotal===null?"replies unavailable":replyTasks+" to answer"}, {due.length} to reach</h2>
-     {replies.length?<ul>{replies.map(reply=><ReplyRow key={reply.id} reply={reply}/>)}</ul>:null}
-     {due.length?<ul>{due.map(row=><FollowupRow key={row.id} row={row} scope={scope}/>)}</ul>:null}
-     {!replies.length&&!due.length?<p className="p-5 text-sm text-[#617084]">No recorded recruiter replies or due follow-ups in this preview.</p>:null}
+     <h2 className={heading}>{selectedDay===0?"Today":formatDay(agendaDay)}: {agendaReplyTotal===null?"replies unavailable":agendaReplyTotal+" to answer"}, {agendaRows.length} to reach</h2>
+     {agendaReplies.length?<ul>{agendaReplies.map(reply=><ReplyRow key={reply.id} reply={reply}/>)}</ul>:null}
+     {agendaRows.length?<ul>{agendaRows.map(row=><FollowupRow key={row.id} row={row} scope={scope}/>)}</ul>:null}
+     {!agendaReplies.length&&!agendaRows.length?<p className="p-5 text-sm text-[#617084]">No recorded recruiter replies or follow-ups for this day in the available preview.</p>:null}
     </section>
     <aside className="space-y-3" aria-label="Other follow-up actions">
      <section className={panel}><h2 className={heading}>Your week ahead</h2>
