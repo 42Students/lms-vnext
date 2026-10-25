@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { getProjectActivityPage, listProjectActivity } from "@/modules/projects/activity-service";
 import {getMentorWeekActivityTotals} from "@/modules/projects/mentor-week-activity-totals-service";
+import {getMentorProjectActivityCounts} from "@/modules/projects/mentor-project-activity-counts-service";
 import {getMentorTeamRecentActorActivity} from "@/modules/projects/mentor-team-recent-actor-service";
 import {searchMentorWorkspacePage} from "@/modules/projects/mentor-unified-search-service";
 import {getMentorLearnerAcademicFacts} from "@/modules/projects/mentor-learner-academic-facts-service";
@@ -206,6 +207,46 @@ describe("Mentor resource-action search across the full authorized history",()=>
     await expect(getProjectActivityPage({
       ...mentorContext,membership:{...mentorContext.membership!,collegeId:SEED_IDS.collegeB},
     },ids.project,range)).rejects.toBeDefined();
+  });
+});
+
+describe("Mentor all-history activity and resource counters",()=>{
+  it("counts 140 older resource deletions before paging and excludes foreign-college inserts",async()=>{
+    const now=new Date("2027-04-01T10:00:00Z");
+    const before=await getMentorProjectActivityCounts(mentorContext,ids.project,now);
+    const ownIds=Array.from({length:140},()=>randomUUID());
+    await pool.query(`insert into activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,occurred_at)
+      select id,$2,$3,$4,'PROJECTS','projects.resource.deleted',
+             'project',$5,'Older deleted resource','2027-03-31T10:00:00Z'
+      from unnest($1::uuid[]) as x(id)`,
+      [ownIds,SEED_IDS.organization,ids.college,SEED_IDS.superAdminUser,ids.project]);
+    // Forged project ID metadata/subject does not defeat tenant isolation.
+    await pool.query(`insert into activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,occurred_at)
+      values($1,$2,$3,$4,'PROJECTS','projects.resource.deleted',
+             'project',$5,'Foreign event must not count','2027-03-31T10:00:00Z')`,
+      [randomUUID(),SEED_IDS.organization,SEED_IDS.collegeB,
+       SEED_IDS.superAdminUser,ids.project]);
+    const after=await getMentorProjectActivityCounts(mentorContext,ids.project,now);
+    expect(after.lastSevenDays.count-before.lastSevenDays.count).toBe(140);
+    expect(after.lastSevenDays.resource-before.lastSevenDays.resource).toBe(140);
+    expect(after.resources.changes-before.resources.changes).toBe(140);
+    expect(after.resources.removed-before.resources.removed).toBe(140);
+    const paged=await getProjectActivityPage(mentorContext,ids.project,{
+      category:"RESOURCE",resourceAction:"Removed",from:"2027-03-31",to:"2027-03-31",size:100,
+    });
+    expect(paged.events).toHaveLength(100);
+    expect(paged.hasMore).toBe(true);
+    await expect(getMentorProjectActivityCounts(context,ids.project,now))
+      .rejects.toBeDefined();
+    await expect(getMentorProjectActivityCounts({
+      ...mentorContext,membership:{...mentorContext.membership!,collegeId:SEED_IDS.collegeB},
+    },ids.project,now)).rejects.toBeDefined();
+    await expect(getMentorProjectActivityCounts(mentorContext,randomUUID(),now))
+      .rejects.toBeDefined();
   });
 });
 
