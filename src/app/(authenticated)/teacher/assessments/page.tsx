@@ -1,70 +1,70 @@
-import Link from "next/link";
+import {and,inArray,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {assignmentSubmissions,quizAttempts} from "@/db/schema";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
+import {getFacultyDeliveryRoster} from "@/modules/attendance/faculty-service";
+import {FacultyPrototypeAssessmentDirectory,type AssessmentRow} from
+ "@/components/courses/faculty-prototype-assessment-directory";
 
-type Kind="all"|"assignment"|"quiz";
-export default async function FacultyAssessmentsPage({searchParams}:{
- searchParams:Promise<{kind?:string}>;
-}){
- const raw=(await searchParams).kind;
- const kind:Kind=raw==="assignment"||raw==="quiz"?raw:"all";
+export default async function FacultyAssessmentsPage(){
  const context=await getCurrentRequestContext();
  const overview=await getFacultyAssessmentOverview(context);
- const assignments=overview.assignments.map(item=>({
-  key:"assignment-"+item.deliveryId+"-"+item.id,id:item.id,kind:"Assignment" as const,
-  courseCode:item.courseCode,sectionName:item.sectionName,title:item.title,
-  dueAt:item.dueAt,status:item.status,deliveryId:item.deliveryId,
-  primaryHref:"/teacher/report/assignment/"+encodeURIComponent(item.id)+"/grade"+
-   "?deliveryId="+encodeURIComponent(item.deliveryId),
-  editorHref:"/teacher/allAssignments",primaryLabel:"Grade",
- }));
- const quizzes=overview.quizzes.map(item=>({
-  key:"quiz-"+item.deliveryId+"-"+item.id,id:item.id,kind:"Quiz" as const,
-  courseCode:item.courseCode,sectionName:item.sectionName,title:item.title,
-  dueAt:item.dueAt,status:item.status,deliveryId:item.deliveryId,
-  primaryHref:"/teacher/report/quiz/"+encodeURIComponent(item.id)+
-   "?deliveryId="+encodeURIComponent(item.deliveryId),
-  editorHref:"/teacher/allQuizzes?content="+encodeURIComponent(item.id),
-  primaryLabel:"Report",
- }));
- const rows=[...(kind==="quiz"?[]:assignments),...(kind==="assignment"?[]:quizzes)]
-  .sort((a,b)=>(b.dueAt?.getTime()??0)-(a.dueAt?.getTime()??0));
- const tabs=[
-  {label:"All",kind:"all" as const,count:assignments.length+quizzes.length},
-  {label:"Assignments",kind:"assignment" as const,count:assignments.length},
-  {label:"Quizzes",kind:"quiz" as const,count:quizzes.length},
- ];
- return <section className="space-y-5">
-  <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h1 className="faculty-proto-heading">Assignments & quizzes</h1>
-    <p className="faculty-proto-subtitle mt-1">Assessments across your current teaching classes.</p>
-   </div>
-   <div className="flex flex-wrap gap-2">
-    <Link href="/teacher/allAssignments" className="faculty-proto-secondary">New assignment / manage</Link>
-    <Link href="/teacher/allQuizzes" className="faculty-proto-action">New quiz / manage</Link>
-   </div>
-  </div>
-  <nav aria-label="Assessment type" className="flex flex-wrap gap-2">{tabs.map(tab=><Link
-   key={tab.kind} href={tab.kind==="all"?"/teacher/assessments":"/teacher/assessments?kind="+tab.kind}
-   className="faculty-proto-pill no-underline" aria-current={kind===tab.kind?"page":undefined}
-   style={kind===tab.kind?{background:"#ebf8fa",borderColor:"#058b9a",color:"#007f8e"}:undefined}>
-    {tab.label} {tab.count}</Link>)}</nav>
-  <div className="faculty-proto-table-wrap">
-   <table className="faculty-proto-table">
-    <thead><tr><th>Assessment</th><th>Course / class</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead>
-    <tbody>{rows.map(row=><tr key={row.key}>
-     <td><Link className="faculty-proto-link" href={row.editorHref}>{row.title}</Link>
-      <p className="faculty-proto-subtitle">{row.kind}</p></td>
-     <td>{row.courseCode} · {row.sectionName}</td>
-     <td>{row.dueAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.dueAt):"No deadline"}</td>
-     <td><span className="rounded-full bg-[#f4f7fa] px-2 py-1 text-xs font-semibold">{row.status}</span></td>
-     <td><div className="flex flex-wrap gap-3">
-      <Link className="faculty-proto-link" href={row.editorHref}>Open</Link>
-      <Link className="faculty-proto-link" href={row.primaryHref}>{row.primaryLabel}</Link>
-     </div></td>
-    </tr>)}</tbody>
-   </table>
-  </div>
-  {rows.length===0?<p className="faculty-proto-subtitle">No assessments for this filter.</p>:null}
- </section>;
+ const ids=[...new Set(overview.assignments.map(item=>item.id))];
+ const quizIds=[...new Set(overview.quizzes.map(item=>item.id))];
+ const deliveryIds=[...new Set([...overview.assignments,...overview.quizzes].map(item=>item.deliveryId))];
+ const [assignmentCounts,quizCounts,rosters]=await Promise.all([
+  ids.length&&deliveryIds.length?getDb().select({
+   id:assignmentSubmissions.assignmentId,deliveryId:assignmentSubmissions.deliveryId,
+   handedIn:sql<number>`count(distinct ${assignmentSubmissions.membershipId})::int`,
+   pending:sql<number>`count(*) filter (where ${assignmentSubmissions.gradingStatus} <> 'GRADED')::int`,
+  }).from(assignmentSubmissions).where(and(
+   inArray(assignmentSubmissions.assignmentId,ids),
+   inArray(assignmentSubmissions.deliveryId,deliveryIds),
+  )).groupBy(assignmentSubmissions.assignmentId,assignmentSubmissions.deliveryId):[],
+  quizIds.length&&deliveryIds.length?getDb().select({
+   id:quizAttempts.quizId,deliveryId:quizAttempts.deliveryId,
+   handedIn:sql<number>`count(distinct ${quizAttempts.membershipId})::int`,
+  }).from(quizAttempts).where(and(
+   inArray(quizAttempts.quizId,quizIds),
+   inArray(quizAttempts.deliveryId,deliveryIds),
+   sql`${quizAttempts.deletedAt} is null`,
+  )).groupBy(quizAttempts.quizId,quizAttempts.deliveryId):[],
+  Promise.all(deliveryIds.map(async deliveryId=>({
+   deliveryId,count:await getFacultyDeliveryRoster(context,deliveryId)
+    .then(value=>value.roster.length).catch(()=>null),
+  }))),
+ ]);
+ const submissions=new Map(assignmentCounts.map(row=>[row.id+":"+row.deliveryId,row] as const));
+ const attempts=new Map(quizCounts.map(row=>[row.id+":"+row.deliveryId,row] as const));
+ const rosterSizes=new Map(rosters.map(row=>[row.deliveryId,row.count] as const));
+ const rows:AssessmentRow[]=[
+  ...overview.assignments.map(item=>{
+   const suffix="?deliveryId="+encodeURIComponent(item.deliveryId);
+   const reportHref="/teacher/report/assignment/"+encodeURIComponent(item.id)+suffix;
+   const count=submissions.get(item.id+":"+item.deliveryId);
+   return {
+    key:"assignment-"+item.id+":"+item.deliveryId,kind:"Assignment" as const,
+    title:item.title,courseCode:item.courseCode,sectionName:item.sectionName,
+    dueAt:item.dueAt?.toISOString()??null,status:item.status,
+    handedIn:count?.handedIn??0,eligible:rosterSizes.get(item.deliveryId)??null,
+    toGrade:count?.pending??0,reportHref,
+    primaryHref:"/teacher/report/assignment/"+encodeURIComponent(item.id)+"/grade"+suffix,
+    editorHref:"/teacher/allAssignments",
+   };
+  }),
+  ...overview.quizzes.map(item=>{
+   const suffix="?deliveryId="+encodeURIComponent(item.deliveryId);
+   const reportHref="/teacher/report/quiz/"+encodeURIComponent(item.id)+suffix;
+   return {
+    key:"quiz-"+item.id+":"+item.deliveryId,kind:"Quiz" as const,
+    title:item.title,courseCode:item.courseCode,sectionName:item.sectionName,
+    dueAt:item.dueAt?.toISOString()??null,status:item.status,
+    handedIn:attempts.get(item.id+":"+item.deliveryId)?.handedIn??0,
+    eligible:rosterSizes.get(item.deliveryId)??null,toGrade:null,reportHref,
+    primaryHref:reportHref,editorHref:"/teacher/allQuizzes?content="+encodeURIComponent(item.id),
+   };
+  }),
+ ].sort((a,b)=>(a.dueAt?Date.parse(a.dueAt):0)-(b.dueAt?Date.parse(b.dueAt):0));
+ return <FacultyPrototypeAssessmentDirectory rows={rows}/>;
 }
