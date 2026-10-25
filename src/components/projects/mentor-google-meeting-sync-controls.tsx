@@ -88,7 +88,7 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
     <label className="text-sm">Repeat
      <select value={repeat} disabled={busy}
       onChange={e=>setRepeat(e.target.value)}
-      className="ml-2 rounded border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded border border-border bg-background p-2">
       <option value="once">Once</option>
       <option value="4">Weekly × 4</option>
       <option value="8">Weekly × 8</option>

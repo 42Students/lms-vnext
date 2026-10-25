@@ -9,6 +9,7 @@ import {
   scheduleProjectMeeting,
 } from "@/modules/projects/meeting-service";
 import {replaceLegacyProjectMeetingDraftSection} from "@/modules/projects/project-meeting-plan-service";
+import {parseMentorMeetingCollectionPagination} from "@/modules/projects/mentor-meeting-collection-pagination";
 
 export const runtime = "nodejs";
 /** Old bulk PUT /{projectId}/meetings maps to this GET collection plus
@@ -31,12 +32,10 @@ export async function GET(
     if(keys.some(key=>!["q","state","archive","page","pageSize"].includes(key)||
       search.getAll(key).length!==1))
       return NextResponse.json({error:"INVALID_MEETING_FILTER"},{status:400});
-    const pageText=search.get("page"),sizeText=search.get("pageSize");
-    const page=pageText&&/^[1-9]\\d{0,4}$/.test(pageText)?Number(pageText):null;
-    const pageSize=sizeText&&/^[1-9]\\d{0,2}$/.test(sizeText)?Number(sizeText):null;
-    if((pageText!==null&&page===null)||(sizeText!==null&&pageSize===null)||
-      (pageSize!==null&&pageSize>99))
+    const paging=parseMentorMeetingCollectionPagination(search);
+    if(!paging.valid)
       return NextResponse.json({error:"INVALID_MEETING_PAGE"},{status:400});
+    const {page,pageSize}=paging;
     const state=search.get("state")??"ALL";
     const archive=search.get("archive")??"ACTIVE";
     if(!["ALL","DRAFT","REQUESTED","SCHEDULED","RESCHEDULED","COMPLETED","CANCELLED"].includes(state)||
