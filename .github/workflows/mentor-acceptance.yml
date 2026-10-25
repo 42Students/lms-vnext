@@ -7,6 +7,8 @@ on:
     paths:
       - ".github/workflows/mentor-acceptance.yml"
       - "src/modules/projects/**"
+      - "src/db/schema/projects.ts"
+      - "drizzle/**"
       - "src/modules/activity/**"
       - "src/components/projects/**"
       - "src/app/(authenticated)/mentor/**"
@@ -17,6 +19,7 @@ on:
       - "tests/unit/PROJ-BREAK-chat6-*.test.ts"
       - "tests/unit/PROJ-BREAK-chat9-member-candidate-privacy.test.ts"
       - "tests/integration/mentor*.test.ts"
+      - "tests/integration/projects-p7b-meetings.test.ts"
       - "tests/integration/learner-project-activity-filters.test.ts"
       - "tests/e2e/mentor-prototype-functional-matrix.spec.ts"
       - "tests/e2e/mentor-portfolio-state-acceptance.spec.ts"
