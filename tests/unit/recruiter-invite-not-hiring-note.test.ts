@@ -4,7 +4,7 @@ import {recruiterInviteNotHiringNoteSchema,recruiterInviteNotHiringReason}
 describe("Public recruiter not-hiring note",()=>{
  it("allows optional short notes, trims and validates length",()=>{
   expect(recruiterInviteNotHiringNoteSchema.parse("  Try again in March  ")).toBe("Try again in March");
-  expect(recruiterInviteNotHiringNoteSchema.safeParse("X".repeat(501)).success).toBe(false);
+  expect(recruiterInviteNotHiringNoteSchema.safeParse("X".repeat(201)).success).toBe(false);
   expect(recruiterInviteNotHiringNoteSchema.safeParse("unsafe\u0000text").success).toBe(false);
  });
  it("persists a bounded reason without changing the opt-out option",()=>{

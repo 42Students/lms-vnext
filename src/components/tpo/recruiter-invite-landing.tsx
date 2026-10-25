@@ -148,7 +148,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         {method:"POST",credentials:"same-origin",
          ...(kind==="not-hiring"?{
           headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({note:notHiringNote.trim().slice(0,500)}),
+          body:JSON.stringify({note:notHiringNote.trim().slice(0,200)}),
          }:{}),
         },
       );
@@ -405,7 +405,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
           <p className="text-sm font-semibold text-foreground">Not hiring this season</p>
           <p className="text-xs text-body">The placement cell may contact you next season. You can leave a brief note.</p>
           <label className="grid gap-1 text-xs font-medium text-muted-foreground">Note (optional)
-            <Textarea rows={2} maxLength={500} value={notHiringNote}
+            <Textarea rows={2} maxLength={200} value={notHiringNote}
              onChange={event=>setNotHiringNote(event.target.value)} />
           </label>
           <div className="flex flex-wrap gap-2">
