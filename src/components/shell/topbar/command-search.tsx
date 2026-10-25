@@ -18,6 +18,7 @@ type MentorCommandResult={
 import { topbarCommands, topbarConfigForPath, topbarSearchDestinations } from "./portal-config";
 import { SearchIcon } from "./icons";
 import { TpoFindSuggestions } from "./tpo-find-suggestions";
+import {FacultyFindSuggestions} from "./faculty-find-suggestions";
 import { RecruiterFindSuggestions } from "./recruiter-find-suggestions";
 import style from "./topbar.module.css";
 
@@ -331,6 +332,12 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
               setQuery("");
               closeSearch();
             }}/> : null}
+        {config.portal === "teacher" && query.trim().length >= 2
+          ? <FacultyFindSuggestions query={query} onOpen={href=>{
+              router.push(href);
+              setQuery("");
+              closeSearch();
+            }}/> : null}
         {config.portal === "tpo" && query.trim().length >= 2
           ? <TpoFindSuggestions query={query} onOpen={href => {
               router.push(href);
@@ -383,7 +390,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           <SearchIcon /> {command.label}
         </Link>)}
         {matches.length === 0 && destinations.length === 0 && courseMatches.length === 0 && !courseMode &&
-          !(config.portal === "tpo" && query.trim().length >= 2) && !courseLoading ? <p role="status" className="min-w-0 break-words p-2 text-xs text-muted-foreground leading-[20px]">
+          !(config.portal === "tpo" && query.trim().length >= 2) &&
+          !(config.portal === "teacher" && query.trim().length >= 2) && !courseLoading ? <p role="status" className="min-w-0 break-words p-2 text-xs text-muted-foreground leading-[20px]">
           No matching shortcuts. Press Enter to search this portal.
         </p> : null}
       </PopoverListbox> : null}
