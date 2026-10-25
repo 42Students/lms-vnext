@@ -49,7 +49,9 @@ export function FacultyFindSuggestions({query,onOpen}:{
    <Button size="sm" variant="link" type="button" onClick={()=>setRetry(x=>x+1)}>Retry</Button>
   </div>:null}
   {(["Students","Colleagues","Courses","Assignments","Quizzes"] as const).map(group=>{
-   const entries=ready&&!state.error?state.results.filter(row=>row.group===group||(group==="Courses"&&row.group==="Pages")):[];
+   const entries=ready&&!state.error?
+    (group==="Courses"?state.results.filter(row=>row.group==="Courses"||row.group==="Pages"):
+     state.results.filter(row=>row.group===group)):[];
    return entries.length?<div key={group}>
     <p className="border-t border-[#edf1f5] px-3 pt-3 text-xs font-bold uppercase tracking-wide text-[#60718b]">{group==="Students"?"Students in your classes":
       group==="Colleagues"?"Colleagues":group==="Courses"||group==="Pages"?"Courses and pages":group}</p>
