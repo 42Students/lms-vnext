@@ -15,6 +15,7 @@ import {MentorEvidenceGallery} from "./mentor-evidence-gallery";
 import {AddProjectMemberControl,MentorLearnerTeamActions} from "./project-team-controls";
 import {MentorDeliveryHistory} from "./mentor-delivery-history";
 import {MentorSprintTimelineSearch} from "./mentor-sprint-timeline-search";
+import {MentorSprintDetailTable} from "./mentor-sprint-detail-table";
 import {compareMentorEvidenceReferences} from "@/modules/projects/mentor-evidence-revision-model";
 import {mentorSubmissionIdentity} from "@/modules/projects/mentor-submission-attribution-model";
 import {mentorDeliveryPrechecks} from "@/modules/projects/mentor-delivery-prechecks-model";
@@ -112,6 +113,24 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
       <div><span>Releases</span><strong>{workspace.releases.length}</strong></div>
       <div><span>Backlog</span><strong>{backlog.length} tasks · {points(backlog)} pts</strong></div>
     </section>
+    <MentorSprintDetailTable projectId={workspace.project.id}
+      rows={sprints.map(sprint=>{
+        const tasks=liveTasks.filter(task=>task.sprintId===sprint.id);
+        const signOff=historical.get(sprint.id);
+        const recorded=sprint.status!=="COMPLETED"||Boolean(signOff);
+        return {
+          id:sprint.id,sequence:sprint.sequence,title:sprint.title,
+          release:workspace.releases.find(release=>release.id===sprint.releaseId)?.title??"Release",
+          startDate:sprint.startDate??null,endDate:sprint.endDate??null,
+          status:sprint.status,taskCount:signOff&&sprint.status==="COMPLETED"?
+            signOff.taskCount:tasks.length,
+          plannedPoints:recorded?chartPoints(sprint).planned:null,
+          donePoints:recorded?chartPoints(sprint).done:null,
+          carriedCount:signOff&&sprint.status==="COMPLETED"?
+            signOff.memberRows.reduce((n,row)=>n+row.carriedCount,0):
+            tasks.filter(task=>Boolean(task.carriedFromSprintId)).length,
+        };
+      })}/>
     <section className="prototype-mentor-chart-card" aria-label="Points per sprint">
       <div className="prototype-mentor-card-title"><h2>Points per sprint · planned and done</h2>
         <span>From your recorded task estimates</span></div>
