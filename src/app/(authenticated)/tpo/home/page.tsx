@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import {TpoHomeReturnRefresh} from "@/components/tpo/tpo-home-return-refresh";
+import {TpoHomePrototypeFocus} from "@/components/tpo/tpo-home-prototype-focus";
 import {eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {users} from "@/db/schema";
@@ -230,6 +231,14 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
  {teamFilter==="false"?<div role="note" className="text-sm text-muted-foreground">Team summary was hidden in the legacy link. The separate Team workspace remains available from the placement work list.</div>:null}
  <p aria-live="polite" data-testid="home.need-line" className="text-sm leading-[22px] text-[var(--lms-body-text)]">{tpoHomeNeedsLine(Array.from({length:Math.max(homeNeeds.length,
    rows.filter(row=>row.needsAttention).length)},()=>({needsAttention:true})))}</p>
+ <TpoHomePrototypeFocus needs={homeNeeds} events={weekNext}
+   calendarAvailable={weekEvents!==null}
+   placed={studentStats?.summary.placed??null}
+   pool={studentStats?.summary.placementPool??null}
+   now={calendarNow}/>
+ <details className="min-w-0 rounded-xl border border-[#e7ecf2] bg-white" data-testid="tpo.home.other-tools">
+  <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-[#172033]">Other placement tools and indicators</summary>
+  <div className="space-y-4 border-t border-[#edf0f3] p-4">
  <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] min-[992px]:items-start md:gap-6">
  <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 min-[768px]:p-6">
   <h2 className="text-xs font-bold uppercase leading-[18px] tracking-[.11em] text-[var(--lms-primary-text)]">Next up</h2>
@@ -278,6 +287,8 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
     {tile.detail?<span className="min-w-0 break-words text-xs leading-5 text-muted-foreground">{tile.detail}</span>:null}
   </Link>)}
  </div>
+  </div>
+ </details>
   </div>
  </details>
  </div>;
