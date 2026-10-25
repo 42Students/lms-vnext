@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,exists,isNull,ne,or,sql} from "drizzle-orm";
+import {and,eq,exists,inArray,isNull,ne,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,membershipRoles,projectInstances,
  projectMembers,users} from "@/db/schema";
@@ -41,7 +41,13 @@ export function mentorVisibleNotificationEventCondition(context:RequestContext){
        isNull(projectMembers.endedAt),
        eq(activityEvents.collegeId,membership.collegeId),
        eq(activityEvents.organizationId,membership.organizationId),
-       sql`${activityEvents.metadata} ->> 'projectId' = ${projectMembers.projectId}::text`,
+       or(
+         sql`${activityEvents.metadata} ->> 'projectId' = ${projectMembers.projectId}::text`,
+         and(
+           inArray(activityEvents.subjectType,["project","project_instance"]),
+           sql`${activityEvents.subjectId} = ${projectMembers.projectId}::text`,
+         ),
+       ),
      ))),
  )!;
 }
