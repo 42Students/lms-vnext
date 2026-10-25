@@ -35,6 +35,7 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
  const [importing,setImporting]=useState(false);
  const importPending=useRef(false);
  const nonce=useRef<string|null>(null);
+ const fileInput=useRef<HTMLInputElement>(null);
  const pending=useRef(false);
  const eligible=new Set(candidates.map(candidate=>candidate.id));
  const chosen=selected.filter(id=>eligible.has(id));
@@ -145,12 +146,20 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
     <h3 className="font-semibold text-foreground">Send selection list</h3>
     <p className="text-sm text-body">Propose an Offer or Letter of Intent to the placement cell for verification.</p>
    </div>
-   <Button disabled={disabled||candidates.length===0} onClick={()=>setOpen(value=>!value)}>
-    <svg viewBox="0 0 16 16" aria-hidden="true" className="size-4 shrink-0" fill="none">
-     <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-    Send selection list
-   </Button>
+   <div className="flex flex-wrap gap-2">
+    <Button disabled={disabled||candidates.length===0} onClick={()=>setOpen(value=>!value)}>
+     <svg viewBox="0 0 16 16" aria-hidden="true" className="size-4 shrink-0" fill="none">
+      <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+     </svg>
+     Pick from those who clear
+    </Button>
+    <Button variant="secondary" disabled={disabled||busy||importing||candidates.length===0}
+     onClick={()=>fileInput.current?.click()}>Upload your list (Excel)</Button>
+    <input ref={fileInput} type="file" hidden
+     aria-label="Choose Excel or CSV selection list"
+     accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+     onChange={event=>{void importList(event.target.files?.[0]);event.target.value="";}}/>
+   </div>
   </div>
   {disabled?<p role="status" className="text-sm text-warning-text">This drive is closed; selection submissions are unavailable.</p>:null}
   {!disabled&&candidates.length===0?<p role="status" className="text-sm text-body">No applicants have passed every completed assessment and interview round.</p>:null}
