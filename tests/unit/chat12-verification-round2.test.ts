@@ -14,7 +14,7 @@ describe("chat-12 verified TPO verification workflows",()=>{
   expect(service).toContain("groupBy(profileVerifications.status)");
   expect(service).toContain("query?.tab===\"WAITING\"?asc(profileVerifications.submittedAt)");
   expect(service).toContain("counts.WAITING+=item.total");
-  expect(src("src/components/verification/TpoVerificationPanel.tsx")).toContain("counts={counts}");
+  expect(src("src/components/verification/TpoVerificationPanel.tsx")).toContain("counts !== undefined ? {counts} : {}");
  });
  it("TPO-requests-verification-24 provides Waiting-update shortcut alongside all the server-side filters",()=>{
   const panel=src("src/components/verification/TpoVerificationPanel.tsx");

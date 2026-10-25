@@ -17,7 +17,7 @@ describe("TPO Team topic creation with optional first message",()=>{
   const form=source("src/components/tpo/tpo-team-forms.tsx");
   expect(service).toContain("tx.insert(placementTpoInternalMessages)");
   expect(service).toContain("firstMessageHash");
-  expect(service).toContain("existing.metadata.firstMessageHash");
+  expect(service).toContain('existing.metadata["firstMessageHash"]');
   expect(service).toContain('actionHref:"/tpo/team/"+thread.id+(initial?"?m="+initial.id:"")');
   expect(service).toContain("input.firstMessage??input.topic");
   expect(route).toContain('firstMessage:form.get("firstMessage")||undefined');

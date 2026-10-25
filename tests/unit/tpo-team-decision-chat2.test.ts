@@ -24,7 +24,7 @@ describe("TPO Team decisions",()=>{
   const composer=src("src/components/tpo/tpo-team-forms.tsx");
   expect(service).toContain("if(input.markDecision)");
   expect(service).toContain('eventType:"placements.tpo_team.decision_marked"');
-  expect(service).toContain("Boolean(existing.metadata.markDecision)");
+  expect(service).toContain('Boolean(existing.metadata["markDecision"])');
   expect(route).toContain('form?.get("markDecision")==="true"');
   expect(composer).toContain("Will be pinned as a decision");
  });
