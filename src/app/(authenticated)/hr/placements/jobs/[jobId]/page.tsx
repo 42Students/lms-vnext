@@ -831,7 +831,7 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xl font-bold text-foreground">{item.value}</p>
             </div>)}
           </div>
-          <section id="recruiter-selection-list" className="scroll-mt-24 "space-y-2 border-b border-border pb-4 md:pb-6">
+          <section id="recruiter-selection-list" className="scroll-mt-24 space-y-2 border-b border-border pb-4 md:pb-6">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds</h3>
             <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. Recruiters can submit a selection proposal; only the placement cell can verify and release a formal offer.</p>
             <RecruiterSelectionComposer
