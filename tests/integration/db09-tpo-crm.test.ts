@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
   afterAll,
   beforeAll,
@@ -66,6 +67,17 @@ const tpo: RequestContext = {
 // The seeded faculty also needs a persisted TPO role for this isolated CRM
 // fixture. A request-context roles array alone never grants real authority.
 let insertedTpoRoleId: string | null = null;
+const inviteCompanyId=randomUUID();
+const inviteRelationshipId=randomUUID();
+async function linkInviteLead(leadId:string){
+ if(!pool)throw new Error("Disposable DB09 test database missing");
+ const attached=await pool.query(
+  "UPDATE placement_tpo_leads SET company_relationship_id=$1 WHERE college_id=$2 AND id=$3 RETURNING id",
+  [inviteRelationshipId,SEED_IDS.collegeA,leadId],
+ );
+ expect(attached.rowCount).toBe(1);
+}
+
 const learner: RequestContext = {
   ...tpo,
   membership: { ...tpo.membership!, roles: ["LEARNER"] },
@@ -108,6 +120,16 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       [SEED_IDS.facultyCollegeAMembership],
     );
     expect(persistedGrant.rows).toHaveLength(1);
+    // A public invitation requires a real authorized college/employer link.
+    // The CRM fixture owns this verified company and cleans it up afterwards.
+    await pool.query(
+      "INSERT INTO placement_companies(id,name,created_by_user_id,verified_at,verified_by_user_id) VALUES($1,$2,$3,now(),$3)",
+      [inviteCompanyId,"DB09 CRM Invite Employer",SEED_IDS.facultyUser],
+    );
+    await pool.query(
+      "INSERT INTO placement_company_relationships(id,college_id,company_id,created_by_user_id,owner_membership_id) VALUES($1,$2,$3,$4,$5)",
+      [inviteRelationshipId,SEED_IDS.collegeA,inviteCompanyId,SEED_IDS.facultyUser,SEED_IDS.facultyCollegeAMembership],
+    );
   });
 
   beforeEach(async () => {
@@ -153,6 +175,10 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
         await pool.query("DELETE FROM membership_roles WHERE id = $1", [insertedTpoRoleId]);
       }
     } finally {
+      if(pool){
+        await pool.query("DELETE FROM placement_company_relationships WHERE id=$1",[inviteRelationshipId]);
+        await pool.query("DELETE FROM placement_companies WHERE id=$1",[inviteCompanyId]);
+      }
       await pool?.end();
       await closeDatabaseConnection();
     }
@@ -263,11 +289,11 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     });
     expect(lead.emailNorm).toBe("recruiter@example.com");
     expect(lead.phoneNorm).toBe("9876543210");
-    expect(lead.companyName).toBe("EXAMPLE");
+    expect(lead.companyName).toBe("Example");
     expect(lead.manualStage).toBe("NEW");
     const activity = await logTpoLeadActivity(tpo, lead.id, {
       collegeId: SEED_IDS.collegeA,
-      type: "CALL",
+      type: "CALL", outcome: "Connected",
       note: "Discussed intake",
     });
     expect(activity.type).toBe("CALL");
@@ -415,6 +441,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
 
     const event = await logTpoLeadActivity(tpo, lead.id, {
       collegeId: SEED_IDS.collegeA, type: "NOTE",
+      note: "Audit history remains immutable",
     });
     await expect(pool.query(
       "UPDATE placement_tpo_lead_activities SET note = 'tamper' WHERE id = $1",
@@ -627,6 +654,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       email: "rotate@example.org",
       companyName: "Rotation Corp",
     });
+    await linkInviteLead(lead.id);
     const first = await issueTpoRecruiterInvite(
       tpo, SEED_IDS.collegeA, lead.id,
       new Date("2026-10-10T08:00:00.000Z"),
@@ -676,6 +704,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       name: "Invite Race",
       email: "invite-race@example.org",
     });
+    await linkInviteLead(lead.id);
     const invite = await issueTpoRecruiterInvite(
       tpo, SEED_IDS.collegeA, lead.id,
       new Date("2026-10-10T08:00:00.000Z"),
@@ -705,6 +734,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
       name: "Invite Unsubscribe",
       email: "invite-unsubscribe@example.org",
     });
+    await linkInviteLead(lead.id);
     const invite = await issueTpoRecruiterInvite(
       tpo, SEED_IDS.collegeA, lead.id,
       new Date("2026-10-10T08:00:00.000Z"),
@@ -736,7 +766,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     });
     await logTpoLeadActivity(tpo, first.id, {
       collegeId: SEED_IDS.collegeA,
-      type: "CALL",
+      type: "CALL", outcome: "Connected",
       note: "Discussed campus hiring",
     });
 

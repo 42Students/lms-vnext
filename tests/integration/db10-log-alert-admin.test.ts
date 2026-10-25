@@ -81,7 +81,8 @@ describe("W06 Known Errors admin persistence and privacy", () => {
     });
     const row = rows.find(item => item.id === id);
     expect(row?.occurrenceCount).toBe("41");
-    expect(row?.affectedAccounts).toBe(0);
+    // An absent account marker is unknown impact, not proven zero impact.
+    expect(row?.affectedAccounts).toBeNull();
     expect(row).not.toHaveProperty("sampleMessage");
     expect(row).not.toHaveProperty("accountKeyHash");
   });
