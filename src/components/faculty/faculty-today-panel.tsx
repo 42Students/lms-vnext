@@ -31,7 +31,7 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
    </h1>
    <p className="faculty-proto-subtitle mt-1">{nextClass??"Your current classes, grading and deadlines are below."}</p>
   </header>
-  <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_308px]">
+  <div className="min-w-0">
    <div className="min-w-0">
     {active.length>0?<div className="faculty-proto-task-list">
      {active.map(item=><article key={item.id} className="faculty-proto-task">
@@ -55,7 +55,9 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
     {later.length>0?<button type="button" className="mt-4 text-sm font-semibold text-[#078191] underline"
      onClick={()=>setLater([])}>Show {later.length} hidden {later.length===1?"item":"items"}</button>:null}
    </div>
-   <aside className="min-w-0 space-y-4" aria-label="Today's classes and this week">
+   <details className="mt-5 rounded-xl border border-[#e5ebf2] p-4">
+    <summary className="cursor-pointer text-sm font-semibold text-[#078191]">More teaching context · classes and deadlines</summary>
+    <aside className="mt-4 grid gap-4 md:grid-cols-2" aria-label="Today's classes and this week">
     <section className="rounded-xl border border-[#e5ebf2] px-5 py-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="text-xs font-bold uppercase tracking-wide text-[#60718b]">Today&apos;s classes</h2>
@@ -82,7 +84,8 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
       </li>)}
      </ul>:<p className="faculty-proto-subtitle mt-3">No known assignment or quiz deadlines this week.</p>}
     </section>
-   </aside>
+    </aside>
+   </details>
   </div>
  </section>;
 }

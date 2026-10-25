@@ -3,8 +3,10 @@ import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
 import {listAssignmentSubmissions} from "@/modules/courses/assignment-submission-service";
 import {getDb} from "@/db/client";
+import {courseDiscussionMessages} from "@/db/schema";
+import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import {users} from "@/db/schema";
-import {eq} from "drizzle-orm";
+import {and,desc,eq,gte,inArray,isNull} from "drizzle-orm";
 import {FacultyTodayPanel,type FacultyTodayTask,
  type FacultyTodayClass,type FacultyTodayDeadline} from "@/components/faculty/faculty-today-panel";
 
@@ -54,6 +56,22 @@ export default async function TeacherIndex(){
    "/teacher/calendar",
  }));
  const tasks:FacultyTodayTask[]=[];
+ // Do not claim an unread count without a persisted read cursor.
+ // Show recent student messages only for the actor's currently assigned deliveries.
+ const assigned=await listFacultyCourseDeliveries(context);
+ const assignedIds=[...new Set(assigned.map(row=>row.deliveryId))];
+ const recentMessages=assignedIds.length?await getDb().select({
+  id:courseDiscussionMessages.id,
+  deliveryId:courseDiscussionMessages.deliveryId,
+  messageText:courseDiscussionMessages.messageText,
+  createdAt:courseDiscussionMessages.createdAt,
+ }).from(courseDiscussionMessages)
+  .where(and(inArray(courseDiscussionMessages.deliveryId,assignedIds),
+    eq(courseDiscussionMessages.senderRole,"LEARNER"),
+    isNull(courseDiscussionMessages.deletedAt),
+    gte(courseDiscussionMessages.createdAt,new Date(now.getTime()-24*3600*1000))))
+  .orderBy(desc(courseDiscussionMessages.createdAt)).limit(30):[];
+
  const assignment=[...new Map(assessments.assignments
   .filter(item=>item.hasSubmissions).map(item=>[item.id+":"+item.deliveryId,item] as const)).values()][0];
  if(assignment){
@@ -82,6 +100,20 @@ export default async function TeacherIndex(){
    href:event.deliveryId?
     "/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(event.id):
     "/teacher/calendar",
+  });
+ }
+ if(recentMessages.length){
+  const recent=recentMessages[0]!;
+  const clazz=assigned.find(row=>row.deliveryId===recent.deliveryId);
+  const count=recentMessages.length;
+  const quoted=recent.messageText.trim().replace(/\s+/g," ").slice(0,110);
+  tasks.push({
+   id:"discussions-"+recent.deliveryId,eyebrow:"STUDENTS ASKED",
+   title:count+(count===1?" recent student message":" recent student messages")+" in Discussions",
+   detail:(quoted?'“'+quoted+(recent.messageText.trim().length>110?"…":"")+'”':"A student posted in your class.")+
+    (count>1?" and "+(count-1)+" more in the last 24 hours.":".")+
+    (clazz?" · "+clazz.sectionName:""),
+   action:"Reply",href:"/teacher/courses/"+encodeURIComponent(recent.deliveryId)+"/discussions",
   });
  }
  const quiz=[...new Map(assessments.quizzes

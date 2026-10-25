@@ -163,14 +163,14 @@
  [data-prototype-portal="faculty"] .faculty-prototype-discussion [role="log"] article {padding:12px 16px;}
 }
 
-/* Screenshot #02: two-column Faculty Today priority queue and right rail. */
+/* Screenshot #02: the default is a single full-width priority queue. */
 [data-prototype-portal="faculty"] .faculty-proto-today {max-width:none;margin:0;}
 [data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task-list{border-radius:14px;}
 [data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task{min-height:90px;}
 [data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task h2{font-size:16px;}
 [data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task-label{margin-bottom:1px;}
-[data-prototype-portal="faculty"] .faculty-proto-today aside .faculty-proto-action,
-[data-prototype-portal="faculty"] .faculty-proto-today aside .faculty-proto-secondary{min-height:36px;padding:6px 10px;font-size:12px;}
+[data-prototype-portal="faculty"] .faculty-proto-today details aside .faculty-proto-action,
+[data-prototype-portal="faculty"] .faculty-proto-today details aside .faculty-proto-secondary{min-height:36px;padding:6px 10px;font-size:12px;}
 
 /* Exact Faculty shell proportions of screenshots #02–13 (1474x1024 source:
    205px rail, 58px header, 34px content inset). Higher specificity than
