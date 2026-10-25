@@ -32,6 +32,8 @@ describe("Mentor-only learner academic facts boundaries",()=>{
   expect(ui).toContain("academic year\n      is shown only when it is recorded");
   expect(academic).toContain("academicYear:cohorts.academicYear");
   expect(academic).toContain("academicYear:row.departmentName?row.academicYear:null");
-  expect(ui).toContain("Last recorded action comes from persisted project events");
+  expect(ui).toContain("Last sign-in comes from a saved authentication timestamp");
+  expect(ui).toContain("Neither establishes current online presence or attendance");
+  expect(ui).toContain("Saved student lead label");
  });
 });
