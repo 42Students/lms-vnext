@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import {FacultyPrototypeAssignmentReport} from "@/components/courses/faculty-prototype-assignment-report";
 import styles from "@/components/courses/faculty-report-legacy-charts.module.css";
 import { Disclosure } from "@/components/ui/disclosure";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
@@ -109,6 +110,10 @@ export default async function FacultyAssignmentReportPage({
         ]}
       />
       </nav>
+      <FacultyPrototypeAssignmentReport report={report}/>
+      <details className="border-t border-[#e5ebf2] pt-4">
+        <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Advanced report analysis, full student records and grading tools</summary>
+        <div className="mt-5 space-y-5">
       <PageHeader title={assignment.title?.trim()||"Untitled assignment"}
         description={assignment.courseName}/>
       <div className="flex min-w-0 flex-wrap items-center gap-3 text-xs text-muted-foreground">
@@ -248,6 +253,8 @@ export default async function FacultyAssignmentReportPage({
           status={assignment.status}
         />
       </section>
+        </div>
+      </details>
     </div>
   );
 }
