@@ -7,6 +7,7 @@ import {rankTpoCompaniesToday,tpoCompaniesTodayScope} from "@/modules/placements
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
 import {getTpoMessagesInbox} from "@/modules/placements/tpo-messages-service";
 import {TpoCompaniesToday} from "@/components/tpo/tpo-companies-today";
+import {TpoTodayAlternateViews} from "@/components/tpo/tpo-today-alternate-views";
 import {Alert} from "@/components/ui/alert";
 import Link from "next/link";
 export const dynamic="force-dynamic";
@@ -14,7 +15,7 @@ export const dynamic="force-dynamic";
 /** Real, per-college Companies/Today focus. Email replies and CRM follow-ups
  * are different sources: no fabricated reply bodies or implied email sends. */
 export default async function TpoCompaniesTodayPage({searchParams}:{
- searchParams:Promise<{scope?:string|string[]}>
+ searchParams:Promise<{scope?:string|string[];view?:string|string[];lead?:string|string[]}>
 }){
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO")||!context.membership)redirect("/dashboard");
@@ -26,9 +27,13 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
  </section>;
  const params=await searchParams;
  const scope=tpoCompaniesTodayScope(params.scope);
- if(!scope)return <section className="space-y-4">
+ const view=params.view??"focus";
+ const invalidView=Array.isArray(view)||!["focus","agenda","brief"].includes(view);
+ const invalidLead=params.lead!==undefined&&
+  (typeof params.lead!=="string"||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.lead));
+ if(!scope||invalidView||invalidLead)return <section className="space-y-4">
   <h1 className="text-2xl font-bold">Companies · Today</h1>
-  <Alert tone="error">Invalid Today ownership selection. Nothing was loaded.</Alert>
+  <Alert tone="error">Invalid Today view, ownership or follow-up selection. Nothing was loaded.</Alert>
   <Link href="/tpo/companies/today" className="font-semibold text-link underline">Open My Work</Link>
  </section>;
  const now=new Date();
@@ -54,7 +59,12 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   })):[];
  const replyTotal=replyResult.status==="fulfilled"&&replyResult.value.source==="RECRUITER_THREADS"
   ?replyResult.value.total:null;
+ if(view==="agenda"||view==="brief")return <TpoTodayAlternateViews
+  view={view} scope={scope} rows={rows} nowIso={now.toISOString()}
+  replies={replies} replyTotal={replyTotal}
+  hasMore={due.value.total>due.value.rows.length||next.value.total>next.value.rows.length}/>;
  return <TpoCompaniesToday scope={scope} rows={rows} nowIso={now.toISOString()}
+  initialFollowupId={typeof params.lead==="string"?params.lead:undefined}
   unreadMessages={unread.status==="fulfilled"?unread.value:null}
   replies={replies} replyTotal={replyTotal}
   hasMore={due.value.total>due.value.rows.length||next.value.total>next.value.rows.length}/>;
