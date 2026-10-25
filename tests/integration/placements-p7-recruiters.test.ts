@@ -156,6 +156,12 @@ async function cleanup() {
     "delete from in_app_notifications where user_id = $1",
     [recruiterUserId],
   );
+  // An activity written by this recruiter can notify a TPO or learner,
+  // not just the recruiter. Clear those linked receipts before their parent.
+  await pool.query(
+    "delete from in_app_notifications where event_id in (select id from activity_events where actor_user_id = $1)",
+    [recruiterUserId],
+  );
   await pool.query(
     "delete from activity_events where actor_user_id = $1",
     [recruiterUserId],
