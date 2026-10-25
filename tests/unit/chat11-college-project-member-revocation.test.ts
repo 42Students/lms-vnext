@@ -44,10 +44,17 @@ describe("PROJ-COL-REVOKE-03 member/mentor mutation safety",()=>{
    expect(begin,name).toBeGreaterThan(0);
    expect(end,name).toBeGreaterThan(begin);
    expect(lock,name).toBeGreaterThan(0);
-   expect(check,name).toBeGreaterThan(lock);
+   if(name==="reassignProjectPrimaryMentor"){
+    expect(check,name).toBeGreaterThan(lock);
+   }else{
+    // These three shared mutations have two persisted authorization paths:
+    // live Mentor project membership or live College Admin permission.
+    expect(action,name).toContain("assertPersistedProjectMutationActor(tx,context,scope)");
+    expect(check,name).toBeGreaterThan(lock);
+   }
    expect(future,name).toBeGreaterThan(check);
    expect(action,name).toContain("collegeId:scope.collegeId,organizationId:scope.organizationId");
-   expect(action,name).toMatch(/project\.status\s*===\s*"ARCHIVED"/);
+   expect(action,name).toMatch(/project\.status\s*===\s*"ARCHIVED"|\["ARCHIVED","COMPLETED"\]\.includes\(project\.status\)/);
   }
   expect(src).toContain("recordActivityEventInTransaction(");
   expect(src).toContain("notifyProjectMemberships(tx");

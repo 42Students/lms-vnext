@@ -25,7 +25,8 @@ describe("Google Calendar draft-to-Meet contract",()=>{
   expect(service).toContain('roles:["MENTOR"]');
  });
  it("makes draft generation reachable with truthful partial state",()=>{
-  expect(page).toContain('["DRAFT","SCHEDULED","RESCHEDULED"].includes(meeting.status)');
+  expect(page).toContain('["DRAFT","SCHEDULED","RESCHEDULED","CANCELLED"].includes(meeting.status)');
+  expect(page).toContain('cancelled={meeting.status==="CANCELLED"}');
   expect(page).toContain('draft={meeting.status==="DRAFT"}');
   expect(control).toContain("Generate Meet link and schedule");
   expect(control).toContain("no invitations were requested");

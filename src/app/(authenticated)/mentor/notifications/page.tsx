@@ -305,7 +305,7 @@ async function MentorNotificationsContent({
           : <div className="min-w-0 divide-y divide-border border-b border-border">{shownAlerts.map(alert=>
               <article key={alert.key}
                 className="block min-h-11 min-w-0 py-4 transition md:min-h-[var(--lms-control-height)]">
-                <Link href={alert.href} className="block rounded focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                <Link href={alert.href} className="block min-h-11 rounded focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{alert.title}</h3>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
