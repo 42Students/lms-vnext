@@ -138,6 +138,72 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   await expect(page.getByRole("region",{name:"Plan a release or sprint"})).toHaveCount(0);
  });
 
+ test("persisted Mentor brief rejects stale tabs and cross-role mutations",async({page,context})=>{
+  await signIn(context,"seed-college-admin",SEED_IDS.collegeAdminMembership,"COLLEGE_ADMIN");
+  await page.goto("/college/projects/create");
+  const template=page.getByRole("region",{name:"Create workspace"})
+   .getByLabel("Template",{exact:true});
+  await template.selectOption({index:1});
+  const templateId=await template.inputValue();
+  expect(templateId).toMatch(/^[0-9a-f-]{36}$/i);
+  const unique=Date.now()+"-"+Math.random().toString(16).slice(2,10);
+  const created=await page.request.post("/api/projects",{
+   headers:{Origin:origin},
+   data:{collegeId:SEED_IDS.collegeA,templateId,
+    title:"Mentor CAS "+unique,slug:"mentor-cas-"+unique,
+    initialStatus:"PLANNED",
+    primaryMentorMembershipId:SEED_IDS.facultyCollegeAMembership,
+    learnerMembershipIds:[SEED_IDS.learnerCollegeAMembership]},
+  });
+  expect(created.status()).toBe(201);
+  const {project}=await created.json() as {project:{id:string;updatedAt:string}};
+  expect(project.id).toMatch(/^[0-9a-f-]{36}$/i);
+  const path="/api/projects/"+project.id+"/brief";
+  const brief={goal:"Persist Mentor review",description:"Durable Mentor-authored project plan",
+   deliverables:["Reviewed acceptance evidence"],completionConditions:["Team may verify"],
+   personas:["Mentor","Learner"]};
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  const saved=await page.request.patch(path,{
+   headers:{Origin:origin},data:{expectedUpdatedAt:project.updatedAt,brief},
+  });
+  expect(saved.status()).toBe(200);
+  const updated=await saved.json() as {project:{updatedAt:string}};
+  expect(updated.project.updatedAt).not.toBe(project.updatedAt);
+  const load=await page.request.get("/api/projects/"+project.id);
+  expect(load.status()).toBe(200);
+  const persisted=await load.json() as {workspace:{project:{authoredBrief:unknown}}};
+  expect(persisted.workspace.project.authoredBrief).toMatchObject(brief);
+  // A stale concurrent tab must not overwrite the persisted earlier save.
+  const stale=await page.request.patch(path,{
+   headers:{Origin:origin},
+   data:{expectedUpdatedAt:project.updatedAt,brief:{...brief,goal:"Stale overwrite"}},
+  });
+  expect(stale.status()).toBe(409);
+  expect((await stale.json() as {error:string}).error).toBe("PROJECT_SUBMISSION_CONFLICT");
+  // A real assigned Learner has read access, not lifecycle write authority.
+  await signIn(context,"seed-learner",SEED_IDS.learnerCollegeAMembership,"LEARNER");
+  const learnerDenied=await page.request.patch(path,{
+   headers:{Origin:origin},
+   data:{expectedUpdatedAt:updated.project.updatedAt,brief},
+  });
+  expect(learnerDenied.status()).toBe(403);
+  expect((await learnerDenied.json() as {error:string}).error)
+   .toBe("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeBMembership,"FACULTY");
+  const foreignDenied=await page.request.patch(path,{
+   headers:{Origin:origin},
+   data:{expectedUpdatedAt:updated.project.updatedAt,brief},
+  });
+  expect(foreignDenied.status()).toBe(403);
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  const unchanged=await page.request.get("/api/projects/"+project.id);
+  expect(unchanged.status()).toBe(200);
+  const state=await unchanged.json() as {
+   workspace:{project:{updatedAt:string;authoredBrief:{goal:string}}}};
+  expect(state.workspace.project.updatedAt).toBe(updated.project.updatedAt);
+  expect(state.workspace.project.authoredBrief.goal).toBe(brief.goal);
+ });
+
  test("a learner cannot open any Mentor route, including deep-linked project tabs",async({page,context})=>{
   await signIn(context,"seed-learner",SEED_IDS.learnerCollegeAMembership,"LEARNER");
   for(const path of ["/mentor/projects","/mentor/calendar",
