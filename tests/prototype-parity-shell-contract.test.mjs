@@ -390,7 +390,10 @@ test("Mentor calendar cross-team Schedule a meeting persists or drafts through g
   assert.match(form,/meetingUrl:link\|\|null/);
   assert.match(form,/\/meetings","POST"/);
   assert.match(form,/fromIstLocalInput\(start\)/);
-  assert.match(form,/No Google Meet link is generated automatically/);
+  assert.match(form,/A saved draft can generate its first Google Meet link/);
+  const sync=source("src/modules/projects/mentor-google-meeting-sync-service.ts");
+  assert.match(sync,/if\(draft&&!event\.meetUrl\)/);
+  assert.match(sync,/status:"SCHEDULED",meetingUrl:event\.meetUrl!/);
   assert.match(route,/isSameOriginRequest/);
   assert.match(route,/scheduleProjectMeeting\(/);
 });

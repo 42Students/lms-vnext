@@ -49,6 +49,7 @@ vi.mock("@/db/schema",()=>({
 vi.mock("drizzle-orm",()=>({
  and:(...args:unknown[])=>["AND",...args],
  eq:(...args:unknown[])=>["EQ",...args],
+ isNull:(col:unknown)=>["IS_NULL",col],
  inArray:(...args:unknown[])=>["IN",...args],
  desc:(x:unknown)=>["DESC",x],
  max:(x:unknown)=>["MAX",x],
