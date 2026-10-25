@@ -6,7 +6,8 @@ import { test } from "node:test";
 const read = (name) => readFileSync(
   new URL("../scripts/sql/" + name, import.meta.url), "utf8",
 );
-const base = read("db02-academic-progression-and-rooms-staging.sql");
+const base = read("db02-academic-progression-and-rooms-staging.sql")
+  .replace(/\bCREATE OR REPLACE (FUNCTION|TRIGGER)\b/g, "CREATE $1");
 // The guard and its trigger are now within canonical DB02 staging.
 const typeStart = base.indexOf("CREATE FUNCTION db02_guard_program_term_course_type_history()");
 const typeEnd = base.indexOf("-- Legacy semester-course credits", typeStart);
