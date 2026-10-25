@@ -352,7 +352,7 @@ export async function finalizeMaturedExternalTpoAcceptances(
             eq(placementLearnerGeneralRequests.collegeId, placementJobs.collegeId),
             eq(placementLearnerGeneralRequests.membershipId, placementApplications.membershipId),
             eq(placementLearnerGeneralRequests.kind, "OFFER_ACCEPTANCE_DISPUTE"),
-            eq(placementLearnerGeneralRequests.targetKey, placementOffers.id),
+            sql`${placementLearnerGeneralRequests.targetKey} = ${placementOffers.id}::text`,
             inArray(placementLearnerGeneralRequests.status, ["PENDING", "APPROVED"]),
           )),
       ),
