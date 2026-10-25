@@ -29,7 +29,7 @@ const courseCodeSchema = z
   );
 
 const courseShortTitleSchema=z.string().trim().min(1,"Enter short display name")
- .max(64,"Maximum 64 characters");
+ .max(255,"Maximum 255 characters");
 const courseOfficialCodeSchema=z.string().trim().max(40,"Maximum 40 characters").nullable();
 /** Immutable legacy/public course slug; the department-local code is separate. */
 export const courseSlugSchema=z.string().trim()
@@ -216,7 +216,7 @@ export function normalizeLegacyCourseDraft(
  const ordered=source.takeaways?.map(item=>item.trim()).filter(Boolean)??[];
  const points=ordered.join("\n");
  if(points.length>2000)throw new Error("Course Takeaways exceed 2000 characters");
- const shortTitle=(source.short_title??source.course_name).slice(0,64);
+ const shortTitle=(source.short_title??source.course_name).slice(0,255);
  return createCourseInputSchema.parse({
   departmentId:source.departmentId,name:source.course_name,
   shortTitle,code:internalCode,officialCode:source.official_course_code||null,

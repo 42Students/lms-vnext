@@ -242,9 +242,9 @@ export async function getFacultyQuizReport(
   // The assessment attempt query is already authorized for this delivery.
   // Include prior learners who transferred out; the current roster controls
   // only today's not-attempted denominator, not historical score evidence.
-  const scopedAttempts=rosterScope
-    ? facultyReportCurrentRosterRows(attempts,rosterScope.roster)
-    : attempts;
+  // The attempt service already authorized this delivery. Retain historic
+  // learners who transferred; only missing counts use the current roster.
+  const scopedAttempts=attempts;
   const latestAttempts =
     latestQuizAttemptsByLearner(scopedAttempts);
   const learners = new Set(
@@ -329,9 +329,9 @@ export async function getFacultyAssignmentReport(
   // outage; do not infer missing learners without a verified current roster.
   // Preserve authorized historical submissions after a learner transfers.
   // Never infer who is currently missing without the current roster.
-  const scopedSubmissions=rosterScope
-    ? facultyReportCurrentRosterRows(submissions,rosterScope.roster)
-    : submissions;
+  // The submission service authorizes this delivery. Do not discard
+  // historical evidence after a learner changes sections.
+  const scopedSubmissions=submissions;
   const submittedMemberships = new Set(
     scopedSubmissions.map(
       (submission) => submission.membershipId,

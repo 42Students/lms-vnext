@@ -52,7 +52,7 @@ describe("graceful route screens", () => {
   });
   it("GR-17 maintenance flag returns 503 and keeps /ready truthful", () => {
     const proxy = source("src/proxy.ts");
-    expect(proxy).toContain('process.env.MAINTENANCE_MODE === "1"');
+    expect(proxy).toContain('process.env["MAINTENANCE_MODE"] === "1"');
     expect(proxy).toContain('path !== "/ready"');
     expect(proxy).toContain('"retry-after": "60"');
   });

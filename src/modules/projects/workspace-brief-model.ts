@@ -38,6 +38,11 @@ export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
  const nested=envelope["overview"]&&typeof envelope["overview"]==="object"&&
   !Array.isArray(envelope["overview"])
   ?envelope["overview"] as Record<string,unknown>:{};
+ // Tenant identifiers and secret fields are not part of an authored brief.
+ // Reject injected envelopes and always return fresh independent arrays.
+ const forbidden=["collegeId","organizationId","membershipId","secret"];
+ if(forbidden.some(key=>Object.hasOwn(envelope,key)||Object.hasOwn(nested,key)))
+  return {goal:"",description:"",deliverables:[],completionConditions:[],personas:[]};
  const raw={...nested,...envelope};
  const list=(data:unknown):string[]=>Array.isArray(data)
   ?data.filter((item):item is string=>typeof item==="string")
