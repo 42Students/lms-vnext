@@ -33,16 +33,17 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
   expect(state.reader).not.toHaveBeenCalled();
  });
  it("reads paginated results using the same current context/kind, returns quoted spreadsheet and bounded pagination",async()=>{
-  state.reader.mockImplementation(async (_ctx,kind,query)=>{
-   if(kind===undefined||query===undefined)throw new Error("ASSESSMENT_READER_ARGS="+JSON.stringify(state.reader.mock.calls.at(-1)));
+  const calls:Array<[unknown,unknown,{page:number;status?:string}]>=[];
+  const reader=async (_ctx:unknown,kind:unknown,query:{page:number;status?:string})=>{
+   calls.push([_ctx,kind,query]);
    expect(kind).toBe("QUIZ");
-   const page=query.page as number;
+   const page=query.page;
    return {items:Array.from({length:page===3?11:COLLEGE_ASSESSMENT_PAGE_SIZE},(_,i)=>row((page-1)*COLLEGE_ASSESSMENT_PAGE_SIZE+i)),
     total:51,totalPages:3};
-  });
-  const out=await exportCollegeAssessments(context,"QUIZ",{status:"PUBLISHED",exportMode:"ALL"},state.reader);
-  expect(state.reader).toHaveBeenCalledTimes(3);
-  for(const call of state.reader.mock.calls){
+  };
+  const out=await exportCollegeAssessments(context,"QUIZ",{status:"PUBLISHED",exportMode:"ALL"},reader as unknown as NonNullable<Parameters<typeof exportCollegeAssessments>[3]>);
+  expect(calls).toHaveLength(3);
+  for(const call of calls){
    expect(call[0]).toBe(context);
    expect(call[1]).toBe("QUIZ");
    expect(call[2].status).toBe("PUBLISHED");
@@ -54,16 +55,18 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
   expect(out.csv.startsWith("\ufeff")).toBe(true);
  });
  it("cannot silently export more than 1000 rows, labels truncated set and never fetches page 41",async()=>{
-  state.reader.mockImplementation(async (_ctx,_kind,query)=>({
-   items:Array.from({length:COLLEGE_ASSESSMENT_PAGE_SIZE},(_,i)=>row((query.page-1)*COLLEGE_ASSESSMENT_PAGE_SIZE+i)),
-   total:1001,totalPages:Math.ceil(1001/COLLEGE_ASSESSMENT_PAGE_SIZE),
-  }));
-  const out=await exportCollegeAssessments(context,"ASSIGNMENT",{exportMode:"ALL"},state.reader);
+  const calls:Array<[unknown,unknown,{page:number}]>=[];
+  const reader=async (_ctx:unknown,_kind:unknown,query:{page:number})=>{
+   calls.push([_ctx,_kind,query]);
+   return {items:Array.from({length:COLLEGE_ASSESSMENT_PAGE_SIZE},(_,i)=>row((query.page-1)*COLLEGE_ASSESSMENT_PAGE_SIZE+i)),
+    total:1001,totalPages:Math.ceil(1001/COLLEGE_ASSESSMENT_PAGE_SIZE)};
+  };
+  const out=await exportCollegeAssessments(context,"ASSIGNMENT",{exportMode:"ALL"},reader as unknown as NonNullable<Parameters<typeof exportCollegeAssessments>[3]>);
   expect(out.rows).toHaveLength(1000);
   expect(out.truncated).toBe(true);
   expect(out.cap).toBe(1000);
-  expect(state.reader).toHaveBeenCalledTimes(1000/COLLEGE_ASSESSMENT_PAGE_SIZE);
-  expect(state.reader.mock.calls.every(call=>call[2]?.page<=1000/COLLEGE_ASSESSMENT_PAGE_SIZE)).toBe(true);
+  expect(calls).toHaveLength(1000/COLLEGE_ASSESSMENT_PAGE_SIZE);
+  expect(calls.every(call=>call[2]?.page<=1000/COLLEGE_ASSESSMENT_PAGE_SIZE)).toBe(true);
   expect(out.csv).toContain("EXPORT TRUNCATED");
   expect(out.csv).toContain("Only the first 1000 matching records");
   expect(out.csv).not.toContain("Quiz 1000");

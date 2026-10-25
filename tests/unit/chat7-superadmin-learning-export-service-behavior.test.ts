@@ -54,32 +54,35 @@ describe("Super Admin assessment export service scoped pagination",()=>{
   expect(csv).toContain("'=1+1");
  });
  it("SA-academics-people-65 never drops quiz results filters as later pages are read",async()=>{
-  state.reader.mockImplementation(async (_context,_kind,query)=>{
-   const page=query.page as number;
-   return {items:[row(page)],total:2,totalPages:2};
-  });
+  const calls:Array<[unknown,unknown,{page:number;results?:string;courseCode?:string;scope?:string}]>=[];
+  const reader=async (_context:unknown,_kind:unknown,query:{page:number;results?:string;courseCode?:string;scope?:string})=>{
+   calls.push([_context,_kind,query]);
+   return {items:[row(query.page)],total:2,totalPages:2};
+  };
   const response=await exportSuperAdminLearningDirectory(new Request(
    "https://app.invalid/api/admin/quizzes/export?results=HIDDEN&courseCode=CS401&scope=SHARED"
-  ),"QUIZ",state.reader);
+  ),"QUIZ",reader as unknown as NonNullable<Parameters<typeof exportSuperAdminLearningDirectory>[2]>);
   expect(response.status).toBe(200);
-  expect(state.reader).toHaveBeenCalledTimes(2);
-  for(const call of state.reader.mock.calls){
+  expect(calls).toHaveLength(2);
+  for(const call of calls){
    expect(call[0]).toBe(state.context);
    expect(call[1]).toBe("QUIZ");
    expect(call[2]).toMatchObject({results:"HIDDEN",courseCode:"CS401",scope:"SHARED"});
   }
-  expect(state.reader.mock.calls.map(call=>call[2].page)).toEqual([1,2]);
+  expect(calls.map(call=>call[2].page)).toEqual([1,2]);
  });
  it("SA-academics-people-64 hard caps CSV at 500 rows and explicitly marks omitted records",async()=>{
-  state.reader.mockImplementation(async (_context,_kind,query)=>({
-   items:Array.from({length:25},(_,i)=>row((query.page-1)*25+i)),
-   total:501,totalPages:21,
-  }));
+  const calls:Array<[unknown,unknown,{page:number}]>=[];
+  const reader=async (_context:unknown,_kind:unknown,query:{page:number})=>{
+   calls.push([_context,_kind,query]);
+   return {items:Array.from({length:25},(_,i)=>row((query.page-1)*25+i)),
+    total:501,totalPages:21};
+  };
   const response=await exportSuperAdminLearningDirectory(new Request(
    "https://app.invalid/api/admin/assignments/export?status=PUBLISHED"
-  ),"ASSIGNMENT",state.reader);
+  ),"ASSIGNMENT",reader as unknown as NonNullable<Parameters<typeof exportSuperAdminLearningDirectory>[2]>);
   expect(response.status).toBe(200);
-  expect(state.reader).toHaveBeenCalledTimes(20);
+  expect(calls).toHaveLength(20);
   expect(response.headers.get("X-Export-Truncated")).toBe("true");
   const csv=await response.text();
   expect(csv).toContain("TRUNCATED: first 500 records");
