@@ -34,6 +34,7 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
  });
  it("reads paginated results using the same current context/kind, returns quoted spreadsheet and bounded pagination",async()=>{
   state.reader.mockImplementation(async (_ctx,kind,query)=>{
+   if(kind===undefined||query===undefined)throw new Error("ASSESSMENT_READER_ARGS="+JSON.stringify(state.reader.mock.calls.at(-1)));
    expect(kind).toBe("QUIZ");
    const page=query.page as number;
    return {items:Array.from({length:page===3?11:COLLEGE_ASSESSMENT_PAGE_SIZE},(_,i)=>row((page-1)*COLLEGE_ASSESSMENT_PAGE_SIZE+i)),
