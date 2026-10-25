@@ -171,3 +171,56 @@
 [data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task-label{margin-bottom:1px;}
 [data-prototype-portal="faculty"] .faculty-proto-today aside .faculty-proto-action,
 [data-prototype-portal="faculty"] .faculty-proto-today aside .faculty-proto-secondary{min-height:36px;padding:6px 10px;font-size:12px;}
+
+/* Exact Faculty shell proportions of screenshots #02–13 (1474x1024 source:
+   205px rail, 58px header, 34px content inset). Higher specificity than
+   the shared TPO/Mentor prototype so other portals remain untouched. */
+@media(min-width:768px){
+ .lms-shell-frame[data-prototype-portal="faculty"] .lms-desktop-sidebar,
+ .lms-shell-frame[data-prototype-portal="faculty"] .lms-desktop-sidebar:is(:hover,:focus-within){
+  width:205px;min-width:205px;max-width:205px;position:sticky;top:0;
+  background:white;border-right:1px solid #e7ecf2;
+ }
+ .lms-shell-frame[data-prototype-portal="faculty"] .lms-sidebar-logo-row,
+ .lms-shell-frame[data-prototype-portal="faculty"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-logo-row{
+  height:100px;min-height:100px;justify-content:flex-start;
+  padding:12px 34px 0;align-items:flex-start;
+ }
+ .lms-shell-frame[data-prototype-portal="faculty"] .lms-shell-page-main{
+  padding:28px 34px 48px;
+ }
+ .lms-shell-frame[data-prototype-portal="faculty"] .lms-sidebar-nav {
+  padding-inline:12px;
+ }
+ .lms-shell-frame[data-prototype-portal="faculty"] .lms-sidebar-nav .lms-sidebar-item,
+ .lms-shell-frame[data-prototype-portal="faculty"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-sidebar-item {
+  min-height:40px;width:100%;margin:1px 0;padding:9px 15px;gap:0;
+  font-size:15px;font-weight:400;border-radius:10px;line-height:20px;
+ }
+ .lms-shell-frame[data-prototype-portal="faculty"] .lms-sidebar-nav .lms-nav-label {
+  font-size:15px;line-height:19px;white-space:normal;
+ }
+}
+.lms-shell-frame[data-prototype-portal="faculty"] .lms-prototype-wordmark {
+ display:block;position:relative;overflow:visible;
+ width:48px;height:59px;font-size:0;line-height:0;color:transparent;
+ background: url("/assets/images/legacy-42lms-logo.svg") left 0 top 0 / 151px 37px no-repeat;
+}
+.lms-shell-frame[data-prototype-portal="faculty"] .lms-prototype-wordmark::after{
+ content:"42 LMS";position:absolute;left:0;top:40px;width:48px;
+ color:#526072;font-family:Lato,Arial,sans-serif;font-size:11px;
+ font-weight:700;line-height:15px;text-align:center;letter-spacing:.025em;
+}
+.lms-shell-frame[data-prototype-portal="faculty"] header[aria-label="Application top bar"]{
+ height:58px;min-height:58px;padding:0 24px;gap:10px;
+ border-bottom:1px solid #e7ecf2;box-shadow:none;background:#fff;
+}
+@media(min-width:768px){
+ .lms-shell-frame[data-prototype-portal="faculty"] header[aria-label="Application top bar"] >div:nth-child(2){
+  display:grid;grid-template-columns:minmax(210px,267px) auto;
+  justify-content:end;align-items:center;gap:10px;flex:1;
+ }
+ .lms-shell-frame[data-prototype-portal="faculty"] header[aria-label="Application top bar"] #lms-topbar-command-search{
+  font-size:14px;
+ }
+}

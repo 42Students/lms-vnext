@@ -45,7 +45,7 @@ export function topbarConfigForPath(pathname: string): TopbarConfig {
     messagesHref: null, notificationsHref: "/learn/notifications",
   };
   if (pathname === "/teacher" || pathname.startsWith("/teacher/") || pathname === "/teach" || pathname.startsWith("/teach/")) return {
-    portal: "teacher", placeholder: "Find a course or assignment",
+    portal: "teacher", placeholder: "Find a student or a course",
     searchHref: "/teacher/courses", newHref: null,
     messagesHref: null, notificationsHref: "/teacher/notifications",
   };
