@@ -2,6 +2,9 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseRoster } from "@/components/courses/faculty-course-roster";
+import {FacultyPrototypeStudentDirectory} from "@/components/courses/faculty-prototype-student-directory";
+import {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
+import {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import { Alert } from "@/components/ui/alert";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -56,17 +59,27 @@ export default async function FacultyCourseStudentsPage({
     </div>;
   }
   const {delivery,roster}=loaded;
+  const signalResult=await getFacultyCourseWorkspace(context,deliveryId)
+    .then(workspace=>getFacultyCourseHomeSignals(context,workspace))
+    .catch(()=>null);
 
   return (
     <div className="min-w-0 max-w-full space-y-5">
       <h1 className="sr-only">Students</h1>
       <p className="sr-only">{delivery.courseName} · {delivery.sectionName} · {delivery.academicPeriodName}</p>
+      <FacultyPrototypeStudentDirectory
+        learners={roster} signals={signalResult} deliveryId={delivery.deliveryId}/>
+      <details className="border-t border-[#e5ebf2] pt-4">
+        <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Detailed roster, contacts and CSV export</summary>
+        <div className="mt-4">
       <FacultyCourseRoster
         key={delivery.deliveryId}
         learners={roster}
         sectionName={delivery.sectionName}
         deliveryId={delivery.deliveryId}
       />
+        </div>
+      </details>
     </div>
   );
 }
