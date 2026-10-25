@@ -2,10 +2,13 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
+// The disposable DB02 overlay is deliberately replayable. PostgreSQL accepts
+// CREATE OR REPLACE for either object; normalize that equivalent DDL spelling
+// for source-shape checks while retaining the complete trigger/guard bodies.
 const sql = readFileSync(
   new URL("../scripts/sql/db02-academic-progression-and-rooms-staging.sql", import.meta.url),
   "utf8",
-);
+).replace(/\bCREATE OR REPLACE (FUNCTION|TRIGGER)\b/g, "CREATE $1");
 
 const acceptanceSql = readFileSync(
   new URL("../scripts/sql/db02-postgres-acceptance-unregistered.sql", import.meta.url),
