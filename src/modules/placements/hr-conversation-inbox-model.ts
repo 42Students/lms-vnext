@@ -74,3 +74,12 @@ export function countScopedConversations<T>(rows:readonly T[]):number{
 export function recruiterMessageSearchLimit(accessibleThreadIds:readonly string[]):number{
  return new Set(accessibleThreadIds).size;
 }
+
+/** A URL parameter never authorizes a thread. Select strictly from the
+ * already-verified employer/college inbox, or fall back to its first row. */
+export function selectRecruiterWorkspaceThread<T extends {id:string}>(
+ rows:readonly T[],raw:string|string[]|undefined,
+):T|null{
+ const id=typeof raw==="string"&&/^[0-9a-f-]{36}$/i.test(raw)?raw:null;
+ return (id?rows.find(row=>row.id===id):undefined)??rows[0]??null;
+}

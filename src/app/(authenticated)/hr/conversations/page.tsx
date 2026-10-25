@@ -25,8 +25,10 @@ import {RecruiterDecisionReadButton} from "@/components/hr/recruiter-decision-re
 import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
 import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
 import {RecruiterGeneralDrawer} from "@/components/hr/recruiter-general-drawer";
+import {RecruiterConversationWorkspace} from "@/components/hr/recruiter-conversation-workspace";
+import {selectRecruiterWorkspaceThread} from "@/modules/placements/hr-conversation-inbox-model";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
-type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[]};
+type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[];thread?:string|string[];view?:string|string[]};
 
 function when(value:Date){return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);}
 function timeAgo(value:Date,now:Date){
@@ -67,6 +69,20 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      description="Your inbox could not be refreshed. Please try again."
      retryHref="/hr/conversations" retryLabel="Retry"/>
  </div>;
+ // The prototype combines the inbox and active conversation. Keep the existing
+ // expanded directory reachable at ?view=advanced, with all previous filters.
+ // Never trust the thread query param to authorize a message read.
+ if(result.status==="READY"&&raw.view!=="advanced"&&
+    parsed.data.unreadOnly==="false"&&parsed.data.sort==="LATEST"&&
+    parsed.data.scope==="ALL"&&parsed.data.page===1){
+  const selected=selectRecruiterWorkspaceThread(result.items,raw.thread);
+  const history=selected?await readRecruiterThreadMessages(context,selected.id,1).catch(()=>null):null;
+  return <RecruiterConversationWorkspace collegeId={result.collegeId}
+   rows={result.items} selected={selected} history={history}
+   selectedHistoryUnavailable={selected!==null&&history===null}
+   q={parsed.data.q} total={result.total} pages={result.pages}
+   unreadTotal={result.unreadTotal}/>;
+ }
  const generalLookup=result.status==="READY"
   ?await listHrConversations(context,{
     collegeId:result.collegeId,q:"",page:1,unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
