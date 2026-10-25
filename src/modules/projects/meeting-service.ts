@@ -326,7 +326,10 @@ export async function requestProjectMeeting(
     const [meeting] = await tx.insert(projectMeetings).values({
       projectId: scope.project.id,
       status: "REQUESTED", meetingType: "GENERAL",
-      title: input.title, agenda: input.agenda ?? null,
+      title: input.title,
+      agenda: input.location
+        ? "Location: "+input.location+"\n"+(input.agenda?.trim()??"")
+        : input.agenda ?? null,
       startsAt, endsAt, timeZone: input.timeZone,
       requestedByMembershipId: context.membership!.id,
       createdByUserId: context.user.id,
@@ -422,7 +425,8 @@ export async function scheduleProjectMeeting(
     // audited state machine as the Mentor UI. In particular, a changed time
     // cannot silently remain SCHEDULED; only SCHEDULED -> RESCHEDULED is valid.
     if (!maySaveMentorMeetingStatus(existing?.status??null,targetStatus,timeChanged) ||
-      (targetStatus!=="DRAFT" && !(input.meetingUrl??existing?.meetingUrl)))
+      (targetStatus!=="DRAFT" && !(input.meetingUrl??existing?.meetingUrl) &&
+        !input.location && !/^(?:Location|Venue):\s*[^\n]+/i.test(existing?.agenda??"")))
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     // MEN-projects-meetings-R02: prevent the organiser being double-booked
     // across multiple Project workspaces. The transaction-scoped lock makes

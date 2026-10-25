@@ -31,6 +31,7 @@ export function MentorMeetingRequestActions({meeting}:{
   const [startsAt,setStartsAt]=useState(displayIst(meeting.startsAt));
   const [endsAt,setEndsAt]=useState(displayIst(meeting.endsAt));
   const [joinUrl,setJoinUrl]=useState("");
+  const [venue,setVenue]=useState("");
   const [note,setNote]=useState("");
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState<string|null>(null);
@@ -53,10 +54,14 @@ export function MentorMeetingRequestActions({meeting}:{
         if(action==="ANOTHER"&&!mentorMeetingHasDifferentRequestedWindow(
           meeting.startsAt,meeting.endsAt,from,until,
         ))throw Error("Choose a different start or end time for this request.");
-        let url:URL;
-        try{url=new URL(joinUrl.trim());}catch{throw Error("A real meeting join link is required.");}
-        if(!["http:","https:"].includes(url.protocol)||url.username||url.password||!url.hostname)
-          throw Error("Enter a valid HTTP or HTTPS meeting join link.");
+        let url:URL|null=null;
+        if(joinUrl.trim()){
+          try{url=new URL(joinUrl.trim());}catch{throw Error("Enter a valid HTTP or HTTPS meeting join link.");}
+          if(!["http:","https:"].includes(url.protocol)||url.username||url.password||!url.hostname)
+            throw Error("Enter a valid HTTP or HTTPS meeting join link.");
+        }
+        if(!url&&!venue.trim())throw Error("Provide a join link or physical meeting venue.");
+        if(venue.trim().length>200)throw Error("Meeting venue must be at most 200 characters.");
         await projectMutation(base,"PATCH",{
           expectedUpdatedAt:meeting.updatedAt,
           title:meeting.title,
@@ -64,7 +69,8 @@ export function MentorMeetingRequestActions({meeting}:{
           startsAt:from,endsAt:until,timeZone:"Asia/Kolkata",
           meetingType:meeting.meetingType??"GENERAL",
           status:"SCHEDULED",
-          meetingUrl:url.toString(),
+          meetingUrl:url?.toString()??null,
+          ...(venue.trim()?{location:venue.trim()}:{}),
         });
       }else{
         await projectMutation(base+"/mentor-decision","POST",{
@@ -83,7 +89,7 @@ export function MentorMeetingRequestActions({meeting}:{
   return <section className="prototype-mentor-meeting-request" aria-label="Answer meeting request">
     <h3>Meeting request · needs your answer</h3>
     <p>Confirm the requested time, choose a different future time, or decline with
-      an optional note. Scheduling requires a real join link. The team is informed
+      an optional note. Provide an online join link or a physical room. The team is informed
       only when the server saves the change; no calendar sync is claimed.</p>
     <div className="prototype-mentor-meeting-request-buttons">
       <Button type="button" size="sm" onClick={()=>{setError(null);setAction("YES");}}>
@@ -100,7 +106,7 @@ export function MentorMeetingRequestActions({meeting}:{
     </div>
     <Dialog title={action==="YES"?"Accept meeting request":
       action==="ANOTHER"?"Choose another meeting time":"Decline meeting request"}
-      description={action==="YES"?"Confirm the requested slot and provide the actual link. No link is generated automatically.":
+      description={action==="YES"?"Confirm the requested slot and provide an online link or physical room. No link is generated automatically.":
         action==="ANOTHER"?"Choose a different future slot. Confirming schedules that time; it is not a tentative provider invitation.":
         "Declining keeps the request and note in the project's history."}
       open={action!==null}
@@ -115,10 +121,15 @@ export function MentorMeetingRequestActions({meeting}:{
             <Input required type="datetime-local" value={endsAt} disabled={busy}
               onChange={event=>setEndsAt(event.target.value)}/>
           </label>
-          <label>Meeting join link
-            <Input required type="url" value={joinUrl} maxLength={500} disabled={busy}
+          <label>Meeting join link (online meetings)
+            <Input type="url" value={joinUrl} maxLength={500} disabled={busy}
               onChange={event=>setJoinUrl(event.target.value)}
               placeholder="https://meet.google.com/..."/>
+          </label>
+          <label>Physical meeting venue (in-person meetings)
+            <Input type="text" value={venue} maxLength={200} disabled={busy}
+              onChange={event=>setVenue(event.target.value)}
+              placeholder="Lab 2, Room 304"/>
           </label>
         </>:<label>Note for the team (optional)
           <Textarea value={note} onChange={event=>setNote(event.target.value)}

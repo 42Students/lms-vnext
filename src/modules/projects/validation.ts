@@ -888,6 +888,9 @@ export const scheduleProjectMeetingInputSchema =
       .optional(),
     status:z.enum(["DRAFT","SCHEDULED","RESCHEDULED"]).optional(),
     meetingUrl: projectMeetingWebUrlSchema.nullable().optional(),
+    // In-person sessions may be confirmed with a named physical venue.
+    // The venue is preserved in the legacy agenda text until a native column exists.
+    location:z.string().trim().min(1).max(200).optional(),
     outcome:z.string().trim().max(4000).nullable().optional(),
     facilitation:mentorMeetingFacilitationSchema.optional(),
     expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
@@ -897,8 +900,8 @@ export const scheduleProjectMeetingInputSchema =
     linkedTaskId:
       projectTaskIdSchema.nullable().optional(),
   }).superRefine((value,ctx)=>{
-    if(value.status!=="DRAFT" && !value.meetingUrl && !value.expectedUpdatedAt)
-      ctx.addIssue({code:"custom",path:["meetingUrl"],message:"Meeting link is required."});
+    if(value.status!=="DRAFT" && !value.meetingUrl && !value.location && !value.expectedUpdatedAt)
+      ctx.addIssue({code:"custom",path:["meetingUrl"],message:"Meeting link or physical venue is required."});
   });
 
 export const projectMeetingTransitionInputSchema =
