@@ -76,7 +76,7 @@ const parityCases: ReadonlyArray<readonly [string,string,string]> = [
   ],
   [
     "SA-placements-projects-32",
-    "src/app/(authenticated)/admin/companies/page.tsx",
+    "src/components/admin/super-admin-global-company-catalogue.tsx",
     "SuperAdminCompanyRestore"
   ],
   [

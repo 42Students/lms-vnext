@@ -24,7 +24,9 @@ describe("Chat 13 Super Admin placement legacy copy and S3 contracts", () => {
   it("SA-placements-projects-32 archived company restore", () => {
     const code = source("src/app/(authenticated)/admin/companies/page.tsx");
     expect(code).toContain("Show deleted (archived) companies");
-    expect(code).toContain("SuperAdminCompanyRestore");
+    expect(code).toContain("SuperAdminGlobalCompanyCatalogue");
+    const global = source("src/components/admin/super-admin-global-company-catalogue.tsx");
+    expect(global).toContain("SuperAdminCompanyRestore");
   });
   it("SA-placements-projects-33 company tabs", () => {
     const code = source("src/app/(authenticated)/admin/companies/page.tsx");

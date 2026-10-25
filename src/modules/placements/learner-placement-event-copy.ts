@@ -63,7 +63,7 @@ const applicationStatusTitles:Record<string,string>={
  WAITLISTED:"Waitlisted",
 };
 function cleanEventDetail(value:string|undefined,max=120){
- return (value??"").replace(/[\r\n\u0000-\u001f]/g," ").trim().slice(0,max);
+ return (value??"").replace(/[\r\n\u0000-\u001f]/g," ").replace(/\s+/g," ").trim().slice(0,max);
 }
 function safeAssessmentUrl(value:string|undefined){
  if(!value)return null;

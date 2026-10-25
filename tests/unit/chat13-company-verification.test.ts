@@ -22,7 +22,10 @@ describe("Super Admin platform company verification",()=>{
   const page=source("src/app/(authenticated)/admin/companies/page.tsx");
   expect(page).toContain("Only not verified");
   expect(page).toContain("Verified by 42");
-  expect(page).toContain("SuperAdminCompanyVerification");
+  expect(page).toContain("SuperAdminGlobalCompanyCatalogue");
+  const global=source("src/components/admin/super-admin-global-company-catalogue.tsx");
+  expect(global).toContain("SuperAdminCompanyVerification");
+  expect(global).toContain("Verified by 42");
   const client=source("src/components/admin/super-admin-company-verification.tsx");
   expect(client).toContain("apiFetch");
   expect(client).not.toContain("window.confirm");
