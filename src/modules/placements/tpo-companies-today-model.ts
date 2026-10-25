@@ -53,3 +53,21 @@ export function tpoCompaniesTodayScope(raw:unknown):"MINE"|"TEAM"|null{
  if(raw==="TEAM")return "TEAM";
  return null;
 }
+
+
+/** All Today presentations share the same local-day boundary and authorized
+ * follow-up deep link. No role or college selector is accepted from a URL. */
+export function splitTpoTodayFollowups(rows:readonly TpoCompaniesTodayRow[],now:Date){
+ const today=istDateKey(now);
+ return {
+  due:rows.filter(row=>istDateKey(new Date(row.dueAt))<=today),
+  upcoming:rows.filter(row=>istDateKey(new Date(row.dueAt))>today),
+ };
+}
+export function tpoTodayFocusHref(scope:"MINE"|"TEAM",followupId?:string){
+ const search=new URLSearchParams();
+ if(scope==="TEAM")search.set("scope","TEAM");
+ if(followupId)search.set("lead",followupId);
+ const query=search.toString();
+ return "/tpo/companies/today"+(query?"?"+query:"");
+}
