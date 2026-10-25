@@ -69,6 +69,13 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
    await expect(page.getByText("No project content available for this section."))
     .toHaveCount(0);
   }
+  // Screen #53 is a separate final-delivery state beyond the seven tabs.
+  await page.goto(base+"?tab=delivery");
+  await expect(page.getByRole("heading",{level:1}).first()).toBeVisible();
+  await expect(page.getByText("No project content available for this section."))
+   .toHaveCount(0);
+  await expect(page.locator("body"))
+   .not.toContainText("Application error: a server-side exception");
   await page.goto(base+"?tab=tasks");
   await expect(page).toHaveURL(base+"?tab=board");
   await page.goto(base+"?tab=meetings");

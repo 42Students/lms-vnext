@@ -20,6 +20,7 @@ on:
       - "tests/integration/learner-project-activity-filters.test.ts"
       - "tests/e2e/mentor-prototype-functional-matrix.spec.ts"
       - "tests/e2e/w03-mentor-surfaces.spec.ts"
+      - "tests/e2e/projects.spec.ts"
 
 permissions:
   contents: read
@@ -143,4 +144,4 @@ jobs:
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Run authenticated Mentor route and role matrix
-        run: npx playwright test tests/e2e/mentor-prototype-functional-matrix.spec.ts tests/e2e/w03-mentor-surfaces.spec.ts
+        run: npx playwright test tests/e2e/mentor-prototype-functional-matrix.spec.ts tests/e2e/w03-mentor-surfaces.spec.ts tests/e2e/projects.spec.ts

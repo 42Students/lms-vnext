@@ -47,6 +47,16 @@ async function authenticate(
       httpOnly: true,
       sameSite: "Lax",
     },
+    {
+      // Persisted role selection, not a privilege grant: multi-role faculty
+      // otherwise defaults to TPO in the isolated seed.
+      name: "lms_role",
+      value: identityUid==="seed-shared-faculty"?"MENTOR":
+        identityUid==="seed-learner"?"LEARNER":"COLLEGE_ADMIN",
+      url: baseUrl,
+      httpOnly: true,
+      sameSite: "Lax",
+    },
   ]);
 }
 
