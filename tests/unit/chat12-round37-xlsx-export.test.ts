@@ -22,7 +22,7 @@ it("uses the saved view label for an export and safely strips HTTP-header contro
  const views=src("src/components/tpo/tpo-student-saved-views.tsx");
  expect(views).toContain('router.push(hrefFor(view.query,view.name))');
  const endpoint=src("src/app/api/placements/tpo/students/export-xlsx/route.ts");
- expect(endpoint).toContain('const savedViewRequested=raw.view!==undefined;');
+ expect(endpoint).toContain('const savedViewRequested=raw["view"]!==undefined;');
  expect(endpoint).toContain('const downloadName=savedViewRequested?viewName:"students";');
  expect(endpoint).toContain('legacySavedViewExportFilename(viewName, "xlsx")');
  expect(legacyGridExportFilename("TCS shortlist","xlsx")).toBe("TCS shortlist.xlsx");

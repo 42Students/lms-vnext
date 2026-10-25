@@ -11,7 +11,7 @@ describe("UX-college-join-01 college recruiter invitation",()=>{
  });
  it("uses shared phone-first form, explicit labels, pending guards and focusable inline error",()=>{
   const form=read("src/components/placements/public-recruiter-join-form.tsx");
-  for(const text of ['<Card as="section"','<Input ','<Button type="submit" loading={pending}','<InlineNotice tone="error" message={error}','ref={errorSummaryRef}','authStyles.page','submittingRef.current=true','submittingRef.current=false','Work email','Your name','Mobile (optional)','Send me a code']){
+  for(const text of ['<Card as="section"','<Input ','<Button type="submit" loading={pending}','<InlineNotice tone="error" message={error}','ref={errorSummaryRef}','authStyles["page"]','submittingRef.current=true','submittingRef.current=false','Work email','Your name','Mobile (optional)','Send me a code']){
     expect(form).toContain(text);
   }
   // Full viewport height is supplied by the shared legacy-inspired public auth skin.
