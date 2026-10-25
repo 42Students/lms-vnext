@@ -19,6 +19,8 @@ import { RouteProgress } from "./route-progress";
 import { LearnerFacultyMobileFooter } from "./learner-faculty-mobile-footer";
 import {ShellWidgetBoundary} from "./shell-widget-boundary";
 import {TPO_PROTOTYPE_NAV} from "./tpo-prototype-navigation";
+import {FACULTY_PROTOTYPE_NAV} from "./faculty-prototype-navigation";
+import "./faculty-prototype.css";
 import {ShellConnectivityNotice} from "./shell-connectivity-notice";
 import {canOpenTpoWorkspace} from "@/modules/placements/tpo-workspace-access-model";
 import { ToastProvider } from "@/components/ui/toast";
@@ -59,8 +61,10 @@ export async function AppShell({
   const prototypePortal =
     resolvedNavigation[0]?.href === "/tpo/home" ? "tpo" :
     resolvedNavigation[0]?.href === "/hr/home" ? "recruiter" :
-    resolvedNavigation[0]?.href === "/mentor/projects" ? "mentor" : null;
-  const navigation=prototypePortal==="tpo"?TPO_PROTOTYPE_NAV:resolvedNavigation;
+    resolvedNavigation[0]?.href === "/mentor/projects" ? "mentor" :
+    resolvedNavigation[0]?.href === "/teacher/courses" ? "faculty" : null;
+  const navigation=prototypePortal==="tpo"?TPO_PROTOTYPE_NAV:
+    prototypePortal==="faculty"?FACULTY_PROTOTYPE_NAV:resolvedNavigation;
   const homeHref=navigation[0]?.href??"/dashboard";
   const currentMembership = context.membership
     ? memberships.find(
@@ -84,6 +88,7 @@ export async function AppShell({
       <PageTitle superAdmin={superAdmin} />
       <PrototypePortalFrame
         className="lms-shell-frame min-h-dvh bg-background text-foreground"
+        facultyEnabled={hasMembershipRole(context,"FACULTY")}
         mentorEnabled={hasMembershipRole(context,"MENTOR")}
         tpoEnabled={hasMembershipRole(context,"TPO")}
         recruiterEnabled={Boolean(context.recruiter)||prototypePortal==="recruiter"}>

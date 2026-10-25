@@ -12,6 +12,7 @@ import {canonicalShellPath,scopedShellNavigation,shellNavIconKey,
 import {ShellNavGlyph} from "./shell-nav-icons";
 import {legacySidebarItemActive} from "./legacy-sidebar-active-model";
 import {tpoPrototypeSidebarActive} from "./tpo-prototype-navigation";
+import {facultyPrototypeSidebarActive} from "./faculty-prototype-navigation";
 import {superAdminLegacyGroupForPath} from "@/modules/people/super-admin-legacy-tabs-model";
 import {collegeLegacyGroupForPath} from "@/modules/people/college-legacy-tabs-model";
 import "./sidebar-legacy.css";
@@ -103,7 +104,9 @@ export function SidebarNav({
    const startsNewGroup=Boolean(item.group)&&(index===0||item.group!==previousGroup);
    const prototypeTpo=sidebarPortal==="tpo"&&visibleItems.length===8&&
      visibleItems.some(entry=>entry.href==="/tpo/companies/today");
-   const active=prototypeTpo?tpoPrototypeSidebarActive(pathname,item,urlSearch.get("tab")):
+   const prototypeFaculty=visibleItems.length===4&&visibleItems[0]?.href==="/teacher";
+   const active=prototypeFaculty?facultyPrototypeSidebarActive(pathname,item.href):
+     prototypeTpo?tpoPrototypeSidebarActive(pathname,item,urlSearch.get("tab")):
      legacySidebarItemActive(route,item,superAdminGroup?.title??null,collegeGroup?.title??null);
    const label=sectionLabel(item,sidebarPortal);
    const count=tpoCounts?tpoItemCount(item.href,tpoCounts):null;

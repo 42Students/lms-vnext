@@ -3,10 +3,12 @@
  * College Admin's Placement cell shortcut must not masquerade as TPO.
  */
 export function prototypeRoleSkinForPath(input:{
- pathname:string|null;mentorEnabled:boolean;tpoEnabled:boolean;
+ pathname:string|null;mentorEnabled:boolean;facultyEnabled?:boolean;tpoEnabled:boolean;
  recruiterEnabled:boolean;
-}):"mentor"|"tpo"|"recruiter"|null{
+}):"mentor"|"faculty"|"tpo"|"recruiter"|null{
  const pathname=input.pathname??"/";
+ if(input.facultyEnabled&&(pathname==="/teacher"||pathname.startsWith("/teacher/")))
+   return "faculty";
  if(input.mentorEnabled&&(pathname==="/mentor"||pathname.startsWith("/mentor/")))
    return "mentor";
  if(input.tpoEnabled&&(pathname==="/tpo"||pathname.startsWith("/tpo/")))
