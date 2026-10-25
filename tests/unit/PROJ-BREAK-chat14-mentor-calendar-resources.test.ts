@@ -29,8 +29,8 @@ describe("PROJ-BREAK-MENTOR calendar and resource directory independent user saf
    expect(safeMentorMeetingJoinUrl({...base,meetingUrl:link}),link).toBeNull();
   }
   expect(safeMentorMeetingJoinUrl(base)).toBe("https://video.example.edu/room");
-  expect(safeMentorMeetingJoinUrl({...base,status:"REQUESTED"})).toBe("https://video.example.edu/room");
-  expect(safeMentorMeetingJoinUrl(base,NOW)).toBe("https://video.example.edu/room");
+  expect(safeMentorMeetingJoinUrl({...base,status:"REQUESTED"})).toBeNull();
+  expect(safeMentorMeetingJoinUrl(base,NOW)).toBeNull();
   expect(mentorMeetingDisplayStatus(base,NOW)).toBe("MISSED");
   expect(mentorMeetingDisplayStatus(base,new Date("2026-10-18T18:20:00Z")))
    .toBe("SCHEDULED");

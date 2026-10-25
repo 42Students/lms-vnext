@@ -15,7 +15,8 @@ describe("mentor notification resilience",()=>{
  });
  it("MEN-projects-meetings-71 partial-source failures keep the remaining feeds and disclose incomplete emptiness",()=>{
   const source=code();
-  expect(source).toContain('const announcements = announcementResult.status === "fulfilled" ? announcementResult.value : []');
+  expect(source).toContain('const announcements=announcementPage.items;');
+  expect(source).toContain('announcementResult.status==="fulfilled"');
   expect(source).toContain('const alerts = projectAccess?.projects.enabled');
   expect(source).toContain('const items:NotificationListItem[] = (inbox?.page.items ?? [])');
   expect(source).toContain('failedSources.length ? "No project alerts are visible, but some notification sources could not be checked."');

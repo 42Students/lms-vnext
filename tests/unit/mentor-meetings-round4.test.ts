@@ -20,7 +20,7 @@ describe("mentor meetings and attention",()=>{
   expect(code).toContain("onClick={reset}");
  });
  it("MEN-projects-meetings-70 restores legacy attention copy",()=>{
-  expect(source("src/app/(authenticated)/mentor/notifications/page.tsx")).toContain("Announcements, submissions waiting for review, stalled projects, and meetings coming up soon.");
+  expect(source("src/app/(authenticated)/mentor/notifications/page.tsx")).toContain("Announcements, final submissions, task approvals, sprint sign-offs, blockers and meetings.");
   expect(source("src/modules/projects/mentor-attention.ts")).toContain("submission waiting for your review");
  });
  it("MEN-projects-meetings-73 flags idle planned projects, not blocked or completed",()=>{

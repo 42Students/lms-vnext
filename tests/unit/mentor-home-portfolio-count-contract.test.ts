@@ -22,7 +22,8 @@ describe("Mentor Home portfolio identity and counts",()=>{
  it("uses own signed-in name and does not invent a learner team lead",()=>{
   expect(page).toContain("eq(users.id,context.user.id)");
   expect(home).toContain("mentorHomeGreeting(nowIso,mentorName)");
-  expect(home).toContain("No student lead is inferred");
+  expect(home).toContain("A primary");
+  expect(home).toContain("Mentor assignment does not designate a student lead.");
   expect(home).toContain("/mentor/projects?status=ARCHIVED");
  });
 });

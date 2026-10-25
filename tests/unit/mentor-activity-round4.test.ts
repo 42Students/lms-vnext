@@ -15,7 +15,8 @@ describe("chat-11 mentor activity and resource parity",()=>{
  it("MEN-projects-meetings-59 supports activity source and bounded date range filters",()=>{
   const ui=source("src/components/projects/project-activity-filtered-list.tsx");
   for(const piece of ["All activity","Date range","From date","To date","Clear filters"])expect(ui).toContain(piece);
-  expect(ui).toContain("max={now.slice(0,10)}");
+  expect(ui).toContain("max={mentorActivityIstDayKey(now)||undefined}");
+  expect(ui).toContain("max={toDate||mentorActivityIstDayKey(now)||undefined}");
  });
  it("MEN-projects-meetings-61 humanizes activity type, category and empties",()=>{
   expect(mentorActivityLabel("PROJECT_TASK_UPDATED")).toBe("Task Updated");
