@@ -8,7 +8,8 @@ describe("Final sprint recruiter Today partial and fatal errors",()=>{
   expect(page).toContain('calendarResult.status==="rejected"');
   expect(page).toContain('inboxResult.status==="rejected"');
   expect(page).toContain('conversationResult.status==="rejected"');
-  expect(page).toContain("Drive summary is partially unavailable.");
+  expect(page).toContain("Some recruiter signals are unavailable:");
+  expect(page).toContain("Missing information does not mean there is no work.");
   expect(page).toContain("(summaryPartiallyUnavailable||otherSignalsUnavailable)");
   expect(page).toContain("unavailableSources");
   expect(page).toContain('href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}');

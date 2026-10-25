@@ -12,9 +12,10 @@ describe("Final sprint recruiter live drive highlight",()=>{
   expect(hrTodayLiveDriveRows(rows,"college","company").map(row=>row.job.id)).toEqual(["early","late"]);
   const source=readFileSync("src/app/(authenticated)/hr/home/page.tsx","utf8");
   expect(source).toContain("recruiterVisiblePortfolioCounts(");
-  expect(source).toContain("mostSharedLiveId");
-  expect(source).toContain("sharedApplicants");
-  expect(source).toContain("No shortlisted applicants have been shared yet.");
-  expect(source).toContain("Applications close ");
+  expect(source).toContain("hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId,1,liveDriveCounts)");
+  expect(source).toContain("sharedApplicants:liveDriveCounts?");
+  const view=readFileSync("src/components/hr/recruiter-today-prototype.tsx","utf8");
+  expect(view).toContain("Shared applicant count unavailable");
+  expect(view).toContain("Applications close ");
  });
 });

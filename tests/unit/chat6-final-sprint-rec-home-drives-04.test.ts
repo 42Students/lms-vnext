@@ -12,7 +12,10 @@ describe("Final sprint recruiter home greeting",()=>{
   });
   const source=readFileSync("src/app/(authenticated)/hr/home/page.tsx","utf8");
   expect(source).toContain("recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length)");
-  expect(source).toContain("title={greeting.title}");
-  expect(source).toContain("description={greeting.subtitle}");
+  expect(source).toContain("greeting={greeting.title}");
+  const view=readFileSync("src/components/hr/recruiter-today-prototype.tsx","utf8");
+  expect(view).toContain('const shortName=props.greeting.replace');
+  expect(view).toContain('const headline=visible.length');
+  expect(view).toContain('<h1>{headline}</h1>');
  });
 });
