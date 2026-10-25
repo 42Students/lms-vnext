@@ -50,9 +50,9 @@ describe("Faculty legacy wording (lists.js, CoursesContent, QuizzesContent, Assi
     expect(facultyCourseTabs.map((t) => t.label)).toEqual([
       "Overview",
       "Blueprint",
+      "Students",
       "Attendance",
       "Discussions",
-      "Students",
     ]);
   });
 });
