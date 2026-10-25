@@ -77,7 +77,7 @@ export function RecruiterConversationWorkspace({
       <Link href={base+"&thread="+encodeURIComponent(selected.id)} className="ml-2 font-semibold text-primary-text underline">Retry</Link>
      </div>:<>
       <ol aria-label="Conversation messages" className="flex max-h-[46vh] min-h-[16rem] flex-1 flex-col gap-4 overflow-y-auto p-4">
-       {history&&history.messages.length?[...history.messages].reverse().map(message=>
+       {history&&history.messages.length?history.messages.map(message=>
         <li key={message.id} className={"max-w-[90%] rounded-xl px-4 py-3 text-sm "+
          (message.senderType==="RECRUITER"?"self-end bg-primary-subtle":"self-start bg-surface-secondary")}>
          <p className="whitespace-pre-wrap break-words text-foreground">{message.body}</p>
