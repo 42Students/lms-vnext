@@ -29,12 +29,12 @@ test.describe("W03 Mentor Meetings and Notifications browser parity",()=>{
     await expect(page.locator(".prototype-mentor-home-heading h1")).toBeVisible();
     await page.getByRole("link",{name:"Meetings"}).last().click();
     await expect(page.getByRole("heading",{level:1,name:"Meetings"})).toBeVisible();
-    await expect(page.getByRole("heading",{name:/Upcoming \(\d+\)/})).toBeVisible();
-    await expect(page.getByRole("heading",{name:/Past & Cancelled \(\d+\)/})).toBeVisible();
+    await expect(page.getByRole("heading",{name:"Upcoming",exact:true})).toBeVisible();
+    await expect(page.getByRole("heading",{name:"Past and cancelled",exact:true})).toBeVisible();
     await page.goto("/mentor/notifications");
     await expect(page.getByRole("heading",{level:1,name:"Notifications"})).toBeVisible();
-    await expect(page.getByRole("heading",{name:/Project attention \(\d+\)/})).toBeVisible();
-    await expect(page.getByRole("heading",{name:"Personal notifications"})).toBeVisible();
+    await expect(page.getByRole("heading",{name:/Your notifications · \d+ loaded/})).toBeVisible();
+    await expect(page.getByRole("heading",{name:"What you’re told about"})).toBeVisible();
   });
   test("Learner cannot access Mentor calendar or notifications via deep links",async({page,context})=>{
     await authenticate(context,"seed-learner",SEED_IDS.learnerCollegeAMembership,"LEARNER");
