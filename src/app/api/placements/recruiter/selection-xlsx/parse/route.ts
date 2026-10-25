@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {parseRecruiterSelectionXlsx} from "@/modules/placements/recruiter-selection-xlsx-model";
+import {readRecruiterUploadEnvelope,RecruiterUploadTooLargeError} from "@/modules/placements/recruiter-upload-size-model";
 export const runtime="nodejs";
 /** Parses only worksheet A IDs. This endpoint never grants candidate visibility
  * or stages a selection: the submission service rechecks the exact shortlist. */
@@ -15,7 +16,18 @@ export async function POST(request:Request){
  const length=Number(request.headers.get("content-length"));
  if(Number.isFinite(length)&&length>300000)
   return NextResponse.json({error:"FILE_TOO_LARGE"},{status:413});
- const form=await request.formData().catch(()=>null);
+ const contentType=request.headers.get("content-type")??"";
+ if(!contentType.toLowerCase().startsWith("multipart/form-data;"))
+  return NextResponse.json({error:"INVALID_FILE"},{status:400});
+ let bytes:Uint8Array;
+ try{bytes=await readRecruiterUploadEnvelope(request);}
+ catch(error){
+  return NextResponse.json({error:error instanceof RecruiterUploadTooLargeError?
+   "FILE_TOO_LARGE":"INVALID_FILE"},{status:error instanceof RecruiterUploadTooLargeError?413:400});
+ }
+ const form=await new Response(new Blob([bytes]),{
+  headers:{"content-type":contentType},
+ }).formData().catch(()=>null);
  const file=form?.get("file");
  if(!(file instanceof File)||file.size>256000||!file.name.toLowerCase().endsWith(".xlsx"))
   return NextResponse.json({error:"INVALID_FILE"},{status:400});
