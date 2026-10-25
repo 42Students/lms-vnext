@@ -11,7 +11,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace}:{
  const deliveryId=workspace.course.deliveryId;
  const first=signals?.pendingSubmissions[0];
  const draftQuiz=workspace.lessons.flatMap(lesson=>lesson.quizzes)
-  .find(quiz=>quiz.status==="DRAFT"&&quiz.deliveryId===deliveryId);
+  .find(quiz=>quiz.status==="DRAFT"&&(quiz.deliveryId===null||quiz.deliveryId===deliveryId));
  const priorities:[
   string,string,string,string
  ][]=[];
@@ -19,7 +19,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace}:{
   priorities.push(["TO GRADE",
    signals.pendingSubmissions.length+" submissions to grade",
    first.assignmentTitle+" · Pending learner work",
-   "/teacher/report/assignment/"+encodeURIComponent(first.assignmentId)+
+   "/teacher/report/assignment/"+encodeURIComponent(first.assignmentId)+"/grade"+
    "?deliveryId="+encodeURIComponent(deliveryId)]);
  }
  if(draftQuiz)priorities.push([

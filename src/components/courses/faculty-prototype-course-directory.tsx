@@ -12,6 +12,7 @@ type CourseRow = {
  credits:number|null;
  classes:string[];
  deliveries:string[];
+ classLinks:{name:string;deliveryId:string}[];
  drafts:number;
 };
 
@@ -28,11 +29,13 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments}:{
   if(current){
    if(!current.classes.includes(course.sectionName))current.classes.push(course.sectionName);
    current.deliveries.push(course.deliveryId);
+   if(!current.classLinks.some(x=>x.deliveryId===course.deliveryId))current.classLinks.push({name:course.sectionName,deliveryId:course.deliveryId});
    current.drafts+=workspace.summary.draftItems;
   }else grouped.set(course.courseId,{
    id:course.courseId,name:course.courseName,code:course.courseCode,
    kind:offeringKind,credits:course.credits,
    classes:[course.sectionName],deliveries:[course.deliveryId],
+   classLinks:[{name:course.sectionName,deliveryId:course.deliveryId}],
    drafts:workspace.summary.draftItems,
   });
  }
@@ -68,7 +71,10 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments}:{
       {course.name}</Link>
       <p className="faculty-proto-subtitle">{course.code} · {course.kind}{course.credits!==null?" · "+course.credits+" credits":""}</p>
      </td>
-     <td>{course.classes.join(", ")}</td>
+     <td><div className="flex flex-wrap gap-x-3 gap-y-2">
+      {course.classLinks.map(link=><Link key={link.deliveryId}
+       className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(link.deliveryId)+"/home"}>{link.name}</Link>)}
+     </div></td>
      <td><span className={"rounded-full px-2.5 py-1 text-xs font-semibold "+(course.drafts>0?"bg-amber-50 text-amber-800":"bg-emerald-50 text-emerald-800")}>
        {course.drafts>0?course.drafts+" to publish":"No drafts"}
      </span></td>
@@ -79,6 +85,6 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments}:{
   </div>
   {visible.length===0?<p className="faculty-proto-subtitle rounded-lg border border-[#dce5ee] p-5">
    No assigned courses match this search and type.</p>:null}
-  {courses.length>0?<p className="faculty-proto-subtitle">Courses with several teaching classes open their first assigned class. Use advanced teaching details below to select a different class.</p>:null}
+  {courses.length>0?<p className="faculty-proto-subtitle">Select any assigned class above to open its exact teaching workspace.</p>:null}
  </section>;
 }

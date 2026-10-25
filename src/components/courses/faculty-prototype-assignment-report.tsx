@@ -27,7 +27,7 @@ export function FacultyPrototypeAssignmentReport({report}:{
     <h2 className="text-xs font-bold uppercase tracking-wide text-[#60718b]">Score distribution</h2>
     {metrics.graded? <div className="mt-5 flex min-h-52 items-end gap-3" role="img"
      aria-label={distribution.map(x=>x.label+": "+x.count).join(", ")}>
-     {distribution.map(bucket=><div className="flex min-w-0 flex-1 flex-col items-center" key={bucket.label}>
+     {[...distribution].reverse().map(bucket=><div className="flex min-w-0 flex-1 flex-col items-center" key={bucket.label}>
       <strong className="text-xs tabular-nums">{bucket.count}</strong>
       <div className="mt-2 w-full rounded-t bg-[#08818f]" style={{height:Math.max(bucket.count?7:1,170*bucket.count/max)}}/>
       <span className="mt-2 text-center text-xs text-[#60718b]">{bucket.label}</span>
@@ -58,7 +58,7 @@ export function FacultyPrototypeAssignmentReport({report}:{
        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800">{s.pointsAwarded} / {assignment.maxPoints}</span>:
        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800">To grade</span>}</td>
       <td>{fmt(s.submittedAt)}</td>
-      <td><Link className="faculty-proto-link" href={gradeHref}>Grade</Link></td>
+      <td><Link className="faculty-proto-link" href={gradeHref+"&student="+encodeURIComponent(s.id)}>Grade</Link></td>
      </tr>)}</tbody>
     </table>
    </div>

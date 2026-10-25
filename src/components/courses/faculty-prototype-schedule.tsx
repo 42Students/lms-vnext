@@ -27,7 +27,9 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
  const keys=Array.from({length:view==="Month"?monthDays:view==="Week"?7:1},(_,i)=>shift(start,i));
  const ordered=[...new Map(events.filter(item=>new Date(item.startsAt)>=new Date(nowIso))
   .sort((a,b)=>a.startsAt.localeCompare(b.startsAt)).map(item=>[item.id,item] as const)).values()].slice(0,3);
- const step=view==="Day"?1:view==="Week"?7:28;
+ const monthJump=(delta:number)=>new Date(Date.UTC(Number(day.slice(0,4)),Number(day.slice(5,7))-1+delta,1)).toISOString().slice(0,10);
+ const previous=view==="Month"?monthJump(-1):shift(day,view==="Week"?-7:-1);
+ const next=view==="Month"?monthJump(1):shift(day,view==="Week"?7:1);
  return <section className="space-y-5" aria-label="Faculty class schedule prototype">
   <div className="flex flex-wrap items-start justify-between gap-3">
    <div><h1 className="faculty-proto-heading">Class schedule</h1>
@@ -35,11 +37,11 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
    <div className="flex flex-wrap gap-2" role="group" aria-label="Calendar views">
     {(["Week","Day","Month"] as const).map(v=><button key={v} type="button"
       className="faculty-proto-pill" aria-pressed={view===v} onClick={()=>setView(v)}>{v}</button>)}
-    <button type="button" className="faculty-proto-secondary" disabled={shift(day,-step)<minDate}
-      onClick={()=>setDay(shift(day,-step))} aria-label={"Previous "+view}>←</button>
+    <button type="button" className="faculty-proto-secondary" disabled={previous<minDate}
+      onClick={()=>setDay(previous)} aria-label={"Previous "+view}>←</button>
     <button type="button" className="faculty-proto-secondary" onClick={()=>setDay(today)}>Today</button>
-    <button type="button" className="faculty-proto-secondary" disabled={shift(day,step)>maxDate}
-      onClick={()=>setDay(shift(day,step))} aria-label={"Next "+view}>→</button>
+    <button type="button" className="faculty-proto-secondary" disabled={next>maxDate}
+      onClick={()=>setDay(next)} aria-label={"Next "+view}>→</button>
    </div>
   </div>
   <div className="overflow-x-auto">
