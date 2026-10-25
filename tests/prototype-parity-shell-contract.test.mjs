@@ -108,7 +108,7 @@ test("Mentor table milestones come from scoped nondeleted sprint and task record
   assert.match(service,/hasMembershipRole\(context,"MENTOR"\)/);
   assert.match(service,/inArray\(projectSprints\.projectId,ids\)/);
   assert.match(service,/isNull\(projectSprints\.deletedAt\)/);
-  assert.match(service,/segments\.push\(\{sequence:row\.sequence,status:row\.status\}\)/);
+  assert.match(service,/return summarizeMentorProjectSprints\(rows\)/);
   assert.match(page,/getMentorPrototypeSprintSummaries\(context/);
   assert.match(page,/getMentorProjectWorkCounts\(context/);
   assert.match(list,/sprintSeries\.slice\(0,32\)/);
@@ -311,7 +311,8 @@ test("Mentor Performance filters current, last four and selected sprint work, pr
   assert.match(perf,/setRange\(event\.target\.value\)/);
   assert.match(perf,/value="last4"/);
   assert.match(perf,/value="current"/);
-  assert.match(perf,/task\.sprintId===range/);
+  assert.match(perf,/selectMentorPerformanceSprints\(/);
+  assert.match(perf,/task\.sprintId===active\?\.id/);
   assert.match(perf,/task\.assigneeMembershipId===student\.id/);
   assert.match(summaries,/<MentorPrototypePerformanceTable/);
   assert.match(detail,/<MentorTaskAllocation/);
@@ -383,7 +384,7 @@ test("Mentor calendar cross-team Schedule a meeting persists or drafts through g
   assert.match(form,/status:link\?"SCHEDULED":"DRAFT"/);
   assert.match(form,/meetingUrl:link\|\|null/);
   assert.match(form,/\/meetings","POST"/);
-  assert.match(form,/toInstant\(start\)/);
+  assert.match(form,/fromIstLocalInput\(start\)/);
   assert.match(form,/No Google Meet link is generated automatically/);
   assert.match(route,/isSameOriginRequest/);
   assert.match(route,/scheduleProjectMeeting\(/);
@@ -408,11 +409,11 @@ test("Mentor meeting request offers real Yes, Another time and No actions with g
 test("Mentor Activity since-seen message states local-device limitations",()=>{
   const marker=source("src/components/projects/mentor-activity-since-last-visit.tsx");
   const route=source("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
-  assert.match(marker,/localStorage\.getItem\(key\)/);
-  assert.match(marker,/localStorage\.setItem\(key,value\)/);
-  assert.match(marker,/this device/);
-  assert.match(marker,/events\.filter\(event=>/);
-  assert.match(route,/<MentorActivitySinceLastVisit userId=\{context\.user\.id\}/);
+  assert.match(marker,/\/activity\/seen/);
+  assert.match(marker,/method:"POST"/);
+  assert.match(marker,/cross-device tracking/);
+  assert.match(marker,/newCount/);
+  assert.match(route,/<MentorActivitySinceLastVisit projectId=/);
 });
 
 test("Mentor Resources show real pinned group without breaking resource actions",()=>{
