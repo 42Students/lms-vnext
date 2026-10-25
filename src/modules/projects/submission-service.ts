@@ -30,6 +30,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { projectDeliveryActivity } from "./delivery-activity-model";
 import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notification-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
+import {queueMentorProjectEmailIntent} from "./mentor-project-email-outbox-service";
 import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
 import {projectDraftRevisionMatches,nextProjectDraftUpdatedAt} from "./submission-revision-policy";
 import {
@@ -504,6 +505,11 @@ export async function submitProjectSubmission(
       roles:["MENTOR"],exceptUserId:context.user.id,
       title:"Delivery submitted",body:"A final delivery is ready for review.",
       actionHref:"/mentor/projects/"+scope.project.id+"?tab=delivery",
+    });
+    await queueMentorProjectEmailIntent(tx,{
+      sourceEventId:event.id,projectId:scope.project.id,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      kind:"FINAL_SUBMISSION",excludeUserId:context.user.id,
     });
     return submitted;
   });

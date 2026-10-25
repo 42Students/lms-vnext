@@ -17,6 +17,7 @@ import {z} from "zod";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { notifyActiveProjectMembers } from "./project-notification-service";
+import {queueMentorProjectEmailIntent} from "./mentor-project-email-outbox-service";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
@@ -344,6 +345,11 @@ export async function requestProjectMeeting(
       roles:["MENTOR"],exceptUserId:context.user.id,
       title:"Meeting requested",body:"A meeting has been requested for your project.",
       actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
+    });
+    await queueMentorProjectEmailIntent(tx,{
+      sourceEventId:event.id,projectId:scope.project.id,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      kind:"MEETING_REQUEST",excludeUserId:context.user.id,
     });
     await notifyActiveProjectMembers(tx,event.id,{
       projectId:scope.project.id,collegeId:scope.collegeId,
