@@ -72,7 +72,7 @@ export default async function MentorLearnerVisibilityPreview({
        {visible.resources.map(item=><li key={item.id} className="border-b py-2">
          <strong>{item.title}</strong>
          {item.description?<p className="whitespace-pre-wrap">{item.description}</p>:null}
-         {item.url?<a href={item.url} target="_blank" rel="noopener noreferrer"
+         {item.url?<a href={item.url} rel="noopener noreferrer"
            className="inline-flex py-2 text-sm font-semibold underline">Open resource ↗</a>:
            <p className="text-xs text-muted-foreground">
              No public link. An authorized uploaded file may require a signed download.
