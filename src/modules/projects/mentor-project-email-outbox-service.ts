@@ -7,7 +7,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {MentorProjectEmailKind} from "./mentor-project-email-provider";
 import {mentorEmailPreferenceFromSavedEvent} from "./mentor-email-preference-model";
 
-type Writer=Pick<ReturnType<typeof getDb>,"select"|"insert">;
+type Writer=Pick<ReturnType<typeof getDb>,"select"|"selectDistinctOn"|"insert">;
 type Params={
  sourceEventId:string;projectId:string;collegeId:string;
  organizationId:string;kind:MentorProjectEmailKind;excludeUserId:string;
