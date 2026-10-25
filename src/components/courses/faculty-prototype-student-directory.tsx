@@ -25,6 +25,8 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
    .some(value=>value?.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
  ),[learners,query]);
  const metrics=signals?.studentRosterMetrics??null;
+ const completion=signals?.courseCompletion??null;
+ const progressById=new Map(completion?.byLearner.map(item=>[item.membershipId,item.progressPercent] as const)??[]);
  const recordById=new Map(metrics?.byLearner.map(item=>[item.membershipId,item] as const)??[]);
  const assignmentComplete=Boolean(signals?.completeness.assignments);
  const attendanceComplete=Boolean(signals?.completeness.attendance);
@@ -38,7 +40,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
  }
  const cards=[
   {label:"Students",value:learners.length,tone:"text-[#1d293f]"},
-  {label:"Behind on the course",value:assignmentComplete&&metrics?metrics.behindTotal:"—",
+  {label:"Behind on the course",value:completion?.behindTotal??"—",
    tone:"text-red-700"},
   {label:"Attendance under 75%",value:attendanceComplete&&metrics?metrics.lowAttendanceTotal:"—",
    tone:"text-orange-700"},
@@ -66,7 +68,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
     const detail="/teacher/courses/"+encodeURIComponent(deliveryId)+
      "/students/"+encodeURIComponent(student.membershipId);
     const row=recordById.get(student.membershipId);
-    const progress=assignmentComplete?row?.assignmentProgressPercent??null:null;
+    const progress=completion?progressById.get(student.membershipId)??null:null;
     const attendance=attendanceComplete?row?.attendancePercent??null:null;
     return <tr key={student.membershipId}>
      <td><div className="flex items-center gap-3">
@@ -82,7 +84,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
   </table></div>
   {!students.length?<p className="faculty-proto-subtitle">No students match your search.</p>:null}
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <p className="faculty-proto-subtitle">Progress is based on submitted published assignments, not lesson-view history or grades.
+   <p className="faculty-proto-subtitle">Progress measures completed published videos, submitted assignments, and quiz attempts. Behind means under 30% completion.
     Attendance uses marked class sessions only. A dash means reliable data is not available.</p>
    <button className="faculty-proto-secondary shrink-0" aria-label="Download roster CSV"
     type="button" onClick={exportCsv} disabled={!students.length}>Download roster CSV</button>

@@ -52,16 +52,16 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
   detail:"Read and reply to student questions in this class.",
   href:base+"/discussions",action:"Reply",
  });
- const total=summary.contents+summary.assignments+summary.quizzes;
- const publicationPercent=total>0?Math.round(summary.publishedItems/total*100):null;
+
  const attendance=signals?.completeness.attendance?signals.attendance.averagePercent:null;
- const gradeAverage=signals?.completeness.assignments?signals.performance.averagePercent:null;
- const risk=signals?.completeness.attendance&&signals.completeness.assignments?signals.atRiskTotal:null;
+ const courseProgress=signals?.courseCompletion?.averagePercent??null;
+ const quizAverage=signals?.courseCompletion?.quizAveragePercent??null;
+ const behind=signals?.courseCompletion?.behindTotal??null;
  const rows=[
-  {label:"Content published",value:publicationPercent===null?"—":publicationPercent+"%",href:base+"/blueprint"},
+  {label:"Course progress (average)",value:courseProgress===null?"—":courseProgress+"%",href:base+"/students"},
   {label:"Attendance (marked classes)",value:attendance===null?"—":attendance+"%",href:base+"/attendanceDetail"},
-  {label:"Graded work average",value:gradeAverage===null?"—":gradeAverage+"%",href:base+"/reports"},
-  {label:"Students needing attention",value:risk===null?"—":String(risk),href:base+"/students"},
+  {label:"Quiz average",value:quizAverage===null?"—":quizAverage+"%",href:base+"/reports"},
+  {label:"Behind (under 30% progress)",value:behind===null?"—":String(behind)+" students",href:base+"/students"},
  ];
  const description=display?.introductionText?.trim()||course.courseDescription?.trim()||null;
  return <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_308px]">
@@ -103,7 +103,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
      </div>)}
     </dl>
     <p className="mt-2 text-xs leading-5 text-[#60718b]">
-     Content percentage is publication progress, not learner completion. Grade averages use only graded assignments; unavailable values are shown as dashes.
+     Progress measures published videos, assignments and quizzes, using the current attempt where relevant. Quiz averages use real submitted scores; unavailable values stay unknown.
     </p>
    </section>
   </aside>
