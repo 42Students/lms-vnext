@@ -8,13 +8,17 @@ const secret=process.env.E2E_AUTH_SECRET;
 
 /** Real authenticated routes: neither the visual screenshot gate nor a mock
  * successful mutation. Skip detail assertions when seed has no owned project. */
-async function signIn(context:BrowserContext,user:string,membershipId:string) {
+async function signIn(
+ context:BrowserContext,user:string,membershipId:string,
+ role:"MENTOR"|"LEARNER"|"FACULTY"="MENTOR",
+) {
  if(!secret)throw new Error("E2E_AUTH_SECRET is required");
  await context.clearCookies();
  await context.addCookies([
   {name:E2E_IDENTITY_COOKIE_NAME,value:user,url:origin,httpOnly:true,sameSite:"Lax"},
   {name:E2E_SECRET_COOKIE_NAME,value:secret,url:origin,httpOnly:true,sameSite:"Lax"},
   {name:"lms_membership",value:membershipId,url:origin,httpOnly:true,sameSite:"Lax"},
+  {name:"lms_role",value:role,url:origin,httpOnly:true,sameSite:"Lax"},
  ]);
 }
 
@@ -68,7 +72,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
  });
 
  test("a learner cannot open any Mentor route, including deep-linked project tabs",async({page,context})=>{
-  await signIn(context,"seed-learner",SEED_IDS.learnerCollegeAMembership);
+  await signIn(context,"seed-learner",SEED_IDS.learnerCollegeAMembership,"LEARNER");
   for(const path of ["/mentor/projects","/mentor/calendar",
     "/mentor/notifications","/mentor/search",
     "/mentor/projects/00000000-0000-4000-8000-000000000001?tab=board",
@@ -79,7 +83,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
  });
 
  test("a Faculty-only college switch cannot inherit the same user's other college Mentor grant",async({page,context})=>{
-  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeBMembership);
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeBMembership,"FACULTY");
   for(const path of ["/mentor/projects","/mentor/calendar",
     "/mentor/notifications","/mentor/search",
     "/mentor/projects/00000000-0000-4000-8000-000000000001?tab=team"]){
