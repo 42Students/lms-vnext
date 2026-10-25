@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
 import {getTpoDueFollowupQueue} from "@/modules/placements/tpo-followup-queue-service";
-import {rankTpoCompaniesToday,tpoCompaniesTodayScope} from "@/modules/placements/tpo-companies-today-model";
+import {rankTpoCompaniesToday,tpoCompaniesTodayScope,tpoTodayAgendaDay} from "@/modules/placements/tpo-companies-today-model";
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
 import {getTpoMessagesInbox} from "@/modules/placements/tpo-messages-service";
 import {TpoCompaniesToday} from "@/components/tpo/tpo-companies-today";
@@ -15,7 +15,7 @@ export const dynamic="force-dynamic";
 /** Real, per-college Companies/Today focus. Email replies and CRM follow-ups
  * are different sources: no fabricated reply bodies or implied email sends. */
 export default async function TpoCompaniesTodayPage({searchParams}:{
- searchParams:Promise<{scope?:string|string[];view?:string|string[];lead?:string|string[]}>
+ searchParams:Promise<{scope?:string|string[];view?:string|string[];lead?:string|string[];day?:string|string[]}>
 }){
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO")||!context.membership)redirect("/dashboard");
@@ -29,9 +29,11 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
  const scope=tpoCompaniesTodayScope(params.scope);
  const view=params.view??"focus";
  const invalidView=Array.isArray(view)||!["focus","agenda","brief"].includes(view);
+ const selectedDay=tpoTodayAgendaDay(params.day);
  const invalidLead=params.lead!==undefined&&
   (typeof params.lead!=="string"||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.lead));
- if(!scope||invalidView||invalidLead)return <section className="space-y-4">
+ if(!scope||invalidView||invalidLead||selectedDay===null||
+  (params.day!==undefined&&view!=="agenda"))return <section className="space-y-4">
   <h1 className="text-2xl font-bold">Companies · Today</h1>
   <Alert tone="error">Invalid Today view, ownership or follow-up selection. Nothing was loaded.</Alert>
   <Link href="/tpo/companies/today" className="font-semibold text-link underline">Open My Work</Link>
@@ -60,7 +62,7 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
  const replyTotal=replyResult.status==="fulfilled"&&replyResult.value.source==="RECRUITER_THREADS"
   ?replyResult.value.total:null;
  if(view==="agenda"||view==="brief")return <TpoTodayAlternateViews
-  view={view} scope={scope} rows={rows} nowIso={now.toISOString()}
+  view={view} scope={scope} rows={rows} selectedDay={selectedDay!} nowIso={now.toISOString()}
   replies={replies} replyTotal={replyTotal}
   hasMore={due.value.total>due.value.rows.length||next.value.total>next.value.rows.length}/>;
  return <TpoCompaniesToday scope={scope} rows={rows} nowIso={now.toISOString()}
