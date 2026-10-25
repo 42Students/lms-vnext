@@ -137,7 +137,7 @@ test("Mentor detail route integrates substantive Overview, Sprints, Team, Perfor
   for(const name of ["MentorPrototypeProjectOverview","MentorPrototypeSprintPlan",
     "MentorPrototypeTeamOverview","MentorPrototypePerformance",
     "MentorPrototypeActivitySummary","MentorPrototypeDeliveryEvidence"]){
-    assert.match(detail,new RegExp("<"+name+" workspace="));
+    assert.match(detail,new RegExp("<"+name+"\\s+workspace="));
     assert.match(summaries,new RegExp("export function "+name+"\\("));
   }
   assert.match(summaries,/safeProjectExternalHref\(latest\.sourceUrl\)/);
@@ -145,8 +145,8 @@ test("Mentor detail route integrates substantive Overview, Sprints, Team, Perfor
   assert.match(summaries,/sprints\.filter\(s=>s\.status==="COMPLETED"\)/);
   const performance=source("src/components/projects/mentor-prototype-performance-table.tsx");
   assert.match(summaries,/<MentorPrototypePerformanceTable/);
-  assert.match(performance,/row\.review\.length/);
-  assert.match(performance,/Last four sprints/);
+  assert.match(performance,/review:review\.length\+sum\(previous,"waitingCount"\)/);
+  assert.match(performance,/Last four worked sprints/);
   assert.match(performance,/Current sprint/);
 });
 
