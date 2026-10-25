@@ -88,6 +88,8 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(views).toContain("agendaRows");
   expect(page).toContain("tpoTodayAgendaDay(params.day)");
   expect(focus).toContain("rows.some(row=>row.id===initialFollowupId)");
+  expect(focus).toContain("notContacted.count");
+  expect(focus).toContain('href="/tpo/recruiters?stage=NEW"');
  });
  it("keeps unassigned CRM follow-ups visible in My Work without dropping the college boundary",()=>{
   const source=readFileSync("src/modules/placements/tpo-followup-queue-service.ts","utf8");
