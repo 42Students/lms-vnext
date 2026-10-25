@@ -67,7 +67,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments}:{
    <table className="faculty-proto-table">
     <thead><tr><th>Course</th><th>Classes</th><th>To do</th><th>Attendance</th><th><span className="sr-only">Open</span></th></tr></thead>
     <tbody>{visible.map(course=><tr key={course.id}>
-     <td><Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)}>
+     <td><Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>
       {course.name}</Link>
       <p className="faculty-proto-subtitle">{course.code} · {course.kind}{course.credits!==null?" · "+course.credits+" credits":""}</p>
      </td>

@@ -2,6 +2,7 @@
 import {useMemo,useState} from "react";
 import Link from "next/link";
 import type {FacultyCourseRosterLearner} from "@/components/courses/faculty-course-roster";
+import {facultyRosterCsv,facultyRosterFileName} from "@/modules/courses/faculty-roster-export";
 import type {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
 type Signals=Awaited<ReturnType<typeof getFacultyCourseHomeSignals>>|null;
 function tag(value:number|null,label:string){
@@ -24,6 +25,15 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
  for(const submission of signals?.pendingSubmissions??[]){
   inReview.set(submission.membershipId,(inReview.get(submission.membershipId)??0)+1);
  }
+ function exportCsv(){
+  const csv=facultyRosterCsv(students);
+  const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
+  const anchor=document.createElement("a");
+  anchor.href=url;anchor.download=facultyRosterFileName("assigned-class");
+  document.body.appendChild(anchor);
+  anchor.click();anchor.remove();
+  window.setTimeout(()=>URL.revokeObjectURL(url),30_000);
+ }
  const available=Boolean(signals?.completeness.attendance&&signals?.completeness.assignments);
  const metrics=[
   {label:"Students",value:learners.length},
@@ -37,6 +47,11 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
     <p className="faculty-proto-subtitle">{metric.label}</p>
     <p className="mt-2 text-3xl font-extrabold text-[#1d293f] tabular-nums">{metric.value}</p>
    </div>)}</div>
+  <div className="flex flex-wrap items-center justify-between gap-3">
+   <h2 className="text-base font-bold text-[#1d293f]">Class list</h2>
+   <button className="faculty-proto-secondary" aria-label="Download roster CSV"
+    type="button" onClick={exportCsv} disabled={students.length===0}>Download roster CSV</button>
+  </div>
   <label htmlFor="faculty-student-directory-search" className="sr-only">Search students</label>
   <input id="faculty-student-directory-search" value={query} type="search"
    onChange={event=>setQuery(event.target.value)}
@@ -54,7 +69,12 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
     return <tr key={student.membershipId}>
      <td><div className="flex items-center gap-3">
       <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e0f1f4] text-xs font-bold text-[#007f8e]">{initials||"ST"}</span>
-      <Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/students/"+encodeURIComponent(student.membershipId)}>{name}</Link>
+      <span className="min-w-0">
+       <Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/students/"+encodeURIComponent(student.membershipId)}>{name}</Link>
+       <Link className="block text-xs text-[#078191] hover:underline"
+        aria-label={"View student details for "+name}
+        href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/students/"+encodeURIComponent(student.membershipId)}>View student details</Link>
+      </span>
      </div></td>
      <td>{student.rollNumber??"—"}</td><td>{tag(score,"average graded score")}</td>
      <td>{attendance===75&&!low.has(student.membershipId)?
@@ -63,7 +83,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
     </tr>;
    })}</tbody>
   </table></div>
-  {students.length===0?<p className="faculty-proto-subtitle">No students match this search.</p>:null}
+  {students.length===0?<p className="faculty-proto-subtitle">No matching students</p>:null}
   <p className="faculty-proto-subtitle">Grade averages use available graded assignments, not course-completion progress. Attendance is shown exactly only for flagged low-attendance students; other recorded attendance is shown as at least 75%. Detailed learner and roster records remain available below.</p>
  </section>;
 }

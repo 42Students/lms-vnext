@@ -64,8 +64,10 @@ export function FacultyCourseRoster({
   learners,
   sectionName,
   deliveryId,
+  advanced=false,
 }: {
   learners: readonly FacultyCourseRosterLearner[];
+  advanced?:boolean;
   sectionName: string;
   deliveryId?: string;
 }) {
@@ -163,7 +165,7 @@ export function FacultyCourseRoster({
           </div>
           <div className="grid w-full min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end lg:max-w-[42rem]">
           <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] print:hidden leading-4">
-            Search students
+            {advanced?"Search detailed roster":"Search students"}
             <Input
               className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9"
               value={search}
@@ -172,7 +174,7 @@ export function FacultyCourseRoster({
                 setPage(1);
               }}
               placeholder="Search by name, roll no, phone or email"
-              aria-label="Search students"
+              aria-label={advanced?"Search detailed roster":"Search students"}
             />
             {search?<Button size="sm" type="button" variant="ghost"
               aria-label="Clear student search" onClick={()=>{setSearch("");setPage(1);}}>Clear search ×</Button>:null}
@@ -182,7 +184,7 @@ export function FacultyCourseRoster({
             variant="secondary"
             disabled={filtered.length === 0}
             onClick={exportFiltered}
-            aria-label="Download roster CSV"
+            aria-label={advanced?"Download detailed roster CSV":"Download roster CSV"}
             className="w-full sm:w-auto print:hidden"
           >
             Download roster CSV (names and roll numbers)

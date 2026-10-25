@@ -77,6 +77,7 @@ export default async function FacultyCourseStudentsPage({
         learners={roster}
         sectionName={delivery.sectionName}
         deliveryId={delivery.deliveryId}
+        advanced
       />
         </div>
       </details>
