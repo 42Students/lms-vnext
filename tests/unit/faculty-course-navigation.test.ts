@@ -10,10 +10,10 @@ describe("Faculty course legacy tab navigation contract", () => {
   });
   it("preserves all five distinct legacy daily-use pages in original order", () => {
     expect(facultyCourseTabs.map((tab) => tab.path)).toEqual([
-      "home", "blueprint", "attendanceDetail", "discussions", "students",
+      "home", "blueprint", "students", "attendanceDetail", "discussions",
     ]);
     expect(facultyCourseTabs.map((tab) => tab.label)).toEqual([
-      "Overview", "Blueprint", "Attendance", "Discussions", "Students",
+      "Overview", "Blueprint", "Students", "Attendance", "Discussions",
     ]);
   });
 

@@ -105,7 +105,7 @@ export function FacultyCourseTabNavigation({
         </Link>
       </nav>
       </details>
-      <Tabs ariaLabel="Faculty course tabs" value={activeTab} renderPanel={false}
+      <Tabs className="faculty-prototype-course-tabs" ariaLabel="Faculty course tabs" value={activeTab} renderPanel={false}
         items={facultyCourseTabs.map(tab => ({
           value: tab.path,
           label: tab.label,

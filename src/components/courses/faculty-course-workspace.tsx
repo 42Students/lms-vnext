@@ -22,6 +22,7 @@ import { FacultyAssignmentResourcesEditor } from "./faculty-assignment-resources
 import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submission-methods";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
+import { FacultyPrototypeCoursePriorities } from "./faculty-prototype-course-priorities";
 import { FacultyCourseItemViewer } from "./faculty-course-item-viewer";
 import { CourseDisplayReadOnly } from "./course-display-read-only";
 import { FacultyContentOrderEditor } from "./faculty-content-order-editor";
@@ -446,6 +447,8 @@ export function FacultyCourseWorkspace({
 
       {view !== "BLUEPRINT" ? (
         <>
+      <FacultyPrototypeCoursePriorities signals={homeSignals} workspace={workspace} />
+      <details className="min-w-0 border-t border-[#e5ebf2] pt-3"><summary className="cursor-pointer text-sm font-semibold text-[#078191]">More course insights and teaching tools</summary><div className="mt-5 space-y-6">
 
       <CourseDisplayReadOnly
         introductionText={
@@ -531,6 +534,7 @@ export function FacultyCourseWorkspace({
         />
       </div>
 
+      </div></details>
         </>
       ) : null}
 

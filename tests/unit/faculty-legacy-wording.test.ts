@@ -46,7 +46,7 @@ describe("Faculty legacy wording (lists.js, CoursesContent, QuizzesContent, Assi
     }
   });
 
-  it("course tabs end with Students", () => {
+  it("course tabs follow the newest Faculty prototype", () => {
     expect(facultyCourseTabs.map((t) => t.label)).toEqual([
       "Overview",
       "Blueprint",

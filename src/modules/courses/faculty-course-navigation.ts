@@ -2,9 +2,9 @@ import {z} from "zod";
 export const facultyCourseTabs = [
   { path: "home", label: "Overview" },
   { path: "blueprint", label: "Blueprint" },
+  { path: "students", label: "Students" },
   { path: "attendanceDetail", label: "Attendance" },
   { path: "discussions", label: "Discussions" },
-  { path: "students", label: "Students" },
 ] as const;
 
 export type FacultyCourseTab = (typeof facultyCourseTabs)[number]["path"];

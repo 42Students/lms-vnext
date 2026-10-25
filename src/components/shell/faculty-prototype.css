@@ -99,3 +99,22 @@
  .faculty-proto-table-wrap {overflow-x:auto;}
  .faculty-proto-table {min-width:680px;}
 }
+
+/* Course detail hierarchy and underline navigation of screens #04–08. */
+[data-prototype-portal="faculty"] .faculty-prototype-course-tabs [data-slot="tabs"] nav {
+  gap:30px;
+  border-color:#e5ebf2;
+}
+[data-prototype-portal="faculty"] .faculty-prototype-course-tabs nav a {
+  font-size:16px;
+  font-weight:500;
+  padding-bottom:14px;
+  color:#61728c;
+}
+[data-prototype-portal="faculty"] .faculty-prototype-course-tabs nav a[aria-current="page"] {
+  color:#007f8e;
+  font-weight:750;
+}
+[data-prototype-portal="faculty"] .faculty-prototype-course-tabs nav a::after {
+  background:#078191;
+}
