@@ -1,4 +1,23 @@
 import type {RecruiterReportRow} from "./recruiter-company-reports-model";
+
+/** Display roles only from authorized, currently published employer drives.
+ * Completed, draft and archived jobs are historical, not live opportunities. */
+export function recruiterCompanyActiveRoles(
+ rows:readonly {job:{title:string;status:string;archivedAt:Date|null}}[],
+ maxRoles=8,
+):string[] {
+ const names:string[]=[];
+ const seen=new Set<string>();
+ for(const row of rows){
+  if(row.job.status!=="PUBLISHED"||row.job.archivedAt!==null)continue;
+  const title=row.job.title.trim();
+  const key=title.toLocaleLowerCase("en");
+  if(!title||seen.has(key))continue;
+  seen.add(key);names.push(title);
+  if(names.length>=maxRoles)break;
+ }
+ return names;
+}
 export type RecruiterCompanyHiringDisplay={
   id:string;title:string;status:string;applied:number;
   cleared:null;offered:number;joined:number;joiningRate:number|null;

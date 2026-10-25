@@ -23,6 +23,7 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterCompanyTeam } from "@/modules/placements/recruiter-company-team-service";
 import {getRecruiterCompanyReports} from "@/modules/placements/recruiter-company-reports-service";
 import {RecruiterCompanyPrototype} from "@/components/hr/recruiter-company-prototype";
+import {recruiterCompanyActiveRoles} from "@/modules/placements/recruiter-company-unified-prototype-model";
 import { recruiterTeamAttributedDriveCounts } from "@/modules/placements/recruiter-team-drive-count-service";
 import { hrTeamSearchSchema, searchHrTeam } from "@/modules/placements/hr-team-search-model";
 import {hrTeamRosterMessage} from "@/modules/placements/hr-team-roster-message-model";
@@ -126,7 +127,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   // Public logo URL/industry are not present in the normalized relationship read.
   // Resolve only the already-authorized company identity; never expose the private object path.
   const [profile]=tab==="company" ? await getDb().select({
-    industry:placementCompanies.industry,logoPublicUrl:placementCompanies.logoPublicUrl,
+    industry:placementCompanies.industry,about:placementCompanies.about,logoPublicUrl:placementCompanies.logoPublicUrl,
     verifiedAt:placementCompanies.verifiedAt,
   }).from(placementCompanies).where(eq(placementCompanies.id,result.company.id)).limit(1) : [null];
   // The authorized company-team service may issue a short-lived signed
@@ -165,6 +166,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       companyName={result.company.name}
       website={result.company.websiteUrl}
       industry={result.company.industry}
+       about={profile?.about??null}
+       hiringFor={recruiterCompanyActiveRoles(jobs)}
       logoUrl={publicLogo}
       verified={Boolean(result.company.verifiedAt)}
       domains={result.company.domains}

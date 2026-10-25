@@ -5,11 +5,12 @@ import styles from "./recruiter-company-prototype.module.css";
 type TeamMember={userId:string;displayName:string|null;email:string|null;title:string|null;isYou:boolean};
 type Choice={collegeId:string;collegeName:string};
 export function RecruiterCompanyPrototype({
- companyName,website,industry,logoUrl,verified,domains,
+ companyName,website,industry,about,hiringFor,logoUrl,verified,domains,
  collegeName,collegeId,choices,team,rows,reportAvailable,hasMore,
  reportHref,csvHref,teamCounts,teamCountsAvailable,
 }:{
- companyName:string;website:string|null;industry:string|null;logoUrl:string|null;
+ companyName:string;website:string|null;industry:string|null;about:string|null;
+ hiringFor:readonly string[];logoUrl:string|null;
  verified:boolean;domains:readonly string[];collegeName:string;collegeId:string;
  choices:readonly Choice[];team:readonly TeamMember[];rows:readonly RecruiterReportRow[];
  reportAvailable:boolean;hasMore:boolean;reportHref:string;csvHref:string;
@@ -42,6 +43,8 @@ export function RecruiterCompanyPrototype({
       <dl className={styles.facts}>
         <div><dt>Name</dt><dd>{companyName}</dd></div>
         <div><dt>Website</dt><dd>{safeWebsite?<a href={safeWebsite} rel="noreferrer">{safeWebsite}</a>:website||"Not recorded"}</dd></div>
+        <div><dt>About</dt><dd>{about?.trim()||"Not recorded"}</dd></div>
+        <div><dt>Hiring for</dt><dd>{hiringFor.length?hiringFor.join(", "):"No currently published roles at this college"}</dd></div>
         <div><dt>Work email domains</dt><dd>{domains.length?domains.map(value=>"@"+value.replace(/^@/,"")).join(", "):"Not recorded"}</dd></div>
       </dl>
       <p className={styles.muted}>Your placement cell manages company details and its trusted domains. Ask them to correct a name, logo or website.</p>
