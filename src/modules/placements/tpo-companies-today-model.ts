@@ -86,3 +86,16 @@ export function tpoTodayAgendaHref(scope:"MINE"|"TEAM",day:number):string{
  if(Number.isInteger(day)&&day>0&&day<7)search.set("day",String(day));
  return "/tpo/companies/today?"+search.toString();
 }
+
+/** Derive the prototype's "Not contacted" card from canonical recruiter
+ * stages, not from a missing follow-up or the absence of a phone number. */
+export function summarizeTpoTodayNotContacted(
+ leads:readonly {stage:string;ownerMembershipId:string|null;createdAt:Date|string|null}[],
+ scope:"MINE"|"TEAM",actorMembershipId:string,
+){
+ const eligible=leads.filter(lead=>lead.stage==="NEW"&&
+  (scope==="TEAM"||lead.ownerMembershipId===null||lead.ownerMembershipId===actorMembershipId));
+ const oldest=eligible.map(lead=>lead.createdAt?new Date(lead.createdAt).getTime():NaN)
+  .filter(time=>Number.isFinite(time)).sort((a,b)=>a-b)[0];
+ return {count:eligible.length,oldestAddedAt:oldest===undefined?null:new Date(oldest).toISOString()};
+}
