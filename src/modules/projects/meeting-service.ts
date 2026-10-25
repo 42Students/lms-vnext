@@ -326,10 +326,7 @@ export async function requestProjectMeeting(
     const [meeting] = await tx.insert(projectMeetings).values({
       projectId: scope.project.id,
       status: "REQUESTED", meetingType: "GENERAL",
-      title: input.title,
-      agenda: input.location
-        ? "Location: "+input.location+"\n"+(input.agenda?.trim()??"")
-        : input.agenda ?? null,
+      title: input.title, agenda: input.agenda ?? null,
       startsAt, endsAt, timeZone: input.timeZone,
       requestedByMembershipId: context.membership!.id,
       createdByUserId: context.user.id,
@@ -458,7 +455,10 @@ export async function scheduleProjectMeeting(
     const values = {
       status: targetStatus,
       meetingType: input.meetingType ?? existing?.meetingType ?? "GENERAL" as const,
-      title: input.title, agenda: input.agenda ?? null,
+      title: input.title,
+      agenda: input.location
+        ? "Location: "+input.location+"\n"+(input.agenda?.trim()??"")
+        : input.agenda===undefined?existing?.agenda??null:input.agenda,
       startsAt, endsAt, timeZone: input.timeZone,
       meetingUrl: targetStatus==="DRAFT"?null:(input.meetingUrl??existing?.meetingUrl??null),
       scheduledByUserId: targetStatus==="DRAFT"?null:organiserId,

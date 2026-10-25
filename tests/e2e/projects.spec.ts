@@ -111,7 +111,7 @@ test.describe("Projects browser regression", () => {
     await authenticate(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
     await page.goto("/mentor/projects/"+id+"?tab=team");
     await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
-    await expect(page.getByText("Seed Learner",{exact:true}).first()).toBeVisible();
+    await expect(page.locator(".prototype-mentor-roster-person").getByText("Seed Learner",{exact:true})).toBeVisible();
     const lead=page.getByRole("button",{name:"Promote lead"});
     await expect(lead).toBeVisible();
     await lead.click();
