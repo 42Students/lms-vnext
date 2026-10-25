@@ -50,6 +50,7 @@ export function SidebarNav({
  const route=canonicalShellPath(pathname);
  const urlSearch=useSearchParams();
  const [tpoCounts,setTpoCounts]=useState<TpoShellCounters|null>(null);
+ const [facultyCounts,setFacultyCounts]=useState<{today:number;assessments:number}|null>(null);
  const visibleItems=scopedShellNavigation(items,route);
  // A college-only Placement cell shortcut still renders the college menu
  // while the URL is /tpo/home. Derive rail styling from the visible role,
@@ -90,6 +91,28 @@ export function SidebarNav({
    document.removeEventListener("visibilitychange",refresh);
   };
  },[pathname,sidebarPortal]);
+ const facultySelected=visibleItems.length===4&&visibleItems[0]?.href==="/teacher";
+ useEffect(()=>{
+  if(!facultySelected)return;
+  let active=true;
+  const refresh=async()=>{
+   if(document.hidden)return;
+   try{
+    const result=await apiFetch<unknown>("/api/courses/faculty/shell-counts",{
+     credentials:"same-origin",cache:"no-store",
+    });
+    if(!active||!result||typeof result!=="object")return;
+    const counts=result as Record<string,unknown>;
+    if(Number.isSafeInteger(counts["today"])&&Number.isSafeInteger(counts["assessments"])&&
+       (counts["today"] as number)>=0&&(counts["assessments"] as number)>=0)
+     setFacultyCounts({today:counts["today"] as number,assessments:counts["assessments"] as number});
+   }catch{if(active)setFacultyCounts(null);}
+  };
+  void refresh();
+  const timer=window.setInterval(()=>void refresh(),60000);
+  document.addEventListener("visibilitychange",refresh);
+  return ()=>{active=false;window.clearInterval(timer);document.removeEventListener("visibilitychange",refresh);};
+ },[facultySelected]);
 
  const superAdminGroup=route.startsWith("/admin/")
   ?superAdminLegacyGroupForPath(route):null;
@@ -109,7 +132,10 @@ export function SidebarNav({
      prototypeTpo?tpoPrototypeSidebarActive(pathname,item,urlSearch.get("tab")):
      legacySidebarItemActive(route,item,superAdminGroup?.title??null,collegeGroup?.title??null);
    const label=sectionLabel(item,sidebarPortal);
-   const count=tpoCounts?tpoItemCount(item.href,tpoCounts):null;
+   const count=prototypeFaculty&&facultyCounts?
+     item.href==="/teacher"?facultyCounts.today:
+     item.href==="/teacher/assessments"?facultyCounts.assessments:null:
+     tpoCounts?tpoItemCount(item.href,tpoCounts):null;
    const badge=count===null?null:shellUnreadBadge(count);
    return <Fragment key={item.href}>
     {startsNewGroup&&!compact
