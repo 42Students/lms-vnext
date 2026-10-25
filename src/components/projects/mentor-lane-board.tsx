@@ -389,7 +389,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        {taskSubmissions.filter(s=>s.taskId===task.id).slice(-3).map(item=>
         <div key={item.id} className="mt-1 text-xs">
           <span>{item.status} · version {item.version}</span>
-          {safeProjectExternalHref(item.submissionUrl)?<a href={safeProjectExternalHref(item.submissionUrl)!} target="_blank"
+          {safeProjectExternalHref(item.submissionUrl)?<a href={safeProjectExternalHref(item.submissionUrl)!}
             rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open submission link</a>:null}
         </div>
        )}
@@ -536,7 +536,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <p>Version {latestEvidence.version} · {latestEvidence.status.replaceAll("_"," ")}</p>
         {safeProjectExternalHref(latestEvidence.submissionUrl)?
          <a href={safeProjectExternalHref(latestEvidence.submissionUrl)!}
-           target="_blank" rel="noopener noreferrer">Open submitted evidence ↗</a>:
+           rel="noopener noreferrer">Open submitted evidence ↗</a>:
          <p>No safe evidence link recorded for this submission.</p>}
       </div>:null}
       {submittedReview&&focused?<div className="prototype-mentor-board-review-actions" aria-label="Review task submission">
