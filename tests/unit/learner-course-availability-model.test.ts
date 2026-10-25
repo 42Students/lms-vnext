@@ -42,9 +42,10 @@ describe("Learner course availability and locked-card navigation", () => {
     expect(source).toContain('return <Link href={href}');
     expect(source).toContain('<LearnerCourseCardSurface');
     expect(source).toContain('blockedReason={blockedReason}');
-    expect(source).toContain('{blockedReason?<p role="status"');
-    expect(source).toContain('{!blocked && row.firstOverdue');
-    expect(source).toContain('{!blocked&&learnerCourseNextItemHref(row)');
+    // Read-only course cards expose the lock reason and no nested action.
+    expect(source).toContain('{blockedReason ? (');
+    expect(source).toContain('<p role="status" className="m-0 text-xs text-warning">{blockedReason}</p>');
+    expect(source).not.toContain("learnerCourseNextItemHref(row)");
     expect(source).not.toContain('aria-disabled={blocked}');
   });
 });

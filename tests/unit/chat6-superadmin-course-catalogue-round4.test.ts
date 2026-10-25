@@ -53,7 +53,7 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(service).toContain('requireSuperAdminSelectedCollege(context,"courses.read")');
     expect(service).toContain("countDistinct(courseLessons.id)");
     expect(service).toContain("eq(departments.collegeId,selected.collegeId)");
-    expect(page).toContain("lessonCountByCourse={lessonCountByCourse}");
+    expect(page).toContain("lessonCountByCourse!==undefined?{lessonCountByCourse}:{}");
     expect(overview).toContain("lessonCountByCourse?.[course.id]");
     expect(actions).toContain("confirmDisabled={activeOfferingCount>0||linkedLessonCount>0}");
     expect(actions).toContain("active Course Offering(s) must be archived");

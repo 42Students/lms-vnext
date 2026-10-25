@@ -192,7 +192,7 @@ export function AdminCourseDisplayEditor({
               expectedUpdatedAt:metadata.updatedAt,
               ...(name!==metadata.name?{name:name.trim()}:{}),
               ...(code!==metadata.code?{code:code.trim()}:{}),
-              ...(shortTitle!==(metadata.shortTitle??"")?{shortTitle:shortTitle.trim()||name.trim().slice(0,64)}:{}),
+              ...(shortTitle!==(metadata.shortTitle??"")?{shortTitle:shortTitle.trim()||name.trim().slice(0,255)}:{}),
               ...(officialCode!==(metadata.officialCode??"")?{officialCode:officialCode.trim()||null}:{}),
               ...(cardColor!==(metadata.cardColor??"")?{cardColor:cardColor.trim()||null}:{}),
               ...(description!==(metadata.description??"")?{description:description.trim()||null}:{}),
@@ -267,7 +267,7 @@ export function AdminCourseDisplayEditor({
     bodyHtml !== (savedDisplay?.bodyHtml ?? "") ||
     takeaways !== (savedDisplay?.takeaways ?? []).join("\n") ||
     thumbnailUrl !== (savedDisplay?.thumbnailUrl ?? "");
-  const metadataIssue=Boolean(metadata&&(!name.trim()||!code.trim()||shortTitle.length>64||officialCode.length>40||
+  const metadataIssue=Boolean(metadata&&(!name.trim()||!code.trim()||shortTitle.length>255||officialCode.length>40||
     Boolean(cardColor.trim()&&!/^#[a-f0-9]{6}$/i.test(cardColor.trim()))));
   const thumbnailIssue = Boolean(
     thumbnailUrl.trim() && !uploadedThumbnail && !courseThumbnailUrlSchema.safeParse(thumbnailUrl.trim()).success,
@@ -317,7 +317,7 @@ export function AdminCourseDisplayEditor({
           <Input value={code} maxLength={64} required disabled={pending} onChange={e=>setCode(e.target.value)}/>
         </label>
         <label className="grid gap-2 text-sm font-semibold">Short display name
-          <Input value={shortTitle} maxLength={64} disabled={pending} onChange={e=>setShortTitle(e.target.value)}/>
+          <Input value={shortTitle} maxLength={255} disabled={pending} onChange={e=>setShortTitle(e.target.value)}/>
         </label>
         <label className="grid gap-2 text-sm font-semibold">Official code (catalogue)
           <Input value={officialCode} maxLength={40} disabled={pending} onChange={e=>setOfficialCode(e.target.value)}/>

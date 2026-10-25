@@ -19,7 +19,7 @@ describe("learner Courses responsive layout source contract", () => {
     expect(source).toContain('label="Filter by course type"');
     expect(source).toContain('value={effectiveTypeFilter}');
     expect(source).toContain('{value: "elective", label: `Electives ${electiveCount}`}');
-    expect(source).toContain('className="w-full md:w-auto');
+    expect(source).toContain('className="flex w-full flex-wrap items-center gap-2 md:w-auto');
     expect(source).toContain("setVisibleLimit(PAGE_SIZE)");
   });
 
