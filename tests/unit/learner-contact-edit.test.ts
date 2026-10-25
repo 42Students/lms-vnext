@@ -16,7 +16,7 @@ describe("Learner contact-only edit validation", () => {
       { ...valid, confirmed: false },
       { contacts: valid.contacts },
       { ...valid, contacts: { alternatePhone: "1", contactEmail: "email" } },
-      { ...valid, contacts: { ...valid.contacts, alternatePhone: "+91 9876543210" } },
+      { ...valid, contacts: { ...valid.contacts, alternatePhone: "+91 +9876543210" } },
       { ...valid, contacts: { ...valid.contacts, accountEmail: "other@example.test" } },
       { ...valid, userId: "forged" },
       { ...valid, membershipId: "forged" },
