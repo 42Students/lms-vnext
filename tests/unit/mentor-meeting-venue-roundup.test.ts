@@ -5,10 +5,10 @@ import {formatMentorMeetingVenueAgenda,parseMentorMeetingVenueAgenda,
 describe("Mentor in-person meeting scheduling and rescheduling",()=>{
  it("preserves one venue line across repeated edits",()=>{
   const first=formatMentorMeetingVenueAgenda("Review requirements","Lab 2");
-  expect(first).toBe("Location: Lab 2\\nReview requirements");
+  expect(first).toBe("Location: Lab 2\nReview requirements");
   expect(formatMentorMeetingVenueAgenda(first,"Room 304")).toBe(
-   "Location: Room 304\\nReview requirements");
-  expect(parseMentorMeetingVenueAgenda("Venue: Studio 5\\nAgenda")).toEqual({
+   "Location: Room 304\nReview requirements");
+  expect(parseMentorMeetingVenueAgenda("Venue: Studio 5\nAgenda")).toEqual({
    location:"Studio 5",agenda:"Agenda",
   });
   expect(formatMentorMeetingVenueAgenda(first,"")).toBe("Review requirements");

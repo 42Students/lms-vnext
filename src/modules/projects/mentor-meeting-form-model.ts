@@ -1,5 +1,5 @@
 /** User-facing validation for the mentor schedule dialog. Local wall times use IST. */
-const storedVenueLine=/^(?:Location|Venue):[ \\t]*([^\\r\\n]+)(?:\\r?\\n|$)/i;
+const storedVenueLine=/^(?:Location|Venue):[ \t]*([^\r\n]+)(?:\r?\n|$)/i;
 
 /** Until a venue column is migrated, keep one structured venue line in agenda.
  * Do not duplicate the line when a meeting is edited or rescheduled. */
@@ -12,7 +12,7 @@ export function parseMentorMeetingVenueAgenda(value:string|null|undefined){
 export function formatMentorMeetingVenueAgenda(value:string|null|undefined,location:string){
   const body=parseMentorMeetingVenueAgenda(value).agenda.trim();
   const venue=location.trim();
-  return (venue?"Location: "+venue+(body?"\\n"+body:""):body)||null;
+  return (venue?"Location: "+venue+(body?"\n"+body:""):body)||null;
 }
 
 export function mentorMeetingCeremonyLabel(value: string): string {
