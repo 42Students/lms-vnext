@@ -74,7 +74,7 @@ export function TpoTodayAlternateViews({
  return <div className="min-w-0 space-y-4 text-[#172033]" data-testid={"tpo.today."+view}>
   <header className="flex flex-wrap items-center justify-between gap-4">
    <div>
-    <p className="text-xs font-bold uppercase tracking-wide text-[#617084]">{formatDay(now,"long")} · {scope==="MINE"?"Your work":"Everyone's work"}</p>
+    <p className="text-xs font-bold uppercase tracking-wide text-[#617084]">{formatDay(now,"long")} · {scope==="MINE"?"Yours and unassigned":"Everyone's work"}</p>
     <h1 className="mt-1 text-[24px] font-bold leading-tight">{view==="brief"?
       taskCount+" things need you today":"Your seven-day follow-up agenda"}</h1>
    </div>
