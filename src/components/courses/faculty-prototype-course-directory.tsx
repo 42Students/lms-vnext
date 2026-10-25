@@ -61,7 +61,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
   <div className="flex flex-wrap items-center justify-between gap-4">
    <div className="min-w-0">
     <h1 className="faculty-proto-heading">Courses</h1>
-    <p className="faculty-proto-subtitle mt-1">{counts.All} {counts.All===1?"course":"courses"} in this period · {new Set(scope.flatMap(c=>c.deliveries)).size} classes assigned.</p>
+    <p className="faculty-proto-subtitle mt-1">{counts.All} {counts.All===1?"course":"courses"} in this period · {new Set(scope.flatMap(c=>c.deliveries)).size} classes assigned. <span className="sr-only">{totalAssignments} teaching assignment records.</span></p>
    </div>
    <div className="flex min-w-0 flex-wrap gap-2">
    <label className="sr-only" htmlFor="faculty-course-search">Search courses</label>
