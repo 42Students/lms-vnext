@@ -25,7 +25,7 @@ export async function POST(request:Request){
   return NextResponse.json({error:error instanceof RecruiterUploadTooLargeError?
    "FILE_TOO_LARGE":"INVALID_FILE"},{status:error instanceof RecruiterUploadTooLargeError?413:400});
  }
- const form=await new Response(new Blob([bytes]),{
+ const form=await new Response(new Blob([bytes.buffer as ArrayBuffer]),{
   headers:{"content-type":contentType},
  }).formData().catch(()=>null);
  const file=form?.get("file");
