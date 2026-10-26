@@ -21,7 +21,7 @@ async function login(context:BrowserContext){
 test("Faculty Today shows the prototype's side cards and truthful task count on desktop and mobile",
  async({page,context})=>{
   await login(context);
-  await page.setViewportSize({width:1440,height:900});
+  await page.setViewportSize({width:1440,height:1000});
   const errors:string[]=[];
   page.on("pageerror",error=>errors.push(error.message));
   await page.goto("/teacher");
@@ -32,6 +32,8 @@ test("Faculty Today shows the prototype's side cards and truthful task count on 
   await expect(cards.getByRole("heading",{name:"Today's classes"})).toBeVisible();
   await expect(cards.getByRole("heading",{name:"This week"})).toBeVisible();
   await expect(cards.getByRole("link",{name:/Schedule/})).toHaveAttribute("href","/teacher/calendar");
+  // Genuine Playwright renders for side-by-side review, never resized copies of the prototype.
+  await page.screenshot({path:"test-results/faculty-today-desktop-1440x1000.png",fullPage:true});
   const queueBox=await queue.boundingBox();
   const cardsBox=await cards.boundingBox();
   expect(queueBox).not.toBeNull();
@@ -61,5 +63,6 @@ test("Faculty Today shows the prototype's side cards and truthful task count on 
   expect(mobileCards).not.toBeNull();
   expect(mobileCards!.y).toBeGreaterThanOrEqual(mobileQueue!.y+mobileQueue!.height-2);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(391);
+  await page.screenshot({path:"test-results/faculty-today-mobile-390x844.png",fullPage:true});
   expect(errors).toEqual([]);
  });
