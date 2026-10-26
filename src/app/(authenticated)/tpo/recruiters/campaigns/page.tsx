@@ -12,6 +12,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { listTpoMessagingHistory } from "@/modules/messaging/receipt-history-service";
 import { messagingHistoryQuerySchema } from "@/modules/messaging/receipt-history-model";
 import {listTpoCampaignDrafts} from "@/modules/messaging/tpo-campaign-draft-service";
+import {TpoCampaignPrototypeSidebar} from "@/components/tpo/tpo-campaign-prototype-sidebar";
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {CAMPAIGN_DRAFT_UNAVAILABLE,CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 import {tpoCampaignHistoryTime,tpoCampaignHistoryStatus} from "@/modules/messaging/tpo-campaign-history-copy";
@@ -28,6 +29,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
  const result=await listTpoMessagingHistory(context,query.data).catch(()=>null);
  const drafts=await listTpoCampaignDrafts(context).catch(()=>null);
  const deliveryReady=await tpoCampaignDispatchReady().catch(()=>null);
+ const recent=drafts?.ready===true?drafts.rows[0]:undefined;
  if(!result)return <div className="min-w-0 space-y-4">
    <PageHeader title="Emails" description="Email campaigns from Engage"/>
    <Alert tone="error"><strong>Could not load email history.</strong>
@@ -48,6 +50,36 @@ export default async function CampaignHistory({searchParams}:PageProps){
   <Tabs ariaLabel="Engage views" renderPanel={false} value="campaigns"
     items={([["table","Table"],["board","Board"],["companies","Companies"],["campaigns","Emails"]] as const)
       .map(([value,label])=>({value,label,href:"/tpo/recruiters?view="+value}))}/>
+  <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(250px,320px)_minmax(0,1fr)]">
+   <TpoCampaignPrototypeSidebar ready={drafts?.ready===true}
+    rows={drafts?.rows??[]} actorUserId={context.user.id}/>
+   <section aria-label="Email workspace overview" data-testid="tpo.campaigns.prototype-overview"
+    className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+     <div><h2 className="text-lg font-semibold text-foreground">Emails</h2>
+      <p className="mt-1 text-sm text-body">Pick a campaign on the left to read its subject, content, and verified sending outcomes.</p>
+     </div>
+     <Link href="/tpo/recruiters/campaigns/new"
+      className="inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">New email</Link>
+    </div>
+    {recent?<div className="mt-6 space-y-3 border-t border-border pt-4">
+     <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Most recent saved campaign</p>
+     <h3 className="text-[20px] font-semibold text-foreground">{recent.title}</h3>
+     <p className="text-sm text-body">Subject: {recent.subject}</p>
+     <p className="text-sm text-body">{recent.total_recipients} eligible at draft time · {recent.sent} provider accepted · {recent.failed} failed · {recent.skipped} skipped</p>
+     <p className="text-xs text-muted-foreground">A provider acceptance receipt does not confirm that an email was opened or received.</p>
+     <Link href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(recent.campaign_id)}
+      className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold text-link md:min-h-9">Open email</Link>
+    </div>:<p role="status" className="mt-6 border-t border-border pt-4 text-sm text-body">
+     {drafts?.ready===true?"No saved emails yet. Use New email to write and review a campaign.":"The saved campaign list is unavailable. No emails have been assumed missing."}
+    </p>}
+   </section>
+  </div>
+  <details className="rounded-xl border border-border bg-surface">
+   <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-link">
+    Advanced history, filters and provider receipt ledger
+   </summary>
+   <div className="min-w-0 space-y-4 border-t border-border p-4">
   <p className="text-sm text-body leading-[22px]">
    To send one, select recruiters in the table and choose Act, then Send an email.
   </p>
@@ -118,5 +150,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
     {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
   </nav>
+   </div>
+  </details>
  </div>;
 }
