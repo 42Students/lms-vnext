@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
+import {selectTpoDriveTalkThread} from "@/modules/placements/tpo-drive-talk-selection-model";
 
 type Thread={
  id:string;recruiterName:string|null;unread:number;count:number;
@@ -32,7 +33,7 @@ export function TpoDriveTalkPrototype({threads,selectedId,requestId,changes,chan
 }){
  const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
  const base=root+"/discussion";
- const selected=selectedId===null?threads[0]??null:threads.find(t=>t.id===selectedId)??null;
+ const selected=selectTpoDriveTalkThread(threads,selectedId);
  const openChanges=changes.filter(row=>row.status==="OPEN");
  return <section aria-label="Drive Talk" data-testid="tpo.drive.talk.prototype"
    className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1.8fr)_minmax(290px,0.8fr)]">
