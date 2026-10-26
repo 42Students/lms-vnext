@@ -67,13 +67,14 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  }
  async function save(){
   setError("");
-  if(!title.trim()){setError("Give this campaign a title");return;}
+  const campaignTitle=title.trim()||subject.trim();
+  if(!campaignTitle){setError("Give this campaign a title or subject");return;}
   if(!subject.trim()){setError("Give it a subject");return;}
   if(!body.trim()){setError("Write the email");return;}
   if(selectedLeadIds.length&&(!audience||audienceStatus!=="ready"||audience.unavailable>0||audience.eligible===0)){
    setError("Selected recruiters could not be confirmed as eligible. Review the audience before saving.");return;
   }
-  const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment:selectedLeadIds.length?"ALL_ELIGIBLE":segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
+  const parsed=tpoCampaignDraftSchema.safeParse({title:campaignTitle,subject,body,segment:selectedLeadIds.length?"ALL_ELIGIBLE":segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
   if(!parsed.success){
    setError(parsed.error.issues[0]?.message??"Check your campaign fields.");return;
   }
@@ -94,17 +95,11 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   }catch(e){setError(e instanceof Error?e.message:CAMPAIGN_DRAFT_UNAVAILABLE);}
   finally{setBusy(false);}
  }
- return <section className={"min-w-0 space-y-4 "+(selectedLeadIds.length?
-   "mx-auto max-w-[680px] rounded-[12px] border border-border bg-white p-4 shadow-[0_12px_35px_rgba(0,0,0,0.08)] sm:p-6":
-   "border-t border-border pt-4")} aria-label="Campaign composer">
+ return <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 md:p-6" aria-label="Campaign composer">
   <h2 className="text-lg font-semibold text-foreground">{selectedLeadIds.length?"Email "+selectedLeadIds.length+" "+(selectedLeadIds.length===1?"recruiter":"recruiters"):"Write a campaign"}</h2>
   <p className="text-sm text-body">Step 1 of 2 · Write the email and review its eligible recipients. Save a draft, then open it to confirm sending. Nothing is sent from this form.</p>
   <p className="text-xs text-muted-foreground">Saving a draft is available even when sending is disabled. The Send action is only available after selecting eligible recipients and confirming a verified draft.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} aria-describedby={error?formErrorId:undefined} className="space-y-4">
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Campaign name
-    <Input value={title} maxLength={160} aria-required="true" className={field}
-     onChange={e=>setTitle(e.target.value)}/>
-   </label>
    {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Draft for {selectedLeadIds.length} specifically selected recruiter contacts. Eligibility and suppression rules still apply; no email will be sent when saving.</p>:null}
    {selectedLeadIds.length?<section aria-label="Selected recruiter audience review" className="min-w-0 space-y-2 border-y border-border py-3 text-sm">
     <h3 className="font-semibold">Selected recruiter audience</h3>
@@ -168,13 +163,20 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      </p>
      </div>
    </Disclosure>
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Approved campaign template key
-    <Input value={templateKey} maxLength={160} required className={field}
-     placeholder="recruiter-campaign" onChange={e=>setTemplateKey(e.target.value)}/>
-    <span className="mt-1 block text-xs font-normal text-muted-foreground">
-     Authentication or OTP templates cannot be used for recruitment campaigns.
-    </span>
-   </label>
+   <Disclosure title="Advanced campaign settings" className="border-y border-border py-2" contentClassName="pt-3">
+    <div className="space-y-3">
+     <label className="block text-[13px] font-semibold text-body">Campaign name (optional)
+      <Input value={title} maxLength={160} className={field} placeholder="Defaults to the email subject"
+       onChange={e=>setTitle(e.target.value)}/>
+     </label>
+     <p className="text-xs text-muted-foreground">This is an internal label for the saved campaign. If left blank, the subject will be used.</p>
+     <label className="block text-[13px] font-semibold text-body">Approved campaign template key
+      <Input value={templateKey} maxLength={160} required className={field}
+       placeholder="recruiter-campaign" onChange={e=>setTemplateKey(e.target.value)}/>
+      <span className="mt-1 block text-xs font-normal text-muted-foreground">Authentication or OTP templates cannot be used for recruitment campaigns.</span>
+     </label>
+    </div>
+   </Disclosure>
    {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
     className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
     Preview audience
