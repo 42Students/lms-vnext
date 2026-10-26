@@ -56,4 +56,11 @@ describe("TPO Drives latest prototype list",()=>{
   expect(src).toContain('job.status==="DRAFT"?{label:"Review draft",href}:null');
   expect(src).toContain("new Date(job.applicationDeadline).getTime()");
  });
+ it("opens the exact original recruiter request from its corresponding review card",()=>{
+  expect(src).toContain('href={"/tpo/placements/lifecycle?view=REQUESTS&page=1&request="+encodeURIComponent(item.id)}');
+  expect(src).toContain("selectedDriveRequestId?data.requestRows.find(row=>row.id===selectedDriveRequestId)??null");
+  expect(src).toContain("No other request was substituted.");
+  expect(src).not.toContain('<Link href="/tpo/placements/lifecycle?view=REQUESTS&page=1"\n         className="mt-3');
+ });
+
 });

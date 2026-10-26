@@ -179,7 +179,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           .format(new Date(item.createdAt))}</p>
         {item.accessEnded?<p className="mt-1 text-xs font-semibold text-warning-text">
          Recruiter access ended. The placement cell must complete the review.</p>:null}
-        <Link href="/tpo/placements/lifecycle?view=REQUESTS&page=1"
+        <Link href={"/tpo/placements/lifecycle?view=REQUESTS&page=1&request="+encodeURIComponent(item.id)}
          className="mt-3 inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">
          Review request
         </Link>
