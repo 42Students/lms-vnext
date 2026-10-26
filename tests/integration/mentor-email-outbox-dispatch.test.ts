@@ -13,15 +13,16 @@ const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const sourceId=randomUUID(),jobId=randomUUID(),submissionId=randomUUID();
 const projectId=randomUUID();
 const stalledJobIds=Array.from({length:12},()=>randomUUID());
+const retryJobId=randomUUID(),retryReceiptId=randomUUID();
 const stalledReceiptIds=Array.from({length:12},()=>randomUUID());
 const setupAt=new Date();
 afterAll(async()=>{
  try{
   await pool.query(`delete from activity_events where
     subject_type='mentor_project_email_dispatch_receipt'
-      and subject_id=any($1::text[])`,[[jobId,...stalledJobIds]]);
+      and subject_id=any($1::text[])`,[[jobId,retryJobId,...stalledJobIds]]);
   await pool.query("delete from activity_events where id=any($1::uuid[])",
-   [[jobId,sourceId,...stalledJobIds]]);
+   [[jobId,sourceId,retryJobId,...stalledJobIds]]);
  }finally{await pool.end();await closeDatabaseConnection();}
 });
 describe("Mentor claimed email outbox PostgreSQL transaction",()=>{
@@ -116,5 +117,46 @@ describe("Mentor claimed email outbox PostgreSQL transaction",()=>{
   expect(saved.rows.map(x=>x.status).sort()).toEqual(["CLAIMED","SUPPRESSED"]);
   expect(first.accepted).toBe(0);
   expect(again.accepted).toBe(0);
+
+  // Deterministic persisted time fixture: an earlier RETRY is already six
+  // minutes old and may now acquire its second claim. No sleeps, mocks or
+  // provider calls; the foreign-college source still gets suppressed.
+  await pool.query(`insert into activity_events
+   (id,organization_id,college_id,actor_user_id,module,event_type,
+    subject_type,subject_id,summary,metadata,occurred_at)
+   values ($1,$2,$3,$4,'PROJECTS',$5,'mentor_project_email_job',$6,
+    'Retry policy fixture',$7::jsonb,clock_timestamp()-interval '7 minutes')`,[
+    retryJobId,SEED_IDS.organization,SEED_IDS.collegeA,
+    SEED_IDS.collegeAdminUser,
+    ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_EMAIL_QUEUED,sourceId,
+    JSON.stringify({sourceEventId:sourceId,recipientUserId:SEED_IDS.facultyUser,
+      projectId,kind:"FINAL_SUBMISSION"}),
+  ]);
+  await pool.query(`insert into activity_events
+   (id,organization_id,college_id,actor_user_id,module,event_type,
+    subject_type,subject_id,summary,metadata,occurred_at)
+   values ($1,$2,$3,$4,'PROJECTS',$5,
+    'mentor_project_email_dispatch_receipt',$6,'Earlier unsuccessful provider',
+    '{"status":"RETRY","attempt":1}'::jsonb,
+    clock_timestamp()-interval '6 minutes')`,[
+    retryReceiptId,SEED_IDS.organization,SEED_IDS.collegeA,
+    SEED_IDS.collegeAdminUser,
+    ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_EMAIL_DISPATCH_STATE,retryJobId,
+  ]);
+  const restart=await runMentorProjectEmailDispatchBatch({
+   ...ready,MENTOR_PROJECT_EMAIL_ACTIVATED_AT:
+     new Date(Date.now()-10*60*1000).toISOString(),
+  });
+  expect(restart.suppressed).toBeGreaterThanOrEqual(1);
+  const priorRetry=await pool.query<{status:string;attempt:number}>(`
+    select metadata->>'status' as status,
+      (metadata->>'attempt')::integer as attempt
+    from activity_events
+    where subject_type='mentor_project_email_dispatch_receipt'
+      and subject_id=$1 order by occurred_at,id`,[retryJobId]);
+  expect(priorRetry.rows).toEqual([
+   {status:"RETRY",attempt:1},{status:"CLAIMED",attempt:2},
+   {status:"SUPPRESSED",attempt:2},
+  ]);
  });
 });
