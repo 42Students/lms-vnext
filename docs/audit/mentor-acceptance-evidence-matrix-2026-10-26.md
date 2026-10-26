@@ -10,6 +10,16 @@
 - Code-first inventory **127 CODE_READY / 3 IMPLEMENTATION_OR_TEST_PENDING / 2 EXTERNAL_INTEGRATION_UNVERIFIED**. **0/132 formally accepted** (source-ready is not accepted).
 - Provider X-05 (live Google Calendar/Meet) and X-09 (live ZeptoMail delivery) remain external-unverified. Pixel-level visual acceptance remains deferred.
 
+## Follow-on authenticated evidence and security fixes
+
+- [Mentor run 40282726293](https://github.com/42Students/lms-vnext/actions/runs/40282726293) on `7f4082a`: **3/3 passed** — 816 unit tests in 268 files, 81 PostgreSQL tests in 29 files, and 21 browser tests. Browser includes a rejected Learner meeting PATCH and saved venue after Team-page reload.
+- [Mentor run 40292508399](https://github.com/42Students/lms-vnext/actions/runs/40292508399) on `145fc64`: PostgreSQL **95/95 passed** (including nine P4 membership cases and five live-DB Google grant cases); browser passed. The source job failed at global TypeScript checking on concurrent TPO/Faculty implementation errors, so this run is **not** a complete accepted workflow.
+- `973d03c` eliminates a global DB-suite fixture-isolation false failure without relaxing per-project access/revocation assertions. `79080ff` registers all P4 membership cases in dedicated Mentor PostgreSQL acceptance.
+- `a219062` and `72489b8` guard Mentor Google OAuth credential reads/refreshed tokens with live user, role, college, organization, and consent records, including revocation during an external token refresh. `5f9fd17` rechecks project meeting and live recipients before post-draft Google invitations; it avoids inviting a selected member removed between draft promotion and provider sync. These source checks do **not** prove external provider delivery.
+- `d51d3a8`, `145fc64`, `bf4f2dd` extend disposable PostgreSQL denial coverage for stale cookie roles, different users, role revocation and foreign organizations. `cd8fad0` adds current-recipient/revoked-recipient provider-selection unit tests.
+- `7996901` preserves separate Mentor unit/lint execution in the dedicated CI workflow even if unrelated account code breaks the global typecheck. The workflow still reports a failure whenever the typecheck, tests, lint or browser fail; this is evidence collection, **not** a bypass.
+- Live OAuth consent, Google attendee receipt, ZeptoMail external delivery, unexecuted per-requirement negative states, and deferred pixel-level acceptance remain open. None of these changes automatically converts the 132-item master register into accepted.
+
 ## All 132 original IDs
 
 **Requirement:** abbreviated from original prototype gap audit, not rewritten as a different criterion. **Source:** pointer from code closure ledger. **Gate:** formally OPEN, pending exact item-specific execution links for unit, PostgreSQL, authenticated browser and security/negative states.
