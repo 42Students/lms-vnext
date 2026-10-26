@@ -37,7 +37,7 @@ test("Faculty Blueprint screenshot 05 has a selected lesson rail, inline actions
   const lessonNav=explorer.getByRole("complementary");
   const chosen=lessonNav.getByRole("link",{current:"page"});
   await expect(chosen).toBeVisible();
-  const activeLesson=chosen.getAttribute("href");
+  const activeLesson=await chosen.getAttribute("href");
   await expect(explorer.getByRole("heading",{name:/^Lesson \d+:/})).toBeVisible();
   const order=explorer.getByRole("list",{name:"Lesson content order"});
   await expect(order).toBeVisible();
