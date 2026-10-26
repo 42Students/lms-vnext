@@ -1,6 +1,8 @@
 import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {assignmentSubmissions,courseAssignments} from "@/db/schema";
+import {getFacultyAttendanceWorkspace} from "@/modules/attendance/faculty-service";
+import {facultyCourseMonthAttendanceEvidence} from "@/modules/courses/faculty-course-month-attendance-model";
 import Link from "next/link";
 import { parseFacultyCourseListLocation } from "@/modules/courses/faculty-course-list-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -59,9 +61,30 @@ export default async function TeacherCoursesPage({searchParams}: {
     sql`${assignmentSubmissions.gradingStatus} <> 'GRADED'`))
    .groupBy(assignmentSubmissions.deliveryId):[];
   const pendingByDelivery=Object.fromEntries(waiting.map(row=>[row.deliveryId,row.total] as const));
+  const now=new Date();
+  const dateParts=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",
+  }).formatToParts(now);
+  const month=dateParts.find(part=>part.type==="year")!.value+"-"+
+    dateParts.find(part=>part.type==="month")!.value;
+  // A month rate requires marked sessions AND current authorized roster.
+  // The existing attendance service enforces each delivery's faculty scope
+  // and protects learners' data; do not scan raw attendance across colleges.
+  // Bound concurrent reads on high-course-count lists.
+  const attendanceByDelivery:Record<string,{present:number;possible:number}|null>={};
+  let cursor=0;
+  await Promise.all(Array.from({length:Math.min(4,deliveryIds.length)},async()=>{
+    while(cursor<deliveryIds.length){
+      const id=deliveryIds[cursor++]!;
+      const evidence=await getFacultyAttendanceWorkspace(context,id,month)
+        .then(result=>facultyCourseMonthAttendanceEvidence(result,now))
+        .catch(()=>null);
+      attendanceByDelivery[id]=evidence;
+    }
+  }));
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <FacultyPrototypeCourseDirectory rows={rows} totalAssignments={list.scopeCount} pendingByDelivery={pendingByDelivery}/>
+      <FacultyPrototypeCourseDirectory rows={rows} totalAssignments={list.scopeCount} pendingByDelivery={pendingByDelivery} attendanceByDelivery={attendanceByDelivery}/>
       <details className="min-w-0 border-t border-[#e5ebf2] pt-4">
         <summary className="cursor-pointer text-sm font-semibold text-[#078191]">
           Advanced teaching filters, class assignments and detailed course cards
