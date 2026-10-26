@@ -25,6 +25,19 @@ describe("Mentor email dispatcher operational safety",()=>{
   expect(mentorProjectEmailWorkerReady({
    ...READY,MENTOR_PROJECT_EMAIL_ACTIVATED_AT:"yesterday",
   })).toEqual({ready:false});
+  for(const invalid of [
+   "2026-02-30T00:00:00Z","2025-02-29T00:00:00Z",
+   "2026-13-01T00:00:00Z","2026-10-25T25:00:00Z",
+  ]){
+   expect(mentorProjectEmailWorkerReady({
+    ...READY,MENTOR_PROJECT_EMAIL_ACTIVATED_AT:invalid,
+   },new Date("2026-11-01T00:00:00Z"))).toEqual({ready:false});
+  }
+  expect(mentorProjectEmailWorkerReady({
+   ...READY,MENTOR_PROJECT_EMAIL_ACTIVATED_AT:"2026-10-25T00:00:00.000Z",
+  },new Date("2026-11-01T00:00:00Z"))).toEqual({
+   ready:true,activatedAt:new Date("2026-10-25T00:00:00Z"),
+  });
  });
  it("enforces a twenty-minute unexpired claim lease and staggered retries",()=>{
   const minutes=60*1000;
