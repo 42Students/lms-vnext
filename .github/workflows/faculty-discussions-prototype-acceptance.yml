@@ -10,6 +10,8 @@ on:
       - "tests/e2e/faculty-discussions-prototype.spec.ts"
       - "src/modules/courses/faculty-discussion-post-recovery.ts"
       - "tests/unit/faculty-discussion-post-recovery.test.ts"
+## Focused Faculty E2E is independent of the repository-wide TS gate.
+## Full TypeScript is still mandatory in the separate CI workflow.
 permissions:
   contents: read
 concurrency:
@@ -59,7 +61,3 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Screenshot #08 Faculty Discussions functional browser acceptance
         run: npx playwright test tests/e2e/faculty-discussions-prototype.spec.ts --workers=1
-      - name: Type-check Faculty discussion and Learner compatibility
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
