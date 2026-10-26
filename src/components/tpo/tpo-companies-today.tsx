@@ -99,7 +99,9 @@ export function TpoCompaniesToday({
  useEffect(()=>{
   function onKey(e:KeyboardEvent){
    const element=e.target as HTMLElement|null;
-   if(element?.closest("input,textarea,select,[contenteditable=true],button,a")||
+   const inQueueOption=Boolean(element?.closest('[role="listbox"] [role="option"]'));
+   if(element?.closest("input,textarea,select,[contenteditable=true]")||
+     (!inQueueOption&&element?.closest("button,a"))||
      e.altKey||e.metaKey||e.ctrlKey)return;
    if(!pending&&(e.key==="j"||e.key==="k")){
     const at=focusItems.findIndex(item=>item.key===selected?.key);
