@@ -138,6 +138,11 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("alertdialog").getByRole("button",{name:"Save changes"}).click();
   const metadata=await metadataResponse;
   expect(metadata.status()).toBe(200);
+  // The editor closes and the RSC row refreshes after the server receipt.
+  // Wait for that transition before navigating, so we don't abort the
+  // in-flight Next.js refresh with a simultaneous hard navigation.
+  await expect(metadataDrawer).toBeHidden();
+  await expect(page.getByRole("heading",{name:title+" metadata"})).toBeVisible();
   await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" metadata (CLOSED)"});
   const archiveResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
