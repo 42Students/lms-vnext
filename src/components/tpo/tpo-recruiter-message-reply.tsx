@@ -136,7 +136,8 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
      <label className="sr-only" htmlFor="tpo-message-template-search">Search message templates</label>
      <Input id="tpo-message-template-search" type="search" value={templateQuery}
       onChange={event=>setTemplateQuery(event.target.value)}
-      placeholder={"Search "+TPO_MESSAGE_TEMPLATE_LIBRARY.length+" built-in templates"} className="min-h-11 w-full md:min-h-9"/>
+      placeholder="Search message templates" className="min-h-11 w-full md:min-h-9"/>
+     <p className="text-xs text-muted-foreground">{matchedTemplates.length} of {TPO_MESSAGE_TEMPLATE_LIBRARY.length} built-in templates · suggested text only</p>
      <div className="max-h-72 min-w-0 overflow-y-auto" role="group" aria-label="Available message templates">
       {matchedTemplates.map(item=>
        <button key={item.id} type="button" aria-pressed={templateId===item.id}
