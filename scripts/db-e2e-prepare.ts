@@ -119,6 +119,63 @@ async function main() {
     })
     .onConflictDoNothing();
 
+  // Recruiter prototype browser acceptance needs a *real*, verified employer-
+  // college grant and a visible drive. The shared role helper signs in as
+  // lms_test_919100061301; only disposable E2E PostgreSQL receives this seed.
+  // This cannot be a hard-coded application bypass or a production grant.
+  const recruiterId="60000000-0000-4000-8000-000000000003";
+  const employerId="66000000-0000-4000-8000-000000000001";
+  const relationshipId="66000000-0000-4000-8000-000000000002";
+  const grantId="66000000-0000-4000-8000-000000000003";
+  const recruiterJobId="66000000-0000-4000-8000-000000000004";
+  const recruiterRoundId="66000000-0000-4000-8000-000000000005";
+  await dbClient.getDb().insert(dbSchema.users).values({
+    id:recruiterId,identityUid:"lms_test_919100061301",
+    email:"recruiter-prototype-e2e@example.com",
+    displayName:"E2E Prototype Recruiter",platformStatus:"ACTIVE",
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementCompanies).values({
+    id:employerId,name:"E2E Prototype Hiring Company",
+    primaryDomain:"recruiter-prototype-e2e.example.com",
+    status:"ACTIVE",verifiedAt:new Date(),verifiedByUserId:ids.collegeAdminUser,
+    createdByUserId:ids.collegeAdminUser,
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementCompanyRelationships).values({
+    id:relationshipId,collegeId:ids.collegeA,companyId:employerId,
+    status:"ACTIVE",isTrusted:true,
+    ownerMembershipId:ids.collegeAdminMembership,
+    createdByUserId:ids.collegeAdminUser,
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementRecruiterProfiles).values({
+    userId:recruiterId,companyId:employerId,status:"ACTIVE",
+    title:"Recruitment Manager",createdByUserId:ids.collegeAdminUser,
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementRecruiterCollegeGrants).values({
+    id:grantId,recruiterUserId:recruiterId,companyRelationshipId:relationshipId,
+    status:"ACTIVE",verificationStatus:"VERIFIED",
+    grantedByUserId:ids.collegeAdminUser,grantedByType:"TPO",
+    validUntil:new Date(Date.now()+120*24*60*60*1000),
+    capabilities:["DRIVES","APPLICANT_EXPORT","INTERVIEWS","MESSAGES"],
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementJobs).values({
+    id:recruiterJobId,collegeId:ids.collegeA,seasonId:ids.placementSeasonA,
+    companyRelationshipId:relationshipId,
+    title:"E2E Prototype Software Engineer",
+    description:"Disposable recruiter prototype acceptance drive",
+    employmentType:"FULL_TIME",workMode:"ONSITE",locations:["Vijayawada"],
+    status:"PUBLISHED",publishedAt:new Date(),
+    applicationDeadline:new Date(Date.now()+14*24*60*60*1000),
+    createdByUserId:ids.collegeAdminUser,
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementJobRounds).values({
+    id:recruiterRoundId,jobId:recruiterJobId,sequence:1,kind:"INTERVIEW",
+    name:"Technical interview",status:"PENDING",
+    createdByUserId:ids.collegeAdminUser,
+  }).onConflictDoNothing();
+  process.stdout.write(
+    "Verified Recruiter prototype identity, grant, drive and interview round seeded.\\n",
+  );
+
   const collegeAdmin: RequestContext = {
     user: {
       id: ids.collegeAdminUser,
