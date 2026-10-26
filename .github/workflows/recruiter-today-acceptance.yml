@@ -16,7 +16,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: recruiter-today-acceptance-${{ github.ref }}
+  group: recruiter-today-dev-auth-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:

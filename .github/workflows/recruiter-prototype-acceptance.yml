@@ -30,7 +30,7 @@ permissions:
 # Faculty/TPO workflows. GitHub may queue a newer run, but never cancel the
 # running verification when another role is actively pushing main.
 concurrency:
-  group: lms-vnext-recruiter-prototype-${{ github.ref }}
+  group: recruiter-prototype-dev-auth-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
