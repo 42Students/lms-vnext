@@ -21,6 +21,7 @@ on:
       - "tests/unit/PROJ-BREAK-chat9-member-candidate-privacy.test.ts"
       - "tests/integration/mentor*.test.ts"
       - "tests/integration/projects-p7b-meetings.test.ts"
+      - "tests/integration/projects-p4-members.test.ts"
       - "tests/integration/learner-project-activity-filters.test.ts"
       - "tests/e2e/mentor-prototype-functional-matrix.spec.ts"
       - "tests/e2e/mentor-portfolio-state-acceptance.spec.ts"
@@ -98,7 +99,8 @@ jobs:
           npx vitest run --config vitest.db.registered.config.ts \
             tests/integration/mentor- \
             tests/integration/learner-project-activity-filters.test.ts \
-            tests/integration/projects-p7b-meetings.test.ts
+            tests/integration/projects-p7b-meetings.test.ts \
+            tests/integration/projects-p4-members.test.ts
 
   mentor-browser:
     runs-on: ubuntu-latest
