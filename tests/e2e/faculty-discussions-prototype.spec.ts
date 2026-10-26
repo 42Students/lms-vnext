@@ -54,7 +54,7 @@ test("Faculty Discussions screenshot 08 uses flat pinned-first list, real modera
  await row.getByRole("button",{name:/^Unpin /}).click();
  expect((await unpinned).ok()).toBe(true);
  await row.getByRole("button",{name:/^Delete /}).click();
- const confirmation=page.getByRole("dialog",{name:"Delete this message?"});
+ const confirmation=page.getByRole("alertdialog",{name:"Delete this message?"});
  await expect(confirmation).toBeVisible();
  const removed=page.waitForResponse(r=>r.request().method()==="DELETE"&&
    new URL(r.url()).pathname.includes("/discussions/"));
