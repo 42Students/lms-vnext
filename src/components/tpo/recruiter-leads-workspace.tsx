@@ -41,6 +41,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {GridWorkspace} from "./grid/grid-workspace";
+import {TpoRecruiterPrototypeInspector} from "./recruiter-prototype-inspector";
 import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import boardStyles from "./recruiter-board-theme.module.css";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
@@ -231,6 +232,9 @@ export function RecruiterLeadsWorkspace({
   const [rows, setRows] = useState<Lead[]>([]);
   const [needsExpanded,setNeedsExpanded]=useState(true);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
+  // Focus is separate from the bulk-action checkboxes. Empty string is an
+  // explicit dismissed inspector; null means auto-focus the first visible row.
+  const [focusedRecruiterId,setFocusedRecruiterId]=useState<string|null>(null);
   const [visibleColumns,setVisibleColumns]=useState<EngageColumn[]>([...ENGAGE_DEFAULT_COLUMNS]);
   const [rosterSort,setRosterSort]=useState<EngageSort>("LAST_ACTIVITY");
   const [sortAscending,setSortAscending]=useState(false);
@@ -517,6 +521,8 @@ export function RecruiterLeadsWorkspace({
       companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter,driveFilter,placedFilter]);
   const sortedVisible=useMemo(()=>sortEngageRows(visible,rosterSort,sortAscending),
     [visible,rosterSort,sortAscending]);
+  const focusedLead=focusedRecruiterId===""?null:
+    sortedVisible.find(lead=>lead.id===focusedRecruiterId)??sortedVisible[0]??null;
   const filterChips=([
     {key:"stage",label:"Stage",value:stage},
     {key:"need",label:"Needs doing",value:need},
@@ -1121,6 +1127,7 @@ export function RecruiterLeadsWorkspace({
               )}
             </section>
           ) : view === "table" ? (
+            <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
             <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-3 sm:p-4" aria-label="Recruiter leads table">
             <GridWorkspace rows={sortedVisible} columns={RECRUITER_GRID_COLUMNS}
               rowKey={lead=>lead.id} selection={{selected:selectedIds,onChange:setSelectedIds}}
@@ -1148,7 +1155,7 @@ export function RecruiterLeadsWorkspace({
                 openPrimary={{
                   columnKey:"Contact",
                   ariaLabel:lead=>"Open "+(lead.name||"recruiter")+" details",
-                  onOpen:lead=>router.push("/tpo/recruiters/"+encodeURIComponent(lead.id)),
+                  onOpen:lead=>setFocusedRecruiterId(lead.id),
                 }}
                 rowActions={visibleColumns.some(column=>["Stage","Owner","Actions"].includes(column))
                   ?lead=><div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
@@ -1166,6 +1173,14 @@ export function RecruiterLeadsWorkspace({
 
             </GridWorkspace>
             </section>
+            {focusedLead?<TpoRecruiterPrototypeInspector lead={focusedLead}
+             onDismiss={()=>setFocusedRecruiterId("")}/>:
+             <aside className="min-w-0 rounded-xl border border-border bg-surface p-4 text-sm text-body">
+              <p>Select a recruiter in the roster to see the next action.</p>
+              <button type="button" className="mt-2 min-h-11 font-semibold text-link underline"
+               onClick={()=>setFocusedRecruiterId(null)}>Show first recruiter</button>
+             </aside>}
+            </div>
           ) : (
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
