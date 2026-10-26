@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { Disclosure } from "@/components/ui/disclosure";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {TPO_CAMPAIGN_COMPOSE_PRESETS,tpoCampaignMergeToken,type TpoCampaignComposePreset} from "@/modules/messaging/tpo-campaign-compose-presets";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -28,6 +30,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  const [body,setBody]=useState(""),[segment,setSegment]=useState<(typeof SEGMENTS)[number]["value"]>("ALL_ELIGIBLE");
  const [templateKey,setTemplateKey]=useState("recruiter-campaign"),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[done,setDone]=useState("");
+ const [pendingPreset,setPendingPreset]=useState<TpoCampaignComposePreset|null>(null);
  const [savedDraftId,setSavedDraftId]=useState<string|null>(null);
  const [audience,setAudience]=useState<SelectedAudiencePreview|null>(null);
  const [audienceStatus,setAudienceStatus]=useState<"idle"|"loading"|"ready"|"error">(selectedLeadIds.length?"loading":"idle");
@@ -53,6 +56,15 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     .catch(()=>{if(!controller.signal.aborted)setAudienceStatus("error");});
   return ()=>controller.abort();
  },[selectionKey,audienceRetry]);
+ function applyPreset(preset:TpoCampaignComposePreset){
+  setTitle(current=>current.trim()?current:preset.title);
+  setSubject(preset.subject);setBody(preset.body);setDone("");setError("");
+  setPendingPreset(null);
+ }
+ function selectPreset(preset:TpoCampaignComposePreset){
+  if(subject.trim()||body.trim())setPendingPreset(preset);
+  else applyPreset(preset);
+ }
  async function save(){
   setError("");
   if(!title.trim()){setError("Give this campaign a title");return;}
@@ -119,6 +131,28 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     <Input value={subject} maxLength={200} aria-required="true" className={field}
      onChange={e=>setSubject(e.target.value)}/>
    </label>
+   <section aria-label="Email quick-start templates" className="space-y-2">
+    <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Quick-start email wording</h3>
+    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+     {TPO_CAMPAIGN_COMPOSE_PRESETS.map(preset=>
+      <button type="button" key={preset.id} onClick={()=>selectPreset(preset)}
+       className="min-h-11 rounded-xl border border-border bg-surface p-3 text-left hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary">
+       <strong className="block text-sm text-foreground">{preset.title}</strong>
+       <span className="mt-1 block text-xs text-muted-foreground">{preset.description}</span>
+      </button>)}
+    </div>
+   </section>
+   <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
+    <span className="text-muted-foreground">Personalize each copy:</span>
+    <button type="button" onClick={()=>setBody(current=>tpoCampaignMergeToken(current,"name"))}
+     className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-link">
+     Insert name
+    </button>
+    <button type="button" onClick={()=>setBody(current=>tpoCampaignMergeToken(current,"company"))}
+     className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-link">
+     Insert company
+    </button>
+   </div>
    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Email
     <Textarea value={body} maxLength={10000} aria-required="true" rows={8}
      className={field} onChange={e=>setBody(e.target.value)}/>
@@ -163,5 +197,10 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     </Link>}
   </div>:null}
   {error?<div id={formErrorId}><InlineNotice tone="error" message={error}/></div>:null}
+  <ConfirmDialog open={pendingPreset!==null} onOpenChange={open=>{if(!open)setPendingPreset(null);}}
+   title="Replace the current email wording?"
+   description="The subject and body will be replaced with the chosen starting text. Nothing will be sent."
+   confirmLabel="Replace wording" cancelLabel="Keep my draft" confirmVariant="primary"
+   onConfirm={()=>{if(pendingPreset)applyPreset(pendingPreset);}}/>
  </section>;
 }
