@@ -17,15 +17,6 @@ on:
       - "tests/unit/faculty-blueprint-archive-receipt.test.ts"
       - "src/modules/courses/faculty-blueprint-archive-receipt-model.ts"
       - "src/modules/courses/faculty-blueprint-sort-model.ts"
-      - "src/modules/courses/faculty-blueprint-add-target.ts"
-      - "src/modules/courses/faculty-blueprint-write-recovery.ts"
-      - "src/components/courses/faculty-lesson-authoring.tsx"
-      - "src/components/courses/faculty-lesson-video-manager.tsx"
-      - "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx"
-      - "src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx"
-      - "src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx"
-      - "tests/unit/faculty-blueprint-add-target.test.ts"
-      - "tests/unit/faculty-blueprint-write-recovery.test.ts"
 permissions:
   contents: read
 concurrency:
