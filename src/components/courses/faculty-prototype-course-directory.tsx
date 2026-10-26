@@ -17,27 +17,33 @@ type CourseRow = {
  classLinks:{name:string;deliveryId:string}[];
  drafts:number;
  toGrade:number;
+ attendancePresent:number;
+ attendancePossible:number;
 };
 
-export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingByDelivery}:{
+export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingByDelivery,attendanceByDelivery}:{
  rows:readonly FacultyCourseListRow[];
  totalAssignments:number;
  pendingByDelivery:Record<string,number>;
+ attendanceByDelivery:Record<string,{present:number;possible:number}|null>;
 }){
  const [q,setQ]=useState("");
  const [kind,setKind]=useState<"All"|"Regular"|"Elective">("All");
- const [period,setPeriod]=useState("all");
+ const [period,setPeriod]=useState(rows[0]?.course.academicPeriodId??"all");
  const grouped=new Map<string,CourseRow>();
  for(const {course,workspace} of rows){
   const key=course.courseId+":"+course.academicPeriodId;
   const current=grouped.get(key);
   const offeringKind=course.offeringType==="ELECTIVE"?"Elective" as const:"Regular" as const;
+  const attendance=attendanceByDelivery[course.deliveryId];
   if(current){
    if(!current.classes.includes(course.sectionName))current.classes.push(course.sectionName);
    current.deliveries.push(course.deliveryId);
    if(!current.classLinks.some(x=>x.deliveryId===course.deliveryId))current.classLinks.push({name:course.sectionName,deliveryId:course.deliveryId});
    current.drafts+=workspace.summary.draftItems;
    current.toGrade+=(pendingByDelivery[course.deliveryId]??0);
+   current.attendancePresent+=attendance?.present??0;
+   current.attendancePossible+=attendance?.possible??0;
   }else grouped.set(key,{
    id:key,name:course.courseName,code:course.courseCode,
    kind:offeringKind,credits:course.credits,
@@ -46,6 +52,8 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
    classLinks:[{name:course.sectionName,deliveryId:course.deliveryId}],
    drafts:workspace.summary.draftItems,
    toGrade:pendingByDelivery[course.deliveryId]??0,
+   attendancePresent:attendance?.present??0,
+   attendancePossible:attendance?.possible??0,
   });
  }
  const courses=[...grouped.values()];
@@ -61,7 +69,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
   <div className="flex flex-wrap items-center justify-between gap-4">
    <div className="min-w-0">
     <h1 className="faculty-proto-heading">Courses</h1>
-    <p className="faculty-proto-subtitle mt-1">{counts.All} {counts.All===1?"course":"courses"} in this period · {new Set(scope.flatMap(c=>c.deliveries)).size} classes assigned. <span className="sr-only">{totalAssignments} teaching assignment records.</span></p>
+    <p className="faculty-proto-subtitle mt-1">{counts.All} {counts.All===1?"course":"courses"} you teach {period==="all"?"across periods":"this semester"}, {new Set(scope.flatMap(c=>c.deliveries)).size} classes. <span className="sr-only">{totalAssignments} teaching assignment records.</span></p>
    </div>
    <div className="flex min-w-0 flex-wrap gap-2">
    <label className="sr-only" htmlFor="faculty-course-search">Search courses</label>
@@ -81,7 +89,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
   <div className="flex flex-wrap gap-2" role="group" aria-label="Course type">
    {(["All","Regular","Elective"] as const).map(option=>
     <button key={option} type="button" onClick={()=>setKind(option)} aria-pressed={kind===option}
-     className="faculty-proto-pill">{option} {counts[option]}</button>)}
+     className="faculty-proto-pill">{option==="Elective"?"Electives":option} {counts[option]}</button>)}
   </div>
   <div className="faculty-proto-table-wrap">
    <table className="faculty-proto-table">
@@ -91,20 +99,20 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
       {course.name}</Link>
       <p className="faculty-proto-subtitle">{course.code} · {course.kind}{course.credits!==null?" · "+course.credits+" credits":""}</p>
      </td>
-     <td><div className="flex flex-wrap gap-x-3 gap-y-2">
-      {course.classLinks.map(link=><Link key={link.deliveryId}
-       className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(link.deliveryId)+"/home"}>{link.name}</Link>)}
+     <td><div className="flex flex-wrap gap-x-1 gap-y-2">
+      {course.classLinks.map((link,index)=><span key={link.deliveryId}><Link
+       className="text-[#1d293f] hover:text-[#078191] hover:underline" href={"/teacher/courses/"+encodeURIComponent(link.deliveryId)+"/home"}>{link.name}</Link>{index<course.classLinks.length-1?",":""}</span>)}
      </div></td>
      <td><span className={"rounded-full px-2.5 py-1 text-xs font-semibold "+(course.toGrade>0?"bg-red-50 text-red-700":course.drafts>0?"bg-amber-50 text-amber-800":"bg-emerald-50 text-emerald-800")}>
        {course.toGrade>0?course.toGrade+" to grade":course.drafts>0?course.drafts+" to publish":"Nothing waiting"}
      </span></td>
-     <td><Link className="faculty-proto-link text-sm" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/attendanceDetail"}>View</Link></td>
-     <td><Link className="faculty-proto-link text-sm" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>Open</Link></td>
+     <td><Link className="text-sm text-[#1d293f] hover:text-[#078191] hover:underline" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/attendanceDetail"}>{course.attendancePossible>0?Math.round(course.attendancePresent*100/course.attendancePossible)+"% this month":"Not recorded"}</Link></td>
+     <td><Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>Open</Link></td>
     </tr>)}</tbody>
    </table>
   </div>
   {visible.length===0?<p className="faculty-proto-subtitle rounded-lg border border-[#dce5ee] p-5">
    No assigned courses match this search and type.</p>:null}
-  {courses.length>0?<p className="faculty-proto-subtitle">For another teaching class, choose its class link. Unassigned courses are not shown until your college assigns a class.</p>:null}
+  {courses.length>0?<p className="faculty-proto-subtitle">A course with no class assigned to you shows “Not assigned to a class” in the detailed course view. Ask the college admin. Your class links and advanced teaching filters remain available.</p>:null}
  </section>;
 }
