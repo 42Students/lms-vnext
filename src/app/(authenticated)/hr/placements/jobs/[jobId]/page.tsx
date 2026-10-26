@@ -930,20 +930,20 @@ export default async function HrPlacementJobPage({
             {!historicalOffers.ready?<p role="status" className="text-sm text-body">
               Previous-year offer history could not be verified. Retry before relying on historical counts.
             </p>:historicalOffers.rows.length?
-              <div className="overflow-x-auto"><table className="min-w-full border-collapse text-left text-sm">
-               <thead><tr className="border-b border-border text-xs font-semibold uppercase text-muted-foreground">
-                <th scope="col" className="px-3 py-2">Student</th>
-                <th scope="col" className="px-3 py-2">Drive</th>
-                <th scope="col" className="px-3 py-2">Offer</th>
-                <th scope="col" className="px-3 py-2">Joining</th>
-               </tr></thead>
-               <tbody>{historicalOffers.rows.map(item=><tr key={item.id} className="border-b border-border">
-                <td className="px-3 py-3 font-semibold text-foreground">{item.student}</td>
-                <td className="px-3 py-3 text-body">{item.role}</td>
-                <td className="px-3 py-3 text-body">{recruiterHistoricalOfferStatus(item.status)}</td>
-                <td className="px-3 py-3 text-body">{recruiterHistoricalJoiningLabel(item.joiningStatus,item.joiningDate)}</td>
-               </tr>)}</tbody>
-              </table></div>:<p role="status" className="text-sm text-muted-foreground">
+              <ol className="grid min-w-0 gap-3 sm:grid-cols-2" aria-label="Previous-year verified offers">
+                {historicalOffers.rows.map(item=><li key={item.id}
+                  className="min-w-0 rounded-lg border border-border p-3 text-sm">
+                  <h4 className="break-words font-semibold text-foreground">{item.student}</h4>
+                  <dl className="mt-2 grid min-w-0 grid-cols-[minmax(5rem,auto)_minmax(0,1fr)] gap-x-3 gap-y-2">
+                    <dt className="text-muted-foreground">Drive</dt>
+                    <dd className="min-w-0 break-words text-body">{item.role}</dd>
+                    <dt className="text-muted-foreground">Offer</dt>
+                    <dd className="min-w-0 break-words text-body">{recruiterHistoricalOfferStatus(item.status)}</dd>
+                    <dt className="text-muted-foreground">Joining</dt>
+                    <dd className="min-w-0 break-words text-body">{recruiterHistoricalJoiningLabel(item.joiningStatus,item.joiningDate)}</dd>
+                  </dl>
+                </li>)}
+              </ol>:<p role="status" className="text-sm text-muted-foreground">
                 No previous-year offers were verified for closed drives at this college.
               </p>}
             {historicalOffers.truncated?<p className="text-xs font-semibold text-muted-foreground">

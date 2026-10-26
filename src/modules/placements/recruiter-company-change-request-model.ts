@@ -18,6 +18,6 @@ export function recruiterCompanyChangeRequest(input:{
   "Requested change: "+detail,
   input.kind==="TEAM"?
    "Please verify with the company and college before modifying this person's access. This request grants no permissions.":
-   "Please verify company identity and trusted domains before updating the company record.",
+   "Please check with the placement cell to verify company identity and trusted domains before updating the company record.",
  ].join("\n");
 }

@@ -88,6 +88,7 @@ describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure 
   expect(props.decisionNoticesUnavailable).toBe(true);
   expect(props.generalPreviewUnavailable).toBe(false);
   expect(props.rows.every(row=>row.preview===null)).toBe(true);
+  expect((result as {props:{selected:{preview:unknown}|null}}).props.selected?.preview).toBeNull();
   expect(JSON.stringify(props)).not.toContain("SECRET_NEVER_RENDER");
   expect(JSON.stringify(props)).not.toContain("private operational detail");
   expect(m.inbox).toHaveBeenCalledTimes(2);

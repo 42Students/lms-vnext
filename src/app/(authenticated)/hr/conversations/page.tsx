@@ -88,11 +88,17 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   ]);
   const scopeConfirmed=generalCheck.ok&&generalCheck.value.status==="READY"&&
     generalCheck.value.collegeId===result.collegeId;
-  const selected=scopeConfirmed?selectRecruiterWorkspaceThread(result.items,raw.thread):null;
-  const history=selected?await readRecruiterThreadMessages(context,selected.id,1).catch(()=>null):null;
-  const historyUnavailable=selected!==null&&history===null;
+  const candidateThread=scopeConfirmed?selectRecruiterWorkspaceThread(result.items,raw.thread):null;
+  const history=candidateThread
+    ?await readRecruiterThreadMessages(context,candidateThread.id,1).catch(()=>null):null;
+  const historyUnavailable=candidateThread!==null&&history===null;
+  // A revoked thread may have an old, cached preview inside the selected
+  // row itself, not just in the inbox list. Scrub *both* representations
+  // before creating the rendered React element (or serializing its props).
   const displayRows=scopeConfirmed
     ?result.items.map(row=>historyUnavailable?{...row,preview:null}:row):[];
+  const selected=candidateThread
+    ?(displayRows.find(row=>row.id===candidateThread.id)??null):null;
   return <RecruiterConversationWorkspace collegeId={result.collegeId} choices={result.choices}
    rows={displayRows} selected={selected} history={history}
    selectedHistoryUnavailable={historyUnavailable}
