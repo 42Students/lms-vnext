@@ -31,6 +31,15 @@ test("Faculty Today shows the prototype's side cards and truthful task count on 
   const cards=today.locator("aside[aria-label=\"Today's classes and this week\"]");
   await expect(cards.getByRole("heading",{name:"Today's classes"})).toBeVisible();
   await expect(cards.getByRole("heading",{name:"This week"})).toBeVisible();
+  // Protect screenshot fidelity: white Faculty page below empty/short lists,
+  // compact 12px captions rather than oversized generic H2 typography.
+  const computed=await page.evaluate(()=>({
+   pageBackground:getComputedStyle(document.querySelector(".lms-shell-page")!).backgroundColor,
+   railHeadingSize:parseFloat(getComputedStyle(document.querySelector(
+    '.faculty-proto-today aside h2')!).fontSize),
+  }));
+  expect(computed.pageBackground).toBe("rgb(255, 255, 255)");
+  expect(computed.railHeadingSize).toBe(12);
   await expect(cards.getByRole("link",{name:/Schedule/})).toHaveAttribute("href","/teacher/calendar");
   // Genuine Playwright renders for side-by-side review, never resized copies of the prototype.
   await page.screenshot({path:"test-results/faculty-today-desktop-1440x1000.png",fullPage:true});
