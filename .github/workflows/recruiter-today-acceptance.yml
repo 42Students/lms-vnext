@@ -13,6 +13,7 @@ on:
       - "tests/e2e/recruiter-today-later.spec.ts"
       - "tests/unit/recruiter-today-*"
       - "tests/unit/hr-today-*"
+      - "src/styles/prototype-portals.css"
 permissions:
   contents: read
 concurrency:

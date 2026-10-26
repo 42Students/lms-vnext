@@ -14,9 +14,17 @@ test.describe("Recruiter Today prototype — persisted actions and Later",()=>{
   await page.goto("/hr/home");
   const today=page.getByTestId("recruiter.today");
   await expect(today).toBeVisible({timeout:20_000});
+  await expect(page.locator(".lms-desktop-sidebar .lms-sidebar-brand-mark svg")).toBeVisible();
+  const rail=await page.locator(".lms-desktop-sidebar").boundingBox();
+  expect(rail).not.toBeNull();
+  expect(rail!.width).toBeGreaterThanOrEqual(205);
+  expect(rail!.width).toBeLessThanOrEqual(210);
   const needs=today.getByRole("region",{name:"Needs you"});
   await expect(needs).toBeVisible();
-  await expect(today.getByRole("heading",{level:1,name:/One thing needs you/})).toBeVisible();
+  await expect(today.getByRole("heading",{level:1,name:/Three things need you/})).toBeVisible();
+  await expect(today.locator('[data-testid^="recruiter.today.task-answer:"]')).toHaveCount(1);
+  await expect(today.locator('[data-testid^="recruiter.today.task-slots:"]')).toHaveCount(1);
+  await expect(today.getByText("How much of the annual CTC is fixed?",{exact:false})).toBeVisible();
   // Synthetic seeded data only. One temporary, capped visual sample allows
   // audit against the latest uploaded PNG without exposing production data.
   if(process.env["E2E_CAPTURE_TODAY"]==="true"){
@@ -32,13 +40,13 @@ test.describe("Recruiter Today prototype — persisted actions and Later",()=>{
   await expect(today.getByRole("link",{name:"Calendar ›"})).toHaveAttribute("href",/\/hr\/calendar/);
   await expect(today.getByRole("region",{name:"This week"})).toBeVisible();
   await deadline.getByRole("button",{name:"Later"}).click();
-  await expect(today.getByRole("heading",{level:1,name:/1 thing is put off for later/})).toBeVisible();
+  await expect(today.getByRole("heading",{level:1,name:/Two things need you/})).toBeVisible();
   await expect(deadline).toHaveCount(0);
   await page.reload();
-  await expect(today.getByRole("heading",{level:1,name:/1 thing is put off for later/})).toBeVisible();
+  await expect(today.getByRole("heading",{level:1,name:/Two things need you/})).toBeVisible();
   await needs.getByRole("button",{name:"Show them"}).click();
   await expect(deadline).toHaveCount(1);
-  await expect(today.getByRole("heading",{level:1,name:/One thing needs you/})).toBeVisible();
+  await expect(today.getByRole("heading",{level:1,name:/Three things need you/})).toBeVisible();
   await deadline.getByRole("link",{name:"Open"}).click();
   await expect(page).toHaveURL(/\/recruiter\/drives\/66000000-0000-4000-8000-000000000004\?tab=overview/);
   // Next dev always mounts an innocuous nextjs-portal for its dev badge.
@@ -59,6 +67,8 @@ test.describe("Recruiter Today prototype — persisted actions and Later",()=>{
   const deadline=today.locator('[data-testid^="recruiter.today.task-deadline:"]');
   await expect(deadline).toHaveCount(1);
   await expect(deadline.getByRole("button",{name:"Later"})).toBeVisible();
+  await expect(today.locator('[data-testid^="recruiter.today.task-answer:"]')).toHaveCount(1);
+  await expect(today.locator('[data-testid^="recruiter.today.task-slots:"]')).toHaveCount(1);
   const width=await page.evaluate(()=>({
    page:document.documentElement.scrollWidth,
    viewport:document.documentElement.clientWidth,

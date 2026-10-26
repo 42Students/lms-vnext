@@ -172,8 +172,20 @@ async function main() {
   }).onConflictDoNothing();
   await dbClient.getDb().insert(dbSchema.placementJobRounds).values({
     id:recruiterRoundId,jobId:recruiterJobId,sequence:1,kind:"INTERVIEW",
-    name:"Technical interview",status:"PENDING",
+    name:"Technical interview",status:"SCHEDULED",
+    scheduledAt:new Date(Date.now()+24*60*60*1000),
+    timezone:"Asia/Kolkata",mode:"ON_CAMPUS",venue:"Seminar Hall",
     createdByUserId:ids.collegeAdminUser,
+  }).onConflictDoNothing();
+  // A real OPEN college-to-company ASK shows up in Recruiter Today.
+  // Only this synthetic, disposable E2E database has these fixtures.
+  await dbClient.getDb().insert(dbSchema.placementDriveChangeRequests).values({
+    id:"66000000-0000-4000-8000-000000000006",
+    jobId:recruiterJobId,createdByUserId:ids.collegeAdminUser,
+    proposerParty:"TPO",targetParty:"COMPANY",mode:"ASK",field:"PAY",
+    reason:"The placement cell needs the salary breakup.",
+    proposedValue:"How much of the annual CTC is fixed?",
+    status:"OPEN",
   }).onConflictDoNothing();
   process.stdout.write(
     "Verified Recruiter prototype identity, grant, drive and interview round seeded.\\n",
