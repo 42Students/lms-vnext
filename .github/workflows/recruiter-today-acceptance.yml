@@ -1,0 +1,91 @@
+name: Recruiter Today acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/recruiter-today-acceptance.yml"
+      - "src/app/(authenticated)/hr/home/**"
+      - "src/components/hr/recruiter-today-*"
+      - "src/modules/placements/hr-today-*"
+      - "src/modules/placements/recruiter-today-*"
+      - "scripts/db-e2e-prepare.ts"
+      - "tests/e2e/recruiter-today-later.spec.ts"
+      - "tests/unit/recruiter-today-*"
+      - "tests/unit/hr-today-*"
+permissions:
+  contents: read
+concurrency:
+  group: recruiter-today-acceptance-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Today projections, awaiting-TPO and Later unit acceptance
+        run: |
+          npx vitest run \
+            tests/unit/recruiter-today-headline-model.test.ts \
+            tests/unit/recruiter-today-later-model.test.ts \
+            tests/unit/recruiter-today-staged-results-model.test.ts \
+            tests/unit/hr-today-action-queue-model.test.ts \
+            tests/unit/hr-today-action-queue-scoped.test.ts
+      - name: Strict application typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      E2E_PRODUCTION_SERVER: "true"
+      E2E_CAPTURE_TODAY: "true"
+      APP_ENV: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Prepare disposable recruiter scenario
+        run: npm run db:e2e:prepare
+      - name: Ephemeral E2E authentication
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Build production Next server
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run build
+      - name: Today first-party browser journey and scoped access denial
+        run: npx playwright test tests/e2e/recruiter-today-later.spec.ts --workers=1 --retries=0
