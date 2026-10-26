@@ -36,7 +36,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("textbox",{name:"Option 2"}).fill("Stack");
   await page.getByRole("textbox",{name:"Due date (IST, required before publishing)"}).fill(new Date(Date.now()+14*86400000).toISOString().slice(0,16));
   await page.getByRole("checkbox",{name:"Publish now"}).uncheck();
-  page.once("dialog",dialog=>dialog.accept());
   const createResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Create draft"}).click();
   const created=await createResponse;
@@ -48,9 +47,10 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.reload();
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" (DRAFT)"});
   await expect(page.getByRole("textbox",{name:"Prompt"})).toHaveValue("FIFO is?");
+  // Editing must hydrate the saved answer key, not turn every answer false.
+  await expect(page.getByRole("checkbox",{name:"Correct"}).first()).toBeChecked();
   await page.getByRole("textbox",{name:"Quiz title"}).fill(title+" revised");
   await page.getByRole("textbox",{name:"Prompt"}).fill("FIFO structure?");
-  page.once("dialog",dialog=>dialog.accept());
   const editResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Save draft"}).click();
   const edited=await editResponse;
@@ -65,7 +65,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.reload();
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" revised (DRAFT)"});
   await expect(page.getByRole("textbox",{name:"Prompt"})).toHaveValue("FIFO structure?");
-  page.once("dialog",dialog=>dialog.accept());
   const publishResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Publish",exact:true}).click();
   const published=await publishResponse;
@@ -81,19 +80,19 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(card.getByText("This Section",{exact:true}).first()).toBeVisible();
   // The prototype-first card preserves advanced actions behind a disclosure.
   await card.locator("summary").filter({hasText:/^Actions/}).click();
-  await card.getByRole("button",{name:"Review attempts"}).click();
-  const drawer=page.getByRole("dialog",{name:"Quiz attempts"});
+  await card.getByRole("button",{name:"Submissions"}).click();
+  const drawer=page.getByRole("dialog",{name:title+" revised — Submissions"});
   await expect(drawer).toBeVisible();
-  await expect(drawer.getByText("No Quiz attempts have been submitted for this Section yet.")).toBeVisible();
-  await page.getByRole("button",{name:"Close drawer"}).click();
+  await expect(drawer.getByText("No submissions yet")).toBeVisible();
+  await drawer.getByRole("button",{name:"Close dialog"}).click();
   await card.getByRole("link",{name:"View Report"}).click();
   await expect(page).toHaveURL(new RegExp("/teacher/report/quiz/"+id+"\\?deliveryId="+deliveryId));
 
   await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" revised (PUBLISHED)"});
-  page.once("dialog",dialog=>dialog.accept());
   const closeResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Close quiz"}).click();
+  await page.getByRole("alertdialog").getByRole("button",{name:"Confirm"}).click();
   const closed=await closeResponse;
   expect(closed.status()).toBe(200);
   expect((await closed.json()).quiz?.status).toBe("CLOSED");
@@ -102,13 +101,18 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("combobox",{name:"Status"}).selectOption("CLOSED");
   await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
   const closedCard=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
-  await closedCard.locator("summary").filter({hasText:/^Actions/}).click();
-  await expect(closedCard.getByRole("button",{name:"Publish results"})).toBeVisible();
-  page.once("dialog",dialog=>dialog.accept());
+  await closedCard.getByRole("button",{name:"Submissions"}).click();
+  const resultsDrawer=page.getByRole("dialog",{name:title+" revised — Submissions"});
+  await expect(resultsDrawer.getByRole("button",{name:"Release results"})).toBeVisible();
   const resultsResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname==="/api/courses/quizzes/"+id+"/faculty-results");
-  await closedCard.getByRole("button",{name:"Publish results"}).click();
+  await resultsDrawer.getByRole("button",{name:"Release results"}).click();
+  await page.getByRole("alertdialog",{name:"Release quiz results"}).getByRole("button",{name:"Release results"}).click();
   expect((await resultsResponse).status()).toBe(200);
-  await expect(closedCard.getByRole("button",{name:"Hide results"})).toBeVisible();
+  await page.reload();
+  await page.getByRole("combobox",{name:"Status"}).selectOption("CLOSED");
+  await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
+  await expect(page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})})
+   .getByText("Results published",{exact:false})).toBeVisible();
 
   // Metadata-only edits remain legal after publication/close; quiz questions
   // and submitted answer snapshots must remain unchanged.
@@ -117,20 +121,21 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
   const metadataCard=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
   await metadataCard.locator("summary").filter({hasText:/^Actions/}).click();
-  await metadataCard.getByRole("button",{name:"Edit",exact:true}).click();
+  await metadataCard.getByRole("button",{name:"Edit quiz "+title+" revised"}).click();
   const metadataDrawer=page.getByRole("dialog",{name:"Edit Quiz"});
   await expect(metadataDrawer).toBeVisible();
   await metadataDrawer.getByRole("textbox",{name:"Title"}).fill(title+" metadata");
-  page.once("dialog",dialog=>dialog.accept());
   const metadataResponse=page.waitForResponse(r=>r.request().method()==="PATCH"&&new URL(r.url()).pathname==="/api/courses/quizzes/"+id);
   await metadataDrawer.getByRole("button",{name:"Save changes"}).click();
+  await page.getByRole("alertdialog").getByRole("button",{name:"Save changes"}).click();
   const metadata=await metadataResponse;
   expect(metadata.status()).toBe(200);
   await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" metadata (CLOSED)"});
-  page.once("dialog",dialog=>dialog.accept());
   const archiveResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
+  await page.locator("summary").filter({hasText:/^Archive quiz/}).click();
   await page.getByRole("button",{name:"Archive quiz"}).click();
+  await page.getByRole("alertdialog").getByRole("button",{name:"Confirm"}).click();
   const archived=await archiveResponse;
   expect(archived.status()).toBe(200);
   expect((await archived.json()).quiz?.status).toBe("ARCHIVED");
