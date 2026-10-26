@@ -84,7 +84,7 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
     lastActivityAt:"2026-10-25T06:00:00Z",ownerName:"Officer B"}],
    selectedId:"lead-1",onSelect:()=>{},now:new Date("2026-10-26T08:00:00Z"),
   }));
-  for(const heading of ["Recruiter","Company","Where you are","Next step","Last activity","Handled by"]){
+  for(const heading of ["Recruiter","Company","Where you are","Next step","Last contact","Handled by"]){
    expect(html).toContain(">"+heading+"</th>");
   }
   for(const signal of ["Recruiter A","Campus Lead","Test Employer","Officer B","Follow up · 3 days late"]){
@@ -109,6 +109,7 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
   expect(html).not.toContain(">Company</th>");
   expect(html).not.toContain(">Handled by</th>");
   expect(html).toContain("3 columns");
+  expect(source("src/modules/placements/tpo-crm-service.ts")).toContain("lastContactAt:contactByLead.get(row.id)?.toISOString()??null");
  });
  it("puts screenshot toolbar at the front while protecting advanced CRM and bulk actions",()=>{
   const workspace=source("src/components/tpo/recruiter-leads-workspace.tsx");
@@ -128,6 +129,17 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
   expect(workspace).toContain('const [needsExpanded,setNeedsExpanded]=useState(false)');
   expect(workspace).toContain('focusedRecruiterId===null?sortedVisible[0]??null:');
   expect(page).not.toContain("TpoFourEntitySearch");
+ });
+ it("does not mistake a note for a recruiter contact",()=>{
+  const html=renderToStaticMarkup(createElement(TpoRecruiterPrototypeRoster,{
+    rows:[{id:"lead-activity",name:"One contact",designation:null,companyName:"Sample Employer",
+      stage:"CONTACTED",nextFollowupAt:null,lastActivityAt:"2026-10-26T07:00:00Z",
+      lastContactAt:"2026-10-20T07:00:00Z",ownerName:null}],
+    selectedId:null,onSelect:()=>{},now:new Date("2026-10-27T07:00:00Z"),
+  }));
+  expect(html).toContain(">Last contact</th>");
+  expect(html).toContain("20 Oct");
+  expect(html).not.toContain("26 Oct");
  });
  it("keeps advanced grid, bulk actions and recruiter detail behind the compact screenshot table",()=>{
   const roster=source("src/components/tpo/recruiter-leads-workspace.tsx");
