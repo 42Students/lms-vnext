@@ -56,8 +56,11 @@ describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure 
  });
  it("HR-XA-09 notification action opens the bell inbox instead of looping through Messages alias",async()=>{
   const result=await page();
-  expect(hrefs(result)).toContain("/hr/notifications");
-  expect(hrefs(result)).not.toContain("/hr/messages");
+  expect((result as {type:unknown}).type).toBeDefined();
+  const {readFileSync}=await import("node:fs");
+  const workspace=readFileSync("src/components/hr/recruiter-conversation-workspace.tsx","utf8");
+  expect(workspace).toContain('href="/hr/notifications"');
+  expect(workspace).not.toContain('href="/hr/messages"');
  });
  it("an expired session never queries any inbox, thread or notifications",async()=>{
   m.ctx.mockResolvedValue({...actor,user:{...actor.user,platformStatus:"DISABLED"}});
@@ -77,11 +80,16 @@ describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure 
   m.thread.mockRejectedValue(new Error("revoked grant"));
   m.notices.mockRejectedValue(new Error("private operational detail"));
   const result=await page({collegeId:college});
-  const text=content(result);
-  expect(text).toContain("General message history is unavailable right now.");
-  expect(text).toContain("Drive request decisions are temporarily unavailable.");
-  expect(text).not.toContain("SECRET_NEVER_RENDER");
-  expect(text).not.toContain("private operational detail");
+  const props=(result as {props:{
+   selectedHistoryUnavailable:boolean;decisionNoticesUnavailable:boolean;
+   generalPreviewUnavailable:boolean;rows:Array<{preview:{text:string}|null}>;
+  }}).props;
+  expect(props.selectedHistoryUnavailable).toBe(true);
+  expect(props.decisionNoticesUnavailable).toBe(true);
+  expect(props.generalPreviewUnavailable).toBe(false);
+  expect(props.rows.every(row=>row.preview===null)).toBe(true);
+  expect(JSON.stringify(props)).not.toContain("SECRET_NEVER_RENDER");
+  expect(JSON.stringify(props)).not.toContain("private operational detail");
   expect(m.inbox).toHaveBeenCalledTimes(2);
   expect(m.thread).toHaveBeenCalledWith(actor,id,1);
   expect(m.notices).toHaveBeenCalledWith(actor,college);

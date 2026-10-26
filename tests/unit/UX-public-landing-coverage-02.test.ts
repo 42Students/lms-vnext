@@ -40,9 +40,10 @@ describe("chat-16 public route responsive and accessible state coverage",()=>{
   expect(page).toContain("getPublicCompanyApplicantShare");
   expect(page).toContain('result.kind==="CODE_REQUIRED"');
   const code=read("src/app/company-share/[token]/share-code-form.tsx");
-  expect(code).toContain('type="text" inputMode="numeric"');
+  expect(code).toContain('type="text"');
+  expect(code).toContain('inputMode="text"');
   expect(code).toContain("required minLength={6} maxLength={6}");
-  expect(code).toContain('pattern="[0-9]{6}"');
+  expect(code).toContain('pattern="[A-Za-z0-9]{6}"');
   expect(code).toContain("disabled={!valid}");
   expect(page).toContain("<DataTable");
   expect(page).toContain("empty={<div role=\"status\"");

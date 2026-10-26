@@ -24,13 +24,13 @@ beforeEach(()=>{
 });
 
 describe("chat-16 public company-share page private applicant and access states",()=>{
- it("UX-chat16-company-share-16 requires a separate six-digit access proof before rendering applicants",async()=>{
+ it("UX-chat16-company-share-16 requires the six-character access proof before rendering applicants",async()=>{
   const html=renderToStaticMarkup(createElement(ToastProvider,null,await CompanySharePage(request())));
   expect(metadata.robots).toEqual({index:false,follow:false});
-  expect(html).toContain("Enter the one-time code the placement cell sent you.");
-  expect(html).toContain("6-digit code");
+  expect(html).toContain("Enter the six-character code the placement cell sent you.");
+  expect(html).toContain("Enter the code from your placement cell");
   expect(html).toContain('method="post"');
-  expect(html).toContain('pattern="[0-9]{6}"');
+  expect(html).toContain('pattern="[A-Za-z0-9]{6}"');
   expect(html).not.toContain("Shared applicants</caption>");
   expect(getPublicCompanyApplicantShare).toHaveBeenCalledWith(
    token,1,"VIEW","",null,

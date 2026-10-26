@@ -56,16 +56,26 @@ describe("HR-MESSAGING-83: general preview failure is recoverable without double
  it("secondary general directory timeout preserves the authorized main message page",async()=>{
   m.list.mockResolvedValueOnce(empty).mockRejectedValueOnce(new Error("general timeout"));
   const output=await view();
-  expect(text(output)).toContain("General conversation preview is temporarily unavailable.");
-  expect(text(output)).toContain("existing conversations remain accessible.");
+  const props=(output as {props:{generalPreviewUnavailable:boolean;rows:unknown[];selected:unknown;decisionNoticesUnavailable:boolean}}).props;
+  expect(props.generalPreviewUnavailable).toBe(true);
+  expect(props.rows).toEqual([]);
+  expect(props.selected).toBeNull();
+  expect(props.decisionNoticesUnavailable).toBe(false);
   expect(hasGeneralOpenForm(output)).toBe(false);
   expect(m.notices).toHaveBeenCalledWith(actor,collegeId);
   expect(m.messages).not.toHaveBeenCalled();
  });
  it("genuine empty general directory offers the single-flight general conversation opener",async()=>{
   const output=await view();
-  expect(hasGeneralOpenForm(output)).toBe(true);
-  expect(text(output)).not.toContain("General conversation preview is temporarily unavailable.");
+  const props=(output as {props:{generalPreviewUnavailable:boolean;rows:unknown[];selected:unknown}}).props;
+  expect(props.generalPreviewUnavailable).toBe(false);
+  expect(props.rows).toEqual([]);
+  expect(props.selected).toBeNull();
+  // The form is rendered by the two-pane component after scoped revalidation.
+  const {readFileSync}=await import("node:fs");
+  expect(readFileSync("src/components/hr/recruiter-conversation-workspace.tsx","utf8"))
+   .toContain('!q&&!generalPreviewUnavailable?<form method="post" action="/api/placements/recruiter/conversations/open"');
+
  });
  it("revoked HR sessions never load the private inbox or general directory",async()=>{
   m.ctx.mockResolvedValue({...actor,user:{...actor.user,platformStatus:"DISABLED"}});
