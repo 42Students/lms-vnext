@@ -82,8 +82,13 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   notContacted={notContacted}
   replies={replies} replyTotal={replyTotal}
   hasMore={due.value.total>due.value.rows.length||next.value.total>next.value.rows.length}/>;
+ const leadContexts=leadsResult.status==="fulfilled"&&leadsResult.value!==null?
+  leadsResult.value.map(lead=>({
+   id:lead.id,stage:lead.stage,designation:lead.designation,
+   emailNorm:lead.emailNorm,ownerName:lead.ownerName,
+  })):[];
  return <TpoCompaniesToday scope={scope} rows={rows} nowIso={now.toISOString()}
-  notContacted={notContacted}
+  notContacted={notContacted} leadContexts={leadContexts}
   initialFollowupId={typeof params.lead==="string"?params.lead:undefined}
   unreadMessages={unread.status==="fulfilled"?unread.value:null}
   replies={replies} replyTotal={replyTotal}
