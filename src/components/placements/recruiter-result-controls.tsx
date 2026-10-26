@@ -414,9 +414,9 @@ export function RecruiterResultControls({
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </Button></div>
 
-                  <details className="min-w-0 border-t border-border py-2"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-body md:min-h-9">Outcome shortcuts</summary><p className="pb-2 text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</p><div className="flex min-w-0 flex-wrap gap-2">
+                  <details open={Boolean(focusApplicantId)} className="min-w-0 border-t border-border py-2"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-body md:min-h-9">Outcome shortcuts</summary><p className="pb-2 text-muted-foreground">{focusApplicantId?"S Keep · H Hold · R Not selected · A Absent · Z Undo (draft only)":"S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)"}</p><div className="flex min-w-0 flex-wrap gap-2">
                   {([
-                    ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
+                    ["PASS",focusApplicantId?"Keep":"Pass"],["HOLD",focusApplicantId?"Hold":"Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
                   ] as const).map(([outcome,label])=><Button key={outcome} type="button" className="min-h-11 md:min-h-9"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
                     disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
