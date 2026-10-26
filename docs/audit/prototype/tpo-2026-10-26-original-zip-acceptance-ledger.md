@@ -65,11 +65,11 @@ Changes: move strong outcome-taking workflow into an accessible advanced disclos
 
 ### Still open — do not claim page 01 accepted
 
-1. Prototype has a genuine **new company verification/trust task** and other non-follow-up task types; current queue still primarily lists persisted CRM follow-ups and a limited inbox preview. A company trust decision needs verified relationship lookup and authorization, never inferred from a recruiter note.
+1. A new real **unverified canonical company** attention section now exists (`fb7aa344c27997fc0e44bb819053f886a7b7545c`, `b9ee1e047ae0fe30d483cd02acd4f733945e6a0b`, `ea25193ea09ec8c50fd32f4a8931c7ff707ac2f7`, `8b3904004308dc2ddf47342227e1bcf442337ff9`, `88728b506b6c4fdde730107ee8292aed96707d78`). It requires a linked recruiter, an unverified canonical employer, and active college relationship; explicitly distinguishes platform verification from local trust, and uses read-only authorized company-review links. **Still missing** selected-company detail inside Today, persisted invite/access-deadline attention, and the screenshot's mixed task sorting and 'Verify' workflow; do not confuse a review link with completing global verification.
 2. Today feed paginates (50 ranked follow-ups; limited inbox preview), so a complete count and exact sample ordering cannot be claimed.
 3. Full real-data browser interaction test, failure cases, and same-viewport screenshot diff have **not been run/accepted**.
 4. Screen 01 remains **partially implemented, visual acceptance open** until task-kind completeness and interactive acceptance are established.
-5. TPO render tests in `tests/unit/tpo-today-prototype-views.test.ts` were committed but CI outcome must be checked on the exact containing SHA.
+5. TPO source CI passed for the initial Today layout at `12ac7f7f03a5753de578dfc964eb928c97f66512` (Actions run 40283050546); focused CI covering later recruiter and verification changes must be checked on their exact commits. Browser/pixel matching remains untested.
 
 ## Screen 02 — Companies › Recruiters (source image visually inspected)
 
