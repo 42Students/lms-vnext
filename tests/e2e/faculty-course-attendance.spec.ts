@@ -71,7 +71,8 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   await page.getByRole("alertdialog",{name:"Submit Attendance"}).getByRole("button",{name:"Confirm"}).click();
   const corrected=await correction;
   expect(corrected.status(),await corrected.text()).toBe(200);
-  await advanced.getByRole("radio",{name:"Attendance report"}).click();
+  await expect(page.getByRole("alertdialog")).toHaveCount(0);
+  await advanced.getByText("Attendance report",{exact:true}).click();
   await expect(page.getByRole("heading",{name:"Monthly class health"})).toBeVisible();
   await expect(page.getByRole("region",{name:"Monthly class health"})).toContainText("0%");
   await expect(page.getByRole("region",{name:"Attendance threshold guidance"})).toContainText("below guidance");
