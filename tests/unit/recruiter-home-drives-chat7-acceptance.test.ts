@@ -53,7 +53,7 @@ expect(text).toContain("Save unsent draft");
 it("REC-home-drives-35 preserves the verified recruiter drive behavior",()=>{const text=src("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
 expect(text).toContain("recruiterDriveProgress");
 expect(text).toContain("recruiterDriveProgressSteps");
-expect(src("src/modules/placements/recruiter-drive-progress-model.ts")).toContain('"Offers","Joining"');
+expect(src("src/modules/placements/recruiter-drive-progress-model.ts")).toContain('"Offers","Completed"');
 });
 it("REC-home-drives-36 preserves the verified recruiter drive behavior",()=>{const text=src("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
 expect(text).toContain("eligibleBranches");

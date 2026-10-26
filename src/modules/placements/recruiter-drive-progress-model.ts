@@ -3,13 +3,15 @@
 export type RecruiterDriveProgressInput={
  shared:number; active:number; withdrawn:number;
  issuedOffers:number; acceptedOffers:number;
- totalRounds:number;completedRounds:number;readOnly:boolean;
+ totalRounds:number;completedRounds:number;readOnly:boolean;closed?:boolean;
 };
-const STEPS=["Requested","Approved","Applications","Rounds","Offers","Joining"] as const;
+const STEPS=["Requested","Approved","Applications","Rounds","Offers","Completed"] as const;
 export function recruiterDriveProgressSteps(input:RecruiterDriveProgressInput){
  // Published and closed jobs necessarily passed request/approval; the current
  // stage comes only from persisted employer-visible activity, not invented rows.
- const index=input.acceptedOffers>0?5:input.issuedOffers>0?4:
+ // A student accepting an offer does not complete the company's drive.
+ // Only the persisted CLOSED lifecycle may reach Completed.
+ const index=input.closed?5:input.acceptedOffers>0||input.issuedOffers>0?4:
   input.totalRounds>0&&input.shared>0?3:2;
  return STEPS.map((label,i)=>({
   label,state:(i<index?"COMPLETE":i===index?"CURRENT":"UPCOMING") as

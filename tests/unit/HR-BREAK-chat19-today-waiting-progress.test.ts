@@ -43,7 +43,7 @@ describe("HR-BREAK-TODAY-PROGRESS-39 employer-visible next steps and no false co
  it("starts in Applications without claiming offers or joining completed",()=>{
   const steps=recruiterDriveProgressSteps(base);
   expect(steps.map(item=>item.label)).toEqual([
-   "Requested","Approved","Applications","Rounds","Offers","Joining",
+   "Requested","Approved","Applications","Rounds","Offers","Completed",
   ]);
   expect(steps.map(item=>item.state)).toEqual([
    "COMPLETE","COMPLETE","CURRENT","UPCOMING","UPCOMING","UPCOMING",
@@ -55,12 +55,15 @@ describe("HR-BREAK-TODAY-PROGRESS-39 employer-visible next steps and no false co
   expect(recruiterDriveProgressSteps({...base,totalRounds:2,shared:5})[3]?.state)
    .toBe("CURRENT");
  });
- it("does not imply Joining until an offer is actually accepted",()=>{
+ it("does not claim that issuing or accepting offers closes the drive",()=>{
   const issued=recruiterDriveProgressSteps({...base,issuedOffers:1});
   expect(issued[4]?.state).toBe("CURRENT");
   expect(issued[5]?.state).toBe("UPCOMING");
   const accepted=recruiterDriveProgressSteps({...base,issuedOffers:2,acceptedOffers:1});
-  expect(accepted[5]?.state).toBe("CURRENT");
+  expect(accepted[4]?.state).toBe("CURRENT");
+  expect(accepted[5]?.state).toBe("UPCOMING");
+  const closed=recruiterDriveProgressSteps({...base,closed:true,readOnly:true});
+  expect(closed[5]?.state).toBe("CURRENT");
  });
  it.each([
   [{...base,readOnly:true},"Hire again",null],

@@ -26,7 +26,7 @@ describe("HR-BREAK-drives-01: recruiter requests, retries and stale tabs",()=>{
   expect(result.find(row=>row.id==="7")?.title).toBe("Hiring request");
   expect(requests).toHaveLength(12);
  });
- it("a drive cannot move to joining or offers based on unshared/unaccepted activity",()=>{
+ it("a drive cannot reach Completed on an accepted offer alone",()=>{
   const stages=recruiterDriveProgressSteps(state);
   expect(stages.filter(row=>row.state==="CURRENT").map(row=>row.label)).toEqual(["Applications"]);
   expect(recruiterDriveProgressSteps({...state,shared:3,totalRounds:2})
@@ -34,7 +34,9 @@ describe("HR-BREAK-drives-01: recruiter requests, retries and stale tabs",()=>{
   expect(recruiterDriveProgressSteps({...state,issuedOffers:1})
    .filter(row=>row.state==="CURRENT")[0]?.label).toBe("Offers");
   expect(recruiterDriveProgressSteps({...state,acceptedOffers:1})
-   .filter(row=>row.state==="CURRENT")[0]?.label).toBe("Joining");
+   .filter(row=>row.state==="CURRENT")[0]?.label).toBe("Offers");
+  expect(recruiterDriveProgressSteps({...state,closed:true,readOnly:true})
+   .filter(row=>row.state==="CURRENT")[0]?.label).toBe("Completed");
   expect(recruiterDriveNextAction({...state,readOnly:true}).label).toBe("Hire again");
   expect(recruiterDriveNextAction({...state,issuedOffers:1}).tab).toBe("offers");
   expect(recruiterDriveNextAction(state).tab).toBe("applicants");

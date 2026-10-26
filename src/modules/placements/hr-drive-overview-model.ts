@@ -19,5 +19,6 @@ export function buildHrDriveOverview(input:HrDriveOverviewInput,now:Date) {
   deadlineState:date===null?"NOT_SET":date.getTime()<now.getTime()?"PASSED":
    date.getTime()<=now.getTime()+7*86400000?"DUE_SOON":"UPCOMING",
   readOnly:input.job.status!=="PUBLISHED",
+  closed:input.job.status==="CLOSED",
  };
 }
