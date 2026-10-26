@@ -54,8 +54,8 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByText("Advanced report analysis, full student records and grading tools",{exact:true}).click();
   await expect(page.getByRole("heading",{name:"Submission timing"})).toBeVisible();
   await expect(page.getByRole("link",{name:"Filter submissions and export"})).toBeVisible();
-  await expect(page.getByRole("link",{name:"Download CSV"})).toBeVisible();
-  const csvLink=page.getByRole("link",{name:"Download CSV"});
+  await expect(page.getByRole("link",{name:"Download current faculty report as CSV"})).toBeVisible();
+  const csvLink=page.getByRole("link",{name:"Download current faculty report as CSV"});
   await expect(csvLink).toHaveAttribute("href",new RegExp("/api/courses/faculty/reports/assignment/"+id+"/csv"));
   const pending=page.waitForEvent("download");
   await csvLink.click();
