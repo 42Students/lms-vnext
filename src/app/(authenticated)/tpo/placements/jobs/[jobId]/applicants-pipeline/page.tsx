@@ -4,6 +4,7 @@ import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {Suspense} from "react";
 import {TpoApplicationsSpreadsheet} from "@/components/tpo/tpo-applications-spreadsheet";
+import {TpoDriveStudentsPrototypeReview} from "@/components/tpo/tpo-drive-students-prototype-review";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 import {can} from "@/modules/permissions/policy";
 import { redirect } from "next/navigation";
@@ -122,6 +123,8 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   </p>
   <p role="status" className="text-sm text-body leading-[22px]">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
+  <TpoDriveStudentsPrototypeReview rows={data.rows} jobId={jobId} jobStatus={data.job.status}
+    totalMatching={data.totalMatching} counts={data.counts}/>
   {data.rows.length > 0 && context.membership &&
     can(context, "placements.manage", {collegeId: context.membership.collegeId}) ?
     <TpoBulkActionPanel
