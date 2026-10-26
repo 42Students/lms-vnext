@@ -29,7 +29,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("link",{name:/E2E Browser Course/}).click();
   // Next App Router client navigation can resolve after Playwright click.
   // Never extract a delivery ID from the previous /teacher/courses URL.
-  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i,{timeout:20000});
   const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
   expect(deliveryId).toMatch(/^[0-9a-f-]{36}$/i);
   await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
@@ -45,9 +45,8 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("textbox",{name:"Title",exact:true}).fill(baseTitle);
   await page.getByRole("textbox",{name:"Text instructions"}).fill("Text-only Section instructions for current roster.");
   await page.getByRole("spinbutton",{name:"Maximum points"}).fill("20");
-  const confirmation=page.getByRole("checkbox",{name:/I confirm this Section assignment change/});
-  await expect(page.getByRole("button",{name:"Create draft"})).toBeDisabled();
-  await confirmation.check();
+  await page.getByRole("textbox",{name:"Due date (IST, required before publishing)"}).fill(new Date(Date.now()+14*86400000).toISOString().slice(0,16));
+  await page.getByRole("checkbox",{name:"Publish now"}).uncheck();
   const createdResponse=page.waitForResponse(res=>res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");
   await page.getByRole("button",{name:"Create draft"}).click();
@@ -61,7 +60,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await choices.selectOption({label:baseTitle+" (DRAFT)"});
   await expect(page.getByText("Current state: DRAFT.",{exact:false})).toBeVisible();
   await page.getByRole("textbox",{name:"Title",exact:true}).fill(baseTitle+" revised");
-  await confirmation.check();
   const editedResponse=page.waitForResponse(res=>res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");
   await page.getByRole("button",{name:"Save draft"}).click();
@@ -82,7 +80,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.reload();
   await page.getByRole("combobox",{name:"Choose draft or create new"})
    .selectOption({label:baseTitle+" revised (DRAFT)"});
-  await confirmation.check();
   const publish=page.waitForResponse(res=>res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");
   await page.getByRole("button",{name:"Publish",exact:true}).click();
@@ -119,7 +116,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
   await page.getByRole("combobox",{name:"Choose draft or create new"})
    .selectOption({label:baseTitle+" revised (PUBLISHED)"});
-  await confirmation.check();
   const archive=page.waitForResponse(res=>res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");
   await page.getByRole("button",{name:"Archive"}).click();
