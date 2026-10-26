@@ -8,7 +8,10 @@ const workspace = readFileSync(join(process.cwd(),"src/components/projects/proje
 const reopen = readFileSync(join(process.cwd(),"src/components/projects/project-delivery-reopen-control.tsx"),"utf8");
 describe("chat-11 attendance and final-delivery recovery",()=>{
   it("FAC-attendance-grades-03 has an atomic-failure explanation and deliberate persisted-roster re-read",()=>{
-    expect(attendance).toContain("No attendance marks were saved.");
+    expect(attendance).toContain("facultyAttendanceWriteNeedsReload(response.status)");
+    expect(attendance).toContain("setWriteUnknown(true)");
+    expect(attendance).toContain("The attendance save may have committed. Reload this session before another submission.");
+    expect(attendance).toContain("Attendance was not saved.");
     expect(attendance).toContain("Attendance saves are atomic:");
     expect(attendance).toContain("Reload saved roster");
     expect(attendance).toContain('title="Reload saved attendance?"');
