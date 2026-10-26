@@ -251,6 +251,49 @@ export function TpoCompaniesToday({
      {attentionIncomplete?" · more may exist":""}</footer>
    </section>
    <section className={styles.detail} aria-label="Selected">
+    {selectedCompany?<div className={styles.companyDetail} data-testid="tpo.today.company-detail">
+     <div className={styles.personHead}>
+      <div className={styles.identity}>
+       <div className={styles.avatar} aria-hidden="true">{selectedCompany.recruiterName.trim().split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()??"").join("")}</div>
+       <div><h2>{selectedCompany.recruiterName}</h2>
+        <p className={styles.sub}>{selectedCompany.companyName} · Recruiter account linked</p></div>
+      </div>
+      <div className={styles.personActions}>
+       <Link href={"/tpo/recruiters/"+encodeURIComponent(selectedCompany.recruiterId)} className={styles.secondary}>Open recruiter</Link>
+       <Link href={"/tpo/companies/"+encodeURIComponent(selectedCompany.companyId)} className={styles.secondary}>Open company</Link>
+      </div>
+     </div>
+     <div className={styles.context}>
+      <span className={styles.eyebrow}>COMPANY IDENTITY · NOT VERIFIED</span>
+      <strong>{selectedCompany.companyName} is not yet platform-verified. Review the company before trusting it for your college.</strong>
+     </div>
+     <p className={styles.sub}>A linked recruiter account is not proof of company identity. Platform verification and this college's trust decision are separate.</p>
+     <div className={styles.facts}>
+      <div><span className={styles.eyebrow}>PLATFORM VERIFICATION</span><p>Not verified by 42</p></div>
+      <div><span className={styles.eyebrow}>COLLEGE TRUST</span><p>College trust: {selectedCompany.collegeTrusted?"Trusted":"Not trusted"}</p></div>
+     </div>
+     <div className={styles.actions}>
+      <Link href={"/tpo/companies/"+encodeURIComponent(selectedCompany.companyId)} className={styles.primary}>Review company trust on its record</Link>
+      <button type="button" onClick={laterAndNext} className={styles.secondary}>Later &amp; next</button>
+     </div>
+     <p className={styles.helper}>Reviewing this company does not automatically verify it or change recruiter access. Later &amp; next changes selection only.</p>
+    </div>:selectedReply?<div className={styles.replyDetail} data-testid="tpo.today.reply-detail">
+     <div className={styles.personHead}><div className={styles.identity}>
+      <div className={styles.avatar} aria-hidden="true">{selectedReply.name.trim().split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()??"").join("")}</div>
+      <div><h2>{selectedReply.name}</h2><p className={styles.sub}>{selectedReply.company??"Recruiter"} · {when(selectedReply.receivedAt)}</p></div>
+     </div></div>
+     <div className={styles.context}><span className={styles.eyebrow}>RECRUITER MESSAGE · NEEDS ANSWER</span>
+      <strong>{selectedReply.subject}</strong></div>
+     {selectedReply.preview?<p className={styles.replyBody}>{selectedReply.preview}</p>:
+      <p className={styles.sub}>Open the conversation to read the complete message.</p>}
+     {selectedReply.accessEnded?<p className={styles.warning} role="status">Recruiter access to this conversation has ended. Open history before taking any action.</p>:null}
+     <div className={styles.actions}>
+      <Link href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(selectedReply.id)}
+       className={styles.primary}>{selectedReply.accessEnded?"Open history":"Answer in Messages"}</Link>
+      <button type="button" onClick={laterAndNext} className={styles.secondary}>Later &amp; next</button>
+     </div>
+     <p className={styles.helper}>Open Messages to reply. Merely selecting this item never sends email or marks a message handled.</p>
+    </div>:null}
     {current?<><div className={styles.personHead}>
       <div className={styles.identity}><div className={styles.avatar} aria-hidden="true">{current.leadName.trim().split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()??"").join("")}</div>
        <div><h2>{current.leadName}</h2><p className={styles.sub}>{leadInfo?.designation?leadInfo.designation+" · ":""}{current.companyName??"Recruiter"}</p>
@@ -308,9 +351,9 @@ export function TpoCompaniesToday({
      <Link className={styles.link} href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)}>
        Open full recruiter history ›
      </Link>
-    </>:<div className={styles.empty}>Choose a recorded follow-up from the queue.
+    </>:!selected?<div className={styles.empty}>No recorded work is selected.
       <Link href="/tpo/recruiters">Browse recruiters ›</Link>
-     </div>}
+     </div>:null}
    </section>
   </div>
   <details className={styles.inboxExtras}><summary>Recruiter replies and messages</summary>
