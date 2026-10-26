@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/mentor-acceptance.yml"
+      - "docs/design-system/UX-GUARD-WAIVERS.json"
       - "src/modules/projects/**"
       - "src/db/schema/projects.ts"
       - "drizzle/**"
