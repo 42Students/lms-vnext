@@ -3,6 +3,7 @@ import {describe,it,expect} from "vitest";
 import {createElement} from "react";
 import {renderToStaticMarkup} from "react-dom/server";
 import {TpoRecruiterPrototypeStageRibbon} from "@/components/tpo/recruiter-prototype-stage-ribbon";
+import {tpoRecruiterFollowupSignal} from "@/modules/placements/tpo-recruiter-attention-model";
 const source=(name:string)=>readFileSync(name,"utf8");
 describe("TPO Companies / Recruiters prototype inspector",()=>{
  it("has a real selected recruiter inspector independent of bulk checkbox selection",()=>{
@@ -54,6 +55,22 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
   expect(roster).toContain('rows={rows} selected={stage} onSelect={value=>updateFilter("stage",value)}');
   expect(roster).toContain('if(kind==="stage")setStage(');
   expect(roster).toContain("filterEngageRoster(rosterRows,filters");
+ });
+
+ it("labels follow-up lateness by India-local date instead of elapsed hours",()=>{
+  const now=new Date("2026-10-26T08:00:00Z"); // 13:30 IST
+  expect(tpoRecruiterFollowupSignal("2026-10-26T01:00:00Z",now))
+    .toEqual({label:"Follow up · today",lateDays:0});
+  expect(tpoRecruiterFollowupSignal("2026-10-25T18:00:00Z",now))
+    .toEqual({label:"Follow up · 1 day late",lateDays:1});
+  expect(tpoRecruiterFollowupSignal("2026-10-23T06:00:00Z",now))
+    .toEqual({label:"Follow up · 3 days late",lateDays:3});
+  expect(tpoRecruiterFollowupSignal("2026-10-27T06:00:00Z",now))
+    .toEqual({label:"Follow up · in 1 day",lateDays:0});
+  expect(tpoRecruiterFollowupSignal(null,now))
+    .toEqual({label:"No next follow-up recorded",lateDays:0});
+  expect(tpoRecruiterFollowupSignal("not-a-date",now))
+    .toEqual({label:"Follow-up date unavailable",lateDays:0});
  });
 
 });
