@@ -35,7 +35,7 @@ test.describe("Recruiter Drive Overview: newest six-stage prototype",()=>{
   await expect(student).toBeVisible();
   await student.locator("summary").click();
   await expect(student.getByText(/Exact publication and application access are controlled by the placement cell/i)).toBeVisible();
-  await expect(page.getByRole("link",{name:"Review applicants"})).toHaveAttribute("href",/tab=applicants/);
+  await expect(page.getByRole("link",{name:"Review applicants"}).first()).toHaveAttribute("href",/tab=applicants/);
   await expectNoRawErrors(page);
  });
 });

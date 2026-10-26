@@ -25,11 +25,25 @@ test.describe("Recruiter Request Drive: real seeded workflow",()=>{
   await page.locator('[data-draft-field="ctcLpa"]').fill("9.50");
   const send=page.getByRole("button",{name:"Send for review"}).first();
   await expect(send).toBeEnabled();
-  await send.click();
-  await expect(page.getByRole("heading",{name:"Request sent"})).toBeVisible({timeout:20_000});
-  await expect(page.getByText(/placement cell will review/i)).toBeVisible();
-  await page.goto("/hr/drives?collegeId="+college+"&view=WAITING");
-  await expect(page.getByText("E2E Specialist Analyst Position",{exact:true})).toBeVisible();
+  const [response]=await Promise.all([
+   page.waitForResponse(r=>r.url().includes("/api/placements/recruiter/drives/requests")&&r.request().method()==="POST"),
+   send.click(),
+  ]);
+  const payload=await response.json() as {request?:{status?:string;id?:string;approvedJobId?:string|null};error?:string};
+  expect(response.status(),"Request API must persist the candidate, not silently fail: "+JSON.stringify(payload)).toBeGreaterThanOrEqual(200);
+  expect(response.status(),"Request API refused a valid role and pay: "+JSON.stringify(payload)).toBeLessThan(300);
+  expect(payload.request?.id).toBeTruthy();
+  expect(["REQUEST","DRAFT"]).toContain(payload.request?.status);
+  if(payload.request?.status==="REQUEST"){
+   await expect(page.getByRole("heading",{name:"Request sent"})).toBeVisible({timeout:20_000});
+   await expect(page.getByText(/placement cell will review/i)).toBeVisible();
+  }else{
+   await expect(page.getByRole("heading",{name:"Drive approved"})).toBeVisible({timeout:20_000});
+   // Even policy-approved drives start DRAFT; the TPO controls publication.
+   expect(payload.request?.approvedJobId).toBeTruthy();
+  }
+  await page.goto("/hr/drives?collegeId="+college+"&view="+(payload.request?.status==="DRAFT"?"DRAFT":"WAITING"));
+  await expect(page.getByText("E2E Specialist Analyst Position",{exact:false}).first()).toBeVisible();
   await expectNoRawErrors(page);
  });
 });
