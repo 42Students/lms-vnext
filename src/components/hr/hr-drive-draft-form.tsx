@@ -386,7 +386,7 @@ export function HrDriveDraftForm({
       ? "Approved. The placement cell sets the dates and opens it to students."
       : "Your request was saved. The placement cell will review and set the dates before it can open to students."}</p>
     <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
-      <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+(approvedJobId?"&view=DRAFT":"&view=WAITING")}
+      <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
         className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open the request</a>
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
         className="inline-flex min-h-11 w-full items-center justify-center min-[768px]:min-h-9 min-[768px]:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Go to Drives</a>
