@@ -166,6 +166,39 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
     await expect(page).toHaveURL(/\/mentor\/notifications$/);
   });
 
+  test("Ctrl+K Mentor popup selects an authorized project with keyboard, Escape and Enter",async({page,context})=>{
+    test.skip(process.env["MENTOR_E2E_SEED_PROJECT"]!=="true",
+      "Requires the disposable assigned Mentor project");
+    await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+    await page.goto("/mentor/projects");
+    await page.keyboard.press("Control+k");
+    const input=page.getByRole("combobox",{name:"Search workspace"});
+    await expect(input).toBeFocused();
+    const menu=page.getByRole("listbox",{name:"Workspace commands"});
+    await expect(menu).toBeVisible();
+    await input.press("Escape");
+    await expect(menu).toHaveCount(0);
+    await page.keyboard.press("Control+k");
+    await expect(input).toBeFocused();
+    await input.fill("E2E Mentor Acceptance Project");
+    const project=menu.getByRole("option",{
+      name:/E2E Mentor Acceptance Project/,
+    }).first();
+    await expect(project).toBeVisible({timeout:12000});
+    const href=await project.getAttribute("href");
+    expect(href).toMatch(/^\\/mentor\\/projects\\/[0-9a-f-]{36}\\?tab=overview$/i);
+    await input.press("ArrowDown");
+    await expect(project).toBeFocused();
+    await Promise.all([
+      page.waitForURL(/\\/mentor\\/projects\\/[0-9a-f-]{36}\\?tab=overview$/i,
+        {timeout:20000}),
+      project.press("Enter"),
+    ]);
+    await expect(page.getByRole("heading",{
+      name:"E2E Mentor Acceptance Project",level:1,
+    })).toBeVisible({timeout:20000});
+  });
+
   test("unified search keyboard submits a real assigned project and opens its scoped overview", async ({ page, context }) => {
     test.skip(process.env["MENTOR_E2E_SEED_PROJECT"] !== "true", "Requires dedicated persisted Mentor fixture");
     await signIn(context, "seed-shared-faculty", SEED_IDS.facultyCollegeAMembership);
