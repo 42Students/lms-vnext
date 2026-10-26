@@ -75,6 +75,20 @@ test.describe("Recruiter prototype functional journeys",()=>{
   await expectNoRawErrors(page);
  });
 
+
+ test("Drive progress and Next for you remain visible above all five prototype workspace tabs",async({page,context})=>{
+  await authenticateGracefulRole(context,"recruiter");
+  const drive="/recruiter/drives/66000000-0000-4000-8000-000000000004";
+  for(const tab of ["overview","applicants","rounds","offers","discussion"]){
+   await page.goto(drive+"?tab="+tab);
+   const banner=page.getByRole("region",{name:"Drive progress and next action"});
+   await expect(banner).toBeVisible();
+   await expect(banner.getByRole("heading",{name:"Next for you"})).toBeVisible();
+   await expect(banner.getByRole("list",{name:"Drive progress"}).locator("li")).toHaveCount(6);
+  }
+  await expectNoRawErrors(page);
+ });
+
  test("Rounds and Offers show scoped scheduling and selection workspaces",async({page,context})=>{
   await authenticateGracefulRole(context,"recruiter");
   // The fixture is an exact persisted drive. URL discovery from the default
