@@ -28,7 +28,8 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
   expect(inspector).toContain('const contactAllowed=!lead.unsubscribedAt');
   expect(inspector).toContain("contactAllowed?validContactPhone");
   expect(inspector).toContain("lead.emailNorm");
-  expect(inspector).toContain("Opted out".toLowerCase()=== "opted out"?"has opted out of outreach":"unused");
+  expect(inspector).toContain("has opted out of outreach");
+  expect(inspector).toContain('return /^\\+?[1-9]\\d{7,14}$/.test(digits)?digits:null;');
   expect(inspector).toContain('const href="/tpo/recruiters/"+encodeURIComponent(lead.id)');
   expect(inspector).toContain("Open full page");
  });
