@@ -23,8 +23,8 @@ export function TpoCompanyTrustSwitch({companyId,initialTrusted,updatedAt}:{comp
    if(typeof result.isTrusted!=="boolean"||!result.updatedAt)throw new Error("UNCONFIRMED");
    setTrusted(result.isTrusted);setVersion(result.updatedAt);
    setMessage(result.isTrusted?
-    "Trusted: their drive requests go live without review":
-    "Their drive requests come to you for review");
+    "College trust saved. Direct publishing still requires a verified company, a current recruiter grant and college policy approval.":
+    "College trust removed. Future recruiter requests must follow the current review policy.");
    router.refresh();
   }catch{setMessage("Couldn't save. Refresh and try again.");}
   finally{window.clearTimeout(timer);pending.current=false;setBusy(false);}
@@ -35,7 +35,7 @@ export function TpoCompanyTrustSwitch({companyId,initialTrusted,updatedAt}:{comp
     onChange={()=>void toggle()} aria-label="Trusted company"/>
    Trusted
   </label>
-  <p className="text-xs text-muted-foreground">Their drive requests go live without your review.</p>
+  <p className="text-xs text-muted-foreground">Trust is a college decision, not platform verification. Direct publishing also requires an active recruiter grant and college policy approval.</p>
   {message?<p role={message.startsWith("Couldn't")?"alert":"status"} className="text-sm">{message}</p>:null}
  </div>;
 }
