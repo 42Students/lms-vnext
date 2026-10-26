@@ -7,8 +7,9 @@ import type {FacultySubmissionReviewRow} from "@/modules/courses/faculty-submiss
 /** Presents the exact existing audited grading editor inline in the Faculty
  * prototype's selected-student pane, with optimistic stale-write guards intact.
  */
-export function FacultyPrototypeInlineGrader({submission,maxPoints,filesEnabled}:{
+export function FacultyPrototypeInlineGrader({submission,maxPoints,filesEnabled,nextStudentHref=null}:{
  submission:FacultySubmissionReviewRow;maxPoints:number;filesEnabled:boolean;
+ nextStudentHref?:string|null;
 }){
  const router=useRouter();
  const [current,setCurrent]=useState(submission);
@@ -18,7 +19,8 @@ export function FacultyPrototypeInlineGrader({submission,maxPoints,filesEnabled}
    filesEnabled={filesEnabled} hideSubmissionContent
    onBusyChange={setBusy} onUpdated={result=>{
     setCurrent(result);
-    router.refresh();
-   }} onRefresh={()=>router.refresh()}/>
+    if(!nextStudentHref)router.refresh();
+   }} onPublished={nextStudentHref?()=>router.push(nextStudentHref):undefined}
+   onRefresh={()=>router.refresh()}/>
  </section>;
 }
