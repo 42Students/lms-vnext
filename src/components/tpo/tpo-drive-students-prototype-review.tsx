@@ -65,6 +65,7 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
     <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
      <p className="text-xs text-muted-foreground">
       {rows.length} records on this page · {totalMatching} matching this drive's filters.
+      All across the scoped stage summary: {counts.all} applications · {counts.shortlisted} shortlisted · {counts.rejected} rejected.
       Counts here are page-scoped; complete stage totals are above.
      </p>
      <Link href={root+"/not-applied"} className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
