@@ -291,7 +291,7 @@ export function TpoCompaniesToday({
       <p className={styles.sub}>Open the conversation to read the complete message.</p>}
      {selectedReply.accessEnded?<p className={styles.warning} role="status">Recruiter access to this conversation has ended. Open history before taking any action.</p>:null}
      <div className={styles.actions}>
-      <Link href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(selectedReply.id)}
+      <Link href={"/tpo/messages?tab=recruiters&status=REPLY&thread="+encodeURIComponent(selectedReply.id)}
        className={styles.primary}>{selectedReply.accessEnded?"Open history":"Answer in Messages"}</Link>
       <button type="button" onClick={laterAndNext} className={styles.secondary}>Later &amp; next</button>
      </div>
@@ -371,7 +371,7 @@ export function TpoCompaniesToday({
        <small>{item.company??"Recruiter"} · {item.subject} · {when(item.receivedAt)}</small>
       </span>
       {item.preview?<span className={styles.replyPreview}>{item.preview}</span>:null}
-      <Link href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(item.id)}
+      <Link href={"/tpo/messages?tab=recruiters&status=REPLY&thread="+encodeURIComponent(item.id)}
         className={styles.replyAction}>{item.accessEnded?"Open history":"Answer"}</Link>
      </article>)}
     </div>
