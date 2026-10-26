@@ -271,6 +271,16 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(html).toContain("limited preview");
  });
 
+ it("does not change the selected queue item during a pending mutation, and advances only after confirmation",()=>{
+  const source=readFileSync("src/components/tpo/tpo-companies-today.tsx","utf8");
+  expect(source).toContain("if(pending||inFlight.current)return");
+  expect(source).toContain('if(!pending&&(e.key==="j"||e.key==="k"))');
+  expect(source).toContain('const nextItem=focusItems[at+1]??focusItems[at-1]??null;');
+  expect(source.indexOf('setSelectedKey(nextItem?.key??null)')).toBeGreaterThan(
+   source.indexOf('if(kind==="TOMORROW"&&!payload?.followup?.dueAt)'));
+  expect(source).toContain('expectedDueAt:current.dueAt');
+  expect(source).toContain('inFlight.current=true;setPending(true)');
+ });
  it("hides outbound contact links when the persisted CRM lead is not contactable",()=>{
   const html=renderToStaticMarkup(createElement(TpoCompaniesToday,{
    scope:"MINE",nowIso:"2026-10-26T10:00:00Z",hasMore:false,
