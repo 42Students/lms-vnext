@@ -178,7 +178,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   ...columns.filter(column=>!["student","number","batch","stage"].includes(column.key)),
   {key:"class",label:"Class",read:row=>row.classIds.map(id=>classes.find(item=>item.id===id)?.name??id).join(", ")||"Not assigned"},
  ];
- const legacyVisibleColumns=["student","number","batch","stage","afterCollege","profile","best","applications","offers"] as const;
+ const legacyVisibleColumns=["student","number","branch","stage","profile","best","applications","offers"] as const;
  const filters:TpoFilterField[]=[
   {key:"batchId",urlKey:"batchId",label:"Batch",options:[...new Map(rows.map(row=>[row.cohortId,{value:row.cohortId,label:row.cohortName+(row.fromFinishedBatch?" · From finished batch":"")}])).values()]},
   {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},

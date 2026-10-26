@@ -37,7 +37,7 @@ import {TpoStudentsDriveVisibility} from "@/components/tpo/tpo-students-drive-vi
 import { listPlacementJobs } from "@/modules/placements/job-service";
 import {tpoJourneyDrillFilters,tpoBranchDrillFilters} from "@/modules/placements/tpo-student-drill-filters-model";
 import {tpoStudentRosterClearHref} from "@/modules/placements/tpo-student-roster-clear-model";
-import {tpoStudentJourneySteps,tpoStudentJourneyGaps} from "@/modules/placements/tpo-student-journey-strip-model";
+import {tpoStudentJourneySteps,tpoStudentJourneyGaps,tpoStudentPrototypeJourneySteps,tpoStudentVerifiedSnapshotCount} from "@/modules/placements/tpo-student-journey-strip-model";
 import { can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -311,6 +311,7 @@ export default async function TpoStudentsPage({
   const programChoices=[...new Map(batchDirectory.batches.map(item=>[item.programId,item.program] as const))];
   const summary = data.summary;
   const roster = data.roster;
+  const verifiedCount=tpoStudentVerifiedSnapshotCount({expectedTotal:summary.activeLearners,rows:data.exportRows??null});
   const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
   const rosterIds=roster.items.map(row=>row.membershipId);
   const rosterVerifications=manageAllowed&&rosterIds.length?await getTpoVerificationQueue(context,{
@@ -678,16 +679,21 @@ export default async function TpoStudentsPage({
           <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Show students</Button>
         </form>
         <div role="group" aria-label="Student placement journey"
-          className="grid min-w-0 grid-cols-2 gap-2 min-[992px]:grid-cols-4">
-          {tpoStudentJourneySteps(summary).map((step,index)=>{
-            const selected=index===0?!query.journeyState&&!query.legacyStage:index===1?query.legacyStage==="REGISTERED":index===2?query.journeyState==="APPLYING":query.journeyState==="PLACED";
-            const href=index===1?scopedHref({...currentFilters,legacyStage:"REGISTERED",journeyState:undefined,page:1}):
-              scopedHref({...currentFilters,legacyStage:undefined,journeyState:index===2?"APPLYING":index===3?"PLACED":undefined,page:1});
-            return <Link role="button" aria-pressed={selected} key={step.label} href={href}
-              className={"relative flex min-h-20 min-w-0 flex-col justify-center rounded-[9px] border px-3 py-2 "+(selected?"border-primary bg-primary-subtle":"border-border bg-white hover:bg-primary-subtle")}>
-              <span className="text-xs font-semibold text-muted-foreground">{step.label}{index<3?" →":""}</span>
-              <strong className="mt-1 text-xl tabular-nums">{step.count}</strong>
-              <span className="text-xs text-muted-foreground">{step.percent}%</span>
+          className="grid min-w-0 grid-cols-2 gap-2 min-[992px]:grid-cols-5">
+          {tpoStudentPrototypeJourneySteps(summary,verifiedCount).map((step,index)=>{
+            const selected=step.key==="ELIGIBLE"?!query.journeyState&&!query.legacyStage:
+              step.key==="REGISTERED"?query.legacyStage==="REGISTERED":
+              step.key==="VERIFIED"?query.legacyStage==="VERIFIED":
+              query.journeyState===step.key;
+            const href=step.key==="REGISTERED"||step.key==="VERIFIED"?
+              scopedHref({...currentFilters,legacyStage:step.key,journeyState:undefined,page:1}):
+              scopedHref({...currentFilters,legacyStage:undefined,
+                journeyState:step.key==="APPLYING"||step.key==="PLACED"?step.key:undefined,page:1});
+            return <Link role="button" aria-pressed={selected} key={step.key} href={href}
+              className={"relative flex min-h-24 min-w-0 flex-col justify-center rounded-[9px] border px-3 py-3 "+(selected?"border-primary bg-primary-subtle":"border-border bg-white hover:bg-primary-subtle")}>
+              <span className="text-xs font-semibold text-muted-foreground">{step.label}{index<4?" →":""}</span>
+              <strong className="mt-1 text-xl tabular-nums">{step.count??"—"}</strong>
+              <span className="text-xs text-muted-foreground">{step.percent===null?"Verification total unavailable":step.percent+"% of all students"}</span>
             </Link>;
           })}
         </div>
