@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
+import {filterOwnRecruiterRequests,requestStageLabel,recruiterRequestAttentionCounts} from "@/modules/placements/recruiter-request-list-model";
 const now=new Date("2026-10-17T00:00:00.000Z");
 const rows=["REQUEST","SENT_BACK","DRAFT","REJECTED","CANCELLED"].map(status=>({
  id:status,status,draft:{title:"QA Engineer"},createdAt:now
@@ -15,4 +15,16 @@ describe("REC-home-drives-12/13 request visibility",()=>{
   expect(requestStageLabel("SENT_BACK")).toBe("Needs changes · sent back");
   expect(requestStageLabel("REQUEST")).toBe("Sent for review");
  });
+ it("does not tell recruiters their sent-back requests are awaiting the placement cell",()=>{
+  expect(recruiterRequestAttentionCounts(rows)).toEqual({
+   waitingOnCollege:2,needsRecruiterChanges:1,
+  });
+  expect(recruiterRequestAttentionCounts([{status:"SENT_BACK"}])).toEqual({
+   waitingOnCollege:0,needsRecruiterChanges:1,
+  });
+  expect(recruiterRequestAttentionCounts([])).toEqual({
+   waitingOnCollege:0,needsRecruiterChanges:0,
+  });
+ });
+
 });
