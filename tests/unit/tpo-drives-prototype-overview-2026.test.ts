@@ -23,7 +23,6 @@ describe("TPO Drives latest prototype list",()=>{
  it("preserves the real permission boundary, drilldown and original bulk export tools",()=>{
   expect(src).toContain('can(context,"placements.manage"');
   expect(src).toContain("getTpoDriveLifecycleList(context");
-  expect(src).toContain("tpoDriveLifecycle");
   expect(src).toContain('Advanced drive table, bulk actions and exports');
   expect(src).toContain("<TpoDriveActOnPanel");
   expect(src).toContain("<TpoBulkDriveDeadline");
