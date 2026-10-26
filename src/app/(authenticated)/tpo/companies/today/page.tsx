@@ -34,7 +34,8 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
  const invalidLead=params.lead!==undefined&&
   (typeof params.lead!=="string"||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.lead));
  if(!scope||invalidView||invalidLead||selectedDay===null||
-  (params.day!==undefined&&view!=="agenda"))return <section className="space-y-4">
+  (params.day!==undefined&&view!=="agenda")||
+  (params.lead!==undefined&&view!=="focus"))return <section className="space-y-4">
   <h1 className="text-2xl font-bold">Companies · Today</h1>
   <Alert tone="error">Invalid Today view, ownership or follow-up selection. Nothing was loaded.</Alert>
   <Link href="/tpo/companies/today" className="font-semibold text-link underline">Open My Work</Link>
@@ -63,6 +64,17 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   })):[];
  const replyTotal=replyResult.status==="fulfilled"&&replyResult.value.source==="RECRUITER_THREADS"
   ?replyResult.value.total:null;
+ // A valid UUID is not evidence that the task belongs to the visible
+ // authorized page. Never silently substitute its first recruiter.
+ if(view==="focus"&&typeof params.lead==="string"&&
+  !rows.some(row=>row.id===params.lead))return <section className="space-y-4">
+   <h1 className="text-2xl font-bold">Companies · Today</h1>
+   <Alert tone="warning">That follow-up is not available in the current Today preview. It may have changed or be outside the loaded queue. No other recruiter was selected.</Alert>
+   <div className="flex flex-wrap gap-4 text-sm">
+    <Link href="/tpo/follow-ups" className="min-h-11 font-semibold text-link underline">Open all follow-ups</Link>
+    <Link href="/tpo/companies/today" className="min-h-11 font-semibold text-link underline">Return to Today</Link>
+   </div>
+  </section>;
  const notContacted=leadsResult.status==="fulfilled"&&leadsResult.value!==null?
   summarizeTpoTodayNotContacted(leadsResult.value,scope,context.membership.id):null;
  if(view==="agenda"||view==="brief")return <TpoTodayAlternateViews
