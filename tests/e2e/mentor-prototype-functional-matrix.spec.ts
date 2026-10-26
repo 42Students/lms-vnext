@@ -370,6 +370,15 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   expect(meeting?.meetingUrl).toBeNull();
   expect(meeting?.agenda).toBe("Location: Lab 2\nReview team work");
   expect(meeting?.id).toMatch(/^[0-9a-f-]{36}$/i);
+  // A Learner must not be able to reschedule an existing Mentor meeting.
+  await signIn(context,"seed-learner",SEED_IDS.learnerCollegeAMembership,"LEARNER");
+  const deniedEdit=await page.request.patch(path+"/"+meeting!.id,{
+    headers:{Origin:origin},
+    data:{...window,status:"RESCHEDULED",location:"Forged room",
+      expectedUpdatedAt:meeting!.updatedAt},
+  });
+  expect(deniedEdit.status()).toBe(403);
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
   const teamResponse=await page.goto("/mentor/projects/"+projectId+"?tab=team");
   const renderedText=(await page.locator("body").innerText()).slice(0,450);
   await expect(page.getByRole("heading",{level:1,name:title}),
@@ -399,6 +408,13 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   const actual=await after.json() as {meetings:{id:string;agenda:string}[]};
   expect(actual.meetings.find(row=>row.id===meeting!.id)?.agenda)
     .toBe("Location: Room 304\nReview team work");
+  // Reopen the streamed Team view to prove the rescheduled venue is persisted
+  // in the UI, while the rejected stale and unauthorized edits are absent.
+  await page.reload();
+  await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
+  await expect(page.getByText("Room 304",{exact:false}).first()).toBeVisible();
+  await expect(page.locator("body")).not.toContainText("Forged room");
+  await expect(page.locator("body")).not.toContainText("Wrong room");
  });
 
  test("a learner cannot open any Mentor route, including deep-linked project tabs",async({page,context})=>{
