@@ -32,6 +32,7 @@ import {getRecruiterSelfProfile} from "@/modules/placements/recruiter-profile-se
 import {recruiterTodayGreeting} from "@/modules/placements/recruiter-today-greeting-model";
 import {recruiterTodayHasDriveHistory} from "@/modules/placements/recruiter-today-headline-model";
 import {recruiterTodayWaitingRequests} from "@/modules/placements/recruiter-today-waiting-model";
+import {listRecruiterTodayStagedResultsWaiting} from "@/modules/placements/recruiter-today-staged-results-service";
 import {recruiterTodayWeekEvents} from "@/modules/placements/recruiter-today-week-events-model";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
@@ -163,10 +164,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const requestsResult=await listOwnRecruiterDriveRequests(context,selectedId)
    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   const requests=requestsResult.ok?requestsResult.value:[];
-  const [changeResult,slotsResult,offersResult]=await Promise.allSettled([
+  const [changeResult,slotsResult,offersResult,stagedResult]=await Promise.allSettled([
     listRecruiterTodayChangeRequests(selectedId,collegeJobs.map(row=>row.job.id)),
     listRecruiterTodayRoundsNeedingSlots(selectedId,collegeJobs.map(row=>row.job.id),now),
     listRecruiterTodayOfferActions(selectedId,collegeJobs.map(row=>row.job.id)),
+    listRecruiterTodayStagedResultsWaiting(context,selectedId,collegeJobs.map(row=>row.job.id)),
   ]);
   const changeRequests=changeResult.status==="fulfilled"?changeResult.value:[];
   const roundsNeedingSlots=slotsResult.status==="fulfilled"?slotsResult.value:[];
@@ -184,7 +186,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   // Pending formal requests count as drives, even before publication.
   const requestCount=requestsResult.ok?requests.length:null;
   const otherSignalsUnavailable=!requestsResult.ok||changeResult.status==="rejected"||
-   slotsResult.status==="rejected"||offersResult.status==="rejected";
+   slotsResult.status==="rejected"||offersResult.status==="rejected"||
+   stagedResult.status==="rejected";
   const waitingRequests=recruiterTodayWaitingRequests(requests);
   const weekEvents=recruiterTodayWeekEvents({events:calendar.events,resultsDue:dueResults,allowedJobs:collegeJobs.map(row=>row.job.id),now});
   let profile: Awaited<ReturnType<typeof getRecruiterSelfProfile>>;
@@ -211,6 +214,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     ...waitingRequests.filter(item=>item.status==="REQUEST").map(item=>({
       id:"request:"+item.id,title:item.title,detail:"Sent for placement-cell review",
     })),
+    ...(stagedResult.status==="fulfilled"?stagedResult.value:[]),
     ...(conversationSignals?.waiting??[]).map(item=>({
       id:"conversation:"+item.id,title:item.label,
       detail:"Last message from you; a reply has not been confirmed.",href:item.href,
@@ -230,7 +234,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         ...(!requestsResult.ok?["Drive requests"]:[]),
         ...(changeResult.status==="rejected"?["Change requests"]:[]),
         ...(slotsResult.status==="rejected"?["Interview slots"]:[]),
-        ...(offersResult.status==="rejected"?["Offer actions"]:[])].join(", ")}.
+        ...(offersResult.status==="rejected"?["Offer actions"]:[]),
+        ...(stagedResult.status==="rejected"?["Results awaiting placement-cell review"]:[])].join(", ")}.
       Missing information does not mean there is no work.
       <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
         className="ml-2 underline">Retry</Link>
@@ -250,7 +255,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           timeZone:"Asia/Kolkata",weekday:"short",hour:"numeric",minute:"2-digit",hour12:true,
         }).format(item.startsAt),
       }))}
-      waiting={waiting} waitingUnavailable={!requestsResult.ok||conversationResult.status==="rejected"}
+      waiting={waiting} waitingUnavailable={!requestsResult.ok||conversationResult.status==="rejected"||
+        stagedResult.status==="rejected"}
       liveDrive={liveDrive?{
         title:liveDrive.job.title,href:"/recruiter/drives/"+encodeURIComponent(liveDrive.job.id),
         deadline:liveDrive.job.applicationDeadline

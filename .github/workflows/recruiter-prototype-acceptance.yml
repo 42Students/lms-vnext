@@ -59,6 +59,7 @@ jobs:
             tests/unit/recruiter-public-invitation-note-route.test.ts \
             tests/unit/recruiter-today-headline-model.test.ts \
             tests/unit/recruiter-today-later-model.test.ts \
+            tests/unit/recruiter-today-staged-results-model.test.ts \
             tests/unit/hr-today-action-queue-model.test.ts \
             tests/unit/hr-today-action-queue-scoped.test.ts
       - name: Typecheck at this verified commit
