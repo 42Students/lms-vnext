@@ -29,7 +29,7 @@ function ReplyRow({reply,mode="brief"}:{reply:TpoTodayReply;mode?:"brief"|"agend
    <p className="mt-1 text-[13px] text-[#617084]">{reply.company??"Recruiter"} · {reply.subject}</p>
    {reply.preview?<p className="mt-2 break-words rounded-lg bg-[#fff7ed] px-3 py-2 text-[13px] text-[#26354a]">{reply.preview}</p>:null}
   </div>
-  <Link className={"inline-flex min-h-10 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
+  <Link className={"inline-flex min-h-11 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
     "border-[#d6e1ee] bg-white text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
    href={messageHref(reply.id)}>{reply.accessEnded?"Open history":"Answer"}</Link>
  </li>;
@@ -41,7 +41,7 @@ function FollowupRow({row,scope,mode="brief"}:{row:TpoCompaniesTodayRow;scope:"M
    <p className="mt-1 text-[13px] text-[#617084]">{row.companyName??"Recruiter"} · {row.overdue?"Overdue":"Follow-up due"} · {formatDay(new Date(row.dueAt))}</p>
    <p className="mt-1 text-[13px] text-[#26354a]">{row.note?.trim()||"Recorded recruiter follow-up."}</p>
   </div>
-  <Link className={"inline-flex min-h-10 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
+  <Link className={"inline-flex min-h-11 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
     "border-[#d6e1ee] bg-white text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
    href={tpoTodayFocusHref(scope,row.id)}>Log the call</Link>
  </li>;
@@ -116,11 +116,11 @@ export function TpoTodayAlternateViews({
     <aside className="space-y-3" aria-label="Other follow-up actions">
      <section className={panel}><h2 className={heading}>Not on the week</h2>
       <p className="px-4 py-3 text-sm text-[#617084]">Later and undated follow-ups cannot be counted from this seven-day preview.</p>
-      <Link href="/tpo/follow-ups" className="inline-flex min-h-10 items-center px-4 pb-3 font-semibold text-[#087f8b]">Re-plan your week</Link>
+      <Link href="/tpo/follow-ups" className="inline-flex min-h-11 items-center px-4 pb-3 font-semibold text-[#087f8b]">Re-plan your week</Link>
      </section>
      <section className={panel}><h2 className={heading}>Not contacted yet</h2>
       <p className="px-4 py-3 text-sm text-[#617084]">{notContacted===null?"Count unavailable":notContacted.count+" recruiter leads"} not contacted yet{notContacted?.oldestAddedAt?" · oldest added "+formatDay(new Date(notContacted.oldestAddedAt)):""}.</p>
-      <Link href="/tpo/recruiters?stage=NEW" className="inline-flex min-h-10 items-center px-4 pb-3 font-semibold text-[#087f8b]">Start with them</Link>
+      <Link href="/tpo/recruiters?stage=NEW" className="inline-flex min-h-11 items-center px-4 pb-3 font-semibold text-[#087f8b]">Start with them</Link>
      </section>
     </aside>
    </div>
@@ -148,7 +148,7 @@ export function TpoTodayAlternateViews({
     <div className="border-t border-[#e8edf2] bg-[#f8fafb] p-4">
      <p className="font-bold">{notContacted===null?"Not contacted yet":notContacted.count+" not contacted yet"}</p>
      <p className="mt-1 text-xs text-[#617084]">{notContacted===null?"Count temporarily unavailable.":notContacted.oldestAddedAt?"Oldest added "+formatDay(new Date(notContacted.oldestAddedAt)):"No uncontacted recruiters in the authorized roster."}</p>
-     <Link href="/tpo/recruiters?stage=NEW" className="mt-2 inline-flex min-h-10 items-center rounded-lg border border-[#d6e1ee] px-3 text-xs font-bold text-[#26354a]">Start with them</Link>
+     <Link href="/tpo/recruiters?stage=NEW" className="mt-2 inline-flex min-h-11 items-center rounded-lg border border-[#d6e1ee] px-3 text-xs font-bold text-[#26354a]">Start with them</Link>
     </div>
    </section>
   </div>}
