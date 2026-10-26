@@ -17,6 +17,15 @@ on:
       - "tests/unit/faculty-blueprint-archive-receipt.test.ts"
       - "src/modules/courses/faculty-blueprint-archive-receipt-model.ts"
       - "src/modules/courses/faculty-blueprint-sort-model.ts"
+      - "src/modules/courses/faculty-blueprint-add-target.ts"
+      - "src/modules/courses/faculty-blueprint-write-recovery.ts"
+      - "src/components/courses/faculty-lesson-authoring.tsx"
+      - "src/components/courses/faculty-lesson-video-manager.tsx"
+      - "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx"
+      - "src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx"
+      - "src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx"
+      - "tests/unit/faculty-blueprint-add-target.test.ts"
+      - "tests/unit/faculty-blueprint-write-recovery.test.ts"
 permissions:
   contents: read
 concurrency:
@@ -52,12 +61,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Type-check Blueprint
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
-      - name: Unit-test order receipts and boundaries
-        run: npx vitest run tests/unit/faculty-content-order-ui-model.test.ts tests/unit/faculty-blueprint-sort-model.test.ts tests/unit/faculty-blueprint-archive-receipt.test.ts
+      - name: Unit-test Blueprint models and write recovery
+        run: npx vitest run tests/unit/faculty-content-order-ui-model.test.ts tests/unit/faculty-blueprint-sort-model.test.ts tests/unit/faculty-blueprint-archive-receipt.test.ts tests/unit/faculty-blueprint-add-target.test.ts tests/unit/faculty-blueprint-write-recovery.test.ts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable E2E database
@@ -70,3 +75,9 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Faculty Blueprint screenshot #05 desktop/mobile E2E
         run: npx playwright test tests/e2e/faculty-blueprint-prototype.spec.ts --workers=1
+      # Keep repo-wide TS enforcement, but do not let unrelated account code
+      # prevent the disposable-DB Faculty browser suite from running.
+      - name: Enforce repository TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
