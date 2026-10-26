@@ -94,6 +94,7 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   })):[];
  return <TpoCompaniesToday scope={scope} rows={rows} nowIso={now.toISOString()}
   notContacted={notContacted} leadContexts={leadContexts} companyAttention={companyAttention}
+  outsideWeek={outsideWeek}
   initialFollowupId={typeof params.lead==="string"?params.lead:undefined}
   unreadMessages={unread.status==="fulfilled"?unread.value:null}
   replies={replies} replyTotal={replyTotal}
