@@ -1,3 +1,6 @@
+# Dedicated screenshot #03 directory acceptance. The full 16-test legacy
+# Faculty cross-course suite remains independently enforced by
+# faculty-course-legacy-regression.yml; do not interpret this as replacing it.
 name: Faculty Courses prototype acceptance
 on:
   workflow_dispatch:
@@ -6,7 +9,6 @@ on:
     paths:
       - ".github/workflows/faculty-courses-prototype-acceptance.yml"
       - "tests/e2e/faculty-courses-prototype.spec.ts"
-      - "tests/e2e/faculty-courses.spec.ts"
       - "tests/unit/faculty-course-month-attendance-model.test.ts"
       - "src/modules/courses/faculty-course-month-attendance-model.ts"
       - "src/app/(authenticated)/teacher/courses/page.tsx"
@@ -61,4 +63,4 @@ jobs:
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Faculty Courses prototype desktop/mobile browser acceptance
-        run: npx playwright test tests/e2e/faculty-courses-prototype.spec.ts tests/e2e/faculty-courses.spec.ts --workers=1
+        run: npx playwright test tests/e2e/faculty-courses-prototype.spec.ts --workers=1
