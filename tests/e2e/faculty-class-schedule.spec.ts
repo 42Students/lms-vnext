@@ -50,7 +50,7 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   await page.goto("/teacher/calendar?month=2026-10&deliveryId="+deliveryId);
   await expect(page.getByRole("heading",{level:1,name:"Class Schedule",exact:true})).toBeVisible();
   await page.getByText("Advanced schedule and full calendar",{exact:true}).click();
-  await page.getByText("Month view",{exact:true}).click();
+  await page.getByRole("group",{name:"Calendar views"}).getByRole("button",{name:"Month",exact:true}).click();
   await expect(page.getByLabel("Teaching Section")).toHaveValue(deliveryId);
   await expect(page.getByLabel("Month (IST)")).toHaveValue("2026-10");
   const grid=page.getByRole("region",{name:"IST month schedule grid"});
