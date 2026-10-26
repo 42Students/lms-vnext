@@ -324,11 +324,12 @@ export default async function HrPlacementJobPage({
   return (
     <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
       <RecruiterDriveFocusRefresh />
+      <Link href={returnTo} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-2 max-[767px]:min-h-11">‹ Drives</Link>
       <header className="flex min-w-0 flex-wrap items-start justify-between gap-4 border-b border-border pb-4">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="m-0 break-words text-[20px] font-semibold leading-tight text-[var(--lms-heading)] md:text-[30px]">
-              {workspace.job.title}
+              {workspace.job.title} · {workspace.college.name}
             </h1>
             <StatusBadge tone={workspace.job.status==="PUBLISHED"?"success":
               workspace.job.status==="DRAFT"?"warning":
@@ -346,6 +347,7 @@ export default async function HrPlacementJobPage({
               workspace.job.locations.join(", ")||"Location to be decided",
               workspace.job.recruiterDriveMode==="OFF_CAMPUS"?"Off campus":
                 "On campus",
+              applicants.counts.all+" applicants shared with you",
               workspace.job.applicationDeadline&&workspace.job.status==="PUBLISHED"?
                 "Applications close "+new Intl.DateTimeFormat("en-IN",{
                   timeZone:"Asia/Kolkata",day:"numeric",month:"short",
@@ -354,9 +356,6 @@ export default async function HrPlacementJobPage({
             ].filter(Boolean).join(" · ")}
           </p>
         </div>
-        <Link href={returnTo} className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-link underline underline-offset-2 hover:text-[var(--lms-primary-hover)] md:min-h-9">
-          ← All drives
-        </Link>
       </header>
 
       <section aria-label="Hiring drive status and key facts" className="min-w-0 border-b border-border pb-4">
@@ -435,10 +434,10 @@ export default async function HrPlacementJobPage({
         items={[{value:"overview",label:"Overview",href:"/recruiter/drives/"+workspace.job.id+"?tab=overview"+returnQuery},
           {value:"applicants",label:"Applicants ("+applicants.counts.all+")",
            href:"/recruiter/drives/"+workspace.job.id+"?tab=applicants"+returnQuery},
-          {value:"rounds",label:"Rounds & interviews",href:"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery},
+          {value:"rounds",label:"Rounds",href:"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery},
           {value:"offers",label:offersTotal>0?"Offers ("+offersTotal+")":"Offers",
            href:"/recruiter/drives/"+workspace.job.id+"?tab=offers"+returnQuery},
-          {value:"discussion",label:"Discussion"+(requestsToAnswer>0?
+          {value:"discussion",label:"Talk"+(requestsToAnswer>0?
             " ("+requestsToAnswer+" to answer)":""),
            href:"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}]}/>
       {filters.tab === "overview" && !requestsTab && !discussionTab ? (
@@ -454,7 +453,7 @@ export default async function HrPlacementJobPage({
 
           {/* Screenshot 34: hiring pipeline and drive facts left, student-visible copy right. */}
           <div className="grid min-w-0 gap-4 lg:grid-cols-2">
-            <div className="min-w-0 rounded-xl border border-border bg-surface p-4">
+            <section aria-label="Hiring so far and drive facts" className="min-w-0 rounded-xl border border-border bg-surface p-4">
           <section aria-labelledby="recruiter-shared-funnel-title"
             className="min-w-0">
             <span className="text-xs font-bold tracking-wide text-muted-foreground">HIRING SO FAR</span>
@@ -488,7 +487,7 @@ export default async function HrPlacementJobPage({
     <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Apply by</dt><dd className="text-foreground">{workspace.job.applicationDeadline?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(workspace.job.applicationDeadline)+" IST":"Not set yet"}</dd></div>
   </dl>
 </section>
-            </div>
+            </section>
           <section aria-label="What students see" className="min-w-0 rounded-xl border border-border bg-surface-secondary p-4">
             <details open className="min-w-0">
              <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">What students see</summary>
