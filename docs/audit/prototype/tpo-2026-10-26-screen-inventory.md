@@ -9,14 +9,14 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 | # | Prototype screenshot | vNext entry / expected backing | Current evidence and next check |
 |---|---|---|---|
 | 01 | Companies → Today | `/tpo/companies/today` | Focus queue and real actions exist; validate screenshot layout and all stage-specific cards |
-| 02 | Companies → Recruiters | `/tpo/recruiters` | Recruiter workspace present; compare roster, filters, right inspector |
+| 02 | Companies → Recruiters | `/tpo/recruiters` | Added source-backed selected-contact inspector; exact-viewport and interaction comparison remain open |
 | 03 | Companies → Companies | `/tpo/companies?directory=1` | Directory present; compare summary, CRM company detail and actions |
 | 04 | Agenda | `/tpo/companies/today?view=agenda` | Added real-data alternate view and `day=0..6` selection; needs browser and visual comparison |
 | 05 | Brief | `/tpo/companies/today?view=brief` | Added real-data Answer/Reach/Week panels; needs browser and visual comparison |
-| 06 | EmailSent | `/tpo/recruiters/campaigns/drafts/[campaignId]` or sent ledger detail | Verify actual sent receipts and provider semantics |
-| 07 | Companies → Emails (sent email open) | `/tpo/recruiters/campaigns/drafts/[campaignId]` | Verify sent detail, recipients, follow-up actions |
-| 08 | Companies → Emails (writing a new email) | `/tpo/recruiters/campaigns/new` | Verify composer, save, send/disable states, templates and actual provider |
-| 09 | Companies → Messages | `/tpo/messages?tab=recruiters` | Verify inbox list, selected thread, read/reply state |
+| 06 | EmailSent | `/tpo/recruiters/campaigns/drafts/[campaignId]` or sent ledger detail | Shared split-view campaign sidebar and real provider receipts; screenshot and provider verification remain open |
+| 07 | Companies → Emails (sent email open) | `/tpo/recruiters/campaigns/drafts/[campaignId]` | Added split list/detail layout with actual campaign status and recipient receipts; runtime acceptance still open |
+| 08 | Companies → Emails (writing a new email) | `/tpo/recruiters/campaigns/new` | Added split list/composer, four draft-wording presets and Insert tokens; two-step send and provider acceptance still need live testing |
+| 09 | Companies → Messages | `/tpo/messages?tab=recruiters` | Added searchable template selection, preview and non-sending insertion into draft; thread interactions and screenshots remain unaccepted |
 | 10 | Students → All students | `/tpo/students` | Verify filterable student table and detail |
 | 11 | Students → Who's in placements | `/tpo/batches` | Verify batch lifecycle, invitation, count semantics |
 | 12 | Students → To verify | `/tpo/verification` | Verify staff authorization, bulk and individual actions |
@@ -37,22 +37,29 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 | 27 | Team → People | `/tpo/settings/team` | Verify roster, roles and availability |
 | 28 | Reports | `/tpo/reports` | Verify report navigation, filtered data and exports |
 | 29 | Reports → One report | `/tpo/reports/[slug]` | Verify selected report against screenshot |
-| 30 | Settings | `/tpo/settings` | Verify settings sections, inputs and persistence |
+| 30 | Settings | `/tpo/settings` | Inline sentence-style placement rules, Save/Discard and collapsed advanced policy details; persistence and visual acceptance remain open |
 | 31 | Settings → Audit log | `/tpo/audit` | Verify filters, actor rows, pagination and exports |
 | 32 | Everywhere search, bell, notifications, profile | Shared authenticated shell, `/tpo/find`, `/tpo/notifications`, `/tpo/profile` | Verify overlays, counts, keyboard, profile flows |
 | 33 | Companies → One recruiter (full page) | `/tpo/recruiters/[leadId]` | Verify recruiter history, updates and access restrictions |
 
-## Implementation currently committed for screenshots 01, 04 and 05
+## Material implementation coverage (code only; not screenshot acceptance)
 
 - `src/components/tpo/tpo-today-alternate-views.tsx`: real-data Agenda and Brief, separate presentation layouts, links to existing message and follow-up workflows
 - `src/app/(authenticated)/tpo/companies/today/page.tsx`: accepts validated `view`, Agenda `day`, and focus `lead`; reads college-scoped CRM and recruiter message sources independently
 - `src/components/tpo/tpo-companies-today.tsx`: select a particular focus follow-up from the alternate views
 - `src/modules/placements/tpo-companies-today-model.ts`: stable IST day grouping, bounded seven-day links, uncontacted summary based on real stage and owner
 - `tests/unit/tpo-today-prototype-views.test.ts`: unit/source contracts, not yet evidence of a green runtime run
+- #02: `recruiter-leads-workspace.tsx` and `recruiter-prototype-inspector.tsx` now show an independently focused recruiter inspector; no invented contacts, accepted hires or phone dial codes
+- #06–08: `tpo-campaign-prototype-sidebar.tsx`, `tpo-campaign-compose.tsx`, `tpo-campaign-compose-presets.ts` and the campaign index/new/detail routes now support a split campaign list/editor, verified author filtering, safe copy suggestions and existing two-step send
+- #09: `tpo-recruiter-message-reply.tsx` and `tpo-message-template-library.ts` expose a searchable template picker with preview and explicit Insert without auto-sending or fabricating student eligibility
+- #30: `tpo-college-rules-control.tsx` renders persisted offer rules as inline editable sentences, retains custom numeric values, Save/Discard and optimistic version checks; rules page keeps advanced details in disclosure
+- `tests/unit/tpo-prototype-{recruiter-inspector,email-workspace,message-templates,placement-rules}-2026.test.ts`: source contracts
+- `.github/workflows/tpo-prototype-source-acceptance.yml`: dedicated non-cancelling source/unit CI for these prototype slices, independent of the global suite
 
 ## Known acceptance boundaries
 
-1. GitHub Actions runs for rapid sequential `main` commits have been superseded/cancelled; no green CI claim is made in this inventory.
+1. GitHub Actions runs for rapid sequential `main` commits have been superseded/cancelled; no green CI claim is made in this inventory. A standalone source acceptance workflow was added, but its result must be checked before reporting a pass.
+1a. Global `npm run lint` is blocked by the expired legacy UX waiver (`docs/design-system/UX-GUARD-WAIVERS.json`, expires 2026-10-25). Do not extend the waiver or rewrite the immutable baseline without the prescribed residual-finding review; dedicated source tests are not a substitute for the global gate.
 2. Both Today feed sources are page-limited; the UI must show when the preview is incomplete, rather than pretend its totals are exhaustive.
 3. "Not contacted" means recruiter stage `NEW`, never merely a missing scheduled follow-up. My Work includes genuinely unassigned and actor-owned leads only, Everyone remains college-scoped.
 4. CRM actions must not claim an email was sent or delivered without an actual provider receipt. Message replies and bulk email campaign receipts are separate ledgers.
