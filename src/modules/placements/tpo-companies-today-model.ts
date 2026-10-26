@@ -99,3 +99,33 @@ export function summarizeTpoTodayNotContacted(
   .filter(time=>Number.isFinite(time)).sort((a,b)=>a-b)[0];
  return {count:eligible.length,oldestAddedAt:oldest===undefined?null:new Date(oldest).toISOString()};
 }
+
+/** "Not on the week" in the original Agenda and Brief prototypes means
+ * genuine open recruiter relationships with no follow-up date or a next date
+ * after the seven displayed IST calendar days. Stages and owner fields are
+ * read from the authorized CRM list, never inferred from task truncation. */
+export function summarizeTpoTodayOutsideWeek(
+ leads:readonly {stage:string;ownerMembershipId:string|null;
+  nextFollowupAt:string|null;unsubscribedAt:string|null}[],
+ scope:"MINE"|"TEAM",actorMembershipId:string,now:Date,
+){
+ const finalDay=istDateKey(new Date(now.getTime()+6*86400000));
+ let withoutDate=0,laterThanWeek=0;
+ for(const lead of leads){
+  if(["RECRUITED","NOT_NOW"].includes(lead.stage)||lead.unsubscribedAt)continue;
+  if(scope==="MINE"&&lead.ownerMembershipId!==null&&lead.ownerMembershipId!==actorMembershipId)continue;
+  if(!lead.nextFollowupAt){withoutDate++;continue;}
+  const at=new Date(lead.nextFollowupAt);
+  if(Number.isFinite(at.getTime())&&istDateKey(at)>finalDay)laterThanWeek++;
+ }
+ return {withoutDate,laterThanWeek};
+}
+
+/** "Overdue" on Today means a previous IST calendar day. A meeting earlier
+ * on the same day is due today rather than one day late. */
+export function tpoTodayLateDays(dueAt:string,now:Date){
+ const due=new Date(dueAt);
+ if(!Number.isFinite(due.getTime())||!Number.isFinite(now.getTime()))return 0;
+ const diff=Date.parse(istDateKey(now)+"T00:00:00Z")-Date.parse(istDateKey(due)+"T00:00:00Z");
+ return Math.max(0,Math.round(diff/86400000));
+}
