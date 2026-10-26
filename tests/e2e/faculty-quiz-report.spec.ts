@@ -23,22 +23,29 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.setViewportSize({width:view.width,height:view.height});
   const errors:string[]=[];
   page.on("pageerror",e=>errors.push(e.message));
-  await page.goto("/teacher/allQuizzes");
-  await page.getByRole("button",{name:"+ Create Quiz"}).click();
-  const dialog=page.getByRole("dialog",{name:"Create Quiz"});
+  // The new Faculty UI authors quizzes inside each assigned Section;
+  // don't assume the retired global + Create Quiz dialog exists.
+  await page.goto("/teacher/courses");
+  await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i,{timeout:20000});
+  const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+  await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
+  await expect(page.getByRole("heading",{name:"Choice-question quiz builder"})).toBeVisible();
   const title="Faculty Quiz Report "+randomUUID().slice(0,8);
-  await dialog.getByLabel("Title",{exact:true}).fill(title);
-  await dialog.getByLabel("Prompt",{exact:true}).fill("What is 1+1?");
-  await dialog.getByLabel("Option 1",{exact:true}).fill("Two");
-  await dialog.getByLabel("Option 2",{exact:true}).fill("Three");
+  await page.getByRole("textbox",{name:"Quiz title"}).fill(title);
+  await page.getByRole("textbox",{name:"Prompt"}).fill("What is 1+1?");
+  await page.getByRole("textbox",{name:"Option 1"}).fill("Two");
+  await page.getByRole("textbox",{name:"Option 2"}).fill("Three");
+  await page.getByRole("checkbox",{name:"Publish now"}).uncheck();
+  await page.getByRole("checkbox",{name:/I confirm these choices/}).check();
   const request=page.waitForResponse(res=>
-   res.request().method()==="POST"&&new URL(res.url()).pathname==="/api/courses/quizzes");
-  await dialog.getByRole("button",{name:"Create draft"}).click();
+   res.request().method()==="POST"&&
+   new URL(res.url()).pathname==="/api/courses/faculty/quizzes/"+deliveryId+"/command");
+  await page.getByRole("button",{name:"Create draft"}).click();
   const response=await request;
   const created=await response.json();
-  expect(response.status(),JSON.stringify(created)).toBe(201);
-  const id:string=created?.quiz?.id;
-  const deliveryId:string=created?.quiz?.deliveryId;
+  expect(response.status(),JSON.stringify(created)).toBe(200);
+  const id:string=created.quiz?.id;
   expect(id).toMatch(/^[0-9a-f-]{36}$/i);
   expect(deliveryId).toMatch(/^[0-9a-f-]{36}$/i);
   await page.goto("/teacher/report/quiz/"+id+"?deliveryId="+deliveryId);
