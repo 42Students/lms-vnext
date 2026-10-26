@@ -52,3 +52,38 @@ The 2026-10-26 full CI run [40299045317](https://github.com/42Students/lms-vnext
 ## Next packet
 
 After #05 code acceptance: #06 Students. After #13: adversarial 12-screen interaction sweep and final separate prototype screenshot visual acceptance, including desktop/mobile screenshots and differences tracked here.
+
+## Per-screen actionable audit register
+
+**One screen at a time; #05 Blueprint remains active.** Each audit explicitly maps **the original user-uploaded PNG** to existing vNext source, confirmed gaps, actions, safety checks and acceptance evidence. The reference screenshots themselves are in `42LMS pages prototype-png-faculty.zip`; the downloadable visual companion supplied alongside this ledger embeds all 12 original images and provides zoomable side-by-side code-linked audit navigation. Do **not** substitute mock images.
+
+| Screen | Uploaded design reference | Open the actionable audit |
+|---|---|---|
+| #02 Today | `Faculty › Today.png` | [F02 audit checklist](screen-02-action-audit.md) |
+| #03 Courses | `Faculty › Courses.png` | [F03 audit checklist](screen-03-action-audit.md) |
+| #04 Course Overview | `Course › Overview.png` | [F04 audit checklist](screen-04-action-audit.md) |
+| #05 Blueprint | `Course › Blueprint.png` | [F05 audit checklist](screen-05-action-audit.md) |
+| #06 Students | `Course › Students.png` | [F06 audit checklist](screen-06-action-audit.md) |
+| #07 Attendance | `Course › Attendance.png` | [F07 audit checklist](screen-07-action-audit.md) |
+| #08 Discussions | `Course › Discussions.png` | [F08 audit checklist](screen-08-action-audit.md) |
+| #09 Assignments & Quizzes | `Assignments & quizzes.png` | [F09 audit checklist](screen-09-action-audit.md) |
+| #10 Assignment Grading | `Assignments › Grade.png` | [F10 audit checklist](screen-10-action-audit.md) |
+| #11 Assignment Report | `Assignments › Report.png` | [F11 audit checklist](screen-11-action-audit.md) |
+| #12 Class Schedule | `Class schedule.png` | [F12 audit checklist](screen-12-action-audit.md) |
+| #13 Find / Bell / Profile | `Find, bell, profile.png` | [F13 audit checklist](screen-13-action-audit.md) |
+
+### Audit vs closure — the difference matters
+
+The 12-page **source-to-image audit register** covers 115 screen-specific checks, plus seven mandatory acceptance gates per screen (desktop screenshot, mobile/accessibility, authorization, write safety, empty/error states, post-change CI and final visual sign-off). **Checklist creation is not task closure.** An item marked CODE is evidence that matching source exists, *not* that it has passed the current commit's browser suite or the visual comparison.
+
+**No screen gets pixel-level sign-off until the real vNext page has been captured** beside the uploaded reference and every observable layout/content divergence has been closed or explicitly approved as a stronger vNext behavior.
+
+**Work order:** #05 Blueprint post-change CI / create deep links / lesson engagement → #06 Students → #07 Attendance → #08 Discussions → #09 Assignments & Quizzes → #10 Grading → #11 Report → #12 Schedule → #13 Find/Bell/Profile. Regress #02–04 after shared shell changes.
+
+### Evidence gate for every checkbox
+
+- Record the concrete change commit and a run ID from a workflow executed **after** that change.
+- Check browser flows with authorized AND unauthorized Faculty accounts; include 1440px and 390px viewport.
+- Record whether mismatch is an implementation bug, deployment prerequisite (DB05), policy restriction (Faculty cannot rename College Admin syllabus), or approved better vNext functionality.
+- If shared CI fails in unrelated TPO/Recruiter, record the exact error and retain the Faculty page as not accepted until page-specific browser proof is possible; don't claim generic CI green.
+
