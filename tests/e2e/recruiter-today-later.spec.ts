@@ -19,6 +19,13 @@ test.describe("Recruiter Today prototype — persisted actions and Later",()=>{
   expect(rail).not.toBeNull();
   expect(rail!.width).toBeGreaterThanOrEqual(205);
   expect(rail!.width).toBeLessThanOrEqual(210);
+  // Screen 31 source uses a 360px maximum weekly/waiting rail at 1440px.
+  // Keep this distinct from the fixed 208px global navigation rail.
+  const weekRail=today.getByRole("region",{name:"This week"});
+  const weekBounds=await weekRail.boundingBox();
+  expect(weekBounds).not.toBeNull();
+  expect(weekBounds!.width).toBeGreaterThanOrEqual(350);
+  expect(weekBounds!.width).toBeLessThanOrEqual(361);
   const needs=today.getByRole("region",{name:"Needs you"});
   await expect(needs).toBeVisible();
   await expect(today.getByRole("heading",{level:1,name:/Three things need you/})).toBeVisible();
