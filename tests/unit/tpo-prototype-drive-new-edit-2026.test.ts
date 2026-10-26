@@ -10,7 +10,7 @@ describe("TPO original New drive / Edit drive code acceptance (screen 17)",()=>{
   expect(page).toContain('hasMembershipRole(context, "TPO")');
   expect(page).toContain("<PlacementJobCreateWorkspace");
   expect(page).toContain("invalidCompany");
-  expect(workspace).toContain("require");
+  expect(workspace).toContain("result.reason instanceof AuthorizationError");
   expect(workspace).toContain('eq(placementJobs.collegeId,collegeId)');
   expect(workspace).toContain('inArray(placementJobs.status,["CLOSED","CANCELLED"])');
   expect(workspace).toContain("isNull(placementJobs.archivedAt)");
