@@ -23,3 +23,14 @@ export function filterOwnRecruiterRequests<T extends RecruiterRequestListItem>(
   return title.toLocaleLowerCase("en").includes(query);
  }).sort((a,b)=>b.createdAt.getTime()-a.createdAt.getTime()||a.id.localeCompare(b.id));
 }
+
+/** A sent-back request needs action from the recruiter, not the placement cell.
+ * Auto-approved DRAFT jobs still await the placement cell to publish them.
+ * Keep these distinct in the prototype's Drives summary without fabricating
+ * a placement-cell decision or altering the existing WAITING filter. */
+export function recruiterRequestAttentionCounts(requests:readonly {status:string}[]){
+ return {
+  waitingOnCollege:requests.filter(row=>row.status==="REQUEST"||row.status==="DRAFT").length,
+  needsRecruiterChanges:requests.filter(row=>row.status==="SENT_BACK").length,
+ };
+}
