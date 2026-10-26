@@ -162,8 +162,15 @@ export default async function TpoPlacementRulesSettingsPage({
           an inferred database record.
         </p>
       </section>
+      <TpoCollegeRulesControl rules={{
+        countsAsPlacedAt: rules.countsAsPlacedAt,
+        maxHeldOffers: rules.maxHeldOffers,
+        upliftPct: rules.upliftPct,
+        minResponseHours: rules.minResponseHours,
+        version: rulesVersion,
+      }} />
 
-      <Disclosure title="Current college-wide offer policy" defaultOpen className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
+      <Disclosure title="Current college-wide offer policy" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section className="min-w-0 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
@@ -209,15 +216,10 @@ export default async function TpoPlacementRulesSettingsPage({
       </section>
       </Disclosure>
 
-      <TpoCgpaRuleControl initialRule={cgpaRule}/>
+      <Disclosure title="CGPA to percentage conversion" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
+       <TpoCgpaRuleControl initialRule={cgpaRule}/>
+      </Disclosure>
 
-      <TpoCollegeRulesControl rules={{
-        countsAsPlacedAt: rules.countsAsPlacedAt,
-        maxHeldOffers: rules.maxHeldOffers,
-        upliftPct: rules.upliftPct,
-        minResponseHours: rules.minResponseHours,
-        version: rulesVersion,
-      }} />
 
       <Disclosure title="Fixed eligibility and participation behavior" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section className="space-y-4">
@@ -261,6 +263,7 @@ export default async function TpoPlacementRulesSettingsPage({
       </section>
       </Disclosure>
 
+      <Disclosure title="Job-specific academic eligibility" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section className="space-y-4">
         <div>
           <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
@@ -448,6 +451,7 @@ export default async function TpoPlacementRulesSettingsPage({
           </div>
         </nav>
       </section>
+      </Disclosure>
 
       <Disclosure title="Rules data sources" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
