@@ -35,7 +35,7 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
  const next=view==="Month"?monthJump(1):shift(day,view==="Week"?7:1);
  return <section className="space-y-5" aria-label="Faculty class schedule prototype">
   <div className="flex flex-wrap items-start justify-between gap-3">
-   <div><h1 className="faculty-proto-heading">Class schedule</h1>
+   <div><h2 className="sr-only">Calendar views and schedule</h2>
     <p className="faculty-proto-subtitle mt-1">{selectedEvents.length} scheduled classes in the loaded window · times shown in IST</p></div>
    <div className="flex flex-wrap gap-2" role="group" aria-label="Calendar views">
     {(["Week","Day","Month"] as const).map(v=><button key={v} type="button"
