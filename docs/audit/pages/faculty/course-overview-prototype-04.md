@@ -2,7 +2,7 @@
 
 **Design reference:** user-uploaded `42LMS pages prototype-png-faculty.zip` → `Course › Overview.png`. Current student count, course title and task numbers **must be live and authorized**, never copied from the screenshot.
 
-**Current state:** fixes on `main`; Faculty Course Overview acceptance run after last source edits required. Exact rendered screenshot visual sign-off **not yet done**.
+**Current state:** **functionally accepted** on `main` via [Faculty Course Overview acceptance run 40284557334](https://github.com/42Students/lms-vnext/actions/runs/40284557334): real PostgreSQL acceptance and desktop/mobile Chromium checks **passed**. Exact screenshot pixel-level visual sign-off **not yet done**.
 
 ## Functional and layout crosscheck
 
@@ -24,4 +24,4 @@
 - Legacy shared course page `docs/legacy-source/frontend/src/pages/teacher/courses/[courseId]/[...courseTab].js` remains useful for routing and feature behavior; newest uploaded Overview screenshot controls presentation.
 - Marked sessions are the denominator; empty marked attendance-exception list means all currently enrolled learners attended; never show fake 0% for missing attendance.
 - `quiz due` is intentional, avoids claiming automatic closing without a verified job.
-- Core caveats before full signoff: rendered screenshot side-by-side review, edit-course authorization/design decision, and acceptance CI results.
+- Core caveats before full signoff: rendered screenshot side-by-side review, edit-course authorization/design decision, and a separately documented pixel-level visual comparison.
