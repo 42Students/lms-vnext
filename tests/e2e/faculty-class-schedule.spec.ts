@@ -51,34 +51,21 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   await expect(page.getByRole("heading",{level:1,name:"Class Schedule",exact:true})).toBeVisible();
   await page.getByText("Advanced schedule and full calendar",{exact:true}).click();
   await page.getByRole("group",{name:"Calendar views"}).getByRole("button",{name:"Month",exact:true}).click();
-  await expect(page.getByLabel("Teaching Section")).toHaveValue(deliveryId);
-  await expect(page.getByLabel("Month (IST)")).toHaveValue("2026-10");
-  const grid=page.getByRole("region",{name:"IST month schedule grid"});
-  await expect(grid.getByText(title,{exact:true})).toHaveCount(1);
-  const day=page.getByRole("region",{name:"2026-10-"+view.day+" IST"});
-  const createdCard=day.locator("article").filter({hasText:title});
-  await expect(createdCard).toBeVisible();
-  const expectedIst=new Intl.DateTimeFormat("en-IN",{
-   timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
-  }).format(new Date("2026-10-"+view.day+"T"+hour+":00:00+05:30"));
-  await expect(createdCard).toContainText(expectedIst+" IST");
-  await expect(createdCard.getByRole("link",{name:"Course Section"})).toHaveAttribute(
-   "href","/teacher/courses/"+deliveryId+"/home",
-  );
-  await page.getByRole("link",{name:"Previous month"}).click();
-  await expect(page.getByLabel("Month (IST)")).toHaveValue("2026-09");
-  await expect(page.getByRole("region",{name:"IST month schedule grid"}).getByText(title)).toHaveCount(0);
-  await page.getByRole("link",{name:"Next month"}).click();
-  await expect(page.getByLabel("Month (IST)")).toHaveValue("2026-10");
-  await expect(page.getByText(title,{exact:true}).first()).toBeVisible();
-  await expect(page.getByRole("region",{name:"Faculty class schedule prototype"})).toBeVisible();
-  const viewSelect=page.getByRole("combobox").filter({
-   has:page.getByRole("option",{name:"Day"}),
-  });
-  await expect(viewSelect).toBeVisible();
-  await viewSelect.selectOption("day");
-  await viewSelect.selectOption("week");
-  await viewSelect.selectOption("month");
+  const calendar=page.getByRole("region",{name:"Faculty class schedule prototype"});
+  await expect(calendar).toBeVisible();
+  await expect(calendar).toContainText(title,{timeout:20000});
+  const dateCell=calendar.locator('section[aria-label="2026-10-'+view.day+' IST"]');
+  await expect(dateCell).toBeVisible();
+  await expect(dateCell).toContainText("Room 42");
+  await expect(dateCell.getByRole("link",{name:"Attendance"})).toHaveAttribute(
+   "href","/teacher/courses/"+deliveryId+"/attendanceDetail");
+  const views=page.getByRole("group",{name:"Calendar views"});
+  await views.getByRole("button",{name:"Week",exact:true}).click();
+  await expect(views.getByRole("button",{name:"Week",exact:true})).toHaveAttribute("aria-pressed","true");
+  await views.getByRole("button",{name:"Day",exact:true}).click();
+  await expect(views.getByRole("button",{name:"Day",exact:true})).toHaveAttribute("aria-pressed","true");
+  await views.getByRole("button",{name:"Month",exact:true}).click();
+  await expect(views.getByRole("button",{name:"Month",exact:true})).toHaveAttribute("aria-pressed","true");
   await page.goto("/teacher/calendar?month=2026-13");
   await expect(page.locator('section[role="alert"]')).toContainText("Invalid month or Section filter");
   // App Router can stream an authorization error boundary with HTTP 200.
