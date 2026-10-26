@@ -13,6 +13,15 @@ const RECEIPT="mentor_project_email_dispatch_receipt";
 const TERMINAL=["ACCEPTED","SUPPRESSED","EXHAUSTED"] as const;
 const MAX_ATTEMPTS=3;
 const LEASE_MS=20*60*1000;
+/** A failed provider attempt must not consume all three retries in a few
+ * consecutive worker invocations. Keep the same wait under the DB claim lock.
+ */
+export function mentorProjectEmailClaimDelayMs(status:unknown,attempt:unknown):number{
+ if(status==="CLAIMED")return LEASE_MS;
+ if(status!=="RETRY")return 0;
+ const n=typeof attempt==="number"&&Number.isSafeInteger(attempt)?attempt:1;
+ return Math.max(1,Math.min(MAX_ATTEMPTS,n))*5*60*1000;
+}
 type Job={
  id:string;collegeId:string|null;organizationId:string|null;
  metadata:Record<string,unknown>;
@@ -71,8 +80,8 @@ async function claimJob(job:Job):Promise<Claim|null>{
   const prevAttempt=prior?.metadata["attempt"];
   const attempts=typeof prevAttempt==="number"&&Number.isSafeInteger(prevAttempt)
     ?prevAttempt:0;
-  if(status==="CLAIMED"&&prior&&
-    prior.occurredAt.getTime()>Date.now()-LEASE_MS)return null;
+  if(prior&&prior.occurredAt.getTime()>
+    Date.now()-mentorProjectEmailClaimDelayMs(status,attempts))return null;
   if(attempts>=MAX_ATTEMPTS){
    await tx.insert(activityEvents)
     .values(receiptValues(job,"EXHAUSTED",attempts));
@@ -122,8 +131,32 @@ export async function runMentorProjectEmailDispatchBatch(
     select 1 from activity_events settled
     where settled.subject_type=${RECEIPT}
       and settled.subject_id=${activityEvents.id}::text
+      and settled.college_id=${activityEvents.collegeId}
       and settled.event_type=${STATE}
       and settled.metadata ->> 'status' in ('ACCEPTED','SUPPRESSED','EXHAUSTED')
+  )`,
+  // Filter leased and backoff jobs BEFORE LIMIT 10. Otherwise ten slow
+  // jobs at the head of the queue starve every later ready recipient.
+  sql`not exists (
+    select 1 from (
+      select pending.metadata,pending.occurred_at
+      from activity_events pending
+      where pending.subject_type=${RECEIPT}
+        and pending.subject_id=${activityEvents.id}::text
+        and pending.college_id=${activityEvents.collegeId}
+        and pending.event_type=${STATE}
+      order by pending.occurred_at desc,pending.id desc
+      limit 1
+    ) latest
+    where (latest.metadata ->> 'status'='CLAIMED'
+      and latest.occurred_at>now()-interval '20 minutes')
+      or (latest.metadata ->> 'status'='RETRY'
+        and latest.occurred_at>now()-(
+          case latest.metadata ->> 'attempt'
+            when '1' then interval '5 minutes'
+            when '2' then interval '10 minutes'
+            else interval '15 minutes'
+          end))
   )`,
  )).orderBy(asc(activityEvents.occurredAt),asc(activityEvents.id)).limit(10);
  for(const job of jobs){
