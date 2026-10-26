@@ -26,7 +26,7 @@ type Item = {
   endsAt: Date | string | null;
 };
 
-export function FacultyContentEditor({ item }: { item: Item }) {
+export function FacultyContentEditor({ item,compact=false }: { item: Item;compact?:boolean }) {
   const router = useRouter();
   const mutationLock=useRef(false);
   const [open, setOpen] = useState(false);
@@ -104,8 +104,8 @@ export function FacultyContentEditor({ item }: { item: Item }) {
 
   return (
     <>
-      <Button size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={openEditor}>
-        Edit content
+      <Button size="md" variant="secondary" className={compact?"!min-h-9 !px-3 !py-1.5 !text-xs":"min-h-11 md:min-h-[var(--lms-control-height)]"} onClick={openEditor}>
+        {compact?"Edit":"Edit content"}
       </Button>
       <Drawer
         open={open}
