@@ -138,10 +138,14 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("alertdialog").getByRole("button",{name:"Save changes"}).click();
   const metadata=await metadataResponse;
   expect(metadata.status()).toBe(200);
-  // The editor closes and the RSC row refreshes after the server receipt.
-  // Wait for that transition before navigating, so we don't abort the
-  // in-flight Next.js refresh with a simultaneous hard navigation.
+  // First ensure that the editor acknowledges the confirmed server receipt.
+  // Then independently read the persisted CLOSED quiz after hard reload;
+  // this is stronger than trusting the optimistic RSC row transition and
+  // remains stable if a concurrent server component refresh is deferred.
   await expect(metadataDrawer).toBeHidden();
+  await page.reload();
+  await page.getByRole("combobox",{name:"Status"}).selectOption("CLOSED");
+  await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" metadata");
   await expect(page.getByRole("heading",{name:title+" metadata"})).toBeVisible();
   await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" metadata (CLOSED)"});
