@@ -62,6 +62,14 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   const links=page.getByRole("navigation",{name:"Quiz CSV response filters"});
   await expect(links.getByRole("link",{name:"Export attempted only"})).toBeVisible();
   await expect(links.getByRole("link",{name:"Export not attempted only"})).toBeVisible();
+  // Exercise both filtered exports, not merely the presence of their links.
+  const attemptedDownloadStarted=page.waitForEvent("download");
+  await links.getByRole("link",{name:"Export attempted only"}).click();
+  const attemptedDownload=await attemptedDownloadStarted;
+  const attemptedCsv=await readFile((await attemptedDownload.path())!,"utf8");
+  expect(attemptedCsv).toContain('"Learner","Response","Score","Percent","Submitted at (IST)","Details"');
+  expect(attemptedCsv).not.toContain("NOT_ATTEMPTED");
+  expect(attemptedCsv).not.toContain("@example.");
   const downloadLink=page.getByRole("link",{name:"Download current faculty report as CSV"});
   const started=page.waitForEvent("download");
   await downloadLink.click();
