@@ -95,3 +95,5 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Verify responsive Quiz Report and filtered safe CSV
         run: npx playwright test tests/e2e/faculty-quiz-report.spec.ts --workers=1
+      # This proof is distinct from the prototype's Assignment Report: quiz
+      # accuracy, attempts and question-level exports are retained.
