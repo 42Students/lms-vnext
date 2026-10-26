@@ -206,6 +206,12 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   }, [open]);
 
   function submit() {
+    // Enter follows the same role-scoped Faculty option that a pointer click uses.
+    if(config.portal==="teacher"&&query.trim().length>=2){
+      const suggestion=root.current?.querySelector<HTMLButtonElement>(
+        'section[aria-label="Matching Faculty records"] button[role="option"]');
+      if(suggestion){suggestion.click();return;}
+    }
     if (query.trim().length > 200) {
       setQueryError("Query length must not exceed 200");
       setOpen(true);
