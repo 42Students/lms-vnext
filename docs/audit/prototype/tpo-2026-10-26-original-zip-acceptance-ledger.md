@@ -25,7 +25,7 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 17 | Drives › New drive (and edit).png | `f3a08d2716a2` | Yes | Open |
 | 18 | Drive › Students (review one by one, share with company).png | `fa5858818245` | Yes | Open |
 | 19 | Drive › Rounds (results, slots).png | `45610502dbb9` | Yes | Open |
-| 20 | Drive › Offers.png | `7c72b4402fc8` | No | Open |
+| 20 | Drive › Offers.png | `7c72b4402fc8` | Yes | Open |
 | 21 | Drive day (at the gate).png | `42077d978c1d` | No | Open |
 | 22 | Drive › Talk (recruiter, change requests, team).png | `458937985d38` | No | Open |
 | 23 | Drive › About.png | `7e3aaa257b42` | No | Open |
@@ -181,10 +181,20 @@ The original **2880 × 2088** Rounds image has a left ordered three-round select
 
 Added static-render regression `tests/unit/tpo-prototype-drive-rounds-2026.test.tsx`, and the dedicated source acceptance workflow now runs both new Drive Students and Rounds regressions. Remaining: measured candidate confirmations (do not equate booked with confirmed), direct per-request move controls within the overview, round add/reorder drag interactions, actual browser test and pixel-comparison. **Source partial only; no visual/browser acceptance.**
 
+## Screen 20 — Drive › Offers (original ZIP image visually inspected)
+
+Original `Drive › Offers.png` has a pre-release approval step that separates selected students the college may release from those needing manual rules decisions, followed by an actual issued-offer register, student response states, joining/letter facts, and selected-student status timeline. Original sample "31 selected, 29 clear, 2 need your call" is **fixture data**, not an approved count.
+
+Source examined: `docs/legacy-source/frontend/src/components/tpo/drive/OffersTab.js`, `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`, `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx`, `src/modules/placements/tpo-drive-selection-service.ts`, `src/components/placements/tpo-drive-selection-manager.tsx`, and `src/modules/placements/tpo-drive-offer-register-service.ts`.
+
+Original behavior already exists behind separate vNext actions: persist selected candidates without issuing offers; snapshot verified readiness; dedicated `VERIFY_AND_RELEASE` with optimistic timestamp, server-side held-offer and college placement policy checks, partial-failure reporting, and official learner notices only after release. New `src/components/tpo/tpo-drive-offers-prototype-review.tsx` visibly reconnects **selected-but-unissued** and **persisted issued offer versions** on the Offers route, showing honest preliminary readiness, source-backed needs-review rows, selected offer response/expiry/joining and links to the existing secured selection confirmation and evidence routes. Explicit source failure is not zero, and no offer is issued from a read-only preview.
+
+Source-backed stage UI does **not** manufacture a fully policy-cleared count or map selected applicants to `ISSUED`. Letter visibility, read/open tracking, arbitrary extension approval, company acceptance and waitlist promotions remain in their established verified workspaces, not fictional buttons. Added render regression `tests/unit/tpo-prototype-drive-offers-2026.test.tsx`, now included in dedicated TPO source CI. **Runtime/browser/pixel acceptance still open.**
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **19/33**
+- Original PNGs visually opened in this recovery pass: **20/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**
