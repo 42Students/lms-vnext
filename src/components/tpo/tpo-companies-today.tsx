@@ -268,7 +268,7 @@ export function TpoCompaniesToday({
      </div>
      <div className={styles.context}>
       <span className={styles.eyebrow}>COMPANY IDENTITY · NOT VERIFIED</span>
-      <strong>{selectedCompany.companyName} is not yet platform-verified. Review the company before trusting it for your college.</strong>
+      <strong>{selectedCompany.companyName} is not yet platform-verified. {selectedCompany.collegeTrusted?"College trust is already enabled; check the verification and publishing conditions.":"Review the company before deciding whether to trust it for your college."}</strong>
      </div>
      <p className={styles.sub}>A linked recruiter account is not proof of company identity. Platform verification and this college's trust decision are separate.</p>
      <div className={styles.facts}>
