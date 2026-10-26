@@ -1,6 +1,7 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
+import {getFacultyDeliveryRoster} from "@/modules/attendance/faculty-service";
 import {getDb} from "@/db/client";
 import {assignmentSubmissions,attendanceSessions,courseDiscussionMessages,colleges} from "@/db/schema";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
@@ -65,9 +66,21 @@ export default async function TeacherIndex(){
   .catch(()=>null):[];
  const markedIds=markedRead===null?null:
   new Set(markedRead.filter(item=>item.status==="MARKED").map(item=>item.id));
+ const assigned=await listFacultyCourseDeliveries(context);
+ const todaysDeliveryIds=[...new Set(todayEvents.slice(0,5)
+  .map(event=>event.deliveryId).filter((id):id is string=>id!==null))];
+ // Session cards use an actual scoped roster count, never the design mockup.
+ // Roster access may be unavailable for older migrated courses; show no
+ // numeric claim rather than falling back to invented prototype counts.
+ const rosters=await Promise.all(todaysDeliveryIds.map(async id=>({
+  deliveryId:id,count:await getFacultyDeliveryRoster(context,id)
+   .then(result=>result.roster.length).catch(()=>null),
+ })));
+ const rosterSizes=new Map(rosters.map(item=>[item.deliveryId,item.count] as const));
  const dailyClasses:FacultyTodayClass[]=todayEvents.slice(0,5).map(event=>({
   id:event.id,title:event.courseCode??event.title,sectionName:event.sectionName,
-  timeLabel:clock(event.startsAt),location:event.location,learnerCount:null,
+  timeLabel:clock(event.startsAt),location:event.location,
+  learnerCount:event.deliveryId?rosterSizes.get(event.deliveryId)??null:null,
   actionLabel:markedIds?.has(event.id)?"Review attendance":"Take attendance",
   href:event.deliveryId?
    "/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(event.id):
@@ -76,7 +89,6 @@ export default async function TeacherIndex(){
  const tasks:FacultyTodayTask[]=[];
  // Do not claim an unread count without a persisted read cursor.
  // Show recent student messages only for the actor's currently assigned deliveries.
- const assigned=await listFacultyCourseDeliveries(context);
  const assignedIds=[...new Set(assigned.map(row=>row.deliveryId))];
  const recentMessages=assignedIds.length?await getDb().select({
   id:courseDiscussionMessages.id,
