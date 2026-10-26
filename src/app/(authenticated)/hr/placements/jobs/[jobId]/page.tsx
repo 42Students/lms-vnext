@@ -407,6 +407,29 @@ export default async function HrPlacementJobPage({
         </div>
       </section>
 
+      {/* Original recruiter prototype: progress and next action persist across drive tabs. */}
+      <section aria-label="Drive progress and next action" className="min-w-0 space-y-3">
+          <ol aria-label="Drive progress" className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            {recruiterDriveProgressSteps(driveOverview).map(step=><li key={step.label}
+              aria-current={step.state==="CURRENT"?"step":undefined}
+              className={step.state==="CURRENT"
+                ?"rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-3 text-sm font-semibold text-primary-text"
+                :"rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary px-3 py-3 text-sm text-body"}>
+              <StatusBadge tone={step.state==="COMPLETE"?"success":step.state==="CURRENT"?"info":"neutral"}>{step.state==="COMPLETE"?"Done":step.state==="CURRENT"?"Current":"Upcoming"}</StatusBadge>
+              <span className="mt-1 block">{step.label}</span>
+            </li>)}
+          </ol>
+          <div className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+            <h2 className="font-semibold text-[var(--lms-heading)]">Next for you</h2>
+            <p className="mt-1 text-sm text-body">{recruiterDriveNextAction(driveOverview).detail}</p>
+            <Link href={recruiterDriveNextAction(driveOverview).tab
+               ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab+returnQuery
+               : recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
+              className="mt-3 inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-[650] text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              {recruiterDriveNextAction(driveOverview).label}
+            </Link>
+          </div>
+      </section>
       <div className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-none md:p-[var(--lms-canvas-padding)]">
       <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={discussionTab ? "discussion" : filters.tab}
         items={[{value:"overview",label:"Overview",href:"/recruiter/drives/"+workspace.job.id+"?tab=overview"+returnQuery},
@@ -428,16 +451,7 @@ export default async function HrPlacementJobPage({
                 {driveOverview.deadlineState==="DUE_SOON"?"Applications close soon":driveOverview.deadlineState==="PASSED"?"Application deadline passed":driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
-          <div className="min-w-0 border-b border-border pb-4">
-            <h3 className="font-semibold text-[var(--lms-heading)]">Next</h3>
-            <p className="mt-1 text-sm text-body">{recruiterDriveNextAction(driveOverview).detail}</p>
-            <Link href={recruiterDriveNextAction(driveOverview).tab
-               ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab+returnQuery
-               : recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
-              className="mt-3 inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-[650] text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-              {recruiterDriveNextAction(driveOverview).label}
-            </Link>
-          </div>
+
           <section aria-label="What students see" className="border-b border-border pb-4">
             <details className="min-w-0">
              <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">What students see</summary>
@@ -490,16 +504,7 @@ export default async function HrPlacementJobPage({
               </li>)}
             </ol>
           </section>
-          <ol aria-label="Drive progress" className="grid min-w-0 grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-6">
-            {recruiterDriveProgressSteps(driveOverview).map(step=><li key={step.label}
-              aria-current={step.state==="CURRENT"?"step":undefined}
-              className={step.state==="CURRENT"
-                ?"rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-3 text-sm font-semibold text-primary-text"
-                :"rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary px-3 py-3 text-sm text-body"}>
-              <StatusBadge tone={step.state==="COMPLETE"?"success":step.state==="CURRENT"?"info":"neutral"}>{step.state==="COMPLETE"?"Done":step.state==="CURRENT"?"Current":"Upcoming"}</StatusBadge>
-              <span className="mt-1 block">{step.label}</span>
-            </li>)}
-          </ol>
+
           <dl className="grid min-w-0 gap-x-6 gap-y-3 border-y border-border py-3 md:grid-cols-2 lg:grid-cols-3">
             {[
               {label:"Shared applications (capped)",value:driveOverview.shared},
