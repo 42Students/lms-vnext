@@ -55,7 +55,7 @@ test("Faculty Blueprint screenshot 05 has a selected lesson rail, inline actions
   await expect(page.getByRole("alertdialog",{name:/^Remove .+\?/})).toBeVisible();
   await page.getByRole("alertdialog",{name:/^Remove .+\?/}).getByRole("button",{name:/Cancel/i}).click();
   await expect(page.getByRole("alertdialog",{name:/^Remove .+\?/})).toHaveCount(0);
-  const add=explorer.locator("details").filter({has:explorer.getByText("+ Add content")}).first();
+  const add=explorer.locator("details").filter({hasText:"+ Add content"}).first();
   await add.locator("summary").click();
   await expect(add.getByRole("link",{name:"Resource",exact:true})).toHaveAttribute(
    "href",new RegExp("lesson=.*advanced=1#faculty-lesson-add-"));
