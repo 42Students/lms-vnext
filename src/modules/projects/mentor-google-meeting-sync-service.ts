@@ -192,20 +192,35 @@ export async function syncMentorGoogleMeeting(
  // the authorised roster. Failure leaves a retryable state, never a false
  // claim that Google sent invitations.
  let invitationStatus:"PROVIDER_ACCEPTED"|"RETRY_REQUIRED"="PROVIDER_ACCEPTED";
+ let invitedRecipients=draft?0:invitees.length;
  if(draft){
   try{
+   // The draft promotion and provider call are separate transactions. A
+   // learner can be removed, a selected member revoked, or the ceremony
+   // rescheduled between the two. Resolve live grants and selected invitees
+   // again instead of sending to the pre-promotion roster snapshot.
+   const fresh=await verifiedGoogleMeeting(context,projectId,meetingId);
+   if(fresh.meeting.status!=="SCHEDULED"||
+      fresh.meeting.meetingUrl!==event.meetUrl||
+      fresh.meeting.startsAt.getTime()!==meeting.startsAt.getTime()||
+      fresh.meeting.endsAt.getTime()!==meeting.endsAt.getTime()||
+      fresh.meeting.timeZone!==meeting.timeZone)
+    throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
+   const currentInvitees=scopedMentorInviteeEmails(
+    fresh.people,selectedMembershipIds);
    await mentorGoogleUpsertMeeting(accessToken,calendarId,{
-    meetingId,title:meeting.title,agenda:meeting.agenda,
-    startsAt:meeting.startsAt,endsAt:meeting.endsAt,
-    timeZone:meeting.timeZone,inviteeEmails:invitees,
+    meetingId,title:fresh.meeting.title,agenda:fresh.meeting.agenda,
+    startsAt:fresh.meeting.startsAt,endsAt:fresh.meeting.endsAt,
+    timeZone:fresh.meeting.timeZone,inviteeEmails:currentInvitees,
     ...(weeklyCount!==undefined?{weeklyCount}:{})
    });
+   invitedRecipients=currentInvitees.length;
   }catch{invitationStatus="RETRY_REQUIRED";}
  }
  const providerStatus=await readMentorGoogleMeetingStatus(
   accessToken,calendarId,meetingId).catch(()=>null);
  return {eventId:event.eventId,meetUrl:event.meetUrl,
-  invitedRecipients:invitationStatus==="PROVIDER_ACCEPTED"?invitees.length:0,
+  invitedRecipients:invitationStatus==="PROVIDER_ACCEPTED"?invitedRecipients:0,
   meetingScheduled:true,invitationStatus,providerStatus};
 }
 
