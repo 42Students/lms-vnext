@@ -118,7 +118,9 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    .selectOption({label:baseTitle+" revised (PUBLISHED)"});
   const archive=page.waitForResponse(res=>res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");
-  await page.getByRole("button",{name:"More"}).click();
+  // The shared Dropdown uses a native <summary>, not a <button>.
+  await page.locator('details[data-slot="dropdown-root"] > summary')
+   .filter({hasText:/^More/}).click();
   await page.getByRole("menuitem",{name:"Archive"}).click();
   await page.getByRole("alertdialog").getByRole("button",{name:"Confirm"}).click();
   const archived=await archive;
