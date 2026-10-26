@@ -23,7 +23,7 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 15 | Drives.png | `c0c53ad75502` | Yes | Open |
 | 16 | Drives › A recruiter’s drive request.png | `c9b273e210fe` | Yes | Open |
 | 17 | Drives › New drive (and edit).png | `f3a08d2716a2` | Yes | Open |
-| 18 | Drive › Students (review one by one, share with company).png | `fa5858818245` | No | Open |
+| 18 | Drive › Students (review one by one, share with company).png | `fa5858818245` | Yes | Open |
 | 19 | Drive › Rounds (results, slots).png | `45610502dbb9` | No | Open |
 | 20 | Drive › Offers.png | `7c72b4402fc8` | No | Open |
 | 21 | Drive day (at the gate).png | `42077d978c1d` | No | Open |
@@ -163,10 +163,20 @@ Remaining acceptance: persistent custom templates and usage counts; secure factu
 - **17 — New drive**, 2880×2560. Prototype starts from previous drive/JD/blank choices, company/role, pay, eligibility, rounds/dates, optional message and a right student eligibility preview. Current `src/app/(authenticated)/tpo/placements/new/page.tsx` and `PlacementJobCreateWorkspace` contain authorized clone/create workflows; `/new/draft` provides a separate quick draft. No simulated AI JD parsing, eligibility number, automatic publication or inferred clash notification should be claimed. Full step/layout parity is still open.
 - All three images were visually inspected and compared to source paths. Only the evidenced per-card request deep-link has been changed here; **none of 15–17 is yet browser/visually accepted**.
 
+## Screen 18 — Drive › Students, one-by-one review (original ZIP image visually inspected)
+
+Original `Drive › Students (review one by one, share with company).png`: prototype has a six-step drive lifecycle ribbon and actionable next-step, stage chips (waiting, all applied, shortlisted, not selected, did not apply), a compact student screening list with CGPA/skills/resume/stage, and the selected student's full profile card + Skip / Not selected / Shortlist-next. It also presents a Share with company action. Counts and people in the PNG are fixture examples, **not** production data.
+
+Compared `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`, `src/components/tpo/tpo-applications-spreadsheet.tsx`, `src/components/placements/tpo-applicant-review-form.tsx`, `src/modules/placements/tpo-applicant-pipeline-service.ts` and original prior application screening control. Existing authenticated scoping, 25-per-page filter, bulk review, export, full applicant proof and optimistic-version POST decision controls are retained.
+
+**Implemented** `src/components/tpo/tpo-drive-students-prototype-review.tsx`, wired to existing live authorized applicant pipeline: source-backed stage chips and selected table/side panel, student CGPA/backlog/eligibility/stage, correct resume-unavailable state, full record drilldown, sequential preview and existing version-protected shortlist/reject form. Opening/skip is non-mutating; no false candidate notifications. Correctly distinguishes page-scoped counts from full-stage counts; unfiltered company sharing is **not** simulated (only authenticated review/export). The source screenshot's skill-match counts, resume update recency, favorite students and eligible headcount need separate scoped evidence and cannot be copied.
+
+Added `tests/unit/tpo-prototype-drive-students-2026.test.ts` contracts. Still open: safe company-sharing workflow, persisted per-drive skill requirement projection, screenshot-perfect layout, browser screening and selected-item navigation. **Source implementation partial, not accepted.**
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **17/33**
+- Original PNGs visually opened in this recovery pass: **18/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**
