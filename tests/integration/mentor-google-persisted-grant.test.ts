@@ -81,6 +81,14 @@ describe("Mentor Google credentials enforce persisted role and membership",()=>{
    await pool.query("delete from users where id=$1",[userId]);
   }
  });
+ it("rejects an organization claim inconsistent with the persisted college",async()=>{
+  const forged:RequestContext={
+   ...mentor,membership:{...mentor.membership!,
+    organizationId:randomUUID()},
+  };
+  await expect(mentorGoogleConnectionState(forged))
+   .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+ });
  it("rejects a disabled Mentor principal before considering saved OAuth credentials",async()=>{
   await expect(mentorGoogleConnectionState({
    ...mentor,user:{...mentor.user,platformStatus:"DISABLED"},
