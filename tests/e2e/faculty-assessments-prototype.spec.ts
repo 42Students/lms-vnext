@@ -34,6 +34,19 @@ test("Faculty unified Assignments and quizzes screenshot 09 filters real rows an
  await quizzes.click();
  await expect(quizzes).toHaveAttribute("aria-pressed","true");
  await all.click();
+ await expect(page).toHaveURL(/\/teacher\/assessments(?:\?.*)?$/);
+ // Canonical shareable filters are the first no-feature-loss step towards
+ // consolidating the old standalone lists into this combined directory.
+ await page.goto("/teacher/assessments?kind=assignment");
+ await expect(assignments).toHaveAttribute("aria-pressed","true");
+ await quizzes.click();
+ await expect(page).toHaveURL(/\/teacher\/assessments\?kind=quiz$/);
+ await page.reload();
+ await expect(quizzes).toHaveAttribute("aria-pressed","true");
+ await all.click();
+ await expect(page).toHaveURL(/\/teacher\/assessments$/);
+ await page.goto("/teacher/assessments?kind=unsupported");
+ await expect(all).toHaveAttribute("aria-pressed","true");
  const table=page.getByRole("table");
  for(const label of ["Title","Course · Class","Due","Handed in","Status"])
   await expect(table.getByRole("columnheader",{name:label})).toBeVisible();

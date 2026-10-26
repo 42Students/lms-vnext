@@ -7,7 +7,14 @@ import {getFacultyDeliveryRoster} from "@/modules/attendance/faculty-service";
 import {FacultyPrototypeAssessmentDirectory,type AssessmentRow} from
  "@/components/courses/faculty-prototype-assessment-directory";
 
-export default async function FacultyAssessmentsPage(){
+export default async function FacultyAssessmentsPage({searchParams}:{
+ searchParams:Promise<{kind?:string|string[]}>;
+}){
+ // Preserve a shareable, non-sensitive destination for the two legacy list
+ // experiences without retiring their advanced actions prematurely.
+ const requestedKind=(await searchParams).kind;
+ const initialKind=requestedKind==="assignment"||requestedKind==="quiz"
+  ?requestedKind:"all";
  const context=await getCurrentRequestContext();
  const overview=await getFacultyAssessmentOverview(context);
  const ids=[...new Set(overview.assignments.map(item=>item.id))];
@@ -68,5 +75,5 @@ export default async function FacultyAssessmentsPage(){
    };
   }),
  ].sort((a,b)=>(a.dueAt?Date.parse(a.dueAt):0)-(b.dueAt?Date.parse(b.dueAt):0));
- return <FacultyPrototypeAssessmentDirectory rows={rows} lessonChoices={overview.lessonChoices}/>;
+ return <FacultyPrototypeAssessmentDirectory rows={rows} lessonChoices={overview.lessonChoices} initialKind={initialKind}/>;
 }

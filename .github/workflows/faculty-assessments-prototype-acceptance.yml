@@ -44,10 +44,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Type-check unified assessment creation and table
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable PostgreSQL
@@ -60,3 +56,10 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Unified Assignments and quizzes screenshot #09 desktop/mobile browser
         run: npx playwright test tests/e2e/faculty-assessments-prototype.spec.ts --workers=1
+      # Shared TPO/Recruiter typecheck failures must not obscure the focused
+      # authenticated Faculty browser acceptance result. Still enforce the
+      # repository-wide typecheck as a separate final, mandatory gate.
+      - name: Type-check unified assessment creation and table
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck

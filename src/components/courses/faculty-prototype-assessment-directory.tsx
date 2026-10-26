@@ -11,10 +11,21 @@ export type AssessmentRow={
 const dateLabel=(value:string|null)=>value?new Intl.DateTimeFormat("en-IN",{
  timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
 }).format(new Date(value)):"Not set";
-export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices}:{rows:readonly AssessmentRow[];
+type AssessmentKindFilter="all"|"assignment"|"quiz";
+export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialKind="all"}:{rows:readonly AssessmentRow[];
  lessonChoices:Awaited<ReturnType<typeof getFacultyAssessmentOverview>>["lessonChoices"];
+ initialKind?:AssessmentKindFilter;
 }){
- const [kind,setKind]=useState<"all"|"assignment"|"quiz">("all");
+ const [kind,setKind]=useState<AssessmentKindFilter>(initialKind);
+ // The selected type is a canonical deep link: old list bookmarks may later
+ // redirect here after the unified screen proves complete feature parity.
+ function selectKind(next:AssessmentKindFilter){
+  setKind(next);
+  const url=new URL(window.location.href);
+  if(next==="all")url.searchParams.delete("kind");
+  else url.searchParams.set("kind",next);
+  window.history.replaceState(window.history.state,"",url.pathname+url.search+url.hash);
+ }
  const [course,setCourse]=useState("all");
  const courses=useMemo(()=>[...new Set(rows.map(row=>row.courseCode))].sort(),[rows]);
  const scoped=rows.filter(row=>course==="all"||row.courseCode===course);
@@ -39,7 +50,7 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices}:{rows:r
   <div className="flex flex-wrap items-center justify-between gap-3">
    <nav aria-label="Assessment type" className="flex flex-wrap gap-2">
     {tabs.map(tab=><button key={tab.value} type="button" className="faculty-proto-pill"
-     aria-pressed={kind===tab.value} onClick={()=>setKind(tab.value)}>
+     aria-pressed={kind===tab.value} onClick={()=>selectKind(tab.value)}>
      {tab.label} {tab.count}</button>)}
    </nav>
    <label className="sr-only" htmlFor="faculty-assessment-course">Filter by course</label>
