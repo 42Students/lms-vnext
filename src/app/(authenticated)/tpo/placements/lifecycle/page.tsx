@@ -83,6 +83,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   let supportError=false;
   try { jobTypes=await listPlacementJobTypeChoices(context,context.membership.collegeId); }
   catch { jobTypes=[];supportError=true; }
+  const requestPreview=data.view==="REQUESTS"?data:
+    data.needsReviewCount>0?
+      await getTpoDriveLifecycleList(context,{view:"REQUESTS",page:"1"}).catch(error=>{
+        if(error instanceof AuthorizationError)throw error;
+        return null;
+      }):null;
   const savedViewScope=context.user.id+":"+context.membership.collegeId;
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
@@ -140,6 +146,33 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </Dropdown>
         <Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgba(38,186,199,0.35)] md:min-h-9 md:w-auto"><span aria-hidden="true" className="mr-2 text-base font-bold">＋</span>Create drive</Link>
       </>} />
+    {data.needsReviewCount>0?<section aria-label="Recruiters asked for a drive"
+     data-testid="tpo.drives.request-cards" className="space-y-2">
+     <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+      Recruiters asked for a drive · {data.needsReviewCount}
+     </h2>
+     {requestPreview?.requestsAvailable?<div className="grid gap-3 md:grid-cols-2">
+      {requestPreview.requestRows.filter(item=>item.reviewRequired).slice(0,2).map(item=>
+       <article key={item.id} className="min-w-0 rounded-xl border border-warning-border bg-warning-subtle p-4">
+        <div className="flex flex-wrap justify-between gap-2">
+         <h3 className="font-semibold text-foreground">{item.company} · {item.title}</h3>
+         <StatusBadge tone={driveRequestStatusTone(item.status)}>{driveRequestStatusLabel(item.status)}</StatusBadge>
+        </div>
+        <p className="mt-2 text-sm text-body">{item.recruiterEmail??"Recruiter contact unavailable"}
+         {" · "}Asked {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})
+          .format(new Date(item.createdAt))}</p>
+        {item.accessEnded?<p className="mt-1 text-xs font-semibold text-warning-text">
+         Recruiter access ended. The placement cell must complete the review.</p>:null}
+        <Link href="/tpo/placements/lifecycle?view=REQUESTS&page=1"
+         className="mt-3 inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">
+         Review request
+        </Link>
+       </article>)}
+     </div>:<Alert tone="warning">Recruiter requests could not be loaded. The drive list is unaffected.
+      <Link href="/tpo/placements/lifecycle?view=REQUESTS&page=1"
+       className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">Open requests</Link>
+     </Alert>}
+    </section>:null}
     <nav aria-label="Needs doing" className="flex flex-wrap gap-2">
       <span className="mr-2 self-center text-sm font-semibold">Needs doing:</span>
       <Link href="/tpo/placements/lifecycle?view=REQUESTS&page=1"
