@@ -2,7 +2,7 @@ import "server-only";
 import {createCipheriv,createDecipheriv,randomBytes} from "node:crypto";
 import {and,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {mentorGoogleCalendarConnections,collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {mentorGoogleCalendarConnections,collegeMemberships,membershipRoles,users,colleges} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {ProjectsServiceError} from "./errors";
@@ -61,6 +61,9 @@ async function scopedMentor(context:RequestContext){
  // on the strength of that snapshot alone.
  const [live]=await getDb().select({id:collegeMemberships.id})
   .from(collegeMemberships)
+  .innerJoin(colleges,and(eq(colleges.id,collegeMemberships.collegeId),
+    eq(colleges.organizationId,membership.organizationId),
+    eq(colleges.status,"ACTIVE")))
   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
     eq(users.platformStatus,"ACTIVE")))
   .innerJoin(membershipRoles,and(
