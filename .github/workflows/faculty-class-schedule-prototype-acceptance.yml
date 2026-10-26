@@ -8,6 +8,8 @@ on:
       - "src/components/courses/faculty-prototype-schedule.tsx"
       - "src/app/(authenticated)/teacher/calendar/page.tsx"
       - "tests/e2e/faculty-class-schedule-prototype.spec.ts"
+## This workflow reports focused Faculty browser acceptance.
+## Global npm run typecheck remains enforced independently in CI.
 permissions:
   contents: read
 concurrency:
@@ -55,7 +57,3 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Screenshot 12 Faculty Schedule authenticated desktop/mobile
         run: npx playwright test tests/e2e/faculty-class-schedule-prototype.spec.ts --workers=1
-      - name: Type-check Faculty schedule and shared components
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
