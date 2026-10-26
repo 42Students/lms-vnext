@@ -14,13 +14,13 @@ export default async function TpoSettingsIndex({searchParams}:{
  return <div className="min-w-0 space-y-4" data-testid="tpo.settings.prototype-rules">
   <TpoSettingsHashRedirect/>
   <TpoPlacementRulesSettingsPage searchParams={Promise.resolve({})}/>
-  <details className="rounded-xl border border-[#e7ecf2] bg-white">
-   <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-[#172033]">Other placement settings</summary>
-   <nav aria-label="Other placement settings" className="flex flex-wrap gap-4 border-t border-[#e7ecf2] p-4 text-sm">
-    <Link href="/tpo/settings/season" className="font-semibold text-[#0a7c88] underline">Placement season</Link>
-    <Link href="/tpo/settings/public-page" className="font-semibold text-[#0a7c88] underline">Public placements settings</Link>
-    <Link href="/tpo/settings/notifications" className="font-semibold text-[#0a7c88] underline">Notifications</Link>
-    <Link href="/tpo/settings/templates" className="font-semibold text-[#0a7c88] underline">Templates</Link>
+  <details className="rounded-xl border border-border bg-white">
+   <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-foreground">Other placement settings</summary>
+   <nav aria-label="Other placement settings" className="flex flex-wrap gap-4 border-t border-border p-4 text-sm">
+    <Link href="/tpo/settings/season" className="font-semibold text-link underline">Placement season</Link>
+    <Link href="/tpo/settings/public-page" className="font-semibold text-link underline">Public placements settings</Link>
+    <Link href="/tpo/settings/notifications" className="font-semibold text-link underline">Notifications</Link>
+    <Link href="/tpo/settings/templates" className="font-semibold text-link underline">Templates</Link>
    </nav>
   </details>
  </div>;
