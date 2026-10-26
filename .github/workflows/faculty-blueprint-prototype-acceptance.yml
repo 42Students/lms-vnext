@@ -14,6 +14,8 @@ on:
       - "tests/e2e/faculty-blueprint-prototype.spec.ts"
       - "tests/unit/faculty-content-order-ui-model.test.ts"
       - "tests/unit/faculty-blueprint-sort-model.test.ts"
+      - "tests/unit/faculty-blueprint-archive-receipt.test.ts"
+      - "src/modules/courses/faculty-blueprint-archive-receipt-model.ts"
       - "src/modules/courses/faculty-blueprint-sort-model.ts"
 permissions:
   contents: read
@@ -55,7 +57,7 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
       - name: Unit-test order receipts and boundaries
-        run: npx vitest run tests/unit/faculty-content-order-ui-model.test.ts tests/unit/faculty-blueprint-sort-model.test.ts
+        run: npx vitest run tests/unit/faculty-content-order-ui-model.test.ts tests/unit/faculty-blueprint-sort-model.test.ts tests/unit/faculty-blueprint-archive-receipt.test.ts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable E2E database
