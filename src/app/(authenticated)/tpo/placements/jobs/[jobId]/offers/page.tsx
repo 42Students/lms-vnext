@@ -5,6 +5,9 @@ import {PageHeader} from "@/components/ui/page-header";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveOfferRegister} from "@/modules/placements/tpo-drive-offer-register-service";
+import {getTpoSelectionWorkspace} from "@/modules/placements/tpo-drive-selection-service";
+import {TpoDriveOffersPrototypeReview} from "@/components/tpo/tpo-drive-offers-prototype-review";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {offerRegisterQuery} from "@/modules/placements/tpo-drive-offer-register-model";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
@@ -34,6 +37,8 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  let data:Awaited<ReturnType<typeof getTpoDriveOfferRegister>>;
  try{data=await getTpoDriveOfferRegister(context,parsed.data)}
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e}
+ const selections=await getTpoSelectionWorkspace(context,p.jobId)
+  .catch(e=>{if(e instanceof AuthorizationError)throw e;return null;});
  const formatIst=(iso:string|null)=>iso?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(iso))+" IST":"Not recorded";
  const root="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
  const searchQuery=parsed.data.q;
@@ -52,6 +57,12 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     <a href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">Export filtered CSV</a>
    </>}/>
   <Banner tone="info">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</Banner>
+  <TpoDriveOffersPrototypeReview jobId={data.job.id} rows={data.rows}
+   total={data.totalMatching} queueAvailable={selections!==null}
+   selectedQueue={selections?.selections.map(row=>({
+    id:row.id,name:row.name,roleTitle:row.roleTitle,status:row.status,offerReady:row.offerReady,
+   }))??[]}/>
+
   <Tabs ariaLabel="Offer status" renderPanel={false} value={data.status}
     items={tabs.map(([value,label,count])=>({
       value,label,count,href:root+"/offers?status="+value+searchSuffix,
