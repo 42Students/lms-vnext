@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {RecruiterColleagueInviteRequest} from "./recruiter-colleague-invite-request";
+import {RecruiterCompanyChangeRequest} from "./recruiter-company-change-request";
 import {recruiterCompanyHiringDisplay} from "@/modules/placements/recruiter-company-unified-prototype-model";
 import type {RecruiterReportRow} from "@/modules/placements/recruiter-company-reports-model";
 import styles from "./recruiter-company-prototype.module.css";
@@ -34,7 +35,10 @@ export function RecruiterCompanyPrototype({
   <div className={styles.grid}>
     <div className={styles.left}>
      <section className={styles.panel} aria-label="Your company">
-      <h2 className={styles.eyebrow}>YOUR COMPANY</h2>
+      <div className={styles.sectionHead}>
+       <h2 className={styles.eyebrow}>YOUR COMPANY</h2>
+       <span className={styles.muted}>Verified changes require placement-cell review</span>
+      </div>
       <div className={styles.companyRow}>
        {logoUrl?<img src={logoUrl} alt="" className={styles.logo} width={58} height={58}/>:
         <span className={styles.logo}>{companyName.slice(0,1).toUpperCase()}</span>}
@@ -49,6 +53,7 @@ export function RecruiterCompanyPrototype({
         <div><dt>Work email domains</dt><dd>{domains.length?domains.map(value=>"@"+value.replace(/^@/,"")).join(", "):"Not recorded"}</dd></div>
       </dl>
       <p className={styles.muted}>Your placement cell manages company details and its trusted domains. Ask them to correct a name, logo or website.</p>
+      <RecruiterCompanyChangeRequest companyName={companyName} collegeId={collegeId} kind="PROFILE"/>
      </section>
      <section className={styles.panel} aria-label="Your team">
       <div className={styles.sectionHead}><h2 className={styles.eyebrow}>YOUR TEAM AT {collegeName.toLocaleUpperCase("en-IN")} · {team.length}</h2>
@@ -63,6 +68,9 @@ export function RecruiterCompanyPrototype({
            <span>{member.title||"Recruiter"}</span>
            <small>{member.email??"Work email unavailable"}</small>
            <small>{teamCountsAvailable?(teamCounts[member.userId]??0)+" recorded drives at this college":"Drive attribution unavailable"}</small>
+           {!member.isYou&&member.email?<RecruiterCompanyChangeRequest
+            kind="TEAM" collegeId={collegeId} companyName={companyName}
+            teammate={{name:member.displayName,email:member.email}}/>:null}
          </div>
        </li>)}
       </ul>:<p className={styles.muted}>Team data is not available. Ask the placement cell to verify access.</p>}
