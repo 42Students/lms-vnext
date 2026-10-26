@@ -26,7 +26,7 @@ const rawErrorPatterns = [
   /set(?:Error|Notice)\(\s*reason\.message\b/,
   /set(?:Error|Notice)\(\s*["'][A-Z][A-Z0-9_]{5,}["']/,
   /\{\s*["'][A-Z][A-Z0-9_]{5,}["']\s*\}/,
-  /<(?:p|div|span|small|strong|label|h[1-6])[^>]*>\s*[A-Z][A-Z0-9_]{5,}\s*</,
+  /<(?:p|div|span|small|strong|label|h[1-6])[^>]*>\s*(?:[A-Z][A-Z0-9]*_[A-Z0-9_]{3,}|UNAUTHORIZED|FORBIDDEN|NOT_FOUND)\s*</,
 ];
 const mutatingFetch = /fetch\([\s\S]{0,350}?\bmethod:\s*["'](?:POST|PUT|PATCH|DELETE)["']/g;
 
@@ -83,6 +83,13 @@ describe("new raw-error and mutation regression gate", () => {
     expect(jsxPattern.test("{body.error}")).toBe(true);
     expect(jsxPattern.test("{result.error.issues.map((issue) => issue.message)}")).toBe(false);
     expect(jsxPattern.test("{body.error?.issues[0]?.message}")).toBe(false);
+  });
+  it("GR-09 rejects raw API codes without falsely treating uppercase page labels as codes", () => {
+    const pattern = rawErrorPatterns[6];
+    expect(pattern.test("<span>COMPANY</span>")).toBe(false);
+    expect(pattern.test("<strong>RECRUITER STATUS</strong>")).toBe(false);
+    expect(pattern.test("<span>TPO_CRM_FOLLOWUP_ALREADY_DONE</span>")).toBe(true);
+    expect(pattern.test("<p>UNAUTHORIZED</p>")).toBe(true);
   });
   it("GR-09 distinguishes direct raw API errors from client Zod issue details", () => {
     const pattern = rawErrorPatterns[2];
