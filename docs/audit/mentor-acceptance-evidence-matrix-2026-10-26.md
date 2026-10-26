@@ -18,6 +18,7 @@
 - `a219062` and `72489b8` guard Mentor Google OAuth credential reads/refreshed tokens with live user, role, college, organization, and consent records, including revocation during an external token refresh. `5f9fd17` rechecks project meeting and live recipients before post-draft Google invitations; it avoids inviting a selected member removed between draft promotion and provider sync. These source checks do **not** prove external provider delivery.
 - `d51d3a8`, `145fc64`, `bf4f2dd` extend disposable PostgreSQL denial coverage for stale cookie roles, different users, role revocation and foreign organizations. `cd8fad0` adds current-recipient/revoked-recipient provider-selection unit tests.
 - `7996901` preserves separate Mentor unit/lint execution in the dedicated CI workflow even if unrelated account code breaks the global typecheck. The workflow still reports a failure whenever the typecheck, tests, lint or browser fail; this is evidence collection, **not** a bypass.
+- `fa754e8` hardens the private ZeptoMail worker endpoint against multi-byte Authorization headers that previously could throw inside `timingSafeEqual`, and `01dde24` adds a denied-request regression. Execution evidence is still required; this does not certify real email delivery.
 - Live OAuth consent, Google attendee receipt, ZeptoMail external delivery, unexecuted per-requirement negative states, and deferred pixel-level acceptance remain open. None of these changes automatically converts the 132-item master register into accepted.
 
 ## All 132 original IDs
