@@ -27,7 +27,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
   action:"Grade",urgent:true,
  });
  if(quiz?.dueAt)priorities.push({
-  id:"quiz",title:quiz.title+" closes "+
+  id:"quiz",title:quiz.title+" due "+
    new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long"}).format(quiz.dueAt),
   detail:(()=>{
    const attempted=signals?.courseCompletion?.quizAttemptsById.find(item=>item.quizId===quiz.id)?.attempted;
@@ -70,18 +70,18 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
   href:base+"/discussions",action:"Reply",
  });
 
- const attendance=signals?.completeness.attendance?signals.attendance.averagePercent:null;
+ const attendance=signals?.completeness.attendance?signals.overviewActivity.attendanceThisMonthPercent:null;
  const courseProgress=signals?.courseCompletion?.averagePercent??null;
  const quizAverage=signals?.courseCompletion?.quizAveragePercent??null;
  const behind=signals?.courseCompletion?.behindTotal??null;
  const rows=[
   {label:"Course progress (average)",value:courseProgress===null?"—":courseProgress+"%",href:base+"/students"},
-  {label:"Attendance (marked classes)",value:attendance===null?"—":attendance+"%",href:base+"/attendanceDetail"},
+  {label:"Attendance this month",value:attendance===null?"—":attendance+"%",href:base+"/attendanceDetail"},
   {label:"Quiz average",value:quizAverage===null?"—":quizAverage+"%",href:base+"/reports"},
   {label:"Behind (under 30% progress)",value:behind===null?"—":String(behind)+" students",href:base+"/students"},
  ];
  const description=display?.introductionText?.trim()||course.courseDescription?.trim()||null;
- return <div className="min-w-0 space-y-4">
+ return <div className="grid min-w-0 items-start gap-[18px] xl:grid-cols-[minmax(0,1fr)_307px]">
   <section aria-label="Needs you" className="faculty-proto-task-list min-w-0">
    <h2 className="border-b border-[#e5ebf2] px-5 py-4 text-xs font-bold uppercase tracking-wide text-[#60718b]">
     Needs you · <span>{course.sectionName}</span>
@@ -99,9 +99,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
     The latest class indicators are unavailable. Open the relevant section tool to retry.
    </p>:null}
   </section>
-  <details className="rounded-xl border border-[#e5ebf2] p-4">
-   <summary className="cursor-pointer text-sm font-semibold text-[#078191]">More course information and class health</summary>
-   <aside aria-label="Course summary" className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
+  <aside aria-label="Course summary" className="grid min-w-0 gap-4">
    <section className="rounded-xl border border-[#e5ebf2] p-5">
     <div className="flex items-center justify-between gap-2">
      <h2 className="text-xs font-bold uppercase tracking-wide text-[#60718b]">About this course</h2>
@@ -126,6 +124,5 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
     </p>
    </section>
   </aside>
-  </details>
  </div>;
 }
