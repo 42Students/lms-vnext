@@ -50,7 +50,9 @@ export default async function FacultyAssessmentsPage(){
     handedIn:count?.handedIn??0,eligible:rosterSizes.get(item.deliveryId)??null,
     toGrade:count?.pending??0,reportHref,
     primaryHref:"/teacher/report/assignment/"+encodeURIComponent(item.id)+"/grade"+suffix,
-    editorHref:"/teacher/allAssignments",
+    editorHref:"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/blueprint?lesson="+
+     encodeURIComponent(item.lessonId)+"&content="+encodeURIComponent(item.id)+
+     "&advanced=1#course-item-"+encodeURIComponent(item.id),
    };
   }),
   ...overview.quizzes.map(item=>{
@@ -66,5 +68,5 @@ export default async function FacultyAssessmentsPage(){
    };
   }),
  ].sort((a,b)=>(a.dueAt?Date.parse(a.dueAt):0)-(b.dueAt?Date.parse(b.dueAt):0));
- return <FacultyPrototypeAssessmentDirectory rows={rows}/>;
+ return <FacultyPrototypeAssessmentDirectory rows={rows} lessonChoices={overview.lessonChoices}/>;
 }
