@@ -61,6 +61,30 @@ export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SEN
     className="min-h-11 min-[768px]:min-h-9"
     onClick={()=>void remind()}>{busy?"Sending…":"Remind them"}</Button>:null}
    {reminder?<InlineNotice tone="success" message={reminder}/>:null}
+   {isSent&&!data.notDelivered&&data.delivered>data.read&&data.unread.length>0?
+    <section aria-label="Unread announcement recipients preview" className="mt-3 min-w-0 overflow-hidden rounded-lg border border-border">
+     <h3 className="bg-surface-secondary px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+      Who has not read this notice
+     </h3>
+     <ul className="divide-y divide-border">
+      {data.unread.slice(0,6).map((recipient,index)=>{
+       const name=typeof recipient==="string"?recipient:recipient.name;
+       const branch=typeof recipient==="string"?null:recipient.branchName;
+       const roll=typeof recipient==="string"?null:recipient.rollNumber;
+       const key=typeof recipient==="string"?index:recipient.id??index;
+       return <li key={key} className="flex min-w-0 flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm">
+        <span className="min-w-0 break-words font-semibold text-foreground">{name}</span>
+        {branch||roll?<span className="break-words text-xs text-body">{[branch,roll].filter(Boolean).join(" · ")}</span>:null}
+       </li>;
+      })}
+     </ul>
+     {data.delivered-data.read>Math.min(6,data.unread.length)?
+      <p className="border-t border-border px-3 py-2 text-xs text-muted-foreground">
+       Previewing {Math.min(6,data.unread.length)} of {data.delivered-data.read} not-yet-read recipients.
+       Open the full list for all currently available names.
+      </p>:null}
+    </section>:null}
+
    {isSent&&data.delivered>data.read?<Button variant="ghost" type="button"
     className="min-h-11 text-link underline md:min-h-9" onClick={()=>setUnreadOpen(true)}>Who hasn&apos;t read ({data.delivered-data.read})</Button>:null}
    <Drawer open={unreadOpen} onOpenChange={setUnreadOpen} title="Who hasn't read"
