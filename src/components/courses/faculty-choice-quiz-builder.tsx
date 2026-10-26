@@ -29,8 +29,8 @@ const fresh=():Question=>({
  type:"SINGLE_CHOICE",prompt:"",points:1,sequence:0,
  options:[{text:"",correct:true,sequence:0},{text:"",correct:false,sequence:1}],
 });
-export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
- deliveryId:string;lessons:readonly {id:string;name:string}[];quizzes:readonly Quiz[];
+export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLessonId=null}:{
+ deliveryId:string;lessons:readonly {id:string;name:string}[];quizzes:readonly Quiz[];initialLessonId?:string|null;
 }){
  const router=useRouter();
  const choiceRequest=useRef(0);
@@ -45,7 +45,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [previewOpen,setPreviewOpen]=useState(false);
  const [previewAnswers,setPreviewAnswers]=useState(false);
  const [localQuizzes,setLocalQuizzes]=useState<Quiz[]>([]);
- const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
+ const defaultLessonId=lessons.find(lesson=>lesson.id===initialLessonId)?.id??lessons[0]?.id??"";
+ const [lessonId,setLessonId]=useState(defaultLessonId);
  const [title,setTitle]=useState("");
  const [description,setDescription]=useState("");
  const [dueAt,setDueAt]=useState("");
@@ -80,7 +81,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   setSelected(id);setConfirmed(false);setDirtyDraft(false);setError(null);setSuccess(null);setDetailsFailed(false);
   const q=availableQuizzes.find(x=>x.id===id);
   if(!q){setTitle("");setDescription("");setDueAt("");setMaxAttempts(1);setShuffleQuestions(false);setShuffleOptions(false);
-    setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");setPending(false);return;}
+    setQuestions([fresh()]);setLessonId(defaultLessonId);setPending(false);return;}
   setTitle(q.title);setDescription(q.description??"");setDueAt(authoringLocalDateTime(q.dueAt));
   setMaxAttempts(q.maxAttempts);setShuffleQuestions(Boolean(q.shuffleQuestions));setShuffleOptions(Boolean(q.shuffleOptions));setLessonId(q.lessonId);setPending(true);
   try{
@@ -208,7 +209,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    if(action==="ARCHIVE"){
      ++choiceRequest.current;
      setSelected("");setTitle("");setDescription("");setDueAt("");
-     setMaxAttempts(1);setShuffleQuestions(false);setShuffleOptions(false);setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");
+     setMaxAttempts(1);setShuffleQuestions(false);setShuffleOptions(false);setQuestions([fresh()]);setLessonId(defaultLessonId);
    }
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}

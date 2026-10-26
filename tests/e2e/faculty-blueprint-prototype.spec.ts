@@ -20,7 +20,7 @@ async function login(context:BrowserContext){
 
 test("Faculty Blueprint screenshot 05 has a selected lesson rail, inline actions, and real authoring links",
  async({page,context})=>{
-  test.setTimeout(90_000);
+  test.setTimeout(150_000);
   await login(context);
   await page.setViewportSize({width:1440,height:900});
   const errors:string[]=[];
@@ -57,10 +57,28 @@ test("Faculty Blueprint screenshot 05 has a selected lesson rail, inline actions
   await expect(page.getByRole("alertdialog",{name:/^Remove .+\?/})).toHaveCount(0);
   const add=explorer.locator("details").filter({hasText:"+ Add content"}).first();
   await add.locator("summary").click();
-  await expect(add.getByRole("link",{name:"Resource",exact:true})).toHaveAttribute(
-   "href",new RegExp("lesson=.*advanced=1#faculty-lesson-add-"));
-  await add.getByRole("link",{name:"Resource",exact:true}).click();
-  await expect(page).toHaveURL(/\/blueprint\?lesson=.*advanced=1#faculty-lesson-add-/);
+  const lessonId=new URL((await chosen.getAttribute("href"))!,page.url()).searchParams.get("lesson");
+  expect(lessonId).toBeTruthy();
+  const options=[["Resource","RESOURCE"],["YouTube","YOUTUBE"],["Live class","LIVE_CLASS"],
+   ["Video","VIDEO"],["Assignment","ASSIGNMENT"],["Quiz","QUIZ"]] as const;
+  const urls:Record<string,string>={};
+  for(const [kind] of options){
+   const href=await add.getByRole("link",{name:kind,exact:true}).getAttribute("href");
+   expect(href).toContain("lesson="+encodeURIComponent(lessonId!));
+   urls[kind]=href!;
+  }
+  for(const [kind,mode] of options){
+   await page.goto(urls[kind]!);
+   if(mode==="VIDEO"){
+    await expect(page.getByRole("dialog",{name:"Upload New Video"})).toBeVisible();
+   }else if(mode==="ASSIGNMENT"||mode==="QUIZ"){
+    await expect(page.getByRole("combobox",{name:"Lesson"})).toHaveValue(lessonId!);
+   }else{
+    await expect(page).toHaveURL(new RegExp("create="+mode));
+    await expect(page.getByRole("textbox",{name:"Content Title"})).toBeVisible();
+   }
+  }
+  await page.goto(urls["Resource"]!);
   await expect(page.getByText("Full blueprint editor, publishing and content ordering")).toBeVisible();
   await page.setViewportSize({width:390,height:844});
   await expect(page.getByRole("region",{name:"Course blueprint lesson explorer"})).toBeVisible();

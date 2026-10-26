@@ -25,10 +25,10 @@ type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
 };
-export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsEnabled=false}:{
+export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsEnabled=false,initialLessonId=null}:{
  deliveryId:string;lessons:readonly {id:string;name:string}[];
  assignments:readonly Existing[];
- methodsEnabled?:boolean;
+ methodsEnabled?:boolean;initialLessonId?:string|null;
 }){
  const router=useRouter();
  const mutationLock=useRef(false);
@@ -39,7 +39,8 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
  const [confirmation,setConfirmation]=useState<{kind:"SWITCH";id:string}|{kind:"ARCHIVE"}|null>(null);
  const [publishNow,setPublishNow]=useState(true);
  const [selected,setSelected]=useState("");
- const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
+ const defaultLessonId=lessons.find(lesson=>lesson.id===initialLessonId)?.id??lessons[0]?.id??"";
+ const [lessonId,setLessonId]=useState(defaultLessonId);
  const [title,setTitle]=useState("");
  const [description,setDescription]=useState("");
  const [dueAt,setDueAt]=useState("");
@@ -59,7 +60,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   setSelected(id);const row=assignments.find(x=>x.id===id);
   setTitle(row?.title??"");setDescription(row?.description??"");
   setDueAt(authoringLocalDateTime(row?.dueAt??null));
-  setMaxPoints(row?.maxPoints??10);setLessonId(row?.lessonId??lessons[0]?.id??"");
+  setMaxPoints(row?.maxPoints??10);setLessonId(row?.lessonId??defaultLessonId);
   setConfirmed(false);setError(null);setSuccess(null);
   setAllowedMethods(ALL_ASSIGNMENT_METHODS);setMethodsDirty(false);
   setMethodsLoaded(!methodsEnabled||!row);
