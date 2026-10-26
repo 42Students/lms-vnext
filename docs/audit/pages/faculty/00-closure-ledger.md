@@ -1,5 +1,13 @@
 # Faculty vNext — single closure ledger
 
+## CANONICAL PRODUCT PAGE INVENTORY — 27 October 2026
+
+**Decision:** The newest Faculty prototype defines the primary user experience and design, **not** an instruction to remove distinct vNext features. The complete [canonical screen and route disposition](01-canonical-page-inventory.md) now classifies the 12 original Faculty screenshot references, 25 additional rendered Faculty routes and 5 compatibility redirects. The 12 references include one shared-shell interaction screenshot, so screenshot count and Next.js route count are different.
+
+**Safe consolidation rule:** `/teacher/assessments` is the canonical Assignments & Quizzes directory. `/teacher/allAssignments` and `/teacher/allQuizzes` are **candidates for future compatibility redirects only after full review/edit/publication/results functionality and existing deep-link behavior are demonstrated in the combined destination**. Do not remove or redirect them prematurely. Faculty Profile vs About & Details is likewise conditional on form and deep-link parity. Manage builders, reports, gradebooks, submissions and other specialized tools remain functional secondary routes unless independently proved redundant.
+
+**Acceptance order:** #05 Blueprint current-code closure → #06–#13 source, authorization, mutation and browser acceptance → current-SHA regress #02–#04 → merge proven duplicates with independent regression → all 25 distinct secondary routes + 5 redirect contract checks → independent visual comparison LAST. Completion of a prototype page is not completion of its associated secondary route.
+
 ## CURRENT CODE PHASE — 26 October 2026 (newest state; supersedes stale descriptions below)
 
 **User decision:** Finish Faculty CODE and functional behavior first. Pixel-level visual checking is deferred, not passed.
