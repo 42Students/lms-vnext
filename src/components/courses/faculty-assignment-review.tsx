@@ -90,11 +90,13 @@ export function SubmissionGradeCard({
   onUpdated,
   onRefresh,
   onBusyChange,
+  onPublished,
   filesEnabled,
   hideSubmissionContent=false,
 }: {
   submission: Submission;
   hideSubmissionContent?:boolean;
+  onPublished?:(submission:Submission)=>void;
   maxPoints: number;
   filesEnabled: boolean;
   onUpdated: (submission: Submission) => void;
@@ -260,6 +262,7 @@ export function SubmissionGradeCard({
       setGradeEditing(false);
       setSuccess("Grade submitted. The learner can now see the score.");
       onUpdated({...current,...published});
+      onPublished?.({...current,...published});
     }catch{
       setNeedsRefresh(true);
       setError("The grade or publication outcome is uncertain. Reload before retrying.");
@@ -311,14 +314,13 @@ export function SubmissionGradeCard({
       });
       setGradeEditing(false);
       setSuccess(facultyManualGradeSuccessMessage("PUBLISH",saved.version));
-      onUpdated({
-        ...submission,
-        ...saved,
-        learnerDisplayName:
-          submission.learnerDisplayName,
-        learnerEmail:
-          submission.learnerEmail,
-      });
+      const publishedSubmission={
+        ...submission,...saved,
+        learnerDisplayName:submission.learnerDisplayName,
+        learnerEmail:submission.learnerEmail,
+      };
+      onUpdated(publishedSubmission);
+      onPublished?.(publishedSubmission);
     } catch {
       setError("Failed to submit grade. "+facultyManualGradeUncertainMessage("PUBLISH"));
     } finally {
@@ -478,7 +480,7 @@ export function SubmissionGradeCard({
             <Button size="md" type="button" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
               disabled={saving||publishing||draftState.points===null}
               onClick={()=>void saveAndPublish()}>
-              {saving?"Submitting…":"Submit grade"}
+              {saving?"Submitting…":onPublished?"Submit grade and next":"Submit grade"}
             </Button>
           ):null}
           {actions.canGrade&&gradeEditing ? (
