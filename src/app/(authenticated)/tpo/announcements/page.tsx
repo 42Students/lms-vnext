@@ -18,6 +18,7 @@ import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-und
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
 import {TpoNoticeDeliveryRetry} from "@/components/tpo/tpo-notice-delivery-retry";
 import {TpoNoticeUndoToast} from "@/components/tpo/tpo-notice-undo-toast";
+import {TpoNoticePrototypeSidebar} from "@/components/tpo/tpo-notice-prototype-sidebar";
 import {TpoNoticeDraftGuard} from "@/components/tpo/tpo-notice-draft-guard";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -34,7 +35,7 @@ import {tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-prev
 import {TpoNoticeLiveAudienceProvider,TpoNoticeLiveReach,TpoNoticeLiveSubmitControls} from "@/components/tpo/tpo-notice-live-preview";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
 import {tpoNoticeDeliveryVerified} from "@/modules/announcements/tpo-notice-delivery-readiness";
-type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[]}>};
+type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[];notice?:string|string[];compose?:string|string[]}>};
 
 // Only confirmed persisted delivery starts the 30-second undo window.
 // Creation can precede dispatch, including immediate notices; using createdAt
@@ -51,7 +52,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  await requirePersistedTpoMembership(context,context.membership.collegeId);
  const raw=await searchParams;
- const scalarKeys=["tab","page","mine","audience","targetId"] as const;
+ const scalarKeys=["tab","page","mine","audience","targetId","notice","compose"] as const;
  if(scalarKeys.some(key=>Array.isArray(raw[key])))
   return <div className="min-w-0 space-y-4"><PageHeader title="Announcements"/><Alert tone="error">Invalid announcement filters. <Link href="/tpo/announcements">Return to announcements</Link></Alert></div>;
  const t=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
@@ -60,7 +61,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
  if(!tab.success)return <div className="min-w-0 space-y-4"><PageHeader title="Announcements"/><Alert tone="error">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></Alert></div>;
  const pageValue=Array.isArray(raw.page)?raw.page[0]:raw.page;
  const page=pageValue&&/^[1-9][0-9]{0,3}$/.test(pageValue)?Math.min(1000,Number(pageValue)):1;
- const showTeam=Array.isArray(raw.mine)?raw.mine[0]==="0":raw.mine==="0";
+ const showTeam=raw.mine==="0";
+ if(raw.compose!==undefined&&raw.compose!=="1")return <div className="min-w-0 space-y-4"><PageHeader title="Announcements"/><Alert tone="error">Invalid compose selection. <Link href="/tpo/announcements">Reset</Link></Alert></div>;
+ if(raw.notice!==undefined&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(raw.notice)))
+  return <div className="min-w-0 space-y-4"><PageHeader title="Announcements"/><Alert tone="error">Invalid announcement selection. <Link href="/tpo/announcements">Reset</Link></Alert></div>;
  const result=await listTpoPlacementAnnouncements(context,tab.data,new Date(),page,showTeam?"COLLEGE":"MINE")
   .catch((error:unknown)=>{
    if(error instanceof AuthorizationError)throw error;
@@ -70,6 +74,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
   await placementTableExists("placement_tpo_notice_recipients");
  const deliveryReady=tpoNoticeDeliveryVerified();
+ const selectedNotice=result.status==="READY"?
+  (raw.notice===undefined?result.items[0]??null:result.items.find(row=>row.id===raw.notice)??null):null;
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
  const noticeError=tpoNoticeFormErrorMessage(first(raw.noticeError));
  const sentId=first(raw.sentNotice);
@@ -89,7 +95,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    description={tab.data==="from-42"?"What 42 tells placement cells.":
     "What you tell your students, to whom, and who has read it. They read it under Placements."}
    actions={result.status==="READY" && tab.data==="yours"?
-    <TpoNoticeComposerDialog initialOpen={Boolean(first(raw.audience)||first(raw.targetId)||raw.targetIds)}><section aria-labelledby="section-compose-a-college-notice" className="space-y-4">
+    <TpoNoticeComposerDialog initialOpen={raw.compose==="1"||Boolean(first(raw.audience)||first(raw.targetId)||raw.targetIds)}><section aria-labelledby="section-compose-a-college-notice" className="space-y-4">
    <h2 id="section-compose-a-college-notice" className="sr-only">Compose a college notice</h2>
    <p className="mt-1 text-sm text-body">Only active college members can see published notices. Email is unavailable (emailReady: false); no email or SMS is sent.</p>
    <TpoNoticeLiveAudienceProvider formId="tpo-notice-create">
@@ -165,8 +171,16 @@ export default async function TpoAnnouncements({searchParams}:Props){
   </Alert>:result.status==="NOT_REGISTERED"?<Alert tone="warning">
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
-  </Alert>:result.items.length?<ol aria-label="tpo announcements entries" className="min-w-0 space-y-3">
-   {result.items.map(row=><li key={row.id} id={"announcement-"+row.id}
+  </Alert>:result.items.length?<div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)]"
+    data-testid="tpo.announcements.prototype-workspace">
+    <TpoNoticePrototypeSidebar tab={tab.data} mine={showTeam} page={page}
+     rows={result.items.map(row=>({id:row.id,title:row.title,senderName:row.senderName,
+      createdAt:row.createdAt.toISOString(),scheduledAt:row.scheduledAt?.toISOString()??null,
+      expiresAt:row.expiresAt?.toISOString()??null,isPinned:row.isPinned,audienceKind:row.audienceKind}))}
+     nowIso={new Date().toISOString()} activeId={selectedNotice?.id??null}/>
+    <section className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-5" aria-label="Announcement details">
+    {selectedNotice?<ol aria-label="tpo announcements entries" className="min-w-0 space-y-3">
+   {[selectedNotice].map(row=><li key={row.id} id={"announcement-"+row.id}
     className={"min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-5 "+(row.isPinned?"border-l-[3px] border-l-[var(--lms-primary)] ":"")+(row.expiresAt&&new Date(row.expiresAt)<=new Date()?"opacity-75":"")}>
     <div className="flex min-w-0 flex-wrap items-center gap-2">
      {row.isPinned?<svg role="img" aria-label="Pinned" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="shrink-0 text-primary-text">
@@ -293,7 +307,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
       status={row.scheduledAt&&new Date(row.scheduledAt)>new Date()?"SCHEDULED":
        row.expiresAt&&new Date(row.expiresAt)<=new Date()?"ENDED":"SENT"}/>:null}
    </li>)}
-  </ol>:<EmptyState title={tab.data==="from-42"?"Nothing from 42 yet.":tab.data==="yours"?"Nothing yet. Tell students about a talk, a deadline or a change; pick who it is for, and see who has read it.":"No recently removed announcements."}/>}
+  </ol>:<Alert tone="warning">The selected announcement is not on this page. No other notice was opened. <Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+(page>1?"&page="+page:"")} className="font-semibold text-link underline">Clear selection</Link></Alert>}
+    </section>
+   </div>:<EmptyState title={tab.data==="from-42"?"Nothing from 42 yet.":tab.data==="yours"?"Nothing yet. Tell students about a talk, a deadline or a change; pick who it is for, and see who has read it.":"No recently removed announcements."}/>}
   {result.status==="READY"&&(result.page>1||result.hasMore)?<nav aria-label="Announcement pages"
     className="flex min-w-0 flex-col items-stretch gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
