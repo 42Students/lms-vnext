@@ -7,6 +7,8 @@ on:
       - ".github/workflows/faculty-prototype-find-acceptance.yml"
       - "tests/e2e/faculty-prototype-find.spec.ts"
       - "src/components/shell/topbar/faculty-find-suggestions.tsx"
+      - "src/components/shell/topbar/command-search.tsx"
+      - "tests/e2e/faculty-notifications.spec.ts"
       - "src/modules/courses/faculty-find-service.ts"
       - "src/app/api/courses/faculty/find/route.ts"
 permissions:
@@ -52,4 +54,4 @@ jobs:
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Faculty Find, bell, and Profile authenticated desktop/mobile and keyboard
-        run: npx playwright test tests/e2e/faculty-prototype-find.spec.ts --workers=1
+        run: npx playwright test tests/e2e/faculty-prototype-find.spec.ts tests/e2e/faculty-notifications.spec.ts --workers=1
