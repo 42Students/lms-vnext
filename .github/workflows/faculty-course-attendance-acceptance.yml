@@ -7,6 +7,10 @@ on:
       - ".github/workflows/faculty-course-attendance-acceptance.yml"
       - "tests/integration/faculty-c4-reports-audit-contact.test.ts"
       - "tests/e2e/faculty-course-attendance.spec.ts"
+      - "tests/e2e/faculty-attendance-prototype.spec.ts"
+      - "tests/unit/faculty-prototype-session-selection.test.ts"
+      - "src/modules/attendance/faculty-prototype-session-selection.ts"
+      - "src/components/attendance/faculty-prototype-attendance.tsx"
       - "src/modules/attendance/faculty-service.ts"
       - "src/components/attendance/faculty-attendance-workspace.tsx"
       - "src/app/(authenticated)/teacher/courses/*/attendanceDetail/**"
@@ -58,6 +62,7 @@ jobs:
           tests/unit/faculty-attendance-edit-state.test.ts
           tests/unit/faculty-attendance-grid-model.test.ts
           tests/unit/faculty-learner-attendance-detail.test.ts
+          tests/unit/faculty-prototype-session-selection.test.ts
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -98,4 +103,4 @@ jobs:
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Authenticated Faculty marking, correction and month report on desktop/mobile
-        run: npx playwright test tests/e2e/faculty-course-attendance.spec.ts --workers=1
+        run: npx playwright test tests/e2e/faculty-course-attendance.spec.ts tests/e2e/faculty-attendance-prototype.spec.ts --workers=1
