@@ -8,6 +8,11 @@ on:
       - ".github/workflows/tpo-prototype-source-acceptance.yml"
       - "src/components/tpo/tpo-campaign-*"
       - "src/components/tpo/tpo-recruiter-message-reply.tsx"
+      - "src/components/tpo/tpo-student-*.tsx"
+      - "src/components/tpo/tpo-students-spreadsheet.tsx"
+      - "src/components/tpo/tpo-request-*.tsx"
+      - "src/components/tpo/tpo-notice-*.tsx"
+      - "src/components/verification/TpoVerification*.tsx"
       - "src/components/tpo/tpo-today-*"
       - "src/components/tpo/recruiter-leads-workspace.tsx"
       - "src/components/tpo/recruiter-prototype-inspector.tsx"
@@ -17,6 +22,10 @@ on:
       - "src/modules/messaging/tpo-campaign-*"
       - "src/app/(authenticated)/tpo/**"
       - "tests/unit/tpo-prototype-*.test.ts"
+      - "tests/unit/tpo-students-prototype-inspector-2026.test.ts"
+      - "tests/unit/tpo-requests-prototype-workspace-2026.test.ts"
+      - "tests/unit/tpo-announcements-prototype-workspace-2026.test.ts"
+      - "tests/unit/tpo-verification-prototype-queue-2026.test.ts"
       - "tests/unit/tpo-today-prototype-views.test.ts"
       - "docs/audit/prototype/tpo-2026-10-26-screen-inventory.md"
 
@@ -55,6 +64,10 @@ jobs:
             tests/unit/tpo-prototype-companies-inspector-2026.test.ts \
             tests/unit/tpo-prototype-email-workspace-2026.test.ts \
             tests/unit/tpo-prototype-message-templates-2026.test.ts \
+            tests/unit/tpo-students-prototype-inspector-2026.test.ts \
+            tests/unit/tpo-requests-prototype-workspace-2026.test.ts \
+            tests/unit/tpo-announcements-prototype-workspace-2026.test.ts \
+            tests/unit/tpo-verification-prototype-queue-2026.test.ts \
             tests/unit/chat9-round6-calendar-settings.test.ts \
             tests/unit/chat9-calendar-reports-existing-contracts.test.ts \
             tests/unit/chat9-round9-calendar-behavior.test.ts
