@@ -15,6 +15,7 @@ import {CAMPAIGN_DRAFT_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {TpoCampaignSendControl} from "@/components/tpo/tpo-campaign-send-control";
 import {TpoCampaignPrototypeSidebar} from "@/components/tpo/tpo-campaign-prototype-sidebar";
+import {TpoCampaignSentStory} from "@/components/tpo/tpo-campaign-sent-story";
 /** The persisted provider receipt state determines the old LMS status-pill tone. */
 function receiptTone(status:string):"neutral"|"info"|"success"|"warning"|"error" {
  if(status==="SENT")return "success";
@@ -55,6 +56,18 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
     ready={campaigns?.ready===true} actorUserId={context.user.id} activeId={campaignId}/>
   {!ready?<Banner tone="warning">{CAMPAIGN_DRAFT_UNAVAILABLE}</Banner>:
    draft?<article className="min-w-0 space-y-4">
+    <TpoCampaignSentStory
+     campaign={{
+      status:draft.status,subject:draft.subject,body:draft.body,
+      senderName:draft.sender_name,createdAt:draft.created_at,
+      totalRecipients:draft.total_recipients,providerAccepted:draft.sent,
+      failed:draft.failed,skipped:draft.skipped,
+     }}
+     recipients={recipients?.rows??[]}
+     recipientsReady={recipients?.ready===true}
+     hasMoreRecipients={recipients?.hasMore??false}
+    />
+
     <section aria-label="Campaign delivery summary" className="grid gap-3 sm:grid-cols-3">
       <StatTile label="Provider accepted" value={draft.sent} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />
       <StatTile label="Failed" value={draft.failed} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />
