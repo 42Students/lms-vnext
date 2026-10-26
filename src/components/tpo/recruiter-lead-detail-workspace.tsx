@@ -640,8 +640,8 @@ export function RecruiterLeadDetailWorkspace({
               )}
             </section>
 
-            <section className="space-y-4 border-b border-border py-5">
-              <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Log an interaction</h2>
+            <section id="tpo-recruiter-log-interaction" className="scroll-mt-24 space-y-4 border-b border-border py-5">
+              <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Log an interaction</h2>
               <form className="space-y-3" onSubmit={e => void addActivity(e)}>
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Interaction type">
                   {ACTIVITY_TYPES.map(type=><FilterChip type="button" key={type} aria-pressed={logType===type}
