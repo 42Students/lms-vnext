@@ -1,13 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Disclosure } from "@/components/ui/disclosure";
 import {Dialog} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {TPO_MESSAGE_TEMPLATE_LIBRARY,searchTpoMessageTemplates} from "@/modules/placements/tpo-message-template-library";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import {useEffect,useId,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/tpo-message-draft-model";
+import {TPO_QUICK_REPLIES,recruiterMessageDraftKey,shouldSendTpoRecruiterReplyKey} from "@/modules/placements/tpo-message-draft-model";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {Textarea} from "@/components/ui/textarea";
@@ -93,22 +92,22 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
     className="min-h-11 md:min-h-9" onClick={()=>addQuickReply(quote)}>Quote change request</Button>:null}
   <Button type="button" variant="secondary" disabled={busy||accessEnded} className="min-h-11 md:min-h-9"
    onClick={()=>setTemplateOpen(true)}>+ Templates</Button>
-  <Disclosure title="Quick replies" className="min-w-0" contentClassName="pt-2">
   <div role="group" aria-label="Quick replies" className="flex min-w-0 flex-wrap gap-2">
+   <p className="w-full text-xs font-bold uppercase tracking-wide text-muted-foreground">Quick replies</p>
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy||accessEnded}
       className="min-h-11 md:min-h-9 shrink-0 rounded-[var(--lms-control-radius)] px-3 text-sm font-[650]"
       onClick={()=>addQuickReply(reply)}>{reply}</Button>)}
    </div>
-  </Disclosure>
   <form aria-busy={busy} onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
    <label className="block text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Message
     <Textarea ref={textareaRef} aria-describedby={draftHintId} className="mt-1 min-h-28 w-full"
       maxLength={4000} required disabled={accessEnded} aria-label="Message" placeholder="Write a message" value={body}
       onFocus={restoreDraft} onChange={e=>persistDraft(e.target.value)}
-      onKeyDown={e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)&&!e.nativeEvent.isComposing){
+      onKeyDown={e=>{if(shouldSendTpoRecruiterReplyKey({key:e.key,shiftKey:e.shiftKey,
+        altKey:e.altKey,isComposing:e.nativeEvent.isComposing})){
        e.preventDefault();if(body.trim()&&!busy&&!accessEnded)void post("messages");}}}/>
    </label>
-   <p id={draftHintId} className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">Ctrl/Cmd + Enter to send · Enter for a new line · {body.length}/4000</p>
+   <p id={draftHintId} className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">Enter to send · Shift+Enter for a new line · Ctrl/Cmd+Enter also sends · {body.length}/4000</p>
    <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center">
     <Button variant="secondary" type="button" disabled={busy||accessEnded||!body.trim()} onClick={discardDraft}
      className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Discard draft</Button>
@@ -137,7 +136,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
      <label className="sr-only" htmlFor="tpo-message-template-search">Search message templates</label>
      <Input id="tpo-message-template-search" type="search" value={templateQuery}
       onChange={event=>setTemplateQuery(event.target.value)}
-      placeholder="Search message templates" className="min-h-11 w-full md:min-h-9"/>
+      placeholder={"Search "+TPO_MESSAGE_TEMPLATE_LIBRARY.length+" built-in templates"} className="min-h-11 w-full md:min-h-9"/>
      <div className="max-h-72 min-w-0 overflow-y-auto" role="group" aria-label="Available message templates">
       {matchedTemplates.map(item=>
        <button key={item.id} type="button" aria-pressed={templateId===item.id}
