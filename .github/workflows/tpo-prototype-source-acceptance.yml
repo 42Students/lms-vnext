@@ -52,6 +52,7 @@ jobs:
             tests/unit/tpo-prototype-navigation-2026.test.ts \
             tests/unit/tpo-prototype-placement-rules-2026.test.ts \
             tests/unit/tpo-prototype-recruiter-inspector-2026.test.ts \
+            tests/unit/tpo-prototype-companies-inspector-2026.test.ts \
             tests/unit/tpo-prototype-email-workspace-2026.test.ts \
             tests/unit/tpo-prototype-message-templates-2026.test.ts \
             tests/unit/chat9-round6-calendar-settings.test.ts \
