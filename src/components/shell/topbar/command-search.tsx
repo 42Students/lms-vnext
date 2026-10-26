@@ -41,6 +41,13 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  // Ctrl/Cmd+K may open the responsive surface only after the key event.
+  // Transfer keyboard focus after React commits the open state.
+  useEffect(()=>{
+    if(!mobileOpen)return;
+    const frame=window.requestAnimationFrame(()=>input.current?.focus());
+    return ()=>window.cancelAnimationFrame(frame);
+  },[mobileOpen]);
   const selectionWriteRef=useRef(false);
   const root = useRef<HTMLDivElement>(null);
   const skipNextFocusOpen=useRef(false);
@@ -184,7 +191,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         event.preventDefault();
         setOpen(true);
         setMobileOpen(true);
-        requestAnimationFrame(() => input.current?.focus());
+        // The open-state effect will focus the committed search input.
       }
       if (event.key === "Escape" && open && !event.defaultPrevented &&
           event.target instanceof Node && root.current?.contains(event.target)) {
