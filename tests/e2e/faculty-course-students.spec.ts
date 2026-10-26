@@ -27,10 +27,14 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("navigation",{name:"Faculty course tabs"})
     .getByRole("link",{name:"Students"}).click();
   await expect(page).toHaveURL(/\/students$/,{timeout:20000});
-  await expect(page.getByRole("region",{name:"Faculty prototype students"})).toBeVisible();
-  await page.getByLabel("Search students").fill("no-student-faculty-zzzzz");
+  const directory=page.getByRole("region",{name:"Faculty prototype students"});
+  await expect(directory).toBeVisible();
+  // The retained advanced roster has its own search field. Scope the
+  // prototype acceptance to the active directory instead of the hidden editor.
+  const search=directory.getByLabel("Search students");
+  await search.fill("no-student-faculty-zzzzz");
   await expect(page.getByText("No students match your search.")).toBeVisible();
-  await page.getByLabel("Search students").fill("learner.seed@example.com");
+  await search.fill("learner.seed@example.com");
   const detailLink=page.getByRole("region",{name:"Faculty prototype students"}).getByRole("row").getByRole("link").first();
   await expect(detailLink).toBeVisible();
   await expect(page.getByText("E2E Section B Secret")).toHaveCount(0);
