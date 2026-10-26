@@ -10,7 +10,7 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 |---|---|---|---|
 | 01 | Companies → Today | `/tpo/companies/today` | Focus queue and real actions exist; validate screenshot layout and all stage-specific cards |
 | 02 | Companies → Recruiters | `/tpo/recruiters` | Added source-backed selected-contact inspector; exact-viewport and interaction comparison remain open |
-| 03 | Companies → Companies | `/tpo/companies?directory=1` | Directory present; compare summary, CRM company detail and actions |
+| 03 | Companies → Companies | `/tpo/companies?directory=1` | Added selected-company inspector with real contacts, drives, accepted offers and confirmed joins; historical comparison and visual acceptance remain open |
 | 04 | Agenda | `/tpo/companies/today?view=agenda` | Added real-data alternate view and `day=0..6` selection; needs browser and visual comparison |
 | 05 | Brief | `/tpo/companies/today?view=brief` | Added real-data Answer/Reach/Week panels; needs browser and visual comparison |
 | 06 | EmailSent | `/tpo/recruiters/campaigns/drafts/[campaignId]` or sent ledger detail | Shared split-view campaign sidebar and real provider receipts; screenshot and provider verification remain open |
@@ -49,6 +49,7 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 - `src/components/tpo/tpo-companies-today.tsx`: select a particular focus follow-up from the alternate views
 - `src/modules/placements/tpo-companies-today-model.ts`: stable IST day grouping, bounded seven-day links, uncontacted summary based on real stage and owner
 - `tests/unit/tpo-today-prototype-views.test.ts`: unit/source contracts, not yet evidence of a green runtime run
+- #03: `tpo-companies-spreadsheet.tsx` now shows a selected-company inspector without attributing unlinked CRM companies to verified employer records or inventing last-season outcomes
 - #02: `recruiter-leads-workspace.tsx` and `recruiter-prototype-inspector.tsx` now show an independently focused recruiter inspector; no invented contacts, accepted hires or phone dial codes
 - #06–08: `tpo-campaign-prototype-sidebar.tsx`, `tpo-campaign-compose.tsx`, `tpo-campaign-compose-presets.ts` and the campaign index/new/detail routes now support a split campaign list/editor, verified author filtering, safe copy suggestions and existing two-step send
 - #09: `tpo-recruiter-message-reply.tsx` and `tpo-message-template-library.ts` expose a searchable template picker with preview and explicit Insert without auto-sending or fabricating student eligibility
