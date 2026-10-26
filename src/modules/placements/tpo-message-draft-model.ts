@@ -11,3 +11,12 @@ export function recruiterMessageDraftKey(actorUserId:string,threadId:string){
    throw new Error("INVALID_DRAFT_ID");
  return "tpo:recruiter-message:draft:"+actorUserId+":"+threadId;
 }
+
+/** Original Messages screenshot uses Enter to send and Shift+Enter for a new
+ * line. Never treat IME composition, Alt+Enter, or Shift+Enter as a send.
+ * The actual post still enforces the persisted access/empty/busy guard. */
+export function shouldSendTpoRecruiterReplyKey(input:{
+ key:string;shiftKey:boolean;altKey:boolean;isComposing:boolean;
+}){
+ return input.key==="Enter"&&!input.shiftKey&&!input.altKey&&!input.isComposing;
+}

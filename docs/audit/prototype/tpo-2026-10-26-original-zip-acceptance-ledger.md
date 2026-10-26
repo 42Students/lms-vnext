@@ -14,7 +14,7 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 06 | EmailSent.png | `4e149e85c7d3` | Yes | Open |
 | 07 | Companies › Emails (a sent email open).png | `a9779118e975` | Yes | Open |
 | 08 | Companies › Emails (writing a new email).png | `5ea6df74973e` | Yes | Open |
-| 09 | Companies › Messages.png | `88ad8f13d2ef` | No | Open |
+| 09 | Companies › Messages.png | `88ad8f13d2ef` | Yes | Open |
 | 10 | Students › All students.png | `41cbb709abc4` | No | Open |
 | 11 | Students › Who’s in placements.png | `420fadf229d6` | No | Open |
 | 12 | Students › To verify.png | `034ab1edaed9` | No | Open |
@@ -130,10 +130,20 @@ Original PNG dimensions: **2880 × 2244**. Image shows a Companies heading and s
 - Tests in `tests/unit/tpo-campaign-sent-story-prototype.test.tsx` and existing `tests/unit/tpo-prototype-email-workspace-2026.test.ts` verify no invented opens/replies/delivery, no emails or secret tokens, failure review, pending receipts and no sent-story for drafts.
 - Still open: campaign-specific reply ingestion/tracking (must be designed as separately authorized and persisted work rather than guessed), scheduling actions, opt-out-safe nudge/resend audience decisions, browser/visual acceptance. Screens 06–08 remain **partial**, not accepted.
 
+## Screen 09 — Companies › Messages (original screenshot visually inspected)
+
+Source `Companies › Messages.png` is **2880 × 1800**. It shows a two-column recruiter thread inbox, Reply/Unread/All filters, a selected live recruiter conversation, 25-template picker grouped Recent/Reaching out/Planning a drive, source-populated eligible-count template preview and explicit Insert, and quick reply chips with Enter-to-send semantics.
+
+Legacy reference: `42Students/lms@lms-dev-2026` `src/main/java/com/_42students/lms/service/tpo/TpoTemplateService.java`. Its built-ins include MESSAGE templates across Reaching out, Planning a drive, During a drive, Results and Follow-ups; the original logic also has per-user usage statistics and team-created custom templates.
+
+vNext verified already: authenticated `/tpo/messages` + real recruiter-thread storage, sender read receipts, opt-out/access-ended guard, actor/thread-scoped session draft and template picker. This recovery extends the safe built-in catalog with legacy categories, keeps unreconciled live numbers as explicit verification copy, exposes quick reply chips, and makes Enter send / Shift+Enter newline with IME-safe guard. It deliberately does **not** claim dynamic recipient-specific template fill, 25 persisted templates, custom-template save, or usage-ranked "most used" until authoritative sources and tested writes exist.
+
+Remaining acceptance: persistent custom templates and usage counts; secure factual merge for eligible student totals; selected-thread message/drive context, browser tests for keyboard/composition/failed send, screenshot diff. **Partial only**.
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **8/33**
+- Original PNGs visually opened in this recovery pass: **9/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**

@@ -2,10 +2,13 @@ import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {TPO_MESSAGE_TEMPLATE_LIBRARY,searchTpoMessageTemplates}
  from "@/modules/placements/tpo-message-template-library";
+import {shouldSendTpoRecruiterReplyKey} from "@/modules/placements/tpo-message-draft-model";
 
 describe("2026 TPO Companies / Messages prototype template picker",()=>{
  it("searches across names, categories and suggestion text deterministically",()=>{
-  expect(TPO_MESSAGE_TEMPLATE_LIBRARY.length).toBeGreaterThanOrEqual(8);
+  expect(TPO_MESSAGE_TEMPLATE_LIBRARY.length).toBeGreaterThanOrEqual(20);
+  expect(searchTpoMessageTemplates("shortlist").map(item=>item.id)).toContain("share-shortlist");
+  expect(searchTpoMessageTemplates("panel details").map(item=>item.id)).toContain("panel-details");
   expect(searchTpoMessageTemplates("WELCOME").map(item=>item.id)).toContain("welcome");
   expect(searchTpoMessageTemplates("planning a drive").map(item=>item.id)).toContain("slots");
   expect(searchTpoMessageTemplates("no-such-template")).toEqual([]);
@@ -33,4 +36,20 @@ describe("2026 TPO Companies / Messages prototype template picker",()=>{
   expect(file).toContain('accessEnded');
   expect(file).toContain("Message must be 4000 characters or fewer.");
  });
+ it("matches Enter-to-send, Shift+Enter newline and IME safety in the original screenshot",()=>{
+  const key=(key:string,shiftKey=false,altKey=false,isComposing=false)=>
+   shouldSendTpoRecruiterReplyKey({key,shiftKey,altKey,isComposing});
+  expect(key("Enter")).toBe(true);
+  expect(key("Enter",true)).toBe(false);
+  expect(key("Enter",false,true)).toBe(false);
+  expect(key("Enter",false,false,true)).toBe(false);
+  expect(key("a")).toBe(false);
+  const file=readFileSync("src/components/tpo/tpo-recruiter-message-reply.tsx","utf8");
+  expect(file).toContain("shouldSendTpoRecruiterReplyKey({key:e.key");
+  expect(file).toContain("Enter to send · Shift+Enter for a new line");
+  expect(file).toContain('role="group" aria-label="Quick replies"');
+  expect(file).toContain("matchedTemplates.length} of {TPO_MESSAGE_TEMPLATE_LIBRARY.length}");
+  expect(file).toContain('if(body.trim()&&!busy&&!accessEnded)void post("messages")');
+ });
+
 });
