@@ -802,6 +802,33 @@ export function RecruiterLeadsWorkspace({
             </div>
           </section>
   );
+  const bulkPanel=(
+            <div className="space-y-3">
+              {view==="board"?<div className="flex flex-wrap gap-2">
+                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","csv")}>Export CSV</Button>
+                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
+                  onClick={()=>exportRows("selected","csv")}>Export selected ({visible.filter(row=>selectedIds.includes(row.id)).length})</Button>
+                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","xlsx")}>Export Excel</Button>
+                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
+                  onClick={()=>exportRows("selected","xlsx")}>Export selected Excel</Button>
+                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>void copyRows()}>Copy rows</Button>
+                {selectedIds.length>0?<Button variant="secondary" type="button" className={buttonStyle}
+                  onClick={()=>setSelectedIds([])}>Clear selection</Button>:null}
+                {exportFeedback?<p role="status" className="text-sm text-body leading-[22px]">{exportFeedback}</p>:null}
+              </div>:null}
+              {view==="board"?<RecruiterSavedViewControls columns={visibleColumns}/>:null}
+              {visible.some(row=>selectedIds.includes(row.id))?<Button variant="secondary" type="button" className={buttonStyle}
+                disabled={visible.filter(row=>selectedIds.includes(row.id)).length>100}
+                onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).map(row=>row.id).join(",")))}>
+                Send an email to selected ({visible.filter(row=>selectedIds.includes(row.id)).length})
+              </Button>:null}
+              {visible.filter(row=>selectedIds.includes(row.id)).length>100?<p role="alert" className="text-sm text-warning leading-[22px]">Select at most 100 recruiters for an email campaign. No one has been contacted.</p>:null}
+              <RecruiterBulkInviteControls collegeId={collegeId}
+                rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
+              <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
+              <RecruiterBulkOwnerControls rows={visible} onUpdated={() => void load()} />
+            </div>
+  );
   return (
     <section className="min-w-0 space-y-4" aria-label="Recruiter leads">
       <PageHeader
@@ -810,6 +837,8 @@ export function RecruiterLeadsWorkspace({
         actions={
           <div className="flex w-full min-w-0 flex-col gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center">
             <RecruiterLeadCsvImport onImported={()=>void load()} />
+            <Button variant="secondary" type="button" className={buttonStyle}
+             onClick={()=>{openAdvancedRoster();advancedRosterRef.current?.scrollIntoView({behavior:"smooth",block:"center"});}}>Invite</Button>
             <Button variant="primary" ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase!=="ready"} aria-haspopup="dialog" aria-expanded={adding}
               onClick={()=>{setAdding(true);setForm(EMPTY);setSaveError("");setDuplicate(null);setReviewingCreate(false);}}>
               <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
@@ -1023,33 +1052,7 @@ export function RecruiterLeadsWorkspace({
               </div>
             </section>
           ):null}
-          {view !== "companies" ? (
-            <div className="space-y-3">
-              {view==="board"?<div className="flex flex-wrap gap-2">
-                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","csv")}>Export CSV</Button>
-                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
-                  onClick={()=>exportRows("selected","csv")}>Export selected ({visible.filter(row=>selectedIds.includes(row.id)).length})</Button>
-                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","xlsx")}>Export Excel</Button>
-                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
-                  onClick={()=>exportRows("selected","xlsx")}>Export selected Excel</Button>
-                <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>void copyRows()}>Copy rows</Button>
-                {selectedIds.length>0?<Button variant="secondary" type="button" className={buttonStyle}
-                  onClick={()=>setSelectedIds([])}>Clear selection</Button>:null}
-                {exportFeedback?<p role="status" className="text-sm text-body leading-[22px]">{exportFeedback}</p>:null}
-              </div>:null}
-              {view==="board"?<RecruiterSavedViewControls columns={visibleColumns}/>:null}
-              {visible.some(row=>selectedIds.includes(row.id))?<Button variant="secondary" type="button" className={buttonStyle}
-                disabled={visible.filter(row=>selectedIds.includes(row.id)).length>100}
-                onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).map(row=>row.id).join(",")))}>
-                Send an email to selected ({visible.filter(row=>selectedIds.includes(row.id)).length})
-              </Button>:null}
-              {visible.filter(row=>selectedIds.includes(row.id)).length>100?<p role="alert" className="text-sm text-warning leading-[22px]">Select at most 100 recruiters for an email campaign. No one has been contacted.</p>:null}
-              <RecruiterBulkInviteControls collegeId={collegeId}
-                rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
-              <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
-              <RecruiterBulkOwnerControls rows={visible} onUpdated={() => void load()} />
-            </div>
-          ) : null}
+          {view==="board"?bulkPanel:null}
           {view !== "companies" && visible.length === 0 ? (
             <div className="border-y border-border py-8 text-center text-muted-foreground">
               {rows.length ? "No leads match your filters." : "No recruiters yet. Add a company contact to start tracking outreach."}
@@ -1179,6 +1182,8 @@ export function RecruiterLeadsWorkspace({
             <details ref={advancedRosterRef} className="m-3 rounded-lg border border-border p-3" data-testid="tpo.recruiter.advanced-grid">
              <summary className="cursor-pointer text-sm font-semibold text-link">Advanced spreadsheet, views, exports and bulk actions</summary>
              {needsPanel}
+             <p className="my-3 text-xs text-body">Select contacts before a bulk action. Invitations, changes and sends still require their own explicit confirmation.</p>
+             {bulkPanel}
              <div className="mb-3"><Tabs ariaLabel="Engage views" controlledOnly renderPanel={false} value={view}
               items={[{value:"table",label:"Table"},{value:"board",label:"Board"},{value:"companies",label:"Companies",count:companies.length},{value:"campaigns",label:"Emails"}]}
               onValueChange={next=>{
