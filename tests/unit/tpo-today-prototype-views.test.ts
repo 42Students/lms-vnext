@@ -172,7 +172,7 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   }));
   expect(html).toContain("tpo.today.reply-detail");
   expect(html).toContain("Please confirm a slot");
-  expect(html).toContain('href="/tpo/messages?tab=recruiters&amp;thread=reply-id"');
+  expect(html).toContain('href="/tpo/messages?tab=recruiters&amp;status=REPLY&amp;thread=reply-id"');
   expect(html).toContain("Answer in Messages");
   expect(html).toContain("Merely selecting this item never sends email");
   expect(html).not.toContain("Email sent");
