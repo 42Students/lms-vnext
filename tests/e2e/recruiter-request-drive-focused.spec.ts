@@ -42,7 +42,9 @@ test.describe("Recruiter Request Drive: real seeded workflow",()=>{
    // Even policy-approved drives start DRAFT; the TPO controls publication.
    expect(payload.request?.approvedJobId).toBeTruthy();
   }
-  await page.goto("/hr/drives?collegeId="+college+"&view="+(payload.request?.status==="DRAFT"?"DRAFT":"WAITING"));
+  // Both pending requests and policy-approved draft jobs belong to WAITING.
+  // DRAFT is a persisted request status, not a valid drive-list query view.
+  await page.goto("/hr/drives?collegeId="+college+"&view=WAITING");
   await expect(page.getByText("E2E Specialist Analyst Position",{exact:false}).first()).toBeVisible();
   await expectNoRawErrors(page);
  });
