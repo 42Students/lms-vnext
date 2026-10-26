@@ -257,7 +257,7 @@ export default async function HrCalendarPage({
   const view =
     VIEWS.find(
       (candidate) => candidate === requestedView,
-    ) ?? "agenda";
+    ) ?? "week";
 
   // Recruiter legacy calendar starts on Monday and displays seven days by default.
   // Other placement calendars retain their own Sunday-first week conventions.
@@ -346,7 +346,7 @@ export default async function HrCalendarPage({
                 </Link>
                 <Link href={calendarHref(today,view,category,selectedCollegeId)}
                   className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
-                  Today
+                  This week
                 </Link>
                 <Link href={calendarHref(next,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Next week":"Next month"}
@@ -354,6 +354,11 @@ export default async function HrCalendarPage({
                   <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M4 8h8m-4-4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </Link>
               </nav>
+          {selectedCollegeId ? <Link
+            href={"/api/placements/recruiter/calendar/ics?from="+window.from+"&to="+window.to+"&collegeId="+encodeURIComponent(selectedCollegeId)}
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle min-[768px]:min-h-9">
+            Add to my calendar (.ics)
+          </Link> : null}
           <Link href="/hr/placements"
           className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 md:w-auto">
           Drives →
