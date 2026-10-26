@@ -17,6 +17,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import {TpoRequestBulkDecision} from "@/components/placements/tpo-request-bulk-decision";
 import {TpoSequentialRequestReview} from "@/components/placements/tpo-sequential-request-review";
+import {TpoRequestPrototypeWorkspace} from "@/components/tpo/tpo-request-prototype-workspace";
 import {TpoRequestPageClipboard} from "@/components/placements/tpo-request-page-clipboard";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -32,7 +33,7 @@ import {Button} from "@/components/ui/button";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
 export const dynamic = "force-dynamic";
-type Params = { proof?:string|string[];branchId?:string|string[];
+type Params = { request?:string|string[];proof?:string|string[];branchId?:string|string[];
  registration?:string|string[];afterCollege?:string|string[];urgentOnly?:string|string[]; jobId?:string|string[]; age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 function href(input: { status: string; age:string; sort:string; requestType:string; search: string; page: number; pageSize: number; urgentOnly?:boolean | undefined;jobId?:string | undefined;proof?:string | undefined;branchId?:string | undefined;registration?:string | undefined;afterCollege?:string | undefined }) {
@@ -55,6 +56,12 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   // inbox-only persisted check is too late to protect that earlier read.
   await requireTpoBatchActor(context);
   const raw = await searchParams;
+  if(raw.request!==undefined&&(typeof raw.request!=="string"||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.request)))
+   return <div className="min-w-0 space-y-4"><PageHeader title="Requests"/>
+    <ErrorState title="Invalid request selection" description="Choose a request from the authorized queue."
+     action={<Link href="/tpo/requests" className="inline-flex min-h-11 items-center font-semibold text-link underline">Reset selection</Link>}/>
+   </div>;
   const parsed=parseGlobalTpoRequestFilters({
     status:first(raw.status),age:first(raw.age),sort:first(raw.sort),
     requestType:first(raw.requestType),search:first(raw.search),
@@ -180,7 +187,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
     </section>
-    <Disclosure title={"Actions · Act on all "+data.summary.pending+" waiting requests"} defaultOpen={data.query.status==="PENDING"} className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">
+    <Disclosure title={"Actions · Act on all "+data.summary.pending+" waiting requests"} className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">
     {data.query.status==="PENDING"?<TpoRequestBulkDecision rows={data.requests.filter(row=>row.status==="PENDING").map(row=>({
       id:row.id,studentName:row.studentName,requestType:row.requestType,
       expectedUpdatedAt:row.updatedAt.toISOString(),
@@ -197,6 +204,18 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         .map(row=>[row.membershipId,{id:row.membershipId,label:row.studentName,registered:null}])).values())}
     />:null}
     </Disclosure>
+    <TpoRequestPrototypeWorkspace rows={data.requests.map(row=>({
+     id:row.id,studentName:row.studentName,rollNumber:row.rollNumber??null,branchName:row.branchName??null,
+     requestType:row.requestType,reason:row.reason,status:row.status,
+     companyName:row.companyName??"",jobTitle:row.jobTitle??"",
+     requestedAt:row.requestedAt,updatedAt:row.updatedAt,urgent:row.urgent===true,
+     nextRoundAt:row.nextRoundAt??null,decidedBy:row.decidedBy??null,
+     decidedAt:row.decidedAt??null,decisionNote:row.decisionNote??null,
+     contextHref:tpoRequestContextLink(row).href,contextLabel:tpoRequestContextLink(row).label,
+    }))} selectedId={typeof raw.request==="string"?raw.request:null}
+     baseHref={href(data.query)} total={data.total}/>
+    <Disclosure title="Advanced request table, exports and additional request tools"
+     className="min-w-0" contentClassName="min-w-0 space-y-4 pt-4">
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total.toLocaleString("en-IN")} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<EmptyState
       title={data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you":"No requests in this period"}
@@ -284,6 +303,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     </Disclosure>
     <p className="text-xs text-muted-foreground">CSV exports matching authorized requests across pages (up to 5,000), includes their recorded reasons and decisions, and neutralizes spreadsheet formulas. If the export is truncated, narrow the filters.</p>
     <p className="text-xs text-muted-foreground">Pending actions require explicit confirmation. The learner receives an in-app notice when a request is approved or rejected; no email is sent from this inbox.</p>
+    </Disclosure>
     </section>
   </div>;
 }
