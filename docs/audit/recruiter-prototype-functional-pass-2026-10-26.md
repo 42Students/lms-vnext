@@ -71,3 +71,8 @@ being present is not test or acceptance evidence.
 
 Do not mark all 15 references complete on source presence, newly written tests,
 or an unverified deployment. This ledger is designed for adversarial closure.
+
+## Third implementation pass — 2026-10-26
+- Removed a duplicate previous-offer panel produced by parallel Recruiter development. Retained `getRecruiterHistoricalOffers` with bounded previous-calendar-year official joining outcomes.
+- Fixed an inconsistent recruiter-portfolio permission predicate: a NULL grant expiry is **not** a runtime authorization, as explicitly required by `recruiterGrantEffectiveAt`. Interview and canonical drive reads already require finite future expiry.
+- Recruiter acceptance remains OPEN; stable-head CI/browser/real PostgreSQL verification is not yet available.

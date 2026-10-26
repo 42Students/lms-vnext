@@ -52,7 +52,6 @@ import {recruiterChangeShortcut,RECRUITER_CHANGE_SHORTCUTS} from "@/modules/plac
 import {getRecruiterBookedInterviews} from "@/modules/placements/recruiter-booked-interviews-service";
 import {groupRecruiterBookedPanels} from "@/modules/placements/recruiter-booked-interviews-model";
 import {RecruiterJoiningReportForm} from "@/components/hr/recruiter-joining-report-form";
-import {getRecruiterPreviousHiringOffers} from "@/modules/placements/recruiter-previous-offers-service";
 import {getRecruiterHistoricalOffers} from "@/modules/placements/recruiter-historical-offers-service";
 import {recruiterHistoricalJoiningLabel,recruiterHistoricalOfferStatus,recruiterPreviousIstCalendarYear} from "@/modules/placements/recruiter-historical-offers-model";
 import {RecruiterPanelActions} from "@/components/hr/recruiter-panel-actions";
@@ -203,16 +202,6 @@ export default async function HrPlacementJobPage({
     "?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1&applicant="+id+
     (filters.roundId?"&roundId="+filters.roundId:"")+returnQuery;
   const now = new Date(currentTimeMs());
-
-  const previousHiring=filters.tab==="offers"&&filters.offerState==="ALL"
-   ?await getRecruiterPreviousHiringOffers(context,{
-     jobId:workspace.job.id,
-     collegeId:workspace.college.id,
-     relationshipId:workspace.job.companyRelationshipId,
-     title:workspace.job.title,
-     createdAt:workspace.job.createdAt,
-   }).catch(()=>({status:"UNAVAILABLE" as const}))
-   :null;
 
   const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
   // The applicant grid is paged and stage-filtered. A selection proposal must
@@ -912,41 +901,6 @@ export default async function HrPlacementJobPage({
               joiningDate:offer.joiningDate??"-",
             }))}
           /></section> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers recorded for this filter. Use the selection list above to send eligible applicants for placement-cell verification.</p>:null}
-          {previousHiring?.status==="READY"?<section
-           aria-label="Previous hiring offers at this college"
-           className="space-y-3 rounded-xl border border-border bg-surface p-4">
-            <div className="flex flex-wrap items-start justify-between gap-2">
-             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-               Previous hiring · {previousHiring.title} · {previousHiring.year}
-              </h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-               Previously recorded offers for a matching drive at this same college. Only shared shortlisted applicants are visible.
-              </p>
-             </div>
-             <Link href={"/recruiter/drives/"+encodeURIComponent(previousHiring.jobId)+"?tab=offers"}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View previous drive</Link>
-            </div>
-            {previousHiring.rows.length?<div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-               <caption className="sr-only">Prior employer offers and verified joining outcomes</caption>
-               <thead><tr className="border-b border-border text-xs uppercase text-muted-foreground">
-                <th scope="col" className="px-2 py-2">Student</th>
-                <th scope="col" className="px-2 py-2">Offer</th>
-                <th scope="col" className="px-2 py-2">Joining</th>
-               </tr></thead>
-               <tbody>{previousHiring.rows.map(row=><tr key={row.id} className="border-b border-border last:border-0">
-                <th scope="row" className="px-2 py-3 font-semibold text-foreground">{row.name||"Unnamed applicant"}</th>
-                <td className="px-2 py-3 text-body">{row.offerLabel}</td>
-                <td className="px-2 py-3 text-body">{row.joiningLabel}</td>
-               </tr>)}</tbody>
-              </table>
-             </div>:<p className="text-sm text-muted-foreground">No previously issued offers are visible for that drive.</p>}
-            {previousHiring.total>previousHiring.rows.length?<p className="text-xs text-muted-foreground">
-             Showing {previousHiring.rows.length} of {previousHiring.total} authorized offers. Open the previous drive for more.
-            </p>:null}
-           </section>:previousHiring?.status==="UNAVAILABLE"?
-            <p role="status" className="text-sm text-muted-foreground">Previous hiring outcomes could not be verified right now. This is not a zero-offer result.</p>:null}
           {offers.some(offer=>offer.status==="ACCEPTED")?<section aria-label="Recruiter joining reports" className="space-y-3 border-t border-border pt-4">
             <h3 className="font-semibold text-foreground">Joining · report to the placement cell</h3>
             <p className="text-sm text-body">
