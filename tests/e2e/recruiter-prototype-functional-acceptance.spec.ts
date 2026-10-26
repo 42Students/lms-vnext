@@ -79,6 +79,17 @@ test.describe("Recruiter prototype functional journeys",()=>{
  test("Drive progress and Next for you remain visible above all five prototype workspace tabs",async({page,context})=>{
   await authenticateGracefulRole(context,"recruiter");
   const drive="/recruiter/drives/66000000-0000-4000-8000-000000000004";
+  await page.setViewportSize({width:1440,height:1000});
+  await page.goto(drive+"?tab=overview");
+  const hiring=page.getByRole("region",{name:"Hiring so far and drive facts"});
+  const student=page.getByRole("region",{name:"What students see"});
+  await expect(hiring).toBeVisible();
+  await expect(student).toBeVisible();
+  await expect(student.getByText(/Student-facing draft facts are shown for reference/)).toBeVisible();
+  const left=await hiring.boundingBox(),right=await student.boundingBox();
+  expect(left).not.toBeNull();expect(right).not.toBeNull();
+  expect(left!.x).toBeLessThan(right!.x);
+  expect(Math.abs(left!.y-right!.y)).toBeLessThan(20);
   for(const tab of ["overview","applicants","rounds","offers","discussion"]){
    await page.goto(drive+"?tab="+tab);
    const banner=page.getByRole("region",{name:"Drive progress and next action"});
