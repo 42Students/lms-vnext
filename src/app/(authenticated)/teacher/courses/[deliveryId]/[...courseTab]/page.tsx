@@ -8,6 +8,7 @@ import { getFacultyCourseWorkspace, resolveFacultyCourseDeliveryForLink } from "
 import { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
+import {facultyBlueprintCreateMode} from "@/modules/courses/faculty-blueprint-add-target";
 
 export default async function FacultyCourseTabPage({
   params,searchParams,
@@ -33,7 +34,7 @@ export default async function FacultyCourseTabPage({
         ?courseTab[0]!:"home";
       const params=new URLSearchParams();
       for(const [key,raw] of Object.entries(query)){
-        if(!["cls","ref","lesson","content","filter","month"].includes(key))continue;
+        if(!["cls","ref","lesson","content","filter","month","create","advanced"].includes(key))continue;
         const value=Array.isArray(raw)?raw[0]:raw;
         if(value&&value.length<=128)params.set(key,value);
       }
@@ -54,6 +55,10 @@ export default async function FacultyCourseTabPage({
   const lessonId=requestedLesson??owningLesson?.id??null;
   if(lessonId&&!workspace.lessons.some(lesson=>lesson.id===lessonId))notFound();
   if(requestedLesson&&owningLesson&&requestedLesson!==owningLesson.id)notFound();
+  // Form links must target a known mode and an explicitly owned lesson.
+  const createMode=typeof query.create==="string"?facultyBlueprintCreateMode(query.create):null;
+  if(query.create!==undefined&&(!requestedLesson||!createMode||
+    courseTab.length!==1||courseTab[0]!=="blueprint"))notFound();
   const segment=courseTab.length===1?courseTab[0]!.toLowerCase():"";
   const aliases:Record<string,string>={
    "attendance":"attendanceDetail","attendancereport":"attendanceDetail",
@@ -110,6 +115,7 @@ export default async function FacultyCourseTabPage({
         selectedLessonId={lessonId}
         selectedContentId={requestedContent}
         advanced={query.advanced==="1"}
+        initialCreateMode={createMode}
       />
     </div>
   );

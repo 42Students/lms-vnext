@@ -24,6 +24,7 @@ import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
 import { FacultyPrototypeCoursePriorities } from "./faculty-prototype-course-priorities";
 import {FacultyPrototypeBlueprint} from "./faculty-prototype-blueprint";
+import type {FacultyBlueprintContentCreateMode} from "@/modules/courses/faculty-blueprint-add-target";
 import { FacultyCourseItemViewer } from "./faculty-course-item-viewer";
 import { CourseDisplayReadOnly } from "./course-display-read-only";
 import { FacultyContentOrderEditor } from "./faculty-content-order-editor";
@@ -411,6 +412,7 @@ export function FacultyCourseWorkspace({
   selectedLessonId=null,
   selectedContentId=null,
   advanced=false,
+  initialCreateMode=null,
 }: {
   workspace: Workspace;
   homeSignals: Awaited<
@@ -422,6 +424,7 @@ export function FacultyCourseWorkspace({
   selectedLessonId?:string|null;
   selectedContentId?:string|null;
   advanced?:boolean;
+  initialCreateMode?:FacultyBlueprintContentCreateMode|null;
 }) {
   const { course, learningPath, summary } =
     workspace;
@@ -544,7 +547,7 @@ export function FacultyCourseWorkspace({
       {view !== "OVERVIEW" ? (
         <>
         <FacultyPrototypeBlueprint workspace={workspace} selectedLessonId={selectedLessonId}/>
-        <details className="border-t border-[#e5ebf2] pt-4" open={advanced}>
+        <details className="border-t border-[#e5ebf2] pt-4" open={advanced||Boolean(initialCreateMode)}>
          <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Full blueprint editor, publishing and content ordering</summary>
          <div className="mt-5 space-y-5">
       {!learningPath ? (
@@ -691,7 +694,9 @@ export function FacultyCourseWorkspace({
                           {lesson.quizzes.length} quizzes
                         </Badge>
                       </div>}
-                      <details id={"faculty-lesson-add-"+lesson.id} className="mb-3 rounded-[var(--lms-control-radius)] border border-border bg-surface">
+                      <details id={"faculty-lesson-add-"+lesson.id}
+                        open={Boolean(initialCreateMode&&selectedLessonId===lesson.id)}
+                        className="mb-3 rounded-[var(--lms-control-radius)] border border-border bg-surface">
                         <summary className="min-h-11 cursor-pointer select-none px-3 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">
                           + Add content
                         </summary>
@@ -700,6 +705,8 @@ export function FacultyCourseWorkspace({
                             Video · Resources · Quiz · Assignment · Live Session
                           </p>
                       <FacultyLessonAuthoring
+                        key={lesson.id+":"+(selectedLessonId===lesson.id?initialCreateMode??"default":"default")}
+                        initialMode={selectedLessonId===lesson.id&&initialCreateMode!=="VIDEO"?initialCreateMode:null}
                         lessonId={lesson.id}
                         deliveryId={course.deliveryId}
                         enableAssignmentResources
@@ -715,6 +722,8 @@ export function FacultyCourseWorkspace({
                       />
 
                       <FacultyLessonVideoManager
+                        key={lesson.id+":"+(selectedLessonId===lesson.id&&initialCreateMode==="VIDEO"?"upload":"default")}
+                        openUploadOnMount={selectedLessonId===lesson.id&&initialCreateMode==="VIDEO"}
                         lessonId={lesson.id}
                         deliveryId={course.deliveryId}
                         nextContentSequence={nextSequence}

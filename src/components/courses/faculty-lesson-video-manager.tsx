@@ -30,8 +30,8 @@ type Action = (signal: AbortSignal) => Promise<void>;
 type VideoConfirmation = {kind: "DELETE"; video: ManagedVideo} | {kind: "REPLACE"; video: ManagedVideo; file: File};
 type LessonContent = { id:string; contentType:string; storageKey:string|null; status:string; lessonId:string; deliveryId:string|null };
 export function FacultyLessonVideoManager({
-  lessonId,deliveryId,nextContentSequence,
-}: { lessonId:string;deliveryId:string|null;nextContentSequence:number }) {
+  lessonId,deliveryId,nextContentSequence,openUploadOnMount=false,
+}: { lessonId:string;deliveryId:string|null;nextContentSequence:number;openUploadOnMount?:boolean }) {
   const router=useRouter();
   const {showToast}=useToast();
   const [videos,setVideos]=useState<ManagedVideo[]>([]);
@@ -75,7 +75,7 @@ export function FacultyLessonVideoManager({
   const [previewId,setPreviewId]=useState<string|null>(null);
   const [confirmation,setConfirmation]=useState<VideoConfirmation|null>(null);
   const [editingId,setEditingId]=useState<string|null>(null);
-  const [uploadDrawerOpen,setUploadDrawerOpen]=useState(false);
+  const [uploadDrawerOpen,setUploadDrawerOpen]=useState(openUploadOnMount);
   const controllerRef=useRef<AbortController|null>(null);
   const locked=useRef(false);
 
@@ -283,7 +283,7 @@ export function FacultyLessonVideoManager({
     change(video,{durationSeconds:value});
   }
 
-  return <section aria-label="Lesson video management" className="mt-4 min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
+  return <section id={"faculty-video-upload-"+lessonId} aria-label="Lesson video management" className="mt-4 min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
     <h3 className="text-base font-semibold text-[var(--lms-heading)]">Video</h3>
     <div className="flex flex-wrap items-center justify-between gap-2">
      <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("lesson-video")}</p>

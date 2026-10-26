@@ -7,6 +7,9 @@ export const FACULTY_BLUEPRINT_ADD_KINDS=[
 ] as const;
 export type FacultyBlueprintAddKind=typeof FACULTY_BLUEPRINT_ADD_KINDS[number];
 export type FacultyBlueprintContentCreateMode="VIDEO"|"YOUTUBE"|"RESOURCE"|"LIVE_CLASS";
+export function facultyBlueprintCreateMode(raw:unknown):FacultyBlueprintContentCreateMode|null{
+ return raw==="VIDEO"||raw==="YOUTUBE"||raw==="RESOURCE"||raw==="LIVE_CLASS"?raw:null;
+}
 export function facultyBlueprintAddTarget(deliveryId:string,lessonId:string,kind:FacultyBlueprintAddKind){
  const delivery=encodeURIComponent(deliveryId);
  const lesson=encodeURIComponent(lessonId);
