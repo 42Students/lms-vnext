@@ -10,9 +10,15 @@ const headers={"Cache-Control":"private, no-store"};
 export async function POST(request:Request){
  const expected=process.env["MENTOR_PROJECT_EMAIL_WORKER_TOKEN"]??"";
  const actual=request.headers.get("authorization")??"";
+ // JavaScript character length is not UTF-8 byte length. Always compare
+ // equal-sized buffers before timingSafeEqual; a multi-byte Authorization
+ // header must return 403, never throw and turn a denied call into HTTP 500.
+ const expectedBytes=Buffer.from(expected,"utf8");
+ const suppliedBytes=Buffer.from(actual.startsWith("Bearer ")?actual.slice(7):"","utf8");
  if(expected.length<32||expected.length>256||
     actual.length!==expected.length+7||!actual.startsWith("Bearer ")||
-    !timingSafeEqual(Buffer.from(actual.slice(7)),Buffer.from(expected)))
+    suppliedBytes.byteLength!==expectedBytes.byteLength||
+    !timingSafeEqual(suppliedBytes,expectedBytes))
   return NextResponse.json({error:"FORBIDDEN"},{status:403,headers});
  if(!mentorProjectEmailWorkerReady().ready)
   return NextResponse.json({error:"WORKER_DISABLED"},{status:503,headers});
