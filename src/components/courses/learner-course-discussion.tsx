@@ -5,6 +5,7 @@ import { Alert } from "@/components/ui/alert";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {facultyDiscussionPostNeedsReadback} from "@/modules/courses/faculty-discussion-post-recovery";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -106,6 +107,7 @@ export function LearnerCourseDiscussion({
   const router = useRouter();
   const [leaveHref,setLeaveHref]=useState<string|null>(null);
   const [posting, setPosting] = useState(false);
+  const [postNeedsReadback,setPostNeedsReadback]=useState(false);
   useEffect(()=>{
     if(!draft.trim()&&!posting)return;
     const guard=(event:BeforeUnloadEvent)=>{
@@ -393,7 +395,7 @@ export function LearnerCourseDiscussion({
   async function submit(event?: FormEvent) {
     event?.preventDefault();
     const messageText = draft.trim();
-    if (!learnerDiscussionMayPost(messageText,canPost,postLocked.current) || !learnerDiscussionDraftValid(messageText)) return;
+    if (postNeedsReadback||!learnerDiscussionMayPost(messageText,canPost,postLocked.current) || !learnerDiscussionDraftValid(messageText)) return;
 
     postLocked.current = true;
     setPosting(true);
@@ -420,9 +422,15 @@ export function LearnerCourseDiscussion({
         focusComposer(),
       );
     } catch(e) {
-      showOperationError(e instanceof FriendlyFetchError&&e.status===409?
-        "The discussion changed while you were writing. Your message is still here. Refresh and retry.":
-        "Failed to post message.");
+      const status=e instanceof FriendlyFetchError?e.status:null;
+      if(facultyDiscussionPostNeedsReadback(status)){
+        // A timed-out or errored request may have committed. Retain the draft
+        // but prohibit another POST until the current feed has been reloaded.
+        setPostNeedsReadback(true);
+        showOperationError("The message save could not be confirmed. Reload this discussion before sending again to avoid duplicates.");
+      }else{
+        showOperationError("Message was not posted. Check the details and retry.");
+      }
     } finally {
       postLocked.current = false;
       setPosting(false);
@@ -733,6 +741,11 @@ export function LearnerCourseDiscussion({
               ? "Students can post questions here anytime — you'll see them appear in real time."
               : "Have a doubt about anything in this course? Feel free to ask here."}
           </p>
+          {postNeedsReadback?<div role="alert" className="w-full rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+            Check the latest messages before posting this draft again.
+            <Button type="button" size="sm" variant="secondary" className="mt-2 min-h-11 md:min-h-9"
+              onClick={()=>window.location.reload()}>Reload discussions to verify</Button>
+          </div>:null}
           {replyTo ? <div className="mb-3 flex min-w-0 flex-col gap-2 border-l-2 border-border bg-surface-subtle p-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="min-w-0 break-words text-xs text-body">Replying to: {replyTo.text}</p>
             <Button type="button" variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
@@ -766,7 +779,7 @@ export function LearnerCourseDiscussion({
               Enter to send · Shift+Enter for a new line
               {draft.length>3400? " · "+draft.length+"/"+LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH:""}
             </span>
-            <Button type="submit" className="min-h-11 w-auto md:min-h-9" disabled={!canPost || scopeUnavailable || !learnerDiscussionDraftValid(draft) || posting}>
+            <Button type="submit" className="min-h-11 w-auto md:min-h-9" disabled={!canPost || scopeUnavailable || !learnerDiscussionDraftValid(draft) || posting || postNeedsReadback}>
               {posting ? "Sending…" : "Send"}
             </Button>
           </div>

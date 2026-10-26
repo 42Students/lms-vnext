@@ -61,5 +61,16 @@ test("Faculty Discussions screenshot 08 uses flat pinned-first list, real modera
  await confirmation.getByRole("button",{name:"Delete",exact:true}).click();
  expect((await removed).ok()).toBe(true);
  await expect(row).toHaveCount(0);
+ // A 503 might conceal a committed POST. Do not let a second click
+ // accidentally create a duplicate without explicit readback.
+ await page.route("**/api/courses/deliveries/*/discussions",async route=>{
+  if(route.request().method()==="POST"){
+   await route.fulfill({status:503,contentType:"application/json",body:'{"error":"SERVICE_UNAVAILABLE"}'});
+  }else await route.continue();
+ });
+ await composer.fill("Fault injection: the submission outcome may be unknown");
+ await pane.getByRole("button",{name:"Send",exact:true}).click();
+ await expect(pane.getByRole("button",{name:"Reload discussions to verify"})).toBeVisible();
+ await expect(pane.getByRole("button",{name:"Send",exact:true})).toBeDisabled();
  expect(errors).toEqual([]);
 });
