@@ -32,6 +32,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page.getByText("E2E Section A",{exact:true}).first()).toBeVisible();
   await expect(page.getByText("E2E Section B Secret")).toHaveCount(0);
   await expect(page.getByRole("region",{name:"Needs you"})).toBeVisible();
+  await page.getByText("More course information and class health",{exact:true}).click();
   await expect(page.getByRole("complementary",{name:"Course summary"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"How the class is doing"})).toBeVisible();
   // The newest Faculty prototype deliberately foregrounds the priority

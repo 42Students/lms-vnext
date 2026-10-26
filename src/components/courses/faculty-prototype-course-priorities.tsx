@@ -81,7 +81,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
   {label:"Behind (under 30% progress)",value:behind===null?"—":String(behind)+" students",href:base+"/students"},
  ];
  const description=display?.introductionText?.trim()||course.courseDescription?.trim()||null;
- return <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_308px]">
+ return <div className="min-w-0 space-y-4">
   <section aria-label="Needs you" className="faculty-proto-task-list min-w-0">
    <h2 className="border-b border-[#e5ebf2] px-5 py-4 text-xs font-bold uppercase tracking-wide text-[#60718b]">
     Needs you · <span>{course.sectionName}</span>
@@ -99,7 +99,9 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
     The latest class indicators are unavailable. Open the relevant section tool to retry.
    </p>:null}
   </section>
-  <aside aria-label="Course summary" className="min-w-0 space-y-4">
+  <details className="rounded-xl border border-[#e5ebf2] p-4">
+   <summary className="cursor-pointer text-sm font-semibold text-[#078191]">More course information and class health</summary>
+   <aside aria-label="Course summary" className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
    <section className="rounded-xl border border-[#e5ebf2] p-5">
     <div className="flex items-center justify-between gap-2">
      <h2 className="text-xs font-bold uppercase tracking-wide text-[#60718b]">About this course</h2>
@@ -124,5 +126,6 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
     </p>
    </section>
   </aside>
+  </details>
  </div>;
 }
