@@ -42,6 +42,16 @@ describe("TPO Drive / Rounds source screenshot",()=>{
   expect(html).not.toContain("58 of 64 confirmed");
   expect(html).not.toContain("2 asked to move · 4 haven");
  });
+ it("shows a safe fallback when a pending reschedule has no recorded display name",()=>{
+  const html=renderToStaticMarkup(createElement(TpoDriveRoundsPrototypeReview,{
+   rounds:example,selectedId:aid,jobId:job,
+   slots:{...slots,reschedules:[{id:"request-no-name",name:null,reason:null}]},
+   now:new Date("2026-10-26T08:00:00Z"),
+  }));
+  expect(html).toContain("Candidate name unavailable");
+  expect(html).toContain("No reason recorded");
+  expect(html).not.toContain(">null<");
+ });
  it("does not substitute another round for a stale authorized selection",()=>{
   const html=renderToStaticMarkup(createElement(TpoDriveRoundsPrototypeReview,{
    rounds:example,selectedId:"44444444-4444-4444-8444-444444444444",jobId:job,slots:null,
