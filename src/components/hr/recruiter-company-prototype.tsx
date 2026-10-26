@@ -1,10 +1,11 @@
 import Link from "next/link";
 import {RecruiterColleagueInviteRequest} from "./recruiter-colleague-invite-request";
 import {RecruiterCompanyChangeRequest} from "./recruiter-company-change-request";
+import {recruiterTeamCapabilityLabels} from "@/modules/placements/recruiter-team-capabilities-model";
 import {recruiterCompanyHiringDisplay} from "@/modules/placements/recruiter-company-unified-prototype-model";
 import type {RecruiterReportRow} from "@/modules/placements/recruiter-company-reports-model";
 import styles from "./recruiter-company-prototype.module.css";
-type TeamMember={userId:string;displayName:string|null;email:string|null;title:string|null;isYou:boolean};
+type TeamMember={userId:string;displayName:string|null;email:string|null;title:string|null;isYou:boolean;capabilities:readonly string[]};
 type Choice={collegeId:string;collegeName:string};
 export function RecruiterCompanyPrototype({
  companyName,website,industry,about,hiringFor,logoUrl,verified,domains,
@@ -67,6 +68,7 @@ export function RecruiterCompanyPrototype({
          <div className={styles.teamWords}><strong>{member.displayName||member.email||"Recruiter"}{member.isYou?" (you)":""}</strong>
            <span>{member.title||"Recruiter"}</span>
            <small>{member.email??"Work email unavailable"}</small>
+           <small>{recruiterTeamCapabilityLabels(member.capabilities).join(" · ")}</small>
            <small>{teamCountsAvailable?(teamCounts[member.userId]??0)+" recorded drives at this college":"Drive attribution unavailable"}</small>
            {!member.isYou&&member.email?<RecruiterCompanyChangeRequest
             kind="TEAM" collegeId={collegeId} companyName={companyName}

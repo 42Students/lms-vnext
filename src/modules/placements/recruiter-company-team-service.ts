@@ -157,6 +157,7 @@ export async function getRecruiterCompanyTeam(
       displayName: users.displayName,
       email: users.email,
       title: placementRecruiterProfiles.title,
+      capabilities: placementRecruiterCollegeGrants.capabilities,
     })
     .from(placementRecruiterCollegeGrants)
     .innerJoin(
