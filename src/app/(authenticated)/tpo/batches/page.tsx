@@ -110,7 +110,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const latestDecision=recent===null?null:[...recent.entries()].sort((a,b)=>b[1].occurredAt.localeCompare(a[1].occurredAt))[0]??null;
  const activeBatch=typeof raw.selectedBatch==="string"?
   batchPage.items.find(batch=>batch.id===raw.selectedBatch)??null:batchPage.items[0]??null;
- const activeSummary=activeBatch?eligibility?.get(activeBatch.id):null;
+ const activeSummary=activeBatch?eligibility?.get(activeBatch.id):undefined;
  const activeJourney=activeBatch?journey?.get(activeBatch.id):null;
  const batchListHref=tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize);
  const selectBatchHref=(id:string)=>batchListHref+(batchListHref.includes("?")?"&":"?")+"selectedBatch="+encodeURIComponent(id);
