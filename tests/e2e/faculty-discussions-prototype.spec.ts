@@ -61,16 +61,31 @@ test("Faculty Discussions screenshot 08 uses flat pinned-first list, real modera
  await confirmation.getByRole("button",{name:"Delete",exact:true}).click();
  expect((await removed).ok()).toBe(true);
  await expect(row).toHaveCount(0);
- // A 503 might conceal a committed POST. Do not let a second click
- // accidentally create a duplicate without explicit readback.
+ expect(errors).toEqual([]);
+});
+
+test("Faculty discussion uncertain POST preserves draft but blocks duplicate retry",async({page,context})=>{
+ test.setTimeout(80000);
+ await login(context);
+ await page.goto("/teacher/courses");
+ await page.getByRole("region",{name:"Courses in the new Faculty prototype"})
+  .getByRole("row").filter({hasText:"E2E Browser Course"}).first()
+  .getByRole("link",{name:"Open",exact:true}).click();
+ await page.getByRole("navigation",{name:"Faculty course tabs"})
+  .getByRole("link",{name:"Discussions"}).click();
+ const pane=page.locator(".faculty-prototype-discussion");
+ const composer=pane.getByRole("textbox",{name:"Write a message"});
+ await expect(composer).toBeVisible();
  await page.route("**/api/courses/deliveries/*/discussions",async route=>{
   if(route.request().method()==="POST"){
    await route.fulfill({status:503,contentType:"application/json",body:'{"error":"SERVICE_UNAVAILABLE"}'});
   }else await route.continue();
  });
- await composer.fill("Fault injection: the submission outcome may be unknown");
+ const draft="Fault injection: the submission outcome may be unknown";
+ await composer.fill(draft);
+ await expect(pane.getByRole("button",{name:"Send",exact:true})).toBeEnabled();
  await pane.getByRole("button",{name:"Send",exact:true}).click();
  await expect(pane.getByRole("button",{name:"Reload discussions to verify"})).toBeVisible();
+ await expect(composer).toHaveValue(draft);
  await expect(pane.getByRole("button",{name:"Send",exact:true})).toBeDisabled();
- expect(errors).toEqual([]);
 });
