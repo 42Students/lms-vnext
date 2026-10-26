@@ -20,9 +20,9 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 12 | Students › To verify.png | `034ab1edaed9` | Yes | Open |
 | 13 | Students › Requests.png | `cd08dd37423b` | Yes | Open |
 | 14 | Students › Announcements.png | `4ae17a7de616` | Yes | Open |
-| 15 | Drives.png | `c0c53ad75502` | No | Open |
-| 16 | Drives › A recruiter’s drive request.png | `c9b273e210fe` | No | Open |
-| 17 | Drives › New drive (and edit).png | `f3a08d2716a2` | No | Open |
+| 15 | Drives.png | `c0c53ad75502` | Yes | Open |
+| 16 | Drives › A recruiter’s drive request.png | `c9b273e210fe` | Yes | Open |
+| 17 | Drives › New drive (and edit).png | `f3a08d2716a2` | Yes | Open |
 | 18 | Drive › Students (review one by one, share with company).png | `fa5858818245` | No | Open |
 | 19 | Drive › Rounds (results, slots).png | `45610502dbb9` | No | Open |
 | 20 | Drive › Offers.png | `7c72b4402fc8` | No | Open |
@@ -156,10 +156,17 @@ Remaining acceptance: persistent custom templates and usage counts; secure factu
 - Source sample totals, names, dates and read receipts are fixture values only; user-facing logic must not copy them.
 - Tests expanded in `tests/unit/tpo-requests-prototype-workspace-2026.test.ts` and `tests/unit/tpo-announcements-prototype-workspace-2026.test.ts`; acceptance still requires browser and visual pass with real fixtures. Partial screens, **not fully accepted**.
 
+## Screens 15–17 — Drives overview, request and new drive (source images visually inspected)
+
+- **15 — Drives**, 2880×1800. Original has waiting recruiter drive request cards with their own Review actions and a five-column operations queue Drive/Where it is/Next/Needs you/Who. vNext `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx` already renders the five-column authorized operations table and real recruiter request cards, with advanced bulk and export preserved. **Recovered critical navigation bug:** each request card's Review previously opened generic request list and could select a different first request. Each Review now deep-links `request=<actual item.id>` to guarantee the exact authorized recruiter request, with an existing fail-closed detail state and source regression.
+- **16 — Recruiter request**, 2880×1800. Original detail has trust notice, offer/criteria/date conflict summary, recruiter request conversation, and approval/changes/decline controls. Existing vNext `/tpo/placements/lifecycle?view=REQUESTS&request=<id>` has a selected authorized pane and persisted `TpoDriveRequestActions`, with approval creating an unpublished draft rather than falsely publishing immediately. Screenshot's named company trust or historical placements must not be assumed from the request alone; detailed visual and interactive acceptance remains open.
+- **17 — New drive**, 2880×2560. Prototype starts from previous drive/JD/blank choices, company/role, pay, eligibility, rounds/dates, optional message and a right student eligibility preview. Current `src/app/(authenticated)/tpo/placements/new/page.tsx` and `PlacementJobCreateWorkspace` contain authorized clone/create workflows; `/new/draft` provides a separate quick draft. No simulated AI JD parsing, eligibility number, automatic publication or inferred clash notification should be claimed. Full step/layout parity is still open.
+- All three images were visually inspected and compared to source paths. Only the evidenced per-card request deep-link has been changed here; **none of 15–17 is yet browser/visually accepted**.
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **14/33**
+- Original PNGs visually opened in this recovery pass: **17/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**
