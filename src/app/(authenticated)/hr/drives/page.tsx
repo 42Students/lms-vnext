@@ -22,7 +22,7 @@ import {countRecruiterAnswerableDriveRequests} from "@/modules/placements/hr-rec
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
-import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
+import {filterOwnRecruiterRequests,requestStageLabel,recruiterRequestAttentionCounts} from "@/modules/placements/recruiter-request-list-model";
 import {recruiterRequestLegacyLabel, RECRUITER_REQUEST_STATUSES} from "@/modules/placements/recruiter-drive-request-model";
 import {recruiterCollegeAcademicOverview} from "@/modules/placements/recruiter-college-academic-overview-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -108,6 +108,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   // A request linked to a created job is not a second independent drive.
   // Approved draft receipts remain visible below in their own request section.
   const standaloneRequests = requests.filter(req=>!req.approvedJobId);
+  const requestAttention=recruiterRequestAttentionCounts(requests);
   const totals = {...pageResult.totals,
     all:pageResult.totals.all+standaloneRequests.length,
     waiting:requests.filter(req=>["REQUEST","SENT_BACK","DRAFT"].includes(req.status)).length,
@@ -152,7 +153,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   return <RecruiterDrivesRetained key={snapshotKey} failed={false}>
    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title={"Drives at "+(grants.find(grant=>grant.collegeId===selectedCollege)?.collegeName??"your college")}
-      description={totals.live+" live · "+totals.waiting+" waiting for the placement cell · "+totals.closed+" completed or cancelled. Visible only through your verified company relationship."}
+      description={totals.live+" live · "+requestAttention.waitingOnCollege+" waiting for the placement cell"+(requestAttention.needsRecruiterChanges?" · "+requestAttention.needsRecruiterChanges+" needing your changes":"")+" · "+totals.closed+" completed or cancelled. Visible only through your verified company relationship."}
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
         className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Request a drive
@@ -347,7 +348,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+pageResult.total.toLocaleString("en-IN")}</p>{pageResult.pages>1 ? <Pagination label="Drive pages" page={pageResult.page} pageCount={pageResult.pages} hrefForPage={page=>recruiterDrivesHref({...query.data,collegeId:selectedCollege,page})}/> : null}</div>:null}
     </section>
     <Link href="/hr/round-results" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review round results →</Link>
-    <p className="text-xs text-muted-foreground">Request history is saved. Placement-cell approval and external sending remain unavailable until the registered employer-request workflow is ready.</p>
+    <p className="text-xs text-muted-foreground">Your requests and placement-cell decisions are saved. Approved draft drives become visible to students only when the placement cell publishes them.</p>
    </div>
   </RecruiterDrivesRetained>;
 }
