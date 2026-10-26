@@ -35,8 +35,12 @@ describe("chat9 calendar and report layout behavior verification (no restyling)"
  it("TPO-calendar-reports-40 renders branch rate from measured values rather than invented graph numbers",()=>{
   const page=source("src/app/(authenticated)/tpo/reports/by-branch/page.tsx");
   const graph=source("src/components/placements/report-bar-chart.tsx");
-  expect(page).toContain('ReportBarChart title="Placement rate by branch"');
-  expect(page).toContain("row.placementRatePercent===null?");
+  expect(page).toContain("<TpoByBranchPrototypeChart rows={workspace.report.byBranch}");
+  const current=source("src/components/tpo/tpo-by-branch-prototype-chart.tsx");
+  const model=source("src/modules/placements/tpo-branch-report-view-model.ts");
+  expect(current).toContain('aria-label="Placement rate by branch"');
+  expect(current).toContain("tpoBranchChartPercent(row.placed,row.registered,row.placementRatePercent)");
+  expect(model).toContain("registered<=0");
   expect(graph).toContain("rows");
   expect(graph).toContain("units");
  });
