@@ -67,6 +67,7 @@ type Lead = {
   quietDays: number;
   createdAt:string;
   ownerName:string|null;
+  lastContactAt:string|null;
   lastActivityAt:string|null;
   lastActivityType?:string|null;
   nextFollowupAt:string|null;
