@@ -50,6 +50,8 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.goto("/teacher/report/assignment/"+id+"?deliveryId="+deliveryId);
   await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
   await expect(page.getByRole("heading",{name:"Score distribution"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"When they handed in"})).toBeVisible();
+  await page.getByText("Advanced report analysis, full student records and grading tools",{exact:true}).click();
   await expect(page.getByRole("heading",{name:"Submission timing"})).toBeVisible();
   await expect(page.getByRole("link",{name:"Filter submissions and export"})).toBeVisible();
   await expect(page.getByRole("link",{name:"Download CSV"})).toBeVisible();
