@@ -94,6 +94,22 @@ describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure 
   expect(m.thread).toHaveBeenCalledWith(actor,id,1);
   expect(m.notices).toHaveBeenCalledWith(actor,college);
  });
+ it("a failed live grant check blocks stale private decisions and replies",async()=>{
+  m.inbox.mockResolvedValueOnce(inbox).mockRejectedValueOnce(new Error("grant revoked"));
+  m.notices.mockResolvedValue([{id:"sensitive",title:"SECRET_DECISION",
+   body:"SECRET_BODY",href:"/hr/drives",createdAt:new Date(),unread:true}]);
+  const result=await page({collegeId:college});
+  const props=(result as {props:{
+   generalPreviewUnavailable:boolean;decisionNotices:unknown[];
+   rows:unknown[];selected:unknown;
+  }}).props;
+  expect(props.generalPreviewUnavailable).toBe(true);
+  expect(props.rows).toEqual([]);
+  expect(props.selected).toBeNull();
+  expect(props.decisionNotices).toEqual([]);
+  expect(JSON.stringify(props)).not.toContain("SECRET_DECISION");
+  expect(m.thread).not.toHaveBeenCalled();
+ });
  it("a removed grant shows a recovery notice with no second private thread read",async()=>{
   m.inbox.mockResolvedValue({status:"NO_ACCESS",choices:[],items:[],collegeId:null});
   const result=await page();
