@@ -1,5 +1,8 @@
 import {readFileSync} from "node:fs";
 import {describe,it,expect} from "vitest";
+import {createElement} from "react";
+import {renderToStaticMarkup} from "react-dom/server";
+import {TpoRecruiterPrototypeStageRibbon} from "@/components/tpo/recruiter-prototype-stage-ribbon";
 const source=(name:string)=>readFileSync(name,"utf8");
 describe("TPO Companies / Recruiters prototype inspector",()=>{
  it("has a real selected recruiter inspector independent of bulk checkbox selection",()=>{
@@ -33,4 +36,24 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
   expect(inspector).toContain('const href="/tpo/recruiters/"+encodeURIComponent(lead.id)');
   expect(inspector).toContain("Open full page");
  });
+ it("shows the eight genuine prototype stage totals with no assumed sample counts",()=>{
+  const html=renderToStaticMarkup(createElement(TpoRecruiterPrototypeStageRibbon,{
+   rows:[{stage:"NEW"},{stage:"JOINED"},{stage:"JOINED"},{stage:"NOT_NOW"}],
+   selected:"JOINED",onSelect:()=>{},
+  }));
+  for(const name of ["Everyone: 4","Not contacted: 1","In touch: 0","Invited: 0",
+   "Joined: 2","Drive planned: 0","Hired from you: 0","Paused: 1"]){
+   expect(html).toContain('aria-label="'+name+'"');
+  }
+  expect(html.match(/aria-pressed="true"/g)).toHaveLength(1);
+  expect(html).not.toContain("12</strong>");
+ });
+ it("connects stage selection to an existing filtered authorized roster",()=>{
+  const roster=source("src/components/tpo/recruiter-leads-workspace.tsx");
+  expect(roster).toContain('import {TpoRecruiterPrototypeStageRibbon} from "./recruiter-prototype-stage-ribbon"');
+  expect(roster).toContain('rows={rows} selected={stage} onSelect={value=>updateFilter("stage",value)}');
+  expect(roster).toContain('if(kind==="stage")setStage(');
+  expect(roster).toContain("filterEngageRoster(rosterRows,filters");
+ });
+
 });
