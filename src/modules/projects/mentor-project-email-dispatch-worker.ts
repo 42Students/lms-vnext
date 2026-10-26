@@ -94,8 +94,8 @@ async function claimJob(job:Job):Promise<Claim|null>{
   return claimed?{id:claimed.id,attempt}:null;
  });
 }
-async function settleJob(job:Job,claim:Claim,status:State){
- await getDb().transaction(async tx=>{
+async function settleJob(job:Job,claim:Claim,status:State):Promise<boolean>{
+ return getDb().transaction(async tx=>{
   await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${job.id}, 61))`);
   const [latest]=await tx.select({id:activityEvents.id})
    .from(activityEvents).where(and(
@@ -104,8 +104,11 @@ async function settleJob(job:Job,claim:Claim,status:State){
     eq(activityEvents.subjectId,job.id),
     eq(activityEvents.collegeId,job.collegeId!),
    )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(1);
-  if(latest?.id!==claim.id)return;
+  // A concurrent worker can take over an expired lease while the original
+  // provider request is in flight. Never count an unpersisted acceptance.
+  if(latest?.id!==claim.id)return false;
   await tx.insert(activityEvents).values(receiptValues(job,status,claim.attempt));
+  return true;
  });
 }
 /** Each queued intent is durable and unique at the producer transaction.
@@ -182,7 +185,8 @@ export async function runMentorProjectEmailDispatchBatch(
   }catch{
    terminal="RETRY";
   }
-  await settleJob(job,claim,terminal);
+  const settled=await settleJob(job,claim,terminal);
+  if(!settled)continue;
   if(terminal==="ACCEPTED")result.accepted++;
   else if(terminal==="SUPPRESSED")result.suppressed++;
   else result.retry++;
