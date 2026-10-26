@@ -59,6 +59,8 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   const choices=page.getByRole("combobox",{name:"Choose draft or create new"});
   await choices.selectOption({label:baseTitle+" (DRAFT)"});
   await expect(page.getByText("Current state: DRAFT.",{exact:false})).toBeVisible();
+  await expect(page.getByText("Loading allowed methods…")).toHaveCount(0,{timeout:20000});
+  await expect(page.getByText("Unable to load permitted submission methods.",{exact:false})).toHaveCount(0);
   await page.getByRole("textbox",{name:"Title",exact:true}).fill(baseTitle+" revised");
   const editedResponse=page.waitForResponse(res=>res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");
