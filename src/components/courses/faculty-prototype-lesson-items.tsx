@@ -11,7 +11,7 @@ import {courseApiError} from "./learner-course-api";
 
 export type FacultyBlueprintItem={
  id:string;title:string;kind:string;description:string|null;
- status:string;href:string;reorderable:boolean;
+ status:string;href:string;reorderable:boolean;sequence:number;
  editor?:FacultyBlueprintRowEditor|null;
  scheduled?:boolean;
 };
