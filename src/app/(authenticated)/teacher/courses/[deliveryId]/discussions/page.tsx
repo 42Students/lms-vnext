@@ -32,7 +32,7 @@ export default async function FacultyCourseDiscussionsPage({
         <div className="min-w-0">
          <h2 className="text-base font-bold text-[#1d293f]">Course discussions · {workspace.course.sectionName}</h2>
          <p className="mt-1 text-xs text-[#60718b]">Everyone in {workspace.course.sectionName} who takes this course sees these.
-          Other classes have their own discussions.</p>
+          Other classes have their own.</p>
         </div>
         {recent&&recent.total>0?<span className="shrink-0 rounded-full bg-[#eef8f9] px-3 py-1 text-xs font-semibold text-[#078191]">
          {recent.total} recent</span>:null}
