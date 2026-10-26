@@ -24,9 +24,18 @@ describe("Mentor background email dispatch authorization",()=>{
   else process.env["MENTOR_PROJECT_EMAIL_WORKER_TOKEN"]=original;
  });
  it("blocks all missing or forged tokens before any database work",async()=>{
-  for(const token of ["","bad","s".repeat(63),"a".repeat(64)]){
+  for(const token of ["","bad","s".repeat(63),"a".repeat(64),"é".repeat(64)]){
    expect((await POST(req(token))).status).toBe(403);
   }
+  expect(fake.run).not.toHaveBeenCalled();
+ });
+ it("returns 403 rather than throwing on UTF-8 tokens with identical character count",async()=>{
+  // 'é' is one JS code unit but two UTF-8 bytes. Node crypto's
+  // timingSafeEqual throws if input buffer lengths differ.
+  const response=await POST(req("é".repeat(64)));
+  expect(response.status).toBe(403);
+  expect(await response.json()).toEqual({error:"FORBIDDEN"});
+  expect(fake.ready).not.toHaveBeenCalled();
   expect(fake.run).not.toHaveBeenCalled();
  });
  it("fails closed on unprovisioned provider readiness",async()=>{
