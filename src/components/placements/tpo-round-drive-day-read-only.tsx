@@ -168,6 +168,8 @@ export function TpoRoundDriveDayReadOnly({
       room,
       waiting:roster.filter(row=>row.attendance==="PRESENT").length,
       inside:roster.filter(row=>row.attendance==="IN_INTERVIEW").length,
+      inRoom:roster.filter(row=>row.attendance==="IN_INTERVIEW").sort((a,b)=>
+        (a.slotStartsAt??"9999").localeCompare(b.slotStartsAt??"9999")||a.applicationId.localeCompare(b.applicationId)),
       next:roster.filter(row=>row.attendance==="PRESENT").sort((a,b)=>
         // Historical drive-day called the earliest booked slot first,
         // breaking ties by natural roll order and stable application ID.
@@ -345,6 +347,24 @@ export function TpoRoundDriveDayReadOnly({
         <Button type="button" variant="secondary" disabled={gateBusy||pasteBusy}
           onClick={()=>{setRefreshFailed(false);router.refresh();}}>Retry roster refresh</Button>
       </div>:null}
+      <section aria-label="At the gate and in the rooms" data-testid="tpo.drive-day.prototype-summary"
+        className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        {([
+         ["Here",data.counts.present+data.counts.inInterview+data.counts.done],
+         ["Not here yet",data.counts.waiting],
+         ["In interview now",data.counts.inInterview],
+         ["Done",data.counts.done],
+         ["Absent",data.counts.absent],
+        ] as const).map(([label,count])=>
+         <div key={label} className="min-w-0 rounded-lg border border-border bg-surface-secondary px-4 py-3">
+          <strong className="block text-xl tabular-nums text-foreground">{count}</strong>
+          <span className="mt-1 block text-xs text-body">{label}</span>
+         </div>)}
+        {data.counts.unknownAttendance>0?<p role="status" className="col-span-full text-sm text-warning-text">
+          {data.counts.unknownAttendance} attendance states cannot be classified.
+          They are not included in these categories.
+        </p>:null}
+      </section>
       <section aria-label="Gate quick check-in" className="min-w-0 space-y-3 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -377,6 +397,20 @@ export function TpoRoundDriveDayReadOnly({
         {gateSuccess?<InlineNotice tone="success" message={gateSuccess} onDismiss={()=>setGateSuccess("")}/>:null}
         {pasteFeedback?<InlineNotice tone="success" message={pasteFeedback} onDismiss={()=>setPasteFeedback("")}/>:null}
         {pasteFailure?<InlineNotice tone="error" message={pasteFailure} onDismiss={()=>setPasteFailure("")}/>:null}
+        {data.rows.some(student=>student.attendance==="PRESENT")?
+         <section aria-label="Here and waiting for a room" className="mt-4 border-t border-border pt-3">
+          <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Here and waiting</h3>
+          <ul className="mt-2 divide-y divide-border text-sm">
+           {data.rows.filter(student=>student.attendance==="PRESENT").slice(0,5).map(student=>
+            <li key={student.applicationId} className="flex min-w-0 items-center justify-between gap-2 py-2">
+             <span className="break-words font-semibold text-foreground">{student.displayName}</span>
+             <span className="text-xs text-body">{student.rollNumber??"Roll number unavailable"}</span>
+            </li>)}
+          </ul>
+          <p className="mt-2 text-xs text-muted-foreground">
+           Arrival timestamps are not recorded by this view; the list shows current present states, not a claimed arrival order.
+          </p>
+         </section>:null}
       </section>
       {roomQueues.length>0?<section aria-label="Room queues" className="space-y-3 border-b border-border pb-4">
         <h2 className="text-base font-semibold text-foreground">Room queues</h2>
@@ -385,25 +419,89 @@ export function TpoRoundDriveDayReadOnly({
           with a fresh attendance check; candidates already in a room are excluded.
         </p>
         <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {roomQueues.map(queue=><div key={queue.room}
-            className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
-            <strong className="block break-words text-sm font-semibold">{queue.room}</strong>
-            <p className="text-xs text-body">{queue.waiting} waiting · {queue.inside} in</p>
-            <p className="truncate text-sm text-body">
-              {queue.next?queue.next.displayName+" · "+(queue.next.rollNumber??"No roll number"):"No checked-in candidate waiting"}
-            </p>
-            <Button type="button" size="sm" variant="secondary"
+          {roomQueues.map(queue=><article key={queue.room}
+            aria-label={"Panel room "+queue.room} className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+             <h3 className="break-words font-bold text-foreground">{queue.room}</h3>
+             <p className="text-xs text-muted-foreground">{queue.waiting} waiting · {queue.inside} in the room</p>
+            </div>
+            <div aria-label="In the room" className="space-y-3">
+             <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">In the room</h4>
+             {queue.inRoom.length?queue.inRoom.slice(0,3).map(student=><div key={student.applicationId}
+                className="min-w-0 rounded-lg border border-border p-3">
+               <p className="break-words text-lg font-semibold text-foreground">{student.displayName}</p>
+               <p className="mt-1 text-xs text-body">
+                {student.rollNumber??"Roll unavailable"} · Slot {student.slotStartsAt?
+                 new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":
+                 "time unavailable"}
+               </p>
+               <TpoRoundResultRecorder roundId={data.round.id}
+                round={{kind:data.round.kind,status:data.round.status}} row={student}/>
+               <TpoRoundCheckIn roundId={data.round.id} applicationId={student.applicationId}
+                displayName={student.displayName} attendance={student.attendance}
+                roundStatus={data.round.status} rollNumber={student.rollNumber}/>
+             </div>):<p className="text-sm text-body">No candidate currently recorded in this room.</p>}
+             {queue.inRoom.length>3?<p className="text-xs text-warning-text">
+               Showing three of {queue.inRoom.length} candidates marked in interview.
+               Check the full roster to resolve overlapping room occupancy.
+             </p>:null}
+            </div>
+            <section aria-label="Next up" className="min-w-0 space-y-2 border-t border-border pt-3">
+             <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Next up</h4>
+             <p className="break-words text-sm font-semibold text-foreground">
+              {queue.next?queue.next.displayName+" · "+(queue.next.rollNumber??"Roll unavailable"):
+               "No checked-in candidate waiting"}
+             </p>
+             <Button type="button" size="sm" variant="secondary"
               disabled={locked||gateBusy||pasteBusy||roomBusy!==null||!queue.next}
               onClick={()=>{if(queue.next)void callNext(queue.next,queue.room);}}>
               {roomBusy===queue.room?"Calling…":"Call next · "+queue.room}
-            </Button>
-          </div>)}
+             </Button>
+            </section>
+          </article>)}
         </div>
         <p className="text-xs text-muted-foreground">
           Within each room, available roll numbers determine the queue order.
           Unassigned candidates are not automatically called into a room.
         </p>
       </section>:null}
+      <section aria-label="Not here yet" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
+       <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+         Not here yet · {data.counts.waiting}
+        </h2>
+        <Link href={destinations.noShows} className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+         Review explicit absences
+        </Link>
+       </div>
+       {data.counts.waiting>0?<ul className="divide-y divide-border">
+        {data.rows.filter(row=>row.attendance==="WAITING").slice(0,8).map(student=>
+         <li key={student.applicationId} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-2">
+          <div className="min-w-0">
+           <p className="break-words text-sm font-semibold text-foreground">{student.displayName}</p>
+           <p className="mt-1 text-xs text-muted-foreground">
+            {student.rollNumber??"Roll not recorded"} · Booked slot:
+            {" "}{student.slotStartsAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":"Not assigned"}
+           </p>
+          </div>
+          <TpoRoundCheckIn roundId={data.round.id} applicationId={student.applicationId}
+           displayName={student.displayName} attendance={student.attendance}
+           roundStatus={data.round.status} rollNumber={student.rollNumber}/>
+         </li>)}
+       </ul>:<p className="text-sm text-body">No students have a recorded waiting status.</p>}
+       {data.counts.waiting>8?<p className="text-xs text-muted-foreground">
+         Showing eight of {data.counts.waiting} waiting candidates. The full roster is below.
+       </p>:null}
+       <p className="text-xs text-muted-foreground">
+        No one is automatically marked absent at a fixed clock time.
+        Individual absent actions require confirmation and a current attendance state.
+       </p>
+      </section>
+      <p className="text-xs leading-5 text-muted-foreground">
+       Results entered here are staged; learners are told only after a confirmed apply action in the
+       <Link href={destinations.results} className="ml-1 font-semibold text-link underline">round results workspace</Link>.
+       Absent notifications are only confirmed when the attendance action reports successful delivery.
+      </p>
       <section aria-label="Round progress">
         <h2 className="mb-3 text-base font-semibold text-foreground">
           Applicant progress
