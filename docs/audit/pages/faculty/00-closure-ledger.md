@@ -2,7 +2,7 @@
 
 **Scope and design authority:** original uploaded `42LMS pages prototype-png-faculty.zip`. Use **only** the 12 Faculty screenshots numbered **#02–#13**; #01 is TPO. Legacy behavior authority is `docs/legacy-source/frontend` and existing vNext domain services. Preserve better, secure, authorization-checked vNext workflows. All work is committed directly on `main` with current blob SHAs, and other lanes may change `main` between checks.
 
-This ledger is the **single entry point** for the Faculty work. Detailed page evidence can live in `docs/audit/pages/faculty/*` and the relevant tests/workflows, but completion status is updated **here only after evidence**.
+**Continuing in a fresh chat?** Start with [NEXT-CHAT-HANDOFF.md](NEXT-CHAT-HANDOFF.md), then the [#05 Blueprint action audit](screen-05-action-audit.md). The handoff includes original image locations, current code, acceptance caveats and the first exact fixes to implement.\n\nThis ledger is the **single entry point** for the Faculty work. Detailed page evidence can live in `docs/audit/pages/faculty/*` and the relevant tests/workflows, but completion status is updated **here only after evidence**.
 
 ## One-page-at-a-time policy
 
@@ -38,7 +38,7 @@ This ledger is the **single entry point** for the Faculty work. Detailed page ev
 - [x] Identify the preexisting authorized vNext learning path, content, lesson, quiz and assignment mutation services; do not change College Admin lesson ownership.
 - [x] Preserve exact lesson/assessment mixed persisted sequences and unit-check stable ties.
 - [x] Add inline Edit, Archive confirmation, verified archive receipts and keep non-owned actions unavailable.
-- [ ] Fix menu: each `+ Add content` option must land on the **actual relevant authoring flow** (upload video, YouTube, Resource, Live class, Assignment, Quiz), not six indistinguishable links.
+- [ ] Complete six `+ Add content` flows: distinct route targets have been coded, but `create=RESOURCE/YOUTUBE/LIVE_CLASS` is not yet consumed by the page/editor and the video target anchor has not been found. Verify the correct *opened form and selected lesson*, not only distinct URLs.
 - [ ] Browser verify desktop/mobile selected lesson, Edit, Cancel Archive, relevant create flow, persisted order including feature-gated disabled state, and authorization.
 - [ ] Record passing post-change acceptance or actionable exact blocker. **Do not mark #05 closed on old passing run.**
 - [ ] Later pixel-level screenshot parity.
