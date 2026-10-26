@@ -213,7 +213,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
      decidedAt:row.decidedAt??null,decisionNote:row.decisionNote??null,
      contextHref:tpoRequestContextLink(row).href,contextLabel:tpoRequestContextLink(row).label,
     }))} selectedId={typeof raw.request==="string"?raw.request:null}
-     baseHref={href(data.query)} total={data.total}/>
+     baseHref={href(data.query)} total={data.total} pendingTotal={data.summary.pending}/>
     <Disclosure title="Advanced request table, exports and additional request tools"
      className="min-w-0" contentClassName="min-w-0 space-y-4 pt-4">
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total.toLocaleString("en-IN")} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
