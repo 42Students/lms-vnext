@@ -43,7 +43,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {GridWorkspace} from "./grid/grid-workspace";
 import {TpoRecruiterPrototypeInspector} from "./recruiter-prototype-inspector";
 import {TpoRecruiterPrototypeStageRibbon} from "./recruiter-prototype-stage-ribbon";
-import {TpoRecruiterPrototypeRoster} from "./recruiter-prototype-roster";
+import {TpoRecruiterPrototypeRoster,TPO_RECRUITER_PROTOTYPE_COLUMNS,type TpoRecruiterPrototypeColumn} from "./recruiter-prototype-roster";
 import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import boardStyles from "./recruiter-board-theme.module.css";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
@@ -232,11 +232,19 @@ export function RecruiterLeadsWorkspace({
 }) {
   const router=useRouter();
   const [rows, setRows] = useState<Lead[]>([]);
-  const [needsExpanded,setNeedsExpanded]=useState(true);
+  const [needsExpanded,setNeedsExpanded]=useState(false);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
   // Focus is separate from the bulk-action checkboxes. Empty string is an
   // explicit dismissed inspector; null means auto-focus the first visible row.
   const [focusedRecruiterId,setFocusedRecruiterId]=useState<string|null>(null);
+  const [compactColumns,setCompactColumns]=useState<TpoRecruiterPrototypeColumn[]>(
+    TPO_RECRUITER_PROTOTYPE_COLUMNS.map(column=>column.key));
+  const [compactColumnsOpen,setCompactColumnsOpen]=useState(false);
+  const advancedRosterRef=useRef<HTMLDetailsElement>(null);
+  function openAdvancedRoster(selectAll=false){
+    if(selectAll)setSelectedIds(sortedVisible.map(lead=>lead.id));
+    if(advancedRosterRef.current)advancedRosterRef.current.open=true;
+  }
   const [visibleColumns,setVisibleColumns]=useState<EngageColumn[]>([...ENGAGE_DEFAULT_COLUMNS]);
   const [rosterSort,setRosterSort]=useState<EngageSort>("LAST_ACTIVITY");
   const [sortAscending,setSortAscending]=useState(false);
@@ -524,7 +532,8 @@ export function RecruiterLeadsWorkspace({
   const sortedVisible=useMemo(()=>sortEngageRows(visible,rosterSort,sortAscending),
     [visible,rosterSort,sortAscending]);
   const focusedLead=focusedRecruiterId===""?null:
-    sortedVisible.find(lead=>lead.id===focusedRecruiterId)??sortedVisible[0]??null;
+    focusedRecruiterId===null?sortedVisible[0]??null:
+    sortedVisible.find(lead=>lead.id===focusedRecruiterId)??null;
   const filterChips=([
     {key:"stage",label:"Stage",value:stage},
     {key:"need",label:"Needs doing",value:need},
@@ -765,6 +774,34 @@ export function RecruiterLeadsWorkspace({
     }
   }
 
+  const needsPanel=(
+          <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
+            <button type="button" aria-expanded={needsExpanded} aria-controls="engage-needs-content"
+              onClick={()=>setNeedsExpanded(open=>!open)}
+              className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              Needs doing <span aria-hidden="true">{needsExpanded?"▴":"▾"}</span>
+            </button>
+            <div id="engage-needs-content" hidden={!needsExpanded} className="space-y-2">
+            <div className="flex min-w-0 flex-wrap gap-2">
+              {([
+                ["OVERDUE","Follow-ups due",rows.filter(row=>dueByEndOfTodayIst(row.nextFollowupAt)).length],
+                ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
+                ["QUIET","Gone quiet",rows.filter(row=>row.chips?.includes("QUIET")).length],
+              ] as const).filter(([, ,count])=>count>0).map(([key,label,count])=>
+                <FilterChip key={key} type="button" data-testid={"needs-"+key.toLowerCase().replaceAll("_","-")}
+                  aria-pressed={attention===key} onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>
+                  {label} · <strong>{count}</strong>
+                </FilterChip>)}
+              {needCounts.unassigned>0?<FilterChip type="button" data-testid="needs-unassigned" aria-pressed={need==="UNASSIGNED"}
+                onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>Unassigned · <strong>{needCounts.unassigned}</strong></FilterChip>:null}
+              {!rows.some(row=>dueByEndOfTodayIst(row.nextFollowupAt)||row.chips?.includes("NO_NEXT_STEP")||row.chips?.includes("QUIET"))&&needCounts.unassigned===0?
+                <span className="text-sm text-muted-foreground">Nothing right now.</span>:null}
+            </div>
+            <Link className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9"
+              href="/tpo/settings/recruiters">{rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access</Link>
+            </div>
+          </section>
+  );
   return (
     <section className="min-w-0 space-y-4" aria-label="Recruiter leads">
       <PageHeader
@@ -810,32 +847,8 @@ export function RecruiterLeadsWorkspace({
         <>
           {view!=="companies"?<TpoRecruiterPrototypeStageRibbon
             rows={rows} selected={stage} onSelect={value=>updateFilter("stage",value)}/>:null}
-          <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
-            <button type="button" aria-expanded={needsExpanded} aria-controls="engage-needs-content"
-              onClick={()=>setNeedsExpanded(open=>!open)}
-              className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-              Needs doing <span aria-hidden="true">{needsExpanded?"▴":"▾"}</span>
-            </button>
-            <div id="engage-needs-content" hidden={!needsExpanded} className="space-y-2">
-            <div className="flex min-w-0 flex-wrap gap-2">
-              {([
-                ["OVERDUE","Follow-ups due",rows.filter(row=>dueByEndOfTodayIst(row.nextFollowupAt)).length],
-                ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
-                ["QUIET","Gone quiet",rows.filter(row=>row.chips?.includes("QUIET")).length],
-              ] as const).filter(([, ,count])=>count>0).map(([key,label,count])=>
-                <FilterChip key={key} type="button" data-testid={"needs-"+key.toLowerCase().replaceAll("_","-")}
-                  aria-pressed={attention===key} onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>
-                  {label} · <strong>{count}</strong>
-                </FilterChip>)}
-              {needCounts.unassigned>0?<FilterChip type="button" data-testid="needs-unassigned" aria-pressed={need==="UNASSIGNED"}
-                onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>Unassigned · <strong>{needCounts.unassigned}</strong></FilterChip>:null}
-              {!rows.some(row=>dueByEndOfTodayIst(row.nextFollowupAt)||row.chips?.includes("NO_NEXT_STEP")||row.chips?.includes("QUIET"))&&needCounts.unassigned===0?
-                <span className="text-sm text-muted-foreground">Nothing right now.</span>:null}
-            </div>
-            <Link className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9"
-              href="/tpo/settings/recruiters">{rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access</Link>
-            </div>
-          </section>
+          {view!=="table"?needsPanel:null}
+          {view!=="table"?<>
           <div className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
             <label className="min-w-48 flex-1 text-sm">
               Search name, company or contact
@@ -861,6 +874,7 @@ export function RecruiterLeadsWorkspace({
                 setView(next as "table"|"board"|"companies");
               }}/></div>
           </div>
+          </>:null}
           <div className="space-y-3">
             {view!=="table"?<Button variant="secondary" type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
               aria-expanded={filterOpen} aria-controls="engage-filter-panel">
@@ -1132,11 +1146,48 @@ export function RecruiterLeadsWorkspace({
             </section>
           ) : view === "table" ? (
             <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-            <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-3 sm:p-4" aria-label="Recruiter leads table">
+            <section className="min-w-0 rounded-xl border border-border bg-surface" aria-label="Recruiter leads table">
+            <div className="flex flex-wrap items-center gap-2 border-b border-border p-3" aria-label="Recruiter table tools">
+             <label className="min-w-[210px] flex-1">
+              <span className="sr-only">Search name, company, email or phone</span>
+              <Input type="search" value={query} onChange={event=>updateFilter("query",event.target.value)}
+               placeholder="Search name, company, email or phone" aria-label="Search recruiters"
+               className={inputStyle+" w-full"}/>
+             </label>
+             <Button variant="secondary" type="button" onClick={()=>setFilterOpen(open=>!open)}
+              aria-expanded={filterOpen} aria-controls="engage-filter-panel">Filters{filterChips.length?" ("+filterChips.length+")":""}</Button>
+             <Button variant="secondary" type="button" onClick={()=>setCompactColumnsOpen(open=>!open)}
+              aria-expanded={compactColumnsOpen} aria-controls="tpo-recruiter-columns">Columns</Button>
+             <Button variant="secondary" type="button" disabled={!sortedVisible.length} onClick={()=>exportRows("shown","csv")}>Export</Button>
+             <span className="ml-auto text-xs text-body">{sortedVisible.length} in this view</span>
+             <Button variant="secondary" type="button" disabled={!sortedVisible.length}
+              onClick={()=>openAdvancedRoster(true)}>Act on all {sortedVisible.length}</Button>
+            </div>
+            {compactColumnsOpen?<fieldset id="tpo-recruiter-columns" className="flex flex-wrap gap-3 border-b border-border p-3">
+             <legend className="text-xs font-semibold text-body">Visible columns</legend>
+             {TPO_RECRUITER_PROTOTYPE_COLUMNS.map(column=><label key={column.key} className="inline-flex items-center gap-1.5 text-xs">
+              <Checkbox checked={compactColumns.includes(column.key)}
+               disabled={compactColumns.length===1&&compactColumns.includes(column.key)}
+               onChange={event=>setCompactColumns(previous=>event.target.checked?
+                [...previous,column.key]:previous.filter(key=>key!==column.key))}/>
+              {column.label}
+             </label>)}
+            </fieldset>:null}
+            {exportFeedback?<p role="status" className="px-3 py-2 text-xs text-body">{exportFeedback}</p>:null}
             <TpoRecruiterPrototypeRoster rows={sortedVisible} selectedId={focusedLead?.id??null}
-             onSelect={setFocusedRecruiterId} now={new Date()}/>
-            <details className="mt-4 rounded-lg border border-border p-3" data-testid="tpo.recruiter.advanced-grid">
-             <summary className="cursor-pointer text-sm font-semibold text-link">Advanced spreadsheet, exports and bulk selection</summary>
+             columns={compactColumns} onSelect={setFocusedRecruiterId} now={new Date()}/>
+            <details ref={advancedRosterRef} className="m-3 rounded-lg border border-border p-3" data-testid="tpo.recruiter.advanced-grid">
+             <summary className="cursor-pointer text-sm font-semibold text-link">Advanced spreadsheet, views, exports and bulk actions</summary>
+             {needsPanel}
+             <div className="mb-3"><Tabs ariaLabel="Engage views" controlledOnly renderPanel={false} value={view}
+              items={[{value:"table",label:"Table"},{value:"board",label:"Board"},{value:"companies",label:"Companies",count:companies.length},{value:"campaigns",label:"Emails"}]}
+              onValueChange={next=>{
+               const params=new URLSearchParams(window.location.search);
+               if(next==="campaigns"){params.set("view","campaigns");window.location.assign("/tpo/recruiters?"+params.toString());return;}
+               if(next==="table")params.delete("view");else params.set("view",next);
+               window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
+               setView(next as "table"|"board"|"companies");
+              }}/></div>
             <GridWorkspace rows={sortedVisible} columns={RECRUITER_GRID_COLUMNS}
               rowKey={lead=>lead.id} selection={{selected:selectedIds,onChange:setSelectedIds}}
               columnKeys={visibleColumns}
