@@ -85,8 +85,12 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   setMaxAttempts(q.maxAttempts);setShuffleQuestions(Boolean(q.shuffleQuestions));setShuffleOptions(Boolean(q.shuffleOptions));setLessonId(q.lessonId);setPending(true);
   try{
    const response=await apiFetch<unknown>("/api/courses/quizzes/"+encodeURIComponent(q.id)+
-     "?deliveryId="+encodeURIComponent(deliveryId),{cache:"no-store"});
+     "?deliveryId="+encodeURIComponent(deliveryId)+"&includeCorrectAnswers=true",{cache:"no-store"});
    if(token!==choiceRequest.current)return;
+   // The read route omits private answer flags unless the caller opts in.
+   // This authenticated Faculty editor must load those flags or every saved
+   // SINGLE_CHOICE answer becomes false and draft edits fail validation.
+   // Learner requests remain restricted by getCourseQuiz's release policy.
    const fetched=facultyAuthoringQuestionsFromResponse(response);
    const loadIssue=facultyQuizLoadedBankIssue(q.status,fetched.length);
    if(loadIssue)throw new Error(loadIssue);
