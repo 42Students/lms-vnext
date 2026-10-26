@@ -195,6 +195,13 @@ export function FacultyAttendanceWorkspace({
   const [error, setError] =
     useState<string | null>(null);
   const [savedNotice,setSavedNotice]=useState<string|null>(null);
+  // A confirmed attendance PATCH becomes the local baseline immediately.
+  // A fresh server session version then supersedes it after router.refresh().
+  // Without this receipt baseline, a fast Report-tab click incorrectly
+  // demands that the Faculty discard marks which have already been saved.
+  const [acceptedWrite,setAcceptedWrite]=useState<{
+    sessionId:string;version:string|null;absentIds:readonly string[];
+  }|null>(null);
   useEffect(() => {
     if (!savedNotice) return;
     const timeout = window.setTimeout(() => setSavedNotice(null), 4000);
@@ -316,8 +323,12 @@ export function FacultyAttendanceWorkspace({
     [...initialAbsencesForSession(workspace.roster, workspace.records, selectedSessionId)],
     [...absent], workspace.roster.length,
   );
+  const baselineAbsences=acceptedWrite?.sessionId===selectedSessionId&&
+    acceptedWrite.version===selectedSession?.markedAt
+      ?new Set(acceptedWrite.absentIds)
+      :initialAbsencesForSession(workspace.roster,workspace.records,selectedSessionId);
   const unsavedMarks=facultyAttendanceMarksDirty(workspace.roster,
-    initialAbsencesForSession(workspace.roster,workspace.records,selectedSessionId),absent);
+    baselineAbsences,absent);
   // Server-rendered class picker lives above this workspace. Broadcast dirty
   // state so its client-side navigation can ask before discarding unsaved marks.
   useEffect(()=>{
@@ -542,6 +553,8 @@ export function FacultyAttendanceWorkspace({
         return;
       }
       persisted = true;
+      setAcceptedWrite({sessionId:selectedSession.id,
+        version:selectedSession.markedAt,absentIds:[...absent]});
       setCorrectionReason("");
       setSavedNotice(`Attendance recorded for ${workspace.roster.length} learner(s).`);
       router.refresh();
