@@ -370,9 +370,13 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   expect(meeting?.meetingUrl).toBeNull();
   expect(meeting?.agenda).toBe("Location: Lab 2\nReview team work");
   expect(meeting?.id).toMatch(/^[0-9a-f-]{36}$/i);
-  await page.goto("/mentor/projects/"+projectId+"?tab=team");
-  await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
-  await expect(page.getByText("Lab 2",{exact:false}).first()).toBeVisible();
+  const teamResponse=await page.goto("/mentor/projects/"+projectId+"?tab=team");
+  const renderedText=(await page.locator("body").innerText()).slice(0,450);
+  await expect(page.getByRole("heading",{level:1,name:title}),
+    "Mentor meeting UI route="+page.url()+" HTTP="+teamResponse?.status()+" content="+renderedText)
+    .toBeVisible({timeout:15000});
+  await expect(page.getByText("Lab 2",{exact:false}).first())
+    .toBeVisible({timeout:15000});
   const saved=await page.request.get(path);
   expect(saved.status()).toBe(200);
   const rows=await saved.json() as {meetings:{id:string;agenda:string}[]};
