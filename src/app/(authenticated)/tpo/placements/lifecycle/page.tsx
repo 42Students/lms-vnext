@@ -395,7 +395,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             const next=job.nextRoundAt?new Date(job.nextRoundAt):null;
             const nextEvent=next&&Number.isFinite(next.getTime())?
              "Next round "+next.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):
-             job.applicationDeadline&&new Date(job.applicationDeadline)>data.asOf?
+             job.applicationDeadline&&new Date(job.applicationDeadline).getTime()>new Date(data.asOf).getTime()?
               "Applications close "+new Date(job.applicationDeadline).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}):
              job.offersMade>0?"Review recorded offers":"No next event recorded";
             const task=job.status==="PUBLISHED"&&!job.applicationDeadline?
