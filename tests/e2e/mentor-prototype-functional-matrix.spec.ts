@@ -301,6 +301,25 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   await page.goto("/mentor/projects/"+projectId+"?tab=activity");
   await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
   await expect(page.locator("body")).not.toContainText(title);
+  // Revocation must be re-checked against persisted project membership,
+  // even if the faculty account still has a valid MENTOR role cookie.
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  const revocationDb=new Pool({connectionString:connection});
+  try{
+    const revoked=await revocationDb.query(
+      "update project_members set ended_at=clock_timestamp() "+
+      "where project_id=$1 and membership_id=$2 and ended_at is null returning id",
+      [projectId,SEED_IDS.facultyCollegeAMembership],
+    );
+    expect(revoked.rowCount).toBe(1);
+  }finally{
+    await revocationDb.end();
+  }
+  const revokedHistory=await page.request.get("/api/projects/"+projectId+
+    "/activity?category=RESOURCE");
+  expect(revokedHistory.status()).toBe(403);
+  await page.goto("/mentor/projects/"+projectId+"?tab=activity");
+  await expect(page.getByRole("heading",{level:1,name:title})).toHaveCount(0);
  });
 
  test("in-person Mentor meeting saves physical venue, enforces CAS and denies Learner writes",async({page,context})=>{
@@ -325,10 +344,15 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   expect(project.project?.updatedAt).toBeTruthy();
   expect(projectId).toMatch(/^[0-9a-f-]{36}$/i);
   const path="/api/projects/"+projectId+"/meetings";
+  // Independent starts per retry prevent a successful earlier attempt or
+  // a parallel test's organizer lock from causing false double-booking.
+  const start=new Date(Date.now()+
+    (35+parseInt(unique.slice(0,4),16))*86400000);
+  start.setUTCHours(8,0,0,0);
   const window={
     title:"In-person project review",agenda:"Review team work",
-    startsAt:"2099-12-27T13:05:00+05:30",
-    endsAt:"2099-12-27T13:35:00+05:30",
+    startsAt:start.toISOString(),
+    endsAt:new Date(start.getTime()+30*60_000).toISOString(),
     timeZone:"Asia/Kolkata",meetingUrl:null,location:"Lab 2",
     expectedProjectUpdatedAt:project.project!.updatedAt!,
   };
@@ -354,8 +378,8 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   const rows=await saved.json() as {meetings:{id:string;agenda:string}[]};
   expect(rows.meetings.find(row=>row.id===meeting!.id)?.agenda)
     .toBe("Location: Lab 2\nReview team work");
-  const move={...window,startsAt:"2099-12-27T14:05:00+05:30",
-    endsAt:"2099-12-27T14:35:00+05:30",status:"RESCHEDULED",
+  const move={...window,startsAt:new Date(start.getTime()+60*60_000).toISOString(),
+    endsAt:new Date(start.getTime()+90*60_000).toISOString(),status:"RESCHEDULED",
     location:"Room 304",expectedUpdatedAt:meeting!.updatedAt};
   const moved=await page.request.patch(path+"/"+meeting!.id,{
     headers:{Origin:origin},data:move,
