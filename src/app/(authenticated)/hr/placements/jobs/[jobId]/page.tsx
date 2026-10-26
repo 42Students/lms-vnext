@@ -452,10 +452,52 @@ export default async function HrPlacementJobPage({
               </StatusBadge>}
           </div>
 
-          <section aria-label="What students see" className="border-b border-border pb-4">
-            <details className="min-w-0">
+          {/* Screenshot 34: hiring pipeline and drive facts left, student-visible copy right. */}
+          <div className="grid min-w-0 gap-4 lg:grid-cols-2">
+            <div className="min-w-0 rounded-xl border border-border bg-surface p-4">
+          <section aria-labelledby="recruiter-shared-funnel-title"
+            className="min-w-0">
+            <span className="text-xs font-bold tracking-wide text-muted-foreground">HIRING SO FAR</span>
+            <h3 id="recruiter-shared-funnel-title" className="mt-1 font-semibold text-foreground">Hiring pipeline</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
+              Assessment and interview steps show recorded applied results; “—” means this drive has no such round. Offered/Hired count distinct employer-visible recipients, not historical offer versions.
+            </p>
+            <ol className="mt-4 grid gap-3 sm:grid-cols-2" aria-label="Employer-visible stage funnel">
+              {recruiterVisibleDriveFunnel({
+                shared:applicants.counts.all,shortlisted:applicants.counts.shortlisted,
+                rounds:workspace.rounds,
+                offered:offerSummary.distinctOffered,hired:offerSummary.distinctHired,
+              }).map(stage=><li key={stage.label} className={funnelStyles["stage"]}>
+                <p className={funnelStyles["label"]}>{stage.label}</p>
+                <p className={funnelStyles["count"]}>{stage.count??"—"}</p>
+                <MetricBar className={funnelStyles["track"]+" mt-2"} role="img"
+                  label={stage.label+": "+(stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage")}
+                  value={stage.ofPrevious??0} maximum={100} unit="percent" />
+                <p className={funnelStyles["note"]}>{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"} · {stage.ofApplied===null?"Applied percentage unavailable":stage.ofApplied+"% of shared applicants"}</p>
+              </li>)}
+            </ol>
+          </section>
+<section aria-label="Drive facts" className="mt-4 border-t border-border pt-4">
+  <h3 className="text-xs font-bold tracking-wide text-muted-foreground">THE DRIVE</h3>
+  <dl className="mt-2 grid gap-2 text-sm">
+    <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Role</dt><dd className="break-words text-foreground">{workspace.job.title} · {workspace.job.employmentType.replaceAll("_"," ").toLowerCase()}</dd></div>
+    <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Pay</dt><dd className="text-foreground">{workspace.job.ctcLpa!==null?workspace.job.ctcLpa+" LPA":ctc??"Not specified"}{workspace.job.fixedCtcLpa!==null?" ("+workspace.job.fixedCtcLpa+" fixed)":""}</dd></div>
+    <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Who could apply</dt><dd className="break-words text-foreground">{workspace.job.eligibleBranches.length?workspace.job.eligibleBranches.join(", "):"No branch restriction recorded"}{workspace.job.eligiblePassingYear?" · "+workspace.job.eligiblePassingYear:""}. College placement rules also apply.</dd></div>
+    <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Rounds</dt><dd className="break-words text-foreground">{workspace.rounds.length?workspace.rounds.map(round=>round.name).join(" → "):"The placement cell sets them with you"}</dd></div>
+    <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Apply by</dt><dd className="text-foreground">{workspace.job.applicationDeadline?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(workspace.job.applicationDeadline)+" IST":"Not set yet"}</dd></div>
+  </dl>
+</section>
+            </div>
+          <section aria-label="What students see" className="min-w-0 rounded-xl border border-border bg-surface-secondary p-4">
+            <details open className="min-w-0">
              <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">What students see</summary>
              <div className="mt-2 min-w-0">
+             <div className="mb-3 rounded-lg border border-border bg-surface p-3">
+               <strong className="block break-words text-base text-foreground">{workspace.job.title}</strong>
+               <span className="text-xs text-muted-foreground">{workspace.college.name} · {workspace.job.ctcLpa!==null?workspace.job.ctcLpa+" LPA":ctc??"Compensation not specified"}</span>
+               {workspace.job.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{workspace.job.description}</p>:<p className="mt-2 text-sm text-muted-foreground">No description recorded yet.</p>}
+             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               Student-facing draft facts are shown for reference. Exact publication and application access are controlled by the placement cell.
             </p>
@@ -482,29 +524,7 @@ export default async function HrPlacementJobPage({
              </div>
             </details>
           </section>
-          <section aria-labelledby="recruiter-shared-funnel-title"
-            className="border-b border-border pb-4 md:pb-6">
-            <h3 id="recruiter-shared-funnel-title" className="font-semibold text-foreground">Hiring pipeline</h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
-              Assessment and interview steps show recorded applied results; “—” means this drive has no such round. Offered/Hired count distinct employer-visible recipients, not historical offer versions.
-            </p>
-            <ol className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3" aria-label="Employer-visible stage funnel">
-              {recruiterVisibleDriveFunnel({
-                shared:applicants.counts.all,shortlisted:applicants.counts.shortlisted,
-                rounds:workspace.rounds,
-                offered:offerSummary.distinctOffered,hired:offerSummary.distinctHired,
-              }).map(stage=><li key={stage.label} className={funnelStyles["stage"]}>
-                <p className={funnelStyles["label"]}>{stage.label}</p>
-                <p className={funnelStyles["count"]}>{stage.count??"—"}</p>
-                <MetricBar className={funnelStyles["track"]+" mt-2"} role="img"
-                  label={stage.label+": "+(stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage")}
-                  value={stage.ofPrevious??0} maximum={100} unit="percent" />
-                <p className={funnelStyles["note"]}>{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"} · {stage.ofApplied===null?"Applied percentage unavailable":stage.ofApplied+"% of shared applicants"}</p>
-              </li>)}
-            </ol>
-          </section>
-
+          </div>
           <dl className="grid min-w-0 gap-x-6 gap-y-3 border-y border-border py-3 md:grid-cols-2 lg:grid-cols-3">
             {[
               {label:"Shared applications (capped)",value:driveOverview.shared},
