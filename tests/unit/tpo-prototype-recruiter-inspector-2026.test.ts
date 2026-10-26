@@ -88,9 +88,38 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
    expect(html).toContain(signal);
   }
   expect(html).toContain('aria-pressed="true"');
-  expect(html).toContain('href="/tpo/recruiters/lead-1"');
+  expect(html).toContain('aria-label="Select Recruiter A details"');
+  expect(html).toContain('aria-label="View Recruiter A in the detail panel"');
   expect(html).toContain("1 in this view");
   expect(html).not.toContain("Rohit Mehta");
+ });
+ it("shows selectable prototype rows and supports real column visibility",()=>{
+  const html=renderToStaticMarkup(createElement(TpoRecruiterPrototypeRoster,{
+   rows:[{id:"recruiter-1",name:"Aanya",designation:"Hiring Lead",companyName:"Example Company",
+    stage:"NEW",nextFollowupAt:null,lastActivityAt:null,ownerName:"Officer One"}],
+   selectedId:"recruiter-1",onSelect:()=>{},now:new Date("2026-10-27T03:00:00Z"),
+   columns:["recruiter","stage","next"],
+  }));
+  expect(html).toContain("Select Aanya details");
+  expect(html).toContain('aria-selected="true"');
+  expect(html).toContain("Where you are");
+  expect(html).not.toContain(">Company</th>");
+  expect(html).not.toContain(">Handled by</th>");
+  expect(html).toContain("3 columns");
+ });
+ it("puts screenshot toolbar at the front while protecting advanced CRM and bulk actions",()=>{
+  const workspace=source("src/components/tpo/recruiter-leads-workspace.tsx");
+  const page=source("src/app/(authenticated)/tpo/recruiters/page.tsx");
+  expect(workspace).toContain('aria-label="Recruiter table tools"');
+  for(const label of ["Search recruiters","Columns","Filters","Act on all ","Export"]){
+   expect(workspace).toContain(label);
+  }
+  expect(workspace).toContain("advancedRosterRef.current.open=true");
+  expect(workspace).toContain("setSelectedIds(sortedVisible.map(lead=>lead.id))");
+  expect(workspace).toContain("setCompactColumns(previous=>");
+  expect(workspace).toContain('const [needsExpanded,setNeedsExpanded]=useState(false)');
+  expect(workspace).toContain('focusedRecruiterId===null?sortedVisible[0]??null:');
+  expect(page).not.toContain("TpoFourEntitySearch");
  });
  it("keeps advanced grid, bulk actions and recruiter detail behind the compact screenshot table",()=>{
   const roster=source("src/components/tpo/recruiter-leads-workspace.tsx");
