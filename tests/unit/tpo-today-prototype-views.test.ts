@@ -275,6 +275,7 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
  it("does not change the selected queue item during a pending mutation, and advances only after confirmation",()=>{
   const source=readFileSync("src/components/tpo/tpo-companies-today.tsx","utf8");
   expect(source).toContain("if(pending||inFlight.current)return");
+  expect(source).toContain("inQueueOption=Boolean");
   expect(source).toContain('if(!pending&&(e.key==="j"||e.key==="k"))');
   expect(source).toContain('const nextItem=focusItems[at+1]??focusItems[at-1]??null;');
   expect(source.indexOf('setSelectedKey(nextItem?.key??null)')).toBeGreaterThan(
