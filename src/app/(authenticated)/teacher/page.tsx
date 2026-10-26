@@ -3,7 +3,7 @@ import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
 import {getFacultyDeliveryRoster} from "@/modules/attendance/faculty-service";
 import {getDb} from "@/db/client";
-import {assignmentSubmissions,attendanceSessions,courseDiscussionMessages,colleges} from "@/db/schema";
+import {assignmentSubmissions,attendanceSessions,courseDiscussionMessages,colleges,quizAttempts} from "@/db/schema";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import {users} from "@/db/schema";
 import {and,desc,eq,gte,inArray,isNull,sql} from "drizzle-orm";
@@ -175,21 +175,65 @@ export default async function TeacherIndex(){
  });
  const limit=now.getTime()+7*86400000;
  const future=[
-  ...assessments.assignments.filter(item=>item.dueAt&&item.dueAt.getTime()>=now.getTime()&&item.dueAt.getTime()<=limit)
-   .map(item=>({id:"assignment-"+item.id+":"+item.deliveryId,
+  ...assessments.assignments.filter(item=>item.status==="PUBLISHED"&&item.dueAt&&
+   item.dueAt.getTime()>=now.getTime()&&item.dueAt.getTime()<=limit)
+   .map(item=>({id:"assignment-"+item.id+":"+item.deliveryId,assessmentId:item.id,
+    deliveryId:item.deliveryId,kind:"assignment" as const,
     title:item.title,at:item.dueAt!,href:"/teacher/report/assignment/"+encodeURIComponent(item.id)+
      "?deliveryId="+encodeURIComponent(item.deliveryId)})),
-  ...assessments.quizzes.filter(item=>item.dueAt&&item.dueAt.getTime()>=now.getTime()&&item.dueAt.getTime()<=limit)
-   .map(item=>({id:"quiz-"+item.id+":"+item.deliveryId,
+  ...assessments.quizzes.filter(item=>item.status==="PUBLISHED"&&item.dueAt&&
+   item.dueAt.getTime()>=now.getTime()&&item.dueAt.getTime()<=limit)
+   .map(item=>({id:"quiz-"+item.id+":"+item.deliveryId,assessmentId:item.id,
+    deliveryId:item.deliveryId,kind:"quiz" as const,
     title:item.title,at:item.dueAt!,href:"/teacher/report/quiz/"+encodeURIComponent(item.id)+
      "?deliveryId="+encodeURIComponent(item.deliveryId)})),
  ].sort((a,b)=>a.at.getTime()-b.at.getTime());
- const deadlines:FacultyTodayDeadline[]=[...new Map(future.map(item=>[item.id,item] as const)).values()]
-  .slice(0,4).map(item=>({
-   id:item.id,title:item.title,
-   dateLabel:new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(item.at),
-   detail:"Upcoming deadline",href:item.href,
-  }));
+ const upcomingDeadlines=[...new Map(future.map(item=>[item.id,item] as const)).values()].slice(0,4);
+ // Borrow previously fetched class rosters. Only these four scoped deadlines
+ // need additional roster reads; unknown populations stay unreported.
+ const missingRosters=[...new Set(upcomingDeadlines.map(item=>item.deliveryId))]
+  .filter(id=>!rosterSizes.has(id));
+ const extraRosters=await Promise.all(missingRosters.map(async id=>({
+  deliveryId:id,count:await getFacultyDeliveryRoster(context,id)
+   .then(result=>result.roster.length).catch(()=>null),
+ })));
+ for(const item of extraRosters)rosterSizes.set(item.deliveryId,item.count);
+ const assignmentDeadlines=upcomingDeadlines.filter(item=>item.kind==="assignment");
+ const quizDeadlines=upcomingDeadlines.filter(item=>item.kind==="quiz");
+ const deadlineDeliveryIds=[...new Set(upcomingDeadlines.map(item=>item.deliveryId))];
+ const [assignmentCounts,quizCounts]=await Promise.all([
+  assignmentDeadlines.length?getDb().select({
+   id:assignmentSubmissions.assignmentId,deliveryId:assignmentSubmissions.deliveryId,
+   submitted:sql<number>`count(distinct ${assignmentSubmissions.membershipId})::int`,
+  }).from(assignmentSubmissions).where(and(
+   inArray(assignmentSubmissions.assignmentId,assignmentDeadlines.map(item=>item.assessmentId)),
+   inArray(assignmentSubmissions.deliveryId,deadlineDeliveryIds),
+  )).groupBy(assignmentSubmissions.assignmentId,assignmentSubmissions.deliveryId):[],
+  quizDeadlines.length?getDb().select({
+   id:quizAttempts.quizId,deliveryId:quizAttempts.deliveryId,
+   submitted:sql<number>`count(distinct ${quizAttempts.membershipId})::int`,
+  }).from(quizAttempts).where(and(
+   inArray(quizAttempts.quizId,quizDeadlines.map(item=>item.assessmentId)),
+   inArray(quizAttempts.deliveryId,deadlineDeliveryIds),isNull(quizAttempts.deletedAt),
+  )).groupBy(quizAttempts.quizId,quizAttempts.deliveryId):[],
+ ]);
+ const submittedByKey=new Map([
+  ...assignmentCounts.map(item=>["assignment:"+item.id+":"+item.deliveryId,item.submitted] as const),
+  ...quizCounts.map(item=>["quiz:"+item.id+":"+item.deliveryId,item.submitted] as const),
+ ]);
+ const dueDay=(at:Date)=>new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
+ }).format(at);
+ const deadlines:FacultyTodayDeadline[]=upcomingDeadlines.map(item=>{
+  const eligible=rosterSizes.get(item.deliveryId)??null;
+  const submitted=submittedByKey.get(item.kind+":"+item.assessmentId+":"+item.deliveryId)??0;
+  const day=dueDay(item.at);
+  return {
+   id:item.id,title:item.title+" due "+day,
+   dateLabel:eligible!==null?submitted+" of "+eligible+(item.kind==="quiz"?" done":" in"):day,
+   detail:"Due "+day,href:item.href,
+  };
+ });
  return <FacultyTodayPanel tasks={tasks} firstName={firstName} greeting={greeting}
   dateLabel={dateLabel} nextClass={nextClass} dailyClasses={dailyClasses} deadlines={deadlines}/>;
 }
