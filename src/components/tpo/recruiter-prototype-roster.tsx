@@ -1,5 +1,6 @@
 "use client";
-import {RECRUITER_STAGE_LEGACY_LABELS,type TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lead-policy";
+import Link from "next/link";
+import type {TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lead-policy";
 import {tpoRecruiterFollowupSignal} from "@/modules/placements/tpo-recruiter-attention-model";
 
 export type TpoRecruiterPrototypeRow={
@@ -15,6 +16,10 @@ function shortDate(raw:string|null){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(date);
 }
 
+const prototypeStage:Record<TpoRecruiterLeadStage,string>={
+ NEW:"Not contacted",CONTACTED:"In touch",INVITED:"Invited",JOINED:"Joined",
+ DRIVE_PLANNED:"Drive planned",RECRUITED:"Hired from you",NOT_NOW:"Paused",
+};
 const stageClass:Record<TpoRecruiterLeadStage,string>={
  NEW:"bg-slate-100 text-slate-700",
  CONTACTED:"bg-cyan-50 text-cyan-800",
@@ -45,16 +50,19 @@ export function TpoRecruiterPrototypeRoster({
      const next=tpoRecruiterFollowupSignal(lead.nextFollowupAt,now);
      return <tr key={lead.id} className={"border-b border-border last:border-0 "+(focused?"bg-primary-subtle":"hover:bg-slate-50")}>
       <td className="max-w-48 px-3 py-3">
-       <button type="button" aria-pressed={focused} aria-label={"Select "+lead.name}
-        onClick={()=>onSelect(lead.id)}
-        className="flex min-h-10 w-full flex-col items-start justify-center text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
-        <strong className="break-words text-foreground">{lead.name}</strong>
+       <div className="flex min-h-10 flex-col items-start justify-center gap-1">
+        <Link href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}
+         className="break-words font-semibold text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-primary-text">{lead.name}</Link>
         {lead.designation?<small className="text-[11px] text-body">{lead.designation}</small>:null}
-       </button>
+        <button type="button" aria-pressed={focused} aria-label={"Select "+lead.name+" details"}
+         onClick={()=>onSelect(lead.id)}
+         className="min-h-8 text-[11px] font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-primary-text">
+         {focused?"Selected · view details":"View details"}</button>
+       </div>
       </td>
       <td className="max-w-32 break-words px-3 py-3 text-foreground">{lead.companyName??"Not recorded"}</td>
       <td className="px-3 py-3"><span className={"inline-block rounded-full px-2 py-1 text-[11px] font-bold "+stageClass[lead.stage]}>
-       {RECRUITER_STAGE_LEGACY_LABELS[lead.stage]}</span></td>
+       {prototypeStage[lead.stage]}</span></td>
       <td className={"max-w-40 px-3 py-3 font-semibold "+(next.lateDays>0?"text-red-700":"text-foreground")}>
        {next.label}</td>
       <td className="px-3 py-3 text-body">{shortDate(lead.lastActivityAt)}</td>
