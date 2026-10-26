@@ -101,7 +101,7 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
   {message?<p role={message.ok?"status":"alert"} className={"mb-3 rounded-lg p-3 text-sm "+
    (message.ok?"bg-green-50 text-green-800":"bg-red-50 text-red-800")}>{message.text}</p>:null}
   {outcomeUnknown?<button type="button" className="faculty-proto-secondary mb-3"
-   onClick={()=>router.refresh()}>Refresh lesson before retrying</button>:null}
+   onClick={()=>window.location.reload()}>Reload lesson to verify saved order</button>:null}
   <ol key={localVersion} className="divide-y divide-[#edf1f5]" aria-label="Lesson content order">
    {displayed.map(item=>{
     const idx=item.reorderable?ordered.indexOf(item.id):-1;
