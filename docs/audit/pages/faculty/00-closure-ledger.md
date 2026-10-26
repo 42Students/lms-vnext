@@ -1,5 +1,22 @@
 # Faculty vNext — single closure ledger
 
+## CURRENT CODE PHASE — 26 October 2026 (newest state; supersedes stale descriptions below)
+
+**User decision:** Finish Faculty CODE and functional behavior first. Pixel-level visual checking is deferred, not passed.
+
+**Active screen #05 Blueprint.** Source commits:
+- [5544f45](https://github.com/42Students/lms-vnext/commit/5544f45fc366d6a63f79c15357de30e16f25b605) opens real Resource / YouTube / Live / Video forms and video upload.
+- [a415234](https://github.com/42Students/lms-vnext/commit/a415234c2c6f59eadc6eea9c4af696ea185e1059) validates requested lesson for Assignment and Quiz and expands browser coverage to all six destinations.
+- [9e2c689](https://github.com/42Students/lms-vnext/commit/9e2c68995e1b4ae0aac277caef4538f9b2d901a9) handles ambiguous order/archive writes and focuses the requested form.
+- [4ea7cf1](https://github.com/42Students/lms-vnext/commit/4ea7cf15882f5602b52710fc8542982e6c9056e0) plus [e3cea6b](https://github.com/42Students/lms-vnext/commit/e3cea6b61ecf5842dbb6f4889fa83e9a14b5e00d) calculate real lesson activity for the authorized roster; absent average time/resource-open telemetry is never invented.
+- [ee9de9e](https://github.com/42Students/lms-vnext/commit/ee9de9e1ed6b86f89eff04ebe86399984248d00c) repairs the dedicated acceptance workflow to run focused unit and browser gates before global TypeScript.
+
+**Confirmed focused evidence:** [Blueprint run 40345554751](https://github.com/42Students/lms-vnext/actions/runs/40345554751) at ee9de9e completed **5 passing Vitest files, 17 unit tests and the authenticated desktop/mobile Playwright test**. Its final overall status is failed because unrelated TPO rounds/page.tsx:76 produces TypeScript TS2322. This run predates the later engagement implementation and must be refreshed.
+
+**Still open:** post-engagement current-SHA test acceptance, DB05_CONTENT_ORDER_READY=DB05_VERIFIED prerequisite to live persisted reorder, Faculty syllabus editing permission deliberately disabled for College Admin-owned structure, unknown-outcome/multiscope browser edge proof, and separate visual signoff. **Do not mark #05 fully code-accepted yet.**
+
+---
+
 **Scope and design authority:** original uploaded `42LMS pages prototype-png-faculty.zip`. Use **only** the 12 Faculty screenshots numbered **#02–#13**; #01 is TPO. Legacy behavior authority is `docs/legacy-source/frontend` and existing vNext domain services. Preserve better, secure, authorization-checked vNext workflows. All work is committed directly on `main` with current blob SHAs, and other lanes may change `main` between checks.
 
 **Continuing in a fresh chat?** Start with [NEXT-CHAT-HANDOFF.md](NEXT-CHAT-HANDOFF.md), then the [#05 Blueprint action audit](screen-05-action-audit.md). The handoff includes original image locations, current code, acceptance caveats and the first exact fixes to implement.\n\nThis ledger is the **single entry point** for the Faculty work. Detailed page evidence can live in `docs/audit/pages/faculty/*` and the relevant tests/workflows, but completion status is updated **here only after evidence**.

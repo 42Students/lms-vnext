@@ -1,5 +1,17 @@
 # Screen #05: Blueprint — actionable source-to-prototype audit
 
+## LATEST CODE-PHASE EVIDENCE — 26 October 2026 (supersedes older item descriptions below)
+
+- **F05-02 / F05-03 — focused browser-pass prior SHA:** All six Add Content URLs now open the appropriate editor with the selected, authorized lesson; closed details expand; video upload opens; title receives focus. Sources 5544f45/a415234/9e2c689; [run 40345554751](https://github.com/42Students/lms-vnext/actions/runs/40345554751) passed seeded Playwright.
+- **F05-06 — implemented with explicit telemetry exception:** Scoped recorded video/assessment activity and completion per lesson added in 4ea7cf1/e3cea6b. There is no field for arbitrary resource opens or cumulative average time; no fake sample counts. Later source acceptance still required.
+- **F05-09 — source + unit, browser edge proof open:** Order/archive unknown outcomes and 409/412/server errors trigger reconciliation lock in 9e2c689; run 40345554751 covered the unit model.
+- **F05-04 — genuine deployment gate:** Persisted content reordering depends on DB05_CONTENT_ORDER_READY=DB05_VERIFIED, not just JSX.
+- **F05-07 — RBAC exception:** College Admin retains shared syllabus rename/new-lesson rights; Faculty controls stay disabled.
+- **F05-10 — unrelated global TS failure:** Focused unit/browser gates green at ee9de9e, overall run red in separate TPO code; e3cea6b requires refreshed current-SHA acceptance.
+- **F05-11 — visual deferred by user:** No pixel-level signoff. Source implementation, focused browser acceptance, global CI, deployment readiness and visual review are distinct statuses.
+
+---
+
 **Real uploaded reference:** `Course › Blueprint.png` inside `42LMS pages prototype-png-faculty.zip`. **Route:** `/teacher/courses/:deliveryId/blueprint`.
 **Queue status:** ACTIVE. **Visual acceptance: NOT SIGNED OFF.**
 **Run to examine:** https://github.com/42Students/lms-vnext/actions/runs/40298561321 (historical; compare run SHA to latest source commit).
