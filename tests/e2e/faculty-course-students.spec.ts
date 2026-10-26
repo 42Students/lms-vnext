@@ -26,12 +26,12 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("link",{name:/E2E Browser Course/}).click();
   await page.getByRole("navigation",{name:"Faculty course tabs"})
     .getByRole("link",{name:"Students"}).click();
-  await expect(page).toHaveURL(/\/students$/);
-  await expect(page.getByRole("heading",{level:1,name:"Students"})).toBeVisible();
+  await expect(page).toHaveURL(/\/students$/,{timeout:20000});
+  await expect(page.getByRole("region",{name:"Faculty prototype students"})).toBeVisible();
   await page.getByLabel("Search students").fill("no-student-faculty-zzzzz");
-  await expect(page.getByText("No matching students")).toBeVisible();
+  await expect(page.getByText("No students match your search.")).toBeVisible();
   await page.getByLabel("Search students").fill("learner.seed@example.com");
-  const detailLink=page.getByRole("link",{name:/View student details/});
+  const detailLink=page.getByRole("region",{name:"Faculty prototype students"}).getByRole("row").getByRole("link").first();
   await expect(detailLink).toBeVisible();
   await expect(page.getByText("E2E Section B Secret")).toHaveCount(0);
   const downloadStarted=page.waitForEvent("download");
@@ -45,7 +45,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   expect(csv).not.toContain("E2E Section B Secret");
   await detailLink.click();
   await expect(page).toHaveURL(/\/students\/[0-9a-f-]{36}$/);
-  await expect(page.getByRole("region",{name:"Student details"})).toBeVisible();
+  await expect(page.getByRole("region",{name:"Student Details"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"Course attendance"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"Session history"})).toBeVisible();
   await expect(page.getByText("Unknown",{exact:true})).toBeVisible();

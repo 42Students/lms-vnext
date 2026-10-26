@@ -64,7 +64,7 @@ export default async function FacultyCourseTabLayout({
   return (
     <div className="min-w-0 space-y-5">
       <header className="min-w-0">
-       <Link href="/teacher/courses" className="inline-flex min-h-10 items-center text-sm font-semibold text-[#078191] hover:underline">
+       <Link href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-[#078191] hover:underline">
         ‹ Courses
        </Link>
        <h1 className="faculty-proto-heading mt-1">{active.courseName}</h1>
