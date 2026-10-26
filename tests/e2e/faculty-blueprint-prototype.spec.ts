@@ -52,9 +52,9 @@ test("Faculty Blueprint screenshot 05 has a selected lesson rail, inline actions
   const remove=order.getByRole("button",{name:/^Remove /}).first();
   await expect(remove).toBeVisible();
   await remove.click();
-  await expect(page.getByRole("dialog",{name:/^Remove .+\?/})).toBeVisible();
-  await page.getByRole("dialog",{name:/^Remove .+\?/}).getByRole("button",{name:/Cancel/i}).click();
-  await expect(page.getByRole("dialog",{name:/^Remove .+\?/})).toHaveCount(0);
+  await expect(page.getByRole("alertdialog",{name:/^Remove .+\?/})).toBeVisible();
+  await page.getByRole("alertdialog",{name:/^Remove .+\?/}).getByRole("button",{name:/Cancel/i}).click();
+  await expect(page.getByRole("alertdialog",{name:/^Remove .+\?/})).toHaveCount(0);
   const add=explorer.locator("details").filter({has:explorer.getByText("+ Add content")}).first();
   await add.locator("summary").click();
   await expect(add.getByRole("link",{name:"Resource",exact:true})).toHaveAttribute(
