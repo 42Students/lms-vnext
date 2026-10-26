@@ -115,10 +115,10 @@ export async function listTpoCampaignDrafts(context:RequestContext){
   });
   return tx.execute<{
   campaign_id:string;title:string;subject:string;segment:string;status:string;
-  total_recipients:number;created_at:Date;sender_name:string;suppressed_counts:Record<string,number>;
+  total_recipients:number;created_at:Date;created_by_user_id:string;sender_name:string;suppressed_counts:Record<string,number>;
   sent:number;failed:number;skipped:number;
  }>(sql`select d.campaign_id,d.title,d.subject,d.segment,c.status,
-    c.total_recipients,d.created_at,coalesce((select u.display_name from users u where u.id=d.created_by_user_id),'Placement cell') as sender_name,
+    c.total_recipients,d.created_at,d.created_by_user_id,coalesce((select u.display_name from users u where u.id=d.created_by_user_id),'Placement cell') as sender_name,
     d.suppression_counts as suppressed_counts,
     (select count(*)::integer from placement_tpo_email_campaign_recipients r
       where r.campaign_id=c.id and r.status='SENT') as sent,
@@ -138,7 +138,7 @@ export async function listTpoCampaignDrafts(context:RequestContext){
  // carrier delivery from provider acceptance.
  return {ready:true as const,rows:rows.rows.map(row=>({...row,
   recipients:row.total_recipients,sentBy:row.sender_name,
-  campaignId:row.campaign_id,createdAt:row.created_at,
+  campaignId:row.campaign_id,createdAt:row.created_at,createdByUserId:row.created_by_user_id,
  }))};
 }
 
