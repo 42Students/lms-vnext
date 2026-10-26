@@ -10,10 +10,11 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
-import {getTpoCampaignDraft,listTpoCampaignRecipientStatuses,tpoCampaignDraftStorageReady} from "@/modules/messaging/tpo-campaign-draft-service";
+import {getTpoCampaignDraft,listTpoCampaignRecipientStatuses,tpoCampaignDraftStorageReady,listTpoCampaignDrafts} from "@/modules/messaging/tpo-campaign-draft-service";
 import {CAMPAIGN_DRAFT_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {TpoCampaignSendControl} from "@/components/tpo/tpo-campaign-send-control";
+import {TpoCampaignPrototypeSidebar} from "@/components/tpo/tpo-campaign-prototype-sidebar";
 /** The persisted provider receipt state determines the old LMS status-pill tone. */
 function receiptTone(status:string):"neutral"|"info"|"success"|"warning"|"error" {
  if(status==="SENT")return "success";
@@ -32,7 +33,10 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
  const {campaignId}=await params;
  const draft=ready?await getTpoCampaignDraft(context,campaignId):null;
  const deliveryReady=ready?await tpoCampaignDispatchReady():false;
- const recipients=draft?await listTpoCampaignRecipientStatuses(context,campaignId):null;
+ const [recipients,campaigns]=await Promise.all([
+  draft?listTpoCampaignRecipientStatuses(context,campaignId):Promise.resolve(null),
+  ready?listTpoCampaignDrafts(context).catch(()=>null):Promise.resolve(null),
+ ]);
  const raw=searchParams?await searchParams:{};
  const rawPage=Array.isArray(raw.page)?raw.page[0]:raw.page;
  const totalPages=Math.max(1,Math.ceil((recipients?.rows.length??0)/25));
@@ -46,6 +50,9 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
       className="inline-flex min-h-11 w-full min-w-0 items-center justify-center text-sm sm:w-auto md:min-h-9 font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       ← Campaign history
     </Link>}/>
+  <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(250px,320px)_minmax(0,1fr)]">
+   <TpoCampaignPrototypeSidebar rows={campaigns?.rows??[]}
+    ready={campaigns?.ready===true} actorUserId={context.user.id} activeId={campaignId}/>
   {!ready?<Banner tone="warning">{CAMPAIGN_DRAFT_UNAVAILABLE}</Banner>:
    draft?<article className="min-w-0 space-y-4">
     <section aria-label="Campaign delivery summary" className="grid gap-3 sm:grid-cols-3">
@@ -87,5 +94,6 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
      {recipients.hasMore?<p role="status" className="text-xs leading-5">Showing the first 500 recipients.</p>:null}
     </section>:null}
    </article>:null}
+  </div>
  </div>;
 }
