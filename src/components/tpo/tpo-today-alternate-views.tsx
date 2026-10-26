@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {istDateKey,splitTpoTodayFollowups,tpoTodayFocusHref,tpoTodayAgendaHref,type TpoCompaniesTodayRow} from "@/modules/placements/tpo-companies-today-model";
+import {istDateKey,splitTpoTodayFollowups,tpoTodayFocusHref,tpoTodayAgendaHref,tpoTodayLateDays,type TpoCompaniesTodayRow} from "@/modules/placements/tpo-companies-today-model";
 
 export type TpoTodayView="focus"|"agenda"|"brief";
 export type TpoTodayReply={
@@ -34,16 +34,17 @@ function ReplyRow({reply,mode="brief"}:{reply:TpoTodayReply;mode?:"brief"|"agend
    href={messageHref(reply.id)}>{reply.accessEnded?"Open history":"Answer"}</Link>
  </li>;
 }
-function FollowupRow({row,scope,mode="brief"}:{row:TpoCompaniesTodayRow;scope:"MINE"|"TEAM";mode?:"brief"|"agenda"}){
+function FollowupRow({row,scope,now,mode="brief"}:{row:TpoCompaniesTodayRow;scope:"MINE"|"TEAM";now:Date;mode?:"brief"|"agenda"}){
+ const late=tpoTodayLateDays(row.dueAt,now);
  return <li className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e8edf2] px-4 py-3 last:border-b-0">
   <div className="min-w-0 flex-1">
    <p className="font-bold text-[#172033]">{row.leadName}</p>
-   <p className="mt-1 text-[13px] text-[#617084]">{row.companyName??"Recruiter"} · {row.overdue?"Overdue":"Follow-up due"} · {formatDay(new Date(row.dueAt))}</p>
+   <p className="mt-1 text-[13px] text-[#617084]">{row.companyName??"Recruiter"} · {late>0?late+" "+(late===1?"day":"days")+" late":"Follow-up due"} · {formatDay(new Date(row.dueAt))}</p>
    <p className="mt-1 text-[13px] text-[#26354a]">{row.note?.trim()||"Recorded recruiter follow-up."}</p>
   </div>
   <Link className={"inline-flex min-h-11 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
     "border-[#d6e1ee] bg-white text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
-   href={tpoTodayFocusHref(scope,row.id)}>Log the call</Link>
+   href={tpoTodayFocusHref(scope,row.id)}>Review follow-up</Link>
  </li>;
 }
 
@@ -51,12 +52,13 @@ function FollowupRow({row,scope,mode="brief"}:{row:TpoCompaniesTodayRow;scope:"M
  * preview pages are explicitly labeled; we never infer an uncontacted count
  * or email-delivery status from CRM follow-up rows. */
 export function TpoTodayAlternateViews({
- view,scope,rows,replies,replyTotal,nowIso,hasMore,selectedDay,notContacted
+ view,scope,rows,replies,replyTotal,nowIso,hasMore,selectedDay,notContacted,outsideWeek
 }:{
  view:"agenda"|"brief";scope:"MINE"|"TEAM";selectedDay:number;
  rows:readonly TpoCompaniesTodayRow[];replies:readonly TpoTodayReply[];
  replyTotal:number|null;nowIso:string;hasMore:boolean;
  notContacted:{count:number;oldestAddedAt:string|null}|null;
+ outsideWeek:{withoutDate:number;laterThanWeek:number}|null;
 }){
  const now=new Date(nowIso);
  const todayKey=istDateKey(now);
@@ -110,17 +112,21 @@ export function TpoTodayAlternateViews({
       <Link className="inline-flex min-h-11 items-center rounded-lg bg-[#087f8b] px-5 text-[13px] font-bold text-white" href={startHref}>Start · {agendaRows.length+(agendaReplyTotal??0)} things</Link>
      </div>
      {agendaReplies.length?<ul>{agendaReplies.map(reply=><ReplyRow key={reply.id} reply={reply} mode="agenda"/>)}</ul>:null}
-     {agendaRows.length?<ul>{agendaRows.map(row=><FollowupRow key={row.id} row={row} scope={scope} mode="agenda"/>)}</ul>:null}
+     {agendaRows.length?<ul>{agendaRows.map(row=><FollowupRow key={row.id} row={row} scope={scope} now={now} mode="agenda"/>)}</ul>:null}
      {!agendaReplies.length&&!agendaRows.length?<p className="p-5 text-sm text-[#617084]">No recorded recruiter replies or follow-ups for this day in the available preview.</p>:null}
     </section>
     <aside className="space-y-3" aria-label="Other follow-up actions">
-     <section className={panel}><h2 className={heading}>Not on the week</h2>
-      <p className="px-4 py-3 text-sm text-[#617084]">Later and undated follow-ups cannot be counted from this seven-day preview.</p>
-      <Link href="/tpo/follow-ups" className="inline-flex min-h-11 items-center px-4 pb-3 font-semibold text-[#087f8b]">Re-plan your week</Link>
-     </section>
      <section className={panel}><h2 className={heading}>Not contacted yet</h2>
       <p className="px-4 py-3 text-sm text-[#617084]">{notContacted===null?"Count unavailable":notContacted.count+" recruiter leads"} not contacted yet{notContacted?.oldestAddedAt?" · oldest added "+formatDay(new Date(notContacted.oldestAddedAt)):""}.</p>
       <Link href="/tpo/recruiters?stage=NEW" className="inline-flex min-h-11 items-center px-4 pb-3 font-semibold text-[#087f8b]">Start with them</Link>
+     </section>
+     <section className={panel}><h2 className={heading}>Not on the week</h2>
+      {outsideWeek===null?<p role="status" className="px-4 py-3 text-sm text-[#617084]">Counts unavailable. Open the full recruiter list to review next steps.</p>:
+       <div className="space-y-2 px-4 py-3 text-sm">
+        <p><Link href="/tpo/recruiters?nextFollowup=NONE" className="font-semibold text-[#087f8b]">{outsideWeek.withoutDate} with no date</Link></p>
+        <p><Link href="/tpo/recruiters?nextFollowup=LATER" className="font-semibold text-[#087f8b]">{outsideWeek.laterThanWeek} later than the next seven days</Link></p>
+       </div>}
+      <Link href="/tpo/follow-ups" className="inline-flex min-h-11 items-center px-4 pb-3 font-semibold text-[#087f8b]">Re-plan your week</Link>
      </section>
     </aside>
    </div>
@@ -133,7 +139,7 @@ export function TpoTodayAlternateViews({
    </section>
    <section className={panel} aria-label="Reach">
     <h2 className={heading}>Reach <span className="float-right text-sm text-[#b42318]">{due.length} due</span></h2>
-    {due.length?<ul>{due.map(row=><FollowupRow key={row.id} row={row} scope={scope}/>)}</ul>:
+    {due.length?<ul>{due.map(row=><FollowupRow key={row.id} row={row} scope={scope} now={now}/>)}</ul>:
      <p className="p-4 text-sm text-[#617084]">No recorded due follow-ups in this preview.</p>}
    </section>
    <section className={panel} aria-label="This week">
@@ -151,6 +157,11 @@ export function TpoTodayAlternateViews({
      <Link href="/tpo/recruiters?stage=NEW" className="mt-2 inline-flex min-h-11 items-center rounded-lg border border-[#d6e1ee] px-3 text-xs font-bold text-[#26354a]">Start with them</Link>
     </div>
    </section>
+   {outsideWeek===null?<p role="status" className="text-sm text-[#617084] lg:col-span-3">Undated and later follow-up totals are temporarily unavailable.</p>:
+    <nav aria-label="Not on the week" className="flex flex-wrap gap-4 text-[13px] text-[#087f8b] lg:col-span-3">
+     <Link href="/tpo/recruiters?nextFollowup=NONE">{outsideWeek.withoutDate} with no date</Link>
+     <Link href="/tpo/recruiters?nextFollowup=LATER">{outsideWeek.laterThanWeek} later than the next seven days</Link>
+    </nav>}
   </div>}
  </div>;
 }

@@ -65,8 +65,10 @@ export function TpoCompaniesToday({
   ?istDateKey(new Date(row.dueAt))<=todayKey
   :istDateKey(new Date(row.dueAt))===dayKey);
  const current=displayed.find(row=>row.id===selectedId)??displayed[0]??null;
+ const totalAttention=displayed.length+(day===0?(replyTotal??replies.length)+(companyAttention?.items.length??0):0);
+ const attentionIncomplete=hasMore||(day===0&&(replyTotal===null||companyAttention===null||companyAttention.hasMore));
  const leadInfo=current?leadContexts.find(lead=>lead.id===current.leadId):undefined;
- const email=leadInfo?.emailNorm?.trim();
+ const email=current?.canContact?leadInfo?.emailNorm?.trim():null;
  const emailHref=email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?"mailto:"+email:null;
  const days=Array.from({length:7},(_,offset)=>{
   const date=new Date(now.getTime()+offset*86400000);
@@ -174,7 +176,7 @@ export function TpoCompaniesToday({
     <div className={styles.queueHead}>
      <div className={styles.queueTitle}>
       <span className={styles.eyebrow}>{day===0?"TODAY · ": "PLANNED · "}{dayLabel(new Date(now.getTime()+day*86400000)).toUpperCase()}</span>
-      <strong>{displayed.length} {displayed.length===1?"thing needs":"things need"} you</strong>
+      <strong>{attentionIncomplete?"At least ":""}{totalAttention} {totalAttention===1?"thing needs":"things need"} you</strong>
       <small>{scope==="MINE"?"Yours and unassigned":"Everyone's open follow-ups"} · <Link href={scope==="MINE"?"/tpo/companies/today?scope=TEAM":"/tpo/companies/today"}>{scope==="MINE"?"everyone's":"my work"}</Link></small>
      </div>
      <Link href="/tpo/follow-ups">Re-plan your week ›</Link></div>
@@ -185,8 +187,8 @@ export function TpoCompaniesToday({
        onClick={()=>pickDay(item.offset)}>
        <span>{item.weekday.toUpperCase()}</span><strong>{item.dayNumber}</strong><small>{item.count||"·"}</small></button>)}
     </div>
-    {companyAttention===null?<p role="status" className={styles.helper}>Company verification attention is unavailable. A missing source does not mean every company is verified.</p>:null}
-    {companyAttention&&companyAttention.items.length>0?<section className={styles.companyAttention} aria-label="Companies awaiting verification">
+    {day===0&&companyAttention===null?<p role="status" className={styles.helper}>Company verification attention is unavailable. A missing source does not mean every company is verified.</p>:null}
+    {day===0&&companyAttention&&companyAttention.items.length>0?<section className={styles.companyAttention} aria-label="Companies awaiting verification">
      <p className={styles.eyebrow}>COMPANY IDENTITY NEEDS REVIEW</p>
      {companyAttention.items.map(company=><article key={company.relationshipId} className={styles.companyAttentionItem}>
       <strong>{company.companyName}</strong>
@@ -196,7 +198,7 @@ export function TpoCompaniesToday({
      </article>)}
      {companyAttention.hasMore?<p className={styles.helper}>This is a bounded preview. Open the full company directory to review other records.</p>:null}
     </section>:null}
-    {replies.length?<div className={styles.queueReplies} aria-label="Recruiter replies">
+    {day===0&&replies.length?<div className={styles.queueReplies} aria-label="Recruiter replies">
      <p className={styles.eyebrow}>REPLIES WAITING</p>
      {replies.map(reply=><Link key={reply.id} href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(reply.id)}
       className={styles.replyQueueItem}><strong>{reply.name}</strong><small>{reply.company??"Recruiter"} · {reply.subject}</small></Link>)}

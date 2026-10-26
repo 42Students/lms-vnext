@@ -9,8 +9,8 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 01 | Companies › Today.png | `a05f03b37437` | Yes | Open |
 | 02 | Companies › Recruiters.png | `6e98580fcef9` | Yes | Open |
 | 03 | Companies › Companies.png | `1625f246f3b7` | Yes | Open |
-| 04 | Agenda.png | `c2141f21471f` | No | Open |
-| 05 | Brief.png | `f30770b9601d` | No | Open |
+| 04 | Agenda.png | `c2141f21471f` | Yes | Open |
+| 05 | Brief.png | `f30770b9601d` | Yes | Open |
 | 06 | EmailSent.png | `4e149e85c7d3` | No | Open |
 | 07 | Companies › Emails (a sent email open).png | `a9779118e975` | No | Open |
 | 08 | Companies › Emails (writing a new email).png | `5ea6df74973e` | No | Open |
@@ -110,10 +110,19 @@ Original PNG dimensions: **2880 × 2244**. Image shows a Companies heading and s
 2. Bind tier filters and a truly comparable six-column roster + selected-company detail to these verified aggregates, preserving existing company creation, linking, exports and access rules.
 3. Browser tests for selection/filter, tenant boundaries, responsive states and screenshot matching. **No screen 03 code completion or acceptance claimed.**
 
+## Screens 04–05 — Agenda and Brief (both source images visually inspected)
+
+- `Agenda.png` is **2880×1800** and displays a seven-day strip, main list of real reply and reach tasks with per-item actions, and right-side "Not contacted yet" and "Not on the week" cards. The latter shows actual counts split between no follow-up date and later-than-week dates; screenshot sample counts are illustrative, not production facts.
+- `Brief.png` is **2880×1800** and groups tasks into Answer, Reach, This week; includes overdue days in the Reach rows, Start, reply preview and actions, recruiter-not-contacted count, and outside-week follow-up counts.
+- Reference code: `src/app/(authenticated)/tpo/companies/today/page.tsx`, `src/components/tpo/tpo-today-alternate-views.tsx`, `src/modules/placements/tpo-companies-today-model.ts`, legacy `TpoRecruiterLeadsHubService.java` and `TpoRecruiterLeadService.java`.
+- Implementation: `8320572d66bb61a83c07953ff30731836fd702e3` adds projected outside-week counters and IST calendar-day late labels; `38aa1d83702d80bc586929d7a26d16d395329e52` wires authorized CRM data; branch `chatgpt/tpo-agenda-brief-source-20261026` implements and tests the exact sidecard categories and keeps separate first-class recruiter conversations. The full company verification feed does not imply email delivery.
+- Important correction: Today focus now counts surfaced reply and verification tasks where the relevant source is available, displays unavailable sources honestly, and does not offer an email link if `canContact` is false.
+- Still not accepted: Screenshot fixtures for email campaigns (opened/clicked, replies, undelivered) need separate explicit source-backed integration with campaign data; the real-time selected-day agenda cannot claim completeness from paginated follow-up previews; browser/visual acceptance remains open.
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **3/33**
+- Original PNGs visually opened in this recovery pass: **5/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**
