@@ -59,3 +59,11 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Faculty Today prototype desktop/mobile acceptance
         run: npx playwright test tests/e2e/faculty-today.spec.ts --workers=1
+      - name: Preserve independent Faculty Today screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: faculty-today-rendered-desktop-mobile
+          path: test-results/faculty-today-*.png
+          if-no-files-found: warn
+          retention-days: 14
