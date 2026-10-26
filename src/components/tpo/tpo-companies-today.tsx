@@ -101,7 +101,7 @@ export function TpoCompaniesToday({
    const element=e.target as HTMLElement|null;
    if(element?.closest("input,textarea,select,[contenteditable=true],button,a")||
      e.altKey||e.metaKey||e.ctrlKey)return;
-   if(e.key==="j"||e.key==="k"){
+   if(!pending&&(e.key==="j"||e.key==="k")){
     const at=focusItems.findIndex(item=>item.key===selected?.key);
     const next=focusItems[Math.max(0,Math.min(focusItems.length-1,at+(e.key==="j"?1:-1)))];
     if(next){e.preventDefault();pickKey(next.key);}
@@ -126,10 +126,11 @@ export function TpoCompaniesToday({
    setNextPlan(value==="CALL_BACK"?"TOMORROW":"NONE");
  }
  function pickKey(key:string){
+  if(pending||inFlight.current)return;
   setSelectedKey(key);setOutcome("CONTACTED");setNextPlan("NONE");setCustomLocal("");
   setNote("");setError("");setNotice("");
  }
- function pickDay(value:number){setDay(value);setSelectedKey(null);setError("");setNotice("");}
+ function pickDay(value:number){if(pending||inFlight.current)return;setDay(value);setSelectedKey(null);setError("");setNotice("");}
  function laterAndNext(){
   if(!selected)return;
   const index=focusItems.findIndex(item=>item.key===selected.key);
@@ -170,8 +171,10 @@ export function TpoCompaniesToday({
     throw new Error("The complete outcome and new follow-up receipt could not be confirmed. Refresh before retrying.");
    if(kind==="TOMORROW"&&!payload?.followup?.dueAt)
     throw new Error("The changed follow-up time could not be confirmed. Refresh before retrying.");
+   const at=focusItems.findIndex(item=>item.key==="followup:"+current.id);
+   const nextItem=focusItems[at+1]??focusItems[at-1]??null;
    setDone(ids=>[...ids,current.id]);
-   setSelectedKey(null);setNote("");setNextPlan("NONE");setCustomLocal("");setConfirm(null);
+   setSelectedKey(nextItem?.key??null);setNote("");setNextPlan("NONE");setCustomLocal("");setConfirm(null);
    setNotice(kind==="DONE"?(nextDueAt?"Outcome and next follow-up saved together.":"Outcome recorded. Next follow-up selected."):"Moved to tomorrow at 10:00 AM IST.");
    router.refresh();
   }catch(e){setConfirm(null);setError(e instanceof Error?e.message:"Could not save the change.");}
