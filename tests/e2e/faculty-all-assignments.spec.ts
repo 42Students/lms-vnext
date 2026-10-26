@@ -116,7 +116,9 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    .selectOption({label:baseTitle+" revised (PUBLISHED)"});
   const archive=page.waitForResponse(res=>res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");
-  await page.getByRole("button",{name:"Archive"}).click();
+  await page.getByRole("button",{name:"More"}).click();
+  await page.getByRole("menuitem",{name:"Archive"}).click();
+  await page.getByRole("alertdialog").getByRole("button",{name:"Confirm"}).click();
   const archived=await archive;
   expect(archived.status()).toBe(200);
   expect((await archived.json()).assignment?.status).toBe("ARCHIVED");
