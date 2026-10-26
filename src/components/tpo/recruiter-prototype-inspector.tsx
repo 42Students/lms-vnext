@@ -51,7 +51,7 @@ export function TpoRecruiterPrototypeInspector({
    {lead.nextFollowupAt?<p className="mt-1 text-xs text-body">{when(lead.nextFollowupAt)}</p>:null}
   </section>
   <div className="mt-3 flex flex-wrap gap-2">
-   <Link href={href} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary md:min-h-9">Log activity</Link>
+   <Link href={href+"#tpo-recruiter-log-interaction"} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary md:min-h-9">Log activity</Link>
    {phone?<a href={"tel:"+phone} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-3 text-sm font-semibold text-foreground md:min-h-9">Call</a>:null}
    {email?<a href={email} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-3 text-sm font-semibold text-foreground md:min-h-9">Email</a>:null}
   </div>
