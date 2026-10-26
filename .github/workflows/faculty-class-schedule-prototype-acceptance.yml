@@ -43,10 +43,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Type-check Faculty schedule and shared components
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable E2E database
@@ -59,3 +55,7 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Screenshot 12 Faculty Schedule authenticated desktop/mobile
         run: npx playwright test tests/e2e/faculty-class-schedule-prototype.spec.ts --workers=1
+      - name: Type-check Faculty schedule and shared components
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
