@@ -48,18 +48,23 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - id: install
+        run: npm ci
       - name: Strict application typecheck
         env:
           NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
       - name: Full Mentor unit, provider and adversarial source matrix
+        # Other role chats may temporarily break global TS. Keep the Mentor
+        # unit evidence independently executable without masking TS failure.
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: |
           npx vitest run tests/unit/mentor- \
             tests/unit/PROJ-BREAK-chat9-member-candidate-privacy.test.ts \
             tests/unit/PROJ-BREAK-chat6-backlog-readiness-cross-scope.test.ts \
             tests/unit/PROJ-BREAK-chat6-delivery-grade-notices.test.ts
       - name: Repository lint and UX guard
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run lint
 
   mentor-postgres:
