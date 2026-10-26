@@ -727,8 +727,8 @@ export function LearnerCourseDiscussion({
         ) : null}
 
         {canPost && !scopeUnavailable ? (
-        <form onSubmit={submit} className="min-w-0 border-t border-border px-1 py-3 sm:px-3 md:py-4">
-          <p className="mb-2 text-xs leading-5 text-muted-foreground">
+        <form onSubmit={submit} className={moderate?"flex min-w-0 flex-wrap items-center gap-2 border-t border-[#e5ebf2] bg-[#fbfcfd] px-4 py-4":"min-w-0 border-t border-border px-1 py-3 sm:px-3 md:py-4"}>
+          <p className={moderate?"sr-only":"mb-2 text-xs leading-5 text-muted-foreground"}>
             {moderate
               ? "Students can post questions here anytime — you'll see them appear in real time."
               : "Have a doubt about anything in this course? Feel free to ask here."}
@@ -738,7 +738,7 @@ export function LearnerCourseDiscussion({
             <Button type="button" variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
               onClick={() => setReplyTo(null)}>Cancel reply</Button>
           </div> : null}
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="course-discussion-message">
+          <label className={moderate?"sr-only":"text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"} htmlFor="course-discussion-message">
             Write a message
           </label>
           <Textarea
@@ -755,14 +755,14 @@ export function LearnerCourseDiscussion({
                 void submit();
               }
             }}
-            rows={2}
+            rows={moderate?1:2}
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
-            className="mt-1.5 w-full"
+            className={moderate?"!min-h-10 min-w-0 flex-[1_1_220px] resize-none !rounded-lg border-[#dce5ee] !py-2":"mt-1.5 w-full"}
             aria-describedby="course-discussion-compose-hint"
           />
-          <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <span id="course-discussion-compose-hint" className="text-xs text-muted-foreground">
+          <div className={moderate?"flex shrink-0 items-center":"mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"}>
+            <span id="course-discussion-compose-hint" className={moderate?"sr-only":"text-xs text-muted-foreground"}>
               Enter to send · Shift+Enter for a new line
               {draft.length>3400? " · "+draft.length+"/"+LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH:""}
             </span>
