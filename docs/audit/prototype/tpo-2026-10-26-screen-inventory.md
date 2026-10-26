@@ -8,7 +8,7 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 
 | # | Prototype screenshot | vNext entry / expected backing | Current evidence and next check |
 |---|---|---|---|
-| 01 | Companies → Today | `/tpo/companies/today` | Focus queue and real actions exist; validate screenshot layout and all stage-specific cards |
+| 01 | Companies → Today | `/tpo/companies/today` | **CODE/SOURCE GATE PASSED:** unified selectable company-verification, message-reply and persisted follow-up queue; real selected detail panes, keyboard movement and truthful bounded counts. Dedicated [CI 40398586308](https://github.com/42Students/lms-vnext/actions/runs/40398586308) passed 21/21 files and 129/129 tests (includes strict typecheck). [Page-01 audit](tpo-page-01-companies-today-audit.md). **Browser flow and screenshot acceptance OPEN.** |
 | 02 | Companies → Recruiters | `/tpo/recruiters` | Added source-backed selected-contact inspector; exact-viewport and interaction comparison remain open |
 | 03 | Companies → Companies | `/tpo/companies?directory=1` | Added selected-company inspector with real contacts, drives, accepted offers and confirmed joins; historical comparison and visual acceptance remain open |
 | 04 | Agenda | `/tpo/companies/today?view=agenda` | Added real-data alternate view and `day=0..6` selection; needs browser and visual comparison |
@@ -44,6 +44,7 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 
 ## Material implementation coverage (code only; not screenshot acceptance)
 
+- **Page 01**: `tpo-companies-today.tsx` now merges company verification attention, recruiter replies and followups into one keyboard-selectable real-data queue; selected company/reply inspectors route to authorized existing actions, while the established versioned CRM mutations remain on followups. The old LMS `TodayQueue.jsx` was consulted. **Focused CI green 40398586308; runtime screenshot and provider acceptance remain open.**
 - `src/components/tpo/tpo-today-alternate-views.tsx`: real-data Agenda and Brief, separate presentation layouts, links to existing message and follow-up workflows
 - `src/app/(authenticated)/tpo/companies/today/page.tsx`: accepts validated `view`, Agenda `day`, and focus `lead`; reads college-scoped CRM and recruiter message sources independently
 - `src/components/tpo/tpo-companies-today.tsx`: select a particular focus follow-up from the alternate views
@@ -89,7 +90,7 @@ Based on the supplied Students screenshot set (assets labeled `tpo_09.png` to `t
 
 ## Known acceptance boundaries
 
-1. GitHub Actions runs for rapid sequential `main` commits have been superseded/cancelled; no green CI claim is made in this inventory. A standalone source acceptance workflow was added, but its result must be checked before reporting a pass.
+1. GitHub Actions runs for rapid sequential `main` commits have been superseded/cancelled. The **dedicated TPO source workflow did pass** at commit `5f5167db9c69265fab5f21b6b13c44ab5bfa6c32` ([run 40398586308](https://github.com/42Students/lms-vnext/actions/runs/40398586308), 21 test files / 129 tests, strict typecheck). This does not certify global CI, browser behavior, or pixel parity.
 1a. Global `npm run lint` is blocked by the expired legacy UX waiver (`docs/design-system/UX-GUARD-WAIVERS.json`, expires 2026-10-25). Do not extend the waiver or rewrite the immutable baseline without the prescribed residual-finding review; dedicated source tests are not a substitute for the global gate.
 2. Both Today feed sources are page-limited; the UI must show when the preview is incomplete, rather than pretend its totals are exhaustive.
 3. "Not contacted" means recruiter stage `NEW`, never merely a missing scheduled follow-up. My Work includes genuinely unassigned and actor-owned leads only, Everyone remains college-scoped.
