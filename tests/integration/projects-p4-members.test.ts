@@ -432,13 +432,13 @@ describe("Projects P4 team and mentor membership", () => {
       code: "PROJECT_ACCESS_DENIED",
     });
 
-    await expect(
-      listMyProjectInstances(learner),
-    ).resolves.toEqual([
+    // The global PostgreSQL suite shares a seeded college with other files.
+    // Assert exact visibility for THIS project, not that the learner has no
+    // unrelated authorized projects created by concurrent test suites.
+    const visible = await listMyProjectInstances(learner);
+    expect(visible.filter(row => row.project.id === project.id)).toEqual([
       expect.objectContaining({
-        project: expect.objectContaining({
-          id: project.id,
-        }),
+        project: expect.objectContaining({ id: project.id }),
         memberRole: "LEARNER",
       }),
     ]);
@@ -456,6 +456,8 @@ describe("Projects P4 team and mentor membership", () => {
     ).rejects.toMatchObject({
       code: "PROJECT_ACCESS_DENIED",
     });
+    const afterRemoval = await listMyProjectInstances(learner);
+    expect(afterRemoval.some(row => row.project.id === project.id)).toBe(false);
   });
 
   it("atomically unassigns unfinished tasks on learner removal while preserving completed owner history", async () => {
