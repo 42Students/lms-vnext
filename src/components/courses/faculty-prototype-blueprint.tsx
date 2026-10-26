@@ -3,6 +3,7 @@ import {FacultyPrototypeLessonItems,type FacultyBlueprintItem} from "./faculty-p
 import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
 import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submission-methods";
 import {orderFacultyBlueprintItems} from "@/modules/courses/faculty-blueprint-sort-model";
+import {FACULTY_BLUEPRINT_ADD_KINDS,facultyBlueprintAddTarget} from "@/modules/courses/faculty-blueprint-add-target";
 import type {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
@@ -116,13 +117,13 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
      <details className="relative">
       <summary className="faculty-proto-action !min-h-9 !cursor-pointer !px-3 !py-1.5 !text-xs">+ Add content ▾</summary>
       <div className="absolute right-0 z-20 mt-2 min-w-52 overflow-hidden rounded-lg border border-[#dce5ee] bg-white py-1 shadow-lg">
-       {["Video","YouTube","Resource","Live class","Assignment","Quiz"].map(label=><Link
+       {FACULTY_BLUEPRINT_ADD_KINDS.map(label=><Link
         key={label}
         className="block px-4 py-2 text-sm text-[#243149] hover:bg-[#eff9fa] focus-visible:bg-[#eff9fa]"
-        href={base+"?lesson="+encodeURIComponent(current.id)+"&advanced=1#faculty-lesson-add-"+encodeURIComponent(current.id)}>
+        href={facultyBlueprintAddTarget(course.deliveryId,current.id,label)}>
         {label}
        </Link>)}
-       <p className="border-t border-[#e5ebf2] px-4 py-2 text-xs text-[#60718b]">Opens the existing Section authoring tools.</p>
+       <p className="border-t border-[#e5ebf2] px-4 py-2 text-xs text-[#60718b]">Uses Section-scoped video upload, content authoring or full assessment builder.</p>
       </div>
      </details>
     </div>:null}
