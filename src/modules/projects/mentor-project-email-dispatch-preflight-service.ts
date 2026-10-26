@@ -6,7 +6,8 @@ import {activityEvents,colleges,collegeMemberships,membershipRoles,
  projectInstances,projectMembers,projectMeetings,projectSubmissions,users}
  from "@/db/schema";
 import {mentorEmailPreferenceFromSavedEvent} from "./mentor-email-preference-model";
-import {classifyMentorProjectEmailSource,mentorProjectEmailSubmissionIsNotifiable}
+import {classifyMentorProjectEmailSource,mentorProjectEmailSubmissionIsNotifiable,
+ mentorEmailQueueMatchesSource,type MentorQueuedEmailScope}
  from "./mentor-project-email-event-model";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {MentorProjectEmailDispatch} from "./mentor-project-email-provider";
@@ -14,10 +15,11 @@ import type {MentorProjectEmailDispatch} from "./mentor-project-email-provider";
 /** An internal, read-only pre-send security boundary for a future claimed
  * email worker. NOT an HTTP endpoint and NOT an outbox/dispatch side effect.
  * Identity, recipient address, event, tenant and saved consent all come
- * exclusively from current PostgreSQL rows; a job may supply two UUIDs only.
+ * exclusively from current PostgreSQL rows. Queue claims must match the
+ * originating source event, tenant, project and allowed event category.
  */
 export async function resolveMentorProjectEmailPreflight(
- sourceEventId:string,recipientUserId:string,
+ sourceEventId:string,recipientUserId:string,queuedScope:MentorQueuedEmailScope,
 ):Promise<MentorProjectEmailDispatch|null>{
  if(!z.uuid().safeParse(sourceEventId).success||
     !z.uuid().safeParse(recipientUserId).success)return null;
@@ -32,7 +34,10 @@ export async function resolveMentorProjectEmailPreflight(
  if(!event||event.module!=="PROJECTS"||!event.collegeId||!event.organizationId)
   return null;
  const source=classifyMentorProjectEmailSource(event);
- if(!source)return null;
+ if(!source||!mentorEmailQueueMatchesSource(queuedScope,{
+  collegeId:event.collegeId,organizationId:event.organizationId,
+  projectId:source.projectId,kind:source.kind,
+ }))return null;
  const [project]=await db.select({
   id:projectInstances.id,title:projectInstances.title,
   deletedAt:projectInstances.deletedAt,
