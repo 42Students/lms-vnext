@@ -5,7 +5,7 @@ import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness"
 import {getTpoDueFollowupQueue} from "@/modules/placements/tpo-followup-queue-service";
 import {listTpoLeads} from "@/modules/placements/tpo-crm-service";
 import {getTpoTodayCompanyVerificationAttention} from "@/modules/placements/tpo-today-company-attention-service";
-import {rankTpoCompaniesToday,tpoCompaniesTodayScope,tpoTodayAgendaDay,summarizeTpoTodayNotContacted} from "@/modules/placements/tpo-companies-today-model";
+import {rankTpoCompaniesToday,tpoCompaniesTodayScope,tpoTodayAgendaDay,summarizeTpoTodayNotContacted,summarizeTpoTodayOutsideWeek} from "@/modules/placements/tpo-companies-today-model";
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
 import {getTpoMessagesInbox} from "@/modules/placements/tpo-messages-service";
 import {TpoCompaniesToday} from "@/components/tpo/tpo-companies-today";
@@ -79,9 +79,11 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   </section>;
  const notContacted=leadsResult.status==="fulfilled"&&leadsResult.value!==null?
   summarizeTpoTodayNotContacted(leadsResult.value,scope,context.membership.id):null;
+ const outsideWeek=leadsResult.status==="fulfilled"&&leadsResult.value!==null?
+  summarizeTpoTodayOutsideWeek(leadsResult.value,scope,context.membership.id,now):null;
  if(view==="agenda"||view==="brief")return <TpoTodayAlternateViews
   view={view} scope={scope} rows={rows} selectedDay={selectedDay!} nowIso={now.toISOString()}
-  notContacted={notContacted}
+  notContacted={notContacted} outsideWeek={outsideWeek}
   replies={replies} replyTotal={replyTotal}
   hasMore={due.value.total>due.value.rows.length||next.value.total>next.value.rows.length}/>;
  const companyAttention=verificationResult.status==="fulfilled"?verificationResult.value:null;
