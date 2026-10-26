@@ -1,5 +1,30 @@
 # Faculty vNext — single closure ledger
 
+## LIVE FOCUSED ACCEPTANCE REGISTER — 27 October 2026
+
+**Counting policy:** "GREEN-FOCUSED" means a dedicated authenticated browser/DB/unit workflow ran successfully on a commit including the applicable screen source; it does **not** certify all code acceptance gates, global build, merged legacy feature parity, external migration readiness or pixel matching. Keep "ACCEPTED-CODE" separately until every required negative and functional gate is closed. A red global CI from other accounts is reported independently rather than silently deleting tests.
+
+| Prototype | Focused witness | Evidence link | Residual code gate |
+| --- | --- | --- | --- |
+| #02 Today | **GREEN-FOCUSED** | [40394512630](https://github.com/42Students/lms-vnext/actions/runs/40394512630) | account-level final integration/regression |
+| #03 Courses | **VERIFYING** | [40394520458](https://github.com/42Students/lms-vnext/actions/runs/40394520458) | newest Course directory browser run |
+| #04 Overview | **GREEN-FOCUSED** | [40394978075](https://github.com/42Students/lms-vnext/actions/runs/40394978075) | full account-wide regression |
+| #05 Blueprint | **GREEN-FOCUSED** | [40394477603](https://github.com/42Students/lms-vnext/actions/runs/40394477603) | DB05 server read/write scope and activation remain fail-closed |
+| #06 Students | **GREEN-FOCUSED** | [40394531043](https://github.com/42Students/lms-vnext/actions/runs/40394531043) | broader intermittent-progress and integrated signals |
+| #07 Attendance | **GREEN-FOCUSED** | [40387070834](https://github.com/42Students/lms-vnext/actions/runs/40387070834) | account-wide regression/legacy checks |
+| #08 Discussions | **GREEN-FOCUSED** | [40394452864](https://github.com/42Students/lms-vnext/actions/runs/40394452864) | Learner shared-component and deeper cross-tenant history |
+| #09 Assessments | **VERIFYING** | [40394462989](https://github.com/42Students/lms-vnext/actions/runs/40394462989) | advanced All Assignments/All Quizzes parity before redirects |
+| #10 Grading | **VERIFYING** | [40394468740](https://github.com/42Students/lms-vnext/actions/runs/40394468740) | publish/save/conflict/grade-and-next DB negative coverage |
+| #11 Assignment Report | **GREEN-FOCUSED** | [40388424119](https://github.com/42Students/lms-vnext/actions/runs/40388424119) | final integration across reporting destinations |
+| #12 Class Schedule | **GREEN-FOCUSED** | [40394414616](https://github.com/42Students/lms-vnext/actions/runs/40394414616) | verify authorized calendar service against shared route updates |
+| #13 Find/Bell/Profile | **VERIFYING** | [40395216104](https://github.com/42Students/lms-vnext/actions/runs/40395216104) | Ctrl/Cmd+K hydration focus + scoped notifications |
+
+**Verified at writing:** eight GREEN-FOCUSED / twelve prototype references. Other four were still under focused verification, **not** green at writing. The 25 additional functional screens and 5 compatibility redirect contracts remain in [01-canonical-page-inventory.md](01-canonical-page-inventory.md) and are not counted as automatically passed because a prototype parent is green.
+
+**Global CI:** `npm run typecheck` still fails in TPO selected-rounds `name: string|null` versus `SelectedSlots` contract, and other separate lint/unit/build failures exist. Dedicated Faculty workflow green is not a claim of globally green `main`. Exact screenshot rendering comparison is deliberately deferred.
+
+---
+
 ## CURRENT CODE IMPLEMENTATION / TEST GATES — 27 October 2026 (supersedes older status descriptions)
 
 **Route inventory is frozen** at [01-canonical-page-inventory.md](01-canonical-page-inventory.md). Work below is real code committed directly to main, not merely design notes; **a focused test pass and a globally green workflow are separate outcomes**.
