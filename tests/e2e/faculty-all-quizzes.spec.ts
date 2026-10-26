@@ -79,6 +79,8 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   const card=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
   await expect(card).toBeVisible();
   await expect(card.getByText("This Section",{exact:true}).first()).toBeVisible();
+  // The prototype-first card preserves advanced actions behind a disclosure.
+  await card.locator("summary").filter({hasText:/^Actions/}).click();
   await card.getByRole("button",{name:"Review attempts"}).click();
   const drawer=page.getByRole("dialog",{name:"Quiz attempts"});
   await expect(drawer).toBeVisible();
@@ -100,6 +102,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("combobox",{name:"Status"}).selectOption("CLOSED");
   await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
   const closedCard=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
+  await closedCard.locator("summary").filter({hasText:/^Actions/}).click();
   await expect(closedCard.getByRole("button",{name:"Publish results"})).toBeVisible();
   page.once("dialog",dialog=>dialog.accept());
   const resultsResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname==="/api/courses/quizzes/"+id+"/faculty-results");
@@ -113,6 +116,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("combobox",{name:"Status"}).selectOption("CLOSED");
   await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
   const metadataCard=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
+  await metadataCard.locator("summary").filter({hasText:/^Actions/}).click();
   await metadataCard.getByRole("button",{name:"Edit",exact:true}).click();
   const metadataDrawer=page.getByRole("dialog",{name:"Edit Quiz"});
   await expect(metadataDrawer).toBeVisible();
