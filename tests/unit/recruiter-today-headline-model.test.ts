@@ -21,6 +21,12 @@ describe("Recruiter Today screenshot and old-LMS first-drive/empty parity",()=>{
   expect(recruiterTodayHeadline("Good evening, Meera",0,true,3))
    .toBe("Good evening, Meera. 3 things are put off for later.");
  });
+ it("does not claim all caught up when calendar, decision or messaging lookups fail",()=>{
+  expect(recruiterTodayHeadline("Good evening, Meera",0,true,0,true))
+   .toBe("Good evening, Meera.");
+  expect(recruiterTodayHeadline("Good evening, Meera",1,true,0,true))
+   .toBe("Good evening, Meera. One thing needs you.");
+ });
  it("knows verified published jobs remain history if secondary requests fail",()=>{
   expect(recruiterTodayHasDriveHistory({verifiedJobCount:1,requestCount:null,jobPreviewCapped:false})).toBe(true);
   expect(recruiterTodayHasDriveHistory({verifiedJobCount:0,requestCount:0,jobPreviewCapped:true})).toBe(true);

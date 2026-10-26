@@ -15,7 +15,7 @@ export type RecruiterTodayPrototypeProps={
   greeting:string;dateLabel:string;collegeName:string;storageKey:string;
   hasDriveHistory:boolean|null;firstDriveHref:string;calendarHref:string;
   tasks:RecruiterTodayTask[];weekEvents:WeekEvent[];
-  waiting:Waiting[];waitingUnavailable:boolean;liveDrive?:LiveDrive|null;
+  waiting:Waiting[];waitingUnavailable:boolean;signalsUnavailable?:boolean;liveDrive?:LiveDrive|null;
 };
 function cta(task:RecruiterTodayTask):string{
   if(task.key.startsWith("answer:"))return "Answer";
@@ -52,7 +52,7 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
   const visible=actionable.filter(task=>!later[task.key]);
   const postponed=actionable.length-visible.length;
   const shown=expanded?visible:visible.slice(0,3);
-  const headline=recruiterTodayHeadline(props.greeting,visible.length,props.hasDriveHistory,postponed);
+  const headline=recruiterTodayHeadline(props.greeting,visible.length,props.hasDriveHistory,postponed,props.signalsUnavailable);
   const nextEvent=props.weekEvents[0];
   const subtitle=nextEvent?nextEvent.title+" · "+nextEvent.jobTitle+" · "+nextEvent.when:null;
   return <div className={styles.root} data-testid="recruiter.today">
@@ -78,13 +78,21 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
         {!shown.length&&postponed===0&&props.hasDriveHistory===false?
           <div className={styles.empty}>
             <strong>Start with your first drive</strong>
-            <p>Describe the role, pay and how you select. The placement cell reviews it before students apply.</p>
+            <ol className={styles.firstSteps}>
+              <li>Describe the role, pay and how you select. Your draft is kept as you type.</li>
+              <li>The placement cell reviews the request, confirms dates and publishes to students.</li>
+              <li>Once applicants are shared, you can review and send results to the placement cell.</li>
+            </ol>
             <Link className={styles.primary} href={props.firstDriveHref}>Request your first drive</Link>
           </div>:null}
-        {!shown.length&&postponed===0&&props.hasDriveHistory===true?
+        {!shown.length&&postponed===0&&props.hasDriveHistory===true&&!props.signalsUnavailable?
           <div className={styles.empty} role="status">You’re all caught up{props.collegeName?" at "+props.collegeName:""}. New applicants, replies and decisions show up here.</div>:null}
         {!shown.length&&postponed===0&&props.hasDriveHistory===null?
           <div className={styles.empty} role="status">We could not confirm your complete drive history. Open Drives to check for other work.</div>:null}
+        {!shown.length&&postponed===0&&props.hasDriveHistory===true&&props.signalsUnavailable?
+          <div className={styles.empty} role="status">
+            Today cannot confirm that your task queue is complete. Some signals are temporarily unavailable. Check Drives or retry Today.
+          </div>:null}
         {!shown.length&&postponed>0?<div className={styles.empty} role="status">
           {postponed} {postponed===1?"action is":"actions are"} put off for later. Use “Show them” below when ready.
         </div>:null}

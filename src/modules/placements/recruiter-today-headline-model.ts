@@ -8,6 +8,7 @@ export function recruiterTodayHasDriveHistory(input:{
 }
 export function recruiterTodayHeadline(
  greeting:string,visibleActions:number,hasDriveHistory:boolean|null,postponed=0,
+ signalsUnavailable=false,
 ):string{
  const salutation=greeting.replace(/\.$/,"").trim();
  const prefix=salutation?salutation+". ":"";
@@ -15,6 +16,8 @@ export function recruiterTodayHeadline(
   return prefix+(words[visibleActions]??visibleActions+" things need")+" you.";
  if(Number.isSafeInteger(postponed)&&postponed>0)
   return prefix+postponed+" "+(postponed===1?"thing is":"things are")+" put off for later.";
+ if(signalsUnavailable&&hasDriveHistory!==false)
+  return salutation?salutation+".":"Today";
  if(hasDriveHistory===false)return prefix+"Let's get your first drive going.";
  if(hasDriveHistory===true)return prefix+"You're all caught up.";
  return salutation?salutation+".":"Today";

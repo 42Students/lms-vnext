@@ -255,7 +255,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           timeZone:"Asia/Kolkata",weekday:"short",hour:"numeric",minute:"2-digit",hour12:true,
         }).format(item.startsAt),
       }))}
-      waiting={waiting} waitingUnavailable={!requestsResult.ok||conversationResult.status==="rejected"||
+      waiting={waiting} signalsUnavailable={summaryPartiallyUnavailable||otherSignalsUnavailable}
+      waitingUnavailable={!requestsResult.ok||conversationResult.status==="rejected"||
         stagedResult.status==="rejected"}
       liveDrive={liveDrive?{
         title:liveDrive.job.title,href:"/recruiter/drives/"+encodeURIComponent(liveDrive.job.id),
