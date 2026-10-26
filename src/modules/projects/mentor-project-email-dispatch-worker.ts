@@ -135,7 +135,10 @@ export async function runMentorProjectEmailDispatchBatch(
   try{
    const ids=jobIdentity(job);
    const source=ids?await resolveMentorProjectEmailPreflight(
-    ids.sourceEventId,ids.recipientUserId):null;
+    ids.sourceEventId,ids.recipientUserId,{
+     collegeId:job.collegeId,organizationId:job.organizationId,
+     projectId:job.metadata["projectId"],kind:job.metadata["kind"],
+    }):null;
    if(!source)terminal="SUPPRESSED";
    else{
     const sent=await sendMentorProjectEventEmail(source,env);
