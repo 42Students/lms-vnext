@@ -108,7 +108,8 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
         gradePublished:selected.gradePublished,version:selected.version,
         learnerDisplayName:selected.learnerDisplayName,learnerEmail:selected.learnerEmail,
        }}
-       filesEnabled={assignmentFilesRuntimeEnabled()} maxPoints={assignment.maxPoints}/>
+       filesEnabled={assignmentFilesRuntimeEnabled()} maxPoints={assignment.maxPoints}
+       nextStudentHref={next?href(filter,next.id):null}/>
        <Link className="faculty-proto-link mt-4 inline-block" href={"/teacher/report/assignment/"+encodeURIComponent(assignment.id)+"/submissions?deliveryId="+encodeURIComponent(assignment.deliveryId)}>Advanced submissions review and grading history</Link>
      </div>
     </>:<p className="faculty-proto-subtitle p-6">Select a submitted learner to see their work. Missing students have no submission to grade.</p>}
