@@ -23,6 +23,7 @@ test("Faculty screenshot #07 chooses active session, searches roster and opens r
  await page.getByRole("region",{name:"Courses in the new Faculty prototype"})
   .getByRole("row").filter({hasText:"E2E Browser Course"}).first()
   .getByRole("link",{name:"Open",exact:true}).click();
+ await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
  const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
  const start=new Date(Date.now()-10000).toISOString();
  const end=new Date(Date.now()+15*60000).toISOString();
