@@ -24,6 +24,9 @@ on:
       - "tests/e2e/recruiter-drives-focused.spec.ts"
       - "tests/e2e/recruiter-request-drive-focused.spec.ts"
       - "tests/e2e/recruiter-drive-overview-focused.spec.ts"
+      - "tests/e2e/recruiter-applicants-rounds-offers-focused.spec.ts"
+      - "src/modules/placements/applicant-notes-service.ts"
+      - "tests/unit/recruiter-applicant-three-source-parity.test.ts"
       - "src/modules/placements/recruiter-drive-progress-model.ts"
       - "src/modules/placements/hr-drive-overview-model.ts"
       - "src/components/hr/hr-drive-draft-form.tsx"
@@ -75,7 +78,8 @@ jobs:
             tests/unit/recruiter-request-drive-prototype-order.test.ts \
             tests/unit/HR-BREAK-drives-01.test.ts \
             tests/unit/HR-BREAK-chat19-today-waiting-progress.test.ts \
-            tests/unit/recruiter-home-drives-chat7-acceptance.test.ts
+            tests/unit/recruiter-home-drives-chat7-acceptance.test.ts \
+            tests/unit/recruiter-applicant-three-source-parity.test.ts
       - name: Typecheck at this verified commit
         env:
           NODE_OPTIONS: --max-old-space-size=6144
@@ -130,4 +134,5 @@ jobs:
             tests/e2e/recruiter-drives-focused.spec.ts \
             tests/e2e/recruiter-request-drive-focused.spec.ts \
             tests/e2e/recruiter-drive-overview-focused.spec.ts \
+            tests/e2e/recruiter-applicants-rounds-offers-focused.spec.ts \
             --workers=1

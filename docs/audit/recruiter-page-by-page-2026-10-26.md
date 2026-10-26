@@ -10,9 +10,9 @@ For each screen: inspect prototype, old frontend page/components, old backend se
 | 02 | Drives | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
 | 03 | Request a drive | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
 | 04 | Drive overview | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
-| 05 | Drive Applicants | QUEUED | OPEN | OPEN | OPEN |
-| 06 | Drive Rounds/slots | QUEUED | OPEN | OPEN | OPEN |
-| 07 | Drive Offers/joining | QUEUED | OPEN | OPEN | OPEN |
+| 05 | Drive Applicants | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
+| 06 | Drive Rounds/slots | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
+| 07 | Drive Offers/joining | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
 | 08 | Drive Talk | QUEUED | OPEN | OPEN | OPEN |
 | 09 | Calendar | QUEUED | OPEN | OPEN | OPEN |
 | 10 | Messages | QUEUED | OPEN | OPEN | OPEN |
@@ -48,3 +48,10 @@ Inspected PNG 03 and legacy `lms2-fe/src/pages/recruiter/drives/new.js` plus leg
 ## Page 04 — Drive overview
 
 Compared PNG 04, legacy `RecruiterDriveOverview.jsx` / `RecruiterWorkspaceService.java` and vNext `hr/placements/jobs/[jobId]`, `recruiter-drive-progress-model`, `hr-drive-overview-model`. Latest prototype has Requested → Approved → Applications → Rounds → Offers → Completed, with the last step only after recorded closure. Changed vNext to show **Completed** rather than **Joining**; explicitly distinguishes accepted offers from formally CLOSED drives and never marks a cancelled draft complete. Maintained explicit placement-cell-only changes and employer-visible funnel scopes. Unit and seeded browser tests for six stages, pending Closed state and student preview were added; visual/funnel comparisons, real cross-role changes and provider acceptance remain open.
+## Screens 05–07: Applicants, Rounds and Offers — three-source adversarial inspection
+
+**05 Applicants**: screenshot 05 has applicant table with consented CGPA/slot/rating and split focused review. Compared with legacy `lms2-fe/src/components/recruiter/RecruiterFocusedReview.jsx`, `lms/src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java`, and vNext `hr/placements/jobs/[jobId]` and `hr-job-read-service`. VNext already provides a native accessible modal review, shortlist-only identity, author-only rating, company-shared notes explicitly labelled by audience, pagination and optimistic result staging. Closed a live authorization gap in `applicant-notes-service`: **both the note read and the in-transaction note write** now recheck the persisted ACTIVE, VERIFIED, non-expired `DRIVES` grant on the exact employer/college relationship. Added tests for unrelated IDs, withdrawn/unshortlisted identities and duplicate conflicting rows. Browser regression asserts no invented applicant rows when the placement cell has not shared any. Gaps still open: true per-applicant CGPA vs verified UG percentage, booked slot in the applicant row, private rating on the list, full split-panel visual layout, real populated list browser acceptance. Do not expose hidden fields as a shortcut.
+
+**06 Rounds**: screenshot 06 groups panel schedules and confirmations. Compared against legacy `RecruiterDriveWorkService.rounds`, `RecruiterFocusedReview`, and vNext `recruiter-booked-interviews-service`, `recruiter-booked-interviews-model`, `recruiter-panel-actions`, `RecruiterResultControls`. Existing vNext distinguishes college bookings from recruiter time proposals and student confirmation; print/download uses authorized controls. Added seeded browser checks for panel scope, scheduling link and conflicts. Remaining: real populated bookings and TPO reschedule, confirmation and result lifecycle; visual panel-by-panel acceptance.
+
+**07 Offers and joining**: screenshot 07 shows selection list, student response, joining and last-year official offers. Legacy `RecruiterWorkspaceService.offers` and `RecruiterDriveWorkService.submitSelections` make recruiter proposal distinct from the college-issued offer. VNext includes selection Excel upload with eligible applicant allowlist, joining **report** to placement cell without silently changing official outcomes, official historical joined rows. Added seeded browser assertions for the authority boundary and offer state. Remaining: actual shared-applicant Excel+selection TPO verification, formal offer-letter provider and joining outcome flows; exact visual comparison.
