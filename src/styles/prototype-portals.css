@@ -2154,3 +2154,24 @@
     display:none;
   }
 }
+
+/* Recruiter screenshot 01: logo glyph and rail alignment are role-scoped.
+ * Global prototype shell hides the original brand mark, so restore it with a
+ * stronger recruiter-only rule rather than changing Faculty/Mentor/TPO. */
+@media(min-width:768px){
+ .lms-shell-frame[data-prototype-portal="recruiter"] .lms-sidebar-logo-row,
+ .lms-shell-frame[data-prototype-portal="recruiter"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-logo-row{
+   height:100px!important;min-height:100px!important;max-height:100px;
+   padding:14px 26px 0;align-items:flex-start;
+ }
+ .lms-shell-frame[data-prototype-portal="recruiter"] .lms-sidebar-brand-mark,
+ .lms-shell-frame[data-prototype-portal="recruiter"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-mark{
+   display:inline-flex!important;align-items:center;justify-content:center;
+ }
+ .lms-shell-frame[data-prototype-portal="recruiter"] .lms-sidebar-brand-link{
+   min-height:65px;align-items:center;justify-content:flex-start;gap:1px;
+ }
+ .lms-shell-frame[data-prototype-portal="recruiter"] .lms-shell-page-main{
+   padding:24px 35px 28px!important;
+ }
+}
