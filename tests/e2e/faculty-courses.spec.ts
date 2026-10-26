@@ -23,9 +23,10 @@ test("Faculty has five distinct, authorized Course tabs and editable Section Blu
   await search.fill("no-matching-course-zzzz");
   await expect(page.getByText("No courses match your search")).toBeVisible();
   await search.fill("E2E Browser Course");
-  const courseCard = page.getByRole("link", { name: /E2E Browser Course/ });
-  await expect(courseCard).toContainText("E2E Section A");
-  await courseCard.click();
+  const courseRow = page.getByRole("region", { name: "Courses in the new Faculty prototype" })
+    .getByRole("row").filter({ hasText: "E2E Browser Course" }).first();
+  await expect(courseRow).toContainText("E2E Section A");
+  await courseRow.getByRole("link", { name: "Open", exact: true }).click();
   await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/home$/);
   const tabs = page.getByRole("navigation", { name: "Faculty course tabs" });
   for (const label of ["Overview", "Blueprint", "Students", "Attendance", "Discussions"]) {
