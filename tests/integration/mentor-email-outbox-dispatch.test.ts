@@ -13,6 +13,7 @@ const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const sourceId=randomUUID(),jobId=randomUUID(),submissionId=randomUUID();
 const projectId=randomUUID();
 const stalledJobIds=Array.from({length:12},()=>randomUUID());
+const unscopedJobIds=Array.from({length:11},()=>randomUUID());
 const retryJobId=randomUUID(),retryReceiptId=randomUUID();
 const stalledReceiptIds=Array.from({length:12},()=>randomUUID());
 const setupAt=new Date();
@@ -22,7 +23,7 @@ afterAll(async()=>{
     subject_type='mentor_project_email_dispatch_receipt'
       and subject_id=any($1::text[])`,[[jobId,retryJobId,...stalledJobIds]]);
   await pool.query("delete from activity_events where id=any($1::uuid[])",
-   [[jobId,sourceId,retryJobId,...stalledJobIds]]);
+   [[jobId,sourceId,retryJobId,...stalledJobIds,...unscopedJobIds]]);
  }finally{await pool.end();await closeDatabaseConnection();}
 });
 describe("Mentor claimed email outbox PostgreSQL transaction",()=>{
@@ -42,6 +43,21 @@ describe("Mentor claimed email outbox PostgreSQL transaction",()=>{
     sourceId,orgB,SEED_IDS.collegeB,SEED_IDS.collegeAdminUser,
     ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_SUBMITTED,submissionId,
     JSON.stringify({projectId}),
+  ]);
+  // Eleven even-older queue rows have no college at all. They are
+  // permanently undeliverable; LIMIT must skip them rather than block the
+  // first ten slots forever.
+  await pool.query(`insert into activity_events
+   (id,organization_id,actor_user_id,module,event_type,
+    subject_type,subject_id,summary,metadata,occurred_at)
+   select bad.id,$2,$3,'PROJECTS',$4,'mentor_project_email_job',$5,
+     'Legacy queue with no recipient college',$6::jsonb,
+     clock_timestamp()-interval '45 seconds'
+   from unnest($1::uuid[]) as bad(id)`,[
+    unscopedJobIds,SEED_IDS.organization,SEED_IDS.collegeAdminUser,
+    ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_EMAIL_QUEUED,sourceId,
+    JSON.stringify({sourceEventId:sourceId,recipientUserId:SEED_IDS.facultyUser,
+     projectId,kind:"FINAL_SUBMISSION"}),
   ]);
   // Twelve older jobs have active claim leases or fresh RETRY cooldowns.
   // A naive LIMIT 10 on all queued jobs would starve the new eligible job.
@@ -107,6 +123,11 @@ describe("Mentor claimed email outbox PostgreSQL transaction",()=>{
    where subject_type='mentor_project_email_dispatch_receipt'
      and subject_id=any($1::text[])`,[stalledJobIds]);
   expect(stillLeased.rows[0]?.n).toBe("12");
+  const malformedProcessed=await pool.query<{n:string}>(`
+   select count(*)::text as n from activity_events
+   where subject_type='mentor_project_email_dispatch_receipt'
+     and subject_id=any($1::text[])`,[unscopedJobIds]);
+  expect(malformedProcessed.rows[0]?.n).toBe("0");
   const again=await runMentorProjectEmailDispatchBatch(ready);
   expect(again.status).toBe("CHECKED");
   const saved=await pool.query<{status:string}>(`
