@@ -38,7 +38,7 @@ export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total,pen
     </p>
     <nav className="mt-3 flex flex-wrap gap-2" aria-label="Request queue filters">
      <Link href="/tpo/requests?status=PENDING" className="rounded-full border border-primary px-3 py-2 text-xs font-semibold text-primary-text">Waiting · {pendingTotal}</Link>
-     <Link href="/tpo/requests?status=ALL&age=LAST_30" className="rounded-full border border-border px-3 py-2 text-xs font-semibold text-body">Last 30 days</Link>
+     <Link href="/tpo/requests?status=ALL&age=LAST_30_DAYS" className="rounded-full border border-border px-3 py-2 text-xs font-semibold text-body">Last 30 days</Link>
      <Link href="/tpo/requests?status=ALL" className="rounded-full border border-border px-3 py-2 text-xs font-semibold text-body">All history</Link>
     </nav>
    </div>
