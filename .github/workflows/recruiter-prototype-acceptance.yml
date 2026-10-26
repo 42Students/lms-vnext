@@ -22,6 +22,9 @@ on:
       - "tests/e2e/recruiter-prototype-functional-acceptance.spec.ts"
       - "tests/e2e/recruiter-prototype-screen-matrix.spec.ts"
       - "tests/e2e/recruiter-drives-focused.spec.ts"
+      - "tests/e2e/recruiter-request-drive-focused.spec.ts"
+      - "src/components/hr/hr-drive-draft-form.tsx"
+      - "tests/unit/recruiter-request-drive-prototype-order.test.ts"
       - "src/components/placements/recruiter-placement-portfolio.tsx"
       - "tests/e2e/support/no-raw-error.ts"
       - "tests/e2e/recruiter-today-later.spec.ts"
@@ -65,7 +68,8 @@ jobs:
             tests/unit/recruiter-today-staged-results-model.test.ts \
             tests/unit/hr-today-action-queue-model.test.ts \
             tests/unit/hr-today-action-queue-scoped.test.ts \
-            tests/unit/recruiter-drive-list-model.test.ts
+            tests/unit/recruiter-drive-list-model.test.ts \
+            tests/unit/recruiter-request-drive-prototype-order.test.ts
       - name: Typecheck at this verified commit
         env:
           NODE_OPTIONS: --max-old-space-size=6144
@@ -118,4 +122,5 @@ jobs:
             tests/e2e/recruiter-prototype-screen-matrix.spec.ts \
             tests/e2e/recruiter-today-later.spec.ts \
             tests/e2e/recruiter-drives-focused.spec.ts \
+            tests/e2e/recruiter-request-drive-focused.spec.ts \
             --workers=1
