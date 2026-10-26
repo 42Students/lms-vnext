@@ -23,7 +23,7 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 | 13 | Students → Requests | `/tpo/requests` | **Code updated:** authorized selected-request list/detail with persisted decision control; bulk tools/table retained in Advanced. Runtime and visual acceptance open |
 | 14 | Students → Announcements | `/tpo/announcements` | **Code updated:** grouped searchable page-scoped sidebar, selected detail, existing edit/delete/read/delivery actions. Runtime and visual acceptance open |
 | 15 | Drives | `/tpo/placements/lifecycle` | **Code updated:** compact prototype operations list with action links, authorized recruiter request cards above tabs, advanced grid retained. Browser and visual acceptance open |
-| 16 | Drives → A recruiter's drive request | `/tpo/requests` / drive change-request flow | Verify requested drive review, approval and safe decline |
+| 16 | Drives → A recruiter's drive request | `/tpo/placements/lifecycle?view=REQUESTS&request=[id]` | **Code updated:** selected recruiter request pane with persisted facts, optional change comparison, and real approve-to-draft/send-back/decline control. Exact-viewport and live decision acceptance open |
 | 17 | Drives → New drive (and edit) | `/tpo/placements/new`, `/tpo/placements/jobs/[jobId]/edit` | Verify form fields, save/publish, validation |
 | 18 | Drive → Students (review and share) | `/tpo/placements/jobs/[jobId]/applicants` | Verify shortlist, one-by-one review and sharing |
 | 19 | Drive → Rounds (results and slots) | `/tpo/placements/jobs/[jobId]/rounds` | Verify schedule, round results and slot allocation |
@@ -71,6 +71,7 @@ Based on the supplied Students screenshot set (assets labeled `tpo_09.png` to `t
 
 ## Drives overview prototype implementation (26 October 2026)
 
+- Screen **16 / Recruiter drive request**: selected request details now appear beside the authorized request list on `/tpo/placements/lifecycle?view=REQUESTS&request=[id]`. The review uses persisted recruiter status/contact metadata, optionally recorded changed-field comparisons, and the existing `TpoDriveRequestActions` policy: **approval produces an unpublished draft**, never directly publishes or claims email delivery. Original advanced request list remains accessible. Live user-flow/browser acceptance is pending.
 - Screen **15 / Drives**: `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx` now displays the prototype-style Drive / Where it is / Next / Needs you / Who grid, using persisted applied count, rounds, offers, schedule and owner fields. It keeps the original authorized advanced drive grid and export/mutation controls behind a disclosure.
 - Recruiter drive-request cards are retrieved independently through `getTpoDriveLifecycleList(context,{view:"REQUESTS",page:"1"})`, bounded to two preview cards with a Review link. On read failure an explicit warning is shown; the valid main drives list stays available.
 - `tests/unit/tpo-drives-prototype-overview-2026.test.ts` covers these source and authorization contracts and is included in the dedicated TPO source CI.
