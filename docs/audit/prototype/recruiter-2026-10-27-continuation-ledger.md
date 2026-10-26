@@ -34,3 +34,11 @@ Rules: exact authored prototype first, legacy dev behavior second, vNext source/
 - The static prototype's sample 64 applicants/58 confirmations and employer names are illustrative, never fake production data.
 - Preserve private scanned JD/resume storage requirements; do not shortcut privacy/authorization to imitate prototype controls.
 - CI may be cancelled by concurrent main commits. Record an exact completed run against a verified SHA before using a green status.
+
+## Request a Drive / Calendar CI repair (same continuation)
+
+- A real Recruiter prototype acceptance browser run 40396849021 had 31 passing journeys and a failed request submit, returning HTTP 500. Disposable PostgreSQL logs identified placement_recruiter_drive_requests_decision_ck: policy auto-approval set decidedAt while decidedByUserId was null. Fixed createOwnRecruiterDriveRequest to leave both nullable human-decision fields null for policy approval. Durable AUTO_APPROVED audit event remains and the associated placement job remains DRAFT. A source unit guard protects the paired-null invariant.
+- The same acceptance run had 143 passing unit tests but a parser error in tests/unit/recruiter-calendar-ics-model.test.ts; corrected the malformed expect() parentheses.
+- Recruiter request browser acceptance previously opened view=DRAFT, but RecruiterDrives query accepts ALL/LIVE/WAITING/CLOSED. Fixed test and actual HrDriveDraftForm success receipt Open the request link to use WAITING, and changed E2E to click the real receipt link.
+- In section 3 Who can apply on the request form, replaced the misleading claim that blank filters include every registered student with a truthful request-without-extra-restrictions explanation. College final eligibility is still authoritative.
+- All repairs are code changes committed to main; current acceptance results must be checked against exact commit SHA before assigning VERIFIED.
