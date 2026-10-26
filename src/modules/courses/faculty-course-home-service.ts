@@ -5,6 +5,7 @@ import {and,eq,gte,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseDiscussionMessages,learnerContentProgress,quizAttempts} from "@/db/schema";
 import {facultyCourseCompletion} from "./faculty-course-completion-model";
+import {facultyBlueprintLessonEngagement} from "./faculty-blueprint-lesson-engagement-model";
 
 import type { RequestContext } from "@/modules/identity/context";
 import { getFacultyAttendanceWorkspace } from "@/modules/attendance/faculty-service";
@@ -76,6 +77,7 @@ export async function getFacultyCourseHomeSignals(
     learnerIds.length&&videoIds.length?getDb().select({
      membershipId:learnerContentProgress.membershipId,itemId:learnerContentProgress.lessonContentId,
      attempt:learnerContentProgress.attempt,completedAt:learnerContentProgress.completedAt,
+     lastPositionSeconds:learnerContentProgress.lastPositionSeconds,
      legacyWasDeleted:learnerContentProgress.legacyWasDeleted,
     }).from(learnerContentProgress).where(and(
      inArray(learnerContentProgress.membershipId,learnerIds),
@@ -101,6 +103,20 @@ export async function getFacultyCourseHomeSignals(
   }):null;
   // Current course activity only: "recent" is explicit, never an invented
   // unread count. A transient discussion error cannot blank other signals.
+  const lessonEngagement=courseCompletionReads?facultyBlueprintLessonEngagement({
+    learnerIds,
+    lessons:visibleLessons.map(lesson=>({
+      lessonId:lesson.id,
+      videoIds:lesson.contents.filter(item=>item.status==="PUBLISHED"&&item.visibleToStudents&&
+        item.deletedAt===null&&(item.contentType==="VIDEO"||item.contentType==="YOUTUBE")).map(item=>item.id),
+      assignmentIds:lesson.assignments.filter(item=>item.status==="PUBLISHED").map(item=>item.id),
+      quizIds:lesson.quizzes.filter(item=>item.status==="PUBLISHED"&&item.legacyDeletedAt===null).map(item=>item.id),
+    })),
+    videos:courseCompletionReads.videos,quizzes:courseCompletionReads.quizzes,
+    assignments:assignmentRows.flatMap(row=>row.submissions.map(sub=>({
+      membershipId:sub.membershipId,itemId:row.id,
+    }))),
+  }):null;
   const discussionRead=await getDb().select({
    count:sql<number>`count(*)::int`,
   }).from(courseDiscussionMessages).where(and(
@@ -167,6 +183,7 @@ export async function getFacultyCourseHomeSignals(
       }:null,
     },
     courseCompletion,
+    lessonEngagement,
     studentRosterMetrics:facultyStudentRosterMetrics({
       roster:attendance?.roster??[],
       attendanceSessions:attendance?.sessions??[],

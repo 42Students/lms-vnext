@@ -5,6 +5,7 @@ import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submissio
 import {orderFacultyBlueprintItems} from "@/modules/courses/faculty-blueprint-sort-model";
 import {FACULTY_BLUEPRINT_ADD_KINDS,facultyBlueprintAddTarget} from "@/modules/courses/faculty-blueprint-add-target";
 import type {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
+import type {FacultyBlueprintLessonEngagement} from "@/modules/courses/faculty-blueprint-lesson-engagement-model";
 
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
 const istDate=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
@@ -15,8 +16,9 @@ const istClassTime=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
  hour:"numeric",minute:"2-digit",hour12:true,
 }).format(date);
 
-export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
+export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement=null}:{
  workspace:Workspace;selectedLessonId:string|null;
+ engagement?:readonly FacultyBlueprintLessonEngagement[]|null;
 }){
  const {course,lessons}=workspace;
  const current=lessons.find(lesson=>lesson.id===selectedLessonId)??lessons[0]??null;
@@ -73,6 +75,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
   })),
  ]):[];
  const currentLive=current?.visibleToStudents&&workspace.learningPath?.status==="PUBLISHED";
+ const selectedEngagement=current?engagement?.find(row=>row.lessonId===current.id)??null:null;
  return <section className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[310px_minmax(0,1fr)]"
   aria-label="Course blueprint lesson explorer">
   <aside className="min-w-0 overflow-hidden rounded-[13px] border border-[#e5ebf2]">
@@ -136,10 +139,20 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
      <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#60718b]">
       How {course.sectionName} did on this lesson
      </h3>
-     <p className="mt-1 text-sm text-[#243149]">Class engagement is shown in the detailed student progress reports.
-      <Link className="ml-1 font-semibold text-[#078191] hover:underline"
-       href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}>View students</Link>
-     </p>
+     {selectedEngagement&&selectedEngagement.trackedItems>0?
+       <p className="mt-1 text-sm text-[#243149]">
+        Recorded activity: <strong>{selectedEngagement.engagedBy} of {selectedEngagement.rosterTotal}</strong> enrolled learners.
+        <span className="ml-2">All {selectedEngagement.trackedItems} measurable activities completed by
+         <strong> {selectedEngagement.completedBy}</strong>.</span>
+        <span className="block text-xs text-[#60718b]">Time spent is not tracked. Resource and live-class completions without recorded activity are excluded.</span>
+       </p>:<p className="mt-1 text-sm text-[#60718b]">
+        {!currentLive?"Progress becomes available after this lesson is published.":
+         engagement===null?"Lesson activity data is currently unavailable.":
+         selectedEngagement?.rosterTotal===0?"No enrolled learners in this class.":
+         "No measurable video or assessment activity in this lesson."}
+       </p>}
+       <Link className="mt-2 inline-flex font-semibold text-[#078191] hover:underline"
+        href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}>View students</Link>
     </footer>:null}
   </section>
  </section>;

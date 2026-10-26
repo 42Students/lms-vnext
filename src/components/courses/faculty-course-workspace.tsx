@@ -546,7 +546,8 @@ export function FacultyCourseWorkspace({
 
       {view !== "OVERVIEW" ? (
         <>
-        <FacultyPrototypeBlueprint workspace={workspace} selectedLessonId={selectedLessonId}/>
+        <FacultyPrototypeBlueprint workspace={workspace} selectedLessonId={selectedLessonId}
+         engagement={homeSignals?.lessonEngagement??null}/>
         <details className="border-t border-[#e5ebf2] pt-4" open={advanced||Boolean(initialCreateMode)}>
          <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Full blueprint editor, publishing and content ordering</summary>
          <div className="mt-5 space-y-5">
