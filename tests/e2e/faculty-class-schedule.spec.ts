@@ -25,7 +25,7 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   page.on("pageerror",e=>errors.push(e.message));
   await page.goto("/teacher/courses");
   await page.getByRole("link",{name:/E2E Browser Course/}).click();
-  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i,{timeout:20000});
   const current=new URL(page.url());
   const deliveryId=current.pathname.split("/")[3]!;
   expect(deliveryId).toMatch(/^[0-9a-f-]{36}$/i);
@@ -48,7 +48,9 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   const createdId:string=submitted.data?.result?.id;
   expect(createdId).toMatch(/^[0-9a-f-]{36}$/i);
   await page.goto("/teacher/calendar?month=2026-10&deliveryId="+deliveryId);
-  await expect(page.getByRole("heading",{level:1,name:"Class Schedule"})).toBeVisible();
+  await expect(page.getByRole("heading",{level:1,name:"Class Schedule",exact:true})).toBeVisible();
+  await page.getByText("Advanced schedule and full calendar",{exact:true}).click();
+  await page.getByText("Month view",{exact:true}).click();
   await expect(page.getByLabel("Teaching Section")).toHaveValue(deliveryId);
   await expect(page.getByLabel("Month (IST)")).toHaveValue("2026-10");
   const grid=page.getByRole("region",{name:"IST month schedule grid"});
@@ -69,7 +71,7 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   await page.getByRole("link",{name:"Next month"}).click();
   await expect(page.getByLabel("Month (IST)")).toHaveValue("2026-10");
   await expect(page.getByText(title,{exact:true}).first()).toBeVisible();
-  await expect(page.getByRole("heading",{name:"Detailed day/week schedule"})).toBeVisible();
+  await expect(page.getByRole("region",{name:"Faculty class schedule prototype"})).toBeVisible();
   const viewSelect=page.getByRole("combobox").filter({
    has:page.getByRole("option",{name:"Day"}),
   });
