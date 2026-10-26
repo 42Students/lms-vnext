@@ -39,9 +39,10 @@ type EditableAssessment = {
 };
 
 export function FacultyAssessmentEditor({
-  assessment,
+  assessment,compact=false,
 }: {
   assessment: EditableAssessment;
+  compact?:boolean;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -231,6 +232,7 @@ export function FacultyAssessmentEditor({
         size="md"
         
         variant="secondary"
+        className={compact?"!min-h-9 !px-3 !py-1.5 !text-xs":undefined}
         aria-label={"Edit "+assessment.kind.toLowerCase()+" "+assessment.title}
         aria-busy={saving||deleting}
         onClick={() => {
