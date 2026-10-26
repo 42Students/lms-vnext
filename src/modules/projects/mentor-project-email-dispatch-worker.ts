@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq,gte,sql} from "drizzle-orm";
+import {and,asc,desc,eq,gte,isNotNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents} from "@/db/schema";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -133,6 +133,10 @@ export async function runMentorProjectEmailDispatchBatch(
  }).from(activityEvents).where(and(
   eq(activityEvents.eventType,QUEUED),
   eq(activityEvents.subjectType,"mentor_project_email_job"),
+  // A legacy/malformed nullable scope cannot be dispatched and must not
+  // permanently occupy the first ten slots of the ready queue.
+  isNotNull(activityEvents.collegeId),
+  isNotNull(activityEvents.organizationId),
   gte(activityEvents.occurredAt,state.activatedAt),
   sql`not exists (
     select 1 from activity_events settled
