@@ -6,6 +6,7 @@ import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {useState} from "react";
 import {useToast} from "@/components/ui/toast";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
+import {TpoVerificationPrototypeQueue} from "./TpoVerificationPrototypeQueue";
 import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
 import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
@@ -112,12 +113,21 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
    </summary>
    <TpoStudentNudgePanel rows={nudgeRows}/>
   </details>:null}
+  <TpoVerificationPrototypeQueue rows={visible} active={active}
+   onReview={row=>{setSequenceIndex(null);setSelected(row);}}/>
+  <details className="min-w-0 border-y border-border py-3">
+   <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link">
+    Advanced verification table, sorting and filters
+   </summary>
+   <div className="min-w-0 pt-3">
   <VerificationWorkspace key={JSON.stringify(filters)+serverTab+serverKind} rows={visible}
    legacyTpoCopy initialTab={serverTab} initialKind={serverKind} {...(counts !== undefined ? {counts} : {})}
    disableLocalSearch preserveServerOrder showTabCounts={true}
    onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?(params.get("waitingState")??"ALL"):"ALL",waitingSince:tab==="WAITING"?(params.get("waitingSince")??"ALL"):"ALL"})}
    onKindChange={kind=>navigate({kind,page:"1"})}
    onReview={row=>{setSequenceIndex(null);setSelected(row);}} />
+   </div>
+  </details>
   {active&&<VerificationReviewDrawer
    key={active.learnerMembershipId+active.section} row={active}
    apiBase="/api/tpo/verification"
