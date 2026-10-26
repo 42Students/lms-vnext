@@ -41,7 +41,7 @@ describe("Recruiter screenshot 09: verified ICS calendar",()=>{
   const r=recruiterCalendarIcs([...dates,{...base,id:"broken",startsAt:new Date("invalid")}],[],at);
   expect(r.included).toBe(300);
   expect(r.truncated).toBe(true);
-  expect((r.ics.match(/BEGIN:VEVENT/g)??[]).toHaveLength(300);
+  expect(r.ics.match(/BEGIN:VEVENT/g) ?? []).toHaveLength(300);
   expect(recruiterCalendarIcs([base,base],[],at).included).toBe(1);
  });
  it("fails closed on malformed export clock",()=>{
