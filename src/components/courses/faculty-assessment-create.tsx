@@ -19,8 +19,10 @@ type ContextSnapshot={deliveryId:string;lessonId:string;nextSequence:number};
  * separate builder dialog; Assignment uses a single 640px right-hand drawer.
  * Both resolve their selected lesson against authorized Faculty teaching
  * assignments and keep it immutable while the assessment is being saved. */
-export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null}:{
+export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null,
+ triggerLabel=null,triggerTone="primary"}:{
  kind:"ASSIGNMENT"|"QUIZ";lessons:readonly LessonChoice[];lessonsLoadError?:string|null;
+ triggerLabel?:string|null;triggerTone?:"primary"|"secondary";
 }){
  const router=useRouter();
  const formId="faculty-new-assessment-"+useId().replace(/:/g,"");
@@ -128,14 +130,15 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null}:{
  </div>:null;
  return <>
   <div className="flex min-w-0 flex-wrap items-center justify-end gap-3 print:hidden">
-   <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
+   <Button type="button" variant={triggerTone==="secondary"?"secondary":"primary"}
+    className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
     onClick={()=>{setError(null);setOpen(true);}} disabled={!lessons.length&& !lessonsLoadError}>
     <span className="inline-flex items-center gap-2">
-     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
+     {!triggerLabel?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
       fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
       <path d="M12 4v16M4 12h16"/>
-     </svg>
-     Create {name}
+     </svg>:null}
+     {triggerLabel??"Create "+name}
     </span>
    </Button>
   </div>
