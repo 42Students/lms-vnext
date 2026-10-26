@@ -320,8 +320,9 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
       learnerMembershipIds:[SEED_IDS.learnerCollegeAMembership]},
   });
   expect(created.status()).toBe(201);
-  const project=await created.json() as {project?:{id?:string}};
+  const project=await created.json() as {project?:{id?:string;updatedAt?:string}};
   const projectId=project.project?.id;
+  expect(project.project?.updatedAt).toBeTruthy();
   expect(projectId).toMatch(/^[0-9a-f-]{36}$/i);
   const path="/api/projects/"+projectId+"/meetings";
   const window={
@@ -329,6 +330,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
     startsAt:"2099-12-27T13:05:00+05:30",
     endsAt:"2099-12-27T13:35:00+05:30",
     timeZone:"Asia/Kolkata",meetingUrl:null,location:"Lab 2",
+    expectedProjectUpdatedAt:project.project!.updatedAt!,
   };
   await signIn(context,"seed-learner",SEED_IDS.learnerCollegeAMembership,"LEARNER");
   const denied=await page.request.post(path,{headers:{Origin:origin},data:window});
