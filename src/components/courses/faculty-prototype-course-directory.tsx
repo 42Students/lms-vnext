@@ -99,7 +99,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
        {course.toGrade>0?course.toGrade+" to grade":course.drafts>0?course.drafts+" to publish":"Nothing waiting"}
      </span></td>
      <td><Link className="faculty-proto-link text-sm" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/attendanceDetail"}>View</Link></td>
-     <td><Link className="faculty-proto-link text-sm" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)}>Open</Link></td>
+     <td><Link className="faculty-proto-link text-sm" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>Open</Link></td>
     </tr>)}</tbody>
    </table>
   </div>
