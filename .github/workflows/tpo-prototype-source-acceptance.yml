@@ -27,6 +27,7 @@ on:
       - "tests/unit/tpo-announcements-prototype-workspace-2026.test.ts"
       - "tests/unit/tpo-verification-prototype-queue-2026.test.ts"
       - "tests/unit/tpo-batches-prototype-workspace-2026.test.ts"
+      - "tests/unit/tpo-drives-prototype-overview-2026.test.ts"
       - "tests/unit/tpo-today-prototype-views.test.ts"
       - "docs/audit/prototype/tpo-2026-10-26-screen-inventory.md"
 
@@ -70,6 +71,7 @@ jobs:
             tests/unit/tpo-announcements-prototype-workspace-2026.test.ts \
             tests/unit/tpo-verification-prototype-queue-2026.test.ts \
             tests/unit/tpo-batches-prototype-workspace-2026.test.ts \
+            tests/unit/tpo-drives-prototype-overview-2026.test.ts \
             tests/unit/chat9-round6-calendar-settings.test.ts \
             tests/unit/chat9-calendar-reports-existing-contracts.test.ts \
             tests/unit/chat9-round9-calendar-behavior.test.ts
