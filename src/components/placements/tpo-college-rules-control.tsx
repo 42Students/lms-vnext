@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {TPO_RULE_LIMITS,tpoRuleBoundsValid} from "@/modules/placements/tpo-rule-limits";
-import {Input} from "@/components/ui/input";
+import Link from "next/link";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
@@ -115,44 +115,68 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       setError(caught instanceof Error ? caught.message : "Could not save rules.");
     } finally { inFlight.current = false; setBusy(false); }
   }
+  const selectClass="mx-1 inline-flex min-h-11 w-auto max-w-full rounded-md border border-border bg-primary-subtle px-2 text-sm font-semibold text-primary-text md:min-h-9";
+  const upliftChoices=[...new Set([0,10,20,30,40,50,60,70,80,90,100,125,150,175,200,Number(form.upliftPct)])]
+    .filter(value=>Number.isSafeInteger(value)&&value>=0&&value<=200).sort((a,b)=>a-b);
+  const responseChoices=[...new Set([12,24,36,48,72,96,120,144,168,Number(form.minResponseHours)])]
+    .filter(value=>Number.isSafeInteger(value)&&value>=12&&value<=168).sort((a,b)=>a-b);
+  const update=(key:keyof typeof form,value:string)=>{
+    setError(null);setNotice("");setForm(current=>({...current,[key]:value}));
+  };
+  const discard=()=>{setForm({...saved});setError(null);setNotice("");setConfirmSave(false);};
   return (
-    <section className="min-w-0 border-b border-border pb-5">
-      <h3 className="flex flex-wrap items-center gap-2 text-base font-semibold text-[var(--lms-heading)]">Offers and placed
-        {dirty?<span role="status" aria-live="polite" className="rounded-full border border-warning px-2 py-0.5 text-xs font-semibold">Unsaved changes</span>:null}
-      </h3>
-      <p className="mt-2 text-sm text-body leading-[22px]">
-        The placed numbers (Home, Students, Reports) follow the first rule as soon as you save; the offer rules apply to offers released from then on.
-      </p>
-      <div className="mt-4 flex min-w-0 flex-wrap items-center gap-3 border-t border-border pt-4">
-        <label className="inline-flex min-w-[180px] flex-1 flex-col gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
-          A student counts as placed when the offer is
-          <Select value={form.countsAsPlacedAt} disabled={busy}
-            onChange={(event) => {setError(null);setNotice("");setForm(current=>({...current,countsAsPlacedAt:event.target.value}));}}
-            className="min-h-11 w-full md:min-h-9">
-            <option value="OFFER_RELEASED">released</option>
-            <option value="OFFER_ACCEPTED">accepted</option>
-          </Select>
-        </label>
-        {(["maxHeldOffers", "upliftPct", "minResponseHours"] as const).map((key) => (
-          <label key={key} className="inline-flex min-w-[130px] flex-1 flex-col gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
-            {key === "maxHeldOffers" ? "Maximum held offers" : key === "upliftPct" ? "Offer uplift %" : "Minimum response hours"}
-            <Input type="number" min={TPO_RULE_LIMITS[key].min} max={TPO_RULE_LIMITS[key].max} step={1}
-              value={form[key]} disabled={busy}
-              onChange={(event) => {setError(null);setNotice("");setForm(current=>({...current,[key]:event.target.value}));}}
-              className="min-h-11 w-full md:min-h-9" />
-          </label>
-        ))}
+    <section aria-label="Offers and placed" className="min-w-0 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+       <p className="text-sm text-body">Read them as sentences. Click a highlighted value to change it.</p>
+       {dirty?<span role="status" aria-live="polite" className="rounded-full border border-warning px-2 py-1 text-xs font-semibold text-warning-text">Unsaved changes</span>:null}
       </div>
-      <section role="status" className="mt-4 min-w-0 space-y-1 border-t border-border pt-4 text-sm text-body">
-        <p>A student may hold {Number.isFinite(held)?held:0} {held===1?"offer":"offers"} (released or accepted) before the next rule applies.</p>
-        <p className="mt-1">After that, another offer needs a CTC at least {form.upliftPct}% higher than their best offer, or a Dream drive. Internships never count.</p>
-        <p className="mt-3 border-t border-border pt-2">For example: A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p>
-        <p className="mt-2">If a student needs more time to respond, the placement cell can extend the response deadline by 48 hours.</p>
-      </section>
+      <div className="divide-y divide-border text-[15px] leading-8 text-foreground">
+       <p className="py-4 first:pt-2">A student counts as placed when the offer is
+        <Select aria-label="Counts as placed when" disabled={busy} value={form.countsAsPlacedAt}
+         onChange={event=>update("countsAsPlacedAt",event.target.value)} className={selectClass}>
+         <option value="OFFER_ACCEPTED">accepted</option>
+         <option value="OFFER_RELEASED">released</option>
+        </Select>.
+       </p>
+       <p className="py-4">A student may hold
+        <Select aria-label="Maximum held offers" disabled={busy} value={form.maxHeldOffers}
+         onChange={event=>update("maxHeldOffers",event.target.value)} className={selectClass}>
+         {Array.from({length:5},(_,index)=>index+1).map(value=>
+          <option key={value} value={value}>{value}</option>)}
+        </Select>
+        {held===1?" offer.":" offers."} After that, another offer needs a CTC at least
+        <Select aria-label="Offer uplift threshold" disabled={busy} value={form.upliftPct}
+         onChange={event=>update("upliftPct",event.target.value)} className={selectClass}>
+         {upliftChoices.map(value=><option key={value} value={value}>{value}%</option>)}
+        </Select>
+        higher. Internships never count.
+       </p>
+       <p className="py-4">Students get
+        <Select aria-label="Minimum response period" disabled={busy} value={form.minResponseHours}
+         onChange={event=>update("minResponseHours",event.target.value)} className={selectClass}>
+         {responseChoices.map(value=><option key={value} value={value}>{value} hours</option>)}
+        </Select>
+        to answer an offer. A placement officer can review any permitted extension separately.
+       </p>
+       <p className="py-4">CTC and dream-drive tiers are configured through
+        <Link href="/tpo/settings/job-types" className="mx-1 font-semibold text-link underline underline-offset-2">Job types</Link>;
+        the offer uplift above is the persisted college-wide threshold.
+       </p>
+      </div>
+      <div className="rounded-lg bg-surface-muted px-4 py-3 text-sm leading-6 text-body">
+       <strong className="font-semibold text-foreground">What this means today:</strong>
+       A student holding a 5 LPA offer needs an offer of at least {nextLpa} LPA
+       unless an applicable alternate placement rule permits the drive.
+       Students' original offer and eligibility records are never rewritten when these rules change.
+      </div>
+      <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border pt-4">
+       <Button type="button" variant="secondary" disabled={busy||!dirty}
+        onClick={discard} className="min-h-11 md:min-h-9">Discard</Button>
       <Button type="button" disabled={busy||!dirty} onClick={() => void save()}
-        className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
-        {busy ? "Saving..." : "Save changes"}
+        className="min-h-11 md:min-h-9">
+        {busy ? "Saving..." : "Save the rules"}
       </Button>
+      </div>
       {notice?<InlineNotice tone="success" message={notice}/>:null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
       <ConfirmDialog open={confirmSave} onOpenChange={next=>{if(!busy)setConfirmSave(next);}}
