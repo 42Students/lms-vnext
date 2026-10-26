@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {mentorProjectEmailWorkerReady} from
+import {mentorProjectEmailWorkerReady,mentorProjectEmailClaimDelayMs} from
  "@/modules/projects/mentor-project-email-dispatch-worker";
 const READY={
  MENTOR_PROJECT_EMAIL_OUTBOX_READY:"verified",
@@ -25,5 +25,18 @@ describe("Mentor email dispatcher operational safety",()=>{
   expect(mentorProjectEmailWorkerReady({
    ...READY,MENTOR_PROJECT_EMAIL_ACTIVATED_AT:"yesterday",
   })).toEqual({ready:false});
+ });
+ it("enforces a twenty-minute unexpired claim lease and staggered retries",()=>{
+  const minutes=60*1000;
+  expect(mentorProjectEmailClaimDelayMs("CLAIMED",1)).toBe(20*minutes);
+  expect(mentorProjectEmailClaimDelayMs("CLAIMED",3)).toBe(20*minutes);
+  expect(mentorProjectEmailClaimDelayMs("RETRY",1)).toBe(5*minutes);
+  expect(mentorProjectEmailClaimDelayMs("RETRY",2)).toBe(10*minutes);
+  expect(mentorProjectEmailClaimDelayMs("RETRY",3)).toBe(15*minutes);
+  expect(mentorProjectEmailClaimDelayMs("RETRY",999)).toBe(15*minutes);
+  expect(mentorProjectEmailClaimDelayMs("RETRY",undefined)).toBe(5*minutes);
+  expect(mentorProjectEmailClaimDelayMs("ACCEPTED",3)).toBe(0);
+  expect(mentorProjectEmailClaimDelayMs("EXHAUSTED",3)).toBe(0);
+  expect(mentorProjectEmailClaimDelayMs("SUPPRESSED",3)).toBe(0);
  });
 });
