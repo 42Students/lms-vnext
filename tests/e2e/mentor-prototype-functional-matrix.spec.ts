@@ -484,6 +484,82 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
    .toHaveAttribute("href","/mentor/notifications");
  });
 
+ test("persisted Mentor notifications survive reload and never leak a foreign-college event",async({page,context})=>{
+  const connection=process.env.E2E_DATABASE_URL||process.env.DATABASE_URL;
+  if(!connection)throw new Error("An isolated Mentor acceptance database is required");
+  const db=new Pool({connectionString:connection,max:1});
+  const eventId=randomUUID(),foreignEventId=randomUUID();
+  const ownId=randomUUID(),foreignId=randomUUID();
+  const title="Mentor persisted notice "+randomUUID();
+  const foreignTitle="Mentor foreign-college notice "+randomUUID();
+  try{
+   const b=await db.query<{organization_id:string}>(
+     "select organization_id from colleges where id=$1",[SEED_IDS.collegeB]);
+   const foreignOrganization=b.rows[0]?.organization_id;
+   expect(foreignOrganization).toBeTruthy();
+   // Insert real persisted recipient messages, not mocked route responses.
+   for(const item of [
+     {eventId,collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
+      notificationId:ownId,title},
+     {eventId:foreignEventId,collegeId:SEED_IDS.collegeB,
+      organizationId:foreignOrganization!,notificationId:foreignId,title:foreignTitle},
+   ]){
+    await db.query(`insert into activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,metadata)
+      values ($1,$2,$3,$4,'ACADEMICS','academics.program.created',
+       'test_notification',$5,'Mentor notification browser fixture','{}'::jsonb)`,
+      [item.eventId,item.organizationId,item.collegeId,
+       SEED_IDS.collegeAdminUser,item.eventId]);
+    await db.query(`insert into in_app_notifications
+      (id,user_id,event_id,title,body)
+      values ($1,$2,$3,$4,'Mentor read persistence browser fixture')`,
+      [item.notificationId,SEED_IDS.facultyUser,item.eventId,item.title]);
+   }
+   await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+   await page.goto("/mentor/notifications?pill=unread&view=unread");
+   const notice=page.locator("article").filter({hasText:title});
+   await expect(notice).toBeVisible();
+   await expect(notice).toContainText("Unread");
+   await expect(page.locator("body")).not.toContainText(foreignTitle);
+   // A Learner cannot acknowledge a Mentor's persisted message by ID.
+   await signIn(context,"seed-learner",SEED_IDS.learnerCollegeAMembership,"LEARNER");
+   const forbidden=await page.request.post("/api/mentor/notifications/"+ownId+"/read",{
+    headers:{Origin:origin},
+   });
+   expect(forbidden.status()).toBe(403);
+   const before=await db.query<{read_at:Date|null}>(
+    "select read_at from in_app_notifications where id=$1",[ownId]);
+   expect(before.rows[0]?.read_at).toBeNull();
+   await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+   await page.goto("/mentor/notifications?pill=unread&view=unread");
+   const ownNotice=page.locator("article").filter({hasText:title});
+   await expect(ownNotice).toBeVisible();
+   await ownNotice.getByRole("button",{name:"Mark read"}).click();
+   await expect(ownNotice).toHaveCount(0);
+   const saved=await db.query<{read_at:Date|null}>(
+    "select read_at from in_app_notifications where id=$1",[ownId]);
+   expect(saved.rows[0]?.read_at).toBeInstanceOf(Date);
+   await page.reload();
+   await expect(page.locator("article").filter({hasText:title})).toHaveCount(0);
+   await page.goto("/mentor/notifications");
+   const readNotice=page.locator("article").filter({hasText:title});
+   await expect(readNotice).toBeVisible();
+   await expect(readNotice).toContainText("Read");
+   await expect(readNotice.getByRole("button",{name:"Mark read"})).toHaveCount(0);
+   await expect(page.locator("body")).not.toContainText(foreignTitle);
+   const foreign=await db.query<{read_at:Date|null}>(
+    "select read_at from in_app_notifications where id=$1",[foreignId]);
+   expect(foreign.rows[0]?.read_at).toBeNull();
+  }finally{
+   await db.query("delete from in_app_notifications where id=any($1::uuid[])",
+    [[ownId,foreignId]]);
+   await db.query("delete from activity_events where id=any($1::uuid[])",
+    [[eventId,foreignEventId]]);
+   await db.end();
+  }
+ });
+
  test("malformed calendar filters fail recoverably for an authenticated Mentor",async({page,context})=>{
   await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
   await page.goto("/mentor/calendar?period=INVALID");
