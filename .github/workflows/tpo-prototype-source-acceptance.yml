@@ -1,0 +1,59 @@
+name: TPO prototype source acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/tpo-prototype-source-acceptance.yml"
+      - "src/components/tpo/tpo-campaign-*"
+      - "src/components/tpo/tpo-recruiter-message-reply.tsx"
+      - "src/components/tpo/tpo-today-*"
+      - "src/components/tpo/recruiter-leads-workspace.tsx"
+      - "src/components/tpo/recruiter-prototype-inspector.tsx"
+      - "src/components/placements/tpo-college-rules-control.tsx"
+      - "src/modules/placements/tpo-message-template-library.ts"
+      - "src/modules/placements/tpo-companies-today-model.ts"
+      - "src/modules/messaging/tpo-campaign-*"
+      - "src/app/(authenticated)/tpo/**"
+      - "tests/unit/tpo-prototype-*.test.ts"
+      - "tests/unit/tpo-today-prototype-views.test.ts"
+      - "docs/audit/prototype/tpo-2026-10-26-screen-inventory.md"
+
+permissions:
+  contents: read
+
+# A stable, TPO-only source contract run: unrelated Faculty and Recruiter main
+# pushes cannot cancel this evidence. Does not certify browser/pixel matching,
+# real email delivery or the global UX waiver baseline.
+concurrency:
+  group: lms-vnext-tpo-prototype-source-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tpo-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Strict application typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: TPO latest-prototype focused source and unit tests
+        run: |
+          npx vitest run \
+            tests/unit/tpo-today-prototype-views.test.ts \
+            tests/unit/tpo-prototype-navigation-2026.test.ts \
+            tests/unit/tpo-prototype-placement-rules-2026.test.ts \
+            tests/unit/tpo-prototype-recruiter-inspector-2026.test.ts \
+            tests/unit/tpo-prototype-email-workspace-2026.test.ts \
+            tests/unit/tpo-prototype-message-templates-2026.test.ts \
+            tests/unit/chat9-round6-calendar-settings.test.ts \
+            tests/unit/chat9-calendar-reports-existing-contracts.test.ts \
+            tests/unit/chat9-round9-calendar-behavior.test.ts
