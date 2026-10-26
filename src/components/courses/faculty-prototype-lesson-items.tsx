@@ -40,8 +40,11 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
  const [outcomeUnknown,setOutcomeUnknown]=useState(false);
  const [localVersion,setLocalVersion]=useState(0);
  const byId=new Map(items.map(item=>[item.id,item] as const));
- const displayed=[...ordered.map(id=>byId.get(id)).filter((v):v is FacultyBlueprintItem=>Boolean(v)),
-  ...items.filter(item=>!item.reorderable)];
+ // Reorder only delivery-owned content in its own slots. Shared materials,
+ // assignments and quizzes keep their authoritative positions in the lesson.
+ let orderPosition=0;
+ const displayed=items.map(item=>item.reorderable?
+  byId.get(ordered[orderPosition++]??"")??item:item);
  const dirty=facultyContentOrderDirty(baseline.current,ordered);
  const canChange=enabled&&!saving&&!outcomeUnknown;
  function move(from:number,to:number){
