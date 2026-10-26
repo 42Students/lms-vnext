@@ -104,11 +104,9 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   });
   await expect(publishedCard).toBeVisible();
   await expect(publishedCard.getByText("This Section")).toBeVisible();
-  await publishedCard.getByRole("button",{name:"View submissions"}).click();
-  const drawer=page.getByRole("dialog",{name:"Assignment submissions"});
-  await expect(drawer).toBeVisible();
-  await expect(drawer.getByText("No learners have submitted this Assignment yet.")).toBeVisible();
-  await page.getByRole("button",{name:"Close drawer"}).click();
+  await publishedCard.getByText("Actions",{exact:true}).click();
+  await expect(publishedCard.getByRole("link",{name:"View submissions"}))
+   .toHaveAttribute("href",new RegExp("/teacher/report/assignment/"+assignmentId));
   await publishedCard.getByRole("link",{name:"View Report"}).click();
   await expect(page).toHaveURL(new RegExp(
    "/teacher/report/assignment/"+assignmentId+"\\?deliveryId="+deliveryId,
