@@ -431,7 +431,7 @@ export function HrDriveDraftForm({
        <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
       <div className="min-w-0 space-y-5">
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="font-semibold text-foreground">Role and work</h2>
+        <h2 className="font-semibold text-foreground">1 · The role</h2>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Role title
@@ -522,7 +522,7 @@ export function HrDriveDraftForm({
       </section>
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="font-semibold text-foreground">2 / 3 · {LEGACY_HR_DRIVE_FORM_LABELS.paySection}</h2>
+        <h2 className="font-semibold text-foreground">2 · Pay</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Enter the overall compensation, then add packages for different offers if needed.
         </p>
@@ -630,72 +630,7 @@ export function HrDriveDraftForm({
       </section>
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-foreground">Rounds</h2>
-          <Button type="button" disabled={draft.rounds.length >= HR_DRIVE_ROUND_LIMIT}
-            variant="secondary"
-            onClick={() => setDraft((current) => ({
-              ...current, rounds: [...current.rounds, { kind: "INTERVIEW", name: "Interview" }],
-            }))}>
-            <span aria-hidden="true">＋</span> Add a round
-          </Button>
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
-          {HR_DRIVE_ROUND_PRESETS.map(preset=><Button key={preset.id}
-            type="button" variant="secondary"
-            onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
-            {preset.label}
-          </Button>)}
-        </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          Preset replaces this draft's rounds. Add is capped at {HR_DRIVE_ROUND_LIMIT} to keep approval reviewable.
-        </p>
-        <div className="mt-4 min-w-0 space-y-3">
-          {draft.rounds.map((round, index) => (
-            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[170px_minmax(0,1fr)_auto]">
-              <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-                Kind
-                <Select className="w-full" value={round.kind}
-                  onChange={(event) => setDraft((current) => ({
-                    ...current, rounds: current.rounds.map((item, i) => i === index
-                      ? { ...item, kind: event.target.value as HrDriveDraft["rounds"][number]["kind"] } : item),
-                  }))}>
-                  {roundKinds.map((kind) => <option key={kind} value={kind}>{roundKindLabels[kind]}</option>)}
-                </Select>
-              </label>
-              <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-                Round name
-                <Input className="w-full" maxLength={100} value={round.name} placeholder={"Round " + (index + 1) + " name"}
-                  onChange={(event) => setDraft((current) => ({
-                    ...current, rounds: current.rounds.map((item, i) => i === index
-                      ? { ...item, name: event.target.value } : item),
-                  }))} />
-              </label>
-              <div className="flex min-w-0 flex-wrap items-end gap-2 min-[768px]:col-span-2 min-[992px]:col-span-1 min-[992px]:justify-end">
-                <Button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
-                  variant="secondary"
-                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</Button>
-                <Button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
-                  variant="secondary"
-                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</Button>
-                <Button type="button" disabled={draft.rounds.length>=HR_DRIVE_ROUND_LIMIT}
-                  aria-label={"Duplicate "+round.name}
-                  variant="secondary" className="max-[767px]:flex-1"
-                  onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
-                  Duplicate
-                </Button>
-                <Button type="button"
-                  variant="secondary" className="max-[767px]:flex-1"
-                  onClick={() => setDraft((current) => ({
-                    ...current, rounds: current.rounds.filter((_, i) => i !== index),
-                  }))}>Remove</Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="font-semibold text-foreground">Eligibility</h2>
+        <h2 className="font-semibold text-foreground">3 · Who can apply</h2>
         <p className="mt-2 text-sm text-body">Leave these blank to include every registered student.</p>
         <div className="mt-3 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
@@ -806,8 +741,82 @@ export function HrDriveDraftForm({
           College branch suggestions are unavailable. Enter known branches or leave All branches for placement-cell review.
         </Alert> : null}
       </section>
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-semibold text-foreground">4 · Rounds</h2>
+          <Button type="button" disabled={draft.rounds.length >= HR_DRIVE_ROUND_LIMIT}
+            variant="secondary"
+            onClick={() => setDraft((current) => ({
+              ...current, rounds: [...current.rounds, { kind: "INTERVIEW", name: "Interview" }],
+            }))}>
+            <span aria-hidden="true">＋</span> Add a round
+          </Button>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
+          {HR_DRIVE_ROUND_PRESETS.map(preset=><Button key={preset.id}
+            type="button" variant="secondary"
+            onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
+            {preset.label}
+          </Button>)}
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Preset replaces this draft's rounds. Add is capped at {HR_DRIVE_ROUND_LIMIT} to keep approval reviewable.
+        </p>
+        <div className="mt-4 min-w-0 space-y-3">
+          {draft.rounds.map((round, index) => (
+            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[170px_minmax(0,1fr)_auto]">
+              <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+                Kind
+                <Select className="w-full" value={round.kind}
+                  onChange={(event) => setDraft((current) => ({
+                    ...current, rounds: current.rounds.map((item, i) => i === index
+                      ? { ...item, kind: event.target.value as HrDriveDraft["rounds"][number]["kind"] } : item),
+                  }))}>
+                  {roundKinds.map((kind) => <option key={kind} value={kind}>{roundKindLabels[kind]}</option>)}
+                </Select>
+              </label>
+              <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+                Round name
+                <Input className="w-full" maxLength={100} value={round.name} placeholder={"Round " + (index + 1) + " name"}
+                  onChange={(event) => setDraft((current) => ({
+                    ...current, rounds: current.rounds.map((item, i) => i === index
+                      ? { ...item, name: event.target.value } : item),
+                  }))} />
+              </label>
+              <div className="flex min-w-0 flex-wrap items-end gap-2 min-[768px]:col-span-2 min-[992px]:col-span-1 min-[992px]:justify-end">
+                <Button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
+                  variant="secondary"
+                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</Button>
+                <Button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
+                  variant="secondary"
+                  onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</Button>
+                <Button type="button" disabled={draft.rounds.length>=HR_DRIVE_ROUND_LIMIT}
+                  aria-label={"Duplicate "+round.name}
+                  variant="secondary" className="max-[767px]:flex-1"
+                  onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
+                  Duplicate
+                </Button>
+                <Button type="button"
+                  variant="secondary" className="max-[767px]:flex-1"
+                  onClick={() => setDraft((current) => ({
+                    ...current, rounds: current.rounds.filter((_, i) => i !== index),
+                  }))}>Remove</Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
       </div>
       <aside aria-label="Drive preview and submit" className="min-w-0 self-start rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 lg:sticky lg:top-6">
+      <section aria-label="What happens next" className="mb-4 border-b border-border pb-4">
+        <h2 className="font-semibold text-foreground">What happens next</h2>
+        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-body">
+          <li>The placement cell reviews your request and may ask questions.</li>
+          <li>They agree dates and publish an approved drive to eligible students.</li>
+          <li>Applicants appear after the college shares their records with you.</li>
+        </ol>
+        <p className="mt-2 text-xs text-muted-foreground">Approval, dates and applicant volume are not guaranteed before the college confirms.</p>
+      </section>
       <section className="min-w-0">
         <h2 className="font-semibold text-foreground">What students will see</h2>
         <p className="mt-1 text-sm text-body">
