@@ -11,6 +11,10 @@ test.describe("Recruiter prototype functional journeys",()=>{
  test("Messages opens the two-pane authorized inbox and preserves advanced filters",async({page,context})=>{
   await authenticateGracefulRole(context,"recruiter");
   await page.goto("/hr/conversations");
+  if(!(await page.getByTestId("recruiter.messages.workspace").count())){
+   const college=page.locator('a[href^="/hr/conversations?collegeId="]').first();
+   if(await college.count())await college.click();
+  }
   const workspace=page.getByTestId("recruiter.messages.workspace");
   await expect(workspace).toBeVisible();
   await expect(workspace.getByRole("searchbox",{name:"Search by drive or message"})).toBeVisible();
@@ -33,6 +37,10 @@ test.describe("Recruiter prototype functional journeys",()=>{
  test("Company & Team keeps verified employer facts, hiring report and request-only invitations",async({page,context})=>{
   await authenticateGracefulRole(context,"recruiter");
   await page.goto("/hr/company");
+  if(!(await page.getByTestId("recruiter.company.prototype").count())){
+   const college=page.locator('a[href^="/hr/company?collegeId="]').first();
+   if(await college.count())await college.click();
+  }
   const company=page.getByTestId("recruiter.company.prototype");
   await expect(company).toBeVisible();
   await expect(company.getByRole("region",{name:"Your company"})).toBeVisible();
@@ -45,6 +53,24 @@ test.describe("Recruiter prototype functional journeys",()=>{
    await expect(invite.getByRole("textbox",{name:"Colleague work email"})).toBeVisible();
   }else{
    await expect(company.getByText(/must verify your company email domain/i)).toBeVisible();
+  }
+  // Open the company correction request without submitting or altering
+  // any verified data. The submit must remain disabled until explicit review.
+  const edit=company.getByText("Edit company details",{exact:true});
+  await expect(edit).toBeVisible();
+  await edit.click();
+  const correction=company.getByRole("form",{name:"Request company profile correction"});
+  await expect(correction).toBeVisible();
+  await expect(correction.getByRole("button",{name:"Send to placement cell"})).toBeDisabled();
+  await correction.getByRole("textbox",{name:"Requested change"}).fill("Please update our company profile website.");
+  await expect(correction.getByRole("button",{name:"Send to placement cell"})).toBeDisabled();
+  await correction.getByRole("checkbox").check();
+  await expect(correction.getByRole("button",{name:"Send to placement cell"})).toBeEnabled();
+  const teammateChange=company.getByText("Change access",{exact:true}).first();
+  if(await teammateChange.count()){
+   await teammateChange.click();
+   const teamForm=company.getByRole("form",{name:"Request teammate access change"}).first();
+   await expect(teamForm.getByRole("button",{name:"Send to placement cell"})).toBeDisabled();
   }
   await expectNoRawErrors(page);
  });
