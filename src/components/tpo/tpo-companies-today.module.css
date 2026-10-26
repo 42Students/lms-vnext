@@ -98,3 +98,12 @@
 .replyQueueItem strong{font-size:13px}
 .replyQueueItem small{font-size:12px;color:#5b6b82}
 .queueReplies>.link{display:inline-block;margin:10px 16px 0}
+
+/* Original Today includes employer verification work as well as follow-ups. */
+.companyAttention{border-bottom:1px solid #e7ecf2;padding:12px 0;background:#fff9f3}
+.companyAttention>.eyebrow{display:block;padding:0 16px 8px}
+.companyAttentionItem{display:flex;flex-direction:column;gap:4px;padding:12px 16px;border-top:1px solid #f4e9da;overflow-wrap:anywhere}
+.companyAttentionItem>strong{font-size:13px;color:#24314b}
+.companyAttentionItem>small{font-size:12px;color:#695b4c}
+.companyAttentionItem>.link{align-self:flex-start;font-size:12px;font-weight:700}
+.companyAttention>.helper{padding:8px 16px 0}
