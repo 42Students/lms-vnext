@@ -114,6 +114,8 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
   const workspace=source("src/components/tpo/recruiter-leads-workspace.tsx");
   const page=source("src/app/(authenticated)/tpo/recruiters/page.tsx");
   expect(workspace).toContain('aria-label="Recruiter table tools"');
+  expect(workspace).toContain('title="Recruiters"');
+  expect(workspace).toContain("Everyone you work with at companies");
   for(const label of ["Search recruiters","Columns","Filters","Act on all ","Export"]){
    expect(workspace).toContain(label);
   }
