@@ -1,5 +1,25 @@
 # Faculty vNext — single closure ledger
 
+## CURRENT CODE IMPLEMENTATION / TEST GATES — 27 October 2026 (supersedes older status descriptions)
+
+**Route inventory is frozen** at [01-canonical-page-inventory.md](01-canonical-page-inventory.md). Work below is real code committed directly to main, not merely design notes; **a focused test pass and a globally green workflow are separate outcomes**.
+
+| Screen | Latest code change | Focused verification | Acceptance limitation |
+| --- | --- | --- | --- |
+| #05 Blueprint | [a5866ae](https://github.com/42Students/lms-vnext/commit/a5866ae4eb6456191805079fb7c4d0af1c0c6905) preserves Section-authoritative content order across assessment slots and resets stale local snapshots | [40384839745](https://github.com/42Students/lms-vnext/actions/runs/40384839745): **21/21 targeted unit tests and authenticated browser pass**, workflow red in unrelated TPO TS2322 | DB05 stage unverified; content-write snapshot/permission scope still needs adversarial DB05 resolution; visuals deferred |
+| #06 Students | [2bc7a5f](https://github.com/42Students/lms-vnext/commit/2bc7a5f62009c9109ab249d953b54938e2b360a3): unavailable/no-denominator Behind filter is disabled; fake behind rows prevented | [40385171351](https://github.com/42Students/lms-vnext/actions/runs/40385171351): prototype + retained desktop/mobile privacy browser **passed**; global TypeScript gate red in unrelated TPO | global CI and broader error-state acceptance open; visuals deferred |
+| #07 Attendance | [75588fd](https://github.com/42Students/lms-vnext/commit/75588fd94851f577f0b1abd95ef98781a818600a), [2d0bb1e](https://github.com/42Students/lms-vnext/commit/2d0bb1e1e77a63b5857dd3c012543044ee48db1c), [0c9d402](https://github.com/42Students/lms-vnext/commit/0c9d40299256b68a70956dc7af69c6e5367c82c2): unknown-save locks, month empty state, confirmed correction becomes clean snapshot | [40386744605](https://github.com/42Students/lms-vnext/actions/runs/40386744605): **all browser, DB integration and model tests passed** on 2d0bb1e; [40387070834](https://github.com/42Students/lms-vnext/actions/runs/40387070834) is newer post-0c9d402 validation | newest advanced failure-handling code needs post-change browser; visuals deferred |
+| #08 Discussions | [137e427](https://github.com/42Students/lms-vnext/commit/137e42727f87a0dd866222a6c79111f73041ebdf): uncertain POST locks send until readback, retains draft; fault-injected browser test | [40386236966](https://github.com/42Students/lms-vnext/actions/runs/40386236966): focused recovery unit passed; browser not yet established at recording | compatibility with Learner sharing component and browser acceptance still pending; visuals deferred |
+| #09 Assignments & Quizzes | [ff8f98a](https://github.com/42Students/lms-vnext/commit/ff8f98aaed6bab1fde4c5dc144997360202534f0) adds deep-linked All/Assignments/Quizzes; [db84281](https://github.com/42Students/lms-vnext/commit/db8428132c45d0fbd8afa9bf46d76a1ea630cd95) fixes duplicate course-code cross-Section filter | [40381543032](https://github.com/42Students/lms-vnext/actions/runs/40381543032): focused browser passed on ff8f; [40387287192](https://github.com/42Students/lms-vnext/actions/runs/40387287192): newest Section filter unit passed, browser pending | keep old full editing/lifecycle pages until full feature parity proven; global TPO TS failing; visuals deferred |
+
+**External cross-account blocker:** `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx:76` TS2322 remains the shared `npm run typecheck` failure. Do not present red global CI as accepted or modify another lane's owned TPO page from this Faculty workstream.
+
+**Product policy / deploy exceptions:** Faculty cannot rename College Admin-owned shared syllabus or add shared lessons. `DB05_CONTENT_ORDER_READY=DB05_VERIFIED` remains fail-closed unless migrations verified. Audit that `listLessonContents` Faculty authorship filtering and ordering-service full visible-content set agree **before** activating DB05. Do not convert historical All Assignments/All Quizzes URLs to redirects before advanced functionality is reachable through `/teacher/assessments`.
+
+**Code gate next:** complete #05 DB05/permissions exception classification; finish newer #07/#08/#09 focused results, then #10 grading and secondary specialized routes. Continue one screen at a time through #13 and regress #02–#04. All 12 prototype references and 25 secondary screens remain inside the acceptance inventory; **pixel review is deferred**.
+
+---
+
 ## CANONICAL PRODUCT PAGE INVENTORY — 27 October 2026
 
 **Decision:** The newest Faculty prototype defines the primary user experience and design, **not** an instruction to remove distinct vNext features. The complete [canonical screen and route disposition](01-canonical-page-inventory.md) now classifies the 12 original Faculty screenshot references, 25 additional rendered Faculty routes and 5 compatibility redirects. The 12 references include one shared-shell interaction screenshot, so screenshot count and Next.js route count are different.

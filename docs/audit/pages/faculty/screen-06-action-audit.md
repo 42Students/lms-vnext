@@ -1,5 +1,11 @@
 # Screen #06: Course Students — actionable prototype/code audit
 
+## Code validation update — 27 October 2026
+
+- [2bc7a5f](https://github.com/42Students/lms-vnext/commit/2bc7a5f62009c9109ab249d953b54938e2b360a3) prevents a false Behind filter when there is no measurable published work or course completion is unavailable; an unavailable denominator is not zero.
+- [40385171351](https://github.com/42Students/lms-vnext/actions/runs/40385171351): the focused prototype and retained desktop/mobile roster/privacy browser tests passed **after** the code change; the workflow failed afterward at unrelated TPO TS2322. This is focused-browser evidence, **not global green**.
+- Still required for final account-wide code closure: broader transient/stale roster/partial-signal scenarios, global TypeScript recovery, and shared navigation regression. Screenshot visual review remains deferred.
+
 **Original reference:** `Course › Students.png` in user-uploaded `42LMS pages prototype-png-faculty.zip`; route `/teacher/courses/:deliveryId/students`.
 **Audit phase:** RECHECK; **rendered visual parity not signed off**.
 **Earlier test evidence, not current-code guarantee:** https://github.com/42Students/lms-vnext/actions/runs/40293289182.

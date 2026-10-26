@@ -1,5 +1,11 @@
 # Screen #05: Blueprint — actionable source-to-prototype audit
 
+## Code validation update — 27 October 2026
+
+- [a5866ae](https://github.com/42Students/lms-vnext/commit/a5866ae4eb6456191805079fb7c4d0af1c0c6905) fixes a newly confirmed display bug: content from the Section-specific server override was previously sorted **again** by historical sequence. A pure helper now preserves content in original content slots while leaving assignments/quizzes in their persisted positions; the lesson list resets its baseline if server order changes.
+- [40384839745](https://github.com/42Students/lms-vnext/actions/runs/40384839745): 6 focused unit files (21 tests) and authenticated desktop/mobile Blueprint Playwright passed after the sort fix. Workflow still red due unrelated TPO TypeScript TS2322.
+- **Remaining P0 DB05 caveat:** the author-visible `listLessonContents` can exclude colleague/admin-created rows while the ordering writer's full visible-set contract includes them. DB05 is staged/unverified. The frontend cannot safely declare all mixed shared/owned reorder writes supported without reconciling both contracts. Leave feature flag off. No visual acceptance.
+
 ## LATEST CODE-PHASE EVIDENCE — 26 October 2026 (supersedes older item descriptions below)
 
 - **F05-02 / F05-03 — focused browser-pass prior SHA:** All six Add Content URLs now open the appropriate editor with the selected, authorized lesson; closed details expand; video upload opens; title receives focus. Sources 5544f45/a415234/9e2c689; [run 40345554751](https://github.com/42Students/lms-vnext/actions/runs/40345554751) passed seeded Playwright.

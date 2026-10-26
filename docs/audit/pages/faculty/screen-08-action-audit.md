@@ -1,5 +1,11 @@
 # Screen #08: Course Discussions — actionable prototype/code audit
 
+## Code validation update — 27 October 2026
+
+- [137e427](https://github.com/42Students/lms-vnext/commit/137e42727f87a0dd866222a6c79111f73041ebdf) prevents the shared Faculty/Learner composer from blindly retrying an uncertain POST; it retains the draft but disables Send until a fresh discussion reload, avoiding duplicate messages. Preserves successful moderation and paging.
+- Focused recovery unit passed in [40386236966](https://github.com/42Students/lms-vnext/actions/runs/40386236966). Added browser 503 fault-injection proof; its browser result was not established when this update was written. Shared Learner regression and negative cross-delivery scope remain explicit gates.
+- No visual acceptance claimed.
+
 **Original reference:** `Course › Discussions.png` in user-uploaded `42LMS pages prototype-png-faculty.zip`; route `/teacher/courses/:deliveryId/discussions`.
 **Audit phase:** RECHECK; **rendered visual parity not signed off**.
 **Earlier test evidence, not current-code guarantee:** https://github.com/42Students/lms-vnext/actions/runs/40295982638.

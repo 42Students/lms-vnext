@@ -1,5 +1,11 @@
 # Screen #09: Assignments & Quizzes — actionable prototype/code audit
 
+## Code validation update — 27 October 2026
+
+- [ff8f98a](https://github.com/42Students/lms-vnext/commit/ff8f98aaed6bab1fde4c5dc144997360202534f0) makes the combined directory's Assignments/Quizzes tab selection shareable with `?kind=assignment|quiz`. Focused browser passed [40381543032](https://github.com/42Students/lms-vnext/actions/runs/40381543032); unrelated TPO typecheck was the failing final step.
+- [db84281](https://github.com/42Students/lms-vnext/commit/db8428132c45d0fbd8afa9bf46d76a1ea630cd95) fixes filtering by course code across Sections: options/rows now use exact authorized `deliveryId`, keeping repeated course codes distinct. Two pure contract tests passed in [40387287192](https://github.com/42Students/lms-vnext/actions/runs/40387287192), latest browser pending as of this update.
+- Old `/teacher/allAssignments` and `/teacher/allQuizzes` remain intact until their review, metadata edit, quiz results release/withhold, publication/lifecycle, and `?content=id` bookmark functions are fully represented in the new combined experience. No unsafe premature consolidation.
+
 **Original reference:** `Assignments & quizzes.png` in user-uploaded `42LMS pages prototype-png-faculty.zip`; route `/teacher/assessments`.
 **Audit phase:** RECHECK; **rendered visual parity not signed off**.
 **Earlier test evidence, not current-code guarantee:** https://github.com/42Students/lms-vnext/actions/runs/40295538156.

@@ -1,5 +1,12 @@
 # Screen #07: Course Attendance — actionable prototype/code audit
 
+## Code validation update — 27 October 2026
+
+- [75588fd](https://github.com/42Students/lms-vnext/commit/75588fd94851f577f0b1abd95ef98781a818600a) protects the prototype marker against 409/412/408/5xx unknown write receipts and handles a month with no scheduled classes. Pure recovery test added.
+- First full Attendance E2E run [40385923788](https://github.com/42Students/lms-vnext/actions/runs/40385923788) found a real issue: after a confirmed advanced correction, immediate report-tab navigation saw an obsolete unsaved snapshot. [2d0bb1e](https://github.com/42Students/lms-vnext/commit/2d0bb1e1e77a63b5857dd3c012543044ee48db1c) fixes the accepted receipt baseline.
+- [40386744605](https://github.com/42Students/lms-vnext/actions/runs/40386744605) **passed** focused PostgreSQL/units plus the retained attendance marking, correction, monthly report and prototype browser cases.
+- Later [0c9d402](https://github.com/42Students/lms-vnext/commit/0c9d40299256b68a70956dc7af69c6e5367c82c2) also makes advanced 408/409/412/5xx/transport uncertainty fail-closed until hard reload. Newest focused run [40387070834](https://github.com/42Students/lms-vnext/actions/runs/40387070834) was in progress at this record. Don't claim 0c9d acceptance based on prior green.
+
 **Original reference:** `Course › Attendance.png` in user-uploaded `42LMS pages prototype-png-faculty.zip`; route `/teacher/courses/:deliveryId/attendanceDetail`.
 **Audit phase:** RECHECK; **rendered visual parity not signed off**.
 **Earlier test evidence, not current-code guarantee:** https://github.com/42Students/lms-vnext/actions/runs/40295364519.
