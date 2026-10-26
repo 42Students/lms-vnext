@@ -16,7 +16,11 @@ export async function listRecruiterTodayChangeRequests(collegeId:string,allowedJ
   totalOpen:sql<number>`count(*) over()::integer`.mapWith(Number),
   jobTitle:placementJobs.title,field:placementDriveChangeRequests.field,
   kind:placementDriveChangeRequests.mode,
-  note:placementDriveChangeRequests.reason,
+  // ASK is a question: show the requested answer, not the college's private
+  // justification. SUGGEST remains descriptive until an explicit decision.
+  note:sql<string>`case when ${placementDriveChangeRequests.mode} = 'ASK'
+    then ${placementDriveChangeRequests.proposedValue}
+    else ${placementDriveChangeRequests.reason} end`,
   createdAt:placementDriveChangeRequests.createdAt,
  }).from(placementDriveChangeRequests)
   .innerJoin(placementJobs,eq(placementJobs.id,placementDriveChangeRequests.jobId))
