@@ -17,11 +17,11 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 | 07 | Companies → Emails (sent email open) | `/tpo/recruiters/campaigns/drafts/[campaignId]` | Added split list/detail layout with actual campaign status and recipient receipts; runtime acceptance still open |
 | 08 | Companies → Emails (writing a new email) | `/tpo/recruiters/campaigns/new` | Added split list/composer, four draft-wording presets and Insert tokens; two-step send and provider acceptance still need live testing |
 | 09 | Companies → Messages | `/tpo/messages?tab=recruiters` | Added searchable template selection, preview and non-sending insertion into draft; thread interactions and screenshots remain unaccepted |
-| 10 | Students → All students | `/tpo/students` | Verify filterable student table and detail |
+| 10 | Students → All students | `/tpo/students` | **Code updated:** selected student right-side preview with actual verification/journey/counts; advanced drawer retained on demand. Runtime and visual acceptance open |
 | 11 | Students → Who's in placements | `/tpo/batches` | Verify batch lifecycle, invitation, count semantics |
 | 12 | Students → To verify | `/tpo/verification` | Verify staff authorization, bulk and individual actions |
-| 13 | Students → Requests | `/tpo/requests` | Verify request triage and state transitions |
-| 14 | Students → Announcements | `/tpo/announcements` | Verify compose, targeting and receipts |
+| 13 | Students → Requests | `/tpo/requests` | **Code updated:** authorized selected-request list/detail with persisted decision control; bulk tools/table retained in Advanced. Runtime and visual acceptance open |
+| 14 | Students → Announcements | `/tpo/announcements` | **Code updated:** grouped searchable page-scoped sidebar, selected detail, existing edit/delete/read/delivery actions. Runtime and visual acceptance open |
 | 15 | Drives | `/tpo/placements/lifecycle` | Verify drive list, lifecycle filters and actions |
 | 16 | Drives → A recruiter's drive request | `/tpo/requests` / drive change-request flow | Verify requested drive review, approval and safe decline |
 | 17 | Drives → New drive (and edit) | `/tpo/placements/new`, `/tpo/placements/jobs/[jobId]/edit` | Verify form fields, save/publish, validation |
@@ -56,6 +56,16 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 - #30: `tpo-college-rules-control.tsx` renders persisted offer rules as inline editable sentences, retains custom numeric values, Save/Discard and optimistic version checks; rules page keeps advanced details in disclosure
 - `tests/unit/tpo-prototype-{recruiter-inspector,email-workspace,message-templates,placement-rules}-2026.test.ts`: source contracts
 - `.github/workflows/tpo-prototype-source-acceptance.yml`: dedicated non-cancelling source/unit CI for these prototype slices, independent of the global suite
+
+## Further Students prototype implementation (26 October 2026)
+
+Based on the supplied Students screenshot set (assets labeled `tpo_09.png` to `tpo_13.png`):
+
+- Screen **10 / All students**: `src/components/tpo/tpo-student-roster-inspector.tsx` adds a right-hand real-data overview. `tpo-students-spreadsheet.tsx` connects row selection while preserving full `TpoStudentQuickPanel` in a separate detail action. Tests: `tests/unit/tpo-students-prototype-inspector-2026.test.ts`.
+- Screen **13 / Requests**: `src/components/tpo/tpo-request-prototype-workspace.tsx` presents authorized list/selection, request reason, current drive context and persisted decision control, while existing bulk operations and report table remain in Advanced. Tests: `tests/unit/tpo-requests-prototype-workspace-2026.test.ts`.
+- Screen **14 / Announcements**: `src/components/tpo/tpo-notice-prototype-sidebar.tsx` groups scheduled, current and ended notices on the loaded page. `/tpo/announcements` renders the selected detail and original audited mutation/read/retry controls. Tests: `tests/unit/tpo-announcements-prototype-workspace-2026.test.ts`.
+- Typecheck regression in first Announcements iteration normalized optional `audienceKind` to `null` in the sidebar mapping. The fix is committed, but awaits a subsequent green typecheck.
+- **All three are code implemented but still require actual interactive browser checks, responsive screenshots and prototype visual comparison.** Do not mark them visually accepted based on source tests.
 
 ## Known acceptance boundaries
 
