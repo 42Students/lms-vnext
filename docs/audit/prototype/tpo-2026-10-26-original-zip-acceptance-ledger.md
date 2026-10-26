@@ -26,7 +26,7 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 18 | Drive › Students (review one by one, share with company).png | `fa5858818245` | Yes | Open |
 | 19 | Drive › Rounds (results, slots).png | `45610502dbb9` | Yes | Open |
 | 20 | Drive › Offers.png | `7c72b4402fc8` | Yes | Open |
-| 21 | Drive day (at the gate).png | `42077d978c1d` | No | Open |
+| 21 | Drive day (at the gate).png | `42077d978c1d` | Yes | Open |
 | 22 | Drive › Talk (recruiter, change requests, team).png | `458937985d38` | No | Open |
 | 23 | Drive › About.png | `7e3aaa257b42` | No | Open |
 | 24 | Home.png | `42bd09911e33` | No | Open |
@@ -191,10 +191,20 @@ Original behavior already exists behind separate vNext actions: persist selected
 
 Source-backed stage UI does **not** manufacture a fully policy-cleared count or map selected applicants to `ISSUED`. Letter visibility, read/open tracking, arbitrary extension approval, company acceptance and waitlist promotions remain in their established verified workspaces, not fictional buttons. Added render regression `tests/unit/tpo-prototype-drive-offers-2026.test.tsx`, now included in dedicated TPO source CI. **Runtime/browser/pixel acceptance still open.**
 
+## Screen 21 — Drive day (at the gate), original PNG visually inspected
+
+The **2880×1920** screenshot shows TPO day-of round operations: five compact persisted attendance states, a roll-number gate scanner/paste entry, a just-arrived list, Panel A and B currently in the room with stage-only results and next waiting student, and a bottom not-here-yet roster with per-candidate follow-up. The pictured names and counts are sample fixture data only.
+
+**Verified existing vNext**: `/tpo/drive-day/[roundId]` calls `getTpoRoundDriveDay(context,roundId)`, a college-scoped authorized roster. `TpoRoundDriveDayReadOnly` already provided exact roll matching, safe batch paste preview (50 cap), confirmed attendance writes, room-specific `PRESENT→IN_INTERVIEW` call-next, stage/apply-safe `TpoRoundResultRecorder`, no-show actions, CSV and advanced roster. It is more functional than a visual imitation and is retained.
+
+**New source-backed implementation** in `src/components/placements/tpo-round-drive-day-read-only.tsx`: original five-stat top summary with Here=Present+In interview+Done, Waiting, In interview, Done and Absent, explicitly distinguishing UNKNOWN; “Here and waiting” preview without fabricated arrival time, room panels showing actual booked student/slot and the existing audited result recorder/check-in for each in-room candidate, next checked-in candidate with the genuine guarded call action, and bounded not-here-yet triage with each applicant’s check-in/absent confirmation. The user is explicitly directed to apply staged results in Rounds. No prototype “mark the rest absent at 1 PM” automation was invented, and no mass notification is claimed. True absent-notification proof is read only from the existing check-in response.
+
+Added `tests/unit/tpo-prototype-drive-day-gate-2026.test.ts` to dedicated TPO source CI for unknown/ambiguous status, stage/apply boundary, room queue and manual absent actions. Still open: audited panel outcome fast-action chips and candidate confirmation evidence, live gate-scanner hardware integration, automatic no-show policies, cross-round "also today" contextual navigation, browser and pixel acceptance. **Partial source implementation, not fully accepted.**
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **20/33**
+- Original PNGs visually opened in this recovery pass: **21/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**
