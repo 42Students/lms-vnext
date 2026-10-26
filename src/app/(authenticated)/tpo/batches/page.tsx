@@ -35,16 +35,19 @@ import {parseTpoBatchFacetQuery,filterTpoBatchFacets} from "@/modules/placements
 import {TpoBatchFacetFilters} from "@/components/tpo/tpo-batch-facet-filters";
 export const dynamic="force-dynamic";
 
-export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[];facetState?:string|string[];facetProgram?:string|string[];facetDepartment?:string|string[];facetFinalYear?:string|string[]}>}){
+export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[];facetState?:string|string[];facetProgram?:string|string[];facetDepartment?:string|string[];facetFinalYear?:string|string[];selectedBatch?:string|string[]}>}){
  // Authorize before even returning filter feedback to a stale or foreign actor.
 
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  await requireTpoBatchActor(context);
  const raw=await searchParams;
- const scalarKeys=["q","state","sort","program","department","deadline","page","pageSize","showOlder"] as const;
+ const scalarKeys=["q","state","sort","program","department","deadline","page","pageSize","showOlder","selectedBatch"] as const;
  if(scalarKeys.some(key=>Array.isArray(raw[key])))
   return <div className="min-w-0 space-y-4"><PageHeader title={TPO_OWNER_PAGE_COPY.placementEligibility}/><Alert tone="error">Invalid batch filters. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/tpo/batches">Clear filters</Link></Alert></div>;
+ if(raw.selectedBatch!==undefined&&(typeof raw.selectedBatch!=="string"||
+  !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.selectedBatch)))
+  return <Alert tone="error">Invalid batch selection. <Link href="/tpo/batches" className="font-semibold text-link underline">Reset</Link></Alert>;
  const parsed=batchDirectoryFilterSchema.safeParse({q:raw.q,state:raw.state});
  const sortParsed=tpoBatchSortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
  const programParsed=tpoBatchProgramSchema.safeParse(Array.isArray(raw.program)?raw.program[0]:raw.program);
@@ -105,6 +108,12 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const pendingCount=eligibility===null?null:working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.undecided??0),0);
  const placedCount=journey===null?null:working.reduce((sum,batch)=>sum+(journey.get(batch.id)?.placed??0),0);
  const latestDecision=recent===null?null:[...recent.entries()].sort((a,b)=>b[1].occurredAt.localeCompare(a[1].occurredAt))[0]??null;
+ const activeBatch=typeof raw.selectedBatch==="string"?
+  batchPage.items.find(batch=>batch.id===raw.selectedBatch)??null:batchPage.items[0]??null;
+ const activeSummary=activeBatch?eligibility?.get(activeBatch.id):null;
+ const activeJourney=activeBatch?journey?.get(activeBatch.id):null;
+ const batchListHref=tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize);
+ const selectBatchHref=(id:string)=>batchListHref+(batchListHref.includes("?")?"&":"?")+"selectedBatch="+encodeURIComponent(id);
  const filterCount=Number(parsed.data.state!=="ALL")+Number(Boolean(programParsed.data))+Number(Boolean(departmentParsed.data))+Number(deadlineParsed.data!=="ALL")+facets.states.length+facets.programs.length+facets.departments.length+facets.finalYears.length;
  return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
@@ -167,6 +176,71 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
       className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Hide older batches</Link>:null}
   <p role="status" className="text-sm text-muted-foreground leading-[1.6]">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
   {pageParsed.data.page!==batchPage.page?<Alert tone="warning">The requested batch page no longer exists for these filters. Showing the last available page.</Alert>:null}
+  {batchPage.items.length>0?<div data-testid="tpo.batches.prototype-workspace"
+   className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+   <div className="min-w-0 overflow-x-auto rounded-xl border border-border bg-surface"
+    role="region" aria-label="Batch placement table" tabIndex={0}>
+    <table className="w-full min-w-[700px] border-collapse text-sm">
+     <thead><tr className="bg-surface-secondary text-left text-xs font-bold uppercase text-muted-foreground">
+      <th scope="col" className="p-3">Batch and classes</th><th scope="col" className="p-3 text-right">Students</th>
+      <th scope="col" className="p-3">Decided</th><th scope="col" className="p-3 text-right">Registered</th>
+      <th scope="col" className="p-3 text-right">Verified</th><th scope="col" className="p-3 text-right">Placed</th>
+      <th scope="col" className="p-3">Next step</th>
+     </tr></thead>
+     <tbody className="divide-y divide-border">{batchPage.items.map(batch=>{
+      const counts=eligibility?.get(batch.id);
+      const progress=journey?.get(batch.id);
+      const isActive=activeBatch?.id===batch.id;
+      return <tr key={batch.id} className={isActive?"bg-primary-subtle":"hover:bg-surface-secondary"}>
+       <td className="p-3"><Link href={selectBatchHref(batch.id)} aria-current={isActive?"true":undefined}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">{batch.name}</Link>
+        <p className="mt-1 text-xs text-muted-foreground">{batch.program} · {batch.department}</p></td>
+       <td className="p-3 text-right tabular-nums">{counts?.assessed??"—"}</td>
+       <td className="p-3">{counts?<><div className="h-2 overflow-hidden rounded-full bg-surface-secondary">
+        <div className="h-full bg-primary" style={{width:counts.assessed>0?
+         Math.min(100,(counts.eligible+counts.ineligible)/counts.assessed*100)+"%":"0%"}}/></div>
+        <p className="mt-1 text-xs text-warning-text">{counts.undecided+counts.needsReview} not decided</p></>:"Unavailable"}</td>
+       <td className="p-3 text-right tabular-nums">{progress?.registered??"—"}</td>
+       <td className="p-3 text-right tabular-nums">{progress?.verified??"—"}</td>
+       <td className="p-3 text-right tabular-nums">{progress?.placed??"—"}</td>
+       <td className="p-3"><Link href={"/tpo/batches/"+batch.id+tpoBatchNextActionLink(batch,data.ready,counts,progress)}
+        className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-xs font-semibold text-link md:min-h-9">
+        {tpoBatchNextAction(batch,data.ready,counts,progress)}</Link></td>
+      </tr>;
+     })}</tbody>
+    </table>
+   </div>
+   <aside aria-label="Selected batch decision" className="min-w-0 rounded-xl border border-border bg-surface p-4">
+    {activeBatch?<><h2 className="text-lg font-bold text-foreground">Decide {activeBatch.name}</h2>
+     <p className="mt-1 text-sm text-body">{activeBatch.program} · {activeBatch.department}</p>
+     <p className="mt-4 rounded-lg bg-surface-secondary p-3 text-sm text-body">
+      Students follow their batch unless a class or individual decision overrides it.
+      Open the batch to review exceptions and record decisions.
+     </p>
+     <dl className="mt-4 divide-y divide-border text-sm">{([
+      ["Students assessed",activeSummary?.assessed],["In placements",activeSummary?.eligible],
+      ["Not eligible",activeSummary?.ineligible],
+      ["Not decided",activeSummary?activeSummary.undecided+activeSummary.needsReview:null],
+      ["Registered",activeJourney?.registered],["Verified",activeJourney?.verified],
+      ["Placed",activeJourney?.placed],
+     ] as const).map(([label,value])=><div key={label} className="flex justify-between gap-3 py-2">
+      <dt className="text-body">{label}</dt><dd className="font-semibold tabular-nums">{value??"—"}</dd>
+     </div>)}</dl>
+     <Link href={"/tpo/batches/"+activeBatch.id+tpoBatchNextActionLink(activeBatch,data.ready,activeSummary,activeJourney)}
+      className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary">
+      {tpoBatchNextAction(activeBatch,data.ready,activeSummary,activeJourney)}
+     </Link>
+     <Link href={"/tpo/batches/"+activeBatch.id}
+      className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Review classes, exceptions and history</Link>
+    </>:<div role="status" className="space-y-2 text-sm text-body">
+     <p>That batch is not on this authorized page. No other batch was selected.</p>
+     <Link href={batchListHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear selection</Link>
+    </div>}
+   </aside>
+  </div>:null}
+  <details className="min-w-0 border-t border-border pt-3">
+   <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link">Advanced batch cards and lifecycle details</summary>
+   <div className="pt-3">
   {batches.length===0?<EmptyState
     title={tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?"No batches yet":"No batches match this view"}
     description={data.batches.length===0?"Batches come from Academic Setup. Create the academic batch there first.":"Try another search or clear the active batch filters."}
@@ -217,6 +291,8 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
      </footer>
     </li>;
    })}</ul>}
+   </div>
+  </details>
   {(batchPage.hasPrev||batchPage.hasNext)?<nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
    {batchPage.hasPrev?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
    {batchPage.hasNext?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
