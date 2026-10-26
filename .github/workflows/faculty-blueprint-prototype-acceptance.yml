@@ -13,6 +13,8 @@ on:
       - "src/components/courses/faculty-course-workspace.tsx"
       - "tests/e2e/faculty-blueprint-prototype.spec.ts"
       - "tests/unit/faculty-content-order-ui-model.test.ts"
+      - "tests/unit/faculty-blueprint-sort-model.test.ts"
+      - "src/modules/courses/faculty-blueprint-sort-model.ts"
 permissions:
   contents: read
 concurrency:
@@ -53,7 +55,7 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
       - name: Unit-test order receipts and boundaries
-        run: npx vitest run tests/unit/faculty-content-order-ui-model.test.ts
+        run: npx vitest run tests/unit/faculty-content-order-ui-model.test.ts tests/unit/faculty-blueprint-sort-model.test.ts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable E2E database
