@@ -380,8 +380,8 @@ export function HrDriveDraftForm({
     }
   }
 
-  if(savedRequestId) return <section aria-label="Drive request submitted" className="min-w-0 max-w-3xl space-y-4 border-y border-border bg-transparent py-4 md:py-6">
-    <h2 role="status" className="text-lg font-semibold text-foreground">{approvedJobId ? "Drive approved" : "Request sent"}</h2>
+  if(savedRequestId) return <section aria-label="Drive request submitted" role="status" aria-live="polite" className="min-w-0 max-w-3xl space-y-4 border-y border-border bg-transparent py-4 md:py-6">
+    <h2 className="text-lg font-semibold text-foreground">{approvedJobId ? "Drive approved" : "Request sent"}</h2>
     <p className="text-sm text-body">{approvedJobId
       ? "Approved. The placement cell sets the dates and opens it to students."
       : "Your request was saved. The placement cell will review and set the dates before it can open to students."}</p>
