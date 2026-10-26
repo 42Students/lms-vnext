@@ -6,7 +6,6 @@ import { Dropdown } from "@/components/ui/dropdown";
 
 import Link from "next/link";
 import Image from "next/image";
-import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
 import {filterEngageRoster,type EngageRosterFilters} from "@/modules/placements/tpo-engage-filter-model";
 import {recruiterTableExportCsv,recruiterTableExportGrid,recruiterTableExportTsv} from "@/modules/placements/tpo-recruiter-export-model";
 import {recruiterLeadsXlsx} from "@/modules/placements/tpo-recruiter-xlsx-export";
@@ -832,8 +831,8 @@ export function RecruiterLeadsWorkspace({
   return (
     <section className="min-w-0 space-y-4" aria-label="Recruiter leads">
       <PageHeader
-        title={TPO_OWNER_PAGE_COPY.recruiterLeads}
-        description="Manage company relationships, follow-ups, and placement drives."
+        title="Recruiters"
+        description="Everyone you work with at companies, and where you are with each."
         actions={
           <div className="flex w-full min-w-0 flex-col gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center">
             <RecruiterLeadCsvImport onImported={()=>void load()} />
