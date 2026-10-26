@@ -379,6 +379,67 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
               "No non-archived jobs match the selected season and filters."} action={<Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text sm:w-auto md:min-h-9">Create drive</Link>} />
 
         </div> :
+        <div className="min-w-0 space-y-3">
+         <div className="min-w-0 overflow-x-auto rounded-xl border border-border bg-surface" role="region"
+          aria-label="Prototype drive operations table" data-testid="tpo.drives.prototype-list" tabIndex={0}>
+          <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+           <thead><tr className="bg-surface-secondary text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            <th scope="col" className="w-[27%] px-4 py-3">Drive</th>
+            <th scope="col" className="w-[27%] px-4 py-3">Where it is</th>
+            <th scope="col" className="w-[21%] px-4 py-3">Next</th>
+            <th scope="col" className="w-[17%] px-4 py-3">Needs you</th>
+            <th scope="col" className="w-[8%] px-4 py-3">Who</th>
+           </tr></thead>
+           <tbody className="divide-y divide-border">{data.rows.map(job=>{
+            const href="/tpo/placements/jobs/"+encodeURIComponent(job.id);
+            const next=job.nextRoundAt?new Date(job.nextRoundAt):null;
+            const nextEvent=next&&Number.isFinite(next.getTime())?
+             "Next round "+next.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):
+             job.applicationDeadline&&new Date(job.applicationDeadline)>data.asOf?
+              "Applications close "+new Date(job.applicationDeadline).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}):
+             job.offersMade>0?"Review recorded offers":"No next event recorded";
+            const task=job.status==="PUBLISHED"&&!job.applicationDeadline?
+             {label:"Set a deadline",href:href+"/extend-deadline"}:
+             job.status==="PUBLISHED"&&job.offersMade>0?
+              {label:"Review offers",href:href+"/offers"}:
+             job.status==="PUBLISHED"&&job.roundCount>job.roundsCompleted?
+              {label:"Review rounds",href:href+"/rounds"}:
+             job.status==="DRAFT"?{label:"Review draft",href}:null;
+            return <tr key={job.id} className="hover:bg-primary-subtle">
+             <td className="px-4 py-3 align-top">
+              <Link href={href} className="inline-flex min-h-11 items-center break-words font-semibold text-foreground hover:text-link md:min-h-9">{job.company}</Link>
+              <p className="text-xs leading-5 text-body">{job.title} · {job.minimumAnnualCtcInr!=null?
+               (job.minimumAnnualCtcInr/100000).toLocaleString("en-IN")+" LPA":"CTC not recorded"}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{job.jobTypeLabel??tpoDriveEmploymentLabel(job.employmentType)}
+               {job.isDream?" · Dream":""}</p>
+             </td>
+             <td className="px-4 py-3 align-top">
+              <p className="font-semibold tabular-nums text-foreground">{job.appliedCount??"—"} applied
+               {" · "}{job.roundsCompleted} of {job.roundCount} rounds
+               {" · "}{job.offersMade} offers</p>
+              <p className="mt-1 text-xs text-body">{tpoDriveWhereItIs(job,data.asOf)}</p>
+             </td>
+             <td className="px-4 py-3 align-top"><p className="font-semibold text-foreground">{nextEvent}</p>
+              <p className="mt-1 text-xs text-body">{tpoDriveStatusLabel(job.status)}</p>
+             </td>
+             <td className="px-4 py-3 align-top">{task?
+              <Link href={task.href} className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-xs font-semibold text-link md:min-h-9">{task.label}</Link>:
+              <span className="text-xs text-muted-foreground">Nothing recorded as due</span>}
+             </td>
+             <td className="px-4 py-3 align-top text-xs text-body">{job.createdBy??"College staff"}</td>
+            </tr>;
+           })}</tbody>
+          </table>
+         </div>
+         <p className="text-xs leading-5 text-muted-foreground">
+          Ordered and filtered through the same authorized lifecycle query. Counts are recorded application, round and offer facts, not inferred shortlist totals.
+          <Link href="/tpo/placements/recorded-outside" className="ml-1 font-semibold text-link underline">Record an outside drive</Link>.
+         </p>
+         <details className="min-w-0 border-t border-border pt-2">
+          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link">
+           Advanced drive table, bulk actions and exports
+          </summary>
+          <div className="min-w-0 pt-3">
         <form action="/api/placements/tpo/drives/export" method="get" aria-label="Selected drive export" className="grid gap-3">
           {Array.from(exportParams.entries()).map(([key,value])=><Input type="hidden" key={key} name={key} value={value}/>)}
           <Input type="hidden" name="scope" value="SELECTED"/>
@@ -487,7 +548,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
            <TpoDriveActOnPanel/>
            <TpoBulkDriveDeadline totalMatching={data.totalMatching}/>
           </div>
-        </form>}
+        </form>
+          </div>
+         </details>
+        </div>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
        {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:<span/>}
        {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
