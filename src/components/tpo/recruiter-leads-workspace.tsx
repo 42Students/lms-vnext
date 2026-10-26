@@ -42,6 +42,7 @@ import {Select} from "@/components/ui/select";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {GridWorkspace} from "./grid/grid-workspace";
 import {TpoRecruiterPrototypeInspector} from "./recruiter-prototype-inspector";
+import {TpoRecruiterPrototypeStageRibbon} from "./recruiter-prototype-stage-ribbon";
 import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import boardStyles from "./recruiter-board-theme.module.css";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
@@ -806,6 +807,8 @@ export function RecruiterLeadsWorkspace({
         </div>
       ) : (
         <>
+          {view!=="companies"?<TpoRecruiterPrototypeStageRibbon
+            rows={rows} selected={stage} onSelect={value=>updateFilter("stage",value)}/>:null}
           <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
             <button type="button" aria-expanded={needsExpanded} aria-controls="engage-needs-content"
               onClick={()=>setNeedsExpanded(open=>!open)}
