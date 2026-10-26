@@ -1,4 +1,5 @@
 import {facultyStudentRosterMetrics} from "./faculty-student-roster-metrics";
+import {facultyCourseMonthAttendancePercent} from "./faculty-course-month-attendance-model";
 import "server-only";
 import {and,eq,gte,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -108,9 +109,24 @@ export async function getFacultyCourseHomeSignals(
    isNull(courseDiscussionMessages.deletedAt),
    gte(courseDiscussionMessages.createdAt,new Date(Date.now()-7*86400000)),
   )).then(rows=>rows[0]?.count??0).catch(()=>null);
+  const now=new Date();
   const nowIst=new Intl.DateTimeFormat("en-GB",{
    timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric",
-  }).format(new Date());
+  }).format(now);
+  const istMonth=(date:Date)=>{
+   const parts=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",
+   }).formatToParts(date);
+   return (parts.find(part=>part.type==="year")?.value??"")+"-"+
+    (parts.find(part=>part.type==="month")?.value??"");
+  };
+  const currentMonth=istMonth(now);
+  const attendanceThisMonthPercent=attendance?
+   facultyCourseMonthAttendancePercent({
+    roster:attendance.roster,
+    sessions:attendance.sessions.filter(session=>istMonth(session.startsAt)===currentMonth),
+    records:attendance.records,
+   },now):null;
   const todayUnmarked=attendance?.sessions.find(session=>
    session.attendanceStatus!=="MARKED"&&
    new Intl.DateTimeFormat("en-GB",{
@@ -134,6 +150,7 @@ export async function getFacultyCourseHomeSignals(
     ...signals,
     overviewActivity:{
       studentMessagesLast7Days:discussionRead,
+      attendanceThisMonthPercent,
       todayUnmarkedSession:todayUnmarked?{
        id:todayUnmarked.id,title:todayUnmarked.title,
        startsAt:todayUnmarked.startsAt.toISOString(),
