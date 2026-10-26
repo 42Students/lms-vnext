@@ -342,7 +342,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   const meeting=body.meeting;
   expect(meeting?.status).toBe("SCHEDULED");
   expect(meeting?.meetingUrl).toBeNull();
-  expect(meeting?.agenda).toBe("Location: Lab 2\\nReview team work");
+  expect(meeting?.agenda).toBe("Location: Lab 2\nReview team work");
   expect(meeting?.id).toMatch(/^[0-9a-f-]{36}$/i);
   await page.goto("/mentor/projects/"+projectId+"?tab=team");
   await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
@@ -351,7 +351,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   expect(saved.status()).toBe(200);
   const rows=await saved.json() as {meetings:{id:string;agenda:string}[]};
   expect(rows.meetings.find(row=>row.id===meeting!.id)?.agenda)
-    .toBe("Location: Lab 2\\nReview team work");
+    .toBe("Location: Lab 2\nReview team work");
   const move={...window,startsAt:"2099-12-27T14:05:00+05:30",
     endsAt:"2099-12-27T14:35:00+05:30",status:"RESCHEDULED",
     location:"Room 304",expectedUpdatedAt:meeting!.updatedAt};
@@ -360,7 +360,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   });
   expect(moved.status()).toBe(200);
   const latest=await moved.json() as {meeting:{agenda:string;updatedAt:string}};
-  expect(latest.meeting.agenda).toBe("Location: Room 304\\nReview team work");
+  expect(latest.meeting.agenda).toBe("Location: Room 304\nReview team work");
   const stale=await page.request.patch(path+"/"+meeting!.id,{
     headers:{Origin:origin},data:{...move,location:"Wrong room"},
   });
@@ -368,7 +368,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   const after=await page.request.get(path);
   const actual=await after.json() as {meetings:{id:string;agenda:string}[]};
   expect(actual.meetings.find(row=>row.id===meeting!.id)?.agenda)
-    .toBe("Location: Room 304\\nReview team work");
+    .toBe("Location: Room 304\nReview team work");
  });
 
  test("a learner cannot open any Mentor route, including deep-linked project tabs",async({page,context})=>{
