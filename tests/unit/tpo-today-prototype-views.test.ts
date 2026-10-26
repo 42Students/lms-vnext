@@ -3,12 +3,13 @@ import {describe,expect,it,vi} from "vitest";
 import {createElement} from "react";
 import {renderToStaticMarkup} from "react-dom/server";
 import {TpoCompaniesToday} from "@/components/tpo/tpo-companies-today";
+import {TpoTodayAlternateViews} from "@/components/tpo/tpo-today-alternate-views";
 
 vi.mock("next/navigation",()=>({useRouter:()=>({refresh:()=>{}})}));
 import {
  splitTpoTodayFollowups,tpoTodayFocusHref,rankTpoCompaniesToday,
  tpoTodayAgendaDay,tpoTodayAgendaHref,
- summarizeTpoTodayNotContacted,
+ summarizeTpoTodayNotContacted,summarizeTpoTodayOutsideWeek,tpoTodayLateDays,
  type TpoCompaniesTodayRow,
 } from "@/modules/placements/tpo-companies-today-model";
 
@@ -167,4 +168,64 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(source).toContain("eq(placementTpoFollowups.ownerMembershipId,ownerMembershipId)");
   expect(source).toContain("isNull(placementTpoFollowups.ownerMembershipId)");
  });
+ it("counts out-of-week work only for active, authorized CRM leads",()=>{
+  const now=new Date("2026-10-26T03:00:00Z");
+  const leads=[
+   {stage:"NEW",ownerMembershipId:null,nextFollowupAt:null,unsubscribedAt:null},
+   {stage:"CONTACTED",ownerMembershipId:"self",nextFollowupAt:"2026-11-02T06:00:00Z",unsubscribedAt:null},
+   {stage:"INVITED",ownerMembershipId:"self",nextFollowupAt:"2026-11-01T03:00:00Z",unsubscribedAt:null},
+   {stage:"RECRUITED",ownerMembershipId:"self",nextFollowupAt:null,unsubscribedAt:null},
+   {stage:"NOT_NOW",ownerMembershipId:"self",nextFollowupAt:null,unsubscribedAt:null},
+   {stage:"NEW",ownerMembershipId:"other",nextFollowupAt:null,unsubscribedAt:null},
+   {stage:"NEW",ownerMembershipId:"self",nextFollowupAt:null,unsubscribedAt:"2026-10-25T00:00:00Z"},
+  ];
+  expect(summarizeTpoTodayOutsideWeek(leads,"MINE","self",now))
+   .toEqual({withoutDate:1,laterThanWeek:1});
+  expect(summarizeTpoTodayOutsideWeek(leads,"TEAM","self",now))
+   .toEqual({withoutDate:2,laterThanWeek:1});
+ });
+ it("does not call a same-day follow-up late because its clock time has passed",()=>{
+  const now=new Date("2026-10-26T08:00:00Z");
+  expect(tpoTodayLateDays("2026-10-26T01:00:00Z",now)).toBe(0);
+  expect(tpoTodayLateDays("2026-10-25T18:00:00Z",now)).toBe(1);
+  expect(tpoTodayLateDays("2026-10-22T14:00:00Z",now)).toBe(4);
+  expect(tpoTodayLateDays("bad date",now)).toBe(0);
+ });
+ it("renders Agenda and Brief with original three-task structure and real follow-up states",()=>{
+  const props={
+   scope:"MINE" as const,nowIso:"2026-10-26T08:00:00Z",
+   selectedDay:0,hasMore:false,replyTotal:1,
+   rows:[row("task-1","2026-10-25T18:00:00Z")],
+   replies:[{id:"message-1",name:"Recruiter B",company:"Example Co",
+    subject:"Interview query",preview:"Can we confirm Tuesday?",
+    receivedAt:"2026-10-26T06:00:00Z",accessEnded:false}],
+   notContacted:{count:2,oldestAddedAt:"2026-10-21T06:00:00Z"},
+   outsideWeek:{withoutDate:4,laterThanWeek:1},
+  };
+  const agenda=renderToStaticMarkup(createElement(TpoTodayAlternateViews,{...props,view:"agenda"}));
+  expect(agenda).toContain("Today: 1 to answer, 1 to reach");
+  expect(agenda).toContain("Not contacted yet");
+  expect(agenda).toContain("Not on the week");
+  expect(agenda).toContain("4 with no date");
+  expect(agenda).toContain("1 later than the next seven days");
+  expect(agenda).toContain("1 day late");
+  expect(agenda).toContain('href="/tpo/recruiters?nextFollowup=NONE"');
+  expect(agenda).toContain('href="/tpo/recruiters?stage=NEW"');
+  const brief=renderToStaticMarkup(createElement(TpoTodayAlternateViews,{...props,view:"brief"}));
+  expect(brief).toContain("2 things need you today");
+  expect(brief).toContain("Answer");
+  expect(brief).toContain("Reach");
+  expect(brief).toContain("This week");
+  expect(brief).toContain("4 with no date");
+ });
+ it("signals unavailable totals rather than claiming zero when optional roster data fails",()=>{
+  const html=renderToStaticMarkup(createElement(TpoTodayAlternateViews,{
+   view:"agenda",scope:"TEAM",selectedDay:0,nowIso:"2026-10-26T08:00:00Z",
+   hasMore:true,rows:[],replies:[],replyTotal:null,outsideWeek:null,notContacted:null,
+  }));
+  expect(html).toContain("Counts unavailable");
+  expect(html).toContain("Recruiter replies are temporarily unavailable");
+  expect(html).toContain("limited preview");
+ });
+
 });
