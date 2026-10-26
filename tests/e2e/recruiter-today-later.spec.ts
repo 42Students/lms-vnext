@@ -9,12 +9,19 @@ test.describe("Recruiter Today prototype — persisted actions and Later",()=>{
 
  test("a scoped deadline appears, Later survives reload, and Show them restores it",async({page,context})=>{
   await authenticateGracefulRole(context,"recruiter");
+  await page.setViewportSize({width:1488,height:992});
   await page.goto("/hr/home");
   const today=page.getByTestId("recruiter.today");
   await expect(today).toBeVisible({timeout:20_000});
   const needs=today.getByRole("region",{name:"Needs you"});
   await expect(needs).toBeVisible();
   await expect(today.getByRole("heading",{level:1,name:/One thing needs you/})).toBeVisible();
+  // Synthetic seeded data only. One temporary, capped visual sample allows
+  // audit against the latest uploaded PNG without exposing production data.
+  if(process.env["E2E_CAPTURE_TODAY"]==="true"){
+   const jpeg=await page.screenshot({type:"jpeg",quality:48});
+   console.log("RECRUITER_TODAY_E2E_JPEG="+jpeg.toString("base64"));
+  }
   const deadline=needs.locator('[data-testid^="recruiter.today.task-deadline:"]');
   await expect(deadline).toHaveCount(1);
   await expect(deadline.getByText("E2E Prototype Software Engineer",{exact:false})).toBeVisible();
