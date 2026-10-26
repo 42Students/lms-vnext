@@ -37,6 +37,18 @@ describe("TPO Drives latest prototype list",()=>{
   expect(src).toContain("<TpoRemindNonApplicants");
   expect(src).toContain('method="get" aria-label="Selected drive export"');
  });
+ it("puts the selected recruiter request in an explicit, authorized decision pane",()=>{
+  expect(src).toContain('data-testid="tpo.drives.prototype-request-review"');
+  expect(src).toContain('aria-label="Recruiter drive request queue"');
+  expect(src).toContain('aria-label="Your answer"');
+  expect(src).toContain("selectedDriveRequestId?data.requestRows.find(row=>row.id===selectedDriveRequestId)??null");
+  expect(src).toContain("No other request was substituted.");
+  expect(src).toContain("<TpoDriveRequestActions requestId={selectedDriveRequest.id} status={selectedDriveRequest.status}/>");
+  expect(src).toContain("Approve creates an unpublished draft.");
+  expect(src).toContain("Advanced recruiter request list and change history");
+  expect(src).toContain("Verification");
+  expect(src).toContain("selectedDriveRequest.changes.filter(change=>change.changed)");
+ });
  it("resolves needs-you actions to actual drive workflows, not pretend mutations",()=>{
   expect(src).toContain('href:href+"/extend-deadline"');
   expect(src).toContain('href:href+"/offers"');
