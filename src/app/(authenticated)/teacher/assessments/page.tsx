@@ -52,6 +52,7 @@ export default async function FacultyAssessmentsPage({searchParams}:{
    const count=submissions.get(item.id+":"+item.deliveryId);
    return {
     key:"assignment-"+item.id+":"+item.deliveryId,kind:"Assignment" as const,
+    deliveryId:item.deliveryId,
     title:item.title,courseCode:item.courseCode,sectionName:item.sectionName,
     dueAt:item.dueAt?.toISOString()??null,status:item.status,
     handedIn:count?.handedIn??0,eligible:rosterSizes.get(item.deliveryId)??null,
@@ -67,6 +68,7 @@ export default async function FacultyAssessmentsPage({searchParams}:{
    const reportHref="/teacher/report/quiz/"+encodeURIComponent(item.id)+suffix;
    return {
     key:"quiz-"+item.id+":"+item.deliveryId,kind:"Quiz" as const,
+    deliveryId:item.deliveryId,
     title:item.title,courseCode:item.courseCode,sectionName:item.sectionName,
     dueAt:item.dueAt?.toISOString()??null,status:item.status,
     handedIn:attempts.get(item.id+":"+item.deliveryId)?.handedIn??0,

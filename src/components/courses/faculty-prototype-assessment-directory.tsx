@@ -3,8 +3,9 @@ import {useMemo,useState} from "react";
 import Link from "next/link";
 import {FacultyAssessmentCreate} from "./faculty-assessment-create";
 import type {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
+import {facultyAssessmentSectionOptions,facultyAssessmentRowsForSection} from "@/modules/courses/faculty-assessment-section-filter-model";
 export type AssessmentRow={
- key:string;kind:"Assignment"|"Quiz";title:string;courseCode:string;sectionName:string;
+ key:string;kind:"Assignment"|"Quiz";deliveryId:string;title:string;courseCode:string;sectionName:string;
  dueAt:string|null;status:string;handedIn:number;eligible:number|null;toGrade:number|null;
  primaryHref:string;reportHref:string;editorHref:string;
 };
@@ -27,8 +28,8 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
   window.history.replaceState(window.history.state,"",url.pathname+url.search+url.hash);
  }
  const [course,setCourse]=useState("all");
- const courses=useMemo(()=>[...new Set(rows.map(row=>row.courseCode))].sort(),[rows]);
- const scoped=rows.filter(row=>course==="all"||row.courseCode===course);
+ const courses=useMemo(()=>facultyAssessmentSectionOptions(rows),[rows]);
+ const scoped=facultyAssessmentRowsForSection(rows,course);
  const visible=scoped.filter(row=>kind==="all"||
   (kind==="assignment"?row.kind==="Assignment":row.kind==="Quiz"));
  const assignmentCount=scoped.filter(row=>row.kind==="Assignment").length;
@@ -57,7 +58,7 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
    <select id="faculty-assessment-course" value={course} onChange={e=>setCourse(e.target.value)}
     className="min-h-11 min-w-48 rounded-lg border border-[#dce5ee] bg-white px-3 text-sm">
     <option value="all">All courses</option>
-    {courses.map(code=><option value={code} key={code}>{code}</option>)}
+    {courses.map(section=><option value={section.deliveryId} key={section.deliveryId}>{section.label}</option>)}
    </select>
   </div>
   <div className="faculty-proto-table-wrap"><table className="faculty-proto-table">

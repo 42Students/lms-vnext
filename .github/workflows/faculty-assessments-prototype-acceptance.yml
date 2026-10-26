@@ -9,6 +9,8 @@ on:
       - "src/components/courses/faculty-prototype-assessment-directory.tsx"
       - "src/components/courses/faculty-assessment-create.tsx"
       - "tests/e2e/faculty-assessments-prototype.spec.ts"
+      - "src/modules/courses/faculty-assessment-section-filter-model.ts"
+      - "tests/unit/faculty-assessment-section-filter-model.test.ts"
 permissions:
   contents: read
 concurrency:
@@ -44,6 +46,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Filter model rejects mixed Sections with the same course code
+        run: npx vitest run tests/unit/faculty-assessment-section-filter-model.test.ts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable PostgreSQL

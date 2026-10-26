@@ -24,6 +24,16 @@ test("Faculty unified Assignments and quizzes screenshot 09 filters real rows an
  await expect(page.getByText("One list instead of two pages.")).toBeVisible();
  const course=page.getByRole("combobox",{name:"Filter by course"});
  await expect(course).toBeVisible();
+ // Course codes can repeat across different Section deliveries: filtering
+ // must preserve the exact authorized Section rather than combine both.
+ const sectionOptions=course.locator("option:not([value='all'])");
+ if(await sectionOptions.count()){
+  const value=await sectionOptions.first().getAttribute("value");
+  expect(value).toMatch(/^[0-9a-f-]{36}$/i);
+  await course.selectOption(value!);
+  await expect(course).toHaveValue(value!);
+  await course.selectOption("all");
+ }
  const tabs=page.getByRole("navigation",{name:"Assessment type"});
  const all=tabs.getByRole("button",{name:/^All \d+$/});
  const assignments=tabs.getByRole("button",{name:/^Assignments \d+$/});
