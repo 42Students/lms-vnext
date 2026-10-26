@@ -85,3 +85,16 @@
 .inboxExtras[open]{display:flex;flex-direction:column;gap:14px}
 @media(max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.queue,.detail{min-height:0}}
 @media(max-width:600px){.facts{grid-template-columns:1fr}.identity{align-items:flex-start}.viewLinks{flex-wrap:wrap;justify-content:flex-start}}
+
+/* Compact seven-day strip and routed inbox messages from original TPO Today. */
+.week .day,.week .chosen{gap:2px;padding:6px 2px}
+.week .day>span,.week .chosen>span{font-size:10px;text-transform:uppercase}
+.week .day strong,.week .chosen strong{font-size:15px}
+.week .day small,.week .chosen small{font-size:11px;color:#087e8b}
+.queueReplies{padding:12px 0;background:#f8fbfc;border-bottom:1px solid #e7ecf2}
+.queueReplies>p{padding:0 16px 8px}
+.replyQueueItem{display:flex;flex-direction:column;gap:3px;padding:10px 16px;text-decoration:none;color:#18263a;border-top:1px solid #edf2f5}
+.replyQueueItem:hover,.replyQueueItem:focus-visible{background:#edf7f9}
+.replyQueueItem strong{font-size:13px}
+.replyQueueItem small{font-size:12px;color:#5b6b82}
+.queueReplies>.link{display:inline-block;margin:10px 16px 0}
