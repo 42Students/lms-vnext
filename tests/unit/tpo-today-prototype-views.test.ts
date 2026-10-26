@@ -80,6 +80,9 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(views).toContain("notContacted.count");
   expect(views).toContain("href=\"/tpo/recruiters?stage=NEW\"");
   expect(page).toContain("initialFollowupId=");
+  expect(page).toContain('!rows.some(row=>row.id===params.lead)');
+  expect(page).toContain("No other recruiter was selected.");
+  expect(page).toContain('(params.lead!==undefined&&view!=="focus")');
   expect(views).toContain('view==="agenda"');
   expect(views).toContain('view==="brief"');
   expect(views).toContain("splitTpoTodayFollowups");
