@@ -183,6 +183,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         </label>
        </div>
       </details>
+      <p className="text-sm text-body">The placed numbers (Home, Students, Reports) follow your chosen placed trigger after you save. For example, an internship never counts as placed, and a qualifying Dream drive may follow separate eligibility rules.</p>
       <div className="rounded-lg bg-surface-muted px-4 py-3 text-sm leading-6 text-body">
        <strong className="font-semibold text-foreground">What this means today:</strong>
        A student holding a 5 LPA offer needs an offer of at least {nextLpa} LPA
