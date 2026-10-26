@@ -97,8 +97,10 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    rows={displayRows} selected={selected} history={history}
    selectedHistoryUnavailable={historyUnavailable}
    generalPreviewUnavailable={!scopeConfirmed}
-   decisionNoticesUnavailable={!noticesCheck.ok}
-   decisionNotices={noticesCheck.ok?noticesCheck.value:[]}
+   // An independently successful notice lookup does not authorize
+   // disclosure if the live employer/college reconfirmation failed.
+   decisionNoticesUnavailable={!scopeConfirmed||!noticesCheck.ok}
+   decisionNotices={scopeConfirmed&&noticesCheck.ok?noticesCheck.value:[]}
    q={parsed.data.q} total={scopeConfirmed?result.total:0}
    pages={scopeConfirmed?result.pages:1}
    unreadTotal={scopeConfirmed?result.unreadTotal:0}/>;
