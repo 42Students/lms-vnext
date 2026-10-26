@@ -32,7 +32,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(row).not.toContainText("@");
   await expect(row).not.toContainText(/(?:\+91)?[6-9]\d{9}/);
   await expect(page.locator('a[href*="/'+SEED_IDS.facultyCollegeBMembership+'"]')).toHaveCount(0);
-  await expect(page.locator('a[href*="/'+SEED_IDS.facultyCollegeAMembership+'"]')).toHaveCount(1);
+  await expect(page.locator('a[href*="/'+SEED_IDS.facultyCollegeAMembership+'"]:visible')).toHaveCount(1);
   await link.click();
   await expect(page).toHaveURL(/\/teacher\/contacts\/allContacts\/[0-9a-f-]{36}(?:\?.*)?$/i,{timeout:20000});
   await expect(page.getByRole("heading",{level:2,name:"Public department"})).toBeVisible();
