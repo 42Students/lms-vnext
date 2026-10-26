@@ -6,6 +6,7 @@ import {FacultyPrototypeInlineGrader} from "@/components/courses/faculty-prototy
 import {FacultySubmissionFileReview} from "@/components/courses/faculty-submission-file-review";
 import {assignmentFilesRuntimeEnabled} from "@/modules/courses/assignment-file-readiness";
 import {facultyAssignmentReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
+import {facultyGradingSelectedSubmission} from "@/modules/courses/faculty-grading-selection-model";
 
 type Params={deliveryId?:string;student?:string;filter?:string};
 export default async function FacultyAssignmentGradePage({params,searchParams}:{
@@ -21,8 +22,10 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
  const filter=query.filter==="pending"||query.filter==="graded"||query.filter==="missing"?query.filter:"all";
  const ungraded=submissions.filter(row=>row.gradingStatus!=="GRADED");
  const graded=submissions.filter(row=>row.gradingStatus==="GRADED");
- const selected=report.submissions.find(row=>row.id===query.student)??(filter==="graded"?graded[0]:filter==="pending"?ungraded[0]:submissions[0])??null;
+ // Select from the current filter, not from the full data set. A forged or
+ // stale ?student= ID cannot make a pending submission appear under Graded.
  const visible=filter==="graded"?graded:filter==="pending"?ungraded:filter==="missing"?[]:submissions;
+ const selected=facultyGradingSelectedSubmission(visible,query.student);
  const position=selected?visible.findIndex(row=>row.id===selected.id):-1;
  const previous=position>0?visible[position-1]:null;
  const next=position>=0&&position<visible.length-1?visible[position+1]:null;
