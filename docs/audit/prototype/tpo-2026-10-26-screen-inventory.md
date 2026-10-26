@@ -19,7 +19,7 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 | 09 | Companies → Messages | `/tpo/messages?tab=recruiters` | Added searchable template selection, preview and non-sending insertion into draft; thread interactions and screenshots remain unaccepted |
 | 10 | Students → All students | `/tpo/students` | **Code updated:** selected student right-side preview with actual verification/journey/counts; advanced drawer retained on demand. Runtime and visual acceptance open |
 | 11 | Students → Who's in placements | `/tpo/batches` | Verify batch lifecycle, invitation, count semantics |
-| 12 | Students → To verify | `/tpo/verification` | Verify staff authorization, bulk and individual actions |
+| 12 | Students → To verify | `/tpo/verification` | **Code updated:** visible verification queue and selected evidence summary; original private review drawer and bulk/table tools retained. Runtime document interaction and visual acceptance open |
 | 13 | Students → Requests | `/tpo/requests` | **Code updated:** authorized selected-request list/detail with persisted decision control; bulk tools/table retained in Advanced. Runtime and visual acceptance open |
 | 14 | Students → Announcements | `/tpo/announcements` | **Code updated:** grouped searchable page-scoped sidebar, selected detail, existing edit/delete/read/delivery actions. Runtime and visual acceptance open |
 | 15 | Drives | `/tpo/placements/lifecycle` | Verify drive list, lifecycle filters and actions |
@@ -63,9 +63,10 @@ Based on the supplied Students screenshot set (assets labeled `tpo_09.png` to `t
 
 - Screen **10 / All students**: `src/components/tpo/tpo-student-roster-inspector.tsx` adds a right-hand real-data overview. `tpo-students-spreadsheet.tsx` connects row selection while preserving full `TpoStudentQuickPanel` in a separate detail action. Tests: `tests/unit/tpo-students-prototype-inspector-2026.test.ts`.
 - Screen **13 / Requests**: `src/components/tpo/tpo-request-prototype-workspace.tsx` presents authorized list/selection, request reason, current drive context and persisted decision control, while existing bulk operations and report table remain in Advanced. Tests: `tests/unit/tpo-requests-prototype-workspace-2026.test.ts`.
+- Screen **12 / To verify**: `src/components/verification/TpoVerificationPrototypeQueue.tsx` displays a student queue and authorized evidence summary while keeping `VerificationReviewDrawer` for document comparison, decision confirmation and server-enforced version checks. `TpoVerificationPanel.tsx` retains the full table and bulk operations in Advanced. Tests: `tests/unit/tpo-verification-prototype-queue-2026.test.ts`.
 - Screen **14 / Announcements**: `src/components/tpo/tpo-notice-prototype-sidebar.tsx` groups scheduled, current and ended notices on the loaded page. `/tpo/announcements` renders the selected detail and original audited mutation/read/retry controls. Tests: `tests/unit/tpo-announcements-prototype-workspace-2026.test.ts`.
 - Typecheck regression in first Announcements iteration normalized optional `audienceKind` to `null` in the sidebar mapping. The fix is committed, but awaits a subsequent green typecheck.
-- **All three are code implemented but still require actual interactive browser checks, responsive screenshots and prototype visual comparison.** Do not mark them visually accepted based on source tests.
+- **All four Students screens worked on in this batch are code updated but still require actual interactive browser checks, responsive screenshots and prototype visual comparison.** Do not mark them visually accepted based on source tests.
 
 ## Known acceptance boundaries
 
