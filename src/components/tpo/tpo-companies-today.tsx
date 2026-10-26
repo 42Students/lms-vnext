@@ -7,6 +7,7 @@ import {istDateKey,nextTpoFollowupTomorrow,nextTpoTodayFollowupAt, type TpoToday
  "@/modules/placements/tpo-companies-today-model";
 import styles from "./tpo-companies-today.module.css";
 
+type LeadContext={id:string;stage:string;designation:string|null;emailNorm:string|null;ownerName:string|null};
 type RecruiterReply={
  id:string;name:string;company:string|null;subject:string;
  preview:string|null;receivedAt:string;accessEnded:boolean;
@@ -27,9 +28,9 @@ function dayLabel(date:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(date);
 }
 export function TpoCompaniesToday({
- scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId,notContacted
+ scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId,notContacted,leadContexts
 }:{scope:"MINE"|"TEAM";rows:TpoCompaniesTodayRow[];nowIso:string;hasMore:boolean;unreadMessages:number|null;
-  replies:RecruiterReply[];replyTotal:number|null;initialFollowupId?:string|undefined;
+  replies:RecruiterReply[];replyTotal:number|null;initialFollowupId?:string|undefined;leadContexts:LeadContext[];
   notContacted:{count:number;oldestAddedAt:string|null}|null}){
  const router=useRouter();
  const now=new Date(nowIso);
@@ -60,6 +61,9 @@ export function TpoCompaniesToday({
   ?istDateKey(new Date(row.dueAt))<=todayKey
   :istDateKey(new Date(row.dueAt))===dayKey);
  const current=displayed.find(row=>row.id===selectedId)??displayed[0]??null;
+ const leadInfo=current?leadContexts.find(lead=>lead.id===current.leadId):undefined;
+ const email=leadInfo?.emailNorm?.trim();
+ const emailHref=email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?"mailto:"+email:null;
  const days=Array.from({length:7},(_,offset)=>{
   const date=new Date(now.getTime()+offset*86400000);
   const key=istDateKey(date);
@@ -101,6 +105,13 @@ export function TpoCompaniesToday({
   setSelectedId(row.id);setOutcome("CONTACTED");setNextPlan("NONE");setCustomLocal("");setNote("");setError("");setNotice("");
  }
  function pickDay(value:number){setDay(value);setSelectedId(null);setError("");}
+ function laterAndNext(){
+  if(!current)return;
+  const index=displayed.findIndex(row=>row.id===current.id);
+  const next=displayed[index+1];
+  if(next){pick(next);setNotice("Opened the next reminder. The previous reminder was left unchanged.");}
+  else setNotice("This is the last loaded reminder for the day. Nothing was changed.");
+ }
  async function submit(kind:"DONE"|"TOMORROW"){
   if(!current||pending||inFlight.current)return;
   if(kind==="DONE"&&!note.trim()){
@@ -144,50 +155,11 @@ export function TpoCompaniesToday({
  const contact=current?.canContact&&current.phoneNorm&&/^\+?[1-9]\d{7,14}$/.test(current.phoneNorm)
   ?"tel:"+(current.phoneNorm.startsWith("+")?current.phoneNorm:"+"+current.phoneNorm):null;
  return <div className={styles.root} data-testid="tpo.companies.today">
-  <div className={styles.top}>
-   <div><p className={styles.eyebrow}>COMPANIES · TODAY</p>
-    <h1>Today</h1>
-    <p className={styles.sub}>Reply to recruiters and finish your next follow-ups, one at a time.</p>
-   </div>
-   <nav aria-label="Today layouts" className="flex flex-wrap items-center gap-3">
-    <Link className={styles.link} href={"/tpo/companies/today"+(scope==="TEAM"?"?scope=TEAM&":"?")+"view=agenda"}>Agenda</Link>
-    <Link className={styles.link} href={"/tpo/companies/today"+(scope==="TEAM"?"?scope=TEAM&":"?")+"view=brief"}>Brief</Link>
-    <Link className={styles.link} href="/tpo/recruiters">All recruiters ›</Link>
-   </nav>
-  </div>
-  <nav aria-label="Today ownership" className="flex flex-wrap items-center gap-2">
-    {([["MINE","My Work"],["TEAM","Everyone"]] as const).map(([value,label])=>
-      <Link key={value} href={value==="MINE"?"/tpo/companies/today":"/tpo/companies/today?scope=TEAM"}
-        aria-current={scope===value?"page":undefined}
-        className="inline-flex min-h-11 items-center rounded-lg border border-[#d6e1ee] bg-white px-4 text-[13px] font-bold text-[#3b4a60] aria-[current=page]:border-[#0a7c88] aria-[current=page]:bg-[#eff8fa] aria-[current=page]:text-[#0a7c88]">
-        {label}
-      </Link>)}
-    <span className={styles.sub}>{scope==="MINE"?
-      "Your follow-ups and unassigned work from this college.":
-      "Open follow-ups from your college's placement team."}</span>
+  <nav className={styles.viewLinks} aria-label="Today views">
+   <span className={styles.eyebrow}>TODAY · RECRUITER FOCUS</span>
+   <Link href={"/tpo/companies/today"+(scope==="TEAM"?"?scope=TEAM&":"?")+"view=agenda"}>Agenda</Link>
+   <Link href={"/tpo/companies/today"+(scope==="TEAM"?"?scope=TEAM&":"?")+"view=brief"}>Brief</Link>
   </nav>
-  {replyTotal!==null&&replyTotal>0?<section className={styles.answer} aria-label="Recruiter replies waiting" data-testid="tpo.today.replies">
-    <div className={styles.replyHead}>
-     <strong>Answer · {replyTotal} recruiter {replyTotal===1?"reply":"replies"} waiting</strong>
-     <Link href="/tpo/messages?tab=recruiters&status=REPLY">All replies in Messages ›</Link>
-    </div>
-    <div className={styles.replyList}>
-     {replies.map(item=><article key={item.id} className={styles.reply}>
-      <span className={styles.replyWho}><strong>{item.name}</strong>
-       <small>{item.company??"Recruiter"} · {item.subject} · {when(item.receivedAt)}</small>
-      </span>
-      {item.preview?<span className={styles.replyPreview}>{item.preview}</span>:null}
-      <Link href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(item.id)}
-        className={styles.replyAction}>{item.accessEnded?"Open history":"Answer"}</Link>
-     </article>)}
-    </div>
-    {replyTotal>replies.length?<p className={styles.sub}>Showing the newest {replies.length} recruiter conversations. Open Messages for the rest.</p>:null}
-   </section>:null}
-  {replyTotal===null?<p className={styles.warning} role="status">Recruiter reply preview is temporarily unavailable. Open Messages to check the inbox.</p>:null}
-  {unreadMessages!==null&&unreadMessages>0?<div className={styles.answer}>
-   <strong>Answer · {unreadMessages} unread recruiter {unreadMessages===1?"message":"messages"}</strong>
-   <Link href="/tpo/messages?tab=recruiters">Open Messages ›</Link>
-  </div>:null}
   {error?<p role="alert" className={styles.error}>{error}</p>:null}
   {notice?<p role="status" className={styles.success}>{notice}</p>:null}
   {hasMore?<p role="status" className={styles.warning}>This is a 50-item focus preview from the first CRM pages. Older follow-ups are available in the full queue.</p>:null}
@@ -196,8 +168,8 @@ export function TpoCompaniesToday({
     <div className={styles.queueHead}>
      <div className={styles.queueTitle}>
       <span className={styles.eyebrow}>{day===0?"TODAY · ": "PLANNED · "}{dayLabel(new Date(now.getTime()+day*86400000)).toUpperCase()}</span>
-      <strong>{displayed.length} {displayed.length===1?"thing":"things"} need you</strong>
-      <small>{scope==="MINE"?"Yours and unassigned":"Your placement team's open follow-ups"}</small>
+      <strong>{displayed.length} {displayed.length===1?"thing needs":"things need"} you</strong>
+      <small>{scope==="MINE"?"Yours and unassigned":"Everyone's open follow-ups"} · <Link href={scope==="MINE"?"/tpo/companies/today?scope=TEAM":"/tpo/companies/today"}>{scope==="MINE"?"everyone's":"my work"}</Link></small>
      </div>
      <Link href="/tpo/follow-ups">Re-plan your week ›</Link></div>
     <div className={styles.week} role="group" aria-label="This week">
@@ -214,6 +186,7 @@ export function TpoCompaniesToday({
       <span className={row.overdue?styles.red:styles.teal} aria-hidden="true"/>
       <span><strong>{row.leadName}</strong>
        <small>{row.companyName??"Recruiter"} · {row.overdue?"Overdue":"Follow-up due"}</small>
+       <small>{row.note?.trim()||"Open the recorded follow-up"}</small>
        <small>{when(row.dueAt)}</small></span>
      </button>)}</div>:
      <div className={styles.empty}>No open, recorded follow-ups in this date window.
@@ -225,21 +198,30 @@ export function TpoCompaniesToday({
       </Link>}
      <Link href="/tpo/follow-ups" className="text-[#087f8b]">Re-plan your week</Link>
     </div>
-    <footer className={styles.foot}>J / K to choose · 1–4 outcome · T tomorrow · Enter to review Done · {displayed.length} shown
+    <footer className={styles.foot}>J / K to move · T tomorrow · Enter to review Done · {displayed.length} shown
      {hasMore?" · more exist":""}</footer>
    </section>
    <section className={styles.detail} aria-label="Selected">
-    {current?<><span className={styles.eyebrow}>{current.overdue?"OVERDUE · ":"DUE · "}{when(current.dueAt)}</span>
-     <div className={styles.personHead}>
-      <div><h2>{current.leadName}</h2><p className={styles.sub}>{current.companyName??"Recruiter"}</p></div>
+    {current?<><div className={styles.personHead}>
+      <div className={styles.identity}><div className={styles.avatar} aria-hidden="true">{current.leadName.trim().split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()??"").join("")}</div>
+       <div><h2>{current.leadName}</h2><p className={styles.sub}>{leadInfo?.designation?leadInfo.designation+" · ":""}{current.companyName??"Recruiter"}</p>
+       {leadInfo?.ownerName?<p className={styles.sub}>Assigned to {leadInfo.ownerName}</p>:null}</div></div>
       <div className={styles.personActions}>
        {contact?<a href={contact} className={styles.secondary}>Call</a>:null}
+       {emailHref?<a href={emailHref} className={styles.secondary}>Email</a>:null}
        <Link href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)} className={styles.secondary}>Open page</Link>
       </div>
      </div>
-     <div className={styles.context}><span className={styles.eyebrow}>WHY THIS PERSON</span>
+     <div className={styles.context}><span className={styles.eyebrow}>{leadInfo?.stage?"RECRUITER · "+leadInfo.stage.replaceAll("_"," "):"RECORDED FOLLOW-UP"}</span>
        <strong>{current.note?.trim()||"A recorded recruiter follow-up is due."}</strong></div>
-     <p className={styles.sub}>Record what happened. An outcome is saved with your account and the recorded follow-up is closed together.</p>
+     <p className={styles.sub}>Due {when(current.dueAt)}. Review the full recruiter record for company trust and verification before changing access.</p>
+     <div className={styles.actions}><button type="button" disabled={pending} className={styles.secondary} onClick={()=>setConfirm("TOMORROW")}>Tomorrow</button>
+      <button type="button" disabled={pending} className={styles.primary} onClick={laterAndNext}>Later &amp; next</button></div>
+     <p className={styles.helper}>Later &amp; next moves to the next item without changing the current reminder.</p>
+     <div className={styles.facts}><div><span className={styles.eyebrow}>RECRUITER STATUS</span><p>{leadInfo?.stage?leadInfo.stage.replaceAll("_"," "):"See recruiter history"}</p></div>
+      <div><span className={styles.eyebrow}>COMPANY</span><p>{current.companyName??"Not linked"} · Review company trust on its record</p></div></div>
+     <details className={styles.advanced}><summary>Record outcome and plan next follow-up</summary>
+      <p className={styles.sub}>Confirmed outcomes are saved with your account and close this follow-up atomically.</p>
      <fieldset className={styles.outcomes}><legend className={styles.eyebrow}>HOW DID IT GO?</legend>
       {outcomes.map(item=><button key={item.value} type="button"
        aria-pressed={outcome===item.value}
@@ -273,6 +255,7 @@ export function TpoCompaniesToday({
        onClick={()=>setConfirm("TOMORROW")}>Tomorrow, 10 AM</button>
       {contact?<a href={contact} className={styles.secondary}>Call recruiter ↗</a>:null}
      </div>
+     </details>
      <Link className={styles.link} href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)}>
        Open full recruiter history ›
      </Link>
@@ -281,6 +264,30 @@ export function TpoCompaniesToday({
      </div>}
    </section>
   </div>
+  <details className={styles.inboxExtras}><summary>Recruiter replies and messages</summary>
+  {replyTotal!==null&&replyTotal>0?<section className={styles.answer} aria-label="Recruiter replies waiting" data-testid="tpo.today.replies">
+    <div className={styles.replyHead}>
+     <strong>Answer · {replyTotal} recruiter {replyTotal===1?"reply":"replies"} waiting</strong>
+     <Link href="/tpo/messages?tab=recruiters&status=REPLY">All replies in Messages ›</Link>
+    </div>
+    <div className={styles.replyList}>
+     {replies.map(item=><article key={item.id} className={styles.reply}>
+      <span className={styles.replyWho}><strong>{item.name}</strong>
+       <small>{item.company??"Recruiter"} · {item.subject} · {when(item.receivedAt)}</small>
+      </span>
+      {item.preview?<span className={styles.replyPreview}>{item.preview}</span>:null}
+      <Link href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(item.id)}
+        className={styles.replyAction}>{item.accessEnded?"Open history":"Answer"}</Link>
+     </article>)}
+    </div>
+    {replyTotal>replies.length?<p className={styles.sub}>Showing the newest {replies.length} recruiter conversations. Open Messages for the rest.</p>:null}
+   </section>:null}
+  {replyTotal===null?<p className={styles.warning} role="status">Recruiter reply preview is temporarily unavailable. Open Messages to check the inbox.</p>:null}
+  {unreadMessages!==null&&unreadMessages>0?<div className={styles.answer}>
+   <strong>Answer · {unreadMessages} unread recruiter {unreadMessages===1?"message":"messages"}</strong>
+   <Link href="/tpo/messages?tab=recruiters">Open Messages ›</Link>
+  </div>:null}
+  </details>
   <ConfirmDialog open={confirm!==null} onOpenChange={value=>{if(!value&&!pending)setConfirm(null);}}
    title={confirm==="DONE"?"Record this outcome and finish the follow-up?":
     "Move this follow-up to tomorrow at 10 AM IST?"}
