@@ -12,13 +12,16 @@ if(!process.env.TEST_DATABASE_URL)
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const sourceId=randomUUID(),jobId=randomUUID(),submissionId=randomUUID();
 const projectId=randomUUID();
+const stalledJobIds=Array.from({length:12},()=>randomUUID());
+const stalledReceiptIds=Array.from({length:12},()=>randomUUID());
 const setupAt=new Date();
 afterAll(async()=>{
  try{
   await pool.query(`delete from activity_events where
-    subject_type='mentor_project_email_dispatch_receipt' and subject_id=$1`,[jobId]);
+    subject_type='mentor_project_email_dispatch_receipt'
+      and subject_id=any($1::text[])`,[[jobId,...stalledJobIds]]);
   await pool.query("delete from activity_events where id=any($1::uuid[])",
-   [[jobId,sourceId]]);
+   [[jobId,sourceId,...stalledJobIds]]);
  }finally{await pool.end();await closeDatabaseConnection();}
 });
 describe("Mentor claimed email outbox PostgreSQL transaction",()=>{
@@ -38,6 +41,37 @@ describe("Mentor claimed email outbox PostgreSQL transaction",()=>{
     sourceId,orgB,SEED_IDS.collegeB,SEED_IDS.collegeAdminUser,
     ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_SUBMITTED,submissionId,
     JSON.stringify({projectId}),
+  ]);
+  // Twelve older jobs have active claim leases or fresh RETRY cooldowns.
+  // A naive LIMIT 10 on all queued jobs would starve the new eligible job.
+  // These state receipts model a worker claim but cannot send email.
+  await pool.query(`insert into activity_events
+   (id,organization_id,college_id,actor_user_id,module,event_type,
+    subject_type,subject_id,summary,metadata,occurred_at)
+   select old.id,$2,$3,$4,'PROJECTS',$5,'mentor_project_email_job',$6,
+     'Still leased or cooling down', $7::jsonb,
+     clock_timestamp()-interval '30 seconds'
+   from unnest($1::uuid[]) as old(id)`,[
+    stalledJobIds,SEED_IDS.organization,SEED_IDS.collegeA,
+    SEED_IDS.collegeAdminUser,
+    ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_EMAIL_QUEUED,sourceId,
+    JSON.stringify({sourceEventId:sourceId,recipientUserId:SEED_IDS.facultyUser,
+     projectId,kind:"FINAL_SUBMISSION"}),
+  ]);
+  await pool.query(`insert into activity_events
+   (id,organization_id,college_id,actor_user_id,module,event_type,
+    subject_type,subject_id,summary,metadata,occurred_at)
+   select receipt.id,$4,$5,$6,'PROJECTS',$7,
+     'mentor_project_email_dispatch_receipt',receipt.job::text,
+     'Unexpired worker lease or retry backoff',
+     jsonb_build_object('status',receipt.state,'attempt',1),
+     clock_timestamp()-interval '1 second'
+   from unnest($1::uuid[],$2::uuid[],$3::text[])
+    as receipt(id,job,state)`,[
+    stalledReceiptIds,stalledJobIds,
+    stalledJobIds.map((_,index)=>index<6?"CLAIMED":"RETRY"),
+    SEED_IDS.organization,SEED_IDS.collegeA,SEED_IDS.collegeAdminUser,
+    ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_EMAIL_DISPATCH_STATE,
   ]);
   await pool.query(`insert into activity_events
     (id,organization_id,college_id,actor_user_id,module,event_type,
@@ -67,6 +101,11 @@ describe("Mentor claimed email outbox PostgreSQL transaction",()=>{
    order by occurred_at,id`,[jobId]);
   expect(receipts.rows.map(x=>x.status)).toEqual(["CLAIMED","SUPPRESSED"]);
   expect(receipts.rows.map(x=>x.attempt)).toEqual([1,1]);
+  const stillLeased=await pool.query<{n:string}>(`
+   select count(*)::text as n from activity_events
+   where subject_type='mentor_project_email_dispatch_receipt'
+     and subject_id=any($1::text[])`,[stalledJobIds]);
+  expect(stillLeased.rows[0]?.n).toBe("12");
   const again=await runMentorProjectEmailDispatchBatch(ready);
   expect(again.status).toBe("CHECKED");
   const saved=await pool.query<{status:string}>(`
