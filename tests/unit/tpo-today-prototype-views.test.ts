@@ -109,6 +109,10 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
     dueAt:"2026-10-25T08:00:00+05:30",note:"Discuss campus recruitment",
     phoneNorm:null,canContact:true,overdue:true}],
    hasMore:false,unreadMessages:0,replyTotal:1,
+   companyAttention:{items:[{relationshipId:"44444444-4444-4444-8444-444444444444",
+    companyId:"55555555-5555-4555-8555-555555555555",companyName:"Unverified Employer",
+    collegeTrusted:false,recruiterId:"66666666-6666-4666-8666-666666666666",
+    recruiterName:"Joined Recruiter"}],hasMore:false},
    replies:[{id:"33333333-3333-4333-8333-333333333333",
     name:"Ravi Recruiter",company:"Example Employer",subject:"Campus hiring",
     preview:"Interested in a visit",receivedAt:"2026-10-26T01:00:00Z",accessEnded:false}],
@@ -122,6 +126,10 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(html).toContain("mailto:asha@example.org");
   expect(html).toContain("Later &amp; next");
   expect(html).toContain("Record outcome and plan next follow-up");
+  expect(html).toContain("Unverified Employer");
+  expect(html).toContain("Not verified by 42");
+  expect(html).toContain("College trust: Not trusted");
+  expect(html).toContain('href="/tpo/companies/55555555-5555-4555-8555-555555555555"');
   expect(html).toContain("Review company trust on its record");
   expect(html).not.toContain("Verify Example Employer");
   expect(html).not.toContain("Email sent");
@@ -129,12 +137,27 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
  it("exposes incomplete queue and recruiter inbox as warnings, not false zero totals",()=>{
   const html=renderToStaticMarkup(createElement(TpoCompaniesToday,{
    scope:"TEAM",rows:[],nowIso:"2026-10-26T08:00:00+05:30",
-   hasMore:true,unreadMessages:null,replyTotal:null,replies:[],notContacted:null,leadContexts:[],
+   hasMore:true,unreadMessages:null,replyTotal:null,replies:[],notContacted:null,leadContexts:[],companyAttention:null,
   }));
   expect(html).toContain("focus preview");
   expect(html).toContain("temporarily unavailable");
   expect(html).toContain("Not-contacted recruiter count unavailable");
+  expect(html).toContain("Company verification attention is unavailable");
   expect(html).not.toContain("No recruiters in this college");
+ });
+ it("keeps platform verification separate from college trust and only exposes read-only review links",()=>{
+  const service=readFileSync("src/modules/placements/tpo-today-company-attention-service.ts","utf8");
+  const today=readFileSync("src/components/tpo/tpo-companies-today.tsx","utf8");
+  expect(service).toContain('isNull(placementCompanies.verifiedAt)');
+  expect(service).toContain('eq(placementCompanyRelationships.collegeId,collegeId)');
+  expect(service).toContain('eq(placementTpoLeads.collegeId,collegeId)');
+  expect(service).toContain('isNotNull(placementTpoLeads.recruiterUserId)');
+  expect(service).toContain('hasMembershipRole(context,"TPO")');
+  expect(service).toContain('scope==="MINE"?[or(');
+  expect(today).toContain("College trust:");
+  expect(today).toContain("Not verified by 42");
+  expect(today).toContain('className={styles.companyAttention}');
+  expect(today).not.toContain("Verify company now");
  });
  it("keeps unassigned CRM follow-ups visible in My Work without dropping the college boundary",()=>{
   const source=readFileSync("src/modules/placements/tpo-followup-queue-service.ts","utf8");
