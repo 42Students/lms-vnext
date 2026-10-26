@@ -110,6 +110,7 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
     dueAt:"2026-10-25T08:00:00+05:30",note:"Discuss campus recruitment",
     phoneNorm:null,canContact:true,overdue:true}],
    hasMore:false,unreadMessages:0,replyTotal:1,
+   initialFollowupId:"11111111-1111-4111-8111-111111111111",
    companyAttention:{items:[{relationshipId:"44444444-4444-4444-8444-444444444444",
     companyId:"55555555-5555-4555-8555-555555555555",companyName:"Unverified Employer",
     collegeTrusted:false,recruiterId:"66666666-6666-4666-8666-666666666666",
@@ -129,11 +130,50 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(html).toContain("Record outcome and plan next follow-up");
   expect(html).toContain("3 things need you");
   expect(html).toContain("Unverified Employer");
-  expect(html).toContain("Not verified by 42");
-  expect(html).toContain("College trust: Not trusted");
-  expect(html).toContain('href="/tpo/companies/55555555-5555-4555-8555-555555555555"');
+  expect(html).toContain("Company not verified");
+  expect(html).toContain("Review company trust and verification");
   expect(html).toContain("Review company trust on its record");
   expect(html).not.toContain("Verify Example Employer");
+  expect(html).not.toContain("Email sent");
+ });
+ it("selects a real company-identity task first and keeps college trust distinct from platform verification",()=>{
+  const html=renderToStaticMarkup(createElement(TpoCompaniesToday,{
+   scope:"MINE",nowIso:"2026-10-26T08:00:00Z",hasMore:false,
+   rows:[{...row("followup","2026-10-26T03:00:00Z"),leadName:"Follow-up person"}],
+   companyAttention:{items:[{relationshipId:"relationship-id",companyId:"company-id",
+    companyName:"Employer Example",collegeTrusted:true,recruiterId:"lead-id",recruiterName:"Recruiter Example"}],
+    hasMore:false},
+   replies:[{id:"reply-id",name:"Second recruiter",company:"Another employer",
+    subject:"Can we talk?",preview:"Hello",receivedAt:"2026-10-26T04:00:00Z",accessEnded:false}],
+   replyTotal:1,notContacted:{count:0,oldestAddedAt:null},leadContexts:[],unreadMessages:0,
+  }));
+  expect(html).toContain("3 things need you");
+  expect(html).toContain("tpo.today.company-detail");
+  expect(html).toContain('aria-selected="true"');
+  expect(html).toContain("Recruiter Example");
+  expect(html).toContain("Company identity".toUpperCase());
+  expect(html).toContain("Not verified by 42");
+  expect(html).toContain("College trust: Trusted");
+  expect(html).toContain('href="/tpo/companies/company-id"');
+  expect(html).toContain('href="/tpo/recruiters/lead-id"');
+  expect(html).toContain("Later &amp; next changes selection only");
+  expect(html).not.toContain("Verified Employer Example");
+  expect(html).not.toContain("Email sent");
+ });
+ it("lets a waiting recruiter reply become the selected item without sending email",()=>{
+  const html=renderToStaticMarkup(createElement(TpoCompaniesToday,{
+   scope:"TEAM",nowIso:"2026-10-26T08:00:00Z",hasMore:false,
+   rows:[],companyAttention:{items:[],hasMore:false},
+   replies:[{id:"reply-id",name:"Recruiter One",company:"Employer",
+    subject:"Interview slots?",preview:"Please confirm a slot",
+    receivedAt:"2026-10-26T04:00:00Z",accessEnded:false}],
+   replyTotal:1,notContacted:{count:0,oldestAddedAt:null},leadContexts:[],unreadMessages:0,
+  }));
+  expect(html).toContain("tpo.today.reply-detail");
+  expect(html).toContain("Please confirm a slot");
+  expect(html).toContain('href="/tpo/messages?tab=recruiters&amp;thread=reply-id"');
+  expect(html).toContain("Answer in Messages");
+  expect(html).toContain("Merely selecting this item never sends email");
   expect(html).not.toContain("Email sent");
  });
  it("exposes incomplete queue and recruiter inbox as warnings, not false zero totals",()=>{
@@ -158,7 +198,9 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(service).toContain('scope==="MINE"?[or(');
   expect(today).toContain("College trust:");
   expect(today).toContain("Not verified by 42");
-  expect(today).toContain('className={styles.companyAttention}');
+  expect(today).toContain('role="listbox"');
+  expect(today).toContain('data-testid="tpo.today.company-detail"');
+  expect(today).toContain("focusItems.map(item=>");
   expect(today).not.toContain("Verify company now");
  });
  it("keeps unassigned CRM follow-ups visible in My Work without dropping the college boundary",()=>{
