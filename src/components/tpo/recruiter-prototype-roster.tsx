@@ -11,7 +11,7 @@ export const TPO_RECRUITER_PROTOTYPE_COLUMNS:readonly {key:TpoRecruiterPrototype
 export type TpoRecruiterPrototypeRow={
  id:string;name:string;designation:string|null;companyName:string|null;
  stage:TpoRecruiterLeadStage;nextFollowupAt:string|null;
- lastActivityAt:string|null;ownerName:string|null;
+ lastContactAt?:string|null;lastActivityAt:string|null;ownerName:string|null;
 };
 
 function shortDate(raw:string|null){
