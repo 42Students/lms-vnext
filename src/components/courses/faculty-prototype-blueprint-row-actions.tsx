@@ -25,10 +25,10 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
  if(!editor)return null;
  const item=editor.item;
  const archivePossible=editor.type==="CONTENT"||
-  (item.status!=="ARCHIVED"&&(item.kind==="QUIZ"||item.status==="DRAFT"||item.status==="PUBLISHED"));
+  (editor.item.status!=="ARCHIVED"&&(editor.item.kind==="QUIZ"||editor.item.status==="DRAFT"||editor.item.status==="PUBLISHED"));
  const route=editor.type==="CONTENT"
   ?"/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition"
-  :"/api/courses/faculty/"+(item.kind==="QUIZ"?"quizzes":"assignments")+
+  :"/api/courses/faculty/"+(editor.item.kind==="QUIZ"?"quizzes":"assignments")+
    "/"+encodeURIComponent(deliveryId)+"/command";
  async function archive(){
   if(locked.current||unknown)return;
@@ -37,7 +37,7 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
    const body=editor.type==="CONTENT"?{action:"ARCHIVE"}:
     facultyAssessmentLifecyclePayload({
      kind:editor.item.kind,id:item.id,action:"ARCHIVE",
-     expectedUpdatedAt:new Date(item.updatedAt).toISOString(),
+     expectedUpdatedAt:new Date(editor.item.updatedAt).toISOString(),
     });
    const response=await fetch(route,{
     method:"POST",headers:{"Content-Type":"application/json"},
