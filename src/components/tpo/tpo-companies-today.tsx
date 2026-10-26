@@ -244,7 +244,7 @@ export function TpoCompaniesToday({
       <button type="button" disabled={pending} className={styles.primary} onClick={laterAndNext}>Later &amp; next</button></div>
      <p className={styles.helper}>Later &amp; next moves to the next item without changing the current reminder.</p>
      <div className={styles.facts}><div><span className={styles.eyebrow}>RECRUITER STATUS</span><p>{leadInfo?.stage?leadInfo.stage.replaceAll("_"," "):"See recruiter history"}</p></div>
-      <div><span className={styles.eyebrow}>COMPANY</span><p>{current.companyName??"Not linked"} · Review company trust on its record</p></div></div>
+      <div><span className={`${styles.eyebrow} uppercase`}>Company</span><p>{current.companyName??"Not linked"} · Review company trust on its record</p></div></div>
      <details className={styles.advanced}><summary>Record outcome and plan next follow-up</summary>
       <p className={styles.sub}>Confirmed outcomes are saved with your account and close this follow-up atomically.</p>
      <fieldset className={styles.outcomes}><legend className={styles.eyebrow}>HOW DID IT GO?</legend>
