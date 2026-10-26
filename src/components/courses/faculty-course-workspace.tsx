@@ -691,7 +691,7 @@ export function FacultyCourseWorkspace({
                           {lesson.quizzes.length} quizzes
                         </Badge>
                       </div>}
-                      <details className="mb-3 rounded-[var(--lms-control-radius)] border border-border bg-surface">
+                      <details id={"faculty-lesson-add-"+lesson.id} className="mb-3 rounded-[var(--lms-control-radius)] border border-border bg-surface">
                         <summary className="min-h-11 cursor-pointer select-none px-3 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">
                           + Add content
                         </summary>
