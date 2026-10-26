@@ -40,4 +40,15 @@ describe("TPO Students / Requests prototype",()=>{
   expect(page).toContain("row.nextRoundAt??null");
   expect(page).toContain("row.updatedAt");
  });
+ it("uses whole-college pending counts and valid age-filter URLs while preserving row scope",()=>{
+  const workspace=file("src/components/tpo/tpo-request-prototype-workspace.tsx");
+  const page=file("src/app/(authenticated)/tpo/requests/page.tsx");
+  expect(workspace).toContain("{pendingTotal} requests waiting");
+  expect(page).toContain("pendingTotal={data.summary.pending}");
+  expect(workspace).toContain("pending} waiting on the current page");
+  expect(workspace).toContain("/tpo/requests?status=ALL&age=LAST_30_DAYS");
+  expect(workspace).toContain('aria-label="Request queue filters"');
+  expect(workspace).not.toContain("7 requests waiting");
+ });
+
 });
