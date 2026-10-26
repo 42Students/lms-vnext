@@ -23,6 +23,9 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
  const graded=submissions.filter(row=>row.gradingStatus==="GRADED");
  const selected=report.submissions.find(row=>row.id===query.student)??(filter==="graded"?graded[0]:filter==="pending"?ungraded[0]:submissions[0])??null;
  const visible=filter==="graded"?graded:filter==="pending"?ungraded:filter==="missing"?[]:submissions;
+ const position=selected?visible.findIndex(row=>row.id===selected.id):-1;
+ const previous=position>0?visible[position-1]:null;
+ const next=position>=0&&position<visible.length-1?visible[position+1]:null;
  const root="/teacher/report/assignment/"+encodeURIComponent(assignment.id)+"/grade";
  const href=(f:string,student?:string)=>root+"?deliveryId="+encodeURIComponent(assignment.deliveryId)+
    (f==="all"?"":"&filter="+encodeURIComponent(f))+(student?"&student="+encodeURIComponent(student):"");
@@ -37,7 +40,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
      "?deliveryId="+encodeURIComponent(assignment.deliveryId)}>Class report</Link>
   </div>
   <div><h1 className="faculty-proto-heading">{assignment.title}</h1>
-   <p className="faculty-proto-subtitle">{assignment.courseName} · {assignment.sectionName} · {assignment.dueAt?"due "+stamp(assignment.dueAt):"no due date"} · {assignment.maxPoints} points · {metrics.submitted}{percent===null?"":"/"+percent} handed in</p>
+   <p className="faculty-proto-subtitle">{assignment.courseCode} · {assignment.sectionName} · {assignment.dueAt?"due "+stamp(assignment.dueAt):"no due date"} · {assignment.maxPoints} points · {metrics.submitted}{percent===null?"":" of "+percent} handed in, {ungraded.length} to grade</p>
   </div>
   <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(280px,0.38fr)_minmax(0,1fr)]">
    <aside className="overflow-hidden rounded-xl border border-[#e5ebf2]">
@@ -55,7 +58,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
      {visible.map(row=><li key={row.id} className={"border-l-[3px] "+(row.id===selected?.id?"border-[#078191] bg-[#f0f9fa]":"border-transparent")}>
       <Link className="flex min-h-16 items-center gap-3 px-4 py-3 no-underline" href={href(filter,row.id)}>
        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e1f1f4] text-xs font-bold text-[#007f8e]">
-        {(row.learnerDisplayName?.trim().slice(0,2)??"ST").toUpperCase()}
+        {(row.learnerDisplayName?.trim().split(/\s+/).map(part=>part[0]??"").slice(0,2).join("")??"ST").toUpperCase()}
        </span>
        <span className="min-w-0 flex-1"><strong className="block truncate text-sm text-[#1d293f]">{row.learnerDisplayName??row.learnerEmail??"Student"}</strong>
         <span className="faculty-proto-subtitle">{stamp(row.submittedAt)} IST</span></span>
@@ -64,7 +67,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
         {row.gradingStatus==="GRADED"?String(row.pointsAwarded??0)+"/"+assignment.maxPoints:"To grade"}</span>
       </Link>
      </li>)}
-     {filter==="missing"?missingLearners.map(row=><li key={row.membershipId} className="px-4 py-4 text-sm">
+     {(filter==="missing"||filter==="all")?missingLearners.map(row=><li key={row.membershipId} className="border-l-[3px] border-l-transparent px-4 py-4 text-sm">
       <strong>{row.displayName??"Student"}</strong> · Missing submission
      </li>):null}
     </ol>
@@ -72,9 +75,17 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
    </aside>
    <div className="min-w-0 overflow-hidden rounded-xl border border-[#e5ebf2]">
     {selected&&filter!=="missing"?<>
-     <header className="border-b border-[#e5ebf2] px-5 py-5">
-      <h2 className="text-xl font-bold text-[#1d293f]">{selected.learnerDisplayName??"Student"}</h2>
-      <p className="faculty-proto-subtitle">Handed in {stamp(selected.submittedAt)} IST · {selected.gradingStatus==="GRADED"?"Graded":"To grade"}</p>
+     <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e5ebf2] px-5 py-5">
+      <div><h2 className="text-lg font-bold text-[#1d293f]">{selected.learnerDisplayName??"Student"}</h2>
+       <p className="faculty-proto-subtitle">Handed in {stamp(selected.submittedAt)} IST · {selected.gradingStatus==="GRADED"?"Graded":"To grade"}</p></div>
+      <nav aria-label="Submission navigation" className="flex shrink-0 gap-2">
+       {previous?<Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
+         href={href(filter,previous.id)}>‹ Previous</Link>:
+        <span className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs opacity-50">‹ Previous</span>}
+       {next?<Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
+         href={href(filter,next.id)}>Next ›</Link>:
+        <span className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs opacity-50">Next ›</span>}
+      </nav>
      </header>
      <div className="min-h-56 border-b border-[#e5ebf2] px-5 py-5">
       {selected.submissionType==="FILE"&&assignmentFilesRuntimeEnabled()?
