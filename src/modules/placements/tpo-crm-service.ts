@@ -192,6 +192,7 @@ export async function listTpoLeads(
     unsubscribedAt: row.unsubscribedAt,
   }, now), stage),
     ownerName:row.ownerMembershipId?ownerByMembership.get(row.ownerMembershipId)??null:null,
+    lastContactAt:contactByLead.get(row.id)?.toISOString()??null,
     lastActivityAt:activityByLead.get(row.id)?.lastActivityAt.toISOString()??null,
     lastActivityType:activityByLead.get(row.id)?.lastActivityType??null,
     nextFollowupAt:nextByLead.get(row.id)?.toISOString()??null,
