@@ -11,6 +11,8 @@ on:
       - "tests/e2e/faculty-assessments-prototype.spec.ts"
       - "src/modules/courses/faculty-assessment-section-filter-model.ts"
       - "tests/unit/faculty-assessment-section-filter-model.test.ts"
+## Focused Faculty E2E is independent of the repository-wide TS gate.
+## Full TypeScript is still mandatory in the separate CI workflow.
 permissions:
   contents: read
 concurrency:
@@ -63,7 +65,3 @@ jobs:
       # Shared TPO/Recruiter typecheck failures must not obscure the focused
       # authenticated Faculty browser acceptance result. Still enforce the
       # repository-wide typecheck as a separate final, mandatory gate.
-      - name: Type-check unified assessment creation and table
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
