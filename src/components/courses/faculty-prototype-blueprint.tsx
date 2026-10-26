@@ -23,7 +23,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
  const owned=(id:string|null)=>id===course.deliveryId;
  const items:FacultyBlueprintItem[]=current?[
   ...current.contents.map(item=>({
-   id:item.id,title:item.title,kind:item.contentType,status:item.status,
+   id:item.id,title:item.title,kind:item.contentType,status:item.status,sequence:item.sequence,
    reorderable:owned(item.deliveryId),scheduled:item.contentType==="LIVE_CLASS"&&
     Boolean(item.startsAt&&item.startsAt.getTime()>Date.now()),
    description:item.contentType==="VIDEO"?
@@ -45,7 +45,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
     "&advanced=1#course-item-"+encodeURIComponent(item.id),
   })),
   ...current.assignments.map(item=>({
-   id:item.id,title:item.title,kind:"ASSIGNMENT",status:item.status,
+   id:item.id,title:item.title,kind:"ASSIGNMENT",status:item.status,sequence:item.sequence,
    reorderable:false,description:item.dueAt?"Due "+istDate(item.dueAt):"No deadline",
    editor:owned(item.deliveryId)?{type:"ASSESSMENT" as const,item:{
      id:item.id,kind:"ASSIGNMENT" as const,title:item.title,
@@ -57,7 +57,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
     "&advanced=1#course-item-"+encodeURIComponent(item.id),
   })),
   ...current.quizzes.map(item=>({
-   id:item.id,title:item.title,kind:"QUIZ",status:item.status,
+   id:item.id,title:item.title,kind:"QUIZ",status:item.status,sequence:item.sequence,
    reorderable:false,description:(item.maxAttempts===1?"1 attempt":item.maxAttempts+" attempts")+
     (item.dueAt?" · Due "+istDate(item.dueAt):" · No deadline"),
    editor:owned(item.deliveryId)?{type:"ASSESSMENT" as const,item:{
@@ -69,7 +69,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
    href:base+"?lesson="+encodeURIComponent(current.id)+"&content="+encodeURIComponent(item.id)+
     "&advanced=1#course-item-"+encodeURIComponent(item.id),
   })),
- ]:[];
+ ].sort((a,b)=>a.sequence-b.sequence||a.title.localeCompare(b.title)):[];
  const currentLive=current?.visibleToStudents&&workspace.learningPath?.status==="PUBLISHED";
  return <section className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[310px_minmax(0,1fr)]"
   aria-label="Course blueprint lesson explorer">
@@ -83,7 +83,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
      </button>
     </span>
    </div>
-   <ol className="divide-y divide-[#e5ebf2]">
+   <ol className="max-h-[454px] divide-y divide-[#e5ebf2] overflow-y-auto overscroll-contain" aria-label="Course syllabus lessons">
     {lessons.map((lesson,index)=>{
      const count=lesson.contents.length+lesson.assignments.length+lesson.quizzes.length;
      const active=lesson.id===current?.id;
