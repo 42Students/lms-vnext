@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {orderFacultyBlueprintItems} from "../../src/modules/courses/faculty-blueprint-sort-model";
+import {orderFacultyBlueprintItems,orderFacultyBlueprintContentSlots} from "../../src/modules/courses/faculty-blueprint-sort-model";
 
 describe("Faculty Blueprint mixed lesson-item ordering",()=>{
  it("interleaves shared resource, assignment, class video and quiz by persisted sequence",()=>{
@@ -26,5 +26,27 @@ describe("Faculty Blueprint mixed lesson-item ordering",()=>{
  });
  it("supports empty lessons without producing fake content",()=>{
   expect(orderFacultyBlueprintItems([])).toEqual([]);
+ });
+});
+
+describe("Faculty Blueprint authoritative Section content order",()=>{
+ it("does not re-sort a saved class override by historical content sequence",()=>{
+  const content=[
+   {id:"c3",sequence:3,kind:"VIDEO"},
+   {id:"c1",sequence:1,kind:"RESOURCE"},
+  ];
+  const assessments=[{id:"a2",sequence:2,kind:"ASSIGNMENT"},
+   {id:"q4",sequence:4,kind:"QUIZ"}];
+  expect(orderFacultyBlueprintContentSlots(content,assessments).map(x=>x.id))
+   .toEqual(["c3","a2","c1","q4"]);
+  expect(content.map(x=>x.id)).toEqual(["c3","c1"]);
+ });
+ it("preserves mixed assessment slots and includes shared contents",()=>{
+  const content=[{id:"owned-4",sequence:4},{id:"shared-1",sequence:1},
+   {id:"owned-2",sequence:2}];
+  const assessments=[{id:"quiz-3",sequence:3}];
+  expect(orderFacultyBlueprintContentSlots(content,assessments).map(x=>x.id))
+   .toEqual(["owned-4","shared-1","quiz-3","owned-2"]);
+  expect(orderFacultyBlueprintContentSlots([],assessments)).toEqual(assessments);
  });
 });

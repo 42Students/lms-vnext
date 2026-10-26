@@ -168,6 +168,7 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
 }
 export function FacultyPrototypeLessonItems(props:Parameters<typeof FacultyPrototypeLessonItemsInner>[0]){
  const key=[props.deliveryId,props.lessonId,
-  ...props.items.filter(item=>item.reorderable).map(item=>item.id)].join(":");
+  // Server-side reorder with the same IDs must reset an optimistic baseline.
+  ...props.items.filter(item=>item.reorderable).map(item=>item.id+":"+item.sequence)].join(":");
  return <FacultyPrototypeLessonItemsInner {...props} key={key}/>;
 }

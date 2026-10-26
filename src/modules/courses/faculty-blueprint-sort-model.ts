@@ -8,3 +8,20 @@
 export function orderFacultyBlueprintItems<T extends {sequence:number}>(items:readonly T[]):T[]{
  return [...items].sort((a,b)=>a.sequence-b.sequence);
 }
+
+/** Keep the Section's server-authoritative content order in the original
+ * content slots of a mixed lesson. Individual assessment positions are
+ * independently persisted and must not shift merely because Section content
+ * is reordered. The content reader already applied any verified DB05
+ * override; sorting it again by its historical sequence loses that order.
+ */
+export function orderFacultyBlueprintContentSlots<
+ C extends {sequence:number}, A extends {sequence:number},
+>(contents:readonly C[],assessments:readonly A[]):Array<C|A>{
+ const mixed=orderFacultyBlueprintItems([
+  ...contents.map(item=>({item,sequence:item.sequence,isContent:true})),
+  ...assessments.map(item=>({item,sequence:item.sequence,isContent:false})),
+ ]);
+ let contentIndex=0;
+ return mixed.map(entry=>entry.isContent?contents[contentIndex++]!:entry.item);
+}

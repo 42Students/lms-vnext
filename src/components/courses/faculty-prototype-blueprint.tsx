@@ -2,7 +2,7 @@ import Link from "next/link";
 import {FacultyPrototypeLessonItems,type FacultyBlueprintItem} from "./faculty-prototype-lesson-items";
 import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
 import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submission-methods";
-import {orderFacultyBlueprintItems} from "@/modules/courses/faculty-blueprint-sort-model";
+import {orderFacultyBlueprintContentSlots} from "@/modules/courses/faculty-blueprint-sort-model";
 import {FACULTY_BLUEPRINT_ADD_KINDS,facultyBlueprintAddTarget} from "@/modules/courses/faculty-blueprint-add-target";
 import type {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import type {FacultyBlueprintLessonEngagement} from "@/modules/courses/faculty-blueprint-lesson-engagement-model";
@@ -25,8 +25,8 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
  const base="/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/blueprint";
  const lessonUrl=(id:string,advanced=false)=>base+"?lesson="+encodeURIComponent(id)+(advanced?"&advanced=1#learning-path":"");
  const owned=(id:string|null)=>id===course.deliveryId;
- const items:FacultyBlueprintItem[]=current?orderFacultyBlueprintItems([
-  ...current.contents.map(item=>({
+ const items:FacultyBlueprintItem[]=current?orderFacultyBlueprintContentSlots(
+  current.contents.map(item=>({
    id:item.id,title:item.title,kind:item.contentType,status:item.status,sequence:item.sequence,
    reorderable:owned(item.deliveryId),scheduled:item.contentType==="LIVE_CLASS"&&
     Boolean(item.startsAt&&item.startsAt.getTime()>Date.now()),
@@ -48,6 +48,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
    href:base+"?lesson="+encodeURIComponent(current.id)+"&content="+encodeURIComponent(item.id)+
     "&advanced=1#course-item-"+encodeURIComponent(item.id),
   })),
+  [
   ...current.assignments.map(item=>({
    id:item.id,title:item.title,kind:"ASSIGNMENT",status:item.status,sequence:item.sequence,
    reorderable:false,description:item.dueAt?"Due "+istDate(item.dueAt):"No deadline",
