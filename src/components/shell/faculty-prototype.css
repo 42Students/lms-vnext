@@ -224,3 +224,26 @@
   font-size:14px;
  }
 }
+
+/* Faculty Today (#02): exact prototype stays white even below a short/empty
+ * task list. The shared portal paints #f4f7fa with higher specificity; this
+ * override intentionally affects only the Faculty shell.
+ * Right-rail caption type must stay compact, unlike generic H2 defaults. */
+.lms-shell-frame[data-prototype-portal="faculty"],
+.lms-shell-frame[data-prototype-portal="faculty"] .lms-shell-page,
+.lms-shell-frame[data-prototype-portal="faculty"] .lms-shell-page-main {
+ background:#fff;
+}
+.lms-shell-frame[data-prototype-portal="faculty"] .faculty-proto-today aside h2 {
+ font-size:12px;
+ line-height:1.4;
+ font-weight:700;
+ letter-spacing:.035em;
+ color:#60718b;
+}
+.lms-shell-frame[data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-empty-heading {
+ font-size:16px;
+ line-height:1.4;
+ font-weight:700;
+ color:#1d293f;
+}
