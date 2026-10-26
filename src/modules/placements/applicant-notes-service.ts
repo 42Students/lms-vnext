@@ -106,6 +106,19 @@ async function resolveRecruiterScope(
       placementCompanyRelationships,
       eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId),
     )
+    // A context grant can expire or be revoked while a browser remains open.
+    // Authorize the *persisted* company relationship for every notes read.
+    .innerJoin(
+      placementRecruiterCollegeGrants,
+      and(
+        eq(placementRecruiterCollegeGrants.recruiterUserId, context.user.id),
+        eq(placementRecruiterCollegeGrants.companyRelationshipId, placementJobs.companyRelationshipId),
+        eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
+        eq(placementRecruiterCollegeGrants.verificationStatus, "VERIFIED"),
+        gt(placementRecruiterCollegeGrants.validUntil, sql`clock_timestamp()`),
+        sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
+      ),
+    )
     .innerJoin(
       placementApplicationScreenings,
       eq(placementApplicationScreenings.applicationId, placementApplications.id),
