@@ -106,7 +106,7 @@ export function summarizeTpoTodayNotContacted(
  * read from the authorized CRM list, never inferred from task truncation. */
 export function summarizeTpoTodayOutsideWeek(
  leads:readonly {stage:string;ownerMembershipId:string|null;
-  nextFollowupAt:string|null;unsubscribedAt:string|null}[],
+  nextFollowupAt:string|null;unsubscribedAt:Date|string|null}[],
  scope:"MINE"|"TEAM",actorMembershipId:string,now:Date,
 ){
  const finalDay=istDateKey(new Date(now.getTime()+6*86400000));
