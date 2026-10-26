@@ -55,7 +55,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   const links=page.getByRole("navigation",{name:"Quiz CSV response filters"});
   await expect(links.getByRole("link",{name:"Export attempted only"})).toBeVisible();
   await expect(links.getByRole("link",{name:"Export not attempted only"})).toBeVisible();
-  const downloadLink=page.getByRole("link",{name:"Download CSV"});
+  const downloadLink=page.getByRole("link",{name:"Download current faculty report as CSV"});
   const started=page.waitForEvent("download");
   await downloadLink.click();
   const download=await started;
