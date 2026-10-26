@@ -1,5 +1,10 @@
 import {readFileSync} from "node:fs";
-import {describe,expect,it} from "vitest";
+import {describe,expect,it,vi} from "vitest";
+import {createElement} from "react";
+import {renderToStaticMarkup} from "react-dom/server";
+import {TpoCompaniesToday} from "@/components/tpo/tpo-companies-today";
+
+vi.mock("next/navigation",()=>({useRouter:()=>({refresh:()=>{}})}));
 import {
  splitTpoTodayFollowups,tpoTodayFocusHref,rankTpoCompaniesToday,
  tpoTodayAgendaDay,tpoTodayAgendaHref,
@@ -93,6 +98,43 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(focus).toContain("rows.some(row=>row.id===initialFollowupId)");
   expect(focus).toContain("notContacted.count");
   expect(focus).toContain('href="/tpo/recruiters?stage=NEW"');
+ });
+ it("renders real CRM context without fabricating company trust or a sent email",()=>{
+  const html=renderToStaticMarkup(createElement(TpoCompaniesToday,{
+   scope:"MINE",
+   nowIso:"2026-10-26T08:00:00+05:30",
+   rows:[{id:"11111111-1111-4111-8111-111111111111",
+    leadId:"22222222-2222-4222-8222-222222222222",
+    leadName:"Asha Rao",companyName:"Example Employer",
+    dueAt:"2026-10-25T08:00:00+05:30",note:"Discuss campus recruitment",
+    phoneNorm:null,canContact:true,overdue:true}],
+   hasMore:false,unreadMessages:0,replyTotal:1,
+   replies:[{id:"33333333-3333-4333-8333-333333333333",
+    name:"Ravi Recruiter",company:"Example Employer",subject:"Campus hiring",
+    preview:"Interested in a visit",receivedAt:"2026-10-26T01:00:00Z",accessEnded:false}],
+   notContacted:{count:1,oldestAddedAt:"2026-10-20T00:00:00Z"},
+   leadContexts:[{id:"22222222-2222-4222-8222-222222222222",
+    designation:"HR Lead",stage:"JOINED",emailNorm:"asha@example.org",ownerName:"Placement Team"}],
+  }));
+  expect(html).toContain("Asha Rao");
+  expect(html).toContain("Discuss campus recruitment");
+  expect(html).toContain("Campus hiring");
+  expect(html).toContain("mailto:asha@example.org");
+  expect(html).toContain("Later &amp; next");
+  expect(html).toContain("Record outcome and plan next follow-up");
+  expect(html).toContain("Review company trust on its record");
+  expect(html).not.toContain("Verify Example Employer");
+  expect(html).not.toContain("Email sent");
+ });
+ it("exposes incomplete queue and recruiter inbox as warnings, not false zero totals",()=>{
+  const html=renderToStaticMarkup(createElement(TpoCompaniesToday,{
+   scope:"TEAM",rows:[],nowIso:"2026-10-26T08:00:00+05:30",
+   hasMore:true,unreadMessages:null,replyTotal:null,replies:[],notContacted:null,leadContexts:[],
+  }));
+  expect(html).toContain("focus preview");
+  expect(html).toContain("temporarily unavailable");
+  expect(html).toContain("Not-contacted recruiter count unavailable");
+  expect(html).not.toContain("No recruiters in this college");
  });
  it("keeps unassigned CRM follow-ups visible in My Work without dropping the college boundary",()=>{
   const source=readFileSync("src/modules/placements/tpo-followup-queue-service.ts","utf8");
