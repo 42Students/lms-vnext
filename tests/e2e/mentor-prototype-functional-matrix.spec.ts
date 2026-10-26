@@ -299,7 +299,7 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
   const forbidden=await page.request.get("/api/projects/"+projectId+"/activity");
   expect(forbidden.status()).toBe(403);
   await page.goto("/mentor/projects/"+projectId+"?tab=activity");
-  await expect(page).toHaveURL(/\\/dashboard(?:[/?#]|$)/);
+  await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
   await expect(page.locator("body")).not.toContainText(title);
  });
 
