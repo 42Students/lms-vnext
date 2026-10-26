@@ -42,3 +42,26 @@ Rules: exact authored prototype first, legacy dev behavior second, vNext source/
 - Recruiter request browser acceptance previously opened view=DRAFT, but RecruiterDrives query accepts ALL/LIVE/WAITING/CLOSED. Fixed test and actual HrDriveDraftForm success receipt Open the request link to use WAITING, and changed E2E to click the real receipt link.
 - In section 3 Who can apply on the request form, replaced the misleading claim that blank filters include every registered student with a truthful request-without-extra-restrictions explanation. College final eligibility is still authoritative.
 - All repairs are code changes committed to main; current acceptance results must be checked against exact commit SHA before assigning VERIFIED.
+
+## Recruiter implementation continuation — 27 October, pages 03–05
+
+### Page 03 · Request a Drive
+- The actual receipt title was rendered with `role=status` on its `h2`, overriding heading semantics. The live Recruiter acceptance browser check could not find `Drive approved` after an API success. Moved `role=status` / `aria-live=polite` to the containing section and restored the proper `h2` role. This is an accessible heading fix, not an invented successful submission.
+- Earlier continuation also fixed the auto-approval DRAFT decision-constraint mismatch and removed `view=DRAFT` from the real receipt link.
+
+### Page 04 · Drive Overview
+- Audited original authored screen 34: progress strip and one Next action persist above tabs; main overview has HIRING SO FAR / THE DRIVE on the left and WHAT STUDENTS SEE on the right. Compared old `lms2-fe/lms-dev-2026` RecruiterDriveOverview.jsx, RecruiterDrivePage and current vNext server route.
+- Moved the six-stage `recruiterDriveProgressSteps` strip and server-derived `recruiterDriveNextAction` above the tabs, so their status appears across Overview, Applicants, Rounds, Offers and Talk instead of only Overview.
+- Reflowed the vNext employer-authorized funnel and recorded drive facts alongside a default-open student-facing preview with title, CTC and job description. Crucially did not fabricate prototype-specific 186 applied, 286 eligible, 58 confirmed, last year's hires, or unshared applicant records.
+- Aligned back navigation and heading with college, shows scoped shared-count metadata, changed visible tabs to Rounds and Talk while retaining existing deep-link keys and complete functionality.
+- Extended the recruiter browser acceptance test to exercise progress on all five tabs and verify side-by-side desktop panel geometry at 1440px.
+
+### Page 05 · Applicants focused review
+- Original authored screen 35 and legacy RecruiterFocusedReview show Keep (S), Hold (H), Not selected (R) prominently, before official college verification. Current vNext results editor already persists the same PASS/HOLD/FAIL semantics only on explicit send; brought the outcome shortcut section open and restored Keep/Hold/Not selected labels when focused on one applicant (bulk editor retains explicit outcome labels).
+- Added authenticated focused-review browser coverage for visible outcome buttons and shortcut instructions.
+- Deep functional parity remains OPEN: current vNext focused applicant UI uses a Drawer + per-applicant server-controlled result editor, not the complete legacy device-persisted multi-person decision draft / undo workflow. Do not call this screen complete until retention across next/previous applicants, private rating write, candidate disclosure and staged result review are browser-verified.
+
+### CI & acceptance
+- Removed obsolete Recruiter source-string assertions in `chat6-final-sprint-rec-home-drives-04/-05` and asserted the new greeting/headline and first-run model behavior directly. Updated `hr-drive-overview-model.test.ts` to assert the newly exposed `closed` state.
+- A general Browser run at SHA 95532b2b failed before executing suites because `tests/e2e/mentor-portfolio-state-acceptance.spec.ts` contains an invalid regular-expression flag at line 189; this is an unrelated Mentor-lane blocker, not evidence of Recruiter pass or failure.
+- As multiple chats commit to main concurrently, CI runs may cancel. Only mark a screen code-verified after exact-SHA typecheck, unit and seeded Recruiter browser results; only mark pixel parity after side-by-side reference/implementation rendered screenshot comparison.
