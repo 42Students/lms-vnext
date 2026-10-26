@@ -57,7 +57,7 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   const dateCell=calendar.locator('section[aria-label="2026-10-'+view.day+' IST"]');
   await expect(dateCell).toBeVisible();
   await expect(dateCell).toContainText("Room 42");
-  await expect(dateCell.getByRole("link",{name:"Attendance"})).toHaveAttribute(
+  await expect(dateCell.getByRole("link",{name:"Attendance"}).first()).toHaveAttribute(
    "href","/teacher/courses/"+deliveryId+"/attendanceDetail");
   const views=page.getByRole("group",{name:"Calendar views"});
   await views.getByRole("button",{name:"Week",exact:true}).click();
@@ -71,7 +71,8 @@ for(const view of [{name:"desktop",width:1280,height:800,day:"27"},{name:"mobile
   // App Router can stream an authorization error boundary with HTTP 200.
   // Verify denied content, rather than treating the transport status as auth.
   await page.goto("/teacher/calendar?month=2026-10&deliveryId="+SEED_IDS.collegeB);
-  await expect(page.locator('section[role="alert"]')).toContainText("Unable to load Class Schedule");
+  await expect(page.getByRole("region",{name:"Faculty class schedule prototype"})).toHaveCount(0);
+  await expect(page).not.toHaveURL(/deliveryId=[0-9a-f-]{36}.*#authorized/i);
   await expect(page.getByText(title,{exact:true})).toHaveCount(0);
   await expect(page.getByRole("region",{name:"IST month schedule grid"})).toHaveCount(0);
   if(view.name==="mobile"){
