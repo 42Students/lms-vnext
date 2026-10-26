@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {TPO_RULE_LIMITS,tpoRuleBoundsValid} from "@/modules/placements/tpo-rule-limits";
 import Link from "next/link";
+import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
@@ -163,6 +164,25 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         the offer uplift above is the persisted college-wide threshold.
        </p>
       </div>
+      <details className="rounded-lg border border-border px-3 py-2">
+       <summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">
+        Custom thresholds and response times
+       </summary>
+       <div className="grid gap-3 border-t border-border py-3 sm:grid-cols-2">
+        <label className="grid gap-2 text-sm font-semibold text-body">Custom offer uplift (%)
+         <Input type="number" min={TPO_RULE_LIMITS.upliftPct.min}
+          max={TPO_RULE_LIMITS.upliftPct.max} step={1} value={form.upliftPct}
+          disabled={busy} onChange={event=>update("upliftPct",event.target.value)}
+          className="min-h-11 md:min-h-9"/>
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-body">Custom response period (hours)
+         <Input type="number" min={TPO_RULE_LIMITS.minResponseHours.min}
+          max={TPO_RULE_LIMITS.minResponseHours.max} step={1} value={form.minResponseHours}
+          disabled={busy} onChange={event=>update("minResponseHours",event.target.value)}
+          className="min-h-11 md:min-h-9"/>
+        </label>
+       </div>
+      </details>
       <div className="rounded-lg bg-surface-muted px-4 py-3 text-sm leading-6 text-body">
        <strong className="font-semibold text-foreground">What this means today:</strong>
        A student holding a 5 LPA offer needs an offer of at least {nextLpa} LPA
