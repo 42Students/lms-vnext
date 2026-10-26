@@ -73,8 +73,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   expect((await published.json()).quiz?.status).toBe("PUBLISHED");
 
   await page.goto("/teacher/allQuizzes");
-  await expect(page.getByRole("heading",{level:1,name:"All Quizzes"})).toBeVisible();
-  await page.getByRole("combobox",{name:"Course / Section"}).selectOption(deliveryId);
+  await expect(page.getByRole("heading",{level:1,name:"My Quizzes"})).toBeVisible();
   await page.getByRole("combobox",{name:"Status"}).selectOption("PUBLISHED");
   await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
   const card=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
@@ -98,7 +97,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   expect((await closed.json()).quiz?.status).toBe("CLOSED");
 
   await page.goto("/teacher/allQuizzes");
-  await page.getByRole("combobox",{name:"Course / Section"}).selectOption(deliveryId);
   await page.getByRole("combobox",{name:"Status"}).selectOption("CLOSED");
   await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
   const closedCard=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
@@ -112,7 +110,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   // Metadata-only edits remain legal after publication/close; quiz questions
   // and submitted answer snapshots must remain unchanged.
   await page.reload();
-  await page.getByRole("combobox",{name:"Course / Section"}).selectOption(deliveryId);
   await page.getByRole("combobox",{name:"Status"}).selectOption("CLOSED");
   await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
   const metadataCard=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
