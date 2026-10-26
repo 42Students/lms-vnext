@@ -89,7 +89,6 @@ jobs:
       E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
       E2E_AUTH_ENABLED: "true"
       APP_ENV: development
-      E2E_PRODUCTION_SERVER: "true"
       E2E_CAPTURE_TODAY: "true"
     steps:
       - uses: actions/checkout@v4
@@ -108,10 +107,6 @@ jobs:
           echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
-      - name: Build production-mode Recruiter browser application
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run build
       - name: Authenticated Recruiter prototype and role denial
         run: |
           npx playwright test \
