@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { projectResourceAuditAction } from "@/modules/projects/project-resource-audit-model";
+import {formatProjectIstDateTime} from "@/modules/projects/project-date-time-format-model";
 
 type ResourceEvent = {
   id: string;
@@ -49,10 +50,7 @@ function actionFor(eventType: string): ResourceAction | null {
   }
 }
 function formatWhen(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-    timeZoneName: "short",
-  }).format(new Date(value));
+  return formatProjectIstDateTime(new Date(value));
 }
 
 /** Legacy Resource activity table, limited to events in the parent workspace snapshot. */

@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {formatProjectIstDateTime} from "@/modules/projects/project-date-time-format-model";
 import {useEffect,useState} from "react";
 
 export type MentorMeetingHistoryItem={
@@ -8,9 +9,7 @@ export type MentorMeetingHistoryItem={
 const PREVIEW=6;
 function when(value:string){
  const parsed=new Date(value);
- return Number.isFinite(parsed.getTime())?new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",timeZoneName:"short",
- }).format(parsed):"Date unavailable";
+ return Number.isFinite(parsed.getTime())?formatProjectIstDateTime(parsed):"Date unavailable";
 }
 /** A preview of completed/cancelled meeting appointments, not their edit history. */
 export function MentorMeetingHistory({meetings,projectId}:{meetings:readonly MentorMeetingHistoryItem[];projectId?:string}){

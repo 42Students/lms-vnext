@@ -1,3 +1,4 @@
+import {formatProjectIstDateTime} from "@/modules/projects/project-date-time-format-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
@@ -335,13 +336,7 @@ function safeHttpHref(value: string | null) {
 }
 
 function formatDateTime(value: Date | null) {
-  if (!value) return "Not set";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-    timeZoneName: "short",
-  }).format(value);
+  return formatProjectIstDateTime(value);
 }
 
 
