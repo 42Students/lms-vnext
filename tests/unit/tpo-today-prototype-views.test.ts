@@ -127,6 +127,7 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(html).toContain("mailto:asha@example.org");
   expect(html).toContain("Later &amp; next");
   expect(html).toContain("Record outcome and plan next follow-up");
+  expect(html).toContain("3 things need you");
   expect(html).toContain("Unverified Employer");
   expect(html).toContain("Not verified by 42");
   expect(html).toContain("College trust: Not trusted");
@@ -226,6 +227,22 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(html).toContain("Counts unavailable");
   expect(html).toContain("Recruiter replies are temporarily unavailable");
   expect(html).toContain("limited preview");
+ });
+
+ it("hides outbound contact links when the persisted CRM lead is not contactable",()=>{
+  const html=renderToStaticMarkup(createElement(TpoCompaniesToday,{
+   scope:"MINE",nowIso:"2026-10-26T10:00:00Z",hasMore:false,
+   rows:[{...row("task-1","2026-10-26T03:00:00Z"),leadId:"lead-1",
+    leadName:"Unsubscribed Contact",canContact:false,phoneNorm:"9876543210"}],
+   leadContexts:[{id:"lead-1",emailNorm:"former@example.org",
+    stage:"CONTACTED",designation:"Recruiter",ownerName:null}],
+   replyTotal:0,replies:[],companyAttention:{items:[],hasMore:false},
+   unreadMessages:0,notContacted:{count:0,oldestAddedAt:null},
+  }));
+  expect(html).toContain("Unsubscribed Contact");
+  expect(html).not.toContain("mailto:former@example.org");
+  expect(html).not.toContain("tel:");
+  expect(html).toContain("Further outreach");
  });
 
 });
