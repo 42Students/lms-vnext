@@ -3,6 +3,7 @@ import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {facultyAttendanceMarkingWindow} from "@/modules/attendance/faculty-marking-window";
+import {facultyAttendanceWriteNeedsReload} from "@/modules/attendance/faculty-attendance-write-recovery";
 import {selectFacultyPrototypeSession} from "@/modules/attendance/faculty-prototype-session-selection";
 import type {FacultyAttendanceWorkspaceData} from "./faculty-attendance-workspace";
 
@@ -106,9 +107,15 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
     }),
    });
    if(!response.ok){
-    if(response.status===409)setOutcomeUncertain(true);
-    setError(response.status===409?"Attendance changed or conflicted. Refresh the session before correcting again.":
-     response.status===403||response.status===404?"This class session is not available to your current Faculty assignment.":
+    // A 5xx or stale-version response can arrive after the attendance write
+    // committed. Never offer a second save from the same roster snapshot.
+    const mustReload=facultyAttendanceWriteNeedsReload(response.status);
+    if(mustReload)setOutcomeUncertain(true);
+    setError(response.status===409||response.status===412?
+     "Attendance changed or conflicted. Refresh the session before correcting again.":
+     response.status===403||response.status===404?
+      "This class session is not available to your current Faculty assignment.":
+     mustReload?"The attendance save could not be confirmed. Refresh this session before trying again.":
      "Attendance could not be saved. Review the class and try again.");
     return;
    }
@@ -133,6 +140,8 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
   {view==="month"?<section className="rounded-xl border border-[#e5ebf2] p-5">
    <h2 className="text-base font-bold text-[#1d293f]">{monthLabel(new Date().toISOString())} attendance</h2>
    <p className="faculty-proto-subtitle mt-1">Review the scheduled classes and open one to mark or correct its attendance.</p>
+   {sessions.some(s=>monthLabel(s.startsAt)===monthLabel(new Date().toISOString()))?null:
+    <p role="status" className="faculty-proto-subtitle mt-3">No class sessions scheduled for this month.</p>}
    <ol className="mt-3 divide-y divide-[#edf1f5]">{sessions.filter(s=>
     monthLabel(s.startsAt)===monthLabel(new Date().toISOString())).map(s=><li key={s.id}
     className="flex flex-wrap items-center justify-between gap-4 py-3 text-sm">

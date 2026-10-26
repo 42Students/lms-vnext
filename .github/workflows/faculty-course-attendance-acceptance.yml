@@ -9,6 +9,8 @@ on:
       - "tests/e2e/faculty-course-attendance.spec.ts"
       - "tests/e2e/faculty-attendance-prototype.spec.ts"
       - "tests/unit/faculty-prototype-session-selection.test.ts"
+      - "src/modules/attendance/faculty-attendance-write-recovery.ts"
+      - "tests/unit/faculty-attendance-write-recovery.test.ts"
       - "src/modules/attendance/faculty-prototype-session-selection.ts"
       - "src/components/attendance/faculty-prototype-attendance.tsx"
       - "src/modules/attendance/faculty-service.ts"
@@ -63,6 +65,7 @@ jobs:
           tests/unit/faculty-attendance-grid-model.test.ts
           tests/unit/faculty-learner-attendance-detail.test.ts
           tests/unit/faculty-prototype-session-selection.test.ts
+          tests/unit/faculty-attendance-write-recovery.test.ts
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 30
