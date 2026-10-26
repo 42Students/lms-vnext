@@ -3,7 +3,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { can } from "@/modules/permissions/policy";
 import { RecruiterLeadsWorkspace } from "@/components/tpo/recruiter-leads-workspace";
 import CampaignHistory from "./campaigns/page";
-import { TpoFourEntitySearch } from "@/components/tpo/tpo-four-entity-search";
 
 type PageProps = {
   searchParams: Promise<{
@@ -68,7 +67,6 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
     requested === "board" || requested === "companies" ? requested : "table";
   return (
     <div className="min-w-0 space-y-4">
-    <TpoFourEntitySearch initialQuery={first(query.q)??""}/>
     <RecruiterLeadsWorkspace
       collegeId={context.membership.collegeId}
       initialView={initialView}
