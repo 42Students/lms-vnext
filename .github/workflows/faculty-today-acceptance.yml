@@ -10,6 +10,8 @@ on:
       - "src/components/faculty/faculty-today-panel.tsx"
       - "src/components/shell/faculty-prototype.css"
       - "src/app/api/courses/faculty/shell-counts/route.ts"
+## Dedicated Faculty browser verification; repository-wide TypeScript
+## remains a separate mandatory gate in CI.
 permissions:
   contents: read
 concurrency:
@@ -45,10 +47,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Type-check Faculty implementation
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable browser database
