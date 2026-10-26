@@ -32,7 +32,8 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
   :"/api/courses/faculty/"+(selectedEditor.item.kind==="QUIZ"?"quizzes":"assignments")+
    "/"+encodeURIComponent(deliveryId)+"/command";
  async function archive(){
-  if(locked.current||unknown)return;
+  // Narrow inside the async closure too; React props may change between renders.
+  if(!selectedEditor||locked.current||unknown)return;
   locked.current=true;setBusy(true);setError(null);
   try{
    const body=selectedEditor.type==="CONTENT"?{action:"ARCHIVE"}:
