@@ -2,6 +2,7 @@ import Link from "next/link";
 import {FacultyPrototypeLessonItems,type FacultyBlueprintItem} from "./faculty-prototype-lesson-items";
 import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
 import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submission-methods";
+import {orderFacultyBlueprintItems} from "@/modules/courses/faculty-blueprint-sort-model";
 import type {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
@@ -21,7 +22,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
  const base="/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/blueprint";
  const lessonUrl=(id:string,advanced=false)=>base+"?lesson="+encodeURIComponent(id)+(advanced?"&advanced=1#learning-path":"");
  const owned=(id:string|null)=>id===course.deliveryId;
- const items:FacultyBlueprintItem[]=current?[
+ const items:FacultyBlueprintItem[]=current?orderFacultyBlueprintItems([
   ...current.contents.map(item=>({
    id:item.id,title:item.title,kind:item.contentType,status:item.status,sequence:item.sequence,
    reorderable:owned(item.deliveryId),scheduled:item.contentType==="LIVE_CLASS"&&
@@ -69,7 +70,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId}:{
    href:base+"?lesson="+encodeURIComponent(current.id)+"&content="+encodeURIComponent(item.id)+
     "&advanced=1#course-item-"+encodeURIComponent(item.id),
   })),
- ].sort((a,b)=>a.sequence-b.sequence||a.title.localeCompare(b.title)):[];
+ ]):[];
  const currentLive=current?.visibleToStudents&&workspace.learningPath?.status==="PUBLISHED";
  return <section className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[310px_minmax(0,1fr)]"
   aria-label="Course blueprint lesson explorer">
