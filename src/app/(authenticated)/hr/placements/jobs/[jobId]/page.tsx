@@ -52,6 +52,8 @@ import {recruiterChangeShortcut,RECRUITER_CHANGE_SHORTCUTS} from "@/modules/plac
 import {getRecruiterBookedInterviews} from "@/modules/placements/recruiter-booked-interviews-service";
 import {groupRecruiterBookedPanels} from "@/modules/placements/recruiter-booked-interviews-model";
 import {RecruiterJoiningReportForm} from "@/components/hr/recruiter-joining-report-form";
+import {getRecruiterHistoricalOffers} from "@/modules/placements/recruiter-historical-offers-service";
+import {recruiterHistoricalJoiningLabel,recruiterHistoricalOfferStatus,recruiterPreviousIstCalendarYear} from "@/modules/placements/recruiter-historical-offers-model";
 import {RecruiterPanelActions} from "@/components/hr/recruiter-panel-actions";
 import {Tabs} from "@/components/ui/tabs";
 
@@ -157,6 +159,12 @@ export default async function HrPlacementJobPage({
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion"||requestsTab;
   const changeShortcut=recruiterChangeShortcut(query.change);
+  const historicalOffers=filters.tab==="offers"
+   ?await getRecruiterHistoricalOffers(context,workspace.job.id)
+     .then(data=>({ready:true as const,...data}))
+     .catch(()=>({ready:false as const,year:recruiterPreviousIstCalendarYear(new Date()).year,
+       rows:[] as Awaited<ReturnType<typeof getRecruiterHistoricalOffers>>["rows"],truncated:false}))
+   :null;
   const bookedInterviews=filters.tab==="rounds"
     ?await getRecruiterBookedInterviews(context,workspace.job.id)
       .then(value=>({items:value.items,truncated:value.truncated,unavailable:false as const}))
@@ -909,6 +917,38 @@ export default async function HrPlacementJobPage({
                   currentOutcome={offer.joiningStatus}/>
               )}
             </div>
+          </section>:null}
+          {historicalOffers?<section aria-label="Previous year company offers" className="space-y-3 rounded-xl border border-border p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h3 className="font-semibold text-foreground">Last year's offers at {workspace.college.name} · {historicalOffers.year}</h3>
+              <Link href={"/hr/company?collegeId="+encodeURIComponent(workspace.college.id)}
+               className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+               All your hiring at {workspace.college.name}
+              </Link>
+            </div>
+            <p className="text-xs text-muted-foreground">Prior closed drives of your verified employer and college, limited to shortlisted applicants shared with your company. Official joining outcomes only.</p>
+            {!historicalOffers.ready?<p role="status" className="text-sm text-body">
+              Previous-year offer history could not be verified. Retry before relying on historical counts.
+            </p>:historicalOffers.rows.length?
+              <div className="overflow-x-auto"><table className="min-w-full border-collapse text-left text-sm">
+               <thead><tr className="border-b border-border text-xs font-semibold uppercase text-muted-foreground">
+                <th scope="col" className="px-3 py-2">Student</th>
+                <th scope="col" className="px-3 py-2">Drive</th>
+                <th scope="col" className="px-3 py-2">Offer</th>
+                <th scope="col" className="px-3 py-2">Joining</th>
+               </tr></thead>
+               <tbody>{historicalOffers.rows.map(item=><tr key={item.id} className="border-b border-border">
+                <td className="px-3 py-3 font-semibold text-foreground">{item.student}</td>
+                <td className="px-3 py-3 text-body">{item.role}</td>
+                <td className="px-3 py-3 text-body">{recruiterHistoricalOfferStatus(item.status)}</td>
+                <td className="px-3 py-3 text-body">{recruiterHistoricalJoiningLabel(item.joiningStatus,item.joiningDate)}</td>
+               </tr>)}</tbody>
+              </table></div>:<p role="status" className="text-sm text-muted-foreground">
+                No previous-year offers were verified for closed drives at this college.
+              </p>}
+            {historicalOffers.truncated?<p className="text-xs font-semibold text-muted-foreground">
+              Showing the latest 10 verified offers; this is not a full-year total.
+            </p>:null}
           </section>:null}
           {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)&&offersPage.pages>1?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
