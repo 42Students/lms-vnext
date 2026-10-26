@@ -22,22 +22,23 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
  const [unknown,setUnknown]=useState(false);
  const [error,setError]=useState<string|null>(null);
  const locked=useRef(false);
- if(!editor)return null;
- const item=editor.item;
- const archivePossible=editor.type==="CONTENT"||
-  (editor.item.status!=="ARCHIVED"&&(editor.item.kind==="QUIZ"||editor.item.status==="DRAFT"||editor.item.status==="PUBLISHED"));
- const route=editor.type==="CONTENT"
+ const selectedEditor=editor;
+ if(!selectedEditor)return null;
+ const item=selectedEditor.item;
+ const archivePossible=selectedEditor.type==="CONTENT"||
+  (selectedEditor.item.status!=="ARCHIVED"&&(selectedEditor.item.kind==="QUIZ"||selectedEditor.item.status==="DRAFT"||selectedEditor.item.status==="PUBLISHED"));
+ const route=selectedEditor.type==="CONTENT"
   ?"/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition"
-  :"/api/courses/faculty/"+(editor.item.kind==="QUIZ"?"quizzes":"assignments")+
+  :"/api/courses/faculty/"+(selectedEditor.item.kind==="QUIZ"?"quizzes":"assignments")+
    "/"+encodeURIComponent(deliveryId)+"/command";
  async function archive(){
   if(locked.current||unknown)return;
   locked.current=true;setBusy(true);setError(null);
   try{
-   const body=editor.type==="CONTENT"?{action:"ARCHIVE"}:
+   const body=selectedEditor.type==="CONTENT"?{action:"ARCHIVE"}:
     facultyAssessmentLifecyclePayload({
-     kind:editor.item.kind,id:item.id,action:"ARCHIVE",
-     expectedUpdatedAt:new Date(editor.item.updatedAt).toISOString(),
+     kind:selectedEditor.item.kind,id:item.id,action:"ARCHIVE",
+     expectedUpdatedAt:new Date(selectedEditor.item.updatedAt).toISOString(),
     });
    const response=await fetch(route,{
     method:"POST",headers:{"Content-Type":"application/json"},
@@ -63,9 +64,9 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
   }
  }
  return <div className="flex shrink-0 items-center gap-1.5" aria-label={"Actions for "+item.title}>
-  {editor.type==="CONTENT"
-   ?<FacultyContentEditor item={editor.item} compact/>
-   :<FacultyAssessmentEditor assessment={editor.item} compact/>}
+  {selectedEditor.type==="CONTENT"
+   ?<FacultyContentEditor item={selectedEditor.item} compact/>
+   :<FacultyAssessmentEditor assessment={selectedEditor.item} compact/>}
   {archivePossible?<button type="button"
    className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-[#dce5ee] bg-white text-lg text-[#334155] hover:border-[#c33937] hover:text-[#a12724] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078191]"
    aria-label={"Remove "+item.title} title={"Archive "+item.title}
