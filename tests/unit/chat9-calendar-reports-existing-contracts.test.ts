@@ -24,7 +24,11 @@ describe("TPO calendar and reports verified source contracts",()=>{
   const source=load("src/app/(authenticated)/tpo/reports/page.tsx");expect(source).toContain('aria-label="Placement journey"');expect(source).toContain("Looking for a job");expect(source).toContain("Placed");expect(source).toContain("Accepted");
  });
  it("TPO-calendar-reports-40 renders evidence-backed chart panels on the major report views",()=>{
-  const branch=load("src/app/(authenticated)/tpo/reports/by-branch/page.tsx");const status=load("src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx");expect(branch).toContain("Placement rate by branch");expect(status).toContain("Acceptance rate by company");expect(status).toContain("<ReportBarChart");
+  const branch=load("src/app/(authenticated)/tpo/reports/by-branch/page.tsx");const status=load("src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx");expect(branch).toContain("<TpoByBranchPrototypeChart rows={workspace.report.byBranch}");
+  const chart=load("src/components/tpo/tpo-by-branch-prototype-chart.tsx");
+  expect(chart).toContain('aria-label="Placement rate by branch"');
+  expect(chart).toContain("tpoBranchChartPercent(row.placed,row.registered,row.placementRatePercent)");
+  expect(status).toContain("Acceptance rate by company");expect(status).toContain("<ReportBarChart");
  });
  it("TPO-calendar-reports-41 connects search sort columns and safe shown-row CSV to report tables",()=>{
   const table=load("src/components/placements/report-interactive-table.tsx");const adapter=load("src/components/placements/placement-report-ui.tsx");expect(table).toContain("const [columnFilters");expect(table).toContain("Search table");expect(table).toContain("Copy shown");expect(table).toContain("Export shown CSV");expect(adapter).toContain("<ReportInteractiveTable");
