@@ -109,3 +109,4 @@ jobs:
           tests/e2e/faculty-contacts-all.spec.ts
           tests/e2e/faculty-contacts-teachers.spec.ts
           tests/e2e/faculty-contacts-students.spec.ts
+          --workers=1
