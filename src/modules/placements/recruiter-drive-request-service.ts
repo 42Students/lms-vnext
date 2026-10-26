@@ -195,7 +195,10 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
     approvedJobId=await createRecruiterApprovedDraftJob(tx,created,context.user.id);
     const [approved]=await tx.update(placementRecruiterDriveRequests).set({
       status:"DRAFT",approvedJobId,updatedAt:new Date(),
-      decisionNote:null,decidedAt:new Date(),decidedByUserId:null,
+      // Policy auto-approval is audited as AUTO_APPROVED below, not a human
+      // decision. The database requires decidedAt and decidedByUserId to
+      // be either both populated or both null.
+      decisionNote:null,decidedAt:null,decidedByUserId:null,
     }).where(eq(placementRecruiterDriveRequests.id,created.id)).returning();
     if(!approved)throw new RecruiterDriveRequestError("STORAGE_NOT_READY");
     finalRequest=approved;
