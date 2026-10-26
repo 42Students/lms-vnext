@@ -176,7 +176,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <TpoNoticePrototypeSidebar tab={tab.data} mine={showTeam} page={page}
      rows={result.items.map(row=>({id:row.id,title:row.title,senderName:row.senderName,
       createdAt:row.createdAt.toISOString(),scheduledAt:row.scheduledAt?.toISOString()??null,
-      expiresAt:row.expiresAt?.toISOString()??null,isPinned:row.isPinned,audienceKind:row.audienceKind}))}
+      expiresAt:row.expiresAt?.toISOString()??null,isPinned:row.isPinned,audienceKind:row.audienceKind??null}))}
      nowIso={new Date().toISOString()} activeId={selectedNotice?.id??null}/>
     <section className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-5" aria-label="Announcement details">
     {selectedNotice?<ol aria-label="tpo announcements entries" className="min-w-0 space-y-3">
