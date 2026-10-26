@@ -26,7 +26,8 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
  const [templateOpen,setTemplateOpen]=useState(false);
  const [templateQuery,setTemplateQuery]=useState("");
  const [templateId,setTemplateId]=useState<string>(TPO_MESSAGE_TEMPLATE_LIBRARY[0].id);
- const template=TPO_MESSAGE_TEMPLATE_LIBRARY.find(item=>item.id===templateId)??TPO_MESSAGE_TEMPLATE_LIBRARY[0];
+ const matchedTemplates=searchTpoMessageTemplates(templateQuery);
+ const template=matchedTemplates.find(item=>item.id===templateId)??matchedTemplates[0];
  useEffect(()=>{
   if(!unread||markedOnOpen.current===threadId)return;
   markedOnOpen.current=threadId;
@@ -138,7 +139,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
       onChange={event=>setTemplateQuery(event.target.value)}
       placeholder="Search message templates" className="min-h-11 w-full md:min-h-9"/>
      <div className="max-h-72 min-w-0 overflow-y-auto" role="group" aria-label="Available message templates">
-      {searchTpoMessageTemplates(templateQuery).map(item=>
+      {matchedTemplates.map(item=>
        <button key={item.id} type="button" aria-pressed={templateId===item.id}
         onClick={()=>setTemplateId(item.id)}
         className={"block min-h-11 w-full rounded-md px-3 py-2 text-left text-sm "+
@@ -146,7 +147,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
         <span className="block text-xs text-muted-foreground">{item.group}</span>
         <span className="block">{item.title}</span>
        </button>)}
-      {searchTpoMessageTemplates(templateQuery).length===0?
+      {matchedTemplates.length===0?
        <p role="status" className="p-3 text-xs text-muted-foreground">No templates match this search.</p>:null}
      </div>
     </div>
