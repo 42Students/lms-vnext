@@ -9,6 +9,8 @@ on:
       - "tests/e2e/faculty-course-students.spec.ts"
       - "src/components/courses/faculty-prototype-student-directory.tsx"
       - "src/modules/courses/faculty-course-home-service.ts"
+## Dedicated Faculty browser verification; repository-wide TypeScript
+## remains a separate mandatory gate in CI.
 permissions:
   contents: read
 concurrency:
@@ -58,7 +60,3 @@ jobs:
         run: npx playwright test tests/e2e/faculty-students-prototype.spec.ts tests/e2e/faculty-course-students.spec.ts --workers=1
       # Do not let unrelated TPO/Recruiter TypeScript errors hide Faculty E2E.
       # Global TypeScript is still a mandatory final acceptance gate.
-      - name: Type-check Faculty Students
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
