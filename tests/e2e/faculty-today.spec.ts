@@ -27,7 +27,7 @@ test("Faculty Today shows the prototype's side cards and truthful task count on 
   await page.goto("/teacher");
   const today=page.locator(".faculty-proto-today");
   await expect(today.getByRole("heading",{level:1,name:/things? needs? you\./i})).toBeVisible();
-  const queue=today.locator("> div > div").first();
+  const queue=today.locator(":scope > div > div").first();
   const cards=today.locator("aside[aria-label=\"Today's classes and this week\"]");
   await expect(cards.getByRole("heading",{name:"Today's classes"})).toBeVisible();
   await expect(cards.getByRole("heading",{name:"This week"})).toBeVisible();
