@@ -81,7 +81,7 @@ test.describe("Recruiter prototype functional journeys",()=>{
   const candidates=await page.locator('a[href^="/recruiter/drives/"]').evaluateAll(links=>links
    .map(link=>link.getAttribute("href")??"")
    .filter(href=>/^\/recruiter\/drives\/[0-9a-f-]{36}(?:[?#]|$)/i.test(href)));
-  test.skip(candidates.length===0,"Seed has no recruiter-visible drive");
+  expect(candidates.length,"Disposable E2E database must seed a Recruiter-owned published drive").toBeGreaterThan(0);
   const drive=candidates[0]!.split(/[?#]/)[0]!;
   await page.goto(drive+"?tab=rounds");
   await expect(page.getByRole("heading",{name:"Who, when · interview panel lists"})).toBeVisible();

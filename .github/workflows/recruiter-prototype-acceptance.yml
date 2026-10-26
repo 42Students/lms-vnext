@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/recruiter-prototype-acceptance.yml"
+      - "scripts/db-e2e-prepare.ts"
       - "src/app/(authenticated)/hr/**"
       - "src/app/company-share/**"
       - "src/app/recruiter-invite/**"
