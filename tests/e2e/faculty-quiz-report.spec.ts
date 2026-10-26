@@ -52,6 +52,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page.getByRole("heading",{name:"Question accuracy"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"Score distribution"})).toBeVisible();
   await expect(page.getByRole("link",{name:/Individual attempts & question accuracy/})).toBeVisible();
+  await page.getByText("Export options",{exact:true}).click();
   const links=page.getByRole("navigation",{name:"Quiz CSV response filters"});
   await expect(links.getByRole("link",{name:"Export attempted only"})).toBeVisible();
   await expect(links.getByRole("link",{name:"Export not attempted only"})).toBeVisible();
