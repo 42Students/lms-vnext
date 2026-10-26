@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export type RoundPreview={
- id:string;sequence:number;name:string;kind:string;status:string;mode:string;
+ id:string;sequence:number;name:string;kind:string;status:string;mode:string|null;
  scheduledAt:Date|null;venue:string|null;durationMinutes:number|null;
  participants:readonly {result:{status:string}|null}[];
 };
@@ -11,7 +11,7 @@ export type SlotPreview={
 };
 type SelectedSlots={
  slots:readonly SlotPreview[];
- roster:readonly {applicationId:string;name:string}[];
+ roster:readonly {applicationId:string;name:string|null}[];
  reschedules:readonly {id:string;name:string;reason:string|null}[];
  pendingProposals:number;
 };
@@ -81,7 +81,7 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
       <div>
        <h2 className="text-xl font-bold text-foreground">{selected.name}</h2>
        <p className="mt-1 text-sm text-body">
-        {when(selected.scheduledAt)} · {selected.venue??"Venue not recorded"} · {selected.mode}
+        {when(selected.scheduledAt)} · {selected.venue??"Venue not recorded"} · {selected.mode??"Mode not recorded"}
        </p>
       </div>
       <nav aria-label="Selected round actions" className="flex flex-wrap gap-2 text-sm">
