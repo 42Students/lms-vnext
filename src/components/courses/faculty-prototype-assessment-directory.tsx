@@ -1,6 +1,8 @@
 "use client";
 import {useMemo,useState} from "react";
 import Link from "next/link";
+import {FacultyAssessmentCreate} from "./faculty-assessment-create";
+import type {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 export type AssessmentRow={
  key:string;kind:"Assignment"|"Quiz";title:string;courseCode:string;sectionName:string;
  dueAt:string|null;status:string;handedIn:number;eligible:number|null;toGrade:number|null;
@@ -9,7 +11,9 @@ export type AssessmentRow={
 const dateLabel=(value:string|null)=>value?new Intl.DateTimeFormat("en-IN",{
  timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
 }).format(new Date(value)):"Not set";
-export function FacultyPrototypeAssessmentDirectory({rows}:{rows:readonly AssessmentRow[]}){
+export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices}:{rows:readonly AssessmentRow[];
+ lessonChoices:Awaited<ReturnType<typeof getFacultyAssessmentOverview>>["lessonChoices"];
+}){
  const [kind,setKind]=useState<"all"|"assignment"|"quiz">("all");
  const [course,setCourse]=useState("all");
  const courses=useMemo(()=>[...new Set(rows.map(row=>row.courseCode))].sort(),[rows]);
@@ -27,9 +31,9 @@ export function FacultyPrototypeAssessmentDirectory({rows}:{rows:readonly Assess
    <div><h1 className="faculty-proto-heading">Assignments &amp; quizzes</h1>
     <p className="faculty-proto-subtitle mt-1">Everything you have set, across all your courses. One list instead of two pages.</p>
    </div>
-   <div className="flex gap-2">
-    <Link className="faculty-proto-secondary" href="/teacher/allQuizzes">+ Quiz</Link>
-    <Link className="faculty-proto-action" href="/teacher/allAssignments">+ Assignment</Link>
+   <div className="flex flex-wrap gap-2">
+    <FacultyAssessmentCreate kind="QUIZ" lessons={lessonChoices} triggerLabel="+ Quiz" triggerTone="secondary"/>
+    <FacultyAssessmentCreate kind="ASSIGNMENT" lessons={lessonChoices} triggerLabel="+ Assignment"/>
    </div>
   </div>
   <div className="flex flex-wrap items-center justify-between gap-3">
