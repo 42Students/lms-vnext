@@ -3,6 +3,7 @@ import {describe,it,expect} from "vitest";
 import {createElement} from "react";
 import {renderToStaticMarkup} from "react-dom/server";
 import {TpoRecruiterPrototypeStageRibbon} from "@/components/tpo/recruiter-prototype-stage-ribbon";
+import {TpoRecruiterPrototypeRoster} from "@/components/tpo/recruiter-prototype-roster";
 import {tpoRecruiterFollowupSignal} from "@/modules/placements/tpo-recruiter-attention-model";
 const source=(name:string)=>readFileSync(name,"utf8");
 describe("TPO Companies / Recruiters prototype inspector",()=>{
@@ -71,6 +72,31 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
     .toEqual({label:"No next follow-up recorded",lateDays:0});
   expect(tpoRecruiterFollowupSignal("not-a-date",now))
     .toEqual({label:"Follow-up date unavailable",lateDays:0});
+ });
+
+ it("renders the six-column screenshot roster with real fields and selection",()=>{
+  const html=renderToStaticMarkup(createElement(TpoRecruiterPrototypeRoster,{
+   rows:[{id:"lead-1",name:"Recruiter A",designation:"Campus Lead",companyName:"Test Employer",
+    stage:"JOINED",nextFollowupAt:"2026-10-23T06:00:00Z",
+    lastActivityAt:"2026-10-25T06:00:00Z",ownerName:"Officer B"}],
+   selectedId:"lead-1",onSelect:()=>{},now:new Date("2026-10-26T08:00:00Z"),
+  }));
+  for(const heading of ["Recruiter","Company","Where you are","Next step","Last activity","Handled by"]){
+   expect(html).toContain(">"+heading+"</th>");
+  }
+  for(const signal of ["Recruiter A","Campus Lead","Test Employer","Officer B","Follow up · 3 days late"]){
+   expect(html).toContain(signal);
+  }
+  expect(html).toContain('aria-pressed="true"');
+  expect(html).toContain("1 in this view");
+  expect(html).not.toContain("Rohit Mehta");
+ });
+ it("keeps advanced grid, bulk actions and recruiter detail behind the compact screenshot table",()=>{
+  const roster=source("src/components/tpo/recruiter-leads-workspace.tsx");
+  expect(roster).toContain('<TpoRecruiterPrototypeRoster rows={sortedVisible}');
+  expect(roster).toContain('data-testid="tpo.recruiter.advanced-grid"');
+  expect(roster).toContain('<RecruiterTpoGrid rows={sortedVisible}');
+  expect(roster).toContain('<TpoRecruiterPrototypeInspector lead={focusedLead}');
  });
 
 });
