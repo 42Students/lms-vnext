@@ -37,6 +37,9 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
   expect(inspector).toContain('return /^\\+?[1-9]\\d{7,14}$/.test(digits)?digits:null;');
   expect(inspector).toContain('const href="/tpo/recruiters/"+encodeURIComponent(lead.id)');
   expect(inspector).toContain("Open full page");
+  expect(inspector).toContain('href={href+"#tpo-recruiter-log-interaction"}');
+  expect(source("src/components/tpo/recruiter-lead-detail-workspace.tsx"))
+   .toContain('id="tpo-recruiter-log-interaction"');
  });
  it("shows the eight genuine prototype stage totals with no assumed sample counts",()=>{
   const html=renderToStaticMarkup(createElement(TpoRecruiterPrototypeStageRibbon,{
@@ -115,6 +118,9 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
    expect(workspace).toContain(label);
   }
   expect(workspace).toContain("advancedRosterRef.current.open=true");
+  expect(workspace).toContain('}>Invite</Button>');
+  expect(workspace).toContain('const bulkPanel=(');
+  expect(workspace).toContain('{bulkPanel}');
   expect(workspace).toContain("setSelectedIds(sortedVisible.map(lead=>lead.id))");
   expect(workspace).toContain("setCompactColumns(previous=>");
   expect(workspace).toContain('const [needsExpanded,setNeedsExpanded]=useState(false)');
