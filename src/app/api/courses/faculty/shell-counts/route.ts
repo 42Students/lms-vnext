@@ -1,9 +1,9 @@
 import {NextResponse} from "next/server";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,eq,gte,inArray,isNull,sql} from "drizzle-orm";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getDb} from "@/db/client";
-import {assignmentSubmissions,courseAssignments} from "@/db/schema";
+import {assignmentSubmissions,attendanceSessions,courseAssignments,courseDiscussionMessages} from "@/db/schema";
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
 
@@ -41,10 +41,33 @@ export async function GET(){
    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
   }).format(date);
   const todayKey=key(now);
-  const todayEvents=new Set((schedule?.events??[]).filter(item=>
-   key(item.startsAt)===todayKey&&item.startsAt<=now).map(item=>item.id));
+  // Mirror the four actionable *categories* used by Faculty Today, not
+  // raw counts of every submission or event. An already-marked session
+  // must never keep the Today badge falsely pending.
+  const todayEvents=[...new Map((schedule?.events??[])
+   .filter(item=>key(item.startsAt)===todayKey&&item.deliveryId!==null)
+   .map(item=>[item.id,item.id] as const)).values()];
+  const attendanceRows=todayEvents.length?await getDb().select({
+   id:attendanceSessions.scheduleEventId,status:attendanceSessions.status,
+  }).from(attendanceSessions)
+   .where(inArray(attendanceSessions.scheduleEventId,todayEvents))
+   .catch(()=>null):[];
+  const markedIds=new Set((attendanceRows??[])
+   .filter(item=>item.status==="MARKED").map(item=>item.id));
+  const attendanceNeeded=todayEvents.some(id=>attendanceRows===null||!markedIds.has(id));
+  const allDeliveryIds=[...new Set(assessments.courses.map(item=>item.deliveryId))];
+  const recentStudentMessages=allDeliveryIds.length?await getDb().select({
+   id:courseDiscussionMessages.id,
+  }).from(courseDiscussionMessages).where(and(
+   inArray(courseDiscussionMessages.deliveryId,allDeliveryIds),
+   eq(courseDiscussionMessages.senderRole,"LEARNER"),
+   isNull(courseDiscussionMessages.deletedAt),
+   gte(courseDiscussionMessages.createdAt,new Date(now.getTime()-24*3600*1000)),
+  )).limit(1):[];
+  const today=Number(pending.length>0)+Number(drafts>0)+
+   Number(attendanceNeeded)+Number(recentStudentMessages.length>0);
   return NextResponse.json({
-   today:pending.length+drafts+todayEvents.size,
+   today,
    assessments:toGrade+drafts,
   },{headers:{"Cache-Control":"private, no-store","Vary":"Cookie"}});
  }catch(error){return apiErrorResponse(error);}
