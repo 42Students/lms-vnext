@@ -18,8 +18,8 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 10 | Students › All students.png | `41cbb709abc4` | Yes | Open |
 | 11 | Students › Who’s in placements.png | `420fadf229d6` | Yes | Open |
 | 12 | Students › To verify.png | `034ab1edaed9` | Yes | Open |
-| 13 | Students › Requests.png | `cd08dd37423b` | No | Open |
-| 14 | Students › Announcements.png | `4ae17a7de616` | No | Open |
+| 13 | Students › Requests.png | `cd08dd37423b` | Yes | Open |
+| 14 | Students › Announcements.png | `4ae17a7de616` | Yes | Open |
 | 15 | Drives.png | `c0c53ad75502` | No | Open |
 | 16 | Drives › A recruiter’s drive request.png | `c9b273e210fe` | No | Open |
 | 17 | Drives › New drive (and edit).png | `f3a08d2716a2` | No | Open |
@@ -149,10 +149,17 @@ Remaining acceptance: persistent custom templates and usage counts; secure factu
 - **12 — Students › To verify**: 2880×1800. Triage left with Waiting/Sent back/Verified and aging, a selected student's submitted education details, document preview at right, and Verify/Send back controls. Current vNext verification subsystem must be reviewed against this original; neither the screenshot’s data nor the preview document should be treated as production verification evidence. No code accepted on this screen.
 - Browser screenshot/interactive acceptance not yet run for screens 10–12. All remain **partially implemented/unaccepted**.
 
+## Screens 13–14 — Requests and Announcements (source images visually inspected)
+
+- **13 — Requests**, 2880×1800. Prototype left pending queue and 3 filter chips, selected request with student text, drive/round context, urgent cue, and approve/reject then next. Inspected `src/app/(authenticated)/tpo/requests/page.tsx`, `src/components/tpo/tpo-request-prototype-workspace.tsx`, `TpoRequestDecisionControl` and legacy request pathways. The vNext decision already uses saved version and explicit server confirmation, preserving functional safety. Updated left queue to show **real full-college pending summary** rather than only page count and to expose pending/last-30-days/all-history navigation with valid schema URL; kept separate current-page count and record-specific request selection.
+- **14 — Announcements**, 2880×1800. Prototype left scheduled/showing/ended notice list with search and audience tabs; selected notice with read-progress bar and six actual non-readers + Remind. Existing `src/app/(authenticated)/tpo/announcements/page.tsx` and `src/components/tpo/tpo-notice-prototype-sidebar.tsx` already group notices, enforce persisted actor access, handle scheduled, pin, stop, delete, verified delivery, real read receipts and throttle reminder writes. `src/components/tpo/tpo-notice-read-progress.tsx` now presents a **bounded inline real-not-yet-read preview** (up to six) with branch/roll when present, supports full drawer and access-protected reminder, and never claims delivery where a receipt is unavailable.
+- Source sample totals, names, dates and read receipts are fixture values only; user-facing logic must not copy them.
+- Tests expanded in `tests/unit/tpo-requests-prototype-workspace-2026.test.ts` and `tests/unit/tpo-announcements-prototype-workspace-2026.test.ts`; acceptance still requires browser and visual pass with real fixtures. Partial screens, **not fully accepted**.
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **12/33**
+- Original PNGs visually opened in this recovery pass: **14/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**

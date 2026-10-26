@@ -22,9 +22,9 @@ function when(date:Date){
   day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
  }).format(date)+" IST";
 }
-export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total}:{
+export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total,pendingTotal}:{
  rows:readonly TpoPrototypeRequestRow[];selectedId:string|null;baseHref:string;
- total:number;
+ total:number;pendingTotal:number;
 }){
  const selected=selectedId?rows.find(row=>row.id===selectedId)??null:rows[0]??null;
  const href=(id:string)=>baseHref+(baseHref.includes("?")?"&":"?")+"request="+encodeURIComponent(id);
@@ -32,10 +32,15 @@ export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total}:{
  return <div data-testid="tpo.requests.prototype-workspace" className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)]">
   <aside aria-label="Request queue" className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface">
    <div className="space-y-1 border-b border-border px-4 py-4">
-    <h2 className="font-bold text-foreground">{pending} waiting on this page</h2>
+    <h2 className="font-bold text-foreground">{pendingTotal} requests waiting</h2>
     <p className="text-xs text-muted-foreground">
-     {total} matching requests across pages · Showing {rows.length} on this page
+     {total} matching requests across pages · {pending} waiting on the current page
     </p>
+    <nav className="mt-3 flex flex-wrap gap-2" aria-label="Request queue filters">
+     <Link href="/tpo/requests?status=PENDING" className="rounded-full border border-primary px-3 py-2 text-xs font-semibold text-primary-text">Waiting · {pendingTotal}</Link>
+     <Link href="/tpo/requests?status=ALL&age=LAST_30_DAYS" className="rounded-full border border-border px-3 py-2 text-xs font-semibold text-body">Last 30 days</Link>
+     <Link href="/tpo/requests?status=ALL" className="rounded-full border border-border px-3 py-2 text-xs font-semibold text-body">All history</Link>
+    </nav>
    </div>
    <ul className="divide-y divide-border">
     {rows.map(row=><li key={row.id}>

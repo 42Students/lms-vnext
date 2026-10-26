@@ -40,4 +40,18 @@ describe("TPO Students / Announcements prototype",()=>{
   expect(sidebar).toContain('href="/tpo/announcements?tab=yours&compose=1"');
   expect(page).toContain('action="/api/placements/tpo/announcements"');
  });
+ it("displays source-verified unread recipients in the selected notice, not fixture people",()=>{
+  const pane=source("src/components/tpo/tpo-notice-read-progress.tsx");
+  expect(pane).toContain('aria-label="Unread announcement recipients preview"');
+  expect(pane).toContain("data.unread.slice(0,6)");
+  expect(pane).toContain("data.notDelivered");
+  expect(pane).toContain("recipient.branchName");
+  expect(pane).toContain("recipient.rollNumber");
+  expect(pane).toContain("Who has not read this notice");
+  expect(pane).toContain("Previewing");
+  expect(pane).toContain("/api/placements/tpo/announcements/");
+  expect(pane).not.toContain("Charan Teja");
+  expect(pane).not.toContain("58 of 64");
+ });
+
 });
