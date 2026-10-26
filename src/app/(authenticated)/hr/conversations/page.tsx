@@ -93,7 +93,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   const historyUnavailable=selected!==null&&history===null;
   const displayRows=scopeConfirmed
     ?result.items.map(row=>historyUnavailable?{...row,preview:null}:row):[];
-  return <RecruiterConversationWorkspace collegeId={result.collegeId}
+  return <RecruiterConversationWorkspace collegeId={result.collegeId} choices={result.choices}
    rows={displayRows} selected={selected} history={history}
    selectedHistoryUnavailable={historyUnavailable}
    generalPreviewUnavailable={!scopeConfirmed}

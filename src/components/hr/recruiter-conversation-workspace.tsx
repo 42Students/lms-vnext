@@ -9,7 +9,7 @@ type InboxRow={id:string;jobId:string|null;jobTitle:string;unread:number;
  preview:{text:string}|null;lastMessageAt:Date|null;createdAt:Date};
 type History=Awaited<ReturnType<typeof readRecruiterThreadMessages>>;
 type DecisionNotice={id:string;title:string;body:string;createdAt:Date;href:string;unread:boolean};
-type Props={collegeId:string;rows:readonly InboxRow[];selected:InboxRow|null;history:History|null;
+type Props={collegeId:string;choices:readonly {collegeId:string;collegeName:string}[];rows:readonly InboxRow[];selected:InboxRow|null;history:History|null;
  selectedHistoryUnavailable:boolean;generalPreviewUnavailable:boolean;
  decisionNoticesUnavailable:boolean;decisionNotices:readonly DecisionNotice[];
  q:string;total:number;pages:number;unreadTotal:number};
@@ -18,7 +18,7 @@ const formatted=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
  hour12:true,
 }).format(value);
 export function RecruiterConversationWorkspace({
- collegeId,rows,selected,history,selectedHistoryUnavailable,
+ collegeId,choices,rows,selected,history,selectedHistoryUnavailable,
  generalPreviewUnavailable,decisionNoticesUnavailable,decisionNotices,q,total,pages,unreadTotal,
 }:Props){
  const base="/hr/conversations?collegeId="+encodeURIComponent(collegeId);
@@ -34,6 +34,16 @@ export function RecruiterConversationWorkspace({
    <p className="text-sm text-body">Conversations with the placement cell, one per hiring drive, plus a general conversation.</p>
    <Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Notification inbox</Link>
   </div>
+  {choices.length>1?<nav aria-label="Choose college messages" className="flex flex-wrap items-center gap-2">
+   <span className="text-xs font-semibold text-muted-foreground">College</span>
+   {choices.map(item=><Link key={item.collegeId}
+    href={"/hr/conversations?collegeId="+encodeURIComponent(item.collegeId)}
+    aria-current={item.collegeId===collegeId?"page":undefined}
+    className={"inline-flex min-h-11 items-center rounded-lg border px-3 py-2 text-sm font-semibold "+
+     (item.collegeId===collegeId?"border-primary bg-primary-subtle text-foreground":"border-border text-primary-text")}>
+    {item.collegeName}
+   </Link>)}
+  </nav>:null}
   {generalPreviewUnavailable?<p role="status" className="rounded-lg border border-border p-3 text-sm text-body">
    General conversation preview is temporarily unavailable. Refresh to try again; existing conversations remain accessible after access is verified.
   </p>:null}
