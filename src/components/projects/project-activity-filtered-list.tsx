@@ -61,12 +61,13 @@ function mentorEventHref(projectId:string,event:Event):string{
  return base+"?tab=activity";
 }
 
-export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false,weekContributors=[],weekTotals=null,actorOptions=[]}:{
+export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false,sprints=[],mentorWeekSummary=false,weekContributors=[],weekTotals=null,resourceHistoryTotals=null,actorOptions=[]}:{
  projectId:string;events:Event[];now:string;resourceAudit?:boolean;
  sprints?:readonly {id:string;title:string;sequence:number}[];
  mentorWeekSummary?:boolean;
  weekContributors?:readonly {membershipId:string;name:string;eventCount:number}[];
  weekTotals?:{taskMoves:number;comments:number;resourcesShared:number;count:number}|null;
+ resourceHistoryTotals?:{changes:number;added:number;edited:number;saved:number;removed:number}|null;
  actorOptions?:readonly {id:string;label:string}[];
 }){
  const [items,setItems]=useState<readonly Event[]>(events);
@@ -281,10 +282,10 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const fewest=mentorWeekSummary?mentorFewestRecordedContributors(weekContributors):null;
  const resourceEvents=items.filter(item=>projectResourceAuditAction(item.eventType)!==null);
  const counts=[
-  ["Changes",resourceEvents.length],
-  ["Added",resourceEvents.filter(item=>projectResourceAuditAction(item.eventType)==="Added").length],
-  ["Edited",resourceEvents.filter(item=>["Edited","Saved"].includes(projectResourceAuditAction(item.eventType)??"")).length],
-  ["Removed",resourceEvents.filter(item=>projectResourceAuditAction(item.eventType)==="Removed").length],
+  ["Changes",resourceHistoryTotals?.changes??resourceEvents.length],
+  ["Added",resourceHistoryTotals?.added??resourceEvents.filter(item=>projectResourceAuditAction(item.eventType)==="Added").length],
+  ["Edited",resourceHistoryTotals?resourceHistoryTotals.edited+resourceHistoryTotals.saved:resourceEvents.filter(item=>["Edited","Saved"].includes(projectResourceAuditAction(item.eventType)??"")).length],
+  ["Removed",resourceHistoryTotals?.removed??resourceEvents.filter(item=>projectResourceAuditAction(item.eventType)==="Removed").length],
  ] as const;
  const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
  const activePage=Math.min(page,totalPages);
@@ -318,7 +319,12 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     </p>:<p>Student activity comparison requires at least two currently
       assigned learners with valid recorded event counts.</p>}
    </div>:null}
-  {resourceAudit?<div aria-label="Resource activity totals" className="grid grid-cols-2 gap-2 sm:grid-cols-4">{counts.map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">{label}</p><p className="text-xl font-semibold tabular-nums">{value}</p></div>)}</div>:null}
+  {resourceAudit?<div role="group" aria-label="Resource activity totals" className="space-y-2">
+    <p className="text-xs text-muted-foreground">{resourceHistoryTotals?
+      "All recorded resource changes, across the authorized full project history; these totals are unfiltered by the controls below.":
+      "Only recently loaded resource changes are counted here. These figures are not full-history totals."}</p>
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{counts.map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">{label}</p><p className="text-xl font-semibold tabular-nums">{value}</p></div>)}</div>
+   </div>:null}
   {mentorWeekSummary?<div role="group" aria-label="Mentor activity categories"
     className="flex flex-wrap gap-2">
     {mentorActivityCategoryChoices.map(option=><Button key={option.value}
