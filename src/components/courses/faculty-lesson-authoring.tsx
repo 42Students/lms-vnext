@@ -151,6 +151,11 @@ export function FacultyLessonAuthoring({
   const [discardConfirm,setDiscardConfirm]=useState(false);
   const [externalLinkTitle,setExternalLinkTitle]=useState("");
   useEffect(()=>{onBusyChange?.(resourceUploading||submitting);},[onBusyChange,resourceUploading,submitting]);
+  // A Blueprint deep link opens its form immediately and places keyboard focus
+  // on the first editable field, not on a closed disclosure summary.
+  useEffect(()=>{
+    if(initialMode)titleRef.current?.focus({preventScroll:true});
+  },[initialMode]);
 
   function reset() {
     setTitle("");

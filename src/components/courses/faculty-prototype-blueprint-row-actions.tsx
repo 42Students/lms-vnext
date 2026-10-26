@@ -7,6 +7,7 @@ import {FacultyAssessmentEditor} from "./faculty-assessment-editor";
 import {facultyAssessmentLifecyclePayload} from "./faculty-assessment-lifecycle-model";
 import {courseApiError} from "./learner-course-api";
 import {facultyBlueprintArchiveReceiptMatches} from "@/modules/courses/faculty-blueprint-archive-receipt-model";
+import {facultyBlueprintWriteNeedsReload} from "@/modules/courses/faculty-blueprint-write-recovery";
 
 type ContentItem=ComponentProps<typeof FacultyContentEditor>["item"];
 type AssessmentItem=ComponentProps<typeof FacultyAssessmentEditor>["assessment"];
@@ -47,6 +48,7 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
     cache:"no-store",body:JSON.stringify(body),
    });
    if(!response.ok){
+    if(facultyBlueprintWriteNeedsReload(response.status))setUnknown(true);
     setError((await courseApiError(response))??"Could not archive this lesson item.");
     return;
    }

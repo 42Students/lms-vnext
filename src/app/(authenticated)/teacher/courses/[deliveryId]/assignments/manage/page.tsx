@@ -23,7 +23,7 @@ export default async function Page({params,searchParams}:{params:Promise<{delive
    description={workspace.course.courseName+" · "+workspace.course.sectionName}
    actions={<PageBackLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)} label="Back to course"/>} />
   {workspace.lessons.length?
-   <FacultyAssignmentEditor initialLessonId={initialLessonId} deliveryId={deliveryId}
+   <FacultyAssignmentEditor key={initialLessonId??"default"} initialLessonId={initialLessonId} deliveryId={deliveryId}
      methodsEnabled={true}
      lessons={workspace.lessons.map(x=>({id:x.id,name:x.name}))} assignments={assignments}/>
    :<EmptyState title="No registered lessons yet" description="Create and publish a learning path before authoring assignments."/>}

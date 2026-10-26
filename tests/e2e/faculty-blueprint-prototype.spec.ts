@@ -76,6 +76,7 @@ test("Faculty Blueprint screenshot 05 has a selected lesson rail, inline actions
    }else{
     await expect(page).toHaveURL(new RegExp("create="+mode));
     await expect(page.getByRole("textbox",{name:"Content Title"})).toBeVisible();
+    await expect(page.getByRole("textbox",{name:"Content Title"})).toBeFocused();
    }
   }
   await page.goto(urls["Resource"]!);

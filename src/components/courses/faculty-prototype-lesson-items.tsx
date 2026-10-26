@@ -8,6 +8,7 @@ import {
  facultyContentOrderReceiptMatches,
 } from "@/modules/courses/faculty-content-order-ui-model";
 import {courseApiError} from "./learner-course-api";
+import {facultyBlueprintWriteNeedsReload} from "@/modules/courses/faculty-blueprint-write-recovery";
 
 export type FacultyBlueprintItem={
  id:string;title:string;kind:string;description:string|null;
@@ -67,6 +68,7 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
    return;
   }
   startTransition(async()=>{
+   let status:number|null=null;
    try{
     const response=await fetch("/api/courses/lesson-contents/order",{
      method:"PUT",headers:{"Content-Type":"application/json"},
@@ -75,7 +77,11 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
       expectedOrderedContentIds:baseline.current,
      }),
     });
-    if(!response.ok)throw new Error(await courseApiError(response));
+    status=response.status;
+    if(!response.ok){
+     if(facultyBlueprintWriteNeedsReload(status))setOutcomeUnknown(true);
+     throw new Error(await courseApiError(response));
+    }
     const receipt:unknown=await response.json().catch(()=>null);
     if(!facultyContentOrderReceiptMatches(deliveryId,ordered,receipt)){
      setOutcomeUnknown(true);
@@ -86,6 +92,8 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
     setMessage({ok:true,text:"Lesson content order saved for this class."});
     router.refresh();
    }catch(error){
+    // No HTTP response may mean the server saved despite a broken connection.
+    if(facultyBlueprintWriteNeedsReload(status))setOutcomeUnknown(true);
     setMessage({ok:false,text:error instanceof Error?error.message:"Content order could not be saved."});
    }
   });
