@@ -44,7 +44,7 @@ export function TpoRecruiterPrototypeRoster({
  onSelect:(id:string)=>void;now:Date;columns?:readonly TpoRecruiterPrototypeColumn[]}){
  const enabled=new Set(columns);
  const columnCount=columns.length;
- return <section aria-label="Recruiter overview table" className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface"
+ return <section aria-label="Recruiter overview table" className="min-w-0 overflow-hidden bg-surface"
   data-testid="tpo.recruiter.prototype-roster">
   <div className="overflow-x-auto">
    <table className="w-full min-w-[690px] border-collapse text-left text-[13px]">
@@ -90,6 +90,6 @@ export function TpoRecruiterPrototypeRoster({
    </table>
   </div>
   {rows.length===0?<p className="p-5 text-sm text-body">No recruiter records match this view.</p>:null}
-  <p className="border-t border-border px-3 py-2 text-xs text-body">{rows.length} in this view · Select a recruiter row to view details · {columnCount} columns</p>
+  <p className="sr-only" aria-live="polite">{rows.length} in this view · Select a recruiter row to view details · {columnCount} columns</p>
  </section>;
 }
