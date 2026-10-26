@@ -1,0 +1,101 @@
+name: Recruiter prototype acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/recruiter-prototype-acceptance.yml"
+      - "src/app/(authenticated)/hr/**"
+      - "src/app/company-share/**"
+      - "src/app/recruiter-invite/**"
+      - "src/components/hr/**"
+      - "src/components/tpo/recruiter-invite-landing.tsx"
+      - "src/modules/placements/recruiter-**"
+      - "src/modules/placements/hr-**"
+      - "tests/unit/HR-BREAK-chat15-messaging-page-83.test.tsx"
+      - "tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts"
+      - "tests/unit/chat19-hr-page-contracts.test.ts"
+      - "tests/unit/recruiter-**"
+      - "tests/e2e/recruiter-prototype-functional-acceptance.spec.ts"
+
+permissions:
+  contents: read
+
+# Distinct Recruiter acceptance evidence, isolated from global CI and the
+# Faculty/TPO workflows. GitHub may queue a newer run, but never cancel the
+# running verification when another role is actively pushing main.
+concurrency:
+  group: lms-vnext-recruiter-prototype-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Recruiter privacy, mobile, selection and invitation unit acceptance
+        run: |
+          npx vitest run \
+            tests/unit/HR-BREAK-chat15-messaging-page-83.test.tsx \
+            tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts \
+            tests/unit/chat19-hr-page-contracts.test.ts \
+            tests/unit/recruiter-company-change-request-model.test.ts \
+            tests/unit/recruiter-booked-interviews-model.test.ts \
+            tests/unit/recruiter-joining-report-model.test.ts \
+            tests/unit/recruiter-selection-xlsx-model.test.ts \
+            tests/unit/recruiter-selection-csv-model.test.ts \
+            tests/unit/recruiter-invite-not-hiring-note.test.ts \
+            tests/unit/recruiter-public-invitation-note-route.test.ts
+      - name: Typecheck at this verified commit
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Seed isolated, disposable PostgreSQL and recruiter identity
+        run: npm run db:e2e:prepare
+      - name: Generate ephemeral per-run authentication secrets
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Authenticated Recruiter Messages, Company, Rounds, Offers and role denial
+        run: npx playwright test tests/e2e/recruiter-prototype-functional-acceptance.spec.ts --workers=1
