@@ -1,4 +1,6 @@
 import {expect,test,type BrowserContext} from "@playwright/test";
+import {randomUUID} from "node:crypto";
+import {Pool} from "pg";
 import {E2E_IDENTITY_COOKIE_NAME,E2E_SECRET_COOKIE_NAME}
  from "../../src/auth/e2e-identity";
 import {SEED_IDS} from "../../scripts/db-seed-data";
@@ -222,6 +224,83 @@ test.describe("Mentor #45–56 source-functional route matrix",()=>{
    workspace:{project:{updatedAt:string;authoredBrief:{goal:string}}}};
   expect(state.workspace.project.updatedAt).toBe(updated.project.updatedAt);
   expect(state.workspace.project.authoredBrief.goal).toBe(brief.goal);
+ });
+
+ test("140 persisted activity changes stay countable beyond the 100-event snapshot and denied across colleges",async({page,context})=>{
+  const connection=process.env.E2E_DATABASE_URL||process.env.DATABASE_URL;
+  if(!connection)throw new Error("Disposable authenticated Mentor browser database is required");
+  // Own project, unique fixture and isolated DB rows: parallel Mentor tests
+  // must never depend on or mutate the shared acceptance seed project.
+  await signIn(context,"seed-college-admin",SEED_IDS.collegeAdminMembership,"COLLEGE_ADMIN");
+  await page.goto("/college/projects/create");
+  const template=page.getByRole("region",{name:"Create workspace"})
+    .getByLabel("Template",{exact:true});
+  await template.selectOption({index:1});
+  const templateId=await template.inputValue();
+  expect(templateId).toMatch(/^[0-9a-f-]{36}$/i);
+  const unique=randomUUID();
+  const title="Mentor activity complete history "+unique;
+  const created=await page.request.post("/api/projects",{
+    headers:{Origin:origin},
+    data:{collegeId:SEED_IDS.collegeA,templateId,title,
+      slug:"mentor-activity-"+unique,initialStatus:"ACTIVE",
+      primaryMentorMembershipId:SEED_IDS.facultyCollegeAMembership,
+      learnerMembershipIds:[SEED_IDS.learnerCollegeAMembership]},
+  });
+  expect(created.status()).toBe(201);
+  const response=await created.json() as {project?:{id?:string}};
+  const projectId=response.project?.id;
+  expect(projectId).toMatch(/^[0-9a-f-]{36}$/i);
+  const ids=Array.from({length:140},()=>randomUUID());
+  const db=new Pool({connectionString:connection});
+  try{
+    // Data is genuine persisted audit evidence. No server or UI mocking.
+    await db.query(`insert into activity_events
+      (id,organization_id,college_id,actor_user_id,module,event_type,
+       subject_type,subject_id,summary,occurred_at)
+      select id,$2,$3,$4,'PROJECTS','projects.resource.deleted',
+             'project',$5,'Full history resource deletion',
+             clock_timestamp()-interval '2 minutes'
+      from unnest($1::uuid[]) as x(id)`,
+      [ids,SEED_IDS.organization,SEED_IDS.collegeA,
+       SEED_IDS.superAdminUser,projectId]);
+  }finally{
+    await db.end();
+  }
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+  await page.goto("/mentor/projects/"+projectId+"?tab=activity");
+  await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
+  const group=page.getByRole("group",{name:"All recorded resource changes"});
+  await expect(group).toBeVisible();
+  await expect(group).toContainText("140");
+  // Must show a complete seven-day count, not only the first 100 loaded events.
+  const summary=page.locator(".prototype-mentor-activity-summary");
+  await expect(summary).toContainText(/recorded events?/);
+  await expect(summary).toContainText("140");
+  const history=await page.request.get("/api/projects/"+projectId+
+    "/activity?category=RESOURCE&resourceAction=Removed&size=100");
+  expect(history.status()).toBe(200);
+  const first=await history.json() as {events:{id:string}[];hasMore:boolean;
+    nextCursor:{time:string;id:string}|null};
+  expect(first.events).toHaveLength(100);
+  expect(first.hasMore).toBe(true);
+  expect(first.nextCursor).toBeTruthy();
+  const older=new URLSearchParams({category:"RESOURCE",resourceAction:"Removed",
+    size:"100",beforeTime:first.nextCursor!.time,beforeId:first.nextCursor!.id});
+  const continuation=await page.request.get("/api/projects/"+projectId+
+    "/activity?"+older.toString());
+  expect(continuation.status()).toBe(200);
+  const second=await continuation.json() as {events:{id:string}[];hasMore:boolean};
+  expect(second.events).toHaveLength(40);
+  expect(second.hasMore).toBe(false);
+  expect(new Set([...first.events,...second.events].map(item=>item.id)).size).toBe(140);
+  // Same identity, wrong college grant: neither history nor route may leak.
+  await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeBMembership,"FACULTY");
+  const forbidden=await page.request.get("/api/projects/"+projectId+"/activity");
+  expect(forbidden.status()).toBe(403);
+  await page.goto("/mentor/projects/"+projectId+"?tab=activity");
+  await expect(page).toHaveURL(/\\/dashboard(?:[/?#]|$)/);
+  await expect(page.locator("body")).not.toContainText(title);
  });
 
  test("a learner cannot open any Mentor route, including deep-linked project tabs",async({page,context})=>{
