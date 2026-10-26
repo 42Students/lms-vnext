@@ -68,6 +68,8 @@ export function TpoCompaniesToday({
   const date=new Date(now.getTime()+offset*86400000);
   const key=istDateKey(date);
   return {offset,label:dayLabel(date),
+    weekday:new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"}).format(date),
+    dayNumber:new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(date),
     count:active.filter(row=>offset===0
       ?istDateKey(new Date(row.dueAt))<=todayKey
       :istDateKey(new Date(row.dueAt))===key).length};
@@ -177,8 +179,14 @@ export function TpoCompaniesToday({
        aria-pressed={day===item.offset}
        className={day===item.offset?styles.chosen:styles.day}
        onClick={()=>pickDay(item.offset)}>
-       <span>{item.label}</span><strong>{item.count}</strong></button>)}
+       <span>{item.weekday.toUpperCase()}</span><strong>{item.dayNumber}</strong><small>{item.count||"·"}</small></button>)}
     </div>
+    {replies.length?<div className={styles.queueReplies} aria-label="Recruiter replies">
+     <p className={styles.eyebrow}>REPLIES WAITING</p>
+     {replies.map(reply=><Link key={reply.id} href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(reply.id)}
+      className={styles.replyQueueItem}><strong>{reply.name}</strong><small>{reply.company??"Recruiter"} · {reply.subject}</small></Link>)}
+     {replyTotal!==null&&replyTotal>replies.length?<Link href="/tpo/messages?tab=recruiters&status=REPLY" className={styles.link}>More replies in Messages</Link>:null}
+    </div>:null}
     {displayed.length?<div role="listbox" aria-label="People needing a follow-up">
      {displayed.map(row=><button key={row.id} type="button" role="option"
       aria-selected={current?.id===row.id} className={styles.item}
