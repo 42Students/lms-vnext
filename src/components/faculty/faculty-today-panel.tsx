@@ -48,7 +48,7 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
       </div>
      </article>)}
     </div>:<div className="rounded-xl border border-[#e5ebf2] p-6">
-     <h2 className="text-base font-bold text-[#1d293f]">Nothing waiting right now</h2>
+     <h2 className="faculty-proto-empty-heading">Nothing waiting right now</h2>
      <p className="faculty-proto-subtitle mt-2">Your current teaching priorities are up to date.</p>
      <Link className="faculty-proto-link mt-3 inline-block" href="/teacher/courses">View courses</Link>
     </div>}
