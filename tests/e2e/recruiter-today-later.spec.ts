@@ -48,6 +48,30 @@ test.describe("Recruiter Today prototype — persisted actions and Later",()=>{
   expect(await page.locator("body").innerText()).not.toMatch(/Application error|Internal Server Error/i);
  });
 
+ test("mobile keeps the verified recruiter action and the weekly schedule usable without horizontal overflow",async({page,context})=>{
+  await authenticateGracefulRole(context,"recruiter");
+  await page.setViewportSize({width:390,height:844});
+  await page.goto("/hr/home");
+  const today=page.getByTestId("recruiter.today");
+  await expect(today).toBeVisible({timeout:20_000});
+  await expect(today.getByRole("region",{name:"Needs you"})).toBeVisible();
+  await expect(today.getByRole("region",{name:"This week"})).toBeVisible();
+  const deadline=today.locator('[data-testid^="recruiter.today.task-deadline:"]');
+  await expect(deadline).toHaveCount(1);
+  await expect(deadline.getByRole("button",{name:"Later"})).toBeVisible();
+  const width=await page.evaluate(()=>({
+   page:document.documentElement.scrollWidth,
+   viewport:document.documentElement.clientWidth,
+  }));
+  expect(width.page).toBeLessThanOrEqual(width.viewport+1);
+  if(process.env["E2E_CAPTURE_TODAY"]==="true"){
+   const jpeg=await page.screenshot({type:"jpeg",quality:48,
+    style:"nextjs-portal{visibility:hidden!important}",
+   });
+   console.log("RECRUITER_TODAY_MOBILE_E2E_JPEG="+jpeg.toString("base64"));
+  }
+ });
+
  test("unauthorized learner cannot see recruiter Today or the scoped action queue",async({page,context})=>{
   await authenticateGracefulRole(context,"learner");
   await page.goto("/hr/home");
