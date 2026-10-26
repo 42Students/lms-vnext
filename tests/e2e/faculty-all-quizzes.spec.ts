@@ -47,8 +47,16 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.reload();
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" (DRAFT)"});
   await expect(page.getByRole("textbox",{name:"Prompt"})).toHaveValue("FIFO is?");
-  // Editing must hydrate the saved answer key, not turn every answer false.
-  await expect(page.getByRole("checkbox",{name:"Correct"}).first()).toBeChecked();
+  // A saved single-choice bank must retain one answer flag; do not assume
+  // a particular answer position when checking the authorized GET response.
+  const detailResponse=await page.request.get("/api/courses/quizzes/"+id+
+   "?deliveryId="+deliveryId+"&includeCorrectAnswers=true");
+  expect(detailResponse.status()).toBe(200);
+  const detail=await detailResponse.json();
+  const savedOptions=detail.quiz?.questions?.[0]?.options;
+  expect(Array.isArray(savedOptions)).toBe(true);
+  expect(savedOptions.filter((option:{correct?:boolean})=>option.correct===true)).toHaveLength(1);
+  await expect(page.getByRole("checkbox",{name:"Correct",checked:true})).toHaveCount(1);
   await page.getByRole("textbox",{name:"Quiz title"}).fill(title+" revised");
   await page.getByRole("textbox",{name:"Prompt"}).fill("FIFO structure?");
   const editResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
