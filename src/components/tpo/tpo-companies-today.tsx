@@ -8,6 +8,10 @@ import {istDateKey,nextTpoFollowupTomorrow,nextTpoTodayFollowupAt, type TpoToday
 import styles from "./tpo-companies-today.module.css";
 
 type LeadContext={id:string;stage:string;designation:string|null;emailNorm:string|null;ownerName:string|null};
+type CompanyAttention={items:Array<{
+ relationshipId:string;companyId:string;companyName:string;
+ collegeTrusted:boolean;recruiterId:string;recruiterName:string;
+}>;hasMore:boolean};
 type RecruiterReply={
  id:string;name:string;company:string|null;subject:string;
  preview:string|null;receivedAt:string;accessEnded:boolean;
@@ -28,9 +32,9 @@ function dayLabel(date:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(date);
 }
 export function TpoCompaniesToday({
- scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId,notContacted,leadContexts
+ scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId,notContacted,leadContexts,companyAttention
 }:{scope:"MINE"|"TEAM";rows:TpoCompaniesTodayRow[];nowIso:string;hasMore:boolean;unreadMessages:number|null;
-  replies:RecruiterReply[];replyTotal:number|null;initialFollowupId?:string|undefined;leadContexts:LeadContext[];
+  replies:RecruiterReply[];replyTotal:number|null;initialFollowupId?:string|undefined;leadContexts:LeadContext[];companyAttention:CompanyAttention|null;
   notContacted:{count:number;oldestAddedAt:string|null}|null}){
  const router=useRouter();
  const now=new Date(nowIso);
@@ -181,6 +185,17 @@ export function TpoCompaniesToday({
        onClick={()=>pickDay(item.offset)}>
        <span>{item.weekday.toUpperCase()}</span><strong>{item.dayNumber}</strong><small>{item.count||"·"}</small></button>)}
     </div>
+    {companyAttention===null?<p role="status" className={styles.helper}>Company verification attention is unavailable. A missing source does not mean every company is verified.</p>:null}
+    {companyAttention&&companyAttention.items.length>0?<section className={styles.companyAttention} aria-label="Companies awaiting verification">
+     <p className={styles.eyebrow}>COMPANY IDENTITY NEEDS REVIEW</p>
+     {companyAttention.items.map(company=><article key={company.relationshipId} className={styles.companyAttentionItem}>
+      <strong>{company.companyName}</strong>
+      <small>Not verified by 42 · College trust: {company.collegeTrusted?"Trusted":"Not trusted"}</small>
+      <small>Recruiter account linked: {company.recruiterName}</small>
+      <Link href={"/tpo/companies/"+encodeURIComponent(company.companyId)} className={styles.link}>Review company</Link>
+     </article>)}
+     {companyAttention.hasMore?<p className={styles.helper}>This is a bounded preview. Open the full company directory to review other records.</p>:null}
+    </section>:null}
     {replies.length?<div className={styles.queueReplies} aria-label="Recruiter replies">
      <p className={styles.eyebrow}>REPLIES WAITING</p>
      {replies.map(reply=><Link key={reply.id} href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(reply.id)}
