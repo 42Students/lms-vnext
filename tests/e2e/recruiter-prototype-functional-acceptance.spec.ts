@@ -30,7 +30,7 @@ test.describe("Recruiter prototype functional journeys",()=>{
   }
   await page.getByRole("link",{name:"Advanced inbox"}).click();
   await expect(page).toHaveURL(/view=advanced/);
-  await expect(page.getByRole("heading",{name:"Messages"})).toBeVisible();
+  await expect(page.getByRole("heading",{level:1,name:"Messages"}).first()).toBeVisible();
   await expectNoRawErrors(page);
  });
 
@@ -77,12 +77,9 @@ test.describe("Recruiter prototype functional journeys",()=>{
 
  test("Rounds and Offers show scoped scheduling and selection workspaces",async({page,context})=>{
   await authenticateGracefulRole(context,"recruiter");
-  await page.goto("/hr/drives");
-  const candidates=await page.locator('a[href^="/recruiter/drives/"]').evaluateAll(links=>links
-   .map(link=>link.getAttribute("href")??"")
-   .filter(href=>/^\/recruiter\/drives\/[0-9a-f-]{36}(?:[?#]|$)/i.test(href)));
-  expect(candidates.length,"Disposable E2E database must seed a Recruiter-owned published drive").toBeGreaterThan(0);
-  const drive=candidates[0]!.split(/[?#]/)[0]!;
+  // The fixture is an exact persisted drive. URL discovery from the default
+  // WAITING view does not exercise this authorized drive, and is not a grant.
+  const drive="/recruiter/drives/66000000-0000-4000-8000-000000000004";
   await page.goto(drive+"?tab=rounds");
   await expect(page.getByRole("heading",{name:"Who, when · interview panel lists"})).toBeVisible();
   await expect(page.getByText(/Only placement-cell-booked, actively shortlisted applicants/)).toBeVisible();

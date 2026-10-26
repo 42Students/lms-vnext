@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/recruiter-prototype-acceptance.yml"
       - "scripts/db-e2e-prepare.ts"
+      - "playwright.config.ts"
       - "src/app/(authenticated)/hr/**"
       - "src/app/company-share/**"
       - "src/app/recruiter-invite/**"
@@ -19,6 +20,7 @@ on:
       - "tests/unit/chat19-hr-page-contracts.test.ts"
       - "tests/unit/recruiter-**"
       - "tests/e2e/recruiter-prototype-functional-acceptance.spec.ts"
+      - "tests/e2e/recruiter-prototype-screen-matrix.spec.ts"
 
 permissions:
   contents: read
@@ -81,6 +83,7 @@ jobs:
       E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
       E2E_AUTH_ENABLED: "true"
       APP_ENV: development
+      E2E_PRODUCTION_SERVER: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -98,5 +101,13 @@ jobs:
           echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
-      - name: Authenticated Recruiter Messages, Company, Rounds, Offers and role denial
-        run: npx playwright test tests/e2e/recruiter-prototype-functional-acceptance.spec.ts --workers=1
+      - name: Build production-mode Recruiter browser application
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run build
+      - name: Authenticated Recruiter prototype and role denial
+        run: |
+          npx playwright test \
+            tests/e2e/recruiter-prototype-functional-acceptance.spec.ts \
+            tests/e2e/recruiter-prototype-screen-matrix.spec.ts \
+            --workers=1
