@@ -43,6 +43,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {GridWorkspace} from "./grid/grid-workspace";
 import {TpoRecruiterPrototypeInspector} from "./recruiter-prototype-inspector";
 import {TpoRecruiterPrototypeStageRibbon} from "./recruiter-prototype-stage-ribbon";
+import {TpoRecruiterPrototypeRoster} from "./recruiter-prototype-roster";
 import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import boardStyles from "./recruiter-board-theme.module.css";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
@@ -1132,6 +1133,10 @@ export function RecruiterLeadsWorkspace({
           ) : view === "table" ? (
             <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
             <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-3 sm:p-4" aria-label="Recruiter leads table">
+            <TpoRecruiterPrototypeRoster rows={sortedVisible} selectedId={focusedLead?.id??null}
+             onSelect={setFocusedRecruiterId} now={new Date()}/>
+            <details className="mt-4 rounded-lg border border-border p-3" data-testid="tpo.recruiter.advanced-grid">
+             <summary className="cursor-pointer text-sm font-semibold text-link">Advanced spreadsheet, exports and bulk selection</summary>
             <GridWorkspace rows={sortedVisible} columns={RECRUITER_GRID_COLUMNS}
               rowKey={lead=>lead.id} selection={{selected:selectedIds,onChange:setSelectedIds}}
               columnKeys={visibleColumns}
@@ -1175,6 +1180,7 @@ export function RecruiterLeadsWorkspace({
               </>}
 
             </GridWorkspace>
+            </details>
             </section>
             {focusedLead?<TpoRecruiterPrototypeInspector lead={focusedLead}
              onDismiss={()=>setFocusedRecruiterId("")}/>:
