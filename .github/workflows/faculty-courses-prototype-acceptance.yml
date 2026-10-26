@@ -11,6 +11,8 @@ on:
       - "src/modules/courses/faculty-course-month-attendance-model.ts"
       - "src/app/(authenticated)/teacher/courses/page.tsx"
       - "src/components/courses/faculty-prototype-course-directory.tsx"
+## Dedicated Faculty browser verification; repository-wide TypeScript
+## remains a separate mandatory gate in CI.
 permissions:
   contents: read
 concurrency:
@@ -46,10 +48,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Type-check Faculty Courses
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
       - name: Unit-test absence-only monthly attendance
         run: npx vitest run tests/unit/faculty-course-month-attendance-model.test.ts
       - name: Install Chromium
