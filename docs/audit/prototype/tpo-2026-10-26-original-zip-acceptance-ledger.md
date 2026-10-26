@@ -8,7 +8,7 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 |---:|---|---|---|---|
 | 01 | Companies › Today.png | `a05f03b37437` | Yes | Open |
 | 02 | Companies › Recruiters.png | `6e98580fcef9` | Yes | Open |
-| 03 | Companies › Companies.png | `1625f246f3b7` | No | Open |
+| 03 | Companies › Companies.png | `1625f246f3b7` | Yes | Open |
 | 04 | Agenda.png | `c2141f21471f` | No | Open |
 | 05 | Brief.png | `f30770b9601d` | No | Open |
 | 06 | EmailSent.png | `4e149e85c7d3` | No | Open |
@@ -86,18 +86,34 @@ Original PNG dimensions: **2880 × 2264**. The image shows a visible Recruiters 
 - `4022b4d7bc572c09b9fada600a438d370285e303`: create `recruiter-prototype-stage-ribbon.tsx`, eight real college-scoped stage counts with accessible interactive tabs.
 - `1eeab47bb2cf548f0fede1935217835ee4540044`: wire stage summary to existing `updateFilter("stage",value)`; retains existing spreadsheet, advanced filters, exports, opt-out rules, bulk operations and contact inspector.
 - `b20991e61b5bb7790a97712eadefd178e249ed29` and `9bb2e9bb5a6142fb947241429c9af8114e3615f6`: compute urgency by local IST date and display factual overdue days in selected inspector; no fabricated note, source or company trust status.
-- `517492f6d98ae94472c48ce1166259b9984dd84d` and `58d675343ab64295495c001c6dd4bbc991babd79`: add stage strip rendered tests, authorization source guard, IST boundary regression cases.
+- `517492f6d98ae94472c48ce1166259b9984dd84d`, `58d675343ab64295495c001c6dd4bbc991babd79`, `ad63af2a4bf5363c6eb0e94ef4547abfa293ac84`, `466188f0bbd56ea79954b3b87dae142f49475e37`: add stage strip / compact roster rendered tests and IST boundary regression cases.
 
 ### Still open — screen 02 not accepted
 
-- Prototype has a compact six-column default table; vNext currently exposes a larger configurable CRM grid with additional controls. Exact visible layout/column order and header title need another same-viewport review without discarding stronger features.
+- The six-column overview is now the default (commits `e70d0db6b443a03b1f045cabae40313655641de0`, `02bcb24f488a4179c845230dde6e1c26c000079a`, `f5aadbe022fea63a72787feeec8b1887ebbd65e0`), with the richer sortable/exportable grid preserved in an Advanced disclosure. Screenshot-perfect column widths, toolbar position and heading still need a browser/visual pass.
 - "How they joined", detailed last conversation, and the screenshot company-history summary need verified source-specific data wiring. The inspector must not fabricate recruiter event notes, join method, placements or a college trust decision.
 - Browser selection/filter/close, keyboard, responsive and screenshot comparisons remain open. Screen 02 implementation **partial** until these pass.
+
+## Screen 03 — Companies › Companies (source image visually inspected, no accepted code changes)
+
+Original PNG dimensions: **2880 × 2244**. Image shows a Companies heading and season comparison; two top summary cards for last season's recruiter relationships and this season's branch coverage; tier filters (All tiers, Super dream, Dream, Regular); a six-column companies grid (Company, Tier, Placed this vs last, Where you are, Next drive, Handled by), and selected-company inspector with placement comparison, best package, branches, people, drive actions.
+
+### Inspected sources
+
+- Current `src/app/(authenticated)/tpo/companies/page.tsx`, `src/components/tpo/tpo-companies-spreadsheet.tsx`, `src/modules/placements/tpo-companies-view-service.ts`, `src/modules/placements/tpo-companies-view-model.ts`, `src/modules/placements/tpo-company-hiring-pulse-model.ts`.
+- The vNext directory currently tracks **canonical college-linked employers**, contact counts, drives, offers, accepted offers and **confirmed joining outcomes**, with an in-page inspector and private-client filters.
+- The screenshot's "placed students" and season comparisons are **not** the same as confirmed joins. The current directory model lacks authoritative season-by-season, tier, branch-coverage and next-drive aggregates. Do not render fabricated 2025–26/2026–27 figures or relabel joined counts as placed.
+
+### Still open
+
+1. Implement policy-correct season/placement/tier/branch aggregates from authorized placements data and the old LMS placement rules, with explicit unavailable states and bounded queries.
+2. Bind tier filters and a truly comparable six-column roster + selected-company detail to these verified aggregates, preserving existing company creation, linking, exports and access rules.
+3. Browser tests for selection/filter, tenant boundaries, responsive states and screenshot matching. **No screen 03 code completion or acceptance claimed.**
 
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **2/33**
+- Original PNGs visually opened in this recovery pass: **3/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**
