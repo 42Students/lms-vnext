@@ -10,6 +10,14 @@ describe("TPO Drives latest prototype list",()=>{
   expect(src).toContain('aria-label="Prototype drive operations table"');
   expect(src).toContain("data.rows.map(job=>");
  });
+ it("surfaces actual authorized recruiter drive requests independently of the live drive page",()=>{
+  expect(src).toContain('data-testid="tpo.drives.request-cards"');
+  expect(src).toContain('getTpoDriveLifecycleList(context,{view:"REQUESTS",page:"1"})');
+  expect(src).toContain('requestPreview.requestRows.filter(item=>item.reviewRequired).slice(0,2)');
+  expect(src).toContain('href="/tpo/placements/lifecycle?view=REQUESTS&page=1"');
+  expect(src).toContain("Recruiter access ended.");
+  expect(src).toContain("Recruiter requests could not be loaded.");
+ });
  it("uses recorded application, round and offer counts without inventing shortlists",()=>{
   expect(src).toContain("job.appliedCount");
   expect(src).toContain("job.roundsCompleted");
