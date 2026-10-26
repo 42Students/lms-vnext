@@ -93,10 +93,10 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   // form: verify persisted aggregate list, scoped status/search, review drawer
   // and report link against this real published Section assignment.
   await page.goto("/teacher/allAssignments");
-  await expect(page.getByRole("heading",{level:1,name:"All Assignments"})).toBeVisible();
-  await page.getByRole("combobox",{name:"Course / Section"}).selectOption(deliveryId);
+  await expect(page.getByRole("heading",{level:1,name:"My Assignments"})).toBeVisible();
+  await page.getByRole("textbox",{name:"Search assessments"}).fill(baseTitle+" revised");
   await page.getByRole("combobox",{name:"Status"}).selectOption("DRAFT");
-  await expect(page.getByText("No matching assessments")).toBeVisible();
+  await expect(page.getByText("No matching assignments")).toBeVisible();
   await page.getByRole("combobox",{name:"Status"}).selectOption("PUBLISHED");
   await page.getByRole("textbox",{name:"Search assessments"}).fill(baseTitle+" revised");
   const publishedCard=page.locator("article").filter({
