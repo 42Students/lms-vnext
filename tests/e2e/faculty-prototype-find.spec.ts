@@ -56,8 +56,16 @@ test("Faculty Find Ctrl+K Enter opens the authorized best matching course",async
  test.setTimeout(90000);
  await login(context);
  await page.goto("/teacher");
- await page.keyboard.press("Control+k");
  const input=page.getByRole("combobox",{name:"Search workspace"});
+ // An interactive click proves the hydrated header has installed its document
+ // shortcut listener. Typing Ctrl+K before Next hydrates is not a valid
+ // keyboard-acceptance witness, even though the SSR input is visible.
+ await page.getByRole("button",{name:"Open command search"}).click();
+ await expect(input).toBeFocused();
+ await input.press("Escape");
+ await page.getByRole("heading",{level:1}).first().click();
+ await expect(input).not.toBeFocused();
+ await page.keyboard.press("Control+k");
  await expect(input).toBeFocused();
  await input.fill("E2E Browser Course");
  const option=page.getByRole("region",{name:"Matching Faculty records"})
