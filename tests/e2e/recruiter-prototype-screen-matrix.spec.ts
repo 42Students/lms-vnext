@@ -24,8 +24,15 @@ test.describe("Recruiter prototype: all authenticated screen families",()=>{
   test(screen.screen+" renders for a verified Recruiter",async({page,context})=>{
    await authenticateGracefulRole(context,"recruiter");
    await page.goto(screen.url);
-   await expect(page.getByRole("heading",{level:1,name:screen.heading}).first())
-    .toBeVisible({timeout:20_000});
+   if(screen.screen==="01 Today"){
+    // Today deliberately uses the current greeting, not a generic "Today" H1.
+    await expect(page.getByTestId("recruiter.today")).toBeVisible({timeout:20_000});
+    await expect(page.getByRole("heading",{level:1,name:/^Good (morning|afternoon|evening)/}))
+     .toBeVisible();
+   }else{
+    await expect(page.getByRole("heading",{level:1,name:screen.heading}).first())
+     .toBeVisible({timeout:20_000});
+   }
    await expect(page.getByText(/Your access to this college has ended|No access to this college|No recruiter access/i))
     .toHaveCount(0);
    await expectNoRawErrors(page);

@@ -164,7 +164,7 @@ async function main() {
     description:"Disposable recruiter prototype acceptance drive",
     employmentType:"FULL_TIME",workMode:"ONSITE",locations:["Vijayawada"],
     status:"PUBLISHED",publishedAt:new Date(),
-    applicationDeadline:new Date(Date.now()+14*24*60*60*1000),
+    applicationDeadline:new Date(Date.now()+3*24*60*60*1000),
     createdByUserId:ids.collegeAdminUser,
   }).onConflictDoNothing();
   await dbClient.getDb().insert(dbSchema.placementJobRounds).values({

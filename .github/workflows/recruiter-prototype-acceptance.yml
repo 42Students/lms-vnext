@@ -21,6 +21,7 @@ on:
       - "tests/unit/recruiter-**"
       - "tests/e2e/recruiter-prototype-functional-acceptance.spec.ts"
       - "tests/e2e/recruiter-prototype-screen-matrix.spec.ts"
+      - "tests/e2e/recruiter-today-later.spec.ts"
 
 permissions:
   contents: read
@@ -114,4 +115,5 @@ jobs:
           npx playwright test \
             tests/e2e/recruiter-prototype-functional-acceptance.spec.ts \
             tests/e2e/recruiter-prototype-screen-matrix.spec.ts \
+            tests/e2e/recruiter-today-later.spec.ts \
             --workers=1
