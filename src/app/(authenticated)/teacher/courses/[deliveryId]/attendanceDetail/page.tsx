@@ -28,7 +28,7 @@ function AttendanceDetailLoading() {
   </span>
  </section>;
 }
-type AttendanceDetailParams={params:Promise<{deliveryId:string}>;searchParams:Promise<{sessionId?:string;cls?:string;advanced?:string}>};
+type AttendanceDetailParams={params:Promise<{deliveryId:string}>;searchParams:Promise<{sessionId?:string;cls?:string;advanced?:string;schedule?:string}>};
 export default function FacultyCourseAttendancePage(props:AttendanceDetailParams) {
  return <Suspense fallback={<AttendanceDetailLoading/>}>
   <FacultyCourseAttendanceContent {...props}/>
@@ -143,7 +143,8 @@ async function FacultyCourseAttendanceContent({
         initialSessionId={initialSessionId}
       />
        </div></details>
-      <Disclosure title="Advanced attendance session scheduling" className="border-t border-border" contentClassName="min-w-0 pb-4">
+      <Disclosure id="faculty-attendance-scheduling" title="Advanced attendance session scheduling"
+        defaultOpen={query.schedule==="1"} className="border-t border-border" contentClassName="min-w-0 pb-4">
       <FacultyAttendanceScheduleEditor
         deliveryId={deliveryId}
         sessions={data.sessions.flatMap(session=>
