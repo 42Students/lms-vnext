@@ -43,3 +43,23 @@ export function recruiterAttentionFromPersistedFacts(input: {
   // Only a persisted verification state may add the UNVERIFIED chip.
   return { chips, quietDays };
 }
+
+
+/** Recruiter inspector wording is calendar-day based in the college's IST
+ * working timezone. A time earlier this same day is "today", not "late". */
+export function tpoRecruiterFollowupSignal(
+ rawDue:string|null|undefined,now:Date,
+):{label:string;lateDays:number}{
+ if(!rawDue)return {label:"No next follow-up recorded",lateDays:0};
+ const due=new Date(rawDue);
+ if(!Number.isFinite(due.getTime())||!Number.isFinite(now.getTime()))
+  return {label:"Follow-up date unavailable",lateDays:0};
+ const day=(value:Date)=>new Intl.DateTimeFormat("sv-SE",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+ }).format(value);
+ const days=Math.round((Date.parse(day(now)+"T00:00:00Z")-
+                        Date.parse(day(due)+"T00:00:00Z"))/86400000);
+ if(days>0)return {label:"Follow up · "+days+" "+(days===1?"day":"days")+" late",lateDays:days};
+ if(days===0)return {label:"Follow up · today",lateDays:0};
+ return {label:"Follow up · in "+Math.abs(days)+" "+(days===-1?"day":"days"),lateDays:0};
+}
