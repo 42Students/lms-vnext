@@ -22,6 +22,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { initialAbsencesForSession, resolveFacultyAttendanceSession, facultyAttendanceMarksDirty } from "@/modules/attendance/faculty-attendance-edit-state";
 import { facultyScheduleInstants } from "@/modules/attendance/faculty-schedule-editor-model";
 import { facultyAttendanceConfirmation, facultyCorrectionReasonValid } from "@/modules/attendance/faculty-correction-audit-model";
+import {facultyAttendanceWriteNeedsReload} from "@/modules/attendance/faculty-attendance-write-recovery";
 import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
 import { facultyLearnerAttendanceDetail, facultyAttendanceMonthSummary, facultyAttendanceThresholdBreakdown } from "@/modules/attendance/faculty-learner-attendance-detail";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
@@ -195,6 +196,7 @@ export function FacultyAttendanceWorkspace({
   const [error, setError] =
     useState<string | null>(null);
   const [savedNotice,setSavedNotice]=useState<string|null>(null);
+  const [writeUnknown,setWriteUnknown]=useState(false);
   // A confirmed attendance PATCH becomes the local baseline immediately.
   // A fresh server session version then supersedes it after router.refresh().
   // Without this receipt baseline, a fast Report-tab click incorrectly
@@ -464,7 +466,7 @@ export function FacultyAttendanceWorkspace({
     membershipId: string,
     isAbsent: boolean,
   ) {
-    if (markingWindow !== "OPEN" || submitting || submitLock.current) return;
+    if (markingWindow !== "OPEN" || submitting || submitLock.current || writeUnknown) return;
     setAbsent((current) => {
       const next = new Set(current);
       if (isAbsent) next.add(membershipId);
@@ -475,7 +477,7 @@ export function FacultyAttendanceWorkspace({
 
   function requestAttendanceConfirmation() {
     if (!selectedSession) { setError("Please select a class."); return; }
-    if (markingWindow !== "OPEN" || submitting || submitLock.current) return;
+    if (markingWindow !== "OPEN" || submitting || submitLock.current || writeUnknown) return;
     setError(null);
     if (workspace.roster.length > 500) {
       setError("Maximum 500 learners per attendance request. Contact your College administrator to review this roster.");
@@ -494,7 +496,7 @@ export function FacultyAttendanceWorkspace({
 
   async function submitAttendance() {
     if (!selectedSession) { setError("Please select a class."); return; }
-    if (markingWindow !== "OPEN" || submitting || submitLock.current) return;
+    if (markingWindow !== "OPEN" || submitting || submitLock.current || writeUnknown) return;
 
     setError(null);
     if(selectedSession.attendanceStatus==="MARKED"&&!facultyCorrectionReasonValid(correctionReason)){
@@ -544,24 +546,25 @@ export function FacultyAttendanceWorkspace({
         },
       );
       if (!response.ok) {
-        setError(
-          "No attendance marks were saved. " + await errorMessage(
-            response,
-            "Retry the same roster after checking the error.",
-          ),
-        );
+        if(facultyAttendanceWriteNeedsReload(response.status)){
+          setWriteUnknown(true);
+          setError("The attendance save may have committed. Reload this session before another submission.");
+        }else{
+          setError("Attendance was not saved. " + await errorMessage(
+            response,"Review the class and try again."));
+        }
         return;
       }
       persisted = true;
+      setWriteUnknown(false);
       setAcceptedWrite({sessionId:selectedSession.id,
         version:selectedSession.markedAt,absentIds:[...absent]});
       setCorrectionReason("");
       setSavedNotice(`Attendance recorded for ${workspace.roster.length} learner(s).`);
       router.refresh();
     } catch {
-      setError(
-        "Unable to confirm attendance save. Refresh the roster before retrying to avoid duplicate changes.",
-      );
+      setWriteUnknown(true);
+      setError("Unable to confirm attendance save. Reload this roster before another submission to avoid duplicate changes.");
     } finally {
       submitLock.current = false;
       setSubmitting(false);
@@ -626,6 +629,12 @@ export function FacultyAttendanceWorkspace({
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)] [--legacy-attendance-panel-gap:var(--lms-space-4)]">
       {savedNotice?<Alert tone="success">{savedNotice}</Alert>:null}
+      {writeUnknown?<div role="alert" className="flex flex-wrap items-center gap-3 border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+        Attendance save status is unknown. Do not submit this roster again until it is reloaded.
+        <Button type="button" size="sm" variant="secondary" onClick={()=>window.location.reload()}>
+          Reload roster to verify
+        </Button>
+      </div>:null}
       <section aria-label="Attendance toolbar" className="border-b border-border pb-4">
         <h1 className="sr-only">Attendance</h1>
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
@@ -1169,7 +1178,7 @@ export function FacultyAttendanceWorkspace({
                 </span>
                 <Button
                   disabled={
-                    submitting ||
+                    submitting || writeUnknown ||
                     !selectedSession ||
                     markingWindow !== "OPEN" ||
                     workspace.roster.length === 0 ||
@@ -1215,7 +1224,7 @@ export function FacultyAttendanceWorkspace({
         cancelLabel="Cancel"
         confirmVariant="primary"
         pending={submitting}
-        confirmDisabled={!selectedSession || markingWindow !== "OPEN" || !attendanceConfirmation}
+        confirmDisabled={!selectedSession || markingWindow !== "OPEN" || !attendanceConfirmation || writeUnknown}
         onConfirm={() => void submitAttendance()}
       />
       <ConfirmDialog
