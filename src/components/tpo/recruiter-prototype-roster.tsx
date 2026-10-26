@@ -6,7 +6,7 @@ export type TpoRecruiterPrototypeColumn="recruiter"|"company"|"stage"|"next"|"la
 export const TPO_RECRUITER_PROTOTYPE_COLUMNS:readonly {key:TpoRecruiterPrototypeColumn;label:string}[]=[
  {key:"recruiter",label:"Recruiter"},{key:"company",label:"Company"},
  {key:"stage",label:"Where you are"},{key:"next",label:"Next step"},
- {key:"last",label:"Last activity"},{key:"owner",label:"Handled by"},
+ {key:"last",label:"Last contact"},{key:"owner",label:"Handled by"},
 ];
 export type TpoRecruiterPrototypeRow={
  id:string;name:string;designation:string|null;companyName:string|null;
@@ -82,7 +82,7 @@ export function TpoRecruiterPrototypeRoster({
        {prototypeStage[lead.stage]}</span></td>:null}
       {enabled.has("next")?<td className={"max-w-40 px-3 py-3 font-semibold "+(next.lateDays>0?"text-red-700":"text-foreground")}>
        {next.label}</td>:null}
-      {enabled.has("last")?<td className="px-3 py-3 text-body">{shortDate(lead.lastActivityAt)}</td>:null}
+      {enabled.has("last")?<td className="px-3 py-3 text-body">{shortDate(lead.lastContactAt??null)}</td>:null}
       {enabled.has("owner")?<td className="max-w-32 break-words px-3 py-3 text-body">{lead.ownerName??"Nobody yet"}</td>:null}
      </tr>;
     })}
