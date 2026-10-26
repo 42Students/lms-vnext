@@ -21,7 +21,7 @@ function when(value:string|null){
 function validContactPhone(value:string|null):string|null{
  if(!value)return null;
  const digits=value.replace(/[\s()-]/g,"");
- return /^\+?[1-9]\d{7,14}$/.test(digits)?(digits.startsWith("+")?digits:"+"+digits):null;
+ return /^\+?[1-9]\d{7,14}$/.test(digits)?digits:null;
 }
 export function TpoRecruiterPrototypeInspector({
  lead,onDismiss
