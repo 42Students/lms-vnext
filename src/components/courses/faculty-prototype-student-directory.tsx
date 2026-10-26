@@ -25,15 +25,18 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
  const [view,setView]=useState<"ALL"|"BEHIND">("ALL");
  const metrics=signals?.studentRosterMetrics??null;
  const completion=signals?.courseCompletion??null;
+ // An unknown completion denominator cannot support a meaningful Behind filter.
+ const hasMeasurableProgress=completion?.behindTotal!==null&&completion?.behindTotal!==undefined;
+ const effectiveView=view==="BEHIND"&&!hasMeasurableProgress?"ALL":view;
  const progressById=new Map(completion?.byLearner.map(item=>[item.membershipId,item.progressPercent] as const)??[]);
  const recordById=new Map(metrics?.byLearner.map(item=>[item.membershipId,item] as const)??[]);
  const assignmentComplete=Boolean(signals?.completeness.assignments);
  const attendanceComplete=Boolean(signals?.completeness.attendance);
  const students=useMemo(()=>learners.filter(student=>
-  (view==="ALL"||(completion?.byLearner.find(row=>row.membershipId===student.membershipId)?.progressPercent??100)<30)&&
+  (effectiveView==="ALL"||(progressById.get(student.membershipId)??100)<30)&&
   [student.displayName,student.rollNumber,student.phoneE164,student.email]
    .some(value=>value?.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
- ),[learners,query,view,completion]);
+ ),[learners,query,effectiveView,progressById]);
  function exportCsv(){
   const csv=facultyRosterCsv(students);
   const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
@@ -64,9 +67,9 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
     className="h-11 min-w-0 flex-[1_1_220px] rounded-lg border border-[#dce5ee] px-4 text-sm"
     placeholder="Search by name, roll no, phone or email"/>
    <div className="flex shrink-0 flex-wrap gap-2" role="group" aria-label="Roster filter">
-    <button type="button" aria-pressed={view==="ALL"} onClick={()=>setView("ALL")}
+    <button type="button" aria-pressed={effectiveView==="ALL"} onClick={()=>setView("ALL")}
      className={"faculty-proto-pill"+(view==="ALL"?" !border-[#078191] !text-[#078191]":"")}>All {learners.length}</button>
-    <button type="button" aria-pressed={view==="BEHIND"} disabled={!completion}
+    <button type="button" aria-pressed={effectiveView==="BEHIND"} disabled={!hasMeasurableProgress}
      onClick={()=>setView("BEHIND")}
      className={"faculty-proto-pill"+(view==="BEHIND"?" !border-[#078191] !text-[#078191]":"")}>
       Behind {completion?.behindTotal??"—"}</button>

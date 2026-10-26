@@ -43,6 +43,9 @@ test("Faculty Students prototype #06 has four cards, scoped contacts, search, be
   await expect(behind).toHaveAttribute("aria-pressed","true");
   expect(await table.getByRole("row").count()).toBeLessThanOrEqual(allRows);
   await filter.getByRole("button",{name:/^All \d+$/}).click();
+ }else{
+  await expect(behind).toContainText("—");
+  await expect(behind).toHaveAttribute("aria-pressed","false");
  }
  const search=dir.getByRole("searchbox",{name:"Search students"});
  await search.fill("no-such-learner-prototype");

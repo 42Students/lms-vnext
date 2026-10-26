@@ -44,10 +44,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Type-check Faculty Students
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable E2E PostgreSQL
@@ -60,3 +56,9 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Screenshot Students and retained privacy flows
         run: npx playwright test tests/e2e/faculty-students-prototype.spec.ts tests/e2e/faculty-course-students.spec.ts --workers=1
+      # Do not let unrelated TPO/Recruiter TypeScript errors hide Faculty E2E.
+      # Global TypeScript is still a mandatory final acceptance gate.
+      - name: Type-check Faculty Students
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
