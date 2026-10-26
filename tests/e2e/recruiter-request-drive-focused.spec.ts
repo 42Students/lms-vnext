@@ -44,7 +44,9 @@ test.describe("Recruiter Request Drive: real seeded workflow",()=>{
   }
   // Both pending requests and policy-approved draft jobs belong to WAITING.
   // DRAFT is a persisted request status, not a valid drive-list query view.
-  await page.goto("/hr/drives?collegeId="+college+"&view=WAITING");
+  // Follow the real confirmation action, which must work for both REQUEST and DRAFT.
+  await page.getByRole("link",{name:"Open the request"}).click();
+  await expect(page).toHaveURL(/\/hr\/drives\?.*view=WAITING/);
   await expect(page.getByText("E2E Specialist Analyst Position",{exact:false}).first()).toBeVisible();
   await expectNoRawErrors(page);
  });
