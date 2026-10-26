@@ -2,6 +2,7 @@
 import {useRef,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
+import {FacultyPrototypeBlueprintRowActions,type FacultyBlueprintRowEditor} from "./faculty-prototype-blueprint-row-actions";
 import {
  facultyMoveContentId,facultyContentOrderDirty,facultyContentOrderValid,
  facultyContentOrderReceiptMatches,
@@ -11,6 +12,8 @@ import {courseApiError} from "./learner-course-api";
 export type FacultyBlueprintItem={
  id:string;title:string;kind:string;description:string|null;
  status:string;href:string;reorderable:boolean;
+ editor?:FacultyBlueprintRowEditor|null;
+ scheduled?:boolean;
 };
 function glyph(kind:string){
  if(kind==="VIDEO")return "▶";
@@ -87,8 +90,8 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
  return <div className="px-5 py-4">
   <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
    <p className="faculty-proto-subtitle">
-    {enabled?"Drag a content handle to reorder for this class. Assignments and quizzes retain their own ordering.":
-     "Content ordering is not enabled for this class. Open the advanced editor for available tools."}
+    {enabled?"Drag the handle or use the arrow keys/buttons to reorder class content. Assessments have separate sequence controls.":
+     "Class-only content reordering needs verified ordering support. Use the full editor for publishing and sequencing tools."}
    </p>
    {dirty?<div className="flex flex-wrap gap-2">
     <button type="button" className="faculty-proto-secondary" onClick={()=>{
@@ -143,8 +146,9 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
       <span className="faculty-proto-subtitle">{item.description??item.kind.replaceAll("_"," ").toLowerCase()}</span>
      </span>
      <span className={"shrink-0 rounded-full px-2 py-1 text-xs font-semibold "+
-       (item.status==="PUBLISHED"?"bg-emerald-50 text-emerald-700":"bg-amber-50 text-amber-800")}>
-      {item.status==="PUBLISHED"?"Live":item.status==="DRAFT"?"Draft":item.status}</span>
+       (item.scheduled?"bg-cyan-50 text-cyan-800":item.status==="PUBLISHED"?"bg-emerald-50 text-emerald-700":"bg-amber-50 text-amber-800")}>
+      {item.scheduled?"Scheduled":item.status==="PUBLISHED"?"Live":item.status==="DRAFT"?"Draft":item.status}</span>
+     <FacultyPrototypeBlueprintRowActions editor={item.editor??null} deliveryId={deliveryId}/>
     </li>;
    })}
   </ol>
