@@ -58,10 +58,23 @@ describe("2026 TPO Companies / Emails prototype",()=>{
   const index=source("src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx");
   expect(detail).toContain("<TpoCampaignPrototypeSidebar");
   expect(detail).toContain("<TpoCampaignSendControl");
+  expect(detail).toContain("<TpoCampaignSentStory");
+  expect(detail).toContain("recipientsReady={recipients?.ready===true}");
   expect(detail).toContain("Provider acceptance is not proof of delivery.");
   expect(index).toContain('data-testid="tpo.campaigns.prototype-overview"');
   expect(index).toContain("Advanced history, filters and provider receipt ledger");
   expect(index).toContain("tpoCampaignDispatchReady()");
   expect(index).toContain("listTpoMessagingHistory(context");
  });
+ it("sent campaign chronology distinguishes provider receipts from untracked engagement",()=>{
+  const story=source("src/components/tpo/tpo-campaign-sent-story.tsx");
+  for(const heading of ["What you sent","What happened","What to do now","Everyone it went to"]){
+   expect(story).toContain(heading);
+  }
+  expect(story).toContain('campaign.status==="SENT"||campaign.status==="SENDING"');
+  expect(story).toContain("Provider acceptance does not confirm inbox delivery");
+  expect(story).toContain("no instrumentation for delivery, opens, clicks");
+  expect(story).toContain('href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}');
+ });
+
 });

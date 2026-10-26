@@ -11,9 +11,9 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 03 | Companies › Companies.png | `1625f246f3b7` | Yes | Open |
 | 04 | Agenda.png | `c2141f21471f` | Yes | Open |
 | 05 | Brief.png | `f30770b9601d` | Yes | Open |
-| 06 | EmailSent.png | `4e149e85c7d3` | No | Open |
-| 07 | Companies › Emails (a sent email open).png | `a9779118e975` | No | Open |
-| 08 | Companies › Emails (writing a new email).png | `5ea6df74973e` | No | Open |
+| 06 | EmailSent.png | `4e149e85c7d3` | Yes | Open |
+| 07 | Companies › Emails (a sent email open).png | `a9779118e975` | Yes | Open |
+| 08 | Companies › Emails (writing a new email).png | `5ea6df74973e` | Yes | Open |
 | 09 | Companies › Messages.png | `88ad8f13d2ef` | No | Open |
 | 10 | Students › All students.png | `41cbb709abc4` | No | Open |
 | 11 | Students › Who’s in placements.png | `420fadf229d6` | No | Open |
@@ -119,10 +119,21 @@ Original PNG dimensions: **2880 × 2244**. Image shows a Companies heading and s
 - Important correction: Today focus now counts surfaced reply and verification tasks where the relevant source is available, displays unavailable sources honestly, and does not offer an email link if `canContact` is false.
 - Still not accepted: Screenshot fixtures for email campaigns (opened/clicked, replies, undelivered) need separate explicit source-backed integration with campaign data; the real-time selected-day agenda cannot claim completeness from paginated follow-up previews; browser/visual acceptance remains open.
 
+## Screens 06–08 — Emails sent progression, open campaign, new composer (source images visually inspected)
+
+- `EmailSent.png`: **2880 × 3000**. Vertical sent-email journey: "What you sent", "What happened" with reached/opened/clicked/replied tiles, pending replies, recipients grouped by response status.
+- `Companies › Emails (a sent email open).png`: **2880 × 2118**. Campaign sidebar (scheduled, sent, drafts), selected email with progress, actionable replies, unopened and opened non-repliers.
+- `Companies › Emails (writing a new email).png`: **2880 × 1920**. Campaign sidebar, audience selection, four preset starters, personalized text, preview, send/schedule controls and save state.
+- Verified existing vNext: `src/components/tpo/tpo-campaign-compose.tsx` already has the four presets, protected draft-and-confirm send workflow, recipient suppression preview and protected selection. `src/components/tpo/tpo-campaign-prototype-sidebar.tsx` already supports author-scoped Mine and saved campaign list.
+- Source limitation: `placement_tpo_email_campaign_recipients` presently persists `PENDING/QUEUED/SENT/FAILED/SKIPPED` provider receipts, **not reliable campaign-specific opens, clicks or replies**. Never map `SENT` onto `delivered`, or manufacture the screenshot’s 9 opened / 2 clicked / 3 replied sample. Recruiter Messages is a distinct channel and does not prove a reply to a campaign.
+- New `src/components/tpo/tpo-campaign-sent-story.tsx` renders source-backed campaign progression with the same four section anchors as screen 06 (What you sent; What happened; What to do now; Everyone it went to), includes true provider receipt breakdown and safe recipient drill-down, and explicit unavailable engagement states. Integrated into the stored campaign-detail route `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`. The original two-stage verified draft-and-send controls remain.
+- Tests in `tests/unit/tpo-campaign-sent-story-prototype.test.tsx` and existing `tests/unit/tpo-prototype-email-workspace-2026.test.ts` verify no invented opens/replies/delivery, no emails or secret tokens, failure review, pending receipts and no sent-story for drafts.
+- Still open: campaign-specific reply ingestion/tracking (must be designed as separately authorized and persisted work rather than guessed), scheduling actions, opt-out-safe nudge/resend audience decisions, browser/visual acceptance. Screens 06–08 remain **partial**, not accepted.
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **5/33**
+- Original PNGs visually opened in this recovery pass: **8/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**
