@@ -88,6 +88,7 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
    expect(html).toContain(signal);
   }
   expect(html).toContain('aria-pressed="true"');
+  expect(html).toContain('href="/tpo/recruiters/lead-1"');
   expect(html).toContain("1 in this view");
   expect(html).not.toContain("Rohit Mehta");
  });
