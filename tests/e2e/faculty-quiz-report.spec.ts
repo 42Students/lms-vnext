@@ -52,8 +52,10 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page.getByRole("heading",{name:"Question accuracy"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"Score distribution"})).toBeVisible();
   await expect(page.getByRole("link",{name:/Individual attempts & question accuracy/})).toBeVisible();
-  const exportOptions=page.locator('details').filter({
-   has:page.locator('summary').getByText("Export options",{exact:true}),
+  // Disclosure's summary includes a decorative chevron. Its full text is
+  // "Export options⌄", so exact getByText("Export options") cannot match it.
+  const exportOptions=page.locator("details").filter({
+   has:page.locator("summary").filter({hasText:/^Export options/}),
   });
   await expect(exportOptions.locator("summary")).toBeVisible();
   await exportOptions.locator("summary").click();
