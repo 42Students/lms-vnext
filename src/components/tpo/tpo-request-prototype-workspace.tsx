@@ -22,12 +22,11 @@ function when(date:Date){
   day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
  }).format(date)+" IST";
 }
-export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total,nowIso}:{
+export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total}:{
  rows:readonly TpoPrototypeRequestRow[];selectedId:string|null;baseHref:string;
- total:number;nowIso:string;
+ total:number;
 }){
  const selected=selectedId?rows.find(row=>row.id===selectedId)??null:rows[0]??null;
- const now=new Date(nowIso);
  const href=(id:string)=>baseHref+(baseHref.includes("?")?"&":"?")+"request="+encodeURIComponent(id);
  const pending=rows.filter(row=>row.status==="PENDING").length;
  return <div data-testid="tpo.requests.prototype-workspace" className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)]">
