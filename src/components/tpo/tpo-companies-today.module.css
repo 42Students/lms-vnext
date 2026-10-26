@@ -60,3 +60,28 @@
 .personActions{display:flex;flex-wrap:wrap;gap:8px}
 .personActions a{min-height:38px}
 @media(max-width:1000px){.grid{grid-template-columns:1fr}}
+
+/* Verified original Companies > Today screenshot: compact queue + detail. */
+.viewLinks{display:flex;align-items:center;justify-content:flex-end;gap:16px;min-height:24px}
+.viewLinks .eyebrow{margin-right:auto}
+.viewLinks a{font-size:12px;color:#087e8b;text-decoration:none;font-weight:700}
+.grid{grid-template-columns:minmax(300px,29%) minmax(0,1fr);gap:16px;align-items:stretch}
+.queue,.detail{min-height:560px}
+.queueTitle strong{font-size:20px}
+.queueTitle small a{font-size:12px;color:#087e8b;text-decoration:none}
+.queueHead>a{display:none}
+.personHead{align-items:center}
+.identity{display:flex;align-items:center;gap:14px;min-width:0}
+.avatar{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:50%;background:#edf7f9;color:#047c86;font-size:16px;font-weight:700}
+.helper{font-size:12px;line-height:1.5;color:#66758a;margin:-6px 0 0}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.facts>div{border:1px solid #e7ecf2;border-radius:10px;padding:12px 14px;min-width:0}
+.facts p{font-size:13px;color:#172033;margin:8px 0 0;overflow-wrap:anywhere}
+.advanced{margin-top:8px;padding:16px;border:1px solid #e7ecf2;border-radius:10px}
+.advanced summary{cursor:pointer;color:#087e8b;font-weight:700;font-size:13px}
+.advanced[open]{display:flex;flex-direction:column;gap:16px}
+.inboxExtras{border:1px solid #e7ecf2;border-radius:10px;padding:12px 16px}
+.inboxExtras summary{font-size:13px;font-weight:700;color:#087e8b;cursor:pointer}
+.inboxExtras[open]{display:flex;flex-direction:column;gap:14px}
+@media(max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.queue,.detail{min-height:0}}
+@media(max-width:600px){.facts{grid-template-columns:1fr}.identity{align-items:flex-start}.viewLinks{flex-wrap:wrap;justify-content:flex-start}}
