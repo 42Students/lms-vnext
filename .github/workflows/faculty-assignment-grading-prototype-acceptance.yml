@@ -10,6 +10,8 @@ on:
       - "src/modules/courses/faculty-grading-selection-model.ts"
       - "tests/unit/faculty-grading-selection-model.test.ts"
       - "tests/e2e/faculty-assignment-grading-prototype.spec.ts"
+## Focused Faculty E2E is independent of the repository-wide TS gate.
+## Full TypeScript is still mandatory in the separate CI workflow.
 permissions:
   contents: read
 concurrency:
@@ -59,7 +61,3 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Faculty #10 Grading prototype desktop-mobile browser
         run: npx playwright test tests/e2e/faculty-assignment-grading-prototype.spec.ts --workers=1
-      - name: Enforce global TypeScript after focused Faculty browser
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
