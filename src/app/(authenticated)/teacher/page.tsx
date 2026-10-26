@@ -2,7 +2,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
 import {getDb} from "@/db/client";
-import {assignmentSubmissions,attendanceSessions,courseDiscussionMessages} from "@/db/schema";
+import {assignmentSubmissions,attendanceSessions,courseDiscussionMessages,colleges} from "@/db/schema";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import {users} from "@/db/schema";
 import {and,desc,eq,gte,inArray,isNull,sql} from "drizzle-orm";
@@ -31,18 +31,27 @@ export default async function TeacherIndex(){
    .where(eq(users.id,context.user.id)).limit(1),
  ]);
  const firstName=profile[0]?.displayName?.trim().split(/\s+/)[0]??"";
+ const collegeCode=context.membership?.collegeId?
+  await getDb().select({code:colleges.code}).from(colleges)
+   .where(eq(colleges.id,context.membership.collegeId)).limit(1)
+   .then(rows=>rows[0]?.code?.trim()??""): "";
  const dateLabel=new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",
- }).format(now);
+ }).format(now)+(collegeCode?" · "+collegeCode:"");
  const hour=Number(new Intl.DateTimeFormat("en-GB",{
   timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23",
  }).format(now));
  const greeting=hour<12?"morning":hour<17?"afternoon":"evening";
  const upcoming=schedule?.nextUpcoming??null;
+ const minutesToClass=upcoming?Math.max(0,Math.ceil((upcoming.startsAt.getTime()-now.getTime())/60000)):0;
+ const when=minutesToClass<24*60?
+  "in "+(minutesToClass>=60?Math.floor(minutesToClass/60)+" "+(Math.floor(minutesToClass/60)===1?"hour":"hours"):"")+
+   (minutesToClass>=60&&minutesToClass%60>0?" ":"")+
+   (minutesToClass%60>0||minutesToClass===0?minutesToClass%60+" "+(minutesToClass%60===1?"minute":"minutes"):""):
+  "on "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(upcoming!.startsAt);
  const nextClass=upcoming?
-  "Next class: "+(upcoming.courseName??upcoming.title??"Scheduled class")+
-  " · "+upcoming.sectionName+" · "+clock(upcoming.startsAt)+" IST"+(upcoming.location?", "+upcoming.location:""):
-  null;
+  "Next class "+when+": "+(upcoming.courseName??upcoming.title??"Scheduled class")+
+  ", "+upcoming.sectionName+(upcoming.location?", "+upcoming.location:"")+".":null;
  const todayKey=dateKey(now);
  const todayEvents=[...new Map((schedule?.events??[])
   .filter(event=>dateKey(event.startsAt)===todayKey)
