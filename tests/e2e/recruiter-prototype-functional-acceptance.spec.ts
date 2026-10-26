@@ -100,6 +100,25 @@ test.describe("Recruiter prototype functional journeys",()=>{
   await expectNoRawErrors(page);
  });
 
+
+ test("Focused applicant review shows the prototype Keep Hold and Not selected actions",async({page,context})=>{
+  await authenticateGracefulRole(context,"recruiter");
+  const drive="/recruiter/drives/66000000-0000-4000-8000-000000000004";
+  await page.goto(drive+"?tab=applicants");
+  const review=page.getByRole("link",{name:"Review one by one"});
+  await expect(review).toBeVisible();
+  await review.click();
+  const chooser=page.getByRole("link",{name:/Review for [0-9]+\./}).first();
+  if(await chooser.count())await chooser.click();
+  const editor=page.getByRole("region",{name:"Recruiter results editor"});
+  await expect(editor).toBeVisible();
+  for(const name of ["Keep","Hold","Not selected"]){
+   await expect(editor.getByRole("button",{name,exact:true}).first()).toBeVisible();
+  }
+  await expect(editor.getByText(/S Keep · H Hold · R Not selected/)).toBeVisible();
+  await expectNoRawErrors(page);
+ });
+
  test("Rounds and Offers show scoped scheduling and selection workspaces",async({page,context})=>{
   await authenticateGracefulRole(context,"recruiter");
   // The fixture is an exact persisted drive. URL discovery from the default
