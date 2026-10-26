@@ -40,4 +40,4 @@
 3. Persisted end-to-end mutation test for follow-up Done, Tomorrow, idempotency/stale conflict and safe failure; verify no sends/trust changes occur from navigation alone.
 4. Exact 1440 × 956 viewport runtime screenshot against the 2880 × 1912 prototype at 2x scaling, plus responsive checks; document remaining intentional changes due to live-data truthfulness.
 
-**Current closure status:** implementation updated and tests written; code CI and browser evidence must be recorded separately. No visual acceptance claim.
+**Current closure status:** focused source/typecheck **PASS** on commit `5f5167db9c69265fab5f21b6b13c44ab5bfa6c32`, [TPO run 40398586308](https://github.com/42Students/lms-vnext/actions/runs/40398586308): **21/21 test files and 129/129 tests passed**. Page 01 is code-implemented with a passing dedicated acceptance gate; authenticated browser flows, exact-viewport visual acceptance and global CI remain open. A subsequent trust-helper copy correction does not independently certify a new runtime pass.
