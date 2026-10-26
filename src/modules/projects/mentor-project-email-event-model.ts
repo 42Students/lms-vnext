@@ -32,3 +32,22 @@ export function mentorProjectEmailSubmissionIsNotifiable(row:{
  return Boolean(row&&!row.deletedAt&&row.submittedAt&&
    ["SUBMITTED","CHANGES_REQUESTED","APPROVED"].includes(row.status));
 }
+
+/** A queued intent must match the originating durable source's tenant,
+ * project and event type. An outbox claim is not permission to send arbitrary
+ * source events by substituting metadata IDs.
+ */
+export type MentorQueuedEmailScope={
+ collegeId:string|null;organizationId:string|null;
+ projectId:unknown;kind:unknown;
+};
+export function mentorEmailQueueMatchesSource(
+ queued:MentorQueuedEmailScope,
+ actual:{collegeId:string|null;organizationId:string|null;
+  projectId:string;kind:MentorProjectEmailKind},
+):boolean{
+ return Boolean(queued.collegeId&&queued.organizationId&&
+   queued.collegeId===actual.collegeId&&
+   queued.organizationId===actual.organizationId&&
+   queued.projectId===actual.projectId&&queued.kind===actual.kind);
+}
