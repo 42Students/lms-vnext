@@ -107,3 +107,10 @@
 .companyAttentionItem>small{font-size:12px;color:#695b4c}
 .companyAttentionItem>.link{align-self:flex-start;font-size:12px;font-weight:700}
 .companyAttention>.helper{padding:8px 16px 0}
+
+/* Companies > Today: one selectable queue and source-backed contextual panes. */
+.replyDot{height:10px;width:10px;margin-top:4px;border-radius:50%;background:#da6b10}
+.companyDetail,.replyDetail{display:flex;min-width:0;flex-direction:column;gap:16px}
+.replyBody{border:1px solid #e7ecf2;border-radius:10px;background:#f8fafb;padding:16px;white-space:pre-wrap;overflow-wrap:anywhere;color:#26354a;line-height:1.6}
+.companyDetail .context{background:#edf7f9}
+.companyDetail .primary,.replyDetail .primary{min-height:44px}
