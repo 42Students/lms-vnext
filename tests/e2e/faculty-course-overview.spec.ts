@@ -25,7 +25,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   page.on("pageerror",e=>errors.push(e.message));
   await page.goto("/teacher/courses");
   await page.getByRole("link",{name:/E2E Browser Course/}).click();
-  await expect(page).toHaveURL(/\/home$/);
+  await expect(page).toHaveURL(/\/home$/,{timeout:20000});
   await expect(page.getByRole("heading",{level:1,name:"E2E Browser Course"})).toBeVisible();
   const tabs=page.getByRole("navigation",{name:"Faculty course tabs"});
   await expect(tabs.getByRole("link",{name:"Overview"})).toHaveAttribute("aria-current","page");

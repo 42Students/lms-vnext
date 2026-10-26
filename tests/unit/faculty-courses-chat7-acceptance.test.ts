@@ -2,8 +2,9 @@ import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 const src=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
 describe("Faculty Courses verified source contracts",()=>{
-it("FAC-courses-01 maintains the faculty course behavior",()=>{const content=src("src/components/courses/faculty-course-tab-navigation.tsx");
-expect(content).toContain("Back to courses");
+it("FAC-courses-01 maintains the faculty course behavior",()=>{const content=src("src/app/(authenticated)/teacher/courses/[deliveryId]/layout.tsx");
+expect(content).toContain("‹ Courses");
+expect(content).toContain('href="/teacher/courses"');
 });
 it("FAC-courses-03 maintains the faculty course behavior",()=>{const content=src("src/components/courses/faculty-course-list.tsx");
 expect(content).toContain("course.cohortName");

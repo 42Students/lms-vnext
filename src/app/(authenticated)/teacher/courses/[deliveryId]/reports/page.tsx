@@ -89,7 +89,7 @@ export default async function FacultyReportsHubPage({
 
       {data.health.items.length === 0 ? <EmptyState title="No published assessment reports"
         description="This Section has no published assessments matching the filter. Private or ungraded work is not fabricated."
-        action={data.query.kind !== "ALL" ? <Link href={facultyReportHubHref({ ...data.query, kind: "ALL", page: 1 })} className={reportLink}>Clear</Link> : undefined} />
+        /* Reset filters stays in the form above; avoid a second identical Clear action. */ />
         : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
           {data.health.items.map(item => <article key={item.kind + item.id}
             className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">

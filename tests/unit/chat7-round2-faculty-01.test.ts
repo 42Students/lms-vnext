@@ -2,8 +2,8 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 describe("chat-7 faculty course listing and roster contracts",()=>{
 it("FAC-courses-01 faculty course back-link has legacy label and destination",()=>{
- const source=readFileSync("src/components/courses/faculty-course-tab-navigation.tsx","utf8");
- expect(source).toContain("Back to courses");
+ const source=readFileSync("src/app/(authenticated)/teacher/courses/[deliveryId]/layout.tsx","utf8");
+ expect(source).toContain("‹ Courses");
  expect(source).toContain("href=\"/teacher/courses\"");
 });
 it("FAC-courses-04 only secondary teaching roles show role badge",()=>{

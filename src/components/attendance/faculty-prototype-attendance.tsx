@@ -45,7 +45,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
  const [outcomeUncertain,setOutcomeUncertain]=useState(false);
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
- const submitLock=useRef(false);
+ const pendingRef=useRef(false);
  useEffect(()=>{setMarks(existingMarks(workspace,selected));setError(null);setSuccess(null);
   setOutcomeUncertain(false);setConfirming(false);
  },[workspace,selected?.id]);
@@ -87,9 +87,9 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
   setConfirming(true);
  }
  async function submit(){
-  if(!selected||!writable||submitLock.current)return;
+  if(!selected||!writable||pendingRef.current)return;
   if(marks.size!==scopeRecords.length)return;
-  setConfirming(false);submitLock.current=true;setSubmitting(true);setError(null);
+  setConfirming(false);pendingRef.current=true;setSubmitting(true);setError(null);
   try{
    const response=await fetch("/api/attendance/faculty/sessions/"+encodeURIComponent(selected.id),{
     method:"PATCH",headers:{"Content-Type":"application/json"},
@@ -116,7 +116,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
   }catch{
    setOutcomeUncertain(true);
    setError("The save outcome is unknown. Refresh the class session before retrying.");
-  }finally{submitLock.current=false;setSubmitting(false);}
+  }finally{pendingRef.current=false;setSubmitting(false);}
  }
  return <section aria-label="Faculty prototype attendance" className="space-y-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
