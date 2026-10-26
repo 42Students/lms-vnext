@@ -60,7 +60,9 @@ describe("HR-MESSAGING-83: general preview failure is recoverable without double
   expect(props.generalPreviewUnavailable).toBe(true);
   expect(props.rows).toEqual([]);
   expect(props.selected).toBeNull();
-  expect(props.decisionNoticesUnavailable).toBe(false);
+  // A timed-out independent grant recheck cannot authorize private decisions,
+  // even if their own downstream notice lookup succeeded.
+  expect(props.decisionNoticesUnavailable).toBe(true);
   expect(hasGeneralOpenForm(output)).toBe(false);
   expect(m.notices).toHaveBeenCalledWith(actor,collegeId);
   expect(m.messages).not.toHaveBeenCalled();
