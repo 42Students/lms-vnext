@@ -72,6 +72,8 @@ jobs:
             tests/unit/tpo-verification-prototype-queue-2026.test.ts \
             tests/unit/tpo-batches-prototype-workspace-2026.test.ts \
             tests/unit/tpo-drives-prototype-overview-2026.test.ts \
+            tests/unit/tpo-prototype-drive-students-2026.test.ts \
+            tests/unit/tpo-prototype-drive-rounds-2026.test.tsx \
             tests/unit/chat9-round6-calendar-settings.test.ts \
             tests/unit/chat9-calendar-reports-existing-contracts.test.ts \
             tests/unit/chat9-round9-calendar-behavior.test.ts
