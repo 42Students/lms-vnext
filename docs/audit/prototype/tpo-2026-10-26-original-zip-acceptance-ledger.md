@@ -15,9 +15,9 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 07 | Companies › Emails (a sent email open).png | `a9779118e975` | Yes | Open |
 | 08 | Companies › Emails (writing a new email).png | `5ea6df74973e` | Yes | Open |
 | 09 | Companies › Messages.png | `88ad8f13d2ef` | Yes | Open |
-| 10 | Students › All students.png | `41cbb709abc4` | No | Open |
-| 11 | Students › Who’s in placements.png | `420fadf229d6` | No | Open |
-| 12 | Students › To verify.png | `034ab1edaed9` | No | Open |
+| 10 | Students › All students.png | `41cbb709abc4` | Yes | Open |
+| 11 | Students › Who’s in placements.png | `420fadf229d6` | Yes | Open |
+| 12 | Students › To verify.png | `034ab1edaed9` | Yes | Open |
 | 13 | Students › Requests.png | `cd08dd37423b` | No | Open |
 | 14 | Students › Announcements.png | `4ae17a7de616` | No | Open |
 | 15 | Drives.png | `c0c53ad75502` | No | Open |
@@ -140,10 +140,19 @@ vNext verified already: authenticated `/tpo/messages` + real recruiter-thread st
 
 Remaining acceptance: persistent custom templates and usage counts; secure factual merge for eligible student totals; selected-thread message/drive context, browser tests for keyboard/composition/failed send, screenshot diff. **Partial only**.
 
+## Screens 10–12 — Students (source images visually inspected)
+
+- **10 — Students › All students**: 2880×2000. Prototype has filters for batch/program/department/class, five-step Eligible → Registered → Verified → Applying → Placed summary with actions, compact 8-field table Student/Roll/Branch/Stage/Profile/Best so far/Applied/Offers, and right student preview with verification/action links.
+- Inspected current vNext `src/app/(authenticated)/tpo/students/page.tsx`, `src/modules/placements/tpo-students-model.ts`, `src/components/tpo/tpo-students-spreadsheet.tsx`, `src/components/tpo/tpo-student-roster-inspector.tsx`. Existing student, batch, program, branch, class, export, multi-filter and bulk actions are stronger and retained.
+- Original stage summary lacked a vNext first-class **verified count**. Newly projected `tpoStudentPrototypeJourneySteps` displays source-backed five steps, and `tpoStudentVerifiedSnapshotCount` uses **only a complete, authorized, non-UNKNOWN roster snapshot** to count VERIFIED; otherwise displays "—" and explicit unavailable text. Stage filters use the existing authorized legacyStage URL path. Default student grid is now the original eight core columns; all additional fields and grid controls remain accessible.
+- **11 — Students › Who’s in placements**: 2880×1800. Batch/class hierarchy with students, decisions, registered, verified, placed, and a selected batch’s scoped “decide” action, class exceptions, and invitations. Current vNext has batch decision and participation workspaces but source-specific parity, hierarchy, exception editing, browser actions remain to be verified; no extra code accepted on this screen.
+- **12 — Students › To verify**: 2880×1800. Triage left with Waiting/Sent back/Verified and aging, a selected student's submitted education details, document preview at right, and Verify/Send back controls. Current vNext verification subsystem must be reviewed against this original; neither the screenshot’s data nor the preview document should be treated as production verification evidence. No code accepted on this screen.
+- Browser screenshot/interactive acceptance not yet run for screens 10–12. All remain **partially implemented/unaccepted**.
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **9/33**
+- Original PNGs visually opened in this recovery pass: **12/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**
