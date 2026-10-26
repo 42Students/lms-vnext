@@ -27,7 +27,7 @@ describe("TPO prototype Settings / placement rules",()=>{
   expect(editor).toContain("TPO_RULE_LIMITS.minResponseHours.max");
   expect(TPO_RULE_LIMITS.upliftPct.min).toBe(0);
   expect(tpoRuleBoundsValid({
-   countsAsPlacedAt:"OFFER_ACCEPTED",maxHeldOffers:2,upliftPct:37,minResponseHours:51,
+   maxHeldOffers:2,upliftPct:37,minResponseHours:51,
   })).toBe(true);
  });
  it("keeps the real mutation and concurrency controls; never treats the UI as a saved receipt",()=>{
