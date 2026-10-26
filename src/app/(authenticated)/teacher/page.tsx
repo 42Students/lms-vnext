@@ -16,6 +16,7 @@ const dateKey=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
 const clock=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
  timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
 }).format(date);
+const shortClock=(date:Date)=>clock(date).replace(/\s*(am|pm)$/i,"");
 
 /** Newest Faculty Today prototype, bound to real authorized timetable and
  * assessment records. Never substitute the prototype's example figures. */
@@ -79,7 +80,7 @@ export default async function TeacherIndex(){
  const rosterSizes=new Map(rosters.map(item=>[item.deliveryId,item.count] as const));
  const dailyClasses:FacultyTodayClass[]=todayEvents.slice(0,5).map(event=>({
   id:event.id,title:event.courseCode??event.title,sectionName:event.sectionName,
-  timeLabel:clock(event.startsAt),location:event.location,
+  timeLabel:shortClock(event.startsAt),location:event.location,
   learnerCount:event.deliveryId?rosterSizes.get(event.deliveryId)??null:null,
   actionLabel:markedIds?.has(event.id)?"Review attendance":"Take attendance",
   href:event.deliveryId?
@@ -109,6 +110,7 @@ export default async function TeacherIndex(){
    id:assignmentSubmissions.assignmentId,
    deliveryId:assignmentSubmissions.deliveryId,
    pending:sql<number>`count(*) filter (where ${assignmentSubmissions.gradingStatus} <> 'GRADED')::int`,
+   oldest:sql<Date|null>`min(${assignmentSubmissions.submittedAt}) filter (where ${assignmentSubmissions.gradingStatus} <> 'GRADED')`,
   }).from(assignmentSubmissions).where(and(
    inArray(assignmentSubmissions.assignmentId,assignmentIds),
    inArray(assignmentSubmissions.deliveryId,deliveryIds),
@@ -116,6 +118,8 @@ export default async function TeacherIndex(){
   .catch(()=>null):[];
  const pendingByAssignment=new Map(pendingRead?.map(item=>[
   item.id+":"+item.deliveryId,item.pending] as const)??[]);
+ const oldestByAssignment=new Map(pendingRead?.map(item=>[
+  item.id+":"+item.deliveryId,item.oldest] as const)??[]);
  const assignment=[...new Map(assessments.assignments
   .filter(item=>item.status==="PUBLISHED"&&(pendingRead===null?
    item.hasSubmissions:(pendingByAssignment.get(item.id+":"+item.deliveryId)??0)>0))
@@ -123,13 +127,19 @@ export default async function TeacherIndex(){
   .sort((a,b)=>(pendingByAssignment.get(b.id+":"+b.deliveryId)??0)-
    (pendingByAssignment.get(a.id+":"+a.deliveryId)??0))[0];
  if(assignment){
-  const pending=pendingRead===null?null:pendingByAssignment.get(assignment.id+":"+assignment.deliveryId)??0;
+  const key=assignment.id+":"+assignment.deliveryId;
+  const pending=pendingRead===null?null:pendingByAssignment.get(key)??0;
+  const oldest=oldestByAssignment.get(key);
+  const age=oldest instanceof Date&&Number.isFinite(oldest.getTime())?
+   Math.max(0,Math.floor((now.getTime()-oldest.getTime())/86400000)):null;
+  const gradingDetail=pending===null?"Grading count unavailable.":
+   age!==null?"The oldest came in "+(age===0?"today":age+" "+(age===1?"day":"days")+" ago")+".":
+   "Review learner submissions.";
   if(pending===null||pending>0)tasks.push({
    id:"grade-"+assignment.id+":"+assignment.deliveryId,eyebrow:"TO GRADE",tone:"warning",
    title:pending===null?"Review "+assignment.title:
     pending+" "+(pending===1?"submission waits":"submissions wait")+" for a grade",
-   detail:assignment.title+" · "+assignment.courseCode+" · "+assignment.sectionName+
-    (pending===null?" · Grading count unavailable.":" · Review learner submissions."),
+   detail:assignment.title+" · "+assignment.courseCode+" · "+assignment.sectionName+". "+gradingDetail,
    action:"Grade",href:"/teacher/report/assignment/"+encodeURIComponent(assignment.id)+
     "/grade?deliveryId="+encodeURIComponent(assignment.deliveryId),
   });
@@ -140,10 +150,12 @@ export default async function TeacherIndex(){
   const event=unmarkedEvent;
   tasks.push({
    id:"attendance-"+event.id,
-   eyebrow:"TODAY, "+clock(event.startsAt),tone:"warning",
+   eyebrow:"TODAY, "+shortClock(event.startsAt),tone:"warning",
    title:"Take attendance for "+event.sectionName,
-   detail:(event.location??"Room not provided")+" · "+(event.courseName??event.title)+
-    ". Open the class session to record attendance.",
+   detail:(event.location??"Room not provided")+
+    (event.deliveryId&&rosterSizes.get(event.deliveryId)!==null&&rosterSizes.get(event.deliveryId)!==undefined?
+     ", "+rosterSizes.get(event.deliveryId)+" students":"")+". "+
+    (markedIds===null?"Attendance status unavailable; open the session to review.":"Not taken yet."),
    action:"Take attendance",
    href:event.deliveryId?
     "/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(event.id):
