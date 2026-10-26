@@ -3,12 +3,13 @@ import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {facultyAttendanceMarkingWindow} from "@/modules/attendance/faculty-marking-window";
+import {selectFacultyPrototypeSession} from "@/modules/attendance/faculty-prototype-session-selection";
 import type {FacultyAttendanceWorkspaceData} from "./faculty-attendance-workspace";
 
 type AttendanceMark="PRESENT"|"ABSENT";
 type Session=FacultyAttendanceWorkspaceData["sessions"][number];
 const sessionLabel=(date:string)=>new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"short",year:"numeric",
+ timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"short",
  hour:"numeric",minute:"2-digit",
 }).format(new Date(date));
 const monthLabel=(date:string)=>new Intl.DateTimeFormat("en-IN",{
@@ -34,7 +35,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
  const router=useRouter();
  const base="/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail";
  const sessions=[...workspace.sessions].sort((a,b)=>b.startsAt.localeCompare(a.startsAt));
- const selected=sessions.find(session=>session.id===selectedSessionId)??sessions[0]??null;
+ const selected=selectFacultyPrototypeSession(sessions,selectedSessionId);
  const [marks,setMarks]=useState(()=>existingMarks(workspace,selected));
  const [search,setSearch]=useState("");
  const [allVisible,setAllVisible]=useState(false);
@@ -49,6 +50,8 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
  useEffect(()=>{setMarks(existingMarks(workspace,selected));setError(null);setSuccess(null);
   setOutcomeUncertain(false);setConfirming(false);
  },[workspace,selected?.id]);
+ // Selecting a specific date from This month must return to marking mode.
+ useEffect(()=>{if(selectedSessionId)setView("mark");},[selectedSessionId]);
  const scopeRecords=workspace.roster;
  const normalized=search.trim().normalize("NFKC").toLocaleLowerCase("en-IN");
  const filtered=scopeRecords.filter(s=>!normalized||[
@@ -154,7 +157,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
       placeholder="Find a student by name" className="min-h-11 rounded-lg border border-[#dce5ee] bg-white px-3 text-sm"/>
      <button type="button" className="faculty-proto-secondary" onClick={()=>setMarks(new Map(scopeRecords.map(s=>[s.membershipId,"PRESENT" as const])))}
       disabled={!writable||!scopeRecords.length}>Mark everyone present</button>
-     <Link className="faculty-proto-secondary" href={base+"?sessionId="+encodeURIComponent(selected.id)+"&advanced=1#faculty-attendance-editor"}>Schedule a class</Link>
+     <Link className="faculty-proto-secondary" href={base+"?sessionId="+encodeURIComponent(selected.id)+"&schedule=1#faculty-attendance-scheduling"}>Schedule a class</Link>
     </div>
    </div>
    <ul className="divide-y divide-[#edf1f5]">{visible.map(student=>{
