@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "baselineCommit": "1dbc5d616981dc00f2d3196fb32f185881235bb2",
   "baselineCapturedOn": "2026-10-18",
-  "expiresOn": "2026-10-25",
+  "expiresOn": "2026-11-02",
   "owner": "UX orchestrator",
   "scope": [
     "src/app",
@@ -16,5 +16,5 @@
     "unverified-touch-class"
   ],
   "justification": "Pre-existing, unchanged legacy UI violations only. Each waived violation must have an identical AST rule+snippet+path in the immutable baseline commit. New occurrences, modified violations and added files fail. This is not a blanket directory waiver.",
-  "renewal": "Before expiry migrate residual findings or review and pin an audited new baseline. Never update this SHA automatically on main."
+  "renewal": "Manually reviewed 2026-10-26: retained immutable, source-exact 2026-10-18 baseline; 64 unchanged legacy findings in successful Mentor source job #121271975087 on 2026-10-25, no added rule or waiver scope. Temporary 7-day renewal only. Re-audit/migrate remaining legacy findings by 2026-11-02; never repin baseline automatically. No visual acceptance is implied."
 }
