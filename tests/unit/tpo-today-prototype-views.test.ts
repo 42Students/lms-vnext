@@ -154,6 +154,7 @@ describe("TPO prototype Companies Today agenda and brief",()=>{
   expect(html).toContain("Company identity".toUpperCase());
   expect(html).toContain("Not verified by 42");
   expect(html).toContain("College trust: Trusted");
+  expect(html).toContain("College trust is already enabled");
   expect(html).toContain('href="/tpo/companies/company-id"');
   expect(html).toContain('href="/tpo/recruiters/lead-id"');
   expect(html).toContain("Later &amp; next changes selection only");
