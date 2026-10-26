@@ -12,6 +12,6 @@ describe("Faculty prototype grading filter-deeplink scope",()=>{
   expect(facultyGradingSelectedSubmission([pending,graded],"graded")).toEqual(graded);
   expect(facultyGradingSelectedSubmission([pending,graded],undefined)).toEqual(pending);
   expect(facultyGradingSelectedSubmission([],graded.id)).toBeNull();
-  expect(facultyGradingSelectedSubmission([])).toBeNull();
+  expect(facultyGradingSelectedSubmission([],undefined)).toBeNull();
  });
 });
