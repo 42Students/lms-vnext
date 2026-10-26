@@ -2107,3 +2107,50 @@
 .lms-shell-frame[data-prototype-portal="mentor"] .prototype-mentor-roster-period-row>span{
   color:#3b4a60;font-size:12px;line-height:1.5;
 }
+
+/* Recruiter screenshot 01 (newer than the shared 23 Oct HTML):
+ * keep the genuine, authenticated shell controls, but use the white 58px
+ * header, 207px rail and top-right search/bell measured in the PNG.
+ * These selectors cannot affect TPO, Mentor, Faculty or learner portals. */
+.lms-shell-frame[data-prototype-portal="recruiter"],
+.lms-shell-frame[data-prototype-portal="recruiter"] .lms-shell-page{
+  background:#fff;
+}
+.lms-shell-frame[data-prototype-portal="recruiter"] .lms-prototype-wordmark{
+  display:none;
+}
+.lms-shell-frame[data-prototype-portal="recruiter"] .lms-sidebar-role-details{
+  display:none;
+}
+@media(min-width:768px){
+  .lms-shell-frame[data-prototype-portal="recruiter"] .lms-desktop-sidebar,
+  .lms-shell-frame[data-prototype-portal="recruiter"] .lms-desktop-sidebar:is(:hover,:focus-within){
+    width:207px;min-width:207px;max-width:207px;
+  }
+  .lms-shell-frame[data-prototype-portal="recruiter"] .lms-sidebar-brand-mark{
+    display:inline-flex;align-items:center;
+  }
+  .lms-shell-frame[data-prototype-portal="recruiter"] .lms-sidebar-brand-link{
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+  }
+  .lms-shell-frame[data-prototype-portal="recruiter"] .lms-sidebar-brand-link::after{
+    content:"42 LMS";font-size:10px;font-weight:700;color:#454b55;
+  }
+  .lms-shell-frame[data-prototype-portal="recruiter"] .lms-shell-page-main{
+    padding:24px 35px 28px;
+  }
+  .lms-shell-frame[data-prototype-portal="recruiter"] header[aria-label="Application top bar"]{
+    height:58px;min-height:58px;box-shadow:none;
+  }
+  .lms-shell-frame[data-prototype-portal="recruiter"] header[aria-label="Application top bar"]>div:nth-child(2){
+    display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  }
+  /* "Request a drive" remains available in the fixed sidebar and on Drives,
+   * so the older header's duplicate quick-create is hidden only on desktop. */
+  .lms-shell-frame[data-prototype-portal="recruiter"] header[aria-label="Application top bar"] a[aria-label="New"]{
+    display:none;
+  }
+  .lms-shell-frame[data-prototype-portal="recruiter"] header[aria-label="Application top bar"] p[title]{
+    display:none;
+  }
+}
