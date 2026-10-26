@@ -146,8 +146,17 @@ export async function getFacultyCourseHomeSignals(
     })) ?? [],
     assignments: assignmentRows,
   });
+  const latestPublishedAssignment=assignmentsComplete&&attendance?
+    assignmentRows.filter(item=>item.status==="PUBLISHED")
+     .sort((a,b)=>(b.dueAt?.getTime()??0)-(a.dueAt?.getTime()??0))[0]??null:null;
+  const latestAssignmentMissing=latestPublishedAssignment&&attendance?{
+   assignmentId:latestPublishedAssignment.id,title:latestPublishedAssignment.title,
+   missing:attendance.roster.filter(learner=>!latestPublishedAssignment.submissions
+    .some(sub=>sub.membershipId===learner.membershipId)).length,
+  }:null;
   return {
     ...signals,
+    latestAssignmentMissing,
     overviewActivity:{
       studentMessagesLast7Days:discussionRead,
       attendanceThisMonthPercent,
