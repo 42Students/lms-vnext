@@ -112,7 +112,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
    </table>
   </div>
   {visible.length===0?<p className="faculty-proto-subtitle rounded-lg border border-[#dce5ee] p-5">
-   No assigned courses match this search and type.</p>:null}
+   {q.trim()?"No courses match your search":"No assigned courses match this course type."}</p>:null}
   {courses.length>0?<p className="faculty-proto-subtitle">A course with no class assigned to you shows “Not assigned to a class” in the detailed course view. Ask the college admin. Your class links and advanced teaching filters remain available.</p>:null}
  </section>;
 }
