@@ -6,6 +6,8 @@ it("UX-teacher-courses-deliveryid-assignments-manage-01 /teacher/courses/[delive
  expect(source).toContain("getCurrentRequestContext");
  expect(source).toContain('<PageHeader title="Section assignments"');
  expect(source).toContain('getFacultyCourseWorkspace(context,deliveryId)');
- expect(source).toContain('<FacultyAssignmentEditor deliveryId={deliveryId}');
+ expect(source).toContain('<FacultyAssignmentEditor key={initialLessonId??"default"} initialLessonId={initialLessonId} deliveryId={deliveryId}');
+ expect(source).toContain('!workspace.lessons.some(lesson=>lesson.id===requestedLesson)');
+ expect(source).toContain('if(requestedLesson!==undefined');
  expect(source).toContain('<EmptyState title="No registered lessons yet"');
 });
