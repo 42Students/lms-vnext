@@ -105,7 +105,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    has:page.getByRole("heading",{name:baseTitle+" revised"}),
   });
   await expect(publishedCard).toBeVisible();
-  await expect(publishedCard.getByText("This Section")).toBeVisible();
+  await expect(publishedCard.getByText("This Section",{exact:true}).first()).toBeVisible();
   await publishedCard.getByText("Actions",{exact:true}).click();
   await expect(publishedCard.getByRole("link",{name:"View submissions"}))
    .toHaveAttribute("href",new RegExp("/teacher/report/assignment/"+assignmentId));

@@ -78,7 +78,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("textbox",{name:"Search assessments"}).fill(title+" revised");
   const card=page.locator("article").filter({has:page.getByRole("heading",{name:title+" revised"})});
   await expect(card).toBeVisible();
-  await expect(card.getByText("This Section")).toBeVisible();
+  await expect(card.getByText("This Section",{exact:true}).first()).toBeVisible();
   await card.getByRole("button",{name:"Review attempts"}).click();
   const drawer=page.getByRole("dialog",{name:"Quiz attempts"});
   await expect(drawer).toBeVisible();
