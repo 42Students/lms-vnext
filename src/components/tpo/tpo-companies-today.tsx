@@ -16,6 +16,11 @@ type RecruiterReply={
  id:string;name:string;company:string|null;subject:string;
  preview:string|null;receivedAt:string;accessEnded:boolean;
 };
+type FocusItem=
+ |{key:string;kind:"company";company:CompanyAttention["items"][number]}
+ |{key:string;kind:"reply";reply:RecruiterReply}
+ |{key:string;kind:"followup";row:TpoCompaniesTodayRow};
+type OutsideWeek={withoutDate:number;laterThanWeek:number};
 type Outcome="CONTACTED"|"NO_RESPONSE"|"CALL_BACK"|"DECLINED";
 const outcomes:{value:Outcome;label:string}[]=[
  {value:"CONTACTED",label:"1 Spoke to them"},
@@ -32,9 +37,10 @@ function dayLabel(date:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(date);
 }
 export function TpoCompaniesToday({
- scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId,notContacted,leadContexts,companyAttention
+ scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId,notContacted,leadContexts,companyAttention,outsideWeek=null
 }:{scope:"MINE"|"TEAM";rows:TpoCompaniesTodayRow[];nowIso:string;hasMore:boolean;unreadMessages:number|null;
   replies:RecruiterReply[];replyTotal:number|null;initialFollowupId?:string|undefined;leadContexts:LeadContext[];companyAttention:CompanyAttention|null;
+  outsideWeek?:OutsideWeek|null;
   notContacted:{count:number;oldestAddedAt:string|null}|null}){
  const router=useRouter();
  const now=new Date(nowIso);
@@ -48,7 +54,7 @@ export function TpoCompaniesToday({
    .find(i=>istDateKey(new Date(now.getTime()+i*86400000))===key);
   return offset??0;
  });
- const [selectedId,setSelectedId]=useState<string|null>(rows.some(row=>row.id===initialFollowupId)?initialFollowupId??null:null);
+ const [selectedKey,setSelectedKey]=useState<string|null>(rows.some(row=>row.id===initialFollowupId)?"followup:"+initialFollowupId:null);
  const [done,setDone]=useState<string[]>([]);
  const [outcome,setOutcome]=useState<Outcome>("CONTACTED");
  const [note,setNote]=useState("");
@@ -64,9 +70,18 @@ export function TpoCompaniesToday({
  const displayed=active.filter(row=>day===0
   ?istDateKey(new Date(row.dueAt))<=todayKey
   :istDateKey(new Date(row.dueAt))===dayKey);
- const current=displayed.find(row=>row.id===selectedId)??displayed[0]??null;
+ // One selectable queue across three independent, college-scoped sources.
+ const focusItems:FocusItem[]=day===0?[
+  ...(companyAttention?.items??[]).map(company=>({key:"company:"+company.relationshipId,kind:"company" as const,company})),
+  ...replies.map(reply=>({key:"reply:"+reply.id,kind:"reply" as const,reply})),
+  ...displayed.map(row=>({key:"followup:"+row.id,kind:"followup" as const,row})),
+ ]:displayed.map(row=>({key:"followup:"+row.id,kind:"followup" as const,row}));
+ const selected=focusItems.find(item=>item.key===selectedKey)??focusItems[0]??null;
+ const current=selected?.kind==="followup"?selected.row:null;
+ const selectedCompany=selected?.kind==="company"?selected.company:null;
+ const selectedReply=selected?.kind==="reply"?selected.reply:null;
  const totalAttention=displayed.length+(day===0?(replyTotal??replies.length)+(companyAttention?.items.length??0):0);
- const attentionIncomplete=hasMore||(day===0&&(replyTotal===null||companyAttention===null||companyAttention.hasMore));
+ const attentionIncomplete=hasMore||(day===0&&(replyTotal===null||replyTotal>replies.length||companyAttention===null||companyAttention.hasMore));
  const leadInfo=current?leadContexts.find(lead=>lead.id===current.leadId):undefined;
  const email=current?.canContact?leadInfo?.emailNorm?.trim():null;
  const emailHref=email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?"mailto:"+email:null;
@@ -78,7 +93,8 @@ export function TpoCompaniesToday({
     dayNumber:new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(date),
     count:active.filter(row=>offset===0
       ?istDateKey(new Date(row.dueAt))<=todayKey
-      :istDateKey(new Date(row.dueAt))===key).length};
+      :istDateKey(new Date(row.dueAt))===key).length+
+      (offset===0?(replyTotal??replies.length)+(companyAttention?.items.length??0):0)};
  });
  useEffect(()=>{
   function onKey(e:KeyboardEvent){
@@ -86,9 +102,9 @@ export function TpoCompaniesToday({
    if(element?.closest("input,textarea,select,[contenteditable=true],button,a")||
      e.altKey||e.metaKey||e.ctrlKey)return;
    if(e.key==="j"||e.key==="k"){
-    const at=displayed.findIndex(row=>row.id===current?.id);
-    const next=displayed[Math.max(0,Math.min(displayed.length-1,at+(e.key==="j"?1:-1)))];
-    if(next){e.preventDefault();setSelectedId(next.id);}
+    const at=focusItems.findIndex(item=>item.key===selected?.key);
+    const next=focusItems[Math.max(0,Math.min(focusItems.length-1,at+(e.key==="j"?1:-1)))];
+    if(next){e.preventDefault();pickKey(next.key);}
    }
    if(current&&!pending&&!confirm){
     if(/^[1-4]$/.test(e.key)){
@@ -104,21 +120,22 @@ export function TpoCompaniesToday({
   }
   document.addEventListener("keydown",onKey);
   return ()=>document.removeEventListener("keydown",onKey);
- },[displayed,current,pending,confirm,note]);
+ },[focusItems,selected,current,pending,confirm,note]);
  function chooseOutcome(value:Outcome){
    setOutcome(value);
    setNextPlan(value==="CALL_BACK"?"TOMORROW":"NONE");
  }
- function pick(row:TpoCompaniesTodayRow){
-  setSelectedId(row.id);setOutcome("CONTACTED");setNextPlan("NONE");setCustomLocal("");setNote("");setError("");setNotice("");
+ function pickKey(key:string){
+  setSelectedKey(key);setOutcome("CONTACTED");setNextPlan("NONE");setCustomLocal("");
+  setNote("");setError("");setNotice("");
  }
- function pickDay(value:number){setDay(value);setSelectedId(null);setError("");}
+ function pickDay(value:number){setDay(value);setSelectedKey(null);setError("");setNotice("");}
  function laterAndNext(){
-  if(!current)return;
-  const index=displayed.findIndex(row=>row.id===current.id);
-  const next=displayed[index+1];
-  if(next){pick(next);setNotice("Opened the next reminder. The previous reminder was left unchanged.");}
-  else setNotice("This is the last loaded reminder for the day. Nothing was changed.");
+  if(!selected)return;
+  const index=focusItems.findIndex(item=>item.key===selected.key);
+  const next=focusItems[index+1];
+  if(next){pickKey(next.key);setNotice("Opened the next item. The previous item was left unchanged.");}
+  else setNotice("This is the last loaded item for the day. Nothing was changed.");
  }
  async function submit(kind:"DONE"|"TOMORROW"){
   if(!current||pending||inFlight.current)return;
@@ -154,7 +171,7 @@ export function TpoCompaniesToday({
    if(kind==="TOMORROW"&&!payload?.followup?.dueAt)
     throw new Error("The changed follow-up time could not be confirmed. Refresh before retrying.");
    setDone(ids=>[...ids,current.id]);
-   setSelectedId(null);setNote("");setNextPlan("NONE");setCustomLocal("");setConfirm(null);
+   setSelectedKey(null);setNote("");setNextPlan("NONE");setCustomLocal("");setConfirm(null);
    setNotice(kind==="DONE"?(nextDueAt?"Outcome and next follow-up saved together.":"Outcome recorded. Next follow-up selected."):"Moved to tomorrow at 10:00 AM IST.");
    router.refresh();
   }catch(e){setConfirm(null);setError(e instanceof Error?e.message:"Could not save the change.");}
