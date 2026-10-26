@@ -44,7 +44,9 @@ describe("chat-9 Round 9: legacy labels survive UX rollout",()=>{
       "Placement rules","Job types","After college","Placement team","Recruiters",
     ]);
     const overview=source("src/app/(authenticated)/tpo/settings/page.tsx");
-    expect(overview).toContain(">Placement Rules</h2>");
+    expect(overview).toContain('import TpoPlacementRulesSettingsPage from "./rules/page"');
+    const ruleScreen=source("src/app/(authenticated)/tpo/settings/rules/page.tsx");
+    expect(ruleScreen).toContain(">Placement rules</h2>");
     expect(overview).toContain('href="/tpo/settings/public-page"');
   });
 });
