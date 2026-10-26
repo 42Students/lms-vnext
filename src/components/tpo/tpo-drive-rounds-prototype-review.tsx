@@ -12,7 +12,7 @@ export type SlotPreview={
 type SelectedSlots={
  slots:readonly SlotPreview[];
  roster:readonly {applicationId:string;name:string|null}[];
- reschedules:readonly {id:string;name:string;reason:string|null}[];
+ reschedules:readonly {id:string;name:string|null;reason:string|null}[];
  pendingProposals:number;
 };
 const when=(date:Date|string|null)=>date?new Intl.DateTimeFormat("en-IN",{
@@ -107,7 +107,7 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
         <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Asked to move</h3>
         {slots.reschedules.slice(0,6).map(item=><div key={item.id}
            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-border bg-warning-subtle px-3 py-2">
-          <p className="min-w-0 break-words text-sm"><strong>{item.name}</strong> · {item.reason??"No reason recorded"}</p>
+          <p className="min-w-0 break-words text-sm"><strong>{item.name?.trim()||"Candidate name unavailable"}</strong> · {item.reason??"No reason recorded"}</p>
           <Link href={root+"/rounds/"+encodeURIComponent(selected.id)+"/slots"}
            className="inline-flex min-h-9 items-center rounded-lg border border-border bg-surface px-3 text-xs font-semibold text-link">
            Review change
