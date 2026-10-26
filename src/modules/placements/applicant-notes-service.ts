@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, gt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   activityEvents,
@@ -234,6 +234,9 @@ async function requireLiveRecruiter(tx: TpoJobTx, context: RequestContext, scope
         eq(placementRecruiterProfiles.companyId, scope.companyId ?? ""),
         eq(users.platformStatus, "ACTIVE"),
         eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
+        eq(placementRecruiterCollegeGrants.verificationStatus, "VERIFIED"),
+        gt(placementRecruiterCollegeGrants.validUntil, sql`clock_timestamp()`),
+        sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
         eq(placementRecruiterCollegeGrants.companyRelationshipId, scope.relationshipId),
       ),
     )
