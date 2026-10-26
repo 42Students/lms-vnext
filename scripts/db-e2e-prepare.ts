@@ -165,7 +165,10 @@ async function main() {
     employmentType:"FULL_TIME",workMode:"ONSITE",locations:["Vijayawada"],
     status:"PUBLISHED",publishedAt:new Date(),
     applicationDeadline:new Date(Date.now()+3*24*60*60*1000),
-    createdByUserId:ids.collegeAdminUser,
+    // recruiterOwnJobPredicate requires author ownership or an approved
+    // formal request. This direct isolated seed uses the actual recruiter
+    // identity, not a fake company-wide authorization bypass.
+    createdByUserId:recruiterId,
   }).onConflictDoNothing();
   await dbClient.getDb().insert(dbSchema.placementJobRounds).values({
     id:recruiterRoundId,jobId:recruiterJobId,sequence:1,kind:"INTERVIEW",
