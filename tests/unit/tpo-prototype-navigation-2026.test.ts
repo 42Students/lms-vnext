@@ -83,7 +83,10 @@ describe("2026 TPO screenshot navigation parity",()=>{
   expect(settings).toContain("TpoPlacementRulesSettingsPage searchParams={Promise.resolve({})}");
   expect(settings).toContain("TpoLegacySettingsRedirect");
   expect(settings).toContain("Other placement settings");
-  expect(rules).toContain('<Disclosure title="Current college-wide offer policy" defaultOpen');
+  expect(rules).toContain('<Disclosure title="Current college-wide offer policy"');
+  expect(rules).not.toContain('<Disclosure title="Current college-wide offer policy" defaultOpen');
+  expect(rules.indexOf("<TpoCollegeRulesControl")).toBeLessThan(rules.indexOf('<Disclosure title="Current college-wide offer policy"'));
+  expect(rules).toContain('<Disclosure title="CGPA to percentage conversion"');
   expect(rules).toContain("TpoCollegeRulesControl");
  });
  it("keeps Companies Today recruiter contact actions and explicit outcome confirmation",()=>{
