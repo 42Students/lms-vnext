@@ -24,20 +24,27 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.setViewportSize({width:view.width,height:view.height});
   const errors:string[]=[];
   page.on("pageerror",e=>errors.push(e.message));
-  await page.goto("/teacher/allAssignments");
-  await page.getByRole("button",{name:"+ Create Assignment"}).click();
-  const dialog=page.getByRole("dialog",{name:"Create Assignment"});
+  // Create the persisted report fixture through the currently exposed
+  // Section authoring UI. The legacy + Create button was replaced by a
+  // course/lesson-aware flow in the prototype-first Faculty experience.
+  await page.goto("/teacher/courses");
+  await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i,{timeout:20000});
+  const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+  await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
+  await expect(page.getByRole("heading",{name:"Assignment authoring"})).toBeVisible();
   const title="Faculty report proof "+randomUUID().slice(0,9);
-  await dialog.getByLabel("Title",{exact:true}).fill(title);
+  await page.getByRole("textbox",{name:"Title",exact:true}).fill(title);
+  await page.getByRole("textbox",{name:"Text instructions"}).fill("Authorized class report fixture");
+  await page.getByRole("checkbox",{name:"Publish now"}).uncheck();
   const saving=page.waitForResponse(res=>
    res.request().method()==="POST" &&
-   new URL(res.url()).pathname==="/api/courses/assignments");
-  await dialog.getByRole("button",{name:"Create draft"}).click();
+   new URL(res.url()).pathname==="/api/courses/faculty/assignments/"+deliveryId+"/command");
+  await page.getByRole("button",{name:"Create draft"}).click();
   const response=await saving;
-  expect(response.status()).toBe(201);
   const body=await response.json();
-  const id:string=body.assignment.id;
-  const deliveryId:string=body.assignment.deliveryId;
+  expect(response.status(),JSON.stringify(body)).toBe(200);
+  const id:string=body.assignment?.id;
   expect(id).toMatch(/^[0-9a-f-]{36}$/i);
   expect(deliveryId).toMatch(/^[0-9a-f-]{36}$/i);
   await page.goto("/teacher/report/assignment/"+id+"?deliveryId="+deliveryId);
