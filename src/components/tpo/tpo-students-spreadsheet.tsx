@@ -16,6 +16,7 @@ import {exportTpoStudentsCsv} from "@/modules/placements/tpo-students-csv";
 import {legacyGridExportFilename,legacySavedViewExportFilename} from "@/modules/placements/grid-export-filename";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
+import {TpoStudentRosterInspector} from "./tpo-student-roster-inspector";
 import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import dynamic from "next/dynamic";
@@ -101,6 +102,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
  const [localSelection,setLocalSelection]=useState<string[]>([]);
+ const [fullDetailsOpen,setFullDetailsOpen]=useState(false);
+ const [inspectorClosed,setInspectorClosed]=useState(false);
  const shared=useTpoStudentsSelection();
  const noteSelection=shared?.selected??localSelection;
  const setNoteSelection=shared?.setSelected??setLocalSelection;
@@ -124,6 +127,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const matches=selected?sortedRows.filter(row=>row.membershipId===selected||
    row.rollNumber===selected||row.registrationNumber===selected):[];
  const active=matches.length===1?matches[0]!:null;
+ const preview=selected?active:sortedRows[0]??null;
  const selectedScoped=noteSelection.filter(id=>shared?.allIds?.includes(id)??rows.some(row=>row.membershipId===id));
  // Bulk notes operate only on this page, even if spreadsheet selection spans
  // other pages. A single bulk note never sends more than 100 learner IDs.
@@ -161,7 +165,11 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   }catch{setDownloadError("Could not prepare the selected CSV. Please try again.");}
  }
 
- const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
+ const open=(id:string|null,detailed=false)=>{
+  setFullDetailsOpen(detailed);setInspectorClosed(false);
+  const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");
+  router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});
+ };
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
   ...columns.filter(column=>["student","number","batch","stage"].includes(column.key)),
   {key:"afterCollege",label:"After college",filter:{urlKey:"afterCollege",options:
@@ -267,6 +275,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
    </Select>
   </label>
+  <div className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_300px]" data-testid="tpo.students.prototype-roster">
   <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
   defaultVisibleKeys={legacyVisibleColumns}
    selection={{selected:noteSelection,onChange:setNoteSelection}}
@@ -292,9 +301,19 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
       aria-label={"Change participation for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline">Change participation</Link>
    </div>}/>
   </GridWorkspace>
-  {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
+  {preview&&!inspectorClosed?<TpoStudentRosterInspector student={preview}
+    onDetails={()=>open(preview.membershipId,true)} onDismiss={()=>setInspectorClosed(true)}/>:
+   <aside aria-label="Student summary" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+    {selected&&!active?"Selected student is not available on this roster page.":"Select a student to review their placement snapshot."}
+    <Button variant="secondary" type="button" className="mt-3 min-h-11 w-full md:min-h-9"
+     onClick={()=>{if(selected)open(null);else setInspectorClosed(false);}}>
+     {selected?"Clear selection":"Show first student"}
+    </Button>
+   </aside>}
+  </div>
+  {active&&fullDetailsOpen?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
     recordedOutcome={afterCollege[active.membershipId]?.outcome??null}
-    onNavigate={open} onClose={()=>open(null)} />:null}
+    onNavigate={id=>open(id,true)} onClose={()=>setFullDetailsOpen(false)} />:null}
   {selected&&!active?<p role="status" className="text-sm leading-[22px]">
     Selected student is not on this roster page. Clear the student panel selection or change filters.
     <Button variant="ghost" type="button" className="ml-2 underline text-link px-0" onClick={()=>open(null)}>Clear selection</Button>
