@@ -32,8 +32,16 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page.getByText("E2E Section A",{exact:true}).first()).toBeVisible();
   await expect(page.getByText("E2E Section B Secret")).toHaveCount(0);
   await expect(page.getByRole("region",{name:"Needs you"})).toBeVisible();
-  await page.getByText("More course information and class health",{exact:true}).click();
-  await expect(page.getByRole("complementary",{name:"Course summary"})).toBeVisible();
+  // Screenshot #04 keeps the course-health column permanently visible.
+  const summary=page.getByRole("complementary",{name:"Course summary"});
+  await expect(summary).toBeVisible();
+  if(view.name==="desktop"){
+   const needs=await page.getByRole("region",{name:"Needs you"}).boundingBox();
+   const stats=await summary.boundingBox();
+   expect(needs).not.toBeNull();
+   expect(stats).not.toBeNull();
+   expect(stats!.x).toBeGreaterThan(needs!.x+needs!.width-2);
+  }
   await expect(page.getByRole("heading",{name:"How the class is doing"})).toBeVisible();
   // The newest Faculty prototype deliberately foregrounds the priority
   // queue and course-health summary. Older diagnostics remain in Advanced.
