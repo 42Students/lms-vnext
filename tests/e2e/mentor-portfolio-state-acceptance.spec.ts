@@ -176,10 +176,19 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
     await search.fill("E2E Mentor Acceptance Project");
     await search.press("Enter");
     await expect(page).toHaveURL(/q=E2E/);
-    const project = page.getByRole("link", { name: /E2E Mentor Acceptance Project/ }).first();
+    const project = page.getByRole("region", { name: "Project search results" })
+      .getByRole("link", { name: /E2E Mentor Acceptance Project/ }).first();
     await expect(project).toBeVisible();
-    await project.click();
-    await expect(page).toHaveURL(/\/mentor\/projects\/[0-9a-f-]{36}\?tab=overview$/i);
-    await expect(page.getByRole("heading", { name: "E2E Mentor Acceptance Project", level: 1 })).toBeVisible();
+    // Assert the server returned an actual assigned destination before clicking.
+    // Next.js can stream the target workspace after the link is activated,
+    // so the URL wait must cover that async transition, not just the click.
+    const href=await project.getAttribute("href");
+    expect(href).toMatch(/^\/mentor\/projects\/[0-9a-f-]{36}\?tab=overview$/i);
+    await Promise.all([
+      page.waitForURL(new RegExp("/mentor/projects/[0-9a-f-]{36}\\\\?tab=overview$","i"),{timeout:20000}),
+      project.click(),
+    ]);
+    await expect(page.getByRole("heading", { name: "E2E Mentor Acceptance Project", level: 1 }))
+      .toBeVisible({timeout:20000});
   });
 });
