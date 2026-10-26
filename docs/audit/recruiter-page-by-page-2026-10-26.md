@@ -7,7 +7,7 @@ For each screen: inspect prototype, old frontend page/components, old backend se
 | PNG | Page | Audit | Implementation | Browser/DB | Visual |
 |---|---|---|---|---|---|
 | 01 | Recruiter Today | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
-| 02 | Drives | QUEUED | OPEN | OPEN | OPEN |
+| 02 | Drives | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
 | 03 | Request a drive | QUEUED | OPEN | OPEN | OPEN |
 | 04 | Drive overview | QUEUED | OPEN | OPEN | OPEN |
 | 05 | Drive Applicants | QUEUED | OPEN | OPEN | OPEN |
@@ -36,3 +36,7 @@ For each screen: inspect prototype, old frontend page/components, old backend se
 **Still open:** match actual desktop/mobile rendered screenshots; seed and exercise ASK, slots, revised resumes, week fold, waiting requests, Later persistence and task-change reappearance; verify one-time join welcome, error retries, and complete PostgreSQL actor scopes. No acceptance signoff yet.
 
 Only the currently displayed prototype is the visual authority; legacy designs do not override it.
+
+## Current audited Page 02: Drives
+
+Reviewed exact uploaded prototype PNG 02 against old `lms2-fe/src/pages/recruiter/drives/index.js`, old `lms/src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java`, and vNext `/hr/drives` plus database drive search. Latest prototype shows open and waiting on the same landing canvas. Repaired the mixed landing which previously silently redirected to a waiting-only filter and hid live interviews. Added the verified college name and live/waiting/completed summary in the page heading. Corrected an employer-visible shared-shortlist count mislabeled "applied". Added seeded browser lifecycle and search isolation tests. Deep visual rows/progress parity and cross-role acceptance remain open; no premature closure.

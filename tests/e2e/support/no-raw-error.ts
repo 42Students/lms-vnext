@@ -77,7 +77,13 @@ export async function expectNoRawErrors(page: Page): Promise<void> {
     expect(value, "GR-81: raw API identifier in accessibility attribute")
       .not.toMatch(/\b[A-Z][A-Z0-9]{2,}_[A-Z][A-Z0-9_]{2,}\b/);
   }
-  await expect(page.locator("nextjs-portal, vite-error-overlay")).toHaveCount(0);
+  // An empty Next.js portal is a normal runtime host, NOT an application error.
+  // Detect real dialogs inside its shadow tree without ignoring runtime errors.
+  await expect(page.locator("vite-error-overlay, nextjs-dialog-overlay, nextjs-error-overlay, nextjs-portal [data-nextjs-error]")).toHaveCount(0);
+  const errors=await page.locator("nextjs-portal").evaluateAll(portals=>portals
+    .map(portal=>portal.shadowRoot?.textContent??"")
+    .filter(value=>/Unhandled Runtime Error|Unhandled Rejection|Application error|Turbopack build failed/i.test(value)));
+  expect(errors,"GR-81: actual framework error overlay").toHaveLength(0);
 }
 
 export type FailureKind =

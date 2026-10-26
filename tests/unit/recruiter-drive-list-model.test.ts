@@ -14,6 +14,13 @@ describe("HR drive lifecycle filters", () => {
     const query = recruiterDriveListQuerySchema.parse({ collegeId: id, view: "LIVE", q: "FRONT" });
     expect(filterRecruiterDrives(rows, query).map(row => row.job.id)).toEqual(["a"]);
   });
+  it("shows mixed published and waiting work by default, like the current prototype",async()=>{
+    const {recruiterDefaultDriveView}=await import("@/modules/placements/recruiter-drive-list-model");
+    expect(recruiterDefaultDriveView({live:1,waiting:1})).toBe("ALL");
+    expect(recruiterDefaultDriveView({live:1,waiting:0})).toBe("LIVE");
+    expect(recruiterDefaultDriveView({live:0,waiting:1})).toBe("WAITING");
+    expect(recruiterDefaultDriveView({live:0,waiting:0})).toBe("ALL");
+  });
   it("does not fabricate waiting requests", () => {
     expect(summarizeRecruiterDrives(rows)).toEqual({all: 3, live: 2, closed: 1, waiting: 0});
     expect(filterRecruiterDrives(rows, recruiterDriveListQuerySchema.parse({view: "WAITING"}))).toEqual([]);

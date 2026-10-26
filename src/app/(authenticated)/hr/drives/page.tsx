@@ -151,8 +151,8 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     countsResult.status==="rejected"||answerableResult.status==="rejected";
   return <RecruiterDrivesRetained key={snapshotKey} failed={false}>
    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
-    <PageHeader title="Drives"
-      description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
+    <PageHeader title={"Drives at "+(grants.find(grant=>grant.collegeId===selectedCollege)?.collegeName??"your college")}
+      description={totals.live+" live · "+totals.waiting+" waiting for the placement cell · "+totals.closed+" completed or cancelled. Visible only through your verified company relationship."}
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
         className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Request a drive

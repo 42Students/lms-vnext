@@ -11,11 +11,11 @@ test.describe("Recruiter prototype: all authenticated screen families",()=>{
 
  const screenPaths=[
   {screen:"01 Today",url:"/hr/home",heading:"Today"},
-  {screen:"02 Drives",url:"/hr/drives",heading:"Drives"},
+  {screen:"02 Drives",url:"/hr/drives",heading:"Drives at Seed College A"},
   {screen:"03 Request a drive",url:"/hr/drives/new",heading:"Request a drive"},
   {screen:"09 Calendar",url:"/hr/calendar",heading:"Calendar"},
   {screen:"10 Messages",url:"/hr/conversations",heading:"Messages"},
-  {screen:"11 Company & Team",url:"/hr/company",heading:"Company & Team"},
+  {screen:"11 Company & Team",url:"/hr/company",heading:"E2E Prototype Hiring Company"},
   {screen:"12 Profile",url:"/hr/profile",heading:"Your Profile"},
   {screen:"12 Notifications",url:"/hr/notifications",heading:"Notifications"},
  ] as const;

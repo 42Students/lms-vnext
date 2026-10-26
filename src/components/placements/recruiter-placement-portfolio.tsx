@@ -129,7 +129,7 @@ export function RecruiterPlacementPortfolio({
                 <Link
                   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                   href={"/recruiter/drives/"+item.job.id+"?tab=applicants"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
-                  {counts?.[item.job.id]?.sharedApplicants==null?"Applicants unavailable":`${counts?.[item.job.id]?.sharedApplicants} applied`}
+                  {counts?.[item.job.id]?.sharedApplicants==null?"Applicants unavailable":`${counts?.[item.job.id]?.sharedApplicants} shared applicants`}
                 </Link>
                 {(counts?.[item.job.id]?.offers??0)>0?<Link
                   className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center"

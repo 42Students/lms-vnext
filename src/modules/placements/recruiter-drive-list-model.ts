@@ -26,6 +26,9 @@ export type RecruiterDriveListQuery = z.infer<typeof recruiterDriveListQuerySche
  */
 export function recruiterDefaultDriveView(counts:{waiting:number;live:number}):
   RecruiterDriveListQuery["view"] {
+ // The prototype exposes both waiting and live drives on the default list.
+ // Mixed work must not disappear behind the waiting-only filter.
+ if(counts.waiting>0&&counts.live>0)return "ALL";
  if(counts.waiting>0)return "WAITING";
  if(counts.live>0)return "LIVE";
  return "ALL";
