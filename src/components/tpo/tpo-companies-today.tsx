@@ -187,14 +187,14 @@ export function TpoCompaniesToday({
   </nav>
   {error?<p role="alert" className={styles.error}>{error}</p>:null}
   {notice?<p role="status" className={styles.success}>{notice}</p>:null}
-  {hasMore?<p role="status" className={styles.warning}>This is a 50-item focus preview from the first CRM pages. Older follow-ups are available in the full queue.</p>:null}
+  {hasMore?<p role="status" className={styles.warning}>This is a bounded focus preview from the first CRM pages. Older follow-ups are available in the full queue.</p>:null}
   <div className={styles.grid}>
-   <section className={styles.queue} aria-label="Follow-up queue">
+   <section className={styles.queue} aria-label="What needs you">
     <div className={styles.queueHead}>
      <div className={styles.queueTitle}>
       <span className={styles.eyebrow}>{day===0?"TODAY · ": "PLANNED · "}{dayLabel(new Date(now.getTime()+day*86400000)).toUpperCase()}</span>
       <strong>{attentionIncomplete?"At least ":""}{totalAttention} {totalAttention===1?"thing needs":"things need"} you</strong>
-      <small>{scope==="MINE"?"Yours and unassigned":"Everyone's open follow-ups"} · <Link href={scope==="MINE"?"/tpo/companies/today?scope=TEAM":"/tpo/companies/today"}>{scope==="MINE"?"everyone's":"my work"}</Link></small>
+      <small>{scope==="MINE"?"Yours and unassigned":"Everyone's work"} · <Link href={scope==="MINE"?"/tpo/companies/today?scope=TEAM":"/tpo/companies/today"}>{scope==="MINE"?"everyone's":"my work"}</Link></small>
      </div>
      <Link href="/tpo/follow-ups">Re-plan your week ›</Link></div>
     <div className={styles.week} role="group" aria-label="This week">
@@ -205,43 +205,50 @@ export function TpoCompaniesToday({
        <span>{item.weekday.toUpperCase()}</span><strong>{item.dayNumber}</strong><small>{item.count||"·"}</small></button>)}
     </div>
     {day===0&&companyAttention===null?<p role="status" className={styles.helper}>Company verification attention is unavailable. A missing source does not mean every company is verified.</p>:null}
-    {day===0&&companyAttention&&companyAttention.items.length>0?<section className={styles.companyAttention} aria-label="Companies awaiting verification">
-     <p className={styles.eyebrow}>COMPANY IDENTITY NEEDS REVIEW</p>
-     {companyAttention.items.map(company=><article key={company.relationshipId} className={styles.companyAttentionItem}>
-      <strong>{company.companyName}</strong>
-      <small>Not verified by 42 · College trust: {company.collegeTrusted?"Trusted":"Not trusted"}</small>
-      <small>Recruiter account linked: {company.recruiterName}</small>
-      <Link href={"/tpo/companies/"+encodeURIComponent(company.companyId)} className={styles.link}>Review company</Link>
-     </article>)}
-     {companyAttention.hasMore?<p className={styles.helper}>This is a bounded preview. Open the full company directory to review other records.</p>:null}
-    </section>:null}
-    {day===0&&replies.length?<div className={styles.queueReplies} aria-label="Recruiter replies">
-     <p className={styles.eyebrow}>REPLIES WAITING</p>
-     {replies.map(reply=><Link key={reply.id} href={"/tpo/messages?tab=recruiters&thread="+encodeURIComponent(reply.id)}
-      className={styles.replyQueueItem}><strong>{reply.name}</strong><small>{reply.company??"Recruiter"} · {reply.subject}</small></Link>)}
-     {replyTotal!==null&&replyTotal>replies.length?<Link href="/tpo/messages?tab=recruiters&status=REPLY" className={styles.link}>More replies in Messages</Link>:null}
-    </div>:null}
-    {displayed.length?<div role="listbox" aria-label="People needing a follow-up">
-     {displayed.map(row=><button key={row.id} type="button" role="option"
-      aria-selected={current?.id===row.id} className={styles.item}
-      onClick={()=>pick(row)}>
-      <span className={row.overdue?styles.red:styles.teal} aria-hidden="true"/>
-      <span><strong>{row.leadName}</strong>
-       <small>{row.companyName??"Recruiter"} · {row.overdue?"Overdue":"Follow-up due"}</small>
-       <small>{row.note?.trim()||"Open the recorded follow-up"}</small>
-       <small>{when(row.dueAt)}</small></span>
-     </button>)}</div>:
-     <div className={styles.empty}>No open, recorded follow-ups in this date window.
-      <Link href="/tpo/follow-ups">Check the full follow-up queue</Link></div>}
+    {day===0&&replyTotal===null?<p role="status" className={styles.helper}>Recruiter replies are temporarily unavailable. Open Messages for the current inbox.</p>:null}
+    {day===0&&companyAttention?.hasMore?<p role="status" className={styles.helper}>More companies need review than this preview can show. <Link href="/tpo/companies?directory=1">Open the company directory</Link>.</p>:null}
+    {day===0&&replyTotal!==null&&replyTotal>replies.length?<p role="status" className={styles.helper}>Showing {replies.length} of {replyTotal} waiting replies. <Link href="/tpo/messages?tab=recruiters&status=REPLY">See all replies</Link>.</p>:null}
+    {focusItems.length?<div role="listbox" aria-label="Today's company and recruiter work">
+     {focusItems.map(item=>{
+      const isCompany=item.kind==="company";
+      const isReply=item.kind==="reply";
+      const name=isCompany?item.company.recruiterName:isReply?item.reply.name:item.row.leadName;
+      const description=isCompany?"Company not verified · "+item.company.companyName:
+       isReply?"Replied to your message · "+(item.reply.company??"Recruiter"):
+       (item.row.companyName??"Recruiter")+" · "+(item.row.overdue?"Overdue":"Follow-up due");
+      const detail=isCompany?"Review company trust and verification":isReply?
+       item.reply.subject:item.row.note?.trim()||"Open the recorded follow-up";
+      const stamp=isCompany?"Needs review":isReply?when(item.reply.receivedAt):when(item.row.dueAt);
+      const urgent=!isCompany&&!isReply&&istDateKey(new Date(item.row.dueAt))<todayKey;
+      return <button type="button" key={item.key} role="option"
+       aria-selected={selected?.key===item.key} className={styles.item}
+       onClick={()=>pickKey(item.key)}>
+       <span className={urgent?styles.red:isReply?styles.replyDot:styles.teal} aria-hidden="true"/>
+       <span><strong>{name}</strong>
+        <small>{description}</small>
+        <small>{detail}</small>
+        <small>{stamp}</small>
+       </span>
+      </button>;
+     })}</div>:
+     <div className={styles.empty}>No recorded work in this date window.
+      <Link href="/tpo/follow-ups">Check the full follow-up queue</Link>
+     </div>}
     <div className="flex flex-col gap-1 border-t border-[#e7ecf2] bg-[#f8fafb] px-4 py-3 text-[13px]">
      {notContacted===null?<span role="status" className="text-[#617084]">Not-contacted recruiter count unavailable.</span>:
       <Link href="/tpo/recruiters?stage=NEW" className="font-bold text-[#087f8b]">
        {notContacted.count} not contacted yet · start with them
       </Link>}
-     <Link href="/tpo/follow-ups" className="text-[#087f8b]">Re-plan your week</Link>
+     {outsideWeek?<span className="text-[#087f8b]">
+      <Link href="/tpo/recruiters?nextFollowup=NONE">{outsideWeek.withoutDate} with no date</Link>
+      {" · "}
+      <Link href="/tpo/recruiters?nextFollowup=LATER">{outsideWeek.laterThanWeek} later than this week</Link>
+      {" · "}
+      <Link href="/tpo/follow-ups">Re-plan your week</Link>
+     </span>:<Link href="/tpo/follow-ups" className="text-[#087f8b]">Re-plan your week</Link>}
     </div>
-    <footer className={styles.foot}>J / K to move · T tomorrow · Enter to review Done · {displayed.length} shown
-     {hasMore?" · more exist":""}</footer>
+    <footer className={styles.foot}>J / K to move · T tomorrow and Enter to review Done for follow-ups · {focusItems.length} shown
+     {attentionIncomplete?" · more may exist":""}</footer>
    </section>
    <section className={styles.detail} aria-label="Selected">
     {current?<><div className={styles.personHead}>
