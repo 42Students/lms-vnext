@@ -52,6 +52,15 @@ being present is not test or acceptance evidence.
 
 **Known remaining gaps**: confirm PostgreSQL and browser behavior for all 14 Recruiter/public screens, real provider OTP delivery/replay, workbook upload with an actual Excel file, authoritative TPO offer letter attachments and joining, candidate booking/reschedule lifecycle, and complete two-role (employer/placement cell) transitions. The visual screenshot audit remains deliberately deferred.
 
+## Current continuation — source and CI evidence
+
+- Last completed CI result checked on `78a4e32`: **Typecheck PASS**, **build PASS**; unit, database and UX lint jobs failed. See Actions run `40235009339`. Unit failures included outdated Recruiter message layouts, legacy Requests JSX shape, and pre-prototype numeric-only public code expectations; non-Recruiter failures were also present.
+- `43c767d`, `9ef880c`: Recruiter two-pane Messages now performs a second live scoped inbox read before disclosure. Failed revalidation suppresses message previews, replies and independent decision-notice content. The single page still handles filtered advanced directory, archived links, and notification access.
+- `3767203`, `5291ab5`: refreshed Recruiter unit tests for prototype-compatible alphanumeric public share codes and two-pane access checks, including fail-closed grant revocation with an independently successful notice lookup.
+- `9b2fd7d`: scoped previous-year CLOSED-drive offer table matching prototype screenshot 07, with TPO-recorded joining labels and honest unavailable/empty/capped states.
+- `5b43216`: restored explicit authorized multi-college choices in Messages.
+- **Not signed off:** the latest commits still need stable CI+seeded browser/PostgreSQL acceptance; do not infer green from tests authored but not run. Faculty/TPO/Projects failures remain separate lanes.
+
 ## Acceptance gate (not yet passed)
 
 1. Run strict typecheck and unit tests at a stable HEAD, including the newly added models.
