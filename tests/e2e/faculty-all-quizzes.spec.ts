@@ -23,7 +23,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   page.on("pageerror",e=>errors.push(e.message));
   await page.goto("/teacher/courses");
   await page.getByRole("link",{name:/E2E Browser Course/}).click();
-  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i,{timeout:20000});
   const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
   const commandPath="/api/courses/faculty/quizzes/"+deliveryId+"/command";
   await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
@@ -34,7 +34,8 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("textbox",{name:"Prompt"}).fill("FIFO is?");
   await page.getByRole("textbox",{name:"Option 1"}).fill("Queue");
   await page.getByRole("textbox",{name:"Option 2"}).fill("Stack");
-  await page.getByRole("checkbox",{name:/I confirm these choices/}).check();
+  await page.getByRole("textbox",{name:"Due date (IST, required before publishing)"}).fill(new Date(Date.now()+14*86400000).toISOString().slice(0,16));
+  await page.getByRole("checkbox",{name:"Publish now"}).uncheck();
   page.once("dialog",dialog=>dialog.accept());
   const createResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Create draft"}).click();
@@ -49,7 +50,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page.getByRole("textbox",{name:"Prompt"})).toHaveValue("FIFO is?");
   await page.getByRole("textbox",{name:"Quiz title"}).fill(title+" revised");
   await page.getByRole("textbox",{name:"Prompt"}).fill("FIFO structure?");
-  await page.getByRole("checkbox",{name:/I confirm these choices/}).check();
   page.once("dialog",dialog=>dialog.accept());
   const editResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Save draft"}).click();
@@ -65,7 +65,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.reload();
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" revised (DRAFT)"});
   await expect(page.getByRole("textbox",{name:"Prompt"})).toHaveValue("FIFO structure?");
-  await page.getByRole("checkbox",{name:/I confirm these choices/}).check();
   page.once("dialog",dialog=>dialog.accept());
   const publishResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Publish",exact:true}).click();
@@ -91,7 +90,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
 
   await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" revised (PUBLISHED)"});
-  await page.getByRole("checkbox",{name:/I confirm these choices/}).check();
   page.once("dialog",dialog=>dialog.accept());
   const closeResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Close quiz"}).click();
@@ -129,7 +127,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   expect(metadata.status()).toBe(200);
   await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
   await page.getByRole("combobox",{name:"Quiz",exact:true}).selectOption({label:title+" metadata (CLOSED)"});
-  await page.getByRole("checkbox",{name:/I confirm these choices/}).check();
   page.once("dialog",dialog=>dialog.accept());
   const archiveResponse=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Archive quiz"}).click();
