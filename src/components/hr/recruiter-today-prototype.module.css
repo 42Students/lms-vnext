@@ -2,7 +2,8 @@
 .heading{display:flex;flex-direction:column;gap:4px}
 .meta{font-size:14px;color:#5b6b82}.heading h1{margin:0;font-size:26px;font-weight:700;line-height:1.25;color:#172033}
 .subtitle{font-size:15px;color:#3b4a60}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(295px,310px);gap:18px;align-items:start}
+/* Original Recruiter Today (screen 31, 1440px): the side rail can reach 360px. */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(295px,360px);gap:18px;align-items:start}
 .needs,.card{min-width:0;overflow:hidden;background:#fff;border:1px solid #e7ecf2;border-radius:12px}
 .need{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;padding:16px 20px;border-bottom:1px solid #f1f4f8}
 .need:last-of-type{border-bottom:0}
