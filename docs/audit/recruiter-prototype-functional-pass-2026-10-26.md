@@ -20,7 +20,7 @@ being present is not test or acceptance evidence.
 | 08 Talk | `?tab=discussion`, `TpoDriveChangeRequests` | Existing persisted requests and replies retained. Commit `4f83af1` adds five prototype quick choices opening ASK dialog. Verify actual decision side effects and notifications. |
 | 09 Calendar | `/hr/calendar` | Round, slot, deadline and result-due sources exist. Verify event/college filters, week/month layouts and exact deep-link destinations. |
 | 10 Messages | `/hr/conversations` | Commit `4719f7b` adds two-pane inbox, reply, search and scoped thread selection; `bf87075` fixes chronology, `a41daee` opens first general thread. Retains advanced inbox. Requires browser/database acceptance. |
-| 11 Company & Team | `/hr/company` | About/hiring roles (`b570387`), colleague invite request (`48db25d`), cleared round aggregate (`d9c59f8`). Verify permissions, company-wide reports, multiple colleges and full export. |
+| 11 Company & Team | `/hr/company` | About/hiring roles (`b570387`), colleague invitation request (`48db25d`), cleared round aggregate (`d9c59f8`), verified correction and teammate-access requests (`fc39cd5`), and actual teammate grant capabilities (`01cce25`). Verify request delivery, changed permissions, multi-college scope, reports and exports. |
 | 12 Bell/search/profile/picker | `/hr/profile`, recruiter topbar, notifications | Notifications and scoped search sources exist. Exercise unread/read, restricted data, cross-college choice, profile save/reload and keyboard dismissals. |
 | 13 Public Invitation | `/recruiter-invite/[token]` | OTP/join/consent source present; optional not-hiring note captured and capped to registered CRM field (`4a770a9`,`16b5460`). Verify real provider delivery, wrong/expired/replayed codes, company domain, revoked/expired invite and sign-in. |
 | 14 Public shared applicants | `/company-share/[token]` | Code gate, expiry, CSV and selected columns present; `8f7bb06` accepts prototype alphanumeric and legacy numeric codes. Six-cell paste/autofill UI (`3b6a3a5`) added. Verify real delivery, expiry, CSV scope and revoked proof. |
@@ -76,3 +76,10 @@ or an unverified deployment. This ledger is designed for adversarial closure.
 - Removed a duplicate previous-offer panel produced by parallel Recruiter development. Retained `getRecruiterHistoricalOffers` with bounded previous-calendar-year official joining outcomes.
 - Fixed an inconsistent recruiter-portfolio permission predicate: a NULL grant expiry is **not** a runtime authorization, as explicitly required by `recruiterGrantEffectiveAt`. Interview and canonical drive reads already require finite future expiry.
 - Recruiter acceptance remains OPEN; stable-head CI/browser/real PostgreSQL verification is not yet available.
+
+## Additional Recruiter closure — 2026-10-26
+- `3ede46b`: Removed duplicate previous-year hiring panels from concurrently landed code; the single current implementation still checks closed-drive, shortlisted-applicant, exact employer/college grant and official joining outcomes.
+- `3ede46b`: The central Recruiter job listing no longer treats NULL `valid_until` as authorized; canonical job, company-team, historical and booked-interview readers already require a finite, future expiry. Added source regression checks.
+- `fc39cd5`: Company-profile and individual teammate access requests can be submitted for placement-cell verification. These requests never mutate verified employers or grant permissions.
+- `01cce25`: Company & Team roster now shows actual granted feature capabilities rather than inferring access from drive counts. Added pure capability-label tests.
+- No final acceptance claim: latest `main` CI and Browser workflows have frequently been cancelled by parallel commits, and the real mail/OTP, student booking, joining and cross-role scenarios require seeded live verification.
