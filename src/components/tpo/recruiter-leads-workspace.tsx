@@ -1036,9 +1036,9 @@ export function RecruiterLeadsWorkspace({
               }}>Clear filters</Button>
             </div>:null}
           </div>
-          <p className="text-sm text-muted-foreground leading-[22px]" aria-live="polite">
+          {view!=="table"?<p className="text-sm text-muted-foreground leading-[22px]" aria-live="polite">
             {visible.length} of {rows.length} in this view
-          </p>
+          </p>:null}
           {freshInvite ? (
             <section className="min-w-0 border-l-2 border-warning bg-warning-subtle px-3 py-3" aria-label="Fresh recruiter invite link">
               <p className="text-sm text-body leading-[22px]">Copy this link now. It is shown only once. No email has been sent.</p>
