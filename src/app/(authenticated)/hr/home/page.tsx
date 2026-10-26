@@ -30,6 +30,7 @@ import {recruiterCollegeCardDetail} from "@/modules/placements/recruiter-college
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {getRecruiterSelfProfile} from "@/modules/placements/recruiter-profile-service";
 import {recruiterTodayGreeting} from "@/modules/placements/recruiter-today-greeting-model";
+import {recruiterTodayHasDriveHistory} from "@/modules/placements/recruiter-today-headline-model";
 import {recruiterTodayWaitingRequests} from "@/modules/placements/recruiter-today-waiting-model";
 import {recruiterTodayWeekEvents} from "@/modules/placements/recruiter-today-week-events-model";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
@@ -232,7 +233,9 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <RecruiterTodayPrototype greeting={greeting.title} dateLabel={dateLabel}
       collegeName={collegeName}
       storageKey={"recruiter-today-later:"+context.user.id+":"+recruiter.companyId+":"+selectedId}
-      hasDriveHistory={requestCount===null?null:(collegeJobs.length>0||requestCount>0||recentJobCapReached)}
+      hasDriveHistory={recruiterTodayHasDriveHistory({
+        verifiedJobCount:collegeJobs.length,requestCount,jobPreviewCapped:recentJobCapReached,
+      })}
       firstDriveHref={recruiterDriveDraftHref({collegeId:selectedId})}
       calendarHref={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)}
       tasks={tasks}

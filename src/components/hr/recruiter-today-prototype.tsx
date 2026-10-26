@@ -5,6 +5,7 @@ import {
   type RecruiterTodayTask, readRecruiterTodayLater,
   putRecruiterTodayLater,
 } from "@/modules/placements/recruiter-today-later-model";
+import {recruiterTodayHeadline} from "@/modules/placements/recruiter-today-headline-model";
 import styles from "./recruiter-today-prototype.module.css";
 
 type WeekEvent={id:string;kind:string;title:string;jobTitle:string;href:string;when:string};
@@ -16,7 +17,6 @@ export type RecruiterTodayPrototypeProps={
   tasks:RecruiterTodayTask[];weekEvents:WeekEvent[];
   waiting:Waiting[];waitingUnavailable:boolean;liveDrive?:LiveDrive|null;
 };
-const words=["","One thing needs","Two things need","Three things need","Four things need","Five things need","Six things need"];
 function cta(task:RecruiterTodayTask):string{
   if(task.key.startsWith("answer:"))return "Answer";
   if(task.key.startsWith("slots:"))return "See the slots";
@@ -52,10 +52,7 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
   const visible=actionable.filter(task=>!later[task.key]);
   const postponed=actionable.length-visible.length;
   const shown=expanded?visible:visible.slice(0,3);
-  const shortName=props.greeting.replace(/\.$/,"");
-  const headline=visible.length
-    ?shortName+". "+(words[visible.length]||visible.length+" things need")+" you."
-    :shortName+".";
+  const headline=recruiterTodayHeadline(props.greeting,visible.length,props.hasDriveHistory);
   const nextEvent=props.weekEvents[0];
   const subtitle=nextEvent?nextEvent.title+" · "+nextEvent.jobTitle+" · "+nextEvent.when:null;
   return <div className={styles.root} data-testid="recruiter.today">
