@@ -8,14 +8,18 @@ import type {readRecruiterThreadMessages} from "@/modules/placements/tpo-messagi
 type InboxRow={id:string;jobId:string|null;jobTitle:string;unread:number;
  preview:{text:string}|null;lastMessageAt:Date|null;createdAt:Date};
 type History=Awaited<ReturnType<typeof readRecruiterThreadMessages>>;
+type DecisionNotice={id:string;title:string;body:string;createdAt:Date;href:string;unread:boolean};
 type Props={collegeId:string;rows:readonly InboxRow[];selected:InboxRow|null;history:History|null;
- selectedHistoryUnavailable:boolean;q:string;total:number;pages:number;unreadTotal:number};
+ selectedHistoryUnavailable:boolean;generalPreviewUnavailable:boolean;
+ decisionNoticesUnavailable:boolean;decisionNotices:readonly DecisionNotice[];
+ q:string;total:number;pages:number;unreadTotal:number};
 const formatted=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
  timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
  hour12:true,
 }).format(value);
 export function RecruiterConversationWorkspace({
- collegeId,rows,selected,history,selectedHistoryUnavailable,q,total,pages,unreadTotal,
+ collegeId,rows,selected,history,selectedHistoryUnavailable,
+ generalPreviewUnavailable,decisionNoticesUnavailable,decisionNotices,q,total,pages,unreadTotal,
 }:Props){
  const base="/hr/conversations?collegeId="+encodeURIComponent(collegeId);
  return <main data-testid="recruiter.messages.workspace" className="min-w-0 space-y-4">
@@ -26,6 +30,24 @@ export function RecruiterConversationWorkspace({
     With your college placement cell · {unreadTotal} unread message{unreadTotal===1?"":"s"}
    </p>
   </header>
+  <div className="flex flex-wrap items-center justify-between gap-3">
+   <p className="text-sm text-body">Conversations with the placement cell, one per hiring drive, plus a general conversation.</p>
+   <Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Notification inbox</Link>
+  </div>
+  {generalPreviewUnavailable?<p role="status" className="rounded-lg border border-border p-3 text-sm text-body">
+   General conversation preview is temporarily unavailable. Refresh to try again; existing conversations remain accessible after access is verified.
+  </p>:null}
+  {decisionNoticesUnavailable?<p role="status" className="rounded-lg border border-border p-3 text-sm text-body">
+   Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
+  </p>:null}
+  {decisionNotices.length?<details className="rounded-lg border border-border p-3">
+   <summary className="min-h-11 cursor-pointer font-semibold text-foreground">Drive request decisions</summary>
+   <ul className="divide-y divide-border">{decisionNotices.map(item=><li key={item.id} className="py-3">
+    <strong className="block text-sm text-foreground">{item.title}{item.unread?" · New":""}</strong>
+    <p className="whitespace-pre-wrap break-words text-sm text-body">{item.body}</p>
+    <Link href={item.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View your drive request</Link>
+   </li>)}</ul>
+  </details>:null}
   <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(240px,290px)_minmax(0,1fr)]">
    <aside aria-label="Conversation inbox" className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface">
     <form method="get" action="/hr/conversations" role="search" className="space-y-2 border-b border-border p-3">
@@ -94,8 +116,10 @@ export function RecruiterConversationWorkspace({
        <RecruiterConversationReplyForm threadId={selected.id} historyAvailable={Boolean(history)}/>
       </div>
     </>}</>:<div className="space-y-4 p-6">
-     <p className="text-sm text-muted-foreground">Start a general conversation with the placement cell, or open a drive to discuss its hiring process.</p>
-     {!q?<form method="post" action="/api/placements/recruiter/conversations/open">
+     <p className="text-sm text-muted-foreground">{generalPreviewUnavailable?
+    "Access could not be reconfirmed; no conversation will be opened. Refresh to retry.":
+    "Start a general conversation with the placement cell, or open a drive to discuss its hiring process."}</p>
+     {!q&&!generalPreviewUnavailable?<form method="post" action="/api/placements/recruiter/conversations/open">
        <input type="hidden" name="collegeId" value={collegeId}/>
        <button type="submit" className="inline-flex min-h-11 items-center rounded-lg border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
         Open general conversation

@@ -75,13 +75,33 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  if(result.status==="READY"&&raw.view!=="advanced"&&
     parsed.data.unreadOnly==="false"&&parsed.data.sort==="LATEST"&&
     parsed.data.scope==="ALL"&&parsed.data.page===1){
-  const selected=selectRecruiterWorkspaceThread(result.items,raw.thread);
+  // A live second grant/college-scoped read guards against revoked access
+  // between the initial directory lookup and rendering cached snippets.
+  // If it fails, do not show old previews or a mutation form.
+  const [generalCheck,noticesCheck]=await Promise.all([
+   listHrConversations(context,{
+    collegeId:result.collegeId,q:"",page:1,
+    unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
+   }).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
+   listOwnRecruiterDecisionNotices(context,result.collegeId)
+    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
+  ]);
+  const scopeConfirmed=generalCheck.ok&&generalCheck.value.status==="READY"&&
+    generalCheck.value.collegeId===result.collegeId;
+  const selected=scopeConfirmed?selectRecruiterWorkspaceThread(result.items,raw.thread):null;
   const history=selected?await readRecruiterThreadMessages(context,selected.id,1).catch(()=>null):null;
+  const historyUnavailable=selected!==null&&history===null;
+  const displayRows=scopeConfirmed
+    ?result.items.map(row=>historyUnavailable?{...row,preview:null}:row):[];
   return <RecruiterConversationWorkspace collegeId={result.collegeId}
-   rows={result.items} selected={selected} history={history}
-   selectedHistoryUnavailable={selected!==null&&history===null}
-   q={parsed.data.q} total={result.total} pages={result.pages}
-   unreadTotal={result.unreadTotal}/>;
+   rows={displayRows} selected={selected} history={history}
+   selectedHistoryUnavailable={historyUnavailable}
+   generalPreviewUnavailable={!scopeConfirmed}
+   decisionNoticesUnavailable={!noticesCheck.ok}
+   decisionNotices={noticesCheck.ok?noticesCheck.value:[]}
+   q={parsed.data.q} total={scopeConfirmed?result.total:0}
+   pages={scopeConfirmed?result.pages:1}
+   unreadTotal={scopeConfirmed?result.unreadTotal:0}/>;
  }
  const generalLookup=result.status==="READY"
   ?await listHrConversations(context,{
