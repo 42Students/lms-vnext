@@ -3,6 +3,10 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
+import {getTpoInterviewSlotWorkspace} from "@/modules/placements/tpo-interview-slot-service";
+import {AuthorizationError} from "@/modules/permissions/policy";
+import {TpoDriveRoundsPrototypeReview} from "@/components/tpo/tpo-drive-rounds-prototype-review";
+import {z} from "zod";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -14,13 +18,21 @@ import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 
 export default async function TpoDriveRoundsPage({
-  params,
+  params,searchParams,
 }: {
   params: Promise<{ jobId: string }>;
+  searchParams?:Promise<{roundId?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const { jobId } = await params;
+  const requested=searchParams?(await searchParams).roundId:undefined;
+  const valid=typeof requested!=="string"||z.string().uuid().safeParse(requested).success;
+  if(Array.isArray(requested)||!valid)return <div className="space-y-3">
+   <PageHeader title="Rounds and schedule"/>
+   <p role="alert" className="rounded-lg border border-border p-4 text-sm">Invalid round selection. No candidate schedule was loaded.</p>
+   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"} className="font-semibold text-link underline">Reset selection</Link>
+  </div>;
   const drive = await getPlacementDriveDay(context, jobId);
   const ids=drive.rounds.filter(r=>r.kind==="INTERVIEW").map(r=>r.id);
   const [requests,proposals,bookings]=ids.length?await Promise.all([
@@ -47,6 +59,9 @@ export default async function TpoDriveRoundsPage({
   const nextRound=drive.rounds.find(round=>
     round.status!=="COMPLETED"&&round.status!=="CANCELLED");
   const root = "/tpo/placements/jobs/" + encodeURIComponent(jobId);
+  const chosen=typeof requested==="string"?drive.rounds.find(row=>row.id===requested)??null:drive.rounds[0]??null;
+  const selectedSlots=chosen?.kind==="INTERVIEW"?await getTpoInterviewSlotWorkspace(context,jobId,chosen.id)
+   .catch(error=>{if(error instanceof AuthorizationError)throw error;return null;}):null;
   const date = (value: Date | null) =>
     value ? new Intl.DateTimeFormat("en-IN", {
       timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
@@ -56,6 +71,17 @@ export default async function TpoDriveRoundsPage({
       description="Plan the drive rounds, check bookings and record company results."
       actions={<Link href={root + "#drive-round-actions"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Manage and reorder rounds</Link>} />
 
+    <TpoDriveRoundsPrototypeReview jobId={jobId} rounds={drive.rounds}
+       selectedId={typeof requested==="string"?requested:null} now={new Date()}
+       slots={selectedSlots?{
+        slots:selectedSlots.slots.map(item=>({
+         id:item.id,startsAt:item.startsAt,room:item.room,panel:item.panel,
+         status:item.status,applicationId:item.applicationId,
+        })),
+        roster:selectedSlots.roster.map(row=>({applicationId:row.applicationId,name:row.name})),
+        reschedules:selectedSlots.reschedules.map(row=>({id:row.id,name:row.name,reason:row.reason})),
+        pendingProposals:selectedSlots.recruiterProposals.length,
+       }:null}/>
     <section aria-labelledby="round-next-action" className="min-w-0 space-y-3 border-b border-border pb-4">
       <h2 id="round-next-action" className="text-base font-semibold text-foreground">
         Next action for this drive
