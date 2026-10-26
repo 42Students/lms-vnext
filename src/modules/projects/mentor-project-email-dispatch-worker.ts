@@ -49,7 +49,11 @@ export function mentorProjectEmailWorkerReady(
  if(!since||!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{3})?Z$/.test(since))
   return {ready:false};
  const activatedAt=new Date(since);
+ const canonical=since.includes(".")?since:since.replace(/Z$/,".000Z");
+ // Date.parse normalizes nonexistent calendar days such as February 30.
+ // Cutover must be an actual, exact UTC instant, not a silently shifted day.
  if(!Number.isFinite(activatedAt.getTime())||
+   activatedAt.toISOString()!==canonical||
    activatedAt.getTime()>now.getTime())return {ready:false};
  return {ready:true,activatedAt};
 }
