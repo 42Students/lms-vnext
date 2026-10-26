@@ -22,7 +22,7 @@ Retain proven vNext behavior that is safer or stronger, without misrepresenting 
 | 12 | Students → To verify | `/tpo/verification` | **Code updated:** visible verification queue and selected evidence summary; original private review drawer and bulk/table tools retained. Runtime document interaction and visual acceptance open |
 | 13 | Students → Requests | `/tpo/requests` | **Code updated:** authorized selected-request list/detail with persisted decision control; bulk tools/table retained in Advanced. Runtime and visual acceptance open |
 | 14 | Students → Announcements | `/tpo/announcements` | **Code updated:** grouped searchable page-scoped sidebar, selected detail, existing edit/delete/read/delivery actions. Runtime and visual acceptance open |
-| 15 | Drives | `/tpo/placements/lifecycle` | Verify drive list, lifecycle filters and actions |
+| 15 | Drives | `/tpo/placements/lifecycle` | **Code updated:** compact prototype operations list with action links, authorized recruiter request cards above tabs, advanced grid retained. Browser and visual acceptance open |
 | 16 | Drives → A recruiter's drive request | `/tpo/requests` / drive change-request flow | Verify requested drive review, approval and safe decline |
 | 17 | Drives → New drive (and edit) | `/tpo/placements/new`, `/tpo/placements/jobs/[jobId]/edit` | Verify form fields, save/publish, validation |
 | 18 | Drive → Students (review and share) | `/tpo/placements/jobs/[jobId]/applicants` | Verify shortlist, one-by-one review and sharing |
@@ -68,6 +68,13 @@ Based on the supplied Students screenshot set (assets labeled `tpo_09.png` to `t
 - Screen **14 / Announcements**: `src/components/tpo/tpo-notice-prototype-sidebar.tsx` groups scheduled, current and ended notices on the loaded page. `/tpo/announcements` renders the selected detail and original audited mutation/read/retry controls. Tests: `tests/unit/tpo-announcements-prototype-workspace-2026.test.ts`.
 - Typecheck regression in first Announcements iteration normalized optional `audienceKind` to `null` in the sidebar mapping. The fix is committed, but awaits a subsequent green typecheck.
 - **All four Students screens worked on in this batch are code updated but still require actual interactive browser checks, responsive screenshots and prototype visual comparison.** Do not mark them visually accepted based on source tests.
+
+## Drives overview prototype implementation (26 October 2026)
+
+- Screen **15 / Drives**: `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx` now displays the prototype-style Drive / Where it is / Next / Needs you / Who grid, using persisted applied count, rounds, offers, schedule and owner fields. It keeps the original authorized advanced drive grid and export/mutation controls behind a disclosure.
+- Recruiter drive-request cards are retrieved independently through `getTpoDriveLifecycleList(context,{view:"REQUESTS",page:"1"})`, bounded to two preview cards with a Review link. On read failure an explicit warning is shown; the valid main drives list stays available.
+- `tests/unit/tpo-drives-prototype-overview-2026.test.ts` covers these source and authorization contracts and is included in the dedicated TPO source CI.
+- Pending: full live data browser walkthrough, exact-viewport comparison against `tpo_14.png`, stage-specific actions, and final visual acceptance.
 
 ## Known acceptance boundaries
 
