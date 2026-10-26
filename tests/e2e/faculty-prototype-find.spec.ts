@@ -51,3 +51,19 @@ for(const viewport of [{name:"desktop",width:1280,height:800},{name:"mobile",wid
   expect(errors).toEqual([]);
  });
 }
+
+test("Faculty Find Ctrl+K Enter opens the authorized best matching course",async({page,context})=>{
+ test.setTimeout(90000);
+ await login(context);
+ await page.goto("/teacher");
+ await page.keyboard.press("Control+k");
+ const input=page.getByRole("combobox",{name:"Search workspace"});
+ await expect(input).toBeFocused();
+ await input.fill("E2E Browser Course");
+ const option=page.getByRole("region",{name:"Matching Faculty records"})
+  .getByRole("option").filter({hasText:"E2E Browser Course"}).first();
+ await expect(option).toBeVisible({timeout:20000});
+ await input.press("Enter");
+ await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i,{timeout:20000});
+ await expect(page.getByRole("heading",{level:1,name:"E2E Browser Course"})).toBeVisible();
+});
