@@ -631,7 +631,7 @@ export function HrDriveDraftForm({
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">3 · Who can apply</h2>
-        <p className="mt-2 text-sm text-body">Leave these blank to include every registered student.</p>
+        <p className="mt-2 text-sm text-body">Leave optional filters blank to request no additional restrictions. The placement cell still verifies eligibility before students can apply.</p>
         <div className="mt-3 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
             Minimum CGPA
