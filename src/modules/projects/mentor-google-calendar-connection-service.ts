@@ -1,8 +1,8 @@
 import "server-only";
 import {createCipheriv,createDecipheriv,randomBytes} from "node:crypto";
-import {and,eq} from "drizzle-orm";
+import {and,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {mentorGoogleCalendarConnections} from "@/db/schema";
+import {mentorGoogleCalendarConnections,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {ProjectsServiceError} from "./errors";
@@ -50,10 +50,29 @@ export function decryptMentorGoogleRefreshToken(
  }catch{throw new Error("GOOGLE_CALENDAR_CREDENTIAL_INVALID");}
 }
 async function scopedMentor(context:RequestContext){
- const collegeId=context.membership?.collegeId;
- if(!hasMembershipRole(context,"MENTOR")||!collegeId||
+ const membership=context.membership;
+ const collegeId=membership?.collegeId;
+ if(context.user.platformStatus!=="ACTIVE"||!hasMembershipRole(context,"MENTOR")||
+    !membership||membership.status!=="ACTIVE"||!collegeId||
     !(await resolveOptionalModuleAccess(context)).projects.enabled)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ // Cookie/request role claims can outlive an administrator's revocation.
+ // A Google OAuth credential must never be read, refreshed, or disconnected
+ // on the strength of that snapshot alone.
+ const [live]=await getDb().select({id:collegeMemberships.id})
+  .from(collegeMemberships)
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+    eq(users.platformStatus,"ACTIVE")))
+  .innerJoin(membershipRoles,and(
+    eq(membershipRoles.membershipId,collegeMemberships.id),
+    eq(membershipRoles.role,"MENTOR")))
+  .where(and(
+    eq(collegeMemberships.id,membership.id),
+    eq(collegeMemberships.userId,context.user.id),
+    eq(collegeMemberships.collegeId,collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),
+  )).limit(1);
+ if(!live)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  return {userId:context.user.id,collegeId};
 }
 export async function mentorGoogleConnectionState(context:RequestContext){
@@ -113,15 +132,31 @@ export async function getMentorGoogleAccessToken(context:RequestContext){
  const refresh=decryptMentorGoogleRefreshToken(row.refreshTokenCiphertext,
    scope.userId,scope.collegeId);
  const token=await mentorGoogleRefreshToken(config,refresh);
+ let expectedCiphertext=row.refreshTokenCiphertext;
  if(token.refreshToken&&token.refreshToken!==refresh){
   const rotated=encryptMentorGoogleRefreshToken(token.refreshToken,scope.userId,scope.collegeId);
-  await getDb().update(mentorGoogleCalendarConnections).set({
+  const updated=await getDb().update(mentorGoogleCalendarConnections).set({
    refreshTokenCiphertext:rotated,updatedAt:new Date(),
   }).where(and(
    eq(mentorGoogleCalendarConnections.userId,scope.userId),
    eq(mentorGoogleCalendarConnections.collegeId,scope.collegeId),
    eq(mentorGoogleCalendarConnections.refreshTokenCiphertext,row.refreshTokenCiphertext),
-  ));
+   isNull(mentorGoogleCalendarConnections.revokedAt),
+  )).returning({userId:mentorGoogleCalendarConnections.userId});
+  if(updated.length!==1)throw new Error("GOOGLE_CALENDAR_CONNECTION_UNAVAILABLE");
+  expectedCiphertext=rotated;
  }
+ // Token refresh performs external I/O. A revoke or reconnect may happen
+ // during that request. Do not return an access token for the old consent.
+ await scopedMentor(context);
+ const [current]=await getDb().select({calendarId:mentorGoogleCalendarConnections.calendarId})
+  .from(mentorGoogleCalendarConnections).where(and(
+   eq(mentorGoogleCalendarConnections.userId,scope.userId),
+   eq(mentorGoogleCalendarConnections.collegeId,scope.collegeId),
+   eq(mentorGoogleCalendarConnections.refreshTokenCiphertext,expectedCiphertext),
+   isNull(mentorGoogleCalendarConnections.revokedAt),
+  )).limit(1);
+ if(!current||current.calendarId!==row.calendarId)
+  throw new Error("GOOGLE_CALENDAR_CONNECTION_UNAVAILABLE");
  return {accessToken:token.accessToken,calendarId:row.calendarId};
 }
