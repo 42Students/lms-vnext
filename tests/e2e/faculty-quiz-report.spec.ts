@@ -37,7 +37,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("textbox",{name:"Option 1"}).fill("Two");
   await page.getByRole("textbox",{name:"Option 2"}).fill("Three");
   await page.getByRole("checkbox",{name:"Publish now"}).uncheck();
-  await page.getByRole("checkbox",{name:/I confirm these choices/}).check();
   const request=page.waitForResponse(res=>
    res.request().method()==="POST"&&
    new URL(res.url()).pathname==="/api/courses/faculty/quizzes/"+deliveryId+"/command");
