@@ -185,7 +185,7 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
     const href=await project.getAttribute("href");
     expect(href).toMatch(/^\/mentor\/projects\/[0-9a-f-]{36}\?tab=overview$/i);
     await Promise.all([
-      page.waitForURL(new RegExp("/mentor/projects/[0-9a-f-]{36}\\\\?tab=overview$","i"),{timeout:20000}),
+      page.waitForURL(/\/mentor\/projects\/[0-9a-f-]{36}\?tab=overview$/i,{timeout:20000}),
       project.click(),
     ]);
     await expect(page.getByRole("heading", { name: "E2E Mentor Acceptance Project", level: 1 }))
