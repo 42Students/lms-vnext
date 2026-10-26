@@ -14,7 +14,7 @@ For each screen: inspect prototype, old frontend page/components, old backend se
 | 06 | Drive Rounds/slots | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
 | 07 | Drive Offers/joining | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
 | 08 | Drive Talk | QUEUED | OPEN | OPEN | OPEN |
-| 09 | Calendar | QUEUED | OPEN | OPEN | OPEN |
+| 09 | Calendar | IN PROGRESS | IN PROGRESS | OPEN | OPEN |
 | 10 | Messages | QUEUED | OPEN | OPEN | OPEN |
 | 11 | Company & Team | QUEUED | OPEN | OPEN | OPEN |
 | 12 | Bell/search/profile/college picker | QUEUED | OPEN | OPEN | OPEN |
@@ -55,3 +55,7 @@ Compared PNG 04, legacy `RecruiterDriveOverview.jsx` / `RecruiterWorkspaceServic
 **06 Rounds**: screenshot 06 groups panel schedules and confirmations. Compared against legacy `RecruiterDriveWorkService.rounds`, `RecruiterFocusedReview`, and vNext `recruiter-booked-interviews-service`, `recruiter-booked-interviews-model`, `recruiter-panel-actions`, `RecruiterResultControls`. Existing vNext distinguishes college bookings from recruiter time proposals and student confirmation; print/download uses authorized controls. Added seeded browser checks for panel scope, scheduling link and conflicts. Remaining: real populated bookings and TPO reschedule, confirmation and result lifecycle; visual panel-by-panel acceptance.
 
 **07 Offers and joining**: screenshot 07 shows selection list, student response, joining and last-year official offers. Legacy `RecruiterWorkspaceService.offers` and `RecruiterDriveWorkService.submitSelections` make recruiter proposal distinct from the college-issued offer. VNext includes selection Excel upload with eligible applicant allowlist, joining **report** to placement cell without silently changing official outcomes, official historical joined rows. Added seeded browser assertions for the authority boundary and offer state. Remaining: actual shared-applicant Excel+selection TPO verification, formal offer-letter provider and joining outcome flows; exact visual comparison.
+
+## Page 09 — Recruiter Calendar
+
+Inspected exact prototype PNG 09, legacy `lms2-fe/src/pages/recruiter/calendar.js` (Monday-first seven-day list, slots grouped into scheduled rounds, per-event Open/Slots/Send, client-generated ICS), and vNext `/hr/calendar` plus scoped `recruiter-calendar-service`. Repaired calendar **default from agenda to week** and "Today" period control to "This week" to match the latest screenshot, while preserving extra Month/Agenda/category and CSV functions. Added an explicit `Add to my calendar (.ics)` control and a separate authorization-checked, college-scoped `/api/placements/recruiter/calendar/ics` export route. The existing CSV exporter is preserved. ICS includes genuine round/slot/deadline and results-due instants, never invents missing end times or exports student identities, escapes CRLF injection, folds UTF-8 lines at 75 octets and caps at 300 entries. Added unit and seeded browser tests including foreign-college denial. **Open:** exact visual week-list comparison, actual booked-results workflow and stable signed-off browser run.
