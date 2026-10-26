@@ -1,5 +1,32 @@
 # Faculty vNext — single closure ledger
 
+## PROTOTYPE FOCUSED GREEN SPRINT — validated 27 October 2026
+
+**Eleven / twelve** prototype reference screens have a green, dedicated post-change acceptance suite. This is the focused browser/DB acceptance metric, **not** a globally green `main` or full code signoff. Distinct deployment/migration and feature-parity gates remain open.
+
+| Original screenshot | Current focused run | Status |
+| --- | --- | --- |
+| #02 Today | [40394512630](https://github.com/42Students/lms-vnext/actions/runs/40394512630) | PASS |
+| #03 Courses | [40396272457](https://github.com/42Students/lms-vnext/actions/runs/40396272457) | PENDING at writing; separate old cross-course regression [40396263591](https://github.com/42Students/lms-vnext/actions/runs/40396263591) continues |
+| #04 Overview | [40394978075](https://github.com/42Students/lms-vnext/actions/runs/40394978075) | PASS, DB+browser |
+| #05 Blueprint | [40394477603](https://github.com/42Students/lms-vnext/actions/runs/40394477603) | PASS, DB05 ordering writer not activated |
+| #06 Students | [40394531043](https://github.com/42Students/lms-vnext/actions/runs/40394531043) | PASS, prototype+privacy |
+| #07 Attendance | [40387070834](https://github.com/42Students/lms-vnext/actions/runs/40387070834) | PASS, DB+browser |
+| #08 Discussions | [40394452864](https://github.com/42Students/lms-vnext/actions/runs/40394452864) | PASS, recovered POST + moderation |
+| #09 Assignments & Quizzes | [40394462989](https://github.com/42Students/lms-vnext/actions/runs/40394462989) | PASS, combined directory and Section scope |
+| #10 Assignment Grading | [40394468740](https://github.com/42Students/lms-vnext/actions/runs/40394468740) | PASS, page and filter-contract E2E; publish/conflict deeper coverage pending |
+| #11 Assignment Report | [40388424119](https://github.com/42Students/lms-vnext/actions/runs/40388424119) | PASS, DB+browser |
+| #12 Class Schedule | [40394414616](https://github.com/42Students/lms-vnext/actions/runs/40394414616) | PASS |
+| #13 Find / Bell / Profile | [40395216104](https://github.com/42Students/lms-vnext/actions/runs/40395216104) | PASS, hydration-safe Ctrl+K and multi-college notification privacy |
+
+**Distinct secondary page acceptance:** `/teacher/allAssignments` E01 [40395686774](https://github.com/42Students/lms-vnext/actions/runs/40395686774) and `/teacher/report/quiz/:quizId` E06 [40395660213](https://github.com/42Students/lms-vnext/actions/runs/40395660213) are separately green; **not redirected**. Section Reports Hub E11 is also traversed and filtered in passing Overview E2E; Student Details E14 is opened and verified in passing Students E2E. These cross-suite cases are useful evidence, not a substitute for full independent deep-page acceptance.
+
+**Shared CI:** dedicated focused workflows no longer duplicate repository-wide TypeScript; the CI workflow still enforces it and remains red from TPO null-name mismatch and other unrelated/general lint/unit/build blockers. Legacy cross-course regression is preserved separately in `.github/workflows/faculty-course-legacy-regression.yml`, not dropped.
+
+**No visual parity claimed.** Product direction is unchanged: newest 12 PNGs own the primary navigation, but all 25 secondary routes must retain useful functionality until approved consolidation is feature-complete. Do not blindly merge or redirect the standalone assessment pages.
+
+---
+
 ## LIVE FOCUSED ACCEPTANCE REGISTER — 27 October 2026
 
 **Counting policy:** "GREEN-FOCUSED" means a dedicated authenticated browser/DB/unit workflow ran successfully on a commit including the applicable screen source; it does **not** certify all code acceptance gates, global build, merged legacy feature parity, external migration readiness or pixel matching. Keep "ACCEPTED-CODE" separately until every required negative and functional gate is closed. A red global CI from other accounts is reported independently rather than silently deleting tests.
