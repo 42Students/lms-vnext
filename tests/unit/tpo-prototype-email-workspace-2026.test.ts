@@ -30,6 +30,9 @@ describe("2026 TPO Companies / Emails prototype",()=>{
   expect(s).toContain('tpoCampaignMergeToken(current,"company")');
   expect(s).toContain('fetch("/api/placements/tpo/campaigns/drafts"');
   expect(s).toContain('Nothing is sent from this form.');
+  expect(s).toContain("const campaignTitle=title.trim()||subject.trim()");
+  expect(s).toContain('title="Advanced campaign settings"');
+  expect(s).toContain('Defaults to the email subject');
  });
  it("list and composer share a prototype split-screen shell without flattening authorization",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx");
