@@ -22,12 +22,18 @@ import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {TpoLifecycleRefreshAction,TpoLifecycleStaleSnapshot} from "@/components/placements/tpo-lifecycle-stale-snapshot";
-type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];tab?:string|string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];recruiterDriveMode?:string|string[];employmentType?:string|string[];jobTypeLabel?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
+type Search = { request?:string|string[]; cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];tab?:string|string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];recruiterDriveMode?:string|string[];employmentType?:string|string[];jobTypeLabel?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !can(context,"placements.manage",{collegeId:context.membership.collegeId})) redirect("/dashboard");
   const params = await searchParams;
+  if(params.request!==undefined&&(typeof params.request!=="string"||
+     !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.request)))
+    return <main className="min-w-0 space-y-4"><PageHeader title="Drive requests"/>
+      <Alert tone="error">Invalid recruiter request selection. <Link href="/tpo/placements/lifecycle?view=REQUESTS" className="font-semibold text-link underline">Reset</Link></Alert>
+    </main>;
+
   // Legacy /tpo/drives links use ?tab=requests|drafts|live|closed.
   const oldTab=first(params.tab)?.trim().toLowerCase();
   const mappedTab: "REQUESTS"|"DRAFT"|"LIVE"|"CLOSED"|undefined=
@@ -125,6 +131,16 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
    ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),
    ...(data.maxOffers!==undefined?{maxOffers:data.maxOffers}:{}),page,
   }};}
+  const selectedDriveRequestId=typeof params.request==="string"?params.request:null;
+  const selectedDriveRequest=data.requestsAvailable&&data.view==="REQUESTS"?
+    selectedDriveRequestId?data.requestRows.find(row=>row.id===selectedDriveRequestId)??null:
+    data.requestRows.find(row=>row.reviewRequired)??data.requestRows[0]??null:null;
+  const requestHref=(id?:string)=>{
+    const query=new URLSearchParams(retryQuery);
+    query.set("view","REQUESTS");
+    if(id)query.set("request",id);else query.delete("request");
+    return "/tpo/placements/lifecycle?"+query.toString();
+  };
   const advancedFiltersActive = Boolean(data.companyId || data.ownerUserId || data.deadline !== "ALL" ||
     data.journey !== "ALL" || data.workMode !== "ALL" || data.recruiterDriveMode !== "ALL" || data.employmentType !== "ALL" || Boolean(data.jobTypeLabel) ||
     data.payCategory !== "ALL" || data.display !== "DETAILED" || data.sort !== "COMPANY" ||
@@ -352,6 +368,74 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         action={<Link href="/tpo/placements/overview" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Operations overview</Link>}/> :
       <section aria-label="Recruiter drive requests" className="space-y-3">
         <p role="status" className="text-sm leading-[1.6]">{data.totalMatching} recruiter drive requests</p>
+        {data.requestRows.length>0?<div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(250px,350px)_minmax(0,1fr)]" data-testid="tpo.drives.prototype-request-review">
+         <aside className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface" aria-label="Recruiter drive request queue">
+          <h3 className="border-b border-border px-4 py-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">Recruiters asked for a drive</h3>
+          <ul className="divide-y divide-border">{data.requestRows.map(item=><li key={item.id}>
+           <Link href={requestHref(item.id)} aria-current={selectedDriveRequest?.id===item.id?"page":undefined}
+            className={"block min-h-11 px-4 py-3 hover:bg-primary-subtle "+(selectedDriveRequest?.id===item.id?
+             "border-l-[3px] border-primary bg-primary-subtle":"")}>
+            <strong className="block break-words text-sm text-foreground">{item.company} · {item.title}</strong>
+            <span className="mt-1 block text-xs text-body">{driveRequestStatusLabel(item.status)} ·
+             {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(new Date(item.createdAt))}</span>
+           </Link>
+          </li>)}</ul>
+         </aside>
+         <section aria-label="Selected recruiter drive request" className="min-w-0 rounded-xl border border-border bg-surface">
+          {selectedDriveRequest?<><header className="border-b border-border p-4">
+           <Link href="/tpo/placements/lifecycle?view=REQUESTS" className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9">Back to requests</Link>
+           <p className="mt-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">A recruiter asked for a drive</p>
+           <h2 className="mt-1 break-words text-xl font-bold text-foreground">{selectedDriveRequest.company} · {selectedDriveRequest.title}</h2>
+           <p className="mt-1 text-sm text-body">Requested {new Intl.DateTimeFormat("en-IN",{
+            timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(selectedDriveRequest.createdAt))} · {driveRequestStatusLabel(selectedDriveRequest.status)}</p>
+          </header>
+          <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_270px]">
+           <div className="min-w-0 space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">What they asked for · checked for you</h3>
+            <dl className="divide-y divide-border text-sm">
+             {([
+              ["Role",selectedDriveRequest.title],["Company",selectedDriveRequest.company],
+              ["Recruiter email",selectedDriveRequest.recruiterEmail??"Not recorded"],
+              ["Recruiter phone",selectedDriveRequest.recruiterPhone??"Not recorded"],
+              ["Verification",selectedDriveRequest.verificationStatus],
+             ] as const).map(([label,value])=><div key={label} className="grid grid-cols-[130px_minmax(0,1fr)] gap-2 py-3">
+              <dt className="text-body">{label}</dt><dd className="min-w-0 break-words font-semibold text-foreground">{value}</dd>
+             </div>)}
+            </dl>
+            {selectedDriveRequest.changes?<section className="space-y-2">
+             <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">What changed since the previous request</h3>
+             {selectedDriveRequest.changes.filter(change=>change.changed).length===0?
+              <p className="text-sm text-body">No changes in the compared categories.</p>:
+              <dl className="divide-y divide-border">{selectedDriveRequest.changes.filter(change=>change.changed).map(change=>
+               <div key={change.label} className="py-3 text-sm">
+                <dt className="font-semibold">{change.label}</dt>
+                <dd className="mt-1 break-words text-body">Before: {change.before||"Not provided"} · Now: {change.after||"Not provided"}</dd>
+               </div>)}</dl>}
+            </section>:null}
+            <p className="text-xs leading-5 text-muted-foreground">Eligibility, pay, dates and student fit must be verified in the draft before publishing. This preview does not infer a learner audience.</p>
+           </div>
+           <aside className="min-w-0 space-y-3 rounded-lg border border-border p-4" aria-label="Your answer">
+            <h3 className="text-lg font-bold">Your answer</h3>
+            {selectedDriveRequest.accessEnded?<Alert tone="warning">Recruiter access ended. Finish the review as the placement cell.</Alert>:null}
+            {selectedDriveRequest.status==="REQUEST"||selectedDriveRequest.status==="SENT_BACK"?
+             <><p className="text-sm text-body">Approve creates an unpublished draft. You can review dates, eligibility and audience before separately publishing.</p>
+              <TpoDriveRequestActions requestId={selectedDriveRequest.id} status={selectedDriveRequest.status}/>
+             </>:selectedDriveRequest.approvedJobId?
+              <Link href={"/tpo/placements/jobs/"+selectedDriveRequest.approvedJobId}
+               className="inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-on-primary">Review unpublished draft</Link>:
+              <p className="text-sm text-body">This request has already been decided.</p>}
+            <p className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">Your decision is version checked, recorded in the audit history, and notified in-app. No recruiter email is assumed delivered.</p>
+           </aside>
+          </div></>:<div role="status" className="space-y-3 p-5">
+           <h3 className="font-semibold">This request is not on the current authorized page.</h3>
+           <p className="text-sm text-body">No other request was substituted. Return to the queue or change pages.</p>
+           <Link href={requestHref()} className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear selection</Link>
+          </div>}
+         </section>
+        </div>:null}
+        <details className="border-t border-border pt-2">
+         <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link">Advanced recruiter request list and change history</summary>
+         <div className="pt-3">
         {data.requestRows.length===0?<EmptyState title="No drive requests waiting" description="No recruiter drive requests need review."
             action={<Link href="/tpo/placements/lifecycle?view=DRAFT" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Drafts</Link>}/>:
           data.requestRows.map(item=><article key={item.id} className="border-b border-border py-4">
@@ -384,6 +468,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
               item.approvedJobId?<Link href={"/tpo/placements/jobs/"+item.approvedJobId}
                 className="text-primary-text underline">Open draft</Link>:null}
           </article>)}
+         </div>
+        </details>
         <nav aria-label="Drive request pagination" className="flex justify-between">
           {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Previous</Link>:<span/>}
           {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Next</Link>:null}
