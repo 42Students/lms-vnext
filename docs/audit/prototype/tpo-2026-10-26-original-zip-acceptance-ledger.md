@@ -24,7 +24,7 @@ The archive has exactly **33 PNG entries**. Names below are decoded for legibili
 | 16 | Drives › A recruiter’s drive request.png | `c9b273e210fe` | Yes | Open |
 | 17 | Drives › New drive (and edit).png | `f3a08d2716a2` | Yes | Open |
 | 18 | Drive › Students (review one by one, share with company).png | `fa5858818245` | Yes | Open |
-| 19 | Drive › Rounds (results, slots).png | `45610502dbb9` | No | Open |
+| 19 | Drive › Rounds (results, slots).png | `45610502dbb9` | Yes | Open |
 | 20 | Drive › Offers.png | `7c72b4402fc8` | No | Open |
 | 21 | Drive day (at the gate).png | `42077d978c1d` | No | Open |
 | 22 | Drive › Talk (recruiter, change requests, team).png | `458937985d38` | No | Open |
@@ -173,10 +173,18 @@ Compared `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipelin
 
 Added `tests/unit/tpo-prototype-drive-students-2026.test.ts` contracts. Still open: safe company-sharing workflow, persisted per-drive skill requirement projection, screenshot-perfect layout, browser screening and selected-item navigation. **Source implementation partial, not accepted.**
 
+## Screen 19 — Drive › Rounds, results and slots (original ZIP image visually inspected)
+
+The original **2880 × 2088** Rounds image has a left ordered three-round selector, selected interview summary, pending candidates asking to reschedule, per-panel time/room table, Nudge / Open drive day, Slots / Results / Edit controls, and an explicit next-action bar. It depicts real interview-confirmation percentages in the fixture; these cannot be inferred from booking status. Existing `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx` already provides authenticated rounds/result counters and genuine staged-result and schedule-request links; `/rounds/[roundId]/slots` has live slot booking and reschedule actions in `TpoInterviewSlotPlanner`.
+
+**Implemented:** New `src/components/tpo/tpo-drive-rounds-prototype-review.tsx` selected stage + real slot timetable using `getTpoInterviewSlotWorkspace(context,jobId,roundId)` under the job-scoped permission boundary, displaying booked slots only as booked, not candidate-confirmed. Renders actual candidate names from the same scoped roster, assigned panel/room, limited first 24 slot entries, source-backed reschedule reasons and recruiter slot proposal counts. Navigates to the exact round for Slots/Results and existing secure planner for changes. A stale selected round does **not** substitute a different round; unavailable slot source is not displayed as zero. Valid UUID selection now enforced before sensitive reads.
+
+Added static-render regression `tests/unit/tpo-prototype-drive-rounds-2026.test.tsx`, and the dedicated source acceptance workflow now runs both new Drive Students and Rounds regressions. Remaining: measured candidate confirmations (do not equate booked with confirmed), direct per-request move controls within the overview, round add/reorder drag interactions, actual browser test and pixel-comparison. **Source partial only; no visual/browser acceptance.**
+
 ## Evidence accounting
 
 - Actual PNG ZIP entries inventoried: **33/33**
-- Original PNGs visually opened in this recovery pass: **18/33**
+- Original PNGs visually opened in this recovery pass: **19/33**
 - Code-complete screens established by this recovery pass: **not established**
 - Browser-accepted screens established by this recovery pass: **0/33**
 - Visually accepted screens established by this recovery pass: **0/33**
