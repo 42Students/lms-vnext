@@ -175,6 +175,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     unread:unreadAction?.value??0,resultsDue:dueResults,
     unreadConversations:conversationSignals?.unread??[],
     returnedRequests:requests,changeRequests,roundsNeedingSlots,offerActions,
+    // Only counted active, verified college-shared applicants can become review
+    // actions. A shared total does not prove anyone updated their resume.
+    sharedApplicantCounts:Object.entries(liveDriveCounts??{}).map(([jobId,counts])=>({
+      jobId,count:counts.sharedApplicants,
+    })),
   });
   // Pending formal requests count as drives, even before publication.
   const requestCount=requestsResult.ok?requests.length:null;

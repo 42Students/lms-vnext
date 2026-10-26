@@ -28,10 +28,10 @@ export function buildRecruiterActionQueue(input:{
   (row.job.status==="PUBLISHED"||row.job.status==="CLOSED"))
   .map(row=>row.job.id));
  // Old Today groups company-facing ASK / CHANGE requests per drive.
- const grouped=new Map<string,{jobId:string;jobTitle:string;count:number;asks:number;unknownKinds:number;note:string|null;createdAt:Date}>();
+ const grouped=new Map<string,{id:string;jobId:string;jobTitle:string;count:number;asks:number;unknownKinds:number;note:string|null;createdAt:Date}>();
  for(const row of input.changeRequests??[]){
   if(!authorized.has(row.jobId))continue;
-  const current=grouped.get(row.jobId)??{jobId:row.jobId,jobTitle:row.jobTitle,count:0,asks:0,unknownKinds:0,note:null,createdAt:row.createdAt};
+  const current=grouped.get(row.jobId)??{id:row.id,jobId:row.jobId,jobTitle:row.jobTitle,count:0,asks:0,unknownKinds:0,note:null,createdAt:row.createdAt};
   current.count++;
   if(row.kind==="ASK")current.asks++;
   if(!row.kind)current.unknownKinds++;
@@ -49,7 +49,7 @@ export function buildRecruiterActionQueue(input:{
   return {key:"answer:"+row.jobId,tone:"SOON" as const,at:row.createdAt,
    label,
    description:row.jobTitle+(row.note?" · “"+row.note+"”":""),
-   href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=messages"};
+   href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=discussion&requestId="+encodeURIComponent(row.id)};
  });
  const slots=(input.roundsNeedingSlots??[])
   .filter(row=>authorized.has(row.jobId)&&row.scheduledAt!==null)
@@ -134,7 +134,7 @@ export function buildRecruiterActionQueue(input:{
  const reviews=live.filter(row=>(sharedCounts.get(row.job.id)??0)>0)
   .map(row=>({key:"review:"+row.job.id, tone:"FINE" as const, at:null as Date|null,
    label:"Review shared applicants · "+row.job.title,
-   description:(sharedCounts.get(row.job.id)??0)+" college-shared applications need recruiter review.",
+   description:(sharedCounts.get(row.job.id)??0)+" college-shared applications available for recruiter review. New resume changes are not inferred from totals.",
    href:recruiterTodayHref({kind:"REVIEW_APPLICANTS",jobId:row.job.id})}));
  // A prelive review is actionable only when an invitation was persisted.
  const preliveIds=new Set(input.jobs.filter(row=>row.collegeId===input.collegeId&&

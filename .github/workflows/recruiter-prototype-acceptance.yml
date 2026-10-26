@@ -55,7 +55,11 @@ jobs:
             tests/unit/recruiter-selection-xlsx-model.test.ts \
             tests/unit/recruiter-selection-csv-model.test.ts \
             tests/unit/recruiter-invite-not-hiring-note.test.ts \
-            tests/unit/recruiter-public-invitation-note-route.test.ts
+            tests/unit/recruiter-public-invitation-note-route.test.ts \
+            tests/unit/recruiter-today-headline-model.test.ts \
+            tests/unit/recruiter-today-later-model.test.ts \
+            tests/unit/hr-today-action-queue-model.test.ts \
+            tests/unit/hr-today-action-queue-scoped.test.ts
       - name: Typecheck at this verified commit
         env:
           NODE_OPTIONS: --max-old-space-size=6144

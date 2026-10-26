@@ -29,7 +29,7 @@ function cta(task:RecruiterTodayTask):string{
 }
 function tag(task:RecruiterTodayTask):string{
   if(task.key.startsWith("answer:"))return "PLACEMENT CELL ASKED";
-  if(task.key.startsWith("review:"))return "NEW";
+  if(task.key.startsWith("review:"))return "SHARED";
   if(task.tone==="URGENT")return "URGENT";
   if(task.tone==="SOON")return "NEEDS YOU";
   return "WHEN YOU CAN";
@@ -52,7 +52,7 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
   const visible=actionable.filter(task=>!later[task.key]);
   const postponed=actionable.length-visible.length;
   const shown=expanded?visible:visible.slice(0,3);
-  const headline=recruiterTodayHeadline(props.greeting,visible.length,props.hasDriveHistory);
+  const headline=recruiterTodayHeadline(props.greeting,visible.length,props.hasDriveHistory,postponed);
   const nextEvent=props.weekEvents[0];
   const subtitle=nextEvent?nextEvent.title+" · "+nextEvent.jobTitle+" · "+nextEvent.when:null;
   return <div className={styles.root} data-testid="recruiter.today">
@@ -75,16 +75,19 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
               onClick={()=>persist(putRecruiterTodayLater(later,task))}>Later</button>
           </div>
         </div>)}
-        {!shown.length&&props.hasDriveHistory===false?
+        {!shown.length&&postponed===0&&props.hasDriveHistory===false?
           <div className={styles.empty}>
             <strong>Start with your first drive</strong>
             <p>Describe the role, pay and how you select. The placement cell reviews it before students apply.</p>
             <Link className={styles.primary} href={props.firstDriveHref}>Request your first drive</Link>
           </div>:null}
-        {!shown.length&&props.hasDriveHistory===true?
+        {!shown.length&&postponed===0&&props.hasDriveHistory===true?
           <div className={styles.empty} role="status">You’re all caught up{props.collegeName?" at "+props.collegeName:""}. New applicants, replies and decisions show up here.</div>:null}
-        {!shown.length&&props.hasDriveHistory===null?
+        {!shown.length&&postponed===0&&props.hasDriveHistory===null?
           <div className={styles.empty} role="status">We could not confirm your complete drive history. Open Drives to check for other work.</div>:null}
+        {!shown.length&&postponed>0?<div className={styles.empty} role="status">
+          {postponed} {postponed===1?"action is":"actions are"} put off for later. Use “Show them” below when ready.
+        </div>:null}
         {visible.length>3?<button className={styles.more} type="button"
           onClick={()=>setExpanded(value=>!value)}>{expanded?"Show the first three":"Show "+(visible.length-3)+" more actions"}</button>:null}
         {postponed>0?<div className={styles.foot}>{postponed} put off for later.{" "}

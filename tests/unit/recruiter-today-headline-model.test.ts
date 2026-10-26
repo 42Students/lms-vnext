@@ -15,6 +15,12 @@ describe("Recruiter Today screenshot and old-LMS first-drive/empty parity",()=>{
   expect(recruiterTodayHeadline("Good afternoon, Meera",0,null))
    .toBe("Good afternoon, Meera.");
  });
+ it("does not mark deferred, unresolved work as all caught up",()=>{
+  expect(recruiterTodayHeadline("Good evening, Meera",0,true,1))
+   .toBe("Good evening, Meera. 1 thing is put off for later.");
+  expect(recruiterTodayHeadline("Good evening, Meera",0,true,3))
+   .toBe("Good evening, Meera. 3 things are put off for later.");
+ });
  it("knows verified published jobs remain history if secondary requests fail",()=>{
   expect(recruiterTodayHasDriveHistory({verifiedJobCount:1,requestCount:null,jobPreviewCapped:false})).toBe(true);
   expect(recruiterTodayHasDriveHistory({verifiedJobCount:0,requestCount:0,jobPreviewCapped:true})).toBe(true);

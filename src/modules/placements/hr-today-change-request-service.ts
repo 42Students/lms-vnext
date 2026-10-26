@@ -15,6 +15,8 @@ export async function listRecruiterTodayChangeRequests(collegeId:string,allowedJ
   // only the 20 newest cards rendered in Today.
   totalOpen:sql<number>`count(*) over()::integer`.mapWith(Number),
   jobTitle:placementJobs.title,field:placementDriveChangeRequests.field,
+  kind:placementDriveChangeRequests.mode,
+  note:placementDriveChangeRequests.reason,
   createdAt:placementDriveChangeRequests.createdAt,
  }).from(placementDriveChangeRequests)
   .innerJoin(placementJobs,eq(placementJobs.id,placementDriveChangeRequests.jobId))
