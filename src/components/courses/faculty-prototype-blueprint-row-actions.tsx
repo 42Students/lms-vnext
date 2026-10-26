@@ -6,6 +6,7 @@ import {FacultyContentEditor} from "./faculty-content-editor";
 import {FacultyAssessmentEditor} from "./faculty-assessment-editor";
 import {facultyAssessmentLifecyclePayload} from "./faculty-assessment-lifecycle-model";
 import {courseApiError} from "./learner-course-api";
+import {facultyBlueprintArchiveReceiptMatches} from "@/modules/courses/faculty-blueprint-archive-receipt-model";
 
 type ContentItem=ComponentProps<typeof FacultyContentEditor>["item"];
 type AssessmentItem=ComponentProps<typeof FacultyAssessmentEditor>["assessment"];
@@ -50,9 +51,10 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
     return;
    }
    const receipt:unknown=await response.json().catch(()=>null);
-   if(!receipt||typeof receipt!=="object"){
+   const kind=selectedEditor.type==="CONTENT"?"CONTENT":selectedEditor.item.kind;
+   if(!facultyBlueprintArchiveReceiptMatches(kind,item.id,receipt)){
     setUnknown(true);
-    setError("The archive response could not be verified. Reload this class before retrying.");
+    setError("The archived item ID or status could not be verified. Reload this class before retrying.");
     return;
    }
    setConfirm(false);
