@@ -39,4 +39,4 @@
 - Fresh 1440 × 1132 viewport screenshot compared to 2880 × 2264 reference at 2×; ensure no unexpected second global search and that the main table/inspector occupy the same geometry. A mobile responsive screenshot is additional.
 - Visual acceptance and real-provider sends/invitation receipt remain separate from static source test.
 
-**Closure label:** CODE IMPLEMENTATION UPDATED; dedicated CI must be checked on the last relevant change. **Visual/browser acceptance not certified.**
+**Closure label:** **SOURCE/TYPECHECK GATE PASS** on commit `82245450051f090b68146a6e3591eee2618860d0`, [dedicated TPO CI 40405859263](https://github.com/42Students/lms-vnext/actions/runs/40405859263): **21 test files / 133 tests passed**, strict application typecheck succeeded. **Visual/browser acceptance not certified.**
