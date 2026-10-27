@@ -7,7 +7,7 @@
 - Legacy frontend source pinned at `9d56bb7a347b06f242ef615c19fdc298f83329e0` (`42Students/lms2-fe@lms-dev-2026`).
 - Legacy backend pinned at `ecb09416b107e82e5ac7d22f3bc94a85258754b3` (`42Students/lms@lms-dev-2026`).
 - vNext route-tree existence was cross-checked against `main` at `65ce57eff29a0159a783ce2c7b3da4c802dfa1a9`.
-- Evidence pools: `2026-10-27-import-reachability-wave1.json` (64 files), `2026-10-27-import-reachability-wave2.json` (60 more files), `2026-10-27-backend-contract-wave1.json` (24 controllers / security sources), `2026-10-27-frontend-service-contract-wave1.json` (four client-service source modules), and `2026-10-27-vnext-destination-sample.json` (12 route files and 11 followed import sources).
+- Evidence pools: `2026-10-27-import-reachability-wave1.json` (64 files), `2026-10-27-import-reachability-wave2.json` (72 more files), `2026-10-27-backend-contract-wave1.json` (24 controllers / security sources), `2026-10-27-frontend-service-contract-wave1.json` (four client-service source modules), and `2026-10-27-vnext-destination-sample.json` (12 route files and 11 followed import sources).
 - Counts are **source files / selected candidates**, not a product surface denominator. Candidate signals may be false positives, unreachable under some guards, or multiple invocations of one shared UI.
 
 ## Validated source pointers / unverified behavioral equivalence
