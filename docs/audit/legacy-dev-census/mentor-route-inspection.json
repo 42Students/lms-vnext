@@ -1,0 +1,204 @@
+{
+  "source": "42Students/lms2-fe",
+  "ref": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+  "account": "mentor",
+  "method": "static per-file JSX/import/event/state candidate scan",
+  "records": [
+    {
+      "path": "src/pages/mentor/allQuizzes.js",
+      "sha": "5fac58e228f94f25b6ab57c0c021cd6f9c31be57",
+      "lines": 13,
+      "bytes": 211,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/calendar.js",
+      "sha": "e7f8f7e9be6c0c64b75fbfc79906e42f46b24422",
+      "lines": 307,
+      "bytes": 14433,
+      "localImports": [
+        "@/components/Course/Common/CourseSectionHeader",
+        "@/api/Services/projectService"
+      ],
+      "childCandidates": [
+        "Tag",
+        "LinkOutlined",
+        "Link",
+        "Spin",
+        "CourseSectionHeader",
+        "MeetingRowSkeleton",
+        "Alert",
+        "Button",
+        "CalendarOutlined",
+        "Empty",
+        "MeetingRow"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 2,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/contacts/[contactsTab].js",
+      "sha": "5fac58e228f94f25b6ab57c0c021cd6f9c31be57",
+      "lines": 13,
+      "bytes": 211,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/contacts/index.js",
+      "sha": "5fac58e228f94f25b6ab57c0c021cd6f9c31be57",
+      "lines": 13,
+      "bytes": 211,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/courses/[courseId]/[...courseTab].js",
+      "sha": "5fac58e228f94f25b6ab57c0c021cd6f9c31be57",
+      "lines": 13,
+      "bytes": 211,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/courses/[courseId]/index.js",
+      "sha": "5fac58e228f94f25b6ab57c0c021cd6f9c31be57",
+      "lines": 13,
+      "bytes": 211,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/courses/index.js",
+      "sha": "21f25372f58012f5da5343a0c50c95a2183b1365",
+      "lines": 13,
+      "bytes": 201,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/fileExplorer.js",
+      "sha": "5fac58e228f94f25b6ab57c0c021cd6f9c31be57",
+      "lines": 13,
+      "bytes": 211,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/index.js",
+      "sha": "81cef26e110ae06f7da2dbd03d274811a2ba2f85",
+      "lines": 42,
+      "bytes": 1485,
+      "localImports": [
+        "@/utils/useCollegeFeatureFlags"
+      ],
+      "childCandidates": [
+        "Result",
+        "Button"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 1,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/notifications.js",
+      "sha": "50293da6603a1d1e78d373a8504c59b90c822025",
+      "lines": 404,
+      "bytes": 17884,
+      "localImports": [
+        "@/components/Course/Common/CourseSectionHeader",
+        "@/api/Services/projectService",
+        "@/api/Services/UserServices",
+        "@/api/Services/notificationService",
+        "@/utils/useCollegeFeatureFlags"
+      ],
+      "childCandidates": [
+        "BellOutlined",
+        "WarningOutlined",
+        "ClockCircleOutlined",
+        "Tag",
+        "Link",
+        "Spin",
+        "CourseSectionHeader",
+        "NotificationRowSkeleton",
+        "Alert",
+        "Button",
+        "Empty",
+        "CheckCircleOutlined",
+        "NotificationRow"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 2,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/profile.js",
+      "sha": "5fac58e228f94f25b6ab57c0c021cd6f9c31be57",
+      "lines": 13,
+      "bytes": 211,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/projects/[projectId].js",
+      "sha": "7bdf4508a647febf46399ee5a4cdc037cfca1aeb",
+      "lines": 19,
+      "bytes": 1165,
+      "localImports": [
+        "@/utils/accountScopeKey",
+        "@/components/Projects/ProjectDetailContent"
+      ],
+      "childCandidates": [
+        "ProjectDetailContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/mentor/projects/index.js",
+      "sha": "d1667820f96a977eb121394cae72d3f3806832d7",
+      "lines": 42,
+      "bytes": 1607,
+      "localImports": [
+        "@/utils/accountScopeKey",
+        "@/components/Projects/ProjectsContent",
+        "@/utils/useCollegeFeatureFlags"
+      ],
+      "childCandidates": [
+        "Result",
+        "Button",
+        "ProjectsContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 1,
+      "queryModes": []
+    }
+  ]
+}
