@@ -86,6 +86,13 @@ test("course detail and tab-heavy pages split into independently closable child 
     "tpo:drive-detail/tab-applicants",
   ]);
 });
+test("preexisting checked work selects evidence reconciliation, not reimplementation", async () => {
+  const { workMode } = await import("../scripts/page-closure.mjs");
+  assert.equal(workMode({ checked: 5, unchecked: 0, problems: [] }), "reconcile-existing-evidence");
+  assert.equal(workMode({ checked: 2, unchecked: 3, problems: [] }), "close-known-requirements");
+  assert.equal(workMode({ checked: 0, unchecked: 0, problems: [] }), "discover-inventory");
+  assert.equal(workMode({ checked: 5, unchecked: 0, problems: ["stale run"] }), "repair-acceptance-record");
+});
 test("unscoped continuation respects current phase dependencies", () => {
   const x = nextPhaseTask({ currentPhase: "DATABASE", tasks: [
     { id: "DB-A", phase: "DATABASE", done: false, dependsOn: ["DB-B"] },

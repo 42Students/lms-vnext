@@ -150,6 +150,13 @@ export function reportFromFiles(filePairs) {
   return { accounts, pages, invalid: pages.flatMap(p => p.problems.map(message => ({
     file: p.file, line: p.line, id: p.id, message }))) };
 }
+export function workMode(page) {
+  if (!page) return "none";
+  if (page.problems.length) return "repair-acceptance-record";
+  if (page.unchecked > 0) return "close-known-requirements";
+  if (page.checked > 0) return "reconcile-existing-evidence";
+  return "discover-inventory";
+}
 export function nextFamily(report, account) {
   const name = account === "hr" ? "recruiter" : account;
   return report.pages.find(p => (!name || p.account === name) &&
@@ -181,7 +188,8 @@ export function run(argv = process.argv.slice(2), root = path.resolve(path.dirna
     console.log(JSON.stringify(account ? { scope: account, currentPhase: phase.phase,
       notice: phase.phase !== "UI" ? "UI phase not globally certified; selection is informational" : null,
       next: page ? { id: page.id, name: page.name, file: page.file, line: page.line,
-        checked: page.checked, unchecked: page.unchecked } : null } :
+        checked: page.checked, unchecked: page.unchecked,
+        workMode: workMode(page), invalidEvidence: page.problems } : null } :
       { scope: "project", currentPhase: phase.phase, remainingInPhase: phase.remaining,
         next: phase.next ? { id: phase.next.id, title: phase.next.title } : null,
         note: "Unscoped continuation uses the official project phase; use --account for pages." }, null, 2));
