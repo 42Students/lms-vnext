@@ -7827,5 +7827,486 @@
     }
   ],
   "remaining": "Expand transitive imports of all UI-rendering descendants. Resolve conditional overlays/actions, services/backend, mapping, tests and runtime separately.",
-  "errors": []
+  "errors": [],
+  "snapshotDelta": {
+    "from": {
+      "legacyFrontend": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+      "legacyBackend": "4ef67db8f198205f11e1e6ca12718c38400dc7ca"
+    },
+    "to": {
+      "legacyFrontend": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+      "legacyBackend": "ecb09416b107e82e5ac7d22f3bc94a85258754b3",
+      "vNext": "57a28a0dca83cc01fc845567fc2186a960e129ab"
+    },
+    "frontendChangedSrcFiles": [
+      {
+        "path": "src/__tests__/collegePublicLink.test.jsx",
+        "status": "modified",
+        "oldSha": "a3450e6cc7716d523bd31ed81a351e6978023051",
+        "newSha": "0f84be5d5d7c6320ca872b9661951e38ce0a39f7"
+      },
+      {
+        "path": "src/__tests__/recruiterDaysInMind.test.jsx",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "5338478b4ceabdbb44c92fc0baaf70d6cf147714"
+      },
+      {
+        "path": "src/__tests__/recruiterFinderApplicants.test.jsx",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "4d9f24b29052ca844c3e9d97f5859e2673e70e31"
+      },
+      {
+        "path": "src/__tests__/recruiterHoverStories.test.jsx",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "a637764bbe72c8bfc2bf94a624f09b10751beaca"
+      },
+      {
+        "path": "src/__tests__/recruiterJoinedExperience.test.jsx",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "0c76d6a81efc0c05880399a342b51c983fd9cd26"
+      },
+      {
+        "path": "src/__tests__/recruiterNextStep.test.js",
+        "status": "modified",
+        "oldSha": "532b06c50bccee567c42e52c593bcadc451e5a46",
+        "newSha": "163892c533c7c8e37930aadc03e8d889710fde05"
+      },
+      {
+        "path": "src/__tests__/recruiterRounds.test.jsx",
+        "status": "modified",
+        "oldSha": "f4d19a147f72bd0a120b14039bb6a4ae0b43e548",
+        "newSha": "ab1bce44ad1ed90ff19c75b1d2950a45c8a0869f"
+      },
+      {
+        "path": "src/__tests__/tpoBringInWindow.test.jsx",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "e4ec4961a9ea2f31c399c0c67b2b703aad33e828"
+      },
+      {
+        "path": "src/__tests__/tpoPublicLinkInvite.test.jsx",
+        "status": "modified",
+        "oldSha": "2c23e3c5104fb71b4aaa1dfc80e5f11a4fbcf74f",
+        "newSha": "7f060375eb4ab4fa073e6cabc9d76e42395284e6"
+      },
+      {
+        "path": "src/__tests__/tpoRecruiterLeadPageEditAndQuickFollowUp.test.jsx",
+        "status": "modified",
+        "oldSha": "2f1c7db548a3eb5e75bd0aaed8a1413494306321",
+        "newSha": "483865b378610f27aaa5a1ec37be0c03ce3cef52"
+      },
+      {
+        "path": "src/__tests__/tpoRecruiterLeadsAddForm.test.jsx",
+        "status": "modified",
+        "oldSha": "cadde8f157468c9e366d6f4ac7469390dd3d303e",
+        "newSha": "3d554f8a0c3fe4c3b12a06740f6f0000b2824e68"
+      },
+      {
+        "path": "src/__tests__/tpoRecruiterLeadsAddPrefillCompany.test.jsx",
+        "status": "modified",
+        "oldSha": "fac46260bc89ba9039f021a143f1207fd8ea7d7f",
+        "newSha": "d662a579033ce77a4de829c3e26388e3a1379b3a"
+      },
+      {
+        "path": "src/__tests__/tpoRecruiterLeadsBulkActionsConfirmAndReportFailure.test.jsx",
+        "status": "modified",
+        "oldSha": "6f5c671f80663adb630b02c0f15599fe59c0ac50",
+        "newSha": "bd3b563287c25f8a62a93f4a33ea8a4ff6c068ac"
+      },
+      {
+        "path": "src/__tests__/tpoRecruiterLeadsErrorStatesAndViewValidation.test.jsx",
+        "status": "modified",
+        "oldSha": "8458692e037e22e36732c4bcbd59508c4da2d04e",
+        "newSha": "5aa672deed3ca961ebeba56e69f839177f81618f"
+      },
+      {
+        "path": "src/__tests__/tpoRecruitersWhereAndNextStep.test.jsx",
+        "status": "modified",
+        "oldSha": "1fbeafc47fd7350da39a0f3fcca4d9462b632c9e",
+        "newSha": "e973342c644ad8a7ed74a0234238a5cdca396d76"
+      },
+      {
+        "path": "src/__tests__/tpoTrustGate.test.jsx",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "66bc26ab2180139d6b07cf0212e0ff4a6819a974"
+      },
+      {
+        "path": "src/__tests__/tpoWaysToPost.test.jsx",
+        "status": "modified",
+        "oldSha": "73177a34eea4784e1af74488a7c85e7bfd759091",
+        "newSha": "3eac510ae4339457b9446dcfd4fc695e7576ff74"
+      },
+      {
+        "path": "src/api/Services/RecruiterService.js",
+        "status": "modified",
+        "oldSha": "ff751cb4688dc3dc951d4704f6b17d22c79638c2",
+        "newSha": "3263f12ec07a3a3f904d48f0bedcf0ddf9a4b4a4"
+      },
+      {
+        "path": "src/api/Services/TpoHubService.js",
+        "status": "modified",
+        "oldSha": "a2c060e5d0a6ac5a7cd67fac4b903d1de8fab739",
+        "newSha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+      },
+      {
+        "path": "src/components/Common/PanelStates.jsx",
+        "status": "modified",
+        "oldSha": "c7e1c2b890e7cfcf11e3cbacb03fce0561b5733d",
+        "newSha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+      },
+      {
+        "path": "src/components/recruiter/RecruiterFinder.jsx",
+        "status": "modified",
+        "oldSha": "39388b7e6ade57f6046c2ebcfd35a91e8922cd49",
+        "newSha": "e9d61c3f5c43eb45dcba6dd8aa091b46c6767c46"
+      },
+      {
+        "path": "src/components/recruiter/RecruiterFocusedReview.jsx",
+        "status": "modified",
+        "oldSha": "344911c568e6d05733c292cf33f1c74642753d08",
+        "newSha": "ce2e484ab843c6819bbe817a964a8d989775c04c"
+      },
+      {
+        "path": "src/components/recruiter/RecruiterToday.jsx",
+        "status": "modified",
+        "oldSha": "6cad397b6a9d3f9ab0be9784d2287b3494dbd030",
+        "newSha": "08a4537dea65d50bc620eb5525118480e6dad3ea"
+      },
+      {
+        "path": "src/components/recruiter/RecruiterTopBar.jsx",
+        "status": "modified",
+        "oldSha": "a3044c0f010f038afb0b456f0d1119f0e5853b1d",
+        "newSha": "14595ebdb9a78ab756d3215b39e3264d6c4f5790"
+      },
+      {
+        "path": "src/components/recruiter/recruiterStories.js",
+        "status": "modified",
+        "oldSha": "7f8bb24da43869d803f3a0deb347694440229ec1",
+        "newSha": "d7f0301a22ec676116336f1664cf57e290f35755"
+      },
+      {
+        "path": "src/components/tpo/TpoDataTable.js",
+        "status": "modified",
+        "oldSha": "8ce4a113717ee05f14440b3c90bb8b2f332c0353",
+        "newSha": "636f3aa40954bee1a149a2b1d83d7585e5fb0aef"
+      },
+      {
+        "path": "src/components/tpo/companies/CompaniesTab.jsx",
+        "status": "modified",
+        "oldSha": "e2ef32db3d91ccc91e0753439399dd4a22359e9b",
+        "newSha": "1e5c84e86d01461760593e8fdac2974286b6d1cb"
+      },
+      {
+        "path": "src/components/tpo/company/CompanyLinkCard.jsx",
+        "status": "modified",
+        "oldSha": "0ee70cd32144690985ba0c2165a7509f14fd5aa6",
+        "newSha": "93d56d100a68bc5866878cc89e84137a6cf4c637"
+      },
+      {
+        "path": "src/components/tpo/drive/DriveRequestReview.jsx",
+        "status": "modified",
+        "oldSha": "a822fcce25e237461e60a5b3b98a398fd72ab195",
+        "newSha": "63d0ab72dbbe0adf49743c170d990eb7a61cc321"
+      },
+      {
+        "path": "src/components/tpo/invite/BringInWindow.jsx",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "e462998683eab504bc2f7f7380ee7a6401cd54e9"
+      },
+      {
+        "path": "src/components/tpo/invite/VerifyCompanyWindow.jsx",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "2a43fbb0b627910c69f4ef7b4e72f1705bfe5720"
+      },
+      {
+        "path": "src/components/tpo/recruiterNextStep.js",
+        "status": "modified",
+        "oldSha": "b76a8d941bf65cbbfb86478b52c1bb9a1ad28fae",
+        "newSha": "0dfe3654529c22ee428851ca88fd976e6f392780"
+      },
+      {
+        "path": "src/components/tpo/recruiterPage.js",
+        "status": "modified",
+        "oldSha": "bcb99ef40c5b707bb25d7b3eec4ea3be786e4e08",
+        "newSha": "d82cced2aa96fd6d0c2508db3ecd60c8d71bce71"
+      },
+      {
+        "path": "src/components/tpo/settings/PublicLinkCard.jsx",
+        "status": "modified",
+        "oldSha": "9bb34728f415c927a71c896c7120ae03a0c1c6bb",
+        "newSha": "b31a865651e14a1b09e8834b75ed4dadfa7589d1"
+      },
+      {
+        "path": "src/components/tpo/stories/recruiterStories.js",
+        "status": "modified",
+        "oldSha": "9464195a914b4d1880ff93bdfeeb3a5608d7bcf9",
+        "newSha": "dd98dd0b1085f8ebabf9666c53892cc30b43e4cc"
+      },
+      {
+        "path": "src/pages/recruiter/calendar.js",
+        "status": "modified",
+        "oldSha": "a55e127b2e5ad227a1f42319da8eb17dee3180e2",
+        "newSha": "c14c82f94fed232b0e2872d5e0a291882affc2d2"
+      },
+      {
+        "path": "src/pages/recruiter/drives/[jobId].js",
+        "status": "modified",
+        "oldSha": "534e79db29f7f218812c81ae6cf2526f0bb629b7",
+        "newSha": "920e7b1d8b11f743d362dd5d7dadfdd72c362618"
+      },
+      {
+        "path": "src/pages/recruiter/drives/new.js",
+        "status": "modified",
+        "oldSha": "11e4f7ea6eb46dc7f5cc021a044b30875de7cf41",
+        "newSha": "eed64c00b7d494177f3cae59a4551db60b24b5da"
+      },
+      {
+        "path": "src/pages/tpo/companies.js",
+        "status": "modified",
+        "oldSha": "822adb6b929f10b2624935a53c8db42ae2d2a4a8",
+        "newSha": "97752e039a828bad3224c38cff480f101700ef8b"
+      },
+      {
+        "path": "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "status": "modified",
+        "oldSha": "15df61672a2ef751768c9f2a4a52d015a0c5862e",
+        "newSha": "6aa8705bb1873366c5a2d3544f1f83341a205bf6"
+      },
+      {
+        "path": "src/pages/tpo/recruiters/index.js",
+        "status": "modified",
+        "oldSha": "84670a95121d3aaf454e58e1e5d6b43c1af4bf60",
+        "newSha": "320036ede98ebd17e07a83d2433610e107f3e117"
+      },
+      {
+        "path": "src/pages/tpo/settings.js",
+        "status": "modified",
+        "oldSha": "0e8eb71b3f66c52cfb926c5309ad3c245369f3fe",
+        "newSha": "a067e35800ce8bbd02a1c05e38cccc889692dea8"
+      },
+      {
+        "path": "src/styles/components/_tpo-bring-in.scss",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "b912b867120dc9d7f585a91f2f0def51d5262cba"
+      },
+      {
+        "path": "src/styles/components/components.scss",
+        "status": "modified",
+        "oldSha": "467a11645bc23c9cd87a37aded579ea0b189e8e6",
+        "newSha": "8e8c366c0e1aa6c71434beb5322b2c5bc116e083"
+      }
+    ],
+    "backendChangedSrcFiles": [
+      {
+        "path": "src/main/java/com/_42students/lms/controller/RecruiterCollegeController.java",
+        "status": "modified",
+        "oldSha": "37b6870e6811d6fd3cb7cfb1ad52b4c15e3b0b03",
+        "newSha": "0f7b6193be3cb6ef850696088a1bc0c9a19b18d4"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/controller/RecruiterDriveController.java",
+        "status": "modified",
+        "oldSha": "9b64fb19f574aabd9c33dac98ea3b9729a3d9884",
+        "newSha": "a9cae72fb06b6b78a75877ce30434798f214acf2"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/controller/tpo/TpoCompanyController.java",
+        "status": "modified",
+        "oldSha": "3f6c8b26f150fe33a3561307294e9e9566eaa7b8",
+        "newSha": "09bbdecf171661737c1f960480aeb8a78f10197d"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/controller/tpo/TpoPublicLinkController.java",
+        "status": "modified",
+        "oldSha": "c844c13f64bef0ae076b667ae7e59ac0d78798b1",
+        "newSha": "c0f135ec544a0cfb49e4f2ad4b6b5cd63f5baf58"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/dto/tpo/DriveForm.java",
+        "status": "modified",
+        "oldSha": "7fd78689f495272f7f77546d1c0ba69910f4c6e9",
+        "newSha": "229d40474efb9697516a73cb842e659339b999f3"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/model/CollegeCompany.java",
+        "status": "modified",
+        "oldSha": "3373142f7d9777409de4ad3b85de3733417ebd39",
+        "newSha": "02f1848beb98ad9bf287481ef38806235517ae91"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/model/Job.java",
+        "status": "modified",
+        "oldSha": "5d4894a3fdd72415a5a23b339d03e07172c71bc5",
+        "newSha": "2bc9bcfa65df561c2672bd0d590fd0ac92c0a8b3"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/recruiter/RecruiterNotificationService.java",
+        "status": "modified",
+        "oldSha": "4ca81be0c880bcb91e4bce4854ab93405a364d3e",
+        "newSha": "2c8db7aab45f33cea29752e8dbaff54befaf4006"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/recruiter/RecruiterTodayService.java",
+        "status": "modified",
+        "oldSha": "59ca57572804e399f841dcaec86ca1b2fa60d3bb",
+        "newSha": "79c4f7b7954fca11857a2379bb7a7f2b70a562a2"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/CollegePublicLinkService.java",
+        "status": "modified",
+        "oldSha": "54346605ee1113bd2543c6c71636d5e4c1c90074",
+        "newSha": "7def03c3bfbd8f5c1c1da8d9a7c6d223d35be493"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/CompanyJoinService.java",
+        "status": "modified",
+        "oldSha": "34ad7804c01ef11c84da831252ae3c71aab6fd34",
+        "newSha": "55a8225ea4156d1b1f891f0f39667d4cc9c8ad55"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/CompanyTrustService.java",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "9f13bc9cb17b7c774d590a6cdb7e67f19a249395"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/RecruiterDriveWorkService.java",
+        "status": "modified",
+        "oldSha": "78fe53a8df05cc11f89300bed445a6e1a9e43a6b",
+        "newSha": "fc179bd0b79ed4c2f453569a6e6ef3d6e693fa5f"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/RecruiterInviteService.java",
+        "status": "modified",
+        "oldSha": "ea14348360cbe2a05031ef508d8efbc2f0e7651b",
+        "newSha": "ef9145b22c3661d80dce9a894761e802e957541b"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/RecruiterJoinService.java",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "d85abe6b510f5e01678fac5de267e2033ddccaf1"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/TpoDriveService.java",
+        "status": "modified",
+        "oldSha": "dbdf2eecfdddd6a6fc78b5b6daa2d5282df8b08b",
+        "newSha": "b1143acf6149c0d9b03fc726fd24af1923654b88"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/TpoInsightsService.java",
+        "status": "modified",
+        "oldSha": "912bd92164a323f9d192df1b609bc433c5f81360",
+        "newSha": "6efa8409418fec01b624dadb0ad3b5be23715319"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadService.java",
+        "status": "modified",
+        "oldSha": "f4c7db47b1a4703d4f43ee80d268aa770ca189d3",
+        "newSha": "f9dba69ecceebef23ad284a5025c169fcd408aad"
+      },
+      {
+        "path": "src/main/java/com/_42students/lms/service/tpo/TpoRecruiterLeadsHubService.java",
+        "status": "modified",
+        "oldSha": "4aa7d61d624d0c7d061461175ab2377e963e164d",
+        "newSha": "1f58e60398de102d05ce0a83becf017bf6852afb"
+      },
+      {
+        "path": "src/main/resources/db/migration/V237__company_link_rebuildable.sql",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "461426c558226fdbbd437d0121b6e3c069f32666"
+      },
+      {
+        "path": "src/main/resources/db/migration/V238__company_trust_decision.sql",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "95e758fe70e82de5ebc754d400182ba30805e535"
+      },
+      {
+        "path": "src/main/resources/db/migration/V239__drive_dates_in_mind.sql",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "ad225a9f563a200e513eb4691f002ea30f0c336a"
+      },
+      {
+        "path": "src/test/java/com/_42students/lms/service/tpo/CollegePublicLinkServiceTest.java",
+        "status": "modified",
+        "oldSha": "4fbf36e67e9bcb0ab68f211ea5b39e2d60876005",
+        "newSha": "b326626e0901eba8c85497da7d2c9f03bb86274f"
+      },
+      {
+        "path": "src/test/java/com/_42students/lms/service/tpo/CompanyJoinServiceTest.java",
+        "status": "modified",
+        "oldSha": "1ad4eab26424bf696aa0feaee46572c44a4538e6",
+        "newSha": "f7c4085463bba4c6f7d6d8d497a85f6a162c590c"
+      },
+      {
+        "path": "src/test/java/com/_42students/lms/service/tpo/CompanyTrustServiceTest.java",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "75c0897d9861de0dbb80901707c90145cfcec2f8"
+      },
+      {
+        "path": "src/test/java/com/_42students/lms/service/tpo/RecruiterApplicantSearchTest.java",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "b130fde9239e9fe5e93748c40dd64868a954ec34"
+      },
+      {
+        "path": "src/test/java/com/_42students/lms/service/tpo/RecruiterJoinServiceTest.java",
+        "status": "added",
+        "oldSha": null,
+        "newSha": "b1d7a2289a5df32edd21a42ebf89026dd3f33e5d"
+      },
+      {
+        "path": "src/test/resources/db/migration-manifest.sha256",
+        "status": "modified",
+        "oldSha": "2688bb24aea424e5659b93b8e2f1d5eee5edbe16",
+        "newSha": "c11c00e479eb8e913ded87f4237c16d95d29aa39"
+      }
+    ],
+    "affectedFrontendEmphasis": "TPO and recruiter code, including their nested flows; tests are also modified",
+    "vNextRouteCandidates": {
+      "learner": [
+        "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx"
+      ],
+      "faculty": [
+        "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx"
+      ],
+      "mentor": [
+        "src/app/(authenticated)/mentor/projects/[projectId]/page.tsx"
+      ],
+      "college": [
+        "src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx"
+      ],
+      "superadmin": [
+        "src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx"
+      ],
+      "tpo": [
+        "src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx"
+      ],
+      "recruiter": [
+        "src/app/(authenticated)/recruiter/drives/[jobId]/page.tsx"
+      ],
+      "lead": [
+        "src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx"
+      ],
+      "collegeJoin": [
+        "src/app/college-join/[token]/page.tsx"
+      ],
+      "companyJoin": [
+        "src/app/company-join/[token]/page.tsx"
+      ]
+    },
+    "vNextRouteCaveat": "Source path existence is not action, guard, state or runtime parity; a renamed/consolidated route is not missing simply due to differing pathname."
+  }
 }
