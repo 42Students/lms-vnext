@@ -1,0 +1,315 @@
+{
+  "source": "42Students/lms2-fe",
+  "ref": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+  "account": "faculty",
+  "method": "static per-file JSX/import/event/state candidate scan",
+  "records": [
+    {
+      "path": "src/pages/teacher/allAssignments.js",
+      "sha": "cf6e9a329a61c9cfeca8e66c664bac7ca5618c1a",
+      "lines": 7,
+      "bytes": 195,
+      "localImports": [
+        "@/components/Assignments/AssignmentsContent"
+      ],
+      "childCandidates": [
+        "AssignmentsContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/allQuizzes.js",
+      "sha": "e17eae66fd7bd7c61bd8409cd70adfc5c4c918e1",
+      "lines": 7,
+      "bytes": 175,
+      "localImports": [
+        "@/components/Quizzes/QuizzesContent"
+      ],
+      "childCandidates": [
+        "QuizzesContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/calendar.js",
+      "sha": "67cbd96349947b471818d808111e27839b104862",
+      "lines": 7,
+      "bytes": 196,
+      "localImports": [
+        "@/components/CalendarComp/ClassScheduleContent"
+      ],
+      "childCandidates": [
+        "ClassScheduleContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/contacts/[contactsTab].js",
+      "sha": "3373cebaeccb528c0efc4e98dce68e811f12f3ce",
+      "lines": 64,
+      "bytes": 1574,
+      "localImports": [
+        "@/layouts/contactsTabLayout",
+        "@/components/contacts"
+      ],
+      "childCandidates": [
+        "ContactsGrid"
+      ],
+      "overlayCandidates": [
+        "ContactsGrid"
+      ],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/contacts/index.js",
+      "sha": "f246a7e957ace35f9ea327dc223b3751b53fb52f",
+      "lines": 20,
+      "bytes": 532,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/courses/[courseId]/[...courseTab].js",
+      "sha": "0fcecba533c133468fe632317675a798842d0aab",
+      "lines": 252,
+      "bytes": 12443,
+      "localImports": [
+        "@/layouts/CourseTabsLayout",
+        "@/components/Course/Common/CourseTabSkeleton",
+        "../../../Dashboard/course/syllabus/syllabus",
+        "../../../Dashboard/course/Sudent/student",
+        "../../../Dashboard/course/Attendance/attendance",
+        "../../../Dashboard/course/Home/Home",
+        "../../../Dashboard/course/Classroom/classroom",
+        "@/redux/store",
+        "@/utils/facultyCourseDetail"
+      ],
+      "childCandidates": [
+        "Alert",
+        "Button",
+        "ReloadOutlined",
+        "CourseTabSkeleton",
+        "Home",
+        "Syllabus",
+        "Student",
+        "Attendance",
+        "Classroom"
+      ],
+      "overlayCandidates": [
+        "CourseTabSkeleton"
+      ],
+      "inlineEvents": 1,
+      "modalConfirmCalls": 0,
+      "queryModes": [
+        "VALID_TABS"
+      ],
+      "hasEmpty": false,
+      "hasError": true,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/courses/[courseId]/index.js",
+      "sha": "f4b2de2a289672bfc4b2c8f860fe10c7f50bd181",
+      "lines": 23,
+      "bytes": 1053,
+      "localImports": [
+        "@/components/Course/Common/CourseTabSkeleton"
+      ],
+      "childCandidates": [
+        "CourseTabSkeleton"
+      ],
+      "overlayCandidates": [
+        "CourseTabSkeleton"
+      ],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": true,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/courses/index.js",
+      "sha": "c0d39cb567bf60d71bf29a39dfac3ea71076959b",
+      "lines": 7,
+      "bytes": 226,
+      "localImports": [
+        "@/components/Course/CoursesContent"
+      ],
+      "childCandidates": [
+        "CoursesContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/fileExplorer.js",
+      "sha": "058d5184eb33a1a6e3d2baceef0a0c5b26dc08b3",
+      "lines": 13,
+      "bytes": 223,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/index.js",
+      "sha": "2c295206b65b1f36ffe8812b9f4e3798381d1fc2",
+      "lines": 12,
+      "bytes": 330,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/notifications.js",
+      "sha": "4ff3c1e47e99d5621d349de7a3c53322db63c6fd",
+      "lines": 7,
+      "bytes": 198,
+      "localImports": [
+        "@/components/Notifications/NotificationsContent"
+      ],
+      "childCandidates": [
+        "NotificationsContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/profile.js",
+      "sha": "65935fdcee757dc598844a9c56449bf86b4b56ea",
+      "lines": 166,
+      "bytes": 6776,
+      "localImports": [
+        "../../components/profile/about",
+        "@/components/profile/ProfileSkeleton",
+        "@/api/Services/UserServices",
+        "@/redux/store",
+        "@/utils/roleUtils",
+        "@/components/Global/ListingPageHeader/ListingPageHeader",
+        "@/components/Common/PageShell",
+        "@/components/Common/Skeletons"
+      ],
+      "childCandidates": [
+        "PageShell",
+        "ListingPageHeader",
+        "ProfileSkeleton",
+        "Button",
+        "ReloadOutlined",
+        "RefreshStatus",
+        "Alert",
+        "About"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 2,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": true,
+      "hasLoad": true,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/report/assignment/[contentId].js",
+      "sha": "991774a8bd8fd5ad972830d3f9eb86e2625e5a28",
+      "lines": 7,
+      "bytes": 207,
+      "localImports": [
+        "@/components/Report/AssignmentReportContent"
+      ],
+      "childCandidates": [
+        "AssignmentReportContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    },
+    {
+      "path": "src/pages/teacher/report/quiz/[quizId].js",
+      "sha": "b40b3462f4c328beeba2cca895704397d06db596",
+      "lines": 7,
+      "bytes": 183,
+      "localImports": [
+        "@/components/Report/QuizReportContent"
+      ],
+      "childCandidates": [
+        "QuizReportContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "modalConfirmCalls": 0,
+      "queryModes": [],
+      "hasEmpty": false,
+      "hasError": false,
+      "hasLoad": false,
+      "hasAuth": false
+    }
+  ]
+}
