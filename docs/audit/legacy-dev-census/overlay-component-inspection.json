@@ -4,6 +4,101 @@
   "totalNamedCandidates": 43,
   "records": [
     {
+      "path": "src/components/admin/AdminAssignmentBuilderModal.jsx",
+      "sha": "1890a759e6bafd2ac5694c348c118af7c4841e7e",
+      "lines": 441,
+      "imports": [
+        "@/api/Services/AdminService",
+        "@/api/Services/adminServices/departmentService",
+        "@/api/Services/AdminAssignmentContentService",
+        "@/utils/uploadToR2",
+        "@/components/Global/Upload/UploadFromLinkButton",
+        "@/utils/formErrors",
+        "@/utils/assignmentSchema",
+        "@/utils/adminAssignmentResources",
+        "@/utils/adminAssignmentEdit",
+        "@/utils/dateUtils"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Spin",
+        "Alert",
+        "Form",
+        "Form.Item",
+        "Select",
+        "Radio.Group",
+        "Radio",
+        "Input",
+        "TextArea",
+        "InputNumber",
+        "DatePicker",
+        "Button",
+        "DeleteOutlined",
+        "UploadFromLinkButton",
+        "Checkbox.Group"
+      ],
+      "events": 11,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/admin/electives/AllocateModal.jsx",
+      "sha": "e2d933212f52893888fc9330184ab77ec22ecc4a",
+      "lines": 126,
+      "imports": [
+        "@/api/Services/ElectiveService"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Form",
+        "Form.Item",
+        "Radio.Group",
+        "Select",
+        "Input.TextArea",
+        "Input",
+        "Alert"
+      ],
+      "events": 4,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/admin/electives/OfferingRosterDrawer.jsx",
+      "sha": "0628a10ae2a848c4c8c90f29a7c54095ec3d7048",
+      "lines": 145,
+      "imports": [
+        "@/components/admin/AdminTableToolbar",
+        "@/api/Services/ElectiveService",
+        "@/components/admin/studentGroups/groupUi"
+      ],
+      "jsxTags": [
+        "Text",
+        "Space",
+        "StateTag",
+        "Space.Compact",
+        "Select",
+        "Button",
+        "Popconfirm",
+        "Drawer",
+        "Tag",
+        "Alert",
+        "AdminTableToolbar",
+        "Table"
+      ],
+      "events": 8,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
       "path": "src/components/Assignments/SubmitAssignmentModal.jsx",
       "sha": "b65a854960891623f4b0c885054bb8d24610d87a",
       "lines": 585,
@@ -78,6 +173,25 @@
       }
     },
     {
+      "path": "src/components/Course/Syllabus/__tests__/VideoDrawer.test.jsx",
+      "sha": "ffcdedfe36b84cbc7b3a81f7a591c1b2c930c537",
+      "lines": 89,
+      "imports": [
+        "../VideoDrawer",
+        "@/api/Services/courseServices",
+        "@/api/Services/AdminService"
+      ],
+      "jsxTags": [
+        "VideoDrawer"
+      ],
+      "events": 3,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": false
+      }
+    },
+    {
       "path": "src/components/Course/Syllabus/VideoDrawer.jsx",
       "sha": "21020d6b212edda856df8aa539ebb7122c7138a2",
       "lines": 287,
@@ -126,25 +240,6 @@
         "permission": false,
         "loading": false,
         "error": true
-      }
-    },
-    {
-      "path": "src/components/Course/Syllabus/__tests__/VideoDrawer.test.jsx",
-      "sha": "ffcdedfe36b84cbc7b3a81f7a591c1b2c930c537",
-      "lines": 89,
-      "imports": [
-        "../VideoDrawer",
-        "@/api/Services/courseServices",
-        "@/api/Services/AdminService"
-      ],
-      "jsxTags": [
-        "VideoDrawer"
-      ],
-      "events": 3,
-      "flags": {
-        "permission": false,
-        "loading": true,
-        "error": false
       }
     },
     {
@@ -258,6 +353,42 @@
       }
     },
     {
+      "path": "src/components/Global/Offcanvas/Syallabus/__tests__/AddLessonDrawer.test.jsx",
+      "sha": "661a27fe6e6539ffc701dfa4846c902d3f759c3b",
+      "lines": 77,
+      "imports": [
+        "../AddLessonDrawer",
+        "@/api/ApiMethod"
+      ],
+      "jsxTags": [
+        "AddLessonDrawer"
+      ],
+      "events": 1,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/__tests__/AddNewLessonContentDrawer.test.js",
+      "sha": "5525d74d71ba997fc4ce491c885d88c675773095",
+      "lines": 46,
+      "imports": [
+        "./ResourceComposer"
+      ],
+      "jsxTags": [
+        "ResourceComposer",
+        "LiveClass"
+      ],
+      "events": 0,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": false
+      }
+    },
+    {
       "path": "src/components/Global/Offcanvas/Syallabus/AddLessonDrawer.jsx",
       "sha": "ce4803eb2e8eabd6e86674c0b128789cf6f52a23",
       "lines": 196,
@@ -309,21 +440,269 @@
       }
     },
     {
-      "path": "src/components/Global/Offcanvas/Syallabus/__tests__/AddLessonDrawer.test.jsx",
-      "sha": "661a27fe6e6539ffc701dfa4846c902d3f759c3b",
-      "lines": 77,
+      "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+      "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee",
+      "lines": 113,
       "imports": [
-        "../AddLessonDrawer",
-        "@/api/ApiMethod"
+        "../Button/button"
       ],
       "jsxTags": [
-        "AddLessonDrawer"
+        "Drawer",
+        "CustomButton"
+      ],
+      "events": 3,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/profile/about/MarksheetUpload.jsx",
+      "sha": "bee3e09a1a5b541c41294c7d5e0a016663d6cefb",
+      "lines": 51,
+      "imports": [
+        "@/utils/uploadToR2",
+        "@/components/profile/PrivateDocLink"
+      ],
+      "jsxTags": [
+        "Upload",
+        "Button",
+        "CheckCircleFilled",
+        "UploadOutlined",
+        "PrivateDocLink"
+      ],
+      "events": 0,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/profile/VideoIntroModal.jsx",
+      "sha": "4b6042428795c19ec29002a5abdea4c3476d8705",
+      "lines": 683,
+      "imports": [
+        "../Global/ModalContainer/ModalContainer",
+        "@/utils/uploadToR2",
+        "@/api/Services/ProfileService"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Button",
+        "Image",
+        "Player",
+        "Progress"
+      ],
+      "events": 7,
+      "flags": {
+        "permission": true,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Projects/modals/TaskDetailsModal.jsx",
+      "sha": "a37859dfc5f069dff40d2855a4e971557ceadc44",
+      "lines": 647,
+      "imports": [],
+      "jsxTags": [
+        "SwapOutlined",
+        "EyeOutlined",
+        "WarningOutlined",
+        "Tag",
+        "Alert",
+        "Button",
+        "Popconfirm",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Select",
+        "DatePicker",
+        "Input.TextArea",
+        "Spin",
+        "Empty"
+      ],
+      "events": 14,
+      "flags": {
+        "permission": true,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Projects/ProjectModalShell.jsx",
+      "sha": "657a2c2448d884940f50c4f31a5e8ff00d173e25",
+      "lines": 45,
+      "imports": [],
+      "jsxTags": [
+        "Modal"
       ],
       "events": 1,
       "flags": {
         "permission": false,
         "loading": false,
         "error": false
+      }
+    },
+    {
+      "path": "src/components/Quiz/QuizBuilderModal.jsx",
+      "sha": "c0125d141d8e36d6d03c1615f2646aded2b7ac96",
+      "lines": 590,
+      "imports": [
+        "@/utils/dateUtils",
+        "@/api/Services/quizServices",
+        "@/api/Services/adminServices/departmentService",
+        "@/utils/formErrors"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Alert",
+        "Button",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Space",
+        "DatePicker",
+        "InputNumber",
+        "Switch",
+        "Radio.Group",
+        "Radio",
+        "Select",
+        "Form.List",
+        "DeleteOutlined",
+        "Input.TextArea",
+        "Radio.Button",
+        "PlusOutlined"
+      ],
+      "events": 13,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/AddToDriveModal.jsx",
+      "sha": "24ea1480d1533d050291b72dea5a282cf5ceb7b2",
+      "lines": 123,
+      "imports": [
+        "@/api/Services/AdminService",
+        "@/api/Services/TpoService",
+        "@/components/tpo/tpoFiles",
+        "@/components/tpo/ui/journeyRules"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Button",
+        "Space",
+        "Alert",
+        "List",
+        "List.Item",
+        "Typography.Text",
+        "Empty",
+        "Select",
+        "Checkbox",
+        "Input.TextArea"
+      ],
+      "events": 7,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/FollowUpModal.jsx",
+      "sha": "6bb0b811e75667c9fd95894b31042de15cfea821",
+      "lines": 164,
+      "imports": [
+        "@/components/tpo/dj",
+        "@/api/Services/AdminService",
+        "@/api/Services/TpoHubService",
+        "@/api/Services/TpoService"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Alert",
+        "Form",
+        "Form.Item",
+        "Select",
+        "DatePicker",
+        "Input.TextArea"
+      ],
+      "events": 5,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/ImportPreviewModal.js",
+      "sha": "3e69eb9838c1bcbdba13f4767e3d12dd5b77938a",
+      "lines": 229,
+      "imports": [
+        "./tpoFiles",
+        "@/api/Services/AdminService"
+      ],
+      "jsxTags": [
+        "Space",
+        "Button",
+        "Modal",
+        "Alert",
+        "Typography.Paragraph",
+        "Upload.Dragger",
+        "InboxOutlined",
+        "Typography.Text",
+        "Radio.Group",
+        "Radio",
+        "Tabs",
+        "Tag",
+        "Table"
+      ],
+      "events": 8,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/InviteModal.js",
+      "sha": "3ba89e4c1bec045b0671ee2ac3d1a8098596154c",
+      "lines": 313,
+      "imports": [
+        "@/api/Services/AdminService",
+        "@/api/Services/TpoService",
+        "@/api/Services/TpoHubService",
+        "@/components/tpo/dj",
+        "@/components/tpo/invite/inviteState"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Typography.Text",
+        "Steps",
+        "Timeline",
+        "Button",
+        "Alert",
+        "Input",
+        "MailOutlined",
+        "ShareAltOutlined",
+        "Input.TextArea",
+        "EmailPreview",
+        "Checkbox",
+        "LoadingOutlined",
+        "CheckCircleFilled",
+        "CopyOutlined",
+        "ExclamationCircleFilled"
+      ],
+      "events": 24,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
       }
     }
   ]
