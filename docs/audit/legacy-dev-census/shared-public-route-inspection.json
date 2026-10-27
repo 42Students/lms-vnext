@@ -767,6 +767,394 @@
       "jsxComponents": [],
       "overlayCandidates": [],
       "events": 0
+    },
+    {
+      "path": "src/pages/enterprises.js",
+      "sha": "b814e046732f9340010cff73131db0b02120d550",
+      "lines": 52,
+      "imports": [
+        "@/components/marketing/MarketingLayout",
+        "@/components/marketing/sections",
+        "@/components/marketing/data"
+      ],
+      "jsxComponents": [
+        "MarketingLayout",
+        "PageHero",
+        "AudienceDetail",
+        "IntegrationsStrip",
+        "PlatformPillars",
+        "CtaBand"
+      ],
+      "overlayCandidates": [
+        "PlatformPillars",
+        "CtaBand"
+      ],
+      "events": 0
+    },
+    {
+      "path": "src/pages/home.js",
+      "sha": "c76d3b3a7194d00a3740859979386f675998db67",
+      "lines": 45,
+      "imports": [
+        "@/components/marketing/MarketingLayout",
+        "@/components/marketing/sections"
+      ],
+      "jsxComponents": [
+        "MarketingLayout",
+        "Hero",
+        "Personalization",
+        "AgentGrid",
+        "IntegrationsStrip",
+        "AudienceSplit",
+        "PlatformPillars",
+        "LifecycleStrip",
+        "CtaBand"
+      ],
+      "overlayCandidates": [
+        "AgentGrid",
+        "PlatformPillars",
+        "CtaBand"
+      ],
+      "events": 0
+    },
+    {
+      "path": "src/pages/index.js",
+      "sha": "85bb7d479ea68b277153786a41842a5567ff1097",
+      "lines": 74,
+      "imports": [
+        "../loginPages/Login",
+        "@/components/Header/LoginHeader",
+        "../loginPages/JntuLogin",
+        "@/redux/store",
+        "@/common/subDomains",
+        "@/loginPages/DgipucLogin"
+      ],
+      "jsxComponents": [
+        "Head",
+        "Header",
+        "JntuLogin",
+        "DgipucLogin",
+        "LoginPage"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/login.js",
+      "sha": "ae94dbe3876bc6cdf4f9fbda583dabe65efcb4ad",
+      "lines": 20,
+      "imports": [
+        "../loginPages/Login"
+      ],
+      "jsxComponents": [
+        "Head",
+        "LoginPage"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/placements/index.js",
+      "sha": "787b4b8dad2fafb4e204f258286afa030b1f06c6",
+      "lines": 119,
+      "imports": [
+        "@/api/Services/TpoService"
+      ],
+      "jsxComponents": [
+        "Card",
+        "Skeleton",
+        "Result",
+        "Button",
+        "Space",
+        "Typography.Title",
+        "Typography.Paragraph",
+        "Statistic",
+        "Alert",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Input.TextArea"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item"
+      ],
+      "events": 3
+    },
+    {
+      "path": "src/pages/platform.js",
+      "sha": "44ed4bd1bacc3c82a6a9f23e10886366862411f2",
+      "lines": 56,
+      "imports": [
+        "@/components/marketing/MarketingLayout",
+        "@/components/marketing/sections"
+      ],
+      "jsxComponents": [
+        "MarketingLayout",
+        "PageHero",
+        "AgentGrid",
+        "PlatformPillars",
+        "IntegrationsStrip",
+        "LifecycleStrip",
+        "CtaBand"
+      ],
+      "overlayCandidates": [
+        "AgentGrid",
+        "PlatformPillars",
+        "CtaBand"
+      ],
+      "events": 0
+    },
+    {
+      "path": "src/pages/privacy-policy.js",
+      "sha": "d234bcaa4fcee71519356e0b72f5702089c51605",
+      "lines": 379,
+      "imports": [],
+      "jsxComponents": [
+        "Head"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/quiz.js",
+      "sha": "8d32a4e4dcdd9593cc741cba4ff034961d87cd9d",
+      "lines": 111,
+      "imports": [
+        "@/components/Quiz/quizpanel",
+        "@/utils/clientErrorReporting"
+      ],
+      "jsxComponents": [
+        "QuizErrorBoundary",
+        "StudentQuizContent",
+        "Head",
+        "Quizpanel"
+      ],
+      "overlayCandidates": [
+        "Quizpanel"
+      ],
+      "events": 3
+    },
+    {
+      "path": "src/pages/recruiter-invite/[token].js",
+      "sha": "c92cf9cd504414b99ef7f86e48b113238ff260f7",
+      "lines": 269,
+      "imports": [
+        "@/api/Services/TpoService",
+        "@/components/recruiter/enterAfterJoin"
+      ],
+      "jsxComponents": [
+        "Link",
+        "Card",
+        "Result",
+        "Skeleton",
+        "Button",
+        "Typography.Title",
+        "Typography.Text",
+        "Alert",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Typography.Paragraph",
+        "Modal",
+        "Input.TextArea"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item",
+        "Modal"
+      ],
+      "events": 14
+    },
+    {
+      "path": "src/pages/request-demo.js",
+      "sha": "6e95b3d2e524f6576bbb0d2a83f56d39134d0e9d",
+      "lines": 93,
+      "imports": [
+        "@/components/marketing/MarketingLayout",
+        "@/components/marketing/icons",
+        "@/components/marketing/data",
+        "@/components/marketing/marketing.module.scss"
+      ],
+      "jsxComponents": [
+        "MarketingLayout",
+        "Icon"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin-login.js",
+      "sha": "e13b53e550803c94757a4d008db62810d0319a4f",
+      "lines": 26,
+      "imports": [
+        "../loginPages/SuperAdminLogin",
+        "../loginPages/DefaultLoginBackground",
+        "@/components/Header/LoginHeader"
+      ],
+      "jsxComponents": [
+        "Head",
+        "DefaultLoginBackground",
+        "Header",
+        "SuperAdminLoginPage"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/tracker/audit-findings.js",
+      "sha": "0743ab2a5e74e0abf6a96762cc700247df55d41a",
+      "lines": 225,
+      "imports": [
+        "@/components/tracker/TrackerShell",
+        "@/components/tracker/TrackerLogsAccessGate",
+        "@/components/tracker/auditFindings/AuditFindingDrawer",
+        "@/components/tracker/auditFindings/auditFindingsModel",
+        "@/api/Services/AuditFindingsService",
+        "@/utils/bugTrackerUtils",
+        "@/utils/authUtils"
+      ],
+      "jsxComponents": [
+        "Tag",
+        "Text",
+        "Button",
+        "SyncOutlined",
+        "Alert",
+        "Space",
+        "Segmented",
+        "Select",
+        "Input.Search",
+        "Table",
+        "Empty",
+        "Collapse",
+        "AuditFindingDrawer",
+        "Head",
+        "TrackerShell",
+        "AuditFindingsContent",
+        "TrackerLogsAccessGate"
+      ],
+      "overlayCandidates": [
+        "Table",
+        "AuditFindingDrawer"
+      ],
+      "events": 11
+    },
+    {
+      "path": "src/pages/tracker/index.js",
+      "sha": "844db5af1bd905a191aaddfc6710e0694083cb4d",
+      "lines": 345,
+      "imports": [
+        "@/components/tracker/TrackerShell",
+        "@/components/tracker/ScreenshotPicker",
+        "@/components/tracker/SimilarIssuesPanel",
+        "@/api/Services/BugTrackerService",
+        "@/utils/bugTrackerAttachments",
+        "@/data/bugTrackerData",
+        "@/utils/bugTrackerUtils"
+      ],
+      "jsxComponents": [
+        "Head",
+        "TrackerShell",
+        "Button",
+        "Link",
+        "Alert",
+        "Form",
+        "Row",
+        "Col",
+        "Form.Item",
+        "Select",
+        "Cascader",
+        "TextArea",
+        "SimilarIssuesPanel",
+        "ScreenshotPicker",
+        "Input"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item",
+        "SimilarIssuesPanel"
+      ],
+      "events": 6
+    },
+    {
+      "path": "src/pages/tracker/issues/[issueId].js",
+      "sha": "e0fa22814afc41472d9fc0c49fc881529e55aba1",
+      "lines": 263,
+      "imports": [
+        "@/components/tracker/TrackerShell",
+        "@/components/tracker/TrackerPill",
+        "@/components/tracker/EngineeringDetails",
+        "@/components/tracker/RetestCard",
+        "@/components/tracker/IssueLogsPanel",
+        "@/components/tracker/ActivityTimeline",
+        "@/api/Services/BugTrackerService",
+        "@/data/bugTrackerData",
+        "@/utils/bugTrackerUtils",
+        "@/utils/trackerMarkdown"
+      ],
+      "jsxComponents": [
+        "Head",
+        "TrackerShell",
+        "Link",
+        "Alert",
+        "Skeleton",
+        "Button",
+        "CopyOutlined",
+        "FileMarkdownOutlined",
+        "SeverityPill",
+        "StatusPill",
+        "Skeleton.Input",
+        "Select",
+        "RetestCard",
+        "Image.PreviewGroup",
+        "Image",
+        "IssueLogsPanel",
+        "EngineeringDetails",
+        "ActivityTimeline",
+        "TrackerIssueDetailBody"
+      ],
+      "overlayCandidates": [
+        "IssueLogsPanel"
+      ],
+      "events": 3
+    },
+    {
+      "path": "src/pages/tracker/issues/index.js",
+      "sha": "06aa658816d0f50d1f6c3488b8c22d55b75f6c9a",
+      "lines": 405,
+      "imports": [
+        "@/components/tracker/TrackerShell",
+        "@/components/tracker/TrackerPill",
+        "@/api/Services/BugTrackerService",
+        "@/utils/trackerBulk",
+        "@/utils/trackerSavedFilters",
+        "@/data/bugTrackerData",
+        "@/utils/bugTrackerUtils"
+      ],
+      "jsxComponents": [
+        "CloseOutlined",
+        "Head",
+        "TrackerShell",
+        "Link",
+        "Input",
+        "Select",
+        "Dropdown",
+        "Button",
+        "StarOutlined",
+        "Alert",
+        "Skeleton",
+        "Checkbox",
+        "SeverityPill",
+        "StatusPill",
+        "Empty",
+        "Modal",
+        "Pagination"
+      ],
+      "overlayCandidates": [
+        "Dropdown",
+        "Modal"
+      ],
+      "events": 15
     }
   ]
 }
