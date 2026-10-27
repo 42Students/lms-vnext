@@ -5063,6 +5063,1192 @@
       "uiSignals": [],
       "totalUiSignals": 0,
       "actionSamples": []
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js",
+      "sha": "5d1f59234765e962346e23d19265449798c9a770",
+      "lineCount": 241,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "./videoform",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/Global/Offcanvas/Syallabus/videoform.js",
+          "sha": "bb807f6256a63a76306e00c9d5785672d3e211bc"
+        },
+        {
+          "specifier": "./youtube",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/Global/Offcanvas/Syallabus/youtube.js",
+          "sha": "9b46960fb1c90c08d43a67af5e2a4afc9caba084"
+        },
+        {
+          "specifier": "./liveclass",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/Global/Offcanvas/Syallabus/liveclass.js",
+          "sha": "23d6e402392cdf10db5767769a64569b571e8690"
+        },
+        {
+          "specifier": "./ResourceComposer",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/Global/Offcanvas/Syallabus/ResourceComposer.js",
+          "sha": "2a48048cf2eef9299c3114ce76625c828a3db6c9"
+        },
+        {
+          "specifier": "../../RightDrawer/DrawerWidget",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+          "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee"
+        },
+        {
+          "specifier": "@/components/Quiz/QuizBuilderModal",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/Quiz/QuizBuilderModal.jsx",
+          "sha": "c0125d141d8e36d6d03c1615f2646aded2b7ac96"
+        },
+        {
+          "specifier": "@/components/Global/Offcanvas/Assignment/newAssignment",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/Global/Offcanvas/Assignment/newAssignment.js",
+          "sha": "ab2ca6168ccbdb4dc25347f98e5c116e9bc377cd"
+        },
+        {
+          "specifier": "next/router",
+          "line": 11,
+          "type": "package"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 43,
+          "kind": "window.confirm"
+        },
+        {
+          "line": 84,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 118,
+          "kind": "Modal.confirm"
+        }
+      ],
+      "totalUiSignals": 3,
+      "actionSamples": [
+        {
+          "line": 25,
+          "s": "const AddNewLessonContentDrawer = ({ open, onClose, onContentAdded, contentMode }) => {"
+        },
+        {
+          "line": 110,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 134,
+          "s": "onClose={() => requestCloseTopLevel(false)}"
+        },
+        {
+          "line": 149,
+          "s": "<button type=\"button\" className=\"ln-btn ln-btn--regular\" onClick={() => setVideoSource(\"UPLOAD\")}>"
+        },
+        {
+          "line": 152,
+          "s": "<button type=\"button\" className=\"ln-btn ln-btn--blue-trans\" onClick={() => setVideoSource(\"YOUTUBE\")}>"
+        },
+        {
+          "line": 170,
+          "s": "onClick={() => selectCategory(category)}"
+        },
+        {
+          "line": 171,
+          "s": "onKeyDown={(event) => {"
+        },
+        {
+          "line": 193,
+          "s": "onClose={() => requestCloseChild(false)}"
+        },
+        {
+          "line": 199,
+          "s": "<button type=\"button\" className=\"ln-btn ln-btn--regular\" onClick={() => setVideoSource(\"UPLOAD\")}>"
+        },
+        {
+          "line": 202,
+          "s": "<button type=\"button\" className=\"ln-btn ln-btn--blue-trans\" onClick={() => setVideoSource(\"YOUTUBE\")}>"
+        },
+        {
+          "line": 221,
+          "s": "onClose={() => { setActive(null); setChildDirty(false); }}"
+        },
+        {
+          "line": 230,
+          "s": "onClose={() => { setActive(null); setChildDirty(false); }}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Assignment/newAssignment.js",
+      "sha": "ab2ca6168ccbdb4dc25347f98e5c116e9bc377cd",
+      "lineCount": 915,
+      "imports": [
+        {
+          "specifier": "antd",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/Global/Editor/editor",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/Global/Editor/editor.js",
+          "sha": "11388860f6eb8325d81eac86075f550d0288e6b2"
+        },
+        {
+          "specifier": "../../RightDrawer/DrawerWidget",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+          "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee"
+        },
+        {
+          "specifier": "react",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 16,
+          "type": "package"
+        },
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 17,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/utils/uploadToR2",
+          "line": 18,
+          "type": "local",
+          "path": "src/utils/uploadToR2.js",
+          "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+        },
+        {
+          "specifier": "@/components/Global/Upload/UploadFromLinkButton",
+          "line": 19,
+          "type": "local",
+          "path": "src/components/Global/Upload/UploadFromLinkButton.jsx",
+          "sha": "314cf6ea0ca8e190ac749193012210faeb7239cf"
+        },
+        {
+          "specifier": "dayjs",
+          "line": 20,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/dateUtils",
+          "line": 21,
+          "type": "local",
+          "path": "src/utils/dateUtils.js",
+          "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+        },
+        {
+          "specifier": "@/utils/assignmentSchema",
+          "line": 36,
+          "type": "local",
+          "path": "src/utils/assignmentSchema.js",
+          "sha": "dc14444afaf15882c0e5c866b32ca000980b71d3"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 390,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 746,
+          "kind": "<Dropdown"
+        },
+        {
+          "line": 822,
+          "kind": "<Upload"
+        }
+      ],
+      "totalUiSignals": 3,
+      "actionSamples": [
+        {
+          "line": 83,
+          "s": "export default function DrawerAssignment({ open, onClose, onSaved, onDirtyChange, editSelectedAssignment, insideSyllabus, lesson }) {"
+        },
+        {
+          "line": 387,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 398,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 502,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 537,
+          "s": "onClose={requestClose}"
+        },
+        {
+          "line": 586,
+          "s": "onChange={(value) => { setContentScope(value); setDirty(true); }}"
+        },
+        {
+          "line": 605,
+          "s": "action={<Button size=\"small\" onClick={hydrateCourses}>Retry</Button>}"
+        },
+        {
+          "line": 622,
+          "s": "onSelect={(value, option) => {"
+        },
+        {
+          "line": 644,
+          "s": "<Button size=\"small\" onClick={() => fetchLessons(formParams?.classId, formParams?.course?.value, formParams?.course?.course_slug ?? formParams?.course?.courseSlug)}>Retry</Button>"
+        },
+        {
+          "line": 662,
+          "s": "onSelect={(value, option) => {"
+        },
+        {
+          "line": 754,
+          "s": "onClick: ({ key }) => addResource(key),"
+        },
+        {
+          "line": 770,
+          "s": "<Button type=\"text\" danger icon={<DeleteOutlined />} disabled={assessmentDefinitionLocked} onClick={() => removeResource(resource.id)}>"
+        },
+        {
+          "line": 780,
+          "s": "onChange={(event) => updateResource(resource.id, { title: event.target.value })}"
+        },
+        {
+          "line": 799,
+          "s": "onChange={(event) => updateResource(resource.id, { link: event.target.value })}"
+        },
+        {
+          "line": 817,
+          "s": "onClick={() => updateResource(resource.id, { file_dto: createEmptyFileDTO() })}"
+        },
+        {
+          "line": 835,
+          "s": "onChange={(info) => {"
+        },
+        {
+          "line": 891,
+          "s": "onChange={(values) => { setAllowedSubmissionTypes(values); setDirty(true); }}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Quiz/QuizBuilderModal.jsx",
+      "sha": "c0125d141d8e36d6d03c1615f2646aded2b7ac96",
+      "lineCount": 590,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "dayjs",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/dateUtils",
+          "line": 4,
+          "type": "local",
+          "path": "src/utils/dateUtils.js",
+          "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+        },
+        {
+          "specifier": "antd",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 6,
+          "type": "package"
+        },
+        {
+          "specifier": "@/api/Services/quizServices",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/quizServices.js",
+          "sha": "5416eedaace3201c8dd5cd183ad7d69e8066699c"
+        },
+        {
+          "specifier": "@/api/Services/adminServices/departmentService",
+          "line": 8,
+          "type": "local",
+          "path": "src/api/Services/adminServices/departmentService.js",
+          "sha": "5c85495cb5823e0b4059c11c502143b47fec6a13"
+        },
+        {
+          "specifier": "@/utils/formErrors",
+          "line": 9,
+          "type": "local",
+          "path": "src/utils/formErrors.js",
+          "sha": "94717daf4b31733522d8f3fd60972f9acae1710a"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 80,
+          "kind": "window.confirm"
+        },
+        {
+          "line": 212,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 294,
+          "kind": "<Modal"
+        }
+      ],
+      "totalUiSignals": 3,
+      "actionSamples": [
+        {
+          "line": 42,
+          "s": "export default function QuizBuilderModal({ open, onClose, onCreated, onDirtyChange, lesson, courseId, classId, quizId, metadataOnly = false }) {"
+        },
+        {
+          "line": 209,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 220,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 273,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 297,
+          "s": "onCancel={requestClose}"
+        },
+        {
+          "line": 315,
+          "s": "onClose={() => setSaveError(null)}"
+        },
+        {
+          "line": 326,
+          "s": "action={<Button size=\"small\" onClick={() => setLoadRetryKey((value) => value + 1)}>Retry</Button>}"
+        },
+        {
+          "line": 425,
+          "s": "onChange={(event) => {"
+        },
+        {
+          "line": 443,
+          "s": "action={<Button size=\"small\" onClick={() => setClassesRetryKey((value) => value + 1)}>Retry sections</Button>}"
+        },
+        {
+          "line": 462,
+          "s": "onChange={(value) => { setTargetClassId(value); setDirty(true); }}"
+        },
+        {
+          "line": 487,
+          "s": "<Button type=\"text\" danger icon={<DeleteOutlined />} onClick={() => { remove(field.name); setDirty(true); }}>"
+        },
+        {
+          "line": 525,
+          "s": "onChange={() => {"
+        },
+        {
+          "line": 551,
+          "s": "onClick={() => { optionOps.remove(optionField.name); setDirty(true); }}"
+        },
+        {
+          "line": 559,
+          "s": "onClick={() => { optionOps.add({ text: \"\", correct: false }); setDirty(true); }}"
+        },
+        {
+          "line": 570,
+          "s": "<Button type=\"dashed\" icon={<PlusOutlined />} onClick={() => { add(defaultQuestion()); setDirty(true); }} block>"
+        },
+        {
+          "line": 581,
+          "s": "<Button onClick={requestClose} disabled={saving}>Cancel</Button>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Assignments/ViewAssignmentModal.jsx",
+      "sha": "e7d1fcd4c7aa725ba7d24cda51a9948a241121f3",
+      "lineCount": 465,
+      "imports": [
+        {
+          "specifier": "@/components/Global/RightDrawer/DrawerWidget",
+          "line": 1,
+          "type": "local",
+          "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+          "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee"
+        },
+        {
+          "specifier": "react",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "next/dynamic",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "interweave",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "./SubmitAssignmentModal",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/Assignments/SubmitAssignmentModal.jsx",
+          "sha": "b65a854960891623f4b0c885054bb8d24610d87a"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 7,
+          "type": "package"
+        },
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 8,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 9,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "antd",
+          "line": 10,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/dateUtils",
+          "line": 11,
+          "type": "local",
+          "path": "src/utils/dateUtils.js",
+          "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 15,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/assignmentSchema",
+          "line": 22,
+          "type": "local",
+          "path": "src/utils/assignmentSchema.js",
+          "sha": "dc14444afaf15882c0e5c866b32ca000980b71d3"
+        },
+        {
+          "specifier": "@/pages/Dashboard/course/syllabus/viewSubmissionsModal",
+          "line": 29,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/syllabus/viewSubmissionsModal.jsx",
+          "sha": "ff32ce1e89fba72fd90a725df0c2346f10ab336e"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": [
+        {
+          "line": 107,
+          "s": "export default function ViewAssignmentDrawer({ open, onClose, assignmentContent, insideSyllabus }) {"
+        },
+        {
+          "line": 261,
+          "s": "onClose={onClose}"
+        },
+        {
+          "line": 281,
+          "s": "onClose();"
+        },
+        {
+          "line": 305,
+          "s": "onClose={() => setViewAssignment(false)}"
+        },
+        {
+          "line": 316,
+          "s": "<Button icon={<ArrowLeftOutlined />} onClick={() => setViewingSubmission(false)}>"
+        },
+        {
+          "line": 378,
+          "s": "onClick={() => setViewingSubmissions(true)}"
+        },
+        {
+          "line": 389,
+          "s": "onClick={() => router.push({ pathname: \"/teacher/report/assignment/[contentId]\", query: { contentId: assignmentRecordId } })}"
+        },
+        {
+          "line": 407,
+          "s": "<Button size=\"small\" onClick={() => setSubmissionRefresh((value) => value + 1)}>"
+        },
+        {
+          "line": 458,
+          "s": "onClose={() => setViewingSubmissions(false)}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Projects/modals/TaskDetailsModal.jsx",
+      "sha": "a37859dfc5f069dff40d2855a4e971557ceadc44",
+      "lineCount": 647,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "dayjs",
+          "line": 4,
+          "type": "package"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 359,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 522,
+          "kind": "<Popconfirm"
+        }
+      ],
+      "totalUiSignals": 2,
+      "actionSamples": [
+        {
+          "line": 331,
+          "s": "onClick={() => handleTaskStatusAction(\"In Progress\", \"Moved task to In Progress.\", \"STATUS_UPDATE\")}"
+        },
+        {
+          "line": 339,
+          "s": "onClick={() => handleTaskStatusAction(\"In Review\", \"Moved task to review.\", \"REVIEW\")}"
+        },
+        {
+          "line": 347,
+          "s": "onClick={() => handleTaskStatusAction(\"Blocked\", \"Task has been flagged for attention.\", \"BLOCKED\")}"
+        },
+        {
+          "line": 355,
+          "s": "onClick={() => handleTaskStatusAction(\"Done\", \"Marked task as done.\", \"STATUS_UPDATE\")}"
+        },
+        {
+          "line": 362,
+          "s": "onConfirm={async () => {"
+        },
+        {
+          "line": 497,
+          "s": "<Button size=\"small\" loading={statusActionLoading} disabled={statusActionLoading} onClick={() => onLearnerStatusChange?.(\"In Progress\")}>"
+        },
+        {
+          "line": 502,
+          "s": "<Button size=\"small\" loading={statusActionLoading} disabled={statusActionLoading} onClick={() => onLearnerStatusChange?.(\"In Progress\")}>"
+        },
+        {
+          "line": 507,
+          "s": "<Button size=\"small\" loading={statusActionLoading} disabled={statusActionLoading} onClick={() => onLearnerStatusChange?.(\"Blocked\")}>"
+        },
+        {
+          "line": 517,
+          "s": "<Button type=\"primary\" size=\"small\" loading={submitForReviewLoading} onClick={onSubmitForReview}>"
+        },
+        {
+          "line": 525,
+          "s": "onConfirm={async () => {"
+        },
+        {
+          "line": 553,
+          "s": "action={<Button size=\"small\" onClick={retryTaskDetail}>Retry history</Button>}"
+        },
+        {
+          "line": 597,
+          "s": "onChange={setTaskActivityFilter}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/ShareModal.js",
+      "sha": "d445452909452caffd72e18bd006f8ff8fe99ec8",
+      "lineCount": 210,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/tpo/ui/shareMemory",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/tpo/ui/shareMemory.js",
+          "sha": "701cb044b073e438cbea96929415614680cd3c88"
+        },
+        {
+          "specifier": "@/components/tpo/dj",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 115,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 140,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 183,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 189,
+          "kind": "<Modal"
+        },
+        {
+          "line": 204,
+          "kind": "<Modal"
+        }
+      ],
+      "totalUiSignals": 5,
+      "actionSamples": [
+        {
+          "line": 21,
+          "s": "export default function ShareModal({ open, job, applicantCount, notSelectedCount = 0, onClose, inline = false }) {"
+        },
+        {
+          "line": 106,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 140,
+          "s": "<Popconfirm title=\"Stop sharing this link?\" description=\"The company can no longer open it.\" okText=\"Stop sharing\" okButtonProps={{ danger: true }} onConfirm={() => revoke(latest)}><a>Stop sharing</a></Popconfirm>"
+        },
+        {
+          "line": 147,
+          "s": "closable onClose={() => setCreateError(\"\")} style={{ marginBottom: 12 }} /> : null}"
+        },
+        {
+          "line": 171,
+          "s": "<Button onClick={() => copy(messageText, \"Message\")}>Copy message</Button>"
+        },
+        {
+          "line": 172,
+          "s": "<Button onClick={() => setCreated(null)}>Create another</Button>"
+        },
+        {
+          "line": 178,
+          "s": "<Alert style={{ marginTop: 16 }} type=\"warning\" showIcon message={sharesError} action={<Button size=\"small\" onClick={load}>Retry</Button>} data-testid=\"tpo.share.list-error\" />"
+        },
+        {
+          "line": 182,
+          "s": "<List.Item actions={[<Button key=\"a\" type=\"link\" size=\"small\" style={{ padding: 0, height: \"auto\" }} onClick={() => openActivity(s)}>Activity</Button>,"
+        },
+        {
+          "line": 183,
+          "s": "!s.revokedAt && dj(s.expiresAt).isAfter(dj()) ? <Popconfirm key=\"r\" title=\"Revoke this link?\" description=\"The company can no longer open it. This cannot be undone.\" okText=\"Revoke\" okButtonProps={{ danger: true }} onConfirm={() => revoke(s)}><a style={{ color: \"#cf1322\" }}>Revoke</a></Popconfirm> : null].filter(Boolean)}>"
+        },
+        {
+          "line": 189,
+          "s": "<Modal open={Boolean(events)} title={`Activity: ${events?.share?.recipientEmail || \"\"}`} footer={null} onCancel={() => setEvents(null)}>"
+        },
+        {
+          "line": 198,
+          "s": "<div className=\"tpo-share__head\"><strong>Share with {job?.companyName || \"the company\"}</strong><Button size=\"small\" onClick={requestClose} disabled={busy}>Done</Button></div>"
+        },
+        {
+          "line": 204,
+          "s": "<Modal open={open} title={`Share applicants with ${job?.companyName || \"the company\"}`} onCancel={requestClose} footer={null} width={640} destroyOnClose"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/ResultsEntryModal.jsx",
+      "sha": "9b8f9f5198637d69ff94ee3197611a6377c53bd1",
+      "lineCount": 219,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/tpo/grid/ChoiceEditor",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/tpo/grid/ChoiceEditor.jsx",
+          "sha": "04203bce4392d72c713417fb1dbe4082ef6ce74f"
+        },
+        {
+          "specifier": "antd",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/tpo/grid/GridWorkspace",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/tpo/grid/GridWorkspace.jsx",
+          "sha": "83e47b081e41e714fdc7447f61ab19d10057ca75"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/components/Common/PanelStates",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/Common/PanelStates.jsx",
+          "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+        },
+        {
+          "specifier": "../tpoFiles",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/tpo/tpoFiles.js",
+          "sha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d"
+        },
+        {
+          "specifier": "../ui/rollParser",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/tpo/ui/rollParser.js",
+          "sha": "0869a50d9af04c831eb583c1ba15ed961e522611"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 86,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 210,
+          "kind": "<Modal"
+        }
+      ],
+      "totalUiSignals": 2,
+      "actionSamples": [
+        {
+          "line": 25,
+          "s": "export default function ResultsEntryModal({ open, round, onClose, onDone, inline = false }) {"
+        },
+        {
+          "line": 83,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 92,
+          "s": "onOk: () => onClose?.(),"
+        },
+        {
+          "line": 147,
+          "s": "<Button key={o.value} size=\"small\" type={o.value === \"PASS\" ? \"primary\" : \"default\"} onClick={() => { setResult(selected.map((a) => a.applicationId), o.value); clear(); }}>{o.label}</Button>"
+        },
+        {
+          "line": 149,
+          "s": "<Button size=\"small\" onClick={() => { setResult(selected.map((a) => a.applicationId), null); clear(); }}>Clear</Button>"
+        },
+        {
+          "line": 165,
+          "s": "<Input.TextArea rows={3} value={paste} onChange={(e) => setPaste(e.target.value)} placeholder=\"21CS001, 21CS014, 21EC007 ...\" style={{ marginTop: 8 }} />"
+        },
+        {
+          "line": 168,
+          "s": "<Select style={{ width: 150 }} value={pasteOutcome} onChange={setPasteOutcome} options={OUTCOMES} />"
+        },
+        {
+          "line": 169,
+          "s": "<Button type=\"primary\" disabled={!parseRolls(paste).length} onClick={applyPaste}>Mark these {parseRolls(paste).length || \"\"}</Button>"
+        },
+        {
+          "line": 182,
+          "s": "<Switch checked={restNotCleared} onChange={setRestNotCleared} aria-label=\"Everyone I did not mark is Not cleared\" />"
+        },
+        {
+          "line": 204,
+          "s": "<Button type=\"primary\" disabled={cannotSave} loading={saving} onClick={save} data-testid=\"results.save\">{saveText}</Button>"
+        },
+        {
+          "line": 210,
+          "s": "<Modal open={open} onCancel={requestClose} width={900} destroyOnClose title={`Enter results: ${round?.name || \"\"}`}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/ScheduleModal.js",
+      "sha": "dbe210c0ab707e16c893afda16dacece703fb433",
+      "lineCount": 355,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "../ui/labels",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/tpo/ui/labels.js",
+          "sha": "96a56474f1800afeb073cde3e3cca67a9c438747"
+        },
+        {
+          "specifier": "antd",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "../ui/slotGenerator",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/tpo/ui/slotGenerator.js",
+          "sha": "10391e2c689139b4f7e088efd21d64960562a2c5"
+        },
+        {
+          "specifier": "@/components/tpo/dj",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 9,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 108,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 128,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 209,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 222,
+          "kind": "<Modal"
+        },
+        {
+          "line": 259,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 262,
+          "kind": "<Popconfirm"
+        }
+      ],
+      "totalUiSignals": 6,
+      "actionSamples": [
+        {
+          "line": 19,
+          "s": "export default function ScheduleModal({ round, job, onClose, readOnly = false }) {"
+        },
+        {
+          "line": 110,
+          "s": "content: round.mode === \"VIRTUAL\" ? \"Virtual panels need no venue.\" : <Input defaultValue={room} placeholder=\"Venue or room\" onChange={(e) => { room = e.target.value; }} />,"
+        },
+        {
+          "line": 130,
+          "s": "content: <Select style={{ width: \"100%\" }} placeholder=\"Choose a confirmed slot\" onChange={(v) => { slotId = v; }}"
+        },
+        {
+          "line": 192,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 222,
+          "s": "<Modal open={Boolean(round)} onCancel={requestClose} maskClosable={false} closable={!busy} keyboard={!busy} footer={null} width={860} destroyOnClose title={`Slots and rooms: ${round?.name || \"\"}`}>"
+        },
+        {
+          "line": 238,
+          "s": "action={<Button size=\"small\" loading={loading} onClick={load}>Retry missing data</Button>}"
+        },
+        {
+          "line": 244,
+          "s": "<List size=\"small\" dataSource={recruiterProposals} renderItem={(s) => <List.Item actions={[<Button key=\"c\" size=\"small\" type=\"primary\" disabled={locked || busy || Boolean(loadErrors.slots)} onClick={() => confirm(s)}>Confirm with venue</Button>]}>{t(s.startsAt)} to {t(s.endsAt)}</List.Item>} />} />"
+        },
+        {
+          "line": 257,
+          "s": "{ title: \"\", dataIndex: \"status\", render: (v, s) => (v === \"CONFIRMED\" ? <Tag color=\"green\">Confirmed</Tag> : <Button size=\"small\" disabled={locked || busy || Boolean(loadErrors.slots)} onClick={() => confirm(s)}>Confirm</Button>) },"
+        },
+        {
+          "line": 259,
+          "s": "<Popconfirm title=\"Remove this slot?\" disabled={locked || busy || Boolean(loadErrors.slots)} okText=\"Remove\" okButtonProps={{ danger: true }} onConfirm={() => removeSlot(s, true)}><Button size=\"small\" type=\"text\" danger disabled={locked || busy || Boolean(loadErrors.slots)} aria-label={`Remove slot ${t(s.startsAt)}`}>Remove</Button></Popconfirm>"
+        },
+        {
+          "line": 262,
+          "s": "<Popconfirm title=\"Remove every slot nobody is booked into?\" description=\"Slots with students in them stay.\" okText=\"Remove them\" okButtonProps={{ danger: true }} onConfirm={() => clearUnbooked(true)}>"
+        },
+        {
+          "line": 279,
+          "s": "<Button onClick={previewGenerated}>Preview slots</Button>"
+        },
+        {
+          "line": 286,
+          "s": "<Button type=\"primary\" style={{ marginTop: 8 }} loading={busy} disabled={locked || Boolean(loadErrors.slots)} onClick={addGenerated}>Add {generated.slots.length} slots</Button>"
+        },
+        {
+          "line": 295,
+          "s": "<Button onClick={addSlot} loading={busy} disabled={locked || Boolean(loadErrors.slots)}>Add slot</Button>"
+        },
+        {
+          "line": 302,
+          "s": "<Input value={r.name} style={{ width: 160 }} onChange={(e) => { setRoomsDirty(true); setRooms(rooms.map((x, j) => (j === i ? { ...x, name: e.target.value } : x))); }} />"
+        },
+        {
+          "line": 303,
+          "s": "<InputNumber min={1} value={r.capacity} onChange={(v) => { setRoomsDirty(true); setRooms(rooms.map((x, j) => (j === i ? { ...x, capacity: v } : x))); }} addonAfter=\"seats\" />"
+        },
+        {
+          "line": 304,
+          "s": "{rooms.length > 1 && <Button size=\"small\" onClick={() => { setRoomsDirty(true); setRooms(rooms.filter((_, j) => j !== i)); }}>Remove</Button>}"
+        },
+        {
+          "line": 307,
+          "s": "{!isInterview && <div><Button size=\"small\" onClick={() => setRooms([...rooms, { name: `Hall ${String.fromCharCode(65 + rooms.length)}`, capacity: 60 }])}>Add a room</Button></div>}"
+        },
+        {
+          "line": 308,
+          "s": "<Button type=\"primary\" style={{ marginTop: 8 }} onClick={doPreview} loading={busy} disabled={Boolean(loadErrors.slots || loadErrors.assignments)}>Preview assignment</Button>"
+        },
+        {
+          "line": 324,
+          "s": "onChange={(sid) => placeStudent(c.applicationId, slots.find((s) => s.id === sid))} />"
+        },
+        {
+          "line": 333,
+          "s": "<Select value={notify} onChange={setNotify} style={{ width: 240 }} options={[{ value: true, label: \"Save and tell the students\" }, { value: false, label: \"Save without telling anyone yet\" }]} />"
+        },
+        {
+          "line": 334,
+          "s": "<Button type=\"primary\" onClick={doCommit} loading={busy} disabled={locked || preview.placed.length === 0}>Save assignment</Button>"
+        },
+        {
+          "line": 344,
+          "s": "<List.Item actions={q.status === \"PENDING\" ? [<Button key=\"m\" size=\"small\" disabled={locked || busy} onClick={() => decide(q, \"MOVE\")}>Move to slot</Button>, <Button key=\"k\" size=\"small\" disabled={locked || busy} onClick={() => decide(q, \"KEEP\")}>Keep</Button>] : [<Tag key=\"s\">{({ MOVED: \"Moved to a new slot\", KEPT: \"Kept their slot\" })[q.status] || label(\"request\", q.status)}</Tag>]}>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/OfferLettersModal.jsx",
+      "sha": "f85cced0e1cb4711f27bcb68904fcf494296fab2",
+      "lineCount": 128,
+      "imports": [
+        {
+          "specifier": "@/components/tpo/TpoDataTable",
+          "line": 1,
+          "type": "local",
+          "path": "src/components/tpo/TpoDataTable.js",
+          "sha": "636f3aa40954bee1a149a2b1d83d7585e5fb0aef"
+        },
+        {
+          "specifier": "react",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/TpoService.js",
+          "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+        },
+        {
+          "specifier": "@/utils/uploadToR2",
+          "line": 7,
+          "type": "local",
+          "path": "src/utils/uploadToR2.js",
+          "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+        },
+        {
+          "specifier": "../tpoFiles",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/tpo/tpoFiles.js",
+          "sha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d"
+        },
+        {
+          "specifier": "../ui/applicantRules",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/tpo/ui/applicantRules.js",
+          "sha": "4853a245bc474c30d83703935156479ade56a357"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 42,
+          "kind": "Modal.info"
+        },
+        {
+          "line": 49,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 91,
+          "kind": "<Modal"
+        },
+        {
+          "line": 99,
+          "kind": "<Upload"
+        }
+      ],
+      "totalUiSignals": 4,
+      "actionSamples": [
+        {
+          "line": 20,
+          "s": "* Props: open, offers (the offers still without a letter), onClose, onDone"
+        },
+        {
+          "line": 22,
+          "s": "export default function OfferLettersModal({ open, offers, onClose, onDone }) {"
+        },
+        {
+          "line": 37,
+          "s": "onClose?.();"
+        },
+        {
+          "line": 91,
+          "s": "<Modal open={open} onCancel={requestClose} width={720} destroyOnClose title=\"Attach offer letters\""
+        },
+        {
+          "line": 93,
+          "s": "<Button key=\"c\" onClick={requestClose} disabled={uploading}>Close</Button>,"
+        },
+        {
+          "line": 94,
+          "s": "<Button key=\"u\" type=\"primary\" disabled={sendable.length === 0 || uploading} loading={uploading} onClick={upload}>Upload {sendable.length || \"\"} letter{sendable.length === 1 ? \"\" : \"s\"}</Button>,"
+        }
+      ]
     }
   ],
   "remaining": "Expand transitive imports of all UI-rendering descendants. Resolve conditional overlays/actions, services/backend, mapping, tests and runtime separately.",
