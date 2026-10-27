@@ -2,11 +2,11 @@
 
 ## Cross-chat master closure operating contract (27 October 2026)
 
-**Canonical entry point:** this README and the eight role/shared specifications linked below. **Do not create a separate chat spreadsheet, duplicate Kanban, or independent percentage of completion.** The official project task and DATABASE/API/UI/RELEASE phase truth remains [\`docs/tracker.json\`](../tracker.json), validated by \`npm run progress\`. Detailed UI parity evidence is kept in these page specifications and the existing [account matrix](../planning/account-surface-parity.md), [legacy route inventories](../audit/legacy-inventory-A.md) and [B](../audit/legacy-inventory-B.md). Summary reports are **derived from evidence**, never separately maintained green checkmarks.
+**Canonical entry point:** this README and the eight role/shared specifications linked below. **Do not create a separate chat spreadsheet, duplicate Kanban, or independent percentage of completion.** The official project task and DATABASE/API/UI/RELEASE phase truth remains [`docs/tracker.json`](../tracker.json), validated by `npm run progress`. Detailed UI parity evidence is kept in these page specifications and the existing [account matrix](../planning/account-surface-parity.md), [legacy route inventories](../audit/legacy-inventory-A.md) and [B](../audit/legacy-inventory-B.md). Summary reports are **derived from evidence**, never separately maintained green checkmarks.
 
 ### Product direction and source hierarchy
 
-- **Coverage target:** all legitimate user jobs and UI surfaces in the *legacy development product*, plus useful vNext improvements. Use \`42Students/lms2-fe@lms-dev-2026\` and \`42Students/lms@lms-dev-2026\` for discovery of the requested development-version feature set. Record the **exact** FE and BE commits read on each page. Existing inventories were generated from older snapshots and are **leads, not proof that the current source was exhaustively inventoried**.
+- **Coverage target:** all legitimate user jobs and UI surfaces in the *legacy development product*, plus useful vNext improvements. Use `42Students/lms2-fe@lms-dev-2026` and `42Students/lms@lms-dev-2026` for discovery of the requested development-version feature set. Record the **exact** FE and BE commits read on each page. Existing inventories were generated from older snapshots and are **leads, not proof that the current source was exhaustively inventoried**.
 - **Cutover obligation:** the existing [clone-parity protocol](../planning/clone-parity-protocol.md) independently uses production branches as the release oracle. Compare development-only behavior to production before final release. Do not quietly replace that release gate by auditing dev alone.
 - **Design authority:** the shared vNext UI kit and an internally coherent, accessible product design. Prototype screenshots are optional references, **not** a demand for pixel reproduction. Never use a visual redesign to silently remove a required workflow.
 - **No-loss rule:** old page/route equality is **not** the goal. Preserve 100% of required reachable capabilities, transitions, permissions, bookmarks and outcomes. A legacy surface may become a tab, drawer or integrated workspace only after action/state/deep-link parity is proven. Every extra vNext surface must also be classified as an intentional improvement, redundant candidate, or explicitly approved retirement; don't delete a beneficial improvement just to match counts.
@@ -17,7 +17,7 @@
 | Level | Unit | Closure meaning |
 | --- | --- | --- |
 | Account | Learner, Faculty, Mentor, College Admin, Super Admin, TPO, Recruiter/HR; shared/public/operational cross-role group | Every reachable child journey mapped; shared and producer→consumer contracts proved |
-| Page family | Stable user job / navigation destination, not necessarily one \`page.tsx\` | All child surfaces, actions, state contracts, responsive paths and page evidence complete |
+| Page family | Stable user job / navigation destination, not necessarily one `page.tsx` | All child surfaces, actions, state contracts, responsive paths and page evidence complete |
 | Surface | Full page, subpage/tab, modal, drawer, wizard step, dropdown/popover, command palette, inline editor, upload/viewer, confirmation or meaningful responsive-only screen | Every discoverable opening trigger and close path recorded; no orphaned legacy surface |
 | Action | CTA, filter, search, sort, pagination, bulk operation, CRUD, submit, export, notification/deep link, destructive transition | Authorized behavior, persistence/side effects and negative paths verified |
 | State / scenario | Default, first-run/empty, populated, large data, filtered-empty, loading, partial/stale, failed/retry, validation, success, conflict/unknown outcome, unauthorized/read-only, past/future, mobile | Applicable states executed with deterministic fixtures; nonapplicable states explicitly justified |
@@ -26,7 +26,7 @@ Do not inflate the page denominator by counting each row, component, transient t
 
 ### Stable page contract — required for *every* page before acceptance
 
-Keep the following data within the appropriate \`docs/parity/<account>.md\` section. If a family needs its own file for safe multi-chat edits, place it at \`docs/parity/pages/<account>/<stable-page-id>.md\` and link it **from the account specification**; move ownership of its detailed checks rather than copy them to a second tracker. Never silently replace legacy audit findings.
+Keep the following data within the appropriate `docs/parity/<account>.md` section. If a family needs its own file for safe multi-chat edits, place it at `docs/parity/pages/<account>/<stable-page-id>.md` and link it **from the account specification**; move ownership of its detailed checks rather than copy them to a second tracker. Never silently replace legacy audit findings.
 
 | Contract field | Required contents |
 | --- | --- |
@@ -41,7 +41,7 @@ Keep the following data within the appropriate \`docs/parity/<account>.md\` sect
 | Evidence | Code commit SHA, commands and test paths, exact passed/failed run/job URLs, DB/readback, desktop/mobile browser proof, UX evidence and exceptions |
 | Next action | One concrete failing or unchecked requirement, not a guessed percentage or vague “polish” |
 
-Every contract should assign stable child IDs (example: \`FAC-BLUEPRINT/SURF-ADD-CONTENT\`, \`.../ACT-PUBLISH\`, \`.../STATE-CONFLICT\`) and link their test witnesses. A surface or action discovered later is added to the **same family**, even if the parent page was previously considered complete. Historical “DONE”, “MAPPED”, “VERIFIED”, a passing unit suite, or a green prototype screenshot suite **must not be imported as new acceptance automatically**.
+Every contract should assign stable child IDs (example: `FAC-BLUEPRINT/SURF-ADD-CONTENT`, `.../ACT-PUBLISH`, `.../STATE-CONFLICT`) and link their test witnesses. A surface or action discovered later is added to the **same family**, even if the parent page was previously considered complete. Historical “DONE”, “MAPPED”, “VERIFIED”, a passing unit suite, or a green prototype screenshot suite **must not be imported as new acceptance automatically**.
 
 ### Closure gate (five independent facts, never collapsed into a single misleading green)
 
@@ -67,12 +67,12 @@ Every contract should assign stable child IDs (example: \`FAC-BLUEPRINT/SURF-ADD
 
 ### Multi-chat contract (all chats read this before touching a page)
 
-- Start from the current \`main\`, read \`AGENTS.md\`, \`docs/tracker.json\`, this README, the target role specification and any family file. Check current FE/BE/vNext SHAs. Current branch names alone are not stable oracle citations.
+- Start from the current `main`, read `AGENTS.md`, `docs/tracker.json`, this README, the target role specification and any family file. Check current FE/BE/vNext SHAs. Current branch names alone are not stable oracle citations.
 - Pick **one stable family ID** and a concrete before→after outcome. Different chats may work on different page families; avoid simultaneous edits to the same family, shared components or migration/schema/CI files without coordinating the actual write.
 - Preserve the existing cross-account page inventory, but do not assume a route named differently is a missing capability or that matching route names prove parity.
-- Commit page implementation, relevant tests and **that page's own evidence/checkbox changes together** to fresh \`main\` using optimistic blob SHA checks. No force-push. Reconcile conflicting edits before retrying.
+- Commit page implementation, relevant tests and **that page's own evidence/checkbox changes together** to fresh `main` using optimistic blob SHA checks. No force-push. Reconcile conflicting edits before retrying.
 - The next chat recovers status **from GitHub files and exact executed evidence**, not the previous chat's prose. Handoff should identify account/family ID, last verified SHAs, touched code/tests, what truly passed, remaining child IDs, blockers, external dependencies and the single next actionable defect.
-- Do not mutate \`docs/tracker.json\` merely because a page is visually or functionally improved; project tasks follow their own acceptance contract. Rollups and percentages must be **generated from current detailed evidence**, not copied from historical matrix headers.
+- Do not mutate `docs/tracker.json` merely because a page is visually or functionally improved; project tasks follow their own acceptance contract. Rollups and percentages must be **generated from current detailed evidence**, not copied from historical matrix headers.
 
 ### Practical start order
 
