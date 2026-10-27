@@ -30,8 +30,13 @@ describe("HR legacy inventory B explicit UNKNOWN routes, source parity audit",()
   expect(authorize).toBeGreaterThan(-1);
   expect(resolve).toBeGreaterThan(authorize);
   expect(load).toBeGreaterThan(resolve);
-  expect(job).toContain('href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"');
-  expect(job).toContain('discussionTab&&requestData?.party==="COMPANY"');
+  // The legacy request surface is now its own authorized tab instead of
+  // being hidden inside the employer messaging Discussion panel.
+  expect(job).toContain('href:"/recruiter/drives/"+workspace.job.id+"?tab=requests"');
+  expect(job).toContain('href:"/recruiter/drives/"+workspace.job.id+"?tab=discussion"');
+  expect(job).toContain('const discussionTab=query.tab==="discussion"');
+  expect(job).toContain('const requestData=requestsTab||discussionTab?');
+  expect(job).toContain('requestsTab&&requestData?.party==="COMPANY"');
   expect(job).toContain('<TpoDriveChangeRequests');
   expect(job).toContain('jobId={workspace.job.id} party="COMPANY"');
  });
