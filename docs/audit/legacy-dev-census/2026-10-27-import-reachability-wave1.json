@@ -2867,6 +2867,1361 @@
       "uiSignals": [],
       "totalUiSignals": 0,
       "actionSamples": []
+    },
+    {
+      "path": "src/components/tpo/drive/DriveHeader.jsx",
+      "sha": "6fe9fc05a0730cac7e268ab2f28498f455d22501",
+      "lineCount": 85,
+      "imports": [
+        {
+          "specifier": "antd",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/tpo/dj",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 56,
+          "kind": "<Dropdown"
+        },
+        {
+          "line": 74,
+          "kind": "<Dropdown"
+        }
+      ],
+      "totalUiSignals": 2,
+      "actionSamples": [
+        {
+          "line": 55,
+          "s": "{onShare && job.lifecycleStatus === \"PUBLISHED\" && <Button onClick={onShare}>Share with {job.companyName}</Button>}"
+        },
+        {
+          "line": 64,
+          "s": "<button type=\"button\" className=\"tpo-dh__step\" onClick={() => onTab(s.tab)}><b>{typeof s.n === \"number\" ? s.n.toLocaleString() : s.n}</b><span>{s.label}</span></button>"
+        },
+        {
+          "line": 74,
+          "s": "<Dropdown trigger={[\"click\"]} menu={{ items: next.more.map((m, i) => ({ key: String(i), label: m.title, onClick: m.action })) }}>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/DriveRequestReview.jsx",
+      "sha": "63d0ab72dbbe0adf49743c170d990eb7a61cc321",
+      "lineCount": 162,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/tpo/invite/VerifyCompanyWindow",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/tpo/invite/VerifyCompanyWindow.jsx",
+          "sha": "2a43fbb0b627910c69f4ef7b4e72f1705bfe5720"
+        },
+        {
+          "specifier": "@/components/tpo/dj",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/api/Services/TpoService",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/TpoService.js",
+          "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+        },
+        {
+          "specifier": "./publishPreflight",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/tpo/drive/publishPreflight.js",
+          "sha": "76e8d8718a5503ea5ab0453a0bd26e67d1958680"
+        },
+        {
+          "specifier": "./DiscussionTab",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/tpo/drive/DiscussionTab.jsx",
+          "sha": "2fd3f115c22d6f76150a4f7e4ecec7cf6722a586"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": [
+        {
+          "line": 89,
+          "s": "<VerifyCompanyWindow open={verifying} companyId={job.companyId} onClose={() => setVerifying(false)} onChanged={loadTrust} />"
+        },
+        {
+          "line": 95,
+          "s": "<Button size=\"small\" onClick={() => setVerifying(true)}>Verify {trust.name} first</Button>"
+        },
+        {
+          "line": 130,
+          "s": "<button type=\"button\" className={`tpo-dr__choice${pick === \"approve\" ? \" is-on\" : \"\"}`} onClick={() => setPick(\"approve\")}><strong>Approve</strong><span>Check the dates, then it goes live to the {fit?.eligible ?? \"eligible\"} students.</span></button>"
+        },
+        {
+          "line": 131,
+          "s": "<button type=\"button\" className={`tpo-dr__choice${pick === \"back\" ? \" is-on\" : \"\"}`} onClick={() => { setPick(\"back\"); setReasons([]); setNote(\"\"); }}><strong>Ask for changes</strong><span>It goes back to the recruiter with what to fix. Nothing goes live.</span></button>"
+        },
+        {
+          "line": 134,
+          "s": "<span className=\"tpo-pills\">{SEND_BACK.map((x) => <button type=\"button\" key={x} className={`tpo-pill${reasons.includes(x) ? \" is-on\" : \"\"}`} onClick={() => pickReason(x)}>{x}</button>)}</span>"
+        },
+        {
+          "line": 135,
+          "s": "<Input.TextArea rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder=\"Anything else for the recruiter\" />"
+        },
+        {
+          "line": 138,
+          "s": "<button type=\"button\" className={`tpo-dr__choice is-decline${pick === \"decline\" ? \" is-on\" : \"\"}`} onClick={() => { setPick(\"decline\"); setReasons([]); setNote(\"\"); }}><strong>Decline</strong><span>The recruiter is told why. They can ask again later.</span></button>"
+        },
+        {
+          "line": 141,
+          "s": "<span className=\"tpo-pills\">{DECLINE.map((x) => <button type=\"button\" key={x} className={`tpo-pill is-danger${reasons.includes(x) ? \" is-on\" : \"\"}`} onClick={() => pickReason(x)}>{x}</button>)}</span>"
+        },
+        {
+          "line": 142,
+          "s": "<Input.TextArea rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder=\"Tell them why (optional)\" />"
+        },
+        {
+          "line": 148,
+          "s": "<Checkbox checked={trustAfter} onChange={(e) => setTrustAfter(e.target.checked)} data-testid=\"drive.request.trust-after\">Trust {trust.name} for future drives</Checkbox>"
+        },
+        {
+          "line": 150,
+          "s": "<Button type=\"primary\" size=\"large\" loading={busy} onClick={approving(onApprovePublish)} data-testid=\"drive.approve-publish\">Approve and publish</Button>"
+        },
+        {
+          "line": 151,
+          "s": "<Button loading={busy} onClick={approving(onApproveLater)}>Approve, publish later</Button>"
+        },
+        {
+          "line": 155,
+          "s": "{pick === \"back\" && <Button type=\"primary\" size=\"large\" loading={busy} disabled={text.length < 3} onClick={async () => { await onSendBack(text); setPick(\"approve\"); loadAsked(); }}>Send back to the recruiter</Button>}"
+        },
+        {
+          "line": 156,
+          "s": "{pick === \"decline\" && <Button danger size=\"large\" loading={busy} disabled={text.length < 3} onClick={() => onDecline(text)}>Decline the request</Button>}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/DriveTalk.jsx",
+      "sha": "084fd7e9e5bf8774b4e45e723a52c99352b9b15b",
+      "lineCount": 40,
+      "imports": [
+        {
+          "specifier": "./DiscussionTab",
+          "line": 1,
+          "type": "local",
+          "path": "src/components/tpo/drive/DiscussionTab.jsx",
+          "sha": "2fd3f115c22d6f76150a4f7e4ecec7cf6722a586"
+        },
+        {
+          "specifier": "./ChangeRequests",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/tpo/drive/ChangeRequests.jsx",
+          "sha": "629af5e8de05ba87b0e658a2c6737fefe52c3027"
+        },
+        {
+          "specifier": "./InviteReviewer",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/tpo/drive/InviteReviewer.jsx",
+          "sha": "b035a594992214eedbec432b8c391924650ebc65"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": []
+    },
+    {
+      "path": "src/components/tpo/drive/ApplicantsTab.js",
+      "sha": "507bfb577f17933433fb31f36e9dbdb5d4315212",
+      "lineCount": 362,
+      "imports": [
+        {
+          "specifier": "next/link",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "../ui/ReasonPicker",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/tpo/ui/ReasonPicker.jsx",
+          "sha": "c1b008e7f1babc5f80f17218e88cd1df4e36fe84"
+        },
+        {
+          "specifier": "react",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "./ApplicantsBoard",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/tpo/drive/ApplicantsBoard.jsx",
+          "sha": "035c00fe04e9753f92f529f59828a33fc83370ff"
+        },
+        {
+          "specifier": "./DriveStudents",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/tpo/drive/DriveStudents.jsx",
+          "sha": "c884f369bb1ae0da1b414ace1e4e72228c914ab3"
+        },
+        {
+          "specifier": "./ShareModal",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/tpo/drive/ShareModal.js",
+          "sha": "d445452909452caffd72e18bd006f8ff8fe99ec8"
+        },
+        {
+          "specifier": "@/components/tpo/ui/HoverStory",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/tpo/ui/HoverStory.jsx",
+          "sha": "d6f1cd0dc9a446e617de3e11fb0e1ebfe7511e1a"
+        },
+        {
+          "specifier": "@/components/tpo/stories/applicantStories",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/tpo/stories/applicantStories.js",
+          "sha": "322f028771f7ee4330a59b52af96a5107f7c8f85"
+        },
+        {
+          "specifier": "../ui/applicantRules",
+          "line": 11,
+          "type": "local",
+          "path": "src/components/tpo/ui/applicantRules.js",
+          "sha": "4853a245bc474c30d83703935156479ade56a357"
+        },
+        {
+          "specifier": "../students/academics",
+          "line": 12,
+          "type": "local",
+          "path": "src/components/tpo/students/academics.js",
+          "sha": "7d2d94830a903eba1fc580ad79d4e5aaa8d00ee3"
+        },
+        {
+          "specifier": "../dj",
+          "line": 13,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "@/utils/safeHref",
+          "line": 14,
+          "type": "local",
+          "path": "src/utils/safeHref.js",
+          "sha": "7c05d05cdc41618a5e6be7d7304efa6d0f2a46a9"
+        },
+        {
+          "specifier": "../filters/filterModel",
+          "line": 15,
+          "type": "local",
+          "path": "src/components/tpo/filters/filterModel.js",
+          "sha": "ed70138d5c54727846942156d71bfa4fa4b0e479"
+        },
+        {
+          "specifier": "../TpoDataTable",
+          "line": 16,
+          "type": "local",
+          "path": "src/components/tpo/TpoDataTable.js",
+          "sha": "636f3aa40954bee1a149a2b1d83d7585e5fb0aef"
+        },
+        {
+          "specifier": "../bulk/BulkAction",
+          "line": 17,
+          "type": "local",
+          "path": "src/components/tpo/bulk/BulkAction.jsx",
+          "sha": "e99ab7d446037d2372e6b49fe8d13824299b2979"
+        },
+        {
+          "specifier": "../ui/ActionsWindow",
+          "line": 18,
+          "type": "local",
+          "path": "src/components/tpo/ui/ActionsWindow.jsx",
+          "sha": "dad777d6ad12ccb14209bc259f54c81082acf1cd"
+        },
+        {
+          "specifier": "../ui/JourneyStrip",
+          "line": 19,
+          "type": "local",
+          "path": "src/components/tpo/ui/JourneyStrip.jsx",
+          "sha": "f7cf68af72c9ee9c108ffa1321015df9266a7b72"
+        },
+        {
+          "specifier": "../tpoFiles",
+          "line": 20,
+          "type": "local",
+          "path": "src/components/tpo/tpoFiles.js",
+          "sha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 21,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoService",
+          "line": 22,
+          "type": "local",
+          "path": "src/api/Services/TpoService.js",
+          "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 23,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/components/tpo/ui/labels",
+          "line": 24,
+          "type": "local",
+          "path": "src/components/tpo/ui/labels.js",
+          "sha": "96a56474f1800afeb073cde3e3cca67a9c438747"
+        },
+        {
+          "specifier": "@/components/tpo/ui/AsyncModal",
+          "line": 25,
+          "type": "local",
+          "path": "src/components/tpo/ui/AsyncModal.jsx",
+          "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2"
+        },
+        {
+          "specifier": "@/components/Common/PanelStates",
+          "line": 26,
+          "type": "local",
+          "path": "src/components/Common/PanelStates.jsx",
+          "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 139,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 154,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 163,
+          "kind": "Modal.confirm"
+        }
+      ],
+      "totalUiSignals": 3,
+      "actionSamples": [
+        {
+          "line": 98,
+          "s": "btn: id ? <Button size=\"small\" onClick={async () => {"
+        },
+        {
+          "line": 239,
+          "s": "onClick={() => setActing({ audience, selected: selected.length > 0, initial: null, clear })}>"
+        },
+        {
+          "line": 245,
+          "s": "<Button size=\"small\" disabled={readOnly} onClick={doTip} data-testid=\"applicants.suggest-do\">{tip.rounds ? \"Go to Rounds\" : \"Do it\"}</Button>"
+        },
+        {
+          "line": 253,
+          "s": "{ title: \"Name\", key: \"name\", render: (_, r) => <Button type=\"link\" size=\"small\" style={{ padding: 0, height: \"auto\" }} onClick={() => onOpenStudent(r.learnerId, rows.findIndex((x) => x.learnerId === r.learnerId))}>{fullName(r) || `#${r.learnerId}`}</Button>, exportValue: fullName },"
+        },
+        {
+          "line": 275,
+          "s": "? <a href={safeHref(r.resumeUrl)} target=\"_blank\" rel=\"noreferrer\" onClick={(e) => e.stopPropagation()}>Open</a>"
+        },
+        {
+          "line": 288,
+          "s": "{(r.withdrawalRequested === true || r.withdrawalRequested === 1) && <Tag color=\"gold\"><Link href=\"/tpo/requests\" onClick={(e) => e.stopPropagation()}>Withdrawal requested</Link></Tag>}"
+        },
+        {
+          "line": 323,
+          "s": "sharePane={sharing ? <ShareModal inline open job={job} applicantCount={applicants.filter((a) => a.stage !== \"WITHDRAWN\").length} notSelectedCount={applicants.filter((a) => a.stage === \"REJECTED\").length} onClose={() => setSharing(false)} /> : null} />"
+        },
+        {
+          "line": 335,
+          "s": "<Segmented value={view} onChange={setView} options={VIEWS} /></div>"
+        },
+        {
+          "line": 345,
+          "s": "toolbar={<Segmented value={view} onChange={setView} options={VIEWS} />} />"
+        },
+        {
+          "line": 348,
+          "s": "<ActionsWindow testid=\"applicant-actions\" open={Boolean(acting)} onClose={() => setActing(null)} audience={acting?.audience || []} selected={Boolean(acting?.selected)}"
+        },
+        {
+          "line": 352,
+          "s": "<AsyncModal open={Boolean(rejecting)} title={`Not selected: ${rejecting ? fullName(rejecting.row) : \"\"}`} onCancel={() => setRejecting(null)}"
+        },
+        {
+          "line": 356,
+          "s": "<ReasonPicker reasons={REJECT_REASONS} value={reason} onChange={setReason} placeholder=\"Internal reason\" />"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/RoundsTab.js",
+      "sha": "f3c24101b9c05625fa99dca08c4a5306f83d0988",
+      "lineCount": 412,
+      "imports": [
+        {
+          "specifier": "@/components/tpo/TpoDataTable",
+          "line": 1,
+          "type": "local",
+          "path": "src/components/tpo/TpoDataTable.js",
+          "sha": "636f3aa40954bee1a149a2b1d83d7585e5fb0aef"
+        },
+        {
+          "specifier": "react",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/tpo/dj",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "../ImportPreviewModal",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/tpo/ImportPreviewModal.js",
+          "sha": "3e69eb9838c1bcbdba13f4767e3d12dd5b77938a"
+        },
+        {
+          "specifier": "./ResultsEntryModal",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/tpo/drive/ResultsEntryModal.jsx",
+          "sha": "9b8f9f5198637d69ff94ee3197611a6377c53bd1"
+        },
+        {
+          "specifier": "../ui/labels",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/tpo/ui/labels.js",
+          "sha": "96a56474f1800afeb073cde3e3cca67a9c438747"
+        },
+        {
+          "specifier": "./ScheduleModal",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/tpo/drive/ScheduleModal.js",
+          "sha": "dbe210c0ab707e16c893afda16dacece703fb433"
+        },
+        {
+          "specifier": "./RoundPanel",
+          "line": 11,
+          "type": "local",
+          "path": "src/components/tpo/drive/RoundPanel.jsx",
+          "sha": "8536e8ca271c55647b4545ffc3af32bcd165238a"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 12,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoService",
+          "line": 13,
+          "type": "local",
+          "path": "src/api/Services/TpoService.js",
+          "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 14,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "../tpoFiles",
+          "line": 15,
+          "type": "local",
+          "path": "src/components/tpo/tpoFiles.js",
+          "sha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d"
+        },
+        {
+          "specifier": "next/router",
+          "line": 16,
+          "type": "package"
+        },
+        {
+          "specifier": ", label: ",
+          "line": 286,
+          "type": "package"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 69,
+          "kind": "window.confirm"
+        },
+        {
+          "line": 86,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 163,
+          "kind": "Modal.warning"
+        },
+        {
+          "line": 241,
+          "kind": "Modal.warning"
+        },
+        {
+          "line": 291,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 344,
+          "kind": "<Modal"
+        },
+        {
+          "line": 392,
+          "kind": "<Modal"
+        }
+      ],
+      "totalUiSignals": 7,
+      "actionSamples": [
+        {
+          "line": 286,
+          "s": "{ key: \"import\", label: \"Import results from a file\", disabled: roundReadOnly(x), onClick: () => setImportRound(x) },"
+        },
+        {
+          "line": 287,
+          "s": "{ key: \"plan\", label: roundReadOnly(x) ? \"See slots and rooms\" : \"Slots and rooms (the whole plan)\", onClick: () => setScheduleRound(x) },"
+        },
+        {
+          "line": 288,
+          "s": "...(x.inRound > 0 && onShowRound ? [{ key: \"who\", label: `See the ${x.inRound} in this round`, onClick: () => onShowRound(x.name) }] : []),"
+        },
+        {
+          "line": 289,
+          "s": "...(canOrder ? [{ type: \"divider\" }, { key: \"up\", label: \"Move earlier\", disabled: idx === 0, onClick: () => step(x, -1) }, { key: \"down\", label: \"Move later\", disabled: idx === rounds.length - 1, onClick: () => step(x, 1) }] : []),"
+        },
+        {
+          "line": 291,
+          "s": "{ key: \"delete\", danger: true, label: \"Delete the round\", disabled: deleteBlocked(x), onClick: () => Modal.confirm({ title: `Delete ${x.name}?`, okText: \"Delete\", okButtonProps: { danger: true }, onOk: () => remove(x) }) },"
+        },
+        {
+          "line": 310,
+          "s": "<button type=\"button\" className={`tpo-rd__card${sel && sel.id === x.id ? \" is-on\" : \"\"}`} onClick={() => setSelId(x.id)} data-testid={`round.card.${x.id}`}>"
+        },
+        {
+          "line": 325,
+          "s": "{PRESETS.map((p) => <Button key={p.label} loading={busy} disabled={readOnly} onClick={() => addPreset(p)}>{p.label}</Button>)}"
+        },
+        {
+          "line": 328,
+          "s": "<Button className=\"tpo-rd__add\" disabled={readOnly} onClick={() => openEdit(\"new\")}>+ Add a round</Button>"
+        },
+        {
+          "line": 331,
+          "s": "<Switch size=\"small\" checked={Boolean(autoApply)} loading={autoApplyBusy} disabled={readOnly || busy || autoApplyBusy} onChange={toggleAutoApply} />"
+        },
+        {
+          "line": 344,
+          "s": "<Modal open={Boolean(editing)} title={editing === \"new\" ? \"Add round\" : \"Edit round\"} onCancel={requestCloseEdit} onOk={save} confirmLoading={saving} okButtonProps={{ disabled: readOnly || (editing && editing !== \"new\" && terminalRound(editing)) }} destroyOnClose width={620}>"
+        },
+        {
+          "line": 352,
+          "s": "<DatePicker showTime style={{ width: \"100%\" }} onChange={checkBlocked} />"
+        },
+        {
+          "line": 380,
+          "s": "<ResultsEntryModal open={Boolean(resultsRound)} round={resultsRound} onClose={() => setResultsRound(null)} onDone={() => { setResultsRound(null); reload(); }} />"
+        },
+        {
+          "line": 382,
+          "s": "<ImportPreviewModal open={Boolean(importRound)} title={`Import results: ${importRound?.name || \"\"}`} onClose={() => setImportRound(null)}"
+        },
+        {
+          "line": 392,
+          "s": "<Modal open={Boolean(applyRound)} title={`Apply ${applyRound?.name || \"\"} results`} onCancel={() => setApplyRound(null)} okText=\"Apply and notify\" onOk={confirmApply} confirmLoading={busy}>"
+        },
+        {
+          "line": 408,
+          "s": "<ScheduleModal round={scheduleRound} job={job} readOnly={scheduleRound ? roundReadOnly(scheduleRound) : readOnly} onClose={() => { setScheduleRound(null); reload(); }} />"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/OffersTab.js",
+      "sha": "3881a8715ec6071b98056efd36ca2211173c7087",
+      "lineCount": 469,
+      "imports": [
+        {
+          "specifier": "../ui/ReasonPicker",
+          "line": 1,
+          "type": "local",
+          "path": "src/components/tpo/ui/ReasonPicker.jsx",
+          "sha": "c1b008e7f1babc5f80f17218e88cd1df4e36fe84"
+        },
+        {
+          "specifier": "@/components/tpo/ui/HoverStory",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/tpo/ui/HoverStory.jsx",
+          "sha": "d6f1cd0dc9a446e617de3e11fb0e1ebfe7511e1a"
+        },
+        {
+          "specifier": "@/components/tpo/stories/offerStories",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/tpo/stories/offerStories.js",
+          "sha": "20f44460ce4cb12c633dfd5c81702dc285f3bc03"
+        },
+        {
+          "specifier": "react",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 6,
+          "type": "package"
+        },
+        {
+          "specifier": "../ui/ActionsWindow",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/tpo/ui/ActionsWindow.jsx",
+          "sha": "dad777d6ad12ccb14209bc259f54c81082acf1cd"
+        },
+        {
+          "specifier": "./OfferLettersModal",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/tpo/drive/OfferLettersModal.jsx",
+          "sha": "f85cced0e1cb4711f27bcb68904fcf494296fab2"
+        },
+        {
+          "specifier": "./DriveOffersList",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/tpo/drive/DriveOffersList.jsx",
+          "sha": "ac5255b119142c1ee94c72c552457721094c99b9"
+        },
+        {
+          "specifier": "@/utils/uploadToR2",
+          "line": 10,
+          "type": "local",
+          "path": "src/utils/uploadToR2.js",
+          "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+        },
+        {
+          "specifier": "@/utils/safeHref",
+          "line": 11,
+          "type": "local",
+          "path": "src/utils/safeHref.js",
+          "sha": "7c05d05cdc41618a5e6be7d7304efa6d0f2a46a9"
+        },
+        {
+          "specifier": "@/components/tpo/dj",
+          "line": 12,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "../TpoDataTable",
+          "line": 13,
+          "type": "local",
+          "path": "src/components/tpo/TpoDataTable.js",
+          "sha": "636f3aa40954bee1a149a2b1d83d7585e5fb0aef"
+        },
+        {
+          "specifier": "../ui/JourneyStrip",
+          "line": 14,
+          "type": "local",
+          "path": "src/components/tpo/ui/JourneyStrip.jsx",
+          "sha": "f7cf68af72c9ee9c108ffa1321015df9266a7b72"
+        },
+        {
+          "specifier": "../bulk/BulkAction",
+          "line": 15,
+          "type": "local",
+          "path": "src/components/tpo/bulk/BulkAction.jsx",
+          "sha": "e99ab7d446037d2372e6b49fe8d13824299b2979"
+        },
+        {
+          "specifier": "../ImportPreviewModal",
+          "line": 16,
+          "type": "local",
+          "path": "src/components/tpo/ImportPreviewModal.js",
+          "sha": "3e69eb9838c1bcbdba13f4767e3d12dd5b77938a"
+        },
+        {
+          "specifier": "../tpoFiles",
+          "line": 17,
+          "type": "local",
+          "path": "src/components/tpo/tpoFiles.js",
+          "sha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 18,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoService",
+          "line": 21,
+          "type": "local",
+          "path": "src/api/Services/TpoService.js",
+          "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 22,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/components/tpo/ui/labels",
+          "line": 23,
+          "type": "local",
+          "path": "src/components/tpo/ui/labels.js",
+          "sha": "96a56474f1800afeb073cde3e3cca67a9c438747"
+        },
+        {
+          "specifier": "@/components/tpo/ui/AsyncModal",
+          "line": 24,
+          "type": "local",
+          "path": "src/components/tpo/ui/AsyncModal.jsx",
+          "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 189,
+          "kind": "Modal.warning"
+        },
+        {
+          "line": 199,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 237,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 254,
+          "kind": "Modal.info"
+        },
+        {
+          "line": 305,
+          "kind": "<Dropdown"
+        },
+        {
+          "line": 312,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 366,
+          "kind": "<Modal"
+        },
+        {
+          "line": 393,
+          "kind": "Modal.warning"
+        },
+        {
+          "line": 436,
+          "kind": "<Upload"
+        }
+      ],
+      "totalUiSignals": 9,
+      "actionSamples": [
+        {
+          "line": 218,
+          "s": "if ([\"SELECTED\", \"PENDING_VERIFICATION\"].includes(o.status)) items.push({ key: \"v\", label: \"Verify and release\", onClick: () => act(\"Offer released\", verifyAndReleaseOffer(o.offerId), o.offerId) });"
+        },
+        {
+          "line": 219,
+          "s": "if (!o.letterUrl) items.push({ key: \"l\", label: \"Attach letter\", onClick: () => { setLetterUrl(\"\"); setLetterFor(o); } });"
+        },
+        {
+          "line": 220,
+          "s": "if (o.status === \"RELEASED\") items.push({ key: \"x\", label: \"Company says accepted\", onClick: () => act(\"Recorded as accepted (reported). It takes effect after the student's 48 hour dispute window.\", externalAcceptance(o.offerId), o.offerId) });"
+        },
+        {
+          "line": 221,
+          "s": "if ([\"RELEASED\", \"ACCEPTED\"].includes(o.status)) items.push({ key: \"w\", label: \"Company withdrew this offer\", onClick: () => { setReason(\"\"); setReasonFor({ kind: \"withdraw\", offer: o }); } });"
+        },
+        {
+          "line": 224,
+          "s": "if (!o.respondedAt || dj(o.respondedAt).add(48, \"hour\").isAfter(dj())) items.push({ key: \"r\", label: \"Reverse acceptance (within 48 h)\", onClick: () => { setReason(\"\"); setReasonFor({ kind: \"reverse\", offer: o }); } });"
+        },
+        {
+          "line": 225,
+          "s": "Object.entries(JOINING).forEach(([k, label]) => items.push({ key: `j${k}`, label: `Joining: ${label}`, onClick: () => act(`Joining status: ${label}`, setJoiningStatus(o.offerId, k), o.offerId) }));"
+        },
+        {
+          "line": 232,
+          "s": "items.push({ key: \"n\", label: \"Offer to next waitlisted\", onClick: async () => {"
+        },
+        {
+          "line": 264,
+          "s": "{ title: \"Student\", key: \"student\", render: (_, o) => <Button type=\"link\" size=\"small\" style={{ padding: 0, height: \"auto\" }} onClick={() => onOpenStudent(o.learnerId)}>{fullName(o)}</Button>, exportValue: fullName },"
+        },
+        {
+          "line": 320,
+          "s": "<Button onClick={() => setView(\"list\")}>‹ Back to the offers</Button>"
+        },
+        {
+          "line": 321,
+          "s": "<Button type=\"primary\" disabled={readOnly} onClick={openRecording}>Record a selection</Button>"
+        },
+        {
+          "line": 322,
+          "s": "<Button disabled={readOnly} onClick={() => setImporting(true)}>Import the company&apos;s selection list</Button>"
+        },
+        {
+          "line": 324,
+          "s": "<Button disabled={toVerify.length === 0 || readOnly} onClick={verifyAll}>Verify and release {toVerify.length || \"\"}</Button>"
+        },
+        {
+          "line": 326,
+          "s": "<Button icon={<UploadOutlined />} disabled={readOnly || offers.filter((o) => !o.letterUrl).length === 0} onClick={() => setLettersOpen(true)}>Attach letters ({offers.filter((o) => !o.letterUrl).length} missing)</Button>"
+        },
+        {
+          "line": 354,
+          "s": "onClick={() => setActing({ audience, selected: selected.length > 0, clear })}>"
+        },
+        {
+          "line": 364,
+          "s": "<ActionsWindow testid=\"offer-actions\" open={Boolean(acting)} onClose={() => setActing(null)} audience={acting?.audience || []} selected={Boolean(acting?.selected)}"
+        },
+        {
+          "line": 366,
+          "s": "<Modal open={recording} title=\"Record a selection\" onCancel={() => { if (!recordingRef.current) setRecording(false); }} destroyOnClose confirmLoading={busy}"
+        },
+        {
+          "line": 414,
+          "s": "onChange={(name) => { const o = roleOptions.find((x) => x.name === name); if (o?.ctcLpa != null) form.setFieldsValue({ ctcLpa: Number(o.ctcLpa) }); }} />"
+        },
+        {
+          "line": 421,
+          "s": "<ImportPreviewModal open={importing} title=\"Import the company's selection list\" onClose={() => setImporting(false)}"
+        },
+        {
+          "line": 430,
+          "s": "<OfferLettersModal open={lettersOpen} offers={offers.filter((o) => !o.letterUrl)} onClose={() => setLettersOpen(false)}"
+        },
+        {
+          "line": 433,
+          "s": "<AsyncModal open={Boolean(letterFor)} title=\"Attach the offer letter\" onCancel={() => { if (!uploadingLetterRef.current && !busyRef.current) setLetterFor(null); }} okButtonProps={{ disabled: !/^https?:\\/\\//.test(letterUrl) }}"
+        },
+        {
+          "line": 450,
+          "s": "<Input placeholder=\"https://\" value={letterUrl} onChange={(e) => setLetterUrl(e.target.value)} />"
+        },
+        {
+          "line": 453,
+          "s": "<AsyncModal open={Boolean(reasonFor)} onCancel={() => { if (!busyRef.current) setReasonFor(null); }} okButtonProps={{ danger: true, disabled: !reasonIsValid(reason, reasonFor?.kind === \"withdraw\" ? WITHDRAW_REASONS : REVERSE_REASONS) }}"
+        },
+        {
+          "line": 464,
+          "s": "<ReasonPicker reasons={reasonFor?.kind === \"withdraw\" ? WITHDRAW_REASONS : REVERSE_REASONS} value={reason} onChange={setReason} />"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/OverviewTab.js",
+      "sha": "c67d3acc14879121bba867f5649585e996e84b84",
+      "lineCount": 203,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "../ui/labels",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/tpo/ui/labels.js",
+          "sha": "96a56474f1800afeb073cde3e3cca67a9c438747"
+        },
+        {
+          "specifier": "next/link",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/tpo/dj",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/utils/safeHref",
+          "line": 8,
+          "type": "local",
+          "path": "src/utils/safeHref.js",
+          "sha": "7c05d05cdc41618a5e6be7d7304efa6d0f2a46a9"
+        },
+        {
+          "specifier": "@/components/tpo/ui/AsyncModal",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/tpo/ui/AsyncModal.jsx",
+          "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 163,
+          "kind": "<Popconfirm"
+        }
+      ],
+      "totalUiSignals": 1,
+      "actionSamples": [
+        {
+          "line": 29,
+          "s": "export default function OverviewTab({ job, summary, activity, applicants, notApplied, reload, readOnly, onEdit, onCopy, onClose, onCancel }) {"
+        },
+        {
+          "line": 100,
+          "s": "<div className=\"tpo-da__head\"><span className=\"tpo-eyebrow\">THE DRIVE</span>{onEdit && !readOnly && <Button size=\"small\" onClick={onEdit}>Edit</Button>}</div>"
+        },
+        {
+          "line": 125,
+          "s": "{job.recruiterId && !summary?.recruiter?.accessEnded && <Button disabled={readOnly} onClick={() => { setFollowUpNote(\"\"); setFollowingUp(true); }}>Follow up with the recruiter</Button>}"
+        },
+        {
+          "line": 141,
+          "s": "{eligError && <Alert type=\"error\" showIcon message=\"Who is eligible could not be worked out.\" action={<Button size=\"small\" onClick={loadElig}>Retry</Button>} />}"
+        },
+        {
+          "line": 149,
+          "s": "{outTotal > 0 && <> · <button type=\"button\" className=\"tpo-link-btn\" onClick={() => setSeeOut((v) => !v)}>{seeOut ? \"Hide who\" : \"See who\"}</button></>}"
+        },
+        {
+          "line": 164,
+          "s": "onConfirm={async () => {"
+        },
+        {
+          "line": 175,
+          "s": "<Select showSearch optionFilterProp=\"label\" placeholder=\"Student or roll number\" options={students} onFocus={loadStudents} value={ov.learnerId} onChange={(v) => setOv((x) => ({ ...x, learnerId: v }))} style={{ minWidth: 200, flex: \"1 1 200px\" }} aria-label=\"Student\" />"
+        },
+        {
+          "line": 176,
+          "s": "<Select value={ov.type} onChange={(v) => setOv((x) => ({ ...x, type: v }))} options={[{ value: \"INCLUDE\", label: \"Let them apply\" }, { value: \"EXCLUDE\", label: \"Keep them out\" }]} style={{ width: 150 }} aria-label=\"Let in or keep out\" />"
+        },
+        {
+          "line": 177,
+          "s": "<Input placeholder=\"Why (for your team)\" value={ov.reason} onChange={(e) => setOv((x) => ({ ...x, reason: e.target.value }))} style={{ flex: \"2 1 180px\" }} aria-label=\"Why\" />"
+        },
+        {
+          "line": 178,
+          "s": "<Button loading={adding} onClick={saveOverride}>Add</Button>"
+        },
+        {
+          "line": 183,
+          "s": "{!readOnly && (onCopy || onClose || onCancel) && ("
+        },
+        {
+          "line": 185,
+          "s": "{onCopy && <div className=\"tpo-da__drow\"><span><strong>Run it again</strong><span className=\"tpo-ds__muted\">A copy with the pay, rules and rounds; new dates.</span></span><Button onClick={onCopy}>Make a copy</Button></div>}"
+        },
+        {
+          "line": 186,
+          "s": "{onClose && <div className=\"tpo-da__drow\"><span><strong>Close the drive</strong><span className=\"tpo-ds__muted\">{openN ? `${plural(openN, \"open applicant\")} ${openN === 1 ? \"becomes\" : \"become\"} Not selected and ${openN === 1 ? \"is\" : \"are\"} told. The waitlist ends.` : \"Nobody is still in it. It moves to Closed and stays read only.\"}</span></span><Button onClick={onClose}>Close…</Button></div>}"
+        },
+        {
+          "line": 187,
+          "s": "{onCancel && <div className=\"tpo-da__drow\"><span><strong className=\"tpo-ds__bad\">Cancel the drive</strong><span className=\"tpo-ds__muted\">If {job.companyName} pulls out. Everyone who applied is told why.</span></span><Button danger onClick={onCancel}>Cancel…</Button></div>}"
+        },
+        {
+          "line": 191,
+          "s": "<AsyncModal open={followingUp} title=\"Follow up with the recruiter\" okText=\"Send\" onCancel={() => setFollowingUp(false)}"
+        },
+        {
+          "line": 198,
+          "s": "<Input.TextArea rows={3} value={followUpNote} onChange={(e) => setFollowUpNote(e.target.value)} placeholder=\"e.g. Thanks for a great drive — how did the joining go?\" />"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/StudentPanel.js",
+      "sha": "a28adec69fea6091394cde142bbedd9eccfb497e",
+      "lineCount": 460,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "next/link",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/tpo/RequestsPanel",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/tpo/RequestsPanel.js",
+          "sha": "bbd6d992c8ddd7628cefbf8c9d8c6445ae5ae4de"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/api/Services/TpoService",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/TpoService.js",
+          "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 8,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "./tpoFiles",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/tpo/tpoFiles.js",
+          "sha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d"
+        },
+        {
+          "specifier": "./dj",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "@/components/Common/PanelStates",
+          "line": 11,
+          "type": "local",
+          "path": "src/components/Common/PanelStates.jsx",
+          "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+        },
+        {
+          "specifier": "@/components/Common/Skeletons",
+          "line": 12,
+          "type": "local",
+          "path": "src/components/Common/Skeletons.jsx",
+          "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+        },
+        {
+          "specifier": "./ui/formatWhen",
+          "line": 13,
+          "type": "local",
+          "path": "src/components/tpo/ui/formatWhen.js",
+          "sha": "0bf9ddd6c52efefb7b5518ace7e5b41b98291cfb"
+        },
+        {
+          "specifier": "./ui/labels",
+          "line": 14,
+          "type": "local",
+          "path": "src/components/tpo/ui/labels.js",
+          "sha": "96a56474f1800afeb073cde3e3cca67a9c438747"
+        },
+        {
+          "specifier": "@/utils/safeHref",
+          "line": 15,
+          "type": "local",
+          "path": "src/utils/safeHref.js",
+          "sha": "7c05d05cdc41618a5e6be7d7304efa6d0f2a46a9"
+        },
+        {
+          "specifier": "@/hooks/useChoices",
+          "line": 16,
+          "type": "local",
+          "path": "src/hooks/useChoices.js",
+          "sha": "50425131c9085cf6c01f17a184691048f916072a"
+        },
+        {
+          "specifier": "@/config/choices",
+          "line": 17,
+          "type": "local",
+          "path": "src/config/choices.js",
+          "sha": "9c1b4ada4ac72724d2c551b021c44676dda30cac"
+        },
+        {
+          "specifier": "./students/studentGridRules",
+          "line": 18,
+          "type": "local",
+          "path": "src/components/tpo/students/studentGridRules.js",
+          "sha": "070f1e27278a3aff19d9d42b4d3b1ae07f5e449b"
+        },
+        {
+          "specifier": "./students/academics",
+          "line": 19,
+          "type": "local",
+          "path": "src/components/tpo/students/academics.js",
+          "sha": "7d2d94830a903eba1fc580ad79d4e5aaa8d00ee3"
+        },
+        {
+          "specifier": "./students/outcomes",
+          "line": 20,
+          "type": "local",
+          "path": "src/components/tpo/students/outcomes.js",
+          "sha": "8fb568fd3fd990eef40108531bd1691fe58b2fcf"
+        },
+        {
+          "specifier": "./batches/batchRules",
+          "line": 21,
+          "type": "local",
+          "path": "src/components/tpo/batches/batchRules.js",
+          "sha": "16156886a6ef7320fa6f5befbd2a450df1522055"
+        },
+        {
+          "specifier": "@/components/tpo/ui/AsyncModal",
+          "line": 22,
+          "type": "local",
+          "path": "src/components/tpo/ui/AsyncModal.jsx",
+          "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2"
+        },
+        {
+          "specifier": "@/components/Common/Facts",
+          "line": 23,
+          "type": "local",
+          "path": "src/components/Common/Facts.jsx",
+          "sha": "97b26edb85a78c005fc370f6d452d263c4a49df4"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 176,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 198,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 241,
+          "kind": "<Drawer"
+        },
+        {
+          "line": 302,
+          "kind": "<Tabs"
+        }
+      ],
+      "totalUiSignals": 4,
+      "actionSamples": [
+        {
+          "line": 86,
+          "s": "export default function StudentPanel({ learnerId, jobId, onClose, onPrev, onNext, onChanged }) {"
+        },
+        {
+          "line": 227,
+          "s": "action: <Button size=\"small\" loading={Number(liftingDebarmentId) === Number(d.id)} disabled={liftingDebarmentId != null} onClick={() => lift(d)}>Lift</Button> })),"
+        },
+        {
+          "line": 232,
+          "s": "action: <Button size=\"small\" onClick={() => setTab(\"requests\")}>Decide</Button> }] : []),"
+        },
+        {
+          "line": 237,
+          "s": "text: `${row.offersWaiting} offer${Number(row.offersWaiting) === 1 ? \" is\" : \"s are\"} waiting for their answer`, action: <Button size=\"small\" onClick={() => setTab(\"placement\")}>See</Button> }] : []),"
+        },
+        {
+          "line": 241,
+          "s": "<Drawer className=\"tpo-student-panel\" open={Boolean(learnerId)} onClose={() => confirmDiscardNoteThen(onClose)} width={680} destroyOnClose"
+        },
+        {
+          "line": 253,
+          "s": "<Button icon={<LeftOutlined />} disabled={!onPrev || noteSaving || registrationSaving || liftingDebarmentId != null} onClick={() => confirmDiscardNoteThen(onPrev)} aria-label=\"Previous student\" />"
+        },
+        {
+          "line": 254,
+          "s": "<Button icon={<RightOutlined />} disabled={!onNext || noteSaving || registrationSaving || liftingDebarmentId != null} onClick={() => confirmDiscardNoteThen(onNext)} aria-label=\"Next student\" /></Space>}>"
+        },
+        {
+          "line": 260,
+          "s": "action={<Button size=\"small\" onClick={load}>Retry</Button>} />"
+        },
+        {
+          "line": 287,
+          "s": "<button type=\"button\" onClick={() => setTab(\"placement\")}><span>Applications</span><strong>{row ? row.applications : applications.length}</strong></button>"
+        },
+        {
+          "line": 288,
+          "s": "<button type=\"button\" onClick={() => setTab(\"placement\")}><span>Offers</span><strong data-testid=\"student-panel.offers\">{row ? row.offers : \"-\"}</strong></button>"
+        },
+        {
+          "line": 289,
+          "s": "<button type=\"button\" onClick={() => setTab(\"profile\")}><span>Profile check</span><strong className={`is-${String(row?.profileStatus || \"\").toLowerCase()}`}>{profile ? profile[0] : \"-\"}</strong></button>"
+        },
+        {
+          "line": 290,
+          "s": "<button type=\"button\" onClick={() => setTab(\"placement\")}><span>Prep</span><strong>{prepPct == null ? \"None\" : `${prepPct}%`}</strong></button>"
+        },
+        {
+          "line": 302,
+          "s": "<Tabs activeKey={tab} onChange={setTab} items={["
+        },
+        {
+          "line": 343,
+          "s": "<Select value={registrationValue(row)} placeholder=\"Not decided yet\" style={{ width: 300, maxWidth: \"100%\" }} onChange={choose}"
+        },
+        {
+          "line": 350,
+          "s": "<AsyncModal open={Boolean(ask)} title={ask ? `After college: ${ask.label || REGISTRATION[ask.choice]}` : \"\"} okText=\"Save\" onCancel={() => setAsk(null)}"
+        },
+        {
+          "line": 354,
+          "s": "onChange={(e) => setAsk({ ...ask, detail: e.target.value })} />"
+        },
+        {
+          "line": 411,
+          "s": "<List.Item actions={s.active ? [<Button key=\"l\" size=\"small\" loading={Number(liftingDebarmentId) === Number(d.id)} disabled={liftingDebarmentId != null} onClick={() => lift(d)}>Lift</Button>] : []}>"
+        },
+        {
+          "line": 432,
+          "s": "<Input.TextArea autoSize={{ minRows: 2, maxRows: 6 }} value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} aria-label=\"New note\""
+        },
+        {
+          "line": 433,
+          "s": "onKeyDown={(e) => { if (e.key === \"Enter\" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); addNote(); } }}"
+        },
+        {
+          "line": 437,
+          "s": "<Button type=\"primary\" loading={noteSaving} disabled={!note.trim() || noteSaving} onClick={addNote}>Add note</Button>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/AsyncModal.jsx",
+      "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2",
+      "lineCount": 19,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 2,
+          "type": "package"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 17,
+          "kind": "<Modal"
+        }
+      ],
+      "totalUiSignals": 1,
+      "actionSamples": []
     }
   ],
   "remaining": "Expand transitive imports of all UI-rendering descendants. Resolve conditional overlays/actions, services/backend, mapping, tests and runtime separately.",
