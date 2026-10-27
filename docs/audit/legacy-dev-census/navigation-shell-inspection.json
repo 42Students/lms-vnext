@@ -1,0 +1,190 @@
+{
+  "source": "42Students/lms2-fe",
+  "ref": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+  "method": "static navigation/shell source inspection",
+  "records": [
+    {
+      "path": "src/common/lists.js",
+      "sha": "171e1732da97fdf98d746da214a8284911e190bb",
+      "lines": 424,
+      "routeStrings": [
+        "/tpo/home"
+      ],
+      "navExports": [
+        "teacherNavigationMenu",
+        "studentNavigationMenu",
+        "adminNavigationMenu",
+        "adminNavigationMenuFlat",
+        "adminNavigationMenuForSidebar",
+        "superAdminNavigationMenuFlat",
+        "superAdminNavigationMenuForSidebar",
+        "mentorNavigationMenu",
+        "recruiterNavigationMenu",
+        "tpoNavigationMenu"
+      ],
+      "overlayTags": [],
+      "actions": 0
+    },
+    {
+      "path": "src/common/navGroupDefinitions.js",
+      "sha": "c76497638b10bc7d5c919c3fe309ae7ada0af98a",
+      "lines": 69,
+      "routeStrings": [],
+      "navExports": [],
+      "overlayTags": [],
+      "actions": 0
+    },
+    {
+      "path": "src/common/superAdminNavGroups.js",
+      "sha": "1254f3187b7be848c28e8bd9a4ce74bcf28e753a",
+      "lines": 110,
+      "routeStrings": [],
+      "navExports": [
+        "SUPER_ADMIN_NAV_GROUPS",
+        "superAdminGroupDefaultPath"
+      ],
+      "overlayTags": [],
+      "actions": 0
+    },
+    {
+      "path": "src/common/adminNavGroups.js",
+      "sha": "72b6a2e0df7d5c4d0fbf6dae0216c1fefd5b481f",
+      "lines": 92,
+      "routeStrings": [],
+      "navExports": [
+        "ADMIN_NAV_GROUPS"
+      ],
+      "overlayTags": [],
+      "actions": 0
+    },
+    {
+      "path": "src/proxy.js",
+      "sha": "0e5f711b95e7eea831e277a987d4644a76cdf853",
+      "lines": 199,
+      "routeStrings": [
+        "/superadmin-login",
+        "/recruiter-invite",
+        "/auth/handoff",
+        "/superadmin",
+        "/learn/courses",
+        "/college-admin",
+        "/mentor",
+        "/teacher/courses",
+        "/college-admin/dashboard",
+        "/teacher",
+        "/mentor/projects",
+        "/learn"
+      ],
+      "navExports": [],
+      "overlayTags": [],
+      "actions": 0
+    },
+    {
+      "path": "src/components/Sidebar/Sidebar.js",
+      "sha": "82a7449942433d15e73e2b5345d22c66c937d9ec",
+      "lines": 495,
+      "routeStrings": [
+        "/tpo",
+        "/tpo/",
+        "/superadmin",
+        "/recruiter",
+        "/mentor",
+        "/teacher",
+        "/learn",
+        "/tpo/home",
+        "/recruiter/home",
+        "/teacher/courses",
+        "/mentor/projects",
+        "/learn/courses"
+      ],
+      "navExports": [
+        "getMenuAndBasePath",
+        "prevGroup",
+        "startsGroup"
+      ],
+      "overlayTags": [],
+      "actions": 3
+    },
+    {
+      "path": "src/layouts/CourseTabsLayout.js",
+      "sha": "b321e071809a3db99d08b8810a6c35078481b638",
+      "lines": 75,
+      "routeStrings": [],
+      "navExports": [
+        "visibleCourseTabs"
+      ],
+      "overlayTags": [],
+      "actions": 1
+    },
+    {
+      "path": "src/layouts/PlacementsTabsLayout.js",
+      "sha": "b7b1f44fc7381da0b3870c323904f5ec6305a3d8",
+      "lines": 116,
+      "routeStrings": [
+        "/learn/my-placements"
+      ],
+      "navExports": [],
+      "overlayTags": [],
+      "actions": 0
+    },
+    {
+      "path": "src/components/Global/Header/SuperAdminHeader.js",
+      "sha": "8839ee541a6e837411816933388b4acaa26b1c94",
+      "lines": 125,
+      "routeStrings": [],
+      "navExports": [
+        "SuperAdminHeader"
+      ],
+      "overlayTags": [
+        "SuperAdminMobileMenuDrawer"
+      ],
+      "actions": 6
+    },
+    {
+      "path": "src/components/tpo/TpoTopBar.js",
+      "sha": "f7dd7e60c58cc1be4945ae3ec638c9e1d91796de",
+      "lines": 124,
+      "routeStrings": [
+        "/tpo/companies",
+        "/tpo/recruiters?add=1",
+        "/tpo/drives/new",
+        "/tpo/messages"
+      ],
+      "navExports": [
+        "newMenu"
+      ],
+      "overlayTags": [
+        "BellOutlined",
+        "TpoBellPanel",
+        "TpoCommandPalette",
+        "Modal",
+        "Form",
+        "Form.Item"
+      ],
+      "actions": 8
+    },
+    {
+      "path": "src/components/recruiter/RecruiterTopBar.jsx",
+      "sha": "a3044c0f010f038afb0b456f0d1119f0e5853b1d",
+      "lines": 41,
+      "routeStrings": [
+        "/recruiter/drives/new"
+      ],
+      "navExports": [],
+      "overlayTags": [
+        "RecruiterNotificationBell",
+        "RecruiterFinder"
+      ],
+      "actions": 3
+    },
+    {
+      "path": "src/pages/_app.js",
+      "sha": "d1555662d7370a09e91557508e7259c698681000",
+      "lines": 241,
+      "routeStrings": [],
+      "navExports": [],
+      "overlayTags": [],
+      "actions": 1
+    }
+  ]
+}
