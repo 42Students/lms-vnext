@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {safeTpoFindResult, type TpoFindResult} from "@/components/shell/topbar/tpo-find-model";
 
-type Suggestion={group:string;label:string;href:string};
+type Suggestion=TpoFindResult;
 const groups=["Recruiter Leads","Drives","Students","Companies"] as const;
 
 /** Old /tpo/search contract: minimum two characters and five matches from
@@ -30,8 +31,7 @@ export function TpoFourEntitySearch({initialQuery=""}:{initialQuery?:string}){
     if(controller.signal.aborted)return;
     setResults((Array.isArray(payload.results)?payload.results:[])
       .filter(item=>groups.some(group=>group===item.group))
-      .filter(item=>typeof item.label==="string"&&
-        typeof item.href==="string"&&item.href.startsWith("/tpo/")).slice(0,20));
+      .filter(safeTpoFindResult).slice(0,20));
    }).catch(()=>{if(!controller.signal.aborted){setError(true);setResults([]);}})
    .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
   },250);

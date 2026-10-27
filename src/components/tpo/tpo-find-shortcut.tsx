@@ -8,13 +8,10 @@ import {Dialog} from "@/components/ui/dialog";
 import { PopoverListbox } from "@/components/ui/popover";
 import {apiFetch} from "@/lib/api-fetch";
 import {isTpoFindShortcut} from "@/modules/placements/tpo-find-shortcut-model";
+import {safeTpoFindResult, type TpoFindResult} from "@/components/shell/topbar/tpo-find-model";
 import {Input} from "@/components/ui/input";
 
-type Match={group:string;label:string;href:string};
-const safeMatch=(value:unknown):value is Match=>
- Boolean(value&&typeof value==="object"&&"href" in value&&"label" in value&&"group" in value&&
- typeof value.href==="string"&&/^\/tpo\/(?!\/)[^\\]*$/.test(value.href)&&
- typeof value.label==="string"&&typeof value.group==="string");
+type Match=TpoFindResult;
 
 export function TpoFindShortcut(){
  const router=useRouter();
@@ -49,7 +46,7 @@ export function TpoFindShortcut(){
      if(controller.signal.aborted)return;
      if(!data||typeof data!=="object"||!("results" in data)||!Array.isArray(data.results))
       throw new Error("Search could not be loaded.");
-     setResults(data.results.filter(safeMatch).slice(0,25));setActive(0);setError("");
+     setResults(data.results.filter(safeTpoFindResult).slice(0,25));setActive(0);setError("");
     }catch{
      if(!controller.signal.aborted)setError("Search could not be loaded. Try again.");
     }finally{
@@ -65,7 +62,7 @@ export function TpoFindShortcut(){
  }
  const showing=query.trim().length>=2?results:recent;
  function select(row:Match){
-  if(!safeMatch(row))return;
+  if(!safeTpoFindResult(row))return;
   setRecent(list=>[row,...list.filter(item=>item.href!==row.href)].slice(0,5));
   setOpen(false);router.push(row.href);
  }
