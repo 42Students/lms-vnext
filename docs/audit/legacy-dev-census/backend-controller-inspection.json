@@ -2982,6 +2982,76 @@
       "tenantScope": true
     },
     {
+      "path": "src/main/java/com/_42students/lms/controller/ProgramController.java",
+      "sha": "99669380f0f6e255dba57609dbb07ddaecda1f06",
+      "lines": 106,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/program"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchAllPrograms"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchProgramDetails"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/getProgramsByCollege"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ProgramStructureController.java",
+      "sha": "f95a4e6bfaf0e548a0a8664d76b8c0c8bf611681",
+      "lines": 149,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/program-structure"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/create"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchAll"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchAllSemesters"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/updateStatus"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchActiveSemesters"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/ProjectWorkspaceController.java",
       "sha": "2ba8e8eaa68c71ecfc2dc98e5c8c1e89be0fb232",
       "lines": 734,
@@ -3165,6 +3235,318 @@
       ],
       "hasAuth": false,
       "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicBugTrackerController.java",
+      "sha": "07e17363b9eb5769c74ab24c5fa7088a1512fa75",
+      "lines": 84,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/bug-tracker"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/issues"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/issues"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/issues/{publicId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/issues/{publicId}/activity"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/issues/{publicId}/attachments/presign"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/issues/{publicId}/attachments/confirm"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/issues/{publicId}/attachments"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicCampaignUnsubscribeController.java",
+      "sha": "0017eb43e7a2a24580670b523bb04d55a41c62cb",
+      "lines": 29,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/campaign-unsubscribe"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicCollegeJoinController.java",
+      "sha": "e225965eed82de82cbf149056e2439de149465d5",
+      "lines": 79,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/college-join"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{token}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/send-code"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/join"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicCompanyJoinController.java",
+      "sha": "673e078e828628e802e8f4f90b8f944fd5f39302",
+      "lines": 64,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/company-join"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{token}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/send-code"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/join"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicE2eAuthController.java",
+      "sha": "529a70f67a090c755d15044ecf3aaebbd3f5932e",
+      "lines": 130,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/e2e/auth"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/superadmin"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicInboundEmailController.java",
+      "sha": "19582478702268623f4041891f083ae36a4b5bdd",
+      "lines": 35,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/inbound-email"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicMailEventsController.java",
+      "sha": "8ceae4c90e0efd6e47dad7b70656af64ad3774b8",
+      "lines": 161,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/mail-events"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/zeptomail"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicMobileAuthController.java",
+      "sha": "207e2fa848ce87b548cdf5f022ff115a0283eec4",
+      "lines": 1329,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/mobile-auth"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/start"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/send"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/email-login/start"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/email-login/send"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/recruiter/email-login/start"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/email-fallback/send"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/email-fallback/verify"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/verify"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicPlacementsPageController.java",
+      "sha": "5a13a4e9abc4832f94eeaac5eb935bd4edf6218a",
+      "lines": 79,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/placements-page"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": "/send-code"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/recruit"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicRecruiterInviteController.java",
+      "sha": "fe2e812bc73fc476961cc495de411b8045a706db",
+      "lines": 97,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/recruiter-invite"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{token}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/send-code"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/accept"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/not-hiring"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/unsubscribe"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicShareController.java",
+      "sha": "2d3166ed5d506303e359f1f18f734eb1516e1b08",
+      "lines": 59,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public/share"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{token}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/open"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/send-code"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/resumes"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{token}/downloaded"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicTenantController.java",
+      "sha": "60ed76a5361238029e799889363989b9cc325897",
+      "lines": 176,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/public"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/tenant-bootstrap"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
     },
     {
       "path": "src/main/java/com/_42students/lms/controller/RecruiterChangeRequestController.java",
