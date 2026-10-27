@@ -584,6 +584,23 @@
       }
     },
     {
+      "path": "src/components/tpo/__tests__/asyncModal.test.js",
+      "sha": "7b27ac482e043ceadc2a43601e2d57cc62f49be8",
+      "lines": 19,
+      "imports": [
+        "@/components/tpo/ui/AsyncModal"
+      ],
+      "jsxTags": [
+        "AsyncModal"
+      ],
+      "events": 2,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": false
+      }
+    },
+    {
       "path": "src/components/tpo/AddToDriveModal.jsx",
       "sha": "24ea1480d1533d050291b72dea5a282cf5ceb7b2",
       "lines": 123,
@@ -607,6 +624,234 @@
         "Input.TextArea"
       ],
       "events": 7,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/batches/IneligibleModal.jsx",
+      "sha": "327b77dc140b5acdeb20138ac015765be0ba7ed9",
+      "lines": 29,
+      "imports": [
+        "@/components/tpo/ui/ReasonPicker",
+        "./batchRules",
+        "@/components/tpo/ui/AsyncModal"
+      ],
+      "jsxTags": [
+        "AsyncModal",
+        "Typography.Paragraph",
+        "ReasonPicker"
+      ],
+      "events": 3,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/tpo/drive/ApplicantReviewModal.jsx",
+      "sha": "e008c45089dbeb71ff0b0b3d6dbe96083659dbbb",
+      "lines": 97,
+      "imports": [
+        "@/components/Common/Facts",
+        "../tpoFiles",
+        "@/utils/safeHref",
+        "../ui/labels"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Typography.Paragraph",
+        "Progress",
+        "Typography.Title",
+        "Typography.Text",
+        "Facts",
+        "Fact",
+        "Tag",
+        "Space",
+        "Button"
+      ],
+      "events": 6,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/tpo/drive/InviteReviewer.jsx",
+      "sha": "b035a594992214eedbec432b8c391924650ebc65",
+      "lines": 128,
+      "imports": [
+        "@/components/tpo/ui/AsyncModal",
+        "@/api/Services/AdminService",
+        "@/api/Services/TpoService",
+        "@/api/Services/TpoHubService",
+        "@/components/tpo/drive/CompanyPicker"
+      ],
+      "jsxTags": [
+        "Space",
+        "Typography.Text",
+        "Input.TextArea",
+        "Button",
+        "Modal",
+        "Alert",
+        "WrittenOut",
+        "Link",
+        "AsyncModal",
+        "Typography.Paragraph",
+        "Form",
+        "Form.Item",
+        "Tooltip",
+        "InfoCircleOutlined",
+        "Input",
+        "Checkbox"
+      ],
+      "events": 6,
+      "flags": {
+        "permission": true,
+        "loading": false,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/drive/OfferLettersModal.jsx",
+      "sha": "f85cced0e1cb4711f27bcb68904fcf494296fab2",
+      "lines": 128,
+      "imports": [
+        "@/components/tpo/TpoDataTable",
+        "@/api/Services/AdminService",
+        "@/api/Services/TpoService",
+        "@/utils/uploadToR2",
+        "../tpoFiles",
+        "../ui/applicantRules"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Button",
+        "Typography.Paragraph",
+        "Upload.Dragger",
+        "InboxOutlined",
+        "Alert",
+        "TpoDataTable",
+        "Progress"
+      ],
+      "events": 3,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/drive/ResultsEntryModal.jsx",
+      "sha": "9b8f9f5198637d69ff94ee3197611a6377c53bd1",
+      "lines": 219,
+      "imports": [
+        "@/components/tpo/grid/ChoiceEditor",
+        "@/components/tpo/grid/GridWorkspace",
+        "@/api/Services/AdminService",
+        "@/api/Services/TpoHubService",
+        "@/components/Common/PanelStates",
+        "../tpoFiles",
+        "../ui/rollParser"
+      ],
+      "jsxTags": [
+        "Space",
+        "Button",
+        "PanelError",
+        "Typography.Text",
+        "Input.TextArea",
+        "Select",
+        "Alert",
+        "Tag",
+        "Switch",
+        "GridWorkspace",
+        "Typography.Paragraph",
+        "Modal"
+      ],
+      "events": 9,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/drive/ScheduleModal.js",
+      "sha": "dbe210c0ab707e16c893afda16dacece703fb433",
+      "lines": 355,
+      "imports": [
+        "../ui/labels",
+        "../ui/slotGenerator",
+        "@/components/tpo/dj",
+        "@/api/Services/AdminService",
+        "@/api/Services/TpoHubService"
+      ],
+      "jsxTags": [
+        "Input",
+        "Select",
+        "Modal",
+        "Skeleton",
+        "Alert",
+        "Button",
+        "List",
+        "List.Item",
+        "Typography.Title",
+        "Table",
+        "Tag",
+        "Popconfirm",
+        "Typography.Text",
+        "Form",
+        "Form.Item",
+        "DatePicker",
+        "InputNumber",
+        "Space",
+        "DatePicker.RangePicker",
+        "Divider",
+        "Typography.Paragraph",
+        "List.Item.Meta"
+      ],
+      "events": 21,
+      "flags": {
+        "permission": true,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/drive/ShareModal.js",
+      "sha": "d445452909452caffd72e18bd006f8ff8fe99ec8",
+      "lines": 210,
+      "imports": [
+        "@/components/tpo/ui/shareMemory",
+        "@/components/tpo/dj",
+        "@/api/Services/AdminService",
+        "@/api/Services/TpoHubService"
+      ],
+      "jsxTags": [
+        "Popconfirm",
+        "Form",
+        "Alert",
+        "Typography.Text",
+        "Form.Item",
+        "Input",
+        "Checkbox",
+        "Checkbox.Group",
+        "Space",
+        "Select",
+        "DatePicker",
+        "Button",
+        "Typography.Paragraph",
+        "List",
+        "List.Item",
+        "List.Item.Meta",
+        "Tag",
+        "Modal"
+      ],
+      "events": 11,
       "flags": {
         "permission": false,
         "loading": true,
@@ -699,6 +944,185 @@
         "ExclamationCircleFilled"
       ],
       "events": 24,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/TpoCommandPalette.jsx",
+      "sha": "6ea3ae1bad87fe1c459720a299a1151b0635e0e9",
+      "lines": 147,
+      "imports": [
+        "@/api/Services/AdminService",
+        "@/api/Services/TpoHubService",
+        "./ui/recents"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Input",
+        "SearchOutlined",
+        "Empty",
+        "Typography.Text",
+        "Tag"
+      ],
+      "events": 3,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tpo/ui/AsyncModal.jsx",
+      "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2",
+      "lines": 19,
+      "imports": [],
+      "jsxTags": [
+        "Modal"
+      ],
+      "events": 1,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/tracker/auditFindings/AuditFindingDrawer.jsx",
+      "sha": "69e3bc8d47e4f8ceea0490ee2cb2d0e7bd5c9f43",
+      "lines": 267,
+      "imports": [
+        "@/api/Services/AuditFindingsService",
+        "./auditFindingsModel"
+      ],
+      "jsxTags": [
+        "Text",
+        "Paragraph",
+        "Drawer",
+        "Alert",
+        "Skeleton",
+        "Space",
+        "Tag",
+        "Button",
+        "CopyOutlined",
+        "Descriptions",
+        "Descriptions.Item",
+        "Plain",
+        "Select",
+        "Input",
+        "Input.TextArea",
+        "Space.Compact",
+        "Timeline",
+        "Empty"
+      ],
+      "events": 15,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tracker/ClaudeReportModal.jsx",
+      "sha": "b48e385396353d4e3947d026605025a163a631a5",
+      "lines": 225,
+      "imports": [
+        "@/api/Services/SuperAdminLogsService",
+        "@/api/Services/BugTrackerService",
+        "@/utils/logReportSource",
+        "@/utils/bugTrackerUtils",
+        "@/utils/downloadText"
+      ],
+      "jsxTags": [
+        "Modal",
+        "Segmented",
+        "Switch",
+        "Alert",
+        "Progress",
+        "Button",
+        "FileTextOutlined",
+        "DownloadOutlined",
+        "CopyOutlined"
+      ],
+      "events": 10,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tracker/KnownErrorsDrawer.jsx",
+      "sha": "a892c95fc0a64255e28490b78a0cd585ea3bfd76",
+      "lines": 141,
+      "imports": [
+        "@/api/Services/SuperAdminLogsService",
+        "@/utils/logListModel",
+        "@/utils/logReport"
+      ],
+      "jsxTags": [
+        "Drawer",
+        "Alert",
+        "Skeleton",
+        "Empty",
+        "Tag",
+        "Switch",
+        "Modal",
+        "Input.TextArea"
+      ],
+      "events": 5,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tracker/LogDigestDrawer.jsx",
+      "sha": "ea3cbae0c32459baa7d64f9f7044f33233695d09",
+      "lines": 94,
+      "imports": [
+        "@/api/Services/SuperAdminLogsService",
+        "@/utils/logReport"
+      ],
+      "jsxTags": [
+        "Tag",
+        "Drawer",
+        "Button",
+        "Empty",
+        "Item"
+      ],
+      "events": 2,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/tracker/TrackerLogDetailsDrawer.jsx",
+      "sha": "d691cf9cc215e94a269c4ef49d149cd430fb8040",
+      "lines": 252,
+      "imports": [
+        "@/components/admin/projects/renderStructuredValue",
+        "@/api/Services/SuperAdminLogsService",
+        "@/utils/logReport",
+        "@/utils/logSourceLinks",
+        "@/utils/logListModel"
+      ],
+      "jsxTags": [
+        "Drawer",
+        "Button",
+        "LinkOutlined",
+        "RobotOutlined",
+        "BugOutlined",
+        "BellOutlined",
+        "Skeleton",
+        "Alert"
+      ],
+      "events": 10,
       "flags": {
         "permission": false,
         "loading": true,
