@@ -94,6 +94,10 @@ jobs:
         run: |
           npm run test:parity:closure
           npm run parity:closure:check
+      - name: Legacy dev census coverage (structure, not final UI parity)
+        run: |
+          npm run test:parity:legacy:census
+          npm run parity:legacy:census:check
       - name: Journal and DB04 source checks
         shell: bash
         run: |

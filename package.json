@@ -57,7 +57,10 @@
     "test:e2e:chat17:kit": "playwright test tests/e2e/chat17-ui-kit-interactions.spec.ts tests/e2e/ux-safe-internal-href-chat17.spec.ts",
     "parity:closure": "node scripts/page-closure.mjs",
     "parity:closure:check": "node scripts/page-closure.mjs --check",
-    "test:parity:closure": "node --test tests/page-closure.test.mjs"
+    "test:parity:closure": "node --test tests/page-closure.test.mjs",
+    "parity:legacy:census": "node scripts/audit/legacy-census-status.mjs",
+    "parity:legacy:census:check": "node scripts/audit/legacy-census-status.mjs --check",
+    "test:parity:legacy:census": "node --test tests/legacy-census-status.test.mjs"
   },
   "dependencies": {
     "ag-grid-community": "^36.2.0",
