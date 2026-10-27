@@ -5,6 +5,63 @@
   "method": "static source-based route/component candidates",
   "records": [
     {
+      "path": "src/pages/_app.js",
+      "sha": "d1555662d7370a09e91557508e7259c698681000",
+      "lines": 241,
+      "imports": [
+        "@/contexts/calendar-context",
+        "../redux/store",
+        "@/layouts/AdminLayout",
+        "@/layouts/SuperAdminLayout",
+        "@/layouts/layout",
+        "@/api/Services/TenantService",
+        "@/utils/tenantUtils",
+        "@/utils/tenantUtils",
+        "@/components/Global/ImpersonationBanner/ImpersonationBanner",
+        "@/components/tracker/TrackerQuickReportLauncher",
+        "@/utils/clientErrorReporting",
+        "@/components/ErrorBoundary/PageErrorBoundary",
+        "@/components/Common/NetworkStatusBanner",
+        "@/hooks/useRouteScrollRestoration",
+        "@/components/Common/PanelStates"
+      ],
+      "jsxComponents": [
+        "PanelEmpty",
+        "Component",
+        "AdminLayout",
+        "PageErrorBoundary",
+        "SuperAdminLayout",
+        "Layout",
+        "NestedLayout",
+        "AppErrorBoundary",
+        "Provider",
+        "ConfigProvider",
+        "QueryClientProvider",
+        "CalendarContextProvider",
+        "NetworkStatusBanner",
+        "ImpersonationBanner",
+        "TrackerQuickReportLauncher"
+      ],
+      "overlayCandidates": [
+        "PanelEmpty"
+      ],
+      "events": 1
+    },
+    {
+      "path": "src/pages/_document.js",
+      "sha": "763f43c741e56d5b59d09c7301ecc2c7ee8cfcbe",
+      "lines": 26,
+      "imports": [],
+      "jsxComponents": [
+        "Html",
+        "Head",
+        "Main",
+        "NextScript"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
       "path": "src/pages/404.js",
       "sha": "ad537c770fccb6dff0cb19bd5c34171898b9522a",
       "lines": 88,
@@ -37,6 +94,141 @@
       "events": 1
     },
     {
+      "path": "src/pages/ai-grading.js",
+      "sha": "8eae98a9128ce65264f25c2cd22ee7b864364e39",
+      "lines": 1277,
+      "imports": [
+        "@/utils/clientErrorReporting"
+      ],
+      "jsxComponents": [
+        "Head",
+        "QuestionForm",
+        "StatCard",
+        "ResultsTable",
+        "ReviewQueue",
+        "ExtractionEvidence"
+      ],
+      "overlayCandidates": [
+        "QuestionForm",
+        "ResultsTable"
+      ],
+      "events": 16
+    },
+    {
+      "path": "src/pages/auth/handoff.js",
+      "sha": "ca913de3ae02e70fa0b17c37de71af312615cd4a",
+      "lines": 176,
+      "imports": [
+        "@/api/ApiMethod",
+        "@/redux/store",
+        "@/utils/authUtils",
+        "@/utils/tenantUtils",
+        "@/utils/facultyRouteUtils",
+        "@/config/roles"
+      ],
+      "jsxComponents": [
+        "Spin",
+        "Button"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/campaign-unsubscribe/[token].js",
+      "sha": "8ce39cc157b4fa6551ea0cb233c0d5235599068b",
+      "lines": 36,
+      "imports": [
+        "@/api/Services/TpoService"
+      ],
+      "jsxComponents": [
+        "Card",
+        "Result",
+        "Typography.Title",
+        "Typography.Paragraph",
+        "Button"
+      ],
+      "overlayCandidates": [],
+      "events": 1
+    },
+    {
+      "path": "src/pages/college-join/[token].js",
+      "sha": "cfca2a02ea4610148954eb172ad20a2c67166fb0",
+      "lines": 163,
+      "imports": [
+        "@/api/Services/TpoService",
+        "@/components/recruiter/enterAfterJoin"
+      ],
+      "jsxComponents": [
+        "Card",
+        "Skeleton",
+        "Result",
+        "Button",
+        "Typography.Title",
+        "Typography.Paragraph",
+        "Alert",
+        "Form",
+        "Form.Item",
+        "Input"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item"
+      ],
+      "events": 6
+    },
+    {
+      "path": "src/pages/company-join/[token].js",
+      "sha": "4877023ab30a78bc3f499963d8e47a60f208d981",
+      "lines": 156,
+      "imports": [
+        "@/api/Services/TpoService",
+        "@/components/recruiter/enterAfterJoin"
+      ],
+      "jsxComponents": [
+        "Card",
+        "Skeleton",
+        "Result",
+        "Button",
+        "Typography.Title",
+        "Typography.Paragraph",
+        "Alert",
+        "Form",
+        "Form.Item",
+        "Input"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item"
+      ],
+      "events": 6
+    },
+    {
+      "path": "src/pages/company-share/[token].js",
+      "sha": "2a2c7f511588c41032202ff23a1a8330ccb14171",
+      "lines": 181,
+      "imports": [
+        "@/utils/safeHref",
+        "@/components/tpo/tpoFiles",
+        "@/components/tpo/ui/labels",
+        "@/api/Services/TpoHubService"
+      ],
+      "jsxComponents": [
+        "Card",
+        "Skeleton",
+        "Alert",
+        "Button",
+        "Space",
+        "Typography.Paragraph",
+        "Space.Compact",
+        "Input",
+        "Table"
+      ],
+      "overlayCandidates": [
+        "Table"
+      ],
+      "events": 6
+    },
+    {
       "path": "src/pages/Dashboard/course/Attendance/AbsentPresntBtnCol.js",
       "sha": "1c9db4e4506e615c6222ca4150098126025422a3",
       "lines": 43,
@@ -47,6 +239,19 @@
       ],
       "overlayCandidates": [],
       "events": 3
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/attendance.js",
+      "sha": "f7842bbb1d277d07190d4962900e96ea42844012",
+      "lines": 20,
+      "imports": [
+        "./AttendanceReport"
+      ],
+      "jsxComponents": [
+        "AttendanceReport"
+      ],
+      "overlayCandidates": [],
+      "events": 0
     },
     {
       "path": "src/pages/Dashboard/course/Attendance/AttendanceReport.js",
@@ -165,19 +370,6 @@
       "events": 2
     },
     {
-      "path": "src/pages/Dashboard/course/Attendance/attendance.js",
-      "sha": "f7842bbb1d277d07190d4962900e96ea42844012",
-      "lines": 20,
-      "imports": [
-        "./AttendanceReport"
-      ],
-      "jsxComponents": [
-        "AttendanceReport"
-      ],
-      "overlayCandidates": [],
-      "events": 0
-    },
-    {
       "path": "src/pages/Dashboard/course/Classroom/classroom.js",
       "sha": "0d8d5e96211ba352a6246109993a0dc924a8bbb8",
       "lines": 673,
@@ -293,21 +485,6 @@
       "events": 5
     },
     {
-      "path": "src/pages/Dashboard/course/syllabus/PdfViewerModal.jsx",
-      "sha": "3bf7f26199f531efac9c3b897496ba4ef2fa2e5b",
-      "lines": 43,
-      "imports": [
-        "@/components/Global/ModalContainer/ModalContainer"
-      ],
-      "jsxComponents": [
-        "ModalContainer"
-      ],
-      "overlayCandidates": [
-        "ModalContainer"
-      ],
-      "events": 1
-    },
-    {
       "path": "src/pages/Dashboard/course/syllabus/liveclass.js",
       "sha": "99a0478f874d25e939280c7b71c04ad47304a28f",
       "lines": 232,
@@ -331,6 +508,265 @@
         "Popconfirm"
       ],
       "events": 3
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/PdfViewerModal.jsx",
+      "sha": "3bf7f26199f531efac9c3b897496ba4ef2fa2e5b",
+      "lines": 43,
+      "imports": [
+        "@/components/Global/ModalContainer/ModalContainer"
+      ],
+      "jsxComponents": [
+        "ModalContainer"
+      ],
+      "overlayCandidates": [
+        "ModalContainer"
+      ],
+      "events": 1
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/resource.js",
+      "sha": "f3232b6c0ad32a6f19eb81aacab6737b614ff23b",
+      "lines": 201,
+      "imports": [
+        "@/api/ApiMethod",
+        "@/utils/courseUtils/syllabusUtils",
+        "@/components/Course/Syllabus/ContentTitle",
+        "@/components/Course/Syllabus/MarkCompleteButton",
+        "@/components/Global/Offcanvas/Syallabus/ResourceComposer"
+      ],
+      "jsxComponents": [
+        "PaperClipOutlined",
+        "ContentAddedDate",
+        "ContentTitle",
+        "Button",
+        "EditOutlined",
+        "Popconfirm",
+        "DeleteOutlined",
+        "Interweave",
+        "Alert",
+        "MaterialIcon",
+        "DownloadOutlined",
+        "LinkOutlined",
+        "Empty",
+        "Drawer",
+        "ResourceComposer",
+        "MarkCompleteButton"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Drawer"
+      ],
+      "events": 5
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/syllabus.js",
+      "sha": "97c7e31198b966c325861293243f9dd39b8876b2",
+      "lines": 1243,
+      "imports": [
+        "@/utils/dateUtils",
+        "../../../../api/Services/courseServices",
+        "@/utils/courseUtils/contentOrder",
+        "@/utils/courseUtils/contentCompletion",
+        "@/api/Services/quizServices",
+        "@/redux/store",
+        "@/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer",
+        "@/components/Global/Offcanvas/Assignment/newAssignment",
+        "@/components/Quiz/QuizBuilderModal",
+        "./video",
+        "./youtube",
+        "./resource",
+        "./liveclass",
+        "./syllabusDetail",
+        "@/utils/courseUtils/contentAvailability"
+      ],
+      "jsxComponents": [
+        "Empty",
+        "Video",
+        "YoutubeVideo",
+        "Resource",
+        "LiveClassContent",
+        "Skeleton",
+        "Alert",
+        "Button",
+        "BookOutlined",
+        "RightOutlined",
+        "Dropdown",
+        "Icon",
+        "PlusOutlined",
+        "TypeIcon",
+        "CheckCircleFilled",
+        "SyllabusDetail",
+        "Assignment",
+        "ViewAssignmentModal",
+        "Modal",
+        "RoadmapContentViewer",
+        "Spin",
+        "AddNewLessonContentDrawer",
+        "DrawerAssignment",
+        "QuizBuilderModal"
+      ],
+      "overlayCandidates": [
+        "Dropdown",
+        "ViewAssignmentModal",
+        "Modal",
+        "AddNewLessonContentDrawer",
+        "DrawerAssignment",
+        "QuizBuilderModal"
+      ],
+      "events": 11
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+      "sha": "590e9e189ebe088ec54e130cf51cfd7ee0c22e5e",
+      "lines": 565,
+      "imports": [
+        "./resource",
+        "./video",
+        "./liveclass",
+        "./youtube",
+        "@/api/Services/quizServices",
+        "@/api/Services/courseServices",
+        "@/redux/store",
+        "@/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer",
+        "@/components/Global/SortableLessonContentList/SortableLessonContentList",
+        "@/components/Course/Syllabus/LessonProgressBar",
+        "@/components/Course/Syllabus/ContentCompletionCheck",
+        "@/utils/courseClassAssignment",
+        "@/utils/courseUtils/contentOrder",
+        "@/utils/courseUtils/quizContent",
+        "@/utils/courseUtils/contentCompletion",
+        "@/components/Course/Syllabus/LessonActivityCards",
+        "@/utils/courseUtils/contentAvailability"
+      ],
+      "jsxComponents": [
+        "Button",
+        "ArrowLeftOutlined",
+        "ArrowRightOutlined",
+        "LessonProgressBar",
+        "Tag",
+        "IconComp",
+        "PlusOutlined",
+        "Alert",
+        "Empty",
+        "SortableLessonContentList",
+        "ContentCompletionCheck",
+        "LockOutlined",
+        "AddNewLessonContentDrawer",
+        "ExclamationCircleOutlined",
+        "Resource",
+        "Video",
+        "YoutubeVideo",
+        "AssignmentLessonCard",
+        "QuizLessonCard",
+        "LiveClassContent"
+      ],
+      "overlayCandidates": [
+        "SortableLessonContentList",
+        "AddNewLessonContentDrawer"
+      ],
+      "events": 11
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/video.js",
+      "sha": "efdebb6a6b6694ebfb8ad35f951ba36a8a0259be",
+      "lines": 223,
+      "imports": [
+        "@/components/Global/video/video",
+        "../../../../utils/courseUtils/syllabusUtils",
+        "@/components/Course/Syllabus/VideoDrawer",
+        "@/components/Course/Syllabus/ContentTitle",
+        "@/components/Course/Syllabus/ContentProgressBadge",
+        "@/api/Services/courseServices",
+        "@/utils/clientSettings",
+        "@/config/appConfig",
+        "@/utils/authUtils",
+        "@/api/serviceUrl"
+      ],
+      "jsxComponents": [
+        "VideoDrawer",
+        "ContentTitle",
+        "EditOutlined",
+        "Popconfirm",
+        "DeleteOutlined",
+        "ContentAddedDate",
+        "VideoGlobal",
+        "ContentProgressBadge"
+      ],
+      "overlayCandidates": [
+        "VideoDrawer",
+        "Popconfirm"
+      ],
+      "events": 3
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/viewSubmissionsModal.jsx",
+      "sha": "ff32ce1e89fba72fd90a725df0c2346f10ab336e",
+      "lines": 563,
+      "imports": [
+        "@/api/Services/courseServices",
+        "@/api/Services/AdminService",
+        "@/api/ApiMethod"
+      ],
+      "jsxComponents": [
+        "Modal",
+        "Spin",
+        "Alert",
+        "Button",
+        "Empty",
+        "List",
+        "Typography.Text",
+        "List.Item",
+        "Select",
+        "LeftOutlined",
+        "RightOutlined",
+        "Markup",
+        "SubmissionPdfPreview",
+        "Input"
+      ],
+      "overlayCandidates": [
+        "Modal"
+      ],
+      "events": 10
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/youtube.js",
+      "sha": "0e213a228f8df8cb8ad5f90d785e5526f28b207c",
+      "lines": 218,
+      "imports": [
+        "@/components/Course/Syllabus/YoutubeDrawer",
+        "@/components/Course/Syllabus/ContentProgressBadge",
+        "../../../../utils/courseUtils/syllabusUtils",
+        "@/components/Course/Syllabus/ContentTitle",
+        "@/api/Services/courseServices",
+        "@/utils/clientSettings"
+      ],
+      "jsxComponents": [
+        "YoutubeDrawer",
+        "ContentTitle",
+        "EditOutlined",
+        "Popconfirm",
+        "DeleteOutlined",
+        "ContentAddedDate",
+        "ContentProgressBadge"
+      ],
+      "overlayCandidates": [
+        "YoutubeDrawer",
+        "Popconfirm"
+      ],
+      "events": 3
+    },
+    {
+      "path": "src/pages/e2e/superadmin-login.js",
+      "sha": "b4e154404475f904661796af6d7a8abe11ead8aa",
+      "lines": 53,
+      "imports": [
+        "@/utils/authUtils",
+        "@/config/appConfig"
+      ],
+      "jsxComponents": [],
+      "overlayCandidates": [],
+      "events": 0
     }
   ]
 }
