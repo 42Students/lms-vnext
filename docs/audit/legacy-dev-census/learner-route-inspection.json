@@ -1,0 +1,237 @@
+{
+  "source": "42Students/lms2-fe",
+  "ref": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+  "account": "learner",
+  "method": "static route JSX/import/event source candidates",
+  "records": [
+    {
+      "path": "src/pages/learn/allAssignments.js",
+      "sha": "f437a061a923ddbe53882628fa084e724fa565e2",
+      "lines": 7,
+      "bytes": 188,
+      "localImports": [
+        "@/components/Assignments/AssignmentsContent"
+      ],
+      "childCandidates": [
+        "AssignmentsContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/allQuizzes.js",
+      "sha": "43727ba5612140f4a5b5aedac9709ee6b6798fa1",
+      "lines": 7,
+      "bytes": 168,
+      "localImports": [
+        "@/components/Quizzes/QuizzesContent"
+      ],
+      "childCandidates": [
+        "QuizzesContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/attendance.js",
+      "sha": "019708a6aaea5a3cdbffe1a49be333683cf2b565",
+      "lines": 7,
+      "bytes": 176,
+      "localImports": [
+        "@/components/Attendance/AttendanceContent"
+      ],
+      "childCandidates": [
+        "AttendanceContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/calendar.js",
+      "sha": "08ecca28e30ef5e7868fb0800d2c8fb5b847df0f",
+      "lines": 7,
+      "bytes": 194,
+      "localImports": [
+        "@/components/CalendarComp/ClassScheduleContent"
+      ],
+      "childCandidates": [
+        "ClassScheduleContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/courses/[courseId]/[...courseTab].js",
+      "sha": "a4d27bbecfe74a4ff9f388a6da4dbb9b1778d6f4",
+      "lines": 144,
+      "bytes": 7159,
+      "localImports": [
+        "@/layouts/CourseTabsLayout",
+        "@/components/Course/Common/CourseTabSkeleton",
+        "../../../Dashboard/course/syllabus/syllabus",
+        "../../../Dashboard/course/Attendance/attendance",
+        "../../../Dashboard/course/Home/Home",
+        "../../../Dashboard/course/Classroom/classroom",
+        "@/redux/store",
+        "@/utils/learnerCourseDetail",
+        "@/utils/courseUtils/contentAvailability",
+        "@/hooks/useLearnerClassScope"
+      ],
+      "childCandidates": [
+        "Home",
+        "Syllabus",
+        "Classroom",
+        "Attendance",
+        "Alert",
+        "Button",
+        "ReloadOutlined",
+        "ArrowLeftOutlined",
+        "CourseTabSkeleton"
+      ],
+      "overlayCandidates": [
+        "CourseTabSkeleton"
+      ],
+      "inlineEvents": 2,
+      "queryModes": [
+        "VALID_TABS"
+      ]
+    },
+    {
+      "path": "src/pages/learn/courses/[courseId]/index.js",
+      "sha": "00d2d22a647d94c8ef09414bdfce9779c647f698",
+      "lines": 30,
+      "bytes": 1336,
+      "localImports": [
+        "@/components/Course/Common/CourseTabSkeleton"
+      ],
+      "childCandidates": [
+        "CourseTabSkeleton"
+      ],
+      "overlayCandidates": [
+        "CourseTabSkeleton"
+      ],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/courses/index.js",
+      "sha": "802f9dbead4cf194ef4963ecbc5e18bec0518779",
+      "lines": 7,
+      "bytes": 223,
+      "localImports": [
+        "@/components/Course/CoursesContent"
+      ],
+      "childCandidates": [
+        "CoursesContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/index.js",
+      "sha": "79499cf3e1cec0a3ff4d7d84d82be7b1839901c5",
+      "lines": 11,
+      "bytes": 258,
+      "localImports": [],
+      "childCandidates": [],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/announcements.js",
+      "sha": "eeec68d8265c5284c8c5d2c008c286b61beee4d9",
+      "lines": 81,
+      "bytes": 4191,
+      "localImports": [
+        "@/layouts/PlacementsTabsLayout",
+        "@/components/tpo/announcements/AnnouncementList",
+        "@/api/Services/TpoHubService",
+        "@/components/Placements/student/words"
+      ],
+      "childCandidates": [
+        "Alert",
+        "Button",
+        "AnnouncementList",
+        "Skeleton",
+        "Link"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 3,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/applications.js",
+      "sha": "88bd6b043658db56bcef711bcba19dfab2b0024c",
+      "lines": 215,
+      "bytes": 12802,
+      "localImports": [
+        "@/layouts/PlacementsTabsLayout",
+        "@/api/Services/TpoHubService",
+        "@/api/Services/jobService",
+        "@/components/Placements/student/useJourney",
+        "@/components/Placements/student/RoundTrack",
+        "@/components/Placements/student/OfferCard",
+        "@/components/Placements/PlacementsCompanyAvatar",
+        "@/components/Placements/student/words"
+      ],
+      "childCandidates": [
+        "Alert",
+        "Button",
+        "Skeleton",
+        "Input.Search",
+        "Link",
+        "Empty",
+        "PlacementsCompanyAvatar",
+        "RoundTrack",
+        "DownOutlined",
+        "RightOutlined",
+        "OfferCard",
+        "Modal",
+        "Input.TextArea"
+      ],
+      "overlayCandidates": [
+        "Modal"
+      ],
+      "inlineEvents": 14,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/assessments.js",
+      "sha": "d7925681d5396f25b5cc8807ac44c1fea9e6db5b",
+      "lines": 10,
+      "bytes": 343,
+      "localImports": [
+        "@/components/Placements/student/MovedPage",
+        "@/layouts/PlacementsTabsLayout"
+      ],
+      "childCandidates": [
+        "MovedPage"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/calendar.js",
+      "sha": "c95c471799ee76c84c65322f4e4aa6d11d5427a7",
+      "lines": 10,
+      "bytes": 370,
+      "localImports": [
+        "@/components/Placements/student/MovedPage",
+        "@/layouts/PlacementsTabsLayout"
+      ],
+      "childCandidates": [
+        "MovedPage"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    }
+  ]
+}
