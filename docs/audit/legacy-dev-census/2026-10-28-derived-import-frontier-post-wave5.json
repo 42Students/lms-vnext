@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "kind": "wave5 import expansion; source-only",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "inputs": [
+    "wave3 existing 248",
+    "wave4 190",
+    "wave5 36"
+  ],
+  "counts": {
+    "wave5Read": 36,
+    "allInspectedDistinct": 474,
+    "uiCandidate": 32,
+    "additionalUiFolderDependencies": 10,
+    "additionalOutsideUiFolderDependencies": 13,
+    "unresolved": 0,
+    "shaMismatches": 0
+  },
+  "limitations": [
+    "This is not full route/action/runtime or backend parity",
+    "Regex may miss multiline, computed, global provider and dynamic imports",
+    "Other module dependencies are retained, not certified harmless"
+  ],
+  "frontier": [
+    {
+      "path": "src/components/profile/PrivateDocLink.jsx",
+      "sha": "b706a590fe25e135f51a3d100d447fe4ead851be",
+      "importedBy": [
+        {
+          "from": "src/components/profile/about/identity.js",
+          "line": 6
+        },
+        {
+          "from": "src/components/profile/about/qualifications.js",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "path": "src/components/Global/Button/PencilUploadButton.jsx",
+      "sha": "bcfb5b0ebd75f3176f84d32d02198725413acb6f",
+      "importedBy": [
+        {
+          "from": "src/components/profile/userInfo.js",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "path": "src/components/Global/SkillsAutocomplete.jsx",
+      "sha": "b78055a51e0ed2fc538758fc8b68c02450a40ea6",
+      "importedBy": [
+        {
+          "from": "src/components/profile/about/skills.js",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/components/profile/about/MarksheetUpload.jsx",
+      "sha": "bee3e09a1a5b541c41294c7d5e0a016663d6cefb",
+      "importedBy": [
+        {
+          "from": "src/components/profile/about/qualifications.js",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "path": "src/components/profile/VideoIntroModal.jsx",
+      "sha": "4b6042428795c19ec29002a5abdea4c3476d8705",
+      "importedBy": [
+        {
+          "from": "src/components/profile/userInfo.js",
+          "line": 24
+        }
+      ]
+    },
+    {
+      "path": "src/components/Quiz/Table/action.js",
+      "sha": "a8c747f6fe1ffad4312587a2fd65b3d878a81483",
+      "importedBy": [
+        {
+          "from": "src/components/Quiz/Table/table.js",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "path": "src/components/Quiz/Table/quizeTitle.js",
+      "sha": "046805b8127d9911bdce118d19353c81d987560e",
+      "importedBy": [
+        {
+          "from": "src/components/Quiz/Table/table.js",
+          "line": 20
+        }
+      ]
+    },
+    {
+      "path": "src/components/Quiz/Table/submission.js",
+      "sha": "ac3698d9f5824be1dd89e035202e6d227943ffd6",
+      "importedBy": [
+        {
+          "from": "src/components/Quiz/Table/table.js",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/recents.js",
+      "sha": "ce864a71e6469af7fab2758dc61304e5f3848d7b",
+      "importedBy": [
+        {
+          "from": "src/components/tpo/TpoCommandPalette.jsx",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/shortcuts.js",
+      "sha": "5061cdb384e8363c9c570a26806f05c074f88456",
+      "importedBy": [
+        {
+          "from": "src/components/tpo/ui/ShortcutHelp.jsx",
+          "line": 3
+        }
+      ]
+    }
+  ],
+  "otherDependencies": [
+    {
+      "path": "src/utils/profileUtils.js",
+      "sha": "59d31264e4370d9f4974dc2eda8c9bd802daa9d3",
+      "importedBy": [
+        {
+          "from": "src/components/profile/userInfo.js",
+          "line": 3
+        },
+        {
+          "from": "src/components/profile/ProfileCompleteness.js",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/ProfileService.js",
+      "sha": "9d9760085683f5a740026898593119bd64953acf",
+      "importedBy": [
+        {
+          "from": "src/components/profile/userInfo.js",
+          "line": 9
+        },
+        {
+          "from": "src/components/profile/about/qualifications.js",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/utils/authUtils.js",
+      "sha": "c79e628b23ecd93e1bb55470f48194a19e1aa007",
+      "importedBy": [
+        {
+          "from": "src/components/tpo/ui/memoryKey.js",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "path": "src/hooks/useContacts.js",
+      "sha": "eff1fa6f8cdaf561ebe0e4d1a446fcb7339f132f",
+      "importedBy": [
+        {
+          "from": "src/components/contacts/ContactsGrid.js",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/utils/urlValidation.js",
+      "sha": "9a66c15be0fec69707f9e9d756b4744f94316065",
+      "importedBy": [
+        {
+          "from": "src/components/profile/about/certifications.js",
+          "line": 7
+        },
+        {
+          "from": "src/components/profile/about/metadata.js",
+          "line": 6
+        },
+        {
+          "from": "src/components/profile/about/projects.js",
+          "line": 7
+        },
+        {
+          "from": "src/components/profile/about/publications.js",
+          "line": 6
+        },
+        {
+          "from": "src/components/profile/about/socialProfiles.js",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "path": "src/hooks/useChoices.js",
+      "sha": "50425131c9085cf6c01f17a184691048f916072a",
+      "importedBy": [
+        {
+          "from": "src/components/profile/about/personalDetails.js",
+          "line": 7
+        },
+        {
+          "from": "src/components/profile/about/socialProfiles.js",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/utils/dateUtils.js",
+      "sha": "9b9a8f851534932211d660504ae368cec3c6d73e",
+      "importedBy": [
+        {
+          "from": "src/components/Quiz/Table/table.js",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/quizServices.js",
+      "sha": "5416eedaace3201c8dd5cd183ad7d69e8066699c",
+      "importedBy": [
+        {
+          "from": "src/components/Quiz/Table/table.js",
+          "line": 21
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/courseServices.js",
+      "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79",
+      "importedBy": [
+        {
+          "from": "src/components/Quiz/Table/table.js",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "path": "src/hooks/useLearnerClassScope.js",
+      "sha": "e897fcfd41133062177766caad901bfb742652ca",
+      "importedBy": [
+        {
+          "from": "src/components/Quiz/Table/table.js",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/AdminService.js",
+      "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6",
+      "importedBy": [
+        {
+          "from": "src/components/tpo/outreach/OutreachSession.jsx",
+          "line": 6
+        },
+        {
+          "from": "src/components/tpo/TpoBellPanel.jsx",
+          "line": 4
+        },
+        {
+          "from": "src/components/tpo/TpoCommandPalette.jsx",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/TpoService.js",
+      "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888",
+      "importedBy": [
+        {
+          "from": "src/components/tpo/outreach/OutreachSession.jsx",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/TpoHubService.js",
+      "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b",
+      "importedBy": [
+        {
+          "from": "src/components/tpo/outreach/OutreachSession.jsx",
+          "line": 8
+        },
+        {
+          "from": "src/components/tpo/TpoBellPanel.jsx",
+          "line": 5
+        },
+        {
+          "from": "src/components/tpo/TpoCommandPalette.jsx",
+          "line": 5
+        }
+      ]
+    }
+  ],
+  "unresolved": []
+}

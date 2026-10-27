@@ -1,0 +1,2075 @@
+{
+  "schemaVersion": 1,
+  "classification": "source import frontier only, NOT accepted UI coverage",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "inputs": [
+    "2026-10-28-import-reachability-wave4-a.json",
+    "2026-10-28-import-reachability-wave4-b.json",
+    "2026-10-28-import-reachability-wave4-c.json",
+    "2026-10-28-import-reachability-wave4-d.json",
+    "2026-10-28-import-reachability-wave4-e.json",
+    "2026-10-28-import-reachability-wave4-f.json",
+    "2026-10-28-import-reachability-wave4-g.json",
+    "2026-10-28-import-reachability-wave4-h.json",
+    "2026-10-28-import-reachability-wave4-i.json",
+    "2026-10-28-import-reachability-wave4-j.json",
+    "2026-10-28-import-reachability-wave4-k.json",
+    "2026-10-28-import-reachability-wave4-l.json",
+    "2026-10-28-import-reachability-wave4-m.json",
+    "2026-10-28-import-reachability-wave4-n.json"
+  ],
+  "method": "Post-wave3 190 files read SHA-exactly; count only new tree-resolved JS/TS imports under UI folders absent from all 438 inspected sources. All other imported code/asset edges retained as diagnostic leads; this parser is static and partial.",
+  "counts": {
+    "previousInspected": 248,
+    "wave4Inspected": 190,
+    "inspectedDistinct": 438,
+    "originalFrontier": 190,
+    "originalFrontierRemaining": 0,
+    "newUiFolderCandidates": 36,
+    "newOtherSourceDependencies": 86,
+    "resolvedLocalImportEdges": 497,
+    "unresolvedStaticLocalSpecifier": 0,
+    "dynamicLiteralImportEdges": 9,
+    "shaMismatches": 0,
+    "readErrors": 0,
+    "uiRenderingSourceCandidates": 120,
+    "interactionHookSources": 9,
+    "nonvisualSources": 61
+  },
+  "assertions": {
+    "allCurrentRead": true,
+    "uniqueSourcePaths": true,
+    "shaMatched": true,
+    "oldFrontierExactlyProcessed": true,
+    "newOutsidePrior": true
+  },
+  "limits": [
+    "Not full transitive closure; newly uncovered imports are pending",
+    "JSX/control regex can yield false classifications",
+    "Provider injected, computed import, runtime/tenant condition and backend effects unproven"
+  ],
+  "newUiFolderFrontier": [
+    {
+      "path": "src/components/Report/ScoreDistributionBars.jsx",
+      "sha": "5a5a4369df743064f2bb92ec5ee54109874ac680",
+      "importedBy": [
+        {
+          "source": "src/components/Course/Home/PerformanceCard.jsx",
+          "line": 3
+        },
+        {
+          "source": "src/components/Report/AssignmentReportContent.jsx",
+          "line": 9
+        },
+        {
+          "source": "src/components/Report/QuizReportContent.jsx",
+          "line": 9
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/common/navGroupDefinitions.js",
+      "sha": "c76497638b10bc7d5c919c3fe309ae7ada0af98a",
+      "importedBy": [
+        {
+          "source": "src/common/superAdminNavGroups.js",
+          "line": 5
+        },
+        {
+          "source": "src/common/adminNavGroups.js",
+          "line": 15
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/userInfo.js",
+      "sha": "cb804c5c67c2bbcb74a7c40b357974a8fc9e708c",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 6
+        },
+        {
+          "source": "src/components/tpo/TpoProfileCard.jsx",
+          "line": 3
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/Report/ReportStudentTable.jsx",
+      "sha": "7cf0d1197a915579670608747f9f7762cecf2958",
+      "importedBy": [
+        {
+          "source": "src/components/Report/AssignmentReportContent.jsx",
+          "line": 11
+        },
+        {
+          "source": "src/components/Report/QuizReportContent.jsx",
+          "line": 11
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/Report/ReportSummaryHeader.jsx",
+      "sha": "5f4220138c1f568b66432e7c5c7d245b52c69671",
+      "importedBy": [
+        {
+          "source": "src/components/Report/AssignmentReportContent.jsx",
+          "line": 8
+        },
+        {
+          "source": "src/components/Report/QuizReportContent.jsx",
+          "line": 8
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/tpo/ui/memoryKey.js",
+      "sha": "1e7e0c93721556f6da6ee3592768852f82cf487f",
+      "importedBy": [
+        {
+          "source": "src/components/tpo/ui/reportFilters.js",
+          "line": 1
+        },
+        {
+          "source": "src/components/tpo/ui/shareMemory.js",
+          "line": 1
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/Common/ResilientAvatar.jsx",
+      "sha": "04411b8f27f82d9a1507a361e3c8667d0e03be72",
+      "importedBy": [
+        {
+          "source": "src/components/Dropdowns/Profile/profiledropdown.js",
+          "line": 19
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/contacts/contactColumns.js",
+      "sha": "520025c30e24469b7ec3825405a3dcb5a7efda52",
+      "importedBy": [
+        {
+          "source": "src/components/contacts/index.js",
+          "line": 2
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/contacts/ContactsGrid.js",
+      "sha": "ee1d553d755f77ceebad43c03965436622d8947b",
+      "importedBy": [
+        {
+          "source": "src/components/contacts/index.js",
+          "line": 1
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/Global/CardHeader/cardHeader.js",
+      "sha": "6cbc59f7ebff9d948407a28fe19ea4028f099047",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 21
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/achievements.js",
+      "sha": "4c323cbea51897c5ceadfd160e60a87d9d51505f",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 10
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/address.js",
+      "sha": "2643ed16bfa5a915ecb6288e19586478cdc4bf38",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 15
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/awards.js",
+      "sha": "6e3dbd2361ec9ecc55e8d410637419243f27fe9e",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 19
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/certifications.js",
+      "sha": "c30ace2893d345f137f7c983e98b323952129054",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 9
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/contacts.js",
+      "sha": "b140c7972e56711910b9a0403da4837f96e47813",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 3
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/experiences.js",
+      "sha": "02e79c06d6f84353e639c51003a5a585b115d338",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 4
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/extracurricular.js",
+      "sha": "587eff435db8039cffc8df43d6295f7bbefdf264",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 13
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/hobbies.js",
+      "sha": "5eb7f833178810171700813459cd63f858846528",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 17
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/identity.js",
+      "sha": "2b0bdea57de4927df8b4f6f45dc653b0cab66edb",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 12
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/languages.js",
+      "sha": "c03a7608ca8bd26b459cf673636818b114838f82",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 11
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/metadata.js",
+      "sha": "7aeb3ab46cd2e5b3359c28f9ea71f3c9cf09264c",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 20
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/personalDetails.js",
+      "sha": "1eff544772a62c78aa787319e55e3d20030e1917",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 16
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/projects.js",
+      "sha": "e7f801f9b771c41157686f9d663bffc5dd38e553",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 8
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/publications.js",
+      "sha": "8af03859e5d617e40fe5e5f3bc2bb5d2d3647216",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 18
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/qualifications.js",
+      "sha": "2f5718e748b95263ee2b7f8951921462ef31645c",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 7
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/skills.js",
+      "sha": "1982cce384397e3b854eec29619d9a8b771ef122",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 5
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/about/socialProfiles.js",
+      "sha": "d9380a31a63e05ff8880736ee3f61c35871fa60d",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 14
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/profile/ProfileCompleteness.js",
+      "sha": "a8a5c0070f6b34950722ec50e8c7ab2c25e5e18b",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 23
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/Quiz/Table/table.js",
+      "sha": "aee730531da0bbdd11084d13ba59af3c225c9d5b",
+      "importedBy": [
+        {
+          "source": "src/components/Quizzes/QuizzesContent.jsx",
+          "line": 14
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/Report/QuestionAccuracyList.jsx",
+      "sha": "632d1c27600e81681f70b72319b573c6c59f4356",
+      "importedBy": [
+        {
+          "source": "src/components/Report/QuizReportContent.jsx",
+          "line": 10
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/Report/SubmissionTimingCard.jsx",
+      "sha": "675cb7894463f19d4bfea6737c23444953f6afae",
+      "importedBy": [
+        {
+          "source": "src/components/Report/AssignmentReportContent.jsx",
+          "line": 10
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/tpo/outreach/OutreachSession.jsx",
+      "sha": "eccc6b8063886d411b6e2c7978c2469204e4a8db",
+      "importedBy": [
+        {
+          "source": "src/components/tpo/outreach/OutreachTab.jsx",
+          "line": 10
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/tpo/TpoBellPanel.jsx",
+      "sha": "edd3ccd2d94484b80082354dda403e210e0f6b99",
+      "importedBy": [
+        {
+          "source": "src/components/tpo/TpoTopBar.js",
+          "line": 6
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/tpo/TpoCommandPalette.jsx",
+      "sha": "6ea3ae1bad87fe1c459720a299a1151b0635e0e9",
+      "importedBy": [
+        {
+          "source": "src/components/tpo/TpoTopBar.js",
+          "line": 7
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/components/tpo/ui/ShortcutHelp.jsx",
+      "sha": "db9e65c5b710fe9e3691a997ae4528524b88cfc8",
+      "importedBy": [
+        {
+          "source": "src/components/tpo/TpoTopBar.js",
+          "line": 8
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    },
+    {
+      "path": "src/layouts/tpoRecruiterTheme.js",
+      "sha": "c7d5fc84bd4ca2798f3b374fa37961497bd90fc9",
+      "importedBy": [
+        {
+          "source": "src/layouts/layout.js",
+          "line": 25
+        }
+      ],
+      "reason": "new UI-folder imported dependency"
+    }
+  ],
+  "otherSourceDependencies": [
+    {
+      "path": "src/redux/store.js",
+      "sha": "0541bf78795810713c9a75e2d1ee882641986036",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 27
+        },
+        {
+          "source": "src/components/recruiter/enterAfterJoin.js",
+          "line": 2
+        },
+        {
+          "source": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+          "line": 10
+        },
+        {
+          "source": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+          "line": 27
+        },
+        {
+          "source": "src/components/Quizzes/QuizzesContent.jsx",
+          "line": 11
+        },
+        {
+          "source": "src/pages/Dashboard/course/Attendance/TakeAttendance.js",
+          "line": 1
+        },
+        {
+          "source": "src/components/Attendance/CourseAttendeeHeaderFilters/CourseAttendeeHeaderFilters.js",
+          "line": 12
+        },
+        {
+          "source": "src/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters.js",
+          "line": 6
+        },
+        {
+          "source": "src/layouts/layout.js",
+          "line": 10
+        },
+        {
+          "source": "src/components/admin/courses/AdminCourseSyllabus.jsx",
+          "line": 8
+        },
+        {
+          "source": "src/components/Attendance/AttendanceContent.jsx",
+          "line": 24
+        },
+        {
+          "source": "src/components/Dropdowns/Profile/profiledropdown.js",
+          "line": 8
+        },
+        {
+          "source": "src/components/Dropdowns/Profile/SuperAdminProfileDropdown.js",
+          "line": 5
+        },
+        {
+          "source": "src/components/tpo/TpoProfileCard.jsx",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/utils/uploadToR2.js",
+      "sha": "71c0336018a10d333a8333306a9a59aa288c785d",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 28
+        },
+        {
+          "source": "src/pages/superadmin/sections/Courses.js",
+          "line": 12
+        },
+        {
+          "source": "src/pages/superadmin/sections/LessonContent.js",
+          "line": 25
+        },
+        {
+          "source": "src/components/tpo/JdUpload.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/Global/CroppedImageUpload/BrandingImageUpload.js",
+          "line": 5
+        },
+        {
+          "source": "src/components/Placements/PlacementCellContent.js",
+          "line": 6
+        },
+        {
+          "source": "src/components/tpo/TpoProfileCard.jsx",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/ProfileService.js",
+      "sha": "9d9760085683f5a740026898593119bd64953acf",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 29
+        },
+        {
+          "source": "src/components/tpo/TpoProfileCard.jsx",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/utils/errorHandlers.js",
+      "sha": "85113c36694344eaa832ff738c73777ba0c835bb",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 30
+        },
+        {
+          "source": "src/pages/superadmin/sections/Faculty.js",
+          "line": 15
+        },
+        {
+          "source": "src/pages/superadmin/sections/Students.js",
+          "line": 29
+        },
+        {
+          "source": "src/components/tpo/TpoProfileCard.jsx",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/utils/resumeUploadUtils.js",
+      "sha": "50a2b3a470bb66d24fc31eb9672f50c02e2010a7",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/AdminService.js",
+      "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6",
+      "importedBy": [
+        {
+          "source": "src/components/profile/about.js",
+          "line": 609
+        },
+        {
+          "source": "src/components/profile/about.js",
+          "line": 635
+        },
+        {
+          "source": "src/components/profile/about.js",
+          "line": 673
+        },
+        {
+          "source": "src/components/profile/about.js",
+          "line": 851
+        },
+        {
+          "source": "src/components/profile/about.js",
+          "line": 875
+        },
+        {
+          "source": "src/components/tpo/team/useTeamPeople.js",
+          "line": 2
+        },
+        {
+          "source": "src/pages/superadmin/sections/AdminResources.js",
+          "line": 4
+        },
+        {
+          "source": "src/pages/superadmin/sections/Attendance.js",
+          "line": 9
+        },
+        {
+          "source": "src/pages/superadmin/sections/Batches.js",
+          "line": 13
+        },
+        {
+          "source": "src/pages/superadmin/sections/BatchPromotion.js",
+          "line": 4
+        },
+        {
+          "source": "src/pages/superadmin/sections/Classes.js",
+          "line": 11
+        },
+        {
+          "source": "src/pages/superadmin/sections/Companies.js",
+          "line": 6
+        },
+        {
+          "source": "src/pages/superadmin/sections/CourseProgress.js",
+          "line": 5
+        },
+        {
+          "source": "src/pages/superadmin/sections/Courses.js",
+          "line": 11
+        },
+        {
+          "source": "src/pages/superadmin/sections/Departments.js",
+          "line": 8
+        },
+        {
+          "source": "src/pages/superadmin/sections/Faculty.js",
+          "line": 6
+        },
+        {
+          "source": "src/pages/superadmin/sections/Faculty.js",
+          "line": 14
+        },
+        {
+          "source": "src/pages/superadmin/sections/FacultyAssignment.js",
+          "line": 4
+        },
+        {
+          "source": "src/pages/superadmin/sections/HiringDashboard.js",
+          "line": 14
+        },
+        {
+          "source": "src/pages/superadmin/sections/HiringDashboard.js",
+          "line": 23
+        },
+        {
+          "source": "src/pages/superadmin/sections/Jobs.js",
+          "line": 6
+        },
+        {
+          "source": "src/pages/superadmin/sections/LectureHalls.js",
+          "line": 5
+        },
+        {
+          "source": "src/pages/superadmin/sections/LessonContent.js",
+          "line": 5
+        },
+        {
+          "source": "src/pages/superadmin/sections/Lessons.js",
+          "line": 9
+        },
+        {
+          "source": "src/pages/superadmin/sections/Programs.js",
+          "line": 9
+        },
+        {
+          "source": "src/pages/superadmin/sections/Quizzes.js",
+          "line": 4
+        },
+        {
+          "source": "src/pages/superadmin/sections/SemesterCourseMapping.js",
+          "line": 9
+        },
+        {
+          "source": "src/pages/superadmin/sections/SemesterManagement.js",
+          "line": 5
+        },
+        {
+          "source": "src/pages/superadmin/sections/Students.js",
+          "line": 13
+        },
+        {
+          "source": "src/components/admin/projects/useProjectTeamSplit.jsx",
+          "line": 3
+        },
+        {
+          "source": "src/components/tpo/outreach/OutreachTab.jsx",
+          "line": 8
+        },
+        {
+          "source": "src/components/tpo/company/CompanyLinkCard.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/tpo/students/StudentActions.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/Global/CroppedImageUpload/BrandingImageUpload.js",
+          "line": 6
+        },
+        {
+          "source": "src/components/profile/ProfileVerificationCard.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/Report/AssignmentReportContent.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/Report/QuizReportContent.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/tpo/emails/EmailComposer.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/tpo/stories/driveStories.js",
+          "line": 2
+        },
+        {
+          "source": "src/components/tpo/team/TeamConversations.jsx",
+          "line": 6
+        },
+        {
+          "source": "src/components/tpo/team/TeamPeople.jsx",
+          "line": 8
+        },
+        {
+          "source": "src/components/tpo/today/TodayQueue.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/tpo/TpoProfileCard.jsx",
+          "line": 30
+        },
+        {
+          "source": "src/components/tpo/TpoTopBar.js",
+          "line": 9
+        },
+        {
+          "source": "src/components/verification/VerifyQueue.jsx",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/utils/authUtils.js",
+      "sha": "c79e628b23ecd93e1bb55470f48194a19e1aa007",
+      "importedBy": [
+        {
+          "source": "src/components/recruiter/enterAfterJoin.js",
+          "line": 1
+        },
+        {
+          "source": "src/pages/Dashboard/course/syllabus/video.js",
+          "line": 14
+        },
+        {
+          "source": "src/pages/superadmin/sections/Faculty.js",
+          "line": 11
+        },
+        {
+          "source": "src/pages/superadmin/sections/Students.js",
+          "line": 9
+        },
+        {
+          "source": "src/layouts/layout.js",
+          "line": 14
+        },
+        {
+          "source": "src/components/Dropdowns/Profile/profiledropdown.js",
+          "line": 16
+        },
+        {
+          "source": "src/components/Dropdowns/Profile/SuperAdminProfileDropdown.js",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/config/choices.js",
+      "sha": "9c1b4ada4ac72724d2c551b021c44676dda30cac",
+      "importedBy": [
+        {
+          "source": "src/components/tpo/batches/batchRules.js",
+          "line": 3
+        },
+        {
+          "source": "src/components/tpo/students/studentGridRules.js",
+          "line": 4
+        },
+        {
+          "source": "src/components/tpo/students/StudentActions.jsx",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/TpoHubService.js",
+      "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b",
+      "importedBy": [
+        {
+          "source": "src/components/tpo/team/useTeamPeople.js",
+          "line": 3
+        },
+        {
+          "source": "src/components/Placements/student/useJourney.js",
+          "line": 2
+        },
+        {
+          "source": "src/components/Placements/student/ScheduleCard.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/tpo/company/CompanyLinkCard.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/tpo/students/StudentActions.jsx",
+          "line": 6
+        },
+        {
+          "source": "src/components/Placements/JobsListContent.jsx",
+          "line": 30
+        },
+        {
+          "source": "src/components/Placements/PlacementCellContent.js",
+          "line": 5
+        },
+        {
+          "source": "src/components/Placements/student/PlacementRules.jsx",
+          "line": 3
+        },
+        {
+          "source": "src/components/tpo/emails/EmailComposer.jsx",
+          "line": 6
+        },
+        {
+          "source": "src/components/tpo/stories/driveStories.js",
+          "line": 4
+        },
+        {
+          "source": "src/components/tpo/team/TeamConversations.jsx",
+          "line": 7
+        },
+        {
+          "source": "src/components/tpo/team/TeamPeople.jsx",
+          "line": 9
+        },
+        {
+          "source": "src/components/tpo/today/TodayQueue.jsx",
+          "line": 7
+        },
+        {
+          "source": "src/components/tpo/TpoTopBar.js",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "path": "src/components/marketing/marketing.module.scss",
+      "sha": "a5bed85fe6230df7452ba571e0698bb420193bdc",
+      "importedBy": [
+        {
+          "source": "src/components/marketing/sections.jsx",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "path": "src/utils/placementDateTime.js",
+      "sha": "aa4262262aa93130a2450be8cde2591bfe02e7cd",
+      "importedBy": [
+        {
+          "source": "src/components/Placements/student/words.js",
+          "line": 2
+        },
+        {
+          "source": "src/pages/superadmin/sections/Jobs.js",
+          "line": 19
+        },
+        {
+          "source": "src/components/tpo/drive/publishPreflight.js",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "path": "src/utils/courseUtils/syllabusUtils.js",
+      "sha": "b0882c16ef95c416d084725e9ab5cccd57ed32a0",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/liveclass.js",
+          "line": 11
+        },
+        {
+          "source": "src/pages/Dashboard/course/syllabus/resource.js",
+          "line": 11
+        },
+        {
+          "source": "src/pages/Dashboard/course/syllabus/video.js",
+          "line": 7
+        },
+        {
+          "source": "src/pages/Dashboard/course/syllabus/youtube.js",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/api/ApiMethod.js",
+      "sha": "3d924576b70062beb57f0726f39a4db9a4840f26",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/resource.js",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/courseServices.js",
+      "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/video.js",
+          "line": 11
+        },
+        {
+          "source": "src/pages/Dashboard/course/syllabus/youtube.js",
+          "line": 9
+        },
+        {
+          "source": "src/pages/superadmin/sections/AdminResources.js",
+          "line": 12
+        },
+        {
+          "source": "src/pages/superadmin/sections/LessonContent.js",
+          "line": 6
+        },
+        {
+          "source": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+          "line": 8
+        },
+        {
+          "source": "src/components/Quizzes/QuizzesContent.jsx",
+          "line": 10
+        },
+        {
+          "source": "src/components/Course/Syllabus/MarkCompleteButton.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/Global/Offcanvas/Syallabus/liveclass.js",
+          "line": 20
+        },
+        {
+          "source": "src/components/Global/Offcanvas/Syallabus/youtube.js",
+          "line": 9
+        },
+        {
+          "source": "src/components/Report/AssignmentReportContent.jsx",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/utils/clientSettings.js",
+      "sha": "19fd64e37b866f073191eebf16ed881a85573fd8",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/video.js",
+          "line": 12
+        },
+        {
+          "source": "src/pages/Dashboard/course/syllabus/youtube.js",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "path": "src/config/appConfig.js",
+      "sha": "30cbebcd0da14f7b3463fe4fe273f00ef615c01d",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/video.js",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "path": "src/api/serviceUrl.js",
+      "sha": "d45d5bc4ace9a6acb5e01bcc124ea48d7f9c1a63",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/video.js",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/adminServices/departmentService.js",
+      "sha": "5c85495cb5823e0b4059c11c502143b47fec6a13",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/AdminResources.js",
+          "line": 13
+        },
+        {
+          "source": "src/pages/superadmin/sections/LessonContent.js",
+          "line": 7
+        },
+        {
+          "source": "src/components/admin/courses/AdminCourseSyllabus.jsx",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "path": "src/utils/resourceUploadToR2.js",
+      "sha": "711a45b7bbf628a406a9762b34add2c33e55197c",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/AdminResources.js",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/attendanceServices.js",
+      "sha": "fde82c83a4426dd3a19a0165ac413de181aff7a0",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Attendance.js",
+          "line": 13
+        },
+        {
+          "source": "src/pages/Dashboard/course/Attendance/StudentAttendanceView.jsx",
+          "line": 1
+        },
+        {
+          "source": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/pages/Dashboard/course/Attendance/TakeAttendance.js",
+          "line": 8
+        },
+        {
+          "source": "src/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters.js",
+          "line": 8
+        },
+        {
+          "source": "src/components/Attendance/AttendanceContent.jsx",
+          "line": 23
+        },
+        {
+          "source": "src/components/Global/Offcanvas/Syallabus/liveclass.js",
+          "line": 19
+        }
+      ]
+    },
+    {
+      "path": "src/utils/attendanceConstants.js",
+      "sha": "7cb9f8b78e07883a57adc2db77025da520ce9a40",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Attendance.js",
+          "line": 14
+        },
+        {
+          "source": "src/pages/Dashboard/course/Attendance/StudentAttendanceView.jsx",
+          "line": 9
+        },
+        {
+          "source": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+          "line": 6
+        },
+        {
+          "source": "src/components/Attendance/AttendanceContent.jsx",
+          "line": 19
+        }
+      ]
+    },
+    {
+      "path": "src/utils/csvExport.js",
+      "sha": "e2912c9140d913488610c9ae5b070f2a4a0b53e1",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Attendance.js",
+          "line": 15
+        },
+        {
+          "source": "src/pages/superadmin/sections/Companies.js",
+          "line": 4
+        },
+        {
+          "source": "src/pages/superadmin/sections/CourseProgress.js",
+          "line": 12
+        },
+        {
+          "source": "src/pages/superadmin/sections/Departments.js",
+          "line": 4
+        },
+        {
+          "source": "src/pages/superadmin/sections/Faculty.js",
+          "line": 8
+        },
+        {
+          "source": "src/pages/superadmin/sections/Quizzes.js",
+          "line": 5
+        },
+        {
+          "source": "src/pages/superadmin/sections/Students.js",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/utils/adminAttendanceGrid.js",
+      "sha": "fab542b87ecd7944529ce023d17ef49dd87c1ac9",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Attendance.js",
+          "line": 17
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/FacultyAssignmentService.js",
+      "sha": "ea0683d738a9c0d4cd628c7e488e8a8a016ec8ee",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Attendance.js",
+          "line": 18
+        },
+        {
+          "source": "src/pages/superadmin/sections/CourseProgress.js",
+          "line": 11
+        },
+        {
+          "source": "src/pages/superadmin/sections/FacultyAssignment.js",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "path": "src/utils/classCapacity.js",
+      "sha": "9d44e2c7a0efb92be48a2e8dfac942727b1d2586",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Batches.js",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "path": "src/utils/formErrors.js",
+      "sha": "94717daf4b31733522d8f3fd60972f9acae1710a",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Batches.js",
+          "line": 19
+        },
+        {
+          "source": "src/pages/superadmin/sections/Classes.js",
+          "line": 18
+        },
+        {
+          "source": "src/pages/superadmin/sections/Companies.js",
+          "line": 17
+        },
+        {
+          "source": "src/pages/superadmin/sections/Courses.js",
+          "line": 15
+        },
+        {
+          "source": "src/pages/superadmin/sections/Departments.js",
+          "line": 21
+        },
+        {
+          "source": "src/pages/superadmin/sections/FacultyAssignment.js",
+          "line": 15
+        },
+        {
+          "source": "src/pages/superadmin/sections/Lessons.js",
+          "line": 16
+        },
+        {
+          "source": "src/pages/superadmin/sections/Programs.js",
+          "line": 11
+        },
+        {
+          "source": "src/pages/superadmin/sections/SemesterCourseMapping.js",
+          "line": 16
+        },
+        {
+          "source": "src/pages/superadmin/sections/SemesterManagement.js",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "path": "src/utils/adminCourseTakeaways.js",
+      "sha": "23568e63124f2e1466029923359de4b9a95f0555",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Courses.js",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/AdminUserLifecycleService.js",
+      "sha": "e13df996103d050c71141db99bc739a6d9d11a06",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Faculty.js",
+          "line": 7
+        },
+        {
+          "source": "src/pages/superadmin/sections/Students.js",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "path": "src/utils/bulkCsvParse.js",
+      "sha": "9f7323d327dc575874826e1745aecdac85445ce3",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Faculty.js",
+          "line": 9
+        },
+        {
+          "source": "src/pages/superadmin/sections/Students.js",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/utils/onboardingPhone.js",
+      "sha": "6f68a665f33e0e9980c25003d2e4da29c4258ffb",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Faculty.js",
+          "line": 10
+        },
+        {
+          "source": "src/pages/superadmin/sections/Students.js",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/FacultySearchService.js",
+      "sha": "8489e3ff26e4a1120e69c6d2bd8f364837ebe96e",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Faculty.js",
+          "line": 16
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/SemesterService.js",
+      "sha": "e726ce9ffab678cd2333856f203541f1b4145793",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/FacultyAssignment.js",
+          "line": 8
+        },
+        {
+          "source": "src/pages/superadmin/sections/Programs.js",
+          "line": 8
+        },
+        {
+          "source": "src/pages/superadmin/sections/SemesterCourseMapping.js",
+          "line": 10
+        },
+        {
+          "source": "src/pages/superadmin/sections/SemesterManagement.js",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/placementJobService.js",
+      "sha": "fea5e38cafeb0a7245eceb874b5a56eaf6bd7bf4",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/HiringDashboard.js",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "path": "src/utils/jobTagUtils.js",
+      "sha": "78ec5989978ef16ec816bb33834be537bd4445f3",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Jobs.js",
+          "line": 18
+        },
+        {
+          "source": "src/components/Placements/JobsListContent.jsx",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "path": "src/utils/navigationContext.js",
+      "sha": "7b0184b438b230f52a937792680cddbe6980c198",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Jobs.js",
+          "line": 22
+        },
+        {
+          "source": "src/components/Placements/JobsListContent.jsx",
+          "line": 34
+        }
+      ]
+    },
+    {
+      "path": "src/utils/dateUtils.js",
+      "sha": "9b9a8f851534932211d660504ae368cec3c6d73e",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Quizzes.js",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/quizServices.js",
+      "sha": "5416eedaace3201c8dd5cd183ad7d69e8066699c",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Quizzes.js",
+          "line": 15
+        },
+        {
+          "source": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+          "line": 7
+        },
+        {
+          "source": "src/components/Report/QuizReportContent.jsx",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/LearnerSearchService.js",
+      "sha": "82214d6954d34befa09f8b55c5588f6b4914d73a",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/Students.js",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "path": "src/utils/monthlyAttendanceReport.js",
+      "sha": "d94b62dd85e544219447adfaee427f25f7b362d7",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "path": "src/utils/downloadMonthlyAttendancePdf.js",
+      "sha": "76903d126171bcf0f4848e66d94e62f0466e2f57",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "path": "src/utils/courseClassAssignment.js",
+      "sha": "47e6f7dfd7085e0c3fc56222ef92e3ef4a6bd83c",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "path": "src/utils/courseUtils/contentOrder.js",
+      "sha": "d3e3b65152b778daac8ce7dd9e672f002336ad73",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "path": "src/utils/courseUtils/quizContent.js",
+      "sha": "947477d4e13bdaa9e28884a691524e0980e0d17f",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+          "line": 34
+        }
+      ]
+    },
+    {
+      "path": "src/utils/courseUtils/contentCompletion.js",
+      "sha": "1460d944c1cc7649685459c04b19635e1ca64cc7",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "path": "src/utils/courseUtils/contentAvailability.js",
+      "sha": "cbb3d8e423ebb1ce01c4165c3d0b64f11288c63a",
+      "importedBy": [
+        {
+          "source": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "path": "src/utils/projectTeams.js",
+      "sha": "af63f44b88922595b82b7bfb4a94110d5bc7dcc3",
+      "importedBy": [
+        {
+          "source": "src/components/admin/projects/useProjectTeamSplit.jsx",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/utils/clientErrorReporting.js",
+      "sha": "bfe655367fd5014a2a9be0fc2e097a68dcd0a4d8",
+      "importedBy": [
+        {
+          "source": "src/components/ErrorBoundary/PageErrorBoundary.js",
+          "line": 3
+        },
+        {
+          "source": "src/components/Global/video/video.jsx",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "path": "src/utils/driveDescription.js",
+      "sha": "1d2fc57ccb2cf2e89d7662184d927df4a0dd7824",
+      "importedBy": [
+        {
+          "source": "src/components/Global/RichTextEditor/RichTextDisplay.jsx",
+          "line": 2
+        },
+        {
+          "source": "src/components/Placements/JobsListContent.jsx",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "path": "src/utils/safeHref.js",
+      "sha": "7c05d05cdc41618a5e6be7d7304efa6d0f2a46a9",
+      "importedBy": [
+        {
+          "source": "src/components/recruiter/recruiterReviewUtils.js",
+          "line": 14
+        },
+        {
+          "source": "src/components/tpo/JdUpload.jsx",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/TpoService.js",
+      "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888",
+      "importedBy": [
+        {
+          "source": "src/components/tpo/outreach/OutreachTab.jsx",
+          "line": 9
+        },
+        {
+          "source": "src/components/tpo/students/StudentActions.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/tpo/stories/driveStories.js",
+          "line": 3
+        },
+        {
+          "source": "src/components/tpo/today/TodayQueue.jsx",
+          "line": 6
+        },
+        {
+          "source": "src/components/tpo/TpoTopBar.js",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/SuperAdminLogsService.js",
+      "sha": "194d62ee5291ff318fbcf99953baf7e931067ec2",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/KnownErrorsDrawer.jsx",
+          "line": 3
+        },
+        {
+          "source": "src/components/tracker/LogDigestDrawer.jsx",
+          "line": 3
+        },
+        {
+          "source": "src/components/tracker/TrackerLogDetailsDrawer.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/tracker/LogsDownloadControl.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/tracker/TriageMenu.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/tracker/useLogInsights.js",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "path": "src/utils/logListModel.js",
+      "sha": "1e0050f0a8b037c16610cdf12bf63167a373ba68",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/KnownErrorsDrawer.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/tracker/TrackerLogDetailsDrawer.jsx",
+          "line": 8
+        },
+        {
+          "source": "src/components/tracker/TriageMenu.jsx",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "path": "src/utils/logReport.js",
+      "sha": "f171c4b498e5ea5afea81891a463eac7d910a37d",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/KnownErrorsDrawer.jsx",
+          "line": 5
+        },
+        {
+          "source": "src/components/tracker/LogDigestDrawer.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/tracker/TrackerLogDetailsDrawer.jsx",
+          "line": 6
+        },
+        {
+          "source": "src/components/tracker/LogHealthStrip.jsx",
+          "line": 2
+        },
+        {
+          "source": "src/components/tracker/TriageMenu.jsx",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "path": "src/utils/bugTrackerAttachmentUtils.js",
+      "sha": "ba36977a2d11a9e83483121e1f8a9919288ee428",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/ScreenshotPicker.jsx",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/BugTrackerService.js",
+      "sha": "1d4484defd08904efc9d0111b48c79b6e80a85d4",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/SimilarIssuesPanel.jsx",
+          "line": 2
+        },
+        {
+          "source": "src/components/tracker/EngineeringDetails.jsx",
+          "line": 3
+        },
+        {
+          "source": "src/components/tracker/RetestCard.jsx",
+          "line": 3
+        },
+        {
+          "source": "src/components/tracker/TrackerQuickReportLauncher.jsx",
+          "line": 7
+        },
+        {
+          "source": "src/components/tracker/TriageMenu.jsx",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "path": "src/utils/bugTrackerUtils.js",
+      "sha": "a92f6c8e1651fefda6f67549fe45826e86213d91",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/SimilarIssuesPanel.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/tracker/ActivityTimeline.jsx",
+          "line": 1
+        },
+        {
+          "source": "src/components/tracker/TrackerQuickReportLauncher.jsx",
+          "line": 17
+        },
+        {
+          "source": "src/components/tracker/TriageMenu.jsx",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "path": "src/utils/logSourceLinks.js",
+      "sha": "68a1da06457da5156322e265533e0cdfe2ed4567",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/TrackerLogDetailsDrawer.jsx",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/utils/facultyRouteUtils.js",
+      "sha": "5d09ec63a56f98df9734ebc828f1f592ea285b10",
+      "importedBy": [
+        {
+          "source": "src/layouts/contactsTabLayout.js",
+          "line": 5
+        },
+        {
+          "source": "src/components/Attendance/AttendanceContent.jsx",
+          "line": 26
+        }
+      ]
+    },
+    {
+      "path": "src/contexts/SuperAdminScopeContext.js",
+      "sha": "14ae9f2486dae62e41ae8fdb975a015fea35f293",
+      "importedBy": [
+        {
+          "source": "src/pages/superadmin/sections/TenantsHub.js",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "path": "src/components/Attendance/CourseAttendeeHeaderFilters/CourseAttendeeHeaderFilters.module.scss",
+      "sha": "3cf14f961a83750577f209cf31b730588564031d",
+      "importedBy": [
+        {
+          "source": "src/components/Attendance/CourseAttendeeHeaderFilters/CourseAttendeeHeaderFilters.js",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "path": "src/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters.module.scss",
+      "sha": "d2d418f6341c0d7bf8a6bbebba0e6172340f16b0",
+      "importedBy": [
+        {
+          "source": "src/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters.js",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "path": "src/data/bugTrackerData.js",
+      "sha": "5992590612591980d83719a731c3868d51b1ee30",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/TrackerPill.jsx",
+          "line": 1
+        },
+        {
+          "source": "src/components/tracker/ActivityTimeline.jsx",
+          "line": 2
+        },
+        {
+          "source": "src/components/tracker/EngineeringDetails.jsx",
+          "line": 4
+        },
+        {
+          "source": "src/components/tracker/TrackerQuickReportLauncher.jsx",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "path": "src/hooks/useSwipeBack.js",
+      "sha": "a12efc3d5ae04cb9ce2a397f41f918583b93efbb",
+      "importedBy": [
+        {
+          "source": "src/layouts/layout.js",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/hooks/useRouteTransition.js",
+      "sha": "614dbce0e45343ae37f046c94d5b6187191726cf",
+      "importedBy": [
+        {
+          "source": "src/layouts/layout.js",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/utils/pageTitle.js",
+      "sha": "5e5fa6806b4229a392e6548a62f6b74f1a6f4370",
+      "importedBy": [
+        {
+          "source": "src/layouts/layout.js",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "path": "src/utils/navigationActiveKey.js",
+      "sha": "c49a6525ef1bc0cb18aaa12e876c7e829bceb75c",
+      "importedBy": [
+        {
+          "source": "src/layouts/layout.js",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "path": "src/config/roles.js",
+      "sha": "b434007a7777400839ce20e8b63011bbdac3387c",
+      "importedBy": [
+        {
+          "source": "src/layouts/layout.js",
+          "line": 26
+        },
+        {
+          "source": "src/components/Dropdowns/Profile/profiledropdown.js",
+          "line": 18
+        }
+      ]
+    },
+    {
+      "path": "src/utils/apiError.js",
+      "sha": "95d2f52e9a7305c1f7fcd9e17a5e50028ced97c2",
+      "importedBy": [
+        {
+          "source": "src/layouts/layout.js",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "path": "src/utils/notificationDateUtils.js",
+      "sha": "f9ae0a68cfea7b77ebd446c91b277c7d3e22cbdb",
+      "importedBy": [
+        {
+          "source": "src/components/Course/Home/UnifiedActivityList.jsx",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/UserServices.js",
+      "sha": "bf22db80dc21133955f4ee30bb6cc10ad5b7381e",
+      "importedBy": [
+        {
+          "source": "src/components/Dropdowns/Profile/profiledropdown.js",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "path": "src/utils/roleUtils.js",
+      "sha": "a16d7b4ef25833d3ace89759751190e1ce56d22d",
+      "importedBy": [
+        {
+          "source": "src/components/Dropdowns/Profile/profiledropdown.js",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "path": "src/utils/profileUtils.js",
+      "sha": "59d31264e4370d9f4974dc2eda8c9bd802daa9d3",
+      "importedBy": [
+        {
+          "source": "src/components/Dropdowns/Profile/profiledropdown.js",
+          "line": 17
+        }
+      ]
+    },
+    {
+      "path": "src/utils/youtubeLink.js",
+      "sha": "2e14e28af531960f6c73c92cc6e88a528e10dc21",
+      "importedBy": [
+        {
+          "source": "src/components/Global/Offcanvas/Syallabus/youtube.js",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/jobService.js",
+      "sha": "92e2c205b86bfee2f9ea10750c0bc0826cc6546f",
+      "importedBy": [
+        {
+          "source": "src/components/Placements/JobsListContent.jsx",
+          "line": 20
+        }
+      ]
+    },
+    {
+      "path": "src/utils/learnerApiUtils.js",
+      "sha": "6d28df69c3d8f7b771dd4d1e6a642736cfa6ae22",
+      "importedBy": [
+        {
+          "source": "src/components/Placements/JobsListContent.jsx",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/VerificationService.js",
+      "sha": "54b5d827dd309924d1bcefd58b21effd50f7a89d",
+      "importedBy": [
+        {
+          "source": "src/components/profile/ProfileVerificationCard.jsx",
+          "line": 6
+        },
+        {
+          "source": "src/components/verification/VerifyQueue.jsx",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/utils/assignmentReport.js",
+      "sha": "cc4ffc2f16ab09e63b1da3fdf57bec2d7a9f695b",
+      "importedBy": [
+        {
+          "source": "src/components/Report/AssignmentReportContent.jsx",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/utils/downloadAssignmentReportPdf.js",
+      "sha": "cfa3ae772b5494cc553a234ea48dda3d4d7f2456",
+      "importedBy": [
+        {
+          "source": "src/components/Report/AssignmentReportContent.jsx",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/utils/quizReport.js",
+      "sha": "2964f0f44e32c29527634c967135b4c840342180",
+      "importedBy": [
+        {
+          "source": "src/components/Report/QuizReportContent.jsx",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/utils/downloadQuizReportPdf.js",
+      "sha": "8771b8ea23bceb412d55f7eff03393bbb59483dc",
+      "importedBy": [
+        {
+          "source": "src/components/Report/QuizReportContent.jsx",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/utils/tenantUtils.js",
+      "sha": "ec05e6c7135fae7134698300b7047b3eacba55bb",
+      "importedBy": [
+        {
+          "source": "src/components/tpo/emails/EmailComposer.jsx",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/utils/trackerLogsExport.js",
+      "sha": "c33f5b874555b97dae7bf02cec8e249d4e2f2015",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/LogsDownloadControl.jsx",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "src/utils/bugTrackerAttachments.js",
+      "sha": "88dad4b030480c061315b4f056854bf3d0cfd815",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/TrackerQuickReportLauncher.jsx",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "path": "src/utils/bugTrackerQuickReport.js",
+      "sha": "18b2309e2076b215f1467c44846a43466fb5dec8",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/TrackerQuickReportLauncher.jsx",
+          "line": 18
+        }
+      ]
+    },
+    {
+      "path": "src/utils/logReportSource.js",
+      "sha": "b5c789317718d26bc898a05218adcdf0f0277930",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/TriageMenu.jsx",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "path": "src/utils/instant.js",
+      "sha": "62376e9f82495b349773b10cbdafb370d2ecddf8",
+      "importedBy": [
+        {
+          "source": "src/components/tracker/useLogInsights.js",
+          "line": 3
+        }
+      ]
+    }
+  ],
+  "unresolved": [],
+  "computed": [
+    {
+      "from": "src/components/profile/about.js",
+      "line": 609,
+      "to": "@/api/Services/AdminService"
+    },
+    {
+      "from": "src/components/profile/about.js",
+      "line": 635,
+      "to": "@/api/Services/AdminService"
+    },
+    {
+      "from": "src/components/profile/about.js",
+      "line": 673,
+      "to": "@/api/Services/AdminService"
+    },
+    {
+      "from": "src/components/profile/about.js",
+      "line": 851,
+      "to": "@/api/Services/AdminService"
+    },
+    {
+      "from": "src/components/profile/about.js",
+      "line": 875,
+      "to": "@/api/Services/AdminService"
+    },
+    {
+      "from": "src/components/tpo/grid/gridExport.js",
+      "line": 44,
+      "to": "write-excel-file/browser"
+    },
+    {
+      "from": "src/components/Quizzes/QuizzesContent.jsx",
+      "line": 14,
+      "to": "@/components/Quiz/Table/table"
+    },
+    {
+      "from": "src/components/admin/courses/AdminCourseSyllabus.jsx",
+      "line": 3,
+      "to": "@/pages/Dashboard/course/syllabus/syllabusDetail"
+    },
+    {
+      "from": "src/components/tpo/TpoProfileCard.jsx",
+      "line": 30,
+      "to": "@/api/Services/AdminService"
+    }
+  ]
+}

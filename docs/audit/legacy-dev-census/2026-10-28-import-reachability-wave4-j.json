@@ -1,0 +1,2760 @@
+{
+  "schemaVersion": 1,
+  "batch": "wave4-j",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "parent": "post-wave3-frontier",
+  "scope": "static candidate signals; no runtime parity",
+  "nodes": [
+    {
+      "path": "src/common/constant.js",
+      "sourceSha": "340f2764e4d97caf0f16530723c582a0516ccc14",
+      "expectedSha": "340f2764e4d97caf0f16530723c582a0516ccc14",
+      "shaMatches": true,
+      "fromIndex": 109,
+      "lineCount": 62,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/common/subDomains.js",
+      "sourceSha": "5d8a2428bd6716cc5d6e330d5adbfb2bec17f3d1",
+      "expectedSha": "5d8a2428bd6716cc5d6e330d5adbfb2bec17f3d1",
+      "shaMatches": true,
+      "fromIndex": 110,
+      "lineCount": 6,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/admin/courses/AdminCourseSyllabus.jsx",
+      "sourceSha": "bcf3a364baf34a24e378817be96af26ba3b9e3d6",
+      "expectedSha": "bcf3a364baf34a24e378817be96af26ba3b9e3d6",
+      "shaMatches": true,
+      "fromIndex": 111,
+      "lineCount": 621,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/dynamic",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/pages/Dashboard/course/syllabus/syllabusDetail",
+          "resolution": {
+            "path": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+            "sha": "590e9e189ebe088ec54e130cf51cfd7ee0c22e5e"
+          },
+          "dynamic": true
+        },
+        {
+          "line": 4,
+          "specifier": "next/image",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/Global/Offcanvas/Syallabus/AddLessonDrawer",
+          "resolution": {
+            "path": "src/components/Global/Offcanvas/Syallabus/AddLessonDrawer.jsx",
+            "sha": "ce4803eb2e8eabd6e86674c0b128789cf6f52a23"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "@/redux/store",
+          "resolution": {
+            "path": "src/redux/store.js",
+            "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 10,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 11,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 12,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 13,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 15,
+          "specifier": "@/api/Services/adminServices/departmentService",
+          "resolution": {
+            "path": "src/api/Services/adminServices/departmentService.js",
+            "sha": "5c85495cb5823e0b4059c11c502143b47fec6a13"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 21,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 146,
+      "signals": [
+        {
+          "line": 6,
+          "kind": "state",
+          "excerpt": "import { useState, useEffect, useRef } from \"react\";"
+        },
+        {
+          "line": 32,
+          "kind": "state",
+          "excerpt": "const [showLessonContent, setShowLessonContent] = useState(false);"
+        },
+        {
+          "line": 33,
+          "kind": "state",
+          "excerpt": "const [drawerOpen, setOpenDrawer] = useState(false);"
+        },
+        {
+          "line": 34,
+          "kind": "state",
+          "excerpt": "const [syllabus, setSyllabus] = useState([]);"
+        },
+        {
+          "line": 35,
+          "kind": "state",
+          "excerpt": "const [selectedClassId, setSelectedClassId] = useState(VALUE_GENERIC);"
+        },
+        {
+          "line": 36,
+          "kind": "state",
+          "excerpt": "const [classesForSyllabus, setClassesForSyllabus] = useState({});"
+        },
+        {
+          "line": 41,
+          "kind": "state",
+          "excerpt": "const [selectedLessonIndex, setSelectedLessonIndex] = useState(0);"
+        },
+        {
+          "line": 43,
+          "kind": "state",
+          "excerpt": "const [refresh, setRefresh] = useState(false);"
+        },
+        {
+          "line": 49,
+          "kind": "state",
+          "excerpt": "const [classesLoadFailed, setClassesLoadFailed] = useState(false);"
+        },
+        {
+          "line": 50,
+          "kind": "state",
+          "excerpt": "const [classesRetry, setClassesRetry] = useState(0);"
+        },
+        {
+          "line": 51,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 73,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 79,
+          "kind": "state",
+          "excerpt": "const lessonListSeq = useRef(0);"
+        },
+        {
+          "line": 80,
+          "kind": "state",
+          "excerpt": "const [syllabusLoadFailed, setSyllabusLoadFailed] = useState(false);"
+        },
+        {
+          "line": 81,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 85,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 99,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 109,
+          "kind": "jsx",
+          "excerpt": "<div className=\"scroll-container\">"
+        },
+        {
+          "line": 110,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mb-5 pb-3\">"
+        },
+        {
+          "line": 111,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-module\">"
+        },
+        {
+          "line": 114,
+          "kind": "jsx",
+          "excerpt": "{/* <div className=\"ln-course-head mb-3\">"
+        },
+        {
+          "line": 115,
+          "kind": "jsx",
+          "excerpt": "<Row className=\"ln-metrics-card-row\" gutter={16}>"
+        },
+        {
+          "line": 116,
+          "kind": "jsx",
+          "excerpt": "<Col span={6}>"
+        },
+        {
+          "line": 120,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-between align-items-center\">"
+        },
+        {
+          "line": 124,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-c-icon\">"
+        },
+        {
+          "line": 131,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 132,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 136,
+          "kind": "jsx",
+          "excerpt": "<div className=\"text-center\">"
+        },
+        {
+          "line": 138,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 139,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 140,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 141,
+          "kind": "jsx",
+          "excerpt": "<Col span={6}>"
+        },
+        {
+          "line": 145,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-between align-items-center\">"
+        },
+        {
+          "line": 147,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-c-icon\">"
+        },
+        {
+          "line": 156,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 157,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 161,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-center\">"
+        },
+        {
+          "line": 163,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 164,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 165,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 166,
+          "kind": "jsx",
+          "excerpt": "<Col span={6}>"
+        },
+        {
+          "line": 170,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-between align-items-center\">"
+        },
+        {
+          "line": 174,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-c-icon\">"
+        },
+        {
+          "line": 183,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 184,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 188,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-center\">"
+        },
+        {
+          "line": 190,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 191,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 192,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 193,
+          "kind": "jsx",
+          "excerpt": "<Col span={6}>"
+        },
+        {
+          "line": 197,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-between align-items-center\">"
+        },
+        {
+          "line": 201,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-c-icon\">"
+        },
+        {
+          "line": 210,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 211,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 215,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-center\">"
+        },
+        {
+          "line": 217,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 218,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 219,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 220,
+          "kind": "jsx",
+          "excerpt": "</Row>"
+        },
+        {
+          "line": 221,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-coursal-row \">"
+        },
+        {
+          "line": 222,
+          "kind": "jsx",
+          "excerpt": "<Carousel className=\"ln-cors-card\">"
+        },
+        {
+          "line": 223,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 228,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-between align-items-center\">"
+        },
+        {
+          "line": 232,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-c-icon\">"
+        },
+        {
+          "line": 239,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 240,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 249,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 250,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 251,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 252,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 257,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-between align-items-center\">"
+        },
+        {
+          "line": 259,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-c-icon\">"
+        },
+        {
+          "line": 268,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 269,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 278,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 279,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 280,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 281,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 286,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-between align-items-center\">"
+        },
+        {
+          "line": 290,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-c-icon ms-1\">"
+        },
+        {
+          "line": 299,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 300,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 309,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 310,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 311,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 312,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 317,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex justify-content-between align-items-center\">"
+        },
+        {
+          "line": 321,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-c-icon\">"
+        },
+        {
+          "line": 330,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 331,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 340,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 341,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 342,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 343,
+          "kind": "jsx",
+          "excerpt": "</Carousel>"
+        },
+        {
+          "line": 344,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 345,
+          "kind": "jsx",
+          "excerpt": "</div> */}"
+        },
+        {
+          "line": 348,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-module-card\">"
+        },
+        {
+          "line": 349,
+          "kind": "jsx",
+          "excerpt": "<div className=\"pb-md-2 mb-4\">"
+        },
+        {
+          "line": 352,
+          "kind": "interactive,navigation",
+          "excerpt": "onClick={() => router.push(\"/college-admin/courses\")}"
+        },
+        {
+          "line": 363,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 364,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 365,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-module-card__head  mb-4\">"
+        },
+        {
+          "line": 366,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex flex-wrap align-items-center gap-3 mb-3\">"
+        },
+        {
+          "line": 367,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-card-subtitle d-flex align-items-center\">"
+        },
+        {
+          "line": 378,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 382,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"link\" size=\"small\" style={{ padding: 0, height: \"auto\" }} onClick={() => fetchLessonList()}>Retry</Button>"
+        },
+        {
+          "line": 388,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"link\" size=\"small\" style={{ padding: 0, height: \"auto\" }} onClick={() => setClassesRetry((n) => n + 1)}>Retry</Button>"
+        },
+        {
+          "line": 392,
+          "kind": "overlay",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 394,
+          "kind": "interactive",
+          "excerpt": "onChange={v => {"
+        },
+        {
+          "line": 403,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 421,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-syallabus-new\">"
+        },
+        {
+          "line": 422,
+          "kind": "jsx,interactive",
+          "excerpt": "<button onClick={() => setOpenDrawer(true)}>"
+        },
+        {
+          "line": 430,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 431,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 433,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 434,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-module-card__body\">"
+        },
+        {
+          "line": 436,
+          "kind": "jsx",
+          "excerpt": "<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />"
+        },
+        {
+          "line": 438,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-syllabus-card row\">"
+        },
+        {
+          "line": 444,
+          "kind": "interactive",
+          "excerpt": "onClick={() => {"
+        },
+        {
+          "line": 453,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-card-syllabus ln-card-hvr\">"
+        },
+        {
+          "line": 454,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-card-syllabus__head\">"
+        },
+        {
+          "line": 459,
+          "kind": "jsx",
+          "excerpt": "<button className=\"ln-btn-dots\">"
+        },
+        {
+          "line": 463,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 467,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 469,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-card-syllabus__body\">"
+        },
+        {
+          "line": 473,
+          "kind": "jsx",
+          "excerpt": "{/* <div className=\"ln-syllabus-topics\">"
+        },
+        {
+          "line": 478,
+          "kind": "jsx",
+          "excerpt": "</div> */}"
+        },
+        {
+          "line": 479,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 481,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-card-syllabus__footer d-flex flex-wrap\">"
+        },
+        {
+          "line": 491,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 492,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 493,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 496,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 498,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 499,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 500,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 501,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 502,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 504,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-module__body\">"
+        },
+        {
+          "line": 505,
+          "kind": "jsx",
+          "excerpt": "<div className=\"scroll-container scroll-container--courselanding\">"
+        }
+      ]
+    },
+    {
+      "path": "src/components/admin/HelpHint.js",
+      "sourceSha": "6e218f2c0be59f21858f8e2ad8d71fd36deaaa83",
+      "expectedSha": "6e218f2c0be59f21858f8e2ad8d71fd36deaaa83",
+      "shaMatches": true,
+      "fromIndex": 112,
+      "lineCount": 60,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 13,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useState } from \"react\";"
+        },
+        {
+          "line": 14,
+          "kind": "jsx",
+          "excerpt": "* Usage: <FormItemLabelWithHelp label=\"Unique ID\" help=\"A short, permanent code...\">"
+        },
+        {
+          "line": 15,
+          "kind": "jsx",
+          "excerpt": "* or standalone: <HelpHint title=\"Unique ID / Code\">A short, permanent code...</HelpHint>"
+        },
+        {
+          "line": 18,
+          "kind": "state",
+          "excerpt": "const [open, setOpen] = useState(false);"
+        },
+        {
+          "line": 25,
+          "kind": "jsx",
+          "excerpt": "icon={<QuestionCircleOutlined />}"
+        },
+        {
+          "line": 27,
+          "kind": "interactive",
+          "excerpt": "onClick={(e) => {"
+        },
+        {
+          "line": 36,
+          "kind": "overlay",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 39,
+          "kind": "interactive",
+          "excerpt": "onCancel={() => setOpen(false)}"
+        },
+        {
+          "line": 41,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button key=\"close\" type=\"primary\" onClick={() => setOpen(false)}>"
+        },
+        {
+          "line": 43,
+          "kind": "jsx",
+          "excerpt": "</Button>,"
+        },
+        {
+          "line": 46,
+          "kind": "jsx",
+          "excerpt": "<Paragraph style={{ marginBottom: 0, whiteSpace: \"pre-line\" }}>{children}</Paragraph>"
+        },
+        {
+          "line": 47,
+          "kind": "jsx",
+          "excerpt": "</Modal>"
+        },
+        {
+          "line": 56,
+          "kind": "jsx",
+          "excerpt": "{label} <HelpHint title={title || label}>{children}</HelpHint>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/admin/profileSectionSchemas.js",
+      "sourceSha": "41cedc792b4e5766202ef877a80b2a8caf91b3f6",
+      "expectedSha": "41cedc792b4e5766202ef877a80b2a8caf91b3f6",
+      "shaMatches": true,
+      "fromIndex": 113,
+      "lineCount": 166,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/Attendance/AttendanceContent.jsx",
+      "sourceSha": "9e1b04f977918e0d9781e0186e544b72c4f396a1",
+      "expectedSha": "9e1b04f977918e0d9781e0186e544b72c4f396a1",
+      "shaMatches": true,
+      "fromIndex": 114,
+      "lineCount": 479,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 14,
+          "specifier": "@/components/Global/ListingPageHeader/ListingPageHeader",
+          "resolution": {
+            "path": "src/components/Global/ListingPageHeader/ListingPageHeader.jsx",
+            "sha": "e51adc75b13a7e51c1f4f0dd3cc056b258e71987"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 15,
+          "specifier": "@/components/Common/PageShell",
+          "resolution": {
+            "path": "src/components/Common/PageShell.jsx",
+            "sha": "0f05dc1e60d652385f03289a608496ab372c92ec"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 16,
+          "specifier": "@/components/Common/Skeletons",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 17,
+          "specifier": "@/components/Global/MetricPill/MetricPill",
+          "resolution": {
+            "path": "src/components/Global/MetricPill/MetricPill.jsx",
+            "sha": "1ccf8904383da10e31bd801b3e7f2a06508cb0cf"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 18,
+          "specifier": "dayjs",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 19,
+          "specifier": "@/utils/attendanceConstants",
+          "resolution": {
+            "path": "src/utils/attendanceConstants.js",
+            "sha": "7cb9f8b78e07883a57adc2db77025da520ce9a40"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 20,
+          "specifier": "moment",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 21,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 22,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 23,
+          "specifier": "@/api/Services/attendanceServices",
+          "resolution": {
+            "path": "src/api/Services/attendanceServices.js",
+            "sha": "fde82c83a4426dd3a19a0165ac413de181aff7a0"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 24,
+          "specifier": "@/redux/store",
+          "resolution": {
+            "path": "src/redux/store.js",
+            "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 25,
+          "specifier": "@/components/Attendance/StudentAttendance/StatusCol",
+          "resolution": {
+            "path": "src/components/Attendance/StudentAttendance/StatusCol.js",
+            "sha": "e015a74c231736eaab3d1ee00b1aea1771d3246a"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 26,
+          "specifier": "@/utils/facultyRouteUtils",
+          "resolution": {
+            "path": "src/utils/facultyRouteUtils.js",
+            "sha": "5d09ec63a56f98df9734ebc828f1f592ea285b10"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 27,
+          "specifier": "dayjs/plugin/localizedFormat",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 86,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useState, useEffect, useCallback, useMemo } from \"react\";"
+        },
+        {
+          "line": 55,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-row-card__main\">"
+        },
+        {
+          "line": 56,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-row-card__icon-wrap\">"
+        },
+        {
+          "line": 57,
+          "kind": "jsx",
+          "excerpt": "<CalendarOutlined className=\"learn-attendance-row-card__icon\" />"
+        },
+        {
+          "line": 58,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 59,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-row-card__content\">"
+        },
+        {
+          "line": 60,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-row-card__header\">"
+        },
+        {
+          "line": 64,
+          "kind": "jsx",
+          "excerpt": "<StatusCol statusClass={status.statusClass} status={status.label} />"
+        },
+        {
+          "line": 65,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 69,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 70,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 81,
+          "kind": "state",
+          "excerpt": "const [attendanceData, setAttendanceData] = useState(null);"
+        },
+        {
+          "line": 85,
+          "kind": "state",
+          "excerpt": "const [attendanceLoadError, setAttendanceLoadError] = useState(false);"
+        },
+        {
+          "line": 86,
+          "kind": "state",
+          "excerpt": "const [attendanceRetryCount, setAttendanceRetryCount] = useState(0);"
+        },
+        {
+          "line": 88,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 90,
+          "kind": "navigation",
+          "excerpt": "router.replace(getFacultyCoursesPath(router.pathname, loginUser?.facultyType));"
+        },
+        {
+          "line": 93,
+          "kind": "state",
+          "excerpt": "const [courses, setCourses] = useState([]);"
+        },
+        {
+          "line": 94,
+          "kind": "state",
+          "excerpt": "const [loading, setLoading] = useState(true);"
+        },
+        {
+          "line": 95,
+          "kind": "state",
+          "excerpt": "const [coursesLoading, setCoursesLoading] = useState(true);"
+        },
+        {
+          "line": 96,
+          "kind": "state",
+          "excerpt": "const [coursesLoadError, setCoursesLoadError] = useState(false);"
+        },
+        {
+          "line": 97,
+          "kind": "state",
+          "excerpt": "const [coursesRetryCount, setCoursesRetryCount] = useState(0);"
+        },
+        {
+          "line": 108,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 135,
+          "kind": "jsx",
+          "excerpt": "icon: <ExclamationCircleOutlined style={{ color: \"#ef4444\" }} />,"
+        },
+        {
+          "line": 149,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 228,
+          "kind": "state",
+          "excerpt": "const handleCourseChange = useCallback("
+        },
+        {
+          "line": 254,
+          "kind": "state",
+          "excerpt": "const handlePrevMonth = useCallback(() => {"
+        },
+        {
+          "line": 259,
+          "kind": "state",
+          "excerpt": "const handleNextMonth = useCallback(() => {"
+        },
+        {
+          "line": 266,
+          "kind": "state",
+          "excerpt": "const handleMonthPick = useCallback("
+        },
+        {
+          "line": 275,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-empty learn-attendance-empty--rich\">"
+        },
+        {
+          "line": 276,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-empty__illustration\">"
+        },
+        {
+          "line": 277,
+          "kind": "jsx",
+          "excerpt": "<AttendanceEmptyIllustration />"
+        },
+        {
+          "line": 278,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 283,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 287,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-empty learn-attendance-empty--rich\">"
+        },
+        {
+          "line": 288,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-empty__illustration\">"
+        },
+        {
+          "line": 289,
+          "kind": "jsx",
+          "excerpt": "<AttendanceEmptyIllustration />"
+        },
+        {
+          "line": 290,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 295,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button onClick={() => setAttendanceRetryCount((count) => count + 1)}>Retry</Button>"
+        },
+        {
+          "line": 296,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 300,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-empty learn-attendance-empty--rich\">"
+        },
+        {
+          "line": 301,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-empty__illustration\">"
+        },
+        {
+          "line": 302,
+          "kind": "jsx",
+          "excerpt": "<AttendanceEmptyIllustration />"
+        },
+        {
+          "line": 303,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 308,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 332,
+          "kind": "jsx",
+          "excerpt": "return <StatusCol statusClass={status.statusClass} status={status.label} />;"
+        },
+        {
+          "line": 342,
+          "kind": "jsx",
+          "excerpt": "<div className=\"scroll-container learn-attendance-page learn-attendance-page--scroll learn-placements-dashboard\">"
+        },
+        {
+          "line": 343,
+          "kind": "jsx",
+          "excerpt": "<PageShell>"
+        },
+        {
+          "line": 351,
+          "kind": "jsx",
+          "excerpt": "icon={<BookOutlined />}"
+        },
+        {
+          "line": 356,
+          "kind": "jsx",
+          "excerpt": "icon={<CheckCircleOutlined />}"
+        },
+        {
+          "line": 363,
+          "kind": "jsx",
+          "excerpt": "icon={<CloseCircleOutlined />}"
+        },
+        {
+          "line": 374,
+          "kind": "jsx",
+          "excerpt": "<section className=\"learn-attendance-grid-section\" aria-label=\"Attendance records\">"
+        },
+        {
+          "line": 384,
+          "kind": "jsx,interactive",
+          "excerpt": "action={<Button size=\"small\" onClick={() => setCoursesRetryCount((count) => count + 1)}>Retry</Button>}"
+        },
+        {
+          "line": 387,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-filter-bar\">"
+        },
+        {
+          "line": 388,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-filter-course\">"
+        },
+        {
+          "line": 389,
+          "kind": "jsx",
+          "excerpt": "<BookOutlined className=\"learn-attendance-filter-course__icon\" />"
+        },
+        {
+          "line": 391,
+          "kind": "overlay",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 393,
+          "kind": "interactive",
+          "excerpt": "onChange={handleCourseChange}"
+        },
+        {
+          "line": 403,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 404,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-filter-date\">"
+        },
+        {
+          "line": 405,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className=\"learn-attendance-filter-date__nav\" onClick={handlePrevMonth} aria-label=\"Previous month\">"
+        },
+        {
+          "line": 406,
+          "kind": "jsx",
+          "excerpt": "<LeftOutlined />"
+        },
+        {
+          "line": 407,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 411,
+          "kind": "interactive",
+          "excerpt": "onChange={handleMonthPick}"
+        },
+        {
+          "line": 420,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className=\"learn-attendance-filter-date__nav\" onClick={handleNextMonth} aria-label=\"Next month\">"
+        },
+        {
+          "line": 421,
+          "kind": "jsx",
+          "excerpt": "<RightOutlined />"
+        },
+        {
+          "line": 422,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 423,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 424,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 425,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-module-card learn-placements-section-card learn-attendance-list-card\""
+        },
+        {
+          "line": 428,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-empty learn-attendance-empty--rich\" role=\"alert\">"
+        },
+        {
+          "line": 431,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button onClick={() => setCoursesRetryCount((n) => n + 1)}>Retry</Button>"
+        },
+        {
+          "line": 432,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 436,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-loading\">"
+        },
+        {
+          "line": 437,
+          "kind": "jsx",
+          "excerpt": "<TableSkeleton rows={5} columns={5}"
+        },
+        {
+          "line": 439,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 447,
+          "kind": "jsx",
+          "excerpt": "<RefreshStatus label={`Updating attendance for ${date.format(\"MMMM YYYY\")}…`} />"
+        },
+        {
+          "line": 449,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-desktop\">"
+        },
+        {
+          "line": 450,
+          "kind": "overlay",
+          "excerpt": "<Table"
+        },
+        {
+          "line": 458,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 459,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-attendance-mobile\">"
+        },
+        {
+          "line": 464,
+          "kind": "jsx",
+          "excerpt": "<AttendanceListItem record={ele} status={statusOf(ele)} />"
+        },
+        {
+          "line": 469,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 472,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 473,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 474,
+          "kind": "jsx",
+          "excerpt": "</PageShell>"
+        },
+        {
+          "line": 475,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Attendance/StudentAttendance/StatusCol.js",
+      "sourceSha": "e015a74c231736eaab3d1ee00b1aea1771d3246a",
+      "expectedSha": "e015a74c231736eaab3d1ee00b1aea1771d3246a",
+      "shaMatches": true,
+      "fromIndex": 115,
+      "lineCount": 27,
+      "classification": "nonvisual-module",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/Common/PanelStates",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/Course/Home/AtRiskStudentsCard.jsx",
+      "sourceSha": "a767be55aad220734ec6a8d4fa8268d12554dc94",
+      "expectedSha": "a767be55aad220734ec6a8d4fa8268d12554dc94",
+      "shaMatches": true,
+      "fromIndex": 116,
+      "lineCount": 192,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 32,
+      "signals": [
+        {
+          "line": 59,
+          "kind": "jsx",
+          "excerpt": "<section className=\"ln-module-card learn-placements-section-card learn-risk-card\" aria-label=\"At-risk students\">"
+        },
+        {
+          "line": 60,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-card__head\">"
+        },
+        {
+          "line": 61,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-card__heading\">"
+        },
+        {
+          "line": 63,
+          "kind": "jsx",
+          "excerpt": "{students.length ? <ExclamationCircleFilled /> : <SafetyCertificateFilled />}"
+        },
+        {
+          "line": 65,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 74,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 75,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 77,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-card__breakdown\" role=\"status\">"
+        },
+        {
+          "line": 84,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 86,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 89,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-card__skeleton\" aria-hidden=\"true\">"
+        },
+        {
+          "line": 91,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 103,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-snapshot\" role=\"none\">"
+        },
+        {
+          "line": 104,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-snapshot__head\">"
+        },
+        {
+          "line": 118,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 119,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-snapshot__stats\">"
+        },
+        {
+          "line": 121,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-snapshot__stat\">"
+        },
+        {
+          "line": 130,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 133,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-snapshot__stat learn-risk-snapshot__stat--plain\">"
+        },
+        {
+          "line": 136,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 139,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-risk-snapshot__stat\">"
+        },
+        {
+          "line": 148,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 150,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 151,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 155,
+          "kind": "jsx,overlay",
+          "excerpt": "<Popover content={snapshot} trigger=\"click\" placement=\"bottomLeft\" overlayClassName=\"learn-risk-snapshot-popover\">"
+        },
+        {
+          "line": 156,
+          "kind": "jsx",
+          "excerpt": "<button type=\"button\" className=\"learn-risk-card__row\" aria-haspopup=\"dialog\">"
+        },
+        {
+          "line": 175,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 176,
+          "kind": "jsx",
+          "excerpt": "</Popover>"
+        },
+        {
+          "line": 181,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className=\"learn-risk-card__cta\" onClick={onViewAll}>"
+        },
+        {
+          "line": 183,
+          "kind": "jsx",
+          "excerpt": "<RightOutlined />"
+        },
+        {
+          "line": 184,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 187,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/InThisCourseSection.jsx",
+      "sourceSha": "31cfcf01978ab73f227ccaa05c3b3467ddca8101",
+      "expectedSha": "31cfcf01978ab73f227ccaa05c3b3467ddca8101",
+      "shaMatches": true,
+      "fromIndex": 117,
+      "lineCount": 147,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "interweave",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 34,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useId, useState, useMemo } from \"react\";"
+        },
+        {
+          "line": 41,
+          "kind": "state",
+          "excerpt": "const [expanded, setExpanded] = useState(false);"
+        },
+        {
+          "line": 52,
+          "kind": "jsx",
+          "excerpt": "<section className=\"cas\" aria-label=\"Course overview\" aria-busy=\"true\" role=\"status\" aria-live=\"polite\">"
+        },
+        {
+          "line": 54,
+          "kind": "jsx",
+          "excerpt": "<div aria-hidden=\"true\">"
+        },
+        {
+          "line": 55,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__head\">"
+        },
+        {
+          "line": 56,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__skel-title\" />"
+        },
+        {
+          "line": 57,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__skel-sub\" />"
+        },
+        {
+          "line": 58,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 59,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__skel-line\" style={{ width: \"85%\" }} />"
+        },
+        {
+          "line": 60,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__skel-line\" style={{ width: \"60%\" }} />"
+        },
+        {
+          "line": 61,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 62,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 74,
+          "kind": "jsx",
+          "excerpt": "<section className=\"cas\" aria-label=\"Course overview\">"
+        },
+        {
+          "line": 76,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__head\">"
+        },
+        {
+          "line": 79,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__meta\">"
+        },
+        {
+          "line": 82,
+          "kind": "jsx",
+          "excerpt": "<TrophyOutlined /> {credits} Credits"
+        },
+        {
+          "line": 87,
+          "kind": "jsx",
+          "excerpt": "<UserOutlined /> {instructor}"
+        },
+        {
+          "line": 90,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 92,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 102,
+          "kind": "jsx",
+          "excerpt": "<CheckCircleOutlined className=\"cas__takeaway-icon\" />"
+        },
+        {
+          "line": 111,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__desc\">"
+        },
+        {
+          "line": 112,
+          "kind": "jsx",
+          "excerpt": "<div id={descriptionId}>"
+        },
+        {
+          "line": 116,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__desc-full\">"
+        },
+        {
+          "line": 118,
+          "kind": "jsx",
+          "excerpt": "<div className=\"cas__html ln-tbl-markup\">"
+        },
+        {
+          "line": 119,
+          "kind": "jsx",
+          "excerpt": "<Markup content={content} allowList={MARKUP_ALLOWED_TAGS} allowAttributes={MARKUP_ALLOWED_ATTRS} />"
+        },
+        {
+          "line": 120,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 124,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 126,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 131,
+          "kind": "interactive",
+          "excerpt": "onClick={() => setExpanded(!expanded)}"
+        },
+        {
+          "line": 136,
+          "kind": "jsx",
+          "excerpt": "<><UpOutlined /> Show less</>"
+        },
+        {
+          "line": 138,
+          "kind": "jsx",
+          "excerpt": "<><ReadOutlined /> Read more</>"
+        },
+        {
+          "line": 140,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 142,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 144,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/UnifiedActivityList.jsx",
+      "sourceSha": "6f4943b09bcac471aaaf0d39238b8cf00d3cece7",
+      "expectedSha": "6f4943b09bcac471aaaf0d39238b8cf00d3cece7",
+      "shaMatches": true,
+      "fromIndex": 118,
+      "lineCount": 239,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "interweave",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 11,
+          "specifier": "@/utils/notificationDateUtils",
+          "resolution": {
+            "path": "src/utils/notificationDateUtils.js",
+            "sha": "f9ae0a68cfea7b77ebd446c91b277c7d3e22cbdb"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 40,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useState } from \"react\";"
+        },
+        {
+          "line": 46,
+          "kind": "state",
+          "excerpt": "const [expandedAnnId, setExpandedAnnId] = useState(null);"
+        },
+        {
+          "line": 92,
+          "kind": "navigation",
+          "excerpt": "router.push(normalizedTaskUrl);"
+        },
+        {
+          "line": 94,
+          "kind": "navigation",
+          "excerpt": "router.push(getFilteredTabPath(router, courseIdentifier, \"assessments\"));"
+        },
+        {
+          "line": 100,
+          "kind": "navigation",
+          "excerpt": "router.push(getFilteredTabPath(router, courseIdentifier, \"live-sessions\"));"
+        },
+        {
+          "line": 109,
+          "kind": "jsx",
+          "excerpt": "<section className=\"unified-activity\" aria-label=\"Recent updates\" aria-busy=\"true\" role=\"status\" aria-live=\"polite\">"
+        },
+        {
+          "line": 112,
+          "kind": "jsx",
+          "excerpt": "<div className=\"unified-activity__skeleton\" aria-hidden=\"true\">"
+        },
+        {
+          "line": 113,
+          "kind": "jsx",
+          "excerpt": "<div className=\"unified-activity__skeleton-line\" />"
+        },
+        {
+          "line": 114,
+          "kind": "jsx",
+          "excerpt": "<div className=\"unified-activity__skeleton-line\" style={{ width: \"75%\" }} />"
+        },
+        {
+          "line": 115,
+          "kind": "jsx",
+          "excerpt": "<div className=\"unified-activity__skeleton-line\" style={{ width: \"60%\" }} />"
+        },
+        {
+          "line": 116,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 117,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 122,
+          "kind": "jsx",
+          "excerpt": "<section className=\"unified-activity\" aria-label=\"Recent updates\">"
+        },
+        {
+          "line": 132,
+          "kind": "interactive",
+          "excerpt": "onClick={() => handleDeadlineClick(item)}"
+        },
+        {
+          "line": 133,
+          "kind": "interactive",
+          "excerpt": "onKeyDown={(e) => e.key === \"Enter\" && handleDeadlineClick(item)}"
+        },
+        {
+          "line": 137,
+          "kind": "jsx",
+          "excerpt": "<FileTextOutlined aria-hidden />"
+        },
+        {
+          "line": 139,
+          "kind": "jsx",
+          "excerpt": "<EditOutlined aria-hidden />"
+        },
+        {
+          "line": 148,
+          "kind": "jsx",
+          "excerpt": "<RightOutlined className=\"unified-activity__arrow\" aria-hidden />"
+        },
+        {
+          "line": 149,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 164,
+          "kind": "jsx",
+          "excerpt": "<MessageOutlined aria-hidden />"
+        },
+        {
+          "line": 166,
+          "kind": "jsx",
+          "excerpt": "<div className=\"unified-activity__content unified-activity__content--announcement\">"
+        },
+        {
+          "line": 170,
+          "kind": "jsx",
+          "excerpt": "<div id={announcementBodyId} className=\"unified-activity__body ln-tbl-markup\">"
+        },
+        {
+          "line": 171,
+          "kind": "jsx",
+          "excerpt": "<Markup content={preview || ''} allowList={ANNOUNCEMENT_ALLOWED_TAGS} allowAttributes={ANNOUNCEMENT_ALLOWED_ATTRS} />"
+        },
+        {
+          "line": 172,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 178,
+          "kind": "interactive",
+          "excerpt": "onClick={() => handleAnnouncementExpand(item.id)}"
+        },
+        {
+          "line": 184,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 186,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 194,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className=\"unified-activity__item-btn\" onClick={handleSessionClick}>"
+        },
+        {
+          "line": 196,
+          "kind": "jsx",
+          "excerpt": "<ClockCircleOutlined aria-hidden />"
+        },
+        {
+          "line": 202,
+          "kind": "jsx",
+          "excerpt": "<RightOutlined className=\"unified-activity__arrow\" aria-hidden />"
+        },
+        {
+          "line": 203,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 211,
+          "kind": "jsx",
+          "excerpt": "<div className=\"unified-activity__links\">"
+        },
+        {
+          "line": 216,
+          "kind": "interactive,navigation",
+          "excerpt": "onClick={() => router.push(getFilteredTabPath(router, courseIdentifier, \"assessments\"))}"
+        },
+        {
+          "line": 219,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 225,
+          "kind": "interactive,navigation",
+          "excerpt": "onClick={() => router.push(`${getCourseBasePath(router, courseIdentifier)}/discussions`)}"
+        },
+        {
+          "line": 228,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 231,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className=\"unified-activity__link\" onClick={handleSessionClick}>"
+        },
+        {
+          "line": 233,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 235,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 236,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Course/Syllabus/ContentCompletionCheck.jsx",
+      "sourceSha": "e00e3ef7bcb1fbde716720d2a9e606ffb40f1205",
+      "expectedSha": "e00e3ef7bcb1fbde716720d2a9e606ffb40f1205",
+      "shaMatches": true,
+      "fromIndex": 119,
+      "lineCount": 31,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 1,
+      "signals": [
+        {
+          "line": 27,
+          "kind": "jsx",
+          "excerpt": "<CheckCircleFilled />"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Course/Syllabus/LessonProgressBar.jsx",
+      "sourceSha": "6f6b4bfe4b8c9d283fc245a11c9024c43461768d",
+      "expectedSha": "6f6b4bfe4b8c9d283fc245a11c9024c43461768d",
+      "shaMatches": true,
+      "fromIndex": 120,
+      "lineCount": 55,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 8,
+      "signals": [
+        {
+          "line": 25,
+          "kind": "jsx",
+          "excerpt": "<div className=\"lesson-progress-bar\">"
+        },
+        {
+          "line": 26,
+          "kind": "jsx",
+          "excerpt": "<div className=\"lesson-progress-bar__row\">"
+        },
+        {
+          "line": 34,
+          "kind": "interactive",
+          "excerpt": "onClick={onContinueClick}"
+        },
+        {
+          "line": 37,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 39,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 40,
+          "kind": "jsx",
+          "excerpt": "<div className=\"lesson-progress-bar__track\">"
+        },
+        {
+          "line": 50,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 52,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Dropdowns/Profile/profiledropdown.js",
+      "sourceSha": "42807cfb9262412dd9418814bc33049cd9287663",
+      "expectedSha": "42807cfb9262412dd9418814bc33049cd9287663",
+      "shaMatches": true,
+      "fromIndex": 121,
+      "lineCount": 239,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/image",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "next/link",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/Loader/loader",
+          "resolution": {
+            "path": "src/components/Loader/loader.js",
+            "sha": "4e05bddcbdbf1b14087e4cfda5e684eb36541199"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "@/redux/store",
+          "resolution": {
+            "path": "src/redux/store.js",
+            "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "@/api/Services/UserServices",
+          "resolution": {
+            "path": "src/api/Services/UserServices.js",
+            "sha": "bf22db80dc21133955f4ee30bb6cc10ad5b7381e"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 13,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 14,
+          "specifier": "@/common/subDomains",
+          "resolution": {
+            "path": "src/common/subDomains.js",
+            "sha": "5d8a2428bd6716cc5d6e330d5adbfb2bec17f3d1"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 15,
+          "specifier": "@/utils/roleUtils",
+          "resolution": {
+            "path": "src/utils/roleUtils.js",
+            "sha": "a16d7b4ef25833d3ace89759751190e1ce56d22d"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 16,
+          "specifier": "@/utils/authUtils",
+          "resolution": {
+            "path": "src/utils/authUtils.js",
+            "sha": "c79e628b23ecd93e1bb55470f48194a19e1aa007"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 17,
+          "specifier": "@/utils/profileUtils",
+          "resolution": {
+            "path": "src/utils/profileUtils.js",
+            "sha": "59d31264e4370d9f4974dc2eda8c9bd802daa9d3"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 18,
+          "specifier": "@/config/roles",
+          "resolution": {
+            "path": "src/config/roles.js",
+            "sha": "b434007a7777400839ce20e8b63011bbdac3387c"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 19,
+          "specifier": "@/components/Common/ResilientAvatar",
+          "resolution": {
+            "path": "src/components/Common/ResilientAvatar.jsx",
+            "sha": "04411b8f27f82d9a1507a361e3c8667d0e03be72"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 36,
+      "signals": [
+        {
+          "line": 5,
+          "kind": "state",
+          "excerpt": "import { useState, useCallback } from \"react\";"
+        },
+        {
+          "line": 13,
+          "kind": "state",
+          "excerpt": "import { useEffect } from \"react\";"
+        },
+        {
+          "line": 27,
+          "kind": "state",
+          "excerpt": "const [openDropdown, setOpenDropdown] = useState(false);"
+        },
+        {
+          "line": 28,
+          "kind": "state",
+          "excerpt": "const [userDetails, setUserDetails] = useState();"
+        },
+        {
+          "line": 32,
+          "kind": "state",
+          "excerpt": "const fetchUserDetails = useCallback(() => {"
+        },
+        {
+          "line": 53,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 58,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 105,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 106,
+          "kind": "overlay",
+          "excerpt": "<Dropdown"
+        },
+        {
+          "line": 115,
+          "kind": "jsx",
+          "excerpt": "<div className={\"ln-head-dropdown-menu\"}>"
+        },
+        {
+          "line": 117,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-profile-dropdown-banner\">"
+        },
+        {
+          "line": 118,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-profile-dropdown-banner__row\">"
+        },
+        {
+          "line": 122,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 123,
+          "kind": "jsx,interactive",
+          "excerpt": "<Link href={getProfilePath(loginUser)} onClick={() => { setOpenDropdown(false); dispatch(appAction.setActiveMenuItem(\"profile\")); }} className=\"ln-profile-"
+        },
+        {
+          "line": 125,
+          "kind": "jsx",
+          "excerpt": "</Link>"
+        },
+        {
+          "line": 126,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 131,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-account-info brd-btm-1 brd-btm-4F9 pb-2\">"
+        },
+        {
+          "line": 136,
+          "kind": "interactive",
+          "excerpt": "onClick={() => {"
+        },
+        {
+          "line": 150,
+          "kind": "jsx",
+          "excerpt": "</Link>"
+        },
+        {
+          "line": 153,
+          "kind": "jsx",
+          "excerpt": "{/* <button className=\"ln-account-info__item mb-3 bt-n d-flex align-items-center\">"
+        },
+        {
+          "line": 163,
+          "kind": "jsx",
+          "excerpt": "</button> */}"
+        },
+        {
+          "line": 164,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 165,
+          "kind": "jsx",
+          "excerpt": "<div className=\"pt-3 pb-1\">"
+        },
+        {
+          "line": 168,
+          "kind": "interactive",
+          "excerpt": "onClick={async () => {"
+        },
+        {
+          "line": 173,
+          "kind": "navigation",
+          "excerpt": "window.location.href = url;"
+        },
+        {
+          "line": 175,
+          "kind": "navigation",
+          "excerpt": "window.location.replace(url);"
+        },
+        {
+          "line": 188,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 189,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 190,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 200,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-profile__avatar-wrap\">"
+        },
+        {
+          "line": 212,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-profile__icon\">"
+        },
+        {
+          "line": 219,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 220,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 221,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 222,
+          "kind": "jsx",
+          "excerpt": "</Dropdown>"
+        },
+        {
+          "line": 223,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Dropdowns/Profile/SuperAdminProfileDropdown.js",
+      "sourceSha": "1d74b00297c099211e067e58fa72efbda7d77e49",
+      "expectedSha": "1d74b00297c099211e067e58fa72efbda7d77e49",
+      "shaMatches": true,
+      "fromIndex": 122,
+      "lineCount": 80,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/image",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/redux/store",
+          "resolution": {
+            "path": "src/redux/store.js",
+            "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/utils/authUtils",
+          "resolution": {
+            "path": "src/utils/authUtils.js",
+            "sha": "c79e628b23ecd93e1bb55470f48194a19e1aa007"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 18,
+      "signals": [
+        {
+          "line": 3,
+          "kind": "state",
+          "excerpt": "import { useState } from \"react\";"
+        },
+        {
+          "line": 14,
+          "kind": "state",
+          "excerpt": "const [openDropdown, setOpenDropdown] = useState(false);"
+        },
+        {
+          "line": 22,
+          "kind": "navigation",
+          "excerpt": "window.location.href = \"/superadmin-login\";"
+        },
+        {
+          "line": 26,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 27,
+          "kind": "overlay",
+          "excerpt": "<Dropdown"
+        },
+        {
+          "line": 34,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-head-dropdown-menu\">"
+        },
+        {
+          "line": 36,
+          "kind": "jsx",
+          "excerpt": "<div className=\"pt-3 pb-1\">"
+        },
+        {
+          "line": 39,
+          "kind": "interactive",
+          "excerpt": "onClick={handleLogout}"
+        },
+        {
+          "line": 50,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 51,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 52,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 62,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-profile__avatar-wrap\">"
+        },
+        {
+          "line": 63,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-profile__icon\">"
+        },
+        {
+          "line": 71,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 72,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 73,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 74,
+          "kind": "jsx",
+          "excerpt": "</Dropdown>"
+        },
+        {
+          "line": 75,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    }
+  ]
+}

@@ -1218,3 +1218,10 @@ Attached to **existing tenant/module, people, interview and operational families
 - **Interview and readiness sections:** legacy `InterviewForm.js`, `InterviewEditForm.js`, `InterviewFeedbackForm.js`, `ReadinessGate.js` and `FeatureControlsHub.js` contain interfaces separate from the route shell. Inspect booking/edit/reschedule, feedback, negative states and underlying side effects before closing the owning families.
 
 **Source investigation only:** no PostgreSQL/browser acceptance run, no source-derived green, no replacement of the official tracker.
+
+
+## 2026-10-28 deeper academic/admin imports — source-only acceptance checkpoint
+
+Newly source-inspected descendants include `src/pages/superadmin/sections/{Faculty,FacultyAssignment,Students,Departments,Courses,CourseProgress,Lessons,LessonContent,AdminResources,Quizzes,SemesterManagement,SemesterCourseMapping,Attendance,Batches,BatchPromotion,Classes,LectureHalls,Companies,HiringDashboard,Jobs,PeopleDirectory,Programs}.js` (legacy FE `9d56bb7a347b06f242ef615c19fdc298f83329e0`). See `docs/audit/legacy-dev-census/2026-10-28-wave4-6-reconciliation.md`.
+
+Each is a conditional nested section within established Super Admin/admin page families. Preserve role/college scope and unique triggers for editors, import/export, schedules, attendance, grading, project/placement related navigation, tenant controls, failure/retry and destructive save states. Reconcile against existing consolidated vNext routes and shared administrative components before acceptance; no one-to-one route/file equivalence is assumed. Follow the already identified `ModuleAccess.js` inheritance/history/permission contract separately. No DB/browser tests or greens were asserted by this source inspection.

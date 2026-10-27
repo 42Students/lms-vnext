@@ -1,0 +1,2229 @@
+{
+  "schemaVersion": 1,
+  "batch": "wave4-m",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "parent": "post-wave3-frontier",
+  "scope": "static candidate signals; no runtime parity",
+  "nodes": [
+    {
+      "path": "src/components/tpo/team/TeamConversations.jsx",
+      "sourceSha": "d2efc1f31589db0e9ba0139ddf3792b288f96305",
+      "expectedSha": "d2efc1f31589db0e9ba0139ddf3792b288f96305",
+      "shaMatches": true,
+      "fromIndex": 151,
+      "lineCount": 287,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/api/Services/TpoHubService",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/tpo/team/TeamConversation",
+          "resolution": {
+            "path": "src/components/tpo/team/TeamConversation.jsx",
+            "sha": "b4ce968ed662dd7718eb704f4e3345e9e985fd5c"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 80,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useMemo, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 15,
+          "kind": "jsx",
+          "excerpt": "const ICON = { EVERYONE: <SoundOutlined />, DRIVE: <SolutionOutlined />, COMPANY: <BankOutlined />, STUDENT: <UserOutlined />, TOPIC: <NumberOutlined /> };"
+        },
+        {
+          "line": 55,
+          "kind": "state",
+          "excerpt": "const [threads, setThreads] = useState(null);"
+        },
+        {
+          "line": 56,
+          "kind": "state",
+          "excerpt": "const [error, setError] = useState(null);"
+        },
+        {
+          "line": 57,
+          "kind": "state",
+          "excerpt": "const [query, setQuery] = useState(\"\");"
+        },
+        {
+          "line": 58,
+          "kind": "state",
+          "excerpt": "const [hits, setHits] = useState(null); // { ids:Set, snippet:{} } while searching"
+        },
+        {
+          "line": 59,
+          "kind": "state",
+          "excerpt": "const [showContext, setShowContext] = useState(true);"
+        },
+        {
+          "line": 60,
+          "kind": "state",
+          "excerpt": "const [creating, setCreating] = useState(false);"
+        },
+        {
+          "line": 61,
+          "kind": "state",
+          "excerpt": "const searchRef = useRef(null);"
+        },
+        {
+          "line": 63,
+          "kind": "state",
+          "excerpt": "const go = useCallback((next) => {"
+        },
+        {
+          "line": 66,
+          "kind": "navigation",
+          "excerpt": "router.replace({ pathname: router.pathname, query: merged }, undefined, { shallow: true });"
+        },
+        {
+          "line": 69,
+          "kind": "state",
+          "excerpt": "const loadThreads = useCallback(async () => {"
+        },
+        {
+          "line": 75,
+          "kind": "state",
+          "excerpt": "useEffect(() => { loadThreads(); }, [loadThreads]);"
+        },
+        {
+          "line": 78,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 86,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 99,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 112,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 142,
+          "kind": "jsx",
+          "excerpt": "<button key={t.id} type=\"button\" className={`team-row${current ? \" is-current\" : \"\"}${unread ? \" is-unread\" : \"\"}`} aria-current={current ? \"true\" : undefi"
+        },
+        {
+          "line": 143,
+          "kind": "interactive",
+          "excerpt": "onClick={() => go({ c: t.id, about: null, m: null, ask: null })}>"
+        },
+        {
+          "line": 146,
+          "kind": "jsx",
+          "excerpt": "<span className=\"team-row__title\">{t.title}{t.isPrivate && <LockOutlined className=\"team-row__lock\" aria-label=\"Private\" />}</span>"
+        },
+        {
+          "line": 154,
+          "kind": "jsx",
+          "excerpt": "{unread > 0 && <Badge count={unread} className=\"team-row__badge\" />}"
+        },
+        {
+          "line": 157,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 163,
+          "kind": "jsx",
+          "excerpt": "<div className={`team-page${open ? \" team-page--open\" : \"\"}`} data-testid=\"tpo.team.conversations\">"
+        },
+        {
+          "line": 164,
+          "kind": "jsx",
+          "excerpt": "<section className=\"team-list\" aria-label=\"Conversations\">"
+        },
+        {
+          "line": 165,
+          "kind": "jsx",
+          "excerpt": "<div className=\"team-list__top\">"
+        },
+        {
+          "line": 166,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" block icon={<PlusOutlined />} onClick={() => setCreating(true)} data-testid=\"team.new\">New conversation</Button>"
+        },
+        {
+          "line": 167,
+          "kind": "jsx",
+          "excerpt": "<div className=\"team-list__search-row\">"
+        },
+        {
+          "line": 168,
+          "kind": "jsx",
+          "excerpt": "<Input ref={searchRef} allowClear prefix={<SearchOutlined aria-hidden=\"true\" />} placeholder=\"Search  (press /)\" value={query}"
+        },
+        {
+          "line": 169,
+          "kind": "interactive",
+          "excerpt": "onChange={(e) => setQuery(e.target.value)} aria-label=\"Search conversations\" />"
+        },
+        {
+          "line": 170,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 172,
+          "kind": "jsx",
+          "excerpt": "<div className=\"team-list__filters\" role=\"group\" aria-label=\"Show\">"
+        },
+        {
+          "line": 174,
+          "kind": "jsx,interactive",
+          "excerpt": "<button key={k} type=\"button\" className={`team-filter${filter === k ? \" is-on\" : \"\"}`} aria-pressed={filter === k} onClick={() => go({ filter: k === \"follo"
+        },
+        {
+          "line": 176,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 178,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 180,
+          "kind": "jsx",
+          "excerpt": "{hits && <Typography.Text type=\"secondary\" className=\"team-list__search-note\">{visible.length} {visible.length === 1 ? \"conversation\" : \"conversations\"} ma"
+        },
+        {
+          "line": 181,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 182,
+          "kind": "jsx,interactive",
+          "excerpt": "{error && <Alert type=\"error\" showIcon message={error} action={<Button size=\"small\" onClick={loadThreads}>Retry</Button>} className=\"team-list__error\" />}"
+        },
+        {
+          "line": 183,
+          "kind": "jsx",
+          "excerpt": "<div className=\"team-list__items\">"
+        },
+        {
+          "line": 184,
+          "kind": "jsx",
+          "excerpt": "{threads === null ? <Skeleton active paragraph={{ rows: 6 }} /> : visible.length === 0 ? ("
+        },
+        {
+          "line": 185,
+          "kind": "jsx",
+          "excerpt": "<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={hits ? \"Nothing matches. Try other words.\" : filter === \"following\" ? \"You follow nothing else yet"
+        },
+        {
+          "line": 187,
+          "kind": "jsx",
+          "excerpt": "<div key={g.key} className=\"team-list__group\">"
+        },
+        {
+          "line": 188,
+          "kind": "jsx",
+          "excerpt": "{g.label && <div className=\"team-list__grp\">{g.label}</div>}"
+        },
+        {
+          "line": 190,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 192,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 193,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 195,
+          "kind": "jsx",
+          "excerpt": "<div className=\"team-page__conversation\">"
+        },
+        {
+          "line": 198,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button className=\"team-page__back\" type=\"text\" icon={<ArrowLeftOutlined />} onClick={() => go({ c: null, about: null, m: null, ask: null })}>All conversat"
+        },
+        {
+          "line": 199,
+          "kind": "jsx",
+          "excerpt": "<TeamConversation key={activeId || `${about?.kind}:${about?.key}`} threadId={activeId} about={activeId ? null : about} meId={meId} people={people}"
+        },
+        {
+          "line": 205,
+          "kind": "jsx",
+          "excerpt": "<div className=\"team-page__pick\"><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description=\"Pick a conversation, or start one with +.\" /></div>"
+        },
+        {
+          "line": 207,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 209,
+          "kind": "jsx,interactive",
+          "excerpt": "<NewConversation open={creating} onClose={() => setCreating(false)} people={people} meId={meId}"
+        },
+        {
+          "line": 211,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 220,
+          "kind": "state",
+          "excerpt": "const [options, setOptions] = useState([]);"
+        },
+        {
+          "line": 221,
+          "kind": "state",
+          "excerpt": "const [busy, setBusy] = useState(false);"
+        },
+        {
+          "line": 222,
+          "kind": "state",
+          "excerpt": "const seq = useRef(0);"
+        },
+        {
+          "line": 223,
+          "kind": "state",
+          "excerpt": "useEffect(() => { if (open) { form.resetFields(); setOptions([]); } }, [open, form]);"
+        },
+        {
+          "line": 235,
+          "kind": "state",
+          "excerpt": "useEffect(() => { if (open && kind !== \"TOPIC\") { form.setFieldValue(\"aboutKey\", undefined); search(\"\"); } }, [kind, open]); // eslint-disable-line react-h"
+        },
+        {
+          "line": 253,
+          "kind": "jsx,overlay,interactive",
+          "excerpt": "<Modal open={open} title=\"New conversation\" okText=\"Start\" onOk={submit} confirmLoading={busy} onCancel={onClose} destroyOnClose>"
+        },
+        {
+          "line": 254,
+          "kind": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\">About something in 42LMS? Pick it, and the conversation lives on its page too. Otherwise give it a topic.</Typograph"
+        },
+        {
+          "line": 255,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form form={form} layout=\"vertical\" initialValues={{ kind: \"DRIVE\", isPrivate: false }}>"
+        },
+        {
+          "line": 256,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"kind\" label=\"About\">"
+        },
+        {
+          "line": 257,
+          "kind": "jsx",
+          "excerpt": "<Radio.Group optionType=\"button\" buttonStyle=\"solid\" options={[{ value: \"DRIVE\", label: \"A drive\" }, { value: \"COMPANY\", label: \"A company\" }, { value: \"ST"
+        },
+        {
+          "line": 258,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 261,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"title\" label=\"Topic\" rules={[{ required: true, whitespace: true, message: \"Give it a topic\" }]}>"
+        },
+        {
+          "line": 262,
+          "kind": "jsx",
+          "excerpt": "<Input maxLength={200} placeholder=\"Training vendor for aptitude\" />"
+        },
+        {
+          "line": 263,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 264,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"isPrivate\" valuePropName=\"checked\">"
+        },
+        {
+          "line": 265,
+          "kind": "jsx",
+          "excerpt": "<Checkbox>Private: only the people I pick can read it</Checkbox>"
+        },
+        {
+          "line": 266,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 269,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"aboutKey\" label={kind === \"DRIVE\" ? \"Which drive\" : kind === \"COMPANY\" ? \"Which company\" : \"Which student\"} rules={[{ required: true, mess"
+        },
+        {
+          "line": 271,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select showSearch filterOption={false} onSearch={search} options={options} placeholder={kind === \"STUDENT\" ? \"Search by name or roll\" : \"Search\"} notFound"
+        },
+        {
+          "line": 272,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 274,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"people\" label={isPrivate && kind === \"TOPIC\" ? \"People who can read it\" : \"Bring people in (optional)\"}"
+        },
+        {
+          "line": 277,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select mode=\"multiple\" optionFilterProp=\"label\" placeholder=\"Choose team members\""
+        },
+        {
+          "line": 279,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 280,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"body\" label=\"First message (optional)\">"
+        },
+        {
+          "line": 281,
+          "kind": "jsx",
+          "excerpt": "<Input.TextArea rows={3} maxLength={4000} />"
+        },
+        {
+          "line": 282,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 283,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        },
+        {
+          "line": 284,
+          "kind": "jsx",
+          "excerpt": "</Modal>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/TeamPeople.jsx",
+      "sourceSha": "9972b66d10ff1a2a83f7d300798769450534b031",
+      "expectedSha": "9972b66d10ff1a2a83f7d300798769450534b031",
+      "shaMatches": true,
+      "fromIndex": 152,
+      "lineCount": 273,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/link",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/Common/PanelStates",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/tpo/ui/AsyncModal",
+          "resolution": {
+            "path": "src/components/tpo/ui/AsyncModal.jsx",
+            "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "@/api/Services/TpoHubService",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 94,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useMemo, useState } from \"react\";"
+        },
+        {
+          "line": 39,
+          "kind": "state",
+          "excerpt": "const [data, setData] = useState(null);"
+        },
+        {
+          "line": 40,
+          "kind": "state",
+          "excerpt": "const [team, setTeam] = useState({ members: [], accounts: [], me: null });"
+        },
+        {
+          "line": 41,
+          "kind": "state",
+          "excerpt": "const [error, setError] = useState(null);"
+        },
+        {
+          "line": 42,
+          "kind": "state",
+          "excerpt": "const [sort, setSort] = useState(\"load\");"
+        },
+        {
+          "line": 43,
+          "kind": "state",
+          "excerpt": "const [assigning, setAssigning] = useState(false);"
+        },
+        {
+          "line": 44,
+          "kind": "state",
+          "excerpt": "const [away, setAway] = useState(null); // { person, until }"
+        },
+        {
+          "line": 45,
+          "kind": "state",
+          "excerpt": "const [adding, setAdding] = useState(false);"
+        },
+        {
+          "line": 46,
+          "kind": "state",
+          "excerpt": "const [directory, setDirectory] = useState([]);"
+        },
+        {
+          "line": 47,
+          "kind": "state",
+          "excerpt": "const [removing, setRemoving] = useState(null);"
+        },
+        {
+          "line": 48,
+          "kind": "state",
+          "excerpt": "const [reassign, setReassign] = useState(null);"
+        },
+        {
+          "line": 49,
+          "kind": "state",
+          "excerpt": "const [selId, setSelId] = useState(null);"
+        },
+        {
+          "line": 50,
+          "kind": "state",
+          "excerpt": "const [giveTo, setGiveTo] = useState(null);"
+        },
+        {
+          "line": 54,
+          "kind": "state",
+          "excerpt": "const reload = useCallback(async () => {"
+        },
+        {
+          "line": 61,
+          "kind": "state",
+          "excerpt": "useEffect(() => { reload(); }, [reload]);"
+        },
+        {
+          "line": 85,
+          "kind": "overlay",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 96,
+          "kind": "jsx",
+          "excerpt": "if (error && !data) return <PanelError title={error} onRetry={reload} />;"
+        },
+        {
+          "line": 97,
+          "kind": "jsx",
+          "excerpt": "if (!data) return <Skeleton active paragraph={{ rows: 8 }} />;"
+        },
+        {
+          "line": 104,
+          "kind": "jsx,overlay",
+          "excerpt": "if (popover) return <Popover content={popover} trigger=\"click\" placement=\"bottom\"><button type=\"button\" className={cls}>{inner}</button></Popover>;"
+        },
+        {
+          "line": 105,
+          "kind": "jsx",
+          "excerpt": "if (href) return <Link href={href} className={cls}>{inner}</Link>;"
+        },
+        {
+          "line": 113,
+          "kind": "jsx",
+          "excerpt": "<div className=\"team-asks-pop\">"
+        },
+        {
+          "line": 115,
+          "kind": "jsx",
+          "excerpt": "<div key={a.id} className={`team-asks-pop__item${a.overdue === true || a.overdue === 1 ? \" is-overdue\" : \"\"}`}>"
+        },
+        {
+          "line": 116,
+          "kind": "jsx",
+          "excerpt": "{a.threadId ? <Link href={`/tpo/team?c=${a.threadId}&m=${a.messageId}`}>{a.body}</Link> : <Typography.Text type=\"secondary\">{a.body}</Typography.Text>}"
+        },
+        {
+          "line": 117,
+          "kind": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\" className=\"team-asks-pop__meta\">{key === \"waitingAsks\" ? `asked ${a[who]}` : a[who]} · {a.dueAt ? `by ${dj(a.dueAt).forma"
+        },
+        {
+          "line": 118,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 120,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 138,
+          "kind": "jsx",
+          "excerpt": "<div className=\"team-people tpo-tp\" data-testid=\"tpo.team.people\">"
+        },
+        {
+          "line": 139,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tp__bar\">"
+        },
+        {
+          "line": 141,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" onClick={() => { addForm.resetFields(); searchDirectory(\"\"); setAdding(true); }}>+ Add a team member</Button>"
+        },
+        {
+          "line": 142,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 145,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tpo-tp__unowned\" aria-label=\"Work nobody handles\">"
+        },
+        {
+          "line": 150,
+          "kind": "jsx,overlay,interactive",
+          "excerpt": "<Select size=\"small\" style={{ minWidth: 190 }} value={giveTo ?? leastWork?.facultyId} onChange={setGiveTo}"
+        },
+        {
+          "line": 152,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button size=\"small\" onClick={assignAll}>Assign all</Button>"
+        },
+        {
+          "line": 153,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className=\"tpo-link-btn\" onClick={() => { assignForm.resetFields(); setAssigning(true); }}>Pick which…</button>"
+        },
+        {
+          "line": 155,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 158,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tp__main\">"
+        },
+        {
+          "line": 159,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tpo-tp__list\">"
+        },
+        {
+          "line": 160,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tp__row is-head\">"
+        },
+        {
+          "line": 164,
+          "kind": "jsx,interactive",
+          "excerpt": "<button key={k} type=\"button\" className={`team-filter${sort === k ? \" is-on\" : \"\"}`} aria-pressed={sort === k} onClick={() => setSort(k)}>{label}</button>"
+        },
+        {
+          "line": 167,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 173,
+          "kind": "jsx",
+          "excerpt": "<div key={p.facultyId} role=\"button\" tabIndex={0} className={`tpo-tp__row${cur && Number(cur.facultyId) === Number(p.facultyId) ? \" is-on\" : \"\"}`}"
+        },
+        {
+          "line": 174,
+          "kind": "interactive",
+          "excerpt": "onClick={() => setSelId(p.facultyId)} onKeyDown={(e) => { if (e.key === \"Enter\") setSelId(p.facultyId); }} data-testid=\"team.person\">"
+        },
+        {
+          "line": 175,
+          "kind": "jsx",
+          "excerpt": "<span className=\"tpo-tp__who\"><span className=\"team-avatar\" aria-hidden=\"true\">{initials(name)}</span><span><strong>{name}{isMe && <Tag className=\"team-per"
+        },
+        {
+          "line": 180,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 183,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-ds__foot\">The college&apos;s TPO and college-admin accounts are always in the team.</div>"
+        },
+        {
+          "line": 184,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 188,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tp__head\"><span className=\"team-avatar team-avatar--lg\" aria-hidden=\"true\">{initials(curName)}</span><span><strong>{curName}</strong><s"
+        },
+        {
+          "line": 191,
+          "kind": "jsx",
+          "excerpt": "<Link className=\"tpo-tp__w\" href={`/tpo/drives?f_owner=${cur.facultyId}`}><span>Drives</span><span className=\"tpo-ds__muted\">{n(cur.drivesLive)} live · {n("
+        },
+        {
+          "line": 192,
+          "kind": "jsx",
+          "excerpt": "<Link className=\"tpo-tp__w\" href={`/tpo/recruiters?f_owner=${cur.facultyId}`}><span>Companies</span><span className=\"tpo-ds__muted\">{n(cur.companies)}</spa"
+        },
+        {
+          "line": 193,
+          "kind": "jsx",
+          "excerpt": "<Link className=\"tpo-tp__w\" href={`/tpo/recruiters?f_owner=${cur.facultyId}&f_when=late&f_nextAction=FOLLOW_UP`}><span>Follow-ups late</span><span classNam"
+        },
+        {
+          "line": 194,
+          "kind": "jsx,overlay",
+          "excerpt": "<Popover content={askList(cur) || \"No asks on them.\"} trigger=\"click\" placement=\"left\"><button type=\"button\" className=\"tpo-tp__w\"><span>Asks on them</span"
+        },
+        {
+          "line": 195,
+          "kind": "jsx,overlay",
+          "excerpt": "<Popover content={askList(cur, \"waitingAsks\", \"assigneeName\") || \"Not waiting on anyone.\"} trigger=\"click\" placement=\"left\"><button type=\"button\" className"
+        },
+        {
+          "line": 199,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button size=\"small\" onClick={() => setAway({ person: cur, until: cur.awayUntil ? dj(cur.awayUntil) : null })}>{cur.awayUntil ? \"Change away…\" : \"Set away…"
+        },
+        {
+          "line": 200,
+          "kind": "jsx,interactive",
+          "excerpt": "{cur.awayUntil && <Button size=\"small\" onClick={() => run(setTeamAway(cur.facultyId, null), `${cur.firstName || \"They\"} are back`)}>Back now</Button>}"
+        },
+        {
+          "line": 201,
+          "kind": "jsx,interactive,navigation",
+          "excerpt": "{!curIsMe && <Button size=\"small\" onClick={() => router.push(`/tpo/team?ask=${cur.facultyId}`)}>Ask {cur.firstName || \"them\"}</Button>}"
+        },
+        {
+          "line": 204,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tp__remove\">"
+        },
+        {
+          "line": 207,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button size=\"small\" danger onClick={() => startRemove(cur)}>Hand over and remove…</Button>"
+        },
+        {
+          "line": 208,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 212,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 214,
+          "kind": "jsx,interactive",
+          "excerpt": "<AsyncModal open={assigning} title=\"Give out work nobody handles\" okText=\"Assign\" onCancel={() => setAssigning(false)} destroyOnClose"
+        },
+        {
+          "line": 215,
+          "kind": "interactive",
+          "excerpt": "onOk={async () => {"
+        },
+        {
+          "line": 224,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form form={assignForm} layout=\"vertical\">"
+        },
+        {
+          "line": 225,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"to\" label=\"Give them to\" rules={[{ required: true, message: \"Choose someone\" }]}>"
+        },
+        {
+          "line": 226,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select options={everyone.map((p) => ({ value: p.facultyId, label: `${fullName(p)}${p.awayUntil ? ` (away until ${dj(p.awayUntil).format(\"D MMM\")})` : \"\"}`"
+        },
+        {
+          "line": 227,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 229,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"driveIds\" label=\"Drives\">"
+        },
+        {
+          "line": 230,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select mode=\"multiple\" optionFilterProp=\"label\" options={(unowned.drives || []).map((d) => ({ value: d.id, label: d.label }))} />"
+        },
+        {
+          "line": 231,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 234,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"companies\" label=\"Companies\" extra=\"All of the company's contacts move to them.\">"
+        },
+        {
+          "line": 235,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select mode=\"multiple\" optionFilterProp=\"label\" options={(unowned.companies || []).map((c) => ({ value: c.key, label: `${c.label} (${plural(n(c.contacts),"
+        },
+        {
+          "line": 236,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 238,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        },
+        {
+          "line": 239,
+          "kind": "jsx",
+          "excerpt": "</AsyncModal>"
+        },
+        {
+          "line": 241,
+          "kind": "jsx,interactive",
+          "excerpt": "<AsyncModal open={Boolean(away)} title={away ? `${away.person.firstName || \"They\"}: away until` : \"\"} okText=\"Save\" onCancel={() => setAway(null)} destroyO"
+        },
+        {
+          "line": 242,
+          "kind": "interactive",
+          "excerpt": "onOk={async () => { if (await run(setTeamAway(away.person.facultyId, away.until.format(\"YYYY-MM-DD\")), \"Saved\")) setAway(null); }}>"
+        },
+        {
+          "line": 243,
+          "kind": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\">Anyone asking them something is told they&apos;re away. It ends by itself after this day.</Typography.Paragraph>"
+        },
+        {
+          "line": 244,
+          "kind": "jsx,interactive",
+          "excerpt": "<DatePicker style={{ width: \"100%\" }} format=\"ddd D MMM YYYY\" value={away?.until || null} onChange={(d) => setAway((a) => ({ ...a, until: d }))}"
+        },
+        {
+          "line": 246,
+          "kind": "jsx",
+          "excerpt": "</AsyncModal>"
+        },
+        {
+          "line": 248,
+          "kind": "jsx,interactive",
+          "excerpt": "<AsyncModal open={adding} title=\"Add a team member\" okText=\"Add\" onCancel={() => setAdding(false)} destroyOnClose"
+        },
+        {
+          "line": 249,
+          "kind": "interactive",
+          "excerpt": "onOk={async () => { const v = await addForm.validateFields(); if (await run(setTeamMember({ facultyId: v.facultyId, role: \"TPO_ADMIN\" }), \"Added to the tea"
+        },
+        {
+          "line": 250,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form form={addForm} layout=\"vertical\">"
+        },
+        {
+          "line": 251,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"facultyId\" label=\"Faculty member\" rules={[{ required: true, message: \"Choose a faculty member\" }]} extra=\"They can do everything in placem"
+        },
+        {
+          "line": 252,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select showSearch filterOption={false} onSearch={searchDirectory} placeholder=\"Search by name or email\""
+        },
+        {
+          "line": 254,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 255,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        },
+        {
+          "line": 256,
+          "kind": "jsx",
+          "excerpt": "</AsyncModal>"
+        },
+        {
+          "line": 258,
+          "kind": "jsx,interactive",
+          "excerpt": "<AsyncModal open={Boolean(removing)} title=\"Who takes over?\" okText=\"Hand over and remove\" okButtonProps={{ disabled: !reassign, danger: true }} onCancel={"
+        },
+        {
+          "line": 259,
+          "kind": "interactive",
+          "excerpt": "onOk={async () => { if (await run(removeTeamMember(removing.p.facultyId, reassign), \"Removed. Their work was handed over.\")) setRemoving(null); }}>"
+        },
+        {
+          "line": 261,
+          "kind": "jsx",
+          "excerpt": "<Typography.Paragraph>"
+        },
+        {
+          "line": 264,
+          "kind": "jsx",
+          "excerpt": "</Typography.Paragraph>"
+        },
+        {
+          "line": 266,
+          "kind": "jsx,overlay,interactive",
+          "excerpt": "<Select style={{ width: \"100%\" }} placeholder=\"Choose a person\" value={reassign} onChange={setReassign}"
+        },
+        {
+          "line": 268,
+          "kind": "jsx",
+          "excerpt": "<Alert type=\"info\" showIcon style={{ marginTop: 12 }} message=\"They lose access at once, private conversations included. What they wrote stays, marked “lef"
+        },
+        {
+          "line": 269,
+          "kind": "jsx",
+          "excerpt": "</AsyncModal>"
+        },
+        {
+          "line": 270,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/today/TodayQueue.jsx",
+      "sourceSha": "913f99d08b8f1614aa0418bbdb6c18d876611f04",
+      "expectedSha": "913f99d08b8f1614aa0418bbdb6c18d876611f04",
+      "shaMatches": true,
+      "fromIndex": 153,
+      "lineCount": 384,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/link",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/TpoService",
+          "resolution": {
+            "path": "src/api/Services/TpoService.js",
+            "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/api/Services/TpoHubService",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/tpo/team/teamTokens",
+          "resolution": {
+            "path": "src/components/tpo/team/teamTokens.js",
+            "sha": "487c53d44ecc1fd7bced20c0bb6b3e0b27511fa0"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/tpo/outreach/outreachRules",
+          "resolution": {
+            "path": "src/components/tpo/outreach/outreachRules.js",
+            "sha": "7159f1380a55bd06c0edb51aa7814343022271a1"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 86,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useMemo, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 47,
+          "kind": "state",
+          "excerpt": "const [scope, setScopeState] = useState(\"mine\");"
+        },
+        {
+          "line": 48,
+          "kind": "state",
+          "excerpt": "const [replies, setReplies] = useState([]);"
+        },
+        {
+          "line": 49,
+          "kind": "state",
+          "excerpt": "const [day, setDay] = useState(0);"
+        },
+        {
+          "line": 50,
+          "kind": "state",
+          "excerpt": "const [fresh, setFresh] = useState(false); // the queue shows the not-contacted ones instead"
+        },
+        {
+          "line": 51,
+          "kind": "state",
+          "excerpt": "const [selKey, setSelKey] = useState(null);"
+        },
+        {
+          "line": 52,
+          "kind": "state",
+          "excerpt": "const [handled, setHandled] = useState([]); // keys done in this visit, gone from the queue until the next load"
+        },
+        {
+          "line": 53,
+          "kind": "state",
+          "excerpt": "const [outcome, setOutcome] = useState(null);"
+        },
+        {
+          "line": 54,
+          "kind": "state",
+          "excerpt": "const [follow, setFollow] = useState(null);"
+        },
+        {
+          "line": 55,
+          "kind": "state",
+          "excerpt": "const [note, setNote] = useState(\"\");"
+        },
+        {
+          "line": 56,
+          "kind": "state",
+          "excerpt": "const [answer, setAnswer] = useState(\"\");"
+        },
+        {
+          "line": 57,
+          "kind": "state",
+          "excerpt": "const [busy, setBusy] = useState(false);"
+        },
+        {
+          "line": 58,
+          "kind": "state",
+          "excerpt": "const [error, setError] = useState(null);"
+        },
+        {
+          "line": 59,
+          "kind": "state",
+          "excerpt": "const [detail, setDetail] = useState(null);"
+        },
+        {
+          "line": 60,
+          "kind": "state",
+          "excerpt": "const [teamNote, setTeamNote] = useState(null);"
+        },
+        {
+          "line": 61,
+          "kind": "state",
+          "excerpt": "const busyRef = useRef(false);"
+        },
+        {
+          "line": 62,
+          "kind": "state",
+          "excerpt": "const paneRef = useRef(null);"
+        },
+        {
+          "line": 65,
+          "kind": "state",
+          "excerpt": "useEffect(() => { setScopeState(readScope()); }, []);"
+        },
+        {
+          "line": 67,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 90,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 105,
+          "kind": "state",
+          "excerpt": "const advance = useCallback((key) => {"
+        },
+        {
+          "line": 209,
+          "kind": "interactive",
+          "excerpt": "const onKeyDown = (e) => {"
+        },
+        {
+          "line": 222,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-out-empty\" data-testid=\"outreach.empty\">"
+        },
+        {
+          "line": 225,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" onClick={onAdd}>Add recruiter lead</Button>"
+        },
+        {
+          "line": 226,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 239,
+          "kind": "jsx,interactive",
+          "excerpt": "<div className=\"tpo-tq\" data-testid=\"outreach.tab\" onKeyDown={onKeyDown}>"
+        },
+        {
+          "line": 240,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tpo-tq__queue\" aria-label=\"What needs you\">"
+        },
+        {
+          "line": 245,
+          "kind": "jsx,interactive",
+          "excerpt": "{fresh ? <button type=\"button\" className=\"tpo-tq__link\" onClick={() => setFresh(false)}>‹ Back to today</button>"
+        },
+        {
+          "line": 246,
+          "kind": "jsx,interactive",
+          "excerpt": ": scope === \"mine\" ? <>Yours and unassigned · <button type=\"button\" className=\"tpo-tq__link\" onClick={() => setScope(\"everyone\")}>everyone&apos;s</button><"
+        },
+        {
+          "line": 247,
+          "kind": "jsx,interactive",
+          "excerpt": ": <>Everyone&apos;s · <button type=\"button\" className=\"tpo-tq__link\" onClick={() => setScope(\"mine\")}>just yours</button></>}"
+        },
+        {
+          "line": 251,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__week\" role=\"group\" aria-label=\"This week\">"
+        },
+        {
+          "line": 255,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" key={d.index} aria-pressed={day === d.index} className={`tpo-tq__day${day === d.index ? \" is-on\" : \"\"}`} onClick={() => { setDay(d.in"
+        },
+        {
+          "line": 260,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 263,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 268,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className={`tpo-tq__row${sel?.key === q.key ? \" is-on\" : \"\"}`} aria-pressed={sel?.key === q.key} onClick={() => { setSelKey(q.key); p"
+        },
+        {
+          "line": 275,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 281,
+          "kind": "jsx,interactive",
+          "excerpt": "{!fresh && freshList.length > 0 && <button type=\"button\" className=\"tpo-tq__link is-strong\" onClick={() => { setFresh(true); setSelKey(null); }} data-testi"
+        },
+        {
+          "line": 284,
+          "kind": "jsx,interactive",
+          "excerpt": "board.none.length > 0 && <button key=\"none\" type=\"button\" className=\"tpo-tq__link\" onClick={() => onShowTable(\"none\")}>{board.none.length} with no date</bu"
+        },
+        {
+          "line": 285,
+          "kind": "jsx,interactive",
+          "excerpt": "board.later.length > 0 && <button key=\"later\" type=\"button\" className=\"tpo-tq__link\" onClick={() => onShowTable(\"later\")}>{board.later.length} later than t"
+        },
+        {
+          "line": 286,
+          "kind": "jsx,interactive",
+          "excerpt": "lateN > 0 && day !== 0 && <button key=\"late\" type=\"button\" className=\"tpo-tq__link\" onClick={() => setDay(0)}>{lateN} late</button>,"
+        },
+        {
+          "line": 287,
+          "kind": "jsx,interactive",
+          "excerpt": "<button key=\"plan\" type=\"button\" className=\"tpo-tq__link\" onClick={onPlan} data-testid=\"outreach.plan\">Re-plan your week</button>,"
+        },
+        {
+          "line": 290,
+          "kind": "jsx",
+          "excerpt": "{Number(messages) > 0 && <Link href=\"/tpo/messages\" className=\"tpo-tq__link\" data-testid=\"today.messages\">{plural(Number(messages), \"unread message\", \"unre"
+        },
+        {
+          "line": 292,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 294,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tpo-tq__pane\" aria-label=\"Selected\" tabIndex={-1} ref={paneRef}>"
+        },
+        {
+          "line": 296,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__empty\"><strong>All done for today.</strong><span>New replies and follow-ups show up here first.</span></div>"
+        },
+        {
+          "line": 299,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__who\">"
+        },
+        {
+          "line": 300,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__who-left\">"
+        },
+        {
+          "line": 302,
+          "kind": "jsx",
+          "excerpt": "<div><h2 data-testid=\"outreach.name\">{sel.name}</h2><span>{[p?.designation, sel.company].filter(Boolean).join(\" · \")}</span></div>"
+        },
+        {
+          "line": 303,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 304,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__contact\">"
+        },
+        {
+          "line": 305,
+          "kind": "jsx",
+          "excerpt": "{p?.phone && <Button size=\"large\" href={`tel:${p.phone}`}>Call</Button>}"
+        },
+        {
+          "line": 306,
+          "kind": "jsx",
+          "excerpt": "{(p?.email || sel.reply?.email) && <Button size=\"large\" href={`mailto:${p?.email || sel.reply.email}`}>Email</Button>}"
+        },
+        {
+          "line": 307,
+          "kind": "jsx",
+          "excerpt": "{p && <Button size=\"large\" href={`/tpo/recruiters/${p.id}`}>Open page</Button>}"
+        },
+        {
+          "line": 308,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 309,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 311,
+          "kind": "jsx",
+          "excerpt": "<div className={`tpo-tq__why${sel.late ? \" is-late\" : sel.kind === \"reply\" ? \" is-reply\" : \"\"}`} data-testid=\"outreach.why\">"
+        },
+        {
+          "line": 314,
+          "kind": "jsx",
+          "excerpt": "{p?._next?.action === \"REVIEW_REQUEST\" && p._next.driveId && <Link href={`/tpo/drives/${p._next.driveId}`}>Open their request ›</Link>}"
+        },
+        {
+          "line": 316,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 319,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__act\">"
+        },
+        {
+          "line": 322,
+          "kind": "jsx,interactive",
+          "excerpt": "<Input.TextArea rows={4} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder=\"Write your answer. It goes from your college's address; th"
+        },
+        {
+          "line": 324,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 326,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__act\">"
+        },
+        {
+          "line": 328,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__chips\" role=\"group\" aria-label=\"How did it go\">"
+        },
+        {
+          "line": 330,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" key={k} className={`tpo-tq__chip${outcome === k ? \" is-on\" : \"\"}`} aria-pressed={outcome === k} onClick={() => pick(k)} data-testid={"
+        },
+        {
+          "line": 332,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 333,
+          "kind": "jsx,interactive",
+          "excerpt": "<Input.TextArea rows={2} value={note} onChange={(e) => setNote(e.target.value)} aria-label=\"What was said\" placeholder=\"What was said? (optional)\" />"
+        },
+        {
+          "line": 335,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__chips is-follow\" role=\"group\" aria-label=\"Next follow-up\">"
+        },
+        {
+          "line": 338,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" key={k} className={`tpo-tq__chip${follow === k ? \" is-on\" : \"\"}`} aria-pressed={follow === k} onClick={() => setFollow(k)}>{label}</b"
+        },
+        {
+          "line": 340,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 342,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 344,
+          "kind": "jsx",
+          "excerpt": "{error && <Alert type=\"error\" showIcon message={error} />}"
+        },
+        {
+          "line": 346,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__bar\">"
+        },
+        {
+          "line": 351,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button size=\"large\" onClick={markReplyHandled} disabled={busy}>Handled elsewhere</Button>"
+        },
+        {
+          "line": 352,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button size=\"large\" type=\"primary\" onClick={sendAnswer} loading={busy} disabled={!answer.trim()} data-testid=\"today.send-answer\">Send answer &amp; next</B"
+        },
+        {
+          "line": 356,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button size=\"large\" onClick={tomorrow} disabled={busy} data-testid=\"outreach.tomorrow\">Tomorrow</Button>"
+        },
+        {
+          "line": 357,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button size=\"large\" type=\"primary\" onClick={save} disabled={!outcome} loading={busy} data-testid=\"outreach.next\">Done &amp; next</Button>"
+        },
+        {
+          "line": 361,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 364,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__boxes\">"
+        },
+        {
+          "line": 365,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__box\">"
+        },
+        {
+          "line": 367,
+          "kind": "jsx",
+          "excerpt": "{!detail ? <Skeleton active paragraph={{ rows: 1 }} title={false} /> : detail.failed ? <span className=\"tpo-tq__muted\">Couldn&apos;t load the history.</spa"
+        },
+        {
+          "line": 370,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 371,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-tq__box\">"
+        },
+        {
+          "line": 375,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 376,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 380,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 381,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/TpoModuleOff.jsx",
+      "sourceSha": "170b3bb306ab0215f344afff72fa0c09ec33d89c",
+      "expectedSha": "170b3bb306ab0215f344afff72fa0c09ec33d89c",
+      "shaMatches": true,
+      "fromIndex": 154,
+      "lineCount": 22,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 2,
+      "signals": [
+        {
+          "line": 13,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-module-off\" role=\"alert\" data-testid=\"tpo-module-off\">"
+        },
+        {
+          "line": 19,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/TpoProfileCard.jsx",
+      "sourceSha": "0c32d6d28721e9099aaebfb5e78eb67b79658462",
+      "expectedSha": "0c32d6d28721e9099aaebfb5e78eb67b79658462",
+      "shaMatches": true,
+      "fromIndex": 155,
+      "lineCount": 65,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/profile/userInfo",
+          "resolution": {
+            "path": "src/components/profile/userInfo.js",
+            "sha": "cb804c5c67c2bbcb74a7c40b357974a8fc9e708c"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/redux/store",
+          "resolution": {
+            "path": "src/redux/store.js",
+            "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/utils/uploadToR2",
+          "resolution": {
+            "path": "src/utils/uploadToR2.js",
+            "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/ProfileService",
+          "resolution": {
+            "path": "src/api/Services/ProfileService.js",
+            "sha": "9d9760085683f5a740026898593119bd64953acf"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/utils/errorHandlers",
+          "resolution": {
+            "path": "src/utils/errorHandlers.js",
+            "sha": "85113c36694344eaa832ff738c73777ba0c835bb"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 30,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": true
+        }
+      ],
+      "signalCount": 14,
+      "signals": [
+        {
+          "line": 48,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-profile-card\" data-testid=\"tpo.profile.card\">"
+        },
+        {
+          "line": 49,
+          "kind": "jsx",
+          "excerpt": "<UserInfo userDetails={userDetails} saveImage={uploadPhoto} saveImageFromLink={photoFromLink} userId={userId} setRefresh={setRefresh} />"
+        },
+        {
+          "line": 50,
+          "kind": "jsx",
+          "excerpt": "<Card className=\"tpo-profile-card__details\" title=\"How students and recruiters see you\">"
+        },
+        {
+          "line": 51,
+          "kind": "jsx",
+          "excerpt": "<Descriptions column={1} size=\"small\" colon={false} labelStyle={{ width: 160 }}>"
+        },
+        {
+          "line": 52,
+          "kind": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Name\">{name || \"-\"}</Descriptions.Item>"
+        },
+        {
+          "line": 53,
+          "kind": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Role\">{ROLE[loginUser?.facultyType] || \"Placement team\"}</Descriptions.Item>"
+        },
+        {
+          "line": 54,
+          "kind": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Department\">{has(userDetails?.department) ? userDetails.department : <Typography.Text type=\"secondary\">Not set</Typography.Text>}"
+        },
+        {
+          "line": 55,
+          "kind": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Phone\">{has(userDetails?.contactMobile) ? userDetails.contactMobile : <Typography.Text type=\"secondary\">Not set</Typography.Text>"
+        },
+        {
+          "line": 56,
+          "kind": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Email\">{has(userDetails?.contactMail) ? userDetails.contactMail : <Typography.Text type=\"secondary\">Not set</Typography.Text>}</D"
+        },
+        {
+          "line": 57,
+          "kind": "jsx",
+          "excerpt": "</Descriptions>"
+        },
+        {
+          "line": 58,
+          "kind": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\" className=\"tpo-profile-card__note\">"
+        },
+        {
+          "line": 60,
+          "kind": "jsx",
+          "excerpt": "</Typography.Paragraph>"
+        },
+        {
+          "line": 61,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 62,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/TpoTopBar.js",
+      "sourceSha": "f7dd7e60c58cc1be4945ae3ec638c9e1d91796de",
+      "expectedSha": "f7dd7e60c58cc1be4945ae3ec638c9e1d91796de",
+      "shaMatches": true,
+      "fromIndex": 156,
+      "lineCount": 124,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "./TpoBellPanel",
+          "resolution": {
+            "path": "src/components/tpo/TpoBellPanel.jsx",
+            "sha": "edd3ccd2d94484b80082354dda403e210e0f6b99"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "./TpoCommandPalette",
+          "resolution": {
+            "path": "src/components/tpo/TpoCommandPalette.jsx",
+            "sha": "6ea3ae1bad87fe1c459720a299a1151b0635e0e9"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "./ui/ShortcutHelp",
+          "resolution": {
+            "path": "src/components/tpo/ui/ShortcutHelp.jsx",
+            "sha": "db9e65c5b710fe9e3691a997ae4528524b88cfc8"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 10,
+          "specifier": "@/api/Services/TpoHubService",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 11,
+          "specifier": "@/api/Services/TpoService",
+          "resolution": {
+            "path": "src/api/Services/TpoService.js",
+            "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 41,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 18,
+          "kind": "state",
+          "excerpt": "const [unread, setUnread] = useState({ bell: 0, messages: 0 });"
+        },
+        {
+          "line": 19,
+          "kind": "state",
+          "excerpt": "const [followOpen, setFollowOpen] = useState(false);"
+        },
+        {
+          "line": 20,
+          "kind": "state",
+          "excerpt": "const [recruiterLeadOptions, setRecruiterLeadOptions] = useState([]);"
+        },
+        {
+          "line": 21,
+          "kind": "state",
+          "excerpt": "const [followBusy, setFollowBusy] = useState(false);"
+        },
+        {
+          "line": 23,
+          "kind": "state",
+          "excerpt": "const [paletteOpen, setPaletteOpen] = useState(false);"
+        },
+        {
+          "line": 24,
+          "kind": "state",
+          "excerpt": "const [bellOpen, setBellOpen] = useState(false);"
+        },
+        {
+          "line": 26,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 33,
+          "kind": "state",
+          "excerpt": "const loadCounts = useCallback(async () => {"
+        },
+        {
+          "line": 38,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 47,
+          "kind": "state",
+          "excerpt": "const recruiterSearchSeq = useRef(0);"
+        },
+        {
+          "line": 70,
+          "kind": "navigation",
+          "excerpt": "{ key: \"recruiterLead\", label: `New recruiter lead for ${companyContext}`, onClick: () => router.push(`/tpo/recruiters?add=1&company=${encodeURIComponent(c"
+        },
+        {
+          "line": 71,
+          "kind": "navigation",
+          "excerpt": "{ key: \"drive\", label: `New drive for ${companyContext}`, onClick: () => router.push(`/tpo/drives/new?company=${encodeURIComponent(companyContext)}`) },"
+        },
+        {
+          "line": 75,
+          "kind": "navigation",
+          "excerpt": "{ key: \"recruiterLead\", label: \"Recruiter lead\", onClick: () => router.push(\"/tpo/recruiters?add=1\") },"
+        },
+        {
+          "line": 76,
+          "kind": "navigation",
+          "excerpt": "{ key: \"drive\", label: \"Drive\", onClick: () => router.push(\"/tpo/drives/new\") },"
+        },
+        {
+          "line": 84,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-glob-sch tpo-command-bar\" data-testid=\"tpo.topbar\">"
+        },
+        {
+          "line": 89,
+          "kind": "interactive",
+          "excerpt": "onClick={() => setPaletteOpen(true)}"
+        },
+        {
+          "line": 93,
+          "kind": "jsx",
+          "excerpt": "<SearchOutlined aria-hidden=\"true\" />"
+        },
+        {
+          "line": 96,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 98,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-command-bar__actions\">"
+        },
+        {
+          "line": 99,
+          "kind": "jsx,overlay",
+          "excerpt": "<Dropdown menu={newMenu} trigger={[\"click\"]}>"
+        },
+        {
+          "line": 100,
+          "kind": "jsx",
+          "excerpt": "<Button className=\"tpo-command-bar__new\" size=\"small\" type=\"primary\" icon={<PlusOutlined />}>New</Button>"
+        },
+        {
+          "line": 101,
+          "kind": "jsx",
+          "excerpt": "</Dropdown>"
+        },
+        {
+          "line": 102,
+          "kind": "jsx",
+          "excerpt": "<Badge count={unread.messages} size=\"small\">"
+        },
+        {
+          "line": 103,
+          "kind": "jsx,interactive,navigation",
+          "excerpt": "<Button className=\"tpo-command-bar__icon-btn\" size=\"small\" icon={<MessageOutlined />} aria-label=\"Messages\" onClick={() => router.push(\"/tpo/messages\")} />"
+        },
+        {
+          "line": 104,
+          "kind": "jsx",
+          "excerpt": "</Badge>"
+        },
+        {
+          "line": 106,
+          "kind": "jsx",
+          "excerpt": "<Badge count={unread.bell} size=\"small\">"
+        },
+        {
+          "line": 107,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button className=\"tpo-command-bar__icon-btn\" size=\"small\" icon={<BellOutlined />} aria-label=\"Notifications\" aria-expanded={bellOpen} data-bell-trigger on"
+        },
+        {
+          "line": 108,
+          "kind": "jsx",
+          "excerpt": "</Badge>"
+        },
+        {
+          "line": 110,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 111,
+          "kind": "jsx,navigation",
+          "excerpt": "<ShortcutHelp onNavigate={(href) => router.push(href)} />"
+        },
+        {
+          "line": 112,
+          "kind": "jsx,interactive,navigation",
+          "excerpt": "<TpoBellPanel open={bellOpen} onClose={() => setBellOpen(false)} onNavigate={(href) => router.push(href)} onChanged={loadCounts} />"
+        },
+        {
+          "line": 113,
+          "kind": "jsx,interactive,navigation",
+          "excerpt": "<TpoCommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onNavigate={(href) => router.push(href)} />"
+        },
+        {
+          "line": 114,
+          "kind": "jsx,overlay,interactive",
+          "excerpt": "<Modal open={followOpen} title=\"New follow-up\" okText=\"Add\" confirmLoading={followBusy} onOk={saveFollowUp} onCancel={() => setFollowOpen(false)} destroyOn"
+        },
+        {
+          "line": 115,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form form={followForm} layout=\"vertical\">"
+        },
+        {
+          "line": 116,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"recruiterLeadId\" label=\"Recruiter\" rules={[{ required: true, message: \"Choose a recruiter\" }]}><Select showSearch filterOption={false} onS"
+        },
+        {
+          "line": 117,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"dueAt\" label=\"When\" rules={[{ required: true, message: \"Pick a date and time\" }]}><DatePicker showTime style={{ width: \"100%\" }} /></Form."
+        },
+        {
+          "line": 118,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"note\" label=\"Note (optional)\"><Input.TextArea rows={2} /></Form.Item>"
+        },
+        {
+          "line": 119,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        },
+        {
+          "line": 120,
+          "kind": "jsx",
+          "excerpt": "</Modal>"
+        },
+        {
+          "line": 121,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/domain.js",
+      "sourceSha": "75ab54012f08a9229ab2abd3baa6b2137c568ccc",
+      "expectedSha": "75ab54012f08a9229ab2abd3baa6b2137c568ccc",
+      "shaMatches": true,
+      "fromIndex": 157,
+      "lineCount": 6,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tpo/ui/driveDayRules.js",
+      "sourceSha": "30695ac401dc1d9a93575bfe381897178fe153cb",
+      "expectedSha": "30695ac401dc1d9a93575bfe381897178fe153cb",
+      "shaMatches": true,
+      "fromIndex": 158,
+      "lineCount": 57,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tpo/ui/journeyRules.js",
+      "sourceSha": "13b506b418fb05aea3623f1d1e77985e6880edbb",
+      "expectedSha": "13b506b418fb05aea3623f1d1e77985e6880edbb",
+      "shaMatches": true,
+      "fromIndex": 159,
+      "lineCount": 78,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tpo/ui/recruiterActivity.js",
+      "sourceSha": "be5bc17e5c1e83fb6ddd13b64e1cfd7bce3ac279",
+      "expectedSha": "be5bc17e5c1e83fb6ddd13b64e1cfd7bce3ac279",
+      "shaMatches": true,
+      "fromIndex": 160,
+      "lineCount": 31,
+      "classification": "nonvisual-module",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tpo/ui/shareMemory.js",
+      "sourceSha": "701cb044b073e438cbea96929415614680cd3c88",
+      "expectedSha": "701cb044b073e438cbea96929415614680cd3c88",
+      "shaMatches": true,
+      "fromIndex": 161,
+      "lineCount": 40,
+      "classification": "nonvisual-module",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "./memoryKey",
+          "resolution": {
+            "path": "src/components/tpo/ui/memoryKey.js",
+            "sha": "1e7e0c93721556f6da6ee3592768852f82cf487f"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tpo/ui/slotGenerator.js",
+      "sourceSha": "10391e2c689139b4f7e088efd21d64960562a2c5",
+      "expectedSha": "10391e2c689139b4f7e088efd21d64960562a2c5",
+      "shaMatches": true,
+      "fromIndex": 162,
+      "lineCount": 55,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tracker/ActivityTimeline.jsx",
+      "sourceSha": "114991975b931ef1bede89ff42113dc388261652",
+      "expectedSha": "114991975b931ef1bede89ff42113dc388261652",
+      "shaMatches": true,
+      "fromIndex": 163,
+      "lineCount": 45,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "@/utils/bugTrackerUtils",
+          "resolution": {
+            "path": "src/utils/bugTrackerUtils.js",
+            "sha": "a92f6c8e1651fefda6f67549fe45826e86213d91"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/data/bugTrackerData",
+          "resolution": {
+            "path": "src/data/bugTrackerData.js",
+            "sha": "5992590612591980d83719a731c3868d51b1ee30"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 8,
+      "signals": [
+        {
+          "line": 25,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tracker-detail-card\">"
+        },
+        {
+          "line": 27,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-activity-list\">"
+        },
+        {
+          "line": 29,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-activity-item\" key={item.id || index}>"
+        },
+        {
+          "line": 31,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 38,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 39,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 41,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 42,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tracker/auditFindings/auditFindingsModel.js",
+      "sourceSha": "ce2303ab79b1d47ff7b31beb275432de8caaf74e",
+      "expectedSha": "ce2303ab79b1d47ff7b31beb275432de8caaf74e",
+      "shaMatches": true,
+      "fromIndex": 164,
+      "lineCount": 87,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 2,
+      "signals": [
+        {
+          "line": 65,
+          "kind": "jsx",
+          "excerpt": "\"<<<FINDING REPORT\","
+        },
+        {
+          "line": 83,
+          "kind": "jsx",
+          "excerpt": "`inbox/${f.id}.u<YYYYMMDDHHmm>-<4 random>.json with \"status\": \"fixed\" and the commit(s).`,"
+        }
+      ],
+      "manualSourceReview": {
+        "note": "Review of pinned 87-line source found no rendered JSX; earlier signal was static regex false positive.",
+        "level": "static source fact only; not runtime parity"
+      }
+    }
+  ]
+}

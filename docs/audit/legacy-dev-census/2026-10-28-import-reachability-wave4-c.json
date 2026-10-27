@@ -1,0 +1,2110 @@
+{
+  "schemaVersion": 1,
+  "batch": "wave4-c",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "parent": "post-wave3-frontier",
+  "scope": "static candidate signals; no runtime parity",
+  "nodes": [
+    {
+      "path": "src/components/Common/Facts.jsx",
+      "sourceSha": "97b26edb85a78c005fc370f6d452d263c4a49df4",
+      "expectedSha": "97b26edb85a78c005fc370f6d452d263c4a49df4",
+      "shaMatches": true,
+      "fromIndex": 11,
+      "lineCount": 26,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 6,
+      "signals": [
+        {
+          "line": 7,
+          "kind": "jsx",
+          "excerpt": "*   <Facts>"
+        },
+        {
+          "line": 8,
+          "kind": "jsx",
+          "excerpt": "*     <Fact label=\"Stage\" hint=\"Their step in placements\">{<Tag>Registered</Tag>}</Fact>"
+        },
+        {
+          "line": 9,
+          "kind": "jsx",
+          "excerpt": "*     <Fact label=\"Placements\">{<Tag color=\"green\">Eligible (from batch)</Tag>}</Fact>"
+        },
+        {
+          "line": 10,
+          "kind": "jsx",
+          "excerpt": "*   </Facts>"
+        },
+        {
+          "line": 21,
+          "kind": "jsx",
+          "excerpt": "const item = <div className=\"lms-facts__item\" data-testid={testid}><dt>{label}</dt><dd>{children}</dd></div>;"
+        },
+        {
+          "line": 22,
+          "kind": "jsx",
+          "excerpt": "return hint ? <Tooltip title={hint}>{item}</Tooltip> : item;"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Course/Syllabus/ContentTitle.jsx",
+      "sourceSha": "6c763a7745cf456a58fcc74caf5aa1733f0dd9c0",
+      "expectedSha": "6c763a7745cf456a58fcc74caf5aa1733f0dd9c0",
+      "shaMatches": true,
+      "fromIndex": 12,
+      "lineCount": 139,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 3,
+      "signals": [
+        {
+          "line": 62,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-card-subtitle\" style={{ alignItems: \"center\" }}>"
+        },
+        {
+          "line": 82,
+          "kind": "jsx",
+          "excerpt": "<IconComponent style={{ fontSize: 14 }} />"
+        },
+        {
+          "line": 111,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/profile/about.js",
+      "sourceSha": "cd22b395246016dfbe4649f6e7b8d03fef7367e0",
+      "expectedSha": "cd22b395246016dfbe4649f6e7b8d03fef7367e0",
+      "shaMatches": true,
+      "fromIndex": 13,
+      "lineCount": 1497,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "./about/contacts",
+          "resolution": {
+            "path": "src/components/profile/about/contacts.js",
+            "sha": "b140c7972e56711910b9a0403da4837f96e47813"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "./about/experiences",
+          "resolution": {
+            "path": "src/components/profile/about/experiences.js",
+            "sha": "02e79c06d6f84353e639c51003a5a585b115d338"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "./about/skills",
+          "resolution": {
+            "path": "src/components/profile/about/skills.js",
+            "sha": "1982cce384397e3b854eec29619d9a8b771ef122"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "./userInfo",
+          "resolution": {
+            "path": "src/components/profile/userInfo.js",
+            "sha": "cb804c5c67c2bbcb74a7c40b357974a8fc9e708c"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "./about/qualifications",
+          "resolution": {
+            "path": "src/components/profile/about/qualifications.js",
+            "sha": "2f5718e748b95263ee2b7f8951921462ef31645c"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "./about/projects",
+          "resolution": {
+            "path": "src/components/profile/about/projects.js",
+            "sha": "e7f801f9b771c41157686f9d663bffc5dd38e553"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "./about/certifications",
+          "resolution": {
+            "path": "src/components/profile/about/certifications.js",
+            "sha": "c30ace2893d345f137f7c983e98b323952129054"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 10,
+          "specifier": "./about/achievements",
+          "resolution": {
+            "path": "src/components/profile/about/achievements.js",
+            "sha": "4c323cbea51897c5ceadfd160e60a87d9d51505f"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 11,
+          "specifier": "./about/languages",
+          "resolution": {
+            "path": "src/components/profile/about/languages.js",
+            "sha": "c03a7608ca8bd26b459cf673636818b114838f82"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 12,
+          "specifier": "./about/identity",
+          "resolution": {
+            "path": "src/components/profile/about/identity.js",
+            "sha": "2b0bdea57de4927df8b4f6f45dc653b0cab66edb"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 13,
+          "specifier": "./about/extracurricular",
+          "resolution": {
+            "path": "src/components/profile/about/extracurricular.js",
+            "sha": "587eff435db8039cffc8df43d6295f7bbefdf264"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 14,
+          "specifier": "./about/socialProfiles",
+          "resolution": {
+            "path": "src/components/profile/about/socialProfiles.js",
+            "sha": "d9380a31a63e05ff8880736ee3f61c35871fa60d"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 15,
+          "specifier": "./about/address",
+          "resolution": {
+            "path": "src/components/profile/about/address.js",
+            "sha": "2643ed16bfa5a915ecb6288e19586478cdc4bf38"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 16,
+          "specifier": "./about/personalDetails",
+          "resolution": {
+            "path": "src/components/profile/about/personalDetails.js",
+            "sha": "1eff544772a62c78aa787319e55e3d20030e1917"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 17,
+          "specifier": "./about/hobbies",
+          "resolution": {
+            "path": "src/components/profile/about/hobbies.js",
+            "sha": "5eb7f833178810171700813459cd63f858846528"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 18,
+          "specifier": "./about/publications",
+          "resolution": {
+            "path": "src/components/profile/about/publications.js",
+            "sha": "8af03859e5d617e40fe5e5f3bc2bb5d2d3647216"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 19,
+          "specifier": "./about/awards",
+          "resolution": {
+            "path": "src/components/profile/about/awards.js",
+            "sha": "6e3dbd2361ec9ecc55e8d410637419243f27fe9e"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 20,
+          "specifier": "./about/metadata",
+          "resolution": {
+            "path": "src/components/profile/about/metadata.js",
+            "sha": "7aeb3ab46cd2e5b3359c28f9ea71f3c9cf09264c"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 21,
+          "specifier": "@/components/Global/CardHeader/cardHeader",
+          "resolution": {
+            "path": "src/components/Global/CardHeader/cardHeader.js",
+            "sha": "6cbc59f7ebff9d948407a28fe19ea4028f099047"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 22,
+          "specifier": "@/components/Global/Upload/UploadFromLinkButton",
+          "resolution": {
+            "path": "src/components/Global/Upload/UploadFromLinkButton.jsx",
+            "sha": "314cf6ea0ca8e190ac749193012210faeb7239cf"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 23,
+          "specifier": "./ProfileCompleteness",
+          "resolution": {
+            "path": "src/components/profile/ProfileCompleteness.js",
+            "sha": "a8a5c0070f6b34950722ec50e8c7ab2c25e5e18b"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 24,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 25,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 26,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 27,
+          "specifier": "@/redux/store",
+          "resolution": {
+            "path": "src/redux/store.js",
+            "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 28,
+          "specifier": "@/utils/uploadToR2",
+          "resolution": {
+            "path": "src/utils/uploadToR2.js",
+            "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 29,
+          "specifier": "@/api/Services/ProfileService",
+          "resolution": {
+            "path": "src/api/Services/ProfileService.js",
+            "sha": "9d9760085683f5a740026898593119bd64953acf"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 30,
+          "specifier": "@/utils/errorHandlers",
+          "resolution": {
+            "path": "src/utils/errorHandlers.js",
+            "sha": "85113c36694344eaa832ff738c73777ba0c835bb"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 31,
+          "specifier": "@/utils/resumeUploadUtils",
+          "resolution": {
+            "path": "src/utils/resumeUploadUtils.js",
+            "sha": "50a2b3a470bb66d24fc31eb9672f50c02e2010a7"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 609,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": true
+        },
+        {
+          "line": 635,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": true
+        },
+        {
+          "line": 673,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": true
+        },
+        {
+          "line": 851,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": true
+        },
+        {
+          "line": 875,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": true
+        }
+      ],
+      "signalCount": 190,
+      "signals": [
+        {
+          "line": 24,
+          "kind": "state",
+          "excerpt": "import { useState, useEffect, useRef } from \"react\";"
+        },
+        {
+          "line": 44,
+          "kind": "interactive",
+          "excerpt": "onClick={onClick}"
+        },
+        {
+          "line": 51,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 58,
+          "kind": "interactive",
+          "excerpt": "onClick={onClick}"
+        },
+        {
+          "line": 65,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 82,
+          "kind": "state",
+          "excerpt": "const [skillsEdit, setSkillsEdit] = useState(false);"
+        },
+        {
+          "line": 83,
+          "kind": "state",
+          "excerpt": "const [contactsEdit, setContactsEdit] = useState(false);"
+        },
+        {
+          "line": 84,
+          "kind": "state",
+          "excerpt": "const [socialEdit, setSocialEdit] = useState(false);"
+        },
+        {
+          "line": 85,
+          "kind": "state",
+          "excerpt": "const [addressEdit, setAddressEdit] = useState(false);"
+        },
+        {
+          "line": 86,
+          "kind": "state",
+          "excerpt": "const [personalDetailsEdit, setPersonalDetailsEdit] = useState(false);"
+        },
+        {
+          "line": 87,
+          "kind": "state",
+          "excerpt": "const [identityEdit, setIdentityEdit] = useState(false);"
+        },
+        {
+          "line": 89,
+          "kind": "state",
+          "excerpt": "const [experienceParams, setExperienceParams] = useState({ editClicked: false, addClicked: false });"
+        },
+        {
+          "line": 90,
+          "kind": "state",
+          "excerpt": "const [qualificationParams, setQualificationParams] = useState({ editClicked: false, addClicked: false });"
+        },
+        {
+          "line": 91,
+          "kind": "state",
+          "excerpt": "const [projectParams, setProjectParams] = useState({ editClicked: false, addClicked: false });"
+        },
+        {
+          "line": 92,
+          "kind": "state",
+          "excerpt": "const [certificationParams, setCertificationParams] = useState({ editClicked: false, addClicked: false });"
+        },
+        {
+          "line": 93,
+          "kind": "state",
+          "excerpt": "const [achievementParams, setAchievementParams] = useState({ editClicked: false, addClicked: false });"
+        },
+        {
+          "line": 94,
+          "kind": "state",
+          "excerpt": "const [languageParams, setLanguageParams] = useState({ editClicked: false, addClicked: false });"
+        },
+        {
+          "line": 95,
+          "kind": "state",
+          "excerpt": "const [activityParams, setActivityParams] = useState({ editClicked: false, addClicked: false });"
+        },
+        {
+          "line": 96,
+          "kind": "state",
+          "excerpt": "const [publicationParams, setPublicationParams] = useState({ editClicked: false, addClicked: false });"
+        },
+        {
+          "line": 97,
+          "kind": "state",
+          "excerpt": "const [awardParams, setAwardParams] = useState({ editClicked: false, addClicked: false });"
+        },
+        {
+          "line": 98,
+          "kind": "state",
+          "excerpt": "const [hobbiesEdit, setHobbiesEdit] = useState(false);"
+        },
+        {
+          "line": 99,
+          "kind": "state",
+          "excerpt": "const [metadataEdit, setMetadataEdit] = useState(false);"
+        },
+        {
+          "line": 100,
+          "kind": "state",
+          "excerpt": "const [uploadingResume, setUploadingResume] = useState(false);"
+        },
+        {
+          "line": 101,
+          "kind": "state",
+          "excerpt": "const resumeMutationRef = useRef(false);"
+        },
+        {
+          "line": 102,
+          "kind": "state",
+          "excerpt": "const [sectionLoadErrors, setSectionLoadErrors] = useState([]);"
+        },
+        {
+          "line": 117,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 125,
+          "kind": "overlay",
+          "excerpt": "if (window.confirm(\"Discard your unsaved profile changes?\")) return;"
+        },
+        {
+          "line": 126,
+          "kind": "navigation",
+          "excerpt": "const addressBar = `${window.location.pathname}${window.location.search}${window.location.hash}`;"
+        },
+        {
+          "line": 135,
+          "kind": "navigation",
+          "excerpt": "window.addEventListener(\"beforeunload\", beforeUnload);"
+        },
+        {
+          "line": 136,
+          "kind": "navigation",
+          "excerpt": "Router.events.on(\"routeChangeStart\", beforeRouteChange);"
+        },
+        {
+          "line": 138,
+          "kind": "navigation",
+          "excerpt": "window.removeEventListener(\"beforeunload\", beforeUnload);"
+        },
+        {
+          "line": 139,
+          "kind": "navigation",
+          "excerpt": "Router.events.off(\"routeChangeStart\", beforeRouteChange);"
+        },
+        {
+          "line": 144,
+          "kind": "state",
+          "excerpt": "const [experiences, setExperiences] = useState([]);"
+        },
+        {
+          "line": 145,
+          "kind": "state",
+          "excerpt": "const [qualifications, setQualifications] = useState([]);"
+        },
+        {
+          "line": 146,
+          "kind": "state",
+          "excerpt": "const [skills, setSkills] = useState([]);"
+        },
+        {
+          "line": 147,
+          "kind": "state",
+          "excerpt": "const [projects, setProjects] = useState([]);"
+        },
+        {
+          "line": 148,
+          "kind": "state",
+          "excerpt": "const [certifications, setCertifications] = useState([]);"
+        },
+        {
+          "line": 149,
+          "kind": "state",
+          "excerpt": "const [achievements, setAchievements] = useState([]);"
+        },
+        {
+          "line": 150,
+          "kind": "state",
+          "excerpt": "const [languages, setLanguages] = useState([]);"
+        },
+        {
+          "line": 151,
+          "kind": "state",
+          "excerpt": "const [extracurricular, setExtracurricular] = useState([]);"
+        },
+        {
+          "line": 152,
+          "kind": "state",
+          "excerpt": "const [hobbies, setHobbies] = useState([]);"
+        },
+        {
+          "line": 153,
+          "kind": "state",
+          "excerpt": "const [publications, setPublications] = useState([]);"
+        },
+        {
+          "line": 154,
+          "kind": "state",
+          "excerpt": "const [awards, setAwards] = useState([]);"
+        },
+        {
+          "line": 155,
+          "kind": "state",
+          "excerpt": "const [social, setSocial] = useState({});"
+        },
+        {
+          "line": 156,
+          "kind": "state",
+          "excerpt": "const [address, setAddress] = useState({});"
+        },
+        {
+          "line": 157,
+          "kind": "state",
+          "excerpt": "const [personalDetails, setPersonalDetails] = useState({});"
+        },
+        {
+          "line": 158,
+          "kind": "state",
+          "excerpt": "const [identity, setIdentity] = useState({});"
+        },
+        {
+          "line": 159,
+          "kind": "state",
+          "excerpt": "const [contact, setContact] = useState({});"
+        },
+        {
+          "line": 160,
+          "kind": "state",
+          "excerpt": "const [metadata, setMetadata] = useState({});"
+        },
+        {
+          "line": 165,
+          "kind": "state",
+          "excerpt": "const isCancelledRef = useRef(() => false);"
+        },
+        {
+          "line": 168,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 903,
+          "kind": "jsx",
+          "excerpt": "<div className=\"pt-0 px-0\">"
+        },
+        {
+          "line": 912,
+          "kind": "jsx,interactive",
+          "excerpt": "action={<Button size=\"small\" onClick={() => loadAllData(isCancelledRef.current)}>Retry sections</Button>}"
+        },
+        {
+          "line": 915,
+          "kind": "jsx",
+          "excerpt": "<Row gutter={[20, 20]} className=\"profile-sections\">"
+        },
+        {
+          "line": 916,
+          "kind": "jsx",
+          "excerpt": "<Col span={24}>"
+        },
+        {
+          "line": 925,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 928,
+          "kind": "jsx",
+          "excerpt": "{!compact && <Col span={24}>"
+        },
+        {
+          "line": 929,
+          "kind": "jsx",
+          "excerpt": "<ProfileCompleteness"
+        },
+        {
+          "line": 933,
+          "kind": "jsx",
+          "excerpt": "</Col>}"
+        },
+        {
+          "line": 935,
+          "kind": "jsx",
+          "excerpt": "<Col span={24}>"
+        },
+        {
+          "line": 936,
+          "kind": "jsx",
+          "excerpt": "<Row gutter={[20, 20]} className=\"profile-sections-row\" align=\"top\">"
+        },
+        {
+          "line": 938,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 945,
+          "kind": "jsx,interactive",
+          "excerpt": "rightContent={<EditButton onClick={() => setPersonalDetailsEdit(true)} disabled={personalDetailsEdit} />}"
+        },
+        {
+          "line": 955,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 956,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 960,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 968,
+          "kind": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 969,
+          "kind": "jsx,interactive",
+          "excerpt": "<AddButton onClick={() => setExperienceParams({ ...experienceParams, addClicked: true })} disabled={experienceParams.addClicked} />"
+        },
+        {
+          "line": 971,
+          "kind": "jsx,interactive",
+          "excerpt": "<EditButton onClick={() => setExperienceParams({ ...experienceParams, editClicked: true })} disabled={experienceParams.editClicked} />"
+        },
+        {
+          "line": 973,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 986,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 987,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 992,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1000,
+          "kind": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 1001,
+          "kind": "jsx,interactive",
+          "excerpt": "<AddButton onClick={() => setQualificationParams({ ...qualificationParams, addClicked: true })} disabled={qualificationParams.addClicked} />"
+        },
+        {
+          "line": 1003,
+          "kind": "jsx,interactive",
+          "excerpt": "<EditButton onClick={() => setQualificationParams({ ...qualificationParams, editClicked: true })} disabled={qualificationParams.editClicked} />"
+        },
+        {
+          "line": 1005,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 1018,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1019,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1024,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1032,
+          "kind": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 1033,
+          "kind": "jsx,interactive",
+          "excerpt": "<AddButton onClick={() => setProjectParams({ ...projectParams, addClicked: true })} disabled={projectParams.addClicked} />"
+        },
+        {
+          "line": 1035,
+          "kind": "jsx,interactive",
+          "excerpt": "<EditButton onClick={() => setProjectParams({ ...projectParams, editClicked: true })} disabled={projectParams.editClicked} />"
+        },
+        {
+          "line": 1037,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 1050,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1051,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1056,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1064,
+          "kind": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 1065,
+          "kind": "jsx,interactive",
+          "excerpt": "<AddButton onClick={() => setCertificationParams({ ...certificationParams, addClicked: true })} disabled={certificationParams.addClicked} />"
+        },
+        {
+          "line": 1067,
+          "kind": "jsx,interactive",
+          "excerpt": "<EditButton onClick={() => setCertificationParams({ ...certificationParams, editClicked: true })} disabled={certificationParams.editClicked} />"
+        },
+        {
+          "line": 1069,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 1082,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1083,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1088,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1096,
+          "kind": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 1097,
+          "kind": "jsx,interactive",
+          "excerpt": "<AddButton onClick={() => setAchievementParams({ ...achievementParams, addClicked: true })} disabled={achievementParams.addClicked} />"
+        },
+        {
+          "line": 1099,
+          "kind": "jsx,interactive",
+          "excerpt": "<EditButton onClick={() => setAchievementParams({ ...achievementParams, editClicked: true })} disabled={achievementParams.editClicked} />"
+        },
+        {
+          "line": 1101,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 1114,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1115,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1120,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1127,
+          "kind": "jsx,interactive",
+          "excerpt": "rightContent={<EditButton onClick={() => setSkillsEdit(true)} />}"
+        },
+        {
+          "line": 1137,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1138,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1143,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1151,
+          "kind": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 1152,
+          "kind": "jsx,interactive",
+          "excerpt": "<AddButton onClick={() => setLanguageParams({ ...languageParams, addClicked: true })} disabled={languageParams.addClicked} />"
+        },
+        {
+          "line": 1154,
+          "kind": "jsx,interactive",
+          "excerpt": "<EditButton onClick={() => setLanguageParams({ ...languageParams, editClicked: true })} disabled={languageParams.editClicked} />"
+        },
+        {
+          "line": 1156,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 1169,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1170,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1175,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1183,
+          "kind": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 1184,
+          "kind": "jsx,interactive",
+          "excerpt": "<AddButton onClick={() => setActivityParams({ ...activityParams, addClicked: true })} disabled={activityParams.addClicked} />"
+        },
+        {
+          "line": 1186,
+          "kind": "jsx,interactive",
+          "excerpt": "<EditButton onClick={() => setActivityParams({ ...activityParams, editClicked: true })} disabled={activityParams.editClicked} />"
+        },
+        {
+          "line": 1188,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 1201,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1202,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1207,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1214,
+          "kind": "jsx,interactive",
+          "excerpt": "rightContent={<EditButton onClick={() => setHobbiesEdit(true)} disabled={hobbiesEdit} />}"
+        },
+        {
+          "line": 1224,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1225,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1230,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1238,
+          "kind": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 1239,
+          "kind": "jsx,interactive",
+          "excerpt": "<AddButton onClick={() => setPublicationParams({ ...publicationParams, addClicked: true })} disabled={publicationParams.addClicked} />"
+        },
+        {
+          "line": 1241,
+          "kind": "jsx,interactive",
+          "excerpt": "<EditButton onClick={() => setPublicationParams({ ...publicationParams, editClicked: true })} disabled={publicationParams.editClicked} />"
+        },
+        {
+          "line": 1243,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 1256,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1257,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1262,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12}>"
+        },
+        {
+          "line": 1270,
+          "kind": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 1271,
+          "kind": "jsx,interactive",
+          "excerpt": "<AddButton onClick={() => setAwardParams({ ...awardParams, addClicked: true })} disabled={awardParams.addClicked} />"
+        },
+        {
+          "line": 1273,
+          "kind": "jsx,interactive",
+          "excerpt": "<EditButton onClick={() => setAwardParams({ ...awardParams, editClicked: true })} disabled={awardParams.editClicked} />"
+        },
+        {
+          "line": 1275,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 1288,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1289,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 1293,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12} id=\"profile-connect-accounts-section\">"
+        },
+        {
+          "line": 1300,
+          "kind": "jsx,interactive",
+          "excerpt": "rightContent={<EditButton onClick={() => setSocialEdit(true)} disabled={socialEdit} />}"
+        },
+        {
+          "line": 1311,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 1312,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/recruiter/enterAfterJoin.js",
+      "sourceSha": "319ed0f62890de9c7c527e9a09e607560b22cdec",
+      "expectedSha": "319ed0f62890de9c7c527e9a09e607560b22cdec",
+      "shaMatches": true,
+      "fromIndex": 14,
+      "lineCount": 23,
+      "classification": "nonvisual-module",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "@/utils/authUtils",
+          "resolution": {
+            "path": "src/utils/authUtils.js",
+            "sha": "c79e628b23ecd93e1bb55470f48194a19e1aa007"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/redux/store",
+          "resolution": {
+            "path": "src/redux/store.js",
+            "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 1,
+      "signals": [
+        {
+          "line": 20,
+          "kind": "navigation",
+          "excerpt": "router.replace(\"/recruiter/home?welcome=1\");"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/batches/batchRules.js",
+      "sourceSha": "16156886a6ef7320fa6f5befbd2a450df1522055",
+      "expectedSha": "16156886a6ef7320fa6f5befbd2a450df1522055",
+      "shaMatches": true,
+      "fromIndex": 15,
+      "lineCount": 185,
+      "classification": "nonvisual-module",
+      "dependencies": [
+        {
+          "line": 2,
+          "specifier": "@/components/tpo/students/academics",
+          "resolution": {
+            "path": "src/components/tpo/students/academics.js",
+            "sha": "7d2d94830a903eba1fc580ad79d4e5aaa8d00ee3"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/config/choices",
+          "resolution": {
+            "path": "src/config/choices.js",
+            "sha": "9c1b4ada4ac72724d2c551b021c44676dda30cac"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tpo/filters/useUrlFilters.js",
+      "sourceSha": "8144cf6aaf7a10787a66d1dc63a45ec995907b16",
+      "expectedSha": "8144cf6aaf7a10787a66d1dc63a45ec995907b16",
+      "shaMatches": true,
+      "fromIndex": 16,
+      "lineCount": 19,
+      "classification": "interaction-hook",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "./filterModel",
+          "resolution": {
+            "path": "src/components/tpo/filters/filterModel.js",
+            "sha": "ed70138d5c54727846942156d71bfa4fa4b0e479"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 3,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useMemo } from \"react\";"
+        },
+        {
+          "line": 13,
+          "kind": "state",
+          "excerpt": "const setState = useCallback((next) => {"
+        },
+        {
+          "line": 15,
+          "kind": "navigation",
+          "excerpt": "router.replace({ pathname: router.pathname, query: mergeQuery(router.query, defs, next || {}) }, undefined, { shallow: true, scroll: false });"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/useTeamPeople.js",
+      "sourceSha": "adcc5161feb368bdcbf2ec26cb346c38dc478395",
+      "expectedSha": "adcc5161feb368bdcbf2ec26cb346c38dc478395",
+      "shaMatches": true,
+      "fromIndex": 17,
+      "lineCount": 23,
+      "classification": "interaction-hook",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/TpoHubService",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 4,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useEffect, useState } from \"react\";"
+        },
+        {
+          "line": 7,
+          "kind": "state",
+          "excerpt": "const [people, setPeople] = useState([]);"
+        },
+        {
+          "line": 8,
+          "kind": "state",
+          "excerpt": "const [meId, setMeId] = useState(fallbackMeId || null);"
+        },
+        {
+          "line": 9,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/rollParser.js",
+      "sourceSha": "0869a50d9af04c831eb583c1ba15ed961e522611",
+      "expectedSha": "0869a50d9af04c831eb583c1ba15ed961e522611",
+      "shaMatches": true,
+      "fromIndex": 18,
+      "lineCount": 39,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tpo/ui/useRefreshOnFocus.js",
+      "sourceSha": "59daf12b902550bca1435054fcff60951a4c2f9a",
+      "expectedSha": "59daf12b902550bca1435054fcff60951a4c2f9a",
+      "shaMatches": true,
+      "fromIndex": 19,
+      "lineCount": 23,
+      "classification": "interaction-hook",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 6,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useEffect, useRef } from \"react\";"
+        },
+        {
+          "line": 7,
+          "kind": "state",
+          "excerpt": "export default function useRefreshOnFocus(refresh, minGapMs = 20000) {"
+        },
+        {
+          "line": 8,
+          "kind": "state",
+          "excerpt": "const ref = useRef(refresh);"
+        },
+        {
+          "line": 9,
+          "kind": "state",
+          "excerpt": "const last = useRef(Date.now());"
+        },
+        {
+          "line": 10,
+          "kind": "state",
+          "excerpt": "useEffect(() => { ref.current = refresh; }, [refresh]);"
+        },
+        {
+          "line": 11,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        }
+      ]
+    },
+    {
+      "path": "src/common/superAdminNavGroups.js",
+      "sourceSha": "1254f3187b7be848c28e8bd9a4ce74bcf28e753a",
+      "expectedSha": "1254f3187b7be848c28e8bd9a4ce74bcf28e753a",
+      "shaMatches": true,
+      "fromIndex": 20,
+      "lineCount": 110,
+      "classification": "nonvisual-module",
+      "dependencies": [
+        {
+          "line": 5,
+          "specifier": "./navGroupDefinitions",
+          "resolution": {
+            "path": "src/common/navGroupDefinitions.js",
+            "sha": "c76497638b10bc7d5c919c3fe309ae7ada0af98a"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/marketing/sections.jsx",
+      "sourceSha": "b61ea522599c425f26b483ce120aba8e892056af",
+      "expectedSha": "b61ea522599c425f26b483ce120aba8e892056af",
+      "shaMatches": true,
+      "fromIndex": 21,
+      "lineCount": 292,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "next/link",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "./marketing.module.scss",
+          "resolution": {
+            "path": "src/components/marketing/marketing.module.scss",
+            "sha": "a5bed85fe6230df7452ba571e0698bb420193bdc"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "./icons",
+          "resolution": {
+            "path": "src/components/marketing/icons.jsx",
+            "sha": "5a8bcfd8baaae6a043b75bac1d6c677e939d8f69"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "./data",
+          "resolution": {
+            "path": "src/components/marketing/data.js",
+            "sha": "4faac887f4a1cce66960a9d32611a062c168109d"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 112,
+      "signals": [
+        {
+          "line": 15,
+          "kind": "jsx",
+          "excerpt": "<div className={left ? s.sectionHeadLeft : s.sectionHead}>"
+        },
+        {
+          "line": 19,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 26,
+          "kind": "jsx",
+          "excerpt": "<section className={s.hero}>"
+        },
+        {
+          "line": 27,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 28,
+          "kind": "jsx",
+          "excerpt": "<div style={{ padding: \"48px 0 8px\", maxWidth: 760 }}>"
+        },
+        {
+          "line": 32,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 33,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 34,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 40,
+          "kind": "jsx",
+          "excerpt": "<section className={s.hero}>"
+        },
+        {
+          "line": 41,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 42,
+          "kind": "jsx",
+          "excerpt": "<div className={s.heroInner}>"
+        },
+        {
+          "line": 43,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 45,
+          "kind": "jsx",
+          "excerpt": "<Icon name=\"spark\" /> The AI Talent &amp; Workforce Operating System"
+        },
+        {
+          "line": 55,
+          "kind": "jsx",
+          "excerpt": "<div className={s.heroCtas}>"
+        },
+        {
+          "line": 56,
+          "kind": "jsx",
+          "excerpt": "<Link href=\"/request-demo\" className={`${s.btn} ${s.btnPrimary} ${s.btnLg}`}>"
+        },
+        {
+          "line": 57,
+          "kind": "jsx",
+          "excerpt": "Request a Demo <Icon name=\"arrow\" />"
+        },
+        {
+          "line": 58,
+          "kind": "jsx",
+          "excerpt": "</Link>"
+        },
+        {
+          "line": 59,
+          "kind": "jsx",
+          "excerpt": "<Link href=\"/platform\" className={`${s.btn} ${s.btnGhost} ${s.btnLg}`}>"
+        },
+        {
+          "line": 61,
+          "kind": "jsx",
+          "excerpt": "</Link>"
+        },
+        {
+          "line": 62,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 64,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 66,
+          "kind": "jsx",
+          "excerpt": "<div className={s.heroVisual} aria-hidden=\"true\">"
+        },
+        {
+          "line": 67,
+          "kind": "jsx",
+          "excerpt": "<div className={s.heroVisualBar}>"
+        },
+        {
+          "line": 69,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 70,
+          "kind": "jsx",
+          "excerpt": "<div className={s.heroChips}>"
+        },
+        {
+          "line": 72,
+          "kind": "jsx",
+          "excerpt": "<div key={a.name} className={s.heroChip}>"
+        },
+        {
+          "line": 73,
+          "kind": "jsx",
+          "excerpt": "<Icon name={a.icon} />"
+        },
+        {
+          "line": 75,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 77,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 78,
+          "kind": "jsx",
+          "excerpt": "<div className={s.heroPulse}>"
+        },
+        {
+          "line": 80,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 81,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 82,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 83,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 84,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 90,
+          "kind": "jsx",
+          "excerpt": "<section className={`${s.section} ${s.sectionAlt}`}>"
+        },
+        {
+          "line": 91,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 92,
+          "kind": "jsx",
+          "excerpt": "<div className={s.quote}>"
+        },
+        {
+          "line": 100,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 101,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 102,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 108,
+          "kind": "jsx",
+          "excerpt": "<section className={s.section}>"
+        },
+        {
+          "line": 109,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 110,
+          "kind": "jsx",
+          "excerpt": "<SectionHeading eyebrow={eyebrow} title={title} lede={lede} />"
+        },
+        {
+          "line": 111,
+          "kind": "jsx",
+          "excerpt": "<div className={`${s.grid} ${s.grid3}`}>"
+        },
+        {
+          "line": 114,
+          "kind": "jsx",
+          "excerpt": "<span className={s.cardIcon}><Icon name={a.icon} /></span>"
+        },
+        {
+          "line": 119,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 120,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 121,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 127,
+          "kind": "jsx",
+          "excerpt": "<section className={`${s.section} ${s.sectionTint}`}>"
+        },
+        {
+          "line": 128,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 134,
+          "kind": "jsx",
+          "excerpt": "<div className={s.chips}>"
+        },
+        {
+          "line": 140,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 141,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 142,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 151,
+          "kind": "jsx",
+          "excerpt": "<Icon name=\"check\" /> <span>{p}</span>"
+        },
+        {
+          "line": 171,
+          "kind": "jsx",
+          "excerpt": "<section className={s.section}>"
+        },
+        {
+          "line": 172,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 178,
+          "kind": "jsx",
+          "excerpt": "<div className={s.audience}>"
+        },
+        {
+          "line": 182,
+          "kind": "jsx",
+          "excerpt": "<CheckList points={UNIVERSITIES.points.slice(0, 3)} />"
+        },
+        {
+          "line": 183,
+          "kind": "jsx",
+          "excerpt": "<Outcomes items={UNIVERSITIES.outcomes} />"
+        },
+        {
+          "line": 184,
+          "kind": "jsx",
+          "excerpt": "<div style={{ marginTop: 18 }}>"
+        },
+        {
+          "line": 185,
+          "kind": "jsx",
+          "excerpt": "<Link href=\"/universities\" className={`${s.btn} ${s.btnGhost}`}>"
+        },
+        {
+          "line": 186,
+          "kind": "jsx",
+          "excerpt": "For Universities <Icon name=\"arrow\" />"
+        },
+        {
+          "line": 187,
+          "kind": "jsx",
+          "excerpt": "</Link>"
+        },
+        {
+          "line": 188,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 193,
+          "kind": "jsx",
+          "excerpt": "<CheckList points={ENTERPRISES.points.slice(0, 3)} />"
+        },
+        {
+          "line": 194,
+          "kind": "jsx",
+          "excerpt": "<Outcomes items={ENTERPRISES.outcomes} />"
+        },
+        {
+          "line": 195,
+          "kind": "jsx",
+          "excerpt": "<div style={{ marginTop: 18 }}>"
+        },
+        {
+          "line": 196,
+          "kind": "jsx",
+          "excerpt": "<Link href=\"/enterprises\" className={`${s.btn} ${s.btnLight}`}>"
+        },
+        {
+          "line": 197,
+          "kind": "jsx",
+          "excerpt": "For Enterprises <Icon name=\"arrow\" />"
+        },
+        {
+          "line": 198,
+          "kind": "jsx",
+          "excerpt": "</Link>"
+        },
+        {
+          "line": 199,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 201,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 202,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 203,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 210,
+          "kind": "jsx",
+          "excerpt": "<section className={s.section}>"
+        },
+        {
+          "line": 211,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 212,
+          "kind": "jsx",
+          "excerpt": "<SectionHeading eyebrow={data.eyebrow} title={data.title} left />"
+        },
+        {
+          "line": 213,
+          "kind": "jsx",
+          "excerpt": "<CheckList points={data.points} />"
+        },
+        {
+          "line": 214,
+          "kind": "jsx",
+          "excerpt": "<div style={{ marginTop: 8 }}>"
+        },
+        {
+          "line": 216,
+          "kind": "jsx",
+          "excerpt": "<Outcomes items={data.outcomes} />"
+        },
+        {
+          "line": 217,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 218,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 219,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 225,
+          "kind": "jsx",
+          "excerpt": "<section className={`${s.section} ${s.sectionAlt}`}>"
+        },
+        {
+          "line": 226,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 231,
+          "kind": "jsx",
+          "excerpt": "<div className={`${s.grid} ${s.grid3}`}>"
+        },
+        {
+          "line": 234,
+          "kind": "jsx",
+          "excerpt": "<span className={s.cardIcon}><Icon name={p.icon} /></span>"
+        },
+        {
+          "line": 239,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 240,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 241,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 247,
+          "kind": "jsx",
+          "excerpt": "<section className={s.section}>"
+        },
+        {
+          "line": 248,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 254,
+          "kind": "jsx",
+          "excerpt": "<div className={s.lifecycle}>"
+        },
+        {
+          "line": 259,
+          "kind": "jsx",
+          "excerpt": "<span className={s.lifeArrow}><Icon name=\"arrow\" /></span>"
+        },
+        {
+          "line": 263,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 264,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 265,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 274,
+          "kind": "jsx",
+          "excerpt": "<section className={s.section}>"
+        },
+        {
+          "line": 275,
+          "kind": "jsx",
+          "excerpt": "<div className={s.container}>"
+        },
+        {
+          "line": 276,
+          "kind": "jsx",
+          "excerpt": "<div className={s.ctaBand}>"
+        },
+        {
+          "line": 279,
+          "kind": "jsx",
+          "excerpt": "<div className={s.ctaActions}>"
+        },
+        {
+          "line": 280,
+          "kind": "jsx",
+          "excerpt": "<Link href=\"/request-demo\" className={`${s.btn} ${s.btnPrimary} ${s.btnLg}`}>"
+        },
+        {
+          "line": 281,
+          "kind": "jsx",
+          "excerpt": "Request a Demo <Icon name=\"arrow\" />"
+        },
+        {
+          "line": 282,
+          "kind": "jsx",
+          "excerpt": "</Link>"
+        },
+        {
+          "line": 283,
+          "kind": "jsx",
+          "excerpt": "<Link href=\"/login\" className={`${s.btn} ${s.btnLight} ${s.btnLg}`}>"
+        },
+        {
+          "line": 285,
+          "kind": "jsx",
+          "excerpt": "</Link>"
+        },
+        {
+          "line": 286,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 287,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 288,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 289,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Placements/student/useJourney.js",
+      "sourceSha": "2a86515d9b6df352e0a7c5b2baf09a926397fd8b",
+      "expectedSha": "2a86515d9b6df352e0a7c5b2baf09a926397fd8b",
+      "shaMatches": true,
+      "fromIndex": 22,
+      "lineCount": 43,
+      "classification": "interaction-hook",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/api/Services/TpoHubService",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 7,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useState } from \"react\";"
+        },
+        {
+          "line": 13,
+          "kind": "state",
+          "excerpt": "const [journey, setJourney] = useState(null);"
+        },
+        {
+          "line": 14,
+          "kind": "state",
+          "excerpt": "const [overview, setOverview] = useState(null);"
+        },
+        {
+          "line": 15,
+          "kind": "state",
+          "excerpt": "const [failed, setFailed] = useState(false);"
+        },
+        {
+          "line": 16,
+          "kind": "state",
+          "excerpt": "const [loading, setLoading] = useState(true);"
+        },
+        {
+          "line": 18,
+          "kind": "state",
+          "excerpt": "const load = useCallback(async () => {"
+        },
+        {
+          "line": 39,
+          "kind": "state",
+          "excerpt": "useEffect(() => { load(); }, [load]);"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Placements/student/words.js",
+      "sourceSha": "46ee37cbf87d007fd6385fcd53f56ea079ef72a0",
+      "expectedSha": "46ee37cbf87d007fd6385fcd53f56ea079ef72a0",
+      "shaMatches": true,
+      "fromIndex": 23,
+      "lineCount": 123,
+      "classification": "nonvisual-module",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "moment",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/utils/placementDateTime",
+          "resolution": {
+            "path": "src/utils/placementDateTime.js",
+            "sha": "aa4262262aa93130a2450be8cde2591bfe02e7cd"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/common/adminNavGroups.js",
+      "sourceSha": "72b6a2e0df7d5c4d0fbf6dae0216c1fefd5b481f",
+      "expectedSha": "72b6a2e0df7d5c4d0fbf6dae0216c1fefd5b481f",
+      "shaMatches": true,
+      "fromIndex": 24,
+      "lineCount": 92,
+      "classification": "nonvisual-module",
+      "dependencies": [
+        {
+          "line": 15,
+          "specifier": "./navGroupDefinitions",
+          "resolution": {
+            "path": "src/common/navGroupDefinitions.js",
+            "sha": "c76497638b10bc7d5c919c3fe309ae7ada0af98a"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": []
+    }
+  ]
+}

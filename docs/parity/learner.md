@@ -1527,3 +1527,15 @@ Learner ledger CLOSED status is claimed from these changes.
 - **Known acceptance gap:** SSE reconnect/update frequency is not established by the current migration projection. A page reload and authorized recipient read work independently; do not claim background/live parity without executing a connected-browser and delivery test.
 
 Source: `src/modules/activity/notification-service.ts`, `src/modules/activity/learner-notification-membership-service.ts`, `src/app/(authenticated)/learn/notifications/page.tsx`. This is a **source-level crosswalk**, not production runtime acceptance.
+
+
+## 2026-10-28 legacy imported profile and placement descendants — source-only acceptance leads
+
+No page family is newly marked green by this section. Source FE SHA: `9d56bb7a347b06f242ef615c19fdc298f83329e0`; full evidence: `docs/audit/legacy-dev-census/2026-10-28-wave4-6-reconciliation.md` and wave-4/5/6 JSON. Group these checks under the **existing profile and placements page families**, not additional route counts.
+
+- Legacy profile `src/components/profile/about.js` calls nested editors for identity, qualifications, address, contact, experience, skills, achievements, certification, publications, social, personal and career data. `src/components/profile/userInfo.js`, `about/qualifications.js`, `about/identity.js` and `ProfileCompleteness.js` add conditional states. Compare with `src/components/profile/learner-profile-workspace.tsx` at vNext `f8231663c0ed30a2473e26d59527e30d33c8bc72`, verifying all edits/validation/cancel/unsaved, refresh, ownership and verification effects. Source import existence is not behavior proof.
+- Legacy `src/components/profile/VideoIntroModal.jsx` implements camera/permission, countdown, up-to-two-minute record/preview, 50 MB upload, replace, cancel and failure states. Identify the exact vNext counterpart or document explicit approved redesign/retirement. Current filename/search results were insufficient to certify equivalence or absence. Private media storage, retention and permission negatives require executed tests.
+- Legacy `about/MarksheetUpload.jsx:L17-L19` validates PDF/JPG/PNG and 5 MB; `PrivateDocLink.jsx:L23,L42-L43` uses short-lived private-link opening; `Global/SkillsAutocomplete.jsx` contains a full searchable catalog UI. Verify these as separate embedded controls against vNext document receipts, `src/modules/people/learner-profile-document-edit-service.ts`, private storage and skills catalog. Security/authorization and expired-link handling are P0/P1 gates where applicable.
+- Placement/job subviews in `Placements/JobDetailContent.jsx`, `JobsListContent.jsx`, `OfferCard.jsx` and `RoundTrack.jsx` need exact apply/round/offer/deep-link state reconciliation. A page wrapper alone cannot close them.
+
+**Evidence status:** 484 imported-source files now represented in the static import graph, with zero unexplored *tree-resolved UI-folder* imports under that parser; this is NOT zero unresolved product behaviors. No runtime, real storage/PG, browser or cross-role acceptance executed and no Implementation Green asserted.

@@ -1,0 +1,1468 @@
+{
+  "schemaVersion": 1,
+  "batch": "wave6-a",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "parent": "wave5-derived-import-frontier",
+  "nodes": [
+    {
+      "path": "src/components/profile/PrivateDocLink.jsx",
+      "expectedSha": "b706a590fe25e135f51a3d100d447fe4ead851be",
+      "sha": "b706a590fe25e135f51a3d100d447fe4ead851be",
+      "shaMatches": true,
+      "lines": 46,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/VerificationService",
+          "resolution": {
+            "path": "src/api/Services/VerificationService.js",
+            "sha": "54b5d827dd309924d1bcefd58b21effd50f7a89d"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 3,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useState } from \"react\";"
+        },
+        {
+          "line": 18,
+          "kind": "state",
+          "excerpt": "const [busy, setBusy] = useState(false);"
+        },
+        {
+          "line": 43,
+          "kind": "interactive",
+          "excerpt": "<a href=\"#\" onClick={open} className={className} aria-busy={busy} data-testid=\"private-doc-link\">{children}</a>"
+        }
+      ],
+      "manualSourceReview": {
+        "note": "Returns link at L23 and dynamic signed-private-document link at L43; source-confirmed interactive UI.",
+        "level": "static source fact only; not runtime parity"
+      }
+    },
+    {
+      "path": "src/components/Global/Button/PencilUploadButton.jsx",
+      "expectedSha": "bcfb5b0ebd75f3176f84d32d02198725413acb6f",
+      "sha": "bcfb5b0ebd75f3176f84d32d02198725413acb6f",
+      "shaMatches": true,
+      "lines": 238,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "antd-img-crop",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/Global/Upload/UploadFromLinkButton",
+          "resolution": {
+            "path": "src/components/Global/Upload/UploadFromLinkButton.jsx",
+            "sha": "314cf6ea0ca8e190ac749193012210faeb7239cf"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 14,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useState, useEffect } from \"react\";"
+        },
+        {
+          "line": 8,
+          "kind": "state",
+          "excerpt": "const [fileList, setFileList] = useState([]);"
+        },
+        {
+          "line": 11,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 118,
+          "kind": "interactive",
+          "excerpt": "const onChange = ({ fileList: newFileList, file }) => {"
+        },
+        {
+          "line": 164,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-pensil-upload\">"
+        },
+        {
+          "line": 187,
+          "kind": "overlay",
+          "excerpt": "<Upload"
+        },
+        {
+          "line": 190,
+          "kind": "interactive",
+          "excerpt": "onChange={onChange}"
+        },
+        {
+          "line": 217,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 218,
+          "kind": "jsx",
+          "excerpt": "</Upload>"
+        },
+        {
+          "line": 219,
+          "kind": "jsx",
+          "excerpt": "</ImgCrop>"
+        },
+        {
+          "line": 221,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mt-2\">"
+        },
+        {
+          "line": 230,
+          "kind": "jsx",
+          "excerpt": "</UploadFromLinkButton>"
+        },
+        {
+          "line": 231,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 233,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Global/SkillsAutocomplete.jsx",
+      "expectedSha": "b78055a51e0ed2fc538758fc8b68c02450a40ea6",
+      "sha": "b78055a51e0ed2fc538758fc8b68c02450a40ea6",
+      "shaMatches": true,
+      "lines": 514,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/SkillService",
+          "resolution": {
+            "path": "src/api/Services/SkillService.js",
+            "sha": "2bbf4fd60992051bdf5a895a81a16a25b4ebbd4c"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "lodash",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 66,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useState, useEffect, useCallback, useRef } from \"react\";"
+        },
+        {
+          "line": 43,
+          "kind": "state",
+          "excerpt": "const [searchValue, setSearchValue] = useState(\"\");"
+        },
+        {
+          "line": 44,
+          "kind": "state",
+          "excerpt": "const [options, setOptions] = useState([]);"
+        },
+        {
+          "line": 45,
+          "kind": "state",
+          "excerpt": "const [popularSkills, setPopularSkills] = useState([]);"
+        },
+        {
+          "line": 46,
+          "kind": "state",
+          "excerpt": "const [recentSkills, setRecentSkills] = useState([]);"
+        },
+        {
+          "line": 47,
+          "kind": "state",
+          "excerpt": "const [loading, setLoading] = useState(false);"
+        },
+        {
+          "line": 48,
+          "kind": "state",
+          "excerpt": "const [selectedSkills, setSelectedSkills] = useState(value || []);"
+        },
+        {
+          "line": 49,
+          "kind": "state",
+          "excerpt": "const [isOpen, setIsOpen] = useState(false);"
+        },
+        {
+          "line": 50,
+          "kind": "state",
+          "excerpt": "const inputRef = useRef(null);"
+        },
+        {
+          "line": 51,
+          "kind": "state",
+          "excerpt": "const searchErrorRef = useRef(false);"
+        },
+        {
+          "line": 71,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 118,
+          "kind": "jsx",
+          "excerpt": "<div style={{"
+        },
+        {
+          "line": 128,
+          "kind": "jsx",
+          "excerpt": "<Text strong style={{ fontSize: 12, color: \"#595959\", textTransform: \"uppercase\", letterSpacing: \"0.5px\" }}>"
+        },
+        {
+          "line": 130,
+          "kind": "jsx",
+          "excerpt": "</Text>"
+        },
+        {
+          "line": 132,
+          "kind": "jsx",
+          "excerpt": "<Text type=\"secondary\" style={{ fontSize: 11 }}>({count})</Text>"
+        },
+        {
+          "line": 134,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 147,
+          "kind": "jsx",
+          "excerpt": "<div style={{"
+        },
+        {
+          "line": 154,
+          "kind": "jsx",
+          "excerpt": "<Space>"
+        },
+        {
+          "line": 157,
+          "kind": "jsx",
+          "excerpt": "<Tag color=\"default\" style={{ fontSize: 10, margin: 0 }}>Added</Tag>"
+        },
+        {
+          "line": 159,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 160,
+          "kind": "jsx",
+          "excerpt": "<Space size={4}>"
+        },
+        {
+          "line": 162,
+          "kind": "jsx",
+          "excerpt": "<Tag color=\"volcano\" style={{ fontSize: 10, margin: 0, padding: \"0 4px\" }}>"
+        },
+        {
+          "line": 163,
+          "kind": "jsx",
+          "excerpt": "<FireOutlined /> Hot"
+        },
+        {
+          "line": 164,
+          "kind": "jsx",
+          "excerpt": "</Tag>"
+        },
+        {
+          "line": 167,
+          "kind": "jsx",
+          "excerpt": "<Tag color=\"cyan\" style={{ fontSize: 10, margin: 0, padding: \"0 4px\" }}>"
+        },
+        {
+          "line": 168,
+          "kind": "jsx",
+          "excerpt": "<ClockCircleOutlined /> Recent"
+        },
+        {
+          "line": 169,
+          "kind": "jsx",
+          "excerpt": "</Tag>"
+        },
+        {
+          "line": 172,
+          "kind": "jsx",
+          "excerpt": "<Tag"
+        },
+        {
+          "line": 177,
+          "kind": "jsx",
+          "excerpt": "</Tag>"
+        },
+        {
+          "line": 179,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 180,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 198,
+          "kind": "jsx",
+          "excerpt": "label: renderSectionHeader(\"Recent\", <ClockCircleOutlined style={{ color: \"#13c2c2\" }} />, recentNotSelected.length),"
+        },
+        {
+          "line": 212,
+          "kind": "jsx",
+          "excerpt": "label: renderSectionHeader(\"Popular\", <FireOutlined style={{ color: \"#fa541c\" }} />, popularNotSelected.length),"
+        },
+        {
+          "line": 223,
+          "kind": "state",
+          "excerpt": "const skillSearchSeq = useRef(0);"
+        },
+        {
+          "line": 224,
+          "kind": "state",
+          "excerpt": "const debouncedSearch = useCallback("
+        },
+        {
+          "line": 242,
+          "kind": "jsx",
+          "excerpt": "label: renderSectionHeader(\"No Results\", <SearchOutlined style={{ color: \"#8c8c8c\" }} />, 0),"
+        },
+        {
+          "line": 257,
+          "kind": "jsx",
+          "excerpt": "label: renderSectionHeader(\"Results\", <SearchOutlined style={{ color: \"#0a7c88\" }} />, skills.length),"
+        },
+        {
+          "line": 268,
+          "kind": "jsx",
+          "excerpt": "label: renderSectionHeader(\"Search Error\", <SearchOutlined style={{ color: \"#8c8c8c\" }} />, 0),"
+        },
+        {
+          "line": 383,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 390,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 397,
+          "kind": "jsx",
+          "excerpt": "<div className=\"skills-autocomplete-container\">"
+        },
+        {
+          "line": 403,
+          "kind": "interactive",
+          "excerpt": "onSelect={handleSelect}"
+        },
+        {
+          "line": 413,
+          "kind": "jsx",
+          "excerpt": "<div style={{ textAlign: \"center\", padding: 20 }}>"
+        },
+        {
+          "line": 414,
+          "kind": "jsx",
+          "excerpt": "<Spin size=\"small\" />"
+        },
+        {
+          "line": 415,
+          "kind": "jsx",
+          "excerpt": "<Text type=\"secondary\" style={{ marginLeft: 8 }}>Searching...</Text>"
+        },
+        {
+          "line": 416,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 429,
+          "kind": "jsx",
+          "excerpt": "<div style={{"
+        },
+        {
+          "line": 436,
+          "kind": "jsx",
+          "excerpt": "<StarOutlined style={{ marginRight: 4 }} />"
+        },
+        {
+          "line": 438,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 446,
+          "kind": "jsx",
+          "excerpt": "<div style={{ marginTop: 12 }}>"
+        },
+        {
+          "line": 447,
+          "kind": "jsx",
+          "excerpt": "<Text type=\"secondary\" style={{ fontSize: 12, marginBottom: 8, display: \"block\" }}>"
+        },
+        {
+          "line": 449,
+          "kind": "jsx",
+          "excerpt": "</Text>"
+        },
+        {
+          "line": 450,
+          "kind": "jsx",
+          "excerpt": "<Space wrap size={[8, 8]}>"
+        },
+        {
+          "line": 455,
+          "kind": "interactive",
+          "excerpt": "onClose={() => handleRemove(skillObj.skill)}"
+        },
+        {
+          "line": 468,
+          "kind": "jsx",
+          "excerpt": "<Tag"
+        },
+        {
+          "line": 473,
+          "kind": "jsx",
+          "excerpt": "</Tag>"
+        },
+        {
+          "line": 476,
+          "kind": "overlay",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 478,
+          "kind": "interactive",
+          "excerpt": "onChange={(val) => handleProficiencyChange(skillObj.skill, val)}"
+        },
+        {
+          "line": 488,
+          "kind": "interactive",
+          "excerpt": "onClick={(e) => e.stopPropagation()}"
+        },
+        {
+          "line": 492,
+          "kind": "jsx",
+          "excerpt": "<Option key={level.value} value={level.value}>"
+        },
+        {
+          "line": 494,
+          "kind": "jsx",
+          "excerpt": "</Option>"
+        },
+        {
+          "line": 496,
+          "kind": "jsx",
+          "excerpt": "</Select>"
+        },
+        {
+          "line": 498,
+          "kind": "jsx",
+          "excerpt": "</Tag>"
+        },
+        {
+          "line": 500,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 501,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 509,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/profile/about/MarksheetUpload.jsx",
+      "expectedSha": "bee3e09a1a5b541c41294c7d5e0a016663d6cefb",
+      "sha": "bee3e09a1a5b541c41294c7d5e0a016663d6cefb",
+      "shaMatches": true,
+      "lines": 51,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/utils/uploadToR2",
+          "resolution": {
+            "path": "src/utils/uploadToR2.js",
+            "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/profile/PrivateDocLink",
+          "resolution": {
+            "path": "src/components/profile/PrivateDocLink.jsx",
+            "sha": "b706a590fe25e135f51a3d100d447fe4ead851be"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 11,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useRef, useState } from \"react\";"
+        },
+        {
+          "line": 14,
+          "kind": "state",
+          "excerpt": "const [busy, setBusy] = useState(false);"
+        },
+        {
+          "line": 15,
+          "kind": "state",
+          "excerpt": "const busyRef = useRef(false);"
+        },
+        {
+          "line": 36,
+          "kind": "jsx",
+          "excerpt": "<div className=\"profile-marksheet\">"
+        },
+        {
+          "line": 37,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mb-1\"><span className=\"fnt-13 clrgray2BB\">Marksheet</span> <span className=\"fnt-13 clrgray2BB\">(needed for verification)</span></div>"
+        },
+        {
+          "line": 38,
+          "kind": "jsx,overlay",
+          "excerpt": "<Upload accept=\".pdf,.jpg,.jpeg,.png\" showUploadList={false} beforeUpload={before} disabled={busy}>"
+        },
+        {
+          "line": 39,
+          "kind": "jsx",
+          "excerpt": "<Button icon={value ? <CheckCircleFilled style={{ color: \"#16a34a\" }} /> : <UploadOutlined />} loading={busy}>"
+        },
+        {
+          "line": 41,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 42,
+          "kind": "jsx",
+          "excerpt": "</Upload>"
+        },
+        {
+          "line": 45,
+          "kind": "jsx",
+          "excerpt": "Attached · <PrivateDocLink value={value} userId={loginUser?.id}>View</PrivateDocLink>"
+        },
+        {
+          "line": 48,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/profile/VideoIntroModal.jsx",
+      "expectedSha": "4b6042428795c19ec29002a5abdea4c3476d8705",
+      "sha": "4b6042428795c19ec29002a5abdea4c3476d8705",
+      "shaMatches": true,
+      "lines": 683,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "../Global/ModalContainer/ModalContainer",
+          "resolution": {
+            "path": "src/components/Global/ModalContainer/ModalContainer.jsx",
+            "sha": "9f5f9b7f318b20292671ef32314458ec03912fbd"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "recordrtc",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "video-react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "next/image",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/utils/uploadToR2",
+          "resolution": {
+            "path": "src/utils/uploadToR2.js",
+            "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "@/api/Services/ProfileService",
+          "resolution": {
+            "path": "src/api/Services/ProfileService.js",
+            "sha": "9d9760085683f5a740026898593119bd64953acf"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 111,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useEffect, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 15,
+          "kind": "state",
+          "excerpt": "const [currentStep, setCurrentStep] = useState(\"warning\"); // warning, countdown, recording, preview, uploading, success"
+        },
+        {
+          "line": 16,
+          "kind": "state",
+          "excerpt": "const [countdown, setCountdown] = useState(COUNTDOWN_DURATION);"
+        },
+        {
+          "line": 17,
+          "kind": "state",
+          "excerpt": "const [recordingUrl, setRecordingUrl] = useState(null);"
+        },
+        {
+          "line": 18,
+          "kind": "state",
+          "excerpt": "const [recorder, setRecorder] = useState(null);"
+        },
+        {
+          "line": 19,
+          "kind": "state",
+          "excerpt": "const [stream, setStream] = useState(null);"
+        },
+        {
+          "line": 20,
+          "kind": "state",
+          "excerpt": "const [recordingDuration, setRecordingDuration] = useState(0);"
+        },
+        {
+          "line": 21,
+          "kind": "state",
+          "excerpt": "const [uploadProgress, setUploadProgress] = useState(0);"
+        },
+        {
+          "line": 22,
+          "kind": "state",
+          "excerpt": "const [error, setError] = useState(null);"
+        },
+        {
+          "line": 23,
+          "kind": "state",
+          "excerpt": "const [isRecorderReady, setIsRecorderReady] = useState(false);"
+        },
+        {
+          "line": 25,
+          "kind": "state",
+          "excerpt": "const videoRef = useRef(null);"
+        },
+        {
+          "line": 26,
+          "kind": "state",
+          "excerpt": "const countdownIntervalRef = useRef(null);"
+        },
+        {
+          "line": 27,
+          "kind": "state",
+          "excerpt": "const recordingTimerRef = useRef(null);"
+        },
+        {
+          "line": 28,
+          "kind": "state",
+          "excerpt": "const durationIntervalRef = useRef(null);"
+        },
+        {
+          "line": 29,
+          "kind": "state",
+          "excerpt": "const recorderRef = useRef(null);"
+        },
+        {
+          "line": 30,
+          "kind": "state",
+          "excerpt": "const streamRef = useRef(null);"
+        },
+        {
+          "line": 31,
+          "kind": "state",
+          "excerpt": "const isRecorderReadyRef = useRef(false);"
+        },
+        {
+          "line": 32,
+          "kind": "state",
+          "excerpt": "const previousStepRef = useRef(null);"
+        },
+        {
+          "line": 33,
+          "kind": "state",
+          "excerpt": "const isInitializingRef = useRef(false);"
+        },
+        {
+          "line": 36,
+          "kind": "state",
+          "excerpt": "const safeDestroyRecorder = React.useCallback((recorderInstance) => {"
+        },
+        {
+          "line": 79,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 168,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 196,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 465,
+          "kind": "overlay",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 484,
+          "kind": "overlay",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 488,
+          "kind": "interactive",
+          "excerpt": "onCancel={requestClose}"
+        },
+        {
+          "line": 496,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi\">"
+        },
+        {
+          "line": 498,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__error\" role=\"alert\">{error}</div>"
+        },
+        {
+          "line": 503,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__warning\">"
+        },
+        {
+          "line": 504,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__hero\">"
+        },
+        {
+          "line": 507,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 509,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__notice\">"
+        },
+        {
+          "line": 513,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 515,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__section-heading\">"
+        },
+        {
+          "line": 518,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 520,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__instructions\">"
+        },
+        {
+          "line": 521,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__instruction-item\">"
+        },
+        {
+          "line": 524,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 525,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__instruction-item\">"
+        },
+        {
+          "line": 528,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 529,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__instruction-item\">"
+        },
+        {
+          "line": 532,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 533,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__instruction-item\">"
+        },
+        {
+          "line": 536,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 537,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 539,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__section-heading\">"
+        },
+        {
+          "line": 542,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 543,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__tips\">"
+        },
+        {
+          "line": 544,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__tip-item\">"
+        },
+        {
+          "line": 546,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 547,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__tip-item\">"
+        },
+        {
+          "line": 549,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 550,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__tip-item\">"
+        },
+        {
+          "line": 552,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 553,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__tip-item\">"
+        },
+        {
+          "line": 555,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 556,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 558,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__footer\">"
+        },
+        {
+          "line": 562,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__footer-actions\">"
+        },
+        {
+          "line": 563,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button onClick={requestClose} size=\"large\">Cancel</Button>"
+        },
+        {
+          "line": 564,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" size=\"large\" onClick={handleWarningConfirm}>"
+        },
+        {
+          "line": 566,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 567,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 568,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 569,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 574,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__countdown\">"
+        },
+        {
+          "line": 575,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__countdown-number\">{countdown}</div>"
+        },
+        {
+          "line": 581,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__video-preview vi__video-preview--dim\">"
+        },
+        {
+          "line": 583,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 586,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__reminders\">"
+        },
+        {
+          "line": 587,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__reminders-title\">"
+        },
+        {
+          "line": 590,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 591,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__reminders-list\">"
+        },
+        {
+          "line": 596,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 597,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 599,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button onClick={requestClose}>Cancel</Button>"
+        },
+        {
+          "line": 600,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 605,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__recording\">"
+        },
+        {
+          "line": 606,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__recording-indicator\">"
+        },
+        {
+          "line": 607,
+          "kind": "jsx",
+          "excerpt": "<Image src=\"/assets/images/common/recording.png\" alt=\"Recording\" height={18} width={18} />"
+        },
+        {
+          "line": 609,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 610,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__recording-timer\">{formatDuration(recordingDuration)}</div>"
+        },
+        {
+          "line": 614,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__video-preview\">"
+        },
+        {
+          "line": 616,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 620,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__recording-tip\">"
+        },
+        {
+          "line": 623,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 626,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" danger size=\"large\" onClick={stopRecording}>"
+        },
+        {
+          "line": 629,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 630,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 635,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__preview\">"
+        },
+        {
+          "line": 640,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__preview-player\">"
+        },
+        {
+          "line": 641,
+          "kind": "jsx",
+          "excerpt": "<Player src={URL.createObjectURL(recordingUrl)}>"
+        },
+        {
+          "line": 643,
+          "kind": "jsx",
+          "excerpt": "</Player>"
+        },
+        {
+          "line": 644,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 645,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__preview-actions\">"
+        },
+        {
+          "line": 646,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button onClick={handleRecordAgain}>Record Again</Button>"
+        },
+        {
+          "line": 647,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" size=\"large\" onClick={() => handleUpload(recordingUrl)}>"
+        },
+        {
+          "line": 649,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 650,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 651,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 656,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__uploading\">"
+        },
+        {
+          "line": 658,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__uploading-progress\">"
+        },
+        {
+          "line": 659,
+          "kind": "jsx",
+          "excerpt": "<Progress percent={uploadProgress} status=\"active\" />"
+        },
+        {
+          "line": 660,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 664,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 669,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__success\">"
+        },
+        {
+          "line": 670,
+          "kind": "jsx",
+          "excerpt": "<div className=\"vi__success-icon\">"
+        },
+        {
+          "line": 672,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 675,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 677,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 678,
+          "kind": "jsx",
+          "excerpt": "</Modal>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Quiz/Table/action.js",
+      "expectedSha": "a8c747f6fe1ffad4312587a2fd65b3d878a81483",
+      "sha": "a8c747f6fe1ffad4312587a2fd65b3d878a81483",
+      "shaMatches": true,
+      "lines": 23,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 4,
+      "signals": [
+        {
+          "line": 9,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-quiz-actions\">"
+        },
+        {
+          "line": 14,
+          "kind": "interactive",
+          "excerpt": "onClick={click}"
+        },
+        {
+          "line": 18,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 19,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Quiz/Table/quizeTitle.js",
+      "expectedSha": "046805b8127d9911bdce118d19353c81d987560e",
+      "sha": "046805b8127d9911bdce118d19353c81d987560e",
+      "shaMatches": true,
+      "lines": 41,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/image",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 6,
+      "signals": [
+        {
+          "line": 6,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex align-items-center\">"
+        },
+        {
+          "line": 11,
+          "kind": "interactive",
+          "excerpt": "onClick={props.onClick}"
+        },
+        {
+          "line": 14,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-icon-round\">"
+        },
+        {
+          "line": 21,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 34,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 36,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Quiz/Table/submission.js",
+      "expectedSha": "ac3698d9f5824be1dd89e035202e6d227943ffd6",
+      "sha": "ac3698d9f5824be1dd89e035202e6d227943ffd6",
+      "shaMatches": true,
+      "lines": 22,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 4,
+      "signals": [
+        {
+          "line": 5,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex align-items-center\">"
+        },
+        {
+          "line": 10,
+          "kind": "interactive",
+          "excerpt": "onClick={props.onClick}"
+        },
+        {
+          "line": 16,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 17,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/recents.js",
+      "expectedSha": "ce864a71e6469af7fab2758dc61304e5f3848d7b",
+      "sha": "ce864a71e6469af7fab2758dc61304e5f3848d7b",
+      "shaMatches": true,
+      "lines": 25,
+      "classification": "nonvisual-or-hook",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "./memoryKey",
+          "resolution": {
+            "path": "src/components/tpo/ui/memoryKey.js",
+            "sha": "1e7e0c93721556f6da6ee3592768852f82cf487f"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tpo/ui/shortcuts.js",
+      "expectedSha": "5061cdb384e8363c9c570a26806f05c074f88456",
+      "sha": "5061cdb384e8363c9c570a26806f05c074f88456",
+      "shaMatches": true,
+      "lines": 48,
+      "classification": "nonvisual-or-hook",
+      "imports": [],
+      "signalCount": 0,
+      "signals": []
+    }
+  ]
+}

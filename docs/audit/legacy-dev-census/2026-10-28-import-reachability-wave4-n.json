@@ -1,0 +1,1851 @@
+{
+  "schemaVersion": 1,
+  "batch": "wave4-n",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "parent": "post-wave3-frontier",
+  "scope": "static candidate signals; no runtime parity",
+  "nodes": [
+    {
+      "path": "src/components/tracker/EngineeringDetails.jsx",
+      "sourceSha": "da6184590cec7614e2e643b6ae17edd5fb7939c9",
+      "expectedSha": "da6184590cec7614e2e643b6ae17edd5fb7939c9",
+      "shaMatches": true,
+      "fromIndex": 165,
+      "lineCount": 167,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/BugTrackerService",
+          "resolution": {
+            "path": "src/api/Services/BugTrackerService.js",
+            "sha": "1d4484defd08904efc9d0111b48c79b6e80a85d4"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/data/bugTrackerData",
+          "resolution": {
+            "path": "src/data/bugTrackerData.js",
+            "sha": "5992590612591980d83719a731c3868d51b1ee30"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 61,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useEffect, useState } from \"react\";"
+        },
+        {
+          "line": 35,
+          "kind": "state",
+          "excerpt": "const [saving, setSaving] = useState(false);"
+        },
+        {
+          "line": 39,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 86,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-engineering__body\">"
+        },
+        {
+          "line": 88,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-source-context\">"
+        },
+        {
+          "line": 89,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 96,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 98,
+          "kind": "jsx",
+          "excerpt": "<div><span>Route</span><strong>{issue.sourcePath}</strong></div>"
+        },
+        {
+          "line": 101,
+          "kind": "jsx",
+          "excerpt": "<div><span>Viewport</span><strong>{issue.viewport}</strong></div>"
+        },
+        {
+          "line": 104,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-source-context__wide\"><span>Browser</span><strong>{issue.browser}</strong></div>"
+        },
+        {
+          "line": 106,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 109,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form form={form} layout=\"vertical\" requiredMark={false} onFinish={save}>"
+        },
+        {
+          "line": 110,
+          "kind": "jsx",
+          "excerpt": "<Row gutter={16}>"
+        },
+        {
+          "line": 111,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} md={12}>"
+        },
+        {
+          "line": 112,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"affectedLayer\" label=\"Affected layer\">"
+        },
+        {
+          "line": 113,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select allowClear placeholder=\"Frontend, backend, or both\" options={AFFECTED_LAYER_OPTIONS} />"
+        },
+        {
+          "line": 114,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 115,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 116,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} md={12}>"
+        },
+        {
+          "line": 117,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"regressionTestStatus\" label=\"Regression coverage\">"
+        },
+        {
+          "line": 118,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select options={REGRESSION_TEST_OPTIONS} />"
+        },
+        {
+          "line": 119,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 120,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 121,
+          "kind": "jsx",
+          "excerpt": "</Row>"
+        },
+        {
+          "line": 123,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"rootCause\" label=\"Root cause\">"
+        },
+        {
+          "line": 124,
+          "kind": "jsx",
+          "excerpt": "<TextArea autoSize={{ minRows: 2, maxRows: 5 }} maxLength={4000} placeholder=\"What actually caused the issue?\" />"
+        },
+        {
+          "line": 125,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 127,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"fixNotes\" label=\"Fix notes\">"
+        },
+        {
+          "line": 128,
+          "kind": "jsx",
+          "excerpt": "<TextArea autoSize={{ minRows: 2, maxRows: 5 }} maxLength={4000} placeholder=\"What changed, and anything important for retest?\" />"
+        },
+        {
+          "line": 129,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 131,
+          "kind": "jsx",
+          "excerpt": "<Row gutter={16}>"
+        },
+        {
+          "line": 132,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} md={12}>"
+        },
+        {
+          "line": 133,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"frontendCommitSha\" label=\"Frontend commit\">"
+        },
+        {
+          "line": 134,
+          "kind": "jsx",
+          "excerpt": "<Input maxLength={64} placeholder=\"Commit SHA\" />"
+        },
+        {
+          "line": 135,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 136,
+          "kind": "jsx",
+          "excerpt": "<CommitLink repoUrl={FRONTEND_REPO} sha={frontendCommitSha} />"
+        },
+        {
+          "line": 137,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 138,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} md={12}>"
+        },
+        {
+          "line": 139,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"backendCommitSha\" label=\"Backend commit\">"
+        },
+        {
+          "line": 140,
+          "kind": "jsx",
+          "excerpt": "<Input maxLength={64} placeholder=\"Commit SHA\" />"
+        },
+        {
+          "line": 141,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 142,
+          "kind": "jsx",
+          "excerpt": "<CommitLink repoUrl={BACKEND_REPO} sha={backendCommitSha} />"
+        },
+        {
+          "line": 143,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 144,
+          "kind": "jsx",
+          "excerpt": "</Row>"
+        },
+        {
+          "line": 146,
+          "kind": "jsx",
+          "excerpt": "<Row gutter={16} align=\"middle\">"
+        },
+        {
+          "line": 147,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} md={12}>"
+        },
+        {
+          "line": 148,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"resolution\" label=\"Resolution\">"
+        },
+        {
+          "line": 149,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select allowClear placeholder=\"Leave open unless terminal\" options={RESOLUTION_OPTIONS} />"
+        },
+        {
+          "line": 150,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 151,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 152,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} md={12}>"
+        },
+        {
+          "line": 153,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"productionVerified\" valuePropName=\"checked\" className=\"tracker-engineering__checkbox\">"
+        },
+        {
+          "line": 154,
+          "kind": "jsx",
+          "excerpt": "<Checkbox>Verified in production</Checkbox>"
+        },
+        {
+          "line": 155,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 156,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 157,
+          "kind": "jsx",
+          "excerpt": "</Row>"
+        },
+        {
+          "line": 159,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-engineering__actions\">"
+        },
+        {
+          "line": 160,
+          "kind": "jsx",
+          "excerpt": "<Button type=\"primary\" htmlType=\"submit\" loading={saving}>Save details</Button>"
+        },
+        {
+          "line": 161,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 162,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        },
+        {
+          "line": 163,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tracker/LogHealthStrip.jsx",
+      "sourceSha": "6feedbfdb12c5eeb2225d9277c14f8044a0af931",
+      "expectedSha": "6feedbfdb12c5eeb2225d9277c14f8044a0af931",
+      "shaMatches": true,
+      "fromIndex": 166,
+      "lineCount": 73,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/utils/logReport",
+          "resolution": {
+            "path": "src/utils/logReport.js",
+            "sha": "f171c4b498e5ea5afea81891a463eac7d910a37d"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 8,
+      "signals": [
+        {
+          "line": 33,
+          "kind": "interactive",
+          "excerpt": "onClick={onOpenDigest}"
+        },
+        {
+          "line": 39,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 43,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tracker-health\" aria-label=\"Log health\">"
+        },
+        {
+          "line": 51,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-health__note\">Error tracking and the daily digest cover production. Deploys are shown for every environment.</div>"
+        },
+        {
+          "line": 62,
+          "kind": "jsx",
+          "excerpt": "<div className={`tracker-health__card tracker-health__card--deploy${verdict ? ` tracker-health__card--${verdict.tone}` : \"\"}`}>"
+        },
+        {
+          "line": 68,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 69,
+          "kind": "jsx",
+          "excerpt": "</Tooltip>"
+        },
+        {
+          "line": 70,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tracker/LogsDownloadControl.jsx",
+      "sourceSha": "3b8992f6a7e48abd168e9f1be13fe21537a618fc",
+      "expectedSha": "3b8992f6a7e48abd168e9f1be13fe21537a618fc",
+      "shaMatches": true,
+      "fromIndex": 167,
+      "lineCount": 173,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "dayjs",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/SuperAdminLogsService",
+          "resolution": {
+            "path": "src/api/Services/SuperAdminLogsService.js",
+            "sha": "194d62ee5291ff318fbcf99953baf7e931067ec2"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/utils/trackerLogsExport",
+          "resolution": {
+            "path": "src/utils/trackerLogsExport.js",
+            "sha": "c33f5b874555b97dae7bf02cec8e249d4e2f2015"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 27,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useMemo, useState } from \"react\";"
+        },
+        {
+          "line": 34,
+          "kind": "state",
+          "excerpt": "const [open, setOpen] = useState(false);"
+        },
+        {
+          "line": 35,
+          "kind": "state",
+          "excerpt": "const [range, setRange] = useState(() => [dayjs(defaultSince), dayjs(defaultUntil)]);"
+        },
+        {
+          "line": 36,
+          "kind": "state",
+          "excerpt": "const [exporting, setExporting] = useState(false);"
+        },
+        {
+          "line": 37,
+          "kind": "state",
+          "excerpt": "const [progress, setProgress] = useState(null);"
+        },
+        {
+          "line": 38,
+          "kind": "state",
+          "excerpt": "const [error, setError] = useState(\"\");"
+        },
+        {
+          "line": 103,
+          "kind": "jsx",
+          "excerpt": "<div style={{ width: 360 }}>"
+        },
+        {
+          "line": 104,
+          "kind": "jsx",
+          "excerpt": "<div style={{ display: \"flex\", flexWrap: \"wrap\", gap: 6, marginBottom: 10 }}>"
+        },
+        {
+          "line": 105,
+          "kind": "jsx",
+          "excerpt": "<Tag>{environment}</Tag>"
+        },
+        {
+          "line": 106,
+          "kind": "jsx",
+          "excerpt": "<Tag>{LEVEL_LABELS[level] || level}</Tag>"
+        },
+        {
+          "line": 107,
+          "kind": "jsx",
+          "excerpt": "{search ? <Tag>matches &quot;{search}&quot;</Tag> : <Tag>no search filter</Tag>}"
+        },
+        {
+          "line": 108,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 110,
+          "kind": "jsx",
+          "excerpt": "<div style={{ display: \"flex\", gap: 6, marginBottom: 10, flexWrap: \"wrap\" }}>"
+        },
+        {
+          "line": 112,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button key={quick.label} size=\"small\" onClick={() => applyQuickRange(quick.amount, quick.unit)}>"
+        },
+        {
+          "line": 114,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 116,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 120,
+          "kind": "interactive",
+          "excerpt": "onChange={(next) => {"
+        },
+        {
+          "line": 131,
+          "kind": "jsx",
+          "excerpt": "{rangeError && <div style={{ color: \"#cf1322\", fontSize: 12, marginBottom: 10 }}>{rangeError}</div>}"
+        },
+        {
+          "line": 132,
+          "kind": "jsx",
+          "excerpt": "{error && <Alert type=\"error\" showIcon message={error} style={{ marginBottom: 10 }} />}"
+        },
+        {
+          "line": 137,
+          "kind": "jsx",
+          "excerpt": "icon={<DownloadOutlined />}"
+        },
+        {
+          "line": 140,
+          "kind": "interactive",
+          "excerpt": "onClick={handleDownload}"
+        },
+        {
+          "line": 147,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 148,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 152,
+          "kind": "overlay",
+          "excerpt": "<Popover"
+        },
+        {
+          "line": 167,
+          "kind": "jsx",
+          "excerpt": "<Button size=\"small\" icon={<DownloadOutlined />}>"
+        },
+        {
+          "line": 169,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 170,
+          "kind": "jsx",
+          "excerpt": "</Popover>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tracker/RetestCard.jsx",
+      "sourceSha": "52c4530fa0cf677f023574f297b383877d3e196f",
+      "expectedSha": "52c4530fa0cf677f023574f297b383877d3e196f",
+      "shaMatches": true,
+      "fromIndex": 168,
+      "lineCount": 64,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/BugTrackerService",
+          "resolution": {
+            "path": "src/api/Services/BugTrackerService.js",
+            "sha": "1d4484defd08904efc9d0111b48c79b6e80a85d4"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 14,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useState } from \"react\";"
+        },
+        {
+          "line": 8,
+          "kind": "state",
+          "excerpt": "const [note, setNote] = useState(\"\");"
+        },
+        {
+          "line": 9,
+          "kind": "state",
+          "excerpt": "const [saving, setSaving] = useState(\"\");"
+        },
+        {
+          "line": 28,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tracker-retest-card\">"
+        },
+        {
+          "line": 29,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 33,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 37,
+          "kind": "interactive",
+          "excerpt": "onChange={(event) => setNote(event.target.value)}"
+        },
+        {
+          "line": 43,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-retest-actions\">"
+        },
+        {
+          "line": 48,
+          "kind": "interactive",
+          "excerpt": "onClick={() => submit(\"FAIL\")}"
+        },
+        {
+          "line": 51,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 56,
+          "kind": "interactive",
+          "excerpt": "onClick={() => submit(\"PASS\")}"
+        },
+        {
+          "line": 59,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 60,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 61,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tracker/TrackerQuickReportLauncher.jsx",
+      "sourceSha": "d007cf5881b1d9981f878a555a76a7ddba0a769e",
+      "expectedSha": "d007cf5881b1d9981f878a555a76a7ddba0a769e",
+      "shaMatches": true,
+      "fromIndex": 169,
+      "lineCount": 294,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/tracker/ScreenshotPicker",
+          "resolution": {
+            "path": "src/components/tracker/ScreenshotPicker.jsx",
+            "sha": "4527a4fa1ffba8edebab0090e4eba43c5a9812a9"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/api/Services/BugTrackerService",
+          "resolution": {
+            "path": "src/api/Services/BugTrackerService.js",
+            "sha": "1d4484defd08904efc9d0111b48c79b6e80a85d4"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "@/utils/bugTrackerAttachments",
+          "resolution": {
+            "path": "src/utils/bugTrackerAttachments.js",
+            "sha": "88dad4b030480c061315b4f056854bf3d0cfd815"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "@/data/bugTrackerData",
+          "resolution": {
+            "path": "src/data/bugTrackerData.js",
+            "sha": "5992590612591980d83719a731c3868d51b1ee30"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 17,
+          "specifier": "@/utils/bugTrackerUtils",
+          "resolution": {
+            "path": "src/utils/bugTrackerUtils.js",
+            "sha": "a92f6c8e1651fefda6f67549fe45826e86213d91"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 18,
+          "specifier": "@/utils/bugTrackerQuickReport",
+          "resolution": {
+            "path": "src/utils/bugTrackerQuickReport.js",
+            "sha": "18b2309e2076b215f1467c44846a43466fb5dec8"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 59,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useEffect, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 32,
+          "kind": "state",
+          "excerpt": "const [enabled, setEnabled] = useState(false);"
+        },
+        {
+          "line": 33,
+          "kind": "state",
+          "excerpt": "const [open, setOpen] = useState(false);"
+        },
+        {
+          "line": 34,
+          "kind": "state",
+          "excerpt": "const [submitting, setSubmitting] = useState(false);"
+        },
+        {
+          "line": 35,
+          "kind": "state",
+          "excerpt": "const [screenshots, setScreenshots] = useState([]);"
+        },
+        {
+          "line": 36,
+          "kind": "state",
+          "excerpt": "const [submittedIssue, setSubmittedIssue] = useState(null);"
+        },
+        {
+          "line": 37,
+          "kind": "state",
+          "excerpt": "const [failedScreenshots, setFailedScreenshots] = useState([]);"
+        },
+        {
+          "line": 38,
+          "kind": "state",
+          "excerpt": "const [uploadingScreenshots, setUploadingScreenshots] = useState(false);"
+        },
+        {
+          "line": 40,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 86,
+          "kind": "state",
+          "excerpt": "const openDrawerRef = useRef(openDrawer);"
+        },
+        {
+          "line": 89,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 177,
+          "kind": "interactive",
+          "excerpt": "onClick={openDrawer}"
+        },
+        {
+          "line": 181,
+          "kind": "jsx",
+          "excerpt": "<BugOutlined aria-hidden=\"true\" />"
+        },
+        {
+          "line": 183,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 186,
+          "kind": "overlay",
+          "excerpt": "<Drawer"
+        },
+        {
+          "line": 191,
+          "kind": "interactive",
+          "excerpt": "onClose={() => setOpen(false)}"
+        },
+        {
+          "line": 196,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-quick-success\" aria-live=\"polite\">"
+        },
+        {
+          "line": 197,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-success-mark\">✓</div>"
+        },
+        {
+          "line": 203,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-attachment-result is-uploading\">Uploading screenshots…</div>"
+        },
+        {
+          "line": 206,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-attachment-result is-error\">"
+        },
+        {
+          "line": 208,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button size=\"small\" onClick={retryScreenshots}>Retry screenshots</Button>"
+        },
+        {
+          "line": 209,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 212,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-quick-success__actions\">"
+        },
+        {
+          "line": 214,
+          "kind": "interactive",
+          "excerpt": "onClick={() => {"
+        },
+        {
+          "line": 216,
+          "kind": "navigation",
+          "excerpt": "router.push(`/tracker/issues/${submittedIssue.publicId}`);"
+        },
+        {
+          "line": 220,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 224,
+          "kind": "interactive",
+          "excerpt": "onClick={resetForAnother}"
+        },
+        {
+          "line": 227,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 228,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 229,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 231,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form form={form} layout=\"vertical\" requiredMark={false} onFinish={submit}>"
+        },
+        {
+          "line": 232,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-quick-context\">"
+        },
+        {
+          "line": 235,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 237,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-quick-grid tracker-quick-grid--three\">"
+        },
+        {
+          "line": 238,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"reporterName\" label=\"Reporter\" rules={[{ required: true, message: \"Select your name.\" }]}>"
+        },
+        {
+          "line": 239,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select options={REPORTER_OPTIONS} showSearch optionFilterProp=\"label\" placeholder=\"Reporter\" />"
+        },
+        {
+          "line": 240,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 241,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"accountRole\" label=\"Account\" rules={[{ required: true }]}>"
+        },
+        {
+          "line": 242,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select options={ACCOUNT_OPTIONS} />"
+        },
+        {
+          "line": 243,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 244,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"environment\" label=\"Environment\" rules={[{ required: true, message: \"Select environment.\" }]}>"
+        },
+        {
+          "line": 245,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select options={ENVIRONMENT_OPTIONS} placeholder=\"Environment\" />"
+        },
+        {
+          "line": 246,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 247,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 249,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"location\" label=\"Where?\" rules={[{ required: true, message: \"Select the page and area.\" }]}>"
+        },
+        {
+          "line": 250,
+          "kind": "jsx",
+          "excerpt": "<Cascader options={LOCATION_OPTIONS} showSearch placeholder=\"Page → screen → section\" />"
+        },
+        {
+          "line": 251,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 253,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"issueType\" label=\"Issue type\" rules={[{ required: true, message: \"Select issue type.\" }]}>"
+        },
+        {
+          "line": 254,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select options={ISSUE_TYPE_OPTIONS} showSearch optionFilterProp=\"label\" placeholder=\"Issue type\" />"
+        },
+        {
+          "line": 255,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 257,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 271,
+          "kind": "interactive",
+          "excerpt": "onKeyDown={(event) => {"
+        },
+        {
+          "line": 278,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 281,
+          "kind": "jsx,interactive",
+          "excerpt": "<ScreenshotPicker files={screenshots} onChange={setScreenshots} disabled={submitting} />"
+        },
+        {
+          "line": 284,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tracker-quick-submit\">"
+        },
+        {
+          "line": 286,
+          "kind": "jsx",
+          "excerpt": "<Button type=\"primary\" htmlType=\"submit\" loading={submitting}>Report issue</Button>"
+        },
+        {
+          "line": 287,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 288,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        },
+        {
+          "line": 290,
+          "kind": "jsx",
+          "excerpt": "</Drawer>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tracker/TriageMenu.jsx",
+      "sourceSha": "90342c6d0cfe7050cb205a276e454ca027666cfe",
+      "expectedSha": "90342c6d0cfe7050cb205a276e454ca027666cfe",
+      "shaMatches": true,
+      "fromIndex": 170,
+      "lineCount": 220,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/SuperAdminLogsService",
+          "resolution": {
+            "path": "src/api/Services/SuperAdminLogsService.js",
+            "sha": "194d62ee5291ff318fbcf99953baf7e931067ec2"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 11,
+          "specifier": "@/api/Services/BugTrackerService",
+          "resolution": {
+            "path": "src/api/Services/BugTrackerService.js",
+            "sha": "1d4484defd08904efc9d0111b48c79b6e80a85d4"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 12,
+          "specifier": "@/utils/bugTrackerUtils",
+          "resolution": {
+            "path": "src/utils/bugTrackerUtils.js",
+            "sha": "a92f6c8e1651fefda6f67549fe45826e86213d91"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 13,
+          "specifier": "@/utils/logReportSource",
+          "resolution": {
+            "path": "src/utils/logReportSource.js",
+            "sha": "b5c789317718d26bc898a05218adcdf0f0277930"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 14,
+          "specifier": "@/utils/logListModel",
+          "resolution": {
+            "path": "src/utils/logListModel.js",
+            "sha": "1e0050f0a8b037c16610cdf12bf63167a373ba68"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 15,
+          "specifier": "@/utils/logReport",
+          "resolution": {
+            "path": "src/utils/logReport.js",
+            "sha": "f171c4b498e5ea5afea81891a463eac7d910a37d"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 17,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useState } from \"react\";"
+        },
+        {
+          "line": 29,
+          "kind": "state",
+          "excerpt": "const [busy, setBusy] = useState(\"\");"
+        },
+        {
+          "line": 30,
+          "kind": "state",
+          "excerpt": "const [mode, setMode] = useState(null);"
+        },
+        {
+          "line": 31,
+          "kind": "state",
+          "excerpt": "const [commit, setCommit] = useState(\"\");"
+        },
+        {
+          "line": 32,
+          "kind": "state",
+          "excerpt": "const [note, setNote] = useState(\"\");"
+        },
+        {
+          "line": 96,
+          "kind": "navigation",
+          "excerpt": "const url = new URL(window.location.href);"
+        },
+        {
+          "line": 181,
+          "kind": "jsx,overlay",
+          "excerpt": "<Dropdown menu={{ items }} trigger={[\"click\"]} overlayClassName=\"tracker-popover-scope\">"
+        },
+        {
+          "line": 184,
+          "kind": "jsx",
+          "excerpt": "icon={<MoreOutlined />}"
+        },
+        {
+          "line": 187,
+          "kind": "interactive",
+          "excerpt": "onClick={(event) => event.stopPropagation()}"
+        },
+        {
+          "line": 190,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 191,
+          "kind": "jsx",
+          "excerpt": "</Dropdown>"
+        },
+        {
+          "line": 192,
+          "kind": "overlay",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 196,
+          "kind": "interactive",
+          "excerpt": "onOk={submitModal}"
+        },
+        {
+          "line": 197,
+          "kind": "interactive",
+          "excerpt": "onCancel={() => setMode(null)}"
+        },
+        {
+          "line": 208,
+          "kind": "jsx,interactive",
+          "excerpt": "<Input value={commit} onChange={(e) => setCommit(e.target.value)} placeholder=\"e.g. abc1234\" maxLength={64} />"
+        },
+        {
+          "line": 214,
+          "kind": "jsx,interactive",
+          "excerpt": "<Input.TextArea rows={3} value={note} onChange={(e) => setNote(e.target.value)} maxLength={255} />"
+        },
+        {
+          "line": 216,
+          "kind": "jsx",
+          "excerpt": "</Modal>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tracker/useLogInsights.js",
+      "sourceSha": "2f8e2b1598d617b435480534536fbcf8d7aba6a6",
+      "expectedSha": "2f8e2b1598d617b435480534536fbcf8d7aba6a6",
+      "shaMatches": true,
+      "fromIndex": 171,
+      "lineCount": 60,
+      "classification": "interaction-hook",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/api/Services/SuperAdminLogsService",
+          "resolution": {
+            "path": "src/api/Services/SuperAdminLogsService.js",
+            "sha": "194d62ee5291ff318fbcf99953baf7e931067ec2"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/utils/instant",
+          "resolution": {
+            "path": "src/utils/instant.js",
+            "sha": "62376e9f82495b349773b10cbdafb370d2ecddf8"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 10,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 11,
+          "kind": "state",
+          "excerpt": "const [knownByHash, setKnownByHash] = useState(() => new Map());"
+        },
+        {
+          "line": 12,
+          "kind": "state",
+          "excerpt": "const [deploys, setDeploys] = useState([]);"
+        },
+        {
+          "line": 13,
+          "kind": "state",
+          "excerpt": "const [health, setHealth] = useState(null);"
+        },
+        {
+          "line": 14,
+          "kind": "state",
+          "excerpt": "const [digest, setDigest] = useState(null);"
+        },
+        {
+          "line": 15,
+          "kind": "state",
+          "excerpt": "const [loading, setLoading] = useState(false);"
+        },
+        {
+          "line": 16,
+          "kind": "state",
+          "excerpt": "const generationRef = useRef(0);"
+        },
+        {
+          "line": 18,
+          "kind": "state",
+          "excerpt": "const reloadKnown = useCallback(async () => {"
+        },
+        {
+          "line": 30,
+          "kind": "state",
+          "excerpt": "const reload = useCallback(async () => {"
+        },
+        {
+          "line": 51,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        }
+      ]
+    },
+    {
+      "path": "src/components/verification/VerifyQueue.jsx",
+      "sourceSha": "ee24b949b50d03c50a3c60a7c8ac3fa1dc8595b6",
+      "expectedSha": "ee24b949b50d03c50a3c60a7c8ac3fa1dc8595b6",
+      "shaMatches": true,
+      "fromIndex": 172,
+      "lineCount": 268,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/Common/PanelStates",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/VerificationService",
+          "resolution": {
+            "path": "src/api/Services/VerificationService.js",
+            "sha": "54b5d827dd309924d1bcefd58b21effd50f7a89d"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "./VerificationWorkspace",
+          "resolution": {
+            "path": "src/components/verification/VerificationWorkspace.jsx",
+            "sha": "8a741baa40cf8776e58a63e93238e636517e59ee"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 81,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useMemo, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 52,
+          "kind": "state",
+          "excerpt": "const [src, setSrc] = useState(null);"
+        },
+        {
+          "line": 53,
+          "kind": "state",
+          "excerpt": "const [failed, setFailed] = useState(false);"
+        },
+        {
+          "line": 54,
+          "kind": "state",
+          "excerpt": "const [zoom, setZoom] = useState(1);"
+        },
+        {
+          "line": 55,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 62,
+          "kind": "jsx",
+          "excerpt": "if (!url) return <div className=\"tpo-vq__doc is-empty\"><strong>{label}: not uploaded</strong><span>Send it back with &ldquo;A marksheet is missing&rdquo;, "
+        },
+        {
+          "line": 63,
+          "kind": "jsx",
+          "excerpt": "if (failed) return <div className=\"tpo-vq__doc is-empty\"><strong>You can&apos;t open this document</strong></div>;"
+        },
+        {
+          "line": 64,
+          "kind": "jsx",
+          "excerpt": "if (!src) return <div className=\"tpo-vq__doc\"><Skeleton.Image active /></div>;"
+        },
+        {
+          "line": 66,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__doc\">"
+        },
+        {
+          "line": 67,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__doc-bar\"><span className=\"tpo-eyebrow\">{label.toUpperCase()}</span>"
+        },
+        {
+          "line": 68,
+          "kind": "jsx,interactive",
+          "excerpt": "<span><Button size=\"small\" onClick={() => setZoom((z) => Math.max(0.5, z - 0.25))} aria-label=\"Zoom out\">−</Button> <Button size=\"small\" onClick={() => set"
+        },
+        {
+          "line": 69,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 70,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__doc-body\">"
+        },
+        {
+          "line": 73,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 74,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 85,
+          "kind": "state",
+          "excerpt": "const [access, setAccess] = useState(null);"
+        },
+        {
+          "line": 86,
+          "kind": "state",
+          "excerpt": "const [accessError, setAccessError] = useState(null);"
+        },
+        {
+          "line": 87,
+          "kind": "state",
+          "excerpt": "const [view, setView] = useState(\"WAITING\");"
+        },
+        {
+          "line": 88,
+          "kind": "state",
+          "excerpt": "const [quick, setQuick] = useState(null);"
+        },
+        {
+          "line": 89,
+          "kind": "state",
+          "excerpt": "const [rows, setRows] = useState(null);"
+        },
+        {
+          "line": 90,
+          "kind": "state",
+          "excerpt": "const [error, setError] = useState(null);"
+        },
+        {
+          "line": 91,
+          "kind": "state",
+          "excerpt": "const [selKey, setSelKey] = useState(null);"
+        },
+        {
+          "line": 92,
+          "kind": "state",
+          "excerpt": "const [detail, setDetail] = useState(null);"
+        },
+        {
+          "line": 93,
+          "kind": "state",
+          "excerpt": "const [itemId, setItemId] = useState(null);"
+        },
+        {
+          "line": 94,
+          "kind": "state",
+          "excerpt": "const [seen, setSeen] = useState({});"
+        },
+        {
+          "line": 95,
+          "kind": "state",
+          "excerpt": "const [backing, setBacking] = useState(false);"
+        },
+        {
+          "line": 96,
+          "kind": "state",
+          "excerpt": "const [reason, setReason] = useState(\"\");"
+        },
+        {
+          "line": 97,
+          "kind": "state",
+          "excerpt": "const [busy, setBusy] = useState(false);"
+        },
+        {
+          "line": 98,
+          "kind": "state",
+          "excerpt": "const [done, setDone] = useState([]);"
+        },
+        {
+          "line": 99,
+          "kind": "state",
+          "excerpt": "const busyRef = useRef(false);"
+        },
+        {
+          "line": 100,
+          "kind": "state",
+          "excerpt": "const seq = useRef(0);"
+        },
+        {
+          "line": 102,
+          "kind": "state",
+          "excerpt": "const loadAccess = useCallback(async () => {"
+        },
+        {
+          "line": 107,
+          "kind": "state",
+          "excerpt": "const load = useCallback(async () => {"
+        },
+        {
+          "line": 115,
+          "kind": "state",
+          "excerpt": "useEffect(() => { loadAccess(); }, [loadAccess]);"
+        },
+        {
+          "line": 116,
+          "kind": "state",
+          "excerpt": "useEffect(() => { if (access?.canVerify) { setRows(null); setDone([]); load(); } }, [access, load]);"
+        },
+        {
+          "line": 124,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 170,
+          "kind": "interactive",
+          "excerpt": "const onKeyDown = (e) => {"
+        },
+        {
+          "line": 180,
+          "kind": "jsx",
+          "excerpt": "if (accessError) return <PanelError title={accessError} onRetry={loadAccess} />;"
+        },
+        {
+          "line": 181,
+          "kind": "jsx",
+          "excerpt": "if (!access) return <Skeleton active paragraph={{ rows: 6 }} />;"
+        },
+        {
+          "line": 182,
+          "kind": "jsx",
+          "excerpt": "if (!access.canVerify) return <Alert type=\"info\" showIcon message=\"You cannot verify profiles here\" description={access.reason} />;"
+        },
+        {
+          "line": 188,
+          "kind": "jsx,interactive",
+          "excerpt": "<div className=\"tpo-vq\" onKeyDown={onKeyDown} data-testid=\"verification.queue\">"
+        },
+        {
+          "line": 189,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tpo-vq__list\" aria-label=\"Waiting\">"
+        },
+        {
+          "line": 190,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__top\">"
+        },
+        {
+          "line": 193,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-pills\" role=\"group\" aria-label=\"Show\">"
+        },
+        {
+          "line": 194,
+          "kind": "jsx,interactive",
+          "excerpt": "{VIEWS.map(([k, label]) => <button type=\"button\" key={k} className={`tpo-pill${view === k ? \" is-on\" : \"\"}`} aria-pressed={view === k} onClick={() => { set"
+        },
+        {
+          "line": 195,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 197,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__quick\">"
+        },
+        {
+          "line": 201,
+          "kind": "jsx,interactive",
+          "excerpt": "return <button type=\"button\" key={k} className={`tpo-link-btn${quick === k ? \" is-on\" : \"\"}`} onClick={() => setQuick(quick === k ? null : k)}>{label} · {n"
+        },
+        {
+          "line": 203,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 205,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 206,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__rows\">"
+        },
+        {
+          "line": 207,
+          "kind": "jsx,interactive",
+          "excerpt": "{error ? <Alert type=\"error\" showIcon message={error} action={<Button size=\"small\" onClick={load}>Retry</Button>} /> : rows === null ? <Skeleton active par"
+        },
+        {
+          "line": 210,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" key={keyOf(r)} className={`tpo-vq__row${sel && keyOf(sel) === keyOf(r) ? \" is-on\" : \"\"}`} onClick={() => setSelKey(keyOf(r))} data-te"
+        },
+        {
+          "line": 214,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 216,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 217,
+          "kind": "jsx,interactive",
+          "excerpt": "{view === \"WAITING\" && queue.length > 1 && <div className=\"tpo-vq__foot\">Many to clear at once? <button type=\"button\" className=\"tpo-link-btn\" onClick={onL"
+        },
+        {
+          "line": 218,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 220,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tpo-vq__pane\" aria-label=\"Check\">"
+        },
+        {
+          "line": 221,
+          "kind": "jsx",
+          "excerpt": "{!sel ? <div className=\"tpo-vq__blank\"><strong>{view !== \"WAITING\" ? \"Pick one to see it.\" : done.length ? \"All verified.\" : \"Nothing to check right now.\"}"
+        },
+        {
+          "line": 222,
+          "kind": "jsx",
+          "excerpt": ": !detail ? <Skeleton active paragraph={{ rows: 8 }} /> : detail.failed ? <PanelError title=\"Couldn't open this student\" onRetry={() => setSelKey(keyOf(sel"
+        },
+        {
+          "line": 225,
+          "kind": "jsx",
+          "excerpt": "<div><strong>{name(detail.student)}</strong><span>{[detail.student?.rollNumber, sel.branch, sel.batchName].filter(Boolean).join(\" · \")}</span></div>"
+        },
+        {
+          "line": 228,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__body\">"
+        },
+        {
+          "line": 229,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__items\">"
+        },
+        {
+          "line": 233,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" key={x.id} className={`tpo-vq__item${item?.id === x.id ? \" is-on\" : \"\"}`} onClick={() => { setItemId(x.id); setSeen((s) => ({ ...s, ["
+        },
+        {
+          "line": 237,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 240,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 241,
+          "kind": "jsx",
+          "excerpt": "{item && <DocView url={item.doc} learnerId={sel.learnerId} label={item.docLabel} />}"
+        },
+        {
+          "line": 242,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 244,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__bar\">"
+        },
+        {
+          "line": 246,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__back\">"
+        },
+        {
+          "line": 248,
+          "kind": "jsx,interactive",
+          "excerpt": "{(SEND_BACK_BY[sel.section] || []).map((x) => <button type=\"button\" key={x} className=\"tpo-pill is-danger\" disabled={busy} onClick={() => sendBack(x)}>{x}<"
+        },
+        {
+          "line": 249,
+          "kind": "jsx,interactive",
+          "excerpt": "<Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder=\"Or write what needs to change\" onPressEnter={() => sendBack()} aria-label=\"R"
+        },
+        {
+          "line": 250,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button danger disabled={reason.trim().length < 3 || busy} onClick={() => sendBack()}>Send back</Button>"
+        },
+        {
+          "line": 251,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 253,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-vq__bar-row\">"
+        },
+        {
+          "line": 256,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button danger onClick={() => setBacking((x) => !x)} disabled={busy}>Send back</Button>"
+        },
+        {
+          "line": 257,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" size=\"large\" loading={busy} onClick={verify} data-testid=\"verification.verify\">Verify · next ›</Button>"
+        },
+        {
+          "line": 259,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 260,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 264,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 265,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    }
+  ]
+}

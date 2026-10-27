@@ -1749,3 +1749,10 @@ Legacy FE pinned to `9d56bb7a347b06f242ef615c19fdc298f83329e0`; supporting wave-
 - Legacy `src/components/Global/Offcanvas/Syallabus/videoform.js`, `src/components/Global/RichTextEditor/RichTextEditor.jsx`, `src/components/Global/SortableLessonContentList/SortableLessonContentList.jsx` and the newly reachable `src/components/Global/Offcanvas/Syallabus/preview.js` require video/resource editor, reorder, cancel/unsaved, upload/error, content preview and mobile overlay parity checks. The richer vNext video flow remains subject to real-scoped tests, not copying legacy implementation structure.
 
 **Implementation Green is withheld pending concrete focused execution and scope/security tests.** The official task tracker was not changed by this source-only audit.
+
+
+## 2026-10-28 imported assessment, attendance and report descendants — source-only
+
+Pinned legacy FE `9d56bb7a347b06f242ef615c19fdc298f83329e0`. Wave-4/5/6 discovery traced nested `src/components/Quiz/Table/{table,action,quizeTitle,submission}.js`, `src/pages/Dashboard/course/Attendance/{TakeAttendance,TeacherAttendanceView,StudentAttendanceView}.js/jsx`, `src/components/Report/{AssignmentReportContent,QuizReportContent,ReportStudentTable,QuestionAccuracyList,SubmissionTimingCard,ScoreDistributionBars}.jsx` and other course content descendants. Full details: `docs/audit/legacy-dev-census/2026-10-28-wave4-6-reconciliation.md`.
+
+Verify each interactive subview's create/edit/mark/submit, attendance correction, feedback/report filters, downloadable content, role/section authorization, stale conflicts, empty/failed states and responsive/keyboard behavior against actual vNext implementations. Prior source tests and route existence are not a runtime acceptance gate; no new Faculty page or Implementation Green is claimed here.

@@ -1,0 +1,3556 @@
+{
+  "schemaVersion": 1,
+  "batch": "wave4-k",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "parent": "post-wave3-frontier",
+  "scope": "static candidate signals; no runtime parity",
+  "nodes": [
+    {
+      "path": "src/components/Global/CroppedImageUpload/BrandingImageUpload.js",
+      "sourceSha": "432380d3efc7aecc029c6e4cbded70291bf1e9d9",
+      "expectedSha": "432380d3efc7aecc029c6e4cbded70291bf1e9d9",
+      "shaMatches": true,
+      "fromIndex": 123,
+      "lineCount": 184,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd-img-crop",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/utils/uploadToR2",
+          "resolution": {
+            "path": "src/utils/uploadToR2.js",
+            "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 16,
+      "signals": [
+        {
+          "line": 3,
+          "kind": "state",
+          "excerpt": "import { useEffect, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 51,
+          "kind": "state",
+          "excerpt": "const [fileList, setFileList] = useState("
+        },
+        {
+          "line": 55,
+          "kind": "state",
+          "excerpt": "const [uploading, setUploading] = useState(false);"
+        },
+        {
+          "line": 56,
+          "kind": "state",
+          "excerpt": "const uploadRef = useRef(false);"
+        },
+        {
+          "line": 58,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 149,
+          "kind": "jsx",
+          "excerpt": "<ImgCrop rotationSlider aspect={aspect}>"
+        },
+        {
+          "line": 150,
+          "kind": "overlay",
+          "excerpt": "<Upload"
+        },
+        {
+          "line": 167,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 168,
+          "kind": "jsx",
+          "excerpt": "<PlusOutlined />"
+        },
+        {
+          "line": 169,
+          "kind": "jsx",
+          "excerpt": "<div style={{ marginTop: 8 }}>Upload</div>"
+        },
+        {
+          "line": 170,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 172,
+          "kind": "jsx",
+          "excerpt": "{uploading && <div>Uploading…</div>}"
+        },
+        {
+          "line": 173,
+          "kind": "jsx",
+          "excerpt": "</Upload>"
+        },
+        {
+          "line": 174,
+          "kind": "jsx",
+          "excerpt": "</ImgCrop>"
+        },
+        {
+          "line": 175,
+          "kind": "jsx",
+          "excerpt": "<div style={{ fontSize: 12, color: \"#8c8c8c\", marginTop: 4 }}>"
+        },
+        {
+          "line": 178,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/liveclass.js",
+      "sourceSha": "23d6e402392cdf10db5767769a64569b571e8690",
+      "expectedSha": "23d6e402392cdf10db5767769a64569b571e8690",
+      "shaMatches": true,
+      "fromIndex": 124,
+      "lineCount": 414,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 13,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 19,
+          "specifier": "@/api/Services/attendanceServices",
+          "resolution": {
+            "path": "src/api/Services/attendanceServices.js",
+            "sha": "fde82c83a4426dd3a19a0165ac413de181aff7a0"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 20,
+          "specifier": "@/api/Services/courseServices",
+          "resolution": {
+            "path": "src/api/Services/courseServices.js",
+            "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 21,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 22,
+          "specifier": "dayjs",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 47,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useEffect, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 42,
+          "kind": "state",
+          "excerpt": "const [loading, setLoading] = useState(false);"
+        },
+        {
+          "line": 43,
+          "kind": "state",
+          "excerpt": "const submittingRef = useRef(false);"
+        },
+        {
+          "line": 44,
+          "kind": "state",
+          "excerpt": "const [dirty, setDirty] = useState(false);"
+        },
+        {
+          "line": 45,
+          "kind": "state",
+          "excerpt": "const [contentScope, setContentScope] = useState(\"CLASS\");"
+        },
+        {
+          "line": 46,
+          "kind": "state",
+          "excerpt": "const [submitError, setSubmitError] = useState(\"\");"
+        },
+        {
+          "line": 59,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 213,
+          "kind": "jsx",
+          "excerpt": "icon: <CheckCircleOutlined style={{ color: \"green\" }} />,"
+        },
+        {
+          "line": 235,
+          "kind": "jsx",
+          "excerpt": "<div style={{ padding: \"0 10px\" }}>"
+        },
+        {
+          "line": 242,
+          "kind": "jsx,interactive",
+          "excerpt": "action={<Button size=\"small\" onClick={() => form.submit()} disabled={loading}>Retry</Button>}"
+        },
+        {
+          "line": 246,
+          "kind": "overlay",
+          "excerpt": "<Form"
+        },
+        {
+          "line": 263,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 270,
+          "kind": "jsx",
+          "excerpt": "prefix={<VideoCameraOutlined />}"
+        },
+        {
+          "line": 272,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 274,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"description\" label=\"Description\">"
+        },
+        {
+          "line": 275,
+          "kind": "jsx",
+          "excerpt": "<TextArea rows={2} placeholder=\"Brief description of the live class\" />"
+        },
+        {
+          "line": 276,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 280,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"contentScope\" label=\"Visibility\" initialValue=\"CLASS\">"
+        },
+        {
+          "line": 281,
+          "kind": "overlay",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 284,
+          "kind": "interactive",
+          "excerpt": "onChange={(value) => { setContentScope(value); setDirty(true); }}"
+        },
+        {
+          "line": 286,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 287,
+          "kind": "jsx",
+          "excerpt": "<div style={{ fontSize: 12, color: \"#6b7280\", marginBottom: 16 }}>"
+        },
+        {
+          "line": 289,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 293,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 303,
+          "kind": "jsx",
+          "excerpt": "prefix={<LinkOutlined />}"
+        },
+        {
+          "line": 305,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 307,
+          "kind": "jsx",
+          "excerpt": "<div style={{ display: \"flex\", gap: 12 }}>"
+        },
+        {
+          "line": 308,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 320,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 321,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 342,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 343,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 345,
+          "kind": "jsx",
+          "excerpt": "<div style={{ display: \"flex\", gap: 12 }}>"
+        },
+        {
+          "line": 346,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 358,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 359,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 393,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 394,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 399,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"points\" label=\"Points\">"
+        },
+        {
+          "line": 400,
+          "kind": "jsx",
+          "excerpt": "<Input type=\"number\" min={0} />"
+        },
+        {
+          "line": 401,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 403,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item>"
+        },
+        {
+          "line": 404,
+          "kind": "jsx",
+          "excerpt": "<Button type=\"primary\" htmlType=\"submit\" loading={loading} disabled={loading} block>"
+        },
+        {
+          "line": 406,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 407,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 408,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        },
+        {
+          "line": 409,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/youtube.js",
+      "sourceSha": "9b46960fb1c90c08d43a67af5e2a4afc9caba084",
+      "expectedSha": "9b46960fb1c90c08d43a67af5e2a4afc9caba084",
+      "shaMatches": true,
+      "fromIndex": 125,
+      "lineCount": 345,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/utils/youtubeLink",
+          "resolution": {
+            "path": "src/utils/youtubeLink.js",
+            "sha": "2e14e28af531960f6c73c92cc6e88a528e10dc21"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "./preview",
+          "resolution": {
+            "path": "src/components/Global/Offcanvas/Syallabus/preview.js",
+            "sha": "4c28361e7034cb0b5fce6d1de02f4a28f690e809"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "@/api/Services/courseServices",
+          "resolution": {
+            "path": "src/api/Services/courseServices.js",
+            "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 11,
+          "specifier": "../../Button/uploadButton",
+          "resolution": {
+            "path": "src/components/Global/Button/uploadButton.jsx",
+            "sha": "f95c4bfad88f9fd2a459cf36a5fa62bdca9b1f40"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 12,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 13,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 65,
+      "signals": [
+        {
+          "line": 6,
+          "kind": "state",
+          "excerpt": "import { useEffect, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 24,
+          "kind": "state",
+          "excerpt": "const [Preview, setPreview] = useState(false);"
+        },
+        {
+          "line": 26,
+          "kind": "state",
+          "excerpt": "const [VideoTitle, setVideoTitle] = useState(\"\");"
+        },
+        {
+          "line": 27,
+          "kind": "state",
+          "excerpt": "const [YouTubeLink, setYouTubeLink] = useState(\"\");"
+        },
+        {
+          "line": 28,
+          "kind": "state",
+          "excerpt": "const [contentScope, setContentScope] = useState(\"CLASS\");"
+        },
+        {
+          "line": 36,
+          "kind": "state",
+          "excerpt": "const [PreviewHtml, setPreviewHtml] = useState([]);"
+        },
+        {
+          "line": 38,
+          "kind": "state",
+          "excerpt": "const [step, setStep] = useState(1);"
+        },
+        {
+          "line": 41,
+          "kind": "state",
+          "excerpt": "const [submitting, setSubmitting] = useState(false);"
+        },
+        {
+          "line": 42,
+          "kind": "state",
+          "excerpt": "const submittingRef = useRef(false);"
+        },
+        {
+          "line": 43,
+          "kind": "state",
+          "excerpt": "const [dirty, setDirty] = useState(false);"
+        },
+        {
+          "line": 46,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 85,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mb-4\">"
+        },
+        {
+          "line": 88,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 90,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mb-4\">"
+        },
+        {
+          "line": 92,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 104,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 105,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 176,
+          "kind": "jsx",
+          "excerpt": "icon: <CheckCircleOutlined style={{ color: \"green\" }} />,"
+        },
+        {
+          "line": 191,
+          "kind": "jsx",
+          "excerpt": "icon: <ExclamationCircleOutlined style={{ color: \"red\" }} />,"
+        },
+        {
+          "line": 208,
+          "kind": "overlay",
+          "excerpt": "<Form"
+        },
+        {
+          "line": 212,
+          "kind": "interactive",
+          "excerpt": "onSubmit={PDFDataValidation}"
+        },
+        {
+          "line": 216,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-drawer-content h-100\">"
+        },
+        {
+          "line": 229,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 230,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex flex-column h-100\">"
+        },
+        {
+          "line": 231,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mb-4 position-relative\">"
+        },
+        {
+          "line": 233,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 243,
+          "kind": "jsx,interactive",
+          "excerpt": "<Input onChange={titile} />"
+        },
+        {
+          "line": 244,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 245,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 247,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mb-4 position-relative\">"
+        },
+        {
+          "line": 249,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 265,
+          "kind": "jsx,interactive",
+          "excerpt": "<Input onChange={formatYoutubelink} />"
+        },
+        {
+          "line": 266,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 267,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 270,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mb-4 position-relative\">"
+        },
+        {
+          "line": 272,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"contentScope\" initialValue=\"CLASS\">"
+        },
+        {
+          "line": 273,
+          "kind": "overlay",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 276,
+          "kind": "interactive",
+          "excerpt": "onChange={(value) => { setContentScope(value); setDirty(true); }}"
+        },
+        {
+          "line": 278,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 279,
+          "kind": "jsx",
+          "excerpt": "<div style={{ fontSize: 12, color: \"#6b7280\" }}>"
+        },
+        {
+          "line": 281,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 282,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 285,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 286,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 290,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 292,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex flex-wrap justify-content-end ln-drwr-foot-btn-container\">"
+        },
+        {
+          "line": 293,
+          "kind": "jsx",
+          "excerpt": "<div className=\"me-3\">"
+        },
+        {
+          "line": 297,
+          "kind": "interactive",
+          "excerpt": "onClick={() => {"
+        },
+        {
+          "line": 303,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 304,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 306,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 310,
+          "kind": "interactive",
+          "excerpt": "onClick={PDFDataValidation}"
+        },
+        {
+          "line": 311,
+          "kind": "interactive",
+          "excerpt": "// onClick={props.PreviewShow}"
+        },
+        {
+          "line": 314,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 315,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 316,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 318,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex flex-wrap justify-content-end ln-drwr-foot-btn-container\">"
+        },
+        {
+          "line": 319,
+          "kind": "jsx",
+          "excerpt": "<div className=\"inline-block\">"
+        },
+        {
+          "line": 323,
+          "kind": "interactive",
+          "excerpt": "onClick={back}"
+        },
+        {
+          "line": 326,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 327,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 331,
+          "kind": "interactive",
+          "excerpt": "onClick={ContentSubmit}"
+        },
+        {
+          "line": 335,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 336,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 340,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Global/titles/title.js",
+      "sourceSha": "adef720a81f1df7bf8e944d37ffa4d8bf69c1c17",
+      "expectedSha": "adef720a81f1df7bf8e944d37ffa4d8bf69c1c17",
+      "shaMatches": true,
+      "fromIndex": 126,
+      "lineCount": 21,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 6,
+      "signals": [
+        {
+          "line": 5,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-module__head bg-white d-flex align-items-center\">"
+        },
+        {
+          "line": 6,
+          "kind": "jsx",
+          "excerpt": "<div className={props.children ? \"col-6\" : \"col-12\"}>"
+        },
+        {
+          "line": 10,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 12,
+          "kind": "jsx",
+          "excerpt": "<div className=\"col-6 d-flex justify-content-end  align-items-center\">"
+        },
+        {
+          "line": 14,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 16,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Global/video/video.jsx",
+      "sourceSha": "1ba9b1a72b72a077f78a3fadc1edd453f6d8d689",
+      "expectedSha": "1ba9b1a72b72a077f78a3fadc1edd453f6d8d689",
+      "shaMatches": true,
+      "fromIndex": 127,
+      "lineCount": 103,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "video-react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/utils/clientErrorReporting",
+          "resolution": {
+            "path": "src/utils/clientErrorReporting.js",
+            "sha": "bfe655367fd5014a2a9be0fc2e097a68dcd0a4d8"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 13,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useEffect, useRef } from \"react\";"
+        },
+        {
+          "line": 10,
+          "kind": "state",
+          "excerpt": "const videoPlayer = useRef();"
+        },
+        {
+          "line": 11,
+          "kind": "state",
+          "excerpt": "const videoCurrentTime = useRef(0);"
+        },
+        {
+          "line": 12,
+          "kind": "state",
+          "excerpt": "const validationArray = useRef(new Array(10).fill(false));"
+        },
+        {
+          "line": 13,
+          "kind": "state",
+          "excerpt": "const lastReportedTimeRef = useRef(-1);"
+        },
+        {
+          "line": 14,
+          "kind": "state",
+          "excerpt": "const initialTimeSeekedRef = useRef(false);"
+        },
+        {
+          "line": 16,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 20,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 24,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 81,
+          "kind": "jsx",
+          "excerpt": "<ControlBar>"
+        },
+        {
+          "line": 82,
+          "kind": "jsx",
+          "excerpt": "<PlaybackRateMenuButton rates={PLAYBACK_RATES} order={7.1} />"
+        },
+        {
+          "line": 83,
+          "kind": "jsx",
+          "excerpt": "</ControlBar>"
+        },
+        {
+          "line": 84,
+          "kind": "jsx",
+          "excerpt": "</Player>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/marketing/icons.jsx",
+      "sourceSha": "5a8bcfd8baaae6a043b75bac1d6c677e939d8f69",
+      "expectedSha": "5a8bcfd8baaae6a043b75bac1d6c677e939d8f69",
+      "shaMatches": true,
+      "fromIndex": 128,
+      "lineCount": 90,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/Placements/JobsListContent.jsx",
+      "sourceSha": "8b726d832e0223f29b35497b2ca4cf16fcffdbfb",
+      "expectedSha": "8b726d832e0223f29b35497b2ca4cf16fcffdbfb",
+      "shaMatches": true,
+      "fromIndex": 129,
+      "lineCount": 1116,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 17,
+          "specifier": "react-redux",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 18,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 19,
+          "specifier": "moment",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 20,
+          "specifier": "@/api/Services/jobService",
+          "resolution": {
+            "path": "src/api/Services/jobService.js",
+            "sha": "92e2c205b86bfee2f9ea10750c0bc0826cc6546f"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 28,
+          "specifier": "@/utils/jobTagUtils",
+          "resolution": {
+            "path": "src/utils/jobTagUtils.js",
+            "sha": "78ec5989978ef16ec816bb33834be537bd4445f3"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 29,
+          "specifier": "@/utils/learnerApiUtils",
+          "resolution": {
+            "path": "src/utils/learnerApiUtils.js",
+            "sha": "6d28df69c3d8f7b771dd4d1e6a642736cfa6ae22"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 30,
+          "specifier": "@/api/Services/TpoHubService",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 31,
+          "specifier": "@/utils/driveDescription",
+          "resolution": {
+            "path": "src/utils/driveDescription.js",
+            "sha": "1d2fc57ccb2cf2e89d7662184d927df4a0dd7824"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 32,
+          "specifier": "./PlacementsCompanyAvatar",
+          "resolution": {
+            "path": "src/components/Placements/PlacementsCompanyAvatar.jsx",
+            "sha": "7a1c3424d9f12419ed29448c10cb4c8fc3ff103f"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 33,
+          "specifier": "@/components/Common/Skeletons",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 34,
+          "specifier": "@/utils/navigationContext",
+          "resolution": {
+            "path": "src/utils/navigationContext.js",
+            "sha": "7b0184b438b230f52a937792680cddbe6980c198"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 162,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useState, useEffect, useCallback, useRef, useMemo } from \"react\";"
+        },
+        {
+          "line": 161,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__avatar\">"
+        },
+        {
+          "line": 162,
+          "kind": "jsx",
+          "excerpt": "<PlacementsCompanyAvatar companyName={job.companyName} companyLogo={job.companyLogo} size={48} className=\"learn-jobs\" />"
+        },
+        {
+          "line": 163,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 165,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__body\">"
+        },
+        {
+          "line": 166,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__badges\">"
+        },
+        {
+          "line": 175,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 181,
+          "kind": "interactive",
+          "excerpt": "onClick={(e) => {"
+        },
+        {
+          "line": 197,
+          "kind": "jsx",
+          "excerpt": "<CloseCircleOutlined aria-hidden=\"true\" />"
+        },
+        {
+          "line": 207,
+          "kind": "jsx",
+          "excerpt": "<ClockCircleOutlined aria-hidden=\"true\" />"
+        },
+        {
+          "line": 216,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 221,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__fact\">"
+        },
+        {
+          "line": 223,
+          "kind": "jsx",
+          "excerpt": "<WalletOutlined aria-hidden=\"true\" /> CTC"
+        },
+        {
+          "line": 228,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 229,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__fact\">"
+        },
+        {
+          "line": 231,
+          "kind": "jsx",
+          "excerpt": "<CalendarOutlined aria-hidden=\"true\" /> Deadline"
+        },
+        {
+          "line": 238,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 239,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__fact\">"
+        },
+        {
+          "line": 241,
+          "kind": "jsx",
+          "excerpt": "<EnvironmentOutlined aria-hidden=\"true\" /> Location"
+        },
+        {
+          "line": 246,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 249,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__actions\">"
+        },
+        {
+          "line": 256,
+          "kind": "interactive",
+          "excerpt": "onClick={(e) => onToggleSave(e, job?.id)}"
+        },
+        {
+          "line": 260,
+          "kind": "jsx",
+          "excerpt": "{isSaved ? <HeartFilled aria-hidden=\"true\" /> : <HeartOutlined aria-hidden=\"true\" />}"
+        },
+        {
+          "line": 261,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 267,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 278,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card learn-jobs-card--skeleton\" aria-hidden=\"true\">"
+        },
+        {
+          "line": 280,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__avatar\">"
+        },
+        {
+          "line": 282,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 283,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__body\">"
+        },
+        {
+          "line": 284,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__badges\">"
+        },
+        {
+          "line": 287,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 292,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 293,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__facts\">"
+        },
+        {
+          "line": 297,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 298,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-card__actions\">"
+        },
+        {
+          "line": 300,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 301,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 311,
+          "kind": "state",
+          "excerpt": "const [jobs, setJobs] = useState([]);"
+        },
+        {
+          "line": 312,
+          "kind": "state",
+          "excerpt": "const [savedJobsFull, setSavedJobsFull] = useState([]);"
+        },
+        {
+          "line": 313,
+          "kind": "state",
+          "excerpt": "const [applicationsByJobId, setApplicationsByJobId] = useState(() => new Map());"
+        },
+        {
+          "line": 314,
+          "kind": "state",
+          "excerpt": "const [loading, setLoading] = useState(true);"
+        },
+        {
+          "line": 315,
+          "kind": "state",
+          "excerpt": "const [fetchError, setFetchError] = useState(null);"
+        },
+        {
+          "line": 316,
+          "kind": "state",
+          "excerpt": "const [searchInput, setSearchInput] = useState(\"\");"
+        },
+        {
+          "line": 317,
+          "kind": "state",
+          "excerpt": "const [savedJobIds, setSavedJobIds] = useState(new Set());"
+        },
+        {
+          "line": 318,
+          "kind": "state",
+          "excerpt": "const [saveErrors, setSaveErrors] = useState({});"
+        },
+        {
+          "line": 319,
+          "kind": "state",
+          "excerpt": "const [supportErrors, setSupportErrors] = useState({ savedIds: false, savedJobs: false, applications: false });"
+        },
+        {
+          "line": 320,
+          "kind": "state",
+          "excerpt": "const [notOpenExpanded, setNotOpenExpanded] = useState(false);"
+        },
+        {
+          "line": 321,
+          "kind": "state",
+          "excerpt": "const saveInFlightRef = useRef(new Set());"
+        },
+        {
+          "line": 322,
+          "kind": "state",
+          "excerpt": "const abortControllerRef = useRef(null);"
+        },
+        {
+          "line": 323,
+          "kind": "state",
+          "excerpt": "const jobsRef = useRef([]);"
+        },
+        {
+          "line": 324,
+          "kind": "state",
+          "excerpt": "const searchHydratedRef = useRef(false);"
+        },
+        {
+          "line": 326,
+          "kind": "state",
+          "excerpt": "useEffect(() => { jobsRef.current = jobs; }, [jobs]);"
+        },
+        {
+          "line": 344,
+          "kind": "state",
+          "excerpt": "const updateQuery = useCallback("
+        },
+        {
+          "line": 363,
+          "kind": "navigation",
+          "excerpt": "router.replace({ pathname: jobsPath, query: next }, undefined, { shallow: true });"
+        },
+        {
+          "line": 368,
+          "kind": "state",
+          "excerpt": "const setTabAndUrl = useCallback((key) => updateQuery({ tab: key }), [updateQuery]);"
+        },
+        {
+          "line": 371,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 378,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 385,
+          "kind": "state",
+          "excerpt": "const fetchJobs = useCallback(async () => {"
+        },
+        {
+          "line": 465,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 468,
+          "kind": "navigation",
+          "excerpt": "router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);"
+        },
+        {
+          "line": 481,
+          "kind": "state",
+          "excerpt": "const handleToggleSave = useCallback("
+        },
+        {
+          "line": 659,
+          "kind": "state",
+          "excerpt": "const isExpiredJob = useCallback("
+        },
+        {
+          "line": 692,
+          "kind": "state",
+          "excerpt": "const handleNavigate = useCallback("
+        },
+        {
+          "line": 695,
+          "kind": "navigation",
+          "excerpt": "router.push(withReturnTo(`${jobsPath}/${id}`, router.asPath));"
+        },
+        {
+          "line": 707,
+          "kind": "state",
+          "excerpt": "const clearFilters = useCallback(() => {"
+        },
+        {
+          "line": 729,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-toolbar\">"
+        },
+        {
+          "line": 730,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-toolbar__row\">"
+        },
+        {
+          "line": 737,
+          "kind": "interactive",
+          "excerpt": "onChange={(e) => setSearchInput(e.target.value)}"
+        },
+        {
+          "line": 738,
+          "kind": "jsx",
+          "excerpt": "prefix={<SearchOutlined aria-hidden=\"true\" />}"
+        },
+        {
+          "line": 743,
+          "kind": "overlay",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 746,
+          "kind": "interactive",
+          "excerpt": "onChange={(val) => updateQuery({ sort: val })}"
+        },
+        {
+          "line": 753,
+          "kind": "overlay",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 756,
+          "kind": "interactive",
+          "excerpt": "onChange={(val) => updateQuery({ type: val })}"
+        },
+        {
+          "line": 763,
+          "kind": "overlay",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 766,
+          "kind": "interactive",
+          "excerpt": "onChange={(val) => updateQuery({ loc: val })}"
+        },
+        {
+          "line": 771,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 772,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-toolbar__facets\">"
+        },
+        {
+          "line": 777,
+          "kind": "interactive",
+          "excerpt": "onClick={() => updateQuery({ eligible: eligibleOnly ? \"0\" : \"1\" })}"
+        },
+        {
+          "line": 780,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 785,
+          "kind": "interactive",
+          "excerpt": "onClick={() => updateQuery({ soon: closingSoon ? \"0\" : \"1\" })}"
+        },
+        {
+          "line": 788,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 790,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"link\" size=\"small\" className=\"learn-jobs-facet__clear\" onClick={clearFilters}>"
+        },
+        {
+          "line": 792,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 794,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 795,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 825,
+          "kind": "jsx",
+          "excerpt": "<nav className=\"learn-jobs-pagination\" aria-label=\"Job list pages\">"
+        },
+        {
+          "line": 831,
+          "kind": "interactive",
+          "excerpt": "onChange={(page) => {"
+        },
+        {
+          "line": 838,
+          "kind": "jsx",
+          "excerpt": "</nav>"
+        },
+        {
+          "line": 842,
+          "kind": "jsx",
+          "excerpt": "<section className=\"learn-jobs-expired\" aria-label=\"Expired saved jobs\">"
+        },
+        {
+          "line": 867,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 871,
+          "kind": "jsx",
+          "excerpt": "<section className=\"learn-jobs-not-open\" aria-label=\"Not open to you\">"
+        },
+        {
+          "line": 877,
+          "kind": "interactive",
+          "excerpt": "onClick={() => setNotOpenExpanded((v) => !v)}"
+        },
+        {
+          "line": 879,
+          "kind": "jsx",
+          "excerpt": "{notOpenExpanded ? <DownOutlined aria-hidden=\"true\" /> : <RightOutlined aria-hidden=\"true\" />}"
+        },
+        {
+          "line": 883,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 904,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 912,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-list\">"
+        },
+        {
+          "line": 914,
+          "kind": "jsx",
+          "excerpt": "<JobListSkeleton key={i} />"
+        },
+        {
+          "line": 916,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 922,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-empty learn-jobs-empty--rich\">"
+        },
+        {
+          "line": 923,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-empty__illustration\">"
+        },
+        {
+          "line": 924,
+          "kind": "jsx",
+          "excerpt": "<JobsEmptyIllustration />"
+        },
+        {
+          "line": 925,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 930,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 936,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-error-card\" role=\"alert\">"
+        },
+        {
+          "line": 937,
+          "kind": "jsx",
+          "excerpt": "<Text className=\"learn-jobs-error-text ln-lto-reg\">Your saved jobs could not be fully loaded. This is not an empty saved list.</Text>"
+        },
+        {
+          "line": 938,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" onClick={fetchJobs} className=\"learn-jobs-cta-btn\">Retry saved jobs</Button>"
+        },
+        {
+          "line": 939,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 945,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-empty learn-jobs-empty--rich\">"
+        },
+        {
+          "line": 946,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-empty__illustration\">"
+        },
+        {
+          "line": 947,
+          "kind": "jsx",
+          "excerpt": "<JobsEmptyIllustration />"
+        },
+        {
+          "line": 948,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 953,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" className=\"learn-jobs-empty__cta\" onClick={() => setTabAndUrl(\"all\")}>"
+        },
+        {
+          "line": 955,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 956,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 962,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-empty learn-jobs-empty--rich\">"
+        },
+        {
+          "line": 963,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-empty__illustration\">"
+        },
+        {
+          "line": 964,
+          "kind": "jsx",
+          "excerpt": "<JobsEmptyIllustration />"
+        },
+        {
+          "line": 965,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 971,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-empty__actions\">"
+        },
+        {
+          "line": 972,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" className=\"learn-jobs-empty__cta\" onClick={clearFilters}>"
+        },
+        {
+          "line": 974,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 977,
+          "kind": "interactive",
+          "excerpt": "onClick={() => {"
+        },
+        {
+          "line": 990,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 991,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 992,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 1004,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-placements-dashboard__body\">"
+        },
+        {
+          "line": 1005,
+          "kind": "jsx",
+          "excerpt": "<section className=\"learn-placements-dashboard__overview\">"
+        },
+        {
+          "line": 1006,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-header\">"
+        },
+        {
+          "line": 1007,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-header__left\">"
+        },
+        {
+          "line": 1009,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 1010,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 1011,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 1012,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-jobs-error-card\">"
+        },
+        {
+          "line": 1013,
+          "kind": "jsx",
+          "excerpt": "<CloseCircleOutlined className=\"learn-jobs-error-icon\" aria-hidden=\"true\" />"
+        },
+        {
+          "line": 1014,
+          "kind": "jsx",
+          "excerpt": "<Text className=\"learn-jobs-error-text ln-lto-reg\">{fetchError}</Text>"
+        },
+        {
+          "line": 1015,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" onClick={() => fetchJobs()} className=\"learn-jobs-cta-btn\">"
+        },
+        {
+          "line": 1017,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 1018,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 1019,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 1024,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-placements-dashboard__body\">"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Placements/PlacementCellContent.js",
+      "sourceSha": "528ddc4b83555bf666ab129e967c2e37b6885c8a",
+      "expectedSha": "528ddc4b83555bf666ab129e967c2e37b6885c8a",
+      "shaMatches": true,
+      "fromIndex": 130,
+      "lineCount": 298,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "moment",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/TpoHubService",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/utils/uploadToR2",
+          "resolution": {
+            "path": "src/utils/uploadToR2.js",
+            "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/Placements/student/PlacementRules",
+          "resolution": {
+            "path": "src/components/Placements/student/PlacementRules.jsx",
+            "sha": "d980cc55c42fb5dc19dd60a5603f4c8dc30ae8ac"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/Placements/student/words",
+          "resolution": {
+            "path": "src/components/Placements/student/words.js",
+            "sha": "46ee37cbf87d007fd6385fcd53f56ea079ef72a0"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 81,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 32,
+          "kind": "state",
+          "excerpt": "const [data, setData] = useState(null);"
+        },
+        {
+          "line": 33,
+          "kind": "state",
+          "excerpt": "const [failed, setFailed] = useState(false);"
+        },
+        {
+          "line": 34,
+          "kind": "state",
+          "excerpt": "const [choice, setChoice] = useState(null);"
+        },
+        {
+          "line": 35,
+          "kind": "state",
+          "excerpt": "const [consent, setConsent] = useState(false);"
+        },
+        {
+          "line": 36,
+          "kind": "state",
+          "excerpt": "const [busy, setBusy] = useState(false);"
+        },
+        {
+          "line": 37,
+          "kind": "state",
+          "excerpt": "const [asking, setAsking] = useState(false);"
+        },
+        {
+          "line": 38,
+          "kind": "state",
+          "excerpt": "const [offerLetter, setOfferLetter] = useState(null);"
+        },
+        {
+          "line": 39,
+          "kind": "state",
+          "excerpt": "const [uploadingLetter, setUploadingLetter] = useState(false);"
+        },
+        {
+          "line": 40,
+          "kind": "state",
+          "excerpt": "const [requestDirty, setRequestDirty] = useState(false);"
+        },
+        {
+          "line": 41,
+          "kind": "state",
+          "excerpt": "const actionRef = useRef(false);"
+        },
+        {
+          "line": 44,
+          "kind": "state",
+          "excerpt": "const load = useCallback(() => {"
+        },
+        {
+          "line": 59,
+          "kind": "state",
+          "excerpt": "useEffect(() => { load(); }, [load]);"
+        },
+        {
+          "line": 62,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 63,
+          "kind": "navigation",
+          "excerpt": "if (!data || typeof window === \"undefined\" || !window.location.hash) return;"
+        },
+        {
+          "line": 64,
+          "kind": "navigation",
+          "excerpt": "const el = document.getElementById(window.location.hash.slice(1));"
+        },
+        {
+          "line": 68,
+          "kind": "jsx,interactive",
+          "excerpt": "if (failed) return <Alert type=\"warning\" showIcon message=\"We could not load this page\" action={<Button size=\"small\" onClick={load}>Retry</Button>} />;"
+        },
+        {
+          "line": 69,
+          "kind": "jsx",
+          "excerpt": "if (!data) return <Skeleton active paragraph={{ rows: 6 }} />;"
+        },
+        {
+          "line": 133,
+          "kind": "overlay",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 166,
+          "kind": "jsx",
+          "excerpt": "<div data-testid=\"placements.cell\">"
+        },
+        {
+          "line": 168,
+          "kind": "jsx",
+          "excerpt": "<Alert key={d.id} className=\"sp-gap\" type=\"error\" showIcon message=\"You are barred from drives for now\""
+        },
+        {
+          "line": 171,
+          "kind": "jsx,interactive",
+          "excerpt": "{\" \"}<Button size=\"small\" type=\"link\" style={{ padding: 0 }} onClick={() => openRequest({ type: \"CORRECTION\", reason: \"I think this debarment is wrong beca"
+        },
+        {
+          "line": 176,
+          "kind": "jsx",
+          "excerpt": "<Alert key={n.id} className=\"sp-gap\" type=\"warning\" showIcon message={n.title} description={n.body}"
+        },
+        {
+          "line": 177,
+          "kind": "jsx,interactive",
+          "excerpt": "action={<Button size=\"small\" onClick={() => disputeNotice(n)}>Wrong? Tell the placement cell</Button>} />"
+        },
+        {
+          "line": 180,
+          "kind": "jsx",
+          "excerpt": "<section className=\"sp-panel\" id=\"registration\" aria-labelledby=\"sp-reg\">"
+        },
+        {
+          "line": 185,
+          "kind": "jsx",
+          "excerpt": "<div className=\"sp-choices\" role=\"radiogroup\" aria-label=\"Your choice\">"
+        },
+        {
+          "line": 188,
+          "kind": "jsx,interactive",
+          "excerpt": "<input type=\"radio\" name=\"sp-choice\" value={c.value} checked={choice === c.value} onChange={() => setChoice(c.value)} />"
+        },
+        {
+          "line": 189,
+          "kind": "jsx",
+          "excerpt": "<div><b>{c.label}</b><span>{c.hint}</span></div>"
+        },
+        {
+          "line": 192,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 194,
+          "kind": "jsx",
+          "excerpt": "<div style={{ marginTop: 12 }}>"
+        },
+        {
+          "line": 195,
+          "kind": "jsx,interactive",
+          "excerpt": "<Checkbox checked={consent} onChange={(e) => setConsent(e.target.checked)}>I agree to share my academic details, resume and contact details with the compan"
+        },
+        {
+          "line": 196,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 198,
+          "kind": "jsx",
+          "excerpt": "<Button type=\"primary\" style={{ marginTop: 12 }} loading={busy}"
+        },
+        {
+          "line": 200,
+          "kind": "jsx,interactive",
+          "excerpt": "onClick={() => act(() => registerForPlacements(choice, consent), \"Registration saved\", \"Could not save\")}>{reg.choice ? \"Save my new choice\" : \"Register\"}<"
+        },
+        {
+          "line": 210,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 212,
+          "kind": "jsx",
+          "excerpt": "<section className=\"sp-panel\" id=\"requests\" aria-labelledby=\"sp-req\">"
+        },
+        {
+          "line": 215,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button size=\"small\" disabled={busy} onClick={() => openRequest()}>New request</Button>"
+        },
+        {
+          "line": 225,
+          "kind": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 230,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 237,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 239,
+          "kind": "jsx",
+          "excerpt": "<section className=\"sp-panel\" id=\"rules\" aria-labelledby=\"sp-rules-h\">"
+        },
+        {
+          "line": 241,
+          "kind": "jsx",
+          "excerpt": "<PlacementRules />"
+        },
+        {
+          "line": 242,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 244,
+          "kind": "jsx,overlay,interactive",
+          "excerpt": "<Modal open={asking} title=\"New request\" okText=\"Send\" onOk={submitRequest} onCancel={closeRequest}"
+        },
+        {
+          "line": 247,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form form={form} layout=\"vertical\" onValuesChange={() => setRequestDirty(true)}>"
+        },
+        {
+          "line": 248,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"type\" label=\"What do you need?\" rules={[{ required: true }]}>"
+        },
+        {
+          "line": 249,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select options={[\"REGISTRATION_CHANGE\", \"CORRECTION\", \"EXTERNAL_OFFER\", \"ABSENCE_DISPUTE\", ...(offerJobs.length ? [\"OFFER_EXTENSION\"] : [])].map((t) => ({"
+        },
+        {
+          "line": 250,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 251,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item noStyle shouldUpdate={(a, b) => a.type !== b.type}>"
+        },
+        {
+          "line": 253,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"jobId\" label=\"Which offer?\" rules={[{ required: true }]}><Select options={offerJobs.map((o) => ({ value: o.jobId, label: `${o.company} · $"
+        },
+        {
+          "line": 255,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"choice\" label=\"Change to\" rules={[{ required: true }]}><Select options={CHOICES.map(({ value, label }) => ({ value, label }))} /></Form.It"
+        },
+        {
+          "line": 258,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"companyName\" label=\"Company\" rules={[{ required: true, message: \"Which company?\" }]}>"
+        },
+        {
+          "line": 259,
+          "kind": "jsx",
+          "excerpt": "<Input maxLength={200} placeholder=\"e.g. Acme Corp\" />"
+        },
+        {
+          "line": 260,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 261,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"ctcLpa\" label=\"CTC (LPA)\">"
+        },
+        {
+          "line": 262,
+          "kind": "jsx",
+          "excerpt": "<Input type=\"number\" min={0} step={0.1} placeholder=\"e.g. 8.5\" />"
+        },
+        {
+          "line": 263,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 264,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item label=\"Offer letter\">"
+        },
+        {
+          "line": 265,
+          "kind": "jsx,overlay",
+          "excerpt": "<Upload.Dragger beforeUpload={uploadAttachment(\"offer-letters\", \"Letter attached\")} showUploadList={false} disabled={uploadingLetter}>"
+        },
+        {
+          "line": 266,
+          "kind": "jsx",
+          "excerpt": "<p className=\"ant-upload-drag-icon\"><InboxOutlined /></p>"
+        },
+        {
+          "line": 268,
+          "kind": "jsx",
+          "excerpt": "</Upload.Dragger>"
+        },
+        {
+          "line": 269,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 273,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"field\" label=\"What is wrong?\" rules={[{ required: true, whitespace: true, message: \"Say what needs correcting\" }]}>"
+        },
+        {
+          "line": 274,
+          "kind": "jsx",
+          "excerpt": "<Input maxLength={100} placeholder=\"e.g. CGPA, 12th marks, name spelling\" />"
+        },
+        {
+          "line": 275,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 276,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"newValue\" label=\"What it should be\">"
+        },
+        {
+          "line": 277,
+          "kind": "jsx",
+          "excerpt": "<Input maxLength={200} placeholder=\"e.g. 8.2\" />"
+        },
+        {
+          "line": 278,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 279,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item label=\"Proof (marksheet or certificate)\">"
+        },
+        {
+          "line": 280,
+          "kind": "jsx,overlay",
+          "excerpt": "<Upload.Dragger beforeUpload={uploadAttachment(\"marksheets\", \"Proof attached\")} showUploadList={false} disabled={uploadingLetter}>"
+        },
+        {
+          "line": 281,
+          "kind": "jsx",
+          "excerpt": "<p className=\"ant-upload-drag-icon\"><InboxOutlined /></p>"
+        },
+        {
+          "line": 283,
+          "kind": "jsx",
+          "excerpt": "</Upload.Dragger>"
+        },
+        {
+          "line": 284,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 287,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"jobId\" label=\"Which drive?\" rules={[{ required: true, message: \"Which drive were you marked absent in?\" }]}>"
+        },
+        {
+          "line": 288,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select options={absentDrives} />"
+        },
+        {
+          "line": 289,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 291,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 292,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form.Item name=\"reason\" label=\"Tell the placement cell why\" rules={[{ required: true, min: 3, message: \"Please explain\" }]}><Input.TextArea rows={3} /></F"
+        },
+        {
+          "line": 293,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        },
+        {
+          "line": 294,
+          "kind": "jsx",
+          "excerpt": "</Modal>"
+        },
+        {
+          "line": 295,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Placements/student/PlacementRules.jsx",
+      "sourceSha": "d980cc55c42fb5dc19dd60a5603f4c8dc30ae8ac",
+      "expectedSha": "d980cc55c42fb5dc19dd60a5603f4c8dc30ae8ac",
+      "shaMatches": true,
+      "fromIndex": 131,
+      "lineCount": 43,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/TpoHubService",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 11,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useCallback, useEffect, useState } from \"react\";"
+        },
+        {
+          "line": 11,
+          "kind": "state",
+          "excerpt": "const [rules, setRules] = useState(null);"
+        },
+        {
+          "line": 13,
+          "kind": "state",
+          "excerpt": "const [open, setOpen] = useState(!collapsible);"
+        },
+        {
+          "line": 14,
+          "kind": "state",
+          "excerpt": "const [failed, setFailed] = useState(false);"
+        },
+        {
+          "line": 15,
+          "kind": "state",
+          "excerpt": "const load = useCallback(() => {"
+        },
+        {
+          "line": 24,
+          "kind": "state",
+          "excerpt": "useEffect(() => { load(); }, [load]);"
+        },
+        {
+          "line": 26,
+          "kind": "jsx,interactive",
+          "excerpt": "if (failed) return <Alert type=\"warning\" showIcon message=\"We couldn't load the rules\" action={<Button size=\"small\" onClick={load}>Retry</Button>} />;"
+        },
+        {
+          "line": 27,
+          "kind": "jsx",
+          "excerpt": "if (!rules) return <Skeleton active paragraph={{ rows: 3 }} />;"
+        },
+        {
+          "line": 29,
+          "kind": "jsx",
+          "excerpt": "<div data-testid=\"sp.rules\">"
+        },
+        {
+          "line": 31,
+          "kind": "jsx,interactive",
+          "excerpt": "{collapsible && <Button type=\"link\" style={{ padding: 0 }} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? \"Hide the rules\" : \"See all the rule"
+        },
+        {
+          "line": 40,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/profile/ProfileVerificationCard.jsx",
+      "sourceSha": "33b6f367fd96fdc95a37eed5eaf7ebcfb2582517",
+      "expectedSha": "33b6f367fd96fdc95a37eed5eaf7ebcfb2582517",
+      "shaMatches": true,
+      "fromIndex": 132,
+      "lineCount": 113,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/VerificationService",
+          "resolution": {
+            "path": "src/api/Services/VerificationService.js",
+            "sha": "54b5d827dd309924d1bcefd58b21effd50f7a89d"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 31,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useState } from \"react\";"
+        },
+        {
+          "line": 35,
+          "kind": "state",
+          "excerpt": "const [data, setData] = useState(null);"
+        },
+        {
+          "line": 36,
+          "kind": "state",
+          "excerpt": "const [error, setError] = useState(false);"
+        },
+        {
+          "line": 37,
+          "kind": "state",
+          "excerpt": "const [busy, setBusy] = useState(null);"
+        },
+        {
+          "line": 39,
+          "kind": "state",
+          "excerpt": "const load = useCallback(async () => {"
+        },
+        {
+          "line": 45,
+          "kind": "state",
+          "excerpt": "useEffect(() => { load(); }, [load]);"
+        },
+        {
+          "line": 48,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 63,
+          "kind": "jsx,interactive",
+          "excerpt": "if (error) return <Alert type=\"warning\" showIcon message=\"We could not load your verification status\" action={<Button size=\"small\" onClick={load}>Retry</Bu"
+        },
+        {
+          "line": 64,
+          "kind": "jsx",
+          "excerpt": "if (!data) return <Card className=\"ln-card profile-verification\"><Skeleton active paragraph={{ rows: 3 }} /></Card>;"
+        },
+        {
+          "line": 72,
+          "kind": "jsx",
+          "excerpt": "<SafetyCertificateOutlined aria-hidden=\"true\" /> Profile verification"
+        },
+        {
+          "line": 74,
+          "kind": "jsx",
+          "excerpt": "? <Tag color=\"green\" icon={<CheckCircleFilled />} className=\"profile-verification__badge\" data-testid=\"profile.verified-badge\">Verified profile</Tag>"
+        },
+        {
+          "line": 75,
+          "kind": "jsx",
+          "excerpt": ": <Tag className=\"profile-verification__badge\">Not verified yet</Tag>}"
+        },
+        {
+          "line": 79,
+          "kind": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\" style={{ marginTop: 0 }}>"
+        },
+        {
+          "line": 81,
+          "kind": "jsx",
+          "excerpt": "</Typography.Paragraph>"
+        },
+        {
+          "line": 82,
+          "kind": "jsx",
+          "excerpt": "<div className=\"profile-verification__sections\">"
+        },
+        {
+          "line": 87,
+          "kind": "jsx",
+          "excerpt": "<div className=\"profile-verification__section\" key={s.section} data-testid={`profile.verification.${s.section}`}>"
+        },
+        {
+          "line": 88,
+          "kind": "jsx",
+          "excerpt": "<div className=\"profile-verification__head\">"
+        },
+        {
+          "line": 89,
+          "kind": "jsx",
+          "excerpt": "<Typography.Text strong>{SECTION_LABEL[s.section] || s.section}</Typography.Text>"
+        },
+        {
+          "line": 90,
+          "kind": "jsx",
+          "excerpt": "<Tag color={color}>{label}</Tag>"
+        },
+        {
+          "line": 91,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 93,
+          "kind": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\" className=\"profile-verification__by\">"
+        },
+        {
+          "line": 95,
+          "kind": "jsx",
+          "excerpt": "</Typography.Text>"
+        },
+        {
+          "line": 97,
+          "kind": "jsx",
+          "excerpt": "{s.state === \"SENT_BACK\" && s.note && <Alert type=\"warning\" showIcon message=\"The college asked for a change\" description={s.note} />}"
+        },
+        {
+          "line": 98,
+          "kind": "jsx",
+          "excerpt": "{s.state === \"VERIFIED\" && s.note && s.changedSinceVerification && <Alert type=\"info\" showIcon message=\"Your last update was not accepted\" description={s.n"
+        },
+        {
+          "line": 100,
+          "kind": "jsx",
+          "excerpt": "<Typography.Text type=\"warning\">You changed this after it was verified. The verified details stay in use until you send the changes and the college verifie"
+        },
+        {
+          "line": 103,
+          "kind": "jsx",
+          "excerpt": "{s.state === \"INCOMPLETE\" && <Typography.Text type=\"secondary\">{SECTION_HELP[s.section]}</Typography.Text>}"
+        },
+        {
+          "line": 104,
+          "kind": "jsx,interactive",
+          "excerpt": "{action && <Button type=\"primary\" loading={busy === s.section} onClick={() => send(s.section)}>{action}</Button>}"
+        },
+        {
+          "line": 105,
+          "kind": "jsx",
+          "excerpt": "{(s.state === \"SUBMITTED\" || s.state === \"UPDATE_PENDING\") && <Typography.Text type=\"secondary\">The college will check it and you will be told.</Typography"
+        },
+        {
+          "line": 106,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 109,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 110,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Report/AssignmentReportContent.jsx",
+      "sourceSha": "447876e8072a3cb1073567ed12284b91fd495091",
+      "expectedSha": "447876e8072a3cb1073567ed12284b91fd495091",
+      "shaMatches": true,
+      "fromIndex": 133,
+      "lineCount": 213,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/courseServices",
+          "resolution": {
+            "path": "src/api/Services/courseServices.js",
+            "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/utils/assignmentReport",
+          "resolution": {
+            "path": "src/utils/assignmentReport.js",
+            "sha": "cc4ffc2f16ab09e63b1da3fdf57bec2d7a9f695b"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/utils/downloadAssignmentReportPdf",
+          "resolution": {
+            "path": "src/utils/downloadAssignmentReportPdf.js",
+            "sha": "cfa3ae772b5494cc553a234ea48dda3d4d7f2456"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "./ReportSummaryHeader",
+          "resolution": {
+            "path": "src/components/Report/ReportSummaryHeader.jsx",
+            "sha": "5f4220138c1f568b66432e7c5c7d245b52c69671"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "./ScoreDistributionBars",
+          "resolution": {
+            "path": "src/components/Report/ScoreDistributionBars.jsx",
+            "sha": "5a5a4369df743064f2bb92ec5ee54109874ac680"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 10,
+          "specifier": "./SubmissionTimingCard",
+          "resolution": {
+            "path": "src/components/Report/SubmissionTimingCard.jsx",
+            "sha": "675cb7894463f19d4bfea6737c23444953f6afae"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 11,
+          "specifier": "./ReportStudentTable",
+          "resolution": {
+            "path": "src/components/Report/ReportStudentTable.jsx",
+            "sha": "7cf0d1197a915579670608747f9f7762cecf2958"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/Common/Skeletons",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 13,
+          "specifier": "dayjs",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 29,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useCallback, useEffect, useState } from \"react\";"
+        },
+        {
+          "line": 37,
+          "kind": "state",
+          "excerpt": "const [assignment, setAssignment] = useState(null);"
+        },
+        {
+          "line": 38,
+          "kind": "state",
+          "excerpt": "const [report, setReport] = useState(null);"
+        },
+        {
+          "line": 39,
+          "kind": "state",
+          "excerpt": "const [loading, setLoading] = useState(true);"
+        },
+        {
+          "line": 40,
+          "kind": "state",
+          "excerpt": "const [error, setError] = useState(null);"
+        },
+        {
+          "line": 41,
+          "kind": "state",
+          "excerpt": "const [partialWarning, setPartialWarning] = useState(null);"
+        },
+        {
+          "line": 42,
+          "kind": "state",
+          "excerpt": "const [reloadKey, setReloadKey] = useState(0);"
+        },
+        {
+          "line": 43,
+          "kind": "state",
+          "excerpt": "const [downloading, setDownloading] = useState(false);"
+        },
+        {
+          "line": 45,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 102,
+          "kind": "state",
+          "excerpt": "const handleDownload = useCallback(() => {"
+        },
+        {
+          "line": 116,
+          "kind": "overlay",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 130,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-report-page ln-report-page--loading\">"
+        },
+        {
+          "line": 131,
+          "kind": "jsx",
+          "excerpt": "<DashboardSkeleton metrics={4} label=\"Loading assignment report\" />"
+        },
+        {
+          "line": 132,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 138,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-report-page\">"
+        },
+        {
+          "line": 143,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" onClick={() => setReloadKey((value) => value + 1)}>"
+        },
+        {
+          "line": 145,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 147,
+          "kind": "jsx",
+          "excerpt": "</Empty>"
+        },
+        {
+          "line": 148,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 153,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-report-page\">"
+        },
+        {
+          "line": 173,
+          "kind": "jsx,interactive",
+          "excerpt": "action={<Button size=\"small\" onClick={() => setReloadKey((value) => value + 1)}>Retry roster</Button>}"
+        },
+        {
+          "line": 178,
+          "kind": "jsx",
+          "excerpt": "<section className=\"ln-report-section\">"
+        },
+        {
+          "line": 180,
+          "kind": "jsx",
+          "excerpt": "<ScoreDistributionBars distribution={report.distribution} />"
+        },
+        {
+          "line": 181,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 183,
+          "kind": "jsx",
+          "excerpt": "<section className=\"ln-report-section\">"
+        },
+        {
+          "line": 190,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 192,
+          "kind": "jsx",
+          "excerpt": "<section className=\"ln-report-section\">"
+        },
+        {
+          "line": 207,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 208,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Report/QuizReportContent.jsx",
+      "sourceSha": "113fea69884a0cd6a49facd53916f33be71d57ed",
+      "expectedSha": "113fea69884a0cd6a49facd53916f33be71d57ed",
+      "shaMatches": true,
+      "fromIndex": 134,
+      "lineCount": 186,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/router",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/quizServices",
+          "resolution": {
+            "path": "src/api/Services/quizServices.js",
+            "sha": "5416eedaace3201c8dd5cd183ad7d69e8066699c"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "@/utils/quizReport",
+          "resolution": {
+            "path": "src/utils/quizReport.js",
+            "sha": "2964f0f44e32c29527634c967135b4c840342180"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/utils/downloadQuizReportPdf",
+          "resolution": {
+            "path": "src/utils/downloadQuizReportPdf.js",
+            "sha": "8771b8ea23bceb412d55f7eff03393bbb59483dc"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 8,
+          "specifier": "./ReportSummaryHeader",
+          "resolution": {
+            "path": "src/components/Report/ReportSummaryHeader.jsx",
+            "sha": "5f4220138c1f568b66432e7c5c7d245b52c69671"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 9,
+          "specifier": "./ScoreDistributionBars",
+          "resolution": {
+            "path": "src/components/Report/ScoreDistributionBars.jsx",
+            "sha": "5a5a4369df743064f2bb92ec5ee54109874ac680"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 10,
+          "specifier": "./QuestionAccuracyList",
+          "resolution": {
+            "path": "src/components/Report/QuestionAccuracyList.jsx",
+            "sha": "632d1c27600e81681f70b72319b573c6c59f4356"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 11,
+          "specifier": "./ReportStudentTable",
+          "resolution": {
+            "path": "src/components/Report/ReportStudentTable.jsx",
+            "sha": "7cf0d1197a915579670608747f9f7762cecf2958"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/Common/Skeletons",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 13,
+          "specifier": "dayjs",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 31,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import React, { useCallback, useEffect, useState } from \"react\";"
+        },
+        {
+          "line": 28,
+          "kind": "state",
+          "excerpt": "const [quiz, setQuiz] = useState(null);"
+        },
+        {
+          "line": 29,
+          "kind": "state",
+          "excerpt": "const [report, setReport] = useState(null);"
+        },
+        {
+          "line": 30,
+          "kind": "state",
+          "excerpt": "const [loading, setLoading] = useState(true);"
+        },
+        {
+          "line": 31,
+          "kind": "state",
+          "excerpt": "const [error, setError] = useState(null);"
+        },
+        {
+          "line": 32,
+          "kind": "state",
+          "excerpt": "const [partialWarning, setPartialWarning] = useState(null);"
+        },
+        {
+          "line": 33,
+          "kind": "state",
+          "excerpt": "const [reloadKey, setReloadKey] = useState(0);"
+        },
+        {
+          "line": 34,
+          "kind": "state",
+          "excerpt": "const [downloading, setDownloading] = useState(false);"
+        },
+        {
+          "line": 36,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        },
+        {
+          "line": 85,
+          "kind": "state",
+          "excerpt": "const handleDownload = useCallback(() => {"
+        },
+        {
+          "line": 99,
+          "kind": "overlay",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 113,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-report-page ln-report-page--loading\">"
+        },
+        {
+          "line": 114,
+          "kind": "jsx",
+          "excerpt": "<DashboardSkeleton metrics={4} label=\"Loading quiz report\" />"
+        },
+        {
+          "line": 115,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 121,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-report-page\">"
+        },
+        {
+          "line": 122,
+          "kind": "jsx",
+          "excerpt": "<Empty description={error || \"Report not found.\"}>"
+        },
+        {
+          "line": 124,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" onClick={() => setReloadKey((value) => value + 1)}>"
+        },
+        {
+          "line": 126,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 128,
+          "kind": "jsx",
+          "excerpt": "</Empty>"
+        },
+        {
+          "line": 129,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 134,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-report-page\">"
+        },
+        {
+          "line": 154,
+          "kind": "jsx,interactive",
+          "excerpt": "action={<Button size=\"small\" onClick={() => setReloadKey((value) => value + 1)}>Retry roster</Button>}"
+        },
+        {
+          "line": 159,
+          "kind": "jsx",
+          "excerpt": "<section className=\"ln-report-section\">"
+        },
+        {
+          "line": 161,
+          "kind": "jsx",
+          "excerpt": "<ScoreDistributionBars distribution={report.distribution} />"
+        },
+        {
+          "line": 162,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 164,
+          "kind": "jsx",
+          "excerpt": "<section className=\"ln-report-section\">"
+        },
+        {
+          "line": 167,
+          "kind": "jsx",
+          "excerpt": "<QuestionAccuracyList questions={report.questions} />"
+        },
+        {
+          "line": 168,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 170,
+          "kind": "jsx",
+          "excerpt": "<section className=\"ln-report-section\">"
+        },
+        {
+          "line": 180,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 181,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/tpo/accreditationPreflight.js",
+      "sourceSha": "f3c92d38efd5a4d91ae2971b34e3fd9403264461",
+      "expectedSha": "f3c92d38efd5a4d91ae2971b34e3fd9403264461",
+      "shaMatches": true,
+      "fromIndex": 135,
+      "lineCount": 38,
+      "classification": "nonvisual-module",
+      "dependencies": [],
+      "signalCount": 0,
+      "signals": []
+    },
+    {
+      "path": "src/components/tpo/batches/BatchTop.jsx",
+      "sourceSha": "1218898e0f42fc43ccd2d81d37e1a2bfcee4d1f5",
+      "expectedSha": "1218898e0f42fc43ccd2d81d37e1a2bfcee4d1f5",
+      "shaMatches": true,
+      "fromIndex": 136,
+      "lineCount": 200,
+      "classification": "ui-rendering-candidate",
+      "dependencies": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "next/link",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@ant-design/icons",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 6,
+          "specifier": "./batchRules",
+          "resolution": {
+            "path": "src/components/tpo/batches/batchRules.js",
+            "sha": "16156886a6ef7320fa6f5befbd2a450df1522055"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/Common/PanelStates",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 63,
+      "signals": [
+        {
+          "line": 21,
+          "kind": "jsx,overlay",
+          "excerpt": "<Dropdown trigger={[\"click\"]} disabled={disabled} menu={{ items, onClick: ({ key }) => onPick(key === \"CLEAR\" ? null : key) }}>"
+        },
+        {
+          "line": 22,
+          "kind": "jsx",
+          "excerpt": "<Button size={size} data-testid={testid}>"
+        },
+        {
+          "line": 23,
+          "kind": "jsx",
+          "excerpt": "{d ? <StatusBadge status={d.status} label={d.label} tone={d.tone} className=\"tpo-decision-badge\" /> : \"Decide\"} <DownOutlined />"
+        },
+        {
+          "line": 24,
+          "kind": "jsx",
+          "excerpt": "</Button>"
+        },
+        {
+          "line": 25,
+          "kind": "jsx",
+          "excerpt": "</Dropdown>"
+        },
+        {
+          "line": 42,
+          "kind": "jsx,interactive",
+          "excerpt": "const picker = <DatePicker key={flash} autoFocus={flash > 0} defaultOpen={flash > 0} value={deadline} onChange={setDeadline} format=\"D MMM YYYY\""
+        },
+        {
+          "line": 45,
+          "kind": "jsx",
+          "excerpt": "<Link href={`/tpo/students?f_batch=${batchId}`} className=\"tpo-nextstep__continue\" data-testid=\"batch.continue\">"
+        },
+        {
+          "line": 46,
+          "kind": "jsx",
+          "excerpt": "{plural(registered, \"student\", \"students\")} registered: continue on Students <ArrowRightOutlined />"
+        },
+        {
+          "line": 47,
+          "kind": "jsx",
+          "excerpt": "</Link>"
+        },
+        {
+          "line": 53,
+          "kind": "jsx",
+          "excerpt": "body = <Typography.Text type=\"secondary\">It is left out of counts and its students can&apos;t apply on their own. You can still add them to a drive.</Typog"
+        },
+        {
+          "line": 55,
+          "kind": "jsx",
+          "excerpt": "tone = \"done\"; title = \"No students yet\"; body = <Typography.Text type=\"secondary\">Add them to the batch&apos;s classes in Academic Setup.</Typography.Text"
+        },
+        {
+          "line": 58,
+          "kind": "jsx",
+          "excerpt": "body = <Typography.Text type=\"secondary\">Below: the whole batch at once; then, in the sheet, any students who are exceptions.</Typography.Text>;"
+        },
+        {
+          "line": 64,
+          "kind": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 65,
+          "kind": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">Register by</Typography.Text>{picker}"
+        },
+        {
+          "line": 66,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" loading={busy} disabled={!deadline} onClick={onInvite} data-testid=\"batch-invite\">Invite {left.toLocaleString()}</Button>"
+        },
+        {
+          "line": 67,
+          "kind": "jsx",
+          "excerpt": "{!deadline && <Typography.Text type=\"secondary\">Pick the date first</Typography.Text>}"
+        },
+        {
+          "line": 68,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 73,
+          "kind": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 74,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" onClick={onRemind} data-testid=\"batch-remind\">Remind the {left.toLocaleString()}</Button>"
+        },
+        {
+          "line": 75,
+          "kind": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">or move the deadline</Typography.Text>{picker}"
+        },
+        {
+          "line": 76,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button loading={busy} disabled={sameDeadline} onClick={onMoveDeadline}>Move</Button>"
+        },
+        {
+          "line": 77,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 82,
+          "kind": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 83,
+          "kind": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">Move the deadline to reopen it</Typography.Text>{picker}"
+        },
+        {
+          "line": 84,
+          "kind": "jsx,interactive",
+          "excerpt": "<Button type=\"primary\" loading={busy} disabled={sameDeadline || !deadline} onClick={onInvite}>Reopen and tell them</Button>"
+        },
+        {
+          "line": 85,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 91,
+          "kind": "jsx",
+          "excerpt": "<section className={`tpo-nextstep is-${tone}${flash ? \" is-flash\" : \"\"}`} key={flash} aria-label=\"Next step\" data-testid=\"batch.next-step\" id=\"batch-next-s"
+        },
+        {
+          "line": 96,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 111,
+          "kind": "jsx",
+          "excerpt": "<section className=\"tpo-whoisin\" aria-label=\"Who is in placements\" data-testid=\"batch.who-is-in\">"
+        },
+        {
+          "line": 112,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-whoisin__row is-batch\">"
+        },
+        {
+          "line": 115,
+          "kind": "jsx",
+          "excerpt": "<DecideMenu current={batch.decision} clearLabel=\"Not decided\" onPick={decideScope(\"BATCH\", Number(batchId), batch.name)} testid=\"batch-decide\" disabled={di"
+        },
+        {
+          "line": 116,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 120,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-whoisin__row\" key={c.classId} data-testid={`class-row-${c.classId}`}>"
+        },
+        {
+          "line": 121,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className={`tpo-whoisin__name is-link${on ? \" is-on\" : \"\"}`} aria-pressed={on} onClick={() => onClass(String(c.classId))}"
+        },
+        {
+          "line": 122,
+          "kind": "jsx",
+          "excerpt": "title={on ? \"Show every class again\" : `Show only ${c.name} below`}>{c.name}</button>"
+        },
+        {
+          "line": 126,
+          "kind": "jsx",
+          "excerpt": "{c.decision && <Typography.Text type=\"secondary\"> · own decision for this class</Typography.Text>}"
+        },
+        {
+          "line": 128,
+          "kind": "jsx",
+          "excerpt": "<DecideMenu current={c.decision} clearLabel=\"Same as the batch\" size=\"small\" onPick={decideScope(\"CLASS\", c.classId, `class ${c.name}`)} testid={`class-dec"
+        },
+        {
+          "line": 129,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 133,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className={`tpo-whoisin__own${ownPicked ? \" is-on\" : \"\"}`} aria-pressed={ownPicked} onClick={onOwn} data-testid=\"batch.own\">"
+        },
+        {
+          "line": 134,
+          "kind": "jsx",
+          "excerpt": "{plural(own, \"exception\", \"exceptions\")}{differ < own ? ` · ${plural(own - differ, \"matches\", \"match\")} the ${showClasses ? \"class or batch\" : \"batch\"} any"
+        },
+        {
+          "line": 135,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 137,
+          "kind": "jsx",
+          "excerpt": "</section>"
+        },
+        {
+          "line": 155,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-journey-wrap\">"
+        },
+        {
+          "line": 156,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-journey__caption\" data-testid=\"batch.journey-caption\">"
+        },
+        {
+          "line": 159,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 160,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-journey\" role=\"group\" aria-label=\"Into placements\" data-testid=\"batch.journey\">"
+        },
+        {
+          "line": 165,
+          "kind": "jsx",
+          "excerpt": "<div key={s.key} className=\"tpo-journey__part\">"
+        },
+        {
+          "line": 166,
+          "kind": "jsx,interactive",
+          "excerpt": "<button type=\"button\" className={`tpo-journey__step${on ? \" is-on\" : \"\"}`} aria-pressed={on} onClick={() => onPick(s.key)} data-testid={`bjourney.${s.key}`"
+        },
+        {
+          "line": 171,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 173,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-journey__between\">"
+        },
+        {
+          "line": 174,
+          "kind": "jsx",
+          "excerpt": "<RightOutlined className=\"tpo-journey__arrow\" aria-hidden />"
+        },
+        {
+          "line": 176,
+          "kind": "jsx",
+          "excerpt": "<button type=\"button\" className={`tpo-journey__gap${picked === gap.key ? \" is-on\" : \"\"}`} aria-pressed={picked === gap.key}"
+        },
+        {
+          "line": 177,
+          "kind": "interactive",
+          "excerpt": "onClick={() => onPick(gap.key)} data-testid={`bjourney.${gap.key}`} title={`Show these ${gap.n}`}>"
+        },
+        {
+          "line": 179,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 181,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 183,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 186,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 188,
+          "kind": "jsx",
+          "excerpt": "<div className=\"tpo-journey__extras\">"
+        },
+        {
+          "line": 190,
+          "kind": "jsx",
+          "excerpt": "<button type=\"button\" key={e.key} className={`tpo-journey__extra${picked === e.key ? \" is-on\" : \"\"}`} aria-pressed={picked === e.key}"
+        },
+        {
+          "line": 191,
+          "kind": "interactive",
+          "excerpt": "onClick={() => onPick(e.key)} data-testid={`bjourney.${e.key}`}>"
+        },
+        {
+          "line": 193,
+          "kind": "jsx",
+          "excerpt": "</button>"
+        },
+        {
+          "line": 195,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 197,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ]
+    }
+  ]
+}

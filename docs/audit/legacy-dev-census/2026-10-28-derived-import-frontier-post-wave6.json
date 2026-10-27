@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "type": "Static UI-folder import frontier after full wave-4/5/6 reachability follow-up (NOT product task tracker)",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "counts": {
+    "inspectedDistinct": 484,
+    "wave6FilesRead": 10,
+    "newUiFolderCandidates": 0,
+    "otherNewImports": 5,
+    "readFailures": 0,
+    "shaMismatches": 0,
+    "priorInspected": 248,
+    "wave4FilesRead": 190,
+    "wave5FilesRead": 36,
+    "uiFolderCandidateFrontier": 0,
+    "scopedImportInspectionSourceCount": 484,
+    "exactSourceShaMatchAllNewlyRead": true
+  },
+  "limitations": [
+    "Source import signals, NOT exhaustive runtime user-facing surface proof",
+    "Computed imports, global providers, backend and source outside UI folders remain follow-up investigation"
+  ],
+  "frontier": [],
+  "outsideUiFolder": [
+    {
+      "path": "src/api/Services/AdminService.js",
+      "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6",
+      "importedBy": [
+        {
+          "from": "src/components/profile/PrivateDocLink.jsx",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/VerificationService.js",
+      "sha": "54b5d827dd309924d1bcefd58b21effd50f7a89d",
+      "importedBy": [
+        {
+          "from": "src/components/profile/PrivateDocLink.jsx",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/SkillService.js",
+      "sha": "2bbf4fd60992051bdf5a895a81a16a25b4ebbd4c",
+      "importedBy": [
+        {
+          "from": "src/components/Global/SkillsAutocomplete.jsx",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "src/utils/uploadToR2.js",
+      "sha": "71c0336018a10d333a8333306a9a59aa288c785d",
+      "importedBy": [
+        {
+          "from": "src/components/profile/about/MarksheetUpload.jsx",
+          "line": 5
+        },
+        {
+          "from": "src/components/profile/VideoIntroModal.jsx",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "path": "src/api/Services/ProfileService.js",
+      "sha": "9d9760085683f5a740026898593119bd64953acf",
+      "importedBy": [
+        {
+          "from": "src/components/profile/VideoIntroModal.jsx",
+          "line": 8
+        }
+      ]
+    }
+  ],
+  "previousSnapshots": {
+    "routeSourceFilesIndexed": 313,
+    "wave1And2Inspected": 136,
+    "wave3Inspected": 112,
+    "wave4Inspected": 190,
+    "wave5Inspected": 36,
+    "wave6Inspected": 10
+  },
+  "assertions": {
+    "allWave4ImportsPreviouslyRemainingCovered": 190,
+    "allNewWave4UiFolderDependenciesInspected": 36,
+    "allNewWave5UiFolderDependenciesInspected": 10,
+    "unvisitedTreeResolvedUiFolderDependencies": 0,
+    "noNewReadOrShaFailure": true
+  },
+  "scopeRestrictions": [
+    "Static graph only: source file counts NOT page-family/surface/action/state count",
+    "User-facing rendering can be assembled through computed/dynamic imports, portal providers, runtime conditions and helpers outside UI folders",
+    "Legacy backend, vNext service parity, role and tenant guards, integrated/browser/prototype proof not certified",
+    "Unknown semantic coupling or parser false negatives are explicit further-research exceptions, not green status",
+    "Official project tracker docs/tracker.json was not modified"
+  ]
+}

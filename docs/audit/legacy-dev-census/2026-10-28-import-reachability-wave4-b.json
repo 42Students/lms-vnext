@@ -1,0 +1,790 @@
+{
+  "schemaVersion": 1,
+  "batch": "wave4-b",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "parentFrontier": "2026-10-28-derived-import-frontier-post-wave3.json",
+  "classification": "source-only, not product parity",
+  "nodes": [
+    {
+      "path": "src/components/tpo/templates/fillTemplate.js",
+      "sha": "c21a93fd8ef04c5a9a60ea269c79d274725adbaf",
+      "expectedSha": "c21a93fd8ef04c5a9a60ea269c79d274725adbaf",
+      "shaMatches": true,
+      "sourceLineCount": 20,
+      "fromIndex": 187,
+      "classification": "nonvisual-module",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": [],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/tpo/ui/calendarGrid.js",
+      "sha": "af86e35a63456ff1184f61fb8b25ba066dc9308a",
+      "expectedSha": "af86e35a63456ff1184f61fb8b25ba066dc9308a",
+      "shaMatches": true,
+      "sourceLineCount": 72,
+      "fromIndex": 188,
+      "classification": "nonvisual-module",
+      "imports": [
+        {
+          "line": 2,
+          "specifier": "../dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": [],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/layouts/placementsTheme.js",
+      "sha": "746cc56436497f1c7a3f6830dcfb8ae4ced1fc73",
+      "expectedSha": "746cc56436497f1c7a3f6830dcfb8ae4ced1fc73",
+      "shaMatches": true,
+      "sourceLineCount": 147,
+      "fromIndex": 189,
+      "classification": "nonvisual-module",
+      "imports": [],
+      "signalCount": 0,
+      "signals": [],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/pages/Dashboard/course/Home/HomeEditDrawer.js",
+      "sha": "2d3c4cbdde7c5807b6f7ec1d6ee6a54c052f6819",
+      "expectedSha": "2d3c4cbdde7c5807b6f7ec1d6ee6a54c052f6819",
+      "shaMatches": true,
+      "sourceLineCount": 80,
+      "fromIndex": 190,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/components/Global/RightDrawer/DrawerWidget",
+          "resolution": {
+            "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+            "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 19,
+      "signals": [
+        {
+          "line": 23,
+          "kind": "interactive",
+          "excerpt": "onClose={close}"
+        },
+        {
+          "line": 31,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-drawer-body\">"
+        },
+        {
+          "line": 32,
+          "kind": "jsx",
+          "excerpt": "<div className=\"ln-drawer-content h-100\">"
+        },
+        {
+          "line": 33,
+          "kind": "jsx,overlay",
+          "excerpt": "<Form form={form} className=\"h-100 ln-ant-form\">"
+        },
+        {
+          "line": 34,
+          "kind": "jsx",
+          "excerpt": "<div className=\"d-flex flex-column h-100\">"
+        },
+        {
+          "line": 35,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mb-4\">"
+        },
+        {
+          "line": 37,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 47,
+          "kind": "jsx",
+          "excerpt": "<Input placeholder=\"Course title\" />"
+        },
+        {
+          "line": 48,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 49,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 51,
+          "kind": "jsx",
+          "excerpt": "<div className=\"mb-4\">"
+        },
+        {
+          "line": 53,
+          "kind": "overlay",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 69,
+          "kind": "jsx",
+          "excerpt": "</Form.Item>"
+        },
+        {
+          "line": 70,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 71,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 72,
+          "kind": "jsx",
+          "excerpt": "</Form>"
+        },
+        {
+          "line": 73,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 74,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 75,
+          "kind": "jsx",
+          "excerpt": "</DrawerWidget>"
+        }
+      ],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/tpo/recruiterNextStep.js",
+      "sha": "0dfe3654529c22ee428851ca88fd976e6f392780",
+      "expectedSha": "0dfe3654529c22ee428851ca88fd976e6f392780",
+      "shaMatches": true,
+      "sourceLineCount": 230,
+      "fromIndex": 1,
+      "classification": "nonvisual-module",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/components/tpo/dj",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/tpo/invite/inviteState",
+          "resolution": {
+            "path": "src/components/tpo/invite/inviteState.js",
+            "sha": "9e3225213b74eaabae6a76ec60ece1062a3b0c29"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": [],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/tpo/ui/useDebouncedValue.js",
+      "sha": "289cf207badae64a1bb7dc7c761798bad584804c",
+      "expectedSha": "289cf207badae64a1bb7dc7c761798bad584804c",
+      "shaMatches": true,
+      "sourceLineCount": 12,
+      "fromIndex": 2,
+      "classification": "interaction-hook",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 3,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useEffect, useState } from \"react\";"
+        },
+        {
+          "line": 5,
+          "kind": "state",
+          "excerpt": "const [debounced, setDebounced] = useState(value);"
+        },
+        {
+          "line": 6,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        }
+      ],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/admin/entitySectionTabs.js",
+      "sha": "68af81a36e26cad2fc107d00ae1588d5d434f267",
+      "expectedSha": "68af81a36e26cad2fc107d00ae1588d5d434f267",
+      "shaMatches": true,
+      "sourceLineCount": 39,
+      "fromIndex": 3,
+      "classification": "nonvisual-module",
+      "imports": [],
+      "signalCount": 0,
+      "signals": [],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/admin/projects/workspaceRowMeta.jsx",
+      "sha": "ea8e3820292da36be2139f584532c291e322853c",
+      "expectedSha": "ea8e3820292da36be2139f584532c291e322853c",
+      "shaMatches": true,
+      "sourceLineCount": 178,
+      "fromIndex": 4,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/AdminService",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          },
+          "dynamic": false
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/admin/projects/adminProjectUtils",
+          "resolution": {
+            "path": "src/components/admin/projects/adminProjectUtils.js",
+            "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 25,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useMemo, useState } from \"react\";"
+        },
+        {
+          "line": 29,
+          "kind": "jsx",
+          "excerpt": "<Tag color={color}>{label}</Tag>"
+        },
+        {
+          "line": 42,
+          "kind": "jsx",
+          "excerpt": "<Tag color={color}>{label}</Tag>"
+        },
+        {
+          "line": 57,
+          "kind": "state",
+          "excerpt": "const [search, setSearch] = useState(\"\");"
+        },
+        {
+          "line": 58,
+          "kind": "state",
+          "excerpt": "const [type, setType] = useState(\"ALL\");"
+        },
+        {
+          "line": 59,
+          "kind": "state",
+          "excerpt": "const [page, setPage] = useState(1);"
+        },
+        {
+          "line": 87,
+          "kind": "jsx",
+          "excerpt": "if (!asList(members).length) return <Empty description=\"No members yet\" />;"
+        },
+        {
+          "line": 89,
+          "kind": "jsx",
+          "excerpt": "<Space direction=\"vertical\" size={8} style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 90,
+          "kind": "jsx",
+          "excerpt": "<Space wrap style={{ width: \"100%\", justifyContent: \"space-between\" }}>"
+        },
+        {
+          "line": 91,
+          "kind": "jsx",
+          "excerpt": "<Input.Search allowClear value={search} placeholder=\"Search member name or ID\" aria-label=\"Search project members\""
+        },
+        {
+          "line": 92,
+          "kind": "interactive",
+          "excerpt": "onChange={(e) => { setSearch(e.target.value); setPage(1); }} style={{ maxWidth: 320 }} />"
+        },
+        {
+          "line": 93,
+          "kind": "jsx,overlay",
+          "excerpt": "<Select value={type} aria-label=\"Filter project members by type\" style={{ width: 160 }}"
+        },
+        {
+          "line": 94,
+          "kind": "interactive",
+          "excerpt": "onChange={(v) => { setType(v); setPage(1); }}"
+        },
+        {
+          "line": 96,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 97,
+          "kind": "overlay",
+          "excerpt": "<Table"
+        },
+        {
+          "line": 106,
+          "kind": "jsx",
+          "excerpt": "{ title: \"Role\", key: \"role\", render: (_, m) => { const r = roleOf(m); return <Tag color={r.color}>{r.label}</Tag>; } },"
+        },
+        {
+          "line": 111,
+          "kind": "jsx",
+          "excerpt": "if (String(m?.userType).toUpperCase() !== \"LEARNER\") return <Typography.Text type=\"secondary\">—</Typography.Text>;"
+        },
+        {
+          "line": 113,
+          "kind": "jsx",
+          "excerpt": "return w?.assigned ? w.assigned : <Tag color=\"orange\">None</Tag>;"
+        },
+        {
+          "line": 121,
+          "kind": "jsx",
+          "excerpt": "return w ? `${w.done} · ${w.review} · ${w.active}` : <Typography.Text type=\"secondary\">—</Typography.Text>;"
+        },
+        {
+          "line": 129,
+          "kind": "jsx",
+          "excerpt": "return w?.lastUpdate ? formatTimestamp(w.lastUpdate) : <Typography.Text type=\"secondary\">—</Typography.Text>;"
+        },
+        {
+          "line": 135,
+          "kind": "jsx",
+          "excerpt": "<Pagination size=\"small\" current={page} pageSize={MEMBER_PAGE_SIZE} total={filtered.length} showSizeChanger={false}"
+        },
+        {
+          "line": 136,
+          "kind": "interactive",
+          "excerpt": "showTotal={(total, range) => `${range[0]}–${range[1]} of ${total} matching members`} onChange={setPage} />"
+        },
+        {
+          "line": 138,
+          "kind": "jsx",
+          "excerpt": "</Space>"
+        },
+        {
+          "line": 148,
+          "kind": "state",
+          "excerpt": "const [checking, setChecking] = useState(false);"
+        },
+        {
+          "line": 174,
+          "kind": "jsx,interactive",
+          "excerpt": "action={<Button size=\"small\" loading={checking} onClick={check}>Check roster</Button>}"
+        }
+      ],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/profile/ProfileSkeleton.js",
+      "sha": "7ac4db71c8bbc0088393bb3fa24b5456c498513a",
+      "expectedSha": "7ac4db71c8bbc0088393bb3fa24b5456c498513a",
+      "shaMatches": true,
+      "sourceLineCount": 48,
+      "fromIndex": 5,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 29,
+      "signals": [
+        {
+          "line": 13,
+          "kind": "jsx",
+          "excerpt": "<div className=\"learn-profile-page__skeleton-grid\">"
+        },
+        {
+          "line": 14,
+          "kind": "jsx",
+          "excerpt": "<Row gutter={[20, 20]} className=\"profile-sections\">"
+        },
+        {
+          "line": 15,
+          "kind": "jsx",
+          "excerpt": "<Col span={24}>"
+        },
+        {
+          "line": 16,
+          "kind": "jsx",
+          "excerpt": "<Card className=\"profile-userinfo-card profile-userinfo\">"
+        },
+        {
+          "line": 17,
+          "kind": "jsx",
+          "excerpt": "<div className=\"profile-userinfo__main\">"
+        },
+        {
+          "line": 18,
+          "kind": "jsx",
+          "excerpt": "<Skeleton.Avatar active size={120} shape=\"square\" className=\"profile-userinfo__avatar ln-prof-img\" />"
+        },
+        {
+          "line": 19,
+          "kind": "jsx",
+          "excerpt": "<div className=\"profile-userinfo__content\" style={{ flex: 1 }}>"
+        },
+        {
+          "line": 20,
+          "kind": "jsx",
+          "excerpt": "<Skeleton active title={{ width: \"35%\" }} paragraph={{ rows: 2, width: [\"45%\", \"30%\"] }} />"
+        },
+        {
+          "line": 21,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 22,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 23,
+          "kind": "jsx",
+          "excerpt": "<div className=\"profile-userinfo__video-section\">"
+        },
+        {
+          "line": 24,
+          "kind": "jsx",
+          "excerpt": "<Skeleton.Node active className=\"profile-userinfo__video-skeleton\" style={{ width: \"100%\", height: 180 }} />"
+        },
+        {
+          "line": 25,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        },
+        {
+          "line": 26,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 27,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 29,
+          "kind": "jsx",
+          "excerpt": "<Col span={24}>"
+        },
+        {
+          "line": 30,
+          "kind": "jsx",
+          "excerpt": "<Card>"
+        },
+        {
+          "line": 31,
+          "kind": "jsx",
+          "excerpt": "<Skeleton active title={false} paragraph={{ rows: 1, width: \"100%\" }} />"
+        },
+        {
+          "line": 32,
+          "kind": "jsx",
+          "excerpt": "</Card>"
+        },
+        {
+          "line": 33,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 35,
+          "kind": "jsx",
+          "excerpt": "<Col span={24}>"
+        },
+        {
+          "line": 36,
+          "kind": "jsx",
+          "excerpt": "<Row gutter={[20, 20]} className=\"profile-sections-row\" align=\"top\">"
+        },
+        {
+          "line": 38,
+          "kind": "jsx",
+          "excerpt": "<Col xs={24} xl={12} key={i}>"
+        },
+        {
+          "line": 39,
+          "kind": "jsx",
+          "excerpt": "<Card loading />"
+        },
+        {
+          "line": 40,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 42,
+          "kind": "jsx",
+          "excerpt": "</Row>"
+        },
+        {
+          "line": 43,
+          "kind": "jsx",
+          "excerpt": "</Col>"
+        },
+        {
+          "line": 44,
+          "kind": "jsx",
+          "excerpt": "</Row>"
+        },
+        {
+          "line": 45,
+          "kind": "jsx",
+          "excerpt": "</div>"
+        }
+      ],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/recruiter/useRecruiterCollege.js",
+      "sha": "9b291490eb5d372dc27db37d43023efae3191c1c",
+      "expectedSha": "9b291490eb5d372dc27db37d43023efae3191c1c",
+      "shaMatches": true,
+      "sourceLineCount": 28,
+      "fromIndex": 6,
+      "classification": "interaction-hook",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/api/Services/RecruiterService",
+          "resolution": {
+            "path": "src/api/Services/RecruiterService.js",
+            "sha": "3263f12ec07a3a3f904d48f0bedcf0ddf9a4b4a4"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 4,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useCallback, useEffect, useState } from \"react\";"
+        },
+        {
+          "line": 9,
+          "kind": "state",
+          "excerpt": "const [state, setState] = useState({ loading: true, error: false, collegeId: null, collegeName: \"\", user: null, needsCollege: false });"
+        },
+        {
+          "line": 11,
+          "kind": "state",
+          "excerpt": "const load = useCallback(() => {"
+        },
+        {
+          "line": 25,
+          "kind": "state",
+          "excerpt": "useEffect(() => { load(); }, [load]);"
+        }
+      ],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/tpo/recruiterLeadStages.js",
+      "sha": "df7b4dcf578e634dd1d6b716c265a02a195d7937",
+      "expectedSha": "df7b4dcf578e634dd1d6b716c265a02a195d7937",
+      "shaMatches": true,
+      "sourceLineCount": 51,
+      "fromIndex": 7,
+      "classification": "ui-rendering-candidate",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "resolution": null,
+          "dynamic": false
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/tpo/ui/HoverStory",
+          "resolution": {
+            "path": "src/components/tpo/ui/HoverStory.jsx",
+            "sha": "d6f1cd0dc9a446e617de3e11fb0e1ebfe7511e1a"
+          },
+          "dynamic": false
+        }
+      ],
+      "signalCount": 3,
+      "signals": [
+        {
+          "line": 39,
+          "kind": "jsx",
+          "excerpt": "<Tag className={`lms-status-badge lms-status-badge--${tone}`} data-status={String(stage || \"\").toLowerCase()}>"
+        },
+        {
+          "line": 42,
+          "kind": "jsx",
+          "excerpt": "</Tag>"
+        },
+        {
+          "line": 49,
+          "kind": "jsx",
+          "excerpt": "return <HoverStory story={story}>{badge}</HoverStory>;"
+        }
+      ],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/tpo/students/academics.js",
+      "sha": "7d2d94830a903eba1fc580ad79d4e5aaa8d00ee3",
+      "expectedSha": "7d2d94830a903eba1fc580ad79d4e5aaa8d00ee3",
+      "shaMatches": true,
+      "sourceLineCount": 139,
+      "fromIndex": 8,
+      "classification": "nonvisual-module",
+      "imports": [
+        {
+          "line": 6,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 0,
+      "signals": [],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/common/lists.js",
+      "sha": "171e1732da97fdf98d746da214a8284911e190bb",
+      "expectedSha": "171e1732da97fdf98d746da214a8284911e190bb",
+      "shaMatches": true,
+      "sourceLineCount": 424,
+      "fromIndex": 9,
+      "classification": "nonvisual-module",
+      "imports": [],
+      "signalCount": 0,
+      "signals": [],
+      "interpretation": "source candidates only; behavior unverified"
+    },
+    {
+      "path": "src/components/admin/useDependencyCounts.js",
+      "sha": "dccacdb27b5bca8bb304174ca27f0f556943861d",
+      "expectedSha": "dccacdb27b5bca8bb304174ca27f0f556943861d",
+      "shaMatches": true,
+      "sourceLineCount": 95,
+      "fromIndex": 10,
+      "classification": "interaction-hook",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "resolution": null,
+          "dynamic": false
+        }
+      ],
+      "signalCount": 5,
+      "signals": [
+        {
+          "line": 1,
+          "kind": "state",
+          "excerpt": "import { useEffect, useRef, useState } from \"react\";"
+        },
+        {
+          "line": 47,
+          "kind": "state",
+          "excerpt": "const [counts, setCounts] = useState({});"
+        },
+        {
+          "line": 48,
+          "kind": "state",
+          "excerpt": "const known = useRef(new Map()); // rowId -> { label: count }"
+        },
+        {
+          "line": 49,
+          "kind": "state",
+          "excerpt": "const knownFor = useRef(resetKey);"
+        },
+        {
+          "line": 56,
+          "kind": "state",
+          "excerpt": "useEffect(() => {"
+        }
+      ],
+      "interpretation": "source candidates only; behavior unverified"
+    }
+  ]
+}

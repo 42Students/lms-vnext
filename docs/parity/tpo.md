@@ -2211,3 +2211,14 @@ This section adds **verification targets to existing TPO page-family contracts**
 - **Outreach and request interactions:** legacy `EmailsTab.jsx`, `FollowUpModal.jsx`, `MessagesPanel.js`, `RecruiterSidePanel.jsx`, `RequestsQueue.jsx` and `RequestsPanel.js` require distinct embedded-overlays/action-state reconciliation, not additional route counts.
 
 **No TPO row was marked Implementation Green.** Actual source-to-handler, database and desktop/mobile tests remain required before accepting an individual existing page family.
+
+
+## 2026-10-28 imported TPO command, communication and student-workspace descendants — source-only
+
+Legacy source reference `9d56bb7a347b06f242ef615c19fdc298f83329e0`; see `docs/audit/legacy-dev-census/2026-10-28-wave4-6-reconciliation.md`. Continue within the **existing TPO Home, Students, Engage, Team, communications and Requests families**. Do not count reusable components as additional pages.
+
+- `src/components/tpo/TpoCommandPalette.jsx:L8,L95-L139` is a Ctrl/Cmd+K finder with student, recruiter, company and drive search, listbox, active selection and recent item behavior; `TpoBellPanel.jsx`, `ui/ShortcutHelp.jsx`, `ui/recents.js` and `ui/shortcuts.js` add notification and keyboard paths. Verify vNext reachability, role/college isolation, shortcut precedence, keyboard/focus/close, recents privacy and empty/error states by browser rather than assuming a topbar matches.
+- `emails/EmailDetail.jsx`, `EmailComposer.jsx`, `outreach/OutreachSession.jsx`, `TeamConversations.jsx`, `TeamPeople.jsx` and `TodayQueue.jsx` expose conditional message, audience, follow-up and operational workflows. Trace frontend service, authorized backend write, notification/side effect and recipient visible state with real disposable fixtures.
+- Previous checkpoint identified legacy seven request kinds versus vNext `src/modules/placements/tpo-global-requests-model.ts` and `tpo-students-service.ts` three-kind model filters. VNext also has general request and bulk-decision implementations, so classify precise semantic coverage first; do not file a missing capability based only on this one enum.
+
+**Closure:** The scoped literal/static UI-folder import frontier is exhausted at the pinned source SHA; action/state/API/runtime parity is NOT accepted. No TPO Implementation Green or tracker change.

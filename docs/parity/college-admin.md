@@ -1606,3 +1606,10 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin Semesters CSV transparency PARTIAL (2026-10-15 chat-3):** Visible mobile-wrapping export link and capped-row/truncation notice clarify that the downloadable CSV uses the current persisted, permission-scoped filters. Source/unit regression guard authored; executed browser/download parity pending.
 
 **College Admin Batches CSV transparency PARTIAL (2026-10-15 chat-3):** Visible mobile-wrapping export link and capped-row/truncation notice clarify that the downloadable CSV uses the current persisted, permission-scoped filters. Source/unit regression guard authored; executed browser/download parity pending.
+
+
+## 2026-10-28 imported shared academic/people section checkpoint — source-only
+
+The legacy source investigation at FE `9d56bb7a347b06f242ef615c19fdc298f83329e0` traced `src/pages/Dashboard/course/syllabus/{liveclass,resource,video,youtube,syllabusDetail}.js`, `src/pages/Dashboard/course/Attendance/{TakeAttendance,StudentAttendanceView,TeacherAttendanceView}.js/jsx`, `src/components/admin/courses/AdminCourseSyllabus.jsx`, `src/components/contacts/ContactsGrid.js` and extensive reused Super Admin `sections/*.js` modules. See `docs/audit/legacy-dev-census/2026-10-28-wave4-6-reconciliation.md`.
+
+Before accepting existing College Admin academic/course/people families, map child tabs, editors, uploads, order changes, contextual menus, attendance corrections, unsaved/invalid states and tenant boundaries to actual vNext child workspaces. Shared source files do not imply identical permission semantics between college and Super Admin. This checkpoint adds no page count, tracker task or green status; backend and browser acceptance remain required.
