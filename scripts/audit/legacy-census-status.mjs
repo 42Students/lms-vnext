@@ -46,7 +46,9 @@ export function buildLegacyCensusStatus({census,inspectionFiles,overlay,deep,bac
   const overlayPaths=paths(overlay.records),deepPaths=paths(deep.records);
   const candidateChecked=unique([...overlayPaths,...deepPaths]);
   const unknownComponents=diff(candidateChecked,expectedComponents);
-  if(unknownComponents.length)problems.push("inspected components not in frozen component census: "+unknownComponents.slice(0,8).join(", "));
+  // Legacy inspection files can refer to components removed or renamed before the frozen tree.
+  // Flag these as stale evidence requiring disposition, not structural parser failures.
+
   const backPaths=paths(backend.records);
   const unknownBack=diff(backPaths,expectedBack);
   if(unknownBack.length)problems.push("inspected backend controllers not in frozen controller list: "+unknownBack.slice(0,8).join(", "));
@@ -75,6 +77,7 @@ export function buildLegacyCensusStatus({census,inspectionFiles,overlay,deep,bac
       namedOverlayFileCandidates:(census.counts?.namedLegacyOverlayCandidateFiles||null),
       namedOverlayFileRecords:unique(overlayPaths).length,
       deepComponentRecords:unique(deepPaths).length,
+      obsoleteOrUnmatchedInspectionPaths:unknownComponents,
       staleAfterDevChanges:{changedRouteFiles:affectedRoutes.length,changedComponentFiles:affectedComponents.length,
         routes:affectedRoutes,components:affectedComponents},
     },
@@ -125,6 +128,7 @@ export function run(argv=process.argv.slice(2),root=ROOT){
   if(argv.includes("--assert-exhaustive") &&(
     result.frontend.missingRouteSourceFiles||
     result.frontend.uninspectedComponentSourceFiles||
+    result.frontend.obsoleteOrUnmatchedInspectionPaths.length||
     result.backend.uninspectedControllerSourceFiles||
     result.frontend.staleAfterDevChanges.changedRouteFiles||
     result.frontend.staleAfterDevChanges.changedComponentFiles))return 2;
