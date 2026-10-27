@@ -836,6 +836,335 @@
       ],
       "overlayCandidates": [],
       "events": 3
+    },
+    {
+      "path": "src/pages/college-admin/projects/templates/index.js",
+      "sha": "b8bc58f0f030a9c544ba8106c065ffafc6da2c2c",
+      "lines": 251,
+      "imports": [
+        "@/utils/csvExport",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Text",
+        "Space",
+        "Tag",
+        "Button",
+        "AdminGroupShell",
+        "Alert",
+        "Card",
+        "Input.Search",
+        "DownloadOutlined",
+        "Skeleton",
+        "Table",
+        "Empty"
+      ],
+      "overlayCandidates": [
+        "Table"
+      ],
+      "events": 4
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/audit.js",
+      "sha": "13c71d32159a010cb408e297ab66a69032bfe854",
+      "lines": 112,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceResourceAudit",
+        "@/components/admin/projects/adminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Button",
+        "AuditOutlined",
+        "WorkspaceResourceAudit"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/delivery.js",
+      "sha": "566d023d048b71568957d3b99733b0f0f0a2ea13",
+      "lines": 67,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceDeliveryOverview",
+        "@/components/admin/projects/adminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Button",
+        "Skeleton",
+        "WorkspaceDeliveryOverview"
+      ],
+      "overlayCandidates": [],
+      "events": 1
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/index.js",
+      "sha": "5db4ecfb56d59f5c731f0c7d2c3269c5fa738573",
+      "lines": 36,
+      "imports": [
+        "@/layouts/AdminLayout"
+      ],
+      "jsxComponents": [
+        "Skeleton"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/meetings.js",
+      "sha": "a68cc1837256be63e7132126522e9ed88c0fed2d",
+      "lines": 143,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/utils/projectErrorModal",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceMeetingsEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/adminWorkspaceSection",
+        "@/components/admin/projects/projectSectionFieldConfigs"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Button",
+        "Skeleton",
+        "WorkspaceMeetingsEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/overview.js",
+      "sha": "1863050d531ce7e25cd1583f74a0726e7ca81065",
+      "lines": 157,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/WorkspaceOverviewEditor",
+        "@/components/admin/projects/adminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Button",
+        "Skeleton",
+        "WorkspaceOverviewEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/readiness.js",
+      "sha": "055e4a39f1b6927d43032a674c3fcf178bbf3a3e",
+      "lines": 89,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceReadinessOverview",
+        "@/components/admin/projects/adminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Button",
+        "Skeleton",
+        "WorkspaceReadinessOverview"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js",
+      "sha": "bfe7a0a4f3f7e45b01d51c31940b3e9e9fedbd78",
+      "lines": 126,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/utils/projectErrorModal",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceResourcesEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/adminWorkspaceSection",
+        "@/components/admin/projects/projectSectionFieldConfigs"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Button",
+        "Skeleton",
+        "WorkspaceResourcesEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/sprints.js",
+      "sha": "d81cfd110fcb2d67368aed95abf60863d75678ba",
+      "lines": 178,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/utils/projectErrorModal",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceSprintsEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/adminWorkspaceSection",
+        "@/components/admin/projects/projectSectionFieldConfigs"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Button",
+        "Skeleton",
+        "WorkspaceSprintsEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/summary.js",
+      "sha": "77c558e18ec740eb0daa176416ab7f2af4913a83",
+      "lines": 738,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/utils/projectErrorModal",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/WorkspaceSummarySnapshot"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Space",
+        "Button",
+        "SwapOutlined",
+        "Popconfirm",
+        "InboxOutlined",
+        "DeleteOutlined",
+        "Modal",
+        "Form",
+        "Form.Item",
+        "Select",
+        "Checkbox",
+        "Skeleton",
+        "WorkspaceSummarySnapshot",
+        "WarningOutlined",
+        "Card",
+        "Input",
+        "TextArea",
+        "Row",
+        "Col",
+        "Progress",
+        "InputNumber",
+        "DatePicker",
+        "Paragraph",
+        "Link"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Modal",
+        "Form",
+        "Form.Item"
+      ],
+      "events": 9
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/tasks.js",
+      "sha": "26ee93ba325eca04e117de64187de2f48556164a",
+      "lines": 147,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/utils/projectErrorModal",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceTasksEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/adminWorkspaceSection",
+        "@/components/admin/projects/projectSectionFieldConfigs"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Button",
+        "Skeleton",
+        "WorkspaceTasksEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/[workspaceId]/team.js",
+      "sha": "8f016d317491b0372558136427f824694697b899",
+      "lines": 483,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/projects/WorkspaceTeamOverview",
+        "@/components/admin/AdminWorkspaceShell",
+        "@/redux/store",
+        "@/utils/projectErrorModal",
+        "@/components/admin/projects/adminWorkspaceSection",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "AdminWorkspaceShell",
+        "Alert",
+        "Space",
+        "Button",
+        "UserOutlined",
+        "TeamOutlined",
+        "Modal",
+        "Form",
+        "Form.Item",
+        "Select",
+        "Input",
+        "Paragraph",
+        "Link",
+        "Checkbox",
+        "Skeleton",
+        "WorkspaceTeamOverview"
+      ],
+      "overlayCandidates": [
+        "Modal",
+        "Form",
+        "Form.Item"
+      ],
+      "events": 12
     }
   ]
 }
