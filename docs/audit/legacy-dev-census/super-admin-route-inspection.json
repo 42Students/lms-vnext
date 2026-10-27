@@ -625,6 +625,508 @@
       ],
       "overlayCandidates": [],
       "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/people.js",
+      "sha": "858ca785d9252dd886dcedb15152d9d6855990ba",
+      "lines": 33,
+      "imports": [
+        "./sections/PeopleDirectory",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "PeopleDirectory"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/programs.js",
+      "sha": "71db1c843b2595b4e22d1dc2cfee4a50b3ec9f83",
+      "lines": 33,
+      "imports": [
+        "./sections/Programs",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "Programs"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/projects/at-risk/index.js",
+      "sha": "b3648820798d39c3e9c56f651fa6baa2e9a8be3a",
+      "lines": 469,
+      "imports": [
+        "@/utils/csvExport",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "ClockCircleOutlined",
+        "WarningOutlined",
+        "FileTextOutlined",
+        "Space",
+        "Button",
+        "EditOutlined",
+        "Tag",
+        "Text",
+        "SuperAdminGroupShell",
+        "Alert",
+        "Skeleton",
+        "Row",
+        "Col",
+        "Card",
+        "Statistic",
+        "Input",
+        "SearchOutlined",
+        "DownloadOutlined",
+        "Table",
+        "Empty"
+      ],
+      "overlayCandidates": [
+        "Table"
+      ],
+      "events": 8
+    },
+    {
+      "path": "src/pages/superadmin/projects/audit/index.js",
+      "sha": "95f5d8e07650b148d3d06ef29e5511b88cb65bec",
+      "lines": 660,
+      "imports": [
+        "@/utils/csvExport",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/renderStructuredValue"
+      ],
+      "jsxComponents": [
+        "Text",
+        "Space",
+        "Tooltip",
+        "WarningOutlined",
+        "Tag",
+        "Button",
+        "Descriptions",
+        "Descriptions.Item",
+        "SuperAdminGroupShell",
+        "Alert",
+        "Skeleton",
+        "ReloadOutlined",
+        "Row",
+        "Col",
+        "Card",
+        "Statistic",
+        "Select",
+        "DownloadOutlined",
+        "Table"
+      ],
+      "overlayCandidates": [
+        "Table"
+      ],
+      "events": 8
+    },
+    {
+      "path": "src/pages/superadmin/projects/index.js",
+      "sha": "f69d5a213143f5ae626a654a12977cdeca12ed8e",
+      "lines": 33,
+      "imports": [
+        "@/layouts/SuperAdminLayout",
+        "@/common/superAdminNavGroups"
+      ],
+      "jsxComponents": [
+        "Skeleton"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/projects/readiness/index.js",
+      "sha": "f649c169eb0a5408a9340980f8197a96885b564f",
+      "lines": 732,
+      "imports": [
+        "@/utils/csvExport",
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Text",
+        "Tag",
+        "UnlockOutlined",
+        "LockOutlined",
+        "Space",
+        "Button",
+        "SuperAdminGroupShell",
+        "Alert",
+        "Skeleton",
+        "Card",
+        "Badge",
+        "DownloadOutlined",
+        "Table",
+        "Empty",
+        "CheckCircleFilled",
+        "Input.Search",
+        "Select",
+        "Progress",
+        "Descriptions",
+        "Descriptions.Item",
+        "Form",
+        "Form.Item",
+        "Radio.Group",
+        "Radio.Button",
+        "Input.TextArea",
+        "Popconfirm"
+      ],
+      "overlayCandidates": [
+        "Table",
+        "Form",
+        "Form.Item",
+        "Popconfirm"
+      ],
+      "events": 9
+    },
+    {
+      "path": "src/pages/superadmin/projects/submissions/index.js",
+      "sha": "f1d554749fe748bf409153f6a51cdeddaabc5d66",
+      "lines": 910,
+      "imports": [
+        "@/utils/csvExport",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/api/Services/projectService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Space",
+        "Button",
+        "EditOutlined",
+        "Text",
+        "Tag",
+        "Tooltip",
+        "SuperAdminGroupShell",
+        "Alert",
+        "Skeleton",
+        "Row",
+        "Col",
+        "Card",
+        "Statistic",
+        "FileTextOutlined",
+        "CheckCircleOutlined",
+        "InboxOutlined",
+        "ClockCircleOutlined",
+        "Input",
+        "SearchOutlined",
+        "Select",
+        "DownloadOutlined",
+        "Tabs",
+        "Table",
+        "Empty",
+        "Modal",
+        "Input.TextArea",
+        "Popconfirm",
+        "SuperAdminProjectSubmissionsPageBody"
+      ],
+      "overlayCandidates": [
+        "Tabs",
+        "Table",
+        "Modal",
+        "Popconfirm"
+      ],
+      "events": 16
+    },
+    {
+      "path": "src/pages/superadmin/projects/templates/[templateId]/colleges.js",
+      "sha": "6786a6cf46c509e7225ee658730cd91e7f8c7c8f",
+      "lines": 309,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminTemplateShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Text",
+        "Space",
+        "Popconfirm",
+        "Switch",
+        "Tag",
+        "SuperAdminTemplateShell",
+        "Button",
+        "ReloadOutlined",
+        "Alert",
+        "Skeleton",
+        "Card",
+        "Input.Search",
+        "Paragraph",
+        "Table",
+        "Empty"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Table"
+      ],
+      "events": 6
+    },
+    {
+      "path": "src/pages/superadmin/projects/templates/[templateId]/index.js",
+      "sha": "7eba5216fc8c82bd424baee58bf53da489a5933a",
+      "lines": 48,
+      "imports": [
+        "@/layouts/SuperAdminLayout"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "Skeleton"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/projects/templates/[templateId]/overview.js",
+      "sha": "12605800e3ca83c011857642dec2aa6b96a3faa3",
+      "lines": 829,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminTemplateShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/renderStructuredValue"
+      ],
+      "jsxComponents": [
+        "Card",
+        "Space",
+        "Tag",
+        "Empty",
+        "Text",
+        "Button",
+        "AuditOutlined",
+        "EyeOutlined",
+        "Tooltip",
+        "PlusOutlined",
+        "CopyOutlined",
+        "Popconfirm",
+        "StopOutlined",
+        "Link",
+        "SendOutlined",
+        "InboxOutlined",
+        "SuperAdminTemplateShell",
+        "Alert",
+        "Skeleton",
+        "ReadOutlined",
+        "Descriptions",
+        "Descriptions.Item",
+        "Paragraph",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Row",
+        "Col",
+        "Select",
+        "TextArea",
+        "Modal",
+        "Input.TextArea",
+        "InputNumber"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Form",
+        "Form.Item",
+        "Modal"
+      ],
+      "events": 16
+    },
+    {
+      "path": "src/pages/superadmin/projects/templates/[templateId]/resources.js",
+      "sha": "e036498e751c6e49ddacb58427404e1a094c159b",
+      "lines": 133,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminTemplateShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/RepeatingItemEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/projectSectionFieldConfigs"
+      ],
+      "jsxComponents": [
+        "SuperAdminTemplateShell",
+        "Alert",
+        "Skeleton",
+        "Card",
+        "Paragraph",
+        "Form",
+        "Form.Item",
+        "RepeatingItemEditor",
+        "Button"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item"
+      ],
+      "events": 1
+    },
+    {
+      "path": "src/pages/superadmin/projects/templates/[templateId]/sprints.js",
+      "sha": "3484e4254d4968eb1eb3044bc99574c7c0246d82",
+      "lines": 171,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminTemplateShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/RepeatingItemEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/projectSectionFieldConfigs"
+      ],
+      "jsxComponents": [
+        "SuperAdminTemplateShell",
+        "Alert",
+        "Skeleton",
+        "Card",
+        "Paragraph",
+        "Form",
+        "Form.Item",
+        "RepeatingItemEditor",
+        "Button"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item"
+      ],
+      "events": 1
+    },
+    {
+      "path": "src/pages/superadmin/projects/templates/[templateId]/tasks.js",
+      "sha": "bf6001be4ff662637f8d96575c42bc308820ecd2",
+      "lines": 155,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminTemplateShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/RepeatingItemEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/projectSectionFieldConfigs"
+      ],
+      "jsxComponents": [
+        "SuperAdminTemplateShell",
+        "Alert",
+        "Skeleton",
+        "Card",
+        "Link",
+        "Paragraph",
+        "Form",
+        "Form.Item",
+        "RepeatingItemEditor",
+        "Button"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item"
+      ],
+      "events": 1
+    },
+    {
+      "path": "src/pages/superadmin/projects/templates/[templateId]/versions.js",
+      "sha": "ef745b77156403ea8f4a6065cf45bdc14adf21a4",
+      "lines": 263,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminTemplateShell",
+        "@/components/admin/projects/renderStructuredValue",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "SuperAdminTemplateShell",
+        "Tag",
+        "ReadOutlined",
+        "Alert",
+        "Skeleton",
+        "Card",
+        "Space",
+        "Text",
+        "Button",
+        "Popconfirm",
+        "RollbackOutlined",
+        "Pagination",
+        "Empty",
+        "Modal"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Modal"
+      ],
+      "events": 5
+    },
+    {
+      "path": "src/pages/superadmin/projects/templates/index.js",
+      "sha": "78ad5175bc5d35d9022d1bb5acdc975940279bb9",
+      "lines": 334,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/utils/csvExport",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Text",
+        "Tag",
+        "Space",
+        "Button",
+        "Popconfirm",
+        "InboxOutlined",
+        "SuperAdminGroupShell",
+        "Alert",
+        "Card",
+        "Input.Search",
+        "Select",
+        "DownloadOutlined",
+        "Skeleton",
+        "Table",
+        "Empty"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Table"
+      ],
+      "events": 7
     }
   ]
 }
