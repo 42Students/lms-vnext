@@ -716,6 +716,59 @@
       "tenantScope": true
     },
     {
+      "path": "src/main/java/com/_42students/lms/controller/AnnouncementController.java",
+      "sha": "f6bf252fd106e96e295a9aa01932619361b2a630",
+      "lines": 515,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/announcements"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/create"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchAll"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetch/{id}"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/deleted"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/restore/{id}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/forLearner"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchLearnerAnnouncements"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchFacultyAnnouncements"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/AssignmentController.java",
       "sha": "b3045ccf13325653d5b61769ea8a17ee3294f3eb",
       "lines": 384,
@@ -791,6 +844,190 @@
         "audit",
         "AUDIT"
       ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AuthController.java",
+      "sha": "04f3f0a294494c8f47d3451166bdfa0bbb944761",
+      "lines": 1161,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/auth"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/ai-grading-access"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/memberships"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/switch"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/switch-token"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/handoff/consume"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/superadmin/scope"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/refresh-cookie"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/logout-cookie"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/refresh"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/logout"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/revoke-sessions"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/sessions"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/sessions/{jti}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/BaseController.java",
+      "sha": "4b456c7e8f2343e7a70bc11d37246c3878e99479",
+      "lines": 18,
+      "mappings": [],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/BatchController.java",
+      "sha": "0c00cc3c7934d1691bab05fa19889c656022a79e",
+      "lines": 342,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/batch"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/create"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/getBranchDetailsById"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetch"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchByProgram"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchByCollege"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{batchId}/promote"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{batchId}/promote/preview"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{batchId}/semester"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/delete/{id}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ChoicesController.java",
+      "sha": "05e5d477c5a3c780672248b9b20418ebced1a12f",
+      "lines": 112,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/choices"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ClassController.java",
+      "sha": "5aa3e3e59e4593cdb80f82f6cb31ad06a06533b8",
+      "lines": 286,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/class"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClass"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassesByProgram"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassesByCollege"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassesByCollegePaged"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
     },
     {
       "path": "src/main/java/com/_42students/lms/controller/ClassroomController.java",
@@ -951,6 +1188,122 @@
       ]
     },
     {
+      "path": "src/main/java/com/_42students/lms/controller/ClientErrorReportController.java",
+      "sha": "4070ae27e86bdb3b3dec9ef9109c161cf63e28f4",
+      "lines": 124,
+      "mappings": [
+        {
+          "method": "PostMapping",
+          "path": "/api/v1/client-errors/report"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ClientSettingsController.java",
+      "sha": "b0d1b103f64ce337d6697cba056a4a12fd3be78a",
+      "lines": 64,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/client-settings"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/CollegeController.java",
+      "sha": "2202fdba9ba8407c5253e8ed18ce7f29433c9b1a",
+      "lines": 244,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/college"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetch"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchOnlyNames"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchCollegeList"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchCollege"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/delete/{id}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/CompanyController.java",
+      "sha": "26902e001f1296bae53da84b6d710c0a90fd3bda",
+      "lines": 251,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/companies"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{companyId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{companyId}/jobs"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{companyId}/stats"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{companyId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{companyId}/restore"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{companyId}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/CourseController.java",
       "sha": "3b2d41ac4deda07e753566efcf27e6b90d0ffa32",
       "lines": 483,
@@ -1027,6 +1380,43 @@
       ]
     },
     {
+      "path": "src/main/java/com/_42students/lms/controller/DepartmentController.java",
+      "sha": "754d6caf34832f4fb6750d13cdcc1b40feceafae",
+      "lines": 251,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/department"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetch"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchAll"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchPaged"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/DiscussionController.java",
       "sha": "b233397a17524dcafe352c326bcce9924049a6a7",
       "lines": 98,
@@ -1049,6 +1439,177 @@
         "Valid"
       ],
       "guards": []
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/FacultyClassScheduleController.java",
+      "sha": "c96ed9e53cb929a8739d4ec73006d624153118fb",
+      "lines": 81,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/faculty/schedules"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/FacultyController.java",
+      "sha": "9d2fb0b995e367e5f540eaa75254a0d3efbe18d6",
+      "lines": 698,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/faculty"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/register"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/bulk-validate"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/bulk-register"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/createCourseMapping"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getInstructorDetails"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getAllFaculty"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getAllCourseMappings"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getFacultyByDeptId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getFacultyByCollegeId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getCoursesFromClassSchedule"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getFacultyCoursesFromMapping"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getFacultyClassMapping"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/login"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/verifyOTP"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/getFacultyCourseMapping"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/createBulkCourseMapping"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/deactivateMapping"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getCourseFacultyClassMapping"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/getFacultyCourseMappingDetails"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/uniqueClasses"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/uniqueCourses"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/uniqueClassesForCourse"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/uniqueCoursesForClass"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/delete/{id}"
+        }
+      ],
+      "hasAuth": true,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/FacultyCourseAssociationController.java",
+      "sha": "00124258af28b70ef0886693e474c1c5f932a53b",
+      "lines": 140,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/faculty-course-associations"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/create"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchAllCoursesByFacultyId"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/createBulk"
+        },
+        {
+          "method": "PatchMapping",
+          "path": "/deactivateAssociation"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchActiveFacultyIdsByCourseId"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchActiveFacultiesInfoByCourseId"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchActiveCoursesByFacultyId"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
     },
     {
       "path": "src/main/java/com/_42students/lms/controller/FacultyLessonContentController.java",
