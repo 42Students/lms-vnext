@@ -493,6 +493,349 @@
       ],
       "overlayCandidates": [],
       "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/lecture-halls.js",
+      "sha": "52a56f60cc6f9c09629e2e067ca1c3e9d0e6af18",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/LectureHalls",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "LectureHalls"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/lesson-content.js",
+      "sha": "ed737fe56814500c5b860c327f98a1bed107b0f3",
+      "lines": 46,
+      "imports": [
+        "../superadmin/sections/LessonContent",
+        "../superadmin/sections/AdminResources",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "AdminResources",
+        "LessonContent"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/lessons.js",
+      "sha": "97e73f805a4ad26d257dfcdf4cc42c32042e53b9",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/Lessons",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Lessons"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/people.js",
+      "sha": "468ab11daf3f9d0a0918c56eec29481e309f8782",
+      "lines": 34,
+      "imports": [
+        "../superadmin/sections/PeopleDirectory",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "PeopleDirectory"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/profile.js",
+      "sha": "11322b355636b4e8a5e167a15b32bb572fb815fc",
+      "lines": 164,
+      "imports": [
+        "../../components/profile/about",
+        "@/components/profile/ProfileSkeleton",
+        "@/api/Services/UserServices",
+        "@/redux/store",
+        "@/utils/roleUtils",
+        "@/layouts/AdminLayout",
+        "@/components/Global/ListingPageHeader/ListingPageHeader",
+        "@/components/Common/Skeletons"
+      ],
+      "jsxComponents": [
+        "ListingPageHeader",
+        "ProfileSkeleton",
+        "Button",
+        "ReloadOutlined",
+        "RefreshStatus",
+        "Alert",
+        "About"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/college-admin/programs.js",
+      "sha": "eba40460f8ec163adbc95312e96c6dad9eb6134d",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/Programs",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Programs"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/projects/at-risk/index.js",
+      "sha": "60eb920ca0e896efdf5307150aadab8a719c8148",
+      "lines": 429,
+      "imports": [
+        "@/utils/csvExport",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "ClockCircleOutlined",
+        "WarningOutlined",
+        "FileTextOutlined",
+        "Space",
+        "Button",
+        "EditOutlined",
+        "Tag",
+        "Text",
+        "Alert",
+        "AdminGroupShell",
+        "Skeleton",
+        "Row",
+        "Col",
+        "Card",
+        "Statistic",
+        "Input",
+        "SearchOutlined",
+        "DownloadOutlined",
+        "Table",
+        "Empty"
+      ],
+      "overlayCandidates": [
+        "Table"
+      ],
+      "events": 8
+    },
+    {
+      "path": "src/pages/college-admin/projects/audit/index.js",
+      "sha": "7598ef713b178599e581ba4845bdce3fc30b03a4",
+      "lines": 619,
+      "imports": [
+        "@/utils/csvExport",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/renderStructuredValue"
+      ],
+      "jsxComponents": [
+        "Text",
+        "Space",
+        "Tooltip",
+        "WarningOutlined",
+        "Tag",
+        "Button",
+        "Descriptions",
+        "Descriptions.Item",
+        "Alert",
+        "AdminGroupShell",
+        "ReloadOutlined",
+        "Row",
+        "Col",
+        "Card",
+        "Statistic",
+        "Select",
+        "DownloadOutlined",
+        "Skeleton",
+        "Table"
+      ],
+      "overlayCandidates": [
+        "Table"
+      ],
+      "events": 8
+    },
+    {
+      "path": "src/pages/college-admin/projects/index.js",
+      "sha": "9623ef1a640cc49817b0a01a9ad0678a2424d0ba",
+      "lines": 33,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/Common/Skeletons",
+        "@/common/adminNavGroups"
+      ],
+      "jsxComponents": [
+        "PageSkeleton"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/projects/readiness/index.js",
+      "sha": "3bbbd05051ad15a751a176b2658656521ff05fba",
+      "lines": 758,
+      "imports": [
+        "@/utils/csvExport",
+        "@/utils/projectErrorModal",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Text",
+        "Tag",
+        "UnlockOutlined",
+        "LockOutlined",
+        "Space",
+        "Button",
+        "Alert",
+        "AdminGroupShell",
+        "Card",
+        "Badge",
+        "DownloadOutlined",
+        "Skeleton",
+        "Table",
+        "Empty",
+        "CheckCircleFilled",
+        "Input.Search",
+        "Select",
+        "Progress",
+        "Descriptions",
+        "Descriptions.Item",
+        "Form",
+        "Form.Item",
+        "Radio.Group",
+        "Radio.Button",
+        "Input.TextArea",
+        "Popconfirm"
+      ],
+      "overlayCandidates": [
+        "Table",
+        "Form",
+        "Form.Item",
+        "Popconfirm"
+      ],
+      "events": 9
+    },
+    {
+      "path": "src/pages/college-admin/projects/submissions/index.js",
+      "sha": "326121392fbc0946c9b3d1aaf74fbabf193463c2",
+      "lines": 972,
+      "imports": [
+        "@/utils/csvExport",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/hooks/useDebounceHook",
+        "@/api/Services/projectService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Space",
+        "Button",
+        "EditOutlined",
+        "Text",
+        "Tag",
+        "Tooltip",
+        "AdminGroupShell",
+        "Alert",
+        "Skeleton",
+        "Row",
+        "Col",
+        "Card",
+        "Statistic",
+        "FileTextOutlined",
+        "CheckCircleOutlined",
+        "InboxOutlined",
+        "ClockCircleOutlined",
+        "Input",
+        "SearchOutlined",
+        "Select",
+        "DownloadOutlined",
+        "Tabs",
+        "Table",
+        "Empty",
+        "Modal",
+        "Input.TextArea",
+        "Popconfirm"
+      ],
+      "overlayCandidates": [
+        "Tabs",
+        "Table",
+        "Modal",
+        "Popconfirm"
+      ],
+      "events": 18
+    },
+    {
+      "path": "src/pages/college-admin/projects/templates/[templateId].js",
+      "sha": "8c8e35473f9afce91e0cafa8db300a9d8ab56147",
+      "lines": 237,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/components/Common/Skeletons",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/renderStructuredValue"
+      ],
+      "jsxComponents": [
+        "Card",
+        "Space",
+        "Tag",
+        "Empty",
+        "Descriptions",
+        "Descriptions.Item",
+        "Text",
+        "AdminGroupShell",
+        "Alert",
+        "Button",
+        "PlusOutlined",
+        "DetailSkeleton",
+        "ReadOutlined",
+        "Title",
+        "Paragraph"
+      ],
+      "overlayCandidates": [],
+      "events": 3
     }
   ]
 }
