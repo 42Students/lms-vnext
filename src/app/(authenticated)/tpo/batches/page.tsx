@@ -227,7 +227,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
       <dt className="text-body">{label}</dt><dd className="font-semibold tabular-nums">{value??"—"}</dd>
      </div>)}</dl>
      <Link href={"/tpo/batches/"+activeBatch.id+tpoBatchNextActionLink(activeBatch,data.ready,activeSummary,activeJourney)}
-      className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary">
+      className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-white">
       {tpoBatchNextAction(activeBatch,data.ready,activeSummary,activeJourney)}
      </Link>
      <Link href={"/tpo/batches/"+activeBatch.id}

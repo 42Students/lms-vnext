@@ -10,9 +10,9 @@ describe("Chat-2 Company relationship and legacy Companies navigation",()=>{
   const detail=source("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx");
   expect(switchSource).toContain('action:"EDIT_TRUST",confirmed:true,nextTrusted:!trusted');
   expect(switchSource).toContain("expectedUpdatedAt:version");
-  expect(switchSource).toContain("Trusted: their drive requests go live without review");
-  expect(switchSource).toContain("Their drive requests come to you for review");
-  expect(switchSource).toContain("Their drive requests go live without your review.");
+  expect(switchSource).toContain("College trust saved. Direct publishing still requires a verified company, a current recruiter grant and college policy approval.");
+  expect(switchSource).toContain("College trust removed. Future recruiter requests must follow the current review policy.");
+  expect(switchSource).toContain("Trust is a college decision, not platform verification.");
   expect(switchSource).toContain("Couldn't save. Refresh and try again.");
   expect(switchSource).toContain("pending.current");
   expect(detail).toContain("TpoCompanyTrustSwitch");

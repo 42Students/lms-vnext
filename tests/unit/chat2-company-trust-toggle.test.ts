@@ -7,9 +7,9 @@ describe("TPO companies trusted relationship",()=>{
   const control=src("src/components/placements/tpo-company-trust-switch.tsx");
   expect(page).toContain("TpoCompanyTrustSwitch");
   expect(page).toContain('lifecycle?.status==="ACTIVE"');
-  expect(control).toContain("Their drive requests go live without your review.");
-  expect(control).toContain("Their drive requests come to you for review");
-  expect(control).toContain("Trusted: their drive requests go live without review");
+  expect(control).toContain("Direct publishing also requires an active recruiter grant and college policy approval.");
+  expect(control).toContain("Future recruiter requests must follow the current review policy.");
+  expect(control).toContain("Trust is a college decision, not platform verification.");
  });
  it("TPO-companies-03 keeps guarded audited optimistic-version write and no raw server codes",()=>{
   const ui=src("src/components/placements/tpo-company-trust-switch.tsx");

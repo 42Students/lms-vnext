@@ -57,9 +57,9 @@ type SearchParams = {
 };
 
 const VIEWS: readonly PlacementCalendarView[] = [
+  "agenda",
   "week",
   "month",
-  "agenda",
 ];
 
 function first(
@@ -257,10 +257,10 @@ export default async function HrCalendarPage({
   const view =
     VIEWS.find(
       (candidate) => candidate === requestedView,
-    ) ?? "week";
+    ) ?? "agenda";
 
-  // Recruiter legacy calendar starts on Monday and displays seven days by default.
-  // Other placement calendars retain their own Sunday-first week conventions.
+  // The legacy recruiter calendar defaults to the event-only agenda. A
+  // selected weekly view starts Monday; other calendars keep their conventions.
   const window = view === "week" ? (() => {
     const weekday = new Date(anchor + "T12:00:00Z").getUTCDay();
     const monday = shiftCareerCalendarDay(anchor, "day", -(weekday === 0 ? 6 : weekday - 1));

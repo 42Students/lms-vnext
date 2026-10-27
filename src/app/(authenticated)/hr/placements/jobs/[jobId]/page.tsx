@@ -157,7 +157,7 @@ export default async function HrPlacementJobPage({
     applicants.rows;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
-  const discussionTab=query.tab==="discussion"||requestsTab;
+  const discussionTab=query.tab==="discussion";
   const changeShortcut=recruiterChangeShortcut(query.change);
   const historicalOffers=filters.tab==="offers"
    ?await getRecruiterHistoricalOffers(context,workspace.job.id)
@@ -172,7 +172,7 @@ export default async function HrPlacementJobPage({
         truncated:false,unavailable:true as const}))
     :null;
 
-  const requestData=discussionTab?await getDriveChangeRequests(context,workspace.job.id):null;
+  const requestData=requestsTab||discussionTab?await getDriveChangeRequests(context,workspace.job.id):null;
   const requestsToAnswer=requestData?.requests.filter(item=>
     item.status==="OPEN"&&item.targetParty==="COMPANY").length??0;
   const quoteRequest=discussionTab&&requestData?.party==="COMPANY"&&typeof query.requestId==="string"
@@ -324,7 +324,7 @@ export default async function HrPlacementJobPage({
   return (
     <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
       <RecruiterDriveFocusRefresh />
-      <Link href={returnTo} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-2 max-[767px]:min-h-11">‹ Drives</Link>
+      <Link href={returnTo} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-2 max-[767px]:min-h-11">← All drives</Link>
       <header className="flex min-w-0 flex-wrap items-start justify-between gap-4 border-b border-border pb-4">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-3">
@@ -430,15 +430,16 @@ export default async function HrPlacementJobPage({
           </div>
       </section>
       <div className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-none md:p-[var(--lms-canvas-padding)]">
-      <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={discussionTab ? "discussion" : filters.tab}
+      <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={requestsTab ? "requests" : discussionTab ? "discussion" : filters.tab}
         items={[{value:"overview",label:"Overview",href:"/recruiter/drives/"+workspace.job.id+"?tab=overview"+returnQuery},
           {value:"applicants",label:"Applicants ("+applicants.counts.all+")",
            href:"/recruiter/drives/"+workspace.job.id+"?tab=applicants"+returnQuery},
-          {value:"rounds",label:"Rounds",href:"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery},
-          {value:"offers",label:offersTotal>0?"Offers ("+offersTotal+")":"Offers",
+          {value:"rounds",label:"Rounds & interviews",href:"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery},
+          {value:"offers",label:"Offers ("+offersTotal+")",
            href:"/recruiter/drives/"+workspace.job.id+"?tab=offers"+returnQuery},
-          {value:"discussion",label:"Talk"+(requestsToAnswer>0?
-            " ("+requestsToAnswer+" to answer)":""),
+          {value:"requests",label:requestsToAnswer>0?"Requests ("+requestsToAnswer+" to answer)":"Requests",
+           href:"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery},
+          {value:"discussion",label:"Discussion",
            href:"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}]}/>
       {filters.tab === "overview" && !requestsTab && !discussionTab ? (
         <section className="space-y-4 border-b border-border pb-4 md:pb-6">
@@ -576,8 +577,8 @@ export default async function HrPlacementJobPage({
         {requestData?.party==="COMPANY"&&requestData.requests.length>0?
           <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm">
             <p className="font-semibold text-foreground">Change-request activity · {requestData.requests.length} recorded</p>
-            <p className="mt-1 text-body">Review submitted requests, college decisions and replies below in this Discussion tab.</p>
-            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery+"#drive-requests"}
+            <p className="mt-1 text-body">The Requests tab shows submitted change requests and college decisions; use Discussion for messages.</p>
+            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery+"#drive-requests"}
               className="mt-2 inline-flex min-h-9 max-[767px]:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open change requests →</Link>
           </div>:null}
         {threadMessages?<div className="space-y-3">
@@ -605,7 +606,7 @@ export default async function HrPlacementJobPage({
           <Button type="submit">Open drive discussion</Button>
         </form>}
       </section>:null}
-      {discussionTab&&requestData?.party==="COMPANY" ? <section id="drive-requests" aria-label="Drive change requests" className="space-y-4 border-b border-border pb-4 md:pb-6">
+      {requestsTab&&requestData?.party==="COMPANY" ? <section id="drive-requests" aria-label="Drive change requests" className="space-y-4 border-b border-border pb-4 md:pb-6">
         <h2 className="text-lg font-semibold text-foreground">Requests</h2>
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
         {requestData.requests.length>0?<details className="min-w-0 border-b border-border pb-3">

@@ -11,7 +11,7 @@ describe("Recruiter Home Drives legacy recruiter tabs",()=>{
   const discussion=src.indexOf('tab=discussion"+returnQuery');
   expect(start).toBeGreaterThan(0);
   expect(discussion).toBeGreaterThan(start);
-  expect(src).toContain('tab=discussion"+returnQuery+"#drive-requests"');
+  expect(src).toContain('tab=requests"+returnQuery+"#drive-requests"');
  });
  it("REC-home-drives-20 preserves the originating Drives filters on workspace tabs",()=>{
   expect(src).toContain("safeDriveReturnTo(query.returnTo)");
