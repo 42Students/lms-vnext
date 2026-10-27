@@ -1,5 +1,14 @@
 # LMS vNext engineering rules
 
+## Generic continuation and page stop rule (2026-10-27)
+
+When asked to **"continue LMS vNext works"**, use the current repository state rather than redoing prior chat research. Start with `docs/tracker.json` and the [cross-chat Green-and-Move protocol](docs/parity/README.md#green-and-move-stop-rule-binding-for-page-execution). The official phase/task progress is **only** `docs/tracker.json`; the parity page files are detailed acceptance evidence, not a competing tracker.
+
+- Respect a named account or page scope, continue its first not-yet-implementation-green eligible family, and skip already accepted pages. Without an account scope, choose the earliest executable blocker in the current official phase; do not guess another chat's context.
+- **Implementation Green** is the stop point for functional page work once the finite legacy surface/action/state contract, P0/P1 repairs, permission/data tests and focused post-change evidence pass. Record it and move to the next independent page. Design Green and Release Green are separate later gates. Never mark blocked required functionality green.
+- After two focused repair rounds with an unresolved external or dependency blocker, preserve the exact failure and attempted evidence, leave the family not green and move to the next independent eligible unit. Do not repeat full audits of already-green families; revalidate only demonstrably impacted requirements after material changes.
+- For simultaneous chats, constrain concurrent workers to disjoint account/page families and serialize edits to shared components, schema, migration and CI. Generic unscoped prompts are not a concurrency lock. Before changing code, check newest `main` and reconcile other chats' commits.
+
 ## Closure-first delivery: authoritative execution method (2026-10-13)
 
 **Read [docs/planning/closure-first-delivery-strategy.md](docs/planning/closure-first-delivery-strategy.md) before beginning an engineering batch.** Optimize for an integrated, runnable, tested capability and a safely closable existing task—not additional source-only plans, parallel trackers, duplicate audits or CI jobs. This delivery method does **not** replace the binary tracker, waive task acceptance, or unlock DATABASE phase gates.
