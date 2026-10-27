@@ -29,7 +29,7 @@ describe("TPO general request bounded bulk review",()=>{
  it("exposes multi-row review using the existing authenticated CAS decision endpoint",()=>{
   const panel=src("src/components/placements/tpo-general-requests-panel.tsx");
   const bulk=src("src/components/placements/tpo-general-requests-bulk-decision.tsx");
-  expect(panel).toContain("<TpoGeneralRequestsBulkDecision rows={pendingRows} onReviewed={load}/>");
+  expect(panel).toContain("<TpoGeneralRequestsBulkDecision rows={pendingRows} onReviewed={load} disabled={loading||stale||pending}/>");
   expect(bulk).toContain("/api/placements/tpo/requests/general/");
   expect(bulk).toContain("version:row.version");
   expect(bulk).toContain("encodeURIComponent(row.id)");
