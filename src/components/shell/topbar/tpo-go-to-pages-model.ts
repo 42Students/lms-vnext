@@ -20,7 +20,7 @@ export const TPO_GO_TO_PAGES=[
  {label:"Profile",href:"/tpo/profile"},
 ] as const;
 export function tpoGoToTerm(query:string):string|null{
- const match=/^go\s*to\b\s*(.*)$/i.exec(query.trim());
+ const match=/^go\s+to\b\s*(.*)$/i.exec(query.trim());
  return match?match[1]!.trim().toLocaleLowerCase("en-IN"):null;
 }
 export function tpoGoToPageMatches(query:string){

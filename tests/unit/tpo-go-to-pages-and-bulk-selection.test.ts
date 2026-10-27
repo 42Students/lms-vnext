@@ -6,6 +6,7 @@ describe("legacy TPO go-to page command in the authenticated topbar",()=>{
  it("only activates after explicit go to, accepting spacing and case",()=>{
   expect(tpoGoToTerm("find calendar")).toBeNull();
   expect(tpoGoToTerm("goto calendar")).toBeNull();
+  expect(tpoGoToTerm("go toboggan")).toBeNull();
   expect(tpoGoToTerm("Go To Calendar")).toBe("calendar");
   expect(tpoGoToTerm("go    to   requests")).toBe("requests");
   expect(tpoGoToTerm("go to")).toBe("");
