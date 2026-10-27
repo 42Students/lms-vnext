@@ -144,10 +144,15 @@ export function HrDriveDraftForm({
     if(submittedRef.current||
        !hrDraftContainsWork(draft)||JSON.stringify(draft)===JSON.stringify(initial))return;
     const beforeUnload=(event:BeforeUnloadEvent)=>{
+      if(submittedRef.current)return;
       event.preventDefault();
       event.returnValue="";
     };
     const linkGuard=(event:MouseEvent)=>{
+      // This listener was installed while the draft was dirty and can remain
+      // mounted when the receipt replaces the form. Never intercept verified
+      // post-submit destinations such as "Open the request".
+      if(submittedRef.current)return;
       const target=event.target instanceof Element?event.target.closest("a[href]"):null;
       if(!target||event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
       const href=target.getAttribute("href");
