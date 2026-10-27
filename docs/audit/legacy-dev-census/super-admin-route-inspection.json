@@ -1127,6 +1127,449 @@
         "Table"
       ],
       "events": 7
+    },
+    {
+      "path": "src/pages/superadmin/projects/templates/new.js",
+      "sha": "ea5bb2b37d5e5339c8af7aa011ea954b5b668e64",
+      "lines": 328,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/RepeatingItemEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/projectSectionFieldConfigs"
+      ],
+      "jsxComponents": [
+        "SuperAdminGroupShell",
+        "Space",
+        "Button",
+        "Card",
+        "Paragraph",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Row",
+        "Col",
+        "Select",
+        "TextArea",
+        "RepeatingItemEditor"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item"
+      ],
+      "events": 5
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/audit.js",
+      "sha": "b60984fc776081112f04ab583a0b3c1e509b62ed",
+      "lines": 110,
+      "imports": [
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceResourceAudit",
+        "@/components/admin/projects/superAdminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Button",
+        "AuditOutlined",
+        "WorkspaceResourceAudit"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/delivery.js",
+      "sha": "5a55e06a1c24113d9402b4f9c2dece3c680b439d",
+      "lines": 62,
+      "imports": [
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceDeliveryOverview",
+        "@/components/admin/projects/superAdminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Button",
+        "WorkspaceDeliveryOverview"
+      ],
+      "overlayCandidates": [],
+      "events": 1
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/index.js",
+      "sha": "02465e39062242ec21b7b852369ae41a3c880838",
+      "lines": 34,
+      "imports": [
+        "@/layouts/SuperAdminLayout"
+      ],
+      "jsxComponents": [
+        "Skeleton"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/meetings.js",
+      "sha": "b737d9ce5f0df3af97ebf484bd62d771168043b6",
+      "lines": 139,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceMeetingsEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/projectSectionFieldConfigs",
+        "@/components/admin/projects/superAdminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Button",
+        "WorkspaceMeetingsEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/overview.js",
+      "sha": "bbbe8b3be8de688a88fce377cbdbd5009c98af10",
+      "lines": 152,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/WorkspaceOverviewEditor",
+        "@/components/admin/projects/superAdminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Button",
+        "WorkspaceOverviewEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/readiness.js",
+      "sha": "835b5f2d6866ec9bedb737e4567daa378735773e",
+      "lines": 88,
+      "imports": [
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceReadinessOverview",
+        "@/components/admin/projects/superAdminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Button",
+        "WorkspaceReadinessOverview"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/resources.js",
+      "sha": "70c486773b1f95cfeb18afa2e209403aefd089c6",
+      "lines": 118,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceResourcesEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/projectSectionFieldConfigs",
+        "@/components/admin/projects/superAdminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Button",
+        "WorkspaceResourcesEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/sprints.js",
+      "sha": "1c1793a41d8adcb5c7ad6771b70262fc4628b3ad",
+      "lines": 167,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceSprintsEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/projectSectionFieldConfigs",
+        "@/components/admin/projects/superAdminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Button",
+        "WorkspaceSprintsEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/summary.js",
+      "sha": "110207ddfd5881dfda0926f26f01894b07dbdddb",
+      "lines": 697,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/superAdminWorkspaceSection",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/WorkspaceSummarySnapshot"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Space",
+        "Button",
+        "SwapOutlined",
+        "Popconfirm",
+        "InboxOutlined",
+        "DeleteOutlined",
+        "Modal",
+        "Form",
+        "Form.Item",
+        "Select",
+        "Checkbox",
+        "WorkspaceSummarySnapshot",
+        "WarningOutlined",
+        "Card",
+        "Input",
+        "TextArea",
+        "Row",
+        "Col",
+        "Progress",
+        "InputNumber",
+        "DatePicker",
+        "Paragraph",
+        "Link",
+        "SuperAdminWorkspaceSummaryPageBody"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Modal",
+        "Form",
+        "Form.Item"
+      ],
+      "events": 9
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/tasks.js",
+      "sha": "2b9b482a069548350acf75f916a6af258cdf6e76",
+      "lines": 134,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/WorkspaceTasksEditor",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/components/admin/projects/projectSectionFieldConfigs",
+        "@/components/admin/projects/superAdminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Button",
+        "WorkspaceTasksEditor"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/[workspaceId]/team.js",
+      "sha": "6ae73baa6882469e8b25b66da99ba862f88d9e07",
+      "lines": 502,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/projects/WorkspaceTeamOverview",
+        "@/components/admin/SuperAdminWorkspaceShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/admin/projects/superAdminWorkspaceSection"
+      ],
+      "jsxComponents": [
+        "SuperAdminWorkspaceShell",
+        "Alert",
+        "Skeleton",
+        "Space",
+        "Button",
+        "UserOutlined",
+        "TeamOutlined",
+        "Modal",
+        "Form",
+        "Form.Item",
+        "Select",
+        "Input",
+        "Paragraph",
+        "Link",
+        "Checkbox",
+        "WorkspaceTeamOverview",
+        "SuperAdminWorkspaceTeamPageBody"
+      ],
+      "overlayCandidates": [
+        "Modal",
+        "Form",
+        "Form.Item"
+      ],
+      "events": 12
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/deleted.js",
+      "sha": "d5b61937d0f4eba80ab6b1f300a3ca659649f223",
+      "lines": 210,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Popconfirm",
+        "Button",
+        "UndoOutlined",
+        "SuperAdminGroupShell",
+        "Alert",
+        "Skeleton",
+        "Space",
+        "Card",
+        "Empty",
+        "Table"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Table"
+      ],
+      "events": 3
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/index.js",
+      "sha": "5ce66a22e2e8851ac97f768121cae5b602698fe8",
+      "lines": 483,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/utils/csvExport",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Space",
+        "Button",
+        "Tag",
+        "Progress",
+        "Link",
+        "Popconfirm",
+        "InboxOutlined",
+        "SuperAdminGroupShell",
+        "Alert",
+        "Skeleton",
+        "Card",
+        "Input.Search",
+        "Select",
+        "DownloadOutlined",
+        "Table",
+        "Empty",
+        "SuperAdminProjectWorkspacesPageBody"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Table"
+      ],
+      "events": 11
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/new.js",
+      "sha": "5659b1e7293490fb88920f1e7000855f0a771d88",
+      "lines": 594,
+      "imports": [
+        "@/utils/csvExport",
+        "@/components/admin/projects/useProjectTeamSplit",
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/hooks/useDebounceHook",
+        "@/api/Services/AdminService"
+      ],
+      "jsxComponents": [
+        "SuperAdminGroupShell",
+        "Alert",
+        "Skeleton",
+        "Space",
+        "Button",
+        "Card",
+        "Radio.Group",
+        "Form",
+        "Form.Item",
+        "Input",
+        "TextArea",
+        "Select",
+        "Table",
+        "Tag",
+        "Paragraph"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item",
+        "Table"
+      ],
+      "events": 10
     }
   ]
 }
