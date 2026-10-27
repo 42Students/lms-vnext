@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
 import {tpoGeneralRequestReviewFacts} from "@/modules/placements/tpo-general-request-review-facts";
+import {tpoGeneralRequestCanApprove} from "@/modules/placements/tpo-general-request-model";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 type Request={id:string;kind:string;status:string;reason:string;payload:Record<string,unknown>;
@@ -55,7 +56,7 @@ export function TpoGeneralRequestsPanel(){
   }catch{setError("This decision was not saved. The request may have changed, or its effect needs specialist review. Refresh before retrying.");}
  }
  const pendingRows=rows.filter(row=>row.status==="PENDING");
- const approveSupported=(kind:string)=>["OFF_CAMPUS_OFFER","REGISTRATION_CHANGE"].includes(kind);
+ const approveSupported=tpoGeneralRequestCanApprove;
  return <section aria-label="Other student requests" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Other student requests · {pendingRows.length} waiting</h2>
   <p className="text-sm leading-[22px]">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>

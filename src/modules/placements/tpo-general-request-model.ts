@@ -24,6 +24,18 @@ export const legacyLearnerRequestChoices=[
  {legacyKind:"PAP",kind:"PLACEMENT_AFTER_PLACEMENT",flow:"GENERAL"},
 ] as const;
 
+/** The general-request approval dialog must offer only effects implemented by
+ * the transactional decision service. Unsupported kinds remain reject/review only. */
+export const TPO_GENERAL_REQUEST_APPROVABLE_KINDS=[
+  "OFF_CAMPUS_OFFER",
+  "REGISTRATION_CHANGE",
+  "ABSENCE_DISPUTE",
+] as const;
+
+export function tpoGeneralRequestCanApprove(kind:string):kind is (typeof TPO_GENERAL_REQUEST_APPROVABLE_KINDS)[number]{
+ return (TPO_GENERAL_REQUEST_APPROVABLE_KINDS as readonly string[]).includes(kind);
+}
+
 export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
  z.object({kind:z.literal("OFF_CAMPUS_OFFER"),reason,
   companyName:z.string().trim().min(1,"Which company?").max(150),
