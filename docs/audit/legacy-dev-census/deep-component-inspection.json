@@ -1,0 +1,654 @@
+{
+  "ref": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+  "method": "static source-level imported workspace inspection",
+  "records": [
+    {
+      "path": "src/components/Assignments/AssignmentsContent.jsx",
+      "sha": "f765d1336dcc290d8781422941a8db9ff1fcfd77",
+      "lines": 765,
+      "imports": [
+        "@/components/Common/Skeletons",
+        "@/components/Global/ListingPageHeader/ListingPageHeader",
+        "@/components/Common/PageShell",
+        "@/components/Global/MetricPill/MetricPill",
+        "@/utils/dateUtils",
+        "@/api/Services/courseServices",
+        "@/utils/learnerApiUtils",
+        "@/components/Global/Offcanvas/Assignment/newAssignment",
+        "@/api/Services/courseServices",
+        "@/common/lists"
+      ],
+      "jsxTags": [
+        "FileTextOutlined",
+        "CalendarOutlined",
+        "BarChartOutlined",
+        "ActionAssignment",
+        "Skeleton.Avatar",
+        "Skeleton.Input",
+        "Select",
+        "Button",
+        "PageShell",
+        "ListingPageHeader",
+        "Skeleton.Button",
+        "AssignmentListSkeleton",
+        "ViewSubmissionsModal",
+        "PlusOutlined",
+        "AssignmentsEmptyIllustration",
+        "DrawerAssignment",
+        "ViewAssignmentDrawer",
+        "MetricPill",
+        "BookOutlined",
+        "Alert",
+        "RefreshStatus",
+        "AssignmentListItem",
+        "Pagination"
+      ],
+      "likelySurfaces": [
+        "ViewSubmissionsModal",
+        "DrawerAssignment",
+        "ViewAssignmentDrawer"
+      ],
+      "events": 22,
+      "statusSignals": {
+        "empty": true,
+        "error": true,
+        "load": true,
+        "auth": false
+      }
+    },
+    {
+      "path": "src/components/Quizzes/QuizzesContent.jsx",
+      "sha": "5a3fc14a0e1c0973a10cfd6b46dad31e7c6738c6",
+      "lines": 314,
+      "imports": [
+        "@/components/Global/ListingPageHeader/ListingPageHeader",
+        "@/components/Common/PageShell",
+        "@/components/Global/MetricPill/MetricPill",
+        "@/components/Quiz/QuizBuilderModal",
+        "@/components/Common/Skeletons",
+        "@/api/Services/courseServices",
+        "@/redux/store"
+      ],
+      "jsxTags": [
+        "Modal",
+        "ListSkeleton",
+        "Alert",
+        "Button",
+        "Space",
+        "Select",
+        "QuizBuilderModal",
+        "PageShell",
+        "ListingPageHeader",
+        "MetricPill",
+        "FormOutlined",
+        "BookOutlined",
+        "CheckCircleOutlined",
+        "PlusOutlined",
+        "Quiztable"
+      ],
+      "likelySurfaces": [
+        "Modal",
+        "QuizBuilderModal",
+        "FormOutlined",
+        "Quiztable"
+      ],
+      "events": 8,
+      "statusSignals": {
+        "empty": false,
+        "error": true,
+        "load": true,
+        "auth": false
+      }
+    },
+    {
+      "path": "src/components/Attendance/AttendanceContent.jsx",
+      "sha": "9e1b04f977918e0d9781e0186e544b72c4f396a1",
+      "lines": 479,
+      "imports": [
+        "@/components/Global/ListingPageHeader/ListingPageHeader",
+        "@/components/Common/PageShell",
+        "@/components/Common/Skeletons",
+        "@/components/Global/MetricPill/MetricPill",
+        "@/utils/attendanceConstants",
+        "@/api/Services/attendanceServices",
+        "@/redux/store",
+        "@/components/Attendance/StudentAttendance/StatusCol",
+        "@/utils/facultyRouteUtils"
+      ],
+      "jsxTags": [
+        "CalendarOutlined",
+        "StatusCol",
+        "ExclamationCircleOutlined",
+        "AttendanceEmptyIllustration",
+        "Button",
+        "PageShell",
+        "ListingPageHeader",
+        "MetricPill",
+        "BookOutlined",
+        "CheckCircleOutlined",
+        "CloseCircleOutlined",
+        "Alert",
+        "Select",
+        "LeftOutlined",
+        "DatePicker",
+        "RightOutlined",
+        "TableSkeleton",
+        "RefreshStatus",
+        "Table",
+        "AttendanceListItem"
+      ],
+      "likelySurfaces": [
+        "TableSkeleton",
+        "Table"
+      ],
+      "events": 7,
+      "statusSignals": {
+        "empty": true,
+        "error": true,
+        "load": true,
+        "auth": true
+      }
+    },
+    {
+      "path": "src/components/CalendarComp/ClassScheduleContent.jsx",
+      "sha": "ba9188e3cb294a255c5b2318f0be38a7cb4715bc",
+      "lines": 443,
+      "imports": [
+        "@/components/Global/ListingPageHeader/ListingPageHeader",
+        "@/components/Common/PageShell",
+        "@/components/Global/MetricPill/MetricPill",
+        "@/contexts/calendar-context",
+        "@/hooks/useCourses",
+        "@/utils/helper",
+        "@/api/Services/calenderServices",
+        "@/components/CalendarComp/CalendarEvents/CalendarEvents",
+        "@/styles/modules/calendar.module.scss"
+      ],
+      "jsxTags": [
+        "LeftOutlined",
+        "RightOutlined",
+        "Select",
+        "Button",
+        "PageShell",
+        "ListingPageHeader",
+        "Skeleton.Input",
+        "Skeleton.Button",
+        "MetricPill",
+        "CalendarOutlined",
+        "ScheduleOutlined",
+        "Alert",
+        "CalendarEvents"
+      ],
+      "likelySurfaces": [],
+      "events": 6,
+      "statusSignals": {
+        "empty": false,
+        "error": true,
+        "load": true,
+        "auth": false
+      }
+    },
+    {
+      "path": "src/components/Course/CoursesContent.jsx",
+      "sha": "da7fd7b667fb9bea0702adae00fa3b39c47d44bb",
+      "lines": 575,
+      "imports": [
+        "@/api/Services/SemesterService",
+        "@/api/Services/FacultyAssignmentService",
+        "@/components/Global/ListingPageHeader/ListingPageHeader",
+        "@/components/Common/PageShell",
+        "@/components/Common/Skeletons",
+        "@/components/Global/MetricPill/MetricPill",
+        "@/redux/store",
+        "@/utils/courseListingUtils",
+        "@/utils/courseUtils/contentAvailability"
+      ],
+      "jsxTags": [
+        "Image",
+        "Select",
+        "Link",
+        "ListingPageHeader",
+        "MetricPill",
+        "CalendarOutlined",
+        "BookOutlined",
+        "StarOutlined",
+        "TeamOutlined",
+        "Segmented",
+        "Popover",
+        "Button",
+        "FilterOutlined",
+        "ReloadOutlined",
+        "Input",
+        "SearchOutlined",
+        "PageShell",
+        "SkeletonText",
+        "Empty",
+        "CourseImage",
+        "Tag",
+        "React.Fragment"
+      ],
+      "likelySurfaces": [
+        "Popover"
+      ],
+      "events": 10,
+      "statusSignals": {
+        "empty": true,
+        "error": true,
+        "load": true,
+        "auth": true
+      }
+    },
+    {
+      "path": "src/components/Projects/ProjectDetailContent.jsx",
+      "sha": "15ea2217e2f1cb37e4d22f98d2ef45573493fc68",
+      "lines": 10851,
+      "imports": [
+        "./ProjectsShell",
+        "./ProjectModalShell",
+        "@/components/Common/Skeletons",
+        "./modals/TaskDetailsModal",
+        "@/api/Services/projectService",
+        "@/data/projectsData",
+        "@/utils/uploadToR2",
+        "@/utils/projectErrorModal",
+        "@/utils/projectMeetingTime",
+        "@/utils/projectBoardUndo",
+        "@/utils/projectEditorVersion",
+        "@/config/appConfig"
+      ],
+      "jsxTags": [
+        "Tag",
+        "Tooltip",
+        "Avatar",
+        "TeamOutlined",
+        "PushpinOutlined",
+        "LinkOutlined",
+        "CalendarOutlined",
+        "WarningOutlined",
+        "BoardCardBody",
+        "Button",
+        "Popconfirm",
+        "DeleteOutlined",
+        "HolderOutlined",
+        "FileTextOutlined",
+        "CheckCircleOutlined",
+        "Collapse",
+        "Spin",
+        "Form.Item",
+        "EditOutlined",
+        "PlusOutlined",
+        "AboutListBlock",
+        "NextLink",
+        "StatusPill",
+        "Empty",
+        "Form",
+        "Input",
+        "DatePicker",
+        "Input.TextArea",
+        "DatePicker.RangePicker",
+        "Select",
+        "ProjectModalShell",
+        "Descriptions",
+        "Descriptions.Item",
+        "Progress",
+        "Alert",
+        "RightOutlined",
+        "Badge",
+        "SearchOutlined",
+        "ListSkeleton",
+        "FilterOutlined",
+        "Drawer",
+        "DndContext",
+        "BoardLaneDropZone",
+        "SortableContext",
+        "BoardTaskCard",
+        "DragOverlay",
+        "PerformanceBucketDropZone",
+        "Input.Search",
+        "Checkbox",
+        "Upload",
+        "UploadOutlined",
+        "SortableResourceRow",
+        "ProjectsShell",
+        "Result",
+        "DetailSkeleton",
+        "Row",
+        "Col",
+        "TimePicker",
+        "TaskDetailsModal"
+      ],
+      "likelySurfaces": [
+        "Popconfirm",
+        "Form.Item",
+        "Form",
+        "ProjectModalShell",
+        "Drawer",
+        "SortableContext",
+        "PerformanceBucketDropZone",
+        "Upload",
+        "UploadOutlined",
+        "SortableResourceRow",
+        "DetailSkeleton",
+        "TaskDetailsModal"
+      ],
+      "events": 145,
+      "statusSignals": {
+        "empty": true,
+        "error": true,
+        "load": true,
+        "auth": true
+      }
+    },
+    {
+      "path": "src/components/Projects/ProjectsContent.jsx",
+      "sha": "5fbbb25e7dc31f6cbb1c07e1a502ebbee67e87c9",
+      "lines": 450,
+      "imports": [
+        "./ProjectsShell",
+        "@/utils/projectListOrdering",
+        "@/api/Services/projectService",
+        "@/components/Common/Skeletons"
+      ],
+      "jsxTags": [
+        "Spin",
+        "ProjectsShell",
+        "RefreshStatus",
+        "Alert",
+        "Button",
+        "Space",
+        "Input.Search",
+        "Select",
+        "SkeletonRegion",
+        "ProjectCardSkeleton",
+        "Empty",
+        "Tag",
+        "RightOutlined",
+        "Progress",
+        "Pagination"
+      ],
+      "likelySurfaces": [],
+      "events": 8,
+      "statusSignals": {
+        "empty": true,
+        "error": true,
+        "load": true,
+        "auth": false
+      }
+    },
+    {
+      "path": "src/components/Report/AssignmentReportContent.jsx",
+      "sha": "447876e8072a3cb1073567ed12284b91fd495091",
+      "lines": 213,
+      "imports": [
+        "@/api/Services/courseServices",
+        "@/api/Services/AdminService",
+        "@/utils/assignmentReport",
+        "@/utils/downloadAssignmentReportPdf",
+        "./ReportSummaryHeader",
+        "./ScoreDistributionBars",
+        "./SubmissionTimingCard",
+        "./ReportStudentTable",
+        "@/components/Common/Skeletons"
+      ],
+      "jsxTags": [
+        "DashboardSkeleton",
+        "Empty",
+        "Button",
+        "ReportSummaryHeader",
+        "Alert",
+        "ScoreDistributionBars",
+        "SubmissionTimingCard",
+        "ReportStudentTable"
+      ],
+      "likelySurfaces": [
+        "ReportStudentTable"
+      ],
+      "events": 2,
+      "statusSignals": {
+        "empty": true,
+        "error": true,
+        "load": true,
+        "auth": false
+      }
+    },
+    {
+      "path": "src/components/Report/QuizReportContent.jsx",
+      "sha": "113fea69884a0cd6a49facd53916f33be71d57ed",
+      "lines": 186,
+      "imports": [
+        "@/api/Services/quizServices",
+        "@/api/Services/AdminService",
+        "@/utils/quizReport",
+        "@/utils/downloadQuizReportPdf",
+        "./ReportSummaryHeader",
+        "./ScoreDistributionBars",
+        "./QuestionAccuracyList",
+        "./ReportStudentTable",
+        "@/components/Common/Skeletons"
+      ],
+      "jsxTags": [
+        "DashboardSkeleton",
+        "Empty",
+        "Button",
+        "ReportSummaryHeader",
+        "Alert",
+        "ScoreDistributionBars",
+        "QuestionAccuracyList",
+        "ReportStudentTable"
+      ],
+      "likelySurfaces": [
+        "ReportStudentTable"
+      ],
+      "events": 2,
+      "statusSignals": {
+        "empty": true,
+        "error": true,
+        "load": true,
+        "auth": false
+      }
+    },
+    {
+      "path": "src/components/Notifications/NotificationsContent.jsx",
+      "sha": "d87d745defd3e7e8b990c0c4ecbeb8cdead54721",
+      "lines": 764,
+      "imports": [
+        "@/hooks/useLearnerClassScope",
+        "@/components/Global/ListingPageHeader/ListingPageHeader",
+        "@/components/Common/PageShell",
+        "@/components/Common/Skeletons",
+        "@/components/Common/PanelStates",
+        "@/api/Services/UserServices",
+        "@/api/Services/notificationService",
+        "@/api/Services/courseServices",
+        "@/utils/roleUtils",
+        "@/utils/learnerApiUtils",
+        "@/utils/notificationDateUtils",
+        "@/utils/facultyRouteUtils",
+        "@/utils/notificationTypeUtils"
+      ],
+      "jsxTags": [
+        "Tag",
+        "Skeleton.Avatar",
+        "Skeleton",
+        "BellOutlined",
+        "Markup",
+        "BookOutlined",
+        "ProjectOutlined",
+        "NotificationOutlined",
+        "SolutionOutlined",
+        "BankOutlined",
+        "TeamOutlined",
+        "UserOutlined",
+        "NotificationsEmptyIllustration",
+        "PageShell",
+        "ListingPageHeader",
+        "PanelError",
+        "Alert",
+        "Button",
+        "RefreshStatus",
+        "PanelPartial",
+        "NotificationListSkeleton",
+        "PanelEmpty",
+        "NotificationListItem",
+        "Modal"
+      ],
+      "likelySurfaces": [
+        "PanelError",
+        "PanelPartial",
+        "PanelEmpty",
+        "Modal"
+      ],
+      "events": 9,
+      "statusSignals": {
+        "empty": true,
+        "error": true,
+        "load": true,
+        "auth": false
+      }
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Assignment/newAssignment.js",
+      "sha": "ab2ca6168ccbdb4dc25347f98e5c116e9bc377cd",
+      "lines": 915,
+      "imports": [
+        "@/components/Global/Editor/editor",
+        "../../RightDrawer/DrawerWidget",
+        "@/api/Services/courseServices",
+        "@/utils/uploadToR2",
+        "@/components/Global/Upload/UploadFromLinkButton",
+        "@/utils/dateUtils",
+        "@/utils/assignmentSchema"
+      ],
+      "jsxTags": [
+        "DrawerWidget",
+        "Alert",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Select",
+        "Button",
+        "DatePicker",
+        "Dropdown",
+        "Icon",
+        "PlusOutlined",
+        "ResourceIcon",
+        "DeleteOutlined",
+        "Editor",
+        "LinkOutlined",
+        "CloseCircleFilled",
+        "Upload",
+        "UploadOutlined",
+        "UploadFromLinkButton",
+        "Checkbox.Group",
+        "Checkbox"
+      ],
+      "likelySurfaces": [
+        "DrawerWidget",
+        "Form",
+        "Form.Item",
+        "Editor",
+        "Upload",
+        "UploadOutlined",
+        "UploadFromLinkButton"
+      ],
+      "events": 12,
+      "statusSignals": {
+        "empty": false,
+        "error": true,
+        "load": true,
+        "auth": true
+      }
+    },
+    {
+      "path": "src/components/Course/Syllabus/ContentCompletionCheck.jsx",
+      "sha": "e00e3ef7bcb1fbde716720d2a9e606ffb40f1205",
+      "lines": 31,
+      "imports": [],
+      "jsxTags": [
+        "CheckCircleFilled"
+      ],
+      "likelySurfaces": [],
+      "events": 0,
+      "statusSignals": {
+        "empty": false,
+        "error": false,
+        "load": false,
+        "auth": false
+      }
+    },
+    {
+      "path": "src/components/Placements/JobsListContent.jsx",
+      "sha": "8b726d832e0223f29b35497b2ca4cf16fcffdbfb",
+      "lines": 1116,
+      "imports": [
+        "@/api/Services/jobService",
+        "@/utils/jobTagUtils",
+        "@/utils/learnerApiUtils",
+        "@/api/Services/TpoHubService",
+        "@/utils/driveDescription",
+        "./PlacementsCompanyAvatar",
+        "@/components/Common/Skeletons",
+        "@/utils/navigationContext"
+      ],
+      "jsxTags": [
+        "PlacementsCompanyAvatar",
+        "CloseCircleOutlined",
+        "ClockCircleOutlined",
+        "WalletOutlined",
+        "CalendarOutlined",
+        "EnvironmentOutlined",
+        "HeartFilled",
+        "HeartOutlined",
+        "Input",
+        "SearchOutlined",
+        "Select",
+        "Button",
+        "JobListItem",
+        "Pagination",
+        "DownOutlined",
+        "RightOutlined",
+        "JobListSkeleton",
+        "JobsEmptyIllustration",
+        "Text",
+        "FileTextOutlined",
+        "Tabs",
+        "RefreshStatus",
+        "Alert"
+      ],
+      "likelySurfaces": [
+        "Tabs"
+      ],
+      "events": 20,
+      "statusSignals": {
+        "empty": true,
+        "error": true,
+        "load": true,
+        "auth": false
+      }
+    },
+    {
+      "path": "src/components/Placements/VerifiedJobDetailContent.jsx",
+      "sha": "098e7b5f6e710c5605f28a51303addb2f22d897c",
+      "lines": 114,
+      "imports": [
+        "@/api/ApiMethod",
+        "@/utils/learnerValidation",
+        "@/utils/placementsAppliedLookup",
+        "@/utils/navigationContext",
+        "./JobDetailContent.jsx"
+      ],
+      "jsxTags": [
+        "JobDetailContent",
+        "Button"
+      ],
+      "likelySurfaces": [],
+      "events": 4,
+      "statusSignals": {
+        "empty": false,
+        "error": true,
+        "load": true,
+        "auth": true
+      }
+    }
+  ]
+}
