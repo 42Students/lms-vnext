@@ -1,0 +1,330 @@
+{
+  "ref": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+  "method": "filename-selected overlay component source candidates; not all inline UI overlays",
+  "totalNamedCandidates": 43,
+  "records": [
+    {
+      "path": "src/components/Assignments/SubmitAssignmentModal.jsx",
+      "sha": "b65a854960891623f4b0c885054bb8d24610d87a",
+      "lines": 585,
+      "imports": [
+        "@/api/Services/courseServices",
+        "@/utils/uploadToR2",
+        "@/components/Global/Upload/UploadFromLinkButton",
+        "@/components/Global/RightDrawer/DrawerWidget",
+        "@/components/Global/Editor/editor",
+        "@/utils/dateUtils",
+        "@/utils/assignmentSchema"
+      ],
+      "jsxTags": [
+        "Modal",
+        "DrawerWidget",
+        "Alert",
+        "Button",
+        "Form",
+        "EditOutlined",
+        "Editor",
+        "SectionIcon",
+        "PlusOutlined",
+        "DeleteOutlined",
+        "CheckCircleFilled",
+        "Upload",
+        "UploadOutlined",
+        "UploadFromLinkButton",
+        "Input",
+        "LinkOutlined"
+      ],
+      "events": 10,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Assignments/ViewAssignmentModal.jsx",
+      "sha": "e7d1fcd4c7aa725ba7d24cda51a9948a241121f3",
+      "lines": 465,
+      "imports": [
+        "@/components/Global/RightDrawer/DrawerWidget",
+        "./SubmitAssignmentModal",
+        "@/api/Services/courseServices",
+        "@/api/Services/AdminService",
+        "@/utils/dateUtils",
+        "@/utils/assignmentSchema"
+      ],
+      "jsxTags": [
+        "Icon",
+        "Button",
+        "ExportOutlined",
+        "DownloadOutlined",
+        "Markup",
+        "DrawerWidget",
+        "SubmitAssignmentModal",
+        "ArrowLeftOutlined",
+        "ResourceCard",
+        "Empty",
+        "CalendarOutlined",
+        "FileSearchOutlined",
+        "BarChartOutlined",
+        "Alert",
+        "ViewSubmissionsModal"
+      ],
+      "events": 7,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Course/Syllabus/VideoDrawer.jsx",
+      "sha": "21020d6b212edda856df8aa539ebb7122c7138a2",
+      "lines": 287,
+      "imports": [
+        "@/components/Global/Editor/editor",
+        "@/api/Services/courseServices",
+        "@/api/Services/AdminService",
+        "@/utils/uploadToR2",
+        "@/components/Global/RightDrawer/DrawerWidget",
+        "@/utils/helper"
+      ],
+      "jsxTags": [
+        "DrawerWidget",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Upload",
+        "Button",
+        "UploadOutlined"
+      ],
+      "events": 2,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Course/Syllabus/YoutubeDrawer.jsx",
+      "sha": "5bf2d6112b081d3161655800733f39c03dc4b51d",
+      "lines": 230,
+      "imports": [
+        "@/components/Global/Editor/editor",
+        "@/utils/youtubeLink",
+        "@/api/Services/courseServices",
+        "@/components/Global/RightDrawer/DrawerWidget"
+      ],
+      "jsxTags": [
+        "DrawerWidget",
+        "Form",
+        "Form.Item",
+        "Input"
+      ],
+      "events": 2,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Course/Syllabus/__tests__/VideoDrawer.test.jsx",
+      "sha": "ffcdedfe36b84cbc7b3a81f7a591c1b2c930c537",
+      "lines": 89,
+      "imports": [
+        "../VideoDrawer",
+        "@/api/Services/courseServices",
+        "@/api/Services/AdminService"
+      ],
+      "jsxTags": [
+        "VideoDrawer"
+      ],
+      "events": 3,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/Global/MobileMenuDrawer/MobileMenuDrawer.js",
+      "sha": "f691b49e9a023d403a882dd1a5277af002255c5c",
+      "lines": 113,
+      "imports": [
+        "../RightDrawer/DrawerWidget",
+        "@/components/Sidebar",
+        "@/utils/roleUtils"
+      ],
+      "jsxTags": [
+        "Link",
+        "DrawerWidget",
+        "AdminSidebar",
+        "Sidebar"
+      ],
+      "events": 3,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/Global/MobileMenuDrawer/SuperAdminMobileMenuDrawer.js",
+      "sha": "532cf35fd1f8fb901d498eb3754d33549167744e",
+      "lines": 87,
+      "imports": [
+        "../RightDrawer/DrawerWidget",
+        "@/components/Sidebar/SuperAdminSidebar"
+      ],
+      "jsxTags": [
+        "Link",
+        "DrawerWidget",
+        "SuperAdminSidebar"
+      ],
+      "events": 2,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/Global/ModalContainer/ConfirmationModal.jsx",
+      "sha": "1ea68ab30353625300a2118eba8bf36497c98921",
+      "lines": 73,
+      "imports": [],
+      "jsxTags": [
+        "ExclamationCircleOutlined"
+      ],
+      "events": 0,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Global/ModalContainer/ModalContainer.jsx",
+      "sha": "9f5f9b7f318b20292671ef32314458ec03912fbd",
+      "lines": 83,
+      "imports": [
+        "../Button/button"
+      ],
+      "jsxTags": [
+        "Modal",
+        "CustomButton"
+      ],
+      "events": 4,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Attendance/SheduleClassDrawer.js",
+      "sha": "bfbdf07d05fed14ad9be04ff8105a829594e0db8",
+      "lines": 193,
+      "imports": [
+        "../../RightDrawer/DrawerWidget"
+      ],
+      "jsxTags": [
+        "DrawerWidget",
+        "Form",
+        "Form.Item",
+        "DatePicker",
+        "TimePicker",
+        "Input"
+      ],
+      "events": 1,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Offcanvas.js",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "lines": 1,
+      "imports": [],
+      "jsxTags": [],
+      "events": 0,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": false
+      }
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/AddLessonDrawer.jsx",
+      "sha": "ce4803eb2e8eabd6e86674c0b128789cf6f52a23",
+      "lines": 196,
+      "imports": [
+        "../../RightDrawer/DrawerWidget",
+        "@/api/ApiMethod"
+      ],
+      "jsxTags": [
+        "DrawerWidget",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Select"
+      ],
+      "events": 2,
+      "flags": {
+        "permission": false,
+        "loading": true,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js",
+      "sha": "5d1f59234765e962346e23d19265449798c9a770",
+      "lines": 241,
+      "imports": [
+        "./videoform",
+        "./youtube",
+        "./liveclass",
+        "./ResourceComposer",
+        "../../RightDrawer/DrawerWidget",
+        "@/components/Quiz/QuizBuilderModal",
+        "@/components/Global/Offcanvas/Assignment/newAssignment"
+      ],
+      "jsxTags": [
+        "DrawerWidget",
+        "ResourceComposer",
+        "LiveClass",
+        "VideoFrom",
+        "YouTube",
+        "QuizBuilderModal",
+        "DrawerAssignment"
+      ],
+      "events": 9,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": true
+      }
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/__tests__/AddLessonDrawer.test.jsx",
+      "sha": "661a27fe6e6539ffc701dfa4846c902d3f759c3b",
+      "lines": 77,
+      "imports": [
+        "../AddLessonDrawer",
+        "@/api/ApiMethod"
+      ],
+      "jsxTags": [
+        "AddLessonDrawer"
+      ],
+      "events": 1,
+      "flags": {
+        "permission": false,
+        "loading": false,
+        "error": false
+      }
+    }
+  ]
+}
