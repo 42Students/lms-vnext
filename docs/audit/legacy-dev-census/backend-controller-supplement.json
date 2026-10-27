@@ -5,6 +5,254 @@
   "method": "Static annotation/role/tenant signals only; class may be non-controller, access checks may be inherited",
   "records": [
     {
+      "path": "src/main/java/com/_42students/lms/controller/electives/ElectiveAdminController.java",
+      "sha": "851f544c59cfc81781c1a581411e27757fd882a3",
+      "lines": 199,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/electives/admin\"",
+          "line": 45
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/slots\"",
+          "line": 81
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/slots\"",
+          "line": 89
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/slots/{slotId}\"",
+          "line": 96
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/slots/{slotId}\"",
+          "line": 102
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/slots/{slotId}/archive\"",
+          "line": 109
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/slots/{slotId}/unallocated\"",
+          "line": 116
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/slots/{slotId}/offerings\"",
+          "line": 124
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/offerings/{offeringId}\"",
+          "line": 133
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/offerings/{offeringId}\"",
+          "line": 139
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/offerings/{offeringId}/archive\"",
+          "line": 146
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/offerings/{offeringId}/faculty\"",
+          "line": 153
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/offerings/{offeringId}/roster\"",
+          "line": 163
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/offerings/{offeringId}/allocate\"",
+          "line": 169
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/offerings/{offeringId}/roster/{learnerId}\"",
+          "line": 178
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/offerings/{offeringId}/roster/{learnerId}/move\"",
+          "line": 188
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": true,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 15
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/groups/AdminGroupController.java",
+      "sha": "f5d1cdb959219035727923f4242b28c09ee5a53b",
+      "lines": 267,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/admin/groups\"",
+          "line": 47
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "",
+          "line": 95
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "",
+          "line": 105
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/{id}\"",
+          "line": 114
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/{id}\"",
+          "line": 119
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{id}/status\"",
+          "line": 126
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/{id}\"",
+          "line": 133
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{id}/reconcile\"",
+          "line": 141
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/{id}/members\"",
+          "line": 150
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{id}/members\"",
+          "line": 157
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/{id}/members/{learnerId}\"",
+          "line": 203
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{id}/members/{learnerId}/lock\"",
+          "line": 215
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/{id}/events\"",
+          "line": 225
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/{id}/rule\"",
+          "line": 233
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/{id}/rule\"",
+          "line": 239
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/{id}/rule\"",
+          "line": 246
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/{id}/rule/preview\"",
+          "line": 254
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{id}/rule/apply\"",
+          "line": 259
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": true,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 17
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/groups/LearnerGroupController.java",
+      "sha": "976aaec7020b5590a2c45822a51ce85fe6358362",
+      "lines": 116,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/learner/groups\"",
+          "line": 32
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/mine\"",
+          "line": 56
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/open\"",
+          "line": 76
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/{id}\"",
+          "line": 91
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{id}/join\"",
+          "line": 100
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{id}/leave\"",
+          "line": 108
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 5
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/PublicTrackerLogsAccessController.java",
       "sha": "3ab3379f1545c3b3c74179aea0e76ade771e69c1",
       "lines": 104,
@@ -605,6 +853,524 @@
         "download": false
       },
       "methodCount": 16
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/TelegramWebhookController.java",
+      "sha": "20e5bb0f5707bf826597d7e3f7a918611e94c32a",
+      "lines": 72,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/api/v1/public/telegram/webhook\"",
+          "line": 39
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 1
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/TenantAdminController.java",
+      "sha": "0d01b12e86db2ced256a7e5a7430a055200eccdb",
+      "lines": 811,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/superadmin/tenant\"",
+          "line": 46
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/domains\"",
+          "line": 139
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/onboarding/readiness/{collegeId}\"",
+          "line": 154
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/onboarding/resolve-preview\"",
+          "line": 273
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/colleges/{collegeId}/subdomain\"",
+          "line": 328
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/colleges/{collegeId}/subdomain\"",
+          "line": 346
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/colleges/{collegeId}/subdomain\"",
+          "line": 389
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/domains\"",
+          "line": 428
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/domains/{id}\"",
+          "line": 465
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/domains/{id}\"",
+          "line": 510
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/domains/{id}/verification-token\"",
+          "line": 543
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/domains/{id}/verify\"",
+          "line": 559
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/branding/{collegeId}\"",
+          "line": 573
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/branding/{collegeId}\"",
+          "line": 585
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/settings/global\"",
+          "line": 640
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/settings/global\"",
+          "line": 649
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/settings/global/{key:.+}\"",
+          "line": 685
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/settings/org/{orgId}\"",
+          "line": 698
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/settings/org/{orgId}\"",
+          "line": 705
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/settings/college/{collegeId}\"",
+          "line": 722
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/settings/college/{collegeId}\"",
+          "line": 729
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/settings/org/{orgId}/{key:.+}\"",
+          "line": 746
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/settings/college/{collegeId}/{key:.+}\"",
+          "line": 757
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": true,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 22
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/UserController.java",
+      "sha": "f19545bb3e6e6feb3d68b0e30c55599918d29fd5",
+      "lines": 557,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "{\"/api/v1/users\", \"/users\"}",
+          "line": 59
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value = \"/admin/clear-otp-lockout\", method = RequestMethod.POST, produces = \"application/json\"",
+          "line": 180
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value = \"/login\", method = RequestMethod.GET, produces = \"application/json\"",
+          "line": 202
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value = \"/verifyOTP\", method = RequestMethod.GET, produces = \"application/json\"",
+          "line": 275
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value = \"/authenticate\", method = RequestMethod.POST",
+          "line": 429
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value = \"/contacts\", method = RequestMethod.GET, produces = \"application/json\"",
+          "line": 434
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value=\"/register\", method = RequestMethod.POST",
+          "line": 484
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value=\"/adminping\", method = RequestMethod.GET",
+          "line": 499
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value=\"/userping\", method = RequestMethod.GET",
+          "line": 505
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value = \"/learnerContactsByProgramId\", method = RequestMethod.GET, produces = \"application/json\"",
+          "line": 511
+        },
+        {
+          "annotation": "RequestMapping",
+          "raw": "value = \"/facultyContactsByDeptId\", method = RequestMethod.GET, produces = \"application/json\"",
+          "line": 533
+        }
+      ],
+      "signals": {
+        "preAuthorize": true,
+        "explicitCollegeScope": true,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/model/ProjectResource.java",
+      "sha": "4c6e34c3eb8f79e13c540c5e15010219e03e2184",
+      "lines": 110,
+      "kind": "other_candidate",
+      "mappings": [],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/search/announcements/AnnouncementSearchController.java",
+      "sha": "9efddcd692b2be7b3d384aeed99035d7b9764e0b",
+      "lines": 77,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v2/announcements\"",
+          "line": 19
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/search\"",
+          "line": 41
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/stats\"",
+          "line": 58
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/refresh\"",
+          "line": 67
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 3
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/search/applications/JobApplicationSearchController.java",
+      "sha": "95c884cee57d8b153773ff501fca51c868ab523f",
+      "lines": 119,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v2/job-applications\"",
+          "line": 20
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/search\"",
+          "line": 57
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/stats\"",
+          "line": 83
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/refresh\"",
+          "line": 106
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 3
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/search/batches/BatchSearchController.java",
+      "sha": "29c2f5d11c94411d5c6d8093a9ecc8e9dde77e62",
+      "lines": 267,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v2/batches\"",
+          "line": 22
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/search\"",
+          "line": 65
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/popular\"",
+          "line": 116
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/program/{programId}\"",
+          "line": 134
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/categories\"",
+          "line": 151
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/category/{program}\"",
+          "line": 172
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{batchId}/select\"",
+          "line": 194
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/stats\"",
+          "line": 213
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/exists/{batchName}\"",
+          "line": 237
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/refresh\"",
+          "line": 253
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": true,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 9
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/search/classes/ClassSearchController.java",
+      "sha": "0e9d8c646a8c7df1b5a3603cc3ec68e3197410ec",
+      "lines": 245,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v2/classes\"",
+          "line": 21
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/search\"",
+          "line": 71
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/popular\"",
+          "line": 119
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/program/{programId}\"",
+          "line": 136
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/categories\"",
+          "line": 153
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/category/{program}\"",
+          "line": 169
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{classId}/select\"",
+          "line": 186
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/stats\"",
+          "line": 202
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/exists/{className}\"",
+          "line": 220
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/refresh\"",
+          "line": 231
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": true,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 9
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/search/colleges/CollegeSearchController.java",
+      "sha": "a75365bf9a5454b2995a4638e0035a53cedaf481",
+      "lines": 369,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v2/colleges\"",
+          "line": 23
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/search\"",
+          "line": 72
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/popular\"",
+          "line": 166
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/states\"",
+          "line": 187
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/state/{state}\"",
+          "line": 211
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/city/{city}\"",
+          "line": 229
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/categories\"",
+          "line": 247
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/category/{state}\"",
+          "line": 271
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{collegeId}/select\"",
+          "line": 289
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/stats\"",
+          "line": 305
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/exists/{collegeName}\"",
+          "line": 332
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/refresh\"",
+          "line": 355
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": true,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 11
     }
   ]
 }
