@@ -186,11 +186,11 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
     }).first();
     await expect(project).toBeVisible({timeout:12000});
     const href=await project.getAttribute("href");
-    expect(href).toMatch(/^\\/mentor\\/projects\\/[0-9a-f-]{36}\\?tab=overview$/i);
+    expect(href).toMatch(/^\/mentor\/projects\/[0-9a-f-]{36}\?tab=overview$/i);
     await input.press("ArrowDown");
     await expect(project).toBeFocused();
     await Promise.all([
-      page.waitForURL(/\\/mentor\\/projects\\/[0-9a-f-]{36}\\?tab=overview$/i,
+      page.waitForURL(/\/mentor\/projects\/[0-9a-f-]{36}\?tab=overview$/i,
         {timeout:20000}),
       project.press("Enter"),
     ]);
