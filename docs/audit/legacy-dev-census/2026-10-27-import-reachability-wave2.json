@@ -6335,11 +6335,732 @@
       "actions": [],
       "totalActionCandidates": 0,
       "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/tpo/drive/DiscussionTab.jsx",
+      "sha": "2fd3f115c22d6f76150a4f7e4ecec7cf6722a586",
+      "lines": 55,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 4,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/components/tpo/MessagesPanel",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/tpo/MessagesPanel.js",
+          "sha": "1929e09abfceda1dea08bb7f6a7e551f4cf78589"
+        },
+        {
+          "specifier": "@/components/tpo/team/TeamConversation",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/tpo/team/TeamConversation.jsx",
+          "sha": "b4ce968ed662dd7718eb704f4e3345e9e985fd5c"
+        },
+        {
+          "specifier": "@/components/tpo/team/useTeamPeople",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/tpo/team/useTeamPeople.js",
+          "sha": "adcc5161feb368bdcbf2ec26cb346c38dc478395"
+        }
+      ],
+      "externalImportCount": 3,
+      "signalCounts": {},
+      "uiSignals": [],
+      "actions": [
+        {
+          "line": 40,
+          "text": "<button type=\"button\" role=\"tab\" aria-selected={view === \"company\"} className={view === \"company\" ? \"is-on\" : \"\"} onClick={() => setView(\"company\")}>With {who}<"
+        },
+        {
+          "line": 41,
+          "text": "<button type=\"button\" role=\"tab\" aria-selected={view === \"team\"} className={view === \"team\" ? \"is-on\" : \"\"} onClick={() => setView(\"team\")}>Your team only{teamN"
+        }
+      ],
+      "totalActionCandidates": 2,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/tpo/drive/InviteReviewer.jsx",
+      "sha": "b035a594992214eedbec432b8c391924650ebc65",
+      "lines": 128,
+      "dependencies": [
+        {
+          "specifier": "@/components/tpo/ui/AsyncModal",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/tpo/ui/AsyncModal.jsx",
+          "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoService",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/TpoService.js",
+          "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 8,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/components/tpo/drive/CompanyPicker",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/tpo/drive/CompanyPicker.jsx",
+          "sha": "d88dde925f95adb6016768bbb6584eba3be20a69"
+        }
+      ],
+      "externalImportCount": 4,
+      "signalCounts": {
+        "message.success": 1,
+        "message.error": 1,
+        "<Button": 4,
+        "<Modal": 1,
+        "<Form": 5
+      },
+      "uiSignals": [
+        {
+          "line": 11,
+          "kind": "message.success"
+        },
+        {
+          "line": 11,
+          "kind": "message.error"
+        },
+        {
+          "line": 73,
+          "kind": "<Modal"
+        }
+      ],
+      "actions": [
+        {
+          "line": 24,
+          "text": "<Button onClick={() => copy(all, \"Email\")}>Copy email</Button>"
+        },
+        {
+          "line": 71,
+          "text": "<Button {...buttonProps} onClick={start}>Invite the recruiter to review</Button>"
+        },
+        {
+          "line": 73,
+          "text": "<Modal open={open} title=\"Invite the recruiter to review\" onCancel={close} destroyOnClose"
+        },
+        {
+          "line": 74,
+          "text": "footer={<Button type=\"primary\" onClick={close}>Done</Button>}>"
+        },
+        {
+          "line": 93,
+          "text": "<AsyncModal open={open} title=\"Invite the recruiter to review\" okText=\"Send invitation\" destroyOnClose onCancel={close}"
+        }
+      ],
+      "totalActionCandidates": 5,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/tpo/team/TeamComposer.jsx",
+      "sha": "99f35cb9c77c6a61176f269dba773e7ddcdf1f34",
+      "lines": 189,
+      "dependencies": [
+        {
+          "specifier": "@/components/tpo/dj",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/components/tpo/team/teamTokens",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/tpo/team/teamTokens.js",
+          "sha": "487c53d44ecc1fd7bced20c0bb6b3e0b27511fa0"
+        }
+      ],
+      "externalImportCount": 3,
+      "signalCounts": {
+        "<Select": 1,
+        "<Button": 6
+      },
+      "uiSignals": [
+        {
+          "line": 162,
+          "kind": "<Select"
+        }
+      ],
+      "actions": [
+        {
+          "line": 42,
+          "text": "initialBody, simple, submitLabel = \"Send\", onCancel, initialAskAssignee, teamReach, inConversation, isPrivate }) {"
+        },
+        {
+          "line": 95,
+          "text": "const onChange = (e) => {"
+        },
+        {
+          "line": 135,
+          "text": "const onKeyDown = (e) => {"
+        },
+        {
+          "line": 162,
+          "text": "<Select size=\"small\" style={{ minWidth: 180 }} placeholder=\"Who\" value={assignee} onChange={setAssignee} aria-label=\"Who to ask\""
+        },
+        {
+          "line": 164,
+          "text": "<DatePicker size=\"small\" showTime={{ format: \"h:mm A\" }} format=\"D MMM, h:mm A\" placeholder=\"By (optional)\" value={due} onChange={setDue} aria-label=\"By when\""
+        },
+        {
+          "line": 169,
+          "text": "<Input.TextArea ref={ref} autoSize={{ minRows: compact ? 1 : 2, maxRows: 8 }} value={text} onChange={onChange} onKeyDown={onKeyDown} disabled={disabled || busy}"
+        },
+        {
+          "line": 173,
+          "text": "<Button size=\"small\" aria-label=\"Mention someone\" onClick={() => { setText((t) => `${t}${t && !/\\s$/.test(t) ? \" \" : \"\"}@`); setSuggest({ type: \"@\", query: \"\", "
+        },
+        {
+          "line": 174,
+          "text": "<Button size=\"small\" aria-label=\"Link a drive, company or student\" onClick={() => { setText((t) => `${t}${t && !/\\s$/.test(t) ? \" \" : \"\"}#`); setSuggest({ type:"
+        },
+        {
+          "line": 181,
+          "text": "{onCancel && <Button onClick={onCancel}>Cancel</Button>}"
+        },
+        {
+          "line": 182,
+          "text": "<Button type=\"primary\" onClick={send} loading={busy} disabled={disabled || !text.trim() || (asking && !assignee)}>{submitLabel}</Button>"
+        }
+      ],
+      "totalActionCandidates": 10,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/tpo/team/TeamMessages.jsx",
+      "sha": "d38a7d07186b9689e0455bdb8d9c9adb920138f7",
+      "lines": 104,
+      "dependencies": [
+        {
+          "specifier": "@/components/tpo/dj",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/tpo/dj.js",
+          "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+        },
+        {
+          "specifier": "@/components/tpo/team/teamTokens",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/tpo/team/teamTokens.js",
+          "sha": "487c53d44ecc1fd7bced20c0bb6b3e0b27511fa0"
+        }
+      ],
+      "externalImportCount": 4,
+      "signalCounts": {
+        "<Dropdown": 1,
+        "<Button": 3
+      },
+      "uiSignals": [
+        {
+          "line": 76,
+          "kind": "<Dropdown"
+        }
+      ],
+      "actions": [
+        {
+          "line": 62,
+          "text": "!m.deleted && { key: \"decision\", label: m.isDecision ? \"Take the decision mark off\" : \"Mark as decision\", onClick: () => onDecision?.(m, !m.isDecision) },"
+        },
+        {
+          "line": 63,
+          "text": "m.canEdit && { key: \"edit\", label: \"Edit\", onClick: () => onEdit?.(m) },"
+        },
+        {
+          "line": 64,
+          "text": "mine && !m.deleted && { key: \"delete\", danger: true, label: \"Delete\", onClick: () => onDelete?.(m) },"
+        },
+        {
+          "line": 89,
+          "text": "<Button size=\"small\" onClick={() => onAskDone?.(m.ask)}>Mark done</Button>"
+        },
+        {
+          "line": 92,
+          "text": "<Button size=\"small\" type=\"text\" onClick={() => onAskCancel?.(m.ask)}>Cancel ask</Button>"
+        }
+      ],
+      "totalActionCandidates": 5,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/tpo/drive/DrivePipeline.js",
+      "sha": "deaab0f3e42746136a61d960a09f815504d9dadd",
+      "lines": 72,
+      "dependencies": [],
+      "externalImportCount": 1,
+      "signalCounts": {},
+      "uiSignals": [],
+      "actions": [
+        {
+          "line": 48,
+          "text": "onClick={() => onStageClick?.(r.key)}"
+        }
+      ],
+      "totalActionCandidates": 1,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/dashboard/AdminDashboardView.js",
+      "sha": "69cacac8060f9acf3d840b58820908c9c5cbfb0a",
+      "lines": 78,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "./config",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/admin/dashboard/config.js",
+          "sha": "1830967b17d9e0b0ff0e9610060cc94636ebab2f"
+        },
+        {
+          "specifier": "./QuickActionsGrid",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/admin/dashboard/QuickActionsGrid.js",
+          "sha": "54cc6d71978e072f52356b6302c1a37f0de0e8ce"
+        },
+        {
+          "specifier": "./SetupGuide",
+          "line": 11,
+          "type": "local",
+          "path": "src/components/admin/dashboard/SetupGuide.js",
+          "sha": "256eb64e6a164940d0cbe440c04ac718d35ff12d"
+        },
+        {
+          "specifier": "./AtAGlance",
+          "line": 12,
+          "type": "local",
+          "path": "src/components/admin/dashboard/AtAGlance.js",
+          "sha": "d5e069c1be3f08bbbd31c2bb93b2b252c842f68a"
+        },
+        {
+          "specifier": "./AttentionBoard",
+          "line": 13,
+          "type": "local",
+          "path": "src/components/admin/dashboard/AttentionBoard.js",
+          "sha": "bbe081e560eabd227787916b5fb011b8c160231c"
+        }
+      ],
+      "externalImportCount": 4,
+      "signalCounts": {},
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/SubmissionWork.jsx",
+      "sha": "8cdd129358bb51d21a77e7dcd0f5e337735ec986",
+      "lines": 91,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/components/admin/projects/adminProjectUtils",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/admin/projects/adminProjectUtils.js",
+          "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+        },
+        {
+          "specifier": "@/utils/dateUtils",
+          "line": 7,
+          "type": "local",
+          "path": "src/utils/dateUtils.js",
+          "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+        }
+      ],
+      "externalImportCount": 4,
+      "signalCounts": {
+        "message.error": 1,
+        "<Button": 1
+      },
+      "uiSignals": [
+        {
+          "line": 65,
+          "kind": "message.error"
+        }
+      ],
+      "actions": [
+        {
+          "line": 76,
+          "text": "<Button key={f.id} size=\"small\" icon={<FileOutlined />} loading={opening === f.id} onClick={() => open(f)}>{f.name}</Button>"
+        }
+      ],
+      "totalActionCandidates": 1,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/SuperAdminTemplateShell.jsx",
+      "sha": "40e1597a456139e61478c48d8ee5f5db747fff3a",
+      "lines": 61,
+      "dependencies": [
+        {
+          "specifier": "@/components/Common/PageShell",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/Common/PageShell.jsx",
+          "sha": "0f05dc1e60d652385f03289a608496ab372c92ec"
+        },
+        {
+          "specifier": "@/components/admin/entitySectionTabs",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/admin/entitySectionTabs.js",
+          "sha": "68af81a36e26cad2fc107d00ae1588d5d434f267"
+        },
+        {
+          "specifier": "@/common/superAdminNavGroups",
+          "line": 5,
+          "type": "local",
+          "path": "src/common/superAdminNavGroups.js",
+          "sha": "1254f3187b7be848c28e8bd9a4ce74bcf28e753a"
+        }
+      ],
+      "externalImportCount": 2,
+      "signalCounts": {
+        "<Button": 2
+      },
+      "uiSignals": [],
+      "actions": [
+        {
+          "line": 38,
+          "text": "// every other admin page header uses. Routing via onClick rather than wrapping a Button in"
+        },
+        {
+          "line": 46,
+          "text": "<Button onClick={() => router.push(\"/superadmin/projects/templates\")}>← Back to templates</Button>"
+        },
+        {
+          "line": 50,
+          "text": "onClick={() => router.push(`/superadmin/projects/workspaces/new?templateId=${encodeURIComponent(templateId)}`)}>"
+        }
+      ],
+      "totalActionCandidates": 3,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/SuperAdminWorkspaceShell.jsx",
+      "sha": "a99266868b0b4df7e2667c458207a041c8424495",
+      "lines": 31,
+      "dependencies": [
+        {
+          "specifier": "@/components/Common/PageShell",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/Common/PageShell.jsx",
+          "sha": "0f05dc1e60d652385f03289a608496ab372c92ec"
+        },
+        {
+          "specifier": "@/components/admin/entitySectionTabs",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/admin/entitySectionTabs.js",
+          "sha": "68af81a36e26cad2fc107d00ae1588d5d434f267"
+        },
+        {
+          "specifier": "@/components/admin/AdminWorkspaceBreadcrumb",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/admin/AdminWorkspaceBreadcrumb.jsx",
+          "sha": "59e1d999e7295999cf4bc2e02bb0026d7f18c0cf"
+        },
+        {
+          "specifier": "@/common/superAdminNavGroups",
+          "line": 6,
+          "type": "local",
+          "path": "src/common/superAdminNavGroups.js",
+          "sha": "1254f3187b7be848c28e8bd9a4ce74bcf28e753a"
+        },
+        {
+          "specifier": "@/components/admin/workspaceBackTarget",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/admin/workspaceBackTarget.js",
+          "sha": "977beda20a3560bc09e324fed3dd1dab675b53e3"
+        }
+      ],
+      "externalImportCount": 2,
+      "signalCounts": {
+        "<Button": 1
+      },
+      "uiSignals": [],
+      "actions": [
+        {
+          "line": 25,
+          "text": "actions={<Space wrap><Button onClick={() => router.push(back.href)}>{back.label}</Button>{actions}</Space>}>"
+        }
+      ],
+      "totalActionCandidates": 1,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/AdminWorkspaceShell.jsx",
+      "sha": "fbe534b8016756a167a8dfec307ed12e74a882ca",
+      "lines": 34,
+      "dependencies": [
+        {
+          "specifier": "@/components/Common/PageShell",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/Common/PageShell.jsx",
+          "sha": "0f05dc1e60d652385f03289a608496ab372c92ec"
+        },
+        {
+          "specifier": "@/components/admin/entitySectionTabs",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/admin/entitySectionTabs.js",
+          "sha": "68af81a36e26cad2fc107d00ae1588d5d434f267"
+        },
+        {
+          "specifier": "@/components/admin/AdminWorkspaceBreadcrumb",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/admin/AdminWorkspaceBreadcrumb.jsx",
+          "sha": "59e1d999e7295999cf4bc2e02bb0026d7f18c0cf"
+        },
+        {
+          "specifier": "@/components/admin/ModuleGroupGuard",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/admin/ModuleGroupGuard.jsx",
+          "sha": "43a942e81dbcbf01df7d119dd86951f3e1748013"
+        },
+        {
+          "specifier": "@/common/adminNavGroups",
+          "line": 7,
+          "type": "local",
+          "path": "src/common/adminNavGroups.js",
+          "sha": "72b6a2e0df7d5c4d0fbf6dae0216c1fefd5b481f"
+        },
+        {
+          "specifier": "@/components/admin/workspaceBackTarget",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/admin/workspaceBackTarget.js",
+          "sha": "977beda20a3560bc09e324fed3dd1dab675b53e3"
+        }
+      ],
+      "externalImportCount": 2,
+      "signalCounts": {
+        "<Button": 1
+      },
+      "uiSignals": [],
+      "actions": [
+        {
+          "line": 26,
+          "text": "actions={<Space wrap><Button onClick={() => router.push(back.href)}>{back.label}</Button>{actions}</Space>}>"
+        }
+      ],
+      "totalActionCandidates": 1,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/Sidebar/Sidebar.js",
+      "sha": "82a7449942433d15e73e2b5345d22c66c937d9ec",
+      "lines": 495,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/TpoHubService",
+          "line": 11,
+          "type": "local",
+          "path": "src/api/Services/TpoHubService.js",
+          "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+        },
+        {
+          "specifier": "@/components/tpo/nav/tpoHubs",
+          "line": 12,
+          "type": "local",
+          "path": "src/components/tpo/nav/tpoHubs.js",
+          "sha": "f8258f78a9c384252daedf7fe2ce8e7109a68b14"
+        },
+        {
+          "specifier": "@/components/tpo/TpoModuleOff",
+          "line": 13,
+          "type": "local",
+          "path": "src/components/tpo/TpoModuleOff.jsx",
+          "sha": "170b3bb306ab0215f344afff72fa0c09ec33d89c"
+        },
+        {
+          "specifier": "@/api/Services/VerificationService",
+          "line": 14,
+          "type": "local",
+          "path": "src/api/Services/VerificationService.js",
+          "sha": "54b5d827dd309924d1bcefd58b21effd50f7a89d"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 15,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/common/lists",
+          "line": 16,
+          "type": "local",
+          "path": "src/common/lists.js",
+          "sha": "171e1732da97fdf98d746da214a8284911e190bb"
+        },
+        {
+          "specifier": "@/redux/store",
+          "line": 18,
+          "type": "local",
+          "path": "src/redux/store.js",
+          "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+        },
+        {
+          "specifier": "@/api/Services/ProfileService",
+          "line": 19,
+          "type": "local",
+          "path": "src/api/Services/ProfileService.js",
+          "sha": "9d9760085683f5a740026898593119bd64953acf"
+        },
+        {
+          "specifier": "@/utils/profileUtils",
+          "line": 20,
+          "type": "local",
+          "path": "src/utils/profileUtils.js",
+          "sha": "59d31264e4370d9f4974dc2eda8c9bd802daa9d3"
+        },
+        {
+          "specifier": "@/utils/roleUtils",
+          "line": 22,
+          "type": "local",
+          "path": "src/utils/roleUtils.js",
+          "sha": "a16d7b4ef25833d3ace89759751190e1ce56d22d"
+        },
+        {
+          "specifier": "@/utils/navigationActiveKey",
+          "line": 23,
+          "type": "local",
+          "path": "src/utils/navigationActiveKey.js",
+          "sha": "c49a6525ef1bc0cb18aaa12e876c7e829bceb75c"
+        },
+        {
+          "specifier": "@/utils/useCollegeFeatureFlags",
+          "line": 24,
+          "type": "local",
+          "path": "src/utils/useCollegeFeatureFlags.js",
+          "sha": "bd0e7f315bdae7f20d43f165d5a00f180b4e87ec"
+        },
+        {
+          "specifier": "@/utils/featureFlagNavFilter",
+          "line": 25,
+          "type": "local",
+          "path": "src/utils/featureFlagNavFilter.js",
+          "sha": "c0cdd97ed02c44623364a902c2510347879cdb2f"
+        }
+      ],
+      "externalImportCount": 7,
+      "signalCounts": {},
+      "uiSignals": [],
+      "actions": [
+        {
+          "line": 45,
+          "text": "const Sidebar = ({ onClose, ...props }) => {"
+        },
+        {
+          "line": 398,
+          "text": "onClick={() => dispatch(appAction.setActiveMenuItem("
+        },
+        {
+          "line": 438,
+          "text": "onClick={() => {"
+        },
+        {
+          "line": 440,
+          "text": "onClose?.();"
+        },
+        {
+          "line": 482,
+          "text": "<button type=\"button\" className=\"fl-d-panel-l__fold\" onClick={toggleFold} aria-pressed={folded}"
+        }
+      ],
+      "totalActionCandidates": 5,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/ModuleGroupGuard.jsx",
+      "sha": "43a942e81dbcbf01df7d119dd86951f3e1748013",
+      "lines": 77,
+      "dependencies": [
+        {
+          "specifier": "@/utils/useCollegeFeatureFlags",
+          "line": 3,
+          "type": "local",
+          "path": "src/utils/useCollegeFeatureFlags.js",
+          "sha": "bd0e7f315bdae7f20d43f165d5a00f180b4e87ec"
+        }
+      ],
+      "externalImportCount": 2,
+      "signalCounts": {},
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
     }
   ],
   "scanStatus": {
-    "read": 48,
+    "read": 60,
     "errors": [],
-    "signalCandidates": 725
+    "signalCandidates": 754
   }
 }
