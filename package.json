@@ -54,7 +54,10 @@
     "ux:callsites": "node scripts/ux-callsite-audit.mjs",
     "ux:callsite:capture": "node scripts/ux-capture-affected-callsites.mjs",
     "test:chat17:weak": "vitest run tests/unit/chat17-auth-crypto-hardening.test.ts tests/unit/chat17-auth-http-hardening.test.ts tests/unit/chat17-auth-tenant-branding.test.ts tests/unit/chat17-auth-config-retention-network.test.ts tests/unit/auth-tenant-access.test.ts tests/unit/chat17-identity-system-roles-hardening.test.ts tests/unit/chat17-identity-portal-matrix.test.ts tests/unit/chat17-tenant-dns-verifier.test.ts tests/unit/tenant-domain-validation.test.ts tests/unit/chat17-system-bootstrap-race.test.ts tests/unit/chat17-tenant-domain-service-journeys.test.ts tests/unit/chat17-managed-domains-model.test.ts",
-    "test:e2e:chat17:kit": "playwright test tests/e2e/chat17-ui-kit-interactions.spec.ts tests/e2e/ux-safe-internal-href-chat17.spec.ts"
+    "test:e2e:chat17:kit": "playwright test tests/e2e/chat17-ui-kit-interactions.spec.ts tests/e2e/ux-safe-internal-href-chat17.spec.ts",
+    "parity:closure": "node scripts/page-closure.mjs",
+    "parity:closure:check": "node scripts/page-closure.mjs --check",
+    "test:parity:closure": "node --test tests/page-closure.test.mjs"
   },
   "dependencies": {
     "ag-grid-community": "^36.2.0",

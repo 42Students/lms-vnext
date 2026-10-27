@@ -114,6 +114,31 @@ A new conversation may contain only "continue LMS vNext works." The assistant sh
 
 **Existing tooling caveat:** `npm run parity:pages` currently counts Markdown checkboxes in the eight **top-level** `docs/parity/*.md` role files. If page-family specifications are split into `docs/parity/pages/**`, update and test the generator to include them **exactly once** before relying on its totals. It is a checklist count, **not** independent runtime acceptance, account-wide green certification or release readiness.
 
+### Machine-validated page closure and cross-chat continuation
+
+The read-only `scripts/page-closure.mjs` discovers page families from the **existing eight account specifications**. It never updates `docs/tracker.json` (which remains the sole official project task/phase tracker), nor does it infer green from old `[x]` checkboxes or historic DONE prose.
+
+```bash
+npm run parity:closure                    # all-account page-family overview
+npm run parity:closure:check              # invalid receipts fail
+npm run parity:closure -- --next          # select official phase task
+npm run parity:closure -- --next --account faculty
+npm run parity:closure -- --json          # inspect individual families
+npm run test:parity:closure               # false-green and resume regressions
+```
+
+To mark a page **Implementation Green**, insert a `<!-- page-closure` JSON block ending with `-->` *inside the existing page-family section*. Its ID equals `<account>:<heading-slug>` (inspect `--json`); `implementation.status` is `open`, `blocked` (with named `blockers`) or `green`. Green demands no unchecked family checkboxes, full FE/BE/vNext commit SHAs, `inventoryComplete: true`, `unmappedRequired: 0`, `openP0P1: 0`, unique named `surfaces`, `actions`, and `states`, and passing current-vNext-SHA `functional`, `authorization`, `browser-desktop`, and `browser-mobile` GitHub Actions evidence. An intentional user-visible redesign or retirement also requires `approvalUrl`. Other relevant DB/storage/cross-role acceptance gates remain mandatory.
+
+Example of a **blocked** family (not a green claim):
+
+```html
+<!-- page-closure
+{"id":"faculty:attendance","implementation":{"status":"blocked","blockers":["Exact unavailable dependency and failed test reference"]}}
+-->
+```
+
+The CLI validates **receipt structure**, not live GitHub Actions truth. Independent reviewers still verify run conclusions/commit SHAs and domain-specific persistence tests. Design and Release Green are separately evidenced and never inferred from Implementation Green. `--next` skips explicitly blocked pages rather than redoing their audit. Bare checked Markdown is *unverified* until a verified receipt is added.
+
 ### Practical start order
 
 First do a **one-time global census** of legacy dev accounts and their reachable page/overlay graph, reconciling inventories A/B and all eight detailed role specs; record incompletes rather than asserting that static scans exhaust everything. Then use **Faculty Today** as the first full contract pilot (without chasing its PNG), validate that every needed child surface/state is representable, and proceed one page family at a time through Faculty and the other roles. Complete the cross-role producer/consumer joins, integrated acceptance and independent UX/visual work; derive account/global completion only from those leaf records.
