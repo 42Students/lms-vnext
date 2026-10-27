@@ -1,0 +1,303 @@
+{
+  "ref": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+  "account": "superadmin",
+  "totalRoutes": 118,
+  "method": "static direct-page import/JSX/event candidates; nested component closures and runtime reachability are independent requirements",
+  "records": [
+    {
+      "path": "src/pages/superadmin/announcements.js",
+      "sha": "e86f26067a4abc9b921fbc37984b37e2ae742383",
+      "lines": 115,
+      "imports": [
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/components/tpo/ui/AsyncModal",
+        "@/components/tpo/announcements/AnnouncementList",
+        "@/components/tpo/dj",
+        "@/api/Services/AdminService"
+      ],
+      "jsxComponents": [
+        "SuperAdminGroupShell",
+        "Button",
+        "PlusOutlined",
+        "Typography.Paragraph",
+        "Alert",
+        "AnnouncementList",
+        "AsyncModal",
+        "Form",
+        "Form.Item",
+        "Input",
+        "Input.TextArea",
+        "Radio.Group",
+        "Select",
+        "Typography.Text",
+        "Space.Compact",
+        "DatePicker",
+        "Checkbox"
+      ],
+      "overlayCandidates": [
+        "AsyncModal",
+        "Form",
+        "Form.Item"
+      ],
+      "events": 5
+    },
+    {
+      "path": "src/pages/superadmin/assignments.js",
+      "sha": "36a8c9c0ee61716365a9d903f941f3661dbfd59f",
+      "lines": 33,
+      "imports": [
+        "./sections/Assignments",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "Assignments"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/attendance.js",
+      "sha": "e7698e7c1aacb4a96318c4c302eae621289577f0",
+      "lines": 33,
+      "imports": [
+        "./sections/Attendance",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "Attendance"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/audit.js",
+      "sha": "69c825812714fe8f4a90153d609f22c949406263",
+      "lines": 25,
+      "imports": [
+        "./sections/AuditHub",
+        "@/layouts/SuperAdminLayout",
+        "@/components/Common/PageShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "PageShell",
+        "AuditHub"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/batch-promotion.js",
+      "sha": "7c827236c7625bca7f29f87f350646617067145f",
+      "lines": 33,
+      "imports": [
+        "./sections/BatchPromotion",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "BatchPromotion"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/batches.js",
+      "sha": "a02382a441070c4e7342df531049a4ab22cd1b82",
+      "lines": 33,
+      "imports": [
+        "./sections/Batches",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "Batches"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/calendar.js",
+      "sha": "7951fc272f9be49134799dd138b21257904b183e",
+      "lines": 39,
+      "imports": [
+        "@/components/InterviewCalendar/InterviewCalendarContent",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "SuperAdminGroupShell",
+        "InterviewCalendarContent"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/classes.js",
+      "sha": "a4040c5ceaf4beb74e58d3921c422144550628e2",
+      "lines": 33,
+      "imports": [
+        "./sections/Classes",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "Classes"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/companies/index.js",
+      "sha": "d9c17d514d52829dc100080cfe42d4baac249b35",
+      "lines": 28,
+      "imports": [
+        "../sections/Companies",
+        "../sections/CompanyCuration",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "CompanyCuration",
+        "Companies",
+        "SuperAdminGroupShell",
+        "Tabs"
+      ],
+      "overlayCandidates": [
+        "Tabs"
+      ],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/course-progress.js",
+      "sha": "2af2e72dd791be8a3f8607f3e02b1f482001b869",
+      "lines": 33,
+      "imports": [
+        "./sections/CourseProgress",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "CourseProgress"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/courses.js",
+      "sha": "13eb4b56a3bdf50291fd1472a1fce4a631d990d4",
+      "lines": 41,
+      "imports": [
+        "@/components/admin/PolicySettingField",
+        "./sections/Courses",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "Card",
+        "Typography.Paragraph",
+        "PolicySettingField",
+        "SuperAdminGroupShell",
+        "Courses"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/dashboard.js",
+      "sha": "04e6297fff120e75b867f52c1ccf9ce216190b27",
+      "lines": 66,
+      "imports": [
+        "./sections/Dashboard",
+        "@/layouts/SuperAdminLayout",
+        "@/contexts/SuperAdminScopeContext",
+        "@/components/Common/PageShell"
+      ],
+      "jsxComponents": [
+        "PageShell",
+        "Dashboard"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/departments.js",
+      "sha": "db23fe8ef8f60f02e63c5835c70dc2502ad00015",
+      "lines": 33,
+      "imports": [
+        "./sections/Departments",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "Departments"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/electives.js",
+      "sha": "bc93118123da9a5cbadcf74d35b7efa79d004eb7",
+      "lines": 29,
+      "imports": [
+        "@/components/admin/electives/ElectivesConsole",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "ElectivesConsole"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/faculty-assignment.js",
+      "sha": "c6a54eb3b4b5d9fc1a3dac704870096d11b73f71",
+      "lines": 33,
+      "imports": [
+        "./sections/FacultyAssignment",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "FacultyAssignment"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    }
+  ]
+}
