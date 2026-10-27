@@ -1570,6 +1570,521 @@
         "Table"
       ],
       "events": 10
+    },
+    {
+      "path": "src/pages/superadmin/projects/workspaces/reassign-mentor.js",
+      "sha": "aa603c634015c468cb02fe5f16391088e1094ae6",
+      "lines": 519,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Button",
+        "Tag",
+        "Tooltip",
+        "Space",
+        "QuestionCircleOutlined",
+        "Text",
+        "SuperAdminGroupShell",
+        "Alert",
+        "Skeleton",
+        "Card",
+        "Table",
+        "Empty",
+        "Form",
+        "Form.Item",
+        "Select",
+        "SwapOutlined",
+        "Paragraph",
+        "AutoComplete",
+        "Input",
+        "Popconfirm",
+        "SuperAdminProjectReassignMentorPageBody"
+      ],
+      "overlayCandidates": [
+        "Table",
+        "Form",
+        "Form.Item",
+        "Popconfirm"
+      ],
+      "events": 10
+    },
+    {
+      "path": "src/pages/superadmin/quizzes.js",
+      "sha": "b4855cf6c48442feb175de017aa2ff0da62b2cbb",
+      "lines": 33,
+      "imports": [
+        "./sections/Quizzes",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "Quizzes"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/recruiters.js",
+      "sha": "ec1201cd014f737420193cdd23718f9fb1220b47",
+      "lines": 20,
+      "imports": [
+        "./sections/RecruiterAccounts",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "SuperAdminGroupShell",
+        "RecruiterAccounts"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/sections/AdminResources.js",
+      "sha": "2b8a810aa035c0f81665d4739657ebb289bdb462",
+      "lines": 417,
+      "imports": [
+        "@/api/Services/AdminService",
+        "@/api/Services/courseServices",
+        "@/api/Services/adminServices/departmentService",
+        "@/utils/resourceUploadToR2",
+        "@/components/Global/Offcanvas/Syallabus/ResourceComposer",
+        "@/components/Common/Skeletons"
+      ],
+      "jsxComponents": [
+        "Tag",
+        "Space",
+        "Button",
+        "EditOutlined",
+        "Popconfirm",
+        "DeleteOutlined",
+        "Alert",
+        "Select",
+        "PlusOutlined",
+        "RefreshStatus",
+        "TableSkeleton",
+        "Table",
+        "Modal",
+        "Input",
+        "Input.TextArea",
+        "Switch",
+        "UploadOutlined"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "TableSkeleton",
+        "Table",
+        "Modal"
+      ],
+      "events": 19
+    },
+    {
+      "path": "src/pages/superadmin/sections/AdminUsers.js",
+      "sha": "e136616f933b526dd9a4a4536d3002828a5ee9d7",
+      "lines": 585,
+      "imports": [
+        "@/api/Services/AdminService",
+        "@/api/Services/SuperAdminUsersService",
+        "@/pages/superadmin/sections/AuditLogs",
+        "@/components/Common/Skeletons",
+        "@/utils/formErrors"
+      ],
+      "jsxComponents": [
+        "Tag",
+        "Space",
+        "Switch",
+        "Tooltip",
+        "Button",
+        "Alert",
+        "Card",
+        "Form",
+        "Row",
+        "Col",
+        "Form.Item",
+        "Select",
+        "Input",
+        "Segmented",
+        "RefreshStatus",
+        "TableSkeleton",
+        "Table",
+        "Modal",
+        "Typography.Text",
+        "AuditLogs"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item",
+        "TableSkeleton",
+        "Table",
+        "Modal"
+      ],
+      "events": 18
+    },
+    {
+      "path": "src/pages/superadmin/sections/Assignments.js",
+      "sha": "6a11d4fd0267737ea4073fa238aa60322e8301df",
+      "lines": 436,
+      "imports": [
+        "@/api/Services/AdminService",
+        "@/utils/dateUtils",
+        "@/api/Services/adminServices/departmentService",
+        "@/components/admin/AdminAssignmentBuilderModal",
+        "@/components/admin/SubmissionWork",
+        "@/utils/csvExport",
+        "@/api/Services/AdminAssignmentService"
+      ],
+      "jsxComponents": [
+        "Modal",
+        "Typography.Paragraph",
+        "Alert",
+        "Button",
+        "Empty",
+        "List",
+        "List.Item",
+        "Space",
+        "InputNumber",
+        "Typography.Text",
+        "Popconfirm",
+        "List.Item.Meta",
+        "Tag",
+        "SubmissionWork",
+        "Pagination",
+        "EditOutlined",
+        "DeleteOutlined",
+        "Select",
+        "PlusOutlined",
+        "DownloadOutlined",
+        "Table",
+        "SubmissionsDrawer",
+        "AdminAssignmentBuilderModal"
+      ],
+      "overlayCandidates": [
+        "Modal",
+        "Popconfirm",
+        "Table",
+        "SubmissionsDrawer",
+        "AdminAssignmentBuilderModal"
+      ],
+      "events": 21
+    },
+    {
+      "path": "src/pages/superadmin/sections/Attendance.js",
+      "sha": "eae2d9fbec2b7e0a840996d3e8c028ed7752ff2f",
+      "lines": 543,
+      "imports": [
+        "@/components/admin/PolicySettingField",
+        "@/api/Services/AdminService",
+        "@/api/Services/attendanceServices",
+        "@/utils/attendanceConstants",
+        "@/utils/csvExport",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/utils/adminAttendanceGrid",
+        "@/api/Services/FacultyAssignmentService",
+        "@/components/Common/Skeletons"
+      ],
+      "jsxComponents": [
+        "Empty",
+        "Spin",
+        "Tag",
+        "Modal",
+        "Typography.Paragraph",
+        "Space",
+        "Button",
+        "DetailSkeleton",
+        "Alert",
+        "Descriptions",
+        "Descriptions.Item",
+        "Radio.Group",
+        "Radio",
+        "Card",
+        "PolicySettingField",
+        "Select",
+        "LeftOutlined",
+        "RightOutlined",
+        "DownloadOutlined",
+        "RefreshStatus",
+        "TableSkeleton",
+        "AttendanceGrid"
+      ],
+      "overlayCandidates": [
+        "Modal",
+        "TableSkeleton",
+        "AttendanceGrid"
+      ],
+      "events": 17
+    },
+    {
+      "path": "src/pages/superadmin/sections/AuditHub.js",
+      "sha": "f33103d4d1dda5a8966da3ed50afd4fb9055c4f1",
+      "lines": 39,
+      "imports": [
+        "@/components/admin/activity/ActivityCenter"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "ActivityCenter"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/sections/AuditLogs.js",
+      "sha": "337de819dff3d5b112411cdc445ab00e51f2b6f5",
+      "lines": 336,
+      "imports": [
+        "@/utils/csvExport",
+        "@/api/Services/AdminService",
+        "@/api/Services/SuperAdminAuditService",
+        "@/components/admin/projects/adminProjectUtils",
+        "@/components/Common/Skeletons",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Tooltip",
+        "Card",
+        "Alert",
+        "Row",
+        "Col",
+        "Input",
+        "Space",
+        "DatePicker.RangePicker",
+        "Button",
+        "RefreshStatus",
+        "TableSkeleton",
+        "Table"
+      ],
+      "overlayCandidates": [
+        "TableSkeleton",
+        "Table"
+      ],
+      "events": 12
+    },
+    {
+      "path": "src/pages/superadmin/sections/Batches.js",
+      "sha": "d51ca33cd20f051af2d5b4ebcc104cb111f9c947",
+      "lines": 697,
+      "imports": [
+        "@/components/admin/AdminTableToolbar",
+        "@/components/admin/useDependencyCounts",
+        "@/utils/classCapacity",
+        "@/api/Services/AdminService",
+        "@/components/Common/Skeletons",
+        "@/utils/formErrors"
+      ],
+      "jsxComponents": [
+        "Form.Item",
+        "Select",
+        "Option",
+        "Input",
+        "Row",
+        "Col",
+        "DatePicker",
+        "Button",
+        "Text",
+        "Tag",
+        "Space",
+        "EditOutlined",
+        "TeamOutlined",
+        "Tooltip",
+        "Popconfirm",
+        "DeleteOutlined",
+        "Alert",
+        "Card",
+        "Link",
+        "Form",
+        "BatchFields",
+        "PlusOutlined",
+        "AdminTableToolbar",
+        "RefreshStatus",
+        "TableSkeleton",
+        "Table",
+        "Modal",
+        "ListSkeleton",
+        "Input.Search",
+        "SwapOutlined"
+      ],
+      "overlayCandidates": [
+        "Form.Item",
+        "Popconfirm",
+        "Form",
+        "AdminTableToolbar",
+        "TableSkeleton",
+        "Table",
+        "Modal"
+      ],
+      "events": 29
+    },
+    {
+      "path": "src/pages/superadmin/sections/BatchPromotion.js",
+      "sha": "19b96874f80033a98ed0da87c529d79cc21e07c1",
+      "lines": 576,
+      "imports": [
+        "@/api/Services/AdminService"
+      ],
+      "jsxComponents": [
+        "Tag",
+        "Popconfirm",
+        "Button",
+        "CheckCircleOutlined",
+        "Text",
+        "ArrowUpOutlined",
+        "Tooltip",
+        "Alert",
+        "Card",
+        "Space",
+        "Select",
+        "Option",
+        "Switch",
+        "ReloadOutlined",
+        "Table",
+        "Modal",
+        "Form",
+        "Form.Item",
+        "Input"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Table",
+        "Modal",
+        "Form",
+        "Form.Item"
+      ],
+      "events": 13
+    },
+    {
+      "path": "src/pages/superadmin/sections/Classes.js",
+      "sha": "0110a7f0f138ab17ce8ca6f6143733512bf3ab0e",
+      "lines": 603,
+      "imports": [
+        "@/components/admin/AdminTableToolbar",
+        "@/components/admin/useDependencyCounts",
+        "@/api/Services/AdminService",
+        "@/components/Common/Skeletons",
+        "@/utils/formErrors"
+      ],
+      "jsxComponents": [
+        "Form.Item",
+        "Select",
+        "Option",
+        "Input",
+        "Input.TextArea",
+        "Typography.Text",
+        "Row",
+        "Col",
+        "InputNumber",
+        "Tag",
+        "Space",
+        "Button",
+        "EditOutlined",
+        "CalendarOutlined",
+        "Popconfirm",
+        "DeleteOutlined",
+        "Alert",
+        "Card",
+        "Link",
+        "Form",
+        "ClassFields",
+        "PlusOutlined",
+        "AdminTableToolbar",
+        "RefreshStatus",
+        "TableSkeleton",
+        "Table",
+        "Modal",
+        "DatePicker.RangePicker",
+        "TimePicker",
+        "Checkbox.Group"
+      ],
+      "overlayCandidates": [
+        "Form.Item",
+        "Popconfirm",
+        "Form",
+        "AdminTableToolbar",
+        "TableSkeleton",
+        "Table",
+        "Modal"
+      ],
+      "events": 23
+    },
+    {
+      "path": "src/pages/superadmin/sections/CollegeBranding.js",
+      "sha": "ecbc840ac19d5060e1b52b8585d511ee88576d9d",
+      "lines": 246,
+      "imports": [
+        "@/api/Services/AdminService",
+        "@/api/Services/TenantAdminService",
+        "@/components/Global/CroppedImageUpload/BrandingImageUpload",
+        "@/components/admin/projects/useUnsavedFormGuard"
+      ],
+      "jsxComponents": [
+        "Card",
+        "Alert",
+        "Button",
+        "ReloadOutlined",
+        "Form",
+        "Form.Item",
+        "BrandingImageUpload",
+        "Segmented",
+        "SaveOutlined"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item"
+      ],
+      "events": 4
+    },
+    {
+      "path": "src/pages/superadmin/sections/CollegeSignIn.js",
+      "sha": "d26ef64fa72a77b9208f653c6ee590ce8bfaffc5",
+      "lines": 158,
+      "imports": [
+        "@/api/Services/TenantAdminService"
+      ],
+      "jsxComponents": [
+        "MethodSketch",
+        "Card",
+        "Button",
+        "ReloadOutlined",
+        "Alert",
+        "Form",
+        "Form.Item",
+        "LoginMethodsPicker",
+        "SaveOutlined"
+      ],
+      "overlayCandidates": [
+        "Form",
+        "Form.Item"
+      ],
+      "events": 3
+    },
+    {
+      "path": "src/pages/superadmin/sections/CollegeSubdomain.js",
+      "sha": "185b9bedae35e979218bca1cbbdb141526cfe184",
+      "lines": 164,
+      "imports": [
+        "@/api/Services/TenantAdminService"
+      ],
+      "jsxComponents": [
+        "Card",
+        "Button",
+        "ReloadOutlined",
+        "Alert",
+        "CheckCircleFilled",
+        "Typography.Text",
+        "LinkOutlined",
+        "Input"
+      ],
+      "overlayCandidates": [],
+      "events": 4
     }
   ]
 }
