@@ -1,0 +1,1504 @@
+{
+  "schemaVersion": 1,
+  "classification": "vNext destination source existence and imports; not runtime functional parity",
+  "reference": {
+    "repo": "42Students/lms-vnext",
+    "baseRef": "main",
+    "observedBaseline": "7ec1807e9a1f5e3a156bd903b7e1c85d686c5f6f",
+    "exactBlobShasPerFile": true
+  },
+  "mappingCaveat": "Route presence is necessary evidence only; deeper components and services need end-to-end tests. Both legacy and vNext may consolidate or split page families.",
+  "results": [
+    {
+      "path": "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",
+      "sha": "802efa44a47a11486354b6a269d5839420972f0f",
+      "lines": 329,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/components/ui/banner"
+        },
+        {
+          "line": 2,
+          "specifier": "@/modules/courses/errors"
+        },
+        {
+          "line": 3,
+          "specifier": "@/modules/permissions/policy"
+        },
+        {
+          "line": 4,
+          "specifier": "zod"
+        },
+        {
+          "line": 5,
+          "specifier": "@/modules/courses/learner-course-copy-model"
+        },
+        {
+          "line": 6,
+          "specifier": "react"
+        },
+        {
+          "line": 7,
+          "specifier": "next/link"
+        },
+        {
+          "line": 8,
+          "specifier": "@/modules/courses/learner-course-tab-route-model"
+        },
+        {
+          "line": 9,
+          "specifier": "@/modules/courses/learner-course-legacy-route-service"
+        },
+        {
+          "line": 10,
+          "specifier": "@/modules/courses/learner-course-tab-context-model"
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/courses/learner-course-document-title"
+        },
+        {
+          "line": 12,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 13,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 14,
+          "specifier": "@/components/courses/learner-course-attendance"
+        },
+        {
+          "line": 15,
+          "specifier": "@/components/courses/learner-course-discussion"
+        },
+        {
+          "line": 16,
+          "specifier": "@/components/courses/learner-course-overview"
+        },
+        {
+          "line": 17,
+          "specifier": "@/components/courses/learner-course-tabs"
+        },
+        {
+          "line": 18,
+          "specifier": "@/components/courses/learner-course-workspace"
+        },
+        {
+          "line": 19,
+          "specifier": "@/components/courses/learner-course-state-retry"
+        },
+        {
+          "line": 20,
+          "specifier": "@/components/ui/page-header"
+        },
+        {
+          "line": 21,
+          "specifier": "@/modules/attendance/learner-course-attendance-ist-model"
+        },
+        {
+          "line": 22,
+          "specifier": "@/modules/attendance/learner-service"
+        },
+        {
+          "line": 23,
+          "specifier": "@/modules/courses/learner-discussion-scope-key-model"
+        },
+        {
+          "line": 24,
+          "specifier": "@/modules/courses/learner-course-announcements-service"
+        },
+        {
+          "line": 25,
+          "specifier": "@/modules/courses/learner-playback-settings"
+        },
+        {
+          "line": 26,
+          "specifier": "@/modules/courses/course-display-service"
+        },
+        {
+          "line": 31,
+          "specifier": "@/modules/courses/learner-course-service"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 2,
+          "code": "import { CoursesServiceError } from \"@/modules/courses/errors\";"
+        },
+        {
+          "line": 12,
+          "code": "import { notFound, redirect } from \"next/navigation\";"
+        },
+        {
+          "line": 45,
+          "code": "searchParams: Promise<Record<string, string | string[] | undefined>>;"
+        },
+        {
+          "line": 47,
+          "code": "const { deliveryId, courseTab } = await params;"
+        },
+        {
+          "line": 48,
+          "code": "const query = await searchParams;"
+        },
+        {
+          "line": 49,
+          "code": "const context = await getCurrentRequestContext();"
+        },
+        {
+          "line": 52,
+          "code": "const authorizedDeliveryId=await resolveLegacyLearnerCourseDelivery(context,deliveryId);"
+        },
+        {
+          "line": 53,
+          "code": "if(!authorizedDeliveryId)notFound();"
+        },
+        {
+          "line": 64,
+          "code": "redirect(\"/learn/courses/\"+encodeURIComponent(authorizedDeliveryId)+\"/\"+"
+        },
+        {
+          "line": 68,
+          "code": "// A malformed/foreign delivery must not redirect before checking scope."
+        },
+        {
+          "line": 69,
+          "code": "await getLearnerCourseWorkspace(context, deliveryId);"
+        },
+        {
+          "line": 80,
+          "code": "redirect(\"/learn/courses/\"+encodeURIComponent(deliveryId)+\"/home\"+(suffix?\"?\"+suffix:\"\"));"
+        },
+        {
+          "line": 86,
+          "code": "await getLearnerCourseWorkspace(context, deliveryId);"
+        },
+        {
+          "line": 95,
+          "code": "redirect(\"/learn/courses/\" + encodeURIComponent(deliveryId) + \"/\" +"
+        },
+        {
+          "line": 99,
+          "code": "const [workspaceResult, deliveriesResult, instructorsResult] = await Promise.allSettled(["
+        },
+        {
+          "line": 111,
+          "code": "].includes(reason.code)))notFound();"
+        },
+        {
+          "line": 118,
+          "code": "if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();"
+        },
+        {
+          "line": 123,
+          "code": "if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();"
+        },
+        {
+          "line": 128,
+          "code": "return <div className=\"min-w-0 space-y-4\">"
+        },
+        {
+          "line": 129,
+          "code": "<PageHeader title={lessonReadFailed?\"Lesson content could not be loaded\":\"Could not load course\"} />"
+        },
+        {
+          "line": 130,
+          "code": "<Banner tone=\"warning\" role=\"alert\">"
+        },
+        {
+          "line": 134,
+          "code": "<LearnerCourseStateRetry label=\"Retry\" />"
+        },
+        {
+          "line": 136,
+          "code": "<Link href=\"/learn/courses\" className=\"font-semibold text-primary-text underline\">"
+        },
+        {
+          "line": 152,
+          "code": "return <div className=\"min-w-0 space-y-4\">"
+        },
+        {
+          "line": 153,
+          "code": "<PageHeader title=\"Not assigned to a class\" />"
+        },
+        {
+          "line": 154,
+          "code": "<Banner tone=\"warning\" role=\"alert\">"
+        },
+        {
+          "line": 155,
+          "code": "<div className=\"flex items-start gap-3\">"
+        },
+        {
+          "line": 156,
+          "code": "<svg aria-hidden=\"true\" width=\"28\" height=\"28\" viewBox=\"0 0 24 24\""
+        },
+        {
+          "line": 159,
+          "code": "<path d=\"M12 6c-3-2-6-2.5-9-2v15c3-.5 6 0 9 2m0-15c3-2 6-2.5 9-2v15c-3-.5-6 0-9 2m0-15v15\"/>"
+        },
+        {
+          "line": 161,
+          "code": "<div>"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx",
+      "sha": "a4fabdd238d6f0c7499a690445990863fa1dbcec",
+      "lines": 123,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 2,
+          "specifier": "zod"
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/ui/banner"
+        },
+        {
+          "line": 4,
+          "specifier": "next/link"
+        },
+        {
+          "line": 5,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/courses/faculty-course-workspace"
+        },
+        {
+          "line": 7,
+          "specifier": "@/modules/courses/faculty-course-service"
+        },
+        {
+          "line": 8,
+          "specifier": "@/modules/courses/faculty-course-home-service"
+        },
+        {
+          "line": 9,
+          "specifier": "@/modules/courses/course-display-service"
+        },
+        {
+          "line": 10,
+          "specifier": "@/modules/courses/faculty-course-navigation"
+        },
+        {
+          "line": 11,
+          "specifier": "@/modules/courses/faculty-blueprint-add-target"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 1,
+          "code": "import { redirect,notFound } from \"next/navigation\";"
+        },
+        {
+          "line": 17,
+          "code": "searchParams:Promise<Record<string,string|string[]|undefined>>;"
+        },
+        {
+          "line": 19,
+          "code": "const { deliveryId, courseTab } = await params;"
+        },
+        {
+          "line": 20,
+          "code": "const query=await searchParams;"
+        },
+        {
+          "line": 25,
+          "code": "const context = await getCurrentRequestContext();"
+        },
+        {
+          "line": 30,
+          "code": "const canonical=await resolveFacultyCourseDeliveryForLink(context,deliveryId,legacyClass);"
+        },
+        {
+          "line": 31,
+          "code": "if(!canonical)notFound();"
+        },
+        {
+          "line": 41,
+          "code": "redirect(\"/teacher/courses/\"+encodeURIComponent(canonical)+\"/\"+encodeURIComponent(tab)+"
+        },
+        {
+          "line": 45,
+          "code": "const workspace = await getFacultyCourseWorkspace(context, deliveryId);"
+        },
+        {
+          "line": 48,
+          "code": "if(requestedLesson&&!z.string().uuid().safeParse(requestedLesson).success)notFound();"
+        },
+        {
+          "line": 49,
+          "code": "if(requestedContent&&!z.string().uuid().safeParse(requestedContent).success)notFound();"
+        },
+        {
+          "line": 54,
+          "code": "if(requestedContent&&!owningLesson)notFound();"
+        },
+        {
+          "line": 56,
+          "code": "if(lessonId&&!workspace.lessons.some(lesson=>lesson.id===lessonId))notFound();"
+        },
+        {
+          "line": 57,
+          "code": "if(requestedLesson&&owningLesson&&requestedLesson!==owningLesson.id)notFound();"
+        },
+        {
+          "line": 61,
+          "code": "courseTab.length!==1||courseTab[0]!==\"blueprint\"))notFound();"
+        },
+        {
+          "line": 63,
+          "code": "const aliases:Record<string,string>={"
+        },
+        {
+          "line": 75,
+          "code": "redirect(\"/teacher/courses/\"+encodeURIComponent(deliveryId)+\"/\"+alias+"
+        },
+        {
+          "line": 83,
+          "code": "redirect(facultyCourseTabHref(deliveryId,requestedContent?\"blueprint\":\"home\")+"
+        },
+        {
+          "line": 89,
+          "code": "redirect(facultyCourseTabHref(deliveryId,\"blueprint\")+\"?\"+safe.toString());"
+        },
+        {
+          "line": 91,
+          "code": "const [homeSignals, displayResult] = await Promise.all(["
+        },
+        {
+          "line": 98,
+          "code": "<div className=\"min-w-0 space-y-4\">"
+        },
+        {
+          "line": 99,
+          "code": "{displayResult.failed ? <Banner tone=\"warning\" role=\"alert\">"
+        },
+        {
+          "line": 101,
+          "code": "<Link href={facultyCourseTabHref(deliveryId,courseTab[0] as \"home\"|\"blueprint\")}"
+        },
+        {
+          "line": 106,
+          "code": "{requestedContent ? <Banner tone=\"info\" role=\"status\">"
+        },
+        {
+          "line": 109,
+          "code": "<FacultyCourseWorkspace"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx",
+      "sha": "6487c9d931fe2a89cf03ab57ef000057a30b570e",
+      "lines": 32,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 2,
+          "specifier": "@/modules/courses/faculty-course-service"
+        },
+        {
+          "line": 3,
+          "specifier": "@/modules/courses/faculty-assignment-authoring-model"
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/courses/faculty-assignment-editor"
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/ui/page-header"
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/ui/page-back-link"
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/ui/empty-state"
+        },
+        {
+          "line": 8,
+          "specifier": "next/navigation"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 8,
+          "code": "import {notFound} from \"next/navigation\";"
+        },
+        {
+          "line": 9,
+          "code": "export default async function Page({params,searchParams}:{params:Promise<{deliveryId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){"
+        },
+        {
+          "line": 10,
+          "code": "const {deliveryId}=facultyAssignmentParamsSchema.parse(await params);"
+        },
+        {
+          "line": 11,
+          "code": "const context=await getCurrentRequestContext();"
+        },
+        {
+          "line": 12,
+          "code": "const workspace=await getFacultyCourseWorkspace(context,deliveryId);"
+        },
+        {
+          "line": 13,
+          "code": "const requestedLesson=(await searchParams).lesson;"
+        },
+        {
+          "line": 15,
+          "code": "!workspace.lessons.some(lesson=>lesson.id===requestedLesson)))notFound();"
+        },
+        {
+          "line": 21,
+          "code": "return <div className=\"min-w-0 max-w-full space-y-4\">"
+        },
+        {
+          "line": 22,
+          "code": "<PageHeader title=\"Section assignments\""
+        },
+        {
+          "line": 24,
+          "code": "actions={<PageBackLink href={\"/teacher/courses/\"+encodeURIComponent(deliveryId)} label=\"Back to course\"/>} />"
+        },
+        {
+          "line": 26,
+          "code": "<FacultyAssignmentEditor key={initialLessonId??\"default\"} initialLessonId={initialLessonId} deliveryId={deliveryId}"
+        },
+        {
+          "line": 29,
+          "code": ":<EmptyState title=\"No registered lessons yet\" description=\"Create and publish a learning path before authoring assignments.\"/>}"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx",
+      "sha": "28f4fc058733a61f5adf015c8e82ac95d44dc28c",
+      "lines": 28,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/link"
+        },
+        {
+          "line": 2,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 3,
+          "specifier": "@/modules/courses/faculty-course-service"
+        },
+        {
+          "line": 4,
+          "specifier": "@/modules/courses/faculty-quiz-authoring-model"
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/courses/faculty-choice-quiz-builder"
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/ui/page-header"
+        },
+        {
+          "line": 7,
+          "specifier": "next/navigation"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 7,
+          "code": "import {notFound} from \"next/navigation\";"
+        },
+        {
+          "line": 8,
+          "code": "export default async function Page({params,searchParams}:{params:Promise<{deliveryId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){"
+        },
+        {
+          "line": 9,
+          "code": "const {deliveryId}=facultyQuizParamsSchema.parse(await params);"
+        },
+        {
+          "line": 10,
+          "code": "const workspace=await getFacultyCourseWorkspace(await getCurrentRequestContext(),deliveryId);"
+        },
+        {
+          "line": 11,
+          "code": "const requestedLesson=(await searchParams).lesson;"
+        },
+        {
+          "line": 13,
+          "code": "!workspace.lessons.some(lesson=>lesson.id===requestedLesson)))notFound();"
+        },
+        {
+          "line": 19,
+          "code": "return <div className=\"min-w-0 max-w-full space-y-4\">"
+        },
+        {
+          "line": 20,
+          "code": "<PageHeader eyebrow=\"Faculty · Courses\" title=\"Section quizzes\""
+        },
+        {
+          "line": 22,
+          "code": "actions={<Link href={\"/teacher/courses/\"+encodeURIComponent(deliveryId)} className=\"inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-"
+        },
+        {
+          "line": 23,
+          "code": "{workspace.lessons.length?<FacultyChoiceQuizBuilder key={initialLessonId??\"default\"} initialLessonId={initialLessonId} deliveryId={deliveryId}"
+        },
+        {
+          "line": 25,
+          "code": "<section role=\"status\" className=\"border-y border-[var(--lms-canvas-border)] bg-transparent py-4\">No registered lessons are available for this Section. Publish a learning path first.</section>}"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/mentor/projects/[projectId]/page.tsx",
+      "sha": "a8730a49f8e4fbcc9535adfc450002995da30fe8",
+      "lines": 293,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/components/projects/mentor-projects-unavailable"
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/ui/disclosure"
+        },
+        {
+          "line": 3,
+          "specifier": "@/modules/module-access/service"
+        },
+        {
+          "line": 4,
+          "specifier": "next/link"
+        },
+        {
+          "line": 5,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 6,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/projects/project-workspace"
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/projects/mentor-task-allocation"
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/projects/mentor-task-create"
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/projects/mentor-calendar-quick-schedule"
+        },
+        {
+          "line": 11,
+          "specifier": "@/modules/projects/mentor-google-calendar-connection-service"
+        },
+        {
+          "line": 12,
+          "specifier": "@/modules/projects/mentor-attention-read-model"
+        },
+        {
+          "line": 13,
+          "specifier": "@/components/projects/mentor-lane-board"
+        },
+        {
+          "line": 14,
+          "specifier": "@/components/projects/mentor-product-backlog"
+        },
+        {
+          "line": 15,
+          "specifier": "@/components/projects/mentor-project-tabs"
+        },
+        {
+          "line": 16,
+          "specifier": "@/components/projects/mentor-project-section-cache"
+        },
+        {
+          "line": 17,
+          "specifier": "@/components/projects/mentor-project-update-composer"
+        },
+        {
+          "line": 18,
+          "specifier": "@/components/projects/mentor-activity-since-last-visit"
+        },
+        {
+          "line": 19,
+          "specifier": "@/modules/projects/mentor-activity-seen-service"
+        },
+        {
+          "line": 20,
+          "specifier": "@/modules/projects/mentor-attention-service"
+        },
+        {
+          "line": 21,
+          "specifier": "@/modules/projects/mentor-attention-later-service"
+        },
+        {
+          "line": 22,
+          "specifier": "@/components/projects/mentor-prototype-project-summaries"
+        },
+        {
+          "line": 23,
+          "specifier": "@/modules/projects/access"
+        },
+        {
+          "line": 24,
+          "specifier": "@/modules/projects/workspace-view-service"
+        },
+        {
+          "line": 25,
+          "specifier": "@/modules/projects/mentor-sprint-order-model"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 5,
+          "code": "import { redirect } from \"next/navigation\";"
+        },
+        {
+          "line": 35,
+          "code": "const context = await getCurrentRequestContext();"
+        },
+        {
+          "line": 36,
+          "code": "const available = await resolveOptionalModuleAccess(context).catch(() => null);"
+        },
+        {
+          "line": 37,
+          "code": "if (available?.projects.enabled !== true) return <MentorProjectsUnavailable loadFailed={available===null} />;"
+        },
+        {
+          "line": 38,
+          "code": "const { projectId } = await params;"
+        },
+        {
+          "line": 39,
+          "code": "const { tab } = await searchParams;"
+        },
+        {
+          "line": 41,
+          "code": "const subtitles:Record<string,string> = {"
+        },
+        {
+          "line": 51,
+          "code": "const breadcrumbTab: Record<string, string> = {"
+        },
+        {
+          "line": 68,
+          "code": "const access = await requireProjectReadAccess("
+        },
+        {
+          "line": 74,
+          "code": "redirect(\"/mentor/projects\");"
+        },
+        {
+          "line": 78,
+          "code": "redirect(\"/mentor/projects/\"+encodeURIComponent(projectId)+\"?tab=\"+selectedTab);"
+        },
+        {
+          "line": 81,
+          "code": "await getProjectWorkspaceView("
+        },
+        {
+          "line": 86,
+          "code": "await getMentorProjectActivitySeenState(context,projectId):null;"
+        },
+        {
+          "line": 88,
+          "code": "?(await listMyMentorProjectAttention(context))"
+        },
+        {
+          "line": 91,
+          "code": "?await listOwnMentorAttentionLater(context,overviewAttention):[];"
+        },
+        {
+          "line": 99,
+          "code": "(await mentorGoogleConnectionState(context).catch(()=>({connected:false}))).connected:false;"
+        },
+        {
+          "line": 112,
+          "code": "<div className=\"min-w-0 max-w-full space-y-4 md:space-y-6\">"
+        },
+        {
+          "line": 113,
+          "code": "<div className=\"prototype-mentor-project-heading\">"
+        },
+        {
+          "line": 114,
+          "code": "<Link href=\"/mentor/projects\" className=\"prototype-mentor-back inline-flex min-h-11 items-center\">‹ Projects</Link>"
+        },
+        {
+          "line": 115,
+          "code": "<div className=\"prototype-mentor-title-line\">"
+        },
+        {
+          "line": 116,
+          "code": "<span className=\"prototype-mentor-team-avatar\" aria-hidden=\"true\">"
+        },
+        {
+          "line": 119,
+          "code": "<div className=\"min-w-0\">"
+        },
+        {
+          "line": 120,
+          "code": "<h1>{workspace.project.title}</h1>"
+        },
+        {
+          "line": 121,
+          "code": "<p>{workspace.project.courseLabel || \"Project\"} · {studentCount} {studentCount===1?\"student\":\"students\"} · <strong>{projectStatus}</strong></p>"
+        },
+        {
+          "line": 123,
+          "code": "<div className=\"prototype-mentor-header-actions\">"
+        },
+        {
+          "line": 124,
+          "code": "{canCreate?<MentorCalendarQuickSchedule googleConnected={googleConnected}"
+        },
+        {
+          "line": 129,
+          "code": "{canCreate?<MentorTaskCreate primary"
+        },
+        {
+          "line": 140,
+          "code": "<section className=\"prototype-mentor-sprint-ribbon\" aria-label=\"Project sprints\">"
+        },
+        {
+          "line": 141,
+          "code": "<div className=\"prototype-mentor-sprint-facts\">"
+        },
+        {
+          "line": 142,
+          "code": "<span><strong>{currentSprint ? \"Sprint \" + currentSprint.sequence : completedSprints + \" completed sprints\"}</strong> of {timeline.length} · {workspace.project.courseLabel || \"Project\"}</span>"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx",
+      "sha": "b50a4a4a4c7756007e88ed0f31ecc44b5284786c",
+      "lines": 20,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 2,
+          "specifier": "@/modules/projects/legacy-workspace-summary-query"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 1,
+          "code": "import { redirect } from \"next/navigation\";"
+        },
+        {
+          "line": 9,
+          "code": "searchParams: Promise<Record<string,string|string[]|undefined>>;"
+        },
+        {
+          "line": 11,
+          "code": "const {workspaceId,section}=await params;"
+        },
+        {
+          "line": 12,
+          "code": "const query=await searchParams;"
+        },
+        {
+          "line": 18,
+          "code": "redirect(next+(suffix?\"?\"+suffix:\"\"));"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/admin/projects/templates/[templateId]/overview/page.tsx",
+      "sha": "176afac0de8659a74a1a958b24df655bbd8a26f7",
+      "lines": 22,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 2,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 3,
+          "specifier": "@/modules/permissions/policy"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 1,
+          "code": "import {notFound,redirect} from \"next/navigation\";"
+        },
+        {
+          "line": 8,
+          "code": "searchParams?:Promise<Record<string,string|string[]|undefined>>;"
+        },
+        {
+          "line": 10,
+          "code": "const context=await getCurrentRequestContext();"
+        },
+        {
+          "line": 12,
+          "code": "const id=(await params).templateId;"
+        },
+        {
+          "line": 13,
+          "code": "if(!id||id.length>100||!(/^[a-z0-9_-]+$/i.test(id)))notFound();"
+        },
+        {
+          "line": 14,
+          "code": "const raw=await searchParams;"
+        },
+        {
+          "line": 20,
+          "code": "redirect(\"/admin/projects/templates/\"+encodeURIComponent(id)+(query.size?\"?\"+query:\"\"));"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx",
+      "sha": "cf915fbb3c7571cb7989b6c465583ebc94c7ff4b",
+      "lines": 85,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 2,
+          "specifier": "next/link"
+        },
+        {
+          "line": 3,
+          "specifier": "zod"
+        },
+        {
+          "line": 4,
+          "specifier": "@/modules/placements/job-service"
+        },
+        {
+          "line": 5,
+          "specifier": "@/modules/placements/errors"
+        },
+        {
+          "line": 6,
+          "specifier": "@/modules/permissions/policy"
+        },
+        {
+          "line": 7,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/placements/placement-drive-workspace"
+        },
+        {
+          "line": 9,
+          "specifier": "@/modules/permissions/policy"
+        },
+        {
+          "line": 10,
+          "specifier": "@/modules/placements/tpo-drive-tab-model"
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/ui/error-state"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 1,
+          "code": "import { notFound, redirect } from \"next/navigation\";"
+        },
+        {
+          "line": 5,
+          "code": "import { PlacementsServiceError } from \"@/modules/placements/errors\";"
+        },
+        {
+          "line": 11,
+          "code": "import {ErrorState} from \"@/components/ui/error-state\";"
+        },
+        {
+          "line": 20,
+          "code": "const context = await getCurrentRequestContext();"
+        },
+        {
+          "line": 25,
+          "code": "redirect(\"/dashboard\");"
+        },
+        {
+          "line": 27,
+          "code": "const [{ jobId }, query] = await Promise.all([params, searchParams]);"
+        },
+        {
+          "line": 30,
+          "code": "let job:Awaited<ReturnType<typeof getPlacementJob>>;"
+        },
+        {
+          "line": 32,
+          "code": "job=await getPlacementJob(context, jobId);"
+        },
+        {
+          "line": 33,
+          "code": "} catch (error) {"
+        },
+        {
+          "line": 34,
+          "code": "if(error instanceof ZodError||error instanceof AuthorizationError)"
+        },
+        {
+          "line": 35,
+          "code": "notFound();"
+        },
+        {
+          "line": 36,
+          "code": "if(error instanceof PlacementsServiceError&&error.code===\"PLACEMENT_JOB_NOT_FOUND\")"
+        },
+        {
+          "line": 37,
+          "code": "return <ErrorState title=\"This drive doesn't exist\""
+        },
+        {
+          "line": 39,
+          "code": "action={<Link href=\"/tpo/placements/jobs\" className=\"text-link underline\">Go to Drives</Link>}/>;"
+        },
+        {
+          "line": 40,
+          "code": "return <ErrorState title=\"Could not load drive\""
+        },
+        {
+          "line": 42,
+          "code": "action={<Link href={\"/tpo/placements/jobs/\"+encodeURIComponent(jobId)} className=\"text-link underline\">Retry</Link>}/>;"
+        },
+        {
+          "line": 52,
+          "code": "redirect(tpoDriveTabHref(jobId,tab===\"overview\"?\"about\":tab)+focus);"
+        },
+        {
+          "line": 57,
+          "code": "redirect(tpoDriveTabHref(jobId,"
+        },
+        {
+          "line": 61,
+          "code": "<div className=\"min-w-0 space-y-4\">"
+        },
+        {
+          "line": 62,
+          "code": "<div className=\"flex flex-wrap justify-end gap-2\" aria-label=\"Drive discussions\">"
+        },
+        {
+          "line": 63,
+          "code": "<Link href={\"/tpo/placements/jobs/\"+encodeURIComponent(jobId)+\"/discussion\"}"
+        },
+        {
+          "line": 68,
+          "code": "<PlacementDriveWorkspace context={context} jobId={jobId} eyebrow=\"TPO\" openPublish={openPublish}/>"
+        },
+        {
+          "line": 69,
+          "code": "<details className=\"group min-w-0 border-t border-border pt-3\">"
+        },
+        {
+          "line": 70,
+          "code": "<summary className=\"flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3p"
+        },
+        {
+          "line": 71,
+          "code": "Drive shortcuts <span aria-hidden=\"true\" className=\"text-muted-foreground group-open:rotate-180\">⌄</span>"
+        },
+        {
+          "line": 73,
+          "code": "<nav aria-label=\"Drive shortcuts\" className=\"flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap\">"
+        },
+        {
+          "line": 74,
+          "code": "<Link href={\"/tpo/placements/jobs/\"+encodeURIComponent(jobId)+\"/discussion\"}"
+        },
+        {
+          "line": 76,
+          "code": "<Link href={\"/tpo/placements/jobs/\"+encodeURIComponent(jobId)+\"/interview-slots\"}"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/page.tsx",
+      "sha": "30c9369e477cefee780889894e44a3fcaff5dfdf",
+      "lines": 15,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/navigation"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 1,
+          "code": "import { redirect } from \"next/navigation\";"
+        },
+        {
+          "line": 12,
+          "code": "const { jobId } = await params;"
+        },
+        {
+          "line": 13,
+          "code": "redirect(`/tpo/placements/jobs/${encodeURIComponent(jobId)}/applicants-pipeline`);"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx",
+      "sha": "ba34c38394087f9b2103d17139a2637129142610",
+      "lines": 165,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/link"
+        },
+        {
+          "line": 2,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 3,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 4,
+          "specifier": "@/modules/identity/context"
+        },
+        {
+          "line": 5,
+          "specifier": "@/modules/placements/drive-day-service"
+        },
+        {
+          "line": 6,
+          "specifier": "@/modules/placements/tpo-interview-slot-service"
+        },
+        {
+          "line": 7,
+          "specifier": "@/modules/permissions/policy"
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/tpo/tpo-drive-rounds-prototype-review"
+        },
+        {
+          "line": 9,
+          "specifier": "zod"
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/ui/page-header"
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/ui/empty-state"
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/ui/status-badge"
+        },
+        {
+          "line": 13,
+          "specifier": "@/components/ui/third-party-link"
+        },
+        {
+          "line": 14,
+          "specifier": "@/db/client"
+        },
+        {
+          "line": 15,
+          "specifier": "drizzle-orm"
+        },
+        {
+          "line": 16,
+          "specifier": "@/db/schema"
+        },
+        {
+          "line": 17,
+          "specifier": "@/db/schema/placement-hr-interview-slots"
+        },
+        {
+          "line": 18,
+          "specifier": "@/db/schema/placement-round-candidate-slots"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 2,
+          "code": "import { redirect } from \"next/navigation\";"
+        },
+        {
+          "line": 26,
+          "code": "const context = await getCurrentRequestContext();"
+        },
+        {
+          "line": 27,
+          "code": "if (!context.membership || !hasMembershipRole(context, \"TPO\")) redirect(\"/dashboard\");"
+        },
+        {
+          "line": 28,
+          "code": "const { jobId } = await params;"
+        },
+        {
+          "line": 29,
+          "code": "const requested=searchParams?(await searchParams).roundId:undefined;"
+        },
+        {
+          "line": 31,
+          "code": "if(Array.isArray(requested)||!valid)return <div className=\"space-y-3\">"
+        },
+        {
+          "line": 32,
+          "code": "<PageHeader title=\"Rounds and schedule\"/>"
+        },
+        {
+          "line": 33,
+          "code": "<p role=\"alert\" className=\"rounded-lg border border-border p-4 text-sm\">Invalid round selection. No candidate schedule was loaded.</p>"
+        },
+        {
+          "line": 34,
+          "code": "<Link href={\"/tpo/placements/jobs/\"+encodeURIComponent(jobId)+\"/rounds\"} className=\"font-semibold text-link underline\">Reset selection</Link>"
+        },
+        {
+          "line": 36,
+          "code": "const drive = await getPlacementDriveDay(context, jobId);"
+        },
+        {
+          "line": 38,
+          "code": "const [requests,proposals,bookings]=ids.length?await Promise.all(["
+        },
+        {
+          "line": 39,
+          "code": "getDb().select({roundId:placementLearnerRequests.roundId,n:sql<number>`count(*)::int`})"
+        },
+        {
+          "line": 44,
+          "code": "getDb().select({roundId:hrInterviewSlots.roundId,n:sql<number>`count(*)::int`})"
+        },
+        {
+          "line": 47,
+          "code": "getDb().select({roundId:placementRoundCandidateSlots.roundId,n:sql<number>`count(*)::int`})"
+        },
+        {
+          "line": 63,
+          "code": "const selectedSlots=chosen?.kind===\"INTERVIEW\"?await getTpoInterviewSlotWorkspace(context,jobId,chosen.id)"
+        },
+        {
+          "line": 64,
+          "code": ".catch(error=>{if(error instanceof AuthorizationError)throw error;return null;}):null;"
+        },
+        {
+          "line": 69,
+          "code": "return <div className=\"min-w-0 space-y-[var(--lms-space-4)]\">"
+        },
+        {
+          "line": 70,
+          "code": "<PageHeader eyebrow=\"TPO · Drive workspace\" title=\"Rounds and schedule\""
+        },
+        {
+          "line": 72,
+          "code": "actions={<Link href={root + \"#drive-round-actions\"} className=\"inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm "
+        },
+        {
+          "line": 74,
+          "code": "<TpoDriveRoundsPrototypeReview jobId={jobId} rounds={drive.rounds}"
+        },
+        {
+          "line": 85,
+          "code": "<section aria-labelledby=\"round-next-action\" className=\"min-w-0 space-y-3 border-b border-border pb-4\">"
+        },
+        {
+          "line": 86,
+          "code": "<h2 id=\"round-next-action\" className=\"text-base font-semibold text-foreground\">"
+        },
+        {
+          "line": 89,
+          "code": "{stagedTotal>0?<p className=\"text-sm text-body\">"
+        },
+        {
+          "line": 90,
+          "code": "<strong>{stagedTotal} results waiting to apply.</strong> Review the staged results"
+        },
+        {
+          "line": 92,
+          "code": "</p>:pendingProposals+pendingChanges>0?<p className=\"text-sm text-body\">"
+        },
+        {
+          "line": 93,
+          "code": "<strong>{pendingProposals} recruiter slot proposals</strong> and"
+        },
+        {
+          "line": 94,
+          "code": "<strong> {pendingChanges} reschedule requests</strong> need review."
+        },
+        {
+          "line": 96,
+          "code": "</p>:nextRound?<p className=\"text-sm text-body\">"
+        },
+        {
+          "line": 97,
+          "code": "<strong>{nextRound.name}</strong> is the next round to check."
+        },
+        {
+          "line": 99,
+          "code": "</p>:<p className=\"text-sm text-body\">"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx",
+      "sha": "f4d658e7e3eefd32ff3d1ce75eb72569a07fb01d",
+      "lines": 154,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/link"
+        },
+        {
+          "line": 2,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 3,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/ui/page-header"
+        },
+        {
+          "line": 5,
+          "specifier": "@/modules/identity/context"
+        },
+        {
+          "line": 6,
+          "specifier": "@/modules/placements/errors"
+        },
+        {
+          "line": 7,
+          "specifier": "@/modules/placements/tpo-drive-offer-register-service"
+        },
+        {
+          "line": 8,
+          "specifier": "@/modules/placements/tpo-drive-selection-service"
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/tpo/tpo-drive-offers-prototype-review"
+        },
+        {
+          "line": 10,
+          "specifier": "@/modules/permissions/policy"
+        },
+        {
+          "line": 11,
+          "specifier": "@/modules/placements/tpo-drive-offer-register-model"
+        },
+        {
+          "line": 12,
+          "specifier": "@/modules/placements/tpo-report-url-guard"
+        },
+        {
+          "line": 13,
+          "specifier": "@/components/placements/tpo-report-invalid-filters"
+        },
+        {
+          "line": 14,
+          "specifier": "@/components/ui/select"
+        },
+        {
+          "line": 15,
+          "specifier": "@/components/ui/input"
+        },
+        {
+          "line": 16,
+          "specifier": "@/components/ui/button"
+        },
+        {
+          "line": 17,
+          "specifier": "@/components/ui/tabs"
+        },
+        {
+          "line": 18,
+          "specifier": "@/components/ui/pagination"
+        },
+        {
+          "line": 19,
+          "specifier": "@/components/ui/empty-state"
+        },
+        {
+          "line": 20,
+          "specifier": "@/components/ui/banner"
+        },
+        {
+          "line": 21,
+          "specifier": "@/components/ui/status-badge"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 2,
+          "code": "import {notFound,redirect} from \"next/navigation\";"
+        },
+        {
+          "line": 6,
+          "code": "import {PlacementsServiceError} from \"@/modules/placements/errors\";"
+        },
+        {
+          "line": 23,
+          "code": "const context=await getCurrentRequestContext();"
+        },
+        {
+          "line": 24,
+          "code": "if(!context.membership||!hasMembershipRole(context,\"TPO\"))redirect(\"/dashboard\");"
+        },
+        {
+          "line": 25,
+          "code": "const [p,q]=await Promise.all([params,searchParams]);"
+        },
+        {
+          "line": 26,
+          "code": "if(tpoReportHasAmbiguousFilters(q)||Object.prototype.hasOwnProperty.call(q,\"jobId\"))return <TpoReportInvalidFilters path={\"/tpo/placements/jobs/\"+encodeURIComponent(p.jobId)+\"/offers\"}/>;"
+        },
+        {
+          "line": 36,
+          "code": "if(!parsed.success)notFound();"
+        },
+        {
+          "line": 37,
+          "code": "let data:Awaited<ReturnType<typeof getTpoDriveOfferRegister>>;"
+        },
+        {
+          "line": 38,
+          "code": "try{data=await getTpoDriveOfferRegister(context,parsed.data)}"
+        },
+        {
+          "line": 39,
+          "code": "catch(e){if(e instanceof PlacementsServiceError&&e.code===\"PLACEMENT_JOB_NOT_FOUND\")notFound();throw e}"
+        },
+        {
+          "line": 40,
+          "code": "const selections=await getTpoSelectionWorkspace(context,p.jobId)"
+        },
+        {
+          "line": 52,
+          "code": "return <div className=\"min-w-0 space-y-[var(--lms-space-4)]\">"
+        },
+        {
+          "line": 54,
+          "code": "<PageHeader eyebrow=\"TPO · Offers\" title={data.job.title+\" · Offer register\"} description=\"Persisted offer versions and recorded joining outcomes; screening results are not employer selection.\""
+        },
+        {
+          "line": 56,
+          "code": "<Link href={root} className=\"inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link"
+        },
+        {
+          "line": 57,
+          "code": "<a href={csvHref} className=\"inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bord"
+        },
+        {
+          "line": 59,
+          "code": "<Banner tone=\"info\">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</Banner>"
+        },
+        {
+          "line": 60,
+          "code": "<TpoDriveOffersPrototypeReview jobId={data.job.id} rows={data.rows}"
+        },
+        {
+          "line": 66,
+          "code": "<Tabs ariaLabel=\"Offer status\" renderPanel={false} value={data.status}"
+        },
+        {
+          "line": 70,
+          "code": "<form method=\"get\" action={root+\"/offers\"} className=\"min-w-0 space-y-3 border-b border-border pb-4\" aria-label=\"Filter offers\">"
+        },
+        {
+          "line": 71,
+          "code": "<Input type=\"hidden\" name=\"status\" value={data.status}/>"
+        },
+        {
+          "line": 72,
+          "code": "<div className=\"flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end\">"
+        },
+        {
+          "line": 73,
+          "code": "<label className=\"grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]\">Search learner, email, roll, batch, branch or role"
+        },
+        {
+          "line": 74,
+          "code": "<Input type=\"search\" name=\"q\" maxLength={100} defaultValue={searchQuery} placeholder=\"Name or offer role\" className=\"w-full min-w-0\"/>"
+        },
+        {
+          "line": 75,
+          "code": "</label><Button type=\"submit\" className=\"min-h-11 w-full px-6 sm:w-auto md:min-h-9\">Search</Button>"
+        },
+        {
+          "line": 76,
+          "code": "{searchQuery||parsed.data.joining!==\"ALL\"||parsed.data.kind!==\"ALL\"||parsed.data.expiry!==\"ALL\"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+\"/offers?status=\""
+        },
+        {
+          "line": 78,
+          "code": "<details className=\"group min-w-0 border-t border-border pt-3\">"
+        },
+        {
+          "line": 79,
+          "code": "<summary className=\"flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:o"
+        },
+        {
+          "line": 80,
+          "code": "Filters <span aria-hidden=\"true\" className=\"text-muted-foreground group-open:rotate-180\">⌄</span>"
+        },
+        {
+          "line": 82,
+          "code": "<div className=\"grid min-w-0 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3\">"
+        },
+        {
+          "line": 83,
+          "code": "<label className=\"grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]\">Joining outcome"
+        }
+      ]
+    },
+    {
+      "path": "src/app/(authenticated)/recruiter/drives/[jobId]/page.tsx",
+      "sha": "52c0946b9eeec5ee3dda582e720cfc99cc96872b",
+      "lines": 2,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/app/(authenticated)/hr/placements/jobs/[jobId]/page"
+        }
+      ],
+      "renderAndActionSignals": []
+    }
+  ]
+}
