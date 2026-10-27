@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
 import {tpoGeneralRequestReviewFacts} from "@/modules/placements/tpo-general-request-review-facts";
+import {TpoGeneralRequestsBulkDecision} from "@/components/placements/tpo-general-requests-bulk-decision";
 import {tpoGeneralRequestCanApprove} from "@/modules/placements/tpo-general-request-model";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
@@ -63,6 +64,7 @@ export function TpoGeneralRequestsPanel(){
   <Button variant="secondary" type="button" onClick={()=>void load()} loading={loading} disabled={loading} className="min-h-11 w-full px-3 sm:w-auto md:min-h-9">Refresh other requests</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
+  {!loading&&pendingRows.length>0?<TpoGeneralRequestsBulkDecision rows={pendingRows} onReviewed={load}/>:null}
   {loading&&!rows.length?<p role="status" className="py-4 text-sm text-body leading-[22px]">Loading other student requests…</p>:!rows.length?<EmptyState title="No other requests to review."/>:
    <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[min(70vh,44rem)] min-h-0 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="min-w-0 py-3 text-sm">
     <h3 className="break-words font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>

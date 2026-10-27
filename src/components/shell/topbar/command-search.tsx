@@ -213,7 +213,17 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   }, [open]);
 
   function submit() {
-    // Enter follows the same role-scoped Faculty option that a pointer click uses.
+    // Enter selects an actual authorized record result before fallback navigation.
+    // Drive and student quick-search options are already validated by their
+    // role-scoped API adapters; do not synthesize a URL from raw search text.
+    if((config.portal==="tpo"||config.portal==="hr")&&query.trim().length>=2){
+      const selector=config.portal==="tpo"
+        ? 'section[aria-label="Matching TPO records"] button[data-tpo-result]'
+        : 'section[aria-label="Matching recruiter drives"] button[role="option"]';
+      const suggestion=root.current?.querySelector<HTMLButtonElement>(selector);
+      if(suggestion){suggestion.click();return;}
+    }
+    // Keep the analogous Faculty record behavior.
     if(config.portal==="teacher"&&query.trim().length>=2){
       const suggestion=root.current?.querySelector<HTMLButtonElement>(
         'section[aria-label="Matching Faculty records"] button[role="option"]');
