@@ -5661,11 +5661,685 @@
       ],
       "totalActionCandidates": 8,
       "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/projects/WorkspaceOverviewEditor.jsx",
+      "sha": "a6e2356b94027516779e285fcd5795b9c10e1cc2",
+      "lines": 122,
+      "dependencies": [],
+      "externalImportCount": 1,
+      "signalCounts": {
+        "<Form": 5,
+        "<Button": 1
+      },
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/projects/WorkspaceTasksEditor.jsx",
+      "sha": "8a2c86a396df10ccb6cd6e7e11bf25e2d535191d",
+      "lines": 167,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/projects/adminProjectUtils",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/admin/projects/adminProjectUtils.js",
+          "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+        },
+        {
+          "specifier": "@/components/admin/projects/RepeatingItemEditor",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/admin/projects/RepeatingItemEditor.jsx",
+          "sha": "bb159be5561d6d352fa3c589b70b073ffd032742"
+        },
+        {
+          "specifier": "@/components/admin/projects/workspaceRowMeta",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/admin/projects/workspaceRowMeta.jsx",
+          "sha": "ea8e3820292da36be2139f584532c291e322853c"
+        }
+      ],
+      "externalImportCount": 3,
+      "signalCounts": {
+        "<Form": 2,
+        "<Button": 1
+      },
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/projects/WorkspaceResourcesEditor.jsx",
+      "sha": "4b286718ab00324d15abb1e6dafc7644894dd353",
+      "lines": 65,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/projects/RepeatingItemEditor",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/admin/projects/RepeatingItemEditor.jsx",
+          "sha": "bb159be5561d6d352fa3c589b70b073ffd032742"
+        }
+      ],
+      "externalImportCount": 1,
+      "signalCounts": {
+        "<Form": 2,
+        "<Button": 1
+      },
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/projects/WorkspaceMeetingsEditor.jsx",
+      "sha": "b6771bfe66c1890e7b3f2908d9599c2ba115f028",
+      "lines": 85,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/projects/RepeatingItemEditor",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/admin/projects/RepeatingItemEditor.jsx",
+          "sha": "bb159be5561d6d352fa3c589b70b073ffd032742"
+        }
+      ],
+      "externalImportCount": 1,
+      "signalCounts": {
+        "<Form": 2,
+        "<Button": 1
+      },
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/projects/WorkspaceSprintsEditor.jsx",
+      "sha": "c1f34157980855d2ea59b8dc7db85b11718b3283",
+      "lines": 106,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/projects/RepeatingItemEditor",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/admin/projects/RepeatingItemEditor.jsx",
+          "sha": "bb159be5561d6d352fa3c589b70b073ffd032742"
+        },
+        {
+          "specifier": "@/components/admin/projects/workspaceRowMeta",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/admin/projects/workspaceRowMeta.jsx",
+          "sha": "ea8e3820292da36be2139f584532c291e322853c"
+        }
+      ],
+      "externalImportCount": 1,
+      "signalCounts": {
+        "<Button": 2,
+        "<Form": 2
+      },
+      "uiSignals": [],
+      "actions": [
+        {
+          "line": 69,
+          "text": "action={<Button size=\"small\" onClick={onRetryReleases}>Retry</Button>}"
+        }
+      ],
+      "totalActionCandidates": 1,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/projects/WorkspaceDeliveryOverview.jsx",
+      "sha": "f32aa07c33270bc7d5001e4dd770c61c823f2611",
+      "lines": 141,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/projects/adminProjectUtils",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/admin/projects/adminProjectUtils.js",
+          "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+        }
+      ],
+      "externalImportCount": 2,
+      "signalCounts": {
+        "<Button": 3
+      },
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/projects/WorkspaceTeamOverview.jsx",
+      "sha": "661e8efc2cf392b733ccc9fcc570a4327b858e0a",
+      "lines": 105,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/projects/adminProjectUtils",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/admin/projects/adminProjectUtils.js",
+          "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+        },
+        {
+          "specifier": "@/components/admin/projects/workspaceRowMeta",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/admin/projects/workspaceRowMeta.jsx",
+          "sha": "ea8e3820292da36be2139f584532c291e322853c"
+        }
+      ],
+      "externalImportCount": 1,
+      "signalCounts": {},
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/projects/WorkspaceReadinessOverview.jsx",
+      "sha": "b1cae7a537e25f4e842cb8bc08b3535e99f98bc0",
+      "lines": 109,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/projects/adminProjectUtils",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/admin/projects/adminProjectUtils.js",
+          "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+        }
+      ],
+      "externalImportCount": 2,
+      "signalCounts": {},
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/projects/WorkspaceSummarySnapshot.jsx",
+      "sha": "6d931b35d313d92f46e2d58fd4134e0c1185b2f0",
+      "lines": 115,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/projects/adminProjectUtils",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/admin/projects/adminProjectUtils.js",
+          "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+        }
+      ],
+      "externalImportCount": 2,
+      "signalCounts": {},
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/ProfileSectionsPanel.js",
+      "sha": "9dc95fef85e2496431b57c0b5942bce1ba0484d0",
+      "lines": 507,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/ProfileService",
+          "line": 4,
+          "type": "local",
+          "path": "src/api/Services/ProfileService.js",
+          "sha": "9d9760085683f5a740026898593119bd64953acf"
+        },
+        {
+          "specifier": "./profileSectionSchemas",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/admin/profileSectionSchemas.js",
+          "sha": "41cedc792b4e5766202ef877a80b2a8caf91b3f6"
+        },
+        {
+          "specifier": "@/components/admin/projects/renderStructuredValue",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/admin/projects/renderStructuredValue.jsx",
+          "sha": "6adb6937aecb9808cdbd584f267901e7c3acec48"
+        }
+      ],
+      "externalImportCount": 3,
+      "signalCounts": {
+        "<Form": 4,
+        "<Button": 14,
+        "message.error": 7,
+        "message.success": 4,
+        "<Popconfirm": 1
+      },
+      "uiSignals": [
+        {
+          "line": 259,
+          "kind": "message.error"
+        },
+        {
+          "line": 266,
+          "kind": "message.success"
+        },
+        {
+          "line": 270,
+          "kind": "message.error"
+        },
+        {
+          "line": 360,
+          "kind": "message.error"
+        },
+        {
+          "line": 365,
+          "kind": "message.success"
+        },
+        {
+          "line": 369,
+          "kind": "message.error"
+        },
+        {
+          "line": 378,
+          "kind": "message.success"
+        },
+        {
+          "line": 381,
+          "kind": "message.error"
+        },
+        {
+          "line": 398,
+          "kind": "message.error"
+        },
+        {
+          "line": 403,
+          "kind": "message.success"
+        },
+        {
+          "line": 408,
+          "kind": "message.error"
+        },
+        {
+          "line": 445,
+          "kind": "<Popconfirm"
+        }
+      ],
+      "actions": [
+        {
+          "line": 195,
+          "text": "<Input placeholder=\"Field name\" value={row.key} onChange={(e) => updateRow(idx, { key: e.target.value })} style={{ width: 180 }} />"
+        },
+        {
+          "line": 196,
+          "text": "<Input placeholder=\"Value\" value={row.value} onChange={(e) => updateRow(idx, { value: e.target.value })} style={{ width: 280 }} />"
+        },
+        {
+          "line": 197,
+          "text": "<Button size=\"small\" danger icon={<DeleteOutlined />} onClick={() => removeRow(idx)} />"
+        },
+        {
+          "line": 200,
+          "text": "<Button size=\"small\" icon={<PlusOutlined />} onClick={() => setRows([...rows, { key: \"\", value: \"\" }])}>Add field</Button>"
+        },
+        {
+          "line": 290,
+          "text": "<TextArea rows={8} value={draft} onChange={(e) => setDraft(e.target.value)} style={{ fontFamily: \"monospace\", fontSize: 12 }} />"
+        },
+        {
+          "line": 293,
+          "text": "<Button size=\"small\" type=\"primary\" onClick={save} loading={saving}>Save</Button>"
+        },
+        {
+          "line": 294,
+          "text": "<Button size=\"small\" onClick={() => setEditing(false)} disabled={saving}>Cancel</Button>"
+        },
+        {
+          "line": 309,
+          "text": "<Button size=\"small\" icon={<EditOutlined />} onClick={startEdit} disabled={!ops.update}>Edit</Button>"
+        },
+        {
+          "line": 310,
+          "text": "<Button size=\"small\" icon={<ReloadOutlined />} onClick={load} />"
+        },
+        {
+          "line": 429,
+          "text": "<TextArea rows={6} value={draft} onChange={(e) => setDraft(e.target.value)} style={{ fontFamily: \"monospace\", fontSize: 12 }} />"
+        },
+        {
+          "line": 432,
+          "text": "<Button size=\"small\" type=\"primary\" onClick={() => saveEdit(idx)} loading={saving}>Save</Button>"
+        },
+        {
+          "line": 433,
+          "text": "<Button size=\"small\" onClick={() => setEditingIndex(null)} disabled={saving}>Cancel</Button>"
+        },
+        {
+          "line": 444,
+          "text": "<Button size=\"small\" icon={<EditOutlined />} onClick={() => startEdit(idx)} disabled={!ops.update}>Edit</Button>"
+        },
+        {
+          "line": 445,
+          "text": "<Popconfirm title=\"Remove this entry?\" onConfirm={() => removeItem(idx)} disabled={!ops.delete}>"
+        },
+        {
+          "line": 458,
+          "text": "<TextArea rows={6} value={addDraft} onChange={(e) => setAddDraft(e.target.value)} style={{ fontFamily: \"monospace\", fontSize: 12 }} />"
+        },
+        {
+          "line": 461,
+          "text": "<Button size=\"small\" type=\"primary\" onClick={saveAdd} loading={saving}>Add</Button>"
+        },
+        {
+          "line": 462,
+          "text": "<Button size=\"small\" onClick={() => setAdding(false)} disabled={saving}>Cancel</Button>"
+        },
+        {
+          "line": 467,
+          "text": "<Button size=\"small\" icon={<PlusOutlined />} onClick={startAdd} disabled={!ops.add}>Add {label}</Button>"
+        },
+        {
+          "line": 468,
+          "text": "<Button size=\"small\" icon={<ReloadOutlined />} onClick={load} />"
+        }
+      ],
+      "totalActionCandidates": 19,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/studentGroups/StudentGroupDetail.jsx",
+      "sha": "03c710d56d6b3bcc39cb41d8f9922e34d7a3d19b",
+      "lines": 594,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/AdminTableToolbar",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/admin/AdminTableToolbar.js",
+          "sha": "40b02404196fa52b5fbd35b009b9bd40ec336a65"
+        },
+        {
+          "specifier": "@/components/Common/PanelStates",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/Common/PanelStates.jsx",
+          "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+        },
+        {
+          "specifier": "@/components/Common/Skeletons",
+          "line": 11,
+          "type": "local",
+          "path": "src/components/Common/Skeletons.jsx",
+          "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+        },
+        {
+          "specifier": "./StudentGroupForm",
+          "line": 12,
+          "type": "local",
+          "path": "src/components/admin/studentGroups/StudentGroupForm.jsx",
+          "sha": "6489b95b609f54974058f06136202165657ee2f8"
+        },
+        {
+          "specifier": "./groupUi",
+          "line": 13,
+          "type": "local",
+          "path": "src/components/admin/studentGroups/groupUi.js",
+          "sha": "9f503c0e2f653a5ba3d7f77b59c704c1aebc3cf2"
+        },
+        {
+          "specifier": "@/api/Services/StudentGroupService",
+          "line": 17,
+          "type": "local",
+          "path": "src/api/Services/StudentGroupService.js",
+          "sha": "a827e64c0b7517ab81d911970938a2ba47c93ed9"
+        }
+      ],
+      "externalImportCount": 5,
+      "signalCounts": {
+        "message.success": 7,
+        "message.error": 10,
+        "<Button": 17,
+        "<Dropdown": 1,
+        "<Tabs": 1,
+        "<Modal": 2,
+        "Modal.confirm": 1,
+        "<Form": 14,
+        "<Popconfirm": 4,
+        "<Select": 4
+      },
+      "uiSignals": [
+        {
+          "line": 83,
+          "kind": "message.success"
+        },
+        {
+          "line": 88,
+          "kind": "message.error"
+        },
+        {
+          "line": 101,
+          "kind": "message.success"
+        },
+        {
+          "line": 104,
+          "kind": "message.error"
+        },
+        {
+          "line": 132,
+          "kind": "<Dropdown"
+        },
+        {
+          "line": 147,
+          "kind": "<Tabs"
+        },
+        {
+          "line": 156,
+          "kind": "<Modal"
+        },
+        {
+          "line": 160,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 243,
+          "kind": "message.error"
+        },
+        {
+          "line": 257,
+          "kind": "message.success"
+        },
+        {
+          "line": 260,
+          "kind": "message.error"
+        },
+        {
+          "line": 275,
+          "kind": "message.error"
+        },
+        {
+          "line": 288,
+          "kind": "message.success"
+        },
+        {
+          "line": 291,
+          "kind": "message.error"
+        },
+        {
+          "line": 310,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 311,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 324,
+          "kind": "<Select"
+        },
+        {
+          "line": 338,
+          "kind": "<Modal"
+        },
+        {
+          "line": 348,
+          "kind": "<Select"
+        },
+        {
+          "line": 434,
+          "kind": "message.success"
+        },
+        {
+          "line": 438,
+          "kind": "message.error"
+        },
+        {
+          "line": 453,
+          "kind": "message.error"
+        },
+        {
+          "line": 467,
+          "kind": "message.success"
+        },
+        {
+          "line": 472,
+          "kind": "message.error"
+        },
+        {
+          "line": 485,
+          "kind": "message.success"
+        },
+        {
+          "line": 490,
+          "kind": "message.error"
+        },
+        {
+          "line": 517,
+          "kind": "<Select"
+        },
+        {
+          "line": 518,
+          "kind": "<Select"
+        },
+        {
+          "line": 531,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 534,
+          "kind": "<Popconfirm"
+        }
+      ],
+      "actions": [
+        {
+          "line": 113,
+          "text": "action={<Button onClick={() => router.push(\"/college-admin/student-groups\")}>Back to groups</Button>} />;"
+        },
+        {
+          "line": 125,
+          "text": "description={groupError} action={<Button size=\"small\" onClick={loadGroup}>Retry</Button>}"
+        },
+        {
+          "line": 129,
+          "text": "<Button icon={<ArrowLeftOutlined />} onClick={() => router.push(\"/college-admin/student-groups\")}>All groups</Button>"
+        },
+        {
+          "line": 130,
+          "text": "<Button onClick={openEdit} disabled={group.status === \"ARCHIVED\"}>Edit</Button>"
+        },
+        {
+          "line": 132,
+          "text": "<Dropdown menu={{ items: moves.map((to) => ({ key: to, label: `Move to ${statusLabel(to)}`, onClick: () => move(to) })) }}>"
+        },
+        {
+          "line": 157,
+          "text": "onCancel={() => {"
+        },
+        {
+          "line": 310,
+          "text": "<Popconfirm title=\"Remove from group?\" disabled={mutationBusy != null} onConfirm={() => remove(m, false)}><Button size=\"small\" loading={mutationBusy === `remove"
+        },
+        {
+          "line": 311,
+          "text": "<Popconfirm title=\"Remove and lock?\" description=\"The student cannot re-join on their own.\" disabled={mutationBusy != null} onConfirm={() => remove(m, true)}><B"
+        },
+        {
+          "line": 324,
+          "text": "extra={<Select size=\"small\" style={{ width: 130 }} value={state} onChange={setState}"
+        },
+        {
+          "line": 328,
+          "text": "<Button onClick={reconcile} loading={mutationBusy === \"reconcile\"} disabled={mutationBusy != null} title=\"Recompute the active count from the roster\">Recount</B"
+        },
+        {
+          "line": 329,
+          "text": "<Button type=\"primary\" onClick={() => { setAddResult(null); setAdding(true); }} disabled={group.status === \"ARCHIVED\" || mutationBusy != null}>Add students</But"
+        },
+        {
+          "line": 333,
+          "text": "action={<Button size=\"small\" onClick={load}>Retry</Button>} style={{ marginBottom: 12 }} /> : null}"
+        },
+        {
+          "line": 338,
+          "text": "<Modal title=\"Add students\" open={adding} onCancel={() => { if (!mutationRef.current) setAdding(false); }} onOk={submitAdd} okText=\"Add\" confirmLoading={addBusy"
+        },
+        {
+          "line": 509,
+          "text": "description={ruleError} action={<Button size=\"small\" onClick={load}>Retry</Button>}"
+        },
+        {
+          "line": 529,
+          "text": "<Button type=\"primary\" onClick={save} loading={busy} disabled={busy || Boolean(loadError)}>Save rule</Button>"
+        },
+        {
+          "line": 530,
+          "text": "<Button onClick={doPreview} loading={busy} disabled={busy || !rule || Boolean(loadError)}>Preview matches</Button>"
+        },
+        {
+          "line": 531,
+          "text": "<Popconfirm title=\"Apply the rule now?\" description=\"Adds matches, removes rule-matched students who no longer match.\" onConfirm={doApply} disabled={!rule}>"
+        },
+        {
+          "line": 534,
+          "text": "{rule && <Popconfirm title=\"Remove the rule?\" disabled={busy || Boolean(loadError)} onConfirm={doClear}><Button danger loading={busy} disabled={busy || Boolean("
+        },
+        {
+          "line": 579,
+          "text": "action={<Button size=\"small\" onClick={load}>Retry</Button>} style={{ marginBottom: 8 }} /> : null}"
+        }
+      ],
+      "totalActionCandidates": 19,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/studentGroups/StudentGroupForm.jsx",
+      "sha": "6489b95b609f54974058f06136202165657ee2f8",
+      "lines": 98,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/StudentGroupService",
+          "line": 2,
+          "type": "local",
+          "path": "src/api/Services/StudentGroupService.js",
+          "sha": "a827e64c0b7517ab81d911970938a2ba47c93ed9"
+        }
+      ],
+      "externalImportCount": 3,
+      "signalCounts": {
+        "<Form": 7
+      },
+      "uiSignals": [],
+      "actions": [],
+      "totalActionCandidates": 0,
+      "hasComputedDynamicImport": false
     }
   ],
   "scanStatus": {
-    "read": 36,
+    "read": 48,
     "errors": [],
-    "signalCandidates": 605
+    "signalCandidates": 725
   }
 }
