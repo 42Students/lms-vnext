@@ -1500,5 +1500,2373 @@
       ],
       "renderAndActionSignals": []
     }
-  ]
+  ],
+  "followedImports": [
+    {
+      "path": "src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx",
+      "sha": "22ecaf24a33b5423a03978e1058dbb616a7c5b4f",
+      "lines": 1170,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/modules/placements/hr-applicant-search-visibility"
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/ui/metric-bar"
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/hr/recruiter-drive-funnel.module.css"
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/ui/button"
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/ui/scroll-cue"
+        },
+        {
+          "line": 6,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 7,
+          "specifier": "zod"
+        },
+        {
+          "line": 8,
+          "specifier": "@/modules/placements/errors"
+        },
+        {
+          "line": 9,
+          "specifier": "next/link"
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/ui/third-party-link"
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/hr/recruiter-applicant-review-drawer"
+        },
+        {
+          "line": 12,
+          "specifier": "@/auth/request-context"
+        },
+        {
+          "line": 13,
+          "specifier": "@/components/placements/recruiter-result-controls"
+        },
+        {
+          "line": 14,
+          "specifier": "@/components/ui/page-header"
+        },
+        {
+          "line": 15,
+          "specifier": "@/components/ui/error-state"
+        },
+        {
+          "line": 16,
+          "specifier": "@/components/hr/hr-job-selection-grid"
+        },
+        {
+          "line": 17,
+          "specifier": "@/components/hr/recruiter-selection-composer"
+        },
+        {
+          "line": 18,
+          "specifier": "@/components/ui/input"
+        },
+        {
+          "line": 19,
+          "specifier": "@/components/hr/hr-job-offers-grid"
+        },
+        {
+          "line": 20,
+          "specifier": "@/components/hr/hr-job-applicants-grid"
+        },
+        {
+          "line": 21,
+          "specifier": "@/components/hr/hr-round-results-grid"
+        },
+        {
+          "line": 22,
+          "specifier": "@/components/hr/recruiter-drive-focus-refresh"
+        },
+        {
+          "line": 23,
+          "specifier": "@/components/hr/recruiter-round-inline-editor"
+        },
+        {
+          "line": 24,
+          "specifier": "@/components/ui/status-badge"
+        },
+        {
+          "line": 25,
+          "specifier": "@/modules/identity/context"
+        },
+        {
+          "line": 26,
+          "specifier": "@/modules/placements/hr-job-read-service"
+        },
+        {
+          "line": 27,
+          "specifier": "@/modules/placements/hr-offer-selection-read-model"
+        },
+        {
+          "line": 28,
+          "specifier": "@/modules/placements/hr-job-applicants-model"
+        },
+        {
+          "line": 29,
+          "specifier": "@/modules/placements/hr-drive-overview-model"
+        },
+        {
+          "line": 30,
+          "specifier": "@/modules/placements/recruiter-drive-funnel-model"
+        },
+        {
+          "line": 31,
+          "specifier": "@/modules/placements/recruiter-round-results-read-model"
+        },
+        {
+          "line": 32,
+          "specifier": "@/modules/placements/hr-inline-round-results-model"
+        },
+        {
+          "line": 33,
+          "specifier": "@/modules/placements/hr-applicant-drawer-model"
+        },
+        {
+          "line": 34,
+          "specifier": "@/modules/placements/recruiter-drive-progress-model"
+        },
+        {
+          "line": 35,
+          "specifier": "@/modules/placements/applicant-notes-service"
+        },
+        {
+          "line": 36,
+          "specifier": "@/components/hr/recruiter-private-rating-editor"
+        },
+        {
+          "line": 37,
+          "specifier": "@/components/placements/recruiter-resume-download"
+        },
+        {
+          "line": 38,
+          "specifier": "@/components/placements/recruiter-resumes-zip-download"
+        },
+        {
+          "line": 39,
+          "specifier": "@/components/placements/applicant-notes-panel"
+        },
+        {
+          "line": 40,
+          "specifier": "@/modules/placements/hr-focused-review-model"
+        },
+        {
+          "line": 41,
+          "specifier": "@/components/placements/recruiter-focused-review-shortcuts"
+        },
+        {
+          "line": 42,
+          "specifier": "@/modules/placements/hr-round-schedule-model"
+        },
+        {
+          "line": 43,
+          "specifier": "@/modules/placements/hr-drive-draft-links"
+        },
+        {
+          "line": 44,
+          "specifier": "@/modules/placements/hr-drive-messages-link-model"
+        },
+        {
+          "line": 45,
+          "specifier": "@/modules/placements/hr-drive-conversation-service"
+        },
+        {
+          "line": 46,
+          "specifier": "@/modules/placements/tpo-messaging-service"
+        },
+        {
+          "line": 47,
+          "specifier": "@/components/hr/recruiter-conversation-reply-form"
+        },
+        {
+          "line": 48,
+          "specifier": "@/components/hr/recruiter-conversation-live-refresh"
+        },
+        {
+          "line": 49,
+          "specifier": "@/modules/placements/tpo-drive-change-request-service"
+        },
+        {
+          "line": 50,
+          "specifier": "@/components/placements/tpo-drive-change-requests"
+        },
+        {
+          "line": 51,
+          "specifier": "@/modules/placements/recruiter-change-shortcuts-model"
+        },
+        {
+          "line": 52,
+          "specifier": "@/modules/placements/recruiter-booked-interviews-service"
+        },
+        {
+          "line": 53,
+          "specifier": "@/modules/placements/recruiter-booked-interviews-model"
+        },
+        {
+          "line": 54,
+          "specifier": "@/components/hr/recruiter-joining-report-form"
+        },
+        {
+          "line": 55,
+          "specifier": "@/modules/placements/recruiter-historical-offers-service"
+        },
+        {
+          "line": 56,
+          "specifier": "@/modules/placements/recruiter-historical-offers-model"
+        },
+        {
+          "line": 57,
+          "specifier": "@/components/hr/recruiter-panel-actions"
+        },
+        {
+          "line": 58,
+          "specifier": "@/components/ui/tabs"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 101,
+          "code": "await getCurrentRequestContext();"
+        },
+        {
+          "line": 110,
+          "code": "const { jobId } = await params;"
+        },
+        {
+          "line": 111,
+          "code": "const query = await searchParams;"
+        },
+        {
+          "line": 126,
+          "code": "hiring = await getHrJobRead(context, jobId, {"
+        },
+        {
+          "line": 163,
+          "code": "?await getRecruiterHistoricalOffers(context,workspace.job.id)"
+        },
+        {
+          "line": 169,
+          "code": "?await getRecruiterBookedInterviews(context,workspace.job.id)"
+        },
+        {
+          "line": 175,
+          "code": "const requestData=discussionTab?await getDriveChangeRequests(context,workspace.job.id):null;"
+        },
+        {
+          "line": 180,
+          "code": "const driveConversation=discussionTab?await getRecruiterDriveConversations(context,workspace.job.id):null;"
+        },
+        {
+          "line": 183,
+          "code": "await readRecruiterThreadMessages(context,selectedThread.id,1):null;"
+        },
+        {
+          "line": 221,
+          "code": "applicantNotes = await listRecruiterApplicantNotes(context, workspace.job.id, selectedApplicant.id);"
+        },
+        {
+          "line": 605,
+          "code": "<Button type=\"submit\">Open drive discussion</Button>"
+        },
+        {
+          "line": 660,
+          "code": "<Button type=\"submit\" variant=\"secondary\">Search</Button>"
+        },
+        {
+          "line": 783,
+          "code": "<p className=\"text-xs text-muted-foreground\">Draft decisions are sent for placement-cell verification. Only the placement cell can apply official outcomes.</p>"
+        },
+        {
+          "line": 789,
+          "code": "{driveOverview.readOnly?\"This drive is finished. Results can no longer be sent.\":\"Choose a round in focused review before recording a decision; the placement cell applies the results.\"}"
+        },
+        {
+          "line": 868,
+          "code": "<p className=\"text-sm text-body\">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. Recruiters can submit a selection proposal; only th"
+        },
+        {
+          "line": 872,
+          "code": "disabled={driveOverview.readOnly}"
+        },
+        {
+          "line": 886,
+          "code": "<p className=\"text-sm text-body\">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p"
+        },
+        {
+          "line": 931,
+          "code": "You can report Joined, Deferred or Did not join for an accepted offer."
+        },
+        {
+          "line": 1004,
+          "code": "This drive is finished, so slots and results can no longer be sent."
+        },
+        {
+          "line": 1023,
+          "code": "? \"Historical hiring rounds and applied outcomes remain readable. New results and interview slots are disabled.\""
+        }
+      ],
+      "totalRenderAndActionSignals": 20
+    },
+    {
+      "path": "src/components/courses/faculty-course-workspace.tsx",
+      "sha": "8d3c652ca50cc1b6843348e870449980fc76d31b",
+      "lines": 802,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/components/ui/stat-tile"
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/ui/disclosure"
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/ui/badge"
+        },
+        {
+          "line": 4,
+          "specifier": "@/modules/courses/assignment-file-readiness"
+        },
+        {
+          "line": 5,
+          "specifier": "next/link"
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/ui/third-party-link"
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/ui/empty-state"
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/ui/tabs"
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/ui/status-badge"
+        },
+        {
+          "line": 10,
+          "specifier": "./faculty-lesson-authoring"
+        },
+        {
+          "line": 11,
+          "specifier": "@/modules/courses/faculty-course-navigation"
+        },
+        {
+          "line": 12,
+          "specifier": "./faculty-lesson-video-manager"
+        },
+        {
+          "line": 13,
+          "specifier": "./faculty-content-editor"
+        },
+        {
+          "line": 14,
+          "specifier": "@/modules/courses/faculty-content-preview-model"
+        },
+        {
+          "line": 15,
+          "specifier": "./faculty-assessment-lifecycle"
+        },
+        {
+          "line": 16,
+          "specifier": "./faculty-item-actions"
+        },
+        {
+          "line": 17,
+          "specifier": "./faculty-assignment-review"
+        },
+        {
+          "line": 18,
+          "specifier": "./faculty-quiz-review"
+        },
+        {
+          "line": 19,
+          "specifier": "./faculty-quiz-learner-preview"
+        },
+        {
+          "line": 20,
+          "specifier": "./faculty-assessment-editor"
+        },
+        {
+          "line": 21,
+          "specifier": "./faculty-assignment-resources-editor"
+        },
+        {
+          "line": 22,
+          "specifier": "@/modules/courses/assignment-submission-methods"
+        },
+        {
+          "line": 23,
+          "specifier": "./faculty-quiz-question-editor"
+        },
+        {
+          "line": 24,
+          "specifier": "./faculty-course-home-signals"
+        },
+        {
+          "line": 25,
+          "specifier": "./faculty-prototype-course-priorities"
+        },
+        {
+          "line": 26,
+          "specifier": "./faculty-prototype-blueprint"
+        },
+        {
+          "line": 27,
+          "specifier": "@/modules/courses/faculty-blueprint-add-target"
+        },
+        {
+          "line": 28,
+          "specifier": "./faculty-course-item-viewer"
+        },
+        {
+          "line": 29,
+          "specifier": "./course-display-read-only"
+        },
+        {
+          "line": 30,
+          "specifier": "./faculty-content-order-editor"
+        },
+        {
+          "line": 31,
+          "specifier": "@/modules/courses/lesson-content-order-readiness"
+        },
+        {
+          "line": 32,
+          "specifier": "@/modules/courses/resource-material-readiness"
+        },
+        {
+          "line": 33,
+          "specifier": "./lesson-resource-materials-control"
+        },
+        {
+          "line": 34,
+          "specifier": "@/modules/courses/course-display-service"
+        },
+        {
+          "line": 35,
+          "specifier": "@/modules/courses/faculty-course-home-service"
+        },
+        {
+          "line": 39,
+          "specifier": "./faculty-course-operation-model"
+        },
+        {
+          "line": 42,
+          "specifier": "@/modules/courses/faculty-course-service"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 171,
+          "code": "allow=\"encrypted-media; picture-in-picture\" allowFullScreen/>"
+        },
+        {
+          "line": 623,
+          "code": "description=\"Lessons are managed by the admin team. Once lessons are available, faculty can add lectures, resources, assessments, and live classes here.\""
+        }
+      ],
+      "totalRenderAndActionSignals": 2
+    },
+    {
+      "path": "src/components/courses/faculty-assignment-editor.tsx",
+      "sha": "d800fff253f79d24e5db93bf2c3bfe5c0d2c4b88",
+      "lines": 227,
+      "imports": [
+        {
+          "line": 2,
+          "specifier": "@/components/ui/alert"
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/ui/loading-state"
+        },
+        {
+          "line": 5,
+          "specifier": "react"
+        },
+        {
+          "line": 6,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/ui/confirm-dialog"
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/ui/dropdown"
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/ui/menu"
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/ui/button"
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/ui/input"
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/ui/select"
+        },
+        {
+          "line": 13,
+          "specifier": "@/components/ui/textarea"
+        },
+        {
+          "line": 14,
+          "specifier": "@/components/ui/selection-controls"
+        },
+        {
+          "line": 15,
+          "specifier": "@/lib/api-fetch"
+        },
+        {
+          "line": 16,
+          "specifier": "@/lib/friendly-error"
+        },
+        {
+          "line": 17,
+          "specifier": "./faculty-assignment-method-picker"
+        },
+        {
+          "line": 18,
+          "specifier": "./faculty-assignment-material-links"
+        },
+        {
+          "line": 19,
+          "specifier": "@/modules/courses/assignment-submission-methods"
+        },
+        {
+          "line": 20,
+          "specifier": "@/modules/courses/faculty-assignment-method-load-model"
+        },
+        {
+          "line": 22,
+          "specifier": "@/modules/courses/faculty-authoring-datetime-model"
+        },
+        {
+          "line": 23,
+          "specifier": "@/modules/courses/faculty-assignment-editor-ui-model"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 5,
+          "code": "import {useRef,useState} from \"react\";"
+        },
+        {
+          "line": 36,
+          "code": "const [error,setError]=useState<string|null>(null);"
+        },
+        {
+          "line": 37,
+          "code": "const [success,setSuccess]=useState<string|null>(null);"
+        },
+        {
+          "line": 38,
+          "code": "const [pending,setPending]=useState(false);"
+        },
+        {
+          "line": 39,
+          "code": "const [confirmation,setConfirmation]=useState<{kind:\"SWITCH\";id:string}|{kind:\"ARCHIVE\"}|null>(null);"
+        },
+        {
+          "line": 40,
+          "code": "const [publishNow,setPublishNow]=useState(true);"
+        },
+        {
+          "line": 41,
+          "code": "const [selected,setSelected]=useState(\"\");"
+        },
+        {
+          "line": 43,
+          "code": "const [lessonId,setLessonId]=useState(defaultLessonId);"
+        },
+        {
+          "line": 44,
+          "code": "const [title,setTitle]=useState(\"\");"
+        },
+        {
+          "line": 45,
+          "code": "const [description,setDescription]=useState(\"\");"
+        },
+        {
+          "line": 46,
+          "code": "const [dueAt,setDueAt]=useState(\"\");"
+        },
+        {
+          "line": 47,
+          "code": "const [maxPoints,setMaxPoints]=useState(10);"
+        },
+        {
+          "line": 48,
+          "code": "const [,setConfirmed]=useState(false);"
+        },
+        {
+          "line": 49,
+          "code": "const [allowedMethods,setAllowedMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);"
+        },
+        {
+          "line": 50,
+          "code": "const [methodsDirty,setMethodsDirty]=useState(false);"
+        },
+        {
+          "line": 51,
+          "code": "const [methodsLoaded,setMethodsLoaded]=useState(true);"
+        },
+        {
+          "line": 52,
+          "code": "const [methodsLoading,setMethodsLoading]=useState(false);"
+        },
+        {
+          "line": 69,
+          "code": "void fetch(\"/api/courses/faculty/assignments/\"+encodeURIComponent(deliveryId)+"
+        },
+        {
+          "line": 128,
+          "code": "const receipt=await apiFetch<unknown>(endpoint,{"
+        },
+        {
+          "line": 140,
+          "code": "const published=await apiFetch<unknown>(endpoint,{"
+        },
+        {
+          "line": 162,
+          "code": "<Select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}"
+        },
+        {
+          "line": 168,
+          "code": "{existing?<p className=\"text-xs text-body\">Current state: {existing.status}. Published assignments can be edited until the first learner submission; archived assignments are read-only. An as"
+        },
+        {
+          "line": 171,
+          "code": "<Select value={lessonId} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,lessonId,next));setLessonId(next);}}"
+        },
+        {
+          "line": 176,
+          "code": "<Input value={title} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,title,next));setTitle(next);}} maxLength={255}"
+        },
+        {
+          "line": 179,
+          "code": "<Textarea value={description} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,description,next));setDescription(next);}}"
+        },
+        {
+          "line": 182,
+          "code": "<Input type=\"datetime-local\" value={dueAt} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,dueAt,next));setDueAt(next);}}"
+        },
+        {
+          "line": 186,
+          "code": "onChange={e=>{const next=Number(e.target.value);setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,maxPoints,next));setMaxPoints(next);}}"
+        },
+        {
+          "line": 193,
+          "code": "disabled={pending||!methodsLoaded||existing?.status===\"ARCHIVED\"}"
+        },
+        {
+          "line": 194,
+          "code": "onChange={next=>{setAllowedMethods(next);setMethodsDirty(true);setConfirmed(false);}}/>:null}"
+        },
+        {
+          "line": 197,
+          "code": "<Checkbox label=\"Publish now\" checked={publishNow} disabled={pending}"
+        },
+        {
+          "line": 198,
+          "code": "onChange={event=>setPublishNow(event.target.checked)} />"
+        },
+        {
+          "line": 199,
+          "code": "<Button type=\"button\" loading={pending} disabled={pending||!lessonId}"
+        },
+        {
+          "line": 200,
+          "code": "onClick={()=>void submit(\"CREATE\")} variant=\"primary\">{publishNow?\"Create and publish\":\"Create draft\"}</Button>"
+        },
+        {
+          "line": 203,
+          "code": "<Button type=\"button\" loading={pending} disabled={!assignmentActionAvailable(existing.status,\"EDIT\")||pending||(!methodsDirty&&!facultyAssignmentCanSaveDraft(existing,{title,description,dueA"
+        },
+        {
+          "line": 204,
+          "code": "onClick={()=>void submit(\"EDIT\")} variant={existing.status===\"DRAFT\"?\"secondary\":\"primary\"}>Save draft</Button>"
+        },
+        {
+          "line": 205,
+          "code": "{existing.status===\"DRAFT\"?<Button type=\"button\" loading={pending} disabled={pending||existing.status!==\"DRAFT\"}"
+        },
+        {
+          "line": 206,
+          "code": "onClick={()=>void submit(\"PUBLISH\")} variant=\"primary\">Publish</Button>:null}"
+        },
+        {
+          "line": 209,
+          "code": "<MenuItem disabled={pending||!assignmentActionAvailable(existing.status,\"ARCHIVE\")} onClick={()=>void submit(\"ARCHIVE\")}>Archive</MenuItem>"
+        },
+        {
+          "line": 214,
+          "code": "{existing?<FacultyAssignmentMaterialLinks key={existing.id} deliveryId={deliveryId} assignmentId={existing.id} disabled={pending||existing.status===\"ARCHIVED\"}/>:null}"
+        }
+      ],
+      "totalRenderAndActionSignals": 39
+    },
+    {
+      "path": "src/components/courses/faculty-choice-quiz-builder.tsx",
+      "sha": "60137b62542184c57b0e5c94c70c911867085d84",
+      "lines": 457,
+      "imports": [
+        {
+          "line": 2,
+          "specifier": "@/components/ui/radio"
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/ui/checkbox"
+        },
+        {
+          "line": 4,
+          "specifier": "react"
+        },
+        {
+          "line": 5,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/ui/confirm-dialog"
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/ui/dialog"
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/ui/alert"
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/ui/empty-state"
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/ui/button"
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/ui/textarea"
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/ui/input"
+        },
+        {
+          "line": 13,
+          "specifier": "@/components/ui/select"
+        },
+        {
+          "line": 14,
+          "specifier": "@/components/ui/selection-controls"
+        },
+        {
+          "line": 15,
+          "specifier": "@/lib/api-fetch"
+        },
+        {
+          "line": 16,
+          "specifier": "@/lib/friendly-error"
+        },
+        {
+          "line": 18,
+          "specifier": "@/modules/courses/faculty-authoring-datetime-model"
+        },
+        {
+          "line": 20,
+          "specifier": "@/modules/courses/faculty-quiz-builder-model"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 4,
+          "code": "import {useRef,useState} from \"react\";"
+        },
+        {
+          "line": 38,
+          "code": "const [success,setSuccess]=useState<string|null>(null);"
+        },
+        {
+          "line": 39,
+          "code": "const [selected,setSelected]=useState(\"\");"
+        },
+        {
+          "line": 40,
+          "code": "const [quizSearch,setQuizSearch]=useState(\"\");"
+        },
+        {
+          "line": 41,
+          "code": "const [questionSearch,setQuestionSearch]=useState(\"\");"
+        },
+        {
+          "line": 42,
+          "code": "const [pasteQuestionIndex,setPasteQuestionIndex]=useState<number|null>(null);"
+        },
+        {
+          "line": 43,
+          "code": "const [pastedChoices,setPastedChoices]=useState(\"\");"
+        },
+        {
+          "line": 44,
+          "code": "const [invalidOnly,setInvalidOnly]=useState(false);"
+        },
+        {
+          "line": 45,
+          "code": "const [previewOpen,setPreviewOpen]=useState(false);"
+        },
+        {
+          "line": 46,
+          "code": "const [previewAnswers,setPreviewAnswers]=useState(false);"
+        },
+        {
+          "line": 47,
+          "code": "const [localQuizzes,setLocalQuizzes]=useState<Quiz[]>([]);"
+        },
+        {
+          "line": 49,
+          "code": "const [lessonId,setLessonId]=useState(defaultLessonId);"
+        },
+        {
+          "line": 50,
+          "code": "const [title,setTitle]=useState(\"\");"
+        },
+        {
+          "line": 51,
+          "code": "const [description,setDescription]=useState(\"\");"
+        },
+        {
+          "line": 52,
+          "code": "const [dueAt,setDueAt]=useState(\"\");"
+        },
+        {
+          "line": 53,
+          "code": "const [maxAttempts,setMaxAttempts]=useState(1);"
+        },
+        {
+          "line": 54,
+          "code": "const [shuffleQuestions,setShuffleQuestions]=useState(false);"
+        },
+        {
+          "line": 55,
+          "code": "const [shuffleOptions,setShuffleOptions]=useState(false);"
+        },
+        {
+          "line": 56,
+          "code": "const [questions,setQuestions]=useState<Question[]>([fresh()]);"
+        },
+        {
+          "line": 57,
+          "code": "const [confirmed,setConfirmed]=useState(false);"
+        },
+        {
+          "line": 58,
+          "code": "const [dirtyDraft,setDirtyDraft]=useState(false);"
+        },
+        {
+          "line": 59,
+          "code": "const [pending,setPending]=useState(false);"
+        },
+        {
+          "line": 61,
+          "code": "const [confirmRequest,setConfirmRequest]=useState<{title:string;variant:\"danger\"|\"primary\"}|null>(null);"
+        },
+        {
+          "line": 67,
+          "code": "const [publishNow,setPublishNow]=useState(true);"
+        },
+        {
+          "line": 68,
+          "code": "const [detailsFailed,setDetailsFailed]=useState(false);"
+        },
+        {
+          "line": 69,
+          "code": "const [error,setError]=useState<string|null>(null);"
+        },
+        {
+          "line": 88,
+          "code": "const response=await apiFetch<unknown>(\"/api/courses/quizzes/\"+encodeURIComponent(q.id)+"
+        },
+        {
+          "line": 180,
+          "code": "const result=await apiFetch<unknown>(endpoint,{"
+        },
+        {
+          "line": 192,
+          "code": "const published=facultyQuizSavedFromCommand(await apiFetch<unknown>(endpoint,{"
+        },
+        {
+          "line": 201,
+          "code": "setSuccess(\"Quiz created and published. Learners can attempt it until the due date.\");"
+        },
+        {
+          "line": 222,
+          "code": "<Input type=\"search\" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}"
+        },
+        {
+          "line": 226,
+          "code": "<Select value={selected} disabled={pending} onChange={e=>chooseWithDraftProtection(e.target.value)}"
+        },
+        {
+          "line": 235,
+          "code": "<Button variant=\"secondary\" type=\"button\" onClick={()=>copyToNewDraft()} className=\"min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650]\""
+        },
+        {
+          "line": 237,
+          "code": "<Select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}"
+        },
+        {
+          "line": 243,
+          "code": "<Input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,title,e.target.value));setDirtyDraft(true);setTitle(e."
+        },
+        {
+          "line": 246,
+          "code": "<Textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}"
+        },
+        {
+          "line": 247,
+          "code": "onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,description,e.target.value));setDirtyDraft(true);setDescription(e.target.value);}}"
+        },
+        {
+          "line": 250,
+          "code": "<Input type=\"datetime-local\" disabled={!metadataEditable} value={dueAt} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,dueAt,e.target.value));setDirtyDraft(true);setDu"
+        },
+        {
+          "line": 253,
+          "code": "<Input type=\"number\" disabled={!editable} min={1} max={20} value={maxAttempts}"
+        },
+        {
+          "line": 254,
+          "code": "onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,maxAttempts,Number(e.target.value)));setDirtyDraft(true);setMaxAttempts(Number(e.target.value));}}"
+        },
+        {
+          "line": 257,
+          "code": "<fieldset disabled={!editable} className=\"space-y-2 border-y border-border py-3\">"
+        },
+        {
+          "line": 260,
+          "code": "onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleQuestions(e.target.checked);}}/>"
+        },
+        {
+          "line": 262,
+          "code": "onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleOptions(e.target.checked);}}/>"
+        },
+        {
+          "line": 270,
+          "code": "<Button variant=\"secondary\" type=\"button\" onClick={()=>setPreviewOpen(open=>!open)}"
+        },
+        {
+          "line": 278,
+          "code": "onChange={e=>setPreviewAnswers(e.target.checked)}/>"
+        },
+        {
+          "line": 287,
+          "code": "name={\"preview-question-\"+index} disabled/> : <NativeCheckbox"
+        },
+        {
+          "line": 288,
+          "code": "name={\"preview-question-\"+index} disabled/>}"
+        },
+        {
+          "line": 296,
+          "code": "<Input type=\"search\" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}"
+        },
+        {
+          "line": 300,
+          "code": "onChange={e=>setInvalidOnly(e.target.checked)}/>"
+        },
+        {
+          "line": 302,
+          "code": "{matchingQuestions.map(({q,i})=><fieldset key={i} disabled={!editable}"
+        },
+        {
+          "line": 309,
+          "code": "onChange={e=>updateQuestion(i,old=>({...old,prompt:e.target.value}))}"
+        },
+        {
+          "line": 314,
+          "code": "onChange={e=>updateQuestion(i,old=>({...old,...facultyChangeQuizChoiceType(old,e.target.value as Question[\"type\"])}))}"
+        },
+        {
+          "line": 321,
+          "code": "onChange={e=>updateQuestion(i,old=>({...old,points:Number(e.target.value)}))}"
+        },
+        {
+          "line": 328,
+          "code": "onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>k===j?{...x,text:e.target.value}:x)}))}"
+        },
+        {
+          "line": 331,
+          "code": "onChange={e=>updateQuestion(i,old=>({...old,options:facultyToggleQuizAnswer(old,j,e.target.checked)}))}/>"
+        },
+        {
+          "line": 332,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={j===0} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j-1)}))}"
+        },
+        {
+          "line": 334,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={j===q.options.length-1} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j+1)}))}"
+        },
+        {
+          "line": 336,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={q.options.length>=20}"
+        },
+        {
+          "line": 337,
+          "code": "onClick={()=>updateQuestion(i,old=>({...old,options:facultyInsertQuizOptionAfter(old.options,j,{clientKey:draftOptionKey(),text:\"\",correct:false,sequence:j+1})}))}"
+        },
+        {
+          "line": 339,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={q.options.length>=20}"
+        },
+        {
+          "line": 340,
+          "code": "onClick={()=>updateQuestion(i,old=>({...old,options:facultyDuplicateQuizOption(old.options,j).map((o,k)=>k===j+1?{text:o.text,correct:o.correct,sequence:o.sequence,clientKey:draftOptionKey()"
+        },
+        {
+          "line": 342,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={q.options.length<=2}"
+        },
+        {
+          "line": 343,
+          "code": "onClick={()=>{if(facultyQuizOptionRemovalNeedsConfirmation(q.options,j)){"
+        },
+        {
+          "line": 350,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={q.options.length>=20}"
+        },
+        {
+          "line": 351,
+          "code": "onClick={()=>{setPasteQuestionIndex(i);setPastedChoices(\"\");setError(null);}}"
+        },
+        {
+          "line": 353,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={q.options.length>=20}"
+        },
+        {
+          "line": 354,
+          "code": "onClick={()=>updateQuestion(i,old=>({...old,options:[...old.options,{clientKey:draftOptionKey(),text:\"\",correct:false,sequence:old.options.length}]}))}"
+        },
+        {
+          "line": 357,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={i===0} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestionToEdge(old,i,\"FIRST\"));}}"
+        },
+        {
+          "line": 359,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={i===0} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestion(old,i,i-1));}}"
+        },
+        {
+          "line": 361,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={i===questions.length-1} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestion(old,i,i+1));}}"
+        },
+        {
+          "line": 363,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={i===questions.length-1} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestionToEdge(old,i,\"LAST\""
+        },
+        {
+          "line": 366,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={questions.length>=100}"
+        },
+        {
+          "line": 367,
+          "code": "onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyInsertQuizQuestionAfter(old,i,{...fresh(),sequence:i+1}));}}"
+        },
+        {
+          "line": 369,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={questions.length>=100}"
+        },
+        {
+          "line": 370,
+          "code": "onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyDuplicateQuizQuestion(old,i).map((question,k)=>k===i+1?{...question,options:question.options.map(option=>({text"
+        },
+        {
+          "line": 372,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={questions.length<=1}"
+        },
+        {
+          "line": 373,
+          "code": "onClick={()=>askConfirm(facultyQuizQuestionRemovalPrompt(i,q.prompt),()=>{"
+        },
+        {
+          "line": 378,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={!editable||questions.length>=100}"
+        },
+        {
+          "line": 379,
+          "code": "onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyAppendQuizQuestion(old,{...fresh(),sequence:old.length}));}}"
+        },
+        {
+          "line": 392,
+          "code": "<Button variant=\"secondary\" type=\"button\" onClick={()=>{if(facultyQuizRetryNeedsConfirmation(dirtyDraft,pending)){"
+        },
+        {
+          "line": 401,
+          "code": "{facultyQuizMayResetDraft(dirtyDraft,pending)?<Button variant=\"secondary\" type=\"button\" onClick={resetDraft}"
+        },
+        {
+          "line": 404,
+          "code": "<Checkbox label=\"Publish now\" checked={publishNow} disabled={pending}"
+        },
+        {
+          "line": 405,
+          "code": "onChange={event=>setPublishNow(event.target.checked)}/>"
+        },
+        {
+          "line": 406,
+          "code": "<Button variant=\"primary\" type=\"button\" disabled={pending||!lessonId}"
+        },
+        {
+          "line": 407,
+          "code": "onClick={()=>void submit(\"CREATE\")} className=\"min-h-11 md:min-h-9\">{publishNow?\"Create and publish\":\"Create draft\"}</Button>"
+        },
+        {
+          "line": 410,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={!facultyQuizCanSaveChanges(chosen.status,dirtyDraft,detailsFailed,pending)}"
+        },
+        {
+          "line": 411,
+          "code": "onClick={()=>void submit(\"EDIT\")} className=\"min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 py-2\">{chosen.status===\"DRAFT\"?\"Save draft\":\"Save metadata\"}</B"
+        },
+        {
+          "line": 412,
+          "code": "<Button variant=\"primary\" type=\"button\" disabled={pending||!facultyQuizReadyToPublish(chosen.status,dirtyDraft,detailsFailed,questions)}"
+        },
+        {
+          "line": 413,
+          "code": "onClick={()=>void submit(\"PUBLISH\")} className=\"min-h-11 md:min-h-9\">Publish</Button>"
+        },
+        {
+          "line": 415,
+          "code": "<Button variant=\"secondary\" type=\"button\" disabled={pending}"
+        },
+        {
+          "line": 416,
+          "code": "onClick={()=>void submit(\"CLOSE\")}"
+        },
+        {
+          "line": 423,
+          "code": "<Button variant=\"danger\" type=\"button\" disabled={pending} onClick={()=>void submit(\"ARCHIVE\")}"
+        },
+        {
+          "line": 431,
+          "code": "<Dialog open={pasteQuestionIndex!==null} onOpenChange={open=>{if(!open&&!pending)setPasteQuestionIndex(null);}}"
+        },
+        {
+          "line": 435,
+          "code": "<Button variant=\"secondary\" className=\"min-h-11 flex-1 sm:flex-none md:min-h-9\" disabled={pending} onClick={()=>setPasteQuestionIndex(null)}>Cancel</Button>"
+        },
+        {
+          "line": 436,
+          "code": "<Button variant=\"primary\" className=\"min-h-11 flex-1 sm:flex-none md:min-h-9\" disabled={pending||pastedChoices.trim().length===0}"
+        },
+        {
+          "line": 437,
+          "code": "onClick={()=>{"
+        },
+        {
+          "line": 447,
+          "code": "<Textarea value={pastedChoices} onChange={event=>setPastedChoices(event.target.value)}"
+        }
+      ],
+      "totalRenderAndActionSignals": 97
+    },
+    {
+      "path": "src/components/projects/project-workspace.tsx",
+      "sha": "6752c9fe401847e02c749b8e68cb11b4b15d34d0",
+      "lines": 2465,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/modules/projects/project-date-time-format-model"
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/ui/empty-state"
+        },
+        {
+          "line": 3,
+          "specifier": "next/link"
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/ui/tabs"
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/ui/disclosure"
+        },
+        {
+          "line": 6,
+          "specifier": "@/modules/projects/mentor-meeting-display-status"
+        },
+        {
+          "line": 7,
+          "specifier": "@/modules/projects/mentor-estimation-unit-model"
+        },
+        {
+          "line": 8,
+          "specifier": "@/modules/projects/mentor-meeting-facilitation-model"
+        },
+        {
+          "line": 9,
+          "specifier": "@/modules/projects/mentor-workspace-evidence-model"
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/ui/page-header"
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/ui/button"
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/ui/page-back-link"
+        },
+        {
+          "line": 13,
+          "specifier": "@/components/ui/breadcrumbs"
+        },
+        {
+          "line": 14,
+          "specifier": "./project-archive-control"
+        },
+        {
+          "line": 15,
+          "specifier": "./project-change-template-control"
+        },
+        {
+          "line": 16,
+          "specifier": "./project-admin-submission-review"
+        },
+        {
+          "line": 17,
+          "specifier": "./college-project-summary-editor-full"
+        },
+        {
+          "line": 18,
+          "specifier": "./mentor-project-about-editor"
+        },
+        {
+          "line": 19,
+          "specifier": "./workspace-brief-editor"
+        },
+        {
+          "line": 20,
+          "specifier": "@/modules/projects/workspace-brief-model"
+        },
+        {
+          "line": 21,
+          "specifier": "@/modules/projects/mentor-overview-presenter"
+        },
+        {
+          "line": 22,
+          "specifier": "./project-resource-files-section"
+        },
+        {
+          "line": 23,
+          "specifier": "./project-delivery-evidence-download"
+        },
+        {
+          "line": 24,
+          "specifier": "./project-delivery-reopen-control"
+        },
+        {
+          "line": 25,
+          "specifier": "./project-delivery-history-timeline"
+        },
+        {
+          "line": 26,
+          "specifier": "@/modules/projects/learner-board-lanes-model"
+        },
+        {
+          "line": 27,
+          "specifier": "@/modules/projects/learner-sprint-progress-model"
+        },
+        {
+          "line": 28,
+          "specifier": "@/components/ui/status-badge"
+        },
+        {
+          "line": 29,
+          "specifier": "@/components/ui/metric-bar"
+        },
+        {
+          "line": 30,
+          "specifier": "@/components/ui/data-table"
+        },
+        {
+          "line": 31,
+          "specifier": "@/modules/projects/readiness-override-model"
+        },
+        {
+          "line": 32,
+          "specifier": "./mentor-sprint-details-edit"
+        },
+        {
+          "line": 33,
+          "specifier": "@/modules/projects/mentor-sprint-details-model"
+        },
+        {
+          "line": 34,
+          "specifier": "./mentor-sprint-delete-control"
+        },
+        {
+          "line": 35,
+          "specifier": "./project-activity-filtered-list"
+        },
+        {
+          "line": 36,
+          "specifier": "./project-resource-audit-list"
+        },
+        {
+          "line": 37,
+          "specifier": "./college-project-mentor-dialog"
+        },
+        {
+          "line": 38,
+          "specifier": "./college-project-student-roster-dialog"
+        },
+        {
+          "line": 39,
+          "specifier": "./project-resource-list"
+        },
+        {
+          "line": 40,
+          "specifier": "./project-resource-library-editor"
+        },
+        {
+          "line": 41,
+          "specifier": "@/modules/projects/project-resource-library-token"
+        },
+        {
+          "line": 42,
+          "specifier": "./project-roster-table"
+        },
+        {
+          "line": 43,
+          "specifier": "./college-admin-workspace-team-overview"
+        },
+        {
+          "line": 44,
+          "specifier": "./project-team-roster-reconcile"
+        },
+        {
+          "line": 45,
+          "specifier": "./project-sprint-plan-editor"
+        },
+        {
+          "line": 46,
+          "specifier": "./project-sprint-row-list"
+        },
+        {
+          "line": 47,
+          "specifier": "./project-task-plan-editor"
+        },
+        {
+          "line": 48,
+          "specifier": "./project-admin-task-add"
+        },
+        {
+          "line": 49,
+          "specifier": "@/modules/projects/project-task-plan-token"
+        },
+        {
+          "line": 50,
+          "specifier": "@/modules/projects/project-task-plan-model"
+        },
+        {
+          "line": 51,
+          "specifier": "./mentor-delivery-lock-control"
+        },
+        {
+          "line": 52,
+          "specifier": "./mentor-sprint-write"
+        },
+        {
+          "line": 53,
+          "specifier": "./mentor-release-editor"
+        },
+        {
+          "line": 54,
+          "specifier": "./mentor-meeting-history"
+        },
+        {
+          "line": 55,
+          "specifier": "./mentor-meeting-rsvp-control"
+        },
+        {
+          "line": 56,
+          "specifier": "./project-meeting-plan-editor"
+        },
+        {
+          "line": 57,
+          "specifier": "@/modules/projects/project-meeting-plan-token"
+        },
+        {
+          "line": 58,
+          "specifier": "./mentor-task-details-edit"
+        },
+        {
+          "line": 59,
+          "specifier": "./project-task-assignee-control"
+        },
+        {
+          "line": 60,
+          "specifier": "./project-task-comments"
+        },
+        {
+          "line": 61,
+          "specifier": "./project-task-submission-overview"
+        },
+        {
+          "line": 62,
+          "specifier": "./learner-task-progress-control"
+        },
+        {
+          "line": 63,
+          "specifier": "@/modules/projects/learner-task-criteria-model"
+        },
+        {
+          "line": 64,
+          "specifier": "@/modules/projects/project-task-visible-facts-model"
+        },
+        {
+          "line": 65,
+          "specifier": "./mentor-task-create"
+        },
+        {
+          "line": 66,
+          "specifier": "./mentor-task-status-transition"
+        },
+        {
+          "line": 72,
+          "specifier": "./project-lifecycle-actions"
+        },
+        {
+          "line": 77,
+          "specifier": "./project-final-delivery-controls"
+        },
+        {
+          "line": 80,
+          "specifier": "./project-task-submission-control"
+        },
+        {
+          "line": 81,
+          "specifier": "./project-resource-controls"
+        },
+        {
+          "line": 86,
+          "specifier": "./project-meeting-controls"
+        },
+        {
+          "line": 87,
+          "specifier": "./project-team-controls"
+        },
+        {
+          "line": 90,
+          "specifier": "@/modules/projects/workspace-view-service"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 348,
+          "code": "<p className=\"mt-2 text-sm text-muted-foreground\">Task-level submissions can still be reviewed from the Tasks tab.</p>"
+        },
+        {
+          "line": 730,
+          "code": "\"This workspace is archived. You can review historical tasks, resources, meetings and submissions, but cannot change them.\":"
+        },
+        {
+          "line": 734,
+          "code": "\"This project is complete. Existing work and meetings remain available to read; editing is disabled.\":"
+        },
+        {
+          "line": 737,
+          "code": "\"Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled.\"}"
+        },
+        {
+          "line": 1095,
+          "code": ":mode===\"ADMIN\"?<Button type=\"button\" variant=\"secondary\" disabled>Reassign mentor…</Button>:null}"
+        },
+        {
+          "line": 1099,
+          "code": ":mode===\"ADMIN\"?<Button type=\"button\" variant=\"secondary\" disabled>Manage students…</Button>:null}"
+        },
+        {
+          "line": 1122,
+          "code": "mentors can review Project work but cannot edit team membership. College Admin changes are audited and notify affected accounts; mentors must request roster corrections through the College A"
+        },
+        {
+          "line": 1278,
+          "code": "<span>No sprints are available yet. You can still draft tasks, but add sprints before assigning tasks to a delivery cycle.</span>"
+        },
+        {
+          "line": 1847,
+          "code": "Task-level submissions can still be reviewed from the Tasks tab."
+        }
+      ],
+      "totalRenderAndActionSignals": 9
+    },
+    {
+      "path": "src/components/placements/placement-drive-workspace.tsx",
+      "sha": "0efd7e8aa6d1b44f0d22c327539d8f9386a55e0d",
+      "lines": 940,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/components/ui/dropdown"
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/ui/disclosure"
+        },
+        {
+          "line": 3,
+          "specifier": "next/link"
+        },
+        {
+          "line": 4,
+          "specifier": "react"
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/ui/third-party-link"
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/ui/page-header"
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/ui/error-state"
+        },
+        {
+          "line": 8,
+          "specifier": "@/modules/permissions/policy"
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/ui/status-badge"
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/ui/alert"
+        },
+        {
+          "line": 11,
+          "specifier": "@/modules/academics/cohort-service"
+        },
+        {
+          "line": 12,
+          "specifier": "@/modules/academics/section-service"
+        },
+        {
+          "line": 13,
+          "specifier": "@/modules/academics/program-service"
+        },
+        {
+          "line": 14,
+          "specifier": "@/modules/identity/context"
+        },
+        {
+          "line": 15,
+          "specifier": "@/modules/placements/bulk-drive-service"
+        },
+        {
+          "line": 16,
+          "specifier": "./placement-bulk-add-applicants"
+        },
+        {
+          "line": 17,
+          "specifier": "./tpo-remind-non-applicants"
+        },
+        {
+          "line": 18,
+          "specifier": "@/modules/placements/tpo-remind-not-applied-service"
+        },
+        {
+          "line": 19,
+          "specifier": "./tpo-drive-clone-action"
+        },
+        {
+          "line": 20,
+          "specifier": "./tpo-delete-draft-action"
+        },
+        {
+          "line": 21,
+          "specifier": "./tpo-drive-refresh-control"
+        },
+        {
+          "line": 22,
+          "specifier": "@/modules/placements/drive-day-service"
+        },
+        {
+          "line": 23,
+          "specifier": "@/modules/placements/eligibility-service"
+        },
+        {
+          "line": 24,
+          "specifier": "@/modules/placements/evaluation-config-service"
+        },
+        {
+          "line": 25,
+          "specifier": "@/modules/placements/job-service"
+        },
+        {
+          "line": 26,
+          "specifier": "@/modules/placements/offer-service"
+        },
+        {
+          "line": 27,
+          "specifier": "@/modules/placements/screening-service"
+        },
+        {
+          "line": 28,
+          "specifier": "@/modules/placements/tpo-schedule-conflicts-service"
+        },
+        {
+          "line": 29,
+          "specifier": "@/modules/placements/tpo-drive-schedule-warnings-model"
+        },
+        {
+          "line": 30,
+          "specifier": "@/modules/placements/tpo-shortlist-service"
+        },
+        {
+          "line": 31,
+          "specifier": "@/modules/placements/tpo-drive-selection-service"
+        },
+        {
+          "line": 32,
+          "specifier": "@/modules/placements/tpo-drive-next-step-model"
+        },
+        {
+          "line": 33,
+          "specifier": "@/modules/placements/tpo-drive-header-model"
+        },
+        {
+          "line": 34,
+          "specifier": "@/modules/placements/tpo-drive-tab-model"
+        },
+        {
+          "line": 35,
+          "specifier": "./drive-company-avatar"
+        },
+        {
+          "line": 36,
+          "specifier": "@/modules/placements/tpo-drive-journey-service"
+        },
+        {
+          "line": 37,
+          "specifier": "@/modules/placements/request-service"
+        },
+        {
+          "line": 38,
+          "specifier": "@/modules/placements/role-option-service"
+        },
+        {
+          "line": 39,
+          "specifier": "./placement-draft-edit-form"
+        },
+        {
+          "line": 40,
+          "specifier": "@/modules/placements/tpo-configuration-read-service"
+        },
+        {
+          "line": 41,
+          "specifier": "./placement-drive-day-overview"
+        },
+        {
+          "line": 42,
+          "specifier": "./placement-job-lifecycle-controls"
+        },
+        {
+          "line": 43,
+          "specifier": "./tpo-drive-lifecycle-controls"
+        },
+        {
+          "line": 44,
+          "specifier": "@/modules/placements/tpo-drive-lifecycle-service"
+        },
+        {
+          "line": 45,
+          "specifier": "@/modules/placements/round-service"
+        },
+        {
+          "line": 46,
+          "specifier": "@/modules/placements/tpo-drive-deadline-service"
+        },
+        {
+          "line": 47,
+          "specifier": "./tpo-drive-deadline-form"
+        },
+        {
+          "line": 48,
+          "specifier": "./tpo-round-reorder"
+        },
+        {
+          "line": 49,
+          "specifier": "./placement-offer-controls"
+        },
+        {
+          "line": 50,
+          "specifier": "./placement-role-options"
+        },
+        {
+          "line": 51,
+          "specifier": "./placement-request-queue"
+        },
+        {
+          "line": 55,
+          "specifier": "./placement-drive-controls"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 78,
+          "code": "const [job,optional]=await Promise.all([getPlacementJobLegacyDetail(context,jobId),Promise.allSettled(["
+        },
+        {
+          "line": 110,
+          "code": "const jobTypes=job.status===\"DRAFT\"?await listPlacementJobTypeChoices(context,job.collegeId).catch(()=>null):[];"
+        },
+        {
+          "line": 114,
+          "code": "await Promise.all(["
+        },
+        {
+          "line": 129,
+          "code": "await listPrograms(context,job.collegeId).catch(()=>null):[];"
+        },
+        {
+          "line": 132,
+          "code": "await Promise.all(programs.map(async program=>({"
+        },
+        {
+          "line": 133,
+          "code": "program,cohorts:await listCohorts(context,program.id),"
+        },
+        {
+          "line": 136,
+          "code": "const sectionGroups=job.status===\"DRAFT\"&&cohortGroups?await Promise.all("
+        },
+        {
+          "line": 140,
+          "code": "sections:await listSections(context,cohort.id)})))).catch(()=>null):[];"
+        },
+        {
+          "line": 258,
+          "code": "const [journey,pendingSelections,reminderPreview]=await Promise.all(["
+        }
+      ],
+      "totalRenderAndActionSignals": 9
+    },
+    {
+      "path": "src/components/tpo/tpo-drive-rounds-prototype-review.tsx",
+      "sha": "ef1c6e7df1b8794abda1f79d7a30f2f15297de1c",
+      "lines": 160,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/link"
+        }
+      ],
+      "renderAndActionSignals": [],
+      "totalRenderAndActionSignals": 0
+    },
+    {
+      "path": "src/components/tpo/tpo-drive-offers-prototype-review.tsx",
+      "sha": "d3a22600c25599ba5f8a91b43942641c915701a1",
+      "lines": 159,
+      "imports": [
+        {
+          "line": 2,
+          "specifier": "react"
+        },
+        {
+          "line": 3,
+          "specifier": "next/link"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 2,
+          "code": "import {useState} from \"react\";"
+        },
+        {
+          "line": 24,
+          "code": "const [selectedId,setSelectedId]=useState<string|null>(null);"
+        },
+        {
+          "line": 42,
+          "code": "{queueAvailable?toCheck.length+\" recorded selections await review or release\":\"Selection queue unavailable\"}"
+        },
+        {
+          "line": 98,
+          "code": "<td className=\"p-3\"><button type=\"button\" onClick={()=>setSelectedId(row.id)}"
+        }
+      ],
+      "totalRenderAndActionSignals": 4
+    },
+    {
+      "path": "src/components/projects/mentor-task-create.tsx",
+      "sha": "d2c620295b1b73f71f0c8cbfe44fbb8e52dd6e89",
+      "lines": 178,
+      "imports": [
+        {
+          "line": 3,
+          "specifier": "react"
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/ui/select"
+        },
+        {
+          "line": 5,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/ui/button"
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/ui/dialog"
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/ui/confirm-dialog"
+        },
+        {
+          "line": 9,
+          "specifier": "./project-editor-discard-guard"
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/ui/input"
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/ui/textarea"
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/ui/toast"
+        },
+        {
+          "line": 13,
+          "specifier": "./project-api"
+        },
+        {
+          "line": 14,
+          "specifier": "@/modules/projects/mentor-estimation-unit-model"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 3,
+          "code": "import {useState} from \"react\";"
+        },
+        {
+          "line": 25,
+          "code": "const [open,setOpen]=useState(false);"
+        },
+        {
+          "line": 26,
+          "code": "const [busy,setBusy]=useState(false);"
+        },
+        {
+          "line": 27,
+          "code": "const [title,setTitle]=useState(\"\");"
+        },
+        {
+          "line": 28,
+          "code": "const [description,setDescription]=useState(\"\");"
+        },
+        {
+          "line": 29,
+          "code": "const [approach,setApproach]=useState(\"\");"
+        },
+        {
+          "line": 30,
+          "code": "const [criteria,setCriteria]=useState(\"\");"
+        },
+        {
+          "line": 31,
+          "code": "const [priority,setPriority]=useState<\"LOW\"|\"MEDIUM\"|\"HIGH\"|\"CRITICAL\">(\"MEDIUM\");"
+        },
+        {
+          "line": 32,
+          "code": "const [estimate,setEstimate]=useState(\"\");"
+        },
+        {
+          "line": 33,
+          "code": "const [taskType,setTaskType]=useState(\"\");"
+        },
+        {
+          "line": 34,
+          "code": "const [dueDate,setDueDate]=useState(\"\");"
+        },
+        {
+          "line": 35,
+          "code": "const [blockerReason,setBlockerReason]=useState(\"\");"
+        },
+        {
+          "line": 36,
+          "code": "const [selectedSprintId,setSelectedSprintId]=useState(sprintId);"
+        },
+        {
+          "line": 37,
+          "code": "const [status,setStatus]=useState<\"TODO\"|\"IN_PROGRESS\"|\"BLOCKED\">(\"TODO\");"
+        },
+        {
+          "line": 38,
+          "code": "const [assigneeMembershipId,setAssigneeMembershipId]=useState(\"\");"
+        },
+        {
+          "line": 59,
+          "code": "await projectMutation(\"/api/projects/\"+projectId+\"/tasks\",\"POST\",{"
+        },
+        {
+          "line": 78,
+          "code": "<Button size=\"sm\" variant={primary?\"primary\":\"secondary\"} onClick={()=>setOpen(true)}>Create task</Button>"
+        },
+        {
+          "line": 79,
+          "code": "<Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title=\"Confirm new task\""
+        },
+        {
+          "line": 82,
+          "code": "<Button className=\"w-full md:w-auto\" variant=\"secondary\" disabled={busy} onClick={guard.requestClose}>Cancel</Button>"
+        },
+        {
+          "line": 83,
+          "code": "<Button className=\"w-full md:w-auto\" loading={busy} disabled={busy||!valid} onClick={()=>void create()}>"
+        },
+        {
+          "line": 89,
+          "code": "<Select value={selectedSprintId} disabled={busy} onChange={event=>{"
+        },
+        {
+          "line": 99,
+          "code": "<Input value={title} maxLength={200} required onChange={e=>setTitle(e.target.value)} />"
+        },
+        {
+          "line": 102,
+          "code": "<Textarea value={description} maxLength={4000} onChange={e=>setDescription(e.target.value)} />"
+        },
+        {
+          "line": 108,
+          "code": "<Textarea value={approach} maxLength={4000} onChange={event=>setApproach(event.target.value)} />"
+        },
+        {
+          "line": 111,
+          "code": "<Textarea value={criteria} maxLength={4000} onChange={e=>setCriteria(e.target.value)} />"
+        },
+        {
+          "line": 116,
+          "code": "<Select value={priority} onChange={e=>setPriority(e.target.value as typeof priority)}"
+        },
+        {
+          "line": 123,
+          "code": "<Select value={status} disabled={busy||!selectedSprintId}"
+        },
+        {
+          "line": 124,
+          "code": "onChange={event=>setStatus(event.target.value as typeof status)}"
+        },
+        {
+          "line": 134,
+          "code": "<Select value={estimate} onChange={e=>setEstimate(e.target.value)}"
+        },
+        {
+          "line": 142,
+          "code": "<Select value={taskType} onChange={e=>setTaskType(e.target.value)}"
+        },
+        {
+          "line": 150,
+          "code": "<Select value={assigneeMembershipId} disabled={busy}"
+        },
+        {
+          "line": 151,
+          "code": "onChange={event=>setAssigneeMembershipId(event.target.value)}"
+        },
+        {
+          "line": 160,
+          "code": "<Input type=\"date\" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>"
+        },
+        {
+          "line": 164,
+          "code": "onChange={e=>setBlockerReason(e.target.value)}/>"
+        }
+      ],
+      "totalRenderAndActionSignals": 34
+    },
+    {
+      "path": "src/components/courses/learner-course-workspace.tsx",
+      "sha": "973802f997e7c35612ea8efe90a4d7e26a6435c1",
+      "lines": 1233,
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/components/ui/metric-bar"
+        },
+        {
+          "line": 2,
+          "specifier": "react"
+        },
+        {
+          "line": 3,
+          "specifier": "./learner-course-progress.module.css"
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/ui/disclosure"
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/ui/stat-tile"
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/ui/badge"
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/ui/alert"
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/ui/button"
+        },
+        {
+          "line": 9,
+          "specifier": "@/modules/courses/learner-assignment-grade-label-model"
+        },
+        {
+          "line": 10,
+          "specifier": "@/modules/courses/learner-assessment-submitted-link-model"
+        },
+        {
+          "line": 11,
+          "specifier": "@/modules/courses/learner-roadmap-headline-model"
+        },
+        {
+          "line": 12,
+          "specifier": "@/modules/courses/learner-roadmap-filter-recovery-model"
+        },
+        {
+          "line": 13,
+          "specifier": "@/modules/courses/learner-roadmap-empty-state-model"
+        },
+        {
+          "line": 14,
+          "specifier": "@/modules/courses/learner-roadmap-focus-filter-model"
+        },
+        {
+          "line": 15,
+          "specifier": "@/modules/courses/learner-roadmap-dialog-key-model"
+        },
+        {
+          "line": 16,
+          "specifier": "@/modules/courses/learner-roadmap-item-focus-model"
+        },
+        {
+          "line": 17,
+          "specifier": "./learner-roadmap-item-dialog"
+        },
+        {
+          "line": 18,
+          "specifier": "@/modules/courses/learner-external-content-link-model"
+        },
+        {
+          "line": 19,
+          "specifier": "./learner-live-class-link"
+        },
+        {
+          "line": 20,
+          "specifier": "@/modules/courses/assignment-file-readiness"
+        },
+        {
+          "line": 21,
+          "specifier": "next/link"
+        },
+        {
+          "line": 22,
+          "specifier": "@/components/ui/third-party-link"
+        },
+        {
+          "line": 23,
+          "specifier": "@/modules/courses/learner-course-date-model"
+        },
+        {
+          "line": 24,
+          "specifier": "@/components/ui/empty-state"
+        },
+        {
+          "line": 25,
+          "specifier": "@/components/ui/status-badge"
+        },
+        {
+          "line": 26,
+          "specifier": "./assignment-file-open-control"
+        },
+        {
+          "line": 27,
+          "specifier": "./assignment-submission-links"
+        },
+        {
+          "line": 28,
+          "specifier": "./assignment-submission-control"
+        },
+        {
+          "line": 29,
+          "specifier": "./quiz-attempt-control"
+        },
+        {
+          "line": 30,
+          "specifier": "./resource-progress-control"
+        },
+        {
+          "line": 31,
+          "specifier": "./learner-live-session-status"
+        },
+        {
+          "line": 32,
+          "specifier": "./lesson-resource-materials-control"
+        },
+        {
+          "line": 33,
+          "specifier": "@/modules/courses/resource-material-readiness"
+        },
+        {
+          "line": 34,
+          "specifier": "./learner-youtube-player"
+        },
+        {
+          "line": 35,
+          "specifier": "./learner-video-player"
+        },
+        {
+          "line": 36,
+          "specifier": "./learner-course-state-retry"
+        },
+        {
+          "line": 37,
+          "specifier": "./learner-formatted-response"
+        },
+        {
+          "line": 44,
+          "specifier": "./learner-interaction-model"
+        },
+        {
+          "line": 47,
+          "specifier": "@/modules/courses/learner-course-service"
+        },
+        {
+          "line": 48,
+          "specifier": "@/modules/courses/learner-roadmap-progress-availability-model"
+        },
+        {
+          "line": 49,
+          "specifier": "@/modules/courses/legacy-syllabus-detail-model"
+        },
+        {
+          "line": 50,
+          "specifier": "@/modules/courses/learner-roadmap-mobile-model"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 612,
+          "code": "Not submitted · Submission deadline has passed. You can still review the instructions."
+        },
+        {
+          "line": 619,
+          "code": "<Button type=\"button\" variant=\"secondary\" disabled aria-disabled=\"true\""
+        }
+      ],
+      "totalRenderAndActionSignals": 2
+    },
+    {
+      "path": "src/components/placements/tpo-drive-selection-manager.tsx",
+      "sha": "4babc0fd84765f6353b387390e8c7ee0b8f2a615",
+      "lines": 144,
+      "imports": [
+        {
+          "line": 2,
+          "specifier": "@/components/ui/checkbox"
+        },
+        {
+          "line": 3,
+          "specifier": "react"
+        },
+        {
+          "line": 4,
+          "specifier": "next/navigation"
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/ui/dialog"
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/ui/confirm-dialog"
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/ui/data-table"
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/ui/button"
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/ui/select"
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/ui/input"
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/ui/alert"
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/ui/inline-notice"
+        },
+        {
+          "line": 13,
+          "specifier": "@/components/ui/empty-state"
+        }
+      ],
+      "renderAndActionSignals": [
+        {
+          "line": 3,
+          "code": "import {useRef,useState} from \"react\";"
+        },
+        {
+          "line": 19,
+          "code": "const router=useRouter();const [mode,setMode]=useState<\"RECORD\"|\"VERIFY_AND_RELEASE\"|null>(null);"
+        },
+        {
+          "line": 20,
+          "code": "const [chosen,setChosen]=useState<string[]>([]);const [role,setRole]=useState(\"\");"
+        },
+        {
+          "line": 21,
+          "code": "const [lpa,setLpa]=useState(\"\");const [pending,setPending]=useState(false);const submitRef=useRef(false);"
+        },
+        {
+          "line": 22,
+          "code": "const [search,setSearch]=useState(\"\");"
+        },
+        {
+          "line": 23,
+          "code": "const [error,setError]=useState(\"\");const [report,setReport]=useState<Result[]>([]);"
+        },
+        {
+          "line": 24,
+          "code": "const [lastRecorded,setLastRecorded]=useState(0);"
+        },
+        {
+          "line": 25,
+          "code": "const [confirmOpen,setConfirmOpen]=useState(false);"
+        },
+        {
+          "line": 46,
+          "code": "const response=await fetch(\"/api/placements/tpo/jobs/\"+encodeURIComponent(jobId)+\"/selections\",{"
+        },
+        {
+          "line": 49,
+          "code": "const payload=await response.json().catch(()=>null) as {error?:string;issues?:Array<{message:string}>;results?:Result[]}|null;"
+        },
+        {
+          "line": 60,
+          "code": "<Button type=\"button\" onClick={()=>open(\"RECORD\")} disabled={!recordable.length} className=\"min-h-11 w-full sm:w-auto md:min-h-9\""
+        },
+        {
+          "line": 62,
+          "code": "<Button variant=\"secondary\" type=\"button\" onClick={()=>open(\"VERIFY_AND_RELEASE\")} disabled={!releasable.length} className=\"min-h-11 w-full sm:w-auto md:min-h-9\""
+        },
+        {
+          "line": 80,
+          "code": "<Dialog open={mode!==null} onOpenChange={next=>{if(!next&&!pending){setMode(null);setError(\"\");}}}"
+        },
+        {
+          "line": 83,
+          "code": "<Button className=\"min-h-11 w-full sm:w-auto md:min-h-9\" variant=\"secondary\" type=\"button\" disabled={pending} onClick={()=>{setMode(null);setError(\"\");}}>Close</Button>"
+        },
+        {
+          "line": 84,
+          "code": "<Button className=\"min-h-11 w-full sm:w-auto md:min-h-9\" type=\"button\" loading={pending} disabled={pending||!chosen.length||(mode===\"RECORD\"&&!role.trim())} onClick={()=>void submit()}>"
+        },
+        {
+          "line": 98,
+          "code": "onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);"
+        },
+        {
+          "line": 104,
+          "code": "<label className=\"grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]\">Role<Input required value={role} onChange={e=>setRole(e.target.value)}"
+        },
+        {
+          "line": 107,
+          "code": "value={lpa} onChange={e=>setLpa(e.target.value)} /></label>"
+        },
+        {
+          "line": 110,
+          "code": "<Input type=\"search\" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}"
+        },
+        {
+          "line": 114,
+          "code": "<Button className=\"min-h-11 w-full sm:w-auto md:min-h-9\" variant=\"ghost\" type=\"button\" disabled={pending} onClick={()=>setChosen(previous=>["
+        },
+        {
+          "line": 118,
+          "code": "<Button className=\"min-h-11 w-full sm:w-auto md:min-h-9\" variant=\"ghost\" type=\"button\" disabled={pending||!chosen.length} onClick={()=>setChosen([])}>Clear selection</Button>"
+        },
+        {
+          "line": 125,
+          "code": "<Checkbox checked={chosen.includes(item.id)} disabled={pending} onChange={()=>toggle(item.id)}/>"
+        }
+      ],
+      "totalRenderAndActionSignals": 22
+    }
+  ],
+  "caution": "These followed import sources are additional static evidence; not browser or API acceptance."
 }
