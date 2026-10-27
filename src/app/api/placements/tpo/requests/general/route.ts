@@ -7,11 +7,11 @@ export const runtime="nodejs";export const dynamic="force-dynamic";
 export async function GET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
-  for(const key of ["page","pageSize","status"]){
+  for(const key of ["page","pageSize","status","kind","q"]){
    if(params.getAll(key).length>1)
     return NextResponse.json({error:"Repeated review filter"},{status:400});
   }
-  if([...params.keys()].some(key=>!["page","pageSize","status"].includes(key)))
+  if([...params.keys()].some(key=>!["page","pageSize","status","kind","q"].includes(key)))
    return NextResponse.json({error:"Unknown review filter"},{status:400});
   const parsed=tpoGeneralReviewQuerySchema.safeParse(Object.fromEntries(params));
   if(!parsed.success)

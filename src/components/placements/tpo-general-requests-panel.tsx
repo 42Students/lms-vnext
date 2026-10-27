@@ -11,6 +11,7 @@ import {TpoGeneralRequestsBulkDecision} from "@/components/placements/tpo-genera
 import {tpoGeneralRequestCanApprove} from "@/modules/placements/tpo-general-request-model";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {Input} from "@/components/ui/input";
 type Request={id:string;kind:string;status:string;reason:string;payload:Record<string,unknown>;
  studentName:string|null;version:string;requestedAt:string;decisionNote:string|null};
 function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
@@ -30,6 +31,8 @@ export function TpoGeneralRequestsPanel(){
  const [rows,setRows]=useState<Request[]>([]),[error,setError]=useState("");
  const [loading,setLoading]=useState(true),[stale,setStale]=useState(false);
  const [status,setStatus]=useState<"PENDING"|"ALL"|"APPROVED"|"REJECTED">("PENDING");
+ const [kind,setKind]=useState("ALL");
+ const [draftQuery,setDraftQuery]=useState(""),[searchQuery,setSearchQuery]=useState("");
  const [page,setPage]=useState(1),[total,setTotal]=useState(0),[totalPages,setTotalPages]=useState(1);
  const generation=useRef(0);
  const [selection,setSelection]=useState<Request|null>(null),[action,setAction]=useState<"APPROVE"|"REJECT">("REJECT");
@@ -39,7 +42,8 @@ export function TpoGeneralRequestsPanel(){
   const sequence=++generation.current;
   setLoading(true);
   try{
-   const query=new URLSearchParams({page:String(page),pageSize:"25",status});
+   const query=new URLSearchParams({page:String(page),pageSize:"25",status,kind});
+   if(searchQuery)query.set("q",searchQuery);
    const data=await apiFetch<{requests:Request[];total:number;totalPages:number}>(
     "/api/placements/tpo/requests/general?"+query.toString(),{cache:"no-store"});
    if(sequence!==generation.current)return false;
@@ -62,8 +66,11 @@ export function TpoGeneralRequestsPanel(){
   }finally{
    if(sequence===generation.current)setLoading(false);
   }
- },[page,status]);
+ },[page,status,kind,searchQuery]);
  useEffect(()=>{void load();return()=>{generation.current++;};},[load]);
+ function invalidateQueue(){
+  setPage(1);setRows([]);setStale(true);setSelection(null);setMessage("");
+ }
  async function decide(){
   if(!selection||pending||loading||stale)return;
   if(action==="REJECT"&&note.trim().length<3){setError("Tell the learner why this request was declined.");return;}
@@ -87,13 +94,41 @@ export function TpoGeneralRequestsPanel(){
   <div className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-40 gap-1 text-sm font-semibold">View requests
     <Select value={status} disabled={loading||pending} onChange={event=>{
-     setStatus(event.target.value as typeof status);setPage(1);
-     setRows([]);setStale(true);setSelection(null);setMessage("");
+     setStatus(event.target.value as typeof status);invalidateQueue();
     }}>
      <option value="PENDING">Waiting</option><option value="ALL">All history</option>
      <option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option>
     </Select>
    </label>
+   <label className="grid min-w-44 gap-1 text-sm font-semibold">Request kind
+    <Select value={kind} disabled={loading||pending} onChange={event=>{
+     setKind(event.target.value);invalidateQueue();
+    }}>
+     <option value="ALL">All kinds</option>
+     <option value="OFF_CAMPUS_OFFER">Off-campus offer</option>
+     <option value="REGISTRATION_CHANGE">Registration change</option>
+     <option value="ABSENCE_DISPUTE">Absence dispute</option>
+     <option value="CORRECTION_WITH_PROOF">Correction with proof</option>
+     <option value="OFFER_ACCEPTANCE_DISPUTE">Offer acceptance dispute</option>
+     <option value="PLACEMENT_AFTER_PLACEMENT">Placement after placement</option>
+    </Select>
+   </label>
+   <form role="search" aria-label="Find general student requests"
+    className="flex min-w-52 flex-1 flex-wrap items-end gap-2" onSubmit={event=>{
+     event.preventDefault();
+     const normalized=draftQuery.trim();
+     if(normalized.length===1){setError("Search needs at least two characters.");return;}
+     setSearchQuery(normalized);invalidateQueue();
+    }}>
+    <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold">Student name or request reason
+     <Input type="search" maxLength={100} value={draftQuery} disabled={loading||pending}
+      onChange={event=>setDraftQuery(event.target.value)} placeholder="At least 2 characters"/>
+    </label>
+    <Button type="submit" variant="secondary" disabled={loading||pending}>Find</Button>
+    {searchQuery?<Button type="button" variant="secondary" disabled={loading||pending} onClick={()=>{
+     setDraftQuery("");setSearchQuery("");invalidateQueue();
+    }}>Clear search</Button>:null}
+   </form>
    <Button variant="secondary" type="button" onClick={()=>void load()} loading={loading} disabled={loading||pending}
     className="min-h-11 w-full px-3 sm:w-auto md:min-h-9">Refresh other requests</Button>
   </div>

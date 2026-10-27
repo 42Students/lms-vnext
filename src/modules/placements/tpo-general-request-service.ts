@@ -1,6 +1,6 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
-import {and,desc,eq,sql} from "drizzle-orm";
+import {and,desc,eq,ilike,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,learnerProgramEnrollments,membershipRoles,
@@ -196,9 +196,22 @@ export async function listTpoGeneralRequests(ctx:RequestContext,raw:unknown={}){
  const college=await requireTpo(ctx);
  await requireRegistered();
  const filter=tpoGeneralReviewQuerySchema.parse(raw);
- const scoped=and(eq(placementLearnerGeneralRequests.collegeId,college.id),
-   filter.status==="ALL"?undefined:eq(placementLearnerGeneralRequests.status,filter.status));
+ // Both the count and page must use the same active college membership
+ // joins and filter; otherwise orphaned rows inflate visible pagination.
+ const needle=filter.q.replace(/[\\%_]/g,char=>"\\"+char);
+ const scoped=and(
+  eq(placementLearnerGeneralRequests.collegeId,college.id),
+  filter.status==="ALL"?undefined:eq(placementLearnerGeneralRequests.status,filter.status),
+  filter.kind==="ALL"?undefined:eq(placementLearnerGeneralRequests.kind,filter.kind),
+  needle?or(ilike(users.displayName,"%"+needle+"%"),
+   ilike(placementLearnerGeneralRequests.reason,"%"+needle+"%")):undefined,
+ );
  const [totalRows,requests]=await Promise.all([
+  getDb().select({count:sql<number>`count(*)::int`}).from(placementLearnerGeneralRequests)
+   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementLearnerGeneralRequests.membershipId),
+    eq(collegeMemberships.collegeId,college.id)))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(scoped),
   getDb().select({count:sql<number>`count(*)::int`}).from(placementLearnerGeneralRequests).where(scoped),
   getDb().select({
    id:placementLearnerGeneralRequests.id,kind:placementLearnerGeneralRequests.kind,
@@ -218,7 +231,8 @@ export async function listTpoGeneralRequests(ctx:RequestContext,raw:unknown={}){
  ]);
  const total=Number(totalRows[0]?.count??0);
  return {requests,total,page:filter.page,pageSize:filter.pageSize,
-  totalPages:Math.max(1,Math.ceil(total/filter.pageSize)),status:filter.status};
+  totalPages:Math.max(1,Math.ceil(total/filter.pageSize)),status:filter.status,
+  kind:filter.kind,q:filter.q};
 }
 /** Unsupported effects never silently approve a pending dispute/correction.
  * Every valid approval must write its real domain consequence in the same transaction. */

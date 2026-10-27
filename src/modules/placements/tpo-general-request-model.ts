@@ -42,6 +42,10 @@ export const tpoGeneralReviewQuerySchema=z.strictObject({
  page:z.coerce.number().int().min(1).max(10000).default(1),
  pageSize:z.coerce.number().int().min(10).max(50).default(25),
  status:z.enum(["ALL","PENDING","APPROVED","REJECTED","CANCELLED"]).default("PENDING"),
+ kind:z.enum(["ALL","OFF_CAMPUS_OFFER","REGISTRATION_CHANGE","ABSENCE_DISPUTE",
+  "CORRECTION_WITH_PROOF","OFFER_ACCEPTANCE_DISPUTE","PLACEMENT_AFTER_PLACEMENT"]).default("ALL"),
+ q:z.string().trim().max(100).refine(value=>value.length===0||value.length>=2,
+  "Search needs at least two characters").default(""),
 });
 
 export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[

@@ -4,11 +4,11 @@ import {tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-requ
 const src=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),"utf8");
 describe("TPO general request paged queue contract",()=>{
  it("defaults to pending, bounds page sizes and rejects unknown client status",()=>{
-  expect(tpoGeneralReviewQuerySchema.parse({})).toEqual({page:1,pageSize:25,status:"PENDING"});
+  expect(tpoGeneralReviewQuerySchema.parse({})).toEqual({page:1,pageSize:25,status:"PENDING",kind:"ALL",q:""});
   expect(tpoGeneralReviewQuerySchema.parse({page:"3",pageSize:"50",status:"ALL"}))
    .toMatchObject({page:3,pageSize:50,status:"ALL"});
   for(const input of [{page:0},{pageSize:1000},{page:"not-number"},
-    {status:"ADMIN"},{page:1,collegeId:"foreign"}]){
+    {status:"ADMIN"},{kind:"INVALID"},{q:"x"},{page:1,collegeId:"foreign"}]){
    expect(tpoGeneralReviewQuerySchema.safeParse(input).success).toBe(false);
   }
  });
