@@ -13,8 +13,17 @@ export function TpoKeyboardShortcuts({showTrigger=true}:{showTrigger?:boolean}={
   let timeout:ReturnType<typeof setTimeout>|undefined;
   function onKey(event:KeyboardEvent){
    const t=event.target;
-   if(event.ctrlKey||event.metaKey||event.altKey||event.repeat||event.isComposing||
-      (t instanceof HTMLElement&&(t.isContentEditable||["INPUT","TEXTAREA","SELECT"].includes(t.tagName))))return;
+   // Topbar search moves focus into option buttons while users continue typing.
+   // Those keystrokes must never be interpreted as global G/N navigation chords.
+   const inInteractiveSurface=t instanceof HTMLElement&&(
+    t.isContentEditable||
+    Boolean(t.closest('input, textarea, select, button, a, [role="option"], [role="listbox"], [data-slot="dialog"], [data-slot="drawer"], [data-slot="popover"]'))
+   );
+   if(event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||
+      event.repeat||event.isComposing||inInteractiveSurface){
+    prefix.current=null;
+    return;
+   }
    if(event.key==="Escape"){setOpen(false);prefix.current=null;return;}
    if(event.key==="?"){event.preventDefault();setOpen(true);prefix.current=null;return;}
    if(open)return;
