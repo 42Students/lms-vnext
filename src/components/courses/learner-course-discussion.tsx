@@ -771,7 +771,7 @@ export function LearnerCourseDiscussion({
             rows={moderate?1:2}
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
-            className={moderate?"!min-h-10 min-w-0 flex-[1_1_220px] resize-none !rounded-lg border-[#dce5ee] !py-2":"mt-1.5 w-full"}
+            className={moderate?"!min-h-11 min-w-0 flex-[1_1_220px] resize-none !rounded-lg border-[#dce5ee] !py-2":"mt-1.5 w-full"}
             aria-describedby="course-discussion-compose-hint"
           />
           <div className={moderate?"flex shrink-0 items-center":"mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"}>

@@ -70,10 +70,10 @@ export function TpoRecruiterPrototypeRoster({
       className={"cursor-pointer border-b border-border last:border-0 focus-visible:outline-2 focus-visible:outline-primary-text "+
        (focused?"bg-primary-subtle":"hover:bg-slate-50")}>
       {enabled.has("recruiter")?<td className="max-w-48 px-3 py-3">
-       <div className="flex min-h-10 flex-col items-start justify-center gap-1">
+       <div className="flex min-h-11 flex-col items-start justify-center gap-1 md:min-h-9">
         <button type="button" onClick={()=>onSelect(lead.id)}
          aria-pressed={focused} aria-label={"View "+lead.name+" in the detail panel"}
-         className="break-words text-left font-semibold text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-primary-text">{lead.name}</button>
+         className="min-h-11 break-words text-left font-semibold text-foreground hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-primary-text">{lead.name}</button>
         {lead.designation?<small className="text-[11px] text-body">{lead.designation}</small>:null}
        </div>
       </td>:null}
