@@ -232,6 +232,251 @@
       "overlayCandidates": [],
       "inlineEvents": 0,
       "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/index.js",
+      "sha": "5c89052b9bb9182167d068e98545e37f1def36e2",
+      "lines": 209,
+      "bytes": 13869,
+      "localImports": [
+        "@/layouts/PlacementsTabsLayout",
+        "@/api/ApiMethod",
+        "@/api/Services/TpoHubService",
+        "@/components/Placements/student/useJourney",
+        "@/components/Placements/student/ScheduleCard",
+        "@/components/Placements/student/RoundTrack",
+        "@/components/Placements/PlacementsCompanyAvatar",
+        "@/components/Placements/student/words"
+      ],
+      "childCandidates": [
+        "Alert",
+        "Button",
+        "Skeleton",
+        "Link",
+        "RightOutlined",
+        "ScheduleCard",
+        "PlacementsCompanyAvatar",
+        "RoundTrack"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 2,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/interviews.js",
+      "sha": "d7925681d5396f25b5cc8807ac44c1fea9e6db5b",
+      "lines": 10,
+      "bytes": 343,
+      "localImports": [
+        "@/components/Placements/student/MovedPage",
+        "@/layouts/PlacementsTabsLayout"
+      ],
+      "childCandidates": [
+        "MovedPage"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/jobs/[jobId].js",
+      "sha": "4428057d8d174ef999d7fba79897a3dae9c3cfe5",
+      "lines": 11,
+      "bytes": 500,
+      "localImports": [
+        "@/components/Placements/VerifiedJobDetailContent",
+        "@/layouts/PlacementsTabsLayout"
+      ],
+      "childCandidates": [
+        "VerifiedJobDetailContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/jobs/index.js",
+      "sha": "aa6953d527727e7e8fb255942c88a503ea560cba",
+      "lines": 38,
+      "bytes": 1665,
+      "localImports": [
+        "@/components/Placements/JobsListContent",
+        "@/layouts/PlacementsTabsLayout"
+      ],
+      "childCandidates": [
+        "JobsListContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/offers.js",
+      "sha": "3071758570ea6db50186c3155648edd244245d32",
+      "lines": 62,
+      "bytes": 3211,
+      "localImports": [
+        "@/layouts/PlacementsTabsLayout",
+        "@/components/Placements/student/useJourney",
+        "@/components/Placements/student/OfferCard",
+        "@/components/Placements/student/PlacementRules"
+      ],
+      "childCandidates": [
+        "Alert",
+        "Button",
+        "Skeleton",
+        "Link",
+        "OfferCard",
+        "PlacementRules"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 1,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/placement.js",
+      "sha": "7e311b7a2d8829d223a0d0c8723dec4c2e86b569",
+      "lines": 18,
+      "bytes": 673,
+      "localImports": [
+        "@/components/Placements/PlacementCellContent",
+        "@/layouts/PlacementsTabsLayout"
+      ],
+      "childCandidates": [
+        "PlacementCellContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/rules.js",
+      "sha": "6c0a123acee4c7dbec680edf8710dbdc0333b515",
+      "lines": 10,
+      "bytes": 394,
+      "localImports": [
+        "@/components/Placements/student/MovedPage",
+        "@/layouts/PlacementsTabsLayout"
+      ],
+      "childCandidates": [
+        "MovedPage"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/my-placements/schedule.js",
+      "sha": "f83a1938a26cbdb6065fa4ebc8b71ac60923b075",
+      "lines": 233,
+      "bytes": 13627,
+      "localImports": [
+        "@/layouts/PlacementsTabsLayout",
+        "@/api/ApiMethod",
+        "@/api/Services/TpoHubService",
+        "@/api/Services/interviewService",
+        "@/components/Placements/student/useJourney",
+        "@/components/Placements/student/ScheduleCard",
+        "@/components/Placements/student/words"
+      ],
+      "childCandidates": [
+        "Alert",
+        "Button",
+        "Skeleton",
+        "Link",
+        "ScheduleCard",
+        "MonthView",
+        "Drawer",
+        "LeftOutlined",
+        "RightOutlined"
+      ],
+      "overlayCandidates": [
+        "Drawer"
+      ],
+      "inlineEvents": 8,
+      "queryModes": [
+        "router.query.view"
+      ]
+    },
+    {
+      "path": "src/pages/learn/notifications.js",
+      "sha": "769d0172e284b89ac45b3c92b0f317bb0e7a48e3",
+      "lines": 7,
+      "bytes": 191,
+      "localImports": [
+        "@/components/Notifications/NotificationsContent"
+      ],
+      "childCandidates": [
+        "NotificationsContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/profile.js",
+      "sha": "bc2d688ee4578ce66bc4fc7630d70e89e8420795",
+      "lines": 176,
+      "bytes": 6997,
+      "localImports": [
+        "@/components/Global/ListingPageHeader/ListingPageHeader",
+        "@/components/Common/PageShell",
+        "../../components/profile/about",
+        "@/components/profile/ProfileSkeleton",
+        "@/components/profile/ProfileVerificationCard",
+        "@/components/Common/Skeletons",
+        "@/api/Services/UserServices",
+        "@/redux/store",
+        "@/utils/roleUtils"
+      ],
+      "childCandidates": [
+        "PageShell",
+        "ListingPageHeader",
+        "ProfileSkeleton",
+        "Button",
+        "ReloadOutlined",
+        "RefreshStatus",
+        "Alert",
+        "ProfileVerificationCard",
+        "About"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 2,
+      "queryModes": []
+    },
+    {
+      "path": "src/pages/learn/projects/[projectId].js",
+      "sha": "8893c6cc7c1268c3b9dd68502df04d7524d4264c",
+      "lines": 16,
+      "bytes": 875,
+      "localImports": [
+        "@/utils/accountScopeKey",
+        "@/components/Projects/ProjectDetailContent"
+      ],
+      "childCandidates": [
+        "ProjectDetailContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": [
+        "router.query.tab"
+      ]
+    },
+    {
+      "path": "src/pages/learn/projects/index.js",
+      "sha": "5ee2be566db5c19609b5e53a8ba3a9c38dc253c3",
+      "lines": 10,
+      "bytes": 371,
+      "localImports": [
+        "@/utils/accountScopeKey",
+        "@/components/Projects/ProjectsContent"
+      ],
+      "childCandidates": [
+        "ProjectsContent"
+      ],
+      "overlayCandidates": [],
+      "inlineEvents": 0,
+      "queryModes": []
     }
   ]
 }
