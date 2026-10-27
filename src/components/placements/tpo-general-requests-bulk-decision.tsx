@@ -66,7 +66,8 @@ export function TpoGeneralRequestsBulkDecision({rows,onReviewed}:{
    inFlight.current=false;setPending(false);
   }
  }
- if(!rows.length)return null;
+ // Keep the outcome receipt visible after a successful refresh leaves no pending rows.
+ if(!rows.length&&!outcomes.length&&!pending)return null;
  return <section aria-label="Other student request bulk decisions" aria-busy={pending}
    className="space-y-3 border-y border-border py-3">
   <div className="flex flex-wrap items-center justify-between gap-3">

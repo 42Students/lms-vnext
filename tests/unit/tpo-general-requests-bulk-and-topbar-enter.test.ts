@@ -36,6 +36,8 @@ describe("TPO general request bounded bulk review",()=>{
   expect(bulk).toContain("inFlight.current=true");
   expect(bulk).toContain("await onReviewed()");
   expect(bulk).toContain("Verify status before retrying");
+  expect(bulk).toContain("if(!rows.length&&!outcomes.length&&!pending)return null;");
+  expect(panel).not.toContain("!loading&&pendingRows.length>0?");
   expect(bulk).toContain('acknowledged}');
   expect(bulk).not.toContain("Promise.all(");
  });
