@@ -1,0 +1,691 @@
+{
+  "source": "42Students/lms",
+  "ref": "4ef67db8f198205f11e1e6ca12718c38400dc7ca",
+  "method": "static annotation/guard candidate inspection; mapping and security require call-chain verification",
+  "records": [
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminAssignmentContentWriteController.java",
+      "sha": "b887e051f4e00c8055da991d571d067706bc7b05",
+      "lines": 63,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/assignments/content"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/save"
+        }
+      ],
+      "annotations": [
+        "Valid"
+      ],
+      "guards": [
+        "collegeId"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminAssignmentController.java",
+      "sha": "5650a3c2d0216d0c91da4cd30441f77b9f4d8ea0",
+      "lines": 156,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/assignments"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        }
+      ],
+      "annotations": [],
+      "guards": [
+        "collegeId",
+        "facultyId"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminAssignmentPublishController.java",
+      "sha": "fcc6f3479960d84668c407a3c49834a278fbc480",
+      "lines": 139,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/assignments"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{lessonContentId}/publish-grades"
+        }
+      ],
+      "annotations": [
+        "Transactional"
+      ],
+      "guards": [
+        "audit"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminAttendanceController.java",
+      "sha": "1b0f095738c01569ecbd3dc9a5d617dab6a539bd",
+      "lines": 355,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/attendance"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/monthly"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/record"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/mark-absent"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/mark-present"
+        }
+      ],
+      "annotations": [],
+      "guards": [
+        "facultyId",
+        "audit",
+        "collegeId"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminClassScheduleController.java",
+      "sha": "810e329310bf087b44e739d0fecbc821b1f3e68a",
+      "lines": 215,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/class-schedule"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/recurring"
+        }
+      ],
+      "annotations": [],
+      "guards": [
+        "audit",
+        "facultyId",
+        "collegeId"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminProjectController.java",
+      "sha": "7dea70f05770419af7fb825dd3933af4f3bb90e0",
+      "lines": 866,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/projects"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/teams"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{projectId}/team/reconcile"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/preflight"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{projectId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/page"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/deleted"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{projectId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{projectId}/mentor"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{projectId}/delivery/review"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/reassign-mentor/bulk"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{projectId}/template"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{projectId}/learners"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{projectId}/archive"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{projectId}/delete"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{projectId}/restore"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{projectId}/readiness"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{projectId}/releases"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{projectId}/readiness/override"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/audit"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{projectId}/resource-audit"
+        }
+      ],
+      "annotations": [
+        "Valid"
+      ],
+      "guards": [
+        "collegeId",
+        "audit",
+        "Audit"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminQuizController.java",
+      "sha": "3f7abd4dd5861eaa50cb1598176132f552093add",
+      "lines": 110,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/quizzes"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        }
+      ],
+      "annotations": [],
+      "guards": [
+        "collegeId"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AssignmentController.java",
+      "sha": "b3045ccf13325653d5b61769ea8a17ee3294f3eb",
+      "lines": 384,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/assignment"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/submit"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchSubmissions"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchSubmissionsByLearnerId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/submissionStats"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/submissionStats/bulk"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/updatePoints"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/publishGrade"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/assignmentAveragePercentageForStudent"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/totalAssignmentSubmissionsByStudent"
+        },
+        {
+          "method": "PatchMapping",
+          "path": "/addDescriptivePoints"
+        }
+      ],
+      "annotations": [
+        "Validated",
+        "Valid"
+      ],
+      "guards": []
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AttendanceBulkController.java",
+      "sha": "3df293032da236fd3778a892bf698c21c3a42fa7",
+      "lines": 220,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/attendance"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk"
+        }
+      ],
+      "annotations": [],
+      "guards": [
+        "Audit",
+        "audit",
+        "AUDIT"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ClassScheduleController.java",
+      "sha": "0d1e165700e7cce85f6abebcd9378bf2549bce51",
+      "lines": 637,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/scheduleClass"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/bulk-reassign-faculty"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassSchedule"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassScheduleByDateRange"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassScheduleByClassId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassScheduleByClassIdByDateRange"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassScheduleByStudentId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassScheduleByStudentIdByDateRange"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassScheduleByFacultyId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassScheduleByFacultyIdByDateRange"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassAttendance"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getStudentIdsByClassScheduleId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getStudentsByClassScheduleId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getAttendanceDetailsByDateRange"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/getFilteredClassSchedulesAndAbsentees"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/learnerClassSchedulesAndAbsentClassScheduleIds"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/learnerClassSchedulesAndAbsentClassScheduleIdsWithCourse"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassSchedulesByClassIdAndDateRange"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassSchedulesByClassIdAndDateRangeAndCourseId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getClassScheduleCount"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/facultyTeachedHours"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/facultyTeachedHoursByCourse"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/facultyTeachedHoursByClass"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/facultyTeachedHoursByCourseAndClass"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/facultyUpcomingClass"
+        }
+      ],
+      "annotations": [
+        "Validated"
+      ],
+      "guards": [
+        "audit",
+        "facultyId",
+        "collegeId"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ClassroomController.java",
+      "sha": "380acd1970ddca78da7378f2c6b1dcb6aa552b50",
+      "lines": 71,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/classroom"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/messages"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/messages"
+        },
+        {
+          "method": "PatchMapping",
+          "path": "/messages/{messageId}/pin"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/messages/{messageId}"
+        }
+      ],
+      "annotations": [
+        "Valid"
+      ],
+      "guards": []
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/CourseController.java",
+      "sha": "3b2d41ac4deda07e753566efcf27e6b90d0ffa32",
+      "lines": 483,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/courses"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetch"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchAll"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchAllPaged"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchByCollege"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchByCollegePaged"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchCourse"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/by-slug/{slug}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/{courseId}/slug"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchCourseName"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/deleted"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/restore/{id}"
+        }
+      ],
+      "annotations": [
+        "Validated",
+        "Transactional",
+        "Valid"
+      ],
+      "guards": [
+        "audit",
+        "collegeId"
+      ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/DiscussionController.java",
+      "sha": "b233397a17524dcafe352c326bcce9924049a6a7",
+      "lines": 98,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/discussion"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/post"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchDiscussion"
+        }
+      ],
+      "annotations": [
+        "Validated",
+        "Valid"
+      ],
+      "guards": []
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/FacultyLessonContentController.java",
+      "sha": "82dcc33debc8d705dd047852bc361fce837abe72",
+      "lines": 100,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/faculty/lesson-contents"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/create"
+        }
+      ],
+      "annotations": [
+        "Valid"
+      ],
+      "guards": []
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/FacultyTeachingAssignmentController.java",
+      "sha": "467f59e61d056561d4b6409e491475aa9d1e3277",
+      "lines": 335,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/teaching-assignment"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/get/{id}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/create"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/createBulk"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/deactivate/{id}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/byFaculty/{facultyId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/byFaculty/{facultyId}/active"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/byClass/{classId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/byClass/{classId}/semester/{semesterNumber}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/byBatch/{batchId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/page"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchAll"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchActive"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/deactivateByBatchSemester"
+        }
+      ],
+      "annotations": [
+        "Valid",
+        "PreAuthorize"
+      ],
+      "guards": [
+        "facultyId",
+        "hasRole",
+        "collegeId"
+      ]
+    }
+  ]
+}
