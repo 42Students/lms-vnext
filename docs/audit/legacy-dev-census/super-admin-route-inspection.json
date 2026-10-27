@@ -298,6 +298,333 @@
       ],
       "overlayCandidates": [],
       "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/features.js",
+      "sha": "ab5d3cfbdbb5b3abbe9fc42e1787cfee7f809a1e",
+      "lines": 24,
+      "imports": [
+        "./sections/FeatureControlsHub",
+        "@/layouts/SuperAdminLayout",
+        "@/components/Common/PageShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "PageShell",
+        "FeatureControlsHub"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/hiring-dashboard.js",
+      "sha": "85af4d367464436694f8dde7ecc5b8c1d1116ca2",
+      "lines": 38,
+      "imports": [
+        "@/layouts/SuperAdminLayout",
+        "@/pages/superadmin/sections/HiringDashboard",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "HiringDashboard"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/inbound-mail.js",
+      "sha": "bae0f02ed96530b01e7572e4dd5aebaf9e530360",
+      "lines": 153,
+      "imports": [
+        "@/layouts/SuperAdminLayout",
+        "@/components/Common/PageShell",
+        "@/api/Services/AdminService",
+        "@/components/tpo/dj",
+        "@/api/Services/SuperAdminInboundMailService"
+      ],
+      "jsxComponents": [
+        "Tag",
+        "Typography.Text",
+        "Sender",
+        "Space",
+        "StatusTag",
+        "PageShell",
+        "Typography.Paragraph",
+        "Segmented",
+        "Input.Search",
+        "Alert",
+        "Button",
+        "Table",
+        "Empty",
+        "Drawer"
+      ],
+      "overlayCandidates": [
+        "Table",
+        "Drawer"
+      ],
+      "events": 6
+    },
+    {
+      "path": "src/pages/superadmin/index.js",
+      "sha": "bb410f6fc4d8c932b38425384f27e9fa36016fc0",
+      "lines": 20,
+      "imports": [],
+      "jsxComponents": [],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/jobs/[jobId]/applications.js",
+      "sha": "f0f1af19208bf3e3f1e10f9748a66ca80df29542",
+      "lines": 49,
+      "imports": [
+        "../../sections/JobApplications",
+        "@/layouts/SuperAdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "DriveSubNav",
+        "JobApplications"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/jobs/[jobId]/index.js",
+      "sha": "7068f0ebb276ac8069ab642ef6d93c8cf3b001a8",
+      "lines": 274,
+      "imports": [
+        "@/utils/placementDateTime",
+        "@/components/Common/Facts",
+        "@/layouts/SuperAdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "@/components/Placements/PlacementsCompanyAvatar",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "DriveSubNav",
+        "Skeleton",
+        "Card",
+        "Space",
+        "Skeleton.Button",
+        "Row",
+        "Col",
+        "WarningOutlined",
+        "Text",
+        "Tag",
+        "Button",
+        "RightOutlined",
+        "PlacementsCompanyAvatar",
+        "Title",
+        "Facts",
+        "Fact",
+        "EditOutlined",
+        "TeamOutlined",
+        "Divider",
+        "Paragraph",
+        "Statistic",
+        "SuperAdminDriveOverviewBody"
+      ],
+      "overlayCandidates": [],
+      "events": 3
+    },
+    {
+      "path": "src/pages/superadmin/jobs/[jobId]/interviews.js",
+      "sha": "a99786748065645420842c16488389c3ef43131b",
+      "lines": 50,
+      "imports": [
+        "@/layouts/SuperAdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "@/components/InterviewCalendar/InterviewCalendarContent",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "DriveSubNav",
+        "InterviewCalendarContent"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/jobs/[jobId]/settings.js",
+      "sha": "3934c381b6e85382a4fb1dc65cc37fddb839fd20",
+      "lines": 201,
+      "imports": [
+        "@/layouts/SuperAdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "../../sections/JobForm",
+        "@/contexts/SuperAdminScopeContext",
+        "@/api/Services/AdminService"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "DriveSubNav",
+        "Button",
+        "Spin",
+        "JobForm",
+        "Card",
+        "Popconfirm",
+        "Text",
+        "DeleteOutlined"
+      ],
+      "overlayCandidates": [
+        "JobForm",
+        "Popconfirm"
+      ],
+      "events": 5
+    },
+    {
+      "path": "src/pages/superadmin/jobs/[jobId]/shortlisted.js",
+      "sha": "9d9424c237a305525743d2e5776542dc1f0deea1",
+      "lines": 54,
+      "imports": [
+        "../../sections/JobApplications",
+        "@/layouts/SuperAdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "DriveSubNav",
+        "JobApplications"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/jobs/all.js",
+      "sha": "ffa31931c6ac54fb89534f2205ebef99e6e49971",
+      "lines": 42,
+      "imports": [
+        "../sections/Jobs",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "SuperAdminGroupShell",
+        "Jobs"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/jobs/index.js",
+      "sha": "7e0a518f08bee28cba04eef7715de713a181e7aa",
+      "lines": 37,
+      "imports": [
+        "../sections/DrivesLanding",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "SuperAdminGroupShell",
+        "DrivesLanding"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/lecture-halls.js",
+      "sha": "92767176bee9a2324ba177325516ee779331b696",
+      "lines": 33,
+      "imports": [
+        "./sections/LectureHalls",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "LectureHalls"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/lesson-content.js",
+      "sha": "9cddd89b6ed3e9a4afc72ea1d4462cc527d328b7",
+      "lines": 80,
+      "imports": [
+        "@/components/admin/PolicySettingField",
+        "./sections/LessonContent",
+        "./sections/AdminResources",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "Card",
+        "PolicySettingField",
+        "SuperAdminGroupShell",
+        "AdminResources",
+        "LessonContent"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/lessons.js",
+      "sha": "3cc0d048234a00bf94da330ef2b1e6d3e6a118c3",
+      "lines": 33,
+      "imports": [
+        "./sections/Lessons",
+        "@/layouts/SuperAdminLayout",
+        "@/components/admin/SuperAdminGroupShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "SuperAdminGroupShell",
+        "Lessons"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/superadmin/module-access.js",
+      "sha": "9cdadd2758ab62022a6ba35827d78feb75819757",
+      "lines": 31,
+      "imports": [
+        "./sections/ModuleAccess",
+        "@/layouts/SuperAdminLayout",
+        "@/components/Common/PageShell",
+        "@/contexts/SuperAdminScopeContext"
+      ],
+      "jsxComponents": [
+        "PageShell",
+        "Alert",
+        "ModuleAccess"
+      ],
+      "overlayCandidates": [],
+      "events": 0
     }
   ]
 }
