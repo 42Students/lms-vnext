@@ -1631,6 +1631,195 @@
       "guards": []
     },
     {
+      "path": "src/main/java/com/_42students/lms/controller/FacultyProfileController.java",
+      "sha": "86f8220c2ecb3963eb649a2533cff8480fc4e810",
+      "lines": 810,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/profile/faculty"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/header"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/header"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/about"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/about"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/personal-details"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/personal-details"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/identity"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/identity"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/languages"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{facultyId}/languages"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/languages/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{facultyId}/languages/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/contact"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/contact"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/address"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/address"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/social"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/social"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/education"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{facultyId}/education"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/education/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{facultyId}/education/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/certifications"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{facultyId}/certifications"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/certifications/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{facultyId}/certifications/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/experiences"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{facultyId}/experiences"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/experiences/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{facultyId}/experiences/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/skills"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{facultyId}/skills"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/skills/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{facultyId}/skills/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/publications"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{facultyId}/publications"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/publications/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{facultyId}/publications/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/awards"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{facultyId}/awards"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/awards/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{facultyId}/awards/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{facultyId}/metadata"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{facultyId}/metadata"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/FacultyTeachingAssignmentController.java",
       "sha": "467f59e61d056561d4b6409e491475aa9d1e3277",
       "lines": 335,
@@ -1711,6 +1900,917 @@
       ]
     },
     {
+      "path": "src/main/java/com/_42students/lms/controller/FeatureFlagController.java",
+      "sha": "cf3a0b25bc1b7ef54f758475f119215953f59a6a",
+      "lines": 63,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/features"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/mine"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/FileUploadController.java",
+      "sha": "8730091982608a05e32fe85b85f33e999587f71c",
+      "lines": 2567,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/upload"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/presign"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/import-file-from-url"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/import-video-from-url"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/validate-video-url"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/file/upload"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/file/download"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/file/get"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/file/stream"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/file/delete"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/InterviewController.java",
+      "sha": "3026e2606698f7d9cb0dd3f211fc7b1a91a0cbca",
+      "lines": 1166,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/interviews"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/interviewers"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/application/{applicationId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/learner/{learnerId}/organization/{organizationId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/learner/{learnerId}/upcoming/organization/{organizationId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{interviewId}/organization/{organizationId}"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{interviewId}/organization/{organizationId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{interviewId}/cancel/organization/{organizationId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{interviewId}/confirm/learner/{learnerId}/organization/{organizationId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{interviewId}/complete/organization/{organizationId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{interviewId}/cancel-reschedule-request/learner/{learnerId}/organization/{organizationId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{interviewId}/feedback"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{interviewId}/request-reschedule/learner/{learnerId}/organization/{organizationId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{interviewId}/decline/learner/{learnerId}/organization/{organizationId}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/JobController.java",
+      "sha": "08085ddb72f5d8156919e94d105860f26d5d014b",
+      "lines": 1002,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/jobs"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/active/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/visible/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/all/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/eligible/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/visibility/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/eligibility/{learnerId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/apply/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/details/{applicationId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/{applicationId}/history"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/applied/{learnerId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/applications/{applicationId}/withdraw/{learnerId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/withdraw/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/{applicationId}/offer-accept-preview/{learnerId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/applications/{applicationId}/offer-response/{learnerId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/save/{learnerId}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{jobId}/unsave/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/saved-ids/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/saved/{learnerId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/calendar-dates"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/calendar-dates/learner/{learnerId}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/LearnerController.java",
+      "sha": "ef69571c02fe94fb744b3879a1e50e75202988bb",
+      "lines": 1146,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/learner"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/attendance/courses"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/attendance/records"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/courses/home-stats"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/myProgramDetails"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/register"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/bulk-validate"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/bulk-register"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/bulk-imports"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/bulk-imports/{batchId}/undo"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getAllLearners"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getLearnersByCollegeId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getLearnerDetails"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getProgramDetailsByLearnerId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getLearnerDetailsByClassId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/login"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/login/alternate"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/verifyOTP"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/verifyOTP/alternate"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/attend"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/attend"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/getLearnersByProgram"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/getLearnerByCollegeAndRoll"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/getLearnerAttendancePercentage"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/getLearnerAttendancePercentageByCourse"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/{id}/move-class"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/delete/{id}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/LearnerProfileController.java",
+      "sha": "c12bc05fb3795055b34b4941bee33bcaef1d1f2b",
+      "lines": 1241,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/profile/learner"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/header"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/header"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/about"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/about"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/personal-details"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/personal-details"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/identity"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/identity"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/languages"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/languages"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/languages/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{learnerId}/languages/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/contact"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/contact"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/address"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/address"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/social"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/social"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/education/config"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/education/exam-configs"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/education/exam-configs/{examCode}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/education/grading-types"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/education/colleges"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/education"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/education"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/education/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{learnerId}/education/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/certifications"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/certifications"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/certifications/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{learnerId}/certifications/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/achievements"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/achievements"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/achievements/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{learnerId}/achievements/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/skills"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/skills"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/skills/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{learnerId}/skills/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/projects"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/projects"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/projects/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{learnerId}/projects/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/experiences"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/experiences"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/experiences/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{learnerId}/experiences/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/extracurricular"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/extracurricular"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/extracurricular/{index}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{learnerId}/extracurricular/{index}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/hobbies"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/hobbies"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/video-intro"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/video-intro"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/metadata"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/metadata"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/job-preferences"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/job-preferences"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/resume"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/resume"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/LectureHallController.java",
+      "sha": "d7073015bedb3ecf7fae4999336e7a5a92fa30b2",
+      "lines": 222,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/lectureHall"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetch"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetch/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchByCollege"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchByDept"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchByCollegePaged"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/LessonContentController.java",
+      "sha": "263ec0e8b723617a5f383872b01504b463775228",
+      "lines": 846,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/lesson/contents"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetch"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchSpecificLessonContents"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchSpecificLessonContentsMetrics"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchSpecificLessonContentsGrades"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchAllAssignmentsByFacultyId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchAllAssignmentsByLearnerId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/coursesForClass"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchAllByFacultyId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchUniqueClassesByCourseId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchClassesForCourseSyllabus"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/class-content-order"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchById/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/{id}/playback-url"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/progress"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{id}/progress"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/progress"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/LessonController.java",
+      "sha": "c46cac2df7003cb7776b9dd7de6b4bcde7757972",
+      "lines": 663,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/lesson"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetch"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchAll"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchAllPaged"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchCourseId"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchGrades"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchGradesByCourseAndClass"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchGenericCourseContents"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchSpecificCourseContents"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/getlessoncontentsByCourseAndClass"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/deleted"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/restore/{id}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ModuleAccessController.java",
+      "sha": "cfb00fb43aae6fcaf0c55d8788e47f5283ee58fa",
+      "lines": 223,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/module-access"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/tree"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": "/bulk"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/learner-overrides"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/history"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/explain"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/NewProgramController.java",
+      "sha": "23850c38524dd10fc56516233818e7337bf7d5a3",
+      "lines": 250,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/new-program"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/create"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchAll"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchByDept"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchByCollege"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetch/{id}"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/delete/{id}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetchProgramDetails"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetchByCollegePaged"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/NotificationController.java",
       "sha": "30cbd269b1ebb3cab2fc009b74600c51f15138c6",
       "lines": 345,
@@ -1761,6 +2861,124 @@
         }
       ],
       "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/OrganizationController.java",
+      "sha": "b07d658221192ce731eeac418aee8dfa9e7c6790",
+      "lines": 191,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/organization"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/create"
+        },
+        {
+          "method": "RequestMapping",
+          "path": "/fetch"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/fetch/{id}"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/update/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/delete/{id}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PlacementJobController.java",
+      "sha": "6b411a3f3b0d1d3ee4522b94520f0290200eed23",
+      "lines": 976,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/placement/jobs"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/organization/{organizationId}/created-by/{createdBy}"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/status"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/applications"
+        },
+        {
+          "method": "PatchMapping",
+          "path": "/applications/{applicationId}/notes"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/applications/bulk-status"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/applications/{applicationId}/status"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/export"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/{applicationId}/history"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/{applicationId}/resume-preview"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/metrics"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/funnel"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/company-report"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications"
+        }
+      ],
+      "hasAuth": true,
       "tenantScope": true
     },
     {
