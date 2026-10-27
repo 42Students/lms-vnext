@@ -46,12 +46,20 @@ test("blocked family is not green and next skips blocked + accepted", () => {
   assert.equal(report.accounts.find(a => a.account === "faculty").blocked, 1);
   assert.equal(nextFamily(report, "faculty").id, "faculty:students");
 });
-test("same-name headings are detected as invalid; historic notes excluded", () => {
+test("duplicate historic headings reconcile into one family, excluding unrelated notes", () => {
   const x = parseAccount("## Page: Courses\n- [ ] action\n## 2026-10-14 note\n" +
     "- [x] historic\n## Page: Courses\n- [ ] different\n", "faculty", "faculty.md");
-  assert.equal(x.length, 2);
+  assert.equal(x.length, 1);
+  assert.deepEqual(x[0].locations, [1, 5]);
   assert.equal(x[0].checked, 0);
-  assert.ok(x[1].problems.some(x => x.includes("duplicate")));
+  assert.equal(x[0].unchecked, 2);
+  assert.deepEqual(x[0].problems, []);
+});
+test("standalone, workspace and report surfaces with the same label stay distinct", () => {
+  const x = parseAccount("## Page: Resources\n- [ ] a\n" +
+    "## Workspace section: Resources\n- [ ] b\n" +
+    "## Report: Resources\n- [ ] c\n", "college-admin", "college-admin.md");
+  assert.deepEqual(x.map(a => a.id), ["college-admin:resources", "college-admin:workspace-resources", "college-admin:report-resources"]);
 });
 test("unscoped continuation respects current phase dependencies", () => {
   const x = nextPhaseTask({ currentPhase: "DATABASE", tasks: [

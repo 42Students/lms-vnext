@@ -71,40 +71,55 @@ export function validateReceipt(id, receipt, completed, open) {
 export function parseAccount(md, account, file) {
   const lines = md.split(/\r?\n/);
   const headingIndexes = lines.flatMap((line, index) => /^## (?!#)/.test(line) ? [index] : []);
-  const pages = [];
-  const ids = new Set();
+  const grouped = new Map();
+  const recognized = new Set();
   for (let h = 0; h < headingIndexes.length; h++) {
     const start = headingIndexes[h];
     const match = lines[start].match(PAGE);
     if (!match) continue;
+    recognized.add(start);
     const end = headingIndexes[h + 1] ?? lines.length;
     const section = lines.slice(start, end);
-    const id = account + ":" + slug(match[2]);
-    const completed = section.filter(s => /^\s*-\s*\[[xX]\]\s+/.test(s)).length;
-    const open = section.filter(s => /^\s*-\s*\[ \]\s+/.test(s)).length;
+    const kind = match[1].toLowerCase();
+    // Type-qualified IDs keep genuinely distinct nested surfaces separate.
+    const prefixes = {
+      "workspace section": "workspace-", "template section": "template-",
+      "report": "report-", "settings": "settings-", "tab": "tab-",
+      "retired route": "redirect-",
+    };
+    const id = account + ":" + (prefixes[kind] || "") + slug(match[2]);
+    const entry = grouped.get(id) || {
+      id, name: match[2], account, file, line: start + 1, kind, locations: [],
+      checked: 0, unchecked: 0, receipts: [], problems: [],
+    };
+    entry.checked += section.filter(x => /^\s*-\s*\[[xX]\]\s+/.test(x)).length;
+    entry.unchecked += section.filter(x => /^\s*-\s*\[ \]\s+/.test(x)).length;
+    entry.locations.push(start + 1);
     const matches = [...section.join("\n").matchAll(RECEIPT)];
-    let receipt = null;
-    const problems = [];
-    if (matches.length > 1) problems.push("multiple receipts in page section");
-    if (matches.length) {
-      try { receipt = JSON.parse(matches[0][1]); }
-      catch { problems.push("invalid JSON receipt"); }
+    for (const row of matches) {
+      try { entry.receipts.push(JSON.parse(row[1])); }
+      catch { entry.problems.push("invalid JSON receipt at line " + (start + 1)); }
     }
-    if (ids.has(id)) problems.push("duplicate page ID; make heading distinctive");
-    ids.add(id);
-    const status = validateReceipt(id, receipt, completed, open);
-    pages.push({ id, name: match[2], account, file, line: start + 1,
-      checked: completed, unchecked: open, ...status, problems: [...problems, ...status.problems] });
+    grouped.set(id, entry);
   }
-  // Reject closure records that cannot be associated with one recognized page section.
-  lines.forEach((line, n) => {
-    if (!line.includes("<!-- page-closure")) return;
-    const ownerHeading = [...headingIndexes].reverse().find(index => index <= n);
-    if (ownerHeading === undefined || !PAGE.test(lines[ownerHeading]))
-      pages.push({ id: account + ":orphan:" + (n + 1), account, file, line: n + 1,
-        implementationGreen: false, blocked: false, problems: ["orphan receipt outside page family"] });
+  for (const index of lines.keys()) {
+    if (!lines[index].includes("<!-- page-closure")) continue;
+    const ownerHeading = [...headingIndexes].reverse().find(n => n <= index);
+    if (ownerHeading === undefined || !recognized.has(ownerHeading)) {
+      const id = account + ":orphan:" + (index + 1);
+      grouped.set(id, { id, name: "orphan receipt", account, file, line: index + 1,
+        kind: "orphan", locations: [index + 1], checked: 0, unchecked: 0,
+        receipts: [], problems: ["receipt outside a recognized page family"] });
+    }
+  }
+  return [...grouped.values()].map(entry => {
+    if (entry.receipts.length > 1) entry.problems.push("multiple acceptance receipts for one page family");
+    const status = validateReceipt(entry.id, entry.receipts[0] || null,
+      entry.checked, entry.unchecked);
+    const { receipts, ...publicEntry } = entry;
+    return { ...publicEntry, ...status,
+      problems: [...publicEntry.problems, ...status.problems] };
   });
-  return pages;
 }
 
 export function reportFromFiles(filePairs) {
