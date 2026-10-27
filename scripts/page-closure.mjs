@@ -70,50 +70,64 @@ export function validateReceipt(id, receipt, completed, open) {
 
 export function parseAccount(md, account, file) {
   const lines = md.split(/\r?\n/);
-  const headingIndexes = lines.flatMap((line, index) => /^## (?!#)/.test(line) ? [index] : []);
+  const h2 = lines.flatMap((line, n) => /^## (?!#)/.test(line) ? [n] : []);
   const grouped = new Map();
-  const recognized = new Set();
-  for (let h = 0; h < headingIndexes.length; h++) {
-    const start = headingIndexes[h];
-    const match = lines[start].match(PAGE);
-    if (!match) continue;
-    recognized.add(start);
-    const end = headingIndexes[h + 1] ?? lines.length;
+  const recognizedRanges = [];
+  const prefixes = { "workspace section": "workspace-", "template section": "template-",
+    report: "report-", settings: "settings-", tab: "tab-", "retired route": "redirect-" };
+  function addUnit(id, name, kind, start, end) {
+    recognizedRanges.push([start, end]);
     const section = lines.slice(start, end);
-    const kind = match[1].toLowerCase();
-    // Type-qualified IDs keep genuinely distinct nested surfaces separate.
-    const prefixes = {
-      "workspace section": "workspace-", "template section": "template-",
-      "report": "report-", "settings": "settings-", "tab": "tab-",
-      "retired route": "redirect-",
-    };
-    const id = account + ":" + (prefixes[kind] || "") + slug(match[2]);
-    const entry = grouped.get(id) || {
-      id, name: match[2], account, file, line: start + 1, kind, locations: [],
-      checked: 0, unchecked: 0, receipts: [], problems: [],
-    };
+    let entry = grouped.get(id);
+    if (!entry) entry = { id, name, account, file, line: start + 1, kind, locations: [],
+      checked: 0, unchecked: 0, receipts: [], problems: [] };
+    entry.locations.push(start + 1);
     entry.checked += section.filter(x => /^\s*-\s*\[[xX]\]\s+/.test(x)).length;
     entry.unchecked += section.filter(x => /^\s*-\s*\[ \]\s+/.test(x)).length;
-    entry.locations.push(start + 1);
-    const matches = [...section.join("\n").matchAll(RECEIPT)];
-    for (const row of matches) {
-      try { entry.receipts.push(JSON.parse(row[1])); }
-      catch { entry.problems.push("invalid JSON receipt at line " + (start + 1)); }
+    for (const match of section.join("\n").matchAll(RECEIPT)) {
+      try { entry.receipts.push(JSON.parse(match[1])); }
+      catch { entry.problems.push("invalid JSON receipt near line " + (start + 1)); }
     }
     grouped.set(id, entry);
   }
-  for (const index of lines.keys()) {
-    if (!lines[index].includes("<!-- page-closure")) continue;
-    const ownerHeading = [...headingIndexes].reverse().find(n => n <= index);
-    if (ownerHeading === undefined || !recognized.has(ownerHeading)) {
-      const id = account + ":orphan:" + (index + 1);
-      grouped.set(id, { id, name: "orphan receipt", account, file, line: index + 1,
-        kind: "orphan", locations: [index + 1], checked: 0, unchecked: 0,
-        receipts: [], problems: ["receipt outside a recognized page family"] });
+  for (let h = 0; h < h2.length; h++) {
+    const start = h2[h], end = h2[h + 1] ?? lines.length;
+    const match = lines[start].match(PAGE);
+    if (!match) continue;
+    const kind = match[1].toLowerCase();
+    const id = account + ":" + (prefixes[kind] || "") + slug(match[2]);
+    const childHeads = [];
+    for (let n = start + 1; n < end; n++)
+      if (/^### (?!#)/.test(lines[n])) childHeads.push(n);
+    // Split sizeable page tabs/views into independently closable units. Shared
+    // header actions remain their own contract if they have explicit checklist rows.
+    const hasUiChildren = childHeads.length &&
+      (kind === "page family" || childHeads.some(n =>
+        /^### (Tab(?: \d+)?\b|View:|Overlays\b|Header\s*\/|Overview\b)/i.test(lines[n])));
+    if (!hasUiChildren) { addUnit(id, match[2], kind, start, end); continue; }
+    const prefix = lines.slice(start, childHeads[0]);
+    if (prefix.some(line => /^\s*-\s*\[[ xX]\]\s+/.test(line)) ||
+      prefix.some(line => line.includes("<!-- page-closure"))) {
+      addUnit(id + "/shared-shell", match[2] + " — shared shell", kind, start, childHeads[0]);
     }
+    childHeads.forEach((child, index) => {
+      const next = childHeads[index + 1] ?? end;
+      const name = lines[child].replace(/^###\s+/, "").trim();
+      addUnit(id + "/" + slug(name), name, "child surface", child, next);
+    });
   }
+  lines.forEach((line, at) => {
+    if (!line.includes("<!-- page-closure")) return;
+    if (!recognizedRanges.some(([start, end]) => at >= start && at < end)) {
+      const id = account + ":orphan:" + (at + 1);
+      grouped.set(id, { id, name: "orphan receipt", account, file, line: at + 1,
+        kind: "orphan", locations: [at + 1], checked: 0, unchecked: 0,
+        receipts: [], problems: ["receipt outside a recognized page/child surface"] });
+    }
+  });
   return [...grouped.values()].map(entry => {
-    if (entry.receipts.length > 1) entry.problems.push("multiple acceptance receipts for one page family");
+    if (entry.receipts.length > 1)
+      entry.problems.push("multiple acceptance receipts for one page/surface");
     const status = validateReceipt(entry.id, entry.receipts[0] || null,
       entry.checked, entry.unchecked);
     const { receipts, ...publicEntry } = entry;

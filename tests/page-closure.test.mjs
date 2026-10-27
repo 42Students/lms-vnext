@@ -68,6 +68,24 @@ test("invalid acceptance is surfaced as next repair target, never skipped", () =
   assert.equal(next.id, "faculty:attendance");
   assert.ok(next.problems.length);
 });
+test("course detail and tab-heavy pages split into independently closable child surfaces", () => {
+  const docs = "## Page family: Course detail\nLegacy tabs\n" +
+    "### Overview\n- [ ] summary\n### Blueprint\n- [ ] content\n" +
+    "### Attendance\n- [ ] marks\n## Page: Notifications\n- [ ] alerts\n";
+  const units = parseAccount(docs, "faculty", "faculty.md");
+  assert.deepEqual(units.map(x => x.id), [
+    "faculty:course-detail/overview", "faculty:course-detail/blueprint",
+    "faculty:course-detail/attendance", "faculty:notifications",
+  ]);
+  assert.deepEqual(units.map(x => x.unchecked), [1, 1, 1, 1]);
+  const tpo = parseAccount("## Page: Drive Detail\n- [ ] Shared header\n" +
+    "### Tab: Overview\n- [ ] summary\n### Tab: Applicants\n- [ ] bulk actions\n",
+    "tpo", "tpo.md");
+  assert.deepEqual(tpo.map(x => x.id), [
+    "tpo:drive-detail/shared-shell", "tpo:drive-detail/tab-overview",
+    "tpo:drive-detail/tab-applicants",
+  ]);
+});
 test("unscoped continuation respects current phase dependencies", () => {
   const x = nextPhaseTask({ currentPhase: "DATABASE", tasks: [
     { id: "DB-A", phase: "DATABASE", done: false, dependsOn: ["DB-B"] },

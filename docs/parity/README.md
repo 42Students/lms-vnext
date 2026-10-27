@@ -116,6 +116,8 @@ A new conversation may contain only "continue LMS vNext works." The assistant sh
 
 ### Machine-validated page closure and cross-chat continuation
 
+**Finite units:** Course Detail, Project Detail and multi-tab workspaces are split into child acceptance units when their specifications contain explicit section/tab/view headings. A shared page header with required checklist actions becomes its own `shared-shell` unit. This prevents a large workspace from trapping one chat for the entire account.
+
 **Historical deduplication:** repeated documentation headings for the same account/page are reconciled as one family, with all their checklist requirements retained. Workspace sections, reports, tabs and standalone pages have distinct IDs. This is a derived documentation index, not a verified full legacy source reachability census.
 
 The read-only `scripts/page-closure.mjs` discovers page families from the **existing eight account specifications**. It never updates `docs/tracker.json` (which remains the sole official project task/phase tracker), nor does it infer green from old `[x]` checkboxes or historic DONE prose.
