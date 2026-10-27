@@ -1,0 +1,2073 @@
+{
+  "schemaVersion": 1,
+  "classification": "Controller route/authorization/domain-call source evidence; never treated as proven end-to-end API behavior",
+  "reference": {
+    "repo": "42Students/lms",
+    "branch": "lms-dev-2026",
+    "sha": "ecb09416b107e82e5ac7d22f3bc94a85258754b3"
+  },
+  "scope": "Placement TPO/Recruiter latest dev sources plus web authorization",
+  "limitations": [
+    "Annotation mapping may be inherited/composed, resolve fully before contract assertions",
+    "Controller guard candidate matches do not establish service-layer scope nor persistence safety",
+    "Frontend services, authenticated runtime and vNext behavior must be independently reconciled"
+  ],
+  "records": [
+    {
+      "path": "src/main/java/com/_42students/lms/configuration/WebSecurityConfig.java",
+      "sha": "d667747866910274b97f4750e5651eb4b85c08e2",
+      "lines": 213,
+      "package": "com._42students.lms.configuration",
+      "className": "WebSecurityConfig",
+      "mappingsAndGuards": [],
+      "guardCandidateSamples": [
+        {
+          "line": 114,
+          "text": ".requestMatchers(CorsUtils::isPreFlightRequest).permitAll()"
+        },
+        {
+          "line": 115,
+          "text": ".antMatchers(\"/users/login\", \"/users/verifyOTP\").permitAll()"
+        },
+        {
+          "line": 127,
+          "text": ").permitAll()"
+        },
+        {
+          "line": 128,
+          "text": ".antMatchers(\"/api/v1/learner/login/**\", \"/api/v1/learner/verifyOTP/**\").permitAll()"
+        },
+        {
+          "line": 129,
+          "text": ".antMatchers(\"/api/v1/faculty/login\", \"/api/v1/faculty/verifyOTP\").permitAll()"
+        },
+        {
+          "line": 130,
+          "text": ".antMatchers(\"/api/v1/public/**\", \"/lms-backend/api/v1/public/**\").permitAll()"
+        },
+        {
+          "line": 131,
+          "text": ".antMatchers(\"/actuator/**\", \"/lms-backend/actuator/**\", \"/swagger-ui/**\", \"/v3/api-docs/**\").permitAll()"
+        },
+        {
+          "line": 132,
+          "text": ".antMatchers(\"/swagger-resources/**\", \"/webjars/**\").permitAll()"
+        },
+        {
+          "line": 137,
+          "text": ".hasRole(\"SUPER_ADMIN\")"
+        },
+        {
+          "line": 142,
+          "text": ".hasRole(\"SUPER_ADMIN\")"
+        },
+        {
+          "line": 143,
+          "text": ".antMatchers(\"/api/v1/admin/**\").hasRole(\"ADMIN\")"
+        },
+        {
+          "line": 147,
+          "text": ".antMatchers(\"/api/v1/superadmin/recruiters\", \"/api/v1/superadmin/recruiters/**\").hasRole(\"SUPER_ADMIN\")"
+        },
+        {
+          "line": 149,
+          "text": ".antMatchers(\"/api/v1/superadmin/audit-findings\", \"/api/v1/superadmin/audit-findings/**\").hasRole(\"SUPER_ADMIN\")"
+        },
+        {
+          "line": 150,
+          "text": ".antMatchers(\"/api/v1/superadmin/companies\", \"/api/v1/superadmin/companies/**\").hasRole(\"SUPER_ADMIN\")"
+        },
+        {
+          "line": 151,
+          "text": ".antMatchers(\"/api/v1/superadmin/announcements\", \"/api/v1/superadmin/announcements/**\").hasRole(\"SUPER_ADMIN\")"
+        },
+        {
+          "line": 152,
+          "text": ".antMatchers(\"/api/v1/superadmin/inbound-mail\", \"/api/v1/superadmin/inbound-mail/**\").hasRole(\"SUPER_ADMIN\")"
+        },
+        {
+          "line": 153,
+          "text": ".antMatchers(\"/api/v1/recruiter\", \"/api/v1/recruiter/**\").hasRole(\"RECRUITER\")"
+        },
+        {
+          "line": 165,
+          "text": "// authenticated LEARNER/FACULTY the way a bare \"/api/v1/**\".authenticated() would be."
+        },
+        {
+          "line": 166,
+          "text": ".antMatchers(\"/api/v1/electives/admin/**\").hasRole(\"ADMIN\")"
+        },
+        {
+          "line": 169,
+          "text": ".antMatchers(HttpMethod.PUT, \"/api/v1/lesson/contents/progress\").authenticated()"
+        },
+        {
+          "line": 195,
+          "text": ".antMatchers(\"/api/v1/**\").authenticated()"
+        },
+        {
+          "line": 196,
+          "text": ".antMatchers(\"/users/**\").authenticated()"
+        },
+        {
+          "line": 197,
+          "text": ".antMatchers(\"/api/v2/jobs/refresh\", \"/api/v2/job-applications/refresh\").hasRole(\"ADMIN\")"
+        },
+        {
+          "line": 198,
+          "text": ".antMatchers(\"/api/v2/**\").authenticated()"
+        },
+        {
+          "line": 199,
+          "text": ".anyRequest().authenticated()"
+        }
+      ],
+      "guardCandidateCount": 25,
+      "domainCallSamples": [],
+      "domainCallCandidateCount": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/security/PlacementAccessFilter.java",
+      "sha": "0ab4bd226da64b308ba52f98ac68b69d8a409af6",
+      "lines": 93,
+      "package": "com._42students.lms.security",
+      "className": "or",
+      "mappingsAndGuards": [],
+      "guardCandidateSamples": [
+        {
+          "line": 71,
+          "text": "if (!eligibility.collegeHasPlacements(p.getCollegeId())) refusal = \"Placements are not available at your college\";"
+        },
+        {
+          "line": 72,
+          "text": "else if (!eligibility.learnerInPlacements(p.getId(), p.getCollegeId())) refusal = \"Placements are not open for you yet\";"
+        },
+        {
+          "line": 74,
+          "text": "if (p.getCollegeId() != null && !eligibility.collegeHasPlacements(p.getCollegeId())) refusal = \"Placements are not switched on for this college\";"
+        },
+        {
+          "line": 79,
+          "text": "} else if (p.isRecruiter() && p.getCollegeId() != null && underAny(path, RECRUITER_SESSION_PREFIXES)"
+        },
+        {
+          "line": 80,
+          "text": "&& !eligibility.collegeHasPlacements(p.getCollegeId())) {"
+        },
+        {
+          "line": 85,
+          "text": "res.setStatus(HttpServletResponse.SC_FORBIDDEN);"
+        },
+        {
+          "line": 87,
+          "text": "res.getWriter().write(\"{\\\"status\\\":\\\"FORBIDDEN\\\",\\\"message\\\":\\\"\" + refusal + \"\\\",\\\"error\\\":\\\"\" + refusal + \"\\\"}\");"
+        }
+      ],
+      "guardCandidateCount": 7,
+      "domainCallSamples": [],
+      "domainCallCandidateCount": 0
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/RecruiterDriveController.java",
+      "sha": "a9cae72fb06b6b78a75877ce30434798f214acf2",
+      "lines": 218,
+      "package": "com._42students.lms.controller",
+      "className": "RecruiterDriveController",
+      "mappingsAndGuards": [
+        {
+          "line": 24,
+          "annotation": "@RequestMapping(\"/api/v1/recruiter/colleges/{collegeId}\")",
+          "next": [
+            "@RequiredArgsConstructor",
+            "public class RecruiterDriveController {",
+            "private final RecruiterAccessService accessService;",
+            "private final RecruiterDriveWorkService work;"
+          ]
+        },
+        {
+          "line": 50,
+          "annotation": "@GetMapping(\"/today\")",
+          "next": [
+            "public Map<String, Object> today(@PathVariable Integer collegeId) {",
+            "UserPrincipal p = p();",
+            "accessService.requireCollege(p, collegeId, null);",
+            "return todayService.today(p.getId().longValue(), collegeId);"
+          ]
+        },
+        {
+          "line": 58,
+          "annotation": "@GetMapping(\"/calendar\")",
+          "next": [
+            "public List<Map<String, Object>> calendar(@PathVariable Integer collegeId,",
+            "@RequestParam(required = false) String from,",
+            "@RequestParam(required = false) String to) {",
+            "UserPrincipal p = p();"
+          ]
+        },
+        {
+          "line": 75,
+          "annotation": "@GetMapping(\"/drives/{jobId}/offers\")",
+          "next": [
+            "public List<Map<String, Object>> offers(@PathVariable Integer collegeId, @PathVariable Integer jobId) {",
+            "return workspaceService.offers(me(collegeId), collegeId, jobId);",
+            "}",
+            "public static class NoteRequest { public Integer rating; public String note; }"
+          ]
+        },
+        {
+          "line": 83,
+          "annotation": "@GetMapping(\"/drives/{jobId}/notes\")",
+          "next": [
+            "public List<Map<String, Object>> notes(@PathVariable Integer collegeId, @PathVariable Integer jobId) {",
+            "return workspaceService.notes(me(collegeId), collegeId, jobId);",
+            "}",
+            "@PutMapping(\"/drives/{jobId}/notes/{applicantId}\")"
+          ]
+        },
+        {
+          "line": 88,
+          "annotation": "@PutMapping(\"/drives/{jobId}/notes/{applicantId}\")",
+          "next": [
+            "public Map<String, Object> saveNote(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable String applicantId, @RequestBody NoteRequest r) {",
+            "workspaceService.saveNote(me(collegeId), collegeId, jobId, applicantId, r.rating, r.note);",
+            "return Map.of(\"ok\", true);",
+            "}"
+          ]
+        },
+        {
+          "line": 95,
+          "annotation": "@GetMapping(\"/company\")",
+          "next": [
+            "public Map<String, Object> company(@PathVariable Integer collegeId) {",
+            "UserPrincipal p = p();",
+            "accessService.requireCollege(p, collegeId, null);",
+            "Map<String, Object> c = workspaceService.company(p.getId().longValue());"
+          ]
+        },
+        {
+          "line": 104,
+          "annotation": "@GetMapping(\"/team\")",
+          "next": [
+            "public List<Map<String, Object>> team(@PathVariable Integer collegeId) {",
+            "UserPrincipal p = p();",
+            "accessService.requireCollege(p, collegeId, null);",
+            "return workspaceService.team(p.getId().longValue(), collegeId);"
+          ]
+        },
+        {
+          "line": 112,
+          "annotation": "@GetMapping(\"/reports\")",
+          "next": [
+            "public Map<String, Object> reports(@PathVariable Integer collegeId) {",
+            "return workspaceService.reports(me(collegeId), collegeId);",
+            "}",
+            "@GetMapping(\"/drives\")"
+          ]
+        },
+        {
+          "line": 117,
+          "annotation": "@GetMapping(\"/drives\")",
+          "next": [
+            "public List<Map<String, Object>> drives(@PathVariable Integer collegeId) { return work.drives(me(collegeId), collegeId); }",
+            "@GetMapping(\"/drives/{jobId}/rounds\")",
+            "public List<Map<String, Object>> rounds(@PathVariable Integer collegeId, @PathVariable Integer jobId) { return work.rounds(me(collegeId), collegeId, jobId); }",
+            "/** The finder's applicants: only those shared with this recruiter, only what the share includes (prototype, \"Applicants shared with you\"). */"
+          ]
+        },
+        {
+          "line": 120,
+          "annotation": "@GetMapping(\"/drives/{jobId}/rounds\")",
+          "next": [
+            "public List<Map<String, Object>> rounds(@PathVariable Integer collegeId, @PathVariable Integer jobId) { return work.rounds(me(collegeId), collegeId, jobId); }",
+            "/** The finder's applicants: only those shared with this recruiter, only what the share includes (prototype, \"Applicants shared with you\"). */",
+            "@GetMapping(\"/applicants/search\")",
+            "public List<Map<String, Object>> searchApplicants(@PathVariable Integer collegeId, @org.springframework.web.bind.annotation.RequestParam(name = \"q\", required = false) String q) {"
+          ]
+        },
+        {
+          "line": 124,
+          "annotation": "@GetMapping(\"/applicants/search\")",
+          "next": [
+            "public List<Map<String, Object>> searchApplicants(@PathVariable Integer collegeId, @org.springframework.web.bind.annotation.RequestParam(name = \"q\", required = false) String q) {",
+            "return work.searchApplicants(me(collegeId), collegeId, q);",
+            "}",
+            "@GetMapping(\"/drives/{jobId}/applicants\")"
+          ]
+        },
+        {
+          "line": 129,
+          "annotation": "@GetMapping(\"/drives/{jobId}/applicants\")",
+          "next": [
+            "public Map<String, Object> applicants(@PathVariable Integer collegeId, @PathVariable Integer jobId) { return work.applicants(me(collegeId), collegeId, jobId); }",
+            "/** Placements UX pass: the drive pipeline funnel, same shape as the TPO's own drive dashboard. */",
+            "@GetMapping(\"/drives/{jobId}/pipeline\")",
+            "public List<Map<String, Object>> pipeline(@PathVariable Integer collegeId, @PathVariable Integer jobId) { return work.pipeline(me(collegeId), collegeId, jobId); }"
+          ]
+        },
+        {
+          "line": 133,
+          "annotation": "@GetMapping(\"/drives/{jobId}/pipeline\")",
+          "next": [
+            "public List<Map<String, Object>> pipeline(@PathVariable Integer collegeId, @PathVariable Integer jobId) { return work.pipeline(me(collegeId), collegeId, jobId); }",
+            "/** recruiter V1 §7 \"Resumes (ZIP)\": every shared applicant's resume, named ROLL_Name.pdf, with the same README the public share link gives. */",
+            "@PostMapping(\"/drives/{jobId}/resumes\")",
+            "public org.springframework.http.ResponseEntity<?> resumes(@PathVariable Integer collegeId, @PathVariable Integer jobId) {"
+          ]
+        },
+        {
+          "line": 137,
+          "annotation": "@PostMapping(\"/drives/{jobId}/resumes\")",
+          "next": [
+            "public org.springframework.http.ResponseEntity<?> resumes(@PathVariable Integer collegeId, @PathVariable Integer jobId) {",
+            "work.requireOwn(me(collegeId), collegeId, jobId);",
+            "try {",
+            "java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();"
+          ]
+        },
+        {
+          "line": 153,
+          "annotation": "@PostMapping(\"/drives/{jobId}/rounds\")",
+          "next": [
+            "public Map<String, Object> addRound(@PathVariable Integer collegeId, @PathVariable Integer jobId, @RequestBody RoundRequest r) {",
+            "return work.addRound(me(collegeId), collegeId, jobId, r.kind, r.name, r.mode);",
+            "}",
+            "@PutMapping(\"/drives/{jobId}/rounds/{roundId}\")"
+          ]
+        },
+        {
+          "line": 158,
+          "annotation": "@PutMapping(\"/drives/{jobId}/rounds/{roundId}\")",
+          "next": [
+            "public Map<String, Object> updateRound(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId, @RequestBody RoundRequest r) {",
+            "return work.updateRound(me(collegeId), collegeId, jobId, roundId, r.kind, r.name, r.mode);",
+            "}",
+            "@DeleteMapping(\"/drives/{jobId}/rounds/{roundId}\")"
+          ]
+        },
+        {
+          "line": 163,
+          "annotation": "@DeleteMapping(\"/drives/{jobId}/rounds/{roundId}\")",
+          "next": [
+            "public Map<String, Object> deleteRound(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId) {",
+            "work.deleteRound(me(collegeId), collegeId, jobId, roundId);",
+            "return Map.of(\"deleted\", true);",
+            "}"
+          ]
+        },
+        {
+          "line": 169,
+          "annotation": "@PostMapping(\"/drives/{jobId}/rounds/{roundId}/results\")",
+          "next": [
+            "public Map<String, Object> results(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId, @RequestBody ResultsRequest r) {",
+            "return work.submitResults(me(collegeId), collegeId, jobId, roundId, r.rows);",
+            "}",
+            "@GetMapping(\"/drives/{jobId}/rounds/{roundId}/slots\")"
+          ]
+        },
+        {
+          "line": 174,
+          "annotation": "@GetMapping(\"/drives/{jobId}/rounds/{roundId}/slots\")",
+          "next": [
+            "public List<Map<String, Object>> slots(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId) {",
+            "return work.slots(me(collegeId), collegeId, jobId, roundId);",
+            "}",
+            "@PostMapping(\"/drives/{jobId}/rounds/{roundId}/slots\")"
+          ]
+        },
+        {
+          "line": 179,
+          "annotation": "@PostMapping(\"/drives/{jobId}/rounds/{roundId}/slots\")",
+          "next": [
+            "public Map<String, Object> proposeSlots(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId, @RequestBody SlotsRequest r) {",
+            "return Map.of(\"added\", work.proposeSlots(me(collegeId), collegeId, jobId, roundId, r.slots));",
+            "}",
+            "@PostMapping(\"/drives/{jobId}/selections\")"
+          ]
+        },
+        {
+          "line": 184,
+          "annotation": "@PostMapping(\"/drives/{jobId}/selections\")",
+          "next": [
+            "public Map<String, Object> selections(@PathVariable Integer collegeId, @PathVariable Integer jobId, @RequestBody SelectionRequest r) {",
+            "return Map.of(\"recorded\", work.submitSelections(me(collegeId), collegeId, jobId, r.applicantIds, r.roleOption, r.ctcLpa, r.kind));",
+            "}",
+            "// ---------------------------------------------------------------- messages"
+          ]
+        },
+        {
+          "line": 190,
+          "annotation": "@GetMapping(\"/messages/threads\")",
+          "next": [
+            "public List<Map<String, Object>> threads(@PathVariable Integer collegeId) { return messages.threadsForRecruiter(collegeId, me(collegeId)); }",
+            "/** Changes whenever this recruiter's conversations with the college change; their screens poll it while open. */",
+            "@GetMapping(\"/messages/pulse\")",
+            "public Map<String, Object> pulse(@PathVariable Integer collegeId) { return Map.of(\"version\", messages.pulse(collegeId, me(collegeId))); }"
+          ]
+        },
+        {
+          "line": 194,
+          "annotation": "@GetMapping(\"/messages/pulse\")",
+          "next": [
+            "public Map<String, Object> pulse(@PathVariable Integer collegeId) { return Map.of(\"version\", messages.pulse(collegeId, me(collegeId))); }",
+            "@GetMapping(\"/messages/threads/{threadId}\")",
+            "public List<Map<String, Object>> thread(@PathVariable Integer collegeId, @PathVariable Long threadId) {",
+            "long recruiter = me(collegeId);"
+          ]
+        },
+        {
+          "line": 197,
+          "annotation": "@GetMapping(\"/messages/threads/{threadId}\")",
+          "next": [
+            "public List<Map<String, Object>> thread(@PathVariable Integer collegeId, @PathVariable Long threadId) {",
+            "long recruiter = me(collegeId);",
+            "if (!messages.threadBelongsToRecruiter(threadId, collegeId, recruiter)) throw new IllegalArgumentException(\"Not found\");",
+            "return messages.messages(collegeId, threadId, \"RECRUITER\");"
+          ]
+        },
+        {
+          "line": 204,
+          "annotation": "@PostMapping(\"/messages\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> send(@PathVariable Integer collegeId, @RequestBody MessageRequest r) {",
+            "long recruiter = me(collegeId);",
+            "if (r.jobId != null) work.requireOwn(recruiter, collegeId, r.jobId);",
+            "return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(\"threadId\", messages.send(collegeId, recruiter, r.jobId, \"RECRUITER\", (int) recruiter, r.body, r.changeRequestId)));"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 24,
+          "text": "@RequestMapping(\"/api/v1/recruiter/colleges/{collegeId}\")"
+        },
+        {
+          "line": 38,
+          "text": "private long me(Integer collegeId) {"
+        },
+        {
+          "line": 40,
+          "text": "accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_WORK);"
+        },
+        {
+          "line": 51,
+          "text": "public Map<String, Object> today(@PathVariable Integer collegeId) {"
+        },
+        {
+          "line": 53,
+          "text": "accessService.requireCollege(p, collegeId, null);"
+        },
+        {
+          "line": 54,
+          "text": "return todayService.today(p.getId().longValue(), collegeId);"
+        },
+        {
+          "line": 59,
+          "text": "public List<Map<String, Object>> calendar(@PathVariable Integer collegeId,"
+        },
+        {
+          "line": 63,
+          "text": "accessService.requireCollege(p, collegeId, null);"
+        },
+        {
+          "line": 71,
+          "text": "return todayService.calendar(p.getId().longValue(), collegeId, start, end);"
+        },
+        {
+          "line": 76,
+          "text": "public List<Map<String, Object>> offers(@PathVariable Integer collegeId, @PathVariable Integer jobId) {"
+        },
+        {
+          "line": 77,
+          "text": "return workspaceService.offers(me(collegeId), collegeId, jobId);"
+        },
+        {
+          "line": 84,
+          "text": "public List<Map<String, Object>> notes(@PathVariable Integer collegeId, @PathVariable Integer jobId) {"
+        },
+        {
+          "line": 85,
+          "text": "return workspaceService.notes(me(collegeId), collegeId, jobId);"
+        },
+        {
+          "line": 89,
+          "text": "public Map<String, Object> saveNote(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable String applicantId, @RequestBody NoteRequest r) {"
+        },
+        {
+          "line": 90,
+          "text": "workspaceService.saveNote(me(collegeId), collegeId, jobId, applicantId, r.rating, r.note);"
+        },
+        {
+          "line": 96,
+          "text": "public Map<String, Object> company(@PathVariable Integer collegeId) {"
+        },
+        {
+          "line": 98,
+          "text": "accessService.requireCollege(p, collegeId, null);"
+        },
+        {
+          "line": 105,
+          "text": "public List<Map<String, Object>> team(@PathVariable Integer collegeId) {"
+        },
+        {
+          "line": 107,
+          "text": "accessService.requireCollege(p, collegeId, null);"
+        },
+        {
+          "line": 108,
+          "text": "return workspaceService.team(p.getId().longValue(), collegeId);"
+        },
+        {
+          "line": 113,
+          "text": "public Map<String, Object> reports(@PathVariable Integer collegeId) {"
+        },
+        {
+          "line": 114,
+          "text": "return workspaceService.reports(me(collegeId), collegeId);"
+        },
+        {
+          "line": 118,
+          "text": "public List<Map<String, Object>> drives(@PathVariable Integer collegeId) { return work.drives(me(collegeId), collegeId); }"
+        },
+        {
+          "line": 121,
+          "text": "public List<Map<String, Object>> rounds(@PathVariable Integer collegeId, @PathVariable Integer jobId) { return work.rounds(me(collegeId), collegeId, jobId); }"
+        },
+        {
+          "line": 125,
+          "text": "public List<Map<String, Object>> searchApplicants(@PathVariable Integer collegeId, @org.springframework.web.bind.annotation.RequestParam(name = \"q\", required = false) String q) {"
+        },
+        {
+          "line": 126,
+          "text": "return work.searchApplicants(me(collegeId), collegeId, q);"
+        },
+        {
+          "line": 130,
+          "text": "public Map<String, Object> applicants(@PathVariable Integer collegeId, @PathVariable Integer jobId) { return work.applicants(me(collegeId), collegeId, jobId); }"
+        },
+        {
+          "line": 134,
+          "text": "public List<Map<String, Object>> pipeline(@PathVariable Integer collegeId, @PathVariable Integer jobId) { return work.pipeline(me(collegeId), collegeId, jobId); }"
+        },
+        {
+          "line": 138,
+          "text": "public org.springframework.http.ResponseEntity<?> resumes(@PathVariable Integer collegeId, @PathVariable Integer jobId) {"
+        },
+        {
+          "line": 139,
+          "text": "work.requireOwn(me(collegeId), collegeId, jobId);"
+        },
+        {
+          "line": 142,
+          "text": "shareService.writeResumeZipForRecruiter(jobId, collegeId, work.directColumnsFor(jobId), buf);"
+        },
+        {
+          "line": 154,
+          "text": "public Map<String, Object> addRound(@PathVariable Integer collegeId, @PathVariable Integer jobId, @RequestBody RoundRequest r) {"
+        },
+        {
+          "line": 155,
+          "text": "return work.addRound(me(collegeId), collegeId, jobId, r.kind, r.name, r.mode);"
+        },
+        {
+          "line": 159,
+          "text": "public Map<String, Object> updateRound(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId, @RequestBody RoundRequest r) {"
+        },
+        {
+          "line": 160,
+          "text": "return work.updateRound(me(collegeId), collegeId, jobId, roundId, r.kind, r.name, r.mode);"
+        },
+        {
+          "line": 164,
+          "text": "public Map<String, Object> deleteRound(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId) {"
+        },
+        {
+          "line": 165,
+          "text": "work.deleteRound(me(collegeId), collegeId, jobId, roundId);"
+        },
+        {
+          "line": 170,
+          "text": "public Map<String, Object> results(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId, @RequestBody ResultsRequest r) {"
+        },
+        {
+          "line": 171,
+          "text": "return work.submitResults(me(collegeId), collegeId, jobId, roundId, r.rows);"
+        },
+        {
+          "line": 175,
+          "text": "public List<Map<String, Object>> slots(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId) {"
+        },
+        {
+          "line": 176,
+          "text": "return work.slots(me(collegeId), collegeId, jobId, roundId);"
+        },
+        {
+          "line": 180,
+          "text": "public Map<String, Object> proposeSlots(@PathVariable Integer collegeId, @PathVariable Integer jobId, @PathVariable Long roundId, @RequestBody SlotsRequest r) {"
+        },
+        {
+          "line": 181,
+          "text": "return Map.of(\"added\", work.proposeSlots(me(collegeId), collegeId, jobId, roundId, r.slots));"
+        },
+        {
+          "line": 185,
+          "text": "public Map<String, Object> selections(@PathVariable Integer collegeId, @PathVariable Integer jobId, @RequestBody SelectionRequest r) {"
+        },
+        {
+          "line": 186,
+          "text": "return Map.of(\"recorded\", work.submitSelections(me(collegeId), collegeId, jobId, r.applicantIds, r.roleOption, r.ctcLpa, r.kind));"
+        },
+        {
+          "line": 191,
+          "text": "public List<Map<String, Object>> threads(@PathVariable Integer collegeId) { return messages.threadsForRecruiter(collegeId, me(collegeId)); }"
+        },
+        {
+          "line": 195,
+          "text": "public Map<String, Object> pulse(@PathVariable Integer collegeId) { return Map.of(\"version\", messages.pulse(collegeId, me(collegeId))); }"
+        },
+        {
+          "line": 198,
+          "text": "public List<Map<String, Object>> thread(@PathVariable Integer collegeId, @PathVariable Long threadId) {"
+        },
+        {
+          "line": 199,
+          "text": "long recruiter = me(collegeId);"
+        },
+        {
+          "line": 200,
+          "text": "if (!messages.threadBelongsToRecruiter(threadId, collegeId, recruiter)) throw new IllegalArgumentException(\"Not found\");"
+        },
+        {
+          "line": 201,
+          "text": "return messages.messages(collegeId, threadId, \"RECRUITER\");"
+        },
+        {
+          "line": 205,
+          "text": "public ResponseEntity<Map<String, Object>> send(@PathVariable Integer collegeId, @RequestBody MessageRequest r) {"
+        },
+        {
+          "line": 206,
+          "text": "long recruiter = me(collegeId);"
+        },
+        {
+          "line": 207,
+          "text": "if (r.jobId != null) work.requireOwn(recruiter, collegeId, r.jobId);"
+        },
+        {
+          "line": 208,
+          "text": "return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(\"threadId\", messages.send(collegeId, recruiter, r.jobId, \"RECRUITER\", (int) recruiter, r.body, r.changeRequestId)));"
+        }
+      ],
+      "guardCandidateCount": 55,
+      "domainCallSamples": [
+        {
+          "line": 40,
+          "text": "accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_WORK);"
+        },
+        {
+          "line": 53,
+          "text": "accessService.requireCollege(p, collegeId, null);"
+        },
+        {
+          "line": 54,
+          "text": "return todayService.today(p.getId().longValue(), collegeId);"
+        },
+        {
+          "line": 63,
+          "text": "accessService.requireCollege(p, collegeId, null);"
+        },
+        {
+          "line": 67,
+          "text": "if ((from != null && !from.isBlank() && parsedFrom == null) || (to != null && !to.isBlank() && parsedTo == null)) throw new IllegalArgumentException(\"Dates must be ISO date-times\");"
+        },
+        {
+          "line": 70,
+          "text": "if (!end.isAfter(start) || end.isAfter(start.plusDays(120))) throw new IllegalArgumentException(\"Choose a range of up to 120 days\");"
+        },
+        {
+          "line": 71,
+          "text": "return todayService.calendar(p.getId().longValue(), collegeId, start, end);"
+        },
+        {
+          "line": 77,
+          "text": "return workspaceService.offers(me(collegeId), collegeId, jobId);"
+        },
+        {
+          "line": 85,
+          "text": "return workspaceService.notes(me(collegeId), collegeId, jobId);"
+        },
+        {
+          "line": 90,
+          "text": "workspaceService.saveNote(me(collegeId), collegeId, jobId, applicantId, r.rating, r.note);"
+        },
+        {
+          "line": 98,
+          "text": "accessService.requireCollege(p, collegeId, null);"
+        },
+        {
+          "line": 99,
+          "text": "Map<String, Object> c = workspaceService.company(p.getId().longValue());"
+        },
+        {
+          "line": 107,
+          "text": "accessService.requireCollege(p, collegeId, null);"
+        },
+        {
+          "line": 108,
+          "text": "return workspaceService.team(p.getId().longValue(), collegeId);"
+        },
+        {
+          "line": 114,
+          "text": "return workspaceService.reports(me(collegeId), collegeId);"
+        },
+        {
+          "line": 142,
+          "text": "shareService.writeResumeZipForRecruiter(jobId, collegeId, work.directColumnsFor(jobId), buf);"
+        },
+        {
+          "line": 200,
+          "text": "if (!messages.threadBelongsToRecruiter(threadId, collegeId, recruiter)) throw new IllegalArgumentException(\"Not found\");"
+        }
+      ],
+      "domainCallCandidateCount": 17
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/RecruiterCollegeController.java",
+      "sha": "0f7b6193be3cb6ef850696088a1bc0c9a19b18d4",
+      "lines": 185,
+      "package": "com._42students.lms.controller",
+      "className": "RecruiterCollegeController",
+      "mappingsAndGuards": [
+        {
+          "line": 41,
+          "annotation": "@RequestMapping(\"/api/v1/recruiter/colleges/{collegeId}\")",
+          "next": [
+            "public class RecruiterCollegeController {",
+            "private final RecruiterAccessService accessService;",
+            "private final RecruiterCollegeOverviewService overviewService;",
+            "private final TpoDriveService driveService;"
+          ]
+        },
+        {
+          "line": 71,
+          "annotation": "@GetMapping(\"/overview\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> overview(@PathVariable Integer collegeId) {",
+            "accessService.requireCollege(principal(), collegeId, RecruiterCapability.COLLEGE_OVERVIEW);",
+            "return ResponseEntity.ok(overviewService.overview(collegeId, principal().getId()));",
+            "}"
+          ]
+        },
+        {
+          "line": 77,
+          "annotation": "@GetMapping(\"/drive-requests\")",
+          "next": [
+            "public ResponseEntity<List<Map<String, Object>>> myRequests(@PathVariable Integer collegeId) {",
+            "UserPrincipal p = principal();",
+            "accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_REQUEST);",
+            "return ResponseEntity.ok(jobRepository.findRecruiterRequests(p.getId().longValue(), collegeId).stream().map(this::view).toList());"
+          ]
+        },
+        {
+          "line": 84,
+          "annotation": "@PostMapping(\"/drive-requests\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> request(@PathVariable Integer collegeId, @RequestBody DriveForm form) {",
+            "UserPrincipal p = principal();",
+            "RecruiterCollegeAccess grant = accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_REQUEST);",
+            "Job job = driveService.createRequest(form, grant.getOrganizationId(), collegeId, p.getId().longValue(), companyNameOf(p));"
+          ]
+        },
+        {
+          "line": 93,
+          "annotation": "@PutMapping(\"/drive-requests/{jobId}\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> resubmit(@PathVariable Integer collegeId, @PathVariable Integer jobId, @RequestBody DriveForm form) {",
+            "UserPrincipal p = principal();",
+            "accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_REQUEST);",
+            "// The request must be this recruiter's and at this college; otherwise it looks like it does not exist."
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 36,
+          "text": "* so the recruiter fence lets it through; every method still calls RecruiterAccessService.requireCollege with the"
+        },
+        {
+          "line": 41,
+          "text": "@RequestMapping(\"/api/v1/recruiter/colleges/{collegeId}\")"
+        },
+        {
+          "line": 72,
+          "text": "public ResponseEntity<Map<String, Object>> overview(@PathVariable Integer collegeId) {"
+        },
+        {
+          "line": 73,
+          "text": "accessService.requireCollege(principal(), collegeId, RecruiterCapability.COLLEGE_OVERVIEW);"
+        },
+        {
+          "line": 74,
+          "text": "return ResponseEntity.ok(overviewService.overview(collegeId, principal().getId()));"
+        },
+        {
+          "line": 78,
+          "text": "public ResponseEntity<List<Map<String, Object>>> myRequests(@PathVariable Integer collegeId) {"
+        },
+        {
+          "line": 80,
+          "text": "accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_REQUEST);"
+        },
+        {
+          "line": 81,
+          "text": "return ResponseEntity.ok(jobRepository.findRecruiterRequests(p.getId().longValue(), collegeId).stream().map(this::view).toList());"
+        },
+        {
+          "line": 85,
+          "text": "public ResponseEntity<Map<String, Object>> request(@PathVariable Integer collegeId, @RequestBody DriveForm form) {"
+        },
+        {
+          "line": 87,
+          "text": "RecruiterCollegeAccess grant = accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_REQUEST);"
+        },
+        {
+          "line": 88,
+          "text": "Job job = driveService.createRequest(form, grant.getOrganizationId(), collegeId, p.getId().longValue(), companyNameOf(p));"
+        },
+        {
+          "line": 94,
+          "text": "public ResponseEntity<Map<String, Object>> resubmit(@PathVariable Integer collegeId, @PathVariable Integer jobId, @RequestBody DriveForm form) {"
+        },
+        {
+          "line": 96,
+          "text": "accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_REQUEST);"
+        },
+        {
+          "line": 98,
+          "text": "boolean mine = jobRepository.findRecruiterRequests(p.getId().longValue(), collegeId).stream().anyMatch(j -> java.util.Objects.equals(j.getId(), jobId)); // BE-0152: value, not boxed identity"
+        }
+      ],
+      "guardCandidateCount": 14,
+      "domainCallSamples": [
+        {
+          "line": 73,
+          "text": "accessService.requireCollege(principal(), collegeId, RecruiterCapability.COLLEGE_OVERVIEW);"
+        },
+        {
+          "line": 74,
+          "text": "return ResponseEntity.ok(overviewService.overview(collegeId, principal().getId()));"
+        },
+        {
+          "line": 80,
+          "text": "accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_REQUEST);"
+        },
+        {
+          "line": 81,
+          "text": "return ResponseEntity.ok(jobRepository.findRecruiterRequests(p.getId().longValue(), collegeId).stream().map(this::view).toList());"
+        },
+        {
+          "line": 87,
+          "text": "RecruiterCollegeAccess grant = accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_REQUEST);"
+        },
+        {
+          "line": 88,
+          "text": "Job job = driveService.createRequest(form, grant.getOrganizationId(), collegeId, p.getId().longValue(), companyNameOf(p));"
+        },
+        {
+          "line": 96,
+          "text": "accessService.requireCollege(p, collegeId, RecruiterCapability.DRIVE_REQUEST);"
+        },
+        {
+          "line": 98,
+          "text": "boolean mine = jobRepository.findRecruiterRequests(p.getId().longValue(), collegeId).stream().anyMatch(j -> java.util.Objects.equals(j.getId(), jobId)); // BE-0152: value, not boxed identity"
+        },
+        {
+          "line": 99,
+          "text": "if (!mine) throw new IllegalArgumentException(\"Not found\");"
+        },
+        {
+          "line": 100,
+          "text": "return ResponseEntity.ok(view(driveService.resubmitRequest(jobId, form, p.getId().longValue(), companyNameOf(p))));"
+        },
+        {
+          "line": 104,
+          "text": "Recruiter recruiter = accessService.findUsableRecruiter(p.getId()).orElseThrow(() -> new IllegalArgumentException(\"Not found\"));"
+        },
+        {
+          "line": 106,
+          "text": "throw new IllegalArgumentException(\"Your account has no company yet. Please contact the placement cell\");"
+        },
+        {
+          "line": 108,
+          "text": "return java.util.Optional.ofNullable(companyRepository.nameOf(recruiter.getCompanyId()))"
+        },
+        {
+          "line": 142,
+          "text": "JobEligibility eligibility = eligibilityService.parse(j);"
+        }
+      ],
+      "domainCallCandidateCount": 14
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoDriveController.java",
+      "sha": "39b1a60d81e1977f4e8ea36470e92f03f128a7e3",
+      "lines": 210,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "TpoDriveController",
+      "mappingsAndGuards": [
+        {
+          "line": 26,
+          "annotation": "@RequestMapping(\"/api/v1/tpo/drives\")",
+          "next": [
+            "public class TpoDriveController {",
+            "private final TpoDriveService driveService;",
+            "private final JobRepository jobRepository;",
+            "private final SecurityContextUtil securityContextUtil;"
+          ]
+        },
+        {
+          "line": 68,
+          "annotation": "@GetMapping",
+          "next": [
+            "public ResponseEntity<List<Job>> list() {",
+            "UserPrincipal p = principal();",
+            "if (p.getCollegeId() == null) return ResponseEntity.ok(List.of());",
+            "return ResponseEntity.ok(jobRepository.findByCollegeIdAndIsDeletedFalse(p.getCollegeId()));"
+          ]
+        },
+        {
+          "line": 75,
+          "annotation": "@GetMapping(\"/{jobId}\")",
+          "next": [
+            "public ResponseEntity<Job> get(@PathVariable Integer jobId) {",
+            "return ResponseEntity.ok(withSaver(requireOwnedJob(jobId)));",
+            "}",
+            "/** Records who saved the form and when, and names them for \"Last saved by\" (recruiter phase 1, N10). */"
+          ]
+        },
+        {
+          "line": 103,
+          "annotation": "@PostMapping",
+          "next": [
+            "public ResponseEntity<Job> create(@RequestBody DriveForm form) {",
+            "UserPrincipal p = principal();",
+            "Job job = savedBy(driveService.createDraft(form, p.getOrganizationId(), p.getCollegeId(), p.getId()), p);",
+            "logDrive(\"DRIVE_CREATED\", job, null);"
+          ]
+        },
+        {
+          "line": 111,
+          "annotation": "@PutMapping(\"/{jobId}\")",
+          "next": [
+            "public ResponseEntity<Job> update(@PathVariable Integer jobId, @RequestBody DriveForm form) {",
+            "requireOwnedJob(jobId);",
+            "Job saved = savedBy(driveService.updateDraft(jobId, form), principal());",
+            "// BE-0056: ordinary edits show in the Audit Log too. The editor autosaves, so one entry per person and drive every"
+          ]
+        },
+        {
+          "line": 124,
+          "annotation": "@DeleteMapping(\"/{jobId}\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> deleteDraft(@PathVariable Integer jobId) {",
+            "Job job = requireOwnedJob(jobId);",
+            "driveService.deleteDraft(jobId);",
+            "logDrive(\"DRIVE_DRAFT_DELETED\", job, null);"
+          ]
+        },
+        {
+          "line": 132,
+          "annotation": "@GetMapping(\"/{jobId}/rounds\")",
+          "next": [
+            "public ResponseEntity<List<JobRound>> rounds(@PathVariable Integer jobId) {",
+            "requireOwnedJob(jobId);",
+            "return ResponseEntity.ok(driveService.rounds(jobId));",
+            "}"
+          ]
+        },
+        {
+          "line": 138,
+          "annotation": "@PostMapping(\"/{jobId}/publish\")",
+          "next": [
+            "public ResponseEntity<Job> publish(@PathVariable Integer jobId, @RequestParam(defaultValue = \"true\") boolean notifyByEmail) {",
+            "requireOwnedJob(jobId);",
+            "Job job = driveService.publish(jobId, principal().getId(), notifyByEmail);",
+            "logDrive(\"DRIVE_PUBLISHED\", job, notifyByEmail ? \"students emailed\" : \"no email sent\");"
+          ]
+        },
+        {
+          "line": 146,
+          "annotation": "@PostMapping(\"/{jobId}/send-back\")",
+          "next": [
+            "public ResponseEntity<Job> sendBack(@PathVariable Integer jobId, @RequestBody Map<String, String> body) {",
+            "requireOwnedJob(jobId);",
+            "Job job = driveService.sendBack(jobId, body.get(\"note\"));",
+            "logDrive(\"DRIVE_SENT_BACK\", job, body.get(\"note\"));"
+          ]
+        },
+        {
+          "line": 155,
+          "annotation": "@PostMapping(\"/{jobId}/approve\")",
+          "next": [
+            "public ResponseEntity<Job> approve(@PathVariable Integer jobId) {",
+            "requireOwnedJob(jobId);",
+            "Job job = driveService.approveRequest(jobId, principal().getId());",
+            "logDrive(\"REQUEST_APPROVED\", job, null);"
+          ]
+        },
+        {
+          "line": 163,
+          "annotation": "@PostMapping(\"/{jobId}/reject\")",
+          "next": [
+            "public ResponseEntity<Job> reject(@PathVariable Integer jobId, @RequestBody Map<String, String> body) {",
+            "requireOwnedJob(jobId);",
+            "Job job = driveService.rejectRequest(jobId, body.get(\"reason\"));",
+            "logDrive(\"REQUEST_REJECTED\", job, body.get(\"reason\"));"
+          ]
+        },
+        {
+          "line": 171,
+          "annotation": "@PostMapping(\"/{jobId}/cancel\")",
+          "next": [
+            "public ResponseEntity<Job> cancel(@PathVariable Integer jobId, @RequestBody Map<String, String> body) {",
+            "requireOwnedJob(jobId);",
+            "Job job = driveService.cancel(jobId, body.get(\"reason\"), principal().getId());",
+            "logDrive(\"DRIVE_CANCELLED\", job, body.get(\"reason\"));"
+          ]
+        },
+        {
+          "line": 179,
+          "annotation": "@PostMapping(\"/{jobId}/close\")",
+          "next": [
+            "public ResponseEntity<Job> close(@PathVariable Integer jobId) {",
+            "requireOwnedJob(jobId);",
+            "Job job = driveService.close(jobId, principal().getId());",
+            "logDrive(\"DRIVE_CLOSED\", job, null);"
+          ]
+        },
+        {
+          "line": 187,
+          "annotation": "@PostMapping(\"/{jobId}/extend-deadline\")",
+          "next": [
+            "public ResponseEntity<Job> extendDeadline(@PathVariable Integer jobId, @RequestBody Map<String, String> body) {",
+            "requireOwnedJob(jobId);",
+            "Job job = driveService.extendDeadline(jobId, LocalDateTime.parse(body.get(\"newDeadline\")));",
+            "// The deadline arrives in UTC; the log says it as the college reads it (\"26 Oct, 11:59 PM\"), not \"2026-10-26T18:29:00\""
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 63,
+          "text": "audit.log(p.getCollegeId(), \"TPO\", p.getId(), action, \"DRIVE\", (long) job.getId(),"
+        },
+        {
+          "line": 71,
+          "text": "if (p.getCollegeId() == null) return ResponseEntity.ok(List.of());"
+        },
+        {
+          "line": 72,
+          "text": "return ResponseEntity.ok(jobRepository.findByCollegeIdAndIsDeletedFalse(p.getCollegeId()));"
+        },
+        {
+          "line": 106,
+          "text": "Job job = savedBy(driveService.createDraft(form, p.getOrganizationId(), p.getCollegeId(), p.getId()), p);"
+        },
+        {
+          "line": 119,
+          "text": "audit.logAtMostEvery(10, p.getCollegeId(), \"TPO\", p.getId(), \"DRIVE_EDITED\", \"DRIVE\", (long) saved.getId(), who);"
+        }
+      ],
+      "guardCandidateCount": 5,
+      "domainCallSamples": [
+        {
+          "line": 56,
+          "text": "return jobRepository.findById(jobId).orElseThrow(() -> new IllegalArgumentException(\"Not found\"));"
+        },
+        {
+          "line": 72,
+          "text": "return ResponseEntity.ok(jobRepository.findByCollegeIdAndIsDeletedFalse(p.getCollegeId()));"
+        },
+        {
+          "line": 84,
+          "text": "jobRepository.save(job);"
+        },
+        {
+          "line": 90,
+          "text": "facultyRepository.findById(job.getLastSavedByFacultyId())"
+        },
+        {
+          "line": 94,
+          "text": "recruiterRepository.findById(job.getRecruiterId().intValue()).ifPresent(r -> {"
+        },
+        {
+          "line": 106,
+          "text": "Job job = savedBy(driveService.createDraft(form, p.getOrganizationId(), p.getCollegeId(), p.getId()), p);"
+        },
+        {
+          "line": 114,
+          "text": "Job saved = savedBy(driveService.updateDraft(jobId, form), principal());"
+        },
+        {
+          "line": 127,
+          "text": "driveService.deleteDraft(jobId);"
+        },
+        {
+          "line": 135,
+          "text": "return ResponseEntity.ok(driveService.rounds(jobId));"
+        },
+        {
+          "line": 141,
+          "text": "Job job = driveService.publish(jobId, principal().getId(), notifyByEmail);"
+        },
+        {
+          "line": 149,
+          "text": "Job job = driveService.sendBack(jobId, body.get(\"note\"));"
+        },
+        {
+          "line": 158,
+          "text": "Job job = driveService.approveRequest(jobId, principal().getId());"
+        },
+        {
+          "line": 166,
+          "text": "Job job = driveService.rejectRequest(jobId, body.get(\"reason\"));"
+        },
+        {
+          "line": 174,
+          "text": "Job job = driveService.cancel(jobId, body.get(\"reason\"), principal().getId());"
+        },
+        {
+          "line": 182,
+          "text": "Job job = driveService.close(jobId, principal().getId());"
+        },
+        {
+          "line": 190,
+          "text": "Job job = driveService.extendDeadline(jobId, LocalDateTime.parse(body.get(\"newDeadline\")));"
+        }
+      ],
+      "domainCallCandidateCount": 16
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoApplicantController.java",
+      "sha": "93368ad186db5c97c7c5232fc92826cf08c62af4",
+      "lines": 128,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "TpoApplicantController",
+      "mappingsAndGuards": [
+        {
+          "line": 18,
+          "annotation": "@RequestMapping(\"/api/v1/tpo/drives/{jobId}/applicants\")",
+          "next": [
+            "public class TpoApplicantController {",
+            "private final TpoApplicantService applicantService;",
+            "private final com._42students.lms.service.tpo.TpoAuditService audit;",
+            "private final SecurityContextUtil securityContextUtil;"
+          ]
+        },
+        {
+          "line": 40,
+          "annotation": "@GetMapping",
+          "next": [
+            "public ResponseEntity<List<JobApplication>> list(@PathVariable Integer jobId) {",
+            "guard.requireJob(principal(), jobId);",
+            "return ResponseEntity.ok(applicantService.applicants(jobId));",
+            "}"
+          ]
+        },
+        {
+          "line": 46,
+          "annotation": "@GetMapping(\"/not-applied\")",
+          "next": [
+            "public ResponseEntity<List<StudentSummaryDTO>> notApplied(@PathVariable Integer jobId) {",
+            "guard.requireJob(principal(), jobId);",
+            "return ResponseEntity.ok(applicantService.notApplied(jobId).stream().map(StudentSummaryDTO::new).toList());",
+            "}"
+          ]
+        },
+        {
+          "line": 52,
+          "annotation": "@PostMapping(\"/remind-not-applied\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> remindNotApplied(@PathVariable Integer jobId) {",
+            "guard.requireJob(principal(), jobId);",
+            "return ResponseEntity.ok(Map.of(\"reminded\", applicantService.remindNotApplied(jobId)));",
+            "}"
+          ]
+        },
+        {
+          "line": 58,
+          "annotation": "@PostMapping(\"/apply-on-behalf/{learnerId}\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> applyOnBehalf(@PathVariable Integer jobId, @PathVariable Integer learnerId) {",
+            "guard.requireJobWritable(principal(), jobId);",
+            "guard.requireLearner(principal(), learnerId);",
+            "Map<String, Object> result = driveAddService.add(jobId, principal().getCollegeId(), List.of(learnerId), false, null, principal().getId());"
+          ]
+        },
+        {
+          "line": 77,
+          "annotation": "@PostMapping(\"/add-students\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> addStudents(@PathVariable Integer jobId, @RequestBody AddStudentsRequest req) {",
+            "guard.requireJobWritable(principal(), jobId);",
+            "if (req.learnerIds != null) for (Integer id : req.learnerIds) if (id != null) guard.requireLearner(principal(), id);",
+            "return ResponseEntity.ok(driveAddService.add(jobId, principal().getCollegeId(), req.learnerIds, req.includeIneligible, req.reason, principal().getId()));"
+          ]
+        },
+        {
+          "line": 90,
+          "annotation": "@PostMapping(\"/bulk-move\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> bulkMove(@PathVariable Integer jobId, @RequestBody BulkRequest req) {",
+            "guard.requireApplicationsInJob(principal(), jobId, req.applicationIds);",
+            "var r = applicantService.bulkMove(req.applicationIds, req.newStatus, principal().getId());",
+            "// On the drive's activity: who moved how many to which stage (single moves from the board used to leave no trace)."
+          ]
+        },
+        {
+          "line": 99,
+          "annotation": "@PostMapping(\"/bulk-reject\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> bulkReject(@PathVariable Integer jobId, @RequestBody BulkRequest req) {",
+            "guard.requireApplicationsInJob(principal(), jobId, req.applicationIds);",
+            "var r = applicantService.bulkReject(req.applicationIds, principal().getId(), req.internalReason);",
+            "if (r.moved() > 0) audit.log(principal().getCollegeId(), \"TPO\", principal().getId(), \"APPLICANTS_NOT_SELECTED\", \"DRIVE\", jobId.longValue(),"
+          ]
+        },
+        {
+          "line": 108,
+          "annotation": "@PostMapping(\"/undo/{undoGroupId}\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> undo(@PathVariable Integer jobId, @PathVariable String undoGroupId) {",
+            "guard.requireJob(principal(), jobId);",
+            "int restored = applicantService.undo(jobId, undoGroupId, principal().getId());",
+            "if (restored < 0) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(\"error\", \"Too late to undo: the students have already been told\"));"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 62,
+          "text": "Map<String, Object> result = driveAddService.add(jobId, principal().getCollegeId(), List.of(learnerId), false, null, principal().getId());"
+        },
+        {
+          "line": 81,
+          "text": "return ResponseEntity.ok(driveAddService.add(jobId, principal().getCollegeId(), req.learnerIds, req.includeIneligible, req.reason, principal().getId()));"
+        },
+        {
+          "line": 95,
+          "text": "if (r.moved() > 0) audit.log(principal().getCollegeId(), \"TPO\", principal().getId(), \"APPLICANTS_MOVED\", \"DRIVE\", jobId.longValue(), r.moved() + (r.moved() == 1 ? \" student\" : \" students\") + \" moved t"
+        },
+        {
+          "line": 103,
+          "text": "if (r.moved() > 0) audit.log(principal().getCollegeId(), \"TPO\", principal().getId(), \"APPLICANTS_NOT_SELECTED\", \"DRIVE\", jobId.longValue(),"
+        },
+        {
+          "line": 113,
+          "text": "if (restored > 0) audit.log(principal().getCollegeId(), \"TPO\", principal().getId(), \"APPLICANTS_MOVE_UNDONE\", \"DRIVE\", jobId.longValue(), restored + (restored == 1 ? \" student\" : \" students\") + \" put "
+        }
+      ],
+      "guardCandidateCount": 5,
+      "domainCallSamples": [
+        {
+          "line": 43,
+          "text": "return ResponseEntity.ok(applicantService.applicants(jobId));"
+        },
+        {
+          "line": 49,
+          "text": "return ResponseEntity.ok(applicantService.notApplied(jobId).stream().map(StudentSummaryDTO::new).toList());"
+        },
+        {
+          "line": 55,
+          "text": "return ResponseEntity.ok(Map.of(\"reminded\", applicantService.remindNotApplied(jobId)));"
+        },
+        {
+          "line": 62,
+          "text": "Map<String, Object> result = driveAddService.add(jobId, principal().getCollegeId(), List.of(learnerId), false, null, principal().getId());"
+        },
+        {
+          "line": 65,
+          "text": "throw new IllegalArgumentException(String.valueOf(row.get(\"message\")));"
+        },
+        {
+          "line": 81,
+          "text": "return ResponseEntity.ok(driveAddService.add(jobId, principal().getCollegeId(), req.learnerIds, req.includeIneligible, req.reason, principal().getId()));"
+        },
+        {
+          "line": 93,
+          "text": "var r = applicantService.bulkMove(req.applicationIds, req.newStatus, principal().getId());"
+        },
+        {
+          "line": 95,
+          "text": "if (r.moved() > 0) audit.log(principal().getCollegeId(), \"TPO\", principal().getId(), \"APPLICANTS_MOVED\", \"DRIVE\", jobId.longValue(), r.moved() + (r.moved() == 1 ? \" student\" : \" students\") + \" moved t"
+        },
+        {
+          "line": 102,
+          "text": "var r = applicantService.bulkReject(req.applicationIds, principal().getId(), req.internalReason);"
+        },
+        {
+          "line": 111,
+          "text": "int restored = applicantService.undo(jobId, undoGroupId, principal().getId());"
+        }
+      ],
+      "domainCallCandidateCount": 10
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoOfferController.java",
+      "sha": "851d4d55ae5b5318fbff00be65e0c6d2d9ee8122",
+      "lines": 140,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "TpoOfferController",
+      "mappingsAndGuards": [
+        {
+          "line": 16,
+          "annotation": "@RequestMapping(\"/api/v1/tpo/offers\")",
+          "next": [
+            "public class TpoOfferController {",
+            "private final TpoOfferService offerService;",
+            "private final SecurityContextUtil securityContextUtil;",
+            "private final TpoAccessGuard guard;"
+          ]
+        },
+        {
+          "line": 54,
+          "annotation": "@PostMapping(\"/record-selection\")",
+          "next": [
+            "public ResponseEntity<JobOffer> recordSelection(@RequestBody RecordSelectionRequest req) {",
+            "guard.requireApplicationWritable(principal(), req.applicationId);",
+            "JobOffer offer = offerService.recordSelection(req.applicationId, req.roleOptionName, req.ctcLpa,",
+            "req.kind, principal().getId(), \"TPO\");"
+          ]
+        },
+        {
+          "line": 63,
+          "annotation": "@PostMapping(\"/{offerId}/letter\")",
+          "next": [
+            "public ResponseEntity<JobOffer> attachLetter(@PathVariable Long offerId, @RequestBody Map<String, String> body) {",
+            "guard.requireOfferWritable(principal(), offerId);",
+            "String url = body.get(\"letterUrl\");",
+            "return ResponseEntity.ok(logged(url == null || url.isBlank() ? \"OFFER_LETTER_REMOVED\" : \"OFFER_LETTER_ATTACHED\", offerService.attachLetter(offerId, url), null));"
+          ]
+        },
+        {
+          "line": 70,
+          "annotation": "@PostMapping(\"/{offerId}/verify-and-release\")",
+          "next": [
+            "public ResponseEntity<JobOffer> verifyAndRelease(@PathVariable Long offerId) {",
+            "guard.requireOfferWritable(principal(), offerId);",
+            "return ResponseEntity.ok(logged(\"OFFER_VERIFIED_RELEASED\", offerService.verifyAndRelease(offerId, principal().getId()), null));",
+            "}"
+          ]
+        },
+        {
+          "line": 82,
+          "annotation": "@PostMapping(\"/bulk-verify\")",
+          "next": [
+            "public ResponseEntity<java.util.Map<String, Object>> bulkVerify(@RequestBody BulkVerifyRequest req) {",
+            "java.util.List<Long> ids = req == null || req.offerIds == null ? java.util.List.of() : req.offerIds;",
+            "if (ids.size() > 200) throw new IllegalArgumentException(\"Verify at most 200 selections at a time\");",
+            "java.util.List<Long> released = new java.util.ArrayList<>();"
+          ]
+        },
+        {
+          "line": 106,
+          "annotation": "@PostMapping(\"/{offerId}/external-acceptance\")",
+          "next": [
+            "public ResponseEntity<JobOffer> externalAcceptance(@PathVariable Long offerId) {",
+            "guard.requireOfferWritable(principal(), offerId);",
+            "return ResponseEntity.ok(logged(\"OFFER_EXTERNAL_ACCEPTANCE_RECORDED\", offerService.recordExternalAcceptance(offerId, principal().getId()), null));",
+            "}"
+          ]
+        },
+        {
+          "line": 112,
+          "annotation": "@PostMapping(\"/{offerId}/withdraw\")",
+          "next": [
+            "public ResponseEntity<JobOffer> withdraw(@PathVariable Long offerId, @RequestBody Map<String, String> body) {",
+            "guard.requireOfferWritable(principal(), offerId);",
+            "return ResponseEntity.ok(logged(\"OFFER_WITHDRAWN_BY_COMPANY\", offerService.withdrawOffer(offerId, body.get(\"reason\"), principal().getId()), body.get(\"reason\")));",
+            "}"
+          ]
+        },
+        {
+          "line": 118,
+          "annotation": "@PostMapping(\"/{offerId}/joining-status\")",
+          "next": [
+            "public ResponseEntity<JobOffer> joiningStatus(@PathVariable Long offerId, @RequestBody Map<String, String> body) {",
+            "guard.requireOfferWritable(principal(), offerId);",
+            "return ResponseEntity.ok(logged(\"OFFER_JOINING_STATUS_SET\", offerService.setJoiningStatus(offerId, body.get(\"status\")), body.get(\"status\")));",
+            "}"
+          ]
+        },
+        {
+          "line": 124,
+          "annotation": "@PostMapping(\"/{offerId}/reverse-acceptance\")",
+          "next": [
+            "public ResponseEntity<JobOffer> reverse(@PathVariable Long offerId, @RequestBody Map<String, String> body) {",
+            "guard.requireOfferWritable(principal(), offerId);",
+            "return ResponseEntity.ok(logged(\"OFFER_ACCEPTANCE_REVERSED\", offerService.reverseAcceptance(offerId, body.get(\"reason\"), principal().getId()), body.get(\"reason\")));",
+            "}"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 42,
+          "text": "audit.log(p.getCollegeId(), \"TPO\", p.getId(), action, \"OFFER\", offer.getId(), detail);"
+        }
+      ],
+      "guardCandidateCount": 1,
+      "domainCallSamples": [
+        {
+          "line": 57,
+          "text": "JobOffer offer = offerService.recordSelection(req.applicationId, req.roleOptionName, req.ctcLpa,"
+        },
+        {
+          "line": 67,
+          "text": "return ResponseEntity.ok(logged(url == null || url.isBlank() ? \"OFFER_LETTER_REMOVED\" : \"OFFER_LETTER_ATTACHED\", offerService.attachLetter(offerId, url), null));"
+        },
+        {
+          "line": 73,
+          "text": "return ResponseEntity.ok(logged(\"OFFER_VERIFIED_RELEASED\", offerService.verifyAndRelease(offerId, principal().getId()), null));"
+        },
+        {
+          "line": 85,
+          "text": "if (ids.size() > 200) throw new IllegalArgumentException(\"Verify at most 200 selections at a time\");"
+        },
+        {
+          "line": 91,
+          "text": "logged(\"OFFER_VERIFIED_RELEASED\", offerService.verifyAndRelease(id, principal().getId()), \"bulk\");"
+        },
+        {
+          "line": 109,
+          "text": "return ResponseEntity.ok(logged(\"OFFER_EXTERNAL_ACCEPTANCE_RECORDED\", offerService.recordExternalAcceptance(offerId, principal().getId()), null));"
+        },
+        {
+          "line": 115,
+          "text": "return ResponseEntity.ok(logged(\"OFFER_WITHDRAWN_BY_COMPANY\", offerService.withdrawOffer(offerId, body.get(\"reason\"), principal().getId()), body.get(\"reason\")));"
+        },
+        {
+          "line": 121,
+          "text": "return ResponseEntity.ok(logged(\"OFFER_JOINING_STATUS_SET\", offerService.setJoiningStatus(offerId, body.get(\"status\")), body.get(\"status\")));"
+        },
+        {
+          "line": 127,
+          "text": "return ResponseEntity.ok(logged(\"OFFER_ACCEPTANCE_REVERSED\", offerService.reverseAcceptance(offerId, body.get(\"reason\"), principal().getId()), body.get(\"reason\")));"
+        }
+      ],
+      "domainCallCandidateCount": 9
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoResultsController.java",
+      "sha": "e0ddab057f66fe6d8d1b354ec7b5e958aafcc12a",
+      "lines": 87,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "TpoResultsController",
+      "mappingsAndGuards": [
+        {
+          "line": 16,
+          "annotation": "@RequestMapping(\"/api/v1/tpo/rounds\")",
+          "next": [
+            "public class TpoResultsController {",
+            "@org.springframework.beans.factory.annotation.Autowired(required = false)",
+            "private org.springframework.jdbc.core.JdbcTemplate jdbc;",
+            "private final TpoResultsService resultsService;"
+          ]
+        },
+        {
+          "line": 49,
+          "annotation": "@PostMapping(\"/{roundId}/results\")",
+          "next": [
+            "public ResponseEntity<RoundResult> stage(@PathVariable Long roundId, @RequestBody StageRequest req) {",
+            "UserPrincipal p = principal();",
+            "guard.requireApplicationInRoundJob(p, roundId, req.applicationId);",
+            "RoundResult r = resultsService.stage(roundId, req.applicationId, req.outcome, req.waitlistRank,"
+          ]
+        },
+        {
+          "line": 59,
+          "annotation": "@GetMapping(\"/{roundId}/results/pending\")",
+          "next": [
+            "public ResponseEntity<List<RoundResult>> pending(@PathVariable Long roundId) {",
+            "guard.requireRound(principal(), roundId);",
+            "return ResponseEntity.ok(resultsService.pending(roundId));",
+            "}"
+          ]
+        },
+        {
+          "line": 65,
+          "annotation": "@PostMapping(\"/{roundId}/results/apply\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> apply(@PathVariable Long roundId, @RequestParam(defaultValue = \"true\") boolean notify) {",
+            "guard.requireRoundWritable(principal(), roundId);",
+            "// { applied, skipped: [{ applicationId, reason }] }: a result that could not be applied stays waiting and is reported.",
+            "Map<String, Object> out = resultsService.applyRound(roundId, principal().getId(), notify);"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 77,
+          "text": "if (jobId != null) audit.log(principal().getCollegeId(), \"TPO\", principal().getId(), \"ROUND_RESULTS_APPLIED\", \"DRIVE\", jobId.longValue(),"
+        }
+      ],
+      "guardCandidateCount": 1,
+      "domainCallSamples": [
+        {
+          "line": 53,
+          "text": "RoundResult r = resultsService.stage(roundId, req.applicationId, req.outcome, req.waitlistRank,"
+        },
+        {
+          "line": 62,
+          "text": "return ResponseEntity.ok(resultsService.pending(roundId));"
+        },
+        {
+          "line": 69,
+          "text": "Map<String, Object> out = resultsService.applyRound(roundId, principal().getId(), notify);"
+        }
+      ],
+      "domainCallCandidateCount": 3
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java",
+      "sha": "fbe9eb5e4ba851361ee2fe84258cb4f0d1c4aaa9",
+      "lines": 183,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "TpoRecruiterLeadController",
+      "mappingsAndGuards": [
+        {
+          "line": 20,
+          "annotation": "@RequestMapping(\"/api/v1/tpo/recruiter-leads\")",
+          "next": [
+            "public class TpoRecruiterLeadController {",
+            "private final TpoRecruiterLeadService recruiterLeadService;",
+            "private final SecurityContextUtil securityContextUtil;",
+            "private final TpoAccessGuard guard;"
+          ]
+        },
+        {
+          "line": 37,
+          "annotation": "@GetMapping",
+          "next": [
+            "public ResponseEntity<List<RecruiterLead>> board() {",
+            "return ResponseEntity.ok(recruiterLeadService.board(principal().getCollegeId()));",
+            "}",
+            "public static class AddRecruiterLeadRequest {"
+          ]
+        },
+        {
+          "line": 54,
+          "annotation": "@PostMapping",
+          "next": [
+            "public ResponseEntity<RecruiterLead> add(@RequestBody AddRecruiterLeadRequest req) {",
+            "UserPrincipal p = principal();",
+            "RecruiterLead existing = recruiterLeadService.findExisting(p.getCollegeId(), req.emailOrPhone);",
+            "if (existing != null) return ResponseEntity.status(HttpStatus.CONFLICT).body(existing);"
+          ]
+        },
+        {
+          "line": 83,
+          "annotation": "@PutMapping(\"/{recruiterLeadId}\")",
+          "next": [
+            "public ResponseEntity<RecruiterLead> update(@PathVariable Long recruiterLeadId, @RequestBody UpdateRecruiterLeadRequest req) {",
+            "guard.requireRecruiterLead(principal(), recruiterLeadId);",
+            "return ResponseEntity.ok(recruiterLeadService.updateDetails(recruiterLeadId, req.name, req.designation, req.email, req.phone, req.companyName, req.source, req.sourceSent));",
+            "}"
+          ]
+        },
+        {
+          "line": 89,
+          "annotation": "@GetMapping(\"/check\")",
+          "next": [
+            "public ResponseEntity<RecruiterLead> check(@RequestParam String emailOrPhone) {",
+            "RecruiterLead existing = recruiterLeadService.findExisting(principal().getCollegeId(), emailOrPhone);",
+            "return existing == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(existing);",
+            "}"
+          ]
+        },
+        {
+          "line": 104,
+          "annotation": "@PostMapping(\"/{recruiterLeadId}/activity\")",
+          "next": [
+            "public ResponseEntity<RecruiterLeadActivity> logActivity(@PathVariable Long recruiterLeadId, @RequestBody ActivityRequest req) {",
+            "guard.requireRecruiterLead(principal(), recruiterLeadId);",
+            "if (req == null || req.type == null || !LOGGABLE_ACTIVITY.contains(req.type.trim().toUpperCase())) {",
+            "throw new org.springframework.web.server.ResponseStatusException(HttpStatus.BAD_REQUEST, \"Log a call, email, meeting or note\");"
+          ]
+        },
+        {
+          "line": 120,
+          "annotation": "@PostMapping(\"/{recruiterLeadId}/follow-ups\")",
+          "next": [
+            "public ResponseEntity<FollowUp> addFollowUp(@PathVariable Long recruiterLeadId, @RequestBody FollowUpRequest req) {",
+            "guard.requireRecruiterLead(principal(), recruiterLeadId);",
+            "return ResponseEntity.status(HttpStatus.CREATED)",
+            ".body(recruiterLeadService.addFollowUp(recruiterLeadId, req.dueAt, principal().getId(), req.note));"
+          ]
+        },
+        {
+          "line": 127,
+          "annotation": "@PostMapping(\"/follow-ups/{followUpId}/done\")",
+          "next": [
+            "public ResponseEntity<Void> markDone(@PathVariable Long followUpId) {",
+            "guard.requireFollowUp(principal(), followUpId);",
+            "recruiterLeadService.markFollowUpDone(followUpId);",
+            "return ResponseEntity.noContent().build();"
+          ]
+        },
+        {
+          "line": 134,
+          "annotation": "@PutMapping(\"/follow-ups/{followUpId}/move\")",
+          "next": [
+            "public ResponseEntity<FollowUp> move(@PathVariable Long followUpId, @RequestBody FollowUpRequest req) {",
+            "guard.requireFollowUp(principal(), followUpId);",
+            "if (req.dueAt == null) throw new IllegalArgumentException(\"Choose a date\");",
+            "return ResponseEntity.ok(recruiterLeadService.moveFollowUp(followUpId, req.dueAt));"
+          ]
+        },
+        {
+          "line": 141,
+          "annotation": "@GetMapping(\"/follow-ups/due\")",
+          "next": [
+            "public ResponseEntity<List<FollowUp>> due() {",
+            "return ResponseEntity.ok(recruiterLeadService.dueFollowUps(LocalDateTime.now(), principal().getCollegeId()));",
+            "}",
+            "public static class NotNowRequest {"
+          ]
+        },
+        {
+          "line": 151,
+          "annotation": "@PostMapping(\"/{recruiterLeadId}/not-now\")",
+          "next": [
+            "public ResponseEntity<Void> notNow(@PathVariable Long recruiterLeadId, @RequestBody NotNowRequest req) {",
+            "guard.requireRecruiterLead(principal(), recruiterLeadId);",
+            "recruiterLeadService.markNotNow(recruiterLeadId, req.reason, req.revisitDate);",
+            "return ResponseEntity.noContent().build();"
+          ]
+        },
+        {
+          "line": 164,
+          "annotation": "@PostMapping(\"/{recruiterLeadId}/invite\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> invite(@PathVariable Long recruiterLeadId, @RequestBody(required = false) InviteRequest body, javax.servlet.http.HttpServletRequest http) {",
+            "guard.requireRecruiterLead(principal(), recruiterLeadId);",
+            "// The email's link points at the site the TPO is on; CORS already limits Origin to our own sites.",
+            "if (body != null && body.channel != null) {"
+          ]
+        },
+        {
+          "line": 177,
+          "annotation": "@PostMapping(\"/{recruiterLeadId}/invite/shared\")",
+          "next": [
+            "public ResponseEntity<Map<String, Object>> inviteShared(@PathVariable Long recruiterLeadId) {",
+            "guard.requireRecruiterLead(principal(), recruiterLeadId);",
+            "return ResponseEntity.ok(recruiterLeadService.markInviteShared(recruiterLeadId, principal().getId()));",
+            "}"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 39,
+          "text": "return ResponseEntity.ok(recruiterLeadService.board(principal().getCollegeId()));"
+        },
+        {
+          "line": 57,
+          "text": "RecruiterLead existing = recruiterLeadService.findExisting(p.getCollegeId(), req.emailOrPhone);"
+        },
+        {
+          "line": 60,
+          "text": "RecruiterLead other = recruiterLeadService.findExisting(p.getCollegeId(), req.otherContact);"
+        },
+        {
+          "line": 63,
+          "text": "RecruiterLead recruiterLead = recruiterLeadService.addRecruiterLead(p.getCollegeId(), req.name, req.emailOrPhone, req.companyName, p.getId(), req.source);"
+        },
+        {
+          "line": 91,
+          "text": "RecruiterLead existing = recruiterLeadService.findExisting(principal().getCollegeId(), emailOrPhone);"
+        },
+        {
+          "line": 143,
+          "text": "return ResponseEntity.ok(recruiterLeadService.dueFollowUps(LocalDateTime.now(), principal().getCollegeId()));"
+        }
+      ],
+      "guardCandidateCount": 6,
+      "domainCallSamples": [
+        {
+          "line": 39,
+          "text": "return ResponseEntity.ok(recruiterLeadService.board(principal().getCollegeId()));"
+        },
+        {
+          "line": 57,
+          "text": "RecruiterLead existing = recruiterLeadService.findExisting(p.getCollegeId(), req.emailOrPhone);"
+        },
+        {
+          "line": 60,
+          "text": "RecruiterLead other = recruiterLeadService.findExisting(p.getCollegeId(), req.otherContact);"
+        },
+        {
+          "line": 63,
+          "text": "RecruiterLead recruiterLead = recruiterLeadService.addRecruiterLead(p.getCollegeId(), req.name, req.emailOrPhone, req.companyName, p.getId(), req.source);"
+        },
+        {
+          "line": 64,
+          "text": "recruiterLead = recruiterLeadService.addDetails(recruiterLead, req.otherContact, req.designation);"
+        },
+        {
+          "line": 86,
+          "text": "return ResponseEntity.ok(recruiterLeadService.updateDetails(recruiterLeadId, req.name, req.designation, req.email, req.phone, req.companyName, req.source, req.sourceSent));"
+        },
+        {
+          "line": 91,
+          "text": "RecruiterLead existing = recruiterLeadService.findExisting(principal().getCollegeId(), emailOrPhone);"
+        },
+        {
+          "line": 108,
+          "text": "throw new org.springframework.web.server.ResponseStatusException(HttpStatus.BAD_REQUEST, \"Log a call, email, meeting or note\");"
+        },
+        {
+          "line": 112,
+          "text": ".body(recruiterLeadService.logActivity(recruiterLeadId, req.type, req.outcome, req.note, principal().getId()));"
+        },
+        {
+          "line": 124,
+          "text": ".body(recruiterLeadService.addFollowUp(recruiterLeadId, req.dueAt, principal().getId(), req.note));"
+        },
+        {
+          "line": 130,
+          "text": "recruiterLeadService.markFollowUpDone(followUpId);"
+        },
+        {
+          "line": 137,
+          "text": "if (req.dueAt == null) throw new IllegalArgumentException(\"Choose a date\");"
+        },
+        {
+          "line": 138,
+          "text": "return ResponseEntity.ok(recruiterLeadService.moveFollowUp(followUpId, req.dueAt));"
+        },
+        {
+          "line": 143,
+          "text": "return ResponseEntity.ok(recruiterLeadService.dueFollowUps(LocalDateTime.now(), principal().getCollegeId()));"
+        },
+        {
+          "line": 154,
+          "text": "recruiterLeadService.markNotNow(recruiterLeadId, req.reason, req.revisitDate);"
+        },
+        {
+          "line": 169,
+          "text": "TpoRecruiterLeadService.InviteOptions o = new TpoRecruiterLeadService.InviteOptions();"
+        },
+        {
+          "line": 171,
+          "text": "return ResponseEntity.ok(recruiterLeadService.inviteWith(recruiterLeadId, o, http.getHeader(\"Origin\"), principal().getId()));"
+        },
+        {
+          "line": 173,
+          "text": "return ResponseEntity.ok(recruiterLeadService.invite(recruiterLeadId, body != null && body.sendEmail, body == null ? null : body.note, http.getHeader(\"Origin\")));"
+        },
+        {
+          "line": 180,
+          "text": "return ResponseEntity.ok(recruiterLeadService.markInviteShared(recruiterLeadId, principal().getId()));"
+        }
+      ],
+      "domainCallCandidateCount": 19
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoRequestController.java",
+      "sha": "753c9c0be65b749a20cda9e39272a20bfcf83f85",
+      "lines": 59,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "TpoRequestController",
+      "mappingsAndGuards": [
+        {
+          "line": 17,
+          "annotation": "@RequestMapping(\"/api/v1/tpo/requests\")",
+          "next": [
+            "public class TpoRequestController {",
+            "private final TpoRequestService requestService;",
+            "private final SecurityContextUtil securityContextUtil;",
+            "private final TpoAccessGuard guard;"
+          ]
+        },
+        {
+          "line": 30,
+          "annotation": "@GetMapping(\"/pending\")",
+          "next": [
+            "public ResponseEntity<List<StudentRequest>> pending() {",
+            "var p = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(requestService.pendingForCollege(p.getCollegeId()));",
+            "}"
+          ]
+        },
+        {
+          "line": 41,
+          "annotation": "@PostMapping(\"/{requestId}/decide\")",
+          "next": [
+            "public ResponseEntity<StudentRequest> decide(@PathVariable Long requestId, @RequestBody DecideRequest req) {",
+            "guard.requireRequest(securityContextUtil.getAuthenticatedUserPrincipal(), requestId);",
+            "UserPrincipal p = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(requestService.decide(requestId, req.approve, p.getId(), req.reason));"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 33,
+          "text": "return ResponseEntity.ok(requestService.pendingForCollege(p.getCollegeId()));"
+        }
+      ],
+      "guardCandidateCount": 1,
+      "domainCallSamples": [
+        {
+          "line": 33,
+          "text": "return ResponseEntity.ok(requestService.pendingForCollege(p.getCollegeId()));"
+        },
+        {
+          "line": 45,
+          "text": "return ResponseEntity.ok(requestService.decide(requestId, req.approve, p.getId(), req.reason));"
+        }
+      ],
+      "domainCallCandidateCount": 2
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoCompanyController.java",
+      "sha": "09bbdecf171661737c1f960480aeb8a78f10197d",
+      "lines": 144,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "TpoCompanyController",
+      "mappingsAndGuards": [
+        {
+          "line": 28,
+          "annotation": "@RequestMapping(\"/api/v1/tpo/companies\")",
+          "next": [
+            "@RequiredArgsConstructor",
+            "public class TpoCompanyController {",
+            "private final CompanyDirectoryService directory;",
+            "private final SecurityContextUtil securityContextUtil;"
+          ]
+        },
+        {
+          "line": 49,
+          "annotation": "@GetMapping(\"/search\")",
+          "next": [
+            "public List<CompanyDirectoryService.Found> search(@RequestParam(name = \"q\", required = false) String q) {",
+            "return directory.search(q, p().getCollegeId());",
+            "}",
+            "/** \"Add other\": find the company by its website or recruiter email domain, or create it unverified; it joins this college's list. */"
+          ]
+        },
+        {
+          "line": 55,
+          "annotation": "@PostMapping(\"/resolve\")",
+          "next": [
+            "public Map<String, Object> resolve(@RequestBody ResolveRequest r) {",
+            "UserPrincipal me = p();",
+            "CompanyDirectoryService.Resolved res = directory.resolveForCollege(r == null ? null : r.name, r == null ? null : r.website,",
+            "r == null ? null : r.recruiterEmail, me.getCollegeId(), new CompanyDirectoryService.Actor(\"FACULTY\", me.getId(), me.getCollegeId()),"
+          ]
+        },
+        {
+          "line": 73,
+          "annotation": "@GetMapping(\"/to-verify\")",
+          "next": [
+            "public List<Map<String, Object>> toVerify() {",
+            "return trust.toVerify(p().getCollegeId());",
+            "}",
+            "/** What the Verify window shows: who joined, what the system can see, what is waiting and the state (NEW, CHECKED, TRUSTED). */"
+          ]
+        },
+        {
+          "line": 79,
+          "annotation": "@GetMapping(\"/{companyId}/trust\")",
+          "next": [
+            "public Map<String, Object> review(@PathVariable Integer companyId) {",
+            "return trust.review(p().getCollegeId(), companyId);",
+            "}",
+            "public static class DecisionRequest {"
+          ]
+        },
+        {
+          "line": 90,
+          "annotation": "@PostMapping(\"/{companyId}/trust\")",
+          "next": [
+            "public Map<String, Object> decide(@PathVariable Integer companyId, @RequestBody DecisionRequest r) {",
+            "UserPrincipal me = p();",
+            "return trust.decide(me.getCollegeId(), companyId, r != null && r.trusted, r == null ? null : r.note, me.getId());",
+            "}"
+          ]
+        },
+        {
+          "line": 97,
+          "annotation": "@GetMapping(\"/links\")",
+          "next": [
+            "public List<Map<String, Object>> links() {",
+            "return companyJoin.links(p().getCollegeId());",
+            "}",
+            "/** The company's join link at this college and how it is doing, and whether the company is trusted (N5 b). */"
+          ]
+        },
+        {
+          "line": 103,
+          "annotation": "@GetMapping(\"/{companyId}/engagement\")",
+          "next": [
+            "public Map<String, Object> engagement(@PathVariable Integer companyId) {",
+            "return companyJoin.engagement(p().getCollegeId(), companyId);",
+            "}",
+            "/** A new unique link for this company; the old one stops working. The token is shown once. */"
+          ]
+        },
+        {
+          "line": 109,
+          "annotation": "@PostMapping(\"/{companyId}/join-link\")",
+          "next": [
+            "public Map<String, Object> newJoinLink(@PathVariable Integer companyId) {",
+            "return companyJoin.newLink(p().getCollegeId(), companyId);",
+            "}",
+            "public static class DomainRequest {"
+          ]
+        },
+        {
+          "line": 119,
+          "annotation": "@PostMapping(\"/{companyId}/domains\")",
+          "next": [
+            "public Map<String, Object> addDomain(@PathVariable Integer companyId, @RequestBody DomainRequest r) {",
+            "UserPrincipal me = p();",
+            "directory.addDomain(companyId, r == null ? null : r.domain, new CompanyDirectoryService.Actor(\"FACULTY\", me.getId(), me.getCollegeId()));",
+            "return companyJoin.engagement(me.getCollegeId(), companyId);"
+          ]
+        },
+        {
+          "line": 131,
+          "annotation": "@PutMapping(\"/{companyId}/trusted\")",
+          "next": [
+            "public Map<String, Object> trusted(@PathVariable Integer companyId, @RequestBody TrustedRequest r) {",
+            "UserPrincipal me = p();",
+            "return companyJoin.setTrusted(me.getCollegeId(), companyId, r != null && r.trusted, me.getId());",
+            "}"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 51,
+          "text": "return directory.search(q, p().getCollegeId());"
+        },
+        {
+          "line": 59,
+          "text": "r == null ? null : r.recruiterEmail, me.getCollegeId(), new CompanyDirectoryService.Actor(\"FACULTY\", me.getId(), me.getCollegeId()),"
+        },
+        {
+          "line": 75,
+          "text": "return trust.toVerify(p().getCollegeId());"
+        },
+        {
+          "line": 81,
+          "text": "return trust.review(p().getCollegeId(), companyId);"
+        },
+        {
+          "line": 93,
+          "text": "return trust.decide(me.getCollegeId(), companyId, r != null && r.trusted, r == null ? null : r.note, me.getId());"
+        },
+        {
+          "line": 99,
+          "text": "return companyJoin.links(p().getCollegeId());"
+        },
+        {
+          "line": 105,
+          "text": "return companyJoin.engagement(p().getCollegeId(), companyId);"
+        },
+        {
+          "line": 111,
+          "text": "return companyJoin.newLink(p().getCollegeId(), companyId);"
+        },
+        {
+          "line": 122,
+          "text": "directory.addDomain(companyId, r == null ? null : r.domain, new CompanyDirectoryService.Actor(\"FACULTY\", me.getId(), me.getCollegeId()));"
+        },
+        {
+          "line": 123,
+          "text": "return companyJoin.engagement(me.getCollegeId(), companyId);"
+        },
+        {
+          "line": 134,
+          "text": "return companyJoin.setTrusted(me.getCollegeId(), companyId, r != null && r.trusted, me.getId());"
+        }
+      ],
+      "guardCandidateCount": 11,
+      "domainCallSamples": [
+        {
+          "line": 59,
+          "text": "r == null ? null : r.recruiterEmail, me.getCollegeId(), new CompanyDirectoryService.Actor(\"FACULTY\", me.getId(), me.getCollegeId()),"
+        },
+        {
+          "line": 122,
+          "text": "directory.addDomain(companyId, r == null ? null : r.domain, new CompanyDirectoryService.Actor(\"FACULTY\", me.getId(), me.getCollegeId()));"
+        }
+      ],
+      "domainCallCandidateCount": 2
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoPublicLinkController.java",
+      "sha": "c0f135ec544a0cfb49e4f2ad4b6b5cd63f5baf58",
+      "lines": 53,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "TpoPublicLinkController",
+      "mappingsAndGuards": [
+        {
+          "line": 17,
+          "annotation": "@RequestMapping(\"/api/v1/tpo/public-link\")",
+          "next": [
+            "@RequiredArgsConstructor",
+            "public class TpoPublicLinkController {",
+            "private final CollegePublicLinkService links;",
+            "private final SecurityContextUtil securityContextUtil;"
+          ]
+        },
+        {
+          "line": 38,
+          "annotation": "@GetMapping",
+          "next": [
+            "public Map<String, Object> settings() {",
+            "return links.settings(college());",
+            "}",
+            "@PostMapping(\"/new\")"
+          ]
+        },
+        {
+          "line": 43,
+          "annotation": "@PostMapping(\"/new\")",
+          "next": [
+            "public Map<String, Object> newLink() {",
+            "return links.newLink(college(), me());",
+            "}",
+            "@PutMapping"
+          ]
+        },
+        {
+          "line": 48,
+          "annotation": "@PutMapping",
+          "next": [
+            "public Map<String, Object> save(@RequestBody SettingsBody b) {",
+            "return links.save(college(), b == null ? null : b.enabled, me());",
+            "}",
+            "}"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 29,
+          "text": "Integer c = securityContextUtil.getAuthenticatedUserPrincipal().getCollegeId();"
+        }
+      ],
+      "guardCandidateCount": 1,
+      "domainCallSamples": [
+        {
+          "line": 30,
+          "text": "if (c == null) throw new IllegalArgumentException(\"Not found\");"
+        }
+      ],
+      "domainCallCandidateCount": 1
+    }
+  ]
+}
