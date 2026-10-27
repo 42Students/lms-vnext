@@ -6,7 +6,7 @@
     "branch": "lms-dev-2026",
     "sha": "ecb09416b107e82e5ac7d22f3bc94a85258754b3"
   },
-  "scope": "Placement TPO/Recruiter latest dev sources plus web authorization",
+  "scope": "Placement TPO/Recruiter plus assignment, project, academic, learner and profile security controllers",
   "limitations": [
     "Annotation mapping may be inherited/composed, resolve fully before contract assertions",
     "Controller guard candidate matches do not establish service-layer scope nor persistence safety",
@@ -2068,6 +2068,3859 @@
         }
       ],
       "domainCallCandidateCount": 1
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminAssignmentController.java",
+      "sha": "5650a3c2d0216d0c91da4cd30441f77b9f4d8ea0",
+      "lines": 156,
+      "package": "com._42students.lms.controller",
+      "className": "AdminAssignmentController",
+      "mappingsAndGuards": [
+        {
+          "line": 44,
+          "annotation": "@RequestMapping(\"/api/v1/admin/assignments\")",
+          "next": [
+            "@Slf4j",
+            "@Api(tags = \"Admin Assignment Oversight APIs (College-Scoped)\")",
+            "@CrossOrigin(originPatterns = {\"http://localhost:*\", \"https://42lms.com\", \"https://www.42lms.com\", \"https://*.42lms.com\"}, allowCredentials = \"true\", maxAge = 3600)",
+            "public class AdminAssignmentController extends BaseController {"
+          ]
+        },
+        {
+          "line": 91,
+          "annotation": "@GetMapping",
+          "next": [
+            "@ApiOperation(value = \"List assignments across the college, with submission stats\", notes = \"Optionally narrow to one course. Server-paginated (like the quiz oversight endpoint) so a college with more assignments than fit on one page doesn't get silently truncated.\")",
+            "public ResponseEntity<Response<PageResponseDTO<Map<String, Object>>>> listAssignments(",
+            "@RequestParam Integer collegeId,",
+            "@RequestParam(required = false) Integer courseId,"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 22,
+          "text": "import org.springframework.security.access.AccessDeniedException;"
+        },
+        {
+          "line": 69,
+          "text": "private static boolean isInvalidCollegeId(Integer collegeId) {"
+        },
+        {
+          "line": 70,
+          "text": "return collegeId == null || collegeId <= 0;"
+        },
+        {
+          "line": 73,
+          "text": "private void requireScopedSuperadminCollegeWithinScope(UserPrincipal principal, Integer collegeId) {"
+        },
+        {
+          "line": 74,
+          "text": "if (principal == null || collegeId == null) return;"
+        },
+        {
+          "line": 75,
+          "text": "if (!accessControlService.isSuperAdmin(principal)) return;"
+        },
+        {
+          "line": 76,
+          "text": "if (principal.getCollegeId() == null && principal.getOrganizationId() == null) return;"
+        },
+        {
+          "line": 79,
+          "text": "if (principal.getCollegeId() != null) {"
+        },
+        {
+          "line": 80,
+          "text": "if (!Objects.equals(principal.getCollegeId(), collegeId)) {"
+        },
+        {
+          "line": 81,
+          "text": "throw new AccessDeniedException(\"Superadmin is college-scoped and cannot access other colleges\");"
+        },
+        {
+          "line": 85,
+          "text": "Integer resolvedOrgId = scopeResolutionService.resolveCollegeToOrganizationId(collegeId);"
+        },
+        {
+          "line": 87,
+          "text": "throw new AccessDeniedException(\"Superadmin is org-scoped and cannot access other organizations\");"
+        },
+        {
+          "line": 94,
+          "text": "@RequestParam Integer collegeId,"
+        },
+        {
+          "line": 99,
+          "text": "if (isInvalidCollegeId(collegeId)) {"
+        },
+        {
+          "line": 100,
+          "text": "return new ResponseEntity<>(new Response<>(\"error\", \"collegeId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 103,
+          "text": "requireScopedSuperadminCollegeWithinScope(principal, collegeId);"
+        },
+        {
+          "line": 104,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 112,
+          "text": "Page<LessonContents> assignmentPage = lessonContentsRepository.findAssignmentsByCollegePaged(collegeId, courseId, classId, pageable);"
+        },
+        {
+          "line": 151,
+          "text": "log.error(\"Error listing admin assignments for college {}: \", collegeId, e);"
+        }
+      ],
+      "guardCandidateCount": 19,
+      "domainCallSamples": [
+        {
+          "line": 75,
+          "text": "if (!accessControlService.isSuperAdmin(principal)) return;"
+        },
+        {
+          "line": 81,
+          "text": "throw new AccessDeniedException(\"Superadmin is college-scoped and cannot access other colleges\");"
+        },
+        {
+          "line": 85,
+          "text": "Integer resolvedOrgId = scopeResolutionService.resolveCollegeToOrganizationId(collegeId);"
+        },
+        {
+          "line": 87,
+          "text": "throw new AccessDeniedException(\"Superadmin is org-scoped and cannot access other organizations\");"
+        },
+        {
+          "line": 104,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 110,
+          "text": "accessControlService.requireAccessClass(principal, classId);"
+        },
+        {
+          "line": 112,
+          "text": "Page<LessonContents> assignmentPage = lessonContentsRepository.findAssignmentsByCollegePaged(collegeId, courseId, classId, pageable);"
+        },
+        {
+          "line": 130,
+          "text": "SubmissionStatsDTO stats = assignmentService.getSubmissionStats(lc.getId());"
+        }
+      ],
+      "domainCallCandidateCount": 8
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminAssignmentContentWriteController.java",
+      "sha": "b887e051f4e00c8055da991d571d067706bc7b05",
+      "lines": 63,
+      "package": "com._42students.lms.controller",
+      "className": "AdminAssignmentContentWriteController",
+      "mappingsAndGuards": [
+        {
+          "line": 26,
+          "annotation": "@RequestMapping(\"/api/v1/admin/assignments/content\")",
+          "next": [
+            "public class AdminAssignmentContentWriteController {",
+            "private final AssignmentContentWriteService writer;",
+            "private final SecurityContextUtil security;",
+            "private final AccessControlService access;"
+          ]
+        },
+        {
+          "line": 44,
+          "annotation": "@PostMapping(\"/save\")",
+          "next": [
+            "public ResponseEntity<Response<LessonContents>> save(@Valid @RequestBody LessonContentsDTO dto) {",
+            "UserPrincipal principal = security.getAuthenticatedUserPrincipal();",
+            "if (principal == null || !(access.isSuperAdmin(principal)",
+            "|| (principal.isFaculty() && \"ADMIN\".equalsIgnoreCase(principal.getFacultyType())))) {"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 47,
+          "text": "if (principal == null || !(access.isSuperAdmin(principal)"
+        },
+        {
+          "line": 49,
+          "text": "throw new ResponseStatusException(HttpStatus.FORBIDDEN, \"Admin access required\");"
+        },
+        {
+          "line": 56,
+          "text": "Integer collegeId = scopes.resolveCourseToCollegeId(lesson.getCourseId());"
+        },
+        {
+          "line": 57,
+          "text": "if (collegeId == null) throw new ResponseStatusException(HttpStatus.FORBIDDEN, \"Cannot resolve college scope\");"
+        },
+        {
+          "line": 58,
+          "text": "access.requirePerformAdminActionForCollege(principal, collegeId);"
+        }
+      ],
+      "guardCandidateCount": 5,
+      "domainCallSamples": [
+        {
+          "line": 49,
+          "text": "throw new ResponseStatusException(HttpStatus.FORBIDDEN, \"Admin access required\");"
+        },
+        {
+          "line": 52,
+          "text": "throw new ResponseStatusException(HttpStatus.BAD_REQUEST, \"Assignment and lesson are required\");"
+        },
+        {
+          "line": 55,
+          "text": "if (lesson == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, \"Lesson not found\");"
+        },
+        {
+          "line": 57,
+          "text": "if (collegeId == null) throw new ResponseStatusException(HttpStatus.FORBIDDEN, \"Cannot resolve college scope\");"
+        }
+      ],
+      "domainCallCandidateCount": 4
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AssignmentController.java",
+      "sha": "b3045ccf13325653d5b61769ea8a17ee3294f3eb",
+      "lines": 384,
+      "package": "com._42students.lms.controller",
+      "className": "AssignmentController",
+      "mappingsAndGuards": [
+        {
+          "line": 39,
+          "annotation": "@RequestMapping(\"/api/v1/assignment\")",
+          "next": [
+            "@Slf4j",
+            "@Validated",
+            "public class AssignmentController extends BaseController {",
+            "private static final int MAX_SUBMISSIONS_PAGE_SIZE = 100;"
+          ]
+        },
+        {
+          "line": 143,
+          "annotation": "@RequestMapping(value = \"/submit\", method = RequestMethod.POST, produces = \"application/json\")",
+          "next": [
+            "@ApiOperation(value = \"Submit assignment\", notes = \"Send lesson_content_id, student_id, file_dto or html_content (content type must be 'assignment'). Quizzes are submitted via POST /api/v1/quizzes/{quizId}/submit, not this endpoint.\")",
+            "public ResponseEntity submit(@Valid @RequestBody StudentAssignmentDTO studentAssignmentDTO) {",
+            "requireAuthenticated();",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();"
+          ]
+        },
+        {
+          "line": 171,
+          "annotation": "@RequestMapping(value = \"/fetchSubmissions\", method = RequestMethod.GET, produces = \"application/json\")",
+          "next": [
+            "@ApiOperation(value = \"Fetch assignment submissions by lesson content id\", notes = \"Optional query params: page (0-based), size. When both provided, returns paged result with content, totalElements, totalPages.\")",
+            "public ResponseEntity fetchSubmissions(",
+            "@RequestParam @Min(1) int lessonContentId,",
+            "@RequestParam(required = false) Integer page,"
+          ]
+        },
+        {
+          "line": 201,
+          "annotation": "@RequestMapping(value = \"/fetchSubmissionsByLearnerId\", method = RequestMethod.GET, produces = \"application/json\")",
+          "next": [
+            "@ApiOperation(value = \"Fetch assignment submissions by learner id\", notes = \"\")",
+            "public ResponseEntity fetchSubmissionsByLearnerId(@RequestParam int learnerId) {",
+            "if (learnerId <= 0) {",
+            "return new ResponseEntity(new Response(HttpStatus.BAD_REQUEST.name(), \"learnerId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+          ]
+        },
+        {
+          "line": 216,
+          "annotation": "@RequestMapping(value = \"/submissionStats\", method = RequestMethod.GET, produces = \"application/json\")",
+          "next": [
+            "@ApiOperation(value = \"Get submission statistics for a lesson content\", notes = \"\")",
+            "public ResponseEntity getSubmissionStats(@RequestParam int lessonContentId) throws Exception {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (principal == null || principal.isLearner()) {"
+          ]
+        },
+        {
+          "line": 236,
+          "annotation": "@GetMapping(value = \"/submissionStats/bulk\", produces = \"application/json\")",
+          "next": [
+            "@ApiOperation(value = \"Get submission statistics for multiple lesson contents\", notes = \"Faculty/admin only. Returns a map of lessonContentId -> SubmissionStatsDTO.\")",
+            "public ResponseEntity getSubmissionStatsBulk(@RequestParam(name = \"lessonContentIds\") List<Integer> lessonContentIds) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (principal == null || principal.isLearner()) {"
+          ]
+        },
+        {
+          "line": 270,
+          "annotation": "@RequestMapping(value = \"/updatePoints\", method = RequestMethod.PATCH, produces = \"application/json\")",
+          "next": [
+            "@ApiOperation(value = \"Update points obtained for a student assignment\", notes = \"\")",
+            "public ResponseEntity updatePoints(@RequestParam int studentAssignmentId,",
+            "@RequestParam @Min(value = 0, message = \"Points cannot be negative\") long pointsObtained) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();"
+          ]
+        },
+        {
+          "line": 295,
+          "annotation": "@RequestMapping(value = \"/publishGrade\", method = RequestMethod.POST, produces = \"application/json\")",
+          "next": [
+            "@ApiOperation(value = \"Publish grade so it becomes visible to the learner (AQ-05)\", notes = \"Only faculty/admin may publish. Grade must be set before publishing.\")",
+            "public ResponseEntity publishGrade(@RequestParam int studentAssignmentId) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (principal == null || principal.isLearner()) {"
+          ]
+        },
+        {
+          "line": 314,
+          "annotation": "@GetMapping(value = \"/assignmentAveragePercentageForStudent\")",
+          "next": [
+            "@ApiOperation(value = \"Get the average percentage of points obtained by a student\", notes = \"\")",
+            "public ResponseEntity getAveragePercentage(@RequestParam int studentId) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (studentId <= 0) {"
+          ]
+        },
+        {
+          "line": 334,
+          "annotation": "@GetMapping(value = \"/totalAssignmentSubmissionsByStudent\")",
+          "next": [
+            "@ApiOperation(value = \"Get the total assignments submitted by a student\", notes = \"\")",
+            "public ResponseEntity getAssignmentTotalSubmissions(@RequestParam int studentId) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (studentId <= 0) {"
+          ]
+        },
+        {
+          "line": 354,
+          "annotation": "@PatchMapping(value = \"/addDescriptivePoints\", produces = \"application/json\")",
+          "next": [
+            "@ApiOperation(value = \"Update points obtained for a student assignment\", notes = \"\")",
+            "public ResponseEntity updateAssignmentPoints(@RequestParam(\"studentAssignmentId\") int studentAssignmentId,",
+            "@RequestParam(\"pointsToAdd\") @Min(value = 0, message = \"Points cannot be negative\") long pointsToAdd) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 4,
+          "text": "import org.springframework.security.access.AccessDeniedException;"
+        },
+        {
+          "line": 61,
+          "text": "private void requireAuthenticated() {"
+        },
+        {
+          "line": 110,
+          "text": "throw new AccessDeniedException(\"Authentication required\");"
+        },
+        {
+          "line": 112,
+          "text": "if (accessControlService.isSuperAdmin(principal) || \"ADMIN\".equalsIgnoreCase(principal.getFacultyType())) {"
+        },
+        {
+          "line": 117,
+          "text": "throw new AccessDeniedException(\"You cannot grade this submission\");"
+        },
+        {
+          "line": 140,
+          "text": "throw new AccessDeniedException(\"You can only grade submissions for courses you teach\");"
+        },
+        {
+          "line": 146,
+          "text": "requireAuthenticated();"
+        },
+        {
+          "line": 155,
+          "text": "return new ResponseEntity(new Response(HttpStatus.FORBIDDEN.name(), \"Only learners can submit assignments\", null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 177,
+          "text": "requireAuthenticated();"
+        },
+        {
+          "line": 180,
+          "text": "return new ResponseEntity(new Response(HttpStatus.FORBIDDEN.name(), \"Learners cannot view all submissions\", null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 209,
+          "text": "return new ResponseEntity(new Response(HttpStatus.FORBIDDEN.name(), \"Learners may only fetch their own submissions\", null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 221,
+          "text": "return new ResponseEntity(new Response(HttpStatus.FORBIDDEN.name(), \"Only faculty/admin can view submission stats\", null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 241,
+          "text": "return new ResponseEntity(new Response(HttpStatus.FORBIDDEN.name(), \"Only faculty/admin can view submission statistics\", null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 260,
+          "text": "} catch (AccessDeniedException | ResponseStatusException denied) {"
+        },
+        {
+          "line": 276,
+          "text": "return new ResponseEntity(new Response(HttpStatus.FORBIDDEN.name(), \"Only faculty/admin can update points\", null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 300,
+          "text": "throw new ResponseStatusException(HttpStatus.FORBIDDEN, \"Only faculty or admin can publish grades\");"
+        },
+        {
+          "line": 322,
+          "text": "return new ResponseEntity(new Response(HttpStatus.FORBIDDEN.name(), \"Learners may only fetch their own stats\", null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 342,
+          "text": "return new ResponseEntity(new Response(HttpStatus.FORBIDDEN.name(), \"Learners may only fetch their own stats\", null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 360,
+          "text": "return new ResponseEntity(new Response(HttpStatus.FORBIDDEN.name(), \"Only faculty/admin can grade descriptive questions\", null), HttpStatus.FORBIDDEN);"
+        }
+      ],
+      "guardCandidateCount": 19,
+      "domainCallSamples": [
+        {
+          "line": 64,
+          "text": "throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, \"Authentication required\");"
+        },
+        {
+          "line": 71,
+          "text": "var lc = lessonContentsService.findById(lessonContentId).orElseThrow();"
+        },
+        {
+          "line": 73,
+          "text": "accessControlService.requireTeachingScope(principal, lc.getCourseId(), lc.getClassId());"
+        },
+        {
+          "line": 78,
+          "text": "throw new ResponseStatusException(HttpStatus.BAD_REQUEST, \"lessonContentId must be a positive integer\");"
+        },
+        {
+          "line": 80,
+          "text": "var lcOpt = lessonContentsService.findById(lessonContentId);"
+        },
+        {
+          "line": 82,
+          "text": "throw new ResponseStatusException(HttpStatus.NOT_FOUND, \"Lesson content not found\");"
+        },
+        {
+          "line": 90,
+          "text": "throw new ResponseStatusException(HttpStatus.BAD_REQUEST, \"Lesson content is missing class/course scope\");"
+        },
+        {
+          "line": 94,
+          "text": "accessControlService.requireAccessCourse(principal, courseId);"
+        },
+        {
+          "line": 97,
+          "text": "accessControlService.requireAccessClass(principal, classId);"
+        },
+        {
+          "line": 110,
+          "text": "throw new AccessDeniedException(\"Authentication required\");"
+        },
+        {
+          "line": 112,
+          "text": "if (accessControlService.isSuperAdmin(principal) || \"ADMIN\".equalsIgnoreCase(principal.getFacultyType())) {"
+        },
+        {
+          "line": 117,
+          "text": "throw new AccessDeniedException(\"You cannot grade this submission\");"
+        },
+        {
+          "line": 123,
+          "text": "var lc = lessonContentsService.findById(submission.getLessonContentId()).orElse(null);"
+        },
+        {
+          "line": 140,
+          "text": "throw new AccessDeniedException(\"You can only grade submissions for courses you teach\");"
+        },
+        {
+          "line": 163,
+          "text": "StudentAssignment studentAssignment = assignmentService.submit(studentAssignmentDTO);"
+        },
+        {
+          "line": 185,
+          "text": "throw new ResponseStatusException(HttpStatus.BAD_REQUEST, \"page must be nonnegative and size must be positive\");"
+        },
+        {
+          "line": 191,
+          "text": "assignmentService.fetchSubmissions(lessonContentId, pageable)), HttpStatus.OK);"
+        },
+        {
+          "line": 195,
+          "text": "assignmentService.fetchSubmissions(lessonContentId, PageRequest.of(0, 50));"
+        },
+        {
+          "line": 211,
+          "text": "accessControlService.requireAccessLearner(principal, learnerId);"
+        },
+        {
+          "line": 212,
+          "text": "List<StudentAssignment> studentAssignmentList = assignmentService.fetchSubmissionsByLearnerId(learnerId);"
+        },
+        {
+          "line": 229,
+          "text": "SubmissionStatsDTO submissionStats = assignmentService.getSubmissionStats(lessonContentId);"
+        },
+        {
+          "line": 264,
+          "text": "SubmissionStatsDTO stats = assignmentService.getSubmissionStats(id);"
+        },
+        {
+          "line": 284,
+          "text": "StudentAssignment existing = assignmentService.fetchSubmission(studentAssignmentId);"
+        },
+        {
+          "line": 288,
+          "text": "StudentAssignment studentAssignment = assignmentService.updatePoints(studentAssignmentId, pointsObtained);"
+        },
+        {
+          "line": 300,
+          "text": "throw new ResponseStatusException(HttpStatus.FORBIDDEN, \"Only faculty or admin can publish grades\");"
+        },
+        {
+          "line": 302,
+          "text": "StudentAssignment existing = assignmentService.fetchSubmission(studentAssignmentId);"
+        },
+        {
+          "line": 307,
+          "text": "StudentAssignment result = assignmentService.publishGrade(studentAssignmentId, principal.getId() != null ? principal.getId() : 0);"
+        },
+        {
+          "line": 324,
+          "text": "accessControlService.requireAccessLearner(principal, studentId);"
+        },
+        {
+          "line": 326,
+          "text": "double averagePercentage = assignmentService.calculateAssignmentAveragePercentage(studentId);"
+        },
+        {
+          "line": 344,
+          "text": "accessControlService.requireAccessLearner(principal, studentId);"
+        },
+        {
+          "line": 346,
+          "text": "int totalAssignments = assignmentService.countAssignmentSubmissionsByLearnerId(studentId);"
+        },
+        {
+          "line": 365,
+          "text": "StudentAssignment existing = assignmentService.fetchSubmission(studentAssignmentId);"
+        },
+        {
+          "line": 368,
+          "text": "lessonContentsService.findById(existing.getLessonContentId()).ifPresent(lc -> {"
+        },
+        {
+          "line": 371,
+          "text": "throw new IllegalArgumentException(\"Total points would exceed maximum allowed (\" + lc.getPoints() + \")\");"
+        },
+        {
+          "line": 377,
+          "text": "StudentAssignment studentAssignment = assignmentService.addDescriptivePoints(studentAssignmentId, pointsToAdd);"
+        }
+      ],
+      "domainCallCandidateCount": 35
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ProjectWorkspaceController.java",
+      "sha": "2ba8e8eaa68c71ecfc2dc98e5c8c1e89be0fb232",
+      "lines": 734,
+      "package": "com._42students.lms.controller",
+      "className": "ProjectWorkspaceController",
+      "mappingsAndGuards": [
+        {
+          "line": 56,
+          "annotation": "@RequestMapping(\"/api/v1/projects\")",
+          "next": [
+            "@CrossOrigin(originPatterns = {\"http://localhost:*\", \"https://42lms.com\", \"https://www.42lms.com\", \"https://*.42lms.com\"}, allowCredentials = \"true\", maxAge = 3600)",
+            "public class ProjectWorkspaceController extends BaseController {",
+            "private final ProjectWorkspaceService projectWorkspaceService;",
+            "private final SecurityContextUtil securityContextUtil;"
+          ]
+        },
+        {
+          "line": 81,
+          "annotation": "@GetMapping(\"/me\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectWorkspaceDTO>>> getMyProjects() {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(new Response<>(\"OK\", \"Projects retrieved\", projectWorkspaceService.getMyProjects(principal)));"
+          ]
+        },
+        {
+          "line": 91,
+          "annotation": "@GetMapping(\"/me/page\")",
+          "next": [
+            "public ResponseEntity<Response<com._42students.lms.dto.response.PageDTO<ProjectWorkspaceDTO>>> getMyProjectsPage(",
+            "@RequestParam(defaultValue = \"0\") int page,",
+            "@RequestParam(defaultValue = \"25\") int size,",
+            "@RequestParam(required = false) String status,"
+          ]
+        },
+        {
+          "line": 108,
+          "annotation": "@GetMapping(\"/{projectId}\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> getMyProject(@PathVariable String projectId) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(new Response<>(\"OK\", \"Project retrieved\", projectWorkspaceService.getMyProject(principal, projectId)));"
+          ]
+        },
+        {
+          "line": 120,
+          "annotation": "@PutMapping(\"/{projectId}\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> updateMyProject(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 135,
+          "annotation": "@PutMapping(\"/{projectId}/overview\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> updateOverview(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 143,
+          "annotation": "@PutMapping(\"/{projectId}/sprints\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> updateSprints(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 154,
+          "annotation": "@PostMapping(\"/{projectId}/sprints/{sprintKey}/start\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> startSprint(",
+            "@PathVariable String projectId,",
+            "@PathVariable String sprintKey",
+            ") {"
+          ]
+        },
+        {
+          "line": 169,
+          "annotation": "@PostMapping(\"/{projectId}/sprints/{sprintKey}/complete\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> completeSprint(",
+            "@PathVariable String projectId,",
+            "@PathVariable String sprintKey",
+            ") {"
+          ]
+        },
+        {
+          "line": 188,
+          "annotation": "@PostMapping(\"/{projectId}/sprints/{sprintKey}/reopen\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> reopenSprint(",
+            "@PathVariable String projectId,",
+            "@PathVariable String sprintKey",
+            ") {"
+          ]
+        },
+        {
+          "line": 204,
+          "annotation": "@GetMapping(\"/{projectId}/releases\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.List<ProjectReleaseDTO>>> getProjectReleases(",
+            "@PathVariable String projectId",
+            ") {",
+            "try {"
+          ]
+        },
+        {
+          "line": 218,
+          "annotation": "@PostMapping(\"/{projectId}/releases\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.List<ProjectReleaseDTO>>> createProjectRelease(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectReleaseUpsertDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 233,
+          "annotation": "@PutMapping(\"/{projectId}/releases/{releaseKey}\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.List<ProjectReleaseDTO>>> updateProjectRelease(",
+            "@PathVariable String projectId,",
+            "@PathVariable String releaseKey,",
+            "@RequestBody ProjectReleaseUpsertDTO payload"
+          ]
+        },
+        {
+          "line": 249,
+          "annotation": "@DeleteMapping(\"/{projectId}/releases/{releaseKey}\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.List<ProjectReleaseDTO>>> removeProjectRelease(",
+            "@PathVariable String projectId,",
+            "@PathVariable String releaseKey",
+            ") {"
+          ]
+        },
+        {
+          "line": 264,
+          "annotation": "@PostMapping(\"/{projectId}/releases/{releaseKey}/ship\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.List<ProjectReleaseDTO>>> shipProjectRelease(",
+            "@PathVariable String projectId,",
+            "@PathVariable String releaseKey",
+            ") {"
+          ]
+        },
+        {
+          "line": 279,
+          "annotation": "@PostMapping(\"/{projectId}/releases/{releaseKey}/unship\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.List<ProjectReleaseDTO>>> unshipProjectRelease(",
+            "@PathVariable String projectId,",
+            "@PathVariable String releaseKey",
+            ") {"
+          ]
+        },
+        {
+          "line": 294,
+          "annotation": "@PutMapping(\"/{projectId}/tasks\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> updateTasks(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 302,
+          "annotation": "@PutMapping(\"/{projectId}/resources\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> updateResources(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 310,
+          "annotation": "@GetMapping(\"/{projectId}/resources/{resourceKey}/download\")",
+          "next": [
+            "public ResponseEntity<?> downloadProjectResource(",
+            "@PathVariable String projectId,",
+            "@PathVariable String resourceKey",
+            ") {"
+          ]
+        },
+        {
+          "line": 342,
+          "annotation": "@PutMapping(\"/{projectId}/delivery\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> updateDelivery(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 357,
+          "annotation": "@GetMapping(\"/{projectId}/delivery\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectDeliveryDTO>> getDelivery(@PathVariable String projectId) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(new Response<>(\"OK\", \"Project delivery retrieved\", projectWorkspaceService.getProjectDelivery(principal, projectId)));"
+          ]
+        },
+        {
+          "line": 369,
+          "annotation": "@GetMapping(\"/{projectId}/submission\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectDeliveryDTO>> getSubmission(@PathVariable String projectId) {",
+            "return getDelivery(projectId);",
+            "}",
+            "@PutMapping(\"/{projectId}/submission\")"
+          ]
+        },
+        {
+          "line": 374,
+          "annotation": "@PutMapping(\"/{projectId}/submission\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> updateSubmission(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 382,
+          "annotation": "@GetMapping(\"/{projectId}/submission/history\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectDeliveryEventDTO>>> getSubmissionHistory(@PathVariable String projectId) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(new Response<>(\"OK\", \"Project submission history retrieved\", projectWorkspaceService.getProjectSubmissionHistory(principal, projectId)));"
+          ]
+        },
+        {
+          "line": 394,
+          "annotation": "@PostMapping(\"/{projectId}/submission/review\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> reviewSubmission(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 402,
+          "annotation": "@GetMapping(\"/{projectId}/readiness\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectReadinessDTO>> getReadiness(@PathVariable String projectId) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(new Response<>(\"OK\", \"Project readiness retrieved\", projectWorkspaceService.getProjectReadiness(principal, projectId)));"
+          ]
+        },
+        {
+          "line": 414,
+          "annotation": "@GetMapping(\"/{projectId}/delivery/history\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectDeliveryEventDTO>>> getDeliveryHistory(@PathVariable String projectId) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(new Response<>(\"OK\", \"Project delivery history retrieved\", projectWorkspaceService.getProjectDeliveryHistory(principal, projectId)));"
+          ]
+        },
+        {
+          "line": 426,
+          "annotation": "@GetMapping(\"/{projectId}/activity\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectActivityDTO>>> getActivity(@PathVariable String projectId) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(new Response<>(\"OK\", \"Project activity retrieved\", projectWorkspaceService.getProjectActivityFeed(principal, projectId)));"
+          ]
+        },
+        {
+          "line": 438,
+          "annotation": "@GetMapping(\"/{projectId}/activity/feed\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectActivityFeedDTO>> getActivityFeed(",
+            "@PathVariable String projectId,",
+            "@org.springframework.web.bind.annotation.RequestParam(required = false) Integer page,",
+            "@org.springframework.web.bind.annotation.RequestParam(required = false) Integer size,"
+          ]
+        },
+        {
+          "line": 471,
+          "annotation": "@PutMapping(\"/{projectId}/meetings\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> updateMeetings(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 479,
+          "annotation": "@GetMapping(\"/{projectId}/meetings\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectMeetingDTO>>> getMeetings(@PathVariable String projectId) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(new Response<>(\"OK\", \"Project meetings retrieved\", projectWorkspaceService.getProjectMeetings(principal, projectId)));"
+          ]
+        },
+        {
+          "line": 491,
+          "annotation": "@PostMapping(\"/{projectId}/meetings/{meetingKey}/withdraw\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectMeetingDTO>>> withdrawMeetingRequest(",
+            "@PathVariable String projectId,",
+            "@PathVariable String meetingKey",
+            ") {"
+          ]
+        },
+        {
+          "line": 509,
+          "annotation": "@PostMapping(\"/{projectId}/meetings/request\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectMeetingDTO>>> requestMeeting(",
+            "@PathVariable String projectId,",
+            "@RequestBody Map<String, Object> payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 524,
+          "annotation": "@GetMapping(\"/{projectId}/tasks/items\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectTaskDTO>>> getProjectTasks(",
+            "@PathVariable String projectId,",
+            "@RequestParam(required = false) String lane,",
+            "@RequestParam(required = false) String priority,"
+          ]
+        },
+        {
+          "line": 542,
+          "annotation": "@GetMapping(\"/{projectId}/tasks/items/{taskId}/comments\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectTaskCommentDTO>>> getProjectTaskComments(",
+            "@PathVariable String projectId,",
+            "@PathVariable String taskId",
+            ") {"
+          ]
+        },
+        {
+          "line": 557,
+          "annotation": "@PostMapping(\"/{projectId}/tasks/items\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectTaskDTO>>> addProjectTask(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectTaskUpsertDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 572,
+          "annotation": "@PutMapping(\"/{projectId}/tasks/items/{taskId}\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectTaskDTO>>> updateProjectTask(",
+            "@PathVariable String projectId,",
+            "@PathVariable String taskId,",
+            "@RequestBody ProjectTaskUpsertDTO payload"
+          ]
+        },
+        {
+          "line": 595,
+          "annotation": "@DeleteMapping(\"/{projectId}/tasks/items/{taskId}\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectTaskDTO>>> removeProjectTask(",
+            "@PathVariable String projectId,",
+            "@PathVariable String taskId",
+            ") {"
+          ]
+        },
+        {
+          "line": 612,
+          "annotation": "@PutMapping(\"/{projectId}/tasks/reorder\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectTaskDTO>>> reorderProjectTasks(",
+            "@PathVariable String projectId,",
+            "@RequestBody ProjectTaskReorderDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 627,
+          "annotation": "@PostMapping(\"/{projectId}/tasks/items/{taskId}/comments\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectTaskCommentDTO>>> addProjectTaskComment(",
+            "@PathVariable String projectId,",
+            "@PathVariable String taskId,",
+            "@Valid @RequestBody ProjectTaskCommentUpsertDTO payload"
+          ]
+        },
+        {
+          "line": 643,
+          "annotation": "@GetMapping(\"/{projectId}/member-candidates\")",
+          "next": [
+            "public ResponseEntity<Response<List<Map<String, Object>>>> searchProjectMemberCandidates(",
+            "@PathVariable String projectId,",
+            "@RequestParam(defaultValue = \"LEARNER\") String userType,",
+            "@RequestParam(defaultValue = \"\") String query,"
+          ]
+        },
+        {
+          "line": 664,
+          "annotation": "@PostMapping(\"/{projectId}/members\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectMemberDTO>>> addProjectMember(",
+            "@PathVariable String projectId,",
+            "@Valid @RequestBody ProjectMemberUpsertDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 679,
+          "annotation": "@PutMapping(\"/{projectId}/members/{memberId}\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectMemberDTO>>> updateProjectMember(",
+            "@PathVariable String projectId,",
+            "@PathVariable Integer memberId,",
+            "@Valid @RequestBody ProjectMemberUpdateDTO payload"
+          ]
+        },
+        {
+          "line": 695,
+          "annotation": "@PostMapping(\"/{projectId}/members/{memberId}/remove\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectMemberDTO>>> removeProjectMember(",
+            "@PathVariable String projectId,",
+            "@PathVariable Integer memberId",
+            ") {"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 37,
+          "text": "import org.springframework.security.access.AccessDeniedException;"
+        },
+        {
+          "line": 86,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 87,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 101,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 102,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 113,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 114,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 128,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 129,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 162,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 163,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 177,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 178,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 196,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 197,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 211,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 212,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 226,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 227,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 242,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 243,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 257,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 258,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 272,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 273,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 287,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 288,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 333,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 334,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 350,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 351,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 362,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 363,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 387,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 388,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 407,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 408,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 419,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 420,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 431,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 432,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 464,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 465,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 484,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 485,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 500,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 501,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 517,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 518,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 535,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 536,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 550,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 551,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 565,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 566,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 581,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 582,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 603,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 604,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 620,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 621,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 636,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 637,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 657,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 658,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 672,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 673,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 688,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 689,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 703,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 704,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 714,
+          "text": "} catch (AccessDeniedException e) {"
+        },
+        {
+          "line": 715,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        }
+      ],
+      "guardCandidateCount": 73,
+      "domainCallSamples": [
+        {
+          "line": 77,
+          "text": "featureFlagService.requireEnabled(\"module.projects.enabled\", securityContextUtil.getAuthenticatedUserPrincipal(), request);"
+        },
+        {
+          "line": 85,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Projects retrieved\", projectWorkspaceService.getMyProjects(principal)));"
+        },
+        {
+          "line": 100,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Projects retrieved\", projectWorkspaceService.getMyProjectsPage(principal, page, size, status, search, attention)));"
+        },
+        {
+          "line": 112,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project retrieved\", projectWorkspaceService.getMyProject(principal, projectId)));"
+        },
+        {
+          "line": 127,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project updated\", projectWorkspaceService.updateMyProject(principal, projectId, payload)));"
+        },
+        {
+          "line": 161,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Sprint started\", projectWorkspaceService.startSprint(principal, projectId, sprintKey)));"
+        },
+        {
+          "line": 176,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Sprint completed\", projectWorkspaceService.completeSprint(principal, projectId, sprintKey)));"
+        },
+        {
+          "line": 195,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Sprint reopened\", projectWorkspaceService.reopenSprint(principal, projectId, sprintKey)));"
+        },
+        {
+          "line": 210,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Releases retrieved\", projectWorkspaceService.getProjectReleases(principal, projectId)));"
+        },
+        {
+          "line": 225,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Release created\", projectWorkspaceService.createProjectRelease(principal, projectId, payload)));"
+        },
+        {
+          "line": 241,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Release updated\", projectWorkspaceService.updateProjectRelease(principal, projectId, releaseKey, payload)));"
+        },
+        {
+          "line": 256,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Release removed\", projectWorkspaceService.removeProjectRelease(principal, projectId, releaseKey)));"
+        },
+        {
+          "line": 271,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Release shipped\", projectWorkspaceService.shipProjectRelease(principal, projectId, releaseKey)));"
+        },
+        {
+          "line": 286,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Release un-shipped\", projectWorkspaceService.unshipProjectRelease(principal, projectId, releaseKey)));"
+        },
+        {
+          "line": 320,
+          "text": "String key = projectWorkspaceService.resolveProjectResourceDownloadKey(principal, projectId, resourceKey);"
+        },
+        {
+          "line": 349,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project updated\", projectWorkspaceService.updateProjectDelivery(principal, projectId, payload)));"
+        },
+        {
+          "line": 361,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project delivery retrieved\", projectWorkspaceService.getProjectDelivery(principal, projectId)));"
+        },
+        {
+          "line": 386,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project submission history retrieved\", projectWorkspaceService.getProjectSubmissionHistory(principal, projectId)));"
+        },
+        {
+          "line": 406,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project readiness retrieved\", projectWorkspaceService.getProjectReadiness(principal, projectId)));"
+        },
+        {
+          "line": 418,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project delivery history retrieved\", projectWorkspaceService.getProjectDeliveryHistory(principal, projectId)));"
+        },
+        {
+          "line": 430,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project activity retrieved\", projectWorkspaceService.getProjectActivityFeed(principal, projectId)));"
+        },
+        {
+          "line": 463,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project activity feed retrieved\", projectWorkspaceService.getProjectActivityFeedPaged(principal, projectId, page, size, eventType, sourceTab, from, to)))"
+        },
+        {
+          "line": 483,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project meetings retrieved\", projectWorkspaceService.getProjectMeetings(principal, projectId)));"
+        },
+        {
+          "line": 499,
+          "text": "projectWorkspaceService.withdrawProjectMeetingRequest(principal, projectId, meetingKey)));"
+        },
+        {
+          "line": 516,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Meeting requested\", projectWorkspaceService.requestProjectMeeting(principal, projectId, payload)));"
+        },
+        {
+          "line": 534,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project tasks retrieved\", projectWorkspaceService.getProjectTasks(principal, projectId, lane, priority, assigneeId, sprintScope)));"
+        },
+        {
+          "line": 549,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project task comments retrieved\", projectWorkspaceService.getProjectTaskComments(principal, projectId, taskId)));"
+        },
+        {
+          "line": 564,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project tasks updated\", projectWorkspaceService.upsertProjectTask(principal, projectId, payload)));"
+        },
+        {
+          "line": 580,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project tasks updated\", projectWorkspaceService.updateProjectTask(principal, projectId, taskId, payload)));"
+        },
+        {
+          "line": 602,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project tasks updated\", projectWorkspaceService.removeProjectTask(principal, projectId, taskId)));"
+        },
+        {
+          "line": 619,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project tasks reordered\", projectWorkspaceService.reorderProjectTasks(principal, projectId, payload)));"
+        },
+        {
+          "line": 635,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project task comment added\", projectWorkspaceService.addProjectTaskComment(principal, projectId, taskId, payload)));"
+        },
+        {
+          "line": 655,
+          "text": "projectWorkspaceService.searchProjectMemberCandidates(principal, projectId, userType, query, limit)"
+        },
+        {
+          "line": 671,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project members updated\", projectWorkspaceService.addProjectMember(principal, projectId, payload)));"
+        },
+        {
+          "line": 687,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project members updated\", projectWorkspaceService.updateProjectMember(principal, projectId, memberId, payload)));"
+        },
+        {
+          "line": 702,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project members updated\", projectWorkspaceService.removeProjectMember(principal, projectId, memberId)));"
+        },
+        {
+          "line": 713,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project updated\", projectWorkspaceService.updateMyProject(principal, projectId, payload)));"
+        }
+      ],
+      "domainCallCandidateCount": 37
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminProjectController.java",
+      "sha": "7dea70f05770419af7fb825dd3933af4f3bb90e0",
+      "lines": 866,
+      "package": "com._42students.lms.controller",
+      "className": "AdminProjectController",
+      "mappingsAndGuards": [
+        {
+          "line": 50,
+          "annotation": "@RequestMapping(\"/api/v1/admin/projects\")",
+          "next": [
+            "@CrossOrigin(originPatterns = {\"http://localhost:*\", \"https://42lms.com\", \"https://www.42lms.com\", \"https://*.42lms.com\"}, allowCredentials = \"true\", maxAge = 3600)",
+            "@Slf4j",
+            "public class AdminProjectController extends BaseController {",
+            "private final ProjectWorkspaceService projectWorkspaceService;"
+          ]
+        },
+        {
+          "line": 79,
+          "annotation": "@PostMapping(\"/teams\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.Map<String, Object>>> createTeams(",
+            "@RequestBody com._42students.lms.dto.projects.AdminProjectTeamsCreateDTO payload) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();"
+          ]
+        },
+        {
+          "line": 109,
+          "annotation": "@PostMapping(\"/{projectId}/team/reconcile\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.Map<String, Object>>> reconcileTeam(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId) {",
+            "try {"
+          ]
+        },
+        {
+          "line": 173,
+          "annotation": "@PostMapping",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> createProject(@Valid @RequestBody AdminProjectCreateDTO payload) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (principal == null) {"
+          ]
+        },
+        {
+          "line": 198,
+          "annotation": "@PostMapping(\"/bulk/preflight\")",
+          "next": [
+            "public ResponseEntity<Response<Map<String, Object>>> previewBulkCreateProjects(@Valid @RequestBody AdminProjectBulkCreateDTO payload) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (principal == null) {"
+          ]
+        },
+        {
+          "line": 222,
+          "annotation": "@PostMapping(\"/bulk\")",
+          "next": [
+            "public ResponseEntity<Response<BulkCreateProjectsResultDTO>> bulkCreateProjects(@Valid @RequestBody AdminProjectBulkCreateDTO payload) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (principal == null) {"
+          ]
+        },
+        {
+          "line": 246,
+          "annotation": "@PutMapping(\"/{projectId}\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> updateProject(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload"
+          ]
+        },
+        {
+          "line": 273,
+          "annotation": "@GetMapping",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectWorkspaceDTO>>> getProjectsByCollege(",
+            "@RequestParam Integer collegeId,",
+            "@RequestParam(required = false) String status,",
+            "@RequestParam(required = false) String search"
+          ]
+        },
+        {
+          "line": 306,
+          "annotation": "@GetMapping(\"/page\")",
+          "next": [
+            "public ResponseEntity<Response<com._42students.lms.dto.response.PageDTO<ProjectWorkspaceDTO>>> getProjectsByCollegePage(",
+            "@RequestParam Integer collegeId,",
+            "@RequestParam(required = false) String status,",
+            "@RequestParam(required = false) String search,"
+          ]
+        },
+        {
+          "line": 339,
+          "annotation": "@GetMapping(\"/deleted\")",
+          "next": [
+            "public ResponseEntity<Response<com._42students.lms.dto.response.PageDTO<ProjectWorkspaceDTO>>> getDeletedProjectsByCollege(",
+            "@RequestParam Integer collegeId,",
+            "@RequestParam(required = false, defaultValue = \"0\") int page,",
+            "@RequestParam(required = false, defaultValue = \"25\") int size"
+          ]
+        },
+        {
+          "line": 366,
+          "annotation": "@GetMapping(\"/{projectId}\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> getProjectById(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 392,
+          "annotation": "@PostMapping(\"/{projectId}/mentor\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> assignMentor(",
+            "@RequestBody AdminProjectMentorAssignDTO payload,",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId",
+            ") {"
+          ]
+        },
+        {
+          "line": 427,
+          "annotation": "@PutMapping(\"/{projectId}/delivery/review\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> reviewDelivery(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId,",
+            "@RequestBody ProjectWorkspaceUpdateDTO payload,"
+          ]
+        },
+        {
+          "line": 475,
+          "annotation": "@PostMapping(\"/reassign-mentor/bulk\")",
+          "next": [
+            "public ResponseEntity<Response<BulkMentorReassignResultDTO>> bulkReassignMentor(@RequestBody AdminProjectBulkMentorReassignDTO payload) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (principal == null) {"
+          ]
+        },
+        {
+          "line": 499,
+          "annotation": "@PostMapping(\"/{projectId}/template\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> attachTemplate(",
+            "@RequestBody AdminProjectTemplateAttachDTO payload,",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId",
+            ") {"
+          ]
+        },
+        {
+          "line": 527,
+          "annotation": "@PostMapping(\"/{projectId}/learners\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> assignLearners(",
+            "@Valid @RequestBody AdminProjectLearnerAssignDTO payload,",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId",
+            ") {"
+          ]
+        },
+        {
+          "line": 555,
+          "annotation": "@PostMapping(\"/{projectId}/archive\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> archiveProject(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 581,
+          "annotation": "@PostMapping(\"/{projectId}/delete\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> deleteProject(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 607,
+          "annotation": "@PostMapping(\"/{projectId}/restore\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> restoreProject(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 633,
+          "annotation": "@GetMapping(\"/{projectId}/readiness\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectReadinessDTO>> getReadiness(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 662,
+          "annotation": "@GetMapping(\"/{projectId}/releases\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.List<ProjectReleaseDTO>>> getReleases(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 688,
+          "annotation": "@PostMapping(\"/{projectId}/readiness/override\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectReadinessDTO>> overrideReadiness(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@Valid @RequestBody AdminProjectReadinessOverrideDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 720,
+          "annotation": "@GetMapping(\"/audit\")",
+          "next": [
+            "public ResponseEntity<?> getAuditLog(",
+            "@RequestParam Integer collegeId,",
+            "@RequestParam(required = false) String actionKey,",
+            "@RequestParam(required = false) Integer actorUserId,"
+          ]
+        },
+        {
+          "line": 839,
+          "annotation": "@GetMapping(\"/{projectId}/resource-audit\")",
+          "next": [
+            "public ResponseEntity<Response<List<com._42students.lms.model.ProjectResourceAudit>>> getResourceAudit(",
+            "@org.springframework.web.bind.annotation.PathVariable String projectId,",
+            "@RequestParam Integer collegeId",
+            ") {"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 87,
+          "text": "if (payload == null || payload.getCollegeId() == null || payload.getCollegeId() <= 0) {"
+        },
+        {
+          "line": 88,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be provided\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 90,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, payload.getCollegeId());"
+        },
+        {
+          "line": 93,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", payload.getCollegeId());"
+        },
+        {
+          "line": 100,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 101,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 112,
+          "text": "@RequestParam Integer collegeId) {"
+        },
+        {
+          "line": 118,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 119,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be provided\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 121,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 126,
+          "text": ".filter(w -> java.util.Objects.equals(w.getCollegeId(), collegeId))"
+        },
+        {
+          "line": 133,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 134,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 180,
+          "text": "Integer collegeId = payload != null ? payload.getCollegeId() : null;"
+        },
+        {
+          "line": 181,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 182,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 184,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 185,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 189,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 190,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 205,
+          "text": "Integer collegeId = payload != null ? payload.getCollegeId() : null;"
+        },
+        {
+          "line": 206,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 207,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 209,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 210,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 214,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 215,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 229,
+          "text": "Integer collegeId = payload != null ? payload.getCollegeId() : null;"
+        },
+        {
+          "line": 230,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 231,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 233,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 234,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 238,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 239,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 249,
+          "text": "@RequestParam Integer collegeId,"
+        },
+        {
+          "line": 253,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 254,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be provided\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 260,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 261,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 262,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project updated\", projectWorkspaceService.updateProject(principal, projectId, collegeId, payload)));"
+        },
+        {
+          "line": 265,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 266,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 275,
+          "text": "@RequestParam Integer collegeId,"
+        },
+        {
+          "line": 280,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 281,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 287,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 288,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 289,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Projects retrieved\", projectWorkspaceService.getProjectsByCollege(principal, collegeId, status, search)));"
+        },
+        {
+          "line": 292,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 293,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 295,
+          "text": "log.error(\"Error fetching projects for college {}:\", collegeId, e);"
+        },
+        {
+          "line": 308,
+          "text": "@RequestParam Integer collegeId,"
+        },
+        {
+          "line": 316,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 317,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 323,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 324,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 325,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Projects retrieved\", projectWorkspaceService.getProjectsByCollegePage(principal, collegeId, status, search, view, page, size)));"
+        },
+        {
+          "line": 328,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 329,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 331,
+          "text": "log.error(\"Error fetching paged projects for college {}:\", collegeId, e);"
+        },
+        {
+          "line": 341,
+          "text": "@RequestParam Integer collegeId,"
+        },
+        {
+          "line": 346,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 347,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 353,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 354,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 355,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Deleted projects retrieved\", projectWorkspaceService.getDeletedProjectsByCollege(principal, collegeId, page, size)));"
+        },
+        {
+          "line": 358,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 359,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 361,
+          "text": "log.error(\"Error fetching deleted projects for college {}:\", collegeId, e);"
+        },
+        {
+          "line": 369,
+          "text": "@RequestParam Integer collegeId"
+        },
+        {
+          "line": 372,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 373,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be provided\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 379,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 380,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 381,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project retrieved\", projectWorkspaceService.getProjectByIdForCollege(principal, projectId, collegeId)));"
+        }
+      ],
+      "guardCandidateCount": 180,
+      "domainCallSamples": [
+        {
+          "line": 90,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, payload.getCollegeId());"
+        },
+        {
+          "line": 93,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", payload.getCollegeId());"
+        },
+        {
+          "line": 97,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Teams processed\", projectTeamService.createTeams(principal, payload)));"
+        },
+        {
+          "line": 121,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 128,
+          "text": "int changed = projectTeamService.reconcile(workspace);"
+        },
+        {
+          "line": 144,
+          "text": "return projectWorkspaceRepository.findActiveById(Integer.parseInt(projectId));"
+        },
+        {
+          "line": 146,
+          "text": "return projectWorkspaceRepository.findActiveBySlug(projectId);"
+        },
+        {
+          "line": 169,
+          "text": "featureFlagService.requireEnabled(\"module.projects.enabled\", securityContextUtil.getAuthenticatedUserPrincipal(), request);"
+        },
+        {
+          "line": 184,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 185,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 186,
+          "text": "return new ResponseEntity<>(new Response<>(\"OK\", \"Project created\", projectWorkspaceService.createProject(principal, payload)), HttpStatus.CREATED);"
+        },
+        {
+          "line": 209,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 210,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 211,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Cohort preflight\", projectWorkspaceService.previewBulkCreateProjectsForClass(principal, payload)));"
+        },
+        {
+          "line": 233,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 234,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 235,
+          "text": "return new ResponseEntity<>(new Response<>(\"OK\", \"Workspaces created\", projectWorkspaceService.bulkCreateProjectsForClass(principal, payload)), HttpStatus.CREATED);"
+        },
+        {
+          "line": 260,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 261,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 262,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project updated\", projectWorkspaceService.updateProject(principal, projectId, collegeId, payload)));"
+        },
+        {
+          "line": 287,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 288,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 289,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Projects retrieved\", projectWorkspaceService.getProjectsByCollege(principal, collegeId, status, search)));"
+        },
+        {
+          "line": 323,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 324,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 325,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Projects retrieved\", projectWorkspaceService.getProjectsByCollegePage(principal, collegeId, status, search, view, page, size)));"
+        },
+        {
+          "line": 353,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 354,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 355,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Deleted projects retrieved\", projectWorkspaceService.getDeletedProjectsByCollege(principal, collegeId, page, size)));"
+        },
+        {
+          "line": 379,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 380,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 381,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project retrieved\", projectWorkspaceService.getProjectByIdForCollege(principal, projectId, collegeId)));"
+        },
+        {
+          "line": 409,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 410,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 411,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Mentor assigned\", projectWorkspaceService.assignProjectMentor(principal, projectId, payload)));"
+        },
+        {
+          "line": 442,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 443,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 444,
+          "text": "ProjectWorkspaceDTO result = projectWorkspaceService.adminReviewProjectDelivery(principal, projectId, collegeId, payload);"
+        },
+        {
+          "line": 456,
+          "text": "auditLogService.log(request, \"PROJECT_DELIVERY_ADMIN_REVIEW\", \"project\", projectId, null, collegeId,"
+        },
+        {
+          "line": 486,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 487,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 488,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Mentor reassignment processed\", projectWorkspaceService.bulkReassignProjectMentor(principal, payload)));"
+        },
+        {
+          "line": 512,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, payload.getCollegeId());"
+        },
+        {
+          "line": 515,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", payload.getCollegeId());"
+        },
+        {
+          "line": 516,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template attached\", projectWorkspaceService.attachProjectTemplate(principal, projectId, payload)));"
+        },
+        {
+          "line": 540,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, payload.getCollegeId());"
+        },
+        {
+          "line": 543,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", payload.getCollegeId());"
+        },
+        {
+          "line": 544,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Learners assigned\", projectWorkspaceService.assignProjectLearners(principal, projectId, payload)));"
+        },
+        {
+          "line": 568,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 569,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 570,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project archived\", projectWorkspaceService.archiveProject(principal, projectId, collegeId)));"
+        },
+        {
+          "line": 594,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 595,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 596,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project deleted\", projectWorkspaceService.deleteProject(principal, projectId, collegeId)));"
+        },
+        {
+          "line": 620,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 621,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 622,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project restored\", projectWorkspaceService.restoreProject(principal, projectId, collegeId)));"
+        },
+        {
+          "line": 646,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 647,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 648,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Readiness retrieved\", projectWorkspaceService.getProjectReadiness(principal, projectId, collegeId)));"
+        },
+        {
+          "line": 675,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 676,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 677,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Releases retrieved\", projectWorkspaceService.getProjectReleases(principal, projectId, collegeId)));"
+        },
+        {
+          "line": 701,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, payload.getCollegeId());"
+        },
+        {
+          "line": 704,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", payload.getCollegeId());"
+        },
+        {
+          "line": 705,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Readiness override updated\", projectWorkspaceService.overrideProjectReadiness(principal, projectId, payload.getCollegeId(), payload.getOverride(), payloa"
+        },
+        {
+          "line": 747,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 748,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 758,
+          "text": "boolean includeGlobalTemplateEvents = accessControlService.isSuperAdmin(principal);"
+        },
+        {
+          "line": 763,
+          "text": "Page<com._42students.lms.model.AdminAuditLog> result = auditLogService.search("
+        },
+        {
+          "line": 797,
+          "text": "for (Learner learner : learnerRepository.findAllById(learnerIds)) {"
+        },
+        {
+          "line": 802,
+          "text": "for (Faculty faculty : facultyRepository.findAllById(facultyIds)) {"
+        },
+        {
+          "line": 852,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 853,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", collegeId);"
+        },
+        {
+          "line": 854,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Resource audit retrieved\", projectWorkspaceService.getProjectResourceAudit(principal, projectId, collegeId)));"
+        }
+      ],
+      "domainCallCandidateCount": 75
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminProjectTemplateController.java",
+      "sha": "e6280bddc36a7362768ef71fd31c8c197bc683be",
+      "lines": 494,
+      "package": "com._42students.lms.controller",
+      "className": "AdminProjectTemplateController",
+      "mappingsAndGuards": [
+        {
+          "line": 34,
+          "annotation": "@RequestMapping(\"/api/v1/admin/project-templates\")",
+          "next": [
+            "@CrossOrigin(originPatterns = {\"http://localhost:*\", \"https://42lms.com\", \"https://www.42lms.com\", \"https://*.42lms.com\"}, allowCredentials = \"true\", maxAge = 3600)",
+            "@Slf4j",
+            "public class AdminProjectTemplateController extends BaseController {",
+            "private final ProjectWorkspaceService projectWorkspaceService;"
+          ]
+        },
+        {
+          "line": 63,
+          "annotation": "@GetMapping",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectTemplateDTO>>> getProjectTemplates(",
+            "@RequestParam(required = false) Integer collegeId,",
+            "@RequestParam(required = false) String lifecycleStatus,",
+            "@RequestParam(required = false) String search"
+          ]
+        },
+        {
+          "line": 95,
+          "annotation": "@GetMapping(\"/{templateId}\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectTemplateDTO>> getProjectTemplate(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 124,
+          "annotation": "@GetMapping(\"/{templateId}/preview\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectTemplateDTO>> previewProjectTemplate(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 132,
+          "annotation": "@GetMapping(\"/{templateId}/versions/page\")",
+          "next": [
+            "public ResponseEntity<Response<com._42students.lms.dto.response.PageDTO<ProjectTemplateVersionDTO>>> getProjectTemplateVersionsPage(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId,",
+            "@RequestParam(defaultValue = \"0\") int page,"
+          ]
+        },
+        {
+          "line": 145,
+          "annotation": "@GetMapping(\"/{templateId}/colleges\")",
+          "next": [
+            "public ResponseEntity<Response<List<Integer>>> getProjectTemplateColleges(@PathVariable Integer templateId) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(new Response<>(\"OK\", \"Template college assignments retrieved\", projectWorkspaceService.getAssignedCollegeIdsForProjectTemplate(principal, templateId)));"
+          ]
+        },
+        {
+          "line": 154,
+          "annotation": "@PutMapping(\"/{templateId}/colleges\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.Map<String,Object>>> bulkSetProjectTemplateColleges(@PathVariable Integer templateId, @RequestBody java.util.Map<String,Object> payload) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "Object raw = payload == null ? null : payload.get(\"collegeIds\");"
+          ]
+        },
+        {
+          "line": 173,
+          "annotation": "@GetMapping(\"/{templateId}/versions\")",
+          "next": [
+            "public ResponseEntity<Response<List<ProjectTemplateVersionDTO>>> getProjectTemplateVersions(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 201,
+          "annotation": "@PostMapping",
+          "next": [
+            "public ResponseEntity<Response<ProjectTemplateDTO>> createProjectTemplate(@RequestBody AdminProjectTemplateUpsertDTO payload) {",
+            "try {",
+            "if (payload == null) {",
+            "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"Template payload is required\", null), HttpStatus.BAD_REQUEST);"
+          ]
+        },
+        {
+          "line": 223,
+          "annotation": "@PutMapping(\"/{templateId}\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectTemplateDTO>> updateProjectTemplate(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId,",
+            "@RequestBody AdminProjectTemplateUpsertDTO payload"
+          ]
+        },
+        {
+          "line": 246,
+          "annotation": "@PostMapping(\"/{templateId}/duplicate\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectTemplateDTO>> duplicateProjectTemplate(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId,",
+            "@RequestBody(required = false) AdminProjectTemplateUpsertDTO payload"
+          ]
+        },
+        {
+          "line": 269,
+          "annotation": "@PostMapping(\"/{templateId}/projects\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectWorkspaceDTO>> createProjectFromTemplate(",
+            "@PathVariable Integer templateId,",
+            "@RequestBody AdminProjectCreateDTO payload",
+            ") {"
+          ]
+        },
+        {
+          "line": 304,
+          "annotation": "@DeleteMapping(\"/{templateId}\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectTemplateDTO>> archiveProjectTemplate(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 327,
+          "annotation": "@PostMapping(\"/{templateId}/colleges/{collegeId}\")",
+          "next": [
+            "public ResponseEntity<Response<Void>> assignProjectTemplateToCollege(",
+            "@PathVariable Integer templateId,",
+            "@PathVariable Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 350,
+          "annotation": "@DeleteMapping(\"/{templateId}/colleges/{collegeId}\")",
+          "next": [
+            "public ResponseEntity<Response<Void>> unassignProjectTemplateFromCollege(",
+            "@PathVariable Integer templateId,",
+            "@PathVariable Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 373,
+          "annotation": "@GetMapping(\"/colleges/{collegeId}\")",
+          "next": [
+            "public ResponseEntity<Response<List<Integer>>> getAssignedProjectTemplateIdsForCollege(@PathVariable Integer collegeId) {",
+            "try {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (principal == null) {"
+          ]
+        },
+        {
+          "line": 392,
+          "annotation": "@PostMapping(\"/{templateId}/publish\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectTemplateDTO>> publishProjectTemplate(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 414,
+          "annotation": "@PostMapping(\"/{templateId}/unpublish\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectTemplateDTO>> unpublishProjectTemplate(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 445,
+          "annotation": "@GetMapping(\"/{templateId}/impact\")",
+          "next": [
+            "public ResponseEntity<Response<java.util.Map<String, Object>>> getProjectTemplateImpact(",
+            "@PathVariable Integer templateId,",
+            "@RequestParam(required = false) Integer collegeId",
+            ") {"
+          ]
+        },
+        {
+          "line": 470,
+          "annotation": "@PostMapping(\"/{templateId}/versions/{versionId}/rollback\")",
+          "next": [
+            "public ResponseEntity<Response<ProjectTemplateDTO>> rollbackProjectTemplateVersion(",
+            "@PathVariable Integer templateId,",
+            "@PathVariable Integer versionId,",
+            "@RequestParam(required = false) Integer collegeId,"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 65,
+          "text": "@RequestParam(required = false) Integer collegeId,"
+        },
+        {
+          "line": 76,
+          "text": "// browse/manage them. College-admin still passes their own collegeId, which"
+        },
+        {
+          "line": 78,
+          "text": "if (!accessControlService.isSuperAdmin(principal)) {"
+        },
+        {
+          "line": 79,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 80,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 82,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 84,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project templates retrieved\", projectWorkspaceService.getProjectTemplates(principal, collegeId, lifecycleStatus, search)));"
+        },
+        {
+          "line": 87,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 88,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 90,
+          "text": "log.error(\"Error fetching project templates for college {}:\", collegeId, e);"
+        },
+        {
+          "line": 98,
+          "text": "@RequestParam(required = false) Integer collegeId"
+        },
+        {
+          "line": 107,
+          "text": "if (!accessControlService.isSuperAdmin(principal)) {"
+        },
+        {
+          "line": 108,
+          "text": "if (collegeId == null || collegeId <= 0) {"
+        },
+        {
+          "line": 109,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be a positive integer\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 111,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 113,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template retrieved\", projectWorkspaceService.getProjectTemplate(principal, collegeId, templateId)));"
+        },
+        {
+          "line": 116,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 117,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 127,
+          "text": "@RequestParam(required = false) Integer collegeId"
+        },
+        {
+          "line": 129,
+          "text": "return getProjectTemplate(templateId, collegeId);"
+        },
+        {
+          "line": 135,
+          "text": "@RequestParam(required = false) Integer collegeId,"
+        },
+        {
+          "line": 140,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template versions retrieved\", projectWorkspaceService.getProjectTemplateVersionsPage(principal, collegeId, templateId, page, size)));"
+        },
+        {
+          "line": 142,
+          "text": "catch (org.springframework.security.access.AccessDeniedException e) { return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN); }"
+        },
+        {
+          "line": 149,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Template college assignments retrieved\", projectWorkspaceService.getAssignedCollegeIdsForProjectTemplate(principal, templateId)));"
+        },
+        {
+          "line": 151,
+          "text": "catch (org.springframework.security.access.AccessDeniedException e) { return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN); }"
+        },
+        {
+          "line": 158,
+          "text": "Object raw = payload == null ? null : payload.get(\"collegeIds\");"
+        },
+        {
+          "line": 162,
+          "text": "Object rawExpected = payload == null ? null : payload.get(\"expectedCollegeIds\");"
+        },
+        {
+          "line": 170,
+          "text": "catch (org.springframework.security.access.AccessDeniedException e) { return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN); }"
+        },
+        {
+          "line": 176,
+          "text": "@RequestParam(required = false) Integer collegeId"
+        },
+        {
+          "line": 185,
+          "text": "// college for a scoped super-admin's collegeId to be checked against)."
+        },
+        {
+          "line": 186,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template versions retrieved\", projectWorkspaceService.getProjectTemplateVersions(principal, collegeId, templateId)));"
+        },
+        {
+          "line": 189,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 190,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 215,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 216,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 226,
+          "text": "@RequestParam(required = false) Integer collegeId,"
+        },
+        {
+          "line": 235,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template updated\", projectWorkspaceService.updateProjectTemplate(principal, templateId, collegeId, payload)));"
+        },
+        {
+          "line": 238,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 239,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 249,
+          "text": "@RequestParam(required = false) Integer collegeId,"
+        },
+        {
+          "line": 258,
+          "text": "return new ResponseEntity<>(new Response<>(\"OK\", \"Project template duplicated\", projectWorkspaceService.duplicateProjectTemplate(principal, templateId, collegeId, payload)), HttpStatus.CREATED);"
+        },
+        {
+          "line": 261,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 262,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 279,
+          "text": "if (payload == null || payload.getCollegeId() == null || payload.getCollegeId() <= 0) {"
+        },
+        {
+          "line": 280,
+          "text": "return new ResponseEntity<>(new Response<>(\"BAD_REQUEST\", \"collegeId must be provided\", null), HttpStatus.BAD_REQUEST);"
+        },
+        {
+          "line": 282,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, payload.getCollegeId());"
+        },
+        {
+          "line": 284,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", payload.getCollegeId());"
+        },
+        {
+          "line": 288,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 289,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 307,
+          "text": "@RequestParam(required = false) Integer collegeId"
+        },
+        {
+          "line": 315,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template archived\", projectWorkspaceService.archiveProjectTemplate(principal, templateId, collegeId)));"
+        },
+        {
+          "line": 318,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 319,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 327,
+          "text": "@PostMapping(\"/{templateId}/colleges/{collegeId}\")"
+        },
+        {
+          "line": 330,
+          "text": "@PathVariable Integer collegeId"
+        },
+        {
+          "line": 338,
+          "text": "projectWorkspaceService.assignProjectTemplateToCollege(principal, templateId, collegeId);"
+        },
+        {
+          "line": 342,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 343,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 345,
+          "text": "log.error(\"Error assigning project template {} to college {}:\", templateId, collegeId, e);"
+        },
+        {
+          "line": 350,
+          "text": "@DeleteMapping(\"/{templateId}/colleges/{collegeId}\")"
+        },
+        {
+          "line": 353,
+          "text": "@PathVariable Integer collegeId"
+        },
+        {
+          "line": 361,
+          "text": "projectWorkspaceService.unassignProjectTemplateFromCollege(principal, templateId, collegeId);"
+        },
+        {
+          "line": 365,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 366,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 368,
+          "text": "log.error(\"Error unassigning project template {} from college {}:\", templateId, collegeId, e);"
+        },
+        {
+          "line": 373,
+          "text": "@GetMapping(\"/colleges/{collegeId}\")"
+        },
+        {
+          "line": 374,
+          "text": "public ResponseEntity<Response<List<Integer>>> getAssignedProjectTemplateIdsForCollege(@PathVariable Integer collegeId) {"
+        },
+        {
+          "line": 381,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Assigned template ids retrieved\", projectWorkspaceService.getAssignedProjectTemplateIdsForCollege(principal, collegeId)));"
+        },
+        {
+          "line": 384,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 385,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        },
+        {
+          "line": 387,
+          "text": "log.error(\"Error fetching assigned project template ids for college {}:\", collegeId, e);"
+        },
+        {
+          "line": 395,
+          "text": "@RequestParam(required = false) Integer collegeId"
+        },
+        {
+          "line": 403,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template published\", projectWorkspaceService.publishProjectTemplate(principal, templateId, collegeId)));"
+        },
+        {
+          "line": 406,
+          "text": "} catch (org.springframework.security.access.AccessDeniedException e) {"
+        },
+        {
+          "line": 407,
+          "text": "return new ResponseEntity<>(new Response<>(\"FORBIDDEN\", e.getMessage(), null), HttpStatus.FORBIDDEN);"
+        }
+      ],
+      "guardCandidateCount": 87,
+      "domainCallSamples": [
+        {
+          "line": 59,
+          "text": "featureFlagService.requireEnabled(\"module.projects.enabled\", securityContextUtil.getAuthenticatedUserPrincipal(), request);"
+        },
+        {
+          "line": 78,
+          "text": "if (!accessControlService.isSuperAdmin(principal)) {"
+        },
+        {
+          "line": 82,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 84,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project templates retrieved\", projectWorkspaceService.getProjectTemplates(principal, collegeId, lifecycleStatus, search)));"
+        },
+        {
+          "line": 107,
+          "text": "if (!accessControlService.isSuperAdmin(principal)) {"
+        },
+        {
+          "line": 111,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 113,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template retrieved\", projectWorkspaceService.getProjectTemplate(principal, collegeId, templateId)));"
+        },
+        {
+          "line": 140,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template versions retrieved\", projectWorkspaceService.getProjectTemplateVersionsPage(principal, collegeId, templateId, page, size)));"
+        },
+        {
+          "line": 149,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Template college assignments retrieved\", projectWorkspaceService.getAssignedCollegeIdsForProjectTemplate(principal, templateId)));"
+        },
+        {
+          "line": 168,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Template college assignments updated\", projectWorkspaceService.bulkSetProjectTemplateColleges(principal, templateId, ids, expected)));"
+        },
+        {
+          "line": 186,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template versions retrieved\", projectWorkspaceService.getProjectTemplateVersions(principal, collegeId, templateId)));"
+        },
+        {
+          "line": 211,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 212,
+          "text": "return new ResponseEntity<>(new Response<>(\"OK\", \"Project template created\", projectWorkspaceService.createProjectTemplate(principal, payload)), HttpStatus.CREATED);"
+        },
+        {
+          "line": 234,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 235,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template updated\", projectWorkspaceService.updateProjectTemplate(principal, templateId, collegeId, payload)));"
+        },
+        {
+          "line": 257,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 258,
+          "text": "return new ResponseEntity<>(new Response<>(\"OK\", \"Project template duplicated\", projectWorkspaceService.duplicateProjectTemplate(principal, templateId, collegeId, payload)), HttpStatus.CREATED);"
+        },
+        {
+          "line": 282,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, payload.getCollegeId());"
+        },
+        {
+          "line": 284,
+          "text": "featureFlagService.requireEnabledForCollege(\"module.projects.enabled\", payload.getCollegeId());"
+        },
+        {
+          "line": 285,
+          "text": "return new ResponseEntity<>(new Response<>(\"OK\", \"Project created from template\", projectWorkspaceService.createProjectFromTemplate(principal, templateId, payload)), HttpStatus.CREATED);"
+        },
+        {
+          "line": 314,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 315,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template archived\", projectWorkspaceService.archiveProjectTemplate(principal, templateId, collegeId)));"
+        },
+        {
+          "line": 337,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 338,
+          "text": "projectWorkspaceService.assignProjectTemplateToCollege(principal, templateId, collegeId);"
+        },
+        {
+          "line": 360,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 361,
+          "text": "projectWorkspaceService.unassignProjectTemplateFromCollege(principal, templateId, collegeId);"
+        },
+        {
+          "line": 380,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 381,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Assigned template ids retrieved\", projectWorkspaceService.getAssignedProjectTemplateIdsForCollege(principal, collegeId)));"
+        },
+        {
+          "line": 402,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 403,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template published\", projectWorkspaceService.publishProjectTemplate(principal, templateId, collegeId)));"
+        },
+        {
+          "line": 424,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 425,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template unpublished\", projectWorkspaceService.unpublishProjectTemplate(principal, templateId, collegeId)));"
+        },
+        {
+          "line": 457,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 459,
+          "text": "projectWorkspaceService.getProjectTemplateImpact(principal, templateId, collegeId)));"
+        },
+        {
+          "line": 482,
+          "text": "accessControlService.requireSuperAdmin(principal);"
+        },
+        {
+          "line": 483,
+          "text": "return ResponseEntity.ok(new Response<>(\"OK\", \"Project template rolled back\", projectWorkspaceService.rollbackProjectTemplateVersion(principal, templateId, collegeId, versionId, expectedTemplateVersio"
+        }
+      ],
+      "domainCallCandidateCount": 36
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/FacultyTeachingAssignmentController.java",
+      "sha": "467f59e61d056561d4b6409e491475aa9d1e3277",
+      "lines": 335,
+      "package": "com._42students.lms.controller",
+      "className": "FacultyTeachingAssignmentController",
+      "mappingsAndGuards": [
+        {
+          "line": 31,
+          "annotation": "@RequestMapping(\"/api/v1/teaching-assignment\")",
+          "next": [
+            "@Api(tags = \"Faculty Teaching Assignment Management\")",
+            "public class FacultyTeachingAssignmentController {",
+            "private final FacultyTeachingAssignmentService assignmentService;",
+            "@Autowired private AccessControlService accessControlService;"
+          ]
+        },
+        {
+          "line": 73,
+          "annotation": "@GetMapping(\"/get/{id}\")",
+          "next": [
+            "@ApiOperation(value = \"Get assignment details by ID\")",
+            "public ResponseEntity<Map<String, Object>> getAssignmentById(@PathVariable Integer id) {",
+            "FacultyTeachingAssignmentResponseDTO result = assignmentService.getAssignmentById(id);",
+            "if (result == null) {"
+          ]
+        },
+        {
+          "line": 98,
+          "annotation": "@PostMapping(\"/create\")",
+          "next": [
+            "@ApiOperation(value = \"Create a new teaching assignment\")",
+            "public ResponseEntity<Map<String, Object>> createAssignment(@Valid @RequestBody FacultyTeachingAssignmentDTO dto) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "requireTeachingAssignmentAdminRole(principal);"
+          ]
+        },
+        {
+          "line": 116,
+          "annotation": "@PostMapping(\"/createBulk\")",
+          "next": [
+            "@ApiOperation(value = \"Create multiple teaching assignments for a faculty\")",
+            "public ResponseEntity<Map<String, Object>> createBulkAssignments(@Valid @RequestBody FacultyTeachingAssignmentDTO dto) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "requireTeachingAssignmentAdminRole(principal);"
+          ]
+        },
+        {
+          "line": 134,
+          "annotation": "@PutMapping(\"/update/{id}\")",
+          "next": [
+            "@ApiOperation(value = \"Update an existing assignment\")",
+            "public ResponseEntity<Map<String, Object>> updateAssignment(",
+            "@PathVariable Integer id, @Valid @RequestBody FacultyTeachingAssignmentDTO dto) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();"
+          ]
+        },
+        {
+          "line": 159,
+          "annotation": "@DeleteMapping(\"/delete/{id}\")",
+          "next": [
+            "@ApiOperation(value = \"Delete an assignment\")",
+            "public ResponseEntity<Map<String, Object>> deleteAssignment(@PathVariable Integer id) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "requireTeachingAssignmentAdminRole(principal);"
+          ]
+        },
+        {
+          "line": 176,
+          "annotation": "@PutMapping(\"/deactivate/{id}\")",
+          "next": [
+            "@ApiOperation(value = \"Deactivate an assignment (soft delete)\")",
+            "public ResponseEntity<Map<String, Object>> deactivateAssignment(@PathVariable Integer id) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "requireTeachingAssignmentAdminRole(principal);"
+          ]
+        },
+        {
+          "line": 193,
+          "annotation": "@GetMapping(\"/byFaculty/{facultyId}\")",
+          "next": [
+            "@ApiOperation(value = \"Get all assignments for a faculty\")",
+            "public ResponseEntity<Map<String, Object>> getAssignmentsByFaculty(@PathVariable Integer facultyId) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "requireFacultyAssignmentReader(principal);"
+          ]
+        },
+        {
+          "line": 204,
+          "annotation": "@GetMapping(\"/byFaculty/{facultyId}/active\")",
+          "next": [
+            "@ApiOperation(value = \"Get active assignments for a faculty\")",
+            "public ResponseEntity<Map<String, Object>> getActiveAssignmentsByFaculty(@PathVariable Integer facultyId) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "requireFacultyAssignmentReader(principal);"
+          ]
+        },
+        {
+          "line": 215,
+          "annotation": "@GetMapping(\"/byClass/{classId}\")",
+          "next": [
+            "@ApiOperation(value = \"Get assignments for a class\")",
+            "public ResponseEntity<Map<String, Object>> getAssignmentsByClass(@PathVariable Integer classId) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "accessControlService.requireAccessClass(principal, classId);"
+          ]
+        },
+        {
+          "line": 225,
+          "annotation": "@GetMapping(\"/byClass/{classId}/semester/{semesterNumber}\")",
+          "next": [
+            "@ApiOperation(value = \"Get assignments for a class in a specific semester\")",
+            "public ResponseEntity<Map<String, Object>> getAssignmentsByClassAndSemester(",
+            "@PathVariable Integer classId, @PathVariable Integer semesterNumber) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();"
+          ]
+        },
+        {
+          "line": 236,
+          "annotation": "@GetMapping(\"/byBatch/{batchId}\")",
+          "next": [
+            "@ApiOperation(value = \"Get assignments for a batch\")",
+            "public ResponseEntity<Map<String, Object>> getAssignmentsByBatch(@PathVariable Integer batchId) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "accessControlService.requireAccessBatch(principal, batchId.longValue());"
+          ]
+        },
+        {
+          "line": 246,
+          "annotation": "@GetMapping(\"/page\")",
+          "next": [
+            "@PreAuthorize(\"hasRole('ADMIN') or hasRole('SUPER_ADMIN')\")",
+            "@ApiOperation(value = \"Get tenant-scoped teaching assignments with server-side paging\")",
+            "public ResponseEntity<Map<String, Object>> getAssignmentsPage(",
+            "@RequestParam Integer collegeId,"
+          ]
+        },
+        {
+          "line": 247,
+          "annotation": "@PreAuthorize(\"hasRole('ADMIN') or hasRole('SUPER_ADMIN')\")",
+          "next": [
+            "@ApiOperation(value = \"Get tenant-scoped teaching assignments with server-side paging\")",
+            "public ResponseEntity<Map<String, Object>> getAssignmentsPage(",
+            "@RequestParam Integer collegeId,",
+            "@RequestParam(required = false) Integer classId,"
+          ]
+        },
+        {
+          "line": 276,
+          "annotation": "@GetMapping(\"/fetchAll\")",
+          "next": [
+            "@PreAuthorize(\"hasRole('ADMIN') or hasRole('SUPER_ADMIN')\")",
+            "@ApiOperation(value = \"Get all assignments\")",
+            "public ResponseEntity<Map<String, Object>> getAllAssignments() {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();"
+          ]
+        },
+        {
+          "line": 277,
+          "annotation": "@PreAuthorize(\"hasRole('ADMIN') or hasRole('SUPER_ADMIN')\")",
+          "next": [
+            "@ApiOperation(value = \"Get all assignments\")",
+            "public ResponseEntity<Map<String, Object>> getAllAssignments() {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "requireTeachingAssignmentAdminRole(principal);"
+          ]
+        },
+        {
+          "line": 297,
+          "annotation": "@GetMapping(\"/fetchActive\")",
+          "next": [
+            "@PreAuthorize(\"hasRole('ADMIN') or hasRole('SUPER_ADMIN')\")",
+            "@ApiOperation(value = \"Get all active assignments\")",
+            "public ResponseEntity<Map<String, Object>> getAllActiveAssignments() {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();"
+          ]
+        },
+        {
+          "line": 298,
+          "annotation": "@PreAuthorize(\"hasRole('ADMIN') or hasRole('SUPER_ADMIN')\")",
+          "next": [
+            "@ApiOperation(value = \"Get all active assignments\")",
+            "public ResponseEntity<Map<String, Object>> getAllActiveAssignments() {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "requireTeachingAssignmentAdminRole(principal);"
+          ]
+        },
+        {
+          "line": 318,
+          "annotation": "@PostMapping(\"/deactivateByBatchSemester\")",
+          "next": [
+            "@ApiOperation(value = \"Deactivate all assignments for a batch's semester (used during promotion)\")",
+            "public ResponseEntity<Map<String, Object>> deactivateByBatchSemester(",
+            "@RequestParam Integer batchId, @RequestParam Integer semesterNumber) {",
+            "UserPrincipal principal = securityContextUtil.getAuthenticatedUserPrincipal();"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 18,
+          "text": "import org.springframework.security.access.AccessDeniedException;"
+        },
+        {
+          "line": 19,
+          "text": "import org.springframework.security.access.prepost.PreAuthorize;"
+        },
+        {
+          "line": 46,
+          "text": "if (principal == null) throw new AccessDeniedException(\"Authentication required\");"
+        },
+        {
+          "line": 47,
+          "text": "boolean isAdmin = accessControlService.isSuperAdmin(principal)"
+        },
+        {
+          "line": 50,
+          "text": "if (!isAdmin) throw new AccessDeniedException(\"Only an admin can manage teaching assignments\");"
+        },
+        {
+          "line": 56,
+          "text": "throw new AccessDeniedException(\"Faculty assignment lists require faculty or administrative access\");"
+        },
+        {
+          "line": 94,
+          "text": "throw new AccessDeniedException(\"Assignment has no resolvable class or batch scope\");"
+        },
+        {
+          "line": 109,
+          "text": "} catch (AccessDeniedException | ResponseStatusException e) {"
+        },
+        {
+          "line": 127,
+          "text": "} catch (AccessDeniedException | ResponseStatusException e) {"
+        },
+        {
+          "line": 152,
+          "text": "} catch (AccessDeniedException | ResponseStatusException e) {"
+        },
+        {
+          "line": 247,
+          "text": "@PreAuthorize(\"hasRole('ADMIN') or hasRole('SUPER_ADMIN')\")"
+        },
+        {
+          "line": 250,
+          "text": "@RequestParam Integer collegeId,"
+        },
+        {
+          "line": 256,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 264,
+          "text": "collegeId, classId, PageRequest.of(safePage, safeSize));"
+        },
+        {
+          "line": 277,
+          "text": "@PreAuthorize(\"hasRole('ADMIN') or hasRole('SUPER_ADMIN')\")"
+        },
+        {
+          "line": 298,
+          "text": "@PreAuthorize(\"hasRole('ADMIN') or hasRole('SUPER_ADMIN')\")"
+        }
+      ],
+      "guardCandidateCount": 16,
+      "domainCallSamples": [
+        {
+          "line": 46,
+          "text": "if (principal == null) throw new AccessDeniedException(\"Authentication required\");"
+        },
+        {
+          "line": 47,
+          "text": "boolean isAdmin = accessControlService.isSuperAdmin(principal)"
+        },
+        {
+          "line": 50,
+          "text": "if (!isAdmin) throw new AccessDeniedException(\"Only an admin can manage teaching assignments\");"
+        },
+        {
+          "line": 56,
+          "text": "throw new AccessDeniedException(\"Faculty assignment lists require faculty or administrative access\");"
+        },
+        {
+          "line": 76,
+          "text": "FacultyTeachingAssignmentResponseDTO result = assignmentService.getAssignmentById(id);"
+        },
+        {
+          "line": 90,
+          "text": "accessControlService.requireAccessClass(principal, existing.getClassId());"
+        },
+        {
+          "line": 92,
+          "text": "accessControlService.requireAccessBatch(principal, existing.getBatchId().longValue());"
+        },
+        {
+          "line": 93,
+          "text": "} else if (!accessControlService.isGlobalSuperAdmin(principal)) {"
+        },
+        {
+          "line": 94,
+          "text": "throw new AccessDeniedException(\"Assignment has no resolvable class or batch scope\");"
+        },
+        {
+          "line": 105,
+          "text": "FacultyTeachingAssignmentResponseDTO result = assignmentService.createAssignment(dto);"
+        },
+        {
+          "line": 123,
+          "text": "List<FacultyTeachingAssignmentResponseDTO> result = assignmentService.createBulkAssignments(dto);"
+        },
+        {
+          "line": 140,
+          "text": "FacultyTeachingAssignmentResponseDTO existing = assignmentService.getAssignmentById(id);"
+        },
+        {
+          "line": 148,
+          "text": "FacultyTeachingAssignmentResponseDTO result = assignmentService.updateAssignment(id, dto);"
+        },
+        {
+          "line": 164,
+          "text": "FacultyTeachingAssignmentResponseDTO existing = assignmentService.getAssignmentById(id);"
+        },
+        {
+          "line": 169,
+          "text": "assignmentService.deleteAssignment(id);"
+        },
+        {
+          "line": 181,
+          "text": "FacultyTeachingAssignmentResponseDTO existing = assignmentService.getAssignmentById(id);"
+        },
+        {
+          "line": 186,
+          "text": "assignmentService.deactivateAssignment(id);"
+        },
+        {
+          "line": 198,
+          "text": "accessControlService.requireAccessFacultySchedule(principal, facultyId);"
+        },
+        {
+          "line": 200,
+          "text": "body.put(\"data\", assignmentService.getAssignmentsByFaculty(facultyId));"
+        },
+        {
+          "line": 209,
+          "text": "accessControlService.requireAccessFacultySchedule(principal, facultyId);"
+        },
+        {
+          "line": 211,
+          "text": "body.put(\"data\", assignmentService.getActiveAssignmentsByFaculty(facultyId));"
+        },
+        {
+          "line": 219,
+          "text": "accessControlService.requireAccessClass(principal, classId);"
+        },
+        {
+          "line": 221,
+          "text": "body.put(\"data\", assignmentService.getAssignmentsByClass(classId));"
+        },
+        {
+          "line": 230,
+          "text": "accessControlService.requireAccessClass(principal, classId);"
+        },
+        {
+          "line": 232,
+          "text": "body.put(\"data\", assignmentService.getAssignmentsByClassAndSemester(classId, semesterNumber));"
+        },
+        {
+          "line": 240,
+          "text": "accessControlService.requireAccessBatch(principal, batchId.longValue());"
+        },
+        {
+          "line": 242,
+          "text": "body.put(\"data\", assignmentService.getAssignmentsByBatch(batchId));"
+        },
+        {
+          "line": 256,
+          "text": "accessControlService.requirePerformAdminActionForCollege(principal, collegeId);"
+        },
+        {
+          "line": 258,
+          "text": "accessControlService.requireAccessClass(principal, classId);"
+        },
+        {
+          "line": 263,
+          "text": "assignmentService.getAdminAssignmentsPage("
+        },
+        {
+          "line": 282,
+          "text": "List<FacultyTeachingAssignmentResponseDTO> result = assignmentService.getAllAssignments().stream()"
+        },
+        {
+          "line": 285,
+          "text": "return accessControlService.canAccessClass(principal, assignment.getClassId());"
+        },
+        {
+          "line": 288,
+          "text": "return accessControlService.canAccessBatch(principal, assignment.getBatchId().longValue());"
+        },
+        {
+          "line": 290,
+          "text": "return accessControlService.isGlobalSuperAdmin(principal);"
+        },
+        {
+          "line": 303,
+          "text": "List<FacultyTeachingAssignmentResponseDTO> result = assignmentService.getAllActiveAssignments().stream()"
+        },
+        {
+          "line": 306,
+          "text": "return accessControlService.canAccessClass(principal, assignment.getClassId());"
+        },
+        {
+          "line": 309,
+          "text": "return accessControlService.canAccessBatch(principal, assignment.getBatchId().longValue());"
+        },
+        {
+          "line": 311,
+          "text": "return accessControlService.isGlobalSuperAdmin(principal);"
+        },
+        {
+          "line": 324,
+          "text": "accessControlService.requireAccessBatch(principal, batchId.longValue());"
+        },
+        {
+          "line": 326,
+          "text": "assignmentService.deactivateAssignmentsForBatchSemester(batchId, semesterNumber);"
+        }
+      ],
+      "domainCallCandidateCount": 40
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementController.java",
+      "sha": "d129b1161acce8b60b4c9570e1994d9054bacf3e",
+      "lines": 53,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "LearnerPlacementController",
+      "mappingsAndGuards": [
+        {
+          "line": 13,
+          "annotation": "@RequestMapping(\"/api/v1/learner/placement\")",
+          "next": [
+            "@RequiredArgsConstructor",
+            "public class LearnerPlacementController {",
+            "private final LearnerPlacementService service;",
+            "private final com._42students.lms.service.tpo.LearnerJourneyService journeyService;"
+          ]
+        },
+        {
+          "line": 24,
+          "annotation": "@GetMapping(\"/overview\")",
+          "next": [
+            "public Map<String, Object> overview() { return service.overview(p().getId(), p().getCollegeId()); }",
+            "/** Learners only: the caller's id is read as a learner id. */",
+            "private UserPrincipal learner() {",
+            "UserPrincipal p = p();"
+          ]
+        },
+        {
+          "line": 35,
+          "annotation": "@GetMapping(\"/journey\")",
+          "next": [
+            "public Map<String, Object> journey() { return journeyService.journey(learner().getId()); }",
+            "/** A drive's selection process (its rounds), for the drive page. */",
+            "@GetMapping(\"/drives/{jobId}/process\")",
+            "public java.util.List<Map<String, Object>> process(@PathVariable Integer jobId) {"
+          ]
+        },
+        {
+          "line": 39,
+          "annotation": "@GetMapping(\"/drives/{jobId}/process\")",
+          "next": [
+            "public java.util.List<Map<String, Object>> process(@PathVariable Integer jobId) {",
+            "guard.requireJobVisibleToLearner(learner(), jobId);",
+            "return journeyService.process(jobId);",
+            "}"
+          ]
+        },
+        {
+          "line": 47,
+          "annotation": "@PostMapping(\"/register\")",
+          "next": [
+            "public Map<String, Object> register(@RequestBody RegisterRequest r) {",
+            "service.register(p().getId(), p().getCollegeId(), r.choice, r.consent);",
+            "return Map.of(\"ok\", true);",
+            "}"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 25,
+          "text": "public Map<String, Object> overview() { return service.overview(p().getId(), p().getCollegeId()); }"
+        },
+        {
+          "line": 30,
+          "text": "if (p == null || !p.isLearner()) throw new org.springframework.security.access.AccessDeniedException(\"Only students have placements\");"
+        },
+        {
+          "line": 49,
+          "text": "service.register(p().getId(), p().getCollegeId(), r.choice, r.consent);"
+        }
+      ],
+      "guardCandidateCount": 3,
+      "domainCallSamples": [
+        {
+          "line": 30,
+          "text": "if (p == null || !p.isLearner()) throw new org.springframework.security.access.AccessDeniedException(\"Only students have placements\");"
+        },
+        {
+          "line": 36,
+          "text": "public Map<String, Object> journey() { return journeyService.journey(learner().getId()); }"
+        },
+        {
+          "line": 42,
+          "text": "return journeyService.process(jobId);"
+        }
+      ],
+      "domainCallCandidateCount": 3
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerRequestController.java",
+      "sha": "1b50a7616c6684b85fffe455e8f6b305fa4f5392",
+      "lines": 60,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "LearnerRequestController",
+      "mappingsAndGuards": [
+        {
+          "line": 16,
+          "annotation": "@RequestMapping(\"/api/v1/learner/requests\")",
+          "next": [
+            "public class LearnerRequestController {",
+            "private final TpoRequestService requestService;",
+            "private final SecurityContextUtil securityContextUtil;",
+            "private final TpoAccessGuard guard;"
+          ]
+        },
+        {
+          "line": 40,
+          "annotation": "@PostMapping",
+          "next": [
+            "public ResponseEntity<StudentRequest> create(@RequestBody CreateRequest req) {",
+            "UserPrincipal p = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "if (req.type == null || !ALLOWED_TYPES.contains(req.type)) {",
+            "return ResponseEntity.badRequest().build();"
+          ]
+        },
+        {
+          "line": 52,
+          "annotation": "@GetMapping(\"/mine\")",
+          "next": [
+            "public ResponseEntity<List<StudentRequest>> mine() {",
+            "UserPrincipal p = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "return ResponseEntity.ok(requestService.forLearner(p.getId()));",
+            "}"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [],
+      "guardCandidateCount": 0,
+      "domainCallSamples": [
+        {
+          "line": 48,
+          "text": "StudentRequest r = requestService.create(p.getId(), req.type, req.jobId, req.applicationId, req.payload, req.reason);"
+        },
+        {
+          "line": 55,
+          "text": "return ResponseEntity.ok(requestService.forLearner(p.getId()));"
+        }
+      ],
+      "domainCallCandidateCount": 2
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerRegistrationController.java",
+      "sha": "86689a3f9754085e828b21b2474458c8aa20550d",
+      "lines": 55,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "LearnerRegistrationController",
+      "mappingsAndGuards": [
+        {
+          "line": 13,
+          "annotation": "@RequestMapping(\"/api/v1/learner/registration\")",
+          "next": [
+            "public class LearnerRegistrationController {",
+            "private final TpoStudentService studentService;",
+            "private final TpoSeasonService seasonService;",
+            "private final SecurityContextUtil securityContextUtil;"
+          ]
+        },
+        {
+          "line": 33,
+          "annotation": "@GetMapping",
+          "next": [
+            "public ResponseEntity<PlacementRegistration> mine() {",
+            "UserPrincipal p = principal();",
+            "Long seasonId = seasonService.current(p.getCollegeId()).getId();",
+            "return studentService.registration(p.getId(), seasonId)"
+          ]
+        },
+        {
+          "line": 42,
+          "annotation": "@PostMapping",
+          "next": [
+            "public ResponseEntity<PlacementRegistration> register(@RequestParam String choice, @RequestParam(defaultValue = \"false\") boolean consent) {",
+            "UserPrincipal p = principal();",
+            "// The same rules as the placements page (LearnerPlacementService.register): the student's three choices, and agreeing to",
+            "// share details before registering for placements. This older endpoint took any choice and no consent."
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 36,
+          "text": "Long seasonId = seasonService.current(p.getCollegeId()).getId();"
+        },
+        {
+          "line": 51,
+          "text": "Long seasonId = seasonService.current(p.getCollegeId()).getId();"
+        }
+      ],
+      "guardCandidateCount": 2,
+      "domainCallSamples": [
+        {
+          "line": 36,
+          "text": "Long seasonId = seasonService.current(p.getCollegeId()).getId();"
+        },
+        {
+          "line": 37,
+          "text": "return studentService.registration(p.getId(), seasonId)"
+        },
+        {
+          "line": 51,
+          "text": "Long seasonId = seasonService.current(p.getCollegeId()).getId();"
+        },
+        {
+          "line": 52,
+          "text": "return ResponseEntity.ok(studentService.register(p.getId(), seasonId, choice, \"SELF\"));"
+        }
+      ],
+      "domainCallCandidateCount": 4
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/ProfileVerificationController.java",
+      "sha": "fcce4639a368f095b2a117453bbb88e3d074270c",
+      "lines": 105,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "ProfileVerificationController",
+      "mappingsAndGuards": [
+        {
+          "line": 41,
+          "annotation": "@GetMapping(\"/api/v1/profile/verification\")",
+          "next": [
+            "public Map<String, Object> mine() { return service.mine(learner()); }",
+            "@PostMapping(\"/api/v1/profile/verification/{section}/submit\")",
+            "public Map<String, Object> submit(@PathVariable String section) { return service.submit(learner(), section); }",
+            "// ---------------------------------------------------------------- verifiers"
+          ]
+        },
+        {
+          "line": 44,
+          "annotation": "@PostMapping(\"/api/v1/profile/verification/{section}/submit\")",
+          "next": [
+            "public Map<String, Object> submit(@PathVariable String section) { return service.submit(learner(), section); }",
+            "// ---------------------------------------------------------------- verifiers",
+            "/** Whether the caller can verify here, and the college it is for (the verifier page and the sidebar ask this first). */",
+            "@GetMapping(\"/api/v1/profile-verification/access\")"
+          ]
+        },
+        {
+          "line": 49,
+          "annotation": "@GetMapping(\"/api/v1/profile-verification/access\")",
+          "next": [
+            "public Map<String, Object> access(@RequestParam(required = false) Integer collegeId) {",
+            "try {",
+            "Integer c = service.verifierCollege(p(), collegeId);",
+            "return Map.of(\"canVerify\", true, \"collegeId\", c, \"counts\", service.counts(c));"
+          ]
+        },
+        {
+          "line": 59,
+          "annotation": "@GetMapping(\"/api/v1/profile-verification/queue\")",
+          "next": [
+            "public List<Map<String, Object>> queue(@RequestParam(required = false) Integer collegeId, @RequestParam(required = false) String status,",
+            "@RequestParam(required = false) String section) {",
+            "return guarded(() -> service.queue(service.verifierCollege(p(), collegeId), blankToNull(status), blankToNull(section)));",
+            "}"
+          ]
+        },
+        {
+          "line": 65,
+          "annotation": "@GetMapping(\"/api/v1/profile-verification/students/{learnerId}\")",
+          "next": [
+            "public Map<String, Object> student(@PathVariable Integer learnerId, @RequestParam(required = false) Integer collegeId) {",
+            "return guarded(() -> service.student(service.verifierCollege(p(), collegeId), learnerId));",
+            "}",
+            "@PostMapping(\"/api/v1/profile-verification/students/{learnerId}/{section}/verify\")"
+          ]
+        },
+        {
+          "line": 70,
+          "annotation": "@PostMapping(\"/api/v1/profile-verification/students/{learnerId}/{section}/verify\")",
+          "next": [
+            "public Map<String, Object> verify(@PathVariable Integer learnerId, @PathVariable String section, @RequestParam(required = false) Integer collegeId,",
+            "@RequestParam(required = false) String seenSubmittedAt) {",
+            "return guarded(() -> service.verify(p(), service.verifierCollege(p(), collegeId), learnerId, section, seenSubmittedAt));",
+            "}"
+          ]
+        },
+        {
+          "line": 78,
+          "annotation": "@PostMapping(\"/api/v1/profile-verification/students/{learnerId}/{section}/send-back\")",
+          "next": [
+            "public Map<String, Object> sendBack(@PathVariable Integer learnerId, @PathVariable String section, @RequestParam(required = false) Integer collegeId,",
+            "@RequestBody SendBackRequest body) {",
+            "return guarded(() -> service.sendBack(p(), service.verifierCollege(p(), collegeId), learnerId, section, body == null ? null : body.reason));",
+            "}"
+          ]
+        },
+        {
+          "line": 86,
+          "annotation": "@PostMapping(\"/api/v1/profile-verification/verify-many\")",
+          "next": [
+            "public Map<String, Object> verifyMany(@RequestParam(required = false) Integer collegeId, @RequestBody VerifyManyRequest body) {",
+            "return guarded(() -> service.verifyMany(p(), service.verifierCollege(p(), collegeId), body == null ? null : body.items));",
+            "}",
+            "@GetMapping(\"/api/v1/profile-verification/settings\")"
+          ]
+        },
+        {
+          "line": 91,
+          "annotation": "@GetMapping(\"/api/v1/profile-verification/settings\")",
+          "next": [
+            "public Map<String, Object> settings(@RequestParam(required = false) Integer collegeId) {",
+            "return guarded(() -> service.settings(service.verifierCollegeOrAdmin(p(), collegeId)));",
+            "}",
+            "public static class SettingsRequest { public Boolean tpoCanVerify; }"
+          ]
+        },
+        {
+          "line": 98,
+          "annotation": "@PutMapping(\"/api/v1/profile-verification/settings\")",
+          "next": [
+            "public Map<String, Object> saveSettings(@RequestParam(required = false) Integer collegeId, @RequestBody SettingsRequest body) {",
+            "return guarded(() -> service.saveSettings(p(), service.verifierCollegeOrAdmin(p(), collegeId), body != null && Boolean.TRUE.equals(body.tpoCanVerify)));",
+            "}",
+            "private static String blankToNull(String s) { return s == null || s.isBlank() ? null : s.trim().toUpperCase(); }"
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 18,
+          "text": "* /api/v1/profile-verification/**. A super admin passes collegeId; everyone else works on their own college."
+        },
+        {
+          "line": 31,
+          "text": "catch (ProfileVerificationService.NotAllowed e) { throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage()); }"
+        },
+        {
+          "line": 36,
+          "text": "if (p == null || !p.isLearner()) throw new ResponseStatusException(HttpStatus.FORBIDDEN, \"Only students verify their own profile\");"
+        },
+        {
+          "line": 50,
+          "text": "public Map<String, Object> access(@RequestParam(required = false) Integer collegeId) {"
+        },
+        {
+          "line": 52,
+          "text": "Integer c = service.verifierCollege(p(), collegeId);"
+        },
+        {
+          "line": 53,
+          "text": "return Map.of(\"canVerify\", true, \"collegeId\", c, \"counts\", service.counts(c));"
+        },
+        {
+          "line": 60,
+          "text": "public List<Map<String, Object>> queue(@RequestParam(required = false) Integer collegeId, @RequestParam(required = false) String status,"
+        },
+        {
+          "line": 62,
+          "text": "return guarded(() -> service.queue(service.verifierCollege(p(), collegeId), blankToNull(status), blankToNull(section)));"
+        },
+        {
+          "line": 66,
+          "text": "public Map<String, Object> student(@PathVariable Integer learnerId, @RequestParam(required = false) Integer collegeId) {"
+        },
+        {
+          "line": 67,
+          "text": "return guarded(() -> service.student(service.verifierCollege(p(), collegeId), learnerId));"
+        },
+        {
+          "line": 71,
+          "text": "public Map<String, Object> verify(@PathVariable Integer learnerId, @PathVariable String section, @RequestParam(required = false) Integer collegeId,"
+        },
+        {
+          "line": 73,
+          "text": "return guarded(() -> service.verify(p(), service.verifierCollege(p(), collegeId), learnerId, section, seenSubmittedAt));"
+        },
+        {
+          "line": 79,
+          "text": "public Map<String, Object> sendBack(@PathVariable Integer learnerId, @PathVariable String section, @RequestParam(required = false) Integer collegeId,"
+        },
+        {
+          "line": 81,
+          "text": "return guarded(() -> service.sendBack(p(), service.verifierCollege(p(), collegeId), learnerId, section, body == null ? null : body.reason));"
+        },
+        {
+          "line": 87,
+          "text": "public Map<String, Object> verifyMany(@RequestParam(required = false) Integer collegeId, @RequestBody VerifyManyRequest body) {"
+        },
+        {
+          "line": 88,
+          "text": "return guarded(() -> service.verifyMany(p(), service.verifierCollege(p(), collegeId), body == null ? null : body.items));"
+        },
+        {
+          "line": 92,
+          "text": "public Map<String, Object> settings(@RequestParam(required = false) Integer collegeId) {"
+        },
+        {
+          "line": 93,
+          "text": "return guarded(() -> service.settings(service.verifierCollegeOrAdmin(p(), collegeId)));"
+        },
+        {
+          "line": 99,
+          "text": "public Map<String, Object> saveSettings(@RequestParam(required = false) Integer collegeId, @RequestBody SettingsRequest body) {"
+        },
+        {
+          "line": 100,
+          "text": "return guarded(() -> service.saveSettings(p(), service.verifierCollegeOrAdmin(p(), collegeId), body != null && Boolean.TRUE.equals(body.tpoCanVerify)));"
+        }
+      ],
+      "guardCandidateCount": 20,
+      "domainCallSamples": [
+        {
+          "line": 31,
+          "text": "catch (ProfileVerificationService.NotAllowed e) { throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage()); }"
+        },
+        {
+          "line": 36,
+          "text": "if (p == null || !p.isLearner()) throw new ResponseStatusException(HttpStatus.FORBIDDEN, \"Only students verify their own profile\");"
+        }
+      ],
+      "domainCallCandidateCount": 2
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerOfferController.java",
+      "sha": "33ab0ccaad0e9b7b503c939c0c82571104f2df5f",
+      "lines": 54,
+      "package": "com._42students.lms.controller.tpo",
+      "className": "LearnerOfferController",
+      "mappingsAndGuards": [
+        {
+          "line": 21,
+          "annotation": "@RequestMapping(\"/api/v1/learner/offers\")",
+          "next": [
+            "public class LearnerOfferController {",
+            "private final TpoOfferService offerService;",
+            "private final SecurityContextUtil securityContextUtil;",
+            "public LearnerOfferController(TpoOfferService offerService, SecurityContextUtil securityContextUtil) {"
+          ]
+        },
+        {
+          "line": 32,
+          "annotation": "@PostMapping(\"/{offerId}/respond\")",
+          "next": [
+            "public ResponseEntity<JobOffer> respond(@PathVariable Long offerId, @RequestBody Map<String, Boolean> body) {",
+            "UserPrincipal p = securityContextUtil.getAuthenticatedUserPrincipal();",
+            "// Learners only: the principal id is used as the learner id below, and faculty/recruiter ids live in other tables,",
+            "// so a faculty member whose id happened to equal a learner's id could otherwise answer that learner's offer."
+          ]
+        }
+      ],
+      "guardCandidateSamples": [
+        {
+          "line": 38,
+          "text": "throw new org.springframework.security.access.AccessDeniedException(\"Only students can respond to offers\");"
+        }
+      ],
+      "guardCandidateCount": 1,
+      "domainCallSamples": [
+        {
+          "line": 38,
+          "text": "throw new org.springframework.security.access.AccessDeniedException(\"Only students can respond to offers\");"
+        },
+        {
+          "line": 41,
+          "text": "return ResponseEntity.ok(offerService.respondInApp(offerId, p.getId(), accept));"
+        }
+      ],
+      "domainCallCandidateCount": 2
     }
   ]
 }
