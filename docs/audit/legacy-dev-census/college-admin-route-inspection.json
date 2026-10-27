@@ -1165,6 +1165,284 @@
         "Form.Item"
       ],
       "events": 12
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/deleted.js",
+      "sha": "e818241a20f1e93dad2220af19bc567eb1613227",
+      "lines": 214,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Popconfirm",
+        "Button",
+        "UndoOutlined",
+        "AdminGroupShell",
+        "Alert",
+        "Space",
+        "Card",
+        "Skeleton",
+        "Empty",
+        "Table"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Table"
+      ],
+      "events": 3
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/index.js",
+      "sha": "798dbb6af1a110da0052df614f374df6c604caea",
+      "lines": 460,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/utils/csvExport",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Space",
+        "Button",
+        "Tag",
+        "Progress",
+        "Link",
+        "Popconfirm",
+        "InboxOutlined",
+        "AdminGroupShell",
+        "Alert",
+        "Card",
+        "Input.Search",
+        "Select",
+        "DownloadOutlined",
+        "Skeleton",
+        "Table",
+        "Empty"
+      ],
+      "overlayCandidates": [
+        "Popconfirm",
+        "Table"
+      ],
+      "events": 11
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/new.js",
+      "sha": "107fcd9e9702a666dc33cc1e762ca63e7a16193a",
+      "lines": 642,
+      "imports": [
+        "@/components/admin/projects/useProjectTeamSplit",
+        "@/utils/projectErrorModal",
+        "@/utils/csvExport",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store",
+        "@/components/admin/projects/useUnsavedFormGuard",
+        "@/hooks/useDebounceHook",
+        "@/api/Services/AdminService"
+      ],
+      "jsxComponents": [
+        "Table",
+        "AdminGroupShell",
+        "Alert",
+        "Space",
+        "Button",
+        "Card",
+        "Radio.Group",
+        "Form",
+        "Form.Item",
+        "Input",
+        "TextArea",
+        "Select",
+        "Tag",
+        "Paragraph"
+      ],
+      "overlayCandidates": [
+        "Table",
+        "Form",
+        "Form.Item"
+      ],
+      "events": 10
+    },
+    {
+      "path": "src/pages/college-admin/projects/workspaces/reassign-mentor.js",
+      "sha": "4d3bebf59672d0f1db0a24755a5dcf430a414fdc",
+      "lines": 516,
+      "imports": [
+        "@/utils/projectErrorModal",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store",
+        "@/api/Services/AdminService",
+        "@/components/admin/projects/adminProjectUtils"
+      ],
+      "jsxComponents": [
+        "Button",
+        "Tag",
+        "Tooltip",
+        "Space",
+        "QuestionCircleOutlined",
+        "Text",
+        "AdminGroupShell",
+        "Alert",
+        "Card",
+        "Skeleton",
+        "Table",
+        "Empty",
+        "Form",
+        "Form.Item",
+        "Select",
+        "SwapOutlined",
+        "Paragraph",
+        "AutoComplete",
+        "Input",
+        "Popconfirm"
+      ],
+      "overlayCandidates": [
+        "Table",
+        "Form",
+        "Form.Item",
+        "Popconfirm"
+      ],
+      "events": 10
+    },
+    {
+      "path": "src/pages/college-admin/quizzes.js",
+      "sha": "a9e6d067e5afdcff1309f587acfb36a9683d62e7",
+      "lines": 34,
+      "imports": [
+        "../superadmin/sections/Quizzes",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Quizzes"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/semester-courses.js",
+      "sha": "7aa181da79a35d857eb868b7431c3b015ddb2b6b",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/SemesterCourseMapping",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "SemesterCourseMapping"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/semesters.js",
+      "sha": "1b84d114edefffd4a3a5a7e7b412c59492bb1b3c",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/SemesterManagement",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "SemesterManagement"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/student-groups.js",
+      "sha": "a61f5ad2372cc632b182753e3c45cc047cf3de8a",
+      "lines": 23,
+      "imports": [
+        "@/layouts/AdminLayout"
+      ],
+      "jsxComponents": [
+        "Skeleton"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/student-groups/[id].js",
+      "sha": "f780f46edb8e6a12b2a2407d7966810d55b37047",
+      "lines": 16,
+      "imports": [
+        "@/layouts/AdminLayout"
+      ],
+      "jsxComponents": [
+        "Skeleton"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/students.js",
+      "sha": "783934e767bb77b271519c27dcf95ea74d016bd2",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/Students",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Students"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/teachers.js",
+      "sha": "2db79a165358befdd435043892d71b16da43d65e",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/Faculty",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Faculty"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/verification.js",
+      "sha": "06362f37f490d1d9662a7323a479027152223c52",
+      "lines": 17,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/Common/PageShell",
+        "@/components/verification/VerificationWorkspace"
+      ],
+      "jsxComponents": [
+        "PageShell",
+        "VerificationWorkspace"
+      ],
+      "overlayCandidates": [],
+      "events": 0
     }
   ]
 }
