@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "incremental source-backed import graph",
-  "note": "First 10 route roots only. Not a complete transitive graph, surface count, or functional certification.",
+  "note": "Incremental source import graph: ten roots and selected descendant components. Not yet full transitive or runtime parity coverage.",
   "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
   "roots": [
     "src/pages/learn/courses/[courseId]/[...courseTab].js",
@@ -1600,7 +1600,1275 @@
         }
       ],
       "dynamicImportPossible": false
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/syllabus.js",
+      "sha": "97c7e31198b966c325861293243f9dd39b8876b2",
+      "lineCount": 1243,
+      "imports": [
+        {
+          "specifier": "@/utils/dateUtils",
+          "line": 1,
+          "type": "local",
+          "path": "src/utils/dateUtils.js",
+          "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+        },
+        {
+          "specifier": "react",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "react",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "../../../../api/Services/courseServices",
+          "line": 4,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/utils/courseUtils/contentOrder",
+          "line": 5,
+          "type": "local",
+          "path": "src/utils/courseUtils/contentOrder.js",
+          "sha": "d3e3b65152b778daac8ce7dd9e672f002336ad73"
+        },
+        {
+          "specifier": "@/utils/courseUtils/contentCompletion",
+          "line": 6,
+          "type": "local",
+          "path": "src/utils/courseUtils/contentCompletion.js",
+          "sha": "1460d944c1cc7649685459c04b19635e1ca64cc7"
+        },
+        {
+          "specifier": "@/api/Services/quizServices",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/quizServices.js",
+          "sha": "5416eedaace3201c8dd5cd183ad7d69e8066699c"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 8,
+          "type": "package"
+        },
+        {
+          "specifier": "@/redux/store",
+          "line": 9,
+          "type": "local",
+          "path": "src/redux/store.js",
+          "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+        },
+        {
+          "specifier": "antd",
+          "line": 10,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 23,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 24,
+          "type": "package"
+        },
+        {
+          "specifier": "next/dynamic",
+          "line": 25,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer",
+          "line": 26,
+          "type": "local",
+          "path": "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js",
+          "sha": "5d1f59234765e962346e23d19265449798c9a770"
+        },
+        {
+          "specifier": "@/components/Global/Offcanvas/Assignment/newAssignment",
+          "line": 27,
+          "type": "local",
+          "path": "src/components/Global/Offcanvas/Assignment/newAssignment.js",
+          "sha": "ab2ca6168ccbdb4dc25347f98e5c116e9bc377cd"
+        },
+        {
+          "specifier": "@/components/Quiz/QuizBuilderModal",
+          "line": 28,
+          "type": "local",
+          "path": "src/components/Quiz/QuizBuilderModal.jsx",
+          "sha": "c0125d141d8e36d6d03c1615f2646aded2b7ac96"
+        },
+        {
+          "specifier": "./video",
+          "line": 29,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/syllabus/video.js",
+          "sha": "efdebb6a6b6694ebfb8ad35f951ba36a8a0259be"
+        },
+        {
+          "specifier": "./youtube",
+          "line": 30,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/syllabus/youtube.js",
+          "sha": "0e213a228f8df8cb8ad5f90d785e5526f28b207c"
+        },
+        {
+          "specifier": "./resource",
+          "line": 31,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/syllabus/resource.js",
+          "sha": "f3232b6c0ad32a6f19eb81aacab6737b614ff23b"
+        },
+        {
+          "specifier": "./liveclass",
+          "line": 32,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/syllabus/liveclass.js",
+          "sha": "99a0478f874d25e939280c7b71c04ad47304a28f"
+        },
+        {
+          "specifier": "./syllabusDetail",
+          "line": 33,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+          "sha": "590e9e189ebe088ec54e130cf51cfd7ee0c22e5e"
+        },
+        {
+          "specifier": "@/utils/courseUtils/contentAvailability",
+          "line": 34,
+          "type": "local",
+          "path": "src/utils/courseUtils/contentAvailability.js",
+          "sha": "cbb3d8e423ebb1ce01c4165c3d0b64f11288c63a"
+        },
+        {
+          "specifier": "@/components/Assignments/ViewAssignmentModal",
+          "line": 36,
+          "type": "local",
+          "path": "src/components/Assignments/ViewAssignmentModal.jsx",
+          "sha": "e7d1fcd4c7aa725ba7d24cda51a9948a241121f3"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 1020,
+          "kind": "<Dropdown"
+        },
+        {
+          "line": 1180,
+          "kind": "<Modal"
+        }
+      ],
+      "totalUiSignals": 2,
+      "actionSamples": [
+        {
+          "line": 901,
+          "s": "action={<Button size=\"small\" onClick={() => setRefresh((value) => !value)}>Retry</Button>}"
+        },
+        {
+          "line": 928,
+          "s": "action={<Button size=\"small\" onClick={() => {"
+        },
+        {
+          "line": 945,
+          "s": "onClick={() => setRoadmapContentFilter(filter.key)}"
+        },
+        {
+          "line": 992,
+          "s": "onClick={() => toggleRoadmapLesson(lessonIndex)}"
+        },
+        {
+          "line": 1027,
+          "s": "onClick: () => openAddContent(lessonIndex, type),"
+        },
+        {
+          "line": 1078,
+          "s": "onClick={() => openRoadmapContent(lessonIndex, id)}"
+        },
+        {
+          "line": 1176,
+          "s": "onClose={closeRoadmapContent}"
+        },
+        {
+          "line": 1182,
+          "s": "onCancel={closeRoadmapContent}"
+        },
+        {
+          "line": 1194,
+          "s": "onClose={closeRoadmapContent}"
+        },
+        {
+          "line": 1213,
+          "s": "onClose={closeAddContent}"
+        },
+        {
+          "line": 1218,
+          "s": "onClose={closeAddContent}"
+        },
+        {
+          "line": 1225,
+          "s": "onClose={closeAddContent}"
+        }
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/attendance.js",
+      "sha": "f7842bbb1d277d07190d4962900e96ea42844012",
+      "lineCount": 20,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "./AttendanceReport",
+          "line": 2,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/Attendance/AttendanceReport.js",
+          "sha": "8aef050e976434f194983015c6ef8a51e2595caa"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": []
+    },
+    {
+      "path": "src/pages/Dashboard/course/Home/Home.js",
+      "sha": "d33f9d005ace8114e7eb367d85a6bef0bb4b90ae",
+      "lineCount": 513,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 12,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 13,
+          "type": "package"
+        },
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 14,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "next/router",
+          "line": 15,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/Course/Home",
+          "line": 21,
+          "type": "local",
+          "path": "src/components/Course/Home/index.js",
+          "sha": "d3e33755ec832c8f675ebbdeec623968c22e6946"
+        },
+        {
+          "specifier": "@/hooks/useCourseHomeWidgets",
+          "line": 22,
+          "type": "local",
+          "path": "src/hooks/useCourseHomeWidgets.js",
+          "sha": "efa3a8f65fabc2b80b4543b47c39dafda81b6a45"
+        },
+        {
+          "specifier": "@/hooks/useLearnerHomeStats",
+          "line": 23,
+          "type": "local",
+          "path": "src/hooks/useLearnerHomeStats.js",
+          "sha": "0844895919eb8248b0837e5122bf3f265266b303"
+        },
+        {
+          "specifier": "@/hooks/useFacultyCourseStats",
+          "line": 24,
+          "type": "local",
+          "path": "src/hooks/useFacultyCourseStats.js",
+          "sha": "24d3673b28de0de4a9dd13c29d25ac5da215c031"
+        },
+        {
+          "specifier": "@/utils/facultyRouteUtils",
+          "line": 25,
+          "type": "local",
+          "path": "src/utils/facultyRouteUtils.js",
+          "sha": "5d09ec63a56f98df9734ebc828f1f592ea285b10"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": [
+        {
+          "line": 388,
+          "s": "onClick={() => routeToCourseTab(nextAction.tab, nextAction.routeParams)}"
+        },
+        {
+          "line": 408,
+          "s": "<Button size=\"small\" onClick={() => facultyStats.refetch?.()}>Retry signals</Button>"
+        },
+        {
+          "line": 436,
+          "s": "onClick={() => routeToCourseTab(card.tab)}"
+        }
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Classroom/classroom.js",
+      "sha": "0d8d5e96211ba352a6246109993a0dc924a8bbb8",
+      "lineCount": 673,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 10,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 11,
+          "type": "package"
+        },
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 17,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/utils/courseClassAssignment",
+          "line": 18,
+          "type": "local",
+          "path": "src/utils/courseClassAssignment.js",
+          "sha": "47e6f7dfd7085e0c3fc56222ef92e3ef4a6bd83c"
+        },
+        {
+          "specifier": "@/utils/clientSettings",
+          "line": 19,
+          "type": "local",
+          "path": "src/utils/clientSettings.js",
+          "sha": "19fd64e37b866f073191eebf16ed881a85573fd8"
+        },
+        {
+          "specifier": "next/router",
+          "line": 20,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/placementDateTime",
+          "line": 21,
+          "type": "local",
+          "path": "src/utils/placementDateTime.js",
+          "sha": "aa4262262aa93130a2450be8cde2591bfe02e7cd"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 289,
+          "kind": "window.confirm"
+        },
+        {
+          "line": 375,
+          "kind": "Modal.confirm"
+        }
+      ],
+      "totalUiSignals": 2,
+      "actionSamples": [
+        {
+          "line": 449,
+          "s": "onClick={() => togglePin(item.id)}"
+        },
+        {
+          "line": 462,
+          "s": "onClick={() => deleteMessage(item.id)}"
+        },
+        {
+          "line": 488,
+          "s": "<Button size=\"small\" icon={<ReloadOutlined />} onClick={() => loadMessages()}>"
+        },
+        {
+          "line": 517,
+          "s": "onClick={() => {"
+        },
+        {
+          "line": 525,
+          "s": "onClick={() => {"
+        },
+        {
+          "line": 592,
+          "s": "onClick={() => togglePin(pinnedMessage.id)}"
+        },
+        {
+          "line": 605,
+          "s": "onClose={() => setRefreshError(null)}"
+        },
+        {
+          "line": 608,
+          "s": "action={<Button size=\"small\" icon={<ReloadOutlined />} onClick={() => loadMessages({ silent: true })}>Retry</Button>}"
+        },
+        {
+          "line": 617,
+          "s": "<button type=\"button\" className=\"ln-classroom-jump\" onClick={() => scrollToBottom()}>"
+        },
+        {
+          "line": 637,
+          "s": "onChange={event => setDraft(event.target.value)}"
+        },
+        {
+          "line": 656,
+          "s": "onClick={sendMessage}"
+        }
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Sudent/student.js",
+      "sha": "be25aa396943bf3ebb86b8aa0d852d9513d0ed90",
+      "lineCount": 504,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/facultyCourseDetail",
+          "line": 3,
+          "type": "local",
+          "path": "src/utils/facultyCourseDetail.js",
+          "sha": "30be9ec04493a75c7055938b2bd193a0cf666634"
+        },
+        {
+          "specifier": "antd",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "@/redux/store",
+          "line": 6,
+          "type": "local",
+          "path": "src/redux/store.js",
+          "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 15,
+          "type": "package"
+        },
+        {
+          "specifier": "@/api/ApiMethod",
+          "line": 16,
+          "type": "local",
+          "path": "src/api/ApiMethod.js",
+          "sha": "3d924576b70062beb57f0726f39a4db9a4840f26"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 469,
+          "kind": "<Modal"
+        }
+      ],
+      "totalUiSignals": 1,
+      "actionSamples": [
+        {
+          "line": 106,
+          "s": "onClick={() => onPreview(student)}"
+        },
+        {
+          "line": 355,
+          "s": "onChange={handleClassSwitch}"
+        },
+        {
+          "line": 372,
+          "s": "onChange={(event) => setSearchTerm(event.target.value)}"
+        },
+        {
+          "line": 396,
+          "s": "<Button size=\"small\" icon={<ReloadOutlined />} onClick={() => setRetryKey((k) => k + 1)}>"
+        },
+        {
+          "line": 474,
+          "s": "onCancel={() => setSelectedStudent(null)}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Projects/ProjectDetailContent.jsx",
+      "sha": "15ea2217e2f1cb37e4d22f98d2ef45573493fc68",
+      "lineCount": 10851,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "dayjs",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "dayjs/plugin/utc",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "dayjs/plugin/timezone",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 8,
+          "type": "package"
+        },
+        {
+          "specifier": "next/link",
+          "line": 10,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 11,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 12,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 13,
+          "type": "package"
+        },
+        {
+          "specifier": "@dnd-kit/core",
+          "line": 25,
+          "type": "package"
+        },
+        {
+          "specifier": "@dnd-kit/sortable",
+          "line": 32,
+          "type": "package"
+        },
+        {
+          "specifier": "@dnd-kit/utilities",
+          "line": 33,
+          "type": "package"
+        },
+        {
+          "specifier": "./ProjectsShell",
+          "line": 34,
+          "type": "local",
+          "path": "src/components/Projects/ProjectsShell.jsx",
+          "sha": "c5bc1b2c7d83a90375ff01d9fe360d3d221aad84"
+        },
+        {
+          "specifier": "./ProjectModalShell",
+          "line": 35,
+          "type": "local",
+          "path": "src/components/Projects/ProjectModalShell.jsx",
+          "sha": "657a2c2448d884940f50c4f31a5e8ff00d173e25"
+        },
+        {
+          "specifier": "@/components/Common/Skeletons",
+          "line": 36,
+          "type": "local",
+          "path": "src/components/Common/Skeletons.jsx",
+          "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+        },
+        {
+          "specifier": "./modals/TaskDetailsModal",
+          "line": 37,
+          "type": "local",
+          "path": "src/components/Projects/modals/TaskDetailsModal.jsx",
+          "sha": "a37859dfc5f069dff40d2855a4e971557ceadc44"
+        },
+        {
+          "specifier": "@/api/Services/projectService",
+          "line": 72,
+          "type": "local",
+          "path": "src/api/Services/projectService.js",
+          "sha": "ad353d4c34ab4f7a1f245a99d6bc18d92acc9b66"
+        },
+        {
+          "specifier": "@/data/projectsData",
+          "line": 73,
+          "type": "local",
+          "path": "src/data/projectsData.js",
+          "sha": "5036eed09336821f36928ef58405830363fd5c1c"
+        },
+        {
+          "specifier": "@/utils/uploadToR2",
+          "line": 74,
+          "type": "local",
+          "path": "src/utils/uploadToR2.js",
+          "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+        },
+        {
+          "specifier": "@/utils/projectErrorModal",
+          "line": 75,
+          "type": "local",
+          "path": "src/utils/projectErrorModal.jsx",
+          "sha": "4f941ad3f77dc24c82ec71c48057198d64c1c35f"
+        },
+        {
+          "specifier": "@/utils/projectMeetingTime",
+          "line": 76,
+          "type": "local",
+          "path": "src/utils/projectMeetingTime.js",
+          "sha": "d264faad337c3a84e9cc9e31ea101d1498c84086"
+        },
+        {
+          "specifier": "@/utils/projectBoardUndo",
+          "line": 77,
+          "type": "local",
+          "path": "src/utils/projectBoardUndo.js",
+          "sha": "ec085ed0988250c9a937fd74949349c2fe8a2ed1"
+        },
+        {
+          "specifier": "@/utils/projectEditorVersion",
+          "line": 78,
+          "type": "local",
+          "path": "src/utils/projectEditorVersion.js",
+          "sha": "6d7f98cf73b14644a0503686784aceb7fd3e438c"
+        },
+        {
+          "specifier": "@/config/appConfig",
+          "line": 79,
+          "type": "local",
+          "path": "src/config/appConfig.js",
+          "sha": "30cbebcd0da14f7b3463fe4fe273f00ef615c01d"
+        },
+        {
+          "specifier": "there",
+          "line": 143,
+          "type": "package"
+        },
+        {
+          "specifier": "Removed from template",
+          "line": 383,
+          "type": "package"
+        },
+        {
+          "specifier": "this project genuinely has no releases",
+          "line": 2965,
+          "type": "package"
+        },
+        {
+          "specifier": "called later",
+          "line": 5094,
+          "type": "package"
+        },
+        {
+          "specifier": "this person has zero access right now",
+          "line": 5873,
+          "type": "package"
+        },
+        {
+          "specifier": "confirmed",
+          "line": 7206,
+          "type": "package"
+        },
+        {
+          "specifier": "Source",
+          "line": 9181,
+          "type": "package"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 643,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 1149,
+          "kind": "window.confirm"
+        },
+        {
+          "line": 2634,
+          "kind": "window.confirm"
+        },
+        {
+          "line": 2637,
+          "kind": "window.confirm"
+        },
+        {
+          "line": 6171,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 6455,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 6470,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 6885,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 6896,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 6908,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 7029,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 7039,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 7056,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 7069,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 7229,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 7251,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 7974,
+          "kind": "<Drawer"
+        },
+        {
+          "line": 8470,
+          "kind": "<Drawer"
+        },
+        {
+          "line": 8523,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 8969,
+          "kind": "<Upload"
+        },
+        {
+          "line": 9042,
+          "kind": "<Upload"
+        },
+        {
+          "line": 9995,
+          "kind": "<Upload"
+        },
+        {
+          "line": 10065,
+          "kind": "<Upload"
+        },
+        {
+          "line": 10090,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 10154,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 10163,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 10181,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 10198,
+          "kind": "<Popconfirm"
+        }
+      ],
+      "totalUiSignals": 28,
+      "actionSamples": [
+        {
+          "line": 489,
+          "s": "onKeyDown={(event) => {"
+        },
+        {
+          "line": 524,
+          "s": "onKeyDown={(event) => event.stopPropagation()}"
+        },
+        {
+          "line": 525,
+          "s": "onClick={(event) => { event.stopPropagation(); onDetails?.(); }}"
+        },
+        {
+          "line": 633,
+          "s": "<Button size=\"small\" type=\"primary\" icon={<LinkOutlined />} onClick={openResource}>"
+        },
+        {
+          "line": 640,
+          "s": "<Button size=\"small\" onClick={() => handleEditResource(resource)}>"
+        },
+        {
+          "line": 648,
+          "s": "onConfirm={() => handleRemoveResource(String(resource._clientId))}"
+        },
+        {
+          "line": 761,
+          "s": "<Button type=\"link\" size=\"small\" onClick={onAdd}>"
+        },
+        {
+          "line": 2471,
+          "s": "onClick={async () => {"
+        },
+        {
+          "line": 4057,
+          "s": "// bypassing handleSubmissionAction's guard which only covers the onClick button path. Guard"
+        },
+        {
+          "line": 4473,
+          "s": "<Button type=\"link\" size=\"small\" className=\"learn-projects-detail__overview-about-edit\" onClick={openOverviewEditor}>"
+        },
+        {
+          "line": 4511,
+          "s": "<Button type=\"link\" size=\"small\" onClick={openOverviewEditor}>"
+        },
+        {
+          "line": 4728,
+          "s": "onClick={openSubmissionModal}"
+        },
+        {
+          "line": 6160,
+          "s": "<Button size=\"small\" type=\"text\" onClick={() => handleEditMember(member)} disabled={soleMentor}"
+        },
+        {
+          "line": 6184,
+          "s": "onConfirm={() => handleRemoveMember(canonicalMemberId(member))}"
+        },
+        {
+          "line": 6446,
+          "s": "<Button size=\"small\" type=\"primary\" icon={<LinkOutlined />} onClick={() => openMeetingLink(meeting)}>"
+        },
+        {
+          "line": 6452,
+          "s": "<Button size=\"small\" onClick={() => handleEditMeeting(meeting)}>"
+        },
+        {
+          "line": 6458,
+          "s": "onConfirm={() => handleRemoveMeeting(listKeyOf(meeting, \"meeting\"))}"
+        },
+        {
+          "line": 6473,
+          "s": "onConfirm={() => handleWithdrawMeetingRequest(meeting)}"
+        },
+        {
+          "line": 6490,
+          "s": "<Button size=\"small\" onClick={() => handleEditMeeting(meeting)}>"
+        },
+        {
+          "line": 6726,
+          "s": "<Button onClick={resetReleaseForm}>Cancel</Button>"
+        },
+        {
+          "line": 6831,
+          "s": "<Button onClick={resetSprintForm}>Cancel</Button>"
+        },
+        {
+          "line": 6847,
+          "s": "if (!release) return <ProjectModalShell open={false} onCancel={close} title={null} />;"
+        },
+        {
+          "line": 6851,
+          "s": "<ProjectModalShell open={Boolean(releaseDetailKey)} onCancel={close} width={560} title={null}>"
+        },
+        {
+          "line": 6883,
+          "s": "<Button icon={<EditOutlined />} onClick={() => { close(); handleEditRelease(release); }}>Edit</Button>"
+        },
+        {
+          "line": 6888,
+          "s": "onConfirm={() => handleShipRelease(release.releaseKey)}"
+        },
+        {
+          "line": 6899,
+          "s": "onConfirm={() => handleUnshipRelease(release.releaseKey)}"
+        },
+        {
+          "line": 6911,
+          "s": "onConfirm={() => { close(); handleDeleteRelease(release.releaseKey); }}"
+        },
+        {
+          "line": 6947,
+          "s": "if (!vm) return <ProjectModalShell open={false} onCancel={close} title={null} />;"
+        },
+        {
+          "line": 6950,
+          "s": "<ProjectModalShell open={Boolean(sprintDetailKey)} onCancel={close} width={560} title={null}>"
+        },
+        {
+          "line": 7032,
+          "s": "onConfirm={() => handleStartSprint(sprintKey)}"
+        },
+        {
+          "line": 7042,
+          "s": "onConfirm={() => handleCompleteSprint(sprintKey, sprint.title)}"
+        },
+        {
+          "line": 7059,
+          "s": "onConfirm={() => handleReopenSprint(sprintKey, sprint.title)}"
+        },
+        {
+          "line": 7068,
+          "s": "<Button icon={<EditOutlined />} onClick={() => { close(); handleEditSprint(sprint); }}>Edit</Button>"
+        },
+        {
+          "line": 7079,
+          "s": "onConfirm={() => { close(); handleRemoveSprint(listKeyOf(sprint, \"sprint\")); }}"
+        },
+        {
+          "line": 7136,
+          "s": "onClick={() => {"
+        },
+        {
+          "line": 7162,
+          "s": "<Button type=\"primary\" onClick={handleOpenMeetingModal} icon={<CalendarOutlined />}>"
+        },
+        {
+          "line": 7166,
+          "s": "<Button type=\"primary\" onClick={handleOpenMeetingRequestModal} icon={<CalendarOutlined />}>"
+        },
+        {
+          "line": 7220,
+          "s": "<Button size=\"small\" type=\"primary\" icon={<LinkOutlined />} onClick={() => openMeetingLink(upcomingTeamMeeting)}>"
+        },
+        {
+          "line": 7226,
+          "s": "<Button size=\"small\" onClick={() => handleEditMeeting(upcomingTeamMeeting)}>"
+        },
+        {
+          "line": 7232,
+          "s": "onConfirm={() => handleRemoveMeeting(listKeyOf(upcomingTeamMeeting, \"meeting\"))}"
+        }
+      ]
+    },
+    {
+      "path": "src/layouts/CourseTabsLayout.js",
+      "sha": "b321e071809a3db99d08b8810a6c35078481b638",
+      "lineCount": 75,
+      "imports": [
+        {
+          "specifier": "antd",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "react",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "next/head",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "@/common/lists",
+          "line": 4,
+          "type": "local",
+          "path": "src/common/lists.js",
+          "sha": "171e1732da97fdf98d746da214a8284911e190bb"
+        },
+        {
+          "specifier": "@/components/Common/PageShell",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/Common/PageShell.jsx",
+          "sha": "0f05dc1e60d652385f03289a608496ab372c92ec"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 6,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 7,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/courseTabsContext",
+          "line": 8,
+          "type": "local",
+          "path": "src/utils/courseTabsContext.js",
+          "sha": "259b51cfef19a1a709ef5164a7da2b75faced197"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": [
+        {
+          "line": 63,
+          "s": "actions={<Button onClick={() => router.push(coursesHref)}>Back to courses</Button>}"
+        }
+      ]
+    },
+    {
+      "path": "src/layouts/AdminLayout.js",
+      "sha": "c7dad368cca14f269c68808c225affe0fb96d99c",
+      "lineCount": 370,
+      "imports": [
+        {
+          "specifier": "next/head",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "react",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "@/hooks/useSwipeBack",
+          "line": 5,
+          "type": "local",
+          "path": "src/hooks/useSwipeBack.js",
+          "sha": "a12efc3d5ae04cb9ce2a397f41f918583b93efbb"
+        },
+        {
+          "specifier": "@/hooks/useRouteTransition",
+          "line": 6,
+          "type": "local",
+          "path": "src/hooks/useRouteTransition.js",
+          "sha": "614dbce0e45343ae37f046c94d5b6187191726cf"
+        },
+        {
+          "specifier": "@/redux/store",
+          "line": 7,
+          "type": "local",
+          "path": "src/redux/store.js",
+          "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+        },
+        {
+          "specifier": "@/components/Loader/loader",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/Loader/loader.js",
+          "sha": "4e05bddcbdbf1b14087e4cfda5e684eb36541199"
+        },
+        {
+          "specifier": "@/components/Sidebar/AdminSidebar",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/Sidebar/AdminSidebar.js",
+          "sha": "7b2d15143a74a83a1d76960bf645cd37d7a80128"
+        },
+        {
+          "specifier": "@/components/Global/Header/Header",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/Global/Header/Header.js",
+          "sha": "777046ae846dcc9a09a0b3fac2df70e584fe27ee"
+        },
+        {
+          "specifier": "@/components/MobileFooter/MobileFooter",
+          "line": 11,
+          "type": "local",
+          "path": "src/components/MobileFooter/MobileFooter.jsx",
+          "sha": "a697b2193eecc12418f8a9e521ecfa054b211712"
+        },
+        {
+          "specifier": "@/common/constant",
+          "line": 12,
+          "type": "local",
+          "path": "src/common/constant.js",
+          "sha": "340f2764e4d97caf0f16530723c582a0516ccc14"
+        },
+        {
+          "specifier": "@/utils/authUtils",
+          "line": 22,
+          "type": "local",
+          "path": "src/utils/authUtils.js",
+          "sha": "c79e628b23ecd93e1bb55470f48194a19e1aa007"
+        },
+        {
+          "specifier": "antd",
+          "line": 23,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/apiError",
+          "line": 24,
+          "type": "local",
+          "path": "src/utils/apiError.js",
+          "sha": "95d2f52e9a7305c1f7fcd9e17a5e50028ced97c2"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": []
+    },
+    {
+      "path": "src/layouts/SuperAdminLayout.js",
+      "sha": "05f651296f56e22da188675e4475783997a61cf9",
+      "lineCount": 232,
+      "imports": [
+        {
+          "specifier": "next/head",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "react",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/Sidebar/SuperAdminSidebar",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/Sidebar/SuperAdminSidebar.js",
+          "sha": "f2c7b134e5366c79531e87ae1dd8df33e2fdf302"
+        },
+        {
+          "specifier": "@/components/Global/Header/SuperAdminHeader",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/Global/Header/SuperAdminHeader.js",
+          "sha": "8839ee541a6e837411816933388b4acaa26b1c94"
+        },
+        {
+          "specifier": "@/loginPages/SuperAdminLogin",
+          "line": 8,
+          "type": "local",
+          "path": "src/loginPages/SuperAdminLogin.js",
+          "sha": "5e42cd724f49151a150a12046f73f6d2a8b9d3fe"
+        },
+        {
+          "specifier": "@/loginPages/DefaultLoginBackground",
+          "line": 9,
+          "type": "local",
+          "path": "src/loginPages/DefaultLoginBackground.jsx",
+          "sha": "dd9930aefea35b0e6db1fa16c7de0fc3796dc8a3"
+        },
+        {
+          "specifier": "@/components/Header/LoginHeader",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/Header/LoginHeader.js",
+          "sha": "af1fd51052711fc92ccba83a556b6be9be306d9c"
+        },
+        {
+          "specifier": "@/components/Loader/loader",
+          "line": 11,
+          "type": "local",
+          "path": "src/components/Loader/loader.js",
+          "sha": "4e05bddcbdbf1b14087e4cfda5e684eb36541199"
+        },
+        {
+          "specifier": "@/hooks/useRouteTransition",
+          "line": 12,
+          "type": "local",
+          "path": "src/hooks/useRouteTransition.js",
+          "sha": "614dbce0e45343ae37f046c94d5b6187191726cf"
+        },
+        {
+          "specifier": "@/contexts/SuperAdminScopeContext",
+          "line": 13,
+          "type": "local",
+          "path": "src/contexts/SuperAdminScopeContext.js",
+          "sha": "14ae9f2486dae62e41ae8fdb975a015fea35f293"
+        },
+        {
+          "specifier": "@/redux/store",
+          "line": 14,
+          "type": "local",
+          "path": "src/redux/store.js",
+          "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+        },
+        {
+          "specifier": "@/utils/authUtils",
+          "line": 20,
+          "type": "local",
+          "path": "src/utils/authUtils.js",
+          "sha": "c79e628b23ecd93e1bb55470f48194a19e1aa007"
+        },
+        {
+          "specifier": "@/utils/apiError",
+          "line": 21,
+          "type": "local",
+          "path": "src/utils/apiError.js",
+          "sha": "95d2f52e9a7305c1f7fcd9e17a5e50028ced97c2"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": []
     }
   ],
-  "remaining": "Expand transitive imports of all UI-rendering descendants. Resolve conditional overlays/actions, services/backend, mapping, tests and runtime separately."
+  "remaining": "Expand transitive imports of all UI-rendering descendants. Resolve conditional overlays/actions, services/backend, mapping, tests and runtime separately.",
+  "errors": []
 }
