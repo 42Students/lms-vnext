@@ -1,6 +1,6 @@
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
-import {tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-request-service";
+import {tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-request-model";
 const src=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),"utf8");
 describe("TPO general request paged queue contract",()=>{
  it("defaults to pending, bounds page sizes and rejects unknown client status",()=>{

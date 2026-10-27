@@ -1,7 +1,8 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
-import {TpoGeneralRequestError,listTpoGeneralRequests,tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-request-service";
+import {TpoGeneralRequestError,listTpoGeneralRequests} from "@/modules/placements/tpo-general-request-service";
+import {tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-request-model";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 export async function GET(request:Request){
  try{

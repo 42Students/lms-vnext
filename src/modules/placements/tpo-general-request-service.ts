@@ -14,7 +14,7 @@ import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 import {requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 import {tpoGeneralRequestInputSchema,tpoGeneralRequestDecisionSchema,tpoGeneralRequestTarget,
- tpoGeneralRequestPayload} from "./tpo-general-request-model";
+ tpoGeneralRequestPayload,tpoGeneralReviewQuerySchema} from "./tpo-general-request-model";
 export class TpoGeneralRequestError extends Error{
  constructor(readonly code:"UNAVAILABLE"|"SCOPE"|"STALE"|"EFFECT_UNSUPPORTED"|"TARGET_CHANGED"){
   super(code);
@@ -192,13 +192,6 @@ export async function listOwnTpoGeneralRequests(ctx:RequestContext){
   eq(placementLearnerGeneralRequests.membershipId,member.id)))
   .orderBy(desc(placementLearnerGeneralRequests.requestedAt),desc(placementLearnerGeneralRequests.id)).limit(100);
 }
-/** Bounded college-scoped general-request review. The former 1000-row
- * list could silently hide a busy college's outstanding requests. */
-export const tpoGeneralReviewQuerySchema=z.strictObject({
- page:z.coerce.number().int().min(1).max(10000).default(1),
- pageSize:z.coerce.number().int().min(10).max(50).default(25),
- status:z.enum(["ALL","PENDING","APPROVED","REJECTED","CANCELLED"]).default("PENDING"),
-});
 export async function listTpoGeneralRequests(ctx:RequestContext,raw:unknown={}){
  const college=await requireTpo(ctx);
  await requireRegistered();

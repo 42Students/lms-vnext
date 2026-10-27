@@ -36,6 +36,14 @@ export function tpoGeneralRequestCanApprove(kind:string):kind is (typeof TPO_GEN
  return (TPO_GENERAL_REQUEST_APPROVABLE_KINDS as readonly string[]).includes(kind);
 }
 
+/** Bounded college-scoped general-request review. The former 1000-row
+ * list could silently hide a busy college's outstanding requests. */
+export const tpoGeneralReviewQuerySchema=z.strictObject({
+ page:z.coerce.number().int().min(1).max(10000).default(1),
+ pageSize:z.coerce.number().int().min(10).max(50).default(25),
+ status:z.enum(["ALL","PENDING","APPROVED","REJECTED","CANCELLED"]).default("PENDING"),
+});
+
 export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
  z.object({kind:z.literal("OFF_CAMPUS_OFFER"),reason,
   companyName:z.string().trim().min(1,"Which company?").max(150),
