@@ -8987,10 +8987,13 @@
     "readErrors": 0,
     "qualifiedSurfaceCount": null,
     "runtimeReachabilityVerified": false,
-    "backendActionParityVerified": false
+    "backendActionParityVerified": false,
+    "pendingUiModuleImportsFromAllRoutesAndScannedNodes": 163,
+    "allLegacyRouteFilesIndexed": 313,
+    "changedRouteSourcesRechecked": 7
   },
   "unresolvedLocalSpecifiers": [],
-  "nextAction": "Start from allRouteIndex stale routes and graph frontier. Refresh only changed legacy route files, then expand unresolved transitive UI imports. Classify each visible UI and its action/state/backend contract in the existing account parity specs. Do not mark these source leads as implementation-green.",
+  "nextAction": "Use globalImportFrontier (all 313 route roots + 64 inspected UI nodes) as source-directed remainder. Preserve 313 route census, and expand candidates by account. Inspect inline action/overlay cases, service/controller/contracts, states and vNext runtime. Complete only with acceptance spec/evidence; source counts are NOT UI surfaces.",
   "allRouteIndex": {
     "method": "Reuse committed per-route source inspections as indexed discovery leads, without re-reading unchanged legacy route sources; current source-tree SHA used to flag stale route evidence.",
     "routeRecordCount": 313,
@@ -16790,7 +16793,8 @@
         "inlineEventCount": null,
         "modalConfirmCalls": null
       }
-    ]
+    ],
+    "indexedCurrentLocalUiTargets": 141
   },
   "refreshedChangedRoutes": [
     {
@@ -18384,6 +18388,2175 @@
           "source": "return <button type=\"button\" key={b.branch} className={`tpo-pill${on ? \" is-on\" : \"\"}`} aria-pressed={on} onClick={() => onChange(on ? list.filter((x) => x !== b.branch) : [...list"
         }
       ]
+    }
+  ],
+  "globalImportFrontier": [
+    {
+      "path": "src/components/Common/PageShell.jsx",
+      "sha": "0f05dc1e60d652385f03289a608496ab372c92ec",
+      "importedBy": [
+        "src/pages/learn/profile.js",
+        "src/pages/teacher/profile.js",
+        "src/pages/tpo/announcements.js",
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/calendar.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/home.js",
+        "src/pages/tpo/messages.js",
+        "src/pages/tpo/more.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/profile.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/reports/index.js",
+        "src/pages/tpo/requests.js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js",
+        "src/pages/tpo/verification.js",
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/recruiter/drives/new.js",
+        "src/pages/recruiter/home.js",
+        "src/pages/recruiter/messages.js",
+        "src/pages/recruiter/profile.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/layouts/CourseTabsLayout.js",
+        "src/components/Projects/ProjectsShell.jsx"
+      ],
+      "accounts": [
+        "learner",
+        "faculty",
+        "tpo",
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Common/Skeletons.jsx",
+      "sha": "19ff7bc7317232a96a7217df406eaa8082567704",
+      "importedBy": [
+        "src/pages/learn/profile.js",
+        "src/pages/teacher/profile.js",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/calendar.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/[roundId].js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/home.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/profile.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/recruiter/drives/new.js",
+        "src/pages/recruiter/home.js",
+        "src/pages/recruiter/messages.js",
+        "src/pages/recruiter/profile.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/Projects/ProjectDetailContent.jsx",
+        "src/components/tpo/StudentPanel.js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty",
+        "tpo",
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Global/ListingPageHeader/ListingPageHeader.jsx",
+      "sha": "e51adc75b13a7e51c1f4f0dd3cc056b258e71987",
+      "importedBy": [
+        "src/pages/learn/profile.js",
+        "src/pages/teacher/profile.js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/more.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/profile.js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/new.js",
+        "src/pages/recruiter/home.js",
+        "src/pages/recruiter/messages.js",
+        "src/pages/recruiter/profile.js",
+        "src/pages/recruiter/drives/[jobId].js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty",
+        "tpo",
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/dj.js",
+      "sha": "09399d1614ffde9593c34d5f880680bf5b485d92",
+      "importedBy": [
+        "src/pages/tpo/announcements.js",
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/calendar.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/[roundId].js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/home.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/profile.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/settings.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/messages.js",
+        "src/pages/recruiter/profile.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/drive/DriveHeader.jsx",
+        "src/components/tpo/drive/DriveRequestReview.jsx",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/RoundsTab.js",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/OverviewTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/recruiter/NoCollegeSession.jsx",
+        "src/components/tpo/InviteModal.js",
+        "src/components/tpo/invite/VerifyCompanyWindow.jsx",
+        "src/components/tpo/team/TeamConversation.jsx",
+        "src/components/tpo/recruiterPage.js",
+        "src/components/tpo/drive/ShareModal.js",
+        "src/components/tpo/drive/ScheduleModal.js",
+        "src/components/tpo/drive/ChangeRequests.jsx",
+        "src/components/tpo/drive/RoundPanel.jsx",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ],
+      "accounts": [
+        "tpo",
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Common/PanelStates.jsx",
+      "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92",
+      "importedBy": [
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/calendar.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/home.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/TpoDataTable.js"
+      ],
+      "accounts": [
+        "tpo",
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/tpoFiles.js",
+      "sha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d",
+      "importedBy": [
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/students/index.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/RoundsTab.js",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/drive/OfferLettersModal.jsx",
+        "src/components/tpo/ImportPreviewModal.js",
+        "src/components/tpo/drive/ApplicantsBoard.jsx",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ],
+      "accounts": [
+        "tpo",
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/HoverStory.jsx",
+      "sha": "d6f1cd0dc9a446e617de3e11fb0e1ebfe7511e1a",
+      "importedBy": [
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js",
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/recruiter/RecruiterFocusedReview.jsx",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/RoundPanel.jsx",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ],
+      "accounts": [
+        "tpo",
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Course/Common/CourseTabSkeleton.jsx",
+      "sha": "0ff612cb40af843f896e76e7d22d3969825c1a0d",
+      "importedBy": [
+        "src/pages/learn/courses/[courseId]/[...courseTab].js",
+        "src/pages/learn/courses/[courseId]/index.js",
+        "src/pages/teacher/courses/[courseId]/[...courseTab].js",
+        "src/pages/teacher/courses/[courseId]/index.js",
+        "src/pages/learn/courses/[courseId]/[...courseTab].js",
+        "src/pages/teacher/courses/[courseId]/[...courseTab].js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/useRefreshOnFocus.js",
+      "sha": "59daf12b902550bca1435054fcff60951a4c2f9a",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/tpo/team/TeamConversation.jsx"
+      ],
+      "accounts": [
+        "tpo",
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/profile/ProfileSkeleton.js",
+      "sha": "7ac4db71c8bbc0088393bb3fa24b5456c498513a",
+      "importedBy": [
+        "src/pages/learn/profile.js",
+        "src/pages/teacher/profile.js",
+        "src/pages/tpo/profile.js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty",
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/labels.js",
+      "sha": "96a56474f1800afeb073cde3e3cca67a9c438747",
+      "importedBy": [
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/[roundId].js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/RoundsTab.js",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/OverviewTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/recruiterPage.js",
+        "src/components/tpo/drive/ScheduleModal.js",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/RoundPanel.jsx",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/nav/TpoHubBar.jsx",
+      "sha": "d6bc2217a016bd7561e9b6a5c88a8678be4e1059",
+      "importedBy": [
+        "src/pages/tpo/announcements.js",
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/messages.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/requests.js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js",
+        "src/pages/tpo/verification.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/recruiter/recruiterRoutes.js",
+      "sha": "a147503fbbc9a4a0f2eccbdc9fb44ef4bed827ab",
+      "importedBy": [
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/recruiter/RecruiterDriveOverview.jsx"
+      ],
+      "accounts": [
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/recruiter/recruiterStories.js",
+      "sha": "d7f0301a22ec676116336f1664cf57e290f35755",
+      "importedBy": [
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/recruiter/RecruiterFocusedReview.jsx"
+      ],
+      "accounts": [
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/filters/filterModel.js",
+      "sha": "ed70138d5c54727846942156d71bfa4fa4b0e479",
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/students/index.js",
+        "src/components/tpo/drive/ApplicantsTab.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/invite/inviteState.js",
+      "sha": "9e3225213b74eaabae6a76ec60ece1062a3b0c29",
+      "importedBy": [
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/InviteModal.js",
+        "src/components/tpo/recruiterPage.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/recruiterNextStep.js",
+      "sha": "0dfe3654529c22ee428851ca88fd976e6f392780",
+      "importedBy": [
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/recruiterPage.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/recruiterLeadStages.js",
+      "sha": "df7b4dcf578e634dd1d6b716c265a02a195d7937",
+      "importedBy": [
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/students/academics.js",
+      "sha": "7d2d94830a903eba1fc580ad79d4e5aaa8d00ee3",
+      "importedBy": [
+        "src/pages/tpo/students/index.js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/drive/DriveStudents.jsx"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/ReasonPicker.jsx",
+      "sha": "c1b008e7f1babc5f80f17218e88cd1df4e36fe84",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OffersTab.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/recruiter/recruiterReviewUtils.js",
+      "sha": "0ee5a5deb4ed39f500bbbb89a4a7e7f563ba1772",
+      "importedBy": [
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/recruiter/RecruiterFocusedReview.jsx"
+      ],
+      "accounts": [
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/batches/batchRules.js",
+      "sha": "16156886a6ef7320fa6f5befbd2a450df1522055",
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js",
+        "src/components/tpo/StudentPanel.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/drive/publishPreflight.js",
+      "sha": "76e8d8718a5503ea5ab0453a0bd26e67d1958680",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/components/tpo/drive/DriveRequestReview.jsx"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/grid/ChoiceEditor.jsx",
+      "sha": "04203bce4392d72c713417fb1dbe4082ef6ce74f",
+      "importedBy": [
+        "src/pages/tpo/students/index.js",
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/TpoDataTable.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/grid/GridWorkspace.jsx",
+      "sha": "83e47b081e41e714fdc7447f61ab19d10057ca75",
+      "importedBy": [
+        "src/pages/tpo/students/index.js",
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/TpoDataTable.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/team/useTeamPeople.js",
+      "sha": "adcc5161feb368bdcbf2ec26cb346c38dc478395",
+      "importedBy": [
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/useLivePulse.js",
+      "sha": "1a622bab4bc8e95bc376e240f955ea90aacfa88c",
+      "importedBy": [
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/messages.js",
+        "src/pages/recruiter/drives/[jobId].js"
+      ],
+      "accounts": [
+        "recruiter",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Assignments/AssignmentsContent.jsx",
+      "sha": "f765d1336dcc290d8781422941a8db9ff1fcfd77",
+      "importedBy": [
+        "src/pages/learn/allAssignments.js",
+        "src/pages/teacher/allAssignments.js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/CalendarComp/ClassScheduleContent.jsx",
+      "sha": "ba9188e3cb294a255c5b2318f0be38a7cb4715bc",
+      "importedBy": [
+        "src/pages/learn/calendar.js",
+        "src/pages/teacher/calendar.js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Course/CoursesContent.jsx",
+      "sha": "da7fd7b667fb9bea0702adae00fa3b39c47d44bb",
+      "importedBy": [
+        "src/pages/learn/courses/index.js",
+        "src/pages/teacher/courses/index.js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Notifications/NotificationsContent.jsx",
+      "sha": "d87d745defd3e7e8b990c0c4ecbeb8cdead54721",
+      "importedBy": [
+        "src/pages/learn/notifications.js",
+        "src/pages/teacher/notifications.js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/profile/about.js",
+      "sha": "cd22b395246016dfbe4649f6e7b8d03fef7367e0",
+      "importedBy": [
+        "src/pages/learn/profile.js",
+        "src/pages/teacher/profile.js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Projects/ProjectsContent.jsx",
+      "sha": "5fbbb25e7dc31f6cbb1c07e1a502ebbee67e87c9",
+      "importedBy": [
+        "src/pages/learn/projects/index.js",
+        "src/pages/mentor/projects/index.js"
+      ],
+      "accounts": [
+        "learner",
+        "mentor"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Quizzes/QuizzesContent.jsx",
+      "sha": "5a3fc14a0e1c0973a10cfd6b46dad31e7c6738c6",
+      "importedBy": [
+        "src/pages/learn/allQuizzes.js",
+        "src/pages/teacher/allQuizzes.js"
+      ],
+      "accounts": [
+        "learner",
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/announcements/AnnouncementList.jsx",
+      "sha": "543913dc33a579c09d79336b00b11b3a91b6fbb0",
+      "importedBy": [
+        "src/pages/learn/my-placements/announcements.js",
+        "src/pages/tpo/announcements.js"
+      ],
+      "accounts": [
+        "learner",
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/grid/HeaderFilter.jsx",
+      "sha": "fa30c507e68ddffdb8e6cceb21543dac90b0a82d",
+      "importedBy": [
+        "src/pages/tpo/students/index.js",
+        "src/components/tpo/TpoDataTable.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/RequestsPanel.js",
+      "sha": "bbd6d992c8ddd7628cefbf8c9d8c6445ae5ae4de",
+      "importedBy": [
+        "src/pages/tpo/requests.js",
+        "src/components/tpo/StudentPanel.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/students/outcomes.js",
+      "sha": "8fb568fd3fd990eef40108531bd1691fe58b2fcf",
+      "importedBy": [
+        "src/pages/tpo/students/index.js",
+        "src/components/tpo/StudentPanel.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/students/studentGridRules.js",
+      "sha": "070f1e27278a3aff19d9d42b4d3b1ae07f5e449b",
+      "importedBy": [
+        "src/pages/tpo/students/index.js",
+        "src/components/tpo/StudentPanel.js"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/rollParser.js",
+      "sha": "0869a50d9af04c831eb583c1ba15ed961e522611",
+      "importedBy": [
+        "src/pages/tpo/drive-day/[roundId].js",
+        "src/components/tpo/drive/ResultsEntryModal.jsx"
+      ],
+      "accounts": [
+        "tpo",
+        "graph-descendant"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/layouts/PlacementsTabsLayout.js",
+      "sha": "b7b1f44fc7381da0b3870c323904f5ec6305a3d8",
+      "importedBy": [
+        "src/pages/learn/my-placements/announcements.js",
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/assessments.js",
+        "src/pages/learn/my-placements/calendar.js",
+        "src/pages/learn/my-placements/index.js",
+        "src/pages/learn/my-placements/interviews.js",
+        "src/pages/learn/my-placements/jobs/[jobId].js",
+        "src/pages/learn/my-placements/jobs/index.js",
+        "src/pages/learn/my-placements/offers.js",
+        "src/pages/learn/my-placements/placement.js",
+        "src/pages/learn/my-placements/rules.js",
+        "src/pages/learn/my-placements/schedule.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/recruiter/useRecruiterCollege.js",
+      "sha": "9b291490eb5d372dc27db37d43023efae3191c1c",
+      "importedBy": [
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/recruiter/drives/new.js",
+        "src/pages/recruiter/messages.js"
+      ],
+      "accounts": [
+        "recruiter"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Placements/student/MovedPage.jsx",
+      "sha": "3612556ee4f3d8042eab1ff513ef1baf69556665",
+      "importedBy": [
+        "src/pages/learn/my-placements/assessments.js",
+        "src/pages/learn/my-placements/calendar.js",
+        "src/pages/learn/my-placements/interviews.js",
+        "src/pages/learn/my-placements/rules.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Placements/student/useJourney.js",
+      "sha": "2a86515d9b6df352e0a7c5b2baf09a926397fd8b",
+      "importedBy": [
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/index.js",
+        "src/pages/learn/my-placements/offers.js",
+        "src/pages/learn/my-placements/schedule.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Placements/student/words.js",
+      "sha": "46ee37cbf87d007fd6385fcd53f56ea079ef72a0",
+      "importedBy": [
+        "src/pages/learn/my-placements/announcements.js",
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/index.js",
+        "src/pages/learn/my-placements/schedule.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/filters/useUrlFilters.js",
+      "sha": "8144cf6aaf7a10787a66d1dc63a45ec995907b16",
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/common/lists.js",
+      "sha": "171e1732da97fdf98d746da214a8284911e190bb",
+      "importedBy": [
+        "src/layouts/CourseTabsLayout.js",
+        "src/components/Sidebar/AdminSidebar.js",
+        "src/components/Sidebar/SuperAdminSidebar.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+      "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js",
+        "src/components/Global/Offcanvas/Assignment/newAssignment.js",
+        "src/components/Assignments/ViewAssignmentModal.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/DriveFormPage.js",
+      "sha": "716fd96c977bd8a778815bf29e736ab94009cccd",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId]/edit.js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/drives/new.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/stories/applicantStories.js",
+      "sha": "322f028771f7ee4330a59b52af96a5107f7c8f85",
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/RoundPanel.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/ui/applicantRules.js",
+      "sha": "4853a245bc474c30d83703935156479ade56a357",
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OfferLettersModal.jsx",
+        "src/components/tpo/drive/ApplicantsBoard.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/ui/ScopeDrop.jsx",
+      "sha": "90f6c145312be3ca5219b47d15da44aec255c430",
+      "importedBy": [
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/reports/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Course/Common/CourseSectionHeader.jsx",
+      "sha": "87609fdcbd7b1f9c50d88cf34cba47583081f2c4",
+      "importedBy": [
+        "src/pages/mentor/calendar.js",
+        "src/pages/mentor/notifications.js"
+      ],
+      "accounts": [
+        "mentor"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Loader/loader.js",
+      "sha": "4e05bddcbdbf1b14087e4cfda5e684eb36541199",
+      "importedBy": [
+        "src/layouts/AdminLayout.js",
+        "src/layouts/SuperAdminLayout.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Placements/PlacementsCompanyAvatar.jsx",
+      "sha": "7a1c3424d9f12419ed29448c10cb4c8fc3ff103f",
+      "importedBy": [
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/index.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Placements/student/OfferCard.jsx",
+      "sha": "7142dcd644c4c3d712e09ac318d33dbfad44b8d6",
+      "importedBy": [
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/offers.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Placements/student/RoundTrack.jsx",
+      "sha": "3ac0b1efd5d23fa7d92f83927e95b88f7047a791",
+      "importedBy": [
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/index.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Placements/student/ScheduleCard.jsx",
+      "sha": "85e868792307e0c0ecc27fd74664b5beeab9aad6",
+      "importedBy": [
+        "src/pages/learn/my-placements/index.js",
+        "src/pages/learn/my-placements/schedule.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/recruiter/enterAfterJoin.js",
+      "sha": "319ed0f62890de9c7c527e9a09e607560b22cdec",
+      "importedBy": [
+        "src/pages/college-join/[token].js",
+        "src/pages/company-join/[token].js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/recruiter/RecruiterToday.jsx",
+      "sha": "08a4537dea65d50bc620eb5525118480e6dad3ea",
+      "importedBy": [
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/home.js"
+      ],
+      "accounts": [
+        "recruiter"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/drive/DiscussionTab.jsx",
+      "sha": "2fd3f115c22d6f76150a4f7e4ecec7cf6722a586",
+      "importedBy": [
+        "src/components/tpo/drive/DriveRequestReview.jsx",
+        "src/components/tpo/drive/DriveTalk.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/reportsMeta.js",
+      "sha": "545c6736d516f362fe4880bba552f40b615a9810",
+      "importedBy": [
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/reports/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/stories/offerStories.js",
+      "sha": "20f44460ce4cb12c633dfd5c81702dc285f3bc03",
+      "importedBy": [
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/students/StudentActions.jsx",
+      "sha": "c89758c41e2ac89ff6ad321a9c06df46f97b7f70",
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/JourneyStrip.jsx",
+      "sha": "f7cf68af72c9ee9c108ffa1321015df9266a7b72",
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OffersTab.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/ui/NextStepCell.jsx",
+      "sha": "b903a861d03d137bff6964aacb94f2f180f4b50e",
+      "importedBy": [
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/reportFilters.js",
+      "sha": "ac6b6700ab6e57b04015cdc527dd6bd10379a101",
+      "importedBy": [
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/reports/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/common/constant.js",
+      "sha": "340f2764e4d97caf0f16530723c582a0516ccc14",
+      "importedBy": [
+        "src/layouts/AdminLayout.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Assignments/SubmitAssignmentModal.jsx",
+      "sha": "b65a854960891623f4b0c885054bb8d24610d87a",
+      "importedBy": [
+        "src/components/Assignments/ViewAssignmentModal.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Attendance/AttendanceContent.jsx",
+      "sha": "9e1b04f977918e0d9781e0186e544b72c4f396a1",
+      "importedBy": [
+        "src/pages/learn/attendance.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Attendance/CourseAttendeeHeaderFilters/CourseAttendeeHeaderFilters.js",
+      "sha": "a1c11b1c82716fde0d60e60f2005d2991b492c05",
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters.js",
+      "sha": "b23dbc7ba333f8384bc2f93fb0621000a27877b5",
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Common/Facts.jsx",
+      "sha": "97b26edb85a78c005fc370f6d452d263c4a49df4",
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/contacts/index.js",
+      "sha": "6c9c59bd339a94e03048d3db0c3064e3852a2dbf",
+      "importedBy": [
+        "src/pages/teacher/contacts/[contactsTab].js"
+      ],
+      "accounts": [
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Course/Home/AtRiskStudentsCard.jsx",
+      "sha": "a767be55aad220734ec6a8d4fa8268d12554dc94",
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Course/Home/InThisCourseSection.jsx",
+      "sha": "31cfcf01978ab73f227ccaa05c3b3467ddca8101",
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Course/Home/PerformanceCard.jsx",
+      "sha": "170a0da079466fff79d2e2b38dd314f039335206",
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Course/Home/UnifiedActivityList.jsx",
+      "sha": "6f4943b09bcac471aaaf0d39238b8cf00d3cece7",
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Dropdowns/Notification/NotifivationDropdown.js",
+      "sha": "13309104f47cab30a778e35426320dda06ff3af1",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Dropdowns/Profile/profiledropdown.js",
+      "sha": "42807cfb9262412dd9418814bc33049cd9287663",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Dropdowns/Profile/SuperAdminProfileDropdown.js",
+      "sha": "1d74b00297c099211e067e58fa72efbda7d77e49",
+      "importedBy": [
+        "src/components/Global/Header/SuperAdminHeader.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/Editor/editor.js",
+      "sha": "11388860f6eb8325d81eac86075f550d0288e6b2",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Assignment/newAssignment.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/MobileMenuDrawer/MobileMenuDrawer.js",
+      "sha": "f691b49e9a023d403a882dd1a5277af002255c5c",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/MobileMenuDrawer/SuperAdminMobileMenuDrawer.js",
+      "sha": "532cf35fd1f8fb901d498eb3754d33549167744e",
+      "importedBy": [
+        "src/components/Global/Header/SuperAdminHeader.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/liveclass.js",
+      "sha": "23d6e402392cdf10db5767769a64569b571e8690",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/ResourceComposer.js",
+      "sha": "2a48048cf2eef9299c3114ce76625c828a3db6c9",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/videoform.js",
+      "sha": "bb807f6256a63a76306e00c9d5785672d3e211bc",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/youtube.js",
+      "sha": "9b46960fb1c90c08d43a67af5e2a4afc9caba084",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/RichTextEditor/RichTextDisplay.jsx",
+      "sha": "f302907c0493cae35cd977c11e2452d79f72cecb",
+      "importedBy": [
+        "src/components/recruiter/RecruiterDriveOverview.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Global/Upload/UploadFromLinkButton.jsx",
+      "sha": "314cf6ea0ca8e190ac749193012210faeb7239cf",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Assignment/newAssignment.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Header/LoginHeader.js",
+      "sha": "af1fd51052711fc92ccba83a556b6be9be306d9c",
+      "importedBy": [
+        "src/layouts/SuperAdminLayout.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Placements/JobsListContent.jsx",
+      "sha": "8b726d832e0223f29b35497b2ca4cf16fcffdbfb",
+      "importedBy": [
+        "src/pages/learn/my-placements/jobs/index.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Placements/PlacementCellContent.js",
+      "sha": "528ddc4b83555bf666ab129e967c2e37b6885c8a",
+      "importedBy": [
+        "src/pages/learn/my-placements/placement.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Placements/student/PlacementRules.jsx",
+      "sha": "d980cc55c42fb5dc19dd60a5603f4c8dc30ae8ac",
+      "importedBy": [
+        "src/pages/learn/my-placements/offers.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Placements/VerifiedJobDetailContent.jsx",
+      "sha": "098e7b5f6e710c5605f28a51303addb2f22d897c",
+      "importedBy": [
+        "src/pages/learn/my-placements/jobs/[jobId].js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/profile/ProfileVerificationCard.jsx",
+      "sha": "33b6f367fd96fdc95a37eed5eaf7ebcfb2582517",
+      "importedBy": [
+        "src/pages/learn/profile.js"
+      ],
+      "accounts": [
+        "learner"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/recruiter/RecruiterTopBar.jsx",
+      "sha": "14595ebdb9a78ab756d3215b39e3264d6c4f5790",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/Report/AssignmentReportContent.jsx",
+      "sha": "447876e8072a3cb1073567ed12284b91fd495091",
+      "importedBy": [
+        "src/pages/teacher/report/assignment/[contentId].js"
+      ],
+      "accounts": [
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/Report/QuizReportContent.jsx",
+      "sha": "113fea69884a0cd6a49facd53916f33be71d57ed",
+      "importedBy": [
+        "src/pages/teacher/report/quiz/[quizId].js"
+      ],
+      "accounts": [
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/accreditationPreflight.js",
+      "sha": "f3c92d38efd5a4d91ae2971b34e3fd9403264461",
+      "importedBy": [
+        "src/pages/tpo/reports/[name].js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/AddToDriveModal.jsx",
+      "sha": "24ea1480d1533d050291b72dea5a282cf5ceb7b2",
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/announcements/AnnouncementComposer.jsx",
+      "sha": "39469d1e3d9f899070ebd18ee632010b17a50733",
+      "importedBy": [
+        "src/pages/tpo/announcements.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/batches/BatchRulesTab.jsx",
+      "sha": "71ba226990059d5f9fffbf9b347448dd69fbbbc5",
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/batches/BatchTop.jsx",
+      "sha": "1218898e0f42fc43ccd2d81d37e1a2bfcee4d1f5",
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/batches/DecidePanel.jsx",
+      "sha": "534f58315fbc9b5638606f86747a6d8757888bef",
+      "importedBy": [
+        "src/pages/tpo/batches/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/batches/EligibilityGrid.jsx",
+      "sha": "89afe0b59f50086994f91bbf691bc3199652e7aa",
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/batches/IneligibleModal.jsx",
+      "sha": "327b77dc140b5acdeb20138ac015765be0ba7ed9",
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/companies/CompaniesTab.jsx",
+      "sha": "1e5c84e86d01461760593e8fdac2974286b6d1cb",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/companies/companyRules.js",
+      "sha": "517391341a00b545663ede1b5a57d00e6035dc83",
+      "importedBy": [
+        "src/pages/tpo/companies.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/company/CompanyLinkCard.jsx",
+      "sha": "93d56d100a68bc5866878cc89e84137a6cf4c637",
+      "importedBy": [
+        "src/pages/tpo/companies.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/drive/DrivePipeline.js",
+      "sha": "deaab0f3e42746136a61d960a09f815504d9dadd",
+      "importedBy": [
+        "src/components/recruiter/RecruiterDriveOverview.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/drive/InviteReviewer.jsx",
+      "sha": "b035a594992214eedbec432b8c391924650ebc65",
+      "importedBy": [
+        "src/components/tpo/drive/DriveTalk.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/emails/EmailComposer.jsx",
+      "sha": "b2268fc4defab5b98dcb86438c00f40a36f9d8dc",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/emails/EmailsTab.jsx",
+      "sha": "d6f76a52146bf42f37f2db7772137118810bbddf",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/FollowUpModal.jsx",
+      "sha": "6bb0b811e75667c9fd95894b31042de15cfea821",
+      "importedBy": [
+        "src/pages/tpo/calendar.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/grid/gridExport.js",
+      "sha": "7fc8fab6ef865f19651f195ec0bd4ca20863f144",
+      "importedBy": [
+        "src/components/tpo/TpoDataTable.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/home/homeRows.js",
+      "sha": "d7af17cb78845d8339fc1b004fdb60a9fd5a4c25",
+      "importedBy": [
+        "src/pages/tpo/home.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/invite/BringInWindow.jsx",
+      "sha": "e462998683eab504bc2f7f7380ee7a6401cd54e9",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/JdUpload.jsx",
+      "sha": "854c8dbd7ce7a682350a7b695fef022799528910",
+      "importedBy": [
+        "src/pages/recruiter/drives/new.js"
+      ],
+      "accounts": [
+        "recruiter"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/messages/MessagesInbox.jsx",
+      "sha": "2d675a2b1501697458ff7f20a5864952bd3798e5",
+      "importedBy": [
+        "src/pages/tpo/messages.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/outreach/outreachRules.js",
+      "sha": "7159f1380a55bd06c0edb51aa7814343022271a1",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/outreach/OutreachTab.jsx",
+      "sha": "2e07c19b3117dd8af1b1455fe4cc2c08fda921a9",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/recruiters/RecruiterSidePanel.jsx",
+      "sha": "0480c01c4348dac5807bfdbb4815461b0ce85cfb",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/reportViews.js",
+      "sha": "15440884a46bce615d18bb1ae08450d8620d8011",
+      "importedBy": [
+        "src/pages/tpo/reports/[name].js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/requests/RequestsQueue.jsx",
+      "sha": "0fc7444f59dbd7ef7d81232d5ffe470f0505e29c",
+      "importedBy": [
+        "src/pages/tpo/requests.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/settings/JobTypesTab.jsx",
+      "sha": "36da6833e3ed3754a1d073a1f037bc34fda26ede",
+      "importedBy": [
+        "src/pages/tpo/settings.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/settings/OutcomeLabelsTab.jsx",
+      "sha": "d531ad7d261719d7c2d75d6c0dcc864ca0fb87f1",
+      "importedBy": [
+        "src/pages/tpo/settings.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/stories/accessStories.js",
+      "sha": "20779891a7774d0da844c09da9e369bee2d21e74",
+      "importedBy": [
+        "src/pages/tpo/settings.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/stories/batchStories.js",
+      "sha": "597357177ef7d98c02ff9eeff8e0107f4b66a6be",
+      "importedBy": [
+        "src/pages/tpo/batches/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/stories/driveStories.js",
+      "sha": "fcb240252d63d0d4f123dc98961a0b9a63930e49",
+      "importedBy": [
+        "src/pages/tpo/drives/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/stories/recruiterStories.js",
+      "sha": "dd98dd0b1085f8ebabf9666c53892cc30b43e4cc",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/stories/studentStories.js",
+      "sha": "f7c0d2e2bed8bb4e90a4f42650109a43f51e1ad9",
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/students/StudentSidePanel.jsx",
+      "sha": "67504b6fb873ff33d9d757c96f63c27e26bb8492",
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/students/StudentsTop.jsx",
+      "sha": "1de8b81ca864d6fd6f6b55bcf03913536664af18",
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/team/TeamComposer.jsx",
+      "sha": "99f35cb9c77c6a61176f269dba773e7ddcdf1f34",
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/team/TeamContext.jsx",
+      "sha": "f132627d98106805bf5b936d90ee4b918430eb3a",
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/team/TeamConversations.jsx",
+      "sha": "d2efc1f31589db0e9ba0139ddf3792b288f96305",
+      "importedBy": [
+        "src/pages/tpo/team.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/team/TeamMessages.jsx",
+      "sha": "d38a7d07186b9689e0455bdb8d9c9adb920138f7",
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/team/TeamPeople.jsx",
+      "sha": "9972b66d10ff1a2a83f7d300798769450534b031",
+      "importedBy": [
+        "src/pages/tpo/team.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/team/teamTokens.js",
+      "sha": "487c53d44ecc1fd7bced20c0bb6b3e0b27511fa0",
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/today/TodayQueue.jsx",
+      "sha": "913f99d08b8f1614aa0418bbdb6c18d876611f04",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/TpoProfileCard.jsx",
+      "sha": "0c32d6d28721e9099aaebfb5e78eb67b79658462",
+      "importedBy": [
+        "src/pages/tpo/profile.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/TpoTopBar.js",
+      "sha": "f7dd7e60c58cc1be4945ae3ec638c9e1d91796de",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/ui/domain.js",
+      "sha": "75ab54012f08a9229ab2abd3baa6b2137c568ccc",
+      "importedBy": [
+        "src/pages/tpo/settings.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/driveDayRules.js",
+      "sha": "30695ac401dc1d9a93575bfe381897178fe153cb",
+      "importedBy": [
+        "src/pages/tpo/drive-day/[roundId].js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/formatWhen.js",
+      "sha": "0bf9ddd6c52efefb7b5518ace7e5b41b98291cfb",
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/ui/journeyRules.js",
+      "sha": "13b506b418fb05aea3623f1d1e77985e6880edbb",
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/recruiterActivity.js",
+      "sha": "be5bc17e5c1e83fb6ddd13b64e1cfd7bce3ac279",
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/ui/shareMemory.js",
+      "sha": "701cb044b073e438cbea96929415614680cd3c88",
+      "importedBy": [
+        "src/components/tpo/drive/ShareModal.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/ui/slotGenerator.js",
+      "sha": "10391e2c689139b4f7e088efd21d64960562a2c5",
+      "importedBy": [
+        "src/components/tpo/drive/ScheduleModal.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/components/tpo/ui/useDebouncedValue.js",
+      "sha": "289cf207badae64a1bb7dc7c761798bad584804c",
+      "importedBy": [
+        "src/pages/tpo/reports/[name].js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/tpo/WeekTimeGrid.jsx",
+      "sha": "a5502e763903ec566b8151761d4ad8d720396768",
+      "importedBy": [
+        "src/pages/tpo/calendar.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/verification/VerificationWorkspace.jsx",
+      "sha": "8a741baa40cf8776e58a63e93238e636517e59ee",
+      "importedBy": [
+        "src/pages/tpo/verification.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/components/verification/VerifyQueue.jsx",
+      "sha": "ee24b949b50d03c50a3c60a7c8ac3fa1dc8595b6",
+      "importedBy": [
+        "src/pages/tpo/verification.js"
+      ],
+      "accounts": [
+        "tpo"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/layouts/contactsTabLayout.js",
+      "sha": "54eac7c5dc98c1b2eccb8bcbc70ac09a2b02a411",
+      "importedBy": [
+        "src/pages/teacher/contacts/[contactsTab].js"
+      ],
+      "accounts": [
+        "faculty"
+      ],
+      "kind": "route"
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/StudentAttendanceView.jsx",
+      "sha": "0209e7ce84ce6617fbc1f49f9f24ec19e5a5f762",
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+      "sha": "bb2139e0742ad8cd87514789ebf72747a5391191",
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/liveclass.js",
+      "sha": "99a0478f874d25e939280c7b71c04ad47304a28f",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/resource.js",
+      "sha": "f3232b6c0ad32a6f19eb81aacab6737b614ff23b",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+      "sha": "590e9e189ebe088ec54e130cf51cfd7ee0c22e5e",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/video.js",
+      "sha": "efdebb6a6b6694ebfb8ad35f951ba36a8a0259be",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/viewSubmissionsModal.jsx",
+      "sha": "ff32ce1e89fba72fd90a725df0c2346f10ab336e",
+      "importedBy": [
+        "src/components/Assignments/ViewAssignmentModal.jsx"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/youtube.js",
+      "sha": "0e213a228f8df8cb8ad5f90d785e5526f28b207c",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ],
+      "accounts": [
+        "graph-descendant"
+      ],
+      "kind": "descendant"
     }
   ]
 }
