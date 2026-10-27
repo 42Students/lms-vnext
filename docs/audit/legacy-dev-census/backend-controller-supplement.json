@@ -1,0 +1,610 @@
+{
+  "schemaVersion": 1,
+  "source": "42Students/lms",
+  "ref": "4ef67db8f198205f11e1e6ca12718c38400dc7ca",
+  "method": "Static annotation/role/tenant signals only; class may be non-controller, access checks may be inherited",
+  "records": [
+    {
+      "path": "src/main/java/com/_42students/lms/controller/PublicTrackerLogsAccessController.java",
+      "sha": "3ab3379f1545c3b3c74179aea0e76ade771e69c1",
+      "lines": 104,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/public/bug-tracker/logs-access\"",
+          "line": 37
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/verify\"",
+          "line": 64
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 1
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/QuizController.java",
+      "sha": "22350d2d4478ec4da749d307e575638fe8a6fb7b",
+      "lines": 167,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/quizzes\"",
+          "line": 30
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "produces = \"application/json\"",
+          "line": 55
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "value = \"/{quizId}\", produces = \"application/json\"",
+          "line": 60
+        },
+        {
+          "annotation": "PatchMapping",
+          "raw": "value = \"/{quizId}/publish\", produces = \"application/json\"",
+          "line": 66
+        },
+        {
+          "annotation": "PatchMapping",
+          "raw": "value = \"/{quizId}/unpublish\", produces = \"application/json\"",
+          "line": 73
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "value = \"/{quizId}\", produces = \"application/json\"",
+          "line": 78
+        },
+        {
+          "annotation": "PatchMapping",
+          "raw": "value = \"/{quizId}/publish-grades\", produces = \"application/json\"",
+          "line": 89
+        },
+        {
+          "annotation": "PatchMapping",
+          "raw": "value = \"/{quizId}/unpublish-grades\", produces = \"application/json\"",
+          "line": 94
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "value = \"/{quizId}\", produces = \"application/json\"",
+          "line": 99
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "produces = \"application/json\"",
+          "line": 105
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "value = \"/{quizId}/attempt\", produces = \"application/json\"",
+          "line": 123
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "value = \"/{quizId}/submit\", produces = \"application/json\"",
+          "line": 128
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "value = \"/{quizId}/submissions\", produces = \"application/json\"",
+          "line": 145
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "value = \"/my-submissions\", produces = \"application/json\"",
+          "line": 150
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 13
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ResourceFileController.java",
+      "sha": "82c25af7ccb78d4734f063e257d20a72011578b7",
+      "lines": 130,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/resource-files\"",
+          "line": 38
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "value = \"/{contentId}/materials/{materialIndex}/url\", produces = \"application/json\"",
+          "line": 51
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 1
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/ResourceUploadController.java",
+      "sha": "063273b736efa7d67bddabab31538e0580e80b7a",
+      "lines": 127,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/resource-uploads\"",
+          "line": 31
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "value = \"/presign\", consumes = \"application/json\", produces = \"application/json\"",
+          "line": 57
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": true,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 1
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/SemesterController.java",
+      "sha": "256dc573866076731700b7650cb2b1220144b407",
+      "lines": 690,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/semester\"",
+          "line": 32
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/create\"",
+          "line": 104
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/update/{id}\"",
+          "line": 160
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/delete/{id}\"",
+          "line": 214
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/fetch/{id}\"",
+          "line": 264
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/fetchByProgram\"",
+          "line": 296
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/fetchAll\"",
+          "line": 310
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{semesterId}/courses\"",
+          "line": 336
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{semesterId}/courses/bulk\"",
+          "line": 386
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/{semesterId}/courses/{courseId}\"",
+          "line": 434
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/{semesterId}/courses\"",
+          "line": 469
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/{semesterId}/staffing\"",
+          "line": 494
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/{semesterId}/courses/reorder\"",
+          "line": 553
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/courses/{id}\"",
+          "line": 617
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/fetchAllPaged\"",
+          "line": 655
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": true,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 14
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/SkillController.java",
+      "sha": "866950e05d0b720d07676518059eb51b293d4f87",
+      "lines": 311,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/skills\"",
+          "line": 28
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/search\"",
+          "line": 57
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/popular\"",
+          "line": 78
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/{skillId}/select\"",
+          "line": 96
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/select/batch\"",
+          "line": 114
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/categories\"",
+          "line": 137
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/category/{category}\"",
+          "line": 153
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/cache/evict\"",
+          "line": 175
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/verify\"",
+          "line": 197
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/load-missing\"",
+          "line": 226
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 9
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/StudentCourseController.java",
+      "sha": "267e0f1e75e7b18178dbdf5362e6c259a801d22c",
+      "lines": 127,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/student-courses\"",
+          "line": 24
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/byStudent/{studentId}\"",
+          "line": 38
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/byStudent/{studentId}/semesters\"",
+          "line": 72
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/byClass/{classId}\"",
+          "line": 98
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 3
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/StudentImageController.java",
+      "sha": "c723d0fa430f9bdb8808a5645bd14b3bd8a9e8aa",
+      "lines": 159,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/learner-images\"",
+          "line": 22
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/create\"",
+          "line": 93
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/getImageDataByLearnerId\"",
+          "line": 113
+        },
+        {
+          "annotation": "PatchMapping",
+          "raw": "\"/deactivateImageByImageIdAndLearnerId\"",
+          "line": 135
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": true,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 3
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/SuperAdminAnnouncementController.java",
+      "sha": "ee3b0cee1c7f8662c7c2166710276a149339df36",
+      "lines": 58,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/superadmin/announcements\"",
+          "line": 21
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "",
+          "line": 29
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/placement-cells\"",
+          "line": 35
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "",
+          "line": 40
+        },
+        {
+          "annotation": "PutMapping",
+          "raw": "\"/{id}\"",
+          "line": 46
+        },
+        {
+          "annotation": "DeleteMapping",
+          "raw": "\"/{id}\"",
+          "line": 52
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 5
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/SuperAdminBugTrackerController.java",
+      "sha": "68e39e22376517ba60ce6d3af0b5bea28d1b4d85",
+      "lines": 82,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/superadmin/bug-tracker\"",
+          "line": 30
+        },
+        {
+          "annotation": "PatchMapping",
+          "raw": "\"/issues/{publicId}/status\"",
+          "line": 48
+        },
+        {
+          "annotation": "PatchMapping",
+          "raw": "\"/issues/{publicId}/workflow\"",
+          "line": 57
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/issues/{publicId}/retest\"",
+          "line": 66
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 3
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/SuperAdminE2eController.java",
+      "sha": "5561c2974547d5d1ce341b51020a96c3c4f69664",
+      "lines": 51,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/superadmin/e2e\"",
+          "line": 18
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/seed\"",
+          "line": 37
+        }
+      ],
+      "signals": {
+        "preAuthorize": true,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 1
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/SuperAdminLogsController.java",
+      "sha": "565e5f6a448f1748dd026421eaa92d2d0f9ae9cd",
+      "lines": 251,
+      "kind": "controller_candidate",
+      "mappings": [
+        {
+          "annotation": "RequestMapping",
+          "raw": "\"/api/v1/superadmin/logs\"",
+          "line": 33
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/query\"",
+          "line": 56
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/detail\"",
+          "line": 62
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/status\"",
+          "line": 69
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/mark-viewed\"",
+          "line": 79
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/test-alert\"",
+          "line": 87
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/known-errors\"",
+          "line": 95
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/mute\"",
+          "line": 102
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/export\"",
+          "line": 120
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/known-errors/{id}/mute\"",
+          "line": 163
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/known-errors/{id}/status\"",
+          "line": 173
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/known-errors/{id}/issue\"",
+          "line": 187
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/context\"",
+          "line": 195
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/deploys\"",
+          "line": 202
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/deploys/health\"",
+          "line": 210
+        },
+        {
+          "annotation": "GetMapping",
+          "raw": "\"/digest\"",
+          "line": 223
+        },
+        {
+          "annotation": "PostMapping",
+          "raw": "\"/digest/send\"",
+          "line": 231
+        }
+      ],
+      "signals": {
+        "preAuthorize": false,
+        "explicitCollegeScope": false,
+        "userAccess": false,
+        "fileUpload": false,
+        "download": false
+      },
+      "methodCount": 16
+    }
+  ]
+}
