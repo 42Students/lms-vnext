@@ -34,6 +34,8 @@ describe("TPO server-scoped general request filters",()=>{
   expect(panel).toContain('query.set("q",searchQuery)');
   expect(panel).toContain('role="search"');
   expect(panel).toContain('value="ABSENCE_DISPUTE"');
+  expect(panel).toContain('value="CANCELLED">Cancelled');
+  expect(panel).toContain("if(normalized===searchQuery&&page===1){void load();return;}");
   expect(panel).toContain('onReviewed={load} disabled={loading||stale||pending}');
  });
 });

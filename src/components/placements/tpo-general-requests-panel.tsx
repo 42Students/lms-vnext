@@ -30,7 +30,7 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
 export function TpoGeneralRequestsPanel(){
  const [rows,setRows]=useState<Request[]>([]),[error,setError]=useState("");
  const [loading,setLoading]=useState(true),[stale,setStale]=useState(false);
- const [status,setStatus]=useState<"PENDING"|"ALL"|"APPROVED"|"REJECTED">("PENDING");
+ const [status,setStatus]=useState<"PENDING"|"ALL"|"APPROVED"|"REJECTED"|"CANCELLED">("PENDING");
  const [kind,setKind]=useState("ALL");
  const [draftQuery,setDraftQuery]=useState(""),[searchQuery,setSearchQuery]=useState("");
  const [page,setPage]=useState(1),[total,setTotal]=useState(0),[totalPages,setTotalPages]=useState(1);
@@ -98,6 +98,7 @@ export function TpoGeneralRequestsPanel(){
     }}>
      <option value="PENDING">Waiting</option><option value="ALL">All history</option>
      <option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option>
+     <option value="CANCELLED">Cancelled</option>
     </Select>
    </label>
    <label className="grid min-w-44 gap-1 text-sm font-semibold">Request kind
@@ -118,6 +119,8 @@ export function TpoGeneralRequestsPanel(){
      event.preventDefault();
      const normalized=draftQuery.trim();
      if(normalized.length===1){setError("Search needs at least two characters.");return;}
+     // Repeating a search with unchanged React dependencies must still fetch.
+     if(normalized===searchQuery&&page===1){void load();return;}
      setSearchQuery(normalized);invalidateQueue();
     }}>
     <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold">Student name or request reason
