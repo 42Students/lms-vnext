@@ -4,6 +4,55 @@
   "method": "static annotation/guard candidate inspection; mapping and security require call-chain verification",
   "records": [
     {
+      "path": "src/main/java/com/_42students/lms/auditfindings/SuperAdminAuditFindingsController.java",
+      "sha": "b4e009b83e6c86e3b04a281b4bfcad1c5cf0ecbd",
+      "lines": 114,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/superadmin/audit-findings"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/sync"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/sync"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{id}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{id}/status"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{id}/severity"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{id}/assignee"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{id}/comment"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{id}/commit"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/AdminAssignmentContentWriteController.java",
       "sha": "b887e051f4e00c8055da991d571d067706bc7b05",
       "lines": 63,
@@ -103,6 +152,23 @@
       ]
     },
     {
+      "path": "src/main/java/com/_42students/lms/controller/AdminAttendancePolicyController.java",
+      "sha": "2472397f048c923c12d4440daa4cf40ffad5dd95",
+      "lines": 55,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/attendance/policy"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/AdminClassScheduleController.java",
       "sha": "810e329310bf087b44e739d0fecbc821b1f3e68a",
       "lines": 215,
@@ -122,6 +188,250 @@
         "facultyId",
         "collegeId"
       ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminCollegeDashboardController.java",
+      "sha": "81326f41c9d2374197ee795edadcdf70a7726950",
+      "lines": 249,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/college-dashboard"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminCollegeSummaryController.java",
+      "sha": "70ed07c2d688ce87f512be76cac2ef3b56896964",
+      "lines": 107,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/college-summary"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java",
+      "sha": "bf69d7c1ba592b9e85e60ee20b1fd0cf441fdd6f",
+      "lines": 158,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/courses"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk-status"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminCourseProgressController.java",
+      "sha": "e338bfa11e4fb71fbc79eef2fc838c812586681b",
+      "lines": 227,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/course-progress"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminJobController.java",
+      "sha": "8fbee91078ecdf65bfc9ead9746c321afbcff835",
+      "lines": 1156,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/jobs"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/context"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/search"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk-status"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/extend-deadline"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/status"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/applications"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/applications/bulk-status"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/applications/{applicationId}"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{jobId}/applications/{applicationId}/status"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/applications/export"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/applications/{applicationId}/history"
+        },
+        {
+          "method": "PatchMapping",
+          "path": "/{jobId}/applications/{applicationId}/notes"
+        },
+        {
+          "method": "PatchMapping",
+          "path": "/{jobId}/applications/{applicationId}/offer-letter"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/metrics"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/funnel"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/company-report"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/data-retention-report"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/needs-attention"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/students/{learnerId}/placement-summary"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/delete-impact"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/applications/{applicationId}/screening"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/applications/{applicationId}/rescreen"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminLearnerProgressController.java",
+      "sha": "afaf76ae91412cb54628eefd23e9989f7ffb0f7b",
+      "lines": 136,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/learner-progress"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/start-attempt"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminLessonBulkController.java",
+      "sha": "0e2c1b1b6b84d4fce76b52a5aaec801155ecfb09",
+      "lines": 149,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/lessons"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk-status"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminNotificationDeliveryController.java",
+      "sha": "5068a2e4c480e2d81db19c0cd2553d7afd45364d",
+      "lines": 156,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/notification-delivery"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{id}/resend"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{id}/cancel-schedule"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
     },
     {
       "path": "src/main/java/com/_42students/lms/controller/AdminProjectController.java",
@@ -235,6 +545,95 @@
       ]
     },
     {
+      "path": "src/main/java/com/_42students/lms/controller/AdminProjectTemplateController.java",
+      "sha": "e6280bddc36a7362768ef71fd31c8c197bc683be",
+      "lines": 494,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/project-templates"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{templateId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{templateId}/preview"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{templateId}/versions/page"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{templateId}/colleges"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{templateId}/colleges"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{templateId}/versions"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{templateId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{templateId}/duplicate"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{templateId}/projects"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{templateId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{templateId}/colleges/{collegeId}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{templateId}/colleges/{collegeId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/colleges/{collegeId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{templateId}/publish"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{templateId}/unpublish"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{templateId}/impact"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{templateId}/versions/{versionId}/rollback"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/AdminQuizController.java",
       "sha": "3f7abd4dd5861eaa50cb1598176132f552093add",
       "lines": 110,
@@ -252,6 +651,69 @@
       "guards": [
         "collegeId"
       ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java",
+      "sha": "66959374246c0b748f2714518f08a55c279984a0",
+      "lines": 288,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/recycle-bin"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/types"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": "/restore"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminSmsLogController.java",
+      "sha": "a901b0c6fd99bb6dcd138affe8f01c8d36e73b8c",
+      "lines": 86,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/sms-log"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java",
+      "sha": "410ead7493066c9360cd627d4a45a389ef980d5b",
+      "lines": 215,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/admin/users"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{userType}/{userId}/suspend"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{userType}/{userId}/reactivate"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
     },
     {
       "path": "src/main/java/com/_42students/lms/controller/AssignmentController.java",
