@@ -18,6 +18,8 @@ describe("TPO server-scoped general request filters",()=>{
   expect(body.match(/\.innerJoin\(collegeMemberships/g)?.length).toBe(2);
   expect(body.match(/\.innerJoin\(users/g)?.length).toBe(2);
   expect(body.match(/\.where\(scoped\)/g)?.length).toBe(2);
+  expect(body.match(/getDb\(\)\.select\(\{count:sql<number>/g)?.length).toBe(1);
+  expect(body).toContain("const [totalRows,requests]=await Promise.all([");
   expect(body).toContain('filter.kind==="ALL"?undefined');
   expect(body).toContain("filter.q.replace(");
   expect(body).toContain("ilike(users.displayName");

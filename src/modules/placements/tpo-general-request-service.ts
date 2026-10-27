@@ -212,7 +212,6 @@ export async function listTpoGeneralRequests(ctx:RequestContext,raw:unknown={}){
     eq(collegeMemberships.collegeId,college.id)))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .where(scoped),
-  getDb().select({count:sql<number>`count(*)::int`}).from(placementLearnerGeneralRequests).where(scoped),
   getDb().select({
    id:placementLearnerGeneralRequests.id,kind:placementLearnerGeneralRequests.kind,
    status:placementLearnerGeneralRequests.status,reason:placementLearnerGeneralRequests.reason,
