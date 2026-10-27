@@ -1,0 +1,336 @@
+{
+  "ref": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+  "account": "shared-public",
+  "totalRoutes": 47,
+  "method": "static source-based route/component candidates",
+  "records": [
+    {
+      "path": "src/pages/404.js",
+      "sha": "ad537c770fccb6dff0cb19bd5c34171898b9522a",
+      "lines": 88,
+      "imports": [
+        "@/layouts/layout",
+        "@/layouts/AdminLayout",
+        "@/layouts/SuperAdminLayout",
+        "@/config/roles",
+        "@/utils/authUtils"
+      ],
+      "jsxComponents": [
+        "Link",
+        "NotFoundContent",
+        "SuperAdminLayout",
+        "AdminLayout",
+        "Layout"
+      ],
+      "overlayCandidates": [],
+      "events": 1
+    },
+    {
+      "path": "src/pages/500.js",
+      "sha": "b9d55c210f0a87700dc0e724acf5b0f20936c84a",
+      "lines": 27,
+      "imports": [],
+      "jsxComponents": [
+        "Link"
+      ],
+      "overlayCandidates": [],
+      "events": 1
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/AbsentPresntBtnCol.js",
+      "sha": "1c9db4e4506e615c6222ca4150098126025422a3",
+      "lines": 43,
+      "imports": [],
+      "jsxComponents": [
+        "CheckOutlined",
+        "CloseOutlined"
+      ],
+      "overlayCandidates": [],
+      "events": 3
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/AttendanceReport.js",
+      "sha": "8aef050e976434f194983015c6ef8a51e2595caa",
+      "lines": 104,
+      "imports": [
+        "@/utils/facultyCourseDetail",
+        "@/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters",
+        "@/components/Attendance/CourseAttendeeHeaderFilters/CourseAttendeeHeaderFilters",
+        "./StudentAttendanceView",
+        "./TeacherAttendanceView",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Select",
+        "Segmented",
+        "TakeAttendanceHeaderFilters",
+        "CourseAttendeeHeaderFilters",
+        "TeacherAttendanceView",
+        "StudentAttendanceView"
+      ],
+      "overlayCandidates": [],
+      "events": 2
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/NameWithDp.js",
+      "sha": "325539d5f5eab47bcdf0d1e342272f67e5ef6e14",
+      "lines": 19,
+      "imports": [],
+      "jsxComponents": [
+        "Image"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/StudentAttendanceView.jsx",
+      "sha": "0209e7ce84ce6617fbc1f49f9f24ec19e5a5f762",
+      "lines": 221,
+      "imports": [
+        "@/api/Services/attendanceServices",
+        "@/components/Attendance/StudentAttendance/StatusCol",
+        "@/utils/attendanceConstants"
+      ],
+      "jsxComponents": [
+        "Spin",
+        "Alert",
+        "Button",
+        "Table",
+        "Empty",
+        "StatusCol"
+      ],
+      "overlayCandidates": [
+        "Table"
+      ],
+      "events": 1
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/TakeAttendance.js",
+      "sha": "383976525bb017269c8f9e55529a3251457ede19",
+      "lines": 578,
+      "imports": [
+        "@/redux/store",
+        "./NameWithDp",
+        "./AbsentPresntBtnCol",
+        "@/api/Services/attendanceServices",
+        "@/components/Global/Offcanvas/Attendance/SheduleClassDrawer",
+        "@/components/Global/Button/button"
+      ],
+      "jsxComponents": [
+        "NameWithDp",
+        "AbsentPresntBtnCol",
+        "SheduleClassDrawer",
+        "Spin",
+        "Alert",
+        "Button",
+        "CustomButton",
+        "Input",
+        "SearchOutlined",
+        "Table",
+        "Empty",
+        "Modal"
+      ],
+      "overlayCandidates": [
+        "SheduleClassDrawer",
+        "Table",
+        "Modal"
+      ],
+      "events": 10
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+      "sha": "bb2139e0742ad8cd87514789ebf72747a5391191",
+      "lines": 453,
+      "imports": [
+        "./TakeAttendance",
+        "@/api/Services/attendanceServices",
+        "@/utils/attendanceConstants",
+        "@/components/Global/Tooltips/CustomToolTipTable",
+        "@/redux/store",
+        "@/utils/monthlyAttendanceReport",
+        "@/utils/downloadMonthlyAttendancePdf"
+      ],
+      "jsxComponents": [
+        "TakeAttendance",
+        "Spin",
+        "Empty",
+        "Button",
+        "DownloadOutlined",
+        "React.Fragment",
+        "CustomToolTipTable"
+      ],
+      "overlayCandidates": [
+        "CustomToolTipTable"
+      ],
+      "events": 2
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/attendance.js",
+      "sha": "f7842bbb1d277d07190d4962900e96ea42844012",
+      "lines": 20,
+      "imports": [
+        "./AttendanceReport"
+      ],
+      "jsxComponents": [
+        "AttendanceReport"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/Dashboard/course/Classroom/classroom.js",
+      "sha": "0d8d5e96211ba352a6246109993a0dc924a8bbb8",
+      "lines": 673,
+      "imports": [
+        "@/api/Services/courseServices",
+        "@/utils/courseClassAssignment",
+        "@/utils/clientSettings",
+        "@/utils/placementDateTime"
+      ],
+      "jsxComponents": [
+        "Avatar",
+        "Tag",
+        "Tooltip",
+        "PushpinFilled",
+        "Button",
+        "PushpinOutlined",
+        "DeleteOutlined",
+        "Spin",
+        "Alert",
+        "ReloadOutlined",
+        "React.Fragment",
+        "ArrowDownOutlined",
+        "Input.TextArea",
+        "SendOutlined"
+      ],
+      "overlayCandidates": [],
+      "events": 11
+    },
+    {
+      "path": "src/pages/Dashboard/course/Home/Home.js",
+      "sha": "d33f9d005ace8114e7eb367d85a6bef0bb4b90ae",
+      "lines": 513,
+      "imports": [
+        "@/api/Services/courseServices",
+        "@/components/Course/Home",
+        "@/hooks/useCourseHomeWidgets",
+        "@/hooks/useLearnerHomeStats",
+        "@/hooks/useFacultyCourseStats",
+        "@/utils/facultyRouteUtils"
+      ],
+      "jsxComponents": [
+        "BookOutlined",
+        "ExclamationCircleOutlined",
+        "FormOutlined",
+        "ClockCircleOutlined",
+        "CalendarOutlined",
+        "PlayCircleOutlined",
+        "BarChartOutlined",
+        "InThisCourseSection",
+        "Button",
+        "AtRiskStudentsCard",
+        "PerformanceCard",
+        "UnifiedActivityList"
+      ],
+      "overlayCandidates": [
+        "FormOutlined",
+        "PerformanceCard"
+      ],
+      "events": 3
+    },
+    {
+      "path": "src/pages/Dashboard/course/Home/HomeEditDrawer.js",
+      "sha": "2d3c4cbdde7c5807b6f7ec1d6ee6a54c052f6819",
+      "lines": 80,
+      "imports": [
+        "@/components/Global/RightDrawer/DrawerWidget"
+      ],
+      "jsxComponents": [
+        "DrawerWidget",
+        "Form",
+        "Form.Item",
+        "Input",
+        "TextArea"
+      ],
+      "overlayCandidates": [
+        "DrawerWidget",
+        "Form",
+        "Form.Item"
+      ],
+      "events": 1
+    },
+    {
+      "path": "src/pages/Dashboard/course/Sudent/student.js",
+      "sha": "be25aa396943bf3ebb86b8aa0d852d9513d0ed90",
+      "lines": 504,
+      "imports": [
+        "@/utils/facultyCourseDetail",
+        "@/redux/store",
+        "@/api/ApiMethod"
+      ],
+      "jsxComponents": [
+        "StudentAvatar",
+        "PhoneOutlined",
+        "MailOutlined",
+        "UserOutlined",
+        "TeamOutlined",
+        "IdcardOutlined",
+        "Select",
+        "Input",
+        "SearchOutlined",
+        "Skeleton",
+        "Alert",
+        "Button",
+        "ReloadOutlined",
+        "Table",
+        "Empty",
+        "Modal"
+      ],
+      "overlayCandidates": [
+        "Table",
+        "Modal"
+      ],
+      "events": 5
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/PdfViewerModal.jsx",
+      "sha": "3bf7f26199f531efac9c3b897496ba4ef2fa2e5b",
+      "lines": 43,
+      "imports": [
+        "@/components/Global/ModalContainer/ModalContainer"
+      ],
+      "jsxComponents": [
+        "ModalContainer"
+      ],
+      "overlayCandidates": [
+        "ModalContainer"
+      ],
+      "events": 1
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/liveclass.js",
+      "sha": "99a0478f874d25e939280c7b71c04ad47304a28f",
+      "lines": 232,
+      "imports": [
+        "../../../../utils/courseUtils/syllabusUtils",
+        "@/components/Course/Syllabus/ContentTitle",
+        "@/components/Course/Syllabus/MarkCompleteButton"
+      ],
+      "jsxComponents": [
+        "VideoCameraOutlined",
+        "ContentTitle",
+        "Popconfirm",
+        "Button",
+        "DeleteOutlined",
+        "ContentAddedDate",
+        "ClockCircleOutlined",
+        "CopyOutlined",
+        "MarkCompleteButton"
+      ],
+      "overlayCandidates": [
+        "Popconfirm"
+      ],
+      "events": 3
+    }
+  ]
+}
