@@ -19,7 +19,7 @@ describe("TPO general request bounded bulk review",()=>{
   expect(MAX_GENERAL_REQUEST_BULK_DECISIONS).toBe(10);
  });
  it("skips proofless or unsupported positive decisions, but permits rejecting them",()=>{
-  expect(generalRequestBulkBlockReason(row("a","ABSENCE_DISPUTE",""),"APPROVE")).toContain("Proof");
+  expect(generalRequestBulkBlockReason(row("a","ABSENCE_DISPUTE",""),"APPROVE")).toBeNull();
   expect(generalRequestBulkBlockReason(row("a","OFF_CAMPUS_OFFER","javascript:alert(1)"),"APPROVE")).toContain("Proof");
   expect(generalRequestBulkBlockReason(row("a","CORRECTION_WITH_PROOF"),"APPROVE")).toContain("specialist");
   expect(generalRequestBulkBlockReason(row("a","PLACEMENT_AFTER_PLACEMENT"),"APPROVE")).toContain("specialist");
@@ -36,6 +36,8 @@ describe("TPO general request bounded bulk review",()=>{
   expect(bulk).toContain("inFlight.current=true");
   expect(bulk).toContain("await onReviewed()");
   expect(bulk).toContain("Verify status before retrying");
+  expect(bulk).toContain("disabled?:boolean");
+  expect(bulk).toContain("if(!(await onReviewed()))");
   expect(bulk).toContain("if(!rows.length&&!outcomes.length&&!pending)return null;");
   expect(panel).not.toContain("!loading&&pendingRows.length>0?");
   expect(bulk).toContain('acknowledged}');

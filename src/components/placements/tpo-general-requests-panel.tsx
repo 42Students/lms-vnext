@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useCallback,useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
@@ -28,21 +28,44 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
 }
 export function TpoGeneralRequestsPanel(){
  const [rows,setRows]=useState<Request[]>([]),[error,setError]=useState("");
- const [loading,setLoading]=useState(true);
+ const [loading,setLoading]=useState(true),[stale,setStale]=useState(false);
+ const [status,setStatus]=useState<"PENDING"|"ALL"|"APPROVED"|"REJECTED">("PENDING");
+ const [page,setPage]=useState(1),[total,setTotal]=useState(0),[totalPages,setTotalPages]=useState(1);
+ const generation=useRef(0);
  const [selection,setSelection]=useState<Request|null>(null),[action,setAction]=useState<"APPROVE"|"REJECT">("REJECT");
  const [note,setNote]=useState(""),[message,setMessage]=useState("");
  const {run,pending}=useGuardedAction();
- async function load(){
+ const load=useCallback(async():Promise<boolean>=>{
+  const sequence=++generation.current;
   setLoading(true);
   try{
-   const data=await apiFetch<{requests:Request[]}>("/api/placements/tpo/requests/general",{cache:"no-store"});
-   setRows(data.requests);setError("");
-  }catch{setError("Other student requests could not be loaded. Retry to refresh.");}
-  finally{setLoading(false);}
- }
- useEffect(()=>{void Promise.resolve().then(load);},[]);
+   const query=new URLSearchParams({page:String(page),pageSize:"25",status});
+   const data=await apiFetch<{requests:Request[];total:number;totalPages:number}>(
+    "/api/placements/tpo/requests/general?"+query.toString(),{cache:"no-store"});
+   if(sequence!==generation.current)return false;
+   if(!Array.isArray(data.requests)||!Number.isSafeInteger(data.total)||data.total<0||
+     !Number.isSafeInteger(data.totalPages)||data.totalPages<1)
+    throw new Error("Malformed requests page");
+   if(page>data.totalPages){
+    setRows([]);setTotal(data.total);setTotalPages(data.totalPages);
+    setPage(data.totalPages);return true;
+   }
+   setRows(data.requests);setTotal(data.total);setTotalPages(data.totalPages);
+   setError("");setStale(false);
+   return true;
+  }catch{
+   if(sequence===generation.current){
+    setStale(true);
+    setError("Other student requests could not be refreshed. Previous results are stale; decisions are disabled until a successful refresh.");
+   }
+   return false;
+  }finally{
+   if(sequence===generation.current)setLoading(false);
+  }
+ },[page,status]);
+ useEffect(()=>{void load();return()=>{generation.current++;};},[load]);
  async function decide(){
-  if(!selection||pending)return;
+  if(!selection||pending||loading||stale)return;
   if(action==="REJECT"&&note.trim().length<3){setError("Tell the learner why this request was declined.");return;}
   setError("");setMessage("");
   try{
@@ -59,13 +82,25 @@ export function TpoGeneralRequestsPanel(){
  const pendingRows=rows.filter(row=>row.status==="PENDING");
  const approveSupported=tpoGeneralRequestCanApprove;
  return <section aria-label="Other student requests" className="space-y-3 border-b border-border pb-5">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Other student requests · {pendingRows.length} waiting</h2>
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Other student requests · {total} matching</h2>
   <p className="text-sm leading-[22px]">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
-  <Button variant="secondary" type="button" onClick={()=>void load()} loading={loading} disabled={loading} className="min-h-11 w-full px-3 sm:w-auto md:min-h-9">Refresh other requests</Button>
+  <div className="flex flex-wrap items-end gap-3">
+   <label className="grid min-w-40 gap-1 text-sm font-semibold">View requests
+    <Select value={status} disabled={loading||pending} onChange={event=>{
+     setStatus(event.target.value as typeof status);setPage(1);
+     setRows([]);setStale(true);setSelection(null);setMessage("");
+    }}>
+     <option value="PENDING">Waiting</option><option value="ALL">All history</option>
+     <option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option>
+    </Select>
+   </label>
+   <Button variant="secondary" type="button" onClick={()=>void load()} loading={loading} disabled={loading||pending}
+    className="min-h-11 w-full px-3 sm:w-auto md:min-h-9">Refresh other requests</Button>
+  </div>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
-  {<TpoGeneralRequestsBulkDecision rows={pendingRows} onReviewed={load}/>}
-  {loading&&!rows.length?<p role="status" className="py-4 text-sm text-body leading-[22px]">Loading other student requests…</p>:!rows.length?<EmptyState title="No other requests to review."/>:
+  <TpoGeneralRequestsBulkDecision rows={pendingRows} onReviewed={load} disabled={loading||stale||pending}/>
+  {loading&&!rows.length?<p role="status" className="py-4 text-sm text-body leading-[22px]">Loading other student requests…</p>:!rows.length?<EmptyState title={status==="PENDING"?"No waiting requests.":"No requests in this view."}/>:
    <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[min(70vh,44rem)] min-h-0 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="min-w-0 py-3 text-sm">
     <h3 className="break-words font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words text-body">{row.reason}</p>
@@ -74,15 +109,24 @@ export function TpoGeneralRequestsPanel(){
      <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
     </details>
     {row.decisionNote?<p>Decision: {row.decisionNote}</p>:null}
-    {row.status==="PENDING"?<Button variant="secondary" type="button" disabled={pending} className="mt-2 min-h-11 w-full px-3 sm:w-auto md:min-h-9"
+    {row.status==="PENDING"?<Button variant="secondary" type="button" disabled={pending||loading||stale} className="mt-2 min-h-11 w-full px-3 sm:w-auto md:min-h-9"
       onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</Button>:null}
    </li>)}</ul>}
+  <nav aria-label="Other request history pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+   <span role="status">Page {page} of {totalPages} · {total} matching requests</span>
+   <div className="flex items-center gap-2">
+    <Button variant="secondary" disabled={loading||pending||page<=1}
+      onClick={()=>{setPage(n=>Math.max(1,n-1));setRows([]);setStale(true);setSelection(null);}}>Previous</Button>
+    <Button variant="secondary" disabled={loading||pending||page>=totalPages}
+      onClick={()=>{setPage(n=>n+1);setRows([]);setStale(true);setSelection(null);}}>Next</Button>
+   </div>
+  </nav>
   <Dialog open={selection!==null} onOpenChange={open=>{if(!open&&!pending)setSelection(null);}}
    title={"Review "+(selection?.kind.replaceAll("_"," ").toLowerCase()??"request")}
    description="The learner receives your reason. An approval must save its domain consequence and the audit in the same transaction."
    footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
     <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>setSelection(null)}>Cancel</Button>
-    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||(action==="APPROVE"&&!approveSupported(selection?.kind??""))} onClick={()=>void decide()}>
+    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||loading||stale||(action==="APPROVE"&&!approveSupported(selection?.kind??""))} onClick={()=>void decide()}>
       {pending?"Saving…":"Confirm decision"}</Button></div>}>
    <div className="min-w-0 space-y-3 break-words">
     <p className="text-sm leading-[22px]">{selection?.reason}</p>

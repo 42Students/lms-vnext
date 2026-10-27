@@ -18,7 +18,9 @@ export function generalRequestBulkBlockReason(
  if(!tpoGeneralRequestCanApprove(row.kind))
   return "This request type requires specialist review before approval.";
  const evidence=tpoGeneralRequestReviewFacts(row.kind,row.payload);
- if(evidence.requiresProof&&!evidence.proofUrl)
+ // The legacy bulk proof skip applies to off-campus offers; attendance
+ // disputes can be corrected without an uploaded document.
+ if(row.kind==="OFF_CAMPUS_OFFER"&&!evidence.proofUrl)
   return "Proof missing or unsafe: open this request for individual review.";
  return null;
 }

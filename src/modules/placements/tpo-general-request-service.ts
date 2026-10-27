@@ -192,23 +192,40 @@ export async function listOwnTpoGeneralRequests(ctx:RequestContext){
   eq(placementLearnerGeneralRequests.membershipId,member.id)))
   .orderBy(desc(placementLearnerGeneralRequests.requestedAt),desc(placementLearnerGeneralRequests.id)).limit(100);
 }
-export async function listTpoGeneralRequests(ctx:RequestContext){
+/** Bounded college-scoped general-request review. The former 1000-row
+ * list could silently hide a busy college's outstanding requests. */
+export const tpoGeneralReviewQuerySchema=z.strictObject({
+ page:z.coerce.number().int().min(1).max(10000).default(1),
+ pageSize:z.coerce.number().int().min(10).max(50).default(25),
+ status:z.enum(["ALL","PENDING","APPROVED","REJECTED","CANCELLED"]).default("PENDING"),
+});
+export async function listTpoGeneralRequests(ctx:RequestContext,raw:unknown={}){
  const college=await requireTpo(ctx);
  await requireRegistered();
- return getDb().select({
-  id:placementLearnerGeneralRequests.id,kind:placementLearnerGeneralRequests.kind,
-  status:placementLearnerGeneralRequests.status,reason:placementLearnerGeneralRequests.reason,
-  payload:placementLearnerGeneralRequests.payload,version:placementLearnerGeneralRequests.version,
-  membershipId:placementLearnerGeneralRequests.membershipId,
-  studentName:users.displayName,requestedAt:placementLearnerGeneralRequests.requestedAt,
-  decidedAt:placementLearnerGeneralRequests.decidedAt,decisionNote:placementLearnerGeneralRequests.decisionNote,
- }).from(placementLearnerGeneralRequests)
-  .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementLearnerGeneralRequests.membershipId),
-   eq(collegeMemberships.collegeId,college.id)))
-  .innerJoin(users,eq(users.id,collegeMemberships.userId))
-  .where(eq(placementLearnerGeneralRequests.collegeId,college.id))
-  .orderBy(sql`case when ${placementLearnerGeneralRequests.status}='PENDING' then 0 else 1 end`,
-   placementLearnerGeneralRequests.requestedAt,placementLearnerGeneralRequests.id).limit(1000);
+ const filter=tpoGeneralReviewQuerySchema.parse(raw);
+ const scoped=and(eq(placementLearnerGeneralRequests.collegeId,college.id),
+   filter.status==="ALL"?undefined:eq(placementLearnerGeneralRequests.status,filter.status));
+ const [totalRows,requests]=await Promise.all([
+  getDb().select({count:sql<number>`count(*)::int`}).from(placementLearnerGeneralRequests).where(scoped),
+  getDb().select({
+   id:placementLearnerGeneralRequests.id,kind:placementLearnerGeneralRequests.kind,
+   status:placementLearnerGeneralRequests.status,reason:placementLearnerGeneralRequests.reason,
+   payload:placementLearnerGeneralRequests.payload,version:placementLearnerGeneralRequests.version,
+   membershipId:placementLearnerGeneralRequests.membershipId,
+   studentName:users.displayName,requestedAt:placementLearnerGeneralRequests.requestedAt,
+   decidedAt:placementLearnerGeneralRequests.decidedAt,decisionNote:placementLearnerGeneralRequests.decisionNote,
+  }).from(placementLearnerGeneralRequests)
+   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementLearnerGeneralRequests.membershipId),
+    eq(collegeMemberships.collegeId,college.id)))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(scoped)
+   .orderBy(sql`case when ${placementLearnerGeneralRequests.status}='PENDING' then 0 else 1 end`,
+    placementLearnerGeneralRequests.requestedAt,placementLearnerGeneralRequests.id)
+   .limit(filter.pageSize).offset((filter.page-1)*filter.pageSize),
+ ]);
+ const total=Number(totalRows[0]?.count??0);
+ return {requests,total,page:filter.page,pageSize:filter.pageSize,
+  totalPages:Math.max(1,Math.ceil(total/filter.pageSize)),status:filter.status};
 }
 /** Unsupported effects never silently approve a pending dispute/correction.
  * Every valid approval must write its real domain consequence in the same transaction. */
