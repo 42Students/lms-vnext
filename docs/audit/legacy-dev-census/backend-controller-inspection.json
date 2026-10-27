@@ -1180,6 +1180,852 @@
       ],
       "hasAuth": false,
       "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoDriveController.java",
+      "sha": "39b1a60d81e1977f4e8ea36470e92f03f128a7e3",
+      "lines": 210,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/drives"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{jobId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/rounds"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/publish"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/send-back"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/approve"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/reject"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/cancel"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/close"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{jobId}/extend-deadline"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoEmailCampaignController.java",
+      "sha": "bdb2e4c9c9e5b08b1e940186fd74643ced87e80a",
+      "lines": 158,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/campaigns"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{campaignId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": "/test"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{campaignId}/follow-ups"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{campaignId}/again"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/replies/{replyId}/answer"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/replies/handled"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/templates"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/templates"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/templates/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/templates/{id}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/drafts"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/drafts"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/drafts/{id}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/drafts/{id}/unschedule"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/drafts/{id}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoHubController.java",
+      "sha": "ba538a200ffe79f02ca8417e85358ddaa4d8f7e4",
+      "lines": 480,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/home"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/calendar"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/calendar/blocked-check"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/reports"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/reports/{name}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/stats"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/mail-status"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/recruiter-leads-hub/bulk/invite"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/recruiter-leads-hub/table"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/recruiter-leads-hub/{recruiterLeadId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/recruiter-leads-hub/bulk/owner"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/recruiter-leads-hub/bulk/stage"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/recruiter-leads-hub/bulk/restore"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk-record"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/recruiter-leads-hub/import/preview"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/recruiter-leads-hub/import"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/companies"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/companies/season"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/companies/communication"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/companies/detail"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/companies/history"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/rounds/{roundId}/slots"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/rounds/{roundId}/slots"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/rounds/{roundId}/slots/{slotId}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/rounds/{roundId}/slots"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/rounds/{roundId}/slots/{slotId}/confirm"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/rounds/{roundId}/candidates"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/rounds/{roundId}/assignment/preview"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/rounds/{roundId}/assignment"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/rounds/{roundId}/assignment"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/rounds/{roundId}/summary"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/rounds/{roundId}/reschedule-requests"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/reschedule-requests/{requestId}/decide"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/my-access"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/drive-day/mine"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/drive-day/{roundId}/roster"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/drive-day/{roundId}/search"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/drive-day/{roundId}/mark"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/messages/pulse"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/messages/threads"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/messages/threads/{threadId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/messages"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/drives/{jobId}/shares"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/drives/{jobId}/shares"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/shares/{shareId}/events"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/shares/{shareId}/revoke"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/team"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/team/directory"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/team"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/team/{facultyId}/removal-impact"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/team/{facultyId}/remove"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/lens/seasons"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/settings/seasons"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/settings/seasons/{seasonId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/settings/job-types"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/settings/job-types"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/settings/cgpa-rule"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/settings/cgpa-rule"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/settings/outcome-labels"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/settings/outcome-labels"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/settings/college"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/settings/college"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/my-preferences"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/my-preferences"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/views"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/views"
+        },
+        {
+          "method": "PatchMapping",
+          "path": "/views/{id}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/views/{id}/used"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/views/{id}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/search"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoOfferController.java",
+      "sha": "851d4d55ae5b5318fbff00be65e0c6d2d9ee8122",
+      "lines": 140,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/offers"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/record-selection"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{offerId}/letter"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{offerId}/verify-and-release"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk-verify"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{offerId}/external-acceptance"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{offerId}/withdraw"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{offerId}/joining-status"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{offerId}/reverse-acceptance"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoPlacementsPageController.java",
+      "sha": "191074e98d7aea5a898f02d8e58db8ec597fca96",
+      "lines": 42,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/placements-page"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoPublicLinkController.java",
+      "sha": "c844c13f64bef0ae076b667ae7e59ac0d78798b1",
+      "lines": 54,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/public-link"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": "/new"
+        },
+        {
+          "method": "PutMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java",
+      "sha": "c3a4919530c20511e8324a6966e661f2b4723be9",
+      "lines": 139,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/recruiter-access"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{recruiterId}/extend"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{recruiterId}/revoke"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java",
+      "sha": "fbe9eb5e4ba851361ee2fe84258cb4f0d1c4aaa9",
+      "lines": 183,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/recruiter-leads"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{recruiterLeadId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/check"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{recruiterLeadId}/activity"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{recruiterLeadId}/follow-ups"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/follow-ups/{followUpId}/done"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/follow-ups/{followUpId}/move"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/follow-ups/due"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{recruiterLeadId}/not-now"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{recruiterLeadId}/invite"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{recruiterLeadId}/invite/shared"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoRequestController.java",
+      "sha": "753c9c0be65b749a20cda9e39272a20bfcf83f85",
+      "lines": 59,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/requests"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/pending"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{requestId}/decide"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoResultsController.java",
+      "sha": "e0ddab057f66fe6d8d1b354ec7b5e958aafcc12a",
+      "lines": 87,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/rounds"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{roundId}/results"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{roundId}/results/pending"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{roundId}/results/apply"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoSeasonController.java",
+      "sha": "b0f7bafe9742b8c500e357e37e5375d2aba990b7",
+      "lines": 62,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/season"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/current"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{seasonId}/open-registration"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoSettingsController.java",
+      "sha": "b78f52525cdd15fba14f4f0889f94b2bf89149f0",
+      "lines": 56,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/settings"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/placement-rules"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/placement-rules"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/what-companies-see"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/what-companies-see"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoStudentController.java",
+      "sha": "1a2de29a9c2fdc1ec218907d59f0c50b9bd70e15",
+      "lines": 84,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/students"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{learnerId}/academic-record"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/debar"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/debarments/{debarmentId}/lift"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/debarments"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoStudentsHubController.java",
+      "sha": "a8fb2fc7a198d856354e483af7f3f9cb73496b5d",
+      "lines": 234,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/students"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/table"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{learnerId}/detail"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/notes"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{learnerId}/register"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/nudge"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/assign-prep"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/higher-studies"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/restore-registration"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/debar"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/register"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/lift-debarment"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/note"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/drive-override"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/drive-override/restore"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/verify"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk/send-back"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/academic-import/preview"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/academic-import"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/requests-queue"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/prep-courses"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
     }
   ]
 }
